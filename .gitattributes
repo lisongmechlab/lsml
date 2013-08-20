@@ -1,0 +1,10 @@
+# Autodetect text files
+* text=auto
+
+# Definitive text files
+*.java text
+
+
+# Definitive binary files
+*.class binary
+*.jar binary
