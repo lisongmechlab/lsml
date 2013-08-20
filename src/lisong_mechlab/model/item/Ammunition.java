@@ -2,17 +2,18 @@ package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsAmmoType;
+import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 
 public class Ammunition extends Item{
    protected final int shotsPerTon;
    protected final double internalDamage;
    protected final int hp;
 
-   public Ammunition(ItemStatsAmmoType aAmmoType){
-      super(aAmmoType, HardpointType.NONE, 1, 1.0);
-      hp = aAmmoType.AmmoTypeStats.health;
-      internalDamage = aAmmoType.AmmoTypeStats.internalDamage;
-      shotsPerTon = aAmmoType.AmmoTypeStats.shotsPerTon;
+   public Ammunition(ItemStatsModule aStatsModule){
+      super(aStatsModule, HardpointType.NONE, 1, 1.0);
+      hp = aStatsModule.AmmoTypeStats.health;
+      internalDamage = aStatsModule.AmmoTypeStats.internalDamage;
+      shotsPerTon = aStatsModule.AmmoTypeStats.shotsPerTon;
    }
 
    public int getShotsPerTon(){

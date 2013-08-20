@@ -38,7 +38,7 @@ public class ItemStatsWeapon extends ItemStats{
       @XStreamAsAttribute
       public String projectileclass;
       @XStreamAsAttribute
-      public int    type;
+      public String type;
       @XStreamAsAttribute
       public int    slots;
       @XStreamAsAttribute

@@ -65,34 +65,12 @@ public class ItemDB{
 
       ItemStatsXml stats = ItemStatsXml.stats;
 
-      // Weapons will link to their related ammo so the ammo must already be parsed before that happens.
-      for(ItemStatsAmmoType statsAmmoType : stats.AmmoTypeList){
-         put(new Ammunition(statsAmmoType));
-      }
-
-      // Weapons next.
-      for(ItemStatsWeapon statsWeapon : stats.WeaponList){
-         switch( HardpointType.fromMwoType(statsWeapon.WeaponStats.type) ){
-            case AMS:
-               put(new AmmoWeapon(statsWeapon, HardpointType.AMS));
-               break;
-            case BALLISTIC:
-               put(new BallisticWeapon(statsWeapon));
-               break;
-            case ENERGY:
-               put(new EnergyWeapon(statsWeapon));
-               break;
-            case MISSILE:
-               put(new MissileWeapon(statsWeapon));
-               break;
-            default:
-               throw new RuntimeException("Unknown value for type field in ItemStatsXML. Please update the program!");
-         }
-      }
-
-      // Modules
+      // Modules (they contain ammo now, and weapons need to find their ammo types when parsed)
       for(ItemStatsModule statsModule : stats.ModuleList){
          switch( statsModule.CType ){
+            case "CAmmoTypeStats":
+               put(new Ammunition(statsModule));
+               break;
             case "CEngineStats":
                put(new Engine(statsModule));
                break;
@@ -112,6 +90,26 @@ public class ItemDB{
                break;
             default:
                break; // Other modules not yet supported
+         }
+      }
+
+      // Weapons next.
+      for(ItemStatsWeapon statsWeapon : stats.WeaponList){
+         switch( HardpointType.fromMwoType(statsWeapon.WeaponStats.type) ){
+            case AMS:
+               put(new AmmoWeapon(statsWeapon, HardpointType.AMS));
+               break;
+            case BALLISTIC:
+               put(new BallisticWeapon(statsWeapon));
+               break;
+            case ENERGY:
+               put(new EnergyWeapon(statsWeapon));
+               break;
+            case MISSILE:
+               put(new MissileWeapon(statsWeapon));
+               break;
+            default:
+               throw new RuntimeException("Unknown value for type field in ItemStatsXML. Please update the program!");
          }
       }
    }
