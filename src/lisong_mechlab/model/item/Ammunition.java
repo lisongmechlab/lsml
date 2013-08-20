@@ -1,7 +1,6 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsAmmoType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 
 public class Ammunition extends Item{
