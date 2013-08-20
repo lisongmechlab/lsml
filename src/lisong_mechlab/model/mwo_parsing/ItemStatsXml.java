@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.List;
 
 import lisong_mechlab.converter.GameDataFile;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsAmmoType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsMech;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
@@ -49,7 +48,6 @@ public class ItemStatsXml{
       xstream.autodetectAnnotations(true);
       xstream.alias("ItemStats", ItemStatsXml.class);
       xstream.alias("Mech", ItemStatsMech.class);
-      xstream.alias("AmmoType", ItemStatsAmmoType.class);
       xstream.alias("Weapon", ItemStatsWeapon.class);
       xstream.alias("Module", ItemStatsModule.class);
       
