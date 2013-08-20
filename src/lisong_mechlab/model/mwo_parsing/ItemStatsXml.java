@@ -24,7 +24,6 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 public class ItemStatsXml{
    public List<ItemStatsMech>     MechList;
    public List<ItemStatsWeapon>   WeaponList;
-   public List<ItemStatsAmmoType> AmmoTypeList;
    public List<ItemStatsModule> ModuleList;
 
    public final static ItemStatsXml            stats;
