@@ -3,6 +3,7 @@ package lisong_mechlab.model.loadout;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.Loadout.Message.Type;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
@@ -195,33 +197,6 @@ public class Loadout implements MessageXBar.Reader{
       upgrades.setDoubleHeatSinks(false);
    }
 
-   // @Deprecated
-   // // Use the crossbar instead
-   // @Override
-   // public void update(Observable anObservable, Object anObject){
-   // if( anObservable == upgrades ){
-   // for(LoadoutPart loadoutPart : parts.values()){
-   // loadoutPart.upgradesChanged(upgrades);
-   // }
-   //
-   // if( Upgrades.ChangeMsg.ARMOR == anObject ){
-   // if( getNumCriticalSlotsFree() < 0 && upgrades.hasFerroFibrous() ){
-   // upgrades.setFerroFibrous(false);
-   // throw new IllegalArgumentException("Not enough free slots for FF armor!");
-   // }
-   // }
-   // else if( Upgrades.ChangeMsg.STRUCTURE == anObject ){
-   // if( getNumCriticalSlotsFree() < 0 && upgrades.hasEndoSteel() ){
-   // upgrades.setEndoSteel(false);
-   // throw new IllegalArgumentException("Not enough free slots for FF armor!");
-   // }
-   // }
-   // }
-   //
-   // setChanged();
-   // notifyObservers();
-   // }
-
    public double getMass(){
       double ans = chassi.getInternalMass();
       if( getUpgrades().hasEndoSteel() ){
@@ -279,8 +254,6 @@ public class Loadout implements MessageXBar.Reader{
       return upgrades;
    }
 
-   @Deprecated
-   // Should this be here?
    public Engine getEngine(){
       LoadoutPart part = getPart(Part.CenterTorso);
       for(Item item : part.getItems()){
@@ -295,20 +268,15 @@ public class Loadout implements MessageXBar.Reader{
       return efficiencies;
    }
 
-   @Deprecated
-   // Should this be here?
    public int getHeatsinksCount(){
       int ans = 0;
-      for(LoadoutPart partConf : parts.values()){
-         for(Item item : partConf.getItems()){
-            if( item instanceof HeatSink ){
-               ans++;
-            }
-            else if( item instanceof Engine ){
-               ans += ((Engine)item).getNumInternalHeatsinks();
-            }
+      for(Item item : allItems()){
+         if( item instanceof HeatSink ){
+            ans++;
          }
-         ans += partConf.getNumEngineHeatsinks();
+         else if( item instanceof Engine ){
+            ans += ((Engine)item).getNumInternalHeatsinks();
+         }
       }
       return ans;
    }
@@ -400,5 +368,31 @@ public class Loadout implements MessageXBar.Reader{
             part.setArmor(ArmorSide.ONLY, max);
          }
       }
+   }
+
+   public int getJumpJetCount(){
+      int ans = 0;
+      for(Item item : allItems()){
+         if( item instanceof JumpJet )
+            ans++;
+      }
+      return ans;
+   }
+
+   public JumpJet getJumpJetType(){
+      for(Item item : allItems()){
+         if( item instanceof JumpJet ){
+            return (JumpJet)item;
+         }
+      }
+      return null;
+   }
+
+   private Collection<Item> allItems(){
+      List<Item> items = new ArrayList<>();
+      for(LoadoutPart part : parts.values()){
+         items.addAll(part.getItems());
+      }
+      return items;
    }
 }

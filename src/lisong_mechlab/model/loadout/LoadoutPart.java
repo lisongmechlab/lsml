@@ -18,6 +18,7 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
@@ -52,7 +53,7 @@ public class LoadoutPart implements MessageXBar.Reader{
    public final Internal                 ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
 
    private final InternalPart            internalPart;
-   private final Loadout                 loadOut;
+   private final Loadout                 loadout;
    private final List<Item>              items;
    private final Map<ArmorSide, Integer> armor;
    private int                           engineHeatsinks = 0;
@@ -62,7 +63,7 @@ public class LoadoutPart implements MessageXBar.Reader{
    LoadoutPart(Loadout aLoadOut, InternalPart anInternalPart, MessageXBar aXBar){
       internalPart = anInternalPart;
       items = new ArrayList<Item>(internalPart.getInternalItems());
-      loadOut = aLoadOut;
+      loadout = aLoadOut;
       armor = new TreeMap<ArmorSide, Integer>();
       xBar = aXBar;
       xBar.attach(this);
@@ -89,9 +90,9 @@ public class LoadoutPart implements MessageXBar.Reader{
       int engineHsLeft = getNumEngineHeatsinksMax();
       for(Item item : items){
          if( item instanceof MissileWeapon )
-            crits += ((MissileWeapon)item).getNumCriticalSlots(loadOut.getUpgrades().hasArtemis());
-         else if( item instanceof HeatSink){
-            if(engineHsLeft > 0 )
+            crits += ((MissileWeapon)item).getNumCriticalSlots(loadout.getUpgrades().hasArtemis());
+         else if( item instanceof HeatSink ){
+            if( engineHsLeft > 0 )
                engineHsLeft--;
             else
                crits += item.getNumCriticalSlots();
@@ -128,8 +129,8 @@ public class LoadoutPart implements MessageXBar.Reader{
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
-            loadOut.getPart(Part.LeftTorso).items.add(ENGINE_INTERNAL);
-            loadOut.getPart(Part.RightTorso).items.add(ENGINE_INTERNAL);
+            loadout.getPart(Part.LeftTorso).items.add(ENGINE_INTERNAL);
+            loadout.getPart(Part.RightTorso).items.add(ENGINE_INTERNAL);
          }
       }
       items.add(anItem);
@@ -137,69 +138,27 @@ public class LoadoutPart implements MessageXBar.Reader{
    }
 
    public boolean canAddItem(Item anItem){
-      // No way around mass
-      final double currentTons = loadOut.getMass();
-      if( currentTons + anItem.getMass() > loadOut.getChassi().getMassMax() ){
-         return false;
-      }
-
-      // No way around hard points
-      if( anItem.getHardpointType() != HardpointType.NONE
-          && getNumItemsOfHardpointType(anItem.getHardpointType()) >= getInternalPart().getNumHardpoints(anItem.getHardpointType()) ){
-         return false; // Not enough hard points!
-      }
-
       if( anItem instanceof Internal ){
          return false; // Can't add internals!
       }
       else if( anItem instanceof HeatSink ){
-         // Don't allow STD heatsinks when double heatsinks are upgraded etc.
-         if( loadOut.getUpgrades().hasDoubleHeatSinks() && anItem != ItemDB.lookup(3001) ){
-            return false;
-         }
-         if( !loadOut.getUpgrades().hasDoubleHeatSinks() && anItem != ItemDB.lookup(3000) ){
-            return false;
-         }
-
-         // Allow engine slot heatsinks even if there are no crit slots
-         if( getNumEngineHeatsinks() < getNumEngineHeatsinksMax() ){
-            return true;
-         }
+         return checkHeatsinkRules((HeatSink)anItem);
       }
       else if( anItem instanceof Engine ){
-         Engine engine = (Engine)anItem;
-
-         if( getInternalPart().getType() != Part.CenterTorso ){
-            return false; // Engines only in CT!
-         }
-
-         // XL engines need 3 additional in RT/LT
-         if( engine.getType() == EngineType.XL ){
-            if( loadOut.getPart(Part.LeftTorso).getNumCriticalSlotsFree() < 3 ){
-               return false;
-            }
-            if( loadOut.getPart(Part.RightTorso).getNumCriticalSlotsFree() < 3 ){
-               return false;
-            }
-         }
-
-         if( engine.getRating() > loadOut.getChassi().getEngineMax() || engine.getRating() < loadOut.getChassi().getEngineMin() ){
-            return false; // Too high engine rating!
-         }
+         return checkEngineRules((Engine)anItem);
+      }
+      else if( anItem instanceof JumpJet ){
+         return checkJumpJetRules((JumpJet)anItem);
       }
       else{
          // Case can only be put in side torsi
-         if(anItem == ItemDB.lookup("C.A.S.E.")){
-            if(internalPart.getType() != Part.LeftTorso && internalPart.getType() != Part.RightTorso){
+         if( anItem == ItemDB.lookup("C.A.S.E.") ){
+            if( internalPart.getType() != Part.LeftTorso && internalPart.getType() != Part.RightTorso ){
                return false;
             }
          }
+         return checkCommonRules(anItem);
       }
-
-      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots() ){
-         return false; // Not enough critical slots!
-      }
-      return true;
    }
 
    public void removeItem(Item anItem){
@@ -214,11 +173,11 @@ public class LoadoutPart implements MessageXBar.Reader{
                     // sides).
 
          if( engine.getType() == EngineType.XL ){
-            loadOut.getPart(Part.LeftTorso).items.remove(ENGINE_INTERNAL);
-            loadOut.getPart(Part.RightTorso).items.remove(ENGINE_INTERNAL);
+            loadout.getPart(Part.LeftTorso).items.remove(ENGINE_INTERNAL);
+            loadout.getPart(Part.RightTorso).items.remove(ENGINE_INTERNAL);
          }
       }
-      if(items.remove(anItem))
+      if( items.remove(anItem) )
          xBar.post(new Message(this, Type.ItemRemoved));
    }
 
@@ -226,10 +185,11 @@ public class LoadoutPart implements MessageXBar.Reader{
       items.clear();
       items.addAll(internalPart.getInternalItems());
    }
-   // FIXME: Bug! 
+
+   // FIXME: Bug!
    public void setArmor(ArmorSide anArmorSide, int anArmorAmount){
       if( anArmorAmount > getArmorMax(anArmorSide) ){
-         throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + getArmorMax(anArmorSide));
+         throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + getArmorMax(anArmorSide) + " Was: " + anArmorAmount);
       }
       armor.put(anArmorSide, anArmorAmount);
       xBar.post(new Message(this, Type.ArmorChanged));
@@ -265,7 +225,7 @@ public class LoadoutPart implements MessageXBar.Reader{
       double ans = engineHeatsinks * 1.0;
       for(Item item : items){
          if( item instanceof MissileWeapon )
-            ans += ((MissileWeapon)item).getMass(loadOut.getUpgrades().hasArtemis());
+            ans += ((MissileWeapon)item).getMass(loadout.getUpgrades().hasArtemis());
          else
             ans += item.getMass();
       }
@@ -284,7 +244,7 @@ public class LoadoutPart implements MessageXBar.Reader{
    public int getNumEngineHeatsinks(){
       int ans = 0;
       for(Item i : items){
-         if(i instanceof HeatSink)
+         if( i instanceof HeatSink )
             ans++;
       }
       return Math.min(ans, getNumEngineHeatsinksMax());
@@ -294,7 +254,7 @@ public class LoadoutPart implements MessageXBar.Reader{
    public void receive(MessageXBar.Message aMsg){
       if( aMsg instanceof Upgrades.Message ){
          Upgrades.Message msg = (Upgrades.Message)aMsg;
-         if( msg.source != loadOut.getUpgrades() ){
+         if( msg.source != loadout.getUpgrades() ){
             return;
          }
 
@@ -306,26 +266,96 @@ public class LoadoutPart implements MessageXBar.Reader{
          }
       }
    }
-   
+
    public String getItemDisplayName(int index){
       Item item = items.get(index);
-      if(item instanceof MissileWeapon){
+      if( item instanceof MissileWeapon ){
          MissileWeapon missileWeapon = (MissileWeapon)item;
-         return missileWeapon.getName(loadOut.getUpgrades().hasArtemis());
+         return missileWeapon.getName(loadout.getUpgrades().hasArtemis());
       }
-      if(item instanceof Ammunition){
+      if( item instanceof Ammunition ){
          Ammunition missileWeapon = (Ammunition)item;
-         return missileWeapon.getName(loadOut.getUpgrades().hasArtemis());
+         return missileWeapon.getName(loadout.getUpgrades().hasArtemis());
       }
-      return items.get(index).getName(loadOut.getUpgrades());
+      return items.get(index).getName(loadout.getUpgrades());
    }
-   
+
    public int getItemCriticalSlots(int index){
       Item item = items.get(index);
-      if(item instanceof MissileWeapon){
+      if( item instanceof MissileWeapon ){
          MissileWeapon missileWeapon = (MissileWeapon)item;
-         return missileWeapon.getNumCriticalSlots(loadOut.getUpgrades().hasArtemis());
+         return missileWeapon.getNumCriticalSlots(loadout.getUpgrades().hasArtemis());
       }
       return items.get(index).getNumCriticalSlots();
+   }
+
+   private boolean checkCommonRules(Item anItem){
+      // Check enough free mass
+      if( loadout.getMass() + anItem.getMass() > loadout.getChassi().getMassMax() ){
+         return false;
+      }
+
+      // Check enough free critical slots
+      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots() ){
+         return false;
+      }
+
+      // Check enough free hardpoints
+      if( anItem.getHardpointType() != HardpointType.NONE
+          && getNumItemsOfHardpointType(anItem.getHardpointType()) >= getInternalPart().getNumHardpoints(anItem.getHardpointType()) ){
+         return false; // Not enough hard points!
+      }
+      return true;
+   }
+
+   private boolean checkJumpJetRules(JumpJet aItem){
+      Part type = getInternalPart().getType();
+      switch( type ){
+         case RightTorso:
+         case CenterTorso:
+         case LeftTorso:
+         case RightLeg:
+         case LeftLeg:
+            return loadout.getJumpJetCount() + 1 <= loadout.getChassi().getMaxJumpJets() && checkCommonRules(aItem);
+         default:
+            return false;
+      }
+   }
+
+   private boolean checkEngineRules(Engine engine){
+      if( getInternalPart().getType() != Part.CenterTorso ){
+         return false; // Engines only in CT!
+      }
+
+      // XL engines need 3 additional slots in RT/LT
+      if( engine.getType() == EngineType.XL ){
+         if( loadout.getPart(Part.LeftTorso).getNumCriticalSlotsFree() < 3 ){
+            return false;
+         }
+         if( loadout.getPart(Part.RightTorso).getNumCriticalSlotsFree() < 3 ){
+            return false;
+         }
+      }
+
+      if( engine.getRating() > loadout.getChassi().getEngineMax() || engine.getRating() < loadout.getChassi().getEngineMin() ){
+         return false; // Too low/high engine rating!
+      }
+      return checkCommonRules(engine);
+   }
+
+   private boolean checkHeatsinkRules(HeatSink anItem){
+      // Don't allow standard heat sinks when double heat sinks are upgraded etc.
+      if( loadout.getUpgrades().hasDoubleHeatSinks() && anItem != ItemDB.lookup(3001) ){
+         return false;
+      }
+      if( !loadout.getUpgrades().hasDoubleHeatSinks() && anItem != ItemDB.lookup(3000) ){
+         return false;
+      }
+
+      // Allow engine slot heat sinks even if there are no critical slots
+      if( getNumEngineHeatsinks() < getNumEngineHeatsinksMax() && loadout.getMass() + anItem.getMass() <= loadout.getChassi().getMassMax() ){
+         return true;
+      }
+      return checkCommonRules(anItem);
    }
 }
