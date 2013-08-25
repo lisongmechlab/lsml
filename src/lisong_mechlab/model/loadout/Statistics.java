@@ -5,6 +5,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.Weapon;
 
+@Deprecated
 public class Statistics{
    private static final double MECH_BASE_HEAT_CAPACITY = 30;
    private transient final Loadout loadout;
@@ -62,7 +63,7 @@ public class Statistics{
          }
       }
       return heat;
-   }   
+   }
   
    public double getTimeToOverHeat(){
       double heatDifferential = getHeatGeneration() - getHeatDissipation();
