@@ -25,7 +25,12 @@ public class InternalPart{
       criticalslots = aComponent.Slots;
       type = aPart;
       hitpoints = aComponent.HP;
-      maxarmor = (int)(hitpoints*2);
+      if( type == Part.Head ){
+         maxarmor = 18;
+      }
+      else{
+         maxarmor = (int)(hitpoints * 2);
+      }
 
       internals = new ArrayList<Item>();
       if( null != aComponent.internals ){
@@ -44,12 +49,12 @@ public class InternalPart{
             hardpoints.put(hardpointType, hardpoints.get(hardpointType) + aHardpoints.slotsForId(hardpoint.ID));
          }
       }
-      
+
       // Stupid PGI making hacks to put ECM on a hardpoint... now I have to change my code...
-      if (aComponent.CanEquipECM == 1)
+      if( aComponent.CanEquipECM == 1 )
          hardpoints.put(HardpointType.ECM, 1);
    }
-   
+
    @Override
    public String toString(){
       return getType().toString();

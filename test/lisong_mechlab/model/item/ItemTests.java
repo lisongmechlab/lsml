@@ -7,46 +7,80 @@ import java.util.Collection;
 import java.util.List;
 
 import lisong_mechlab.model.MessageXBar;
+import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.mockito.Mockito.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class ItemTests{
    @Mock
    MessageXBar xBar;
-   
+
    @Before
    public void setup(){
-       MockitoAnnotations.initMocks(this);
+      MockitoAnnotations.initMocks(this);
    }
-   
+
+   @Test
+   public void testJumpJets(){
+      JumpJet jj = (JumpJet)ItemDB.lookup(1503); // Class IV JJ
+      Chassi chassi_39t = mock(Chassi.class);
+      Chassi chassi_40t = mock(Chassi.class);
+      Chassi chassi_59t = mock(Chassi.class);
+      Chassi chassi_60t = mock(Chassi.class);
+      when(chassi_39t.getMassMax()).thenReturn(39);
+      when(chassi_40t.getMassMax()).thenReturn(40);
+      when(chassi_59t.getMassMax()).thenReturn(59);
+      when(chassi_60t.getMassMax()).thenReturn(60);
+      when(chassi_39t.getMaxJumpJets()).thenReturn(1);
+      when(chassi_40t.getMaxJumpJets()).thenReturn(1);
+      when(chassi_59t.getMaxJumpJets()).thenReturn(1);
+      when(chassi_60t.getMaxJumpJets()).thenReturn(1);
+      Loadout loadout_39t = mock(Loadout.class);
+      Loadout loadout_40t = mock(Loadout.class);
+      Loadout loadout_59t = mock(Loadout.class);
+      Loadout loadout_60t = mock(Loadout.class);
+      when(loadout_39t.getChassi()).thenReturn(chassi_39t);
+      when(loadout_40t.getChassi()).thenReturn(chassi_40t);
+      when(loadout_59t.getChassi()).thenReturn(chassi_59t);
+      when(loadout_60t.getChassi()).thenReturn(chassi_60t);
+
+      assertFalse(jj.isEquippableOn(loadout_39t)); // 39 tons
+      assertTrue(jj.isEquippableOn(loadout_40t)); // 40 tons
+      assertTrue(jj.isEquippableOn(loadout_59t)); // 59 tons
+      assertFalse(jj.isEquippableOn(loadout_60t)); // 60 tons
+      assertEquals(3.75, jj.getDuration(), 0);
+      assertEquals(0.1, jj.getJumpHeat(), 0);
+      assertEquals(39.3, jj.getForce(), 0);
+   }
+
    @Test
    public void testEngines() throws Exception{
       Loadout hm = new Loadout(ChassiDB.lookup("Heavy Metal"), xBar);
-      
+
       Engine std175 = (Engine)ItemDB.lookup("STD ENGINE 175");
       Engine std180 = (Engine)ItemDB.lookup("STD ENGINE 180");
       Engine xl330 = (Engine)ItemDB.lookup("XL ENGINE 330");
       Engine xl335 = (Engine)ItemDB.lookup("XL ENGINE 335");
-      
+
       assertEquals(6, std175.getNumCriticalSlots());
       assertEquals(6, std180.getNumCriticalSlots());
-      //assertEquals(12, xl330.getNumCriticalSlots());
-      //assertEquals(12, xl335.getNumCriticalSlots());
-      
-      
+      // assertEquals(12, xl330.getNumCriticalSlots());
+      // assertEquals(12, xl335.getNumCriticalSlots());
+
       assertEquals(9.0, std175.getMass(), 0.0);
       assertEquals(9.0, std180.getMass(), 0.0);
       assertEquals(19.5, xl330.getMass(), 0.0);
       assertEquals(20.0, xl335.getMass(), 0.0);
-      
+
       // Heavy Metal can equip 180-330 engines
-      assertFalse(std175.isEquippableOn(hm)); 
+      assertFalse(std175.isEquippableOn(hm));
       assertTrue(std180.isEquippableOn(hm));
       assertTrue(xl330.isEquippableOn(hm));
       assertFalse(xl335.isEquippableOn(hm));
@@ -65,7 +99,8 @@ public class ItemTests{
 
    /**
     * ECM/BAP/CC/CASE etc should exist and only be equippable on the correct mechs
-    * @throws Exception 
+    * 
+    * @throws Exception
     */
    @Test
    public void testModules() throws Exception{
@@ -74,7 +109,7 @@ public class ItemTests{
       Item CC = ItemDB.lookup("COMMAND CONSOLE");
       Item BAP = ItemDB.lookup("BEAGLE ACTIVE PROBE");
       Item Case = ItemDB.lookup("C.A.S.E.");
-      
+
       Item JJC3 = ItemDB.lookup("Jump Jets - Class III");
       Item JJC4 = ItemDB.lookup("Jump Jets - Class IV");
       Item JJC5 = ItemDB.lookup("Jump Jets - Class V");
@@ -94,20 +129,20 @@ public class ItemTests{
       assertEquals(1, JJC3.getMass(), 0.0);
       assertEquals(0.5, JJC4.getMass(), 0.0);
       assertEquals(0.5, JJC5.getMass(), 0.0);
-      
+
       assertTrue(ECM.isEquippableOn(new Loadout("AS7-D-DC", xBar)));
       assertFalse(ECM.isEquippableOn(new Loadout("JR7-K", xBar)));
-      
+
       assertTrue(JJC5.isEquippableOn(new Loadout("JR7-F", xBar)));
       assertFalse(JJC5.isEquippableOn(new Loadout("RVN-3L", xBar)));
       assertFalse(JJC5.isEquippableOn(new Loadout("TBT-5J", xBar)));
       assertFalse(JJC5.isEquippableOn(new Loadout("CTF-3D", xBar)));
-      
+
       assertFalse(JJC4.isEquippableOn(new Loadout("JR7-F", xBar)));
       assertFalse(JJC4.isEquippableOn(new Loadout("hbk-4j", xBar)));
       assertTrue(JJC4.isEquippableOn(new Loadout("TBT-5J", xBar)));
       assertFalse(JJC4.isEquippableOn(new Loadout("CTF-3D", xBar)));
-      
+
       assertFalse(JJC3.isEquippableOn(new Loadout("JR7-F", xBar)));
       assertFalse(JJC3.isEquippableOn(new Loadout("ILYA MUROMETS", xBar)));
       assertFalse(JJC3.isEquippableOn(new Loadout("TBT-5J", xBar)));
@@ -224,7 +259,7 @@ public class ItemTests{
          else{
             // Same number of slots if ARTEMIS is disabled.
             assertEquals(weapon.getNumCriticalSlots(), weapon.getNumCriticalSlots(false));
-            
+
             // One more slot if ARTEMIS is enabled.
             assertEquals(weapon.getNumCriticalSlots() + 1, weapon.getNumCriticalSlots(true));
 
@@ -236,12 +271,12 @@ public class ItemTests{
 
             // Weapon name must always contains he original name regardless of ARTEMIS status
             assertEquals(weapon.getName(), weapon.getName(false));
-            assertTrue(weapon.getName(true).contains(weapon.getName())); 
-            
+            assertTrue(weapon.getName(true).contains(weapon.getName()));
+
             // Name contains ARTEMIS if ARTEMIS is enabled
             assertFalse(weapon.getName(false).toLowerCase().contains("artemis"));
             assertTrue(weapon.getName(true).toLowerCase().contains("artemis"));
-            
+
             // Ammo name changes to reflect ARTEMIS status
             Ammunition ammunition = weapon.getAmmoType();
             assertEquals(ammunition.getName(), ammunition.getName(false));

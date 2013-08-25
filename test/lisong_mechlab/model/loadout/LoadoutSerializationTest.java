@@ -106,7 +106,8 @@ public class LoadoutSerializationTest{
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.lookup("XL ENGINE 290")));
-
+         assertTrue(items.remove(ItemDB.lookup("Double Heat Sink")));
+         
          assertEquals(1, part.getNumEngineHeatsinks());
 
          assertOnlyInternals(items);
@@ -215,7 +216,6 @@ public class LoadoutSerializationTest{
    @Test
    public void testLoadStockTwice() throws Exception{
       Loadout cut = new Loadout("JR7-F", xBar);
-
       cut.loadStock();
    }
 
@@ -346,6 +346,8 @@ public class LoadoutSerializationTest{
          assertTrue(items.remove(ItemDB.lookup("STD ENGINE 300")));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
+         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
+         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
          assertEquals(94, part.getArmor(ArmorSide.FRONT));
          assertEquals(28, part.getArmor(ArmorSide.BACK));
 
