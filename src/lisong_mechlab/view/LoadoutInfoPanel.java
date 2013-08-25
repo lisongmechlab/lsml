@@ -51,7 +51,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private JLabel       dpsMax           = new JLabel("xxx");
    final private JLabel       dpsSustained     = new JLabel("xxx");
 
-   final private JLabel       jumpDistance     = new JLabel("xxx");
+   final private JLabel       jumpJets     = new JLabel("xxx");
    final private JLabel       topSpeed         = new JLabel("xxx");
    final private JCheckBox    speedTweak       = new JCheckBox("Speed Tweak");
 
@@ -132,8 +132,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          mobility.add(Box.createHorizontalGlue());
          add(mobility);
 
-         jumpDistance.setAlignmentX(Component.CENTER_ALIGNMENT);
-         mobility.add(jumpDistance);
+         jumpJets.setAlignmentX(Component.CENTER_ALIGNMENT);
+         mobility.add(jumpJets);
 
          topSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
          mobility.add(topSpeed);
@@ -239,7 +239,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             // Mobility
             // ----------------------------------------------------------------------
             topSpeed.setText("Top speed: " + df.format(statistics.getTopSpeed()) + " km/h");
-            jumpDistance.setText("Jump distance: " + df.format(statistics.getJumpDistance()) + " m");
+            jumpJets.setText("Jump Jets: " + configuration.getJumpJetCount() + "/" + configuration.getChassi().getMaxJumpJets() + " ("+ df.format(statistics.getJumpDistance()) + " m)");
             speedTweak.setSelected(configuration.getEfficiencies().hasSpeedTweak());
 
             // Heat

@@ -16,6 +16,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 
+import org.joda.time.Partial;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -148,21 +149,6 @@ public class LoadoutPartTest{
    }
 
    @Test
-   public void testGetNumItemsOfHardpointType() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
-   public void testGetItems() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
-   public void testAddItemString() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
    public void testAddItem_fail_nomessage() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
       Chassi chassi = mock(Chassi.class);
@@ -193,6 +179,26 @@ public class LoadoutPartTest{
 
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
       assertTrue(cut.getItems().contains(ItemDB.lookup("AC/20 AMMO")));
+   }
+
+   @Test
+   public void testAddItem_jumpJetsBadPart() throws Exception{
+      for(Part part : new Part[] {Part.LeftArm, Part.RightArm, Part.Head}){
+         LoadoutPart cut = makeCUT(0, part, 12);
+         Chassi chassi = mock(Chassi.class);
+         when(loadout.getChassi()).thenReturn(chassi);
+         when(loadout.getJumpJetCount()).thenReturn(0);
+         when(chassi.getMassMax()).thenReturn(100);
+         when(chassi.getMaxJumpJets()).thenReturn(5);
+         reset(xBar);
+
+         try{
+            cut.addItem("JUMP JETS - CLASS V");
+            fail("Expected exception!");
+         }catch(Exception e){
+            // success
+         }
+      }
    }
 
    /**
@@ -237,15 +243,16 @@ public class LoadoutPartTest{
          assertEquals(6, cut.getNumEngineHeatsinks());
          assertEquals(10, cut.getNumCriticalSlotsUsed());
 
-         if( i == ItemDB.lookup("DOUBLE HEAT SINK")){
+         if( i == ItemDB.lookup("DOUBLE HEAT SINK") ){
             // Execute
             try{
                cut.addItem(i);
                fail();
-            }catch(Exception e){
+            }
+            catch( Exception e ){
                // Success
             }
-            
+
             // Verify (internal slots all occupied)
             assertEquals(6, cut.getNumEngineHeatsinks());
             assertEquals(10, cut.getNumCriticalSlotsUsed());
@@ -255,19 +262,14 @@ public class LoadoutPartTest{
          else{
             // Execute
             cut.addItem(i);
-            
+
             // Verify (internal slots all occupied)
             assertEquals(6, cut.getNumEngineHeatsinks());
             assertEquals(11, cut.getNumCriticalSlotsUsed());
 
-            verify(xBar, times(7)).post(new LoadoutPart.Message(cut, Type.ItemAdded));            
+            verify(xBar, times(7)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
          }
       }
-   }
-
-   @Test
-   public void testAddItemItem() throws Exception{
-      throw new RuntimeException("not yet implemented");
    }
 
    @Test
@@ -309,11 +311,6 @@ public class LoadoutPartTest{
    }
 
    @Test
-   public void testCanAddItem() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
    public void testRemoveItem_success() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
       Chassi chassi = mock(Chassi.class);
@@ -337,11 +334,6 @@ public class LoadoutPartTest{
       cut.removeItem(item);
 
       verifyZeroInteractions(xBar);
-   }
-
-   @Test
-   public void testRemoveAllItems() throws Exception{
-      throw new RuntimeException("not yet implemented");
    }
 
    @Test
@@ -373,31 +365,6 @@ public class LoadoutPartTest{
       assertEquals(10, cut.getArmor(ArmorSide.FRONT));
       assertEquals(10, cut.getArmor(ArmorSide.BACK));
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
-   }
-   
-   @Test
-   public void testGetArmorTotal() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
-   public void testGetArmor() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
-   public void testGetArmorMax() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
-   public void testGetItemMass() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
-   public void testGetNumEngineHeatsinksMax() throws Exception{
-      throw new RuntimeException("not yet implemented");
    }
 
 }
