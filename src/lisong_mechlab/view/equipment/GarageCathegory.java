@@ -4,8 +4,6 @@ import javax.swing.event.TreeModelEvent;
 
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Loadout.Message;
-import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.model.loadout.MechGarage.Message.Type;
 
