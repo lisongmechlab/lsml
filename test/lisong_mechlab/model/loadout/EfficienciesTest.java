@@ -1,17 +1,17 @@
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.Efficiencies.Message.Type;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EfficienciesTest{
@@ -138,25 +138,25 @@ public class EfficienciesTest{
    }
 
    @Test
-   public void testGetHeatDissapationModifier() throws Exception{
-      assertEquals(1.0, cut.getHeatDissapationModifier(), 0.0);
-
-      // These don't affect heat capacity
-      cut.setHeatContainment(true);
-      cut.setSpeedTweak(true);
-      cut.setDoubleBasics(true); // Only if we have heat containment
-      assertEquals(1.0, cut.getHeatDissapationModifier(), 0.0);
-
-      cut.setHeatContainment(false);
-      cut.setSpeedTweak(false);
-      cut.setDoubleBasics(false);
-
-      // These do
-      cut.setCoolRun(true);
-      assertEquals(1.075, cut.getHeatDissapationModifier(), 0.0);
-      cut.setDoubleBasics(true);
-      assertEquals(1.15, cut.getHeatDissapationModifier(), 0.0);
-   }
+      public void testGetHeatDissipationModifier() throws Exception{
+         assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
+   
+         // These don't affect heat capacity
+         cut.setHeatContainment(true);
+         cut.setSpeedTweak(true);
+         cut.setDoubleBasics(true); // Only if we have heat containment
+         assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
+   
+         cut.setHeatContainment(false);
+         cut.setSpeedTweak(false);
+         cut.setDoubleBasics(false);
+   
+         // These do
+         cut.setCoolRun(true);
+         assertEquals(1.075, cut.getHeatDissipationModifier(), 0.0);
+         cut.setDoubleBasics(true);
+         assertEquals(1.15, cut.getHeatDissipationModifier(), 0.0);
+      }
 
    @Test
    public void testGetSpeedModifier() throws Exception{
