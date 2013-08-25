@@ -270,7 +270,7 @@ public class Loadout implements MessageXBar.Reader{
 
    public int getHeatsinksCount(){
       int ans = 0;
-      for(Item item : allItems()){
+      for(Item item : getAllItems()){
          if( item instanceof HeatSink ){
             ans++;
          }
@@ -372,7 +372,7 @@ public class Loadout implements MessageXBar.Reader{
 
    public int getJumpJetCount(){
       int ans = 0;
-      for(Item item : allItems()){
+      for(Item item : getAllItems()){
          if( item instanceof JumpJet )
             ans++;
       }
@@ -380,7 +380,7 @@ public class Loadout implements MessageXBar.Reader{
    }
 
    public JumpJet getJumpJetType(){
-      for(Item item : allItems()){
+      for(Item item : getAllItems()){
          if( item instanceof JumpJet ){
             return (JumpJet)item;
          }
@@ -388,7 +388,7 @@ public class Loadout implements MessageXBar.Reader{
       return null;
    }
 
-   private Collection<Item> allItems(){
+   public Collection<Item> getAllItems(){
       List<Item> items = new ArrayList<>();
       for(LoadoutPart part : parts.values()){
          items.addAll(part.getItems());
