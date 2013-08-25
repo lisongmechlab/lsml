@@ -21,45 +21,57 @@ import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.Statistics;
+import lisong_mechlab.model.loadout.metrics.AlphaStrike;
+import lisong_mechlab.model.loadout.metrics.HeatDissipation;
+import lisong_mechlab.model.loadout.metrics.MaxDPS;
+import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
-   private static final long  serialVersionUID = 4720126200474042446L;
-   final private Loadout      configuration;
+   private static final long     serialVersionUID = 4720126200474042446L;
+   final private Loadout         configuration;
 
-   final private JProgressBar massBar;
-   final private JLabel       massValue        = new JLabel("xxx");
-   final private JProgressBar armorBar;
-   final private JLabel       armorValue       = new JLabel("xxx");
-   final private JProgressBar critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
-   final private JLabel       critslotsValue   = new JLabel("xxx");
-   final private JCheckBox    ferroFibros      = new JCheckBox("Ferro-Fibrous");
-   final private JCheckBox    endoSteel        = new JCheckBox("Endo-Steel");
-   final private JCheckBox    artemis          = new JCheckBox("Artemis IV");
+   final private JProgressBar    massBar;
+   final private JLabel          massValue        = new JLabel("xxx");
+   final private JProgressBar    armorBar;
+   final private JLabel          armorValue       = new JLabel("xxx");
+   final private JProgressBar    critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
+   final private JLabel          critslotsValue   = new JLabel("xxx");
+   final private JCheckBox       ferroFibros      = new JCheckBox("Ferro-Fibrous");
+   final private JCheckBox       endoSteel        = new JCheckBox("Endo-Steel");
+   final private JCheckBox       artemis          = new JCheckBox("Artemis IV");
 
-   final private JLabel       heatsinks        = new JLabel("xxx");
-   final private JLabel       effectiveHS      = new JLabel("xxx");
-   final private JLabel       timeToOverheat   = new JLabel("xxx");
-   final private JLabel       coolingRatio     = new JLabel("xxx");
-   final private JCheckBox    doubleHeatSinks  = new JCheckBox("Double Heatsinks");
-   final private JCheckBox    coolRun          = new JCheckBox("Cool Run");
-   final private JCheckBox    heatContainment  = new JCheckBox("Heat Containment");
-   final private JCheckBox    doubleBasics     = new JCheckBox("Double Basics");
+   final private JLabel          heatsinks        = new JLabel("xxx");
+   final private JLabel          effectiveHS      = new JLabel("xxx");
+   final private JLabel          timeToOverheat   = new JLabel("xxx");
+   final private JLabel          coolingRatio     = new JLabel("xxx");
+   final private JCheckBox       doubleHeatSinks  = new JCheckBox("Double Heatsinks");
+   final private JCheckBox       coolRun          = new JCheckBox("Cool Run");
+   final private JCheckBox       heatContainment  = new JCheckBox("Heat Containment");
+   final private JCheckBox       doubleBasics     = new JCheckBox("Double Basics");
 
-   final private JLabel       alphaStrike      = new JLabel("xxx");
-   final private JLabel       dpsMax           = new JLabel("xxx");
-   final private JLabel       dpsSustained     = new JLabel("xxx");
+   final private JLabel          alphaStrike      = new JLabel("xxx");
+   final private JLabel          dpsMax           = new JLabel("xxx");
+   final private JLabel          dpsSustained     = new JLabel("xxx");
 
-   final private JLabel       jumpJets         = new JLabel("xxx");
-   final private JLabel       topSpeed         = new JLabel("xxx");
-   final private JCheckBox    speedTweak       = new JCheckBox("Speed Tweak");
+   final private JLabel          jumpJets         = new JLabel("xxx");
+   final private JLabel          topSpeed         = new JLabel("xxx");
+   final private JCheckBox       speedTweak       = new JCheckBox("Speed Tweak");
 
-   final private JLabel       rating           = new JLabel("xxx");
+   final private JLabel          rating           = new JLabel("xxx");
 
-   final private Statistics   statistics;
+   final private Statistics      statistics;
+   final private HeatDissipation metricHeatDissipation;
+   final private AlphaStrike     metricAlphaStrike;
+   final private MaxDPS          metricMaxDPS;
+   final private MaxSustainedDPS metricSustainedDps;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       configuration = aConfiguration;
       statistics = new Statistics(configuration);
+      metricAlphaStrike = new AlphaStrike(configuration);
+      metricMaxDPS = new MaxDPS(configuration);
+      metricHeatDissipation = new HeatDissipation(configuration);
+      metricSustainedDps = new MaxSustainedDPS(configuration, metricHeatDissipation);
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
       anXBar.attach(this);
@@ -255,6 +267,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
             // Offense
             // ----------------------------------------------------------------------
+            alphaStrike.setText("Alpha strike: " + metricAlphaStrike.calculate());
+            dpsMax.setText("Max DPS: " + metricMaxDPS.calculate());
+            dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
 
             // Summary
             // ----------------------------------------------------------------------
