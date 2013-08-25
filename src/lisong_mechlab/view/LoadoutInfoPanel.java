@@ -22,8 +22,6 @@ import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.Statistics;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long  serialVersionUID = 4720126200474042446L;
    final private Loadout      configuration;
@@ -51,11 +49,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private JLabel       dpsMax           = new JLabel("xxx");
    final private JLabel       dpsSustained     = new JLabel("xxx");
 
-   final private JLabel       jumpJets     = new JLabel("xxx");
+   final private JLabel       jumpJets         = new JLabel("xxx");
    final private JLabel       topSpeed         = new JLabel("xxx");
    final private JCheckBox    speedTweak       = new JCheckBox("Speed Tweak");
 
-   final private JLabel       rating;
+   final private JLabel       rating           = new JLabel("xxx");
 
    final private Statistics   statistics;
 
@@ -204,7 +202,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          summary.setBorder(new CompoundBorder(new TitledBorder(null, "Summary"), new EmptyBorder(5, 5, 5, 5)));
          add(summary);
 
-         rating = DefaultComponentFactory.getInstance().createLabel("Battle Rating: 5123");
+         rating.setText("Battle Rating: 5123");
          summary.add(rating);
       }
 
@@ -239,7 +237,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             // Mobility
             // ----------------------------------------------------------------------
             topSpeed.setText("Top speed: " + df.format(statistics.getTopSpeed()) + " km/h");
-            jumpJets.setText("Jump Jets: " + configuration.getJumpJetCount() + "/" + configuration.getChassi().getMaxJumpJets() + " ("+ df.format(statistics.getJumpDistance()) + " m)");
+            jumpJets.setText("Jump Jets: " + configuration.getJumpJetCount() + "/" + configuration.getChassi().getMaxJumpJets() + " ("
+                             + df.format(statistics.getJumpDistance()) + " m)");
             speedTweak.setSelected(configuration.getEfficiencies().hasSpeedTweak());
 
             // Heat
