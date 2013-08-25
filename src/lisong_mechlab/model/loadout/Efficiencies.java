@@ -97,7 +97,7 @@ public class Efficiencies{
       return 1.0;
    }
 
-   public double getHeatDissapationModifier(){
+   public double getHeatDissipationModifier(){
       if( coolRun ){
          if( doubleBasics )
             return 1 + 0.075 * 2;
