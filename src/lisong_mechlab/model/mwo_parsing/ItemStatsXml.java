@@ -11,6 +11,7 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
@@ -31,7 +32,7 @@ public class ItemStatsXml{
    }
 
    private static ItemStatsXml fromXml(InputStream is){
-      XStream xstream = new XStream(new StaxDriver()){
+      XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
          @Override
          protected MapperWrapper wrapMapper(MapperWrapper next){
             return new MapperWrapper(next){

@@ -1,5 +1,6 @@
 package lisong_mechlab.model.loadout;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -13,6 +14,7 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.JumpJet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +29,73 @@ public class LoadoutTest{
    public void setup(){
       MockitoAnnotations.initMocks(this);
    }
+
+   // -------------------------------------------------------------------------
+   //
+   // Jump jet related tests
+   //
+   // -------------------------------------------------------------------------
+   @Test
+   public void testGetJumpJetCount_noJJCapability() throws Exception{
+      Loadout cut = new Loadout("HBK-4J", xBar);
+      assertEquals(0, cut.getJumpJetCount());
+   }
+
+   @Test
+   public void testGetJumpJetCount_noJJEquipped() throws Exception{
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      assertEquals(0, cut.getJumpJetCount());
+   }
+
+   @Test
+   public void testGetJumpJetCount() throws Exception{
+      Loadout cut = new Loadout("SDR-5D", xBar);
+      assertEquals(8, cut.getJumpJetCount()); // 8 stock
+   }
+
+   @Test
+   public void testGetJumpJetType_noJJCapability() throws Exception{
+      Loadout cut = new Loadout("HBK-4J", xBar);
+      assertNull(cut.getJumpJetType());
+   }
+
+   @Test
+   public void testGetJumpJetType_noJJEquipped() throws Exception{
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      assertNull(cut.getJumpJetType());
+   }
+
+   @Test
+   public void testGetJumpJetType() throws Exception{
+      Loadout cut = new Loadout("SDR-5D", xBar);
+      assertSame(ItemDB.lookup("JUMP JETS - CLASS V"), cut.getJumpJetType());
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testAddItem_JJTooMany(){
+      Loadout cut = null;
+      JumpJet jjv = null;
+      try{
+         cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+         jjv = (JumpJet)ItemDB.lookup("JUMP JETS - CLASS V");
+
+         Part parts[] = new Part[] {Part.RightTorso, Part.LeftTorso, Part.CenterTorso, Part.LeftLeg, Part.RightLeg};
+         for(int i = 0; i < cut.getChassi().getMaxJumpJets(); ++i){
+            cut.getPart(parts[i % parts.length]).addItem(jjv);
+         }
+      }
+      catch( Exception e ){
+         fail("Premature throw!");
+      }
+
+      cut.getPart(Part.RightTorso).addItem(jjv);
+   }
+
+   // -------------------------------------------------------------------------
+   //
+   // Unsorted tests
+   //
+   // -------------------------------------------------------------------------
 
    /**
     * Will create a new, empty loadout
@@ -240,11 +309,13 @@ public class LoadoutTest{
       // Verify
       assertEquals(tons + 3, cut.getMass(), 0.0);
       assertEquals(slots - 3, cut.getNumCriticalSlotsFree());
-      /*assertEquals("SRM 6 + ARTEMIS", cut.getPart(Part.LeftTorso).getItems().get(0).getName());
-      assertEquals("SRM 2 + ARTEMIS", cut.getPart(Part.LeftTorso).getItems().get(1).getName());
-      assertEquals("LRM 20 + ARTEMIS", cut.getPart(Part.LeftTorso).getItems().get(2).getName());
-      assertSame(ItemDB.lookup("SRM AMMO + ARTEMIS IV"), cut.getPart(Part.RightTorso).getItems().get(0));
-      assertSame(ItemDB.lookup("LRM AMMO + ARTEMIS IV"), cut.getPart(Part.RightTorso).getItems().get(1));*/
+      /*
+       * assertEquals("SRM 6 + ARTEMIS", cut.getPart(Part.LeftTorso).getItems().get(0).getName());
+       * assertEquals("SRM 2 + ARTEMIS", cut.getPart(Part.LeftTorso).getItems().get(1).getName());
+       * assertEquals("LRM 20 + ARTEMIS", cut.getPart(Part.LeftTorso).getItems().get(2).getName());
+       * assertSame(ItemDB.lookup("SRM AMMO + ARTEMIS IV"), cut.getPart(Part.RightTorso).getItems().get(0));
+       * assertSame(ItemDB.lookup("LRM AMMO + ARTEMIS IV"), cut.getPart(Part.RightTorso).getItems().get(1));
+       */
    }
 
    @Test
@@ -253,7 +324,7 @@ public class LoadoutTest{
       Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
-      
+
       // Execute
       cut.setMaxArmor(front_back_ratio);
 
@@ -266,13 +337,13 @@ public class LoadoutTest{
          if( part.getType().isTwoSided() ){
             int front = cut.getPart(part.getType()).getArmor(ArmorSide.FRONT);
             int back = cut.getPart(part.getType()).getArmor(ArmorSide.BACK);
-            
-            double lb = (double)(front - tolerance)/(back + tolerance);
-            double ub = (double)(front + tolerance)/(back - tolerance);
-            
+
+            double lb = (double)(front - tolerance) / (back + tolerance);
+            double ub = (double)(front + tolerance) / (back - tolerance);
+
             assertTrue(lb < front_back_ratio);
             assertTrue(ub > front_back_ratio);
-            
+
             verify(xBar, times(2)).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
          }
          else

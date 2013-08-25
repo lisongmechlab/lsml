@@ -1,8 +1,8 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.HeatSource;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.Weapon;
 
 public class Statistics{
@@ -26,7 +26,10 @@ public class Statistics{
    }
 
    public double getJumpDistance(){
-      return 0;
+      JumpJet jj = loadout.getJumpJetType();
+      if(jj == null)
+         return 0;
+      return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() / (2*loadout.getChassi().getMassMax());
    }
 
    public double getHeatCapacity(){

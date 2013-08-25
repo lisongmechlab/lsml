@@ -1,42 +1,42 @@
 The trouble with Li
 
-Prio: Hög (5/10)
+Prio: HÃ¶g (5/10)
 ----------------------------------------------
-<done>   Artemis visas inte på mechen
-<done>   Armorvärden fel efter load stock
-<done>   Knapp för max/stock armor
-<done>   Knapp för strip mech
+<done>   Artemis visas inte pÃ¥ mechen
+<done>   ArmorvÃ¤rden fel efter load stock
+<done>   Knapp fÃ¶r max/stock armor
+<done>   Knapp fÃ¶r strip mech
 <done>   CASE enbart i sidotorso
-<done>   Släpper double heatsink i motorn som då försvinner, uppdateringsbugg?
-<done>   Heatsink hantering i motorer är buggit
+<done>   SlÃ¤pper double heatsink i motorn som dÃ¥ fÃ¶rsvinner, uppdateringsbugg?
+<done>   Heatsink hantering i motorer Ã¤r buggit
 <done>   Byte till double heatsinks ger inga DHS i item listan.
-<done>   Byte till artemis ändrar inte visningsnamnet på missiler i item listan.
+<done>   Byte till artemis Ã¤ndrar inte visningsnamnet pÃ¥ missiler i item listan.
 
-Pågående
-<prog>   Vill se alfa-skada, helst även dps
+PÃ¥gÃ¥ende
+<prog>   Vill se alfa-skada, helst Ã¤ven dps
 
 
 Kan inte upprepa
-<nrep>   Att sätta armor när man har max armor ger undantag... inte längre?
+<nrep>   Att sÃ¤tta armor nÃ¤r man har max armor ger undantag... inte lÃ¤ngre?
 
-Inte påbörjade
-<tbd >   Svårt att veta vilka enheter som får plats
+Inte pÃ¥bÃ¶rjade
+<tbd >   SvÃ¥rt att veta vilka enheter som fÃ¥r plats
 <tbd >   Fakta om vapen, skada, range... 
-<tbd >   Hoppdistans är noll oavsett ben
+<tbd >   Hoppdistans Ã¤r noll oavsett ben
 
-Prio: Låg (0/5)
+Prio: LÃ¥g (0/5)
 -----------------------------------------------
-Artemis som slås på och av ger övervikt
+Artemis som slÃ¥s pÃ¥ och av ger Ã¶vervikt
 Mechs inte sorterade efter chassi
-Svårt att få en snabb överblick på hårdpunkter
-Det går kryssa i Double Basics utan att kryssa CR och HC
-Om man öppnar för att titta blir det en sparad mech. Kan bli grötigt om man kollar på en massa bara för att se hur de är stockade.
+SvÃ¥rt att fÃ¥ en snabb Ã¶verblick pÃ¥ hÃ¥rdpunkter
+Det gÃ¥r kryssa i Double Basics utan att kryssa CR och HC
+Om man Ã¶ppnar fÃ¶r att titta blir det en sparad mech. Kan bli grÃ¶tigt om man kollar pÃ¥ en massa bara fï¿½r att se hur de Ã¤r stockade.
 markering i listor i alla lemmar
 
 Prio: Senare release (0/5)
 -----------------------------------------------
-Kan vara bra att se vilka hårdpunkter utan att prova öppna alla
-Vapen och ammo blandat, förvirrande?
+Kan vara bra att se vilka hÃ¥rdpunkter utan att prova Ã¶ppna alla
+Vapen och ammo blandat, fÃ¶rvirrande?
 Antal missiltuber?
-Hur skickar man en build till någon?
-Stoppa in moduler i rätt antal modulslots så man kan skicka builds med de moduler man tycker de ska ha.
+Hur skickar man en build till nÃ¥gon?
+Stoppa in moduler i rÃ¤tt antal modulslots sÃ¥ man kan skicka builds med de moduler man tycker de ska ha.
