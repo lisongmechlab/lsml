@@ -36,8 +36,8 @@ public class Statistics{
       return (MECH_BASE_HEAT_CAPACITY + baseHeat()) * loadout.getEfficiencies().getHeatCapacityModifier();
    }
 
-   public double getHeatDissapation(){
-      return baseHeat() / 10.0 * loadout.getEfficiencies().getHeatDissapationModifier();
+   public double getHeatDissipation(){
+      return baseHeat() / 10.0 * loadout.getEfficiencies().getHeatDissipationModifier();
    }
    
    private double baseHeat(){
@@ -65,7 +65,7 @@ public class Statistics{
    }   
   
    public double getTimeToOverHeat(){
-      double heatDifferential = getHeatGeneration() - getHeatDissapation();
+      double heatDifferential = getHeatGeneration() - getHeatDissipation();
       if( heatDifferential <= 0 ){
          return Double.POSITIVE_INFINITY;
       }
@@ -76,6 +76,6 @@ public class Statistics{
       if(getHeatGeneration() <= 0){
          return 1.0;
       }
-      return getHeatDissapation() / getHeatGeneration();
+      return getHeatDissipation() / getHeatGeneration();
    }
 }
