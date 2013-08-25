@@ -66,7 +66,7 @@ public class Statistics{
   
    public double getTimeToOverHeat(){
       double heatDifferential = getHeatGeneration() - getHeatDissipation();
-      if( heatDifferential <= 0 ){
+      if( heatDifferential <= 0  || getHeatCapacity() / heatDifferential >= 15*60 ){ // 15min = infinity in MWO
          return Double.POSITIVE_INFINITY;
       }
       return getHeatCapacity() / heatDifferential;
