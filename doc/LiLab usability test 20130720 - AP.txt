@@ -1,6 +1,6 @@
 The trouble with Li
 
-Prio: Hög (5/10)
+Prio: Hög:
 ----------------------------------------------
 <done>   Artemis visas inte på mechen
 <done>   Armorvärden fel efter load stock
@@ -11,31 +11,30 @@ Prio: Hög (5/10)
 <done>   Heatsink hantering i motorer är buggit
 <done>   Byte till double heatsinks ger inga DHS i item listan.
 <done>   Byte till artemis ändrar inte visningsnamnet på missiler i item listan.
+<done>   Vill se alfa-skada, helst även dps
+<done>   Hoppdistans är noll oavsett ben
+<done>   Svårt att veta vilka enheter som får plats
+<done>   Fakta om vapen, skada, range... 
+<done>   Kan vara bra att se vilka hårdpunkter utan att prova öppna alla
 
-Pågående
-<prog>   Vill se alfa-skada, helst även dps
+Pågående:
 
-
-Kan inte upprepa
+Kan inte upprepa:
 <nrep>   Att sätta armor när man har max armor ger undantag... inte längre?
 
-Inte påbörjade
-<tbd >   Svårt att veta vilka enheter som får plats
-<tbd >   Fakta om vapen, skada, range... 
-<tbd >   Hoppdistans är noll oavsett ben
+Inte påbörjade:
 
-Prio: Låg (0/5)
+Prio: Låg (0/5):
 -----------------------------------------------
 Artemis som slås på och av ger övervikt
 Mechs inte sorterade efter chassi
 Svårt att få en snabb överblick på hårdpunkter
 Det går kryssa i Double Basics utan att kryssa CR och HC
-Om man öppnar för att titta blir det en sparad mech. Kan bli grötigt om man kollar på en massa bara f�r att se hur de är stockade.
-markering i listor i alla lemmar
+Om man öppnar för att titta blir det en sparad mech. Kan bli grötigt om man kollar på en massa bara för att se hur de är stockade.
+Markering i listor i alla lemmar
 
-Prio: Senare release (0/5)
+Prio: Senare release (0/5):
 -----------------------------------------------
-Kan vara bra att se vilka hårdpunkter utan att prova öppna alla
 Vapen och ammo blandat, förvirrande?
 Antal missiltuber?
 Hur skickar man en build till någon?
