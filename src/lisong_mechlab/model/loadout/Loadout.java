@@ -395,4 +395,12 @@ public class Loadout implements MessageXBar.Reader{
       }
       return items;
    }
+
+   public boolean isEquippable(Item anItem){
+      for(LoadoutPart part : parts.values()){
+         if(part.canAddItem(anItem))
+            return true;
+      }
+      return false;
+   }
 }
