@@ -37,6 +37,8 @@ public class PartList extends JList<String>{
          while( (it = (String)getElementAt(anIndex)).equals(MULTISLOT) ){
             anIndex--;
          }
+
+         // Drop on an empty slot
          if( it.equals(EMPTY) ){
             if( part.canAddItem(anItem) ){
                part.addItem(anItem);
@@ -44,26 +46,32 @@ public class PartList extends JList<String>{
             }
             return false;
          }
-         else if( it.startsWith(HEATSINKS_STRING) && anItem instanceof HeatSink && part.getNumEngineHeatsinks() < part.getNumEngineHeatsinksMax() ){
+
+         // Drop of a heat sink on a engine is a special case
+         if( anItem instanceof HeatSink && (it.contains(" ENGINE ") || it.startsWith(HEATSINKS_STRING)) ){
+            if( part.getNumEngineHeatsinks() < part.getNumEngineHeatsinksMax() ){
+               if( part.canAddItem(anItem) ){
+                  part.addItem(anItem);
+                  return true;
+               }
+            }
+            return false;
+         }
+
+         // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
+         try{
+            if( aShouldReplace ){
+               Item rem = ItemDB.lookup(it);
+               part.removeItem(rem);
+            }
             if( part.canAddItem(anItem) ){
                part.addItem(anItem);
                return true;
             }
-            else
-               return false;
+            return false;
          }
-         else{
-            try{
-               if( aShouldReplace ){
-                  Item rem = ItemDB.lookup(it);
-                  part.removeItem(rem);
-               }
-               part.addItem(anItem);
-               return true;
-            }
-            catch( Exception e ){
-               return false;
-            }
+         catch( Exception e ){
+            return false;
          }
 
          // TODO Handle Ferro Fibrous
