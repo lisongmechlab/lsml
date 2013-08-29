@@ -15,6 +15,10 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
    private static final long           serialVersionUID = -3967290040803547940L;
    private List<InternalFrameListener> listeners        = new ArrayList<InternalFrameListener>();
 
+   public LoadoutDesktop(){
+      setTransferHandler(new ItemTransferHandler());
+   }
+   
    public void openLoadout(Loadout aLoadout, MessageXBar anXBar){
       LoadoutFrame frame = new LoadoutFrame(aLoadout, anXBar);
       frame.addInternalFrameListener(this);
