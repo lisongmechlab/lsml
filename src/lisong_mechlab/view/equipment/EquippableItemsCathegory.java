@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.TreeModelEvent;
 
@@ -22,7 +23,7 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
 
    private final List<Item> allItems;
    private final List<Item> equippableItems = new ArrayList<>();
-   private Loadout loadout = null;
+   private Loadout          loadout         = null;
 
    public EquippableItemsCathegory(List<Item> anItemList, String aName, TreeCathegory aParent, EquipmentTreeModel aModel, MessageXBar anXBar){
       super(aName, aParent, aModel);
@@ -45,7 +46,7 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
    @Override
    public Object getChild(int aIndex){
       Item item = equippableItems.get(aIndex);
-      if(item instanceof MissileWeapon && loadout != null && loadout.getUpgrades().hasArtemis())
+      if( item instanceof MissileWeapon && loadout != null && loadout.getUpgrades().hasArtemis() )
          return ((MissileWeapon)item).getName(true);
       return item.getName();
    }
@@ -97,6 +98,11 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
 
    @Override
    public void receive(Message aMsg){
-      determineEquippable();
+      SwingUtilities.invokeLater(new Runnable(){
+         @Override
+         public void run(){
+            determineEquippable();
+         }
+      });
    }
 }
