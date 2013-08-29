@@ -36,8 +36,8 @@ public class LoadoutFrame extends JInternalFrame{
 
       JMenuBar menuBar = new JMenuBar();
       {
-         JMenu menu = new JMenu("Loadout");
-         menuBar.add(menu);
+         JMenu menuLoadout = new JMenu("Loadout");
+         menuBar.add(menuLoadout);
          {
             JMenuItem item = new JMenuItem("Load stock");
             item.addActionListener(new ActionListener(){
@@ -51,7 +51,7 @@ public class LoadoutFrame extends JInternalFrame{
                   }
                }
             });
-            menu.add(item);
+            menuLoadout.add(item);
          }
          {
             JMenuItem item = new JMenuItem("Rename...");
@@ -64,7 +64,7 @@ public class LoadoutFrame extends JInternalFrame{
                   // TODO: Trigger name change to garage view
                }
             });
-            menu.add(item);
+            menuLoadout.add(item);
          }
          {
             JMenuItem item = new JMenuItem("Strip mech");
@@ -74,11 +74,25 @@ public class LoadoutFrame extends JInternalFrame{
                   loadout.strip();
                }
             });
-            menu.add(item);
+            menuLoadout.add(item);
          }
+
+         JMenu menuArmor = new JMenu("Armor");
+         menuBar.add(menuArmor);
          {
+            {
+               JMenuItem item = new JMenuItem("Strip Armor");
+               item.addActionListener(new ActionListener(){
+                  @Override
+                  public void actionPerformed(ActionEvent aArg0){
+                     loadout.stripArmor();
+                  }
+               });
+               menuArmor.add(item);
+            }
+            
             JMenu subMenu = new JMenu("Max Armor");
-            menu.add(subMenu);
+            menuArmor.add(subMenu);
             {
                JMenuItem item = new JMenuItem("3:1");
                item.addActionListener(new ActionListener(){
