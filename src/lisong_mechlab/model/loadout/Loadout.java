@@ -181,15 +181,9 @@ public class Loadout implements MessageXBar.Reader{
    }
 
    public void strip(){
+      stripArmor();
       for(LoadoutPart loadoutPart : parts.values()){
          loadoutPart.removeAllItems();
-         if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-            loadoutPart.setArmor(ArmorSide.FRONT, 0);
-            loadoutPart.setArmor(ArmorSide.BACK, 0);
-         }
-         else{
-            loadoutPart.setArmor(ArmorSide.ONLY, 0);
-         }
       }
       upgrades.setArtemis(false);
       upgrades.setEndoSteel(false);
@@ -351,6 +345,7 @@ public class Loadout implements MessageXBar.Reader{
    }
 
    public void setMaxArmor(double aRatio){
+      stripArmor();
       for(LoadoutPart part : parts.values()){
          final int max = part.getInternalPart().getArmorMax();
          if( part.getInternalPart().getType().isTwoSided() ){
@@ -402,5 +397,17 @@ public class Loadout implements MessageXBar.Reader{
             return true;
       }
       return false;
+   }
+
+   public void stripArmor(){
+      for(LoadoutPart loadoutPart : parts.values()){
+         if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+            loadoutPart.setArmor(ArmorSide.FRONT, 0);
+            loadoutPart.setArmor(ArmorSide.BACK, 0);
+         }
+         else{
+            loadoutPart.setArmor(ArmorSide.ONLY, 0);
+         }
+      }
    }
 }
