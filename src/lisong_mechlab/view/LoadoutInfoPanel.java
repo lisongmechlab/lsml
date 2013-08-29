@@ -258,7 +258,13 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             doubleHeatSinks.setSelected(configuration.getUpgrades().hasDoubleHeatSinks());
             coolRun.setSelected(configuration.getEfficiencies().hasCoolRun());
             heatContainment.setSelected(configuration.getEfficiencies().hasHeatContainment());
-            doubleBasics.setSelected(configuration.getEfficiencies().hasDoubleBasics());
+            if(!coolRun.isSelected() || !heatContainment.isSelected()){
+               doubleBasics.setSelected(false);
+               doubleBasics.setEnabled(false);
+            }else{
+               doubleBasics.setEnabled(true);
+               doubleBasics.setSelected(configuration.getEfficiencies().hasDoubleBasics());
+            }
 
             heatsinks.setText("Heatsinks: " + configuration.getHeatsinksCount());
             effectiveHS.setText("Heat capacity: " + df.format(statistics.getHeatCapacity()));
@@ -267,8 +273,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
             // Offense
             // ----------------------------------------------------------------------
-            alphaStrike.setText("Alpha strike: " + metricAlphaStrike.calculate());
-            dpsMax.setText("Max DPS: " + metricMaxDPS.calculate());
+            alphaStrike.setText("Alpha strike: " + df.format(metricAlphaStrike.calculate()));
+            dpsMax.setText("Max DPS: " + df.format(metricMaxDPS.calculate()));
             dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
 
             // Summary
