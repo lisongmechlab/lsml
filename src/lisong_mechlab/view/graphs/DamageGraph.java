@@ -2,9 +2,10 @@ package lisong_mechlab.view.graphs;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -71,7 +72,7 @@ public class DamageGraph extends JFrame{
     * 
     * @return A {@link SortedSet} with {@link Double}s for the ranges.
     */
-   private SortedSet<Double> getRangeIntervals(){
+   private Double[] getRangeIntervals(){
       SortedSet<Double> ans = new TreeSet<>();
 
       ans.add(Double.valueOf(0.0));
@@ -84,29 +85,34 @@ public class DamageGraph extends JFrame{
 
             if( weapon.getName().contains("LRM") ){
                // Special case the immediate fall off of LRMs
-               ans.add(weapon.getRangeMin() - Math.ulp(weapon.getRangeMin()) * 4);
+               ans.add(weapon.getRangeMin() - Math.ulp(weapon.getRangeMin()) * Weapon.RANGE_ULP_FUZZ);
             }
          }
       }
-      return ans;
+      return ans.toArray(new Double[ans.size()]);
    }
 
    private TableXYDataset getSeries(){
       SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(new Comparator<Weapon>(){
          @Override
          public int compare(Weapon aO1, Weapon aO2){
-            return Double.compare(aO2.getRangeMax(), aO1.getRangeMax());
+            int comp = Double.compare(aO2.getRangeMax(), aO1.getRangeMax());
+            if( comp == 0 )
+               return aO1.compareTo(aO2);
+            return comp;
          }
       });
-      for(Double range : getRangeIntervals()){
-         for(Map.Entry<Weapon, Double> entry : maxSustainedDPS.getDamageDistribution(range).entrySet()){
+
+      Double[] ranges = getRangeIntervals();
+      for(double range : ranges){
+         Set<Entry<Weapon, Double>> damageDistributio = maxSustainedDPS.getDamageDistribution(range).entrySet();
+         for(Map.Entry<Weapon, Double> entry : damageDistributio){
             Weapon weapon = entry.getKey();
             double ratio = entry.getValue();
             double dps = weapon.getStat("d/s");
 
             if( !data.containsKey(weapon) ){
                data.put(weapon, new ArrayList<Pair<Double, Double>>());
-
             }
             data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio));
          }

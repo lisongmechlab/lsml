@@ -22,4 +22,9 @@ public class Pair<F, S> {
       Pair that = (Pair)o;
       return this.first.equals(that.first) && this.second.equals(that.second);
    }
+   
+   @Override
+   public String toString(){
+      return "{"+first.toString()+", "+second.toString()+"}";
+   }
 }
