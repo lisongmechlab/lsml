@@ -329,28 +329,7 @@ public class Loadout implements MessageXBar.Reader{
                }
                break;
             case GUIDANCE:
-               if(upgrades.hasArtemis()){
-                  int extraMassCounter = 0;
-                  int extraCritSlotsCounter = 0;
-                  for(LoadoutPart part : parts.values()){
-                     for(Item item : part.getItems()){
-                        if(item instanceof MissileWeapon){
-                           extraCritSlotsCounter++;
-                           extraMassCounter++;
-                        }
-                     }
-                  }
-                  
-                  if(!(extraMassCounter <= getFreeMass()) ){
-                     getUpgrades().setArtemis(false);
-                     throw new IllegalArgumentException("Not enough free mass!");
-                     
-                  }
-                  if(!(extraCritSlotsCounter <= getNumCriticalSlotsFree())){
-                     getUpgrades().setArtemis(false);
-                     throw new IllegalArgumentException("Not enough free crit slots!");
-                  }
-               }
+               checkArtemisAdditionLegal();
                
                break;
             case HEATSINKS:
@@ -368,8 +347,33 @@ public class Loadout implements MessageXBar.Reader{
       }
    }
 
+   private void checkArtemisAdditionLegal() throws IllegalArgumentException{
+      if(upgrades.hasArtemis()){
+         int extraMassCounter = 0;
+         int extraCritSlotsCounter = 0;
+         for(LoadoutPart part : parts.values()){
+            for(Item item : part.getItems()){
+               if(item instanceof MissileWeapon){
+                  extraCritSlotsCounter++;
+                  extraMassCounter++;
+               }
+            }
+         }
+         
+         if(!(extraMassCounter <= getFreeMass()) ){
+            getUpgrades().setArtemis(false);
+            throw new IllegalArgumentException("Not enough free mass!");
+            
+         }
+         if(!(extraCritSlotsCounter <= getNumCriticalSlotsFree())){
+            getUpgrades().setArtemis(false);
+            throw new IllegalArgumentException("Not enough free crit slots!");
+         }
+      }
+   }
+
    private double getFreeMass(){
-      double freeMass = chassi.getInternalMass() - getMass();
+      double freeMass = chassi.getMassMax() - getMass();
       return freeMass;
    }
 
