@@ -228,7 +228,7 @@ public class GameDataFile{
    }
 
    private Path getDefaultGameFileLocation(){
-Path defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online");
+Path defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online"); //Uses two variations one for x64 and one for x86
 if(!defaultGameFileLocation.toFile().exists()){
    defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online");
 }
