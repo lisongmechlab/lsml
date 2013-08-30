@@ -5,12 +5,10 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class MissileWeapon extends AmmoWeapon{
    private static final String ARTEMIS = " + ARTEMIS";
-   protected final int         missilesPerVolley;
    protected final double      flightSpeed;
 
    public MissileWeapon(ItemStatsWeapon aStatsWeapon){
       super(aStatsWeapon, HardpointType.MISSILE);
-      missilesPerVolley = aStatsWeapon.WeaponStats.numFiring;
       flightSpeed = aStatsWeapon.WeaponStats.speed;
    }
 
@@ -35,6 +33,15 @@ public class MissileWeapon extends AmmoWeapon{
       return super.getName();
    }
 
+   @Override
+   public double getRangeEffectivity(double range){
+      // Assume linear fall off
+      if( range < getRangeMin() )
+         return 0;
+      else
+         return super.getRangeEffectivity(range);
+   }
+   
    /**
     * Canonizes an item name with respect to MissileWeapon specifics.
     * 
