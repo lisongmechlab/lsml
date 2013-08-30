@@ -5,7 +5,7 @@ import java.util.prefs.Preferences;
 public class LsmlPreferences{
    public static final String GARAGEFILE_KEY = "garagefile";
    public static final String GARAGEFILE_DEFAULT = "garage.xml";
-   static private Preferences prefs = Preferences.userRoot().node(LsmlPreferences.class.getName());
+   static private Preferences prefs = Preferences.userNodeForPackage(LsmlPreferences.class);
 
    static public String getString(String key){
       return prefs.get(key, "");
