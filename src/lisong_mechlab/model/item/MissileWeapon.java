@@ -16,7 +16,7 @@ public class MissileWeapon extends AmmoWeapon{
    public double getRangeMax(){
       // Missile fall off is a bit different from other weapons because long = max.
       // Emulate a steep fall off by nudging max ever so slightly
-      return super.getRangeMax() + Math.ulp(super.getRangeMax())*4; 
+      return super.getRangeMax() + Math.ulp(super.getRangeMax())*RANGE_ULP_FUZZ; 
    }
    
    @Deprecated
