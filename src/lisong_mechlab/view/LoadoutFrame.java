@@ -17,12 +17,13 @@ import javax.swing.JSplitPane;
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.view.graphs.DamageGraph;
 
 public class LoadoutFrame extends JInternalFrame{
    private static final long serialVersionUID = -9181002222136052106L;
-   static int                openFrameCount   = 0;
-   static final int          xOffset          = 30, yOffset = 30;
-   final private Loadout     loadout;
+   private static int        openFrameCount   = 0;
+   private static final int  xOffset          = 30, yOffset = 30;
+   private final Loadout     loadout;
 
    public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout.toString(), true, // resizable
@@ -35,131 +36,16 @@ public class LoadoutFrame extends JInternalFrame{
       loadout = aLoadout;
 
       JMenuBar menuBar = new JMenuBar();
-      {
-         JMenu menuLoadout = new JMenu("Loadout");
-         menuBar.add(menuLoadout);
-         {
-            JMenuItem item = new JMenuItem("Load stock");
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent aArg0){
-                  try{
-                     loadout.loadStock();
-                  }
-                  catch( Exception e ){
-                     JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't load stock loadout! Error: " + e.getMessage());
-                  }
-               }
-            });
-            menuLoadout.add(item);
-         }
-         {
-            JMenuItem item = new JMenuItem("Rename...");
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent aArg0){
-                  String name = JOptionPane.showInputDialog("Give a name");
-                  loadout.rename(name);
-                  setTitle(loadout.toString());
-                  // TODO: Trigger name change to garage view
-               }
-            });
-            menuLoadout.add(item);
-         }
-         {
-            JMenuItem item = new JMenuItem("Strip mech");
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent aArg0){
-                  loadout.strip();
-               }
-            });
-            menuLoadout.add(item);
-         }
-
-         JMenu menuArmor = new JMenu("Armor");
-         menuBar.add(menuArmor);
-         {
-            {
-               JMenuItem item = new JMenuItem("Strip Armor");
-               item.addActionListener(new ActionListener(){
-                  @Override
-                  public void actionPerformed(ActionEvent aArg0){
-                     loadout.stripArmor();
-                  }
-               });
-               menuArmor.add(item);
-            }
-            
-            JMenu subMenu = new JMenu("Max Armor");
-            menuArmor.add(subMenu);
-            {
-               JMenuItem item = new JMenuItem("3:1");
-               item.addActionListener(new ActionListener(){
-                  @Override
-                  public void actionPerformed(ActionEvent aArg0){
-                     loadout.setMaxArmor(3);
-                  }
-               });
-               subMenu.add(item);
-            }
-            {
-               JMenuItem item = new JMenuItem("5:1");
-               item.addActionListener(new ActionListener(){
-                  @Override
-                  public void actionPerformed(ActionEvent aArg0){
-                     loadout.setMaxArmor(5);
-                  }
-               });
-               subMenu.add(item);
-            }
-            {
-               JMenuItem item = new JMenuItem("10:1");
-               item.addActionListener(new ActionListener(){
-                  @Override
-                  public void actionPerformed(ActionEvent aArg0){
-                     loadout.setMaxArmor(10);
-                  }
-               });
-               subMenu.add(item);
-            }
-            {
-               JMenuItem item = new JMenuItem("Custom...");
-               item.addActionListener(new ActionListener(){
-                  @Override
-                  public void actionPerformed(ActionEvent aArg0){
-                     String input = (String)JOptionPane.showInputDialog(LoadoutFrame.this,
-                                                                        "Please enter the ratio between front and back armor as front:back.Example 3:1",
-                                                                        "Maximizing armor...", JOptionPane.INFORMATION_MESSAGE, null, null, "3:1");
-                     String[] s = input.split(":");
-                     if( s.length == 2 ){
-                        double front, back;
-                        try{
-                           front = Double.parseDouble(s[0]);
-                           back = Double.parseDouble(s[1]);
-                        }
-                        catch( Exception e ){
-                           JOptionPane.showMessageDialog(LoadoutFrame.this, "Error parsing ratio! Loadout was not changed!");
-                           return;
-                        }
-                        loadout.setMaxArmor(front / back);
-                     }
-                     else
-                        JOptionPane.showMessageDialog(LoadoutFrame.this, "Error parsing ratio! Loadout was not changed!");
-                  }
-               });
-               subMenu.add(item);
-            }
-         }
-      }
-
+      menuBar.add(createMenuLoadout());
+      menuBar.add(createMenuArmor());
+      menuBar.add(createMenuGraphs());
       setJMenuBar(menuBar);
 
       // Set the window's location.
       setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
 
       JPanel r = new LoadoutInfoPanel(aLoadout, anXBar);
-      JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, mechView(aLoadout, anXBar), r);
+      JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, createMechView(aLoadout, anXBar), r);
 
       sp.setDividerLocation(-1);
       sp.setDividerSize(0);
@@ -170,7 +56,15 @@ public class LoadoutFrame extends JInternalFrame{
       setVisible(true);
    }
 
-   private JPanel mechView(Loadout aConfiguration, MessageXBar anXBar){
+   public boolean isSaved(){
+      return false;
+   }
+
+   public Loadout getLoadout(){
+      return loadout;
+   }
+
+   private JPanel createMechView(Loadout aConfiguration, MessageXBar anXBar){
       final JPanel panel = new JPanel();
       panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 
@@ -241,11 +135,116 @@ public class LoadoutFrame extends JInternalFrame{
       return panel;
    }
 
-   public boolean isSaved(){
-      return false;
+   private JMenuItem createMenuItem(String text, ActionListener anActionListener){
+      JMenuItem item = new JMenuItem(text);
+      item.addActionListener(anActionListener);
+      return item;
    }
 
-   public Loadout getLoadout(){
-      return loadout;
+   private JMenu createMenuLoadout(){
+      JMenu menu = new JMenu("Loadout");
+
+      menu.add(createMenuItem("Load stock", new ActionListener(){
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            try{
+               loadout.loadStock();
+            }
+            catch( Exception e ){
+               JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't load stock loadout! Error: " + e.getMessage());
+            }
+         }
+      }));
+
+      menu.add(createMenuItem("Rename...", new ActionListener(){
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            String name = JOptionPane.showInputDialog("Give a name");
+            loadout.rename(name);
+            setTitle(loadout.toString());
+         }
+      }));
+
+      menu.add(createMenuItem("Strip mech", new ActionListener(){
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            loadout.strip();
+         }
+      }));
+      return menu;
+   }
+
+   private JMenu createMenuArmor(){
+      JMenu menu = new JMenu("Armor");
+
+      menu.add(createMenuItem("Strip Armor", new ActionListener(){
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            loadout.stripArmor();
+         }
+      }));
+
+      {
+         JMenu subMenu = new JMenu("Max Armor");
+         menu.add(subMenu);
+
+         subMenu.add(createMenuItem("3:1", new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aArg0){
+               loadout.setMaxArmor(3);
+            }
+         }));
+
+         subMenu.add(createMenuItem("5:1", new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aArg0){
+               loadout.setMaxArmor(5);
+            }
+         }));
+
+         subMenu.add(createMenuItem("10:1", new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aArg0){
+               loadout.setMaxArmor(10);
+            }
+         }));
+
+         subMenu.add(createMenuItem("Custom...", new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aArg0){
+               String input = (String)JOptionPane.showInputDialog(LoadoutFrame.this,
+                                                                  "Please enter the ratio between front and back armor as front:back.Example 3:1",
+                                                                  "Maximizing armor...", JOptionPane.INFORMATION_MESSAGE, null, null, "3:1");
+               String[] s = input.split(":");
+               if( s.length == 2 ){
+                  double front, back;
+                  try{
+                     front = Double.parseDouble(s[0]);
+                     back = Double.parseDouble(s[1]);
+                  }
+                  catch( Exception e ){
+                     JOptionPane.showMessageDialog(LoadoutFrame.this, "Error parsing ratio! Loadout was not changed!");
+                     return;
+                  }
+                  loadout.setMaxArmor(front / back);
+               }
+               else
+                  JOptionPane.showMessageDialog(LoadoutFrame.this, "Error parsing ratio! Loadout was not changed!");
+            }
+         }));
+      }
+      return menu;
+   }
+
+   private JMenu createMenuGraphs(){
+      JMenu menu = new JMenu("Graphs");
+
+      menu.add(createMenuItem("Damage", new ActionListener(){
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            new DamageGraph("DPS over Range", loadout);
+         }
+      }));
+      return menu;
    }
 }

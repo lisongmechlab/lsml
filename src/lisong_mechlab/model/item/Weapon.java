@@ -5,23 +5,32 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class Weapon extends HeatSource{
-   protected final double damage;
+   protected final double damagePerProjectile;
    protected final double cycleTime;
    protected final double rangeMin;
    protected final double rangeLong;
    protected final double rangeMax;
+   protected final int    numPerVolley;
 
    public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
       super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat);
-      damage = aStatsWeapon.WeaponStats.damage;
+      damagePerProjectile = aStatsWeapon.WeaponStats.damage;
       cycleTime = aStatsWeapon.WeaponStats.cooldown;
       rangeMin = aStatsWeapon.WeaponStats.minRange;
       rangeMax = aStatsWeapon.WeaponStats.maxRange;
       rangeLong = aStatsWeapon.WeaponStats.longRange;
+
+      int volleysize = 1;
+      if( aStatsWeapon.WeaponStats.numFiring > 0 ){
+         volleysize = aStatsWeapon.WeaponStats.numFiring;
+      }
+      if( aStatsWeapon.WeaponStats.numPerShot > 0 )
+         volleysize = aStatsWeapon.WeaponStats.numPerShot;
+      numPerVolley = volleysize;
    }
 
-   public double getDamagePerShot(){
-      return damage;
+   public double getDamagePerVolley(){
+      return damagePerProjectile * numPerVolley;
    }
 
    public double getSecondsPerShot(){
@@ -42,6 +51,18 @@ public class Weapon extends HeatSource{
       return rangeLong;
    }
 
+   public double getRangeEffectivity(double range){
+      // Assume linear fall off
+      if( range < getRangeMin() )
+         return range / getRangeMin();
+      else if( range <= getRangeLong() )
+         return 1.0;
+      else if( range < getRangeMax() )
+         return 1.0 - (range - getRangeLong()) / (getRangeMax() - getRangeLong());
+      else
+         return 0;
+   }
+
    /**
     * Calculates an arbitrary statistic for the weapon based on the string. The string format is (regexp):
     * "[dsthc]+(/[dsthc]+)?" where d=damage, s=seconds, t=tons, h=heat, c=criticalslots. For example "d/hhs" is damage
@@ -58,7 +79,7 @@ public class Weapon extends HeatSource{
       while( index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/' ){
          switch( aWeaponStat.charAt(index) ){
             case 'd':
-               nominator *= getDamagePerShot();
+               nominator *= getDamagePerVolley();
                break;
             case 's':
                nominator *= getSecondsPerShot();
@@ -83,7 +104,7 @@ public class Weapon extends HeatSource{
       while( index < aWeaponStat.length() ){
          switch( aWeaponStat.charAt(index) ){
             case 'd':
-               denominator *= getDamagePerShot();
+               denominator *= getDamagePerVolley();
                break;
             case 's':
                denominator *= getSecondsPerShot();
