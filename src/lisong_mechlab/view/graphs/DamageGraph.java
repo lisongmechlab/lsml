@@ -1,10 +1,13 @@
 package lisong_mechlab.view.graphs;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.swing.JFrame;
@@ -78,13 +81,23 @@ public class DamageGraph extends JFrame{
             ans.add(weapon.getRangeMin());
             ans.add(weapon.getRangeLong());
             ans.add(weapon.getRangeMax());
+
+            if( weapon.getName().contains("LRM") ){
+               // Special case the immediate fall off of LRMs
+               ans.add(weapon.getRangeMin() - Math.ulp(weapon.getRangeMin()) * 4);
+            }
          }
       }
       return ans;
    }
 
    private TableXYDataset getSeries(){
-      Map<Weapon, List<Pair<Double, Double>>> data = new HashMap<Weapon, List<Pair<Double, Double>>>();
+      SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(new Comparator<Weapon>(){
+         @Override
+         public int compare(Weapon aO1, Weapon aO2){
+            return Double.compare(aO2.getRangeMax(), aO1.getRangeMax());
+         }
+      });
       for(Double range : getRangeIntervals()){
          for(Map.Entry<Weapon, Double> entry : maxSustainedDPS.getDamageDistribution(range).entrySet()){
             Weapon weapon = entry.getKey();
@@ -93,6 +106,7 @@ public class DamageGraph extends JFrame{
 
             if( !data.containsKey(weapon) ){
                data.put(weapon, new ArrayList<Pair<Double, Double>>());
+
             }
             data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio));
          }

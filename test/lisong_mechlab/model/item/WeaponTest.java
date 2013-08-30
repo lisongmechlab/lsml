@@ -77,6 +77,26 @@ public class WeaponTest{
    }
 
    @Test
+   public void testGetRangeEffectivity_lrm20() throws Exception{
+      MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("LRM 20");
+      assertEquals(0.0, srm6.getRangeEffectivity(0), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMin() - Math.ulp(srm6.getRangeLong()) * 4), 0.0);
+      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeMin()), 0.0);
+      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong()), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * 4), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax()), 0.0);
+   }
+
+   @Test
+   public void testGetRangeEffectivity_srm6() throws Exception{
+      MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
+      assertEquals(1.0, srm6.getRangeEffectivity(0), 0.0);
+      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong()), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * 4), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax()), 0.0);
+   }
+
+   @Test
    public void testGetRangeEffectivity_mg() throws Exception{
       BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("MACHINE GUN");
       assertEquals(1.0, mg.getRangeEffectivity(0), 0.0);
@@ -92,9 +112,9 @@ public class WeaponTest{
       assertEquals(1.0, gauss.getRangeEffectivity(gauss.getRangeLong()), 0.0);
       assertEquals(0.5, gauss.getRangeEffectivity((gauss.getRangeLong() + gauss.getRangeMax()) / 2), 0.0);
       assertEquals(0.0, gauss.getRangeEffectivity(gauss.getRangeMax()), 0.0);
-      
+
       assertTrue(gauss.getRangeEffectivity(750) < 0.95);
-      assertTrue(gauss.getRangeEffectivity(750) > 0.8);  
+      assertTrue(gauss.getRangeEffectivity(750) > 0.8);
    }
 
    @Test
