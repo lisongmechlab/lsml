@@ -1,6 +1,7 @@
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -10,6 +11,13 @@ public class WeaponTest{
    @Test
    public void testIsEquippableOn() throws Exception{
       throw new RuntimeException("not yet implemented");
+   }
+
+   @Test
+   public void testInequality(){
+      MissileWeapon lrm10 = (MissileWeapon)ItemDB.lookup("LRM 10");
+      MissileWeapon lrm15 = (MissileWeapon)ItemDB.lookup("LRM 15");
+      assertFalse(lrm10.equals(lrm15));
    }
 
    /**
@@ -80,10 +88,10 @@ public class WeaponTest{
    public void testGetRangeEffectivity_lrm20() throws Exception{
       MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("LRM 20");
       assertEquals(0.0, srm6.getRangeEffectivity(0), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMin() - Math.ulp(srm6.getRangeLong()) * 4), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMin() - Math.ulp(srm6.getRangeLong()) * Weapon.RANGE_ULP_FUZZ), 0.0);
       assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeMin()), 0.0);
       assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong()), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * 4), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * Weapon.RANGE_ULP_FUZZ), 0.0);
       assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax()), 0.0);
    }
 
@@ -92,7 +100,7 @@ public class WeaponTest{
       MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
       assertEquals(1.0, srm6.getRangeEffectivity(0), 0.0);
       assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong()), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * 4), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * Weapon.RANGE_ULP_FUZZ), 0.0);
       assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax()), 0.0);
    }
 

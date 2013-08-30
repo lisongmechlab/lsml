@@ -5,6 +5,8 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class Weapon extends HeatSource{
+   public static final int RANGE_ULP_FUZZ = 20;
+   
    protected final double damagePerProjectile;
    protected final double cycleTime;
    protected final double rangeMin;
