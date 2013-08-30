@@ -23,6 +23,7 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout.Message.Type;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
@@ -328,6 +329,29 @@ public class Loadout implements MessageXBar.Reader{
                }
                break;
             case GUIDANCE:
+               if(upgrades.hasArtemis()){
+                  int extraMassCounter = 0;
+                  int extraCritSlotsCounter = 0;
+                  for(LoadoutPart part : parts.values()){
+                     for(Item item : part.getItems()){
+                        if(item instanceof MissileWeapon){
+                           extraCritSlotsCounter++;
+                           extraMassCounter++;
+                        }
+                     }
+                  }
+                  
+                  if(!(extraMassCounter <= getFreeMass()) ){
+                     getUpgrades().setArtemis(false);
+                     throw new IllegalArgumentException("Not enough free mass!");
+                     
+                  }
+                  if(!(extraCritSlotsCounter <= getNumCriticalSlotsFree())){
+                     getUpgrades().setArtemis(false);
+                     throw new IllegalArgumentException("Not enough free crit slots!");
+                  }
+               }
+               
                break;
             case HEATSINKS:
                break;
@@ -342,6 +366,11 @@ public class Loadout implements MessageXBar.Reader{
 
          }
       }
+   }
+
+   private double getFreeMass(){
+      double freeMass = chassi.getInternalMass() - getMass();
+      return freeMass;
    }
 
    public void setMaxArmor(double aRatio){
