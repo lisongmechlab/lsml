@@ -45,6 +45,8 @@ public class ItemStatsWeapon extends ItemStats{
       public int    Health;
       @XStreamAsAttribute
       public String artemisAmmoType;
+      @XStreamAsAttribute
+      public int    numPerShot;
    }
 
    public WeaponStatsTag WeaponStats;
