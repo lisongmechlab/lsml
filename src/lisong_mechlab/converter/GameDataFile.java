@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -189,7 +191,7 @@ public class GameDataFile{
 
          @Override
          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
-            if( dir.getFileName() != null && dir.getFileName().toString().toLowerCase().equals("windows") )
+            if( dir.getFileName() != null && dir.getFileName().toString().toLowerCase().equals("windows") && dir.getFileName().toString().toLowerCase().equals("users") )
                // Skip windows folder, it's big and slow and we don't expect to find the game there.
                return SKIP_SUBTREE;
             return CONTINUE;
@@ -205,8 +207,11 @@ public class GameDataFile{
          public FileVisitResult postVisitDirectory(Path aArg0, IOException aArg1) throws IOException{
             return CONTINUE;
          }
-      }
 
+      }
+      if( getDefaultGameFileLocation().toFile().exists() ){
+         return getDefaultGameFileLocation();
+      }
       GameFinder finder = new GameFinder();
 
       File[] roots = File.listRoots();
@@ -220,5 +225,16 @@ public class GameDataFile{
       }
 
       return null;
+   }
+
+   private Path getDefaultGameFileLocation(){
+Path defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online");
+if(!defaultGameFileLocation.toFile().exists()){
+   defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online");
+}
+
+return defaultGameFileLocation;
+
+      
    }
 }
