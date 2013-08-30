@@ -10,6 +10,7 @@ import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
@@ -28,7 +29,7 @@ import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long     serialVersionUID = 4720126200474042446L;
-   final private Loadout         configuration;
+   final private Loadout         loadout;
 
    final private JProgressBar    massBar;
    final private JLabel          massValue        = new JLabel("xxx");
@@ -64,14 +65,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private AlphaStrike     metricAlphaStrike;
    final private MaxDPS          metricMaxDPS;
    final private MaxSustainedDPS metricSustainedDps;
+   transient private Boolean     inhibitChanges   = false;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
-      configuration = aConfiguration;
-      statistics = new Statistics(configuration);
-      metricAlphaStrike = new AlphaStrike(configuration);
-      metricMaxDPS = new MaxDPS(configuration);
-      metricHeatDissipation = new HeatDissipation(configuration);
-      metricSustainedDps = new MaxSustainedDPS(configuration, metricHeatDissipation);
+      loadout = aConfiguration;
+      statistics = new Statistics(loadout);
+      metricAlphaStrike = new AlphaStrike(loadout);
+      metricMaxDPS = new MaxDPS(loadout);
+      metricHeatDissipation = new HeatDissipation(loadout);
+      metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
       anXBar.attach(this);
@@ -86,10 +88,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          JLabel critslotsTxt = new JLabel("Critical Slots:");
 
          JLabel massTxt = new JLabel("Tonnage:");
-         massBar = new JProgressBar(0, configuration.getChassi().getMassMax());
+         massBar = new JProgressBar(0, loadout.getChassi().getMassMax());
 
          JLabel armorTxt = new JLabel("Armor:");
-         armorBar = new JProgressBar(0, configuration.getChassi().getArmorMax());
+         armorBar = new JProgressBar(0, loadout.getChassi().getArmorMax());
 
          ferroFibros.addItemListener(this);
          endoSteel.addItemListener(this);
@@ -227,58 +229,66 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       SwingUtilities.invokeLater(new Runnable(){
          @Override
          public void run(){
-            // General
-            // ----------------------------------------------------------------------
-            final DecimalFormat df = new DecimalFormat("#.##");
-            df.setMinimumFractionDigits(2);
+            synchronized( inhibitChanges ){
 
-            double mass = configuration.getMass();
-            massBar.setValue((int)Math.ceil(mass));
-            massValue.setText(df.format(mass) + " (" + df.format(configuration.getChassi().getMassMax() - mass) + " free)");
+               inhibitChanges = true;
 
-            armorBar.setValue(configuration.getArmor());
-            armorValue.setText(configuration.getArmor() + " / " + configuration.getChassi().getArmorMax());
+               // General
+               // ----------------------------------------------------------------------
+               final DecimalFormat df = new DecimalFormat("#.##");
+               df.setMinimumFractionDigits(2);
 
-            critslotsBar.setValue(configuration.getNumCriticalSlotsUsed());
-            critslotsValue.setText(configuration.getNumCriticalSlotsFree() + " free");
+               double mass = loadout.getMass();
+               massBar.setValue((int)Math.ceil(mass));
+               massValue.setText(df.format(mass) + " (" + df.format(loadout.getChassi().getMassMax() - mass) + " free)");
 
-            artemis.setSelected(configuration.getUpgrades().hasArtemis());
-            endoSteel.setSelected(configuration.getUpgrades().hasEndoSteel());
-            ferroFibros.setSelected(configuration.getUpgrades().hasFerroFibrous());
+               armorBar.setValue(loadout.getArmor());
+               armorValue.setText(loadout.getArmor() + " / " + loadout.getChassi().getArmorMax());
 
-            // Mobility
-            // ----------------------------------------------------------------------
-            topSpeed.setText("Top speed: " + df.format(statistics.getTopSpeed()) + " km/h");
-            jumpJets.setText("Jump Jets: " + configuration.getJumpJetCount() + "/" + configuration.getChassi().getMaxJumpJets() + " ("
-                             + df.format(statistics.getJumpDistance()) + " m)");
-            speedTweak.setSelected(configuration.getEfficiencies().hasSpeedTweak());
+               critslotsBar.setValue(loadout.getNumCriticalSlotsUsed());
+               critslotsValue.setText(loadout.getNumCriticalSlotsFree() + " free");
 
-            // Heat
-            // ----------------------------------------------------------------------
-            doubleHeatSinks.setSelected(configuration.getUpgrades().hasDoubleHeatSinks());
-            coolRun.setSelected(configuration.getEfficiencies().hasCoolRun());
-            heatContainment.setSelected(configuration.getEfficiencies().hasHeatContainment());
-            if(!coolRun.isSelected() || !heatContainment.isSelected()){
-               doubleBasics.setSelected(false);
-               doubleBasics.setEnabled(false);
-            }else{
-               doubleBasics.setEnabled(true);
-               doubleBasics.setSelected(configuration.getEfficiencies().hasDoubleBasics());
+               artemis.setSelected(loadout.getUpgrades().hasArtemis());
+               endoSteel.setSelected(loadout.getUpgrades().hasEndoSteel());
+               ferroFibros.setSelected(loadout.getUpgrades().hasFerroFibrous());
+
+               // Mobility
+               // ----------------------------------------------------------------------
+               topSpeed.setText("Top speed: " + df.format(statistics.getTopSpeed()) + " km/h");
+               jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassi().getMaxJumpJets() + " ("
+                                + df.format(statistics.getJumpDistance()) + " m)");
+               speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
+
+               // Heat
+               // ----------------------------------------------------------------------
+               doubleHeatSinks.setSelected(loadout.getUpgrades().hasDoubleHeatSinks());
+               coolRun.setSelected(loadout.getEfficiencies().hasCoolRun());
+               heatContainment.setSelected(loadout.getEfficiencies().hasHeatContainment());
+               if( !coolRun.isSelected() || !heatContainment.isSelected() ){
+                  doubleBasics.setSelected(false);
+                  doubleBasics.setEnabled(false);
+               }
+               else{
+                  doubleBasics.setEnabled(true);
+                  doubleBasics.setSelected(loadout.getEfficiencies().hasDoubleBasics());
+               }
+
+               heatsinks.setText("Heatsinks: " + loadout.getHeatsinksCount());
+               effectiveHS.setText("Heat capacity: " + df.format(statistics.getHeatCapacity()));
+               timeToOverheat.setText("Seconds to Overheat: " + df.format(statistics.getTimeToOverHeat()));
+               coolingRatio.setText("Cooling efficiency: " + df.format(statistics.getCoolingRatio()));
+
+               // Offense
+               // ----------------------------------------------------------------------
+               alphaStrike.setText("Alpha strike: " + df.format(metricAlphaStrike.calculate()));
+               dpsMax.setText("Max DPS: " + df.format(metricMaxDPS.calculate()));
+               dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
+
+               // Summary
+               // ----------------------------------------------------------------------
+
+               inhibitChanges = false;
             }
-
-            heatsinks.setText("Heatsinks: " + configuration.getHeatsinksCount());
-            effectiveHS.setText("Heat capacity: " + df.format(statistics.getHeatCapacity()));
-            timeToOverheat.setText("Seconds to Overheat: " + df.format(statistics.getTimeToOverHeat()));
-            coolingRatio.setText("Cooling efficiency: " + df.format(statistics.getCoolingRatio()));
-
-            // Offense
-            // ----------------------------------------------------------------------
-            alphaStrike.setText("Alpha strike: " + df.format(metricAlphaStrike.calculate()));
-            dpsMax.setText("Max DPS: " + df.format(metricMaxDPS.calculate()));
-            dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
-
-            // Summary
-            // ----------------------------------------------------------------------
          }
       });
 
@@ -286,34 +296,44 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    @Override
    public void itemStateChanged(ItemEvent anEvent){
+      synchronized( inhibitChanges ){
+         if( inhibitChanges )
+            return;
+      }
+
       JCheckBox source = (JCheckBox)anEvent.getSource();
 
-      if( source == artemis ){
-         configuration.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+      try{
+         if( source == artemis ){
+            loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == endoSteel ){
+            loadout.getUpgrades().setEndoSteel(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == ferroFibros ){
+            loadout.getUpgrades().setFerroFibrous(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == speedTweak ){
+            loadout.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == doubleHeatSinks ){
+            loadout.getUpgrades().setDoubleHeatSinks(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == coolRun ){
+            loadout.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == heatContainment ){
+            loadout.getEfficiencies().setHeatContainment(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == doubleBasics ){
+            loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else{
+            throw new RuntimeException("Unkown source control!");
+         }
       }
-      else if( source == endoSteel ){
-         configuration.getUpgrades().setEndoSteel(anEvent.getStateChange() == ItemEvent.SELECTED);
-      }
-      else if( source == ferroFibros ){
-         configuration.getUpgrades().setFerroFibrous(anEvent.getStateChange() == ItemEvent.SELECTED);
-      }
-      else if( source == speedTweak ){
-         configuration.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED);
-      }
-      else if( source == doubleHeatSinks ){
-         configuration.getUpgrades().setDoubleHeatSinks(anEvent.getStateChange() == ItemEvent.SELECTED);
-      }
-      else if( source == coolRun ){
-         configuration.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED);
-      }
-      else if( source == heatContainment ){
-         configuration.getEfficiencies().setHeatContainment(anEvent.getStateChange() == ItemEvent.SELECTED);
-      }
-      else if( source == doubleBasics ){
-         configuration.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED);
-      }
-      else{
-         throw new RuntimeException("Unkown source control!");
+      catch( RuntimeException e ){
+         JOptionPane.showMessageDialog(this, e.getMessage());
       }
    }
 
