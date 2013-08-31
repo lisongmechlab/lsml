@@ -22,8 +22,8 @@ public class DeleteLoadoutAction extends AbstractAction{
    @Override
    public void actionPerformed(ActionEvent aE){
       if( garage.getMechs().contains(loadout) ){
-         int result = JOptionPane.showConfirmDialog(null, "Are you certain you want to delete this loadout?", "Confirm operation",
-                                                    JOptionPane.YES_NO_OPTION);
+         int result = JOptionPane.showConfirmDialog(null, "Are you certain you want to delete the loadout: " + loadout.getName() + "?",
+                                                    "Confirm operation", JOptionPane.YES_NO_OPTION);
          if( JOptionPane.YES_OPTION == result ){
             try{
                garage.remove(loadout);

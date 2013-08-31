@@ -6,7 +6,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
@@ -21,6 +24,8 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.view.action.DeleteLoadoutAction;
+import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.equipment.EquipmentTreeModel;
 
 public class EquipmentPane extends JTree{
@@ -100,11 +105,23 @@ public class EquipmentPane extends JTree{
       addMouseListener(new MouseAdapter(){
          @Override
          public void mousePressed(MouseEvent e){
+            if( SwingUtilities.isRightMouseButton(e) ){
+               Object clicked = getClickedObject(e);
+               if( clicked instanceof Loadout ){
+                  EquipmentPane.this.setSelectionPath(getClosestPathForLocation(e.getX(), e.getY()));
+
+                  Loadout loadout = (Loadout)clicked;
+                  JPopupMenu menu = new JPopupMenu();
+                  JMenuItem label = new JMenuItem(loadout.getName());
+                  label.setEnabled(false);
+                  menu.add(label);
+                  menu.add(new JMenuItem(new RenameLoadoutAction(loadout)));
+                  menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout)));
+                  menu.show(EquipmentPane.this, e.getX(), e.getY());
+               }
+            }
             if( e.getClickCount() == 2 ){
-               TreePath path = getPathForLocation(e.getX(), e.getY());
-               if( path == null )
-                  return;
-               Object clicked = path.getLastPathComponent();
+               Object clicked = getClickedObject(e);
                if( clicked instanceof Chassi ){
                   Chassi chassi = (Chassi)clicked;
                   Loadout loadout = new Loadout(chassi, xBar);
@@ -117,6 +134,13 @@ public class EquipmentPane extends JTree{
             }
          }
       });
+   }
+
+   private Object getClickedObject(MouseEvent e){
+      TreePath path = getPathForLocation(e.getX(), e.getY());
+      if( path == null )
+         return null;
+      return path.getLastPathComponent();
    }
 
    @Override
