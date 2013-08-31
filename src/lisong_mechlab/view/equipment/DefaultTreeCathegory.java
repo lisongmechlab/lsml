@@ -1,24 +1,30 @@
 package lisong_mechlab.view.equipment;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-class DefaultTreeCathegory extends AbstractTreeCathegory{
-   final protected List<Object>     children = new ArrayList<Object>();
+class DefaultTreeCathegory <T> extends AbstractTreeCathegory{
+   final protected List<T> children = new ArrayList<>();
 
    public DefaultTreeCathegory(String aName, EquipmentTreeModel aModel){
       super(aName, aModel);
    }
-   
+
    public DefaultTreeCathegory(String aName, TreeCathegory aParent, EquipmentTreeModel aModel){
       super(aName, aParent, aModel);
    }
 
-   public void addChild(Object anObject){
+   public void addChild(T anObject){
       children.add(anObject);
+   }
+
+   public void sort(Comparator<T> comparator){
+      Collections.sort(children, comparator);
    }
 
    @Override
