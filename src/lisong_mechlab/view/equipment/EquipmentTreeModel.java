@@ -1,6 +1,7 @@
 package lisong_mechlab.view.equipment;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.event.InternalFrameEvent;
@@ -26,15 +27,15 @@ import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.view.LSML;
 
 public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
-   private final List<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
-   private final DefaultTreeCathegory    root;
+   private final List<TreeModelListener>                     listeners = new ArrayList<TreeModelListener>();
+   private final DefaultTreeCathegory<AbstractTreeCathegory> root;
 
    public EquipmentTreeModel(LSML aLSML, MessageXBar xBar) throws Exception{
-      root = new DefaultTreeCathegory("MechLab", this);
+      root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
 
       List<Item> items = ItemDB.lookup(Item.class);
 
-      DefaultTreeCathegory chassii = new DefaultTreeCathegory("Chassii", root, this);
+      DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
       GarageCathegory garage = new GarageCathegory("Garage", root, this, aLSML.getXBar());
 
       // Process the items list
@@ -45,12 +46,12 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
       List<Item> engineXl = new ArrayList<>();
       List<Item> misc = new ArrayList<>();
       for(Item item : items){
-         if( item instanceof Ammunition){
+         if( item instanceof Ammunition ){
             continue;
          }
          else if( item instanceof EnergyWeapon )
             energy.add((EnergyWeapon)item);
-         else if( item instanceof BallisticWeapon){
+         else if( item instanceof BallisticWeapon ){
             Ammunition ammo = ((AmmoWeapon)item).getAmmoType();
             ballistic.add(item);
             ballistic.add(ammo);
@@ -68,7 +69,7 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
                engineXl.add(engine);
          }
          else{
-            if(item instanceof AmmoWeapon)
+            if( item instanceof AmmoWeapon )
                misc.add(((AmmoWeapon)item).getAmmoType());
             misc.add(item);
          }
@@ -85,10 +86,16 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
 
       // Chassii
       for(ChassiClass chassiClass : ChassiClass.values()){
-         DefaultTreeCathegory chassiiSub = new DefaultTreeCathegory(chassiClass.toString(), chassii, this);
+         DefaultTreeCathegory<Chassi> chassiiSub = new DefaultTreeCathegory<Chassi>(chassiClass.toString(), chassii, this);
          for(Chassi chassi : ChassiDB.lookup(chassiClass)){
             chassiiSub.addChild(chassi);
          }
+         chassiiSub.sort(new Comparator<Chassi>(){
+            @Override
+            public int compare(Chassi aO1, Chassi aO2){
+               return aO1.getNameShort().compareTo(aO2.getNameShort());
+            }
+         });
          chassii.addChild(chassiiSub);
       }
    }
