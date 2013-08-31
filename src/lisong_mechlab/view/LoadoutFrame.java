@@ -15,11 +15,14 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import lisong_mechlab.model.MessageXBar;
+import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 
-public class LoadoutFrame extends JInternalFrame{
+public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private static final long serialVersionUID = -9181002222136052106L;
    private static int        openFrameCount   = 0;
    private static final int  xOffset          = 30, yOffset = 30;
@@ -30,6 +33,9 @@ public class LoadoutFrame extends JInternalFrame{
             true, // closable
             false, // maximizable
             true);// iconifiable
+      
+      anXBar.attach(this);
+      
       // ...Create the GUI and put it in the window...
       // ...Then set the window size or call pack...
 
@@ -144,6 +150,17 @@ public class LoadoutFrame extends JInternalFrame{
    private JMenu createMenuLoadout(){
       JMenu menu = new JMenu("Loadout");
 
+      menu.add(createMenuItem("Rename...", new ActionListener(){
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            String name = JOptionPane.showInputDialog("Give a name");
+            loadout.rename(name);
+            setTitle(loadout.toString());
+         }
+      }));
+      
+      menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout)));
+      
       menu.add(createMenuItem("Load stock", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
@@ -153,15 +170,6 @@ public class LoadoutFrame extends JInternalFrame{
             catch( Exception e ){
                JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't load stock loadout! Error: " + e.getMessage());
             }
-         }
-      }));
-
-      menu.add(createMenuItem("Rename...", new ActionListener(){
-         @Override
-         public void actionPerformed(ActionEvent aArg0){
-            String name = JOptionPane.showInputDialog("Give a name");
-            loadout.rename(name);
-            setTitle(loadout.toString());
          }
       }));
 
@@ -246,5 +254,16 @@ public class LoadoutFrame extends JInternalFrame{
          }
       }));
       return menu;
+   }
+
+   @Override
+   public void receive(Message aMsg){
+      if(aMsg instanceof MechGarage.Message){
+         MechGarage.Message msg = (MechGarage.Message)aMsg;
+         if(msg.type == MechGarage.Message.Type.LoadoutRemoved && msg.loadout == loadout){
+            dispose(); // Closes frame
+         }
+      }
+      
    }
 }
