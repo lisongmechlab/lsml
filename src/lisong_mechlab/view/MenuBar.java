@@ -7,6 +7,9 @@ import java.awt.event.KeyEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+
+import lisong_mechlab.view.action.OpenHelp;
 
 public class MenuBar extends JMenuBar{
    private static final long serialVersionUID = -8841283911101837906L;
@@ -16,29 +19,12 @@ public class MenuBar extends JMenuBar{
 
       {
          JMenu menu = new JMenu("Program");
-         menu.setMnemonic(KeyEvent.VK_F);
+         menu.setMnemonic(KeyEvent.VK_P);
          menu.getAccessibleContext().setAccessibleDescription("Actions relating to the program");
          add(menu);
 
-         {
-            JMenuItem item = new JMenuItem("About", KeyEvent.VK_A);
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent arg0){
-               }
-            });
-            menu.add(item);
-         }
-         
-         {
-            JMenuItem item = new JMenuItem("Help", KeyEvent.VK_H);
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent arg0){
-               }
-            });
-            menu.add(item);
-         }
+         menu.add(new JMenuItem(new OpenHelp("About", "About", KeyStroke.getKeyStroke('a'))));
+         menu.add(new JMenuItem(new OpenHelp("Help", "", KeyStroke.getKeyStroke('h'))));
          
          {
             JMenuItem item = new JMenuItem("Quit", KeyEvent.VK_Q);
@@ -59,7 +45,7 @@ public class MenuBar extends JMenuBar{
          add(menu);
 
          {
-            JMenuItem item = new JMenuItem("New", KeyEvent.VK_O);
+            JMenuItem item = new JMenuItem("New", KeyEvent.VK_N);
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent aArg0){
