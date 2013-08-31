@@ -399,6 +399,44 @@ public class LoadoutTest{
             verify(xBar).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
       }
    }
+   
+   @Test
+   public void testFreeMass(){
+   // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+      
+// Verify
+      assertEquals(90, cut.getFreeMass(), 0.0);
+   }
+   
+   @Test
+   public void testCheckArtemisAdditionLegal(){
+      // Setup
+         Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
+         Loadout anotherCut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+         anotherCut.getPart(Part.LeftTorso).addItem("SRM 6");
+         try{
+            cut.loadStock();
+         }
+         catch( Exception e ){
+            fail("Unexpected exception when loading stock loadout!");
+         }
+      //Verify
+         try{
+//            cut.checkArtemisAdditionLegal();
+            cut.getUpgrades().setArtemis(true);
+            fail("Exception expected!");
+         }
+         catch( Exception e ){
+            //Success!
+         }
+         try{
+            anotherCut.getUpgrades().setArtemis(true);
+         }
+         catch(Exception e){
+            fail("Should not throw exception!");
+         }
+      }
 
    // -------------------------------------------------------------------------
    //
