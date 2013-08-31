@@ -179,6 +179,7 @@ public class LSML extends JFrame{
       JScrollPane jScrollPane = new JScrollPane(equipmentPane);
       JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, configurationsPane);
 
+      sp.setDividerLocation(180);
       setContentPane(sp);
 
       setSize(600, 600);
