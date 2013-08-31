@@ -120,12 +120,11 @@ public class EquipmentPane extends JTree{
                   menu.show(EquipmentPane.this, e.getX(), e.getY());
                }
             }
-            if( e.getClickCount() == 2 ){
+            if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2 ){
                Object clicked = getClickedObject(e);
                if( clicked instanceof Chassi ){
                   Chassi chassi = (Chassi)clicked;
                   Loadout loadout = new Loadout(chassi, xBar);
-                  aLsml.getGarage().add(loadout);
                   aLoadoutDesktop.openLoadout(loadout, xBar);
                }
                else if( clicked instanceof Loadout ){

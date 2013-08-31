@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
@@ -18,7 +20,7 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
    public LoadoutDesktop(){
       setTransferHandler(new ItemTransferHandler());
    }
-   
+
    public void openLoadout(Loadout aLoadout, MessageXBar anXBar){
       LoadoutFrame frame = new LoadoutFrame(aLoadout, anXBar);
       frame.addInternalFrameListener(this);
@@ -89,6 +91,25 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
    public void internalFrameOpened(InternalFrameEvent aE){
       for(InternalFrameListener frameListener : listeners){
          frameListener.internalFrameOpened(aE);
+      }
+   }
+
+   /**
+    * Must be called from the AWT event dispatcher thread! (SwingUtilites.invokeLater etc)
+    */
+   public void closeAll(){
+      if( !SwingUtilities.isEventDispatchThread() )
+         throw new RuntimeException("Bug!");
+
+      for(JInternalFrame frame : getAllFrames()){
+         try{
+            frame.setClosed(true);
+         }
+         catch( PropertyVetoException e ){
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+         frame.dispose();
       }
    }
 }
