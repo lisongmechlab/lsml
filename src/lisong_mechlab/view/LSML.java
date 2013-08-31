@@ -176,10 +176,10 @@ public class LSML extends JFrame{
 
       setJMenuBar(new MenuBar(this));
 
-      LoadoutDesktop configurationsPane = new LoadoutDesktop();
-      EquipmentPane equipmentPane = new EquipmentPane(configurationsPane, this, xBar);
-      JScrollPane jScrollPane = new JScrollPane(equipmentPane);
-      JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, configurationsPane);
+      final LoadoutDesktop configurationsPane = new LoadoutDesktop();
+      final EquipmentPane equipmentPane = new EquipmentPane(configurationsPane, this, xBar);
+      final JScrollPane jScrollPane = new JScrollPane(equipmentPane);
+      final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, configurationsPane);
 
       sp.setDividerLocation(180);
       setContentPane(sp);
@@ -190,6 +190,7 @@ public class LSML extends JFrame{
       addWindowListener(new WindowAdapter(){
          @Override
          public void windowClosing(WindowEvent e){
+            configurationsPane.closeAll();
             saveGarage();
          }
       });
