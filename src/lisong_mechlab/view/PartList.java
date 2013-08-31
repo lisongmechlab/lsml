@@ -1,7 +1,9 @@
 package lisong_mechlab.view;
 
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,16 +142,14 @@ public class PartList extends JList<String>{
       setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       setTransferHandler(new ItemTransferHandler());
 
-      addKeyListener(new KeyListener(){
-
+      addFocusListener(new FocusAdapter(){
          @Override
-         public void keyTyped(KeyEvent aArg0){
+         public void focusLost(FocusEvent e){
+            clearSelection();
          }
-
-         @Override
-         public void keyReleased(KeyEvent aArg0){
-         }
-
+      });
+      
+      addKeyListener(new KeyAdapter(){
          @Override
          public void keyPressed(KeyEvent aArg0){
             if( aArg0.getKeyCode() == KeyEvent.VK_DELETE ){
