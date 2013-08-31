@@ -21,6 +21,7 @@ public class LSML extends JFrame{
 
    private static final long   serialVersionUID       = -2463321343234141728L;
 
+   private static LSML         instance;
    private MechGarage          garage;
    private final MessageXBar   xBar                   = new MessageXBar();
 
@@ -36,7 +37,8 @@ public class LSML extends JFrame{
             garage = MechGarage.open(garageFile, xBar);
          }
          catch( Exception e ){
-            JOptionPane.showMessageDialog(this, e.getMessage() + "\nExiting application!\nPlease check your garage file manually, it is located at: " + garageFile, "Error loading mech garage!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.getMessage() + "\nExiting application!\nPlease check your garage file manually, it is located at: "
+                                                + garageFile, "Error loading mech garage!", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
          }
       }
@@ -68,8 +70,8 @@ public class LSML extends JFrame{
          garage = MechGarage.open(chooser.getSelectedFile(), xBar);
       }
       catch( IOException e ){
-         JOptionPane.showOptionDialog(this, "Error: " + e.getMessage(), "Couldn't open garage!", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                      null, null, 0);
+         JOptionPane.showOptionDialog(this, "Error: " + e.getMessage(), "Couldn't open garage!", JOptionPane.DEFAULT_OPTION,
+                                      JOptionPane.QUESTION_MESSAGE, null, null, 0);
       }
    }
 
@@ -196,7 +198,7 @@ public class LSML extends JFrame{
    }
 
    public static void main(String[] args) throws Exception{
-      new LSML();
+      instance = new LSML();
    }
 
    public MechGarage getGarage(){
@@ -205,6 +207,10 @@ public class LSML extends JFrame{
 
    public MessageXBar getXBar(){
       return xBar;
+   }
+
+   public static LSML getInstance(){
+      return instance;
    }
 
 }
