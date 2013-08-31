@@ -58,8 +58,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private JLabel          topSpeed         = new JLabel("xxx");
    final private JCheckBox       speedTweak       = new JCheckBox("Speed Tweak");
 
-   final private JLabel          rating           = new JLabel("xxx");
-
    final private Statistics      statistics;
    final private HeatDissipation metricHeatDissipation;
    final private AlphaStrike     metricAlphaStrike;
@@ -215,9 +213,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          JPanel summary = new JPanel();
          summary.setBorder(new CompoundBorder(new TitledBorder(null, "Summary"), new EmptyBorder(5, 5, 5, 5)));
          add(summary);
-
-         rating.setText("Battle Rating: 5123");
-         summary.add(rating);
       }
 
       add(Box.createVerticalGlue());
