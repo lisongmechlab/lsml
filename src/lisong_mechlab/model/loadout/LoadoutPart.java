@@ -125,7 +125,6 @@ public class LoadoutPart implements MessageXBar.Reader{
       if( !canAddItem(anItem) ){
          throw new IllegalArgumentException("Can't add " + anItem + "!");
       }
-      // TODO: Handle jumpjets!
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
@@ -186,7 +185,6 @@ public class LoadoutPart implements MessageXBar.Reader{
       items.addAll(internalPart.getInternalItems());
    }
 
-   // FIXME: Bug!
    public void setArmor(ArmorSide anArmorSide, int anArmorAmount){
       if( anArmorAmount > getArmorMax(anArmorSide) ){
          throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + getArmorMax(anArmorSide) + " Was: " + anArmorAmount);

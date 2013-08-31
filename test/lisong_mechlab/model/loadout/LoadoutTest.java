@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
@@ -220,11 +220,11 @@ public class LoadoutTest{
 
       cut.getUpgrades().setFerroFibrous(true);
       assertEquals(freeslots - 14, cut.getNumCriticalSlotsFree());
-      assertEquals(mass - armorTons * (0.12), cut.getMass(), 0.0);
+      assertEquals(mass - armorTons * (1 - 1 / 1.12), cut.getMass(), 0.0);
 
       cut.getUpgrades().setFerroFibrous(false);
       assertEquals(freeslots, cut.getNumCriticalSlotsFree());
-      assertEquals(mass - armorTons * (0.00), cut.getMass(), 0.0);
+      assertEquals(mass, cut.getMass(), 0.0);
    }
 
    @Test
@@ -266,6 +266,19 @@ public class LoadoutTest{
       cut.getUpgrades().setEndoSteel(false);
       assertEquals(freeslots, cut.getNumCriticalSlotsFree());
       assertEquals(mass - intMass * (0.0), cut.getMass(), 0.0);
+   }
+
+   /**
+    * Endo-Steel weight savings is rounded up to the closest half ton. This only applies for mechs with weights
+    * divisible by 5 tons. Such as the JR7-F
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testES_oddtonnage() throws Exception{
+      Loadout cut = new Loadout(ChassiDB.lookup("JR7-F"), xBar);
+      cut.getUpgrades().setEndoSteel(true);
+      assertEquals(2.0, cut.getMass(), 0.0);
    }
 
    @Test
@@ -345,10 +358,97 @@ public class LoadoutTest{
             assertTrue(lb < front_back_ratio);
             assertTrue(ub > front_back_ratio);
 
-            verify(xBar, times(2)).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
+            verify(xBar, atLeast(2)).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
          }
          else
             verify(xBar).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
       }
+   }
+
+   @Test
+   public void testMaxArmor_twice(){
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+      final double front_back_ratio = 3.0 / 2.0;
+      final int tolerance = 1;
+
+      // Execute
+      cut.setMaxArmor(1.0);
+      reset(xBar);
+      cut.setMaxArmor(front_back_ratio);
+
+      // Verify
+      // All parts have max armor
+      for(InternalPart part : cut.getChassi().getInternalParts()){
+         assertEquals(part.getArmorMax(), cut.getPart(part.getType()).getArmorTotal());
+
+         // Double sided parts have a ratio of 3 : 2 armor between front and back.
+         if( part.getType().isTwoSided() ){
+            int front = cut.getPart(part.getType()).getArmor(ArmorSide.FRONT);
+            int back = cut.getPart(part.getType()).getArmor(ArmorSide.BACK);
+
+            double lb = (double)(front - tolerance) / (back + tolerance);
+            double ub = (double)(front + tolerance) / (back - tolerance);
+
+            assertTrue(lb < front_back_ratio);
+            assertTrue(ub > front_back_ratio);
+
+            verify(xBar, atLeast(2)).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
+         }
+         else
+            verify(xBar).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
+      }
+   }
+
+   // -------------------------------------------------------------------------
+   //
+   // Integration tests
+   //
+   // -------------------------------------------------------------------------
+   @Test
+   public void testBuild_jr7f(){
+      Loadout cut = new Loadout(ChassiDB.lookup("JR7-F"), xBar);
+
+      cut.getUpgrades().setDoubleHeatSinks(true);
+      cut.getUpgrades().setFerroFibrous(true);
+      cut.getUpgrades().setEndoSteel(true);
+
+      cut.getPart(Part.LeftArm).setArmor(ArmorSide.ONLY, 24);
+      cut.getPart(Part.LeftArm).addItem("MEDIUM LASER");
+      cut.getPart(Part.LeftArm).addItem("MEDIUM LASER");
+      cut.getPart(Part.LeftArm).addItem("MEDIUM LASER");
+
+      cut.getPart(Part.RightArm).setArmor(ArmorSide.ONLY, 24);
+      cut.getPart(Part.RightArm).addItem("MEDIUM LASER");
+      cut.getPart(Part.RightArm).addItem("MEDIUM LASER");
+      cut.getPart(Part.RightArm).addItem("MEDIUM LASER");
+
+      cut.getPart(Part.LeftTorso).setArmor(ArmorSide.FRONT, 23);
+      cut.getPart(Part.LeftTorso).setArmor(ArmorSide.BACK, 9);
+      cut.getPart(Part.LeftTorso).addItem("JUMP JETS - CLASS V");
+      cut.getPart(Part.LeftTorso).addItem("JUMP JETS - CLASS V");
+
+      cut.getPart(Part.RightTorso).setArmor(ArmorSide.FRONT, 23);
+      cut.getPart(Part.RightTorso).setArmor(ArmorSide.BACK, 9);
+      cut.getPart(Part.RightTorso).addItem("JUMP JETS - CLASS V");
+      cut.getPart(Part.RightTorso).addItem("JUMP JETS - CLASS V");
+      cut.getPart(Part.RightTorso).addItem("DOUBLE HEAT SINK");
+
+      cut.getPart(Part.Head).setArmor(ArmorSide.ONLY, 12);
+
+      cut.getPart(Part.CenterTorso).setArmor(ArmorSide.FRONT, 39);
+      cut.getPart(Part.CenterTorso).setArmor(ArmorSide.BACK, 5);
+      cut.getPart(Part.CenterTorso).addItem("XL ENGINE 300");
+      cut.getPart(Part.CenterTorso).addItem("DOUBLE HEAT SINK");
+      cut.getPart(Part.CenterTorso).addItem("DOUBLE HEAT SINK");
+
+      cut.getPart(Part.LeftLeg).setArmor(ArmorSide.ONLY, 32);
+
+      cut.getPart(Part.RightLeg).setArmor(ArmorSide.ONLY, 32);
+
+      // Verification against in-game mech lab
+      assertEquals(232, cut.getArmor());
+      assertTrue("mass = " + cut.getMass(), cut.getMass() > 35.0 - 1.0 / 32.0);
+      assertTrue("mass = " + cut.getMass(), cut.getMass() <= 35.0);
    }
 }

@@ -9,11 +9,6 @@ import org.junit.Test;
 public class WeaponTest{
 
    @Test
-   public void testIsEquippableOn() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
    public void testInequality(){
       MissileWeapon lrm10 = (MissileWeapon)ItemDB.lookup("LRM 10");
       MissileWeapon lrm15 = (MissileWeapon)ItemDB.lookup("LRM 15");

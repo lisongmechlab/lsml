@@ -196,12 +196,13 @@ public class Loadout implements MessageXBar.Reader{
       double ans = chassi.getInternalMass();
       if( getUpgrades().hasEndoSteel() ){
          ans *= 0.5;
+         ans += (chassi.getMassMax() % 10) * 0.05;
       }
       for(LoadoutPart partConf : parts.values()){
          ans += partConf.getItemMass();
       }
 
-      ans += getArmor() / LoadoutPart.ARMOR_PER_TON * (1.0 - (getUpgrades().hasFerroFibrous() ? 0.12 : 0));
+      ans += getArmor() / (LoadoutPart.ARMOR_PER_TON * (getUpgrades().hasFerroFibrous() ? 1.12 : 1));
       return ans;
    }
 
@@ -330,7 +331,7 @@ public class Loadout implements MessageXBar.Reader{
                break;
             case GUIDANCE:
                checkArtemisAdditionLegal();
-               
+
                break;
             case HEATSINKS:
                break;
@@ -348,24 +349,24 @@ public class Loadout implements MessageXBar.Reader{
    }
 
    private void checkArtemisAdditionLegal() throws IllegalArgumentException{
-      if(upgrades.hasArtemis()){
+      if( upgrades.hasArtemis() ){
          int extraMassCounter = 0;
          int extraCritSlotsCounter = 0;
          for(LoadoutPart part : parts.values()){
             for(Item item : part.getItems()){
-               if(item instanceof MissileWeapon){
+               if( item instanceof MissileWeapon ){
                   extraCritSlotsCounter++;
                   extraMassCounter++;
                }
             }
          }
-         
-         if(!(extraMassCounter <= getFreeMass()) ){
+
+         if( !(extraMassCounter <= getFreeMass()) ){
             getUpgrades().setArtemis(false);
             throw new IllegalArgumentException("Not enough free mass!");
-            
+
          }
-         if(!(extraCritSlotsCounter <= getNumCriticalSlotsFree())){
+         if( !(extraCritSlotsCounter <= getNumCriticalSlotsFree()) ){
             getUpgrades().setArtemis(false);
             throw new IllegalArgumentException("Not enough free crit slots!");
          }
@@ -378,7 +379,6 @@ public class Loadout implements MessageXBar.Reader{
    }
 
    public void setMaxArmor(double aRatio){
-      stripArmor();
       for(LoadoutPart part : parts.values()){
          final int max = part.getInternalPart().getArmorMax();
          if( part.getInternalPart().getType().isTwoSided() ){
@@ -389,6 +389,8 @@ public class Loadout implements MessageXBar.Reader{
             // = > back * ratio = max - back
             int back = (int)(max / (aRatio + 1));
             int front = max - back;
+
+            part.setArmor(ArmorSide.BACK, 0);
             part.setArmor(ArmorSide.FRONT, front);
             part.setArmor(ArmorSide.BACK, back);
          }
@@ -426,7 +428,7 @@ public class Loadout implements MessageXBar.Reader{
 
    public boolean isEquippable(Item anItem){
       for(LoadoutPart part : parts.values()){
-         if(part.canAddItem(anItem))
+         if( part.canAddItem(anItem) )
             return true;
       }
       return false;
