@@ -77,7 +77,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       setContentPane(chartPanel);
 
       chartPanel.setLayout(new OverlayLayout(chartPanel));
-      JButton button = new JButton(new OpenHelp("What is this?", "SustainedDPSGraph", KeyStroke.getKeyStroke('w')));
+      JButton button = new JButton(new OpenHelp("What is this?", "Max-sustained-dps-graph", KeyStroke.getKeyStroke('w')));
       button.setMargin(new Insets(10,10,10,10));
       button.setFocusable(false);
       button.setAlignmentX(Component.RIGHT_ALIGNMENT);
