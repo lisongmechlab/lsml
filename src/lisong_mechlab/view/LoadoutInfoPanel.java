@@ -26,6 +26,7 @@ import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
+import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long     serialVersionUID = 4720126200474042446L;
@@ -53,6 +54,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private JLabel          alphaStrike      = new JLabel("xxx");
    final private JLabel          dpsMax           = new JLabel("xxx");
    final private JLabel          dpsSustained     = new JLabel("xxx");
+   final private JLabel          totalAmmoSupply = new JLabel("xxx" );
 
    final private JLabel          jumpJets         = new JLabel("xxx");
    final private JLabel          topSpeed         = new JLabel("xxx");
@@ -65,6 +67,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private AlphaStrike     metricAlphaStrike;
    final private MaxDPS          metricMaxDPS;
    final private MaxSustainedDPS metricSustainedDps;
+   final private TotalAmmoSupply metricTotalAmmoSupply;
    transient private Boolean     inhibitChanges   = false;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
@@ -74,6 +77,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricMaxDPS = new MaxDPS(loadout);
       metricHeatDissipation = new HeatDissipation(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
+      metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
       anXBar.attach(this);
@@ -207,6 +211,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(dpsSustained);
+         
+         totalAmmoSupply.setAlignmentX(Component.CENTER_ALIGNMENT);
+         offence.add(totalAmmoSupply);
       }
 
       // Summary
@@ -283,6 +290,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                alphaStrike.setText("Alpha strike: " + df.format(metricAlphaStrike.calculate()));
                dpsMax.setText("Max DPS: " + df.format(metricMaxDPS.calculate()));
                dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
+               metricTotalAmmoSupply.calculate();
+               totalAmmoSupply.setText("All Ammo values:" + metricTotalAmmoSupply.generateString());
 
                // Summary
                // ----------------------------------------------------------------------
