@@ -19,7 +19,9 @@ import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.model.loadout.MechGarage.Message.Type;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
+import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
@@ -33,10 +35,10 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             true, // closable
             false, // maximizable
             true);// iconifiable
-      
+
       anXBar.attach(this);
-      
-      // ...Create the GUI and put it in the window...
+
+      // ...Create the GUI and put it in the zwindow...
       // ...Then set the window size or call pack...
 
       loadout = aLoadout;
@@ -150,17 +152,9 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private JMenu createMenuLoadout(){
       JMenu menu = new JMenu("Loadout");
 
-      menu.add(createMenuItem("Rename...", new ActionListener(){
-         @Override
-         public void actionPerformed(ActionEvent aArg0){
-            String name = JOptionPane.showInputDialog("Give a name");
-            loadout.rename(name);
-            setTitle(loadout.toString());
-         }
-      }));
-      
+      menu.add(new JMenuItem(new RenameLoadoutAction(loadout)));
       menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout)));
-      
+
       menu.add(createMenuItem("Load stock", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
@@ -258,12 +252,22 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
    @Override
    public void receive(Message aMsg){
-      if(aMsg instanceof MechGarage.Message){
+      if( aMsg instanceof MechGarage.Message ){
          MechGarage.Message msg = (MechGarage.Message)aMsg;
-         if(msg.type == MechGarage.Message.Type.LoadoutRemoved && msg.loadout == loadout){
-            dispose(); // Closes frame
+         if( msg.loadout == loadout ){
+            if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
+               dispose(); // Closes frame
+            }
          }
       }
-      
+      else if( aMsg instanceof Loadout.Message ){
+         Loadout.Message msg = (Loadout.Message)aMsg;
+         if( msg.loadout == loadout ){
+            if( msg.type == Loadout.Message.Type.RENAME ){
+               setTitle(loadout.toString());
+            }
+         }
+      }
+
    }
 }
