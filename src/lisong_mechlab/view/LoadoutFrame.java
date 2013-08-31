@@ -13,6 +13,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -167,7 +168,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       JMenu menu = new JMenu("Loadout");
 
       JMenuItem save = new JMenuItem("Save to garage");
-      if(isSaved())
+      if( isSaved() )
          save.setEnabled(false);
       else
          save.addActionListener(new ActionListener(){
@@ -176,10 +177,10 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                LSML.getInstance().getGarage().add(loadout);
             }
          });
-      
+
       menu.add(save);
-      menu.add(new JMenuItem(new RenameLoadoutAction(loadout)));
-      menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout)));
+      menu.add(new JMenuItem(new RenameLoadoutAction(loadout, KeyStroke.getKeyStroke("R"))));
+      menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
 
       menu.add(createMenuItem("Load stock", new ActionListener(){
          @Override

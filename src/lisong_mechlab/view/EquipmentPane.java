@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.InternalFrameEvent;
@@ -115,8 +116,8 @@ public class EquipmentPane extends JTree{
                   JMenuItem label = new JMenuItem(loadout.getName());
                   label.setEnabled(false);
                   menu.add(label);
-                  menu.add(new JMenuItem(new RenameLoadoutAction(loadout)));
-                  menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout)));
+                  menu.add(new JMenuItem(new RenameLoadoutAction(loadout, KeyStroke.getKeyStroke("R"))));
+                  menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
                   menu.show(EquipmentPane.this, e.getX(), e.getY());
                }
             }
