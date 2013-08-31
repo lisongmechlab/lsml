@@ -31,6 +31,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private static int        openFrameCount   = 0;
    private static final int  xOffset          = 30, yOffset = 30;
    private final Loadout     loadout;
+   private final MessageXBar xbar;
 
    public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout.toString(), true, // resizable
@@ -38,7 +39,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             false, // maximizable
             true);// iconifiable
 
-      anXBar.attach(this);
+      xbar = anXBar;
+      xbar.attach(this);
 
       // ...Create the GUI and put it in the zwindow...
       // ...Then set the window size or call pack...
@@ -271,7 +273,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(createMenuItem("Damage", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
-            new DamageGraph("DPS over Range", loadout);
+            new DamageGraph(loadout, xbar);
          }
       }));
       return menu;

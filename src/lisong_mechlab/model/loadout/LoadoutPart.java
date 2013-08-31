@@ -39,13 +39,12 @@ public class LoadoutPart implements MessageXBar.Reader{
          return false;
       }
 
-      enum Type{
+      public enum Type{
          ItemAdded, ItemRemoved, ArmorChanged
       };
 
       final public LoadoutPart part;
       final public Type        type;
-
    }
 
    public final static double            ARMOR_PER_TON   = 32.0;
