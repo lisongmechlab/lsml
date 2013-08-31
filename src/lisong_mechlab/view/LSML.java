@@ -68,6 +68,7 @@ public class LSML extends JFrame{
       }
       try{
          garage = MechGarage.open(chooser.getSelectedFile(), xBar);
+         LsmlPreferences.setString(LsmlPreferences.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
       }
       catch( IOException e ){
          JOptionPane.showOptionDialog(this, "Error: " + e.getMessage(), "Couldn't open garage!", JOptionPane.DEFAULT_OPTION,
