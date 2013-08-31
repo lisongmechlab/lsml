@@ -127,28 +127,23 @@ public class StatisticsTest{
       setupMocksHeat(doubleHs, dissipationFactor, capacityFactor, externalHs, internalHs);
 
       double expectedDissipation = (internalHs * internalHsDissipation + externalHs * externalHsDissipation) * dissipationFactor;
-      assertEquals(expectedDissipation, statistics.getHeatDissipation(), Math.ulp(expectedDissipation)*4);
+      assertEquals(expectedDissipation, statistics.getHeatDissipation(), Math.ulp(expectedDissipation) * 4);
    }
 
-   @Test
-   public void testGetHeatGeneration() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-   
    @Test
    public void testGetTimeToOverHeat_15minutes() throws Exception{
       double heat = 10;
       double cooling = heat - 1;
-      double capacity = 15*60;
+      double capacity = 15 * 60;
       Statistics cut = mock(Statistics.class);
       when(cut.getHeatGeneration()).thenReturn(heat);
       when(cut.getHeatDissipation()).thenReturn(cooling);
       when(cut.getHeatCapacity()).thenReturn(capacity);
       when(cut.getTimeToOverHeat()).thenCallRealMethod();
-      
+
       assertEquals(Double.POSITIVE_INFINITY, cut.getTimeToOverHeat(), 0);
    }
-   
+
    @Test
    public void testGetTimeToOverHeat() throws Exception{
       double heat = 10;
@@ -159,7 +154,7 @@ public class StatisticsTest{
       when(cut.getHeatDissipation()).thenReturn(cooling);
       when(cut.getHeatCapacity()).thenReturn(capacity);
       when(cut.getTimeToOverHeat()).thenCallRealMethod();
-      assertEquals(capacity / ( heat - cooling), cut.getTimeToOverHeat(), 0);
+      assertEquals(capacity / (heat - cooling), cut.getTimeToOverHeat(), 0);
    }
 
    @Test
@@ -184,7 +179,7 @@ public class StatisticsTest{
       assertEquals(1.0, cut.getCoolingRatio(), 0);
    }
 
-   private void setupMocksHeat(boolean hasDoubleHs, double dissipationMod, double capacityMod, int numHs, int numInternalHs ){     
+   private void setupMocksHeat(boolean hasDoubleHs, double dissipationMod, double capacityMod, int numHs, int numInternalHs){
       Engine engine = mock(Engine.class);
       when(engine.getNumInternalHeatsinks()).thenReturn(numInternalHs);
       when(efficiencies.getHeatCapacityModifier()).thenReturn(dissipationMod);

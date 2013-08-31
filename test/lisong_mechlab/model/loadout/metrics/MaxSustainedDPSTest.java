@@ -3,7 +3,6 @@ package lisong_mechlab.model.loadout.metrics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -30,12 +29,7 @@ public class MaxSustainedDPSTest{
    private Loadout         loadout;
    @InjectMocks
    private MaxSustainedDPS maxSustainedDPS;
-
-   @Test
-   public void testCalculate() throws Exception{
-      fail("NYI");
-   }
-
+   
    @Test
    public void testGetDamageDistribution() throws Exception{
    // Setup
