@@ -1,9 +1,12 @@
 package lisong_mechlab.view.action;
 
 import java.awt.event.ActionEvent;
+import java.security.KeyStore;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
@@ -13,10 +16,11 @@ public class DeleteLoadoutAction extends AbstractAction{
    private final Loadout     loadout;
    private final MechGarage  garage;
 
-   public DeleteLoadoutAction(MechGarage aGarage, Loadout aLoadout){
+   public DeleteLoadoutAction(MechGarage aGarage, Loadout aLoadout, KeyStroke key){
       super("Delete loadout");
       loadout = aLoadout;
       garage = aGarage;
+      putValue(Action.ACCELERATOR_KEY, key);
    }
 
    @Override
