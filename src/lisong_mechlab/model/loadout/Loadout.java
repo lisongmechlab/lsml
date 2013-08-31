@@ -373,7 +373,7 @@ public class Loadout implements MessageXBar.Reader{
       }
    }
 
-   private double getFreeMass(){
+   public double getFreeMass(){
       double freeMass = chassi.getMassMax() - getMass();
       return freeMass;
    }
