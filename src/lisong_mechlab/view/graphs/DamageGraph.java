@@ -12,14 +12,19 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import lisong_mechlab.Pair;
+import lisong_mechlab.model.MessageXBar;
+import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
+import lisong_mechlab.view.LSML;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -37,10 +42,16 @@ import org.jfree.data.xy.XYSeries;
  * 
  * @author Emily Björk
  */
-public class DamageGraph extends JFrame{
+public class DamageGraph extends JFrame implements MessageXBar.Reader{
    private static final long     serialVersionUID = -8812749194029184861L;
    private final Loadout         loadout;
    private final MaxSustainedDPS maxSustainedDPS;
+   private final ChartPanel      chartPanel;
+
+   JFreeChart makechart(){
+      return ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout, "range [m]", "damage / second", getSeries(),
+                                                   PlotOrientation.VERTICAL, true, true, false);
+   }
 
    /**
     * Creates and displays the {@link DamageGraph}.
@@ -50,14 +61,14 @@ public class DamageGraph extends JFrame{
     * @param aLoadout
     *           Which load out the diagram is for.
     */
-   public DamageGraph(String aTitle, Loadout aLoadout){
-      super(aTitle + " for " + aLoadout);
+   public DamageGraph(Loadout aLoadout, MessageXBar anXbar){
+      super("Max Sustained DPS over range for " + aLoadout);
 
+      anXbar.attach(this);
+      
       loadout = aLoadout;
       maxSustainedDPS = new MaxSustainedDPS(loadout, new HeatDissipation(loadout));
-      final JFreeChart chart = ChartFactory.createStackedXYAreaChart(aTitle + " for " + aLoadout, "range [m]", "damage / second", getSeries(),
-                                                                     PlotOrientation.VERTICAL, true, true, false);
-      final ChartPanel chartPanel = new ChartPanel(chart);
+      chartPanel = new ChartPanel(makechart());
       setContentPane(chartPanel);
 
       setSize(800, 600);
@@ -127,5 +138,24 @@ public class DamageGraph extends JFrame{
          dataset.addSeries(series);
       }
       return dataset;
+   }
+
+   @Override
+   public void receive(Message aMsg){
+      if( aMsg instanceof LoadoutPart.Message ){
+         LoadoutPart.Message msg = (LoadoutPart.Message)aMsg;
+         if( !loadout.getPartLoadOuts().contains(msg.part) ){
+            return;
+         }
+
+         if( msg.type == LoadoutPart.Message.Type.ItemAdded || msg.type == LoadoutPart.Message.Type.ItemRemoved ){
+            SwingUtilities.invokeLater(new Runnable(){
+               @Override
+               public void run(){
+                  chartPanel.setChart(makechart());
+               }
+            });
+         }
+      }
    }
 }
