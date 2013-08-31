@@ -1,5 +1,7 @@
 package lisong_mechlab.view.graphs;
 
+import java.awt.Component;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -11,7 +13,10 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.KeyStroke;
+import javax.swing.OverlayLayout;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.Pair;
@@ -24,7 +29,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
-import lisong_mechlab.view.LSML;
+import lisong_mechlab.view.action.OpenHelp;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -65,11 +70,19 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       super("Max Sustained DPS over range for " + aLoadout);
 
       anXbar.attach(this);
-      
+
       loadout = aLoadout;
       maxSustainedDPS = new MaxSustainedDPS(loadout, new HeatDissipation(loadout));
       chartPanel = new ChartPanel(makechart());
       setContentPane(chartPanel);
+
+      chartPanel.setLayout(new OverlayLayout(chartPanel));
+      JButton button = new JButton(new OpenHelp("What is this?", "SustainedDPSGraph", KeyStroke.getKeyStroke('w')));
+      button.setMargin(new Insets(10,10,10,10));
+      button.setFocusable(false);
+      button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+      button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+      chartPanel.add(button);
 
       setSize(800, 600);
       setVisible(true);

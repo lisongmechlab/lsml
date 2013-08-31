@@ -199,7 +199,16 @@ public class LSML extends JFrame{
    }
 
    public static void main(String[] args) throws Exception{
-      instance = new LSML();
+      javax.swing.SwingUtilities.invokeLater(new Runnable(){
+         public void run(){
+            try{
+               instance = new LSML();
+            }
+            catch( Exception e ){
+               e.printStackTrace();
+            }
+         }
+      });
    }
 
    public MechGarage getGarage(){
