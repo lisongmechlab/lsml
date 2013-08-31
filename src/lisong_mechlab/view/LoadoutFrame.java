@@ -13,13 +13,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
-import lisong_mechlab.model.loadout.MechGarage.Message.Type;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
@@ -62,10 +63,23 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       pack();
       setVisible(true);
+
+      addInternalFrameListener(new InternalFrameAdapter(){
+         @Override
+         public void internalFrameClosing(InternalFrameEvent e){
+            if( !isSaved() ){
+               int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to save " + loadout.getName() + " to your garage?",
+                                                       "Save to garage?", JOptionPane.YES_NO_OPTION);
+               if( ans == JOptionPane.YES_OPTION ){
+                  LSML.getInstance().getGarage().add(loadout);
+               }
+            }
+         }
+      });
    }
 
    public boolean isSaved(){
-      return false;
+      return LSML.getInstance().getGarage().getMechs().contains(loadout);
    }
 
    public Loadout getLoadout(){
@@ -152,6 +166,18 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private JMenu createMenuLoadout(){
       JMenu menu = new JMenu("Loadout");
 
+      JMenuItem save = new JMenuItem("Save to garage");
+      if(isSaved())
+         save.setEnabled(false);
+      else
+         save.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aArg0){
+               LSML.getInstance().getGarage().add(loadout);
+            }
+         });
+      
+      menu.add(save);
       menu.add(new JMenuItem(new RenameLoadoutAction(loadout)));
       menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout)));
 
@@ -268,6 +294,5 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             }
          }
       }
-
    }
 }
