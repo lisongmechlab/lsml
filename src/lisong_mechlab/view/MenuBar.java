@@ -24,7 +24,8 @@ public class MenuBar extends JMenuBar{
          add(menu);
 
          menu.add(new JMenuItem(new OpenHelp("About", "About", KeyStroke.getKeyStroke('a'))));
-         menu.add(new JMenuItem(new OpenHelp("Help", "", KeyStroke.getKeyStroke('h'))));
+         menu.add(new JMenuItem(new OpenHelp("User Manual", "User-Manual", KeyStroke.getKeyStroke('m'))));
+         menu.add(new JMenuItem(new OpenHelp("Legal", "Legal", KeyStroke.getKeyStroke('m'))));
          
          {
             JMenuItem item = new JMenuItem("Quit", KeyEvent.VK_Q);
