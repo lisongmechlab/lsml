@@ -1,5 +1,7 @@
 package lisong_mechlab.view;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -9,7 +11,9 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 import javax.swing.DropMode;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
 import lisong_mechlab.model.MessageXBar;
@@ -23,7 +27,38 @@ import lisong_mechlab.model.loadout.LoadoutPart;
 public class PartList extends JList<String>{
    private static final long serialVersionUID = 5995694414450060827L;
    private final LoadoutPart part;
+   
+   class Renderer extends JLabel implements ListCellRenderer<Object> {
+      private static final long serialVersionUID = -8157859670319431469L;
 
+      public Component getListCellRendererComponent(JList<?> list,
+                                                    Object value,
+                                                    int index,
+                                                    boolean isSelected,
+                                                    boolean cellHasFocus) {
+          setText(value.toString());
+
+          if(value instanceof String){
+             String string = (String)value;
+             if(string == Model.EMPTY || string == Model.MULTISLOT || string.contains(Model.HEATSINKS_STRING)){
+                setForeground(Color.GREEN);
+                setOpaque(false);
+             }
+             else{
+                setOpaque(true);
+                Item item = ItemDB.lookup(string);
+                ColourManager.colour(this, item);
+             }
+          }
+          else{
+             setForeground(Color.GREEN);
+             setOpaque(false);
+          }
+
+          return this;
+      }
+   }
+   
    class Model extends AbstractListModel<String> implements MessageXBar.Reader{
       private static final String HEATSINKS_STRING = "Heatsinks: ";
       private static final String EMPTY            = "empty";
@@ -105,21 +140,6 @@ public class PartList extends JList<String>{
          while( strings.size() < total_slots )
             strings.add(EMPTY);
          return strings.get(arg0);
-
-         /*
-          * int critslot = 0; int item = 0; Item lastItem = null; int engHsLeft = partConf.getNumEngineHeatsinksMax();
-          * List<Item> items = new ArrayList<>(partConf.getItems()); for(int i = 0; i < arg0; ++i){ if( 0 == critslot ){
-          * while( engHsLeft > 0 && item < items.size() && items.get(item) instanceof HeatSink ){ engHsLeft--; item++;
-          * lastItem = null; } if( item < items.size() ){ lastItem = items.get(item); critslot =
-          * partConf.getItemCriticalSlots(item);// lastItem.getNumCriticalSlots(); item++; } else{ break; } }
-          * critslot--; } while( engHsLeft > 0 && lastItem instanceof HeatSink ){ engHsLeft--; item++; lastItem = null;
-          * } // Case 1: Empty slot if( item >= items.size() && 0 == critslot ){ return EMPTY; } // Case 1.5: Engine
-          * with space for heatsinks else if( lastItem instanceof Engine && ((Engine)lastItem).getNumHeatsinkSlots() > 0
-          * && critslot == 1 ){ return "Heatsinks: " + partConf.getNumEngineHeatsinks() + " / " +
-          * ((Engine)lastItem).getNumHeatsinkSlots(); } // Case 2: Part of a multi-slot item else if( critslot != 0 ){
-          * return MULTISLOT; } // Case 3: Name of a part else{ // return partConf.getItems().get(item).getName();
-          * return partConf.getItemDisplayName(item); } // TODO: Case 4 Dynamic Armor // TODO: Case 5 Internal Structure
-          */
       }
 
       @Override
@@ -141,7 +161,8 @@ public class PartList extends JList<String>{
       setDropMode(DropMode.ON);
       setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       setTransferHandler(new ItemTransferHandler());
-
+      setCellRenderer(new Renderer());
+      
       addFocusListener(new FocusAdapter(){
          @Override
          public void focusLost(FocusEvent e){
