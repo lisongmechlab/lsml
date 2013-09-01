@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 
+import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
@@ -37,6 +38,15 @@ public class TotalAmmoSupply extends AmmoMetric{
             }
          }
 
+      }
+      
+      for(Item item : loadout.getAllItems()){
+         if( item instanceof AmmoWeapon ){
+            if( !ammoValues.containsKey(((AmmoWeapon)item).getAmmoType().getName()) ){
+               ammoValues.put(((AmmoWeapon)item).getAmmoType().getName(), 0);
+            }
+         }
+         
       }
       return ammoValues;
    }
