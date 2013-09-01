@@ -1,6 +1,5 @@
 package lisong_mechlab.view;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -38,16 +37,37 @@ public class EquipmentPane extends JTree{
       private static final long serialVersionUID = 5198340883942696537L;
       private Loadout           loadout;
 
+      public Renderer(){
+         // setOpaque(true);
+      }
+
+      /*
+       * @Override public Color getBackgroundNonSelectionColor() { return (null); }
+       * @Override public Color getBackgroundSelectionColor() { return Color.GREEN; }
+       * @Override public Color getBackground() { return (null); }
+       */
+
       @Override
       public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus){
-         Component r = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
          if( value instanceof String ){
+            setOpaque(true);
             Item item = ItemDB.lookup((String)value);
-            if( loadout != null && !loadout.isEquippable(item) ){
-               r.setForeground(Color.RED);
+            if( loadout != null ){
+               if( !loadout.isEquippable(item) )
+                  ColourManager.colourInvalid(this);
+               else
+                  ColourManager.colour(this, item);
+            }
+            else{
+               ColourManager.colour(this, item);
             }
          }
-         return r;
+         else
+            setOpaque(false);
+
+         return this;
       }
 
       @Override
