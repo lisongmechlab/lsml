@@ -82,7 +82,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricHeatDissipation = new HeatDissipation(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
       metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
-      anAmmoTableDataModel = new AmmoTableDataModel(loadout);
+      anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
       anXBar.attach(this);
@@ -219,16 +219,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       }
          //Ammo
       { 
-         /*JPanel ammo = new JPanel();
-         totalAmmoSupply = new JTable(anAmmoTableDataModel);
-         totalAmmoSupply.setModel(anAmmoTableDataModel);
-         JTableHeader header =  totalAmmoSupply.getTableHeader();
-         ammo.add(header,BorderLayout.NORTH);
-         ammo.add(totalAmmoSupply,BorderLayout.CENTER);
-  
-         ammo.setBorder(new CompoundBorder(new TitledBorder(null, "Ammo"), new EmptyBorder(5, 5, 5, 5)));
-         add(ammo);
-         */
+        
          JPanel ammo = new JPanel();
          totalAmmoSupply = new JTable(anAmmoTableDataModel);
          totalAmmoSupply.setModel(anAmmoTableDataModel);
