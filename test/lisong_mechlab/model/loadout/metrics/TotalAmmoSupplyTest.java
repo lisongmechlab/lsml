@@ -6,6 +6,7 @@ import java.util.TreeMap;
 
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -42,10 +43,36 @@ public class TotalAmmoSupplyTest{
       }
       totalAmmoSupply = new TotalAmmoSupply(cut);
       //Verify
+      Item testItem = null;
+      for(Item item : cut.getAllItems()){
+         if(item instanceof Ammunition){
+            testItem = item; 
+         }
+        
+      }
      TreeMap<Item, Integer> ammoValuesTest =  totalAmmoSupply.calculate();
-     Integer actual = ammoValuesTest.get("SRM AMMO");
+     Integer actual = ammoValuesTest.get(testItem);
      assertEquals(200, actual.intValue());
       
+   }
+   
+   @Test
+   public void testGetVolleyNumber(){
+   // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
+      try{
+         cut.loadStock();
+      }
+      catch( Exception e ){
+         fail("Unexpected exception when loading stock!");
+         e.printStackTrace();
+      }
+      totalAmmoSupply = new TotalAmmoSupply(cut);
+      //Verify
+      totalAmmoSupply.calculate();
+      TreeMap<String, Integer> volleyValuesTest =  totalAmmoSupply.getShotsPerVolleyForEach();
+      Integer actual = volleyValuesTest.get("SRM AMMO");
+      assertEquals(10, actual.intValue());
    }
    
 
