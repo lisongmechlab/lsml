@@ -6,6 +6,8 @@ import java.util.TreeMap;
 
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.item.Ammunition;
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 
 import org.junit.Before;
@@ -41,14 +43,21 @@ public class TotalAmmoSupplyTest{
       }
       totalAmmoSupply = new TotalAmmoSupply(cut);
       //Verify
-     TreeMap<String, Integer> ammoValuesTest =  totalAmmoSupply.calculate();
-     Integer actual = ammoValuesTest.get("SRM AMMO");
+      Item testItem = null;
+      for(Item item : cut.getAllItems()){
+         if(item instanceof Ammunition){
+            testItem = item; 
+         }
+        
+      }
+     TreeMap<Item, Integer> ammoValuesTest =  totalAmmoSupply.calculate();
+     Integer actual = ammoValuesTest.get(testItem);
      assertEquals(200, actual.intValue());
       
    }
    
    @Test
-   public void testStringGenerate(){
+   public void testGetVolleyNumber(){
    // Setup
       Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
       try{
@@ -59,8 +68,12 @@ public class TotalAmmoSupplyTest{
          e.printStackTrace();
       }
       totalAmmoSupply = new TotalAmmoSupply(cut);
-      totalAmmoSupply.calculate();
       //Verify
-      assertEquals("SRM AMMO-  200,  ", totalAmmoSupply.generateString());
+      totalAmmoSupply.calculate();
+      TreeMap<String, Integer> volleyValuesTest =  totalAmmoSupply.getShotsPerVolleyForEach();
+      Integer actual = volleyValuesTest.get("SRM AMMO");
+      assertEquals(10, actual.intValue());
    }
+   
+
 }
