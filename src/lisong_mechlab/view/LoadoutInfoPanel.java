@@ -36,6 +36,7 @@ import lisong_mechlab.model.tables.AmmoTableDataModel;
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long     serialVersionUID = 4720126200474042446L;
    final private Loadout         loadout;
+   private MessageXBar anXBar;
 
    final private JProgressBar    massBar;
    final private JLabel          massValue        = new JLabel("xxx");
@@ -84,6 +85,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
       anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+      this.anXBar = anXBar;
 
       anXBar.attach(this);
 
@@ -247,6 +249,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    public void updateDisplay(){
       SwingUtilities.invokeLater(new Runnable(){
+
+
          @Override
          public void run(){
             synchronized( inhibitChanges ){
@@ -306,8 +310,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                metricTotalAmmoSupply.calculate();
 
-               anAmmoTableDataModel.fillInData();
-               totalAmmoSupply = new JTable(anAmmoTableDataModel);
+               AmmoTableDataModel anAmmoTableDataModel1 = new AmmoTableDataModel(loadout, anXBar);
+               anAmmoTableDataModel1.fillInData();
+               totalAmmoSupply.setModel(anAmmoTableDataModel1);
 
 
                // Summary
