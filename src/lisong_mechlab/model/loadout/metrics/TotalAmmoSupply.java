@@ -1,23 +1,20 @@
 package lisong_mechlab.model.loadout.metrics;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 
-public class TotalAmmoSupply extends AmmoMetric implements MessageXBar.Reader{
+public class TotalAmmoSupply extends AmmoMetric{
 
    private final Loadout          loadout;
    private TreeMap<Item, Integer> ammoValues;
 
    public TotalAmmoSupply(Loadout aLoadout){
       this.loadout = aLoadout;
+
       ammoValues = new TreeMap<>();
    }
 
@@ -80,10 +77,6 @@ public class TotalAmmoSupply extends AmmoMetric implements MessageXBar.Reader{
       return volleyValues;
    }
 
-   @Override
-   public void receive(Message aMsg){
-      calculate();
 
-   }
 
 }
