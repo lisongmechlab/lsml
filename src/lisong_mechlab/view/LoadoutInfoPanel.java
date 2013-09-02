@@ -238,7 +238,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // ----------------------------------------------------------------------
       {
          JPanel summary = new JPanel();
-         summary.setBorder(new CompoundBorder(new TitledBorder(null, "Summary"), new EmptyBorder(5, 5, 5, 5)));
+         summary.setBorder(new CompoundBorder(new TitledBorder(null, "Summary"), new EmptyBorder(0, 0, 0, 0)));
          add(summary);
       }
 
