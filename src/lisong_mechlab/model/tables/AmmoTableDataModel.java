@@ -12,13 +12,29 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
+import lisong_mechlab.model.tables.AmmoTableDataModel.Message.Type;
 
 public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
+   public static class Message implements MessageXBar.Message{
+      
+      public Type type;
+      public AmmoTableDataModel ammoTableDataModel;
+
+      public Message(Type aType, AmmoTableDataModel aTDM){
+         type = aType;
+         ammoTableDataModel = aTDM;
+      }
+
+      public enum Type{
+        TABLEUPDATE
+      }
+
+   }
+
    
    private final List<TableModelListener>                     listeners = new ArrayList<TableModelListener>();
    
@@ -27,11 +43,13 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
    private TotalAmmoSupply totalAmmoSupply;
    private Object[][] data = {{"srm"}, {"345"}};//Exception occurs if there arn't some values.
    private String[] columnNames = {"Weapon" , "Ammo", "Volley Amount" , "Number of Volleys"};
+   private MessageXBar aXBar;
    
    public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
       this.aLoadout = aloadout;
       totalAmmoSupply = new TotalAmmoSupply(aLoadout);
       totalAmmoSupply.calculate();
+      this.aXBar = aXBar;
       aXBar.attach(this);
 
    }
@@ -103,6 +121,13 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
    public String getColumnName(int aColumnIndex){
       return columnNames[aColumnIndex];
    }
+   
+  
+   public void tableChanged(TableModelEvent e){
+      totalAmmoSupply = new TotalAmmoSupply(aLoadout);
+      totalAmmoSupply.calculate();
+      fillInData();
+   }
 
    @Override
    public int getRowCount(){
@@ -133,11 +158,19 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
    }
 
    @Override
-   public void receive(Message aMsg){
-      if(aMsg instanceof LoadoutPart.Message){
+   public void receive(MessageXBar.Message aMsg){
+      if(this.aXBar != null){
+           if(aMsg instanceof LoadoutPart.Message){
          totalAmmoSupply = new TotalAmmoSupply(aLoadout);
-         fillInData();
+         totalAmmoSupply.calculate();
+//         if(!(totalAmmoSupply.calculate().size() == 0)){
+            fillInData();
+        aXBar.post(new Message(Type.TABLEUPDATE, this));
+//         }
+         
       }
+      }
+    
       
    }
 

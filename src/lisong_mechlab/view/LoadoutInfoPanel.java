@@ -303,6 +303,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                alphaStrike.setText("Alpha strike: " + df.format(metricAlphaStrike.calculate()));
                dpsMax.setText("Max DPS: " + df.format(metricMaxDPS.calculate()));
                dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
+
                metricTotalAmmoSupply.calculate();
 
                anAmmoTableDataModel.fillInData();
