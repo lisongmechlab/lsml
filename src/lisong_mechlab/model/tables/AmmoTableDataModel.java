@@ -12,6 +12,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import lisong_mechlab.model.MessageXBar;
+import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
@@ -40,11 +41,11 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
    
    public void fillInData(){
       data = new Object[totalAmmoSupply.calculate().size()][4];
-      Set<Entry<Item, Integer>> entrySet = totalAmmoSupply.calculate().entrySet();
-      Iterator<Entry<Item, Integer>> entryIterator = entrySet.iterator();
+      Set<Entry<Ammunition, Integer>> entrySet = totalAmmoSupply.calculate().entrySet();
+      Iterator<Entry<Ammunition, Integer>> entryIterator = entrySet.iterator();
       int entryCounter = 0;
       while( entryIterator.hasNext()){
-         Entry<Item, Integer> entryTemp = entryIterator.next();
+         Entry<Ammunition, Integer> entryTemp = entryIterator.next();
             data[entryCounter][0] = entryTemp.getKey().getName();
           data[entryCounter][1] = entryTemp.getValue();
           entryCounter++;
