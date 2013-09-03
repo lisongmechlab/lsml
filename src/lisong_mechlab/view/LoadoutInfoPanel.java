@@ -1,5 +1,6 @@
 package lisong_mechlab.view;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -13,10 +14,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.JTableHeader;
 
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
@@ -27,10 +31,12 @@ import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
+import lisong_mechlab.model.tables.AmmoTableDataModel;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long     serialVersionUID = 4720126200474042446L;
    final private Loadout         loadout;
+   private MessageXBar anXBar;
 
    final private JProgressBar    massBar;
    final private JLabel          massValue        = new JLabel("xxx");
@@ -54,7 +60,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private JLabel          alphaStrike      = new JLabel("xxx");
    final private JLabel          dpsMax           = new JLabel("xxx");
    final private JLabel          dpsSustained     = new JLabel("xxx");
-   final private JLabel          totalAmmoSupply = new JLabel("xxx" );
+   private JTable          totalAmmoSupply = new JTable( );
 
    final private JLabel          jumpJets         = new JLabel("xxx");
    final private JLabel          topSpeed         = new JLabel("xxx");
@@ -66,6 +72,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private MaxDPS          metricMaxDPS;
    final private MaxSustainedDPS metricSustainedDps;
    final private TotalAmmoSupply metricTotalAmmoSupply;
+   final private AmmoTableDataModel  anAmmoTableDataModel;
    transient private Boolean     inhibitChanges   = false;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
@@ -76,7 +83,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricHeatDissipation = new HeatDissipation(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
       metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
+      anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+      this.anXBar = anXBar;
 
       anXBar.attach(this);
 
@@ -209,16 +218,27 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(dpsSustained);
+      }
+         //Ammo
+      { 
+        
+         JPanel ammo = new JPanel();
+         totalAmmoSupply = new JTable(anAmmoTableDataModel);
+         totalAmmoSupply.setModel(anAmmoTableDataModel);
+         ammo.setLayout(new BorderLayout()); // unless already there
+         ammo.add(totalAmmoSupply, BorderLayout.CENTER);
+         ammo.add(totalAmmoSupply.getTableHeader(), BorderLayout.NORTH);
+         ammo.setBorder(new CompoundBorder(new TitledBorder(null, "Ammo"), new EmptyBorder(5, 5, 5, 5)));
+         add(ammo);
          
-         totalAmmoSupply.setAlignmentX(Component.CENTER_ALIGNMENT);
-         offence.add(totalAmmoSupply);
+       
       }
 
       // Summary
       // ----------------------------------------------------------------------
       {
          JPanel summary = new JPanel();
-         summary.setBorder(new CompoundBorder(new TitledBorder(null, "Summary"), new EmptyBorder(5, 5, 5, 5)));
+         summary.setBorder(new CompoundBorder(new TitledBorder(null, "Summary"), new EmptyBorder(0, 0, 0, 0)));
          add(summary);
       }
 
@@ -229,6 +249,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    public void updateDisplay(){
       SwingUtilities.invokeLater(new Runnable(){
+
+
          @Override
          public void run(){
             synchronized( inhibitChanges ){
@@ -285,8 +307,13 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                alphaStrike.setText("Alpha strike: " + df.format(metricAlphaStrike.calculate()));
                dpsMax.setText("Max DPS: " + df.format(metricMaxDPS.calculate()));
                dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
+
                metricTotalAmmoSupply.calculate();
-               totalAmmoSupply.setText("All Ammo values:" + metricTotalAmmoSupply.generateString());
+
+               AmmoTableDataModel anAmmoTableDataModel1 = new AmmoTableDataModel(loadout, anXBar);
+               anAmmoTableDataModel1.fillInData();
+               totalAmmoSupply.setModel(anAmmoTableDataModel1);
+
 
                // Summary
                // ----------------------------------------------------------------------

@@ -34,6 +34,10 @@ public class Weapon extends HeatSource{
    public double getDamagePerVolley(){
       return damagePerProjectile * numPerVolley;
    }
+   
+   public int getNumberOfShotsPerVolley(){
+      return numPerVolley;
+   }
 
    public double getSecondsPerShot(){
       if( cycleTime < 0.1 )
