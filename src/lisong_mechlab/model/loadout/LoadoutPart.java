@@ -263,21 +263,20 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
    }
 
-   public String getItemDisplayName(Item item){
-      return item.getName(loadout.getUpgrades());
+   public String getItemDisplayName(Item anItem){
+      return anItem.getName(loadout.getUpgrades());
    }
 
    public String getItemDisplayName(int index){
       return getItemDisplayName(items.get(index));
    }
 
+   public int getItemCriticalSlots(Item anItem){
+      return anItem.getNumCriticalSlots(loadout.getUpgrades());
+   }
+
    public int getItemCriticalSlots(int index){
-      Item item = items.get(index);
-      if( item instanceof MissileWeapon ){
-         MissileWeapon missileWeapon = (MissileWeapon)item;
-         return missileWeapon.getNumCriticalSlots(loadout.getUpgrades());
-      }
-      return items.get(index).getNumCriticalSlots();
+      return getItemCriticalSlots(items.get(index));
    }
 
    private boolean checkCommonRules(Item anItem){
