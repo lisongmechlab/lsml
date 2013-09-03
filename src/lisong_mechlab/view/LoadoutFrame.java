@@ -101,7 +101,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightArm), anXBar));
+         subPanel.add(Box.createVerticalStrut(50));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightArm), anXBar, true));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -112,8 +113,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightTorso), anXBar));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightLeg), anXBar));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightTorso), anXBar, true));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightLeg), anXBar, false));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -124,8 +125,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.CenterTorso), anXBar));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, false));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.CenterTorso), anXBar, true));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -136,8 +137,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftTorso), anXBar));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftLeg), anXBar));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftTorso), anXBar, true));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftLeg), anXBar, false));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -148,7 +149,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftArm), anXBar));
+         subPanel.add(Box.createVerticalStrut(50));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftArm), anXBar, true));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }

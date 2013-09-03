@@ -349,30 +349,19 @@ public class Loadout implements MessageXBar.Reader{
    }
 
    private void checkArtemisAdditionLegal() throws IllegalArgumentException{
-      if( upgrades.hasArtemis() ){
-         double extraMassCounter = 0;
-         int extraCritSlotsCounter = 0;
-         for(LoadoutPart part : parts.values()){
-            for(Item item : part.getItems()){
-               if( item instanceof MissileWeapon ){
-                  extraCritSlotsCounter++;
-                  extraMassCounter++;
-               }
-            }
-         }
+      
+      if( getMass() > chassi.getMassMax() ){
 
-         if( extraMassCounter > (getFreeMass() + extraMassCounter) ){
-            
-            getUpgrades().setArtemis(false);
-            throw new IllegalArgumentException("Not enough free mass!");
+         getUpgrades().setArtemis(false);
+         throw new IllegalArgumentException("Not enough free mass!");
 
-         }
-         if( extraCritSlotsCounter >  (getNumCriticalSlotsFree() + extraCritSlotsCounter) && (extraCritSlotsCounter != 0)) {
-            getUpgrades().setArtemis(false);
-            throw new IllegalArgumentException("Not enough free crit slots!");
-         }
+      }
+      if( getNumCriticalSlotsFree() < 0 ){
+         getUpgrades().setArtemis(false);
+         throw new IllegalArgumentException("Not enough free crit slots!");
       }
    }
+   
 
    public double getFreeMass(){
       double freeMass = chassi.getMassMax() - getMass();
