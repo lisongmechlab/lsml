@@ -1,6 +1,12 @@
 package lisong_mechlab.model.item;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,10 +17,10 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.Upgrades;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -249,38 +255,47 @@ public class ItemTests{
          if( weapon.getName().toLowerCase().contains("streak") || weapon.getName().toLowerCase().contains("narc") ){
             // ARTEMIS does not affect SSRM
             for(boolean artemis : new boolean[] {true, false}){
-               assertEquals(weapon.getMass(), weapon.getMass(artemis), 0.0);
-               assertEquals(weapon.getName(), weapon.getName(artemis));
-               assertEquals(weapon.getNumCriticalSlots(), weapon.getNumCriticalSlots(artemis));
+               Upgrades upgrades = mock(Upgrades.class);
+               when(upgrades.hasArtemis()).thenReturn(artemis);
+
+               assertEquals(weapon.getMass(), weapon.getMass(upgrades), 0.0);
+               assertEquals(weapon.getName(), weapon.getName(upgrades));
+               assertEquals(weapon.getNumCriticalSlots(), weapon.getNumCriticalSlots(upgrades));
                Ammunition ammunition = weapon.getAmmoType();
-               assertEquals(ammunition.getName(), ammunition.getName(artemis));
+               assertEquals(ammunition.getName(), ammunition.getName(upgrades));
             }
          }
          else{
-            // Same number of slots if ARTEMIS is disabled.
-            assertEquals(weapon.getNumCriticalSlots(), weapon.getNumCriticalSlots(false));
+            Upgrades noArtemis = mock(Upgrades.class);
+            when(noArtemis.hasArtemis()).thenReturn(false);
 
-            // One more slot if ARTEMIS is enabled.
-            assertEquals(weapon.getNumCriticalSlots() + 1, weapon.getNumCriticalSlots(true));
+            Upgrades artemis = mock(Upgrades.class);
+            when(artemis.hasArtemis()).thenReturn(true);
+
+            // Same number of slots if ARTEMIS is disabled.
+            assertEquals(weapon.getNumCriticalSlots(), weapon.getNumCriticalSlots(noArtemis));
 
             // Same mass if ARTEMIS is disabled.
-            assertEquals(weapon.getMass(), weapon.getMass(false), 0.0);
-
-            // One ton more mass if ARTEMIS is enabled.
-            assertEquals(weapon.getMass() + 1.0, weapon.getMass(true), 0.0);
+            assertEquals(weapon.getMass(), weapon.getMass(noArtemis), 0.0);
 
             // Weapon name must always contains he original name regardless of ARTEMIS status
-            assertEquals(weapon.getName(), weapon.getName(false));
-            assertTrue(weapon.getName(true).contains(weapon.getName()));
+            assertEquals(weapon.getName(), weapon.getName(noArtemis));
+            assertTrue(weapon.getName(artemis).contains(weapon.getName()));
+
+            // One more slot if ARTEMIS is enabled.
+            assertEquals(weapon.getNumCriticalSlots() + 1, weapon.getNumCriticalSlots(artemis));
+
+            // One ton more mass if ARTEMIS is enabled.
+            assertEquals(weapon.getMass() + 1.0, weapon.getMass(artemis), 0.0);
 
             // Name contains ARTEMIS if ARTEMIS is enabled
-            assertFalse(weapon.getName(false).toLowerCase().contains("artemis"));
-            assertTrue(weapon.getName(true).toLowerCase().contains("artemis"));
+            assertFalse(weapon.getName(noArtemis).toLowerCase().contains("artemis"));
+            assertTrue(weapon.getName(artemis).toLowerCase().contains("artemis"));
 
             // Ammo name changes to reflect ARTEMIS status
             Ammunition ammunition = weapon.getAmmoType();
-            assertEquals(ammunition.getName(), ammunition.getName(false));
-            assertEquals(ammunition.getName() + " + ARTEMIS", ammunition.getName(true));
+            assertEquals(ammunition.getName(), ammunition.getName(noArtemis));
+            assertEquals(ammunition.getName() + " + ARTEMIS", ammunition.getName(artemis));
          }
       }
 
@@ -300,8 +315,11 @@ public class ItemTests{
             continue;
 
          for(boolean artemis : new boolean[] {true, false}){
+            Upgrades upgrades = mock(Upgrades.class);
+            when(upgrades.hasArtemis()).thenReturn(artemis);
+
             Ammunition ammunition = weapon.getAmmoType();
-            assertEquals(ammunition.getName(), ammunition.getName(artemis));
+            assertEquals(ammunition.getName(), ammunition.getName(upgrades));
          }
       }
    }

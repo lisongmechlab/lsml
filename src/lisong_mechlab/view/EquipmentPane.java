@@ -56,12 +56,12 @@ public class EquipmentPane extends JTree{
             Item item = ItemDB.lookup((String)value);
             if( loadout != null ){
                if( !loadout.isEquippable(item) )
-                  ColourManager.colourInvalid(this);
+                  StyleManager.colourInvalid(this);
                else
-                  ColourManager.colour(this, item);
+                  StyleManager.colour(this, item);
             }
             else{
-               ColourManager.colour(this, item);
+               StyleManager.colour(this, item);
             }
          }
          else

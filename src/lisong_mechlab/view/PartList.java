@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
+import javax.swing.BorderFactory;
 import javax.swing.DropMode;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
+import lisong_mechlab.Pair;
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.Engine;
@@ -24,122 +26,165 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutPart;
 
-public class PartList extends JList<String>{
+public class PartList extends JList<Item>{
    private static final long serialVersionUID = 5995694414450060827L;
+
    private final LoadoutPart part;
-   
-   class Renderer extends JLabel implements ListCellRenderer<Object> {
+
+   private enum ListEntryType{
+      Empty, MultiSlot, Item, EngineHeatSink, LastSlot
+   }
+
+   private class Renderer extends JLabel implements ListCellRenderer<Object>{
+
       private static final long serialVersionUID = -8157859670319431469L;
 
-      public Component getListCellRendererComponent(JList<?> list,
-                                                    Object value,
-                                                    int index,
-                                                    boolean isSelected,
-                                                    boolean cellHasFocus) {
-          setText(value.toString());
+      @Override
+      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus){
+         Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(index);
+         setBorder(BorderFactory.createEmptyBorder());
+         switch( pair.first ){
+            case Empty:{
+               setForeground(Color.BLACK);
+               setOpaque(false);
+               setText(Model.EMPTY);
+               break;
+            }
+            case Item:{
+               setText(part.getItemDisplayName(pair.second));
+               if( pair.second.getNumCriticalSlots() == 1 ){
+                  StyleManager.styleItem(this, pair.second);
+               }
+               else{
+                  StyleManager.styleItemTop(this, pair.second);
+               }
+               break;
+            }
+            case LastSlot:{
+               setText(Model.MULTISLOT);
+               StyleManager.styleItemBottom(this, pair.second);
+               break;
+            }
+            case MultiSlot:{
+               setText(Model.MULTISLOT);
+               StyleManager.styleItemMiddle(this, pair.second);
+               break;
+            }
+            case EngineHeatSink:{
+               setText(Model.HEATSINKS_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
+               StyleManager.styleItemBottom(this, pair.second);
+               break;
+            }
+         }
 
-          if(value instanceof String){
-             String string = (String)value;
-             if(string == Model.EMPTY || string == Model.MULTISLOT || string.contains(Model.HEATSINKS_STRING)){
-                setForeground(Color.GREEN);
-                setOpaque(false);
-             }
-             else{
-                setOpaque(true);
-                Item item = ItemDB.lookup(string);
-                ColourManager.colour(this, item);
-             }
-          }
-          else{
-             setForeground(Color.GREEN);
-             setOpaque(false);
-          }
+         if( isSelected ){
+            setForeground(getForeground().brighter());
+            setBackground(getBackground().brighter());
+         }
 
-          return this;
+         return this;
       }
    }
-   
-   class Model extends AbstractListModel<String> implements MessageXBar.Reader{
+
+   private class Model extends AbstractListModel<Item> implements MessageXBar.Reader{
       private static final String HEATSINKS_STRING = "Heatsinks: ";
       private static final String EMPTY            = "empty";
       private static final String MULTISLOT        = "---";
       private static final long   serialVersionUID = 2438473891359444131L;
 
-      public Model(MessageXBar aXBar){
+      Model(MessageXBar aXBar){
          aXBar.attach(this);
       }
 
-      public boolean putElement(Item anItem, int anIndex, boolean aShouldReplace){
-         String it = null;
-         while( (it = (String)getElementAt(anIndex)).equals(MULTISLOT) ){
-            anIndex--;
-         }
-
-         // Drop on an empty slot
-         if( it.equals(EMPTY) ){
-            if( part.canAddItem(anItem) ){
-               part.addItem(anItem);
-               return true;
+      boolean putElement(Item anItem, int anIndex, boolean aShouldReplace){
+         Pair<ListEntryType, Item> target = getElementTypeAt(anIndex);
+         switch( target.first ){
+            case EngineHeatSink:{
+               if( anItem instanceof HeatSink && part.canAddItem(anItem) ){
+                  part.addItem(anItem);
+                  return true;
+               }
+               return false;
             }
-            return false;
-         }
-
-         // Drop of a heat sink on a engine is a special case
-         if( anItem instanceof HeatSink && (it.contains(" ENGINE ") || it.startsWith(HEATSINKS_STRING)) ){
-            if( part.getNumEngineHeatsinks() < part.getNumEngineHeatsinksMax() ){
+            case LastSlot: // Fall through
+            case Item: // Fall through
+            case MultiSlot:{
+               // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
+               if( aShouldReplace && !(anItem instanceof HeatSink && target.second instanceof Engine) ){
+                  part.removeItem(target.second);
+               }
+               // Fall through
+            }
+            case Empty:{
                if( part.canAddItem(anItem) ){
                   part.addItem(anItem);
                   return true;
                }
+               return false;
             }
-            return false;
+            default:
+               break;
+         }
+         return false;
+         // TODO Handle Ferro-Fibrous
+         // TODO Handle Endo-Steel
+      }
+
+      Pair<ListEntryType, Item> getElementTypeAt(int arg0){
+         List<Item> items = new ArrayList<>(part.getItems());
+         int numEngineHs = part.getNumEngineHeatsinks();
+         boolean foundhs = true;
+         while( numEngineHs > 0 && !items.isEmpty() && foundhs ){
+            foundhs = false;
+            for(Item item : items){
+               if( item instanceof HeatSink ){
+                  items.remove(item);
+                  numEngineHs--;
+                  foundhs = true;
+                  break;
+               }
+            }
          }
 
-         // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
-         try{
-            if( aShouldReplace ){
-               Item rem = ItemDB.lookup(it);
-               part.removeItem(rem);
-            }
-            if( part.canAddItem(anItem) ){
-               part.addItem(anItem);
-               return true;
-            }
-            return false;
-         }
-         catch( Exception e ){
-            return false;
-         }
+         if( items.isEmpty() )
+            return new Pair<ListEntryType, Item>(ListEntryType.Empty, null);
 
-         // TODO Handle Ferro Fibrous
-         // TODO Handle Endo Steel
+         int itemsIdx = 0;
+         Item item = items.get(itemsIdx);
+         itemsIdx++;
+
+         int spaceLeft = item.getNumCriticalSlots();
+         for(int slot = 0; slot < arg0; ++slot){
+            spaceLeft--;
+            if( spaceLeft == 0 ){
+               if( itemsIdx < items.size() ){
+                  item = items.get(itemsIdx);
+                  itemsIdx++;
+                  spaceLeft = item.getNumCriticalSlots();
+               }
+               else
+                  return new Pair<ListEntryType, Item>(ListEntryType.Empty, null);
+            }
+         }
+         if( spaceLeft == 1 && item.getNumCriticalSlots() > 1 ){
+            if( item instanceof Engine )
+               return new Pair<ListEntryType, Item>(ListEntryType.EngineHeatSink, item);
+            else
+               return new Pair<ListEntryType, Item>(ListEntryType.LastSlot, item);
+         }
+         if( spaceLeft == item.getNumCriticalSlots() )
+            return new Pair<ListEntryType, Item>(ListEntryType.Item, item);
+         if( spaceLeft > 0 )
+            return new Pair<ListEntryType, Item>(ListEntryType.MultiSlot, item);
+         return new Pair<ListEntryType, Item>(ListEntryType.Empty, null);
       }
 
       @Override
-      public String getElementAt(int arg0){
-         int total_slots = part.getInternalPart().getNumCriticalslots();
-         int hs_slots = part.getNumEngineHeatsinksMax();
-         List<String> strings = new ArrayList<>(total_slots);
-         for(int i = 0; i < part.getItems().size(); ++i){
-            final Item item = part.getItems().get(i);
-            if( hs_slots > 0 && item instanceof HeatSink ){
-               hs_slots--;
-               continue;
-            }
-
-            strings.add(part.getItemDisplayName(i));
-            int spacers_left = part.getItemCriticalSlots(i) - 1;
-            while( spacers_left > 0 ){
-               if( spacers_left == 1 && item instanceof Engine && ((Engine)item).getNumHeatsinkSlots() > 0 )
-                  strings.add(HEATSINKS_STRING + part.getNumEngineHeatsinks() + " / " + ((Engine)item).getNumHeatsinkSlots());
-               else
-                  strings.add(MULTISLOT);
-               spacers_left--;
-            }
-         }
-         while( strings.size() < total_slots )
-            strings.add(EMPTY);
-         return strings.get(arg0);
+      public Item getElementAt(int arg0){
+         Pair<ListEntryType, Item> target = getElementTypeAt(arg0);
+         if( target.first == ListEntryType.Item )
+            return getElementTypeAt(arg0).second;
+         return null;
       }
 
       @Override
@@ -162,14 +207,14 @@ public class PartList extends JList<String>{
       setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       setTransferHandler(new ItemTransferHandler());
       setCellRenderer(new Renderer());
-      
+
       addFocusListener(new FocusAdapter(){
          @Override
          public void focusLost(FocusEvent e){
             clearSelection();
          }
       });
-      
+
       addKeyListener(new KeyAdapter(){
          @Override
          public void keyPressed(KeyEvent aArg0){
@@ -185,36 +230,26 @@ public class PartList extends JList<String>{
    List<Item> getSelectedItems(){
       List<Item> items = new ArrayList<Item>();
       int[] idxs = getSelectedIndices();
-      List<Integer> removed = new ArrayList<>();
       for(int i : idxs){
-         while( getModel().getElementAt(i) == Model.MULTISLOT ){
-            i--;
+         Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(i);
+         if( pair.first == ListEntryType.Item ){
+            items.add(pair.second);
          }
-         if( getModel().getElementAt(i).startsWith(Model.HEATSINKS_STRING) ){
+         else if( pair.first == ListEntryType.EngineHeatSink ){
             if( part.getNumEngineHeatsinks() > 0 ){
                items.add(ItemDB.lookup("STD HEAT SINK"));
                items.add(ItemDB.lookup("DOUBLE HEAT SINK"));
             }
          }
-         else if( !removed.contains(i) ){
-            try{
-               Item item = ItemDB.lookup(getModel().getElementAt(i));
-               items.add(item);
-            }
-            catch( IllegalArgumentException e ){
-               continue; // Not valid entry.
-            }
-         }
-         removed.add(i);
       }
-      /*
-       * for(String obj : getSelectedValuesList()){ try{ Item item = ItemDB.lookup(obj); items.add(item); } catch(
-       * IllegalArgumentException e ){ continue; // Not valid entry. } }
-       */
       return items;
    }
 
    LoadoutPart getPart(){
       return part;
+   }
+
+   public void putElement(Item aItem, int aDropIndex, boolean aFirst){
+      ((Model)getModel()).putElement(aItem, aDropIndex, aFirst);
    }
 }
