@@ -350,7 +350,7 @@ public class Loadout implements MessageXBar.Reader{
 
    private void checkArtemisAdditionLegal() throws IllegalArgumentException{
       if( upgrades.hasArtemis() ){
-         int extraMassCounter = 0;
+         double extraMassCounter = 0;
          int extraCritSlotsCounter = 0;
          for(LoadoutPart part : parts.values()){
             for(Item item : part.getItems()){
@@ -361,12 +361,13 @@ public class Loadout implements MessageXBar.Reader{
             }
          }
 
-         if( !(extraMassCounter <= getFreeMass()) ){
+         if( extraMassCounter > (getFreeMass() + extraMassCounter) ){
+            
             getUpgrades().setArtemis(false);
             throw new IllegalArgumentException("Not enough free mass!");
 
          }
-         if( extraCritSlotsCounter <= getNumCriticalSlotsFree() && (extraCritSlotsCounter != 0)) {
+         if( extraCritSlotsCounter >  (getNumCriticalSlotsFree() + extraCritSlotsCounter) && (extraCritSlotsCounter != 0)) {
             getUpgrades().setArtemis(false);
             throw new IllegalArgumentException("Not enough free crit slots!");
          }
