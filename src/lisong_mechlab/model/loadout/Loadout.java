@@ -366,7 +366,7 @@ public class Loadout implements MessageXBar.Reader{
             throw new IllegalArgumentException("Not enough free mass!");
 
          }
-         if( !(extraCritSlotsCounter <= getNumCriticalSlotsFree()) ){
+         if( extraCritSlotsCounter <= getNumCriticalSlotsFree() && (extraCritSlotsCounter != 0)) {
             getUpgrades().setArtemis(false);
             throw new IllegalArgumentException("Not enough free crit slots!");
          }
