@@ -10,7 +10,7 @@ import lisong_mechlab.model.loadout.Loadout;
 public class TotalAmmoSupply extends AmmoMetric{
 
    private final Loadout          loadout;
-   private TreeMap<Ammunition, Integer> ammoValues;
+   private TreeMap<Item, Integer> ammoValues;
 
    public TotalAmmoSupply(Loadout aLoadout){
       this.loadout = aLoadout;
@@ -19,7 +19,7 @@ public class TotalAmmoSupply extends AmmoMetric{
    }
 
    @Override
-   public TreeMap<Ammunition, Integer> calculate(){
+   public TreeMap<Item, Integer> calculate(){
       ammoValues.clear();
       for(Item item : loadout.getAllItems()){
          if( item instanceof Ammunition ){
@@ -32,7 +32,7 @@ public class TotalAmmoSupply extends AmmoMetric{
 
             }
             else{
-               ammoValues.put((Ammunition)item, ((Ammunition)item).getShotsPerTon());
+               ammoValues.put(item, ((Ammunition)item).getShotsPerTon());
             }
          }
 
@@ -41,7 +41,7 @@ public class TotalAmmoSupply extends AmmoMetric{
       for(Item item : loadout.getAllItems()){
          if( item instanceof AmmoWeapon ){
             if( !ammoValues.containsKey(((AmmoWeapon)item).getAmmoType()) ){
-               ammoValues.put((Ammunition)item, 0);
+               ammoValues.put(item, 0);
             }
          }
 
