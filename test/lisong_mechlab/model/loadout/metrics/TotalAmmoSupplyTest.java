@@ -1,6 +1,7 @@
 package lisong_mechlab.model.loadout.metrics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.TreeMap;
 
@@ -10,12 +11,10 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -28,11 +27,11 @@ public class TotalAmmoSupplyTest{
    @Mock
    private Loadout         loadout;
    @InjectMocks
-   private TotalAmmoSupply          totalAmmoSupply;
+   private TotalAmmoSupply totalAmmoSupply;
 
    @Test
    public void testGenerate(){
-   // Setup
+      // Setup
       Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
       try{
          cut.loadStock();
@@ -42,23 +41,23 @@ public class TotalAmmoSupplyTest{
          e.printStackTrace();
       }
       totalAmmoSupply = new TotalAmmoSupply(cut);
-      //Verify
+      // Verify
       Item testItem = null;
       for(Item item : cut.getAllItems()){
-         if(item instanceof Ammunition){
-            testItem = item; 
+         if( item instanceof Ammunition ){
+            testItem = item;
          }
-        
+
       }
-     TreeMap<Item, Integer> ammoValuesTest =  totalAmmoSupply.calculate();
-     Integer actual = ammoValuesTest.get(testItem);
-     assertEquals(200, actual.intValue());
-      
+      TreeMap<Item, Integer> ammoValuesTest = totalAmmoSupply.calculate();
+      Integer actual = ammoValuesTest.get(testItem);
+      assertEquals(200, actual.intValue());
+
    }
-   
+
    @Test
    public void testGetVolleyNumber(){
-   // Setup
+      // Setup
       Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
       try{
          cut.loadStock();
@@ -68,12 +67,11 @@ public class TotalAmmoSupplyTest{
          e.printStackTrace();
       }
       totalAmmoSupply = new TotalAmmoSupply(cut);
-      //Verify
+      // Verify
       totalAmmoSupply.calculate();
-      TreeMap<String, Integer> volleyValuesTest =  totalAmmoSupply.getShotsPerVolleyForEach();
+      TreeMap<String, Integer> volleyValuesTest = totalAmmoSupply.getShotsPerVolleyForEach();
       Integer actual = volleyValuesTest.get("SRM AMMO");
       assertEquals(10, actual.intValue());
    }
-   
 
 }
