@@ -12,7 +12,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;

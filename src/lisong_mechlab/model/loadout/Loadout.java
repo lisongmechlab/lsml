@@ -23,7 +23,6 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout.Message.Type;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
@@ -349,19 +348,15 @@ public class Loadout implements MessageXBar.Reader{
    }
 
    private void checkArtemisAdditionLegal() throws IllegalArgumentException{
-      
       if( getMass() > chassi.getMassMax() ){
-
          getUpgrades().setArtemis(false);
          throw new IllegalArgumentException("Not enough free mass!");
-
       }
       if( getNumCriticalSlotsFree() < 0 ){
          getUpgrades().setArtemis(false);
          throw new IllegalArgumentException("Not enough free crit slots!");
       }
    }
-   
 
    public double getFreeMass(){
       double freeMass = chassi.getMassMax() - getMass();

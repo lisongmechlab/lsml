@@ -14,13 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.JTableHeader;
 
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
@@ -34,46 +32,46 @@ import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.tables.AmmoTableDataModel;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
-   private static final long     serialVersionUID = 4720126200474042446L;
-   final private Loadout         loadout;
-   private MessageXBar anXBar;
+   private static final long        serialVersionUID = 4720126200474042446L;
+   final private Loadout            loadout;
+   private MessageXBar              anXBar;
 
-   final private JProgressBar    massBar;
-   final private JLabel          massValue        = new JLabel("xxx");
-   final private JProgressBar    armorBar;
-   final private JLabel          armorValue       = new JLabel("xxx");
-   final private JProgressBar    critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
-   final private JLabel          critslotsValue   = new JLabel("xxx");
-   final private JCheckBox       ferroFibros      = new JCheckBox("Ferro-Fibrous");
-   final private JCheckBox       endoSteel        = new JCheckBox("Endo-Steel");
-   final private JCheckBox       artemis          = new JCheckBox("Artemis IV");
+   final private JProgressBar       massBar;
+   final private JLabel             massValue        = new JLabel("xxx");
+   final private JProgressBar       armorBar;
+   final private JLabel             armorValue       = new JLabel("xxx");
+   final private JProgressBar       critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
+   final private JLabel             critslotsValue   = new JLabel("xxx");
+   final private JCheckBox          ferroFibros      = new JCheckBox("Ferro-Fibrous");
+   final private JCheckBox          endoSteel        = new JCheckBox("Endo-Steel");
+   final private JCheckBox          artemis          = new JCheckBox("Artemis IV");
 
-   final private JLabel          heatsinks        = new JLabel("xxx");
-   final private JLabel          effectiveHS      = new JLabel("xxx");
-   final private JLabel          timeToOverheat   = new JLabel("xxx");
-   final private JLabel          coolingRatio     = new JLabel("xxx");
-   final private JCheckBox       doubleHeatSinks  = new JCheckBox("Double Heatsinks");
-   final private JCheckBox       coolRun          = new JCheckBox("Cool Run");
-   final private JCheckBox       heatContainment  = new JCheckBox("Heat Containment");
-   final private JCheckBox       doubleBasics     = new JCheckBox("Double Basics");
+   final private JLabel             heatsinks        = new JLabel("xxx");
+   final private JLabel             effectiveHS      = new JLabel("xxx");
+   final private JLabel             timeToOverheat   = new JLabel("xxx");
+   final private JLabel             coolingRatio     = new JLabel("xxx");
+   final private JCheckBox          doubleHeatSinks  = new JCheckBox("Double Heatsinks");
+   final private JCheckBox          coolRun          = new JCheckBox("Cool Run");
+   final private JCheckBox          heatContainment  = new JCheckBox("Heat Containment");
+   final private JCheckBox          doubleBasics     = new JCheckBox("Double Basics");
 
-   final private JLabel          alphaStrike      = new JLabel("xxx");
-   final private JLabel          dpsMax           = new JLabel("xxx");
-   final private JLabel          dpsSustained     = new JLabel("xxx");
-   private JTable          totalAmmoSupply = new JTable( );
+   final private JLabel             alphaStrike      = new JLabel("xxx");
+   final private JLabel             dpsMax           = new JLabel("xxx");
+   final private JLabel             dpsSustained     = new JLabel("xxx");
+   private JTable                   totalAmmoSupply  = new JTable();
 
-   final private JLabel          jumpJets         = new JLabel("xxx");
-   final private JLabel          topSpeed         = new JLabel("xxx");
-   final private JCheckBox       speedTweak       = new JCheckBox("Speed Tweak");
+   final private JLabel             jumpJets         = new JLabel("xxx");
+   final private JLabel             topSpeed         = new JLabel("xxx");
+   final private JCheckBox          speedTweak       = new JCheckBox("Speed Tweak");
 
-   final private Statistics      statistics;
-   final private HeatDissipation metricHeatDissipation;
-   final private AlphaStrike     metricAlphaStrike;
-   final private MaxDPS          metricMaxDPS;
-   final private MaxSustainedDPS metricSustainedDps;
-   final private TotalAmmoSupply metricTotalAmmoSupply;
-   final private AmmoTableDataModel  anAmmoTableDataModel;
-   transient private Boolean     inhibitChanges   = false;
+   final private Statistics         statistics;
+   final private HeatDissipation    metricHeatDissipation;
+   final private AlphaStrike        metricAlphaStrike;
+   final private MaxDPS             metricMaxDPS;
+   final private MaxSustainedDPS    metricSustainedDps;
+   final private TotalAmmoSupply    metricTotalAmmoSupply;
+   final private AmmoTableDataModel anAmmoTableDataModel;
+   transient private Boolean        inhibitChanges   = false;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
@@ -219,9 +217,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(dpsSustained);
       }
-         //Ammo
-      { 
-        
+      // Ammo
+      {
+
          JPanel ammo = new JPanel();
          totalAmmoSupply = new JTable(anAmmoTableDataModel);
          totalAmmoSupply.setModel(anAmmoTableDataModel);
@@ -230,8 +228,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          ammo.add(totalAmmoSupply.getTableHeader(), BorderLayout.NORTH);
          ammo.setBorder(new CompoundBorder(new TitledBorder(null, "Ammo"), new EmptyBorder(5, 5, 5, 5)));
          add(ammo);
-         
-       
+
       }
 
       // Summary
@@ -249,7 +246,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    public void updateDisplay(){
       SwingUtilities.invokeLater(new Runnable(){
-
 
          @Override
          public void run(){
@@ -313,7 +309,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                AmmoTableDataModel anAmmoTableDataModel1 = new AmmoTableDataModel(loadout, anXBar);
                anAmmoTableDataModel1.fillInData();
                totalAmmoSupply.setModel(anAmmoTableDataModel1);
-
 
                // Summary
                // ----------------------------------------------------------------------
