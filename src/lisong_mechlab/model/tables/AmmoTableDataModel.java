@@ -145,16 +145,13 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
 
    @Override
    public void receive(MessageXBar.Message aMsg){
-      if(this.aXBar != null){
-           if(aMsg instanceof LoadoutPart.Message){
-         totalAmmoSupply = new TotalAmmoSupply(aLoadout);
-         totalAmmoSupply.calculate();
-//         if(!(totalAmmoSupply.calculate().size() == 0)){
+      if( this.aXBar != null ){
+         if( aMsg instanceof LoadoutPart.Message ){
+            totalAmmoSupply = new TotalAmmoSupply(aLoadout);
+            totalAmmoSupply.calculate();
             fillInData();
-//         }
-            tableChanged(new TableModelEvent(this));
-         
-      }
+
+         }
       }
     
       
