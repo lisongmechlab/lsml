@@ -132,9 +132,9 @@ public class EfficienciesTest{
 
       // These do
       cut.setHeatContainment(true);
-      assertEquals(1.075, cut.getHeatCapacityModifier(), 0.0);
+      assertEquals(1.1, cut.getHeatCapacityModifier(), 0.0);
       cut.setDoubleBasics(true);
-      assertEquals(1.15, cut.getHeatCapacityModifier(), 0.0);
+      assertEquals(1.2, cut.getHeatCapacityModifier(), 0.0);
    }
 
    @Test

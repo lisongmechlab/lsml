@@ -2,7 +2,6 @@ package lisong_mechlab.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -19,103 +18,33 @@ import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.LoadoutPart;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
-   private static final long serialVersionUID = -4399442572295284661L;
+   private static final int  ARMOR_LABEL_WIDTH = 30;
 
-   private final int         CELL_HEIGHT      = 20;
-   private final int         CELL_WIDTH       = 120;
+   private static final long serialVersionUID  = -4399442572295284661L;
 
-   JLabel                    lbl_armor_front;
-   JLabel                    lbl_armor_back;
-   JSpinner                  spinner_front;
-   JSpinner                  spinner_back;
+   private final int         CELL_HEIGHT       = 20;
+   private final int         CELL_WIDTH        = 120;
+
+   private JLabel            frontArmorLabel;
+   private JLabel            backArmorLabel;
 
    private final LoadoutPart loadoutPart;
 
-   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar){
+   private boolean           canHaveHardpoints;
+
+   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints){
       super(new BorderLayout());
       anXBar.attach(this);
       loadoutPart = aLoadoutPart;
+      canHaveHardpoints = aCanHaveHardpoints;
+
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-      // setBackground(Color.pink);
       setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(aLoadoutPart.getInternalPart().getType().longName()),
                                                    BorderFactory.createEmptyBorder(0, 4, 4, 8)));
-
-      // Armor spinner
-      JPanel armorPanel = new JPanel();
-      {
-         if( aLoadoutPart.getInternalPart().getType().isTwoSided() ){
-            armorPanel.setLayout(new BoxLayout(armorPanel, BoxLayout.PAGE_AXIS));
-
-            {
-               JPanel p = new JPanel();
-               p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
-               spinner_front = new JSpinner(new ArmorSpinner(aLoadoutPart, ArmorSide.FRONT, anXBar));
-               JLabel frontLabel = new JLabel("Front");
-               frontLabel.setLabelFor(spinner_front);
-
-               p.add(frontLabel);
-               p.add(Box.createRigidArea(new Dimension(5, 0)));
-               p.add(spinner_front);
-               lbl_armor_front = new JLabel("/ " + Integer.valueOf(aLoadoutPart.getArmorMax(ArmorSide.FRONT)));
-               p.add(lbl_armor_front);
-               armorPanel.add(p);
-            }
-
-            {
-               JPanel p = new JPanel();
-               p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
-               spinner_back = new JSpinner(new ArmorSpinner(aLoadoutPart, ArmorSide.BACK, anXBar));
-               JLabel backLabel = new JLabel("Back");
-               backLabel.setLabelFor(spinner_back);
-
-               p.add(backLabel);
-               p.add(Box.createRigidArea(new Dimension(5, 0)));
-               p.add(spinner_back);
-               lbl_armor_back = new JLabel("/ " + Integer.valueOf(aLoadoutPart.getArmorMax(ArmorSide.BACK)));
-               p.add(lbl_armor_back);
-               armorPanel.add(p);
-            }
-         }
-         else{
-            armorPanel.setLayout(new BoxLayout(armorPanel, BoxLayout.LINE_AXIS));
-
-            spinner_front = new JSpinner(new ArmorSpinner(aLoadoutPart, ArmorSide.ONLY, anXBar));
-            JLabel label = new JLabel("Armor");
-            label.setLabelFor(spinner_front);
-
-            armorPanel.add(label);
-            armorPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-            armorPanel.add(spinner_front);
-
-            JLabel armorMax = new JLabel("/ " + Integer.valueOf(aLoadoutPart.getInternalPart().getArmorMax()));
-            armorPanel.add(armorMax);
-         }
-         // Dimension armorSpinnerSize = armorSpinner.getPreferredSize();
-         // armorSpinnerSize.height = CELL_HEIGHT;
-         // armorSpinnerSize.width = 80;
-         // armorSpinner.setMaximumSize(armorSpinnerSize);
-
-         Insets insets = getBorder().getBorderInsets(armorPanel);
-         Dimension armorPanelDimension = armorPanel.getPreferredSize();
-         armorPanelDimension.width = insets.left + insets.right + CELL_WIDTH + 2; // Magic number 2, seems to work.. :s
-         armorPanel.setMaximumSize(armorPanelDimension);
-         add(armorPanel);
-      }
-
-      // Hardpoints
-      {
-         for(HardpointType hp : HardpointType.values()){
-            int hardpoints = aLoadoutPart.getInternalPart().getNumHardpoints(hp);
-            if( 1 == hardpoints ){
-               JLabel hardpointLabel = new JLabel(hp.shortName());
-               add(hardpointLabel);
-            }
-            else if( 1 < hardpoints ){
-               JLabel hardpointLabel = new JLabel(hardpoints + hp.shortName());
-               add(hardpointLabel);
-            }
-         }
-      }
+      add(makeArmorPanel(anXBar));
+      
+      if( canHaveHardpoints )
+         add(makeHardpointsPanel());
 
       // Critical slots
       PartList list = new PartList(aLoadoutPart, anXBar);
@@ -124,14 +53,86 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       add(list);
       add(Box.createRigidArea(new Dimension(0, 10)));
+   }
 
-      // Formatting
-      // Insets insets = getBorder().getBorderInsets(list);
-      // int panelHeight = insets.bottom + insets.top + CELL_HEIGHT
-      // * aConfPart.part().criticalslots() + 2 * CELL_HEIGHT;
-      // int panelWidth = insets.left + insets.right + CELL_WIDTH;
-      // setMinimumSize(new Dimension(panelWidth, panelHeight));
-      // setMaximumSize(new Dimension(panelWidth, panelHeight));
+   private JPanel makeHardpointsPanel(){
+      JPanel panel = new JPanel();
+      BoxLayout layoutManager = new BoxLayout(panel, BoxLayout.LINE_AXIS);
+      panel.setLayout(layoutManager);
+      ///panel.setBackground(Color.PINK.darker());
+      panel.add(Box.createVerticalStrut(CELL_HEIGHT + CELL_HEIGHT / 2));
+
+      for(HardpointType hp : HardpointType.values()){
+         final int hardpoints = loadoutPart.getInternalPart().getNumHardpoints(hp);
+         if( 1 == hardpoints ){
+            JLabel label = new JLabel(hp.shortName());
+            label.setBackground(StyleManager.getBgColorFor(hp));
+            label.setForeground(StyleManager.getFgColorFor(hp));
+            label.setBorder(new RoundedBorders());
+            label.setOpaque(true);
+            panel.add(label);
+         }
+         else if( 1 < hardpoints ){
+            JLabel label = new JLabel(hardpoints + hp.shortName());
+            label.setBackground(StyleManager.getBgColorFor(hp));
+            label.setForeground(StyleManager.getFgColorFor(hp));
+            label.setBorder(new RoundedBorders());
+            label.setOpaque(true);
+            panel.add(label);
+         }
+      }
+
+      panel.add(Box.createHorizontalGlue());
+      return panel;
+   }
+
+   private JPanel makeArmorPanel(MessageXBar anXBar){
+      JPanel panel = new JPanel();
+
+      if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+         frontArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
+         frontArmorLabel.setPreferredSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         backArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
+         backArmorLabel.setPreferredSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+
+         JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar));
+         frontSpinner.setMaximumSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+
+         JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar));
+         backSpinner.setMaximumSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+
+         JPanel frontPanel = new JPanel();
+         frontPanel.setLayout(new BoxLayout(frontPanel, BoxLayout.LINE_AXIS));
+         frontPanel.add(new JLabel("Front:"));
+         frontPanel.add(Box.createHorizontalGlue());
+         frontPanel.add(frontSpinner);
+         frontPanel.add(frontArmorLabel);
+
+         JPanel backPanel = new JPanel();
+         backPanel.setLayout(new BoxLayout(backPanel, BoxLayout.LINE_AXIS));
+         backPanel.add(new JLabel("Back:"));
+         backPanel.add(Box.createHorizontalGlue());
+         backPanel.add(backSpinner);
+         backPanel.add(backArmorLabel);
+
+         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+         panel.add(frontPanel);
+         panel.add(backPanel);
+      }
+      else{
+         JLabel armorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()));
+         armorLabel.setPreferredSize(new Dimension(ARMOR_LABEL_WIDTH, 0));
+
+         JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar));
+         spinner.setMaximumSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+
+         panel.add(new JLabel("Armor:"));
+         panel.add(Box.createHorizontalGlue());
+         panel.add(spinner);
+         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+         panel.add(armorLabel);
+      }
+      return panel;
    }
 
    @Override
@@ -139,18 +140,10 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       SwingUtilities.invokeLater(new Runnable(){
          @Override
          public void run(){
-            if( lbl_armor_back != null && lbl_armor_front != null ){
-               lbl_armor_front.setText("/ " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
-               lbl_armor_back.setText("/ " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
+            if( backArmorLabel != null && frontArmorLabel != null ){
+               frontArmorLabel.setText(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
+               backArmorLabel.setText(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
             }
-/*
-            if( spinner_back == null ){
-               spinner_front.setValue(loadoutPart.getArmor(ArmorSide.ONLY));
-            }
-            else{
-               spinner_front.setValue(loadoutPart.getArmor(ArmorSide.FRONT));
-               spinner_back.setValue(loadoutPart.getArmor(ArmorSide.BACK));
-            }*/
          }
       });
    }
