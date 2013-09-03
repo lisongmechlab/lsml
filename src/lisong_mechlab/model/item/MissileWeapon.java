@@ -1,6 +1,7 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class MissileWeapon extends AmmoWeapon{
@@ -18,24 +19,24 @@ public class MissileWeapon extends AmmoWeapon{
       // Emulate a steep fall off by nudging max ever so slightly
       return super.getRangeMax() + Math.ulp(super.getRangeMax())*RANGE_ULP_FUZZ; 
    }
-   
-   @Deprecated
-   public int getNumCriticalSlots(boolean hasArtemis){
-      if( hasArtemis && isArtemisCapable() )
+
+   @Override
+   public int getNumCriticalSlots(Upgrades aUpgrades){
+      if( aUpgrades.hasArtemis() && isArtemisCapable() )
          return super.getNumCriticalSlots() + 1;
       return super.getNumCriticalSlots();
    }
 
-   @Deprecated
-   public double getMass(boolean hasArtemis){
-      if( hasArtemis && isArtemisCapable() )
+   @Override
+   public double getMass(Upgrades aUpgrades){
+      if( aUpgrades.hasArtemis() && isArtemisCapable() )
          return super.getMass() + 1.0;
       return super.getMass();
    }
 
-   @Deprecated
-   public String getName(boolean hasArtemis){
-      if( hasArtemis && isArtemisCapable() )
+   @Override
+   public String getName(Upgrades aUpgrades){
+      if( aUpgrades.hasArtemis() && isArtemisCapable() )
          return super.getName() + ARTEMIS;
       return super.getName();
    }

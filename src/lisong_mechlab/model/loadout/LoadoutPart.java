@@ -11,7 +11,6 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
@@ -89,7 +88,7 @@ public class LoadoutPart implements MessageXBar.Reader{
       int engineHsLeft = getNumEngineHeatsinksMax();
       for(Item item : items){
          if( item instanceof MissileWeapon )
-            crits += ((MissileWeapon)item).getNumCriticalSlots(loadout.getUpgrades().hasArtemis());
+            crits += ((MissileWeapon)item).getNumCriticalSlots(loadout.getUpgrades());
          else if( item instanceof HeatSink ){
             if( engineHsLeft > 0 )
                engineHsLeft--;
@@ -222,7 +221,7 @@ public class LoadoutPart implements MessageXBar.Reader{
       double ans = engineHeatsinks * 1.0;
       for(Item item : items){
          if( item instanceof MissileWeapon )
-            ans += ((MissileWeapon)item).getMass(loadout.getUpgrades().hasArtemis());
+            ans += ((MissileWeapon)item).getMass(loadout.getUpgrades());
          else
             ans += item.getMass();
       }
@@ -264,24 +263,19 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
    }
 
+   public String getItemDisplayName(Item item){
+      return item.getName(loadout.getUpgrades());
+   }
+
    public String getItemDisplayName(int index){
-      Item item = items.get(index);
-      if( item instanceof MissileWeapon ){
-         MissileWeapon missileWeapon = (MissileWeapon)item;
-         return missileWeapon.getName(loadout.getUpgrades().hasArtemis());
-      }
-      if( item instanceof Ammunition ){
-         Ammunition missileWeapon = (Ammunition)item;
-         return missileWeapon.getName(loadout.getUpgrades().hasArtemis());
-      }
-      return items.get(index).getName(loadout.getUpgrades());
+      return getItemDisplayName(items.get(index));
    }
 
    public int getItemCriticalSlots(int index){
       Item item = items.get(index);
       if( item instanceof MissileWeapon ){
          MissileWeapon missileWeapon = (MissileWeapon)item;
-         return missileWeapon.getNumCriticalSlots(loadout.getUpgrades().hasArtemis());
+         return missileWeapon.getNumCriticalSlots(loadout.getUpgrades());
       }
       return items.get(index).getNumCriticalSlots();
    }
