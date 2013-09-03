@@ -15,7 +15,6 @@ import lisong_mechlab.model.MessageXBar.Reader;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.view.LoadoutFrame;
 
@@ -46,8 +45,8 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
    @Override
    public Object getChild(int aIndex){
       Item item = equippableItems.get(aIndex);
-      if( item instanceof MissileWeapon && loadout != null && loadout.getUpgrades().hasArtemis() )
-         return ((MissileWeapon)item).getName(true);
+      if(loadout != null)
+         return item.getName(loadout.getUpgrades());
       return item.getName();
    }
 

@@ -91,8 +91,8 @@ public class Efficiencies{
    public double getHeatCapacityModifier(){
       if( heatContainment ){
          if( doubleBasics )
-            return 1 + 0.075 * 2;
-         return 1.075;
+            return 1.2;
+         return 1.1;
       }
       return 1.0;
    }

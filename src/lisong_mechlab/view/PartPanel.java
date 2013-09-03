@@ -66,16 +66,16 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          final int hardpoints = loadoutPart.getInternalPart().getNumHardpoints(hp);
          if( 1 == hardpoints ){
             JLabel label = new JLabel(hp.shortName());
-            label.setBackground(ColourManager.getBgColorFor(hp));
-            label.setForeground(ColourManager.getFgColorFor(hp));
+            label.setBackground(StyleManager.getBgColorFor(hp));
+            label.setForeground(StyleManager.getFgColorFor(hp));
             label.setBorder(new RoundedBorders());
             label.setOpaque(true);
             panel.add(label);
          }
          else if( 1 < hardpoints ){
             JLabel label = new JLabel(hardpoints + hp.shortName());
-            label.setBackground(ColourManager.getBgColorFor(hp));
-            label.setForeground(ColourManager.getFgColorFor(hp));
+            label.setBackground(StyleManager.getBgColorFor(hp));
+            label.setForeground(StyleManager.getFgColorFor(hp));
             label.setBorder(new RoundedBorders());
             label.setOpaque(true);
             panel.add(label);
