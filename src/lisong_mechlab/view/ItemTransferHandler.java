@@ -14,7 +14,6 @@ import javax.swing.TransferHandler;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.view.PartList.Model;
 
 class ItemTransferHandler extends TransferHandler{
    private static final long  serialVersionUID = -8109855943478269304L;
@@ -86,7 +85,7 @@ class ItemTransferHandler extends TransferHandler{
 
       Component component = info.getComponent();
       if( component instanceof PartList ){
-         Model model = (Model)((PartList)component).getModel();
+         PartList model = (PartList)component;
          int dropIndex = ((JList.DropLocation)info.getDropLocation()).getIndex();
          try{
             boolean first = true;

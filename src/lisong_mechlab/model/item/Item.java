@@ -55,12 +55,20 @@ public class Item implements Comparable<Item>{
       return slots;
    }
 
+   public int getNumCriticalSlots(Upgrades aUpgrades){
+      return getNumCriticalSlots();
+   }
+
    public HardpointType getHardpointType(){
       return hardpointType;
    }
 
    public double getMass(){
       return tons;
+   }
+
+   public double getMass(Upgrades aUpgrades){
+      return getMass();
    }
 
    public int getMwoIdx(){
@@ -82,7 +90,8 @@ public class Item implements Comparable<Item>{
       return true;
    }
 
-   /* (non-Javadoc) Defines sorting order for items. Default is lexicographical order.
+   /*
+    * (non-Javadoc) Defines sorting order for items. Default is lexicographical order.
     * @see java.lang.Comparable#compareTo(java.lang.Object)
     */
    @Override
