@@ -6,5 +6,5 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 
 public abstract class AmmoMetric{
-   abstract public TreeMap<Ammunition, Integer> calculate();
+   abstract public TreeMap<Item, Integer> calculate();
 }
