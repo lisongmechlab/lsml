@@ -64,7 +64,7 @@ public class LoadoutSerializationTest{
 
       cut.getPart(Part.CenterTorso).addItem(ItemDB.lookup("XL ENGINE 290"));
       cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("GUARDIAN ECM"));
-      cut.getPart(Part.CenterTorso).addItem(ItemDB.lookup("Double Heat Sink"));
+      cut.getPart(Part.CenterTorso).addItem(ItemDB.DHS);
 
       cut.getPart(Part.RightArm).addItem(ItemDB.lookup("MED PULSE LASER"));
       cut.getPart(Part.RightArm).addItem(ItemDB.lookup("MED PULSE LASER"));
@@ -106,7 +106,7 @@ public class LoadoutSerializationTest{
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.lookup("XL ENGINE 290")));
-         assertTrue(items.remove(ItemDB.lookup("Double Heat Sink")));
+         assertTrue(items.remove(ItemDB.DHS));
          
          assertEquals(1, part.getNumEngineHeatsinks());
 
@@ -259,8 +259,8 @@ public class LoadoutSerializationTest{
          LoadoutPart part = cut.getPart(Part.RightLeg);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
+         assertTrue(items.remove(ItemDB.SHS));
+         assertTrue(items.remove(ItemDB.SHS));
          assertEquals(82, part.getArmor(ArmorSide.ONLY));
 
          assertOnlyInternals(items);
@@ -272,8 +272,8 @@ public class LoadoutSerializationTest{
          LoadoutPart part = cut.getPart(Part.LeftLeg);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
+         assertTrue(items.remove(ItemDB.SHS));
+         assertTrue(items.remove(ItemDB.SHS));
          assertEquals(82, part.getArmor(ArmorSide.ONLY));
 
          assertOnlyInternals(items);
@@ -284,7 +284,7 @@ public class LoadoutSerializationTest{
          LoadoutPart part = cut.getPart(Part.RightArm);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
+         assertTrue(items.remove(ItemDB.SHS));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
          assertEquals(68, part.getArmor(ArmorSide.ONLY));
 
@@ -297,7 +297,7 @@ public class LoadoutSerializationTest{
          LoadoutPart part = cut.getPart(Part.LeftArm);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
+         assertTrue(items.remove(ItemDB.SHS));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
          assertEquals(68, part.getArmor(ArmorSide.ONLY));
 
@@ -330,7 +330,7 @@ public class LoadoutSerializationTest{
          assertTrue(items.remove(ItemDB.lookup("LRM AMMO")));
          assertTrue(items.remove(ItemDB.lookup("LRM AMMO")));
          assertTrue(items.remove(ItemDB.lookup("SRM AMMO")));
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
+         assertTrue(items.remove(ItemDB.SHS));
          assertEquals(64, part.getArmor(ArmorSide.FRONT));
          assertEquals(20, part.getArmor(ArmorSide.BACK));
 
@@ -346,8 +346,8 @@ public class LoadoutSerializationTest{
          assertTrue(items.remove(ItemDB.lookup("STD ENGINE 300")));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
+         assertTrue(items.remove(ItemDB.SHS));
+         assertTrue(items.remove(ItemDB.SHS));
          assertEquals(94, part.getArmor(ArmorSide.FRONT));
          assertEquals(28, part.getArmor(ArmorSide.BACK));
 
@@ -362,7 +362,7 @@ public class LoadoutSerializationTest{
          LoadoutPart part = cut.getPart(Part.Head);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
+         assertTrue(items.remove(ItemDB.SHS));
          assertEquals(18, part.getArmor(ArmorSide.ONLY));
 
          assertOnlyInternals(items);
@@ -499,7 +499,7 @@ public class LoadoutSerializationTest{
          LoadoutPart part = cut.getPart(Part.Head);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
-         assertTrue(items.remove(ItemDB.lookup("STD HEAT SINK")));
+         assertTrue(items.remove(ItemDB.SHS));
          assertEquals(12, part.getArmor(ArmorSide.ONLY));
 
          assertOnlyInternals(items);
@@ -520,7 +520,7 @@ public class LoadoutSerializationTest{
       Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
 
       cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 210"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD HEAT SINK"));
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
 
       assertEquals(9, cut.getHeatsinksCount());
       assertEquals(9.0, cut.getHeatCapacity(), 0.0);
@@ -546,7 +546,7 @@ public class LoadoutSerializationTest{
 
       cut.getUpgrades().setDoubleHeatSinks(true);
       cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 210")); // 8 internal
-      cut.getInternalPartLoadout(InternalPartType.LeftArm).addItem(ItemDB.lookup("DOUBLE HEAT SINK"));
+      cut.getInternalPartLoadout(InternalPartType.LeftArm).addItem(ItemDB.DHS);
 
       assertEquals(9, cut.getHeatsinksCount());
       assertEquals(8 * 2 + 1.4 * 1, cut.getHeatCapacity(), 0.0);
@@ -571,12 +571,12 @@ public class LoadoutSerializationTest{
       Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
 
       cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 355"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD HEAT SINK"));
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
 
       assertEquals(16, cut.getHeatsinksCount());
       assertEquals(16.0, cut.getHeatCapacity(), 0.0);
@@ -602,12 +602,12 @@ public class LoadoutSerializationTest{
       cut.getUpgrades().setDoubleHeatSinks(true);
 
       cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 355"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("DOUBLE HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("DOUBLE HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("DOUBLE HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("DOUBLE HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.LeftTorso).addItem(ItemDB.lookup("DOUBLE HEAT SINK"));
-      cut.getInternalPartLoadout(InternalPartType.LeftTorso).addItem(ItemDB.lookup("DOUBLE HEAT SINK"));
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
+      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
+      cut.getInternalPartLoadout(InternalPartType.LeftTorso).addItem(ItemDB.DHS);
+      cut.getInternalPartLoadout(InternalPartType.LeftTorso).addItem(ItemDB.DHS);
 
       assertEquals(16, cut.getHeatsinksCount());
       assertEquals((2 * 10 + 1.4 * 6), cut.getHeatCapacity(), 0.0);
