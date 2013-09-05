@@ -48,14 +48,14 @@ public class MechGarage{
       }
 
       public Message(Type aType, MechGarage aGarage){
-         this(aType,aGarage, null);
+         this(aType, aGarage, null);
       }
 
    }
 
-   private final List<Loadout>      mechs    = new ArrayList<Loadout>();
-   private File                     file     = null;
-   private transient MessageXBar    xBar     = null;
+   private final List<Loadout>   mechs = new ArrayList<Loadout>();
+   private File                  file  = null;
+   private transient MessageXBar xBar  = null;
 
    public MechGarage(MessageXBar aXBar){
       xBar = aXBar;
@@ -63,10 +63,10 @@ public class MechGarage{
    }
 
    public static MechGarage open(File aFile, MessageXBar aXBar) throws IOException{
-      if(aFile.isFile() && aFile.length() < 50){
+      if( aFile.isFile() && aFile.length() < 50 ){
          throw new IOException("The file is too small to be a garage file!");
       }
-      
+
       FileInputStream fis = null;
       MechGarage mg = null;
       try{
@@ -123,6 +123,9 @@ public class MechGarage{
    }
 
    public void add(Loadout aLoadout){
+      if( mechs.contains(aLoadout) ){
+         throw new IllegalArgumentException("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
+      }
       mechs.add(aLoadout);
       xBar.post(new Message(Message.Type.LoadoutAdded, this, aLoadout));
    }
