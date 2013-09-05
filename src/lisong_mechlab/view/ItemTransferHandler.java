@@ -28,14 +28,21 @@ class ItemTransferHandler extends TransferHandler{
 
    @Override
    protected Transferable createTransferable(JComponent aComponent){
-      sourceItems = ((PartList)aComponent).getSelectedItems();
-      sourcePart = ((PartList)aComponent).getPart();
+      if( aComponent instanceof PartList ){
+         sourceItems = ((PartList)aComponent).getSelectedItems();
+         sourcePart = ((PartList)aComponent).getPart();
 
-      StringBuffer buff = new StringBuffer();
-      for(Item it : sourceItems){
-         buff.append(it.getName()).append('\n');
+         StringBuffer buff = new StringBuffer();
+         for(Item it : sourceItems){
+            buff.append(it.getName()).append('\n');
+         }
+         return new StringSelection(buff.toString());
       }
-      return new StringSelection(buff.toString());
+      else if( aComponent instanceof EquipmentPane ){
+         sourcePart = null;
+         return new StringSelection((String)((EquipmentPane)aComponent).getSelectionPath().getLastPathComponent());
+      }
+      return null;
    }
 
    @Override
@@ -60,10 +67,9 @@ class ItemTransferHandler extends TransferHandler{
          }
          return true;
       }
-      else if( component instanceof LoadoutDesktop ){
+      else{
          return parseItems(aInfo) != null;
       }
-      return false;
    }
 
    /**
