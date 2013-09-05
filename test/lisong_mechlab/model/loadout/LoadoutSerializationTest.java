@@ -72,7 +72,7 @@ public class LoadoutSerializationTest{
       cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("TAG"));
       cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("STREAK SRM 2"));
 
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("ANTI-MISSILE SYSTEM"));
+      cut.getPart(Part.LeftTorso).addItem(ItemDB.AMS);
       cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("AMS AMMO"));
       cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("STREAK SRM AMMO"));
       cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("STREAK SRM AMMO"));
@@ -155,7 +155,7 @@ public class LoadoutSerializationTest{
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.lookup("GUARDIAN ECM")));
-         assertTrue(items.remove(ItemDB.lookup("ANTI-MISSILE SYSTEM")));
+         assertTrue(items.remove(ItemDB.AMS));
          assertTrue(items.remove(ItemDB.lookup("AMS AMMO")));
          assertTrue(items.remove(ItemDB.lookup("STREAK SRM AMMO")));
          assertTrue(items.remove(ItemDB.lookup("STREAK SRM AMMO")));
