@@ -5,8 +5,8 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 
 public class Engine extends HeatSource{
-   public final static double ENGINE_HEAT_FULL_THROTTLE = ItemDB.SHS.getDissipation() * 2;
-   public final static double ENGINE_HEAT_66_THROTTLE = ItemDB.SHS.getDissipation() * 1;
+   public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
+   public final static double ENGINE_HEAT_66_THROTTLE   = 0.1;
 
    protected final int        rating;
    protected final EngineType type;

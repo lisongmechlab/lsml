@@ -115,7 +115,7 @@ public class MechGarageTest{
          cut.saveas(testFile); // File already exists
          fail(); // Must throw!
       }
-      
+
       // Verify
       catch( IOException e ){
          assertEquals(0, testFile.lastModified()); // Must not have been modified
@@ -187,5 +187,31 @@ public class MechGarageTest{
       // Verify
       assertTrue(cut.getMechs().isEmpty());
       verify(xBar).post(new Message(MechGarage.Message.Type.LoadoutRemoved, cut, loadout));
+   }
+
+   /**
+    * @throws Exception
+    */
+   @Test
+   public void testAddLoadoutTwice() throws Exception{
+      // Setup
+      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      MechGarage cut = new MechGarage(xBar);
+
+      // Execute
+      cut.add(loadout);
+
+      try{
+         reset(xBar);
+         cut.add(loadout);
+         fail("Expected exception!");
+      }
+      catch( IllegalArgumentException e ){
+         // Success!
+         verifyZeroInteractions(xBar);
+      }
+      catch( Exception e ){
+         fail("Wrong exception!");
+      }
    }
 }
