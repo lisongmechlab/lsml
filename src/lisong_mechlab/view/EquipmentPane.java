@@ -37,10 +37,6 @@ public class EquipmentPane extends JTree{
       private static final long serialVersionUID = 5198340883942696537L;
       private Loadout           loadout;
 
-      public Renderer(){
-         // setOpaque(true);
-      }
-
       /*
        * @Override public Color getBackgroundNonSelectionColor() { return (null); }
        * @Override public Color getBackgroundSelectionColor() { return Color.GREEN; }
@@ -122,6 +118,7 @@ public class EquipmentPane extends JTree{
       setShowsRootHandles(true);
       aLoadoutDesktop.addInternalFrameListener(treeModel);
       aLoadoutDesktop.addInternalFrameListener(renderer);
+      setTransferHandler(new ItemTransferHandler());
 
       addMouseListener(new MouseAdapter(){
          @Override
