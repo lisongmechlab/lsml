@@ -256,9 +256,9 @@ public class LoadoutPart implements MessageXBar.Reader{
 
          if( msg.msg == ChangeMsg.HEATSINKS ){
             if( msg.source.hasDoubleHeatSinks() )
-               while( items.remove(ItemDB.lookup("STD HEAT SINK")) );
+               while( items.remove(ItemDB.SHS) );
             else
-               while( items.remove(ItemDB.lookup("DOUBLE HEAT SINK")) );
+               while( items.remove(ItemDB.DHS) );
          }
       }
    }

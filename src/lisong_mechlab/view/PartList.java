@@ -237,8 +237,8 @@ public class PartList extends JList<Item>{
          }
          else if( pair.first == ListEntryType.EngineHeatSink ){
             if( part.getNumEngineHeatsinks() > 0 ){
-               items.add(ItemDB.lookup("STD HEAT SINK"));
-               items.add(ItemDB.lookup("DOUBLE HEAT SINK"));
+               items.add(ItemDB.SHS);
+               items.add(ItemDB.DHS);
             }
          }
       }

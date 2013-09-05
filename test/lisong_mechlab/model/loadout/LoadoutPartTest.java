@@ -215,7 +215,7 @@ public class LoadoutPartTest{
     */
    @Test
    public void testAddItem_EngineHeatsink() throws Exception{
-      Item[] items = new Item[] {ItemDB.lookup("STD HEAT SINK"), ItemDB.lookup("DOUBLE HEAT SINK")};
+      Item[] items = new Item[] {ItemDB.SHS, ItemDB.DHS};
       for(Item i : items){
          Internal gyro = mock(Internal.class);
          when(gyro.getNumCriticalSlots()).thenReturn(4);
@@ -225,7 +225,7 @@ public class LoadoutPartTest{
          Upgrades upgrades = mock(Upgrades.class);
          when(loadout.getChassi()).thenReturn(chassi);
          when(loadout.getUpgrades()).thenReturn(upgrades);
-         when(upgrades.hasDoubleHeatSinks()).thenReturn(i == ItemDB.lookup("DOUBLE HEAT SINK"));
+         when(upgrades.hasDoubleHeatSinks()).thenReturn(i == ItemDB.DHS);
          when(chassi.getEngineMax()).thenReturn(400);
          when(chassi.getEngineMin()).thenReturn(100);
          when(chassi.getMassMax()).thenReturn(100);
@@ -251,7 +251,7 @@ public class LoadoutPartTest{
          assertEquals(6, cut.getNumEngineHeatsinks());
          assertEquals(10, cut.getNumCriticalSlotsUsed());
 
-         if( i == ItemDB.lookup("DOUBLE HEAT SINK") ){
+         if( i == ItemDB.DHS ){
             // Execute
             try{
                cut.addItem(i);

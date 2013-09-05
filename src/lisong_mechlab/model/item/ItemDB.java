@@ -13,12 +13,14 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class ItemDB{
    // Special global "item constants" use full when checking special cases.
-   // Feel free to populate if you find yourself consistently using 
+   // Feel free to populate if you find yourself consistently using
    // ItemDB.lookup() with constant strings.
-   
+
    // AMS
-   static public final Item AMS;
-   
+   static public final AmmoWeapon          AMS;
+   static public final HeatSink            SHS;
+   static public final HeatSink            DHS;
+
    static private final Map<String, Item>  locname2item;
    static private final Map<String, Item>  mwoname2item;
    static private final Map<Integer, Item> mwoidx2item;
@@ -118,8 +120,10 @@ public class ItemDB{
                throw new RuntimeException("Unknown value for type field in ItemStatsXML. Please update the program!");
          }
       }
-      
+
       // Initialize special items
-      AMS = lookup("ANTI-MISSILE SYSTEM");
+      AMS = (AmmoWeapon)lookup("ANTI-MISSILE SYSTEM");
+      SHS = (HeatSink)lookup("STD HEAT SINK");
+      DHS = (HeatSink)lookup("DOUBLE HEAT SINK");
    }
 }
