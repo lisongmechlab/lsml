@@ -220,7 +220,7 @@ public class ItemTests{
       HeatSink sgl = null;
       HeatSink dbl = null;
       for(HeatSink heatSink : heatsinks){
-         assertTrue(heatSink.getDissapation() > 0);
+         assertTrue(heatSink.getDissipation() > 0);
          assertTrue(heatSink.getCapacity() > 0);
 
          // Determine which is double/single
@@ -228,7 +228,7 @@ public class ItemTests{
             sgl = heatSink;
          }
          else{
-            if( heatSink.getDissapation() > sgl.getDissapation() ){
+            if( heatSink.getDissipation() > sgl.getDissipation() ){
                dbl = heatSink;
             }
             else{
@@ -239,7 +239,7 @@ public class ItemTests{
       }
 
       // Double should have higher values than single
-      assertTrue(dbl.getDissapation() > sgl.getDissapation());
+      assertTrue(dbl.getDissipation() > sgl.getDissipation());
       assertTrue(dbl.getCapacity() > sgl.getCapacity());
 
       assertEquals(3, dbl.getNumCriticalSlots());

@@ -142,7 +142,7 @@ public class LoadoutTest{
    public void testDHSToggleOn(){
       // Setup
       Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
-      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("STD HEAT SINK"));
+      cut.getPart(Part.RightTorso).addItem(ItemDB.SHS);
 
       // Execute
       cut.getUpgrades().setDoubleHeatSinks(true);
@@ -150,7 +150,7 @@ public class LoadoutTest{
       // Verify
       assertTrue(cut.getUpgrades().hasDoubleHeatSinks());
       verify(xBar).post(new Upgrades.Message(Upgrades.ChangeMsg.HEATSINKS, cut.getUpgrades()));
-      assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.lookup("STD HEAT SINK")));
+      assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.SHS));
 
    }
 
@@ -162,7 +162,7 @@ public class LoadoutTest{
       // Setup
       Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
       cut.getUpgrades().setDoubleHeatSinks(true);
-      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("DOUBLE HEAT SINK"));
+      cut.getPart(Part.RightTorso).addItem(ItemDB.DHS);
       reset(xBar);
 
       // Execute
@@ -171,7 +171,7 @@ public class LoadoutTest{
       // Verify
       assertFalse(cut.getUpgrades().hasDoubleHeatSinks());
       verify(xBar).post(new Upgrades.Message(Upgrades.ChangeMsg.HEATSINKS, cut.getUpgrades()));
-      assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.lookup("DOUBLE HEAT SINK")));
+      assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.DHS));
    }
 
    /**
@@ -182,13 +182,13 @@ public class LoadoutTest{
       // Setup
       Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
       cut.getUpgrades().setDoubleHeatSinks(true);
-      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("DOUBLE HEAT SINK"));
+      cut.getPart(Part.RightTorso).addItem(ItemDB.DHS);
 
       // Execute
       cut.getUpgrades().setDoubleHeatSinks(true);
 
       // Verify
-      assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.lookup("DOUBLE HEAT SINK")));
+      assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.DHS));
    }
 
    /**
@@ -199,13 +199,13 @@ public class LoadoutTest{
       // Setup
       Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
       cut.getUpgrades().setDoubleHeatSinks(false);
-      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("STD HEAT SINK"));
+      cut.getPart(Part.RightTorso).addItem(ItemDB.SHS);
 
       // Execute
       cut.getUpgrades().setDoubleHeatSinks(false);
 
       // Verify
-      assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.lookup("STD HEAT SINK")));
+      assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.SHS));
    }
 
    @Test

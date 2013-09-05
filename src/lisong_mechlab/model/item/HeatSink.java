@@ -14,7 +14,7 @@ public class HeatSink extends Module{
       capacity = -aStatsModule.HeatSinkStats.heatbase;
    }
 
-   public double getDissapation(){
+   public double getDissipation(){
       return dissapation;
    }
 
