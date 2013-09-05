@@ -5,14 +5,16 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 
 public class Engine extends HeatSource{
+   public final static double ENGINE_HEAT_FULL_THROTTLE = ItemDB.SHS.getDissipation() * 2;
+   public final static double ENGINE_HEAT_66_THROTTLE = ItemDB.SHS.getDissipation() * 1;
+
    protected final int        rating;
    protected final EngineType type;
    final private int          internalHs;
    final private int          heatsinkslots;
 
    public Engine(ItemStatsModule aStatsModule){
-      super(aStatsModule, HardpointType.NONE, 6, aStatsModule.EngineStats.weight, 0.2); // TODO: Determine engine heat
-                                                                                        // value!
+      super(aStatsModule, HardpointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE);
       int hs = aStatsModule.EngineStats.heatsinks;
       internalHs = Math.min(10, hs);
       heatsinkslots = hs - internalHs;
