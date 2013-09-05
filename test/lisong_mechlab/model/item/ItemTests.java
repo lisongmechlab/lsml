@@ -3,6 +3,7 @@ package lisong_mechlab.model.item;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -98,6 +99,7 @@ public class ItemTests{
    @Test
    public void testAMS(){
       AmmoWeapon ams = (AmmoWeapon)ItemDB.lookup("ANTI-MISSILE SYSTEM");
+      assertSame(ams, ItemDB.AMS);
       assertEquals(1, ams.getNumCriticalSlots());
       assertEquals(0.5, ams.getMass(), 0.0);
       assertEquals(HardpointType.AMS, ams.getHardpointType());
@@ -194,7 +196,7 @@ public class ItemTests{
             weaponPart = weaponPart.substring(0, weaponPart.indexOf(" "));
          }
 
-         if( item.getName().equals("ANTI-MISSILE SYSTEM") ){
+         if( item == ItemDB.AMS ){
             assertTrue(ammunition.getName().equals("AMS AMMO"));
          }
          else{

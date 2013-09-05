@@ -41,7 +41,7 @@ public class MaxSustainedDPS extends Metric{
       double heatleft = dissipation.calculate();
       List<Weapon> weapons = new ArrayList<>(15);
       for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon && item != ItemDB.lookup("ANTI-MISSILE SYSTEM") ){
+         if( item instanceof Weapon && item != ItemDB.AMS ){
             weapons.add((Weapon)item);
          }
       }

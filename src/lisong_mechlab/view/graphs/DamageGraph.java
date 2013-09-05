@@ -101,7 +101,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
 
       ans.add(Double.valueOf(0.0));
       for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon && item != ItemDB.lookup("ANTI-MISSILE SYSTEM") ){
+         if( item instanceof Weapon && item != ItemDB.AMS ){
             Weapon weapon = (Weapon)item;
             ans.add(weapon.getRangeMin());
             ans.add(weapon.getRangeLong());
