@@ -1,9 +1,11 @@
 package lisong_mechlab.view;
 
+import java.awt.Color;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
@@ -18,6 +20,8 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
    private List<InternalFrameListener> listeners        = new ArrayList<InternalFrameListener>();
 
    public LoadoutDesktop(){
+      setBorder(BorderFactory.createLoweredSoftBevelBorder());
+      setBackground(Color.GRAY.brighter());
       setTransferHandler(new ItemTransferHandler());
    }
 
