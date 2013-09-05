@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -32,6 +33,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private static final int  xOffset          = 30, yOffset = 30;
    private final Loadout     loadout;
    private final MessageXBar xbar;
+   private JMenuItem addToGarage;
 
    public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout.toString(), true, // resizable
@@ -171,18 +173,24 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private JMenu createMenuLoadout(){
       JMenu menu = new JMenu("Loadout");
 
-      JMenuItem save = new JMenuItem("Save to garage");
+      addToGarage = new JMenuItem("Add to garage");
       if( isSaved() )
-         save.setEnabled(false);
+         addToGarage.setEnabled(false);
       else
-         save.addActionListener(new ActionListener(){
+         addToGarage.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aArg0){
-               LSML.getInstance().getGarage().add(loadout);
+               try{
+                  // TODO: This should be an Action class
+                  LSML.getInstance().getGarage().add(loadout);
+               }
+               catch( IllegalArgumentException e ){
+                  JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't add to garage! Error: " + e.getMessage());
+               }
             }
          });
 
-      menu.add(save);
+      menu.add(addToGarage);
       menu.add(new JMenuItem(new RenameLoadoutAction(loadout, KeyStroke.getKeyStroke("R"))));
       menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
 
@@ -288,6 +296,14 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          if( msg.loadout == loadout ){
             if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
                dispose(); // Closes frame
+            }
+            else if(msg.type == MechGarage.Message.Type.LoadoutAdded){
+               SwingUtilities.invokeLater(new Runnable(){
+                  @Override
+                  public void run(){
+                     addToGarage.setEnabled(false);
+                  }
+               });
             }
          }
       }
