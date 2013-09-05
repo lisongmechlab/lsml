@@ -44,7 +44,7 @@ public class MaxSustainedDPSTest{
       items.add(ItemDB.lookup("GAUSS RIFLE"));
       items.add(ItemDB.AMS);
       items.add(ItemDB.lookup("STD ENGINE 245"));
-      items.add(ItemDB.lookup("DOUBLE HEAT SINK"));
+      items.add(ItemDB.DHS);
       items.add(ItemDB.lookup("STREAK SRM 2"));
       items.add(ItemDB.lookup("LRM 20"));
       items.add(ItemDB.lookup("ER PPC"));
