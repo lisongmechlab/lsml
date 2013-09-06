@@ -45,7 +45,7 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
    @Override
    public Object getChild(int aIndex){
       Item item = equippableItems.get(aIndex);
-      if(loadout != null)
+      if( loadout != null )
          return item.getName(loadout.getUpgrades());
       return item.getName();
    }
@@ -68,31 +68,51 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
       getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
    }
 
+   private void focus(InternalFrameEvent anEvent){
+      if( anEvent == null ){
+         loadout = null;
+         determineEquippable();
+      }
+      else{
+         LoadoutFrame frame = (LoadoutFrame)anEvent.getInternalFrame();
+         loadout = frame.getLoadout();
+         determineEquippable();
+      }
+   }
+
    @Override
    public void internalFrameActivated(InternalFrameEvent aArg0){
-      LoadoutFrame frame = (LoadoutFrame)aArg0.getInternalFrame();
-      loadout = frame.getLoadout();
-      determineEquippable();
+      focus(aArg0);
    }
 
    @Override
    public void internalFrameClosed(InternalFrameEvent aArg0){
-      loadout = null;
-      determineEquippable();
+      focus(null);
+   }
+
+   @Override
+   public void internalFrameClosing(InternalFrameEvent aE){
+      focus(null);
+   }
+
+   @Override
+   public void internalFrameDeactivated(InternalFrameEvent aE){
+      focus(null);
    }
 
    @Override
    public void internalFrameDeiconified(InternalFrameEvent aArg0){
-      LoadoutFrame frame = (LoadoutFrame)aArg0.getInternalFrame();
-      loadout = frame.getLoadout();
-      determineEquippable();
+      focus(aArg0);
+   }
+
+   @Override
+   public void internalFrameIconified(InternalFrameEvent aE){
+      focus(null);
    }
 
    @Override
    public void internalFrameOpened(InternalFrameEvent aArg0){
-      LoadoutFrame frame = (LoadoutFrame)aArg0.getInternalFrame();
-      loadout = frame.getLoadout();
-      determineEquippable();
+      focus(aArg0);
    }
 
    @Override
