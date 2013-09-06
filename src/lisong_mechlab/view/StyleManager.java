@@ -106,7 +106,10 @@ public class StyleManager{
    }
 
    static public Color getBgColorFor(Item anItem){
-      if( anItem instanceof Internal ){
+      if( anItem == null ){
+         return Color.WHITE;
+      }
+      else if( anItem instanceof Internal ){
          return COLOR_BG_INTERNAL;
       }
       else if( anItem instanceof Ammunition ){
@@ -159,7 +162,10 @@ public class StyleManager{
    }
 
    static public Color getFgColorFor(Item anItem){
-      if( anItem instanceof Internal ){
+      if( anItem == null ){
+         return Color.BLACK;
+      }
+      else if( anItem instanceof Internal ){
          return Color.GRAY.darker();
       }
       else if( anItem instanceof Ammunition ){

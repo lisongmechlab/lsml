@@ -1,6 +1,5 @@
 package lisong_mechlab.view;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -45,8 +44,7 @@ public class PartList extends JList<Item>{
          setBorder(BorderFactory.createEmptyBorder());
          switch( pair.first ){
             case Empty:{
-               setForeground(Color.BLACK);
-               setOpaque(false);
+               StyleManager.styleItem(this, null);
                setText(Model.EMPTY);
                break;
             }
