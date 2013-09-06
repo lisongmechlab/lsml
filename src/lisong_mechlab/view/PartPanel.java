@@ -42,7 +42,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(aLoadoutPart.getInternalPart().getType().longName()),
                                                    BorderFactory.createEmptyBorder(0, 4, 4, 8)));
       add(makeArmorPanel(anXBar));
-      
+
       if( canHaveHardpoints )
          add(makeHardpointsPanel());
 
@@ -59,7 +59,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       JPanel panel = new JPanel();
       BoxLayout layoutManager = new BoxLayout(panel, BoxLayout.LINE_AXIS);
       panel.setLayout(layoutManager);
-      ///panel.setBackground(Color.PINK.darker());
+      // /panel.setBackground(Color.PINK.darker());
       panel.add(Box.createVerticalStrut(CELL_HEIGHT + CELL_HEIGHT / 2));
 
       for(HardpointType hp : HardpointType.values()){
@@ -73,7 +73,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
             panel.add(label);
          }
          else if( 1 < hardpoints ){
-            JLabel label = new JLabel(hardpoints + hp.shortName());
+            JLabel label = new JLabel(hardpoints + " " + hp.shortName());
             label.setBackground(StyleManager.getBgColorFor(hp));
             label.setForeground(StyleManager.getFgColorFor(hp));
             label.setBorder(new RoundedBorders());
