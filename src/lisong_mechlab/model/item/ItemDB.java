@@ -20,6 +20,7 @@ public class ItemDB{
    static public final AmmoWeapon          AMS;
    static public final HeatSink            SHS;
    static public final HeatSink            DHS;
+   static public final Item                ECM;
 
    static private final Map<String, Item>  locname2item;
    static private final Map<String, Item>  mwoname2item;
@@ -125,5 +126,6 @@ public class ItemDB{
       AMS = (AmmoWeapon)lookup("ANTI-MISSILE SYSTEM");
       SHS = (HeatSink)lookup("STD HEAT SINK");
       DHS = (HeatSink)lookup("DOUBLE HEAT SINK");
+      ECM = lookup("GUARDIAN ECM");
    }
 }
