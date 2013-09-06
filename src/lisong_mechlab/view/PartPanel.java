@@ -15,6 +15,7 @@ import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
@@ -32,7 +33,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private boolean           canHaveHardpoints;
 
-   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints){
+   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor){
       super(new BorderLayout());
       anXBar.attach(this);
       loadoutPart = aLoadoutPart;
@@ -47,7 +48,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          add(makeHardpointsPanel());
 
       // Critical slots
-      PartList list = new PartList(aLoadoutPart, anXBar);
+      PartList list = new PartList(aLoadoutPart, anXBar, aSlotDistributor);
       list.setFixedCellHeight(CELL_HEIGHT);
       list.setFixedCellWidth(CELL_WIDTH);
 

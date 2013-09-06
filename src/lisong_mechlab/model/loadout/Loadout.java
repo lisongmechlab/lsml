@@ -233,10 +233,10 @@ public class Loadout implements MessageXBar.Reader{
       int ans = 0;
 
       if( getUpgrades().hasFerroFibrous() ){
-         ans += 14;
+         ans += 14; // TODO: We need to prepare to handle Clan FF
       }
       if( getUpgrades().hasEndoSteel() ){
-         ans += 14;
+         ans += 14; // TODO: We need to prepare to handle Clan ES
       }
 
       for(LoadoutPart partConf : parts.values()){
