@@ -86,7 +86,7 @@ public class PartList extends JList<Item>{
 
    private class Model extends AbstractListModel<Item> implements MessageXBar.Reader{
       private static final String HEATSINKS_STRING = "Heatsinks: ";
-      private static final String EMPTY            = "empty";
+      private static final String EMPTY            = "Empty";
       private static final String MULTISLOT        = "---";
       private static final long   serialVersionUID = 2438473891359444131L;
 
