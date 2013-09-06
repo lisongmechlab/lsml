@@ -36,6 +36,9 @@ class ItemTransferHandler extends TransferHandler{
          for(Item it : sourceItems){
             buff.append(it.getName()).append('\n');
          }
+         for(Item item : sourceItems){
+            sourcePart.removeItem(item);
+         }
          return new StringSelection(buff.toString());
       }
       else if( aComponent instanceof EquipmentPane ){
@@ -82,9 +85,10 @@ class ItemTransferHandler extends TransferHandler{
       }
 
       if( null != sourcePart && info.getDropAction() != COPY ){
-         for(Item item : sourceItems){
-            sourcePart.removeItem(item);
-         }
+         // Moved to the creation part
+         // for(Item item : sourceItems){
+         // sourcePart.removeItem(item);
+         // }
          sourcePart = null;
          sourceItems = null;
       }
