@@ -85,10 +85,6 @@ class ItemTransferHandler extends TransferHandler{
       }
 
       if( null != sourcePart && info.getDropAction() != COPY ){
-         // Moved to the creation part
-         // for(Item item : sourceItems){
-         // sourcePart.removeItem(item);
-         // }
          sourcePart = null;
          sourceItems = null;
       }

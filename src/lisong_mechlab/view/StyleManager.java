@@ -29,6 +29,7 @@ public class StyleManager{
    private static final Border singleBorder            = new RoundedBorders(null, new Insets(MARGIN, MARGIN, MARGIN, MARGIN), PADDING, THICKNESS,
                                                                             RADII, false, false);
 
+   private static Color        COLOR_BG_DYNAMIC        = new Color(0xeeeeec);
    private static Color        COLOR_BG_AMS            = new Color(0x2e3436);
    private static Color        COLOR_BG_AMS_AMMO       = new Color(0x888a85);
    private static Color        COLOR_BG_BALLISTIC      = new Color(0xc4a000);
@@ -70,6 +71,13 @@ public class StyleManager{
       aComponent.setBorder(bottomBorder);
       aComponent.setBackground(getBgColorFor(anItem));
       aComponent.setForeground(getFgColorFor(anItem));
+   }
+
+   public static void styleDynamicEntry(JComponent aComponent){
+      aComponent.setOpaque(true);
+      aComponent.setBorder(singleBorder);
+      aComponent.setBackground(COLOR_BG_DYNAMIC);
+      aComponent.setForeground(Color.GRAY.brighter());
    }
 
    static public void colour(JComponent aComponent, HardpointType aType){

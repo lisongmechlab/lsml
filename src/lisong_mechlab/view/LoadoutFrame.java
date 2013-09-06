@@ -21,6 +21,7 @@ import javax.swing.event.InternalFrameEvent;
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
@@ -33,7 +34,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private static final int  xOffset          = 30, yOffset = 30;
    private final Loadout     loadout;
    private final MessageXBar xbar;
-   private JMenuItem addToGarage;
+   private JMenuItem         addToGarage;
 
    public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout.toString(), true, // resizable
@@ -99,12 +100,14 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       panel.add(Box.createRigidArea(padding));
 
+      DynamicSlotDistributor slotDistributor = new DynamicSlotDistributor(loadout);
+
       // Right Arm
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
          subPanel.add(Box.createVerticalStrut(50));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightArm), anXBar, true));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightArm), anXBar, true, slotDistributor));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -115,8 +118,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightTorso), anXBar, true));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightLeg), anXBar, false));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightTorso), anXBar, true, slotDistributor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightLeg), anXBar, false, slotDistributor));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -127,8 +130,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, false));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.CenterTorso), anXBar, true));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, false, slotDistributor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.CenterTorso), anXBar, true, slotDistributor));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -139,8 +142,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftTorso), anXBar, true));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftLeg), anXBar, false));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftTorso), anXBar, true, slotDistributor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftLeg), anXBar, false, slotDistributor));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -152,7 +155,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
          subPanel.add(Box.createVerticalStrut(50));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftArm), anXBar, true));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftArm), anXBar, true, slotDistributor));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -297,7 +300,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
                dispose(); // Closes frame
             }
-            else if(msg.type == MechGarage.Message.Type.LoadoutAdded){
+            else if( msg.type == MechGarage.Message.Type.LoadoutAdded ){
                SwingUtilities.invokeLater(new Runnable(){
                   @Override
                   public void run(){
