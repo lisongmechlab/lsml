@@ -59,12 +59,6 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
 
    @Override
    public void internalFrameClosing(InternalFrameEvent aE){
-      LoadoutFrame loadoutFrame = (LoadoutFrame)aE.getInternalFrame();
-
-      if( !loadoutFrame.isSaved() ){
-         // TODO: Ask to save
-      }
-
       for(InternalFrameListener frameListener : listeners){
          frameListener.internalFrameClosing(aE);
       }
