@@ -23,12 +23,15 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
 
 public class PartList extends JList<Item>{
-   private static final long serialVersionUID = 5995694414450060827L;
+   private static final long            serialVersionUID = 5995694414450060827L;
 
-   private final LoadoutPart part;
+   private final LoadoutPart            part;
+
+   private final DynamicSlotDistributor slotDistributor;
 
    private enum ListEntryType{
       Empty, MultiSlot, Item, EngineHeatSink, LastSlot
@@ -44,8 +47,18 @@ public class PartList extends JList<Item>{
          setBorder(BorderFactory.createEmptyBorder());
          switch( pair.first ){
             case Empty:{
-               StyleManager.styleItem(this, null);
-               setText(Model.EMPTY);
+               if( isDynArmor(index) ){
+                  StyleManager.styleDynamicEntry(this);
+                  setText(Model.DYN_ARMOR);
+               }
+               else if( isDynStructure(index) ){
+                  StyleManager.styleDynamicEntry(this);
+                  setText(Model.DYN_STRUCT);
+               }
+               else{
+                  StyleManager.styleItem(this, null);
+                  setText(Model.EMPTY);
+               }
                break;
             }
             case Item:{
@@ -75,19 +88,33 @@ public class PartList extends JList<Item>{
             }
          }
 
-         if( isSelected ){
+         if( isSelected && pair.first != ListEntryType.Empty ){
             setForeground(getForeground().brighter());
             setBackground(getBackground().brighter());
          }
 
          return this;
       }
+
+      private boolean isDynStructure(int aIndex){
+         int freeSlotOrdinal = aIndex - part.getNumCriticalSlotsUsed() - slotDistributor.getDynamicArmorSlots(part);
+         int dynStructNum = slotDistributor.getDynamicStructureSlots(part);
+         return freeSlotOrdinal >= 0 && freeSlotOrdinal < dynStructNum;
+      }
+
+      private boolean isDynArmor(int aIndex){
+         int freeSlotOrdinal = aIndex - part.getNumCriticalSlotsUsed();
+         int dynArmorNum = slotDistributor.getDynamicArmorSlots(part);
+         return freeSlotOrdinal < dynArmorNum;
+      }
    }
 
    private class Model extends AbstractListModel<Item> implements MessageXBar.Reader{
-      private static final String HEATSINKS_STRING = "Heatsinks: ";
-      private static final String EMPTY            = "Empty";
+      private static final String HEATSINKS_STRING = "HEATSINKS: ";
+      private static final String EMPTY            = "EMPTY";
       private static final String MULTISLOT        = "---";
+      private static final String DYN_ARMOR        = "DYNAMIC ARMOR";
+      private static final String DYN_STRUCT       = "DYNAMIC STRUCTURE";
       private static final long   serialVersionUID = 2438473891359444131L;
 
       Model(MessageXBar aXBar){
@@ -197,7 +224,8 @@ public class PartList extends JList<Item>{
       }
    }
 
-   PartList(LoadoutPart aPartConf, MessageXBar anXBar){
+   PartList(LoadoutPart aPartConf, MessageXBar anXBar, DynamicSlotDistributor aSlotDistributor){
+      slotDistributor = aSlotDistributor;
       part = aPartConf;
       setModel(new Model(anXBar));
       setDragEnabled(true);
