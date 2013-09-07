@@ -25,7 +25,7 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
    protected String weaponNames;
    private Loadout aLoadout;
    private TotalAmmoSupply totalAmmoSupply;
-   private Object[][] data = {{"srm"}, {"345"}};//Exception occurs if there arn't some values.
+   private Object[][] data = {{"empty"}, {"empty"}, {"empty"}, {"empty"}};//Exception occurs if there arn't some values.
    private String[] columnNames = {"Weapon" , "Ammo", "Volley Amount" , "Number of Volleys"};
    private MessageXBar aXBar;
    
@@ -122,7 +122,11 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
 
    @Override
    public Object getValueAt(int aRowIndex, int aColumnIndex){
-      return data[aRowIndex][aColumnIndex];
+
+      if(data.length == 1){
+         return "empty";
+      }
+      else return data[aRowIndex][aColumnIndex];
    }
 
    @Override
@@ -145,7 +149,7 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
 
    @Override
    public void receive(MessageXBar.Message aMsg){
-      if( this.aXBar != null ){
+/*      if( this.aXBar != null ){
          if( aMsg instanceof LoadoutPart.Message ){
             totalAmmoSupply = new TotalAmmoSupply(aLoadout);
             totalAmmoSupply.calculate();
@@ -153,7 +157,7 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
 
          }
       }
-    
+    */
       
    }
 

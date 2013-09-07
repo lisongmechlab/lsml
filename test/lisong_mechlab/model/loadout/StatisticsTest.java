@@ -27,31 +27,6 @@ public class StatisticsTest{
    @InjectMocks
    private Statistics   statistics;
 
-   @Test
-   public void testGetTopSpeed_noengine() throws Exception{
-      when(loadout.getEngine()).thenReturn(null);
-      assertEquals(0, statistics.getTopSpeed(), 0.0);
-   }
-
-   @Test
-   public void testGetTopSpeed() throws Exception{
-      int rating = 300;
-      double factor = 4;
-      int tonnage = 30;
-      for(double speedtweak : new double[] {1.0, 1.1}){
-         when(loadout.getEngine()).thenReturn((Engine)ItemDB.lookup("STD ENGINE " + rating));
-         when(loadout.getChassi()).thenReturn(chassi);
-         when(loadout.getEfficiencies()).thenReturn(efficiencies);
-         when(chassi.getSpeedFactor()).thenReturn(factor);
-         when(chassi.getMassMax()).thenReturn(tonnage);
-         when(efficiencies.hasSpeedTweak()).thenReturn(speedtweak > 1.0);
-         when(efficiencies.getSpeedModifier()).thenReturn(speedtweak);
-
-         double expected = rating * factor / tonnage * speedtweak;
-         assertEquals(expected, statistics.getTopSpeed(), 0.0);
-      }
-   }
-
    /**
     * The jump jet definitions in the ItemStats.xml list forces in kilonewton. When weights are taken as tons, the
     * calculations can be done without compensating for factor 1000 (surprise, how convenient!). F = m*a h = a*t^2/2 =
