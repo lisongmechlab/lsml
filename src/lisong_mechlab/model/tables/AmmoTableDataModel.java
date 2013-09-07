@@ -121,8 +121,11 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
 
    @Override
    public Object getValueAt(int aRowIndex, int aColumnIndex){
-      
-      return data[aRowIndex][aColumnIndex];
+
+      if(data.length == 1){
+         return "empty";
+      }
+      else return data[aRowIndex][aColumnIndex];
    }
 
    @Override
