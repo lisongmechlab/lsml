@@ -56,7 +56,7 @@ public class PartList extends JList<Item>{
                   setText(Model.DYN_STRUCT);
                }
                else{
-                  StyleManager.styleItem(this, null);
+                  StyleManager.styleItem(this);
                   setText(Model.EMPTY);
                }
                break;

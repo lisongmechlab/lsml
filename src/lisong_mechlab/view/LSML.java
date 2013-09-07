@@ -17,13 +17,14 @@ import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.MechGarage;
 
 public class LSML extends JFrame{
-   private static final String GARAGE_FILEDESCRIPTION = "Li Song Mech Lab Garage File (.xml)";
+   private static final String  GARAGE_FILEDESCRIPTION = "Li Song Mech Lab Garage File (.xml)";
 
-   private static final long   serialVersionUID       = -2463321343234141728L;
+   private static final long    serialVersionUID       = -2463321343234141728L;
 
-   private static LSML         instance;
-   private MechGarage          garage;
-   private final MessageXBar   xBar                   = new MessageXBar();
+   private static LSML          instance;
+   private MechGarage           garage;
+   private final MessageXBar    xBar                   = new MessageXBar();
+   private final LoadoutDesktop configurationsPane     = new LoadoutDesktop();
 
    public void initGarage(){
       String garageFileName = LsmlPreferences.getString(LsmlPreferences.GARAGEFILE_KEY);
@@ -177,7 +178,6 @@ public class LSML extends JFrame{
 
       setJMenuBar(new MenuBar(this));
 
-      final LoadoutDesktop configurationsPane = new LoadoutDesktop();
       final EquipmentPane equipmentPane = new EquipmentPane(configurationsPane, this, xBar);
       final JScrollPane jScrollPane = new JScrollPane(equipmentPane);
       final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, configurationsPane);
@@ -202,7 +202,7 @@ public class LSML extends JFrame{
    public static void main(String[] args) throws Exception{
       SplashScreen splash = new SplashScreen();
       splash.waitUntilDone();
-      
+
       javax.swing.SwingUtilities.invokeLater(new Runnable(){
          public void run(){
             try{
@@ -225,6 +225,10 @@ public class LSML extends JFrame{
 
    public static LSML getInstance(){
       return instance;
+   }
+
+   public LoadoutDesktop getDesktop(){
+      return configurationsPane;
    }
 
 }

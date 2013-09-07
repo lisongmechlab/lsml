@@ -17,9 +17,12 @@ import lisong_mechlab.model.item.Weapon;
 
 public class StyleManager{
    private static final Insets PADDING                 = new Insets(2, 5, 2, 5);
+   private static final Insets THIN_PADDING            = new Insets(1, 2, 1, 2);
    private static final int    THICKNESS               = 2;
    private static final int    RADII                   = 10;
    private static final int    MARGIN                  = 2;
+   private static final Border thinItemBorder          = new RoundedBorders(null, new Insets(0, MARGIN, 0, MARGIN), THIN_PADDING, THICKNESS, RADII,
+                                                                            false, false);
    private static final Border topBorder               = new RoundedBorders(null, new Insets(MARGIN, MARGIN, 0, MARGIN), PADDING, THICKNESS, RADII,
                                                                             false, true);
    private static final Border middleBorder            = new RoundedBorders(null, new Insets(0, MARGIN, 0, MARGIN), PADDING, THICKNESS, RADII, true,
@@ -44,6 +47,11 @@ public class StyleManager{
    private static Color        COLOR_BG_ENGINE         = new Color(0x5c3566);
    private static Color        COLOR_BG_HS             = new Color(0xad7fa8);
    private static Color        COLOR_BG_MISC           = new Color(0x729fcf);
+
+   public static void styleItem(JComponent aComponent){
+      Item item = null;
+      styleItem(aComponent, item);
+   }
 
    static public void styleItem(JComponent aComponent, Item anItem){
       aComponent.setOpaque(true);
@@ -73,11 +81,25 @@ public class StyleManager{
       aComponent.setForeground(getFgColorFor(anItem));
    }
 
+   public static void styleThinItem(JComponent aComponent, HardpointType aType){
+      aComponent.setOpaque(true);
+      aComponent.setBorder(thinItemBorder);
+      aComponent.setBackground(getBgColorFor(aType));
+      aComponent.setForeground(getFgColorFor(aType));
+   }
+
    public static void styleDynamicEntry(JComponent aComponent){
       aComponent.setOpaque(true);
       aComponent.setBorder(singleBorder);
       aComponent.setBackground(COLOR_BG_DYNAMIC);
       aComponent.setForeground(Color.GRAY.brighter());
+   }
+
+   public static void styleItem(JComponent aComponent, HardpointType aType){
+      aComponent.setOpaque(true);
+      aComponent.setBorder(singleBorder);
+      aComponent.setBackground(getBgColorFor(aType));
+      aComponent.setForeground(getFgColorFor(aType));
    }
 
    static public void colour(JComponent aComponent, HardpointType aType){
@@ -206,4 +228,5 @@ public class StyleManager{
    static public Color getFgColorInvalid(){
       return Color.RED;
    }
+
 }

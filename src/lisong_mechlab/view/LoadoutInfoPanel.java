@@ -28,6 +28,7 @@ import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
+import lisong_mechlab.model.loadout.metrics.TopSpeedMetric;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.tables.AmmoTableDataModel;
 
@@ -71,6 +72,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private MaxSustainedDPS    metricSustainedDps;
    final private TotalAmmoSupply    metricTotalAmmoSupply;
    final private AmmoTableDataModel anAmmoTableDataModel;
+   final private TopSpeedMetric topSpeedMetric;
    transient private Boolean        inhibitChanges   = false;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
@@ -82,6 +84,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
       metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
       anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
+      topSpeedMetric = new TopSpeedMetric(loadout);
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       this.anXBar = anXBar;
 
@@ -274,7 +277,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // Mobility
                // ----------------------------------------------------------------------
-               topSpeed.setText("Top speed: " + df.format(statistics.getTopSpeed()) + " km/h");
+               topSpeed.setText("Top speed: " + df.format(topSpeedMetric.calculate()) + " km/h");
                jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassi().getMaxJumpJets() + " ("
                                 + df.format(statistics.getJumpDistance()) + " m)");
                speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
