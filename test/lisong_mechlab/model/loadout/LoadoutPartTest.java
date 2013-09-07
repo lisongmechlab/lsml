@@ -6,10 +6,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -18,16 +17,17 @@ import java.util.List;
 
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -35,15 +35,24 @@ import org.mockito.MockitoAnnotations;
 
 public class LoadoutPartTest{
    @Mock
-   MessageXBar  xBar;
+   MessageXBar          xBar;
+   MockLoadoutContainer mlc = new MockLoadoutContainer();
+
    @Mock
-   Loadout      loadout;
-   @Mock
-   InternalPart part;
+   InternalPart         part;
 
    @Before
    public void setup(){
       MockitoAnnotations.initMocks(this);
+
+      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(20);
+      when(mlc.chassi.getMassMax()).thenReturn(100);
+   }
+
+   @After
+   public void tearDown(){
+      // We do not allow spurious messages on the crossbar!
+      verifyNoMoreInteractions(xBar);
    }
 
    private LoadoutPart makeCUT(int max_armor, Part type, int numCritSlots){
@@ -72,7 +81,8 @@ public class LoadoutPartTest{
       }
 
       // Execute
-      LoadoutPart cut = new LoadoutPart(loadout, part, xBar);
+      LoadoutPart cut = new LoadoutPart(mlc.loadout, part, xBar);
+      verify(xBar).attach(cut);
 
       // Verify default state
       assertSame(part, cut.getInternalPart());
@@ -138,50 +148,28 @@ public class LoadoutPartTest{
       MissileWeapon srm = (MissileWeapon)ItemDB.lookup("STREAK SRM 2");
       MissileWeapon lrm_artemis = (MissileWeapon)ItemDB.lookup("LRM5");
 
-      Upgrades upgrades = mock(Upgrades.class);
-      when(upgrades.hasArtemis()).thenReturn(true);
-      when(loadout.getUpgrades()).thenReturn(upgrades);
-
-      Chassi chassi = mock(Chassi.class);
-      when(chassi.getMassMax()).thenReturn(100);
-      when(loadout.getChassi()).thenReturn(chassi);
-
+      when(mlc.upgrades.hasArtemis()).thenReturn(true);
       when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(2);
 
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
       cut.addItem(lrm_artemis);
       cut.addItem(srm);
+      verify(xBar, times(2)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
 
       // Execute & verify
       assertEquals(3, cut.getNumCriticalSlotsUsed());
    }
 
-   @Test
+   @Test(expected = IllegalArgumentException.class)
    public void testAddItem_fail_nomessage() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      Chassi chassi = mock(Chassi.class);
-      when(loadout.getChassi()).thenReturn(chassi);
-      when(chassi.getMassMax()).thenReturn(100);
-      reset(xBar);
 
-      try{
-         cut.addItem("AC/20");
-         fail(); // No hardpoints
-      }
-      catch( Exception e ){
-         // Success
-      }
-
-      verifyZeroInteractions(xBar); // No message sent
+      cut.addItem("AC/20");
    }
 
    @Test
    public void testAddItem_success() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      Chassi chassi = mock(Chassi.class);
-      when(loadout.getChassi()).thenReturn(chassi);
-      when(chassi.getMassMax()).thenReturn(100);
-      reset(xBar);
 
       cut.addItem("AC/20 AMMO");
 
@@ -193,17 +181,13 @@ public class LoadoutPartTest{
    public void testAddItem_jumpJetsBadPart() throws Exception{
       for(Part part : new Part[] {Part.LeftArm, Part.RightArm, Part.Head}){
          LoadoutPart cut = makeCUT(0, part, 12);
-         Chassi chassi = mock(Chassi.class);
-         when(loadout.getChassi()).thenReturn(chassi);
-         when(loadout.getJumpJetCount()).thenReturn(0);
-         when(chassi.getMassMax()).thenReturn(100);
-         when(chassi.getMaxJumpJets()).thenReturn(5);
-         reset(xBar);
-
+         when(mlc.loadout.getJumpJetCount()).thenReturn(0);
+         when(mlc.chassi.getMaxJumpJets()).thenReturn(5);
          try{
             cut.addItem("JUMP JETS - CLASS V");
             fail("Expected exception!");
-         }catch(Exception e){
+         }
+         catch( Exception e ){
             // success
          }
       }
@@ -221,16 +205,10 @@ public class LoadoutPartTest{
          when(gyro.getNumCriticalSlots()).thenReturn(4);
          when(gyro.getMass()).thenReturn(0.0);
          LoadoutPart cut = makeCUT(Arrays.asList((Item)gyro), 0, Part.CenterTorso, 12);
-         Chassi chassi = mock(Chassi.class);
-         Upgrades upgrades = mock(Upgrades.class);
-         when(loadout.getChassi()).thenReturn(chassi);
-         when(loadout.getUpgrades()).thenReturn(upgrades);
-         when(upgrades.hasDoubleHeatSinks()).thenReturn(i == ItemDB.DHS);
-         when(chassi.getEngineMax()).thenReturn(400);
-         when(chassi.getEngineMin()).thenReturn(100);
-         when(chassi.getMassMax()).thenReturn(100);
+         when(mlc.upgrades.hasDoubleHeatSinks()).thenReturn(i == ItemDB.DHS);
+         when(mlc.chassi.getEngineMax()).thenReturn(400);
+         when(mlc.chassi.getEngineMin()).thenReturn(100);
          cut.addItem("STD ENGINE 400");
-         reset(xBar);
 
          // Execute
          cut.addItem(i);
@@ -265,7 +243,7 @@ public class LoadoutPartTest{
             assertEquals(6, cut.getNumEngineHeatsinks());
             assertEquals(10, cut.getNumCriticalSlotsUsed());
 
-            verify(xBar, times(6)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+            verify(xBar, times(7)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
          }
          else{
             // Execute
@@ -275,19 +253,15 @@ public class LoadoutPartTest{
             assertEquals(6, cut.getNumEngineHeatsinks());
             assertEquals(11, cut.getNumCriticalSlotsUsed());
 
-            verify(xBar, times(7)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+            verify(xBar, times(8)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
          }
       }
    }
 
    @Test
-   public void testCanAddItem_CASE_side_torso() throws Exception{
+   public void testAddItem_CASE_side_torso() throws Exception{
       for(Part part : new Part[] {Part.LeftTorso, Part.RightTorso}){
          LoadoutPart cut = makeCUT(0, part, 12);
-         Chassi chassi = mock(Chassi.class);
-         when(loadout.getChassi()).thenReturn(chassi);
-         when(chassi.getMassMax()).thenReturn(100);
-         reset(xBar);
 
          cut.addItem("C.A.S.E.");
 
@@ -297,13 +271,9 @@ public class LoadoutPartTest{
    }
 
    @Test
-   public void testCanAddItem_CASE_invalid() throws Exception{
+   public void testAddItem_CASE_invalid() throws Exception{
       for(Part part : new Part[] {Part.LeftArm, Part.LeftLeg, Part.CenterTorso, Part.Head, Part.RightArm, Part.RightLeg}){
          LoadoutPart cut = makeCUT(0, part, 12);
-         Chassi chassi = mock(Chassi.class);
-         when(loadout.getChassi()).thenReturn(chassi);
-         when(chassi.getMassMax()).thenReturn(100);
-         reset(xBar);
 
          try{
             cut.addItem("C.A.S.E.");
@@ -312,24 +282,32 @@ public class LoadoutPartTest{
          catch( Exception e ){
             // Success
          }
-
-         verifyZeroInteractions(xBar);
          assertFalse(cut.getItems().contains(ItemDB.lookup("C.A.S.E.")));
       }
+   }
+
+   /**
+    * {@link LoadoutPart#canAddItem(Item)} shall return false if the {@link Loadout} doesn't have enough free slots.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testCanAddItem_TooFewSlots() throws Exception{
+      LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
+      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots() - 1);
+
+      assertFalse(cut.canAddItem(ItemDB.BAP));
    }
 
    @Test
    public void testRemoveItem_success() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      Chassi chassi = mock(Chassi.class);
-      when(loadout.getChassi()).thenReturn(chassi);
-      when(chassi.getMassMax()).thenReturn(100);
       Item item = ItemDB.lookup("AC/20 AMMO");
-      cut.addItem(item);
-      reset(xBar);
 
+      cut.addItem(item);
       cut.removeItem(item);
 
+      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
    }
 
@@ -337,18 +315,14 @@ public class LoadoutPartTest{
    public void testRemoveItem_nosuchitem() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
       Item item = ItemDB.lookup("AC/20 AMMO");
-      reset(xBar);
 
       cut.removeItem(item);
-
-      verifyZeroInteractions(xBar);
    }
 
    @Test
    public void testSetArmor() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
       when(part.getArmorMax()).thenReturn(20);
-      reset(xBar);
 
       cut.setArmor(ArmorSide.FRONT, 10);
 
@@ -358,21 +332,49 @@ public class LoadoutPartTest{
    }
 
    /**
-    * Setting a armor value shall not throw regardless of previous value is new value is valid.
+    * {@link LoadoutPart#setArmor(ArmorSide, int)} shall throw an {@link IllegalArgumentException} if the armor amount
+    * is above the max for the component.
+    * 
+    * @throws Exception
+    */
+   @Test(expected = IllegalArgumentException.class)
+   public void testSetArmor_tooMuch() throws Exception{
+      int max = 10;
+      LoadoutPart cut = makeCUT(max, Part.LeftTorso, 12);
+
+      cut.setArmor(ArmorSide.FRONT, max + 1);
+   }
+
+   /**
+    * {@link LoadoutPart#setArmor(ArmorSide, int)} shall throw an {@link IllegalArgumentException} if there is not
+    * enough free tons to add that amount of armor.
+    * 
+    * @throws Exception
+    */
+   @Test(expected = IllegalArgumentException.class)
+   public void testSetArmor_notEnoughTons() throws Exception{
+      int maxArmor = 20;
+      LoadoutPart cut = makeCUT(maxArmor + 1, Part.LeftTorso, 12);
+      when(mlc.loadout.getFreeMass()).thenReturn(-1.0);
+
+      cut.setArmor(ArmorSide.FRONT, maxArmor + 1);
+   }
+
+   /**
+    * Setting a armor value shall not throw regardless of previous value if new value is valid.
     */
    @Test
    public void testSetArmor_alreadyMax() throws Exception{
-      LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      when(part.getArmorMax()).thenReturn(20);
+      int maxArmor = 20;
+      LoadoutPart cut = makeCUT(maxArmor, Part.LeftTorso, 12);
+
       cut.setArmor(ArmorSide.FRONT, 5);
       cut.setArmor(ArmorSide.BACK, 10);
-      reset(xBar);
-
       cut.setArmor(ArmorSide.FRONT, 10);
 
       assertEquals(10, cut.getArmor(ArmorSide.FRONT));
       assertEquals(10, cut.getArmor(ArmorSide.BACK));
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
+      verify(xBar, times(3)).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
    }
 
 }

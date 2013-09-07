@@ -183,11 +183,27 @@ public class LoadoutPart implements MessageXBar.Reader{
       items.addAll(internalPart.getInternalItems());
    }
 
-   public void setArmor(ArmorSide anArmorSide, int anArmorAmount){
+   /**
+    * Sets the armor for a given side of the component. Throws if the operation fails.
+    * 
+    * @param anArmorSide
+    *           The side to set the armor for.
+    * @param anArmorAmount
+    *           The amount to set the armor to.
+    * @throws IllegalArgumentException
+    *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
+    *            support the armor.
+    */
+   public void setArmor(ArmorSide anArmorSide, int anArmorAmount) throws IllegalArgumentException{
       if( anArmorAmount > getArmorMax(anArmorSide) ){
          throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + getArmorMax(anArmorSide) + " Was: " + anArmorAmount);
       }
+      int oldArmor = armor.get(anArmorSide);
       armor.put(anArmorSide, anArmorAmount);
+      if( loadout.getFreeMass() < 0 ){
+         armor.put(anArmorSide, oldArmor);
+         throw new IllegalArgumentException("Not enough tonnage to add more armor!");
+      }
       xBar.post(new Message(this, Type.ArmorChanged));
    }
 
@@ -203,6 +219,14 @@ public class LoadoutPart implements MessageXBar.Reader{
       return armor.get(anArmorSide);
    }
 
+   /**
+    * Will return the number of armor points that can be set on the component. Taking both armor sides into account and
+    * respecting the max armor limit. Does not take free tonnage into account.
+    * 
+    * @param anArmorSide
+    *           The {@link ArmorSide} to get the max free armor for.
+    * @return The number of armor points that can be maximally set (ignoring tonnage).
+    */
    public int getArmorMax(ArmorSide anArmorSide){
       // TODO: Take free tonnage into consideration!
       if( anArmorSide == ArmorSide.ONLY ){
@@ -286,7 +310,11 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
 
       // Check enough free critical slots
-      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots() ){
+      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots()){
+         return false;
+      }
+      
+      if( loadout.getNumCriticalSlotsFree() < anItem.getNumCriticalSlots()){
          return false;
       }
 
