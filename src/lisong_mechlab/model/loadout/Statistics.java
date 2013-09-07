@@ -14,18 +14,6 @@ public class Statistics{
       loadout = aLoadout;
    }
 
-   public double getTopSpeed(){
-      Engine engine = loadout.getEngine();
-      if( null == engine )
-         return 0;
-
-      double maxspeed = loadout.getChassi().getSpeedFactor() *  engine.getRating() / loadout.getChassi().getMassMax();
-      if( loadout.getEfficiencies().hasSpeedTweak() ){
-         maxspeed *= loadout.getEfficiencies().getSpeedModifier();
-      }
-      return maxspeed;
-   }
-
    public double getJumpDistance(){
       JumpJet jj = loadout.getJumpJetType();
       if(jj == null)

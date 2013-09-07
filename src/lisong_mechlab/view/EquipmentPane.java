@@ -37,12 +37,6 @@ public class EquipmentPane extends JTree{
       private static final long serialVersionUID = 5198340883942696537L;
       private Loadout           loadout;
 
-      /*
-       * @Override public Color getBackgroundNonSelectionColor() { return (null); }
-       * @Override public Color getBackgroundSelectionColor() { return Color.GREEN; }
-       * @Override public Color getBackground() { return (null); }
-       */
-
       @Override
       public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus){
          super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
