@@ -1,5 +1,7 @@
 package lisong_mechlab.model.item;
 
+import static org.mockito.Mockito.verify;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +9,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.model.mwo_parsing.ItemStatsXml;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
@@ -21,6 +25,7 @@ public class ItemDB{
    static public final HeatSink            SHS;
    static public final HeatSink            DHS;
    static public final Item                ECM;
+   static public final Item                BAP;
 
    static private final Map<String, Item>  locname2item;
    static private final Map<String, Item>  mwoname2item;
@@ -127,5 +132,6 @@ public class ItemDB{
       SHS = (HeatSink)lookup("STD HEAT SINK");
       DHS = (HeatSink)lookup("DOUBLE HEAT SINK");
       ECM = lookup("GUARDIAN ECM");
+      BAP = lookup("BEAGLE ACTIVE PROBE");
    }
 }
