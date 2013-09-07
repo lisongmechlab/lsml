@@ -10,6 +10,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.view.action.OpenHelp;
+import lisong_mechlab.view.action.OpenMechSelectorAction;
 
 public class MenuBar extends JMenuBar{
    private static final long serialVersionUID = -8841283911101837906L;
@@ -37,6 +38,15 @@ public class MenuBar extends JMenuBar{
             });
             menu.add(item);
          }
+      }
+      
+      {
+         JMenu menu = new JMenu("Mech");
+         menu.setMnemonic(KeyEvent.VK_M);
+         menu.getAccessibleContext().setAccessibleDescription("Actions relating to mech configurations");
+         add(menu);
+
+         menu.add(new JMenuItem(new OpenMechSelectorAction("New...", KeyStroke.getKeyStroke('n'))));
       }
 
       {
