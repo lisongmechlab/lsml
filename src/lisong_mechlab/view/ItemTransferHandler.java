@@ -43,7 +43,11 @@ class ItemTransferHandler extends TransferHandler{
       }
       else if( aComponent instanceof EquipmentPane ){
          sourcePart = null;
-         return new StringSelection((String)((EquipmentPane)aComponent).getSelectionPath().getLastPathComponent());
+         Object dragged = ((EquipmentPane)aComponent).getSelectionPath().getLastPathComponent();
+         if( dragged instanceof String )
+            return new StringSelection((String)dragged);
+         else if( dragged instanceof Item )
+            return new StringSelection(((Item)dragged).getName());
       }
       return null;
    }
