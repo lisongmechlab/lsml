@@ -1,7 +1,5 @@
 package lisong_mechlab.model.item;
 
-import static org.mockito.Mockito.verify;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +7,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.model.mwo_parsing.ItemStatsXml;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;

@@ -185,7 +185,7 @@ public class LSML extends JFrame{
       sp.setDividerLocation(180);
       setContentPane(sp);
 
-      setSize(600, 600);
+      setSize(1024, 768);
       setVisible(true);
 
       addWindowListener(new WindowAdapter(){
@@ -200,6 +200,9 @@ public class LSML extends JFrame{
    }
 
    public static void main(String[] args) throws Exception{
+      SplashScreen splash = new SplashScreen();
+      splash.waitUntilDone();
+      
       javax.swing.SwingUtilities.invokeLater(new Runnable(){
          public void run(){
             try{
