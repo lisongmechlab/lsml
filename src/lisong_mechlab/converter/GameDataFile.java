@@ -27,15 +27,15 @@ import java.util.zip.ZipFile;
 import lisong_mechlab.view.LsmlPreferences;
 
 public class GameDataFile{
-   public static final File             ITEM_STATS_XML = new File("Game/Libs/Items/ItemStats.xml");
+   private static final String   PREF_GAMEDIR   = "gamedir";
+   public static final File      ITEM_STATS_XML = new File("Game/Libs/Items/ItemStats.xml");
+   public static final File      MDF_ROOT       = new File("Game/Objects/mechs/");
 
-   private final Path                   gamePath;
-   private static final Map<File, File> entryCache     = new HashMap<File, File>();
-
-   public static final File             MDF_ROOT       = new File("Game/Objects/mechs/");
+   private final Map<File, File> entryCache     = new HashMap<File, File>();
+   private final Path            gamePath;
 
    public GameDataFile() throws IOException{
-      String gameDir = LsmlPreferences.getString("gameDir");
+      String gameDir = LsmlPreferences.getString(PREF_GAMEDIR);
       if( isValidGameDirectory(new File(gameDir).toPath()) ){
          gamePath = new File(gameDir).toPath();
       }
@@ -47,6 +47,7 @@ public class GameDataFile{
          else
             throw new FileNotFoundException("Couldn't find the game directory!");
       }
+      LsmlPreferences.setString(PREF_GAMEDIR, gamePath.toString());
    }
 
    public GameDataFile(File aGameRoot) throws FileNotFoundException{
@@ -144,7 +145,7 @@ public class GameDataFile{
                if( visitedArchives.contains(file) ){
                   continue;
                }
-               if( file.getName().toLowerCase().endsWith(".pak")  && !file.getName().toLowerCase().contains("french")){
+               if( file.getName().toLowerCase().endsWith(".pak") && !file.getName().toLowerCase().contains("french") ){
                   ZipFile zipFile = null;
                   try{
                      zipFile = new ZipFile(file);
@@ -190,7 +191,8 @@ public class GameDataFile{
 
          @Override
          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
-            if( dir.getFileName() != null && dir.getFileName().toString().toLowerCase().equals("windows") && dir.getFileName().toString().toLowerCase().equals("users") )
+            if( dir.getFileName() != null && dir.getFileName().toString().toLowerCase().equals("windows")
+                && dir.getFileName().toString().toLowerCase().equals("users") )
                // Skip windows folder, it's big and slow and we don't expect to find the game there.
                return SKIP_SUBTREE;
             return CONTINUE;
@@ -227,7 +229,8 @@ public class GameDataFile{
    }
 
    private Path getDefaultGameFileLocation(){
-      Path defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online"); //Uses two variations one for x64 and one for x86
+      // Uses two variations one for x64 and one for x86
+      Path defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online");
       if( !defaultGameFileLocation.toFile().exists() ){
          defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online");
       }
