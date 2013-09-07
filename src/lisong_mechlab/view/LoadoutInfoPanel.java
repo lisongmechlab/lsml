@@ -15,10 +15,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
@@ -225,7 +229,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          JPanel ammo = new JPanel();
          totalAmmoSupply = new JTable(anAmmoTableDataModel);
+            
+         
          totalAmmoSupply.setModel(anAmmoTableDataModel);
+         DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+         dtcr.setHorizontalTextPosition(JLabel.CENTER);
+         for (int i=0; i<totalAmmoSupply.getColumnCount();i++){
+            totalAmmoSupply.setDefaultRenderer(totalAmmoSupply.getColumnClass(i),dtcr);
+         }
+         totalAmmoSupply.updateUI();
          ammo.setLayout(new BorderLayout()); // unless already there
          ammo.add(totalAmmoSupply, BorderLayout.CENTER);
          ammo.add(totalAmmoSupply.getTableHeader(), BorderLayout.NORTH);
@@ -312,6 +324,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                AmmoTableDataModel anAmmoTableDataModel1 = new AmmoTableDataModel(loadout, anXBar);
                anAmmoTableDataModel1.fillInData();
                totalAmmoSupply.setModel(anAmmoTableDataModel1);
+               
+               DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+               dtcr.setHorizontalAlignment(SwingConstants.CENTER);
+               for (int i=0; i<totalAmmoSupply.getColumnCount();i++){
+                  totalAmmoSupply.setDefaultRenderer(totalAmmoSupply.getColumnClass(i),dtcr);
+               }
+              JTableHeader header =  totalAmmoSupply.getTableHeader();
+              header.setDefaultRenderer(new HeaderRenderer(totalAmmoSupply));
+               totalAmmoSupply.updateUI();
 
                // Summary
                // ----------------------------------------------------------------------
@@ -322,6 +343,28 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       });
 
    }
+   
+   private static class HeaderRenderer implements TableCellRenderer {
+
+      DefaultTableCellRenderer renderer;
+
+      public HeaderRenderer(JTable table) {
+         if(table.getTableHeader().getDefaultRenderer() instanceof DefaultTableCellRenderer){
+            renderer = (DefaultTableCellRenderer)
+                  table.getTableHeader().getDefaultRenderer();
+              renderer.setHorizontalAlignment(JLabel.CENTER);
+         }
+         
+      }
+
+      @Override
+      public Component getTableCellRendererComponent(
+          JTable table, Object value, boolean isSelected,
+          boolean hasFocus, int row, int col) {
+          return renderer.getTableCellRendererComponent(
+              table, value, isSelected, hasFocus, row, col);
+      }
+  }
 
    @Override
    public void itemStateChanged(ItemEvent anEvent){
