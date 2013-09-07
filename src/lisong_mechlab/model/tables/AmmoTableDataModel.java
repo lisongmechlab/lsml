@@ -33,6 +33,7 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
       this.aLoadout = aloadout;
       totalAmmoSupply = new TotalAmmoSupply(aLoadout);
       totalAmmoSupply.calculate();
+      fillInData();
       this.aXBar = aXBar;
       aXBar.attach(this);
 
