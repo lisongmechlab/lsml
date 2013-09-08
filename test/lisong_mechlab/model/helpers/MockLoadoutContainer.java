@@ -7,6 +7,7 @@ import java.util.Arrays;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
@@ -101,5 +102,21 @@ public class MockLoadoutContainer{
       when(loadout.getUpgrades()).thenReturn(upgrades);
       when(loadout.getEfficiencies()).thenReturn(efficiencies);
       when(loadout.getChassi()).thenReturn(chassi);
+   }
+   
+   public Internal makeInternal(String aName, int aNumSlots){
+      return makeInternal(aName, aNumSlots, 0.0);
+   }
+   
+   public Internal makeInternal(int aNumSlots){
+      return makeInternal("unnamed", aNumSlots, 0.0);
+   }
+   
+   public Internal makeInternal(String aName, int aNumSlots, double aTons){
+      Internal internalItem = mock(Internal.class);
+      when(internalItem.getNumCriticalSlots()).thenReturn(aNumSlots);
+      when(internalItem.getMass()).thenReturn(aTons);
+      //when(internalItem.getName()).thenReturn(aName);
+      return internalItem;
    }
 }
