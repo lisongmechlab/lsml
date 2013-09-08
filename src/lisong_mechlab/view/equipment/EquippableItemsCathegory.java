@@ -86,16 +86,6 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
    }
 
    @Override
-   public void internalFrameClosed(InternalFrameEvent aArg0){
-      focus(null);
-   }
-
-   @Override
-   public void internalFrameClosing(InternalFrameEvent aE){
-      focus(null);
-   }
-
-   @Override
    public void internalFrameDeactivated(InternalFrameEvent aE){
       focus(null);
    }
@@ -108,11 +98,6 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
    @Override
    public void internalFrameIconified(InternalFrameEvent aE){
       focus(null);
-   }
-
-   @Override
-   public void internalFrameOpened(InternalFrameEvent aArg0){
-      focus(aArg0);
    }
 
    @Override
