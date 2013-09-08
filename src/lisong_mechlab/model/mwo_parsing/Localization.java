@@ -78,7 +78,7 @@ public class Localization{
          protected MapperWrapper wrapMapper(MapperWrapper next){
             return new MapperWrapper(next){
                @Override
-               public boolean shouldSerializeMember(@SuppressWarnings("rawtypes") Class definedIn, String fieldName){
+               public boolean shouldSerializeMember(Class definedIn, String fieldName){
                   if( definedIn == Object.class ){
                      return false;
                   }
@@ -121,6 +121,7 @@ public class Localization{
 
    }
 
+   @SuppressWarnings("unused")
    static private void debugprintrow(Workbook.Worksheet.Table.Row row){
 //      if( row.cells != null ){
 //         System.out.print("{");

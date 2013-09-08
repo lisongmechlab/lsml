@@ -1,9 +1,8 @@
 package lisong_mechlab.view.equipment;
 
-import javax.swing.event.InternalFrameEvent;
 import javax.swing.tree.TreePath;
 
-abstract class AbstractTreeCathegory implements TreeCathegory{
+abstract class AbstractTreeCathegory extends TreeCathegory{
    private final String             name;
    private final TreePath           path;
    private final EquipmentTreeModel model;
@@ -23,34 +22,6 @@ abstract class AbstractTreeCathegory implements TreeCathegory{
    @Override
    public String toString(){
       return name;
-   }  
-
-   @Override
-   public void internalFrameActivated(InternalFrameEvent aE){
-   }
-
-   @Override
-   public void internalFrameClosed(InternalFrameEvent aE){
-   }
-
-   @Override
-   public void internalFrameClosing(InternalFrameEvent aE){
-   }
-
-   @Override
-   public void internalFrameDeactivated(InternalFrameEvent aE){
-   }
-
-   @Override
-   public void internalFrameDeiconified(InternalFrameEvent aE){
-   }
-
-   @Override
-   public void internalFrameIconified(InternalFrameEvent aE){
-   }
-
-   @Override
-   public void internalFrameOpened(InternalFrameEvent aE){
    }
 
    @Override

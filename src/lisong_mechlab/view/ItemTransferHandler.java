@@ -74,9 +74,7 @@ class ItemTransferHandler extends TransferHandler{
          }
          return true;
       }
-      else{
-         return parseItems(aInfo) != null;
-      }
+      return parseItems(aInfo) != null;
    }
 
    /**
@@ -108,12 +106,9 @@ class ItemTransferHandler extends TransferHandler{
          catch( Exception e ){
             return false;
          }
-         return true;
       }
-      else{
-         // Allow the user to drop the item to get it removed
-         return true;
-      }
+      // Allow the user to drop the item to get it removed
+      return true;
    }
 
    private List<Item> parseItems(TransferHandler.TransferSupport aInfo){

@@ -43,11 +43,11 @@ public class Item implements Comparable<Item>{
    }
 
    @Override
-   final public String toString(){
+   public String toString(){
       return getName();
    }
 
-   final public String getName(){
+   public String getName(){
       return locName;
    }
 
@@ -56,7 +56,9 @@ public class Item implements Comparable<Item>{
    }
 
    public int getNumCriticalSlots(Upgrades aUpgrades){
-      return getNumCriticalSlots();
+      if(aUpgrades == null)
+         return slots;
+      return slots;
    }
 
    public HardpointType getHardpointType(){
@@ -68,6 +70,8 @@ public class Item implements Comparable<Item>{
    }
 
    public double getMass(Upgrades aUpgrades){
+      if(aUpgrades == null)
+         return getMass();
       return getMass();
    }
 
@@ -87,6 +91,8 @@ public class Item implements Comparable<Item>{
     * @return True if the {@link Loadout} is able to carry the weapon with current upgrades.
     */
    public boolean isEquippableOn(Loadout aLoadout){
+      if(aLoadout == null)
+         return true;
       return true;
    }
 
@@ -100,6 +106,8 @@ public class Item implements Comparable<Item>{
    }
 
    public String getName(Upgrades aUpgrades){
+      if(aUpgrades == null)
+         return getName();
       return getName();
    }
 }

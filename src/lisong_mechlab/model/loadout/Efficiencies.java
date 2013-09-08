@@ -22,7 +22,7 @@ public class Efficiencies{
 
       enum Type{
          Changed
-      };
+      }
 
       public final Efficiencies efficiencies;
       public final Type         type;

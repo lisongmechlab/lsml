@@ -28,14 +28,14 @@ import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
-import lisong_mechlab.model.loadout.metrics.TopSpeedMetric;
+import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.tables.AmmoTableDataModel;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long        serialVersionUID = 4720126200474042446L;
    final private Loadout            loadout;
-   private MessageXBar              anXBar;
+   private MessageXBar              xBar;
 
    final private JProgressBar       massBar;
    final private JLabel             massValue        = new JLabel("xxx");
@@ -72,7 +72,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    final private MaxSustainedDPS    metricSustainedDps;
    final private TotalAmmoSupply    metricTotalAmmoSupply;
    final private AmmoTableDataModel anAmmoTableDataModel;
-   final private TopSpeedMetric topSpeedMetric;
+   final private TopSpeed     topSpeedMetric;
    transient private Boolean        inhibitChanges   = false;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
@@ -84,9 +84,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
       metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
       anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
-      topSpeedMetric = new TopSpeedMetric(loadout);
+      topSpeedMetric = new TopSpeed(loadout);
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-      this.anXBar = anXBar;
+      this.xBar = anXBar;
 
       anXBar.attach(this);
 
@@ -309,7 +309,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                metricTotalAmmoSupply.calculate();
 
-               AmmoTableDataModel anAmmoTableDataModel1 = new AmmoTableDataModel(loadout, anXBar);
+               AmmoTableDataModel anAmmoTableDataModel1 = new AmmoTableDataModel(loadout, xBar);
                anAmmoTableDataModel1.fillInData();
                totalAmmoSupply.setModel(anAmmoTableDataModel1);
 

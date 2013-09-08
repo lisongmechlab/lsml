@@ -50,7 +50,7 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
             continue;
          }
          else if( item instanceof EnergyWeapon )
-            energy.add((EnergyWeapon)item);
+            energy.add(item);
          else if( item instanceof BallisticWeapon ){
             Ammunition ammo = ((AmmoWeapon)item).getAmmoType();
             ballistic.add(item);

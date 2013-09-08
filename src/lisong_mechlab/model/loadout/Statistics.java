@@ -1,6 +1,5 @@
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.Weapon;
