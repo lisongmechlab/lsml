@@ -67,7 +67,12 @@ public class EquipmentPane extends JTree{
       }
 
       @Override
-      public void internalFrameClosed(InternalFrameEvent aArg0){
+      public void internalFrameDeactivated(InternalFrameEvent aE){
+         loadout = null;
+      }
+
+      @Override
+      public void internalFrameIconified(InternalFrameEvent aE){
          loadout = null;
       }
 
@@ -78,24 +83,19 @@ public class EquipmentPane extends JTree{
       }
 
       @Override
-      public void internalFrameOpened(InternalFrameEvent aArg0){
-         LoadoutFrame frame = (LoadoutFrame)aArg0.getInternalFrame();
-         loadout = frame.getLoadout();
-      }
-
-      @Override
       public void internalFrameClosing(InternalFrameEvent aE){
-         loadout = null;
+         // No-Op
       }
 
       @Override
-      public void internalFrameDeactivated(InternalFrameEvent aE){
-         loadout = null;
+      public void internalFrameClosed(InternalFrameEvent aArg0){
+         // No-Op -- This may be received after the new frame is activated
+         // And is the cause for issue #64
       }
 
       @Override
-      public void internalFrameIconified(InternalFrameEvent aE){
-         loadout = null;
+      public void internalFrameOpened(InternalFrameEvent aArg0){
+         // No-Op
       }
    }
 

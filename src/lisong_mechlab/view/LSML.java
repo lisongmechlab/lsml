@@ -24,7 +24,7 @@ public class LSML extends JFrame{
    private static LSML          instance;
    private MechGarage           garage;
    private final MessageXBar    xBar                   = new MessageXBar();
-   private final LoadoutDesktop configurationsPane     = new LoadoutDesktop();
+   private final LoadoutDesktop desktop                = new LoadoutDesktop();
 
    public void initGarage(){
       String garageFileName = LsmlPreferences.getString(LsmlPreferences.GARAGEFILE_KEY);
@@ -178,9 +178,9 @@ public class LSML extends JFrame{
 
       setJMenuBar(new MenuBar(this));
 
-      final EquipmentPane equipmentPane = new EquipmentPane(configurationsPane, this, xBar);
+      final EquipmentPane equipmentPane = new EquipmentPane(desktop, this, xBar);
       final JScrollPane jScrollPane = new JScrollPane(equipmentPane);
-      final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, configurationsPane);
+      final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, desktop);
 
       sp.setDividerLocation(180);
       setContentPane(sp);
@@ -191,7 +191,7 @@ public class LSML extends JFrame{
       addWindowListener(new WindowAdapter(){
          @Override
          public void windowClosing(WindowEvent e){
-            configurationsPane.closeAll();
+            desktop.closeAll();
             saveGarage();
          }
       });
@@ -228,7 +228,7 @@ public class LSML extends JFrame{
    }
 
    public LoadoutDesktop getDesktop(){
-      return configurationsPane;
+      return desktop;
    }
 
 }
