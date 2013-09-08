@@ -103,14 +103,10 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       for(Item item : loadout.getAllItems()){
          if( item instanceof Weapon && item != ItemDB.AMS ){
             Weapon weapon = (Weapon)item;
+            ans.add(weapon.getRangeZero());
             ans.add(weapon.getRangeMin());
             ans.add(weapon.getRangeLong());
             ans.add(weapon.getRangeMax());
-
-            if( weapon.getName().contains("LRM") ){
-               // Special case the immediate fall off of LRMs
-               ans.add(weapon.getRangeMin() - Math.ulp(weapon.getRangeMin()) * Weapon.RANGE_ULP_FUZZ);
-            }
          }
       }
       return ans.toArray(new Double[ans.size()]);

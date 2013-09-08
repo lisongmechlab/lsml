@@ -5,14 +5,14 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class Weapon extends HeatSource{
-   public static final int RANGE_ULP_FUZZ = 20;
-   
-   protected final double damagePerProjectile;
-   protected final double cycleTime;
-   protected final double rangeMin;
-   protected final double rangeLong;
-   protected final double rangeMax;
-   protected final int    numPerVolley;
+   public static final int RANGE_ULP_FUZZ = 5;
+
+   protected final double  damagePerProjectile;
+   protected final double  cycleTime;
+   protected final double  rangeMin;
+   protected final double  rangeLong;
+   protected final double  rangeMax;
+   protected final int     numPerVolley;
 
    public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
       super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat);
@@ -34,7 +34,7 @@ public class Weapon extends HeatSource{
    public double getDamagePerVolley(){
       return damagePerProjectile * numPerVolley;
    }
-   
+
    public int getNumberOfShotsPerVolley(){
       return numPerVolley;
    }
@@ -43,6 +43,10 @@ public class Weapon extends HeatSource{
       if( cycleTime < 0.1 )
          return 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 = 0.10375
       return cycleTime;
+   }
+
+   public double getRangeZero(){
+      return 0;
    }
 
    public double getRangeMin(){
@@ -59,8 +63,10 @@ public class Weapon extends HeatSource{
 
    public double getRangeEffectivity(double range){
       // Assume linear fall off
+      if( range < getRangeZero())
+         return 0;
       if( range < getRangeMin() )
-         return range / getRangeMin();
+         return (range - getRangeZero()) / (getRangeMin() - getRangeZero());
       else if( range <= getRangeLong() )
          return 1.0;
       else if( range < getRangeMax() )
