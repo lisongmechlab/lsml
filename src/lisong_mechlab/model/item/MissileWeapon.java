@@ -12,6 +12,11 @@ public class MissileWeapon extends AmmoWeapon{
       super(aStatsWeapon, HardpointType.MISSILE);
       flightSpeed = aStatsWeapon.WeaponStats.speed;
    }
+   
+   @Override
+   public double getRangeZero(){
+      return super.getRangeMin() - Math.ulp(super.getRangeMin())*RANGE_ULP_FUZZ;
+   }
 
    @Override
    public double getRangeMax(){
@@ -39,15 +44,6 @@ public class MissileWeapon extends AmmoWeapon{
       if( aUpgrades.hasArtemis() && isArtemisCapable() )
          return super.getName() + ARTEMIS;
       return super.getName();
-   }
-
-   @Override
-   public double getRangeEffectivity(double range){
-      // Assume linear fall off
-      if( range < getRangeMin() )
-         return 0;
-      else
-         return super.getRangeEffectivity(range);
    }
    
    /**

@@ -89,6 +89,29 @@ public class MaxSustainedDPSTest{
    }
 
    /**
+    * PPC shall have an instant fall off (patch 2013-09-03)
+    */
+   @Test
+   public void testGetDamageDistribution_ppc(){
+      // Setup
+      List<Item> items = new ArrayList<>();
+      EnergyWeapon ppc = (EnergyWeapon)ItemDB.lookup("PPC");
+      items.add(ppc);
+
+      when(loadout.getAllItems()).thenReturn(items);
+      when(heatDissipation.calculate()).thenReturn(10.0);
+
+      Map<Weapon, Double> result_0 = cut.getDamageDistribution(90.0 - 0.001);
+      Map<Weapon, Double> result_1 = cut.getDamageDistribution(90.0 + 0.001);
+
+      assertTrue(result_0.containsKey(ppc));
+      assertEquals(0.0, result_0.get(ppc).doubleValue(), 0.0);
+
+      assertTrue(result_1.containsKey(ppc));
+      assertEquals(1.0, result_1.get(ppc).doubleValue(), 0.0);
+   }
+
+   /**
     * Damage shall be correctly calculated, taking high DpH weapons into account first regardless of order they are
     * found.
     */
