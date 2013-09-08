@@ -43,9 +43,27 @@ public class ChassiDBTest{
       assertTrue(heavies.contains(ChassiDB.lookup("JM6-DD")));
       assertTrue(heavies.contains(ChassiDB.lookup("CPLT-C4")));
       assertTrue(heavies.contains(ChassiDB.lookup("FLAME")));
+      assertTrue(heavies.contains(ChassiDB.lookup("PROTECTOR")));
       
       for(Chassi chassi : heavies){
          assertEquals(ChassiClass.HEAVY, chassi.getChassiClass());
+      }
+   }
+   
+   /**
+    * Test that the assault group contains the right mechs
+    */
+   @Test
+   public void testLookupByChassiClass_Assault(){
+      List<Chassi> heavies = ChassiDB.lookup(ChassiClass.ASSAULT);
+      
+      assertTrue(heavies.contains(ChassiDB.lookup("PRETTY BABY")));
+      assertTrue(heavies.contains(ChassiDB.lookup("DRAGON SLAYER")));
+      assertTrue(heavies.contains(ChassiDB.lookup("MISERY")));
+      assertTrue(heavies.contains(ChassiDB.lookup("AS7-D-DC")));
+      
+      for(Chassi chassi : heavies){
+         assertEquals(ChassiClass.ASSAULT, chassi.getChassiClass());
       }
    }
 
