@@ -27,7 +27,7 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
 
    public void openLoadout(Loadout aLoadout, MessageXBar anXBar){
       LoadoutFrame frame = new LoadoutFrame(aLoadout, anXBar);
-      frame.addInternalFrameListener(this);
+      frame.addInternalFrameListener(this); // The desktop acts as forwarder of frame events from the frames.
       add(frame);
 
       try{
