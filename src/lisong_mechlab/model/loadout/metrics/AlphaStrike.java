@@ -21,7 +21,7 @@ public class AlphaStrike implements Metric{
       double ans = 0;
       for(Item item : loadout.getAllItems()){
          if( item instanceof Weapon ){
-            ans += ((Weapon)item).getDamagePerVolley();
+            ans += ((Weapon)item).getDamagePerShot();
          }
       }
       return ans;
