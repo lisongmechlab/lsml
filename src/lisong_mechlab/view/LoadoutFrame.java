@@ -58,6 +58,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       // Set the window's location.
       setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
+      openFrameCount++;
 
       JPanel r = new LoadoutInfoPanel(aLoadout, anXBar);
       JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, createMechView(aLoadout, anXBar), r);
