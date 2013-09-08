@@ -37,7 +37,7 @@ public class AlphaStrikeTest{
       items.add(lb10x);
       when(mlc.loadout.getAllItems()).thenReturn(items);
 
-      double expected = ppc.getDamagePerVolley() + ll.getDamagePerVolley() + lrm20.getDamagePerVolley() + lb10x.getDamagePerVolley();
+      double expected = ppc.getDamagePerShot() + ll.getDamagePerShot() + lrm20.getDamagePerShot() + lb10x.getDamagePerShot();
       assertEquals(expected, cut.calculate(), 0.0);
    }
 }
