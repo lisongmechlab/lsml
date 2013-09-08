@@ -5,10 +5,22 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class EnergyWeapon extends Weapon{
    protected final double burnTime;
+   protected final double zeroRange;
 
    public EnergyWeapon(ItemStatsWeapon aStatsWeapon){
       super(aStatsWeapon, HardpointType.ENERGY);
       burnTime = aStatsWeapon.WeaponStats.duration;
+      if( getName().equals("PPC") ){
+         zeroRange = getRangeMin() - Math.ulp(getRangeMin()) * RANGE_ULP_FUZZ;
+      }
+      else{
+         zeroRange = 0;
+      }
+   }
+   
+   @Override
+   public double getRangeZero(){
+      return zeroRange;
    }
 
    @Override
