@@ -56,11 +56,11 @@ public class TotalAmmoSupply extends AmmoMetric{
             if( ammoValues.containsKey(((AmmoWeapon)item).getAmmoType()) ){
                if( volleyValues.containsKey(((AmmoWeapon)item).getAmmoType().getName()) ){
                   int tempVolleyAmount = volleyValues.get(((AmmoWeapon)item).getAmmoType().getName())
-                                         + ((AmmoWeapon)item).getNumberOfShotsPerVolley();
+                                         + ((AmmoWeapon)item).getAmmoPerPerShot();
                   volleyValues.put(((AmmoWeapon)item).getAmmoType().getName(), tempVolleyAmount);
                }
                else{
-                  volleyValues.put(((AmmoWeapon)item).getAmmoType().getName(), ((AmmoWeapon)item).getNumberOfShotsPerVolley());
+                  volleyValues.put(((AmmoWeapon)item).getAmmoType().getName(), ((AmmoWeapon)item).getAmmoPerPerShot());
                }
 
             }

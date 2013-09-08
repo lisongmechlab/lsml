@@ -16,66 +16,90 @@ public class WeaponTest{
    }
 
    /**
-    * Make sure {@link Weapon#getDamagePerVolley()} returns the volley damage and not missile damage.
+    * Make sure {@link Weapon#getDamagePerShot()} returns the volley damage and not missile damage.
     * 
     * @throws Exception
     */
    @Test
-   public void testGetDamagePerVolley_lrm20() throws Exception{
+   public void testGetDamagePerShot_lrm20() throws Exception{
       MissileWeapon lrm20 = (MissileWeapon)ItemDB.lookup("LRM 20");
-      assertTrue(lrm20.getDamagePerVolley() > 10);
+      assertTrue(lrm20.getDamagePerShot() > 10);
+   }
+   
+   @Test
+   public void testGetDamagePerShot_lpl() throws Exception{
+      Weapon weapon = (Weapon)ItemDB.lookup("LRG PULSE LASER");
+      assertTrue(weapon.getDamagePerShot() > 8);
+   }
+
+   @Test
+   public void testGetDamagePerShot_ml() throws Exception{
+      Weapon weapon = (Weapon)ItemDB.lookup("MEDIUM LASER");
+      assertTrue(weapon.getDamagePerShot() > 4);
    }
 
    /**
-    * Make sure {@link Weapon#getDamagePerVolley()} returns the volley damage and not projectile damage.
+    * Make sure {@link Weapon#getDamagePerShot()} returns the volley damage and not projectile damage.
     * 
     * @throws Exception
     */
    @Test
-   public void testGetDamagePerVolley_lb10x() throws Exception{
-      BallisticWeapon lb10xac = (BallisticWeapon)ItemDB.lookup("LB 10-X AC");
-      assertTrue(lb10xac.getDamagePerVolley() > 5);
+   public void testGetDamagePerShot_lb10x() throws Exception{
+      Weapon lb10xac = (Weapon)ItemDB.lookup("LB 10-X AC");
+      assertTrue(lb10xac.getDamagePerShot() > 5);
    }
 
    @Test
-   public void testGetDamagePerVolley_gauss() throws Exception{
-      BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      assertTrue(gauss.getDamagePerVolley() > 10);
+   public void testGetShotsPerVolley_lb10x() throws Exception{
+      Weapon lb10xac = (Weapon)ItemDB.lookup("LB 10-X AC");
+      assertEquals(1, lb10xac.getAmmoPerPerShot());
+   }
+
+   @Test
+   public void testGetShotsPerVolley_lrm10() throws Exception{
+      Weapon lb10xac = (Weapon)ItemDB.lookup("LRM 10");
+      assertEquals(10, lb10xac.getAmmoPerPerShot());
+   }
+
+   @Test
+   public void testGetDamagePerShot_gauss() throws Exception{
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
+      assertTrue(gauss.getDamagePerShot() > 10);
    }
 
    @Test
    public void testGetHeat_gauss(){
-      BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
       assertEquals(1.0, gauss.getHeat(), 0.0);
    }
 
    @Test
    public void testGetSecondsPerShot_mg() throws Exception{
-      BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("MACHINE GUN");
+      Weapon mg = (Weapon)ItemDB.lookup("MACHINE GUN");
       assertTrue(mg.getSecondsPerShot() > 0.05);
    }
 
    @Test
    public void testGetSecondsPerShot_gauss() throws Exception{
-      BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
+      Weapon mg = (Weapon)ItemDB.lookup("GAUSS RIFLE");
       assertTrue(mg.getSecondsPerShot() > 3);
    }
 
    @Test
    public void testGetRangeMin_ppc() throws Exception{
-      EnergyWeapon ppc = (EnergyWeapon)ItemDB.lookup("PPC");
+      Weapon ppc = (Weapon)ItemDB.lookup("PPC");
       assertEquals(90.0, ppc.getRangeMin(), 0.0);
    }
 
    @Test
    public void testGetRangeMax_ppc() throws Exception{
-      EnergyWeapon ppc = (EnergyWeapon)ItemDB.lookup("PPC");
+      Weapon ppc = (Weapon)ItemDB.lookup("PPC");
       assertEquals(1080.0, ppc.getRangeMax(), 0.0);
    }
 
    @Test
    public void testGetRangeLong_ppc() throws Exception{
-      EnergyWeapon ppc = (EnergyWeapon)ItemDB.lookup("PPC");
+      Weapon ppc = (Weapon)ItemDB.lookup("PPC");
       assertEquals(540.0, ppc.getRangeLong(), 0.0);
    }
 
@@ -123,7 +147,7 @@ public class WeaponTest{
    @Test
    public void testGetStat_gauss() throws Exception{
       BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      assertEquals(gauss.getDamagePerVolley() / gauss.getHeat(), gauss.getStat("d/h"), 0.0);
+      assertEquals(gauss.getDamagePerShot() / gauss.getHeat(), gauss.getStat("d/h"), 0.0);
    }
 
 }
