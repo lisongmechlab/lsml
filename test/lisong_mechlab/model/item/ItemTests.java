@@ -209,6 +209,7 @@ public class ItemTests{
    /**
     * There must be heat sinks in the item database
     */
+   @SuppressWarnings("null")
    @Test
    public void testHeatsinks(){
       Collection<HeatSink> heatsinks = ItemDB.lookup(HeatSink.class);
@@ -217,33 +218,36 @@ public class ItemTests{
       assertEquals(2, heatsinks.size());
 
       // All parameters should be positive
-      HeatSink sgl = null;
-      HeatSink dbl = null;
+      HeatSink shs = null;
+      HeatSink dhs = null;
       for(HeatSink heatSink : heatsinks){
          assertTrue(heatSink.getDissipation() > 0);
          assertTrue(heatSink.getCapacity() > 0);
 
          // Determine which is double/single
-         if( null == sgl ){
-            sgl = heatSink;
+         if( null == shs ){
+            shs = heatSink;
          }
          else{
-            if( heatSink.getDissipation() > sgl.getDissipation() ){
-               dbl = heatSink;
+            if( heatSink.getDissipation() > shs.getDissipation() ){
+               dhs = heatSink;
             }
             else{
-               dbl = sgl;
-               sgl = heatSink;
+               dhs = shs;
+               shs = heatSink;
             }
          }
       }
+      
+      assertNotNull(dhs);
+      assertNotNull(shs);
 
       // Double should have higher values than single
-      assertTrue(dbl.getDissipation() > sgl.getDissipation());
-      assertTrue(dbl.getCapacity() > sgl.getCapacity());
+      assertTrue(dhs.getDissipation() > shs.getDissipation());
+      assertTrue(dhs.getCapacity() > shs.getCapacity());
 
-      assertEquals(3, dbl.getNumCriticalSlots());
-      assertEquals(1, sgl.getNumCriticalSlots());
+      assertEquals(3, dhs.getNumCriticalSlots());
+      assertEquals(1, shs.getNumCriticalSlots());
    }
 
    /**

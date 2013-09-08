@@ -21,7 +21,7 @@ public class InternalPart{
    private final List<Item>                  internals;
    private final Map<HardpointType, Integer> hardpoints;
 
-   public InternalPart(MdfComponent aComponent, Part aPart, Chassi aChassi, HardpointsXml aHardpoints){
+   public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints){
       criticalslots = aComponent.Slots;
       type = aPart;
       hitpoints = aComponent.HP;

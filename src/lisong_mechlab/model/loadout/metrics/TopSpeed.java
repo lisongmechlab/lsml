@@ -4,10 +4,10 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.Loadout;
 
-public class TopSpeedMetric extends Metric{
+public class TopSpeed extends Metric{
    private final Loadout loadout;
 
-   public TopSpeedMetric(Loadout aLoadout){
+   public TopSpeed(Loadout aLoadout){
       loadout = aLoadout;
    }
 

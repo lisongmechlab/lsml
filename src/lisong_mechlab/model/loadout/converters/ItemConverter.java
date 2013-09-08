@@ -11,7 +11,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class ItemConverter implements Converter{
 
-   @SuppressWarnings("rawtypes")
    @Override
    public boolean canConvert(Class aClass){
       return Item.class.isAssignableFrom(aClass);

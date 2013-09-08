@@ -11,9 +11,9 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TopSpeedMetricTest{
+public class TopSpeedTest{
    MockLoadoutContainer mlc = new MockLoadoutContainer();
-   TopSpeedMetric statistics = new TopSpeedMetric(mlc.loadout);
+   TopSpeed statistics = new TopSpeed(mlc.loadout);
 
    @Test
    public void testCalculate_noengine() throws Exception{

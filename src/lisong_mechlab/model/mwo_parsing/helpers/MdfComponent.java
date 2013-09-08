@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 public class MdfComponent{
-   public class Hardpoint{
+   public static class Hardpoint{
       @XStreamAsAttribute
       public int ID;
       @XStreamAsAttribute

@@ -87,6 +87,7 @@ public class LoadoutTest{
       }
       catch( Exception e ){
          fail("Premature throw!");
+         return;
       }
 
       cut.getPart(Part.RightTorso).addItem(jjv);

@@ -24,7 +24,7 @@ public class LSML extends JFrame{
    private static LSML          instance;
    private MechGarage           garage;
    private final MessageXBar    xBar                   = new MessageXBar();
-   private final LoadoutDesktop desktop                = new LoadoutDesktop();
+   private final LoadoutDesktop desktop                = new LoadoutDesktop(xBar);
 
    public void initGarage(){
       String garageFileName = LsmlPreferences.getString(LsmlPreferences.GARAGEFILE_KEY);
@@ -204,12 +204,13 @@ public class LSML extends JFrame{
       splash.waitUntilDone();
 
       javax.swing.SwingUtilities.invokeLater(new Runnable(){
+         @Override
          public void run(){
             try{
                instance = new LSML();
             }
             catch( Exception e ){
-               e.printStackTrace();
+               JOptionPane.showMessageDialog(null, "Unable to start! Error: " + e);
             }
          }
       });

@@ -27,7 +27,7 @@ import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.metrics.TopSpeedMetric;
+import lisong_mechlab.model.loadout.metrics.TopSpeed;
 
 public class ChassiListView extends JFrame{
    static public class ChassiTableModel extends AbstractTableModel{
@@ -49,7 +49,7 @@ public class ChassiListView extends JFrame{
          public Chassi value(Chassi aChassi){
             return aChassi;
          }
-      };
+      }
 
       static class TonsColumn extends TableColumn<String>{
          public TonsColumn(){
@@ -60,7 +60,7 @@ public class ChassiListView extends JFrame{
          public String value(Chassi aChassi){
             return "" + aChassi.getMassMax();
          }
-      };
+      }
 
       static class SpeedColumn extends TableColumn<String>{
          DecimalFormat df = new DecimalFormat("###.#");
@@ -71,11 +71,11 @@ public class ChassiListView extends JFrame{
 
          @Override
          public String value(Chassi aChassi){
-            final double maxSpeed = TopSpeedMetric.calculate(aChassi.getEngineMax(), aChassi, 1.0);
-            final double maxSpeedTweak = TopSpeedMetric.calculate(aChassi.getEngineMax(), aChassi, 1.1);
+            final double maxSpeed = TopSpeed.calculate(aChassi.getEngineMax(), aChassi, 1.0);
+            final double maxSpeedTweak = TopSpeed.calculate(aChassi.getEngineMax(), aChassi, 1.1);
             return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
          }
-      };
+      }
 
       static class WeaponsColumn extends TableColumn<Chassi>{
          JPanel panel     = new JPanel();
@@ -126,7 +126,7 @@ public class ChassiListView extends JFrame{
                }
             };
          }
-      };
+      }
 
       public ChassiTableModel(){
          columns.add(new NameColumn());
@@ -229,7 +229,7 @@ public class ChassiListView extends JFrame{
                final Object cell = target.getValueAt(row, column);
                if( cell instanceof Chassi ){
                   Chassi chassi = (Chassi)cell;
-                  LSML.getInstance().getDesktop().openLoadout(new Loadout(chassi, LSML.getInstance().getXBar()), LSML.getInstance().getXBar());
+                  LSML.getInstance().getDesktop().openLoadout(new Loadout(chassi, LSML.getInstance().getXBar()));
                }
             }
          }

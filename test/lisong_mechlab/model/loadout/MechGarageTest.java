@@ -29,7 +29,7 @@ public class MechGarageTest{
    MessageXBar xBar;
 
    @Before
-   public void setup() throws InterruptedException{
+   public void setup(){
       MockitoAnnotations.initMocks(this);
       testFile = new File("test_mechgarage_" + Math.random() + ".xml");
    }
