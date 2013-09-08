@@ -125,7 +125,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
 
       Double[] ranges = getRangeIntervals();
       for(double range : ranges){
-         Set<Entry<Weapon, Double>> damageDistributio = maxSustainedDPS.getDamageDistribution(range).entrySet();
+         Set<Entry<Weapon, Double>> damageDistributio = maxSustainedDPS.getWeaponRatios(range).entrySet();
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
             Weapon weapon = entry.getKey();
             double ratio = entry.getValue();

@@ -2,10 +2,15 @@ package lisong_mechlab.model.loadout.metrics;
 
 import lisong_mechlab.model.loadout.Loadout;
 
-public class HeatDissipation extends Metric{
+/**
+ * This {@link Metric} calculates the heat dissipation for a {@link Loadout}.
+ * 
+ * @author Emily Björk
+ */
+public class HeatDissipation implements Metric{
    private final Loadout loadout;
 
-   public HeatDissipation(Loadout aLoadout){
+   public HeatDissipation(final Loadout aLoadout){
       loadout = aLoadout;
    }
 
