@@ -200,7 +200,7 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
       int oldArmor = armor.get(anArmorSide);
       armor.put(anArmorSide, anArmorAmount);
-      if( loadout.getFreeMass() < 0 ){
+      if( anArmorAmount >= oldArmor && loadout.getFreeMass() < 0 ){
          armor.put(anArmorSide, oldArmor);
          throw new IllegalArgumentException("Not enough tonnage to add more armor!");
       }
