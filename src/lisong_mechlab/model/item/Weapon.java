@@ -12,7 +12,10 @@ public class Weapon extends HeatSource{
    protected final double  rangeMin;
    protected final double  rangeLong;
    protected final double  rangeMax;
-   protected final int     numPerVolley;
+   protected final int     ammoPerShot;
+   protected final int     projectilesPerShot;
+
+   protected final int     shotsPerFiring;
 
    public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
       super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat);
@@ -22,21 +25,17 @@ public class Weapon extends HeatSource{
       rangeMax = aStatsWeapon.WeaponStats.maxRange;
       rangeLong = aStatsWeapon.WeaponStats.longRange;
 
-      int volleysize = 1;
-      if( aStatsWeapon.WeaponStats.numFiring > 0 ){
-         volleysize = aStatsWeapon.WeaponStats.numFiring;
-      }
-      if( aStatsWeapon.WeaponStats.numPerShot > 0 )
-         volleysize = aStatsWeapon.WeaponStats.numPerShot;
-      numPerVolley = volleysize;
+      shotsPerFiring = aStatsWeapon.WeaponStats.numFiring;
+      projectilesPerShot = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
+      ammoPerShot = aStatsWeapon.WeaponStats.ammoPerShot;
    }
 
-   public double getDamagePerVolley(){
-      return damagePerProjectile * numPerVolley;
+   public double getDamagePerShot(){
+      return damagePerProjectile * projectilesPerShot * shotsPerFiring;
    }
 
-   public int getNumberOfShotsPerVolley(){
-      return numPerVolley;
+   public int getAmmoPerPerShot(){
+      return ammoPerShot;
    }
 
    public double getSecondsPerShot(){
@@ -63,7 +62,7 @@ public class Weapon extends HeatSource{
 
    public double getRangeEffectivity(double range){
       // Assume linear fall off
-      if( range < getRangeZero())
+      if( range < getRangeZero() )
          return 0;
       if( range < getRangeMin() )
          return (range - getRangeZero()) / (getRangeMin() - getRangeZero());
@@ -91,7 +90,7 @@ public class Weapon extends HeatSource{
       while( index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/' ){
          switch( aWeaponStat.charAt(index) ){
             case 'd':
-               nominator *= getDamagePerVolley();
+               nominator *= getDamagePerShot();
                break;
             case 's':
                nominator *= getSecondsPerShot();
@@ -116,7 +115,7 @@ public class Weapon extends HeatSource{
       while( index < aWeaponStat.length() ){
          switch( aWeaponStat.charAt(index) ){
             case 'd':
-               denominator *= getDamagePerVolley();
+               denominator *= getDamagePerShot();
                break;
             case 's':
                denominator *= getSecondsPerShot();

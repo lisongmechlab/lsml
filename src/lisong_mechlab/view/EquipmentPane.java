@@ -170,7 +170,7 @@ public class EquipmentPane extends JTree{
             if( item instanceof HeatSource ){
                if( item instanceof Weapon ){
                   Weapon weapon = (Weapon)item;
-                  sb.append("Damage: ").append(df.format(weapon.getDamagePerVolley())).append(" Cooldown: ")
+                  sb.append("Damage: ").append(df.format(weapon.getDamagePerShot())).append(" Cooldown: ")
                     .append(df.format(weapon.getSecondsPerShot())).append("<br>");
                   sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
                     .append(df.format(weapon.getRangeMax())).append("<br>");
