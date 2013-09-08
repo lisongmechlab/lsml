@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,11 +197,19 @@ public class ChassiListView extends JFrame{
       }
    }
 
-   private static final long serialVersionUID = -4134588793726908789L;
+   private static final long     serialVersionUID = -4134588793726908789L;
+
+   private static ChassiListView current          = null;
 
    public ChassiListView(){
-      Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+      if( current != null ){
+         current.setState(NORMAL);
+         current.toFront();
+         current.repaint();
+         return;
+      }
 
+      Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
       setResizable(true);
       setTitle("Chassi selection");
       setSize(500, 300);
@@ -228,6 +238,15 @@ public class ChassiListView extends JFrame{
       add(scrollPane);
 
       setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+      addWindowListener(new WindowAdapter(){
+         @Override
+         public void windowClosing(WindowEvent aArg0){
+            current = null;
+         }
+      });
+
+      current = this;
    }
 
 }
