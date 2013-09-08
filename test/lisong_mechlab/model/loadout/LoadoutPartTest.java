@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -112,10 +111,7 @@ public class LoadoutPartTest{
    @Test
    public void testLoadoutPart_CT(){
       // Setup
-      Internal gyro = mock(Internal.class);
-      when(gyro.getNumCriticalSlots()).thenReturn(4);
-      when(gyro.getMass()).thenReturn(0.0);
-
+      Internal gyro = mlc.makeInternal(4);
       makeCUT(Arrays.asList((Item)gyro), 31, Part.CenterTorso, 12);
    }
 
@@ -125,18 +121,10 @@ public class LoadoutPartTest{
    @Test
    public void testLoadoutPart_LL(){
       // Setup
-      Internal hip = mock(Internal.class);
-      Internal ula = mock(Internal.class);
-      Internal lla = mock(Internal.class);
-      Internal fa = mock(Internal.class);
-      when(hip.getNumCriticalSlots()).thenReturn(1);
-      when(hip.getMass()).thenReturn(0.0);
-      when(ula.getNumCriticalSlots()).thenReturn(1);
-      when(ula.getMass()).thenReturn(0.0);
-      when(lla.getNumCriticalSlots()).thenReturn(1);
-      when(lla.getMass()).thenReturn(0.0);
-      when(fa.getNumCriticalSlots()).thenReturn(1);
-      when(fa.getMass()).thenReturn(0.0);
+      Internal hip = mlc.makeInternal(1);
+      Internal ula = mlc.makeInternal(1);
+      Internal lla = mlc.makeInternal(1);
+      Internal fa = mlc.makeInternal(1);
       List<Item> internals = Arrays.asList((Item)hip, (Item)ula, (Item)lla, (Item)fa);
 
       makeCUT(internals, 31, Part.LeftLeg, 12);
@@ -201,9 +189,7 @@ public class LoadoutPartTest{
    public void testAddItem_EngineHeatsink() throws Exception{
       Item[] items = new Item[] {ItemDB.SHS, ItemDB.DHS};
       for(Item i : items){
-         Internal gyro = mock(Internal.class);
-         when(gyro.getNumCriticalSlots()).thenReturn(4);
-         when(gyro.getMass()).thenReturn(0.0);
+         Internal gyro = mlc.makeInternal(4);
          LoadoutPart cut = makeCUT(Arrays.asList((Item)gyro), 0, Part.CenterTorso, 12);
          when(mlc.upgrades.hasDoubleHeatSinks()).thenReturn(i == ItemDB.DHS);
          when(mlc.chassi.getEngineMax()).thenReturn(400);
@@ -297,6 +283,25 @@ public class LoadoutPartTest{
       when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots() - 1);
 
       assertFalse(cut.canAddItem(ItemDB.BAP));
+   }
+
+   /**
+    * Adding an Artemis enabled SRM6 launcher to CT while there is an engine there shouldn't work.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testCanAddItem_ArtemisSRM6CT() throws Exception{
+      Internal gyro = mlc.makeInternal(4);
+      LoadoutPart cut = makeCUT(Arrays.asList((Item)gyro), 31, Part.CenterTorso, 12);
+      when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      when(mlc.chassi.getEngineMax()).thenReturn(400);
+      when(mlc.chassi.getEngineMin()).thenReturn(100);
+      when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(1);
+      cut.addItem(ItemDB.lookup("STD ENGINE 100"));
+      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      
+      assertFalse(cut.canAddItem(ItemDB.lookup("SRM 6")));
    }
 
    @Test

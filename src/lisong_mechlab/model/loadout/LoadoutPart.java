@@ -305,20 +305,20 @@ public class LoadoutPart implements MessageXBar.Reader{
 
    private boolean checkCommonRules(Item anItem){
       // Check enough free mass
-      if( loadout.getMass() + anItem.getMass() > loadout.getChassi().getMassMax() ){
+      if( loadout.getMass() + anItem.getMass(loadout.getUpgrades()) > loadout.getChassi().getMassMax() ){
          return false;
       }
 
       // Check enough free critical slots
-      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots()){
-         return false;
-      }
-      
-      if( loadout.getNumCriticalSlotsFree() < anItem.getNumCriticalSlots()){
+      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(loadout.getUpgrades()) ){
          return false;
       }
 
-      // Check enough free hardpoints
+      if( loadout.getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(loadout.getUpgrades()) ){
+         return false;
+      }
+
+      // Check enough free hard points
       if( anItem.getHardpointType() != HardpointType.NONE
           && getNumItemsOfHardpointType(anItem.getHardpointType()) >= getInternalPart().getNumHardpoints(anItem.getHardpointType()) ){
          return false; // Not enough hard points!
