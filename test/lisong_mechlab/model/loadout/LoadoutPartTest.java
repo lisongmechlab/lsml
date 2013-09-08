@@ -300,7 +300,7 @@ public class LoadoutPartTest{
       when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(1);
       cut.addItem(ItemDB.lookup("STD ENGINE 100"));
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      
+
       assertFalse(cut.canAddItem(ItemDB.lookup("SRM 6")));
    }
 
@@ -348,6 +348,23 @@ public class LoadoutPartTest{
       LoadoutPart cut = makeCUT(max, Part.LeftTorso, 12);
 
       cut.setArmor(ArmorSide.FRONT, max + 1);
+   }
+
+   /**
+    * {@link LoadoutPart#setArmor(ArmorSide, int)} shall successfully change the armor value if called with an armor
+    * amount less than the current amount and the 'mech is over-tonnage.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testSetArmor_reduceWhenOverTonnage() throws Exception{
+      int max = 64;
+      LoadoutPart cut = makeCUT(max, Part.LeftTorso, 12);
+      cut.setArmor(ArmorSide.FRONT, max);
+      when(mlc.loadout.getFreeMass()).thenReturn(-0.1);
+
+      cut.setArmor(ArmorSide.FRONT, max - 1);
+      verify(xBar, times(2)).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
    }
 
    /**
