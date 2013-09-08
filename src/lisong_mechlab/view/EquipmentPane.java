@@ -30,7 +30,7 @@ import lisong_mechlab.view.equipment.EquipmentTreeModel;
 
 public class EquipmentPane extends JTree{
    private static final long serialVersionUID = -8856874024057864775L;
-   EquipmentTreeModel        treeModel        = null;
+   EquipmentTreeModel        model            = null;
    private final MessageXBar xBar;
 
    private static class Renderer extends DefaultTreeCellRenderer implements InternalFrameListener{
@@ -38,12 +38,13 @@ public class EquipmentPane extends JTree{
       private Loadout           loadout;
 
       @Override
-      public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus){
-         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+      public Component getTreeCellRendererComponent(JTree aTree, Object aValue, boolean aSel, boolean anExpanded, boolean aLeaf, int aRow,
+                                                    boolean aHasFocus){
+         super.getTreeCellRendererComponent(aTree, aValue, aSel, anExpanded, aLeaf, aRow, aHasFocus);
 
-         if( value instanceof String ){
+         if( aValue instanceof String ){
             setOpaque(true);
-            Item item = ItemDB.lookup((String)value);
+            Item item = ItemDB.lookup((String)aValue);
             if( loadout != null ){
                if( !loadout.isEquippable(item) )
                   StyleManager.colourInvalid(this);
@@ -100,17 +101,17 @@ public class EquipmentPane extends JTree{
    }
 
    public EquipmentPane(final LoadoutDesktop aLoadoutDesktop, final LSML aLsml, MessageXBar crossBar) throws Exception{
-      treeModel = new EquipmentTreeModel(aLsml, crossBar);
+      model = new EquipmentTreeModel(aLsml, crossBar);
       xBar = crossBar;
 
       ToolTipManager.sharedInstance().registerComponent(this);
       Renderer renderer = new Renderer();
       setCellRenderer(renderer);
-      setModel(treeModel);
+      setModel(model);
       setDragEnabled(true);
       setRootVisible(false);
       setShowsRootHandles(true);
-      aLoadoutDesktop.addInternalFrameListener(treeModel);
+      aLoadoutDesktop.addInternalFrameListener(model);
       aLoadoutDesktop.addInternalFrameListener(renderer);
       setTransferHandler(new ItemTransferHandler());
 
@@ -137,10 +138,10 @@ public class EquipmentPane extends JTree{
                if( clicked instanceof Chassi ){
                   Chassi chassi = (Chassi)clicked;
                   Loadout loadout = new Loadout(chassi, xBar);
-                  aLoadoutDesktop.openLoadout(loadout, xBar);
+                  aLoadoutDesktop.openLoadout(loadout);
                }
                else if( clicked instanceof Loadout ){
-                  aLoadoutDesktop.openLoadout((Loadout)clicked, xBar);
+                  aLoadoutDesktop.openLoadout((Loadout)clicked);
                }
             }
          }

@@ -128,8 +128,7 @@ public class Loadout implements MessageXBar.Reader{
    public String toString(){
       if( getName().contains(chassi.getNameShort()) )
          return getName();
-      else
-         return getName() + " (" + chassi.getNameShort() + ")";
+      return getName() + " (" + chassi.getNameShort() + ")";
    }
 
    public static Loadout load(File aFile, MessageXBar crossBar){
@@ -146,28 +145,28 @@ public class Loadout implements MessageXBar.Reader{
 
       List<Element> maybeUpgrades = reader.getElementsByTagName("Upgrades");
       if( maybeUpgrades.size() == 1 ){
-         Element upgrades = maybeUpgrades.get(0);
-         getUpgrades().setDoubleHeatSinks(reader.getElementByTagName("HeatSinks", upgrades).getAttribute("Type").equals("Double"));
-         getUpgrades().setFerroFibrous(reader.getElementByTagName("Armor", upgrades).getAttribute("ItemID").equals("2801"));
-         getUpgrades().setEndoSteel(reader.getElementByTagName("Structure", upgrades).getAttribute("ItemID").equals("3101"));
-         getUpgrades().setArtemis(reader.getElementByTagName("Artemis", upgrades).getAttribute("Equipped").equals("1"));
+         Element stockUpgrades = maybeUpgrades.get(0);
+         getUpgrades().setDoubleHeatSinks(reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double"));
+         getUpgrades().setFerroFibrous(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801"));
+         getUpgrades().setEndoSteel(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101"));
+         getUpgrades().setArtemis(reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1"));
       }
 
       for(Element component : reader.getElementsByTagName("component")){
-         String name = component.getAttribute("Name");
-         int armor = Integer.parseInt(component.getAttribute("Armor"));
+         String componentName = component.getAttribute("Name");
+         int componentArmor = Integer.parseInt(component.getAttribute("Armor"));
 
-         Part partType = Part.fromMwoName(name);
+         Part partType = Part.fromMwoName(componentName);
 
          LoadoutPart part = getPart(partType);
          if( partType.isTwoSided() ){
-            if( Part.isRear(name) )
-               part.setArmor(ArmorSide.BACK, armor);
+            if( Part.isRear(componentName) )
+               part.setArmor(ArmorSide.BACK, componentArmor);
             else
-               part.setArmor(ArmorSide.FRONT, armor);
+               part.setArmor(ArmorSide.FRONT, componentArmor);
          }
          else
-            part.setArmor(ArmorSide.ONLY, armor);
+            part.setArmor(ArmorSide.ONLY, componentArmor);
 
          Node child = component.getFirstChild();
          while( null != child ){

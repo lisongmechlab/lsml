@@ -151,8 +151,6 @@ public class PartList extends JList<Item>{
                break;
          }
          return false;
-         // TODO Handle Ferro-Fibrous
-         // TODO Handle Endo-Steel
       }
 
       Pair<ListEntryType, Item> getElementTypeAt(int arg0){
@@ -194,8 +192,7 @@ public class PartList extends JList<Item>{
          if( spaceLeft == 1 && part.getItemCriticalSlots(item) > 1 ){
             if( item instanceof Engine )
                return new Pair<ListEntryType, Item>(ListEntryType.EngineHeatSink, item);
-            else
-               return new Pair<ListEntryType, Item>(ListEntryType.LastSlot, item);
+            return new Pair<ListEntryType, Item>(ListEntryType.LastSlot, item);
          }
          if( spaceLeft == part.getItemCriticalSlots(item) )
             return new Pair<ListEntryType, Item>(ListEntryType.Item, item);

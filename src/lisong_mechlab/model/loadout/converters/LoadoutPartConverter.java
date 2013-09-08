@@ -23,7 +23,6 @@ public class LoadoutPartConverter implements Converter{
       loadout = aLoadout;
    }
 
-   @SuppressWarnings("rawtypes")
    @Override
    public boolean canConvert(Class aClass){
       return LoadoutPart.class.isAssignableFrom(aClass);

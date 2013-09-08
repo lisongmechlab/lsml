@@ -167,8 +167,8 @@ public class LoadoutPartTest{
 
    @Test
    public void testAddItem_jumpJetsBadPart() throws Exception{
-      for(Part part : new Part[] {Part.LeftArm, Part.RightArm, Part.Head}){
-         LoadoutPart cut = makeCUT(0, part, 12);
+      for(Part testPart : new Part[] {Part.LeftArm, Part.RightArm, Part.Head}){
+         LoadoutPart cut = makeCUT(0, testPart, 12);
          when(mlc.loadout.getJumpJetCount()).thenReturn(0);
          when(mlc.chassi.getMaxJumpJets()).thenReturn(5);
          try{
@@ -246,8 +246,8 @@ public class LoadoutPartTest{
 
    @Test
    public void testAddItem_CASE_side_torso() throws Exception{
-      for(Part part : new Part[] {Part.LeftTorso, Part.RightTorso}){
-         LoadoutPart cut = makeCUT(0, part, 12);
+      for(Part testPart : new Part[] {Part.LeftTorso, Part.RightTorso}){
+         LoadoutPart cut = makeCUT(0, testPart, 12);
 
          cut.addItem("C.A.S.E.");
 
@@ -258,8 +258,8 @@ public class LoadoutPartTest{
 
    @Test
    public void testAddItem_CASE_invalid() throws Exception{
-      for(Part part : new Part[] {Part.LeftArm, Part.LeftLeg, Part.CenterTorso, Part.Head, Part.RightArm, Part.RightLeg}){
-         LoadoutPart cut = makeCUT(0, part, 12);
+      for(Part testPart : new Part[] {Part.LeftArm, Part.LeftLeg, Part.CenterTorso, Part.Head, Part.RightArm, Part.RightLeg}){
+         LoadoutPart cut = makeCUT(0, testPart, 12);
 
          try{
             cut.addItem("C.A.S.E.");

@@ -18,7 +18,7 @@ public class MessageXBar{
    }
 
    public interface Message{
-
+      /* Empty interface. */
    }
 
    public void post(Message aMessage){

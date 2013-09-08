@@ -40,7 +40,7 @@ public class LoadoutPart implements MessageXBar.Reader{
 
       public enum Type{
          ItemAdded, ItemRemoved, ArmorChanged
-      };
+      }
 
       final public LoadoutPart part;
       final public Type        type;
@@ -228,7 +228,6 @@ public class LoadoutPart implements MessageXBar.Reader{
     * @return The number of armor points that can be maximally set (ignoring tonnage).
     */
    public int getArmorMax(ArmorSide anArmorSide){
-      // TODO: Take free tonnage into consideration!
       if( anArmorSide == ArmorSide.ONLY ){
          return internalPart.getArmorMax();
       }
@@ -280,9 +279,9 @@ public class LoadoutPart implements MessageXBar.Reader{
 
          if( msg.msg == ChangeMsg.HEATSINKS ){
             if( msg.source.hasDoubleHeatSinks() )
-               while( items.remove(ItemDB.SHS) );
+               while( items.remove(ItemDB.SHS) ){/* No-Op */}
             else
-               while( items.remove(ItemDB.DHS) );
+               while( items.remove(ItemDB.DHS) ){/* No-Op */}
          }
       }
    }

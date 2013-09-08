@@ -22,7 +22,6 @@ public class LoadoutConverter implements Converter{
       xBar = anXBar;
    }
    
-   @SuppressWarnings("rawtypes")
    @Override
    public boolean canConvert(Class aClass){
       return Loadout.class.isAssignableFrom(aClass);

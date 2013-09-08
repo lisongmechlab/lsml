@@ -1,17 +1,17 @@
 package lisong_mechlab.view.equipment;
 
-import javax.swing.event.InternalFrameListener;
+import javax.swing.event.InternalFrameAdapter;
 import javax.swing.tree.TreePath;
 
-interface TreeCathegory extends InternalFrameListener{
+abstract class TreeCathegory extends InternalFrameAdapter{
 
-   int getChildCount();
+   public abstract int getChildCount();
 
-   int getIndex(Object aChild);
+   public abstract int getIndex(Object aChild);
 
-   Object getChild(int aIndex);
+   public abstract Object getChild(int aIndex);
 
-   TreePath getPath();
-   
-   EquipmentTreeModel getModel();
+   public abstract TreePath getPath();
+
+   public abstract EquipmentTreeModel getModel();
 }

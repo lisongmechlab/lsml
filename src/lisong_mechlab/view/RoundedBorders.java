@@ -71,13 +71,13 @@ public class RoundedBorders extends AbstractBorder{
    }
 
    @Override
-   public Insets getBorderInsets(Component c){
+   public Insets getBorderInsets(Component aComponent){
       return insets;
    }
 
    @Override
-   public Insets getBorderInsets(Component c, Insets insets){
-      return getBorderInsets(c);
+   public Insets getBorderInsets(Component aComponent, Insets anInsets){
+      return getBorderInsets(aComponent);
    }
 
    @Override

@@ -48,7 +48,6 @@ public class MessageXBarTest{
    
    @Test
    public void testWeakReference() {      
-      @SuppressWarnings("unchecked")
       WeakReference<Reader> ref = mock(WeakReference.class);//new WeakReference<MessageXBar.Reader>(reader0);
       Reader reader0 = mock(Reader.class);
       Message msg0 = mock(Message.class);
