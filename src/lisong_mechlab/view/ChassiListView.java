@@ -64,13 +64,14 @@ public class ChassiListView extends JFrame{
          DecimalFormat df = new DecimalFormat("###.#");
 
          public SpeedColumn(){
-            super("Min/Max Speed", String.class);
+            super("Max Speed", String.class);
          }
 
          @Override
          public String value(Chassi aChassi){
-            return df.format(TopSpeedMetric.calculate(aChassi.getEngineMin(), aChassi)) + " kph / "
-                   + df.format(TopSpeedMetric.calculate(aChassi.getEngineMax(), aChassi)) + " kph";
+            final double maxSpeed = TopSpeedMetric.calculate(aChassi.getEngineMax(), aChassi, 1.0);
+            final double maxSpeedTweak = TopSpeedMetric.calculate(aChassi.getEngineMax(), aChassi, 1.1);
+            return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
          }
       };
 

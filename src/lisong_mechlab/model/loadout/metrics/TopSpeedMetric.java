@@ -16,15 +16,10 @@ public class TopSpeedMetric extends Metric{
       Engine engine = loadout.getEngine();
       if( null == engine )
          return 0;
-
-      double maxspeed = calculate(engine.getRating(), loadout.getChassi());
-      if( loadout.getEfficiencies().hasSpeedTweak() ){
-         maxspeed *= loadout.getEfficiencies().getSpeedModifier();
-      }
-      return maxspeed;
+      return calculate(engine.getRating(), loadout.getChassi(), loadout.getEfficiencies().getSpeedModifier());
    }
-   
-   static public double calculate(int aRating, Chassi aChassi){
-      return aChassi.getSpeedFactor() * aRating / aChassi.getMassMax();
+
+   static public double calculate(int aRating, Chassi aChassi, double aModifier){
+      return aChassi.getSpeedFactor() * aRating / aChassi.getMassMax() * aModifier;
    }
 }
