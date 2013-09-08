@@ -1,5 +1,7 @@
 package lisong_mechlab.model.loadout.converters;
 
+import javax.swing.JOptionPane;
+
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
@@ -41,9 +43,9 @@ public class LoadoutPartConverter implements Converter{
       }
 
       /*
-      if( part.getNumEngineHeatsinksMax() > 0 ){
-         aWriter.addAttribute("engineheatsinks", Integer.toString(part.getNumEngineHeatsinks()));
-      }*/
+       * if( part.getNumEngineHeatsinksMax() > 0 ){ aWriter.addAttribute("engineheatsinks",
+       * Integer.toString(part.getNumEngineHeatsinks())); }
+       */
 
       for(Item item : part.getItems()){
          if( item instanceof Internal ){
@@ -62,36 +64,34 @@ public class LoadoutPartConverter implements Converter{
       Part partType = Part.valueOf(aReader.getAttribute("part"));
       LoadoutPart loadoutPart = loadout.getPart(partType);
 
-      /*
-      int enghs = 0;
-      if( aReader.getAttribute("engineheatsinks") != null )
-         enghs = Integer.parseInt(aReader.getAttribute("engineheatsinks"));
-*/
-      if( partType.isTwoSided() ){
-         String[] armors = aReader.getAttribute("armor").split("/");
-         if( armors.length == 2 ){
-            loadoutPart.setArmor(ArmorSide.FRONT, Integer.parseInt(armors[0]));
-            loadoutPart.setArmor(ArmorSide.BACK, Integer.parseInt(armors[1]));
+      try{
+         if( partType.isTwoSided() ){
+            String[] armors = aReader.getAttribute("armor").split("/");
+            if( armors.length == 2 ){
+               loadoutPart.setArmor(ArmorSide.FRONT, Integer.parseInt(armors[0]));
+               loadoutPart.setArmor(ArmorSide.BACK, Integer.parseInt(armors[1]));
+            }
+         }
+         else{
+            loadoutPart.setArmor(ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")));
          }
       }
-      else{
-         loadoutPart.setArmor(ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")));
+      catch( IllegalArgumentException exception ){
+         JOptionPane.showMessageDialog(null, "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
       }
-
+      
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
          if( "item".equals(aReader.getNodeName()) ){
-            loadoutPart.addItem((Item)aContext.convertAnother(null, Item.class));
+            try{
+               loadoutPart.addItem((Item)aContext.convertAnother(null, Item.class));
+            }
+            catch( IllegalArgumentException exception ){
+               JOptionPane.showMessageDialog(null, "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
+            }
          }
          aReader.moveUp();
       }
-/*
-      if( loadoutPart.getNumEngineHeatsinksMax() > 0 ){
-         while( enghs > 0 ){
-            loadoutPart.addEngineHeatsink();
-            enghs--;
-         }
-      }*/
       return null; // We address directly into the given loadout, this is a trap.
    }
 
