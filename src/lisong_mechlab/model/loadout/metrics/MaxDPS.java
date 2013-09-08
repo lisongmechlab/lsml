@@ -5,8 +5,12 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 
-public class MaxDPS extends Metric{
-
+/**
+ * This {@link Metric} calculates the maximal DPS a {@link Loadout} can output.
+ * 
+ * @author Li Song
+ */
+public class MaxDPS implements Metric{
    private final Loadout loadout;
 
    public MaxDPS(Loadout aLoadout){

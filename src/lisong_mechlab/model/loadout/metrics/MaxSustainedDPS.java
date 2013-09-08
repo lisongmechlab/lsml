@@ -12,11 +12,16 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 
-public class MaxSustainedDPS extends Metric{
+/**
+ * This {@link Metric} calculates the maximal DPS that a {@link Loadout} can sustain indefinitely.
+ * 
+ * @author Li Song
+ */
+public class MaxSustainedDPS implements Metric{
    private final Loadout         loadout;
    private final HeatDissipation dissipation;
 
-   public MaxSustainedDPS(Loadout aLoadout, HeatDissipation aHeatDissipation){
+   public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation){
       loadout = aLoadout;
       dissipation = aHeatDissipation;
    }
@@ -24,7 +29,7 @@ public class MaxSustainedDPS extends Metric{
    @Override
    public double calculate(){
       double ans = 0.0;
-      Map<Weapon, Double> dd = getDamageDistribution(-1);
+      Map<Weapon, Double> dd = getWeaponRatios(-1);
       for(Map.Entry<Weapon, Double> entry : dd.entrySet()){
          ans += entry.getKey().getStat("d/s") * entry.getValue();
       }
@@ -32,12 +37,14 @@ public class MaxSustainedDPS extends Metric{
    }
 
    /**
-    * Calculates a distribution of damage over the weapons that achieves the maximal sustained damage throughput.
+    * Calculates the ratio with each weapon should be fired to obtain the maximal sustained DPS. A ratio of 0.0 means
+    * the weapon is never fired and a ratio of 0.5 means the weapon is fired every 2 cooldowns and a ratio of 1.0 means
+    * the weapon is fired every time it is available.
     * 
     * @return A {@link Map} with {@link Weapon} as key and a {@link Double} as value representing a % of how often the
     *         weapon is used.
     */
-   public Map<Weapon, Double> getDamageDistribution(final double range){
+   public Map<Weapon, Double> getWeaponRatios(final double range){
       double heatleft = dissipation.calculate();
       List<Weapon> weapons = new ArrayList<>(15);
       for(Item item : loadout.getAllItems()){
