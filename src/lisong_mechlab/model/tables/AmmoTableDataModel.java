@@ -150,12 +150,8 @@ public class AmmoTableDataModel extends AbstractTableModel{
    public void fillInCombatSeconds(){
       for(String weaponName : weaponColumn.keySet()){
          if(weaponColumn.get(weaponName) != null){
-            if(weaponName != "ANTI-MISSILE SYSTEM"){
-               combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) / weaponColumn.get(weaponName).getSecondsPerShot()));
-            }
-            else{
-               combatColumn.put(weaponName, (double)0);
-            }
+               combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * weaponColumn.get(weaponName).getSecondsPerShot()));
+
          }
          else {
             combatColumn.put(weaponName, (double)0);
