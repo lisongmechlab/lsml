@@ -11,6 +11,8 @@ import java.util.TreeMap;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import org.jfree.ui.tabbedui.AbstractTabbedUI;
@@ -28,7 +30,6 @@ import lisong_mechlab.model.loadout.metrics.TotalWeapons;
 public class AmmoTableDataModel extends AbstractTableModel{
 
    
-   private final List<TableModelListener>                     listeners = new ArrayList<TableModelListener>();
    
    protected String weaponNames;
    private Loadout aLoadout;
@@ -43,7 +44,6 @@ public class AmmoTableDataModel extends AbstractTableModel{
    private TreeMap<Ammunition, Integer> ammoEquipped;
    private TreeMap<Weapon, Integer> weaponsEquipped;
    private String[] columnNames = {"Weapon" , "Ammo Type",  "Ammo Quantity", "Volley Amount" , "Number of Volleys", "Combat Seconds"};
-   private MessageXBar aXBar;
    
    public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
       this.aLoadout = aloadout;
@@ -115,32 +115,11 @@ public class AmmoTableDataModel extends AbstractTableModel{
       }
       for(Ammunition ammo : tempListOfAmmo){
          ammoTypeColumn.put(ammo.getName() + " Only", ammo.getName());
-         ammoQuantityColumn.put(ammo.getName() + " Only", (double)ammoEquipped.get(ammo));
+         ammoQuantityColumn.put(ammo.getName() + " Only", (double)ammoEquipped.get(ammo) * ammo.getShotsPerTon());
          weaponColumn.put(ammo.getName() + " Only", null);
       }
       
-      /*
-      for(Ammunition ammo :ammoEquipped.keySet()){
-         Ammunition AmmunitionArrayTemp = ammo;
-         boolean changed = false;
-         for(Weapon weapon : weaponColumn.values()){
-            if(weapon instanceof AmmoWeapon){
-               if(!(((AmmoWeapon)weapon).getAmmoType() == ammo)){//Broken includes every ammo not of that individual weapon.
-               ammoTypeColumn.put(ammo.getName(), ammo.getName());
-               ammoQuantityColumn.put(ammo.getName(), (double)ammoEquipped.get(ammo));
-               AmmunitionArrayTemp = ammo;
-               changed = true;
-            }
-               else break;
-            }
-            
-         }
-         if(changed){
-            weaponColumn.put(AmmunitionArrayTemp.getName(), null);
-            changed = false;
-         }
-         
-      }*/
+     
    }
    
    public void fillInVolleyAmount(){
@@ -183,18 +162,10 @@ public class AmmoTableDataModel extends AbstractTableModel{
    
    
    
-/*
-   @Override
-   public void addTableModelListener(TableModelListener aL){
-     listeners.add(aL);
-      
-   }
-
-   public void notifyTreeChange(TableModelEvent e){
-      for(TableModelListener listener : listeners){
-         listener.tableChanged(e);
-      }
-   }*/
+   
+   
+   
+  
    @Override
    public Class<?> getColumnClass(int aColumnIndex){
       if(aColumnIndex == 0){
@@ -251,10 +222,8 @@ public class AmmoTableDataModel extends AbstractTableModel{
       if(aColumnIndex == 0){
          String[] weaponArray= new String[weaponColumn.size()];
          weaponArray= (String[])weaponColumn.keySet().toArray(weaponArray);
-         if(weaponArray[aRowIndex] != null) return weaponArray[aRowIndex];
-         else {
-            return "Not Equipped";
-         }
+         return weaponArray[aRowIndex];
+         
       }
       if(aColumnIndex == 1){
          String[] ammoTypeArray = new String[ammoTypeColumn.size()];
@@ -283,6 +252,7 @@ public class AmmoTableDataModel extends AbstractTableModel{
       }
       else return "false";
    }
+  
 
   
 
