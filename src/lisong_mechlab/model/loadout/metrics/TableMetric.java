@@ -4,6 +4,6 @@ import java.util.TreeMap;
 
 import lisong_mechlab.model.item.Item;
 
-public abstract class AmmoMetric{
-   abstract public TreeMap<Item, Integer> calculate();
+public abstract class TableMetric{
+   abstract public TreeMap<?, ?> calculate();
 }
