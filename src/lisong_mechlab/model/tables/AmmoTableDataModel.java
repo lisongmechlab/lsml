@@ -96,7 +96,10 @@ public class AmmoTableDataModel extends AbstractTableModel{
          if(weaponColumn.get(weaponName) instanceof AmmoWeapon){
             Ammunition ammoTypeTemp = ((AmmoWeapon)weaponColumn.get(weaponName)).getAmmoType();
             if(ammoEquipped.keySet().contains(ammoTypeTemp)){
-               ammoQuantityColumn.put(weaponName, (double)ammoTypeTemp.getShotsPerTon());
+               ammoQuantityColumn.put(weaponName, (double)ammoTypeTemp.getShotsPerTon()* ammoEquipped.get(ammoTypeTemp));
+            }
+            else{
+               ammoQuantityColumn.put(weaponName, (double)0);
             }
          }
          else{
