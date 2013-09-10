@@ -3,7 +3,7 @@
 
 # Definitive text files
 *.java text
-*.txt text eof=crlf
+*.txt text eol=crlf
 
 # Definitive binary files
 *.class binary
