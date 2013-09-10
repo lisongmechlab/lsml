@@ -15,17 +15,6 @@ public class WeaponTest{
       assertFalse(lrm10.equals(lrm15));
    }
 
-   /**
-    * Make sure {@link Weapon#getDamagePerShot()} returns the volley damage and not missile damage.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testGetDamagePerShot_lrm20() throws Exception{
-      MissileWeapon lrm20 = (MissileWeapon)ItemDB.lookup("LRM 20");
-      assertTrue(lrm20.getDamagePerShot() > 10);
-   }
-   
    @Test
    public void testGetDamagePerShot_lpl() throws Exception{
       Weapon weapon = (Weapon)ItemDB.lookup("LRG PULSE LASER");
@@ -53,12 +42,6 @@ public class WeaponTest{
    public void testGetShotsPerVolley_lb10x() throws Exception{
       Weapon lb10xac = (Weapon)ItemDB.lookup("LB 10-X AC");
       assertEquals(1, lb10xac.getAmmoPerPerShot());
-   }
-
-   @Test
-   public void testGetShotsPerVolley_lrm10() throws Exception{
-      Weapon lb10xac = (Weapon)ItemDB.lookup("LRM 10");
-      assertEquals(10, lb10xac.getAmmoPerPerShot());
    }
 
    @Test
@@ -103,25 +86,6 @@ public class WeaponTest{
       assertEquals(540.0, ppc.getRangeLong(), 0.0);
    }
 
-   @Test
-   public void testGetRangeEffectivity_lrm20() throws Exception{
-      MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("LRM 20");
-      assertEquals(0.0, srm6.getRangeEffectivity(0), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMin() - Math.ulp(srm6.getRangeLong()) * Weapon.RANGE_ULP_FUZZ), 0.0);
-      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeMin()), 0.0);
-      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong()), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * Weapon.RANGE_ULP_FUZZ), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax()), 0.0);
-   }
-
-   @Test
-   public void testGetRangeEffectivity_srm6() throws Exception{
-      MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
-      assertEquals(1.0, srm6.getRangeEffectivity(0), 0.0);
-      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong()), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * Weapon.RANGE_ULP_FUZZ), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax()), 0.0);
-   }
 
    @Test
    public void testGetRangeEffectivity_mg() throws Exception{

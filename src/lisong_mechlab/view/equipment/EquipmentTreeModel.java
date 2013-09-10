@@ -24,6 +24,7 @@ import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.view.LSML;
 
 public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
@@ -52,14 +53,17 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
          else if( item instanceof EnergyWeapon )
             energy.add(item);
          else if( item instanceof BallisticWeapon ){
-            Ammunition ammo = ((AmmoWeapon)item).getAmmoType();
+            Ammunition ammo = ((AmmoWeapon)item).getAmmoType(null);
             ballistic.add(item);
             ballistic.add(ammo);
          }
          else if( item instanceof MissileWeapon ){
-            Ammunition ammo = ((AmmoWeapon)item).getAmmoType();
             missile.add(item);
-            missile.add(ammo);
+            Upgrades upgrades = new Upgrades(null);
+            upgrades.setArtemis(true);
+            missile.add(((AmmoWeapon)item).getAmmoType(upgrades));
+            upgrades.setArtemis(false);
+            missile.add(((AmmoWeapon)item).getAmmoType(upgrades));
          }
          else if( item instanceof Engine ){
             Engine engine = (Engine)item;
@@ -70,7 +74,7 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
          }
          else{
             if( item instanceof AmmoWeapon )
-               misc.add(((AmmoWeapon)item).getAmmoType());
+               misc.add(((AmmoWeapon)item).getAmmoType(null));
             misc.add(item);
          }
       }
