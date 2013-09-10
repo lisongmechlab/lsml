@@ -43,8 +43,6 @@ import lisong_mechlab.model.tables.AmmoTableDataModel;
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long        serialVersionUID = 4720126200474042446L;
    private final Loadout            loadout;
-   private final MessageXBar        xBar;
-
    private final JProgressBar       massBar;
    private final JLabel             massValue        = new JLabel("xxx");
    private final JProgressBar       armorBar;
@@ -106,8 +104,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-      this.xBar = anXBar;
-
       anXBar.attach(this);
 
       // General
@@ -243,16 +239,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // Ammo
       {
 
-         
          JPanel ammo = new JPanel();
          totalAmmoSupply = new JTable(anAmmoTableDataModel);
-            
-         
+
          totalAmmoSupply.setModel(anAmmoTableDataModel);
-         JTableHeader header =  totalAmmoSupply.getTableHeader();
+         JTableHeader header = totalAmmoSupply.getTableHeader();
          header.setDefaultRenderer(new HeaderRenderer(totalAmmoSupply));
-//          totalAmmoSupply.updateUI();
-       
+         // totalAmmoSupply.updateUI();
+
          ammo.setLayout(new BorderLayout()); // unless already there
          ammo.add(totalAmmoSupply, BorderLayout.CENTER);
          ammo.add(totalAmmoSupply.getTableHeader(), BorderLayout.NORTH);
@@ -265,30 +259,26 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       updateDisplay();
    }
-   
-// TODO sets formatting correctly but throws exception on system exit need to 
-private static class HeaderRenderer implements TableCellRenderer {
 
-   DefaultTableCellRenderer renderer;
+   // TODO sets formatting correctly but throws exception on system exit need to
+   // FIXME: Move this somewhere else. 
+   private static class HeaderRenderer implements TableCellRenderer{
 
-   public HeaderRenderer(JTable table) {
-      if(table.getTableHeader().getDefaultRenderer() instanceof DefaultTableCellRenderer){
-         renderer = (DefaultTableCellRenderer)
-               table.getTableHeader().getDefaultRenderer();
-           renderer.setHorizontalAlignment(JLabel.CENTER);
+      DefaultTableCellRenderer renderer;
+
+      public HeaderRenderer(JTable table){
+         if( table.getTableHeader().getDefaultRenderer() instanceof DefaultTableCellRenderer ){
+            renderer = (DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer();
+            renderer.setHorizontalAlignment(JLabel.CENTER);
+         }
+
       }
-      
-   }
 
-   @Override
-   public Component getTableCellRendererComponent(
-       JTable table, Object value, boolean isSelected,
-       boolean hasFocus, int row, int col) {
-       return renderer.getTableCellRendererComponent(
-           table, value, isSelected, hasFocus, row, col);
+      @Override
+      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col){
+         return renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+      }
    }
-}
-
 
    public void updateDisplay(){
       SwingUtilities.invokeLater(new Runnable(){
@@ -350,13 +340,12 @@ private static class HeaderRenderer implements TableCellRenderer {
                dpsMax.setText("Max DPS: " + df.format(metricMaxDPS.calculate()));
                dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
 
-                inhibitChanges = false;
+               inhibitChanges = false;
             }
          }
       });
 
    }
-   
 
    @Override
    public void itemStateChanged(ItemEvent anEvent){
