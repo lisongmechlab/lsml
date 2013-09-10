@@ -126,11 +126,20 @@ public class AmmoTableDataModel extends AbstractTableModel{
    }
    
    public void fillInVolleyAmount(){
-      for(String weaponName : weaponColumn.keySet()){
-         if(weaponColumn.get(weaponName) != null){
-            volleyAmountColumn.put(weaponName, weaponColumn.get(weaponName).getNumberOfShotsPerVolley());
+      for(Weapon weapon : weaponsEquipped.keySet()){
+         for(String weaponName : weaponColumn.keySet()){
+            if( weapon.getName() == weaponName ){
+              
+                  volleyAmountColumn.put(weaponName, weaponColumn.get(weaponName).getNumberOfShotsPerVolley() * weaponsEquipped.get(weapon));
+               
+               
+            }
+
          }
-         else{
+
+      }
+      for(String weaponName : weaponColumn.keySet()){
+         if(weaponColumn.get(weaponName) == null){
             volleyAmountColumn.put(weaponName, 0);
          }
       }
