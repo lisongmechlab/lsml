@@ -232,12 +232,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             
          
          totalAmmoSupply.setModel(anAmmoTableDataModel);
-//         DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
-//         dtcr.setHorizontalTextPosition(JLabel.CENTER);
-//         for (int i=0; i<totalAmmoSupply.getColumnCount();i++){
-//            totalAmmoSupply.setDefaultRenderer(totalAmmoSupply.getColumnClass(i),dtcr);
-//         }
-//         totalAmmoSupply.updateUI();
+//       
          ammo.setLayout(new BorderLayout()); // unless already there
          ammo.add(totalAmmoSupply, BorderLayout.CENTER);
          ammo.add(totalAmmoSupply.getTableHeader(), BorderLayout.NORTH);
@@ -317,15 +312,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                anAmmoTableDataModel1.fillInData();
                totalAmmoSupply.setModel(anAmmoTableDataModel1);
                
-               /*
-               DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer(); TODO set the renderer correctly I need to make a new renderer for Integer, Double, String
-               dtcr.setHorizontalAlignment(SwingConstants.CENTER);
-               for (int i=0; i<totalAmmoSupply.getColumnCount();i++){
-                  totalAmmoSupply.setDefaultRenderer(totalAmmoSupply.getColumnClass(i),dtcr);
-               }
+               
               JTableHeader header =  totalAmmoSupply.getTableHeader();
               header.setDefaultRenderer(new HeaderRenderer(totalAmmoSupply));
-               totalAmmoSupply.updateUI();*/
+               totalAmmoSupply.updateUI();
 
                // Summary
                // ----------------------------------------------------------------------
@@ -337,7 +327,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    }
    
-   /* TODO sets formatting correctly but throws exception on system exit need to 
+//    TODO sets formatting correctly but throws exception on system exit need to 
    private static class HeaderRenderer implements TableCellRenderer {
 
       DefaultTableCellRenderer renderer;
@@ -358,7 +348,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
           return renderer.getTableCellRendererComponent(
               table, value, isSelected, hasFocus, row, col);
       }
-  }*/
+  }
 
    @Override
    public void itemStateChanged(ItemEvent anEvent){
