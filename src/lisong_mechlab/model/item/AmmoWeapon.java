@@ -1,6 +1,7 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class AmmoWeapon extends Weapon{
@@ -11,7 +12,9 @@ public class AmmoWeapon extends Weapon{
       ammoType = (Ammunition)ItemDB.lookup(aStatsWeapon.WeaponStats.ammoType); // MWO Name
    }
 
-   public Ammunition getAmmoType(){
+   public Ammunition getAmmoType(Upgrades aUpgrades){
+      if(aUpgrades == null)
+         return ammoType;
       return ammoType;
    }
 
