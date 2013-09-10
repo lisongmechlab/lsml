@@ -17,14 +17,14 @@ import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.MechGarage;
 
 public class LSML extends JFrame{
-   private static final String  GARAGE_FILEDESCRIPTION = "Li Song Mech Lab Garage File (.xml)";
-
    private static final long    serialVersionUID       = -2463321343234141728L;
+   private static final String  GARAGE_FILEDESCRIPTION = "Li Song Mech Lab Garage File (.xml)";
+   private static final String  VERSION_STRING         = "(v1.0.0-rc1)";
 
    private static LSML          instance;
-   private MechGarage           garage;
    private final MessageXBar    xBar                   = new MessageXBar();
    private final LoadoutDesktop desktop                = new LoadoutDesktop(xBar);
+   private MechGarage           garage;
 
    public void initGarage(){
       String garageFileName = LsmlPreferences.getString(LsmlPreferences.GARAGEFILE_KEY);
@@ -166,7 +166,7 @@ public class LSML extends JFrame{
    }
 
    LSML() throws Exception{
-      super("LiSong MechLab");
+      super("LiSong MechLab " + VERSION_STRING);
       setDefaultCloseOperation(DISPOSE_ON_CLOSE);
       setDefaultLookAndFeelDecorated(true);
       try{
