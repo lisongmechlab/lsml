@@ -7,10 +7,10 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 
-public class TotalAmmoSupply extends AmmoMetric{
+public class TotalAmmoSupply extends TableMetric{
 
-   private final Loadout          loadout;
-   private TreeMap<Item, Integer> ammoValues;
+   private final Loadout                loadout;
+   private TreeMap<Ammunition, Integer> ammoValues;
 
    public TotalAmmoSupply(Loadout aLoadout){
       this.loadout = aLoadout;
@@ -19,34 +19,22 @@ public class TotalAmmoSupply extends AmmoMetric{
    }
 
    @Override
-   public TreeMap<Item, Integer> calculate(){
-      ammoValues.clear();
+   public TreeMap<Ammunition, Integer> calculate(){
+      TreeMap<Ammunition, Integer> ammoMap = new TreeMap<>();
       for(Item item : loadout.getAllItems()){
          if( item instanceof Ammunition ){
-            if( ammoValues.containsKey(item) ){
-
-               int ammoBuffer = ammoValues.get(item);
-               ammoBuffer = ammoBuffer + ((Ammunition)item).getShotsPerTon();
-               ammoValues.put((Ammunition)item, ammoBuffer);
-               ammoBuffer = 0;
-
+            if( ammoMap.containsKey(item) ){
+               int tempValue = ammoMap.get(item);
+               ammoMap.put((Ammunition)item, ++tempValue);
             }
             else{
-               ammoValues.put(item, ((Ammunition)item).getShotsPerTon());
+               ammoMap.put((Ammunition)item, 1);
             }
+
          }
 
       }
-
-      for(Item item : loadout.getAllItems()){
-         if( item instanceof AmmoWeapon ){
-            if( !ammoValues.containsKey(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades())) ){
-               ammoValues.put(item, 0);
-            }
-         }
-
-      }
-      return ammoValues;
+      return ammoMap;
    }
 
    public TreeMap<String, Integer> getShotsPerVolleyForEach(){
@@ -77,6 +65,33 @@ public class TotalAmmoSupply extends AmmoMetric{
       return volleyValues;
    }
 
+   public TreeMap<String, Double> getSecondsForEach(){
+      TreeMap<String, Double> secondValues = new TreeMap<>();
+      for(Item item : loadout.getAllItems()){
+         if( item instanceof AmmoWeapon ){
+            AmmoWeapon weapon = (AmmoWeapon) item;
+            Ammunition ammo = weapon.getAmmoType(loadout.getUpgrades());
+            if( ammoValues.containsKey(ammo) ){
+               if( secondValues.containsKey(ammo.getName()) ){
+                  double tempVolleyAmount = secondValues.get(ammo.getName()) + weapon.getSecondsPerShot();
+                  secondValues.put(ammo.getName(), tempVolleyAmount);
+               }
+               else{
+                  secondValues.put(ammo.getName(), weapon.getSecondsPerShot());
+               }
 
+            }
+            else{
+               secondValues.put(item.getName(), (double)0);
+            }
+         }
+         else if( item instanceof Ammunition ){
+            if( !secondValues.containsKey(item.getName()) ){
+               secondValues.put(item.getName(), (double)0);
+            }
+         }
+      }
+      return secondValues;
+   }
 
 }
