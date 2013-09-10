@@ -1,9 +1,13 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 
+/**
+ * A generic ammunition item.
+ * 
+ * @author Li Song
+ */
 public class Ammunition extends Item{
    protected final int           shotsPerTon;
    protected final double        internalDamage;
@@ -34,20 +38,9 @@ public class Ammunition extends Item{
       return shotsPerTon;
    }
 
-   @Override
-   public String getName(Upgrades aUpgrades){
-      if( getName().contains("LRM") || getName().contains("SRM") ){
-         if( aUpgrades.hasArtemis() && !getName().toLowerCase().contains("streak") )
-            return super.getName() + " + ARTEMIS";
-      }
-      return super.getName();
-   }
-
    /**
-    * Returns the {@link HardpointType} that the weapon that uses this ammo is using. Useful for colour coding and
-    * searching.
-    * 
-    * @return
+    * @return The {@link HardpointType} that the weapon that uses this ammo is using. Useful for color coding and
+    *         searching.
     */
    public HardpointType getWeaponHardpointType(){
       return type;

@@ -40,7 +40,7 @@ public class TotalAmmoSupply extends AmmoMetric{
 
       for(Item item : loadout.getAllItems()){
          if( item instanceof AmmoWeapon ){
-            if( !ammoValues.containsKey(((AmmoWeapon)item).getAmmoType()) ){
+            if( !ammoValues.containsKey(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades())) ){
                ammoValues.put(item, 0);
             }
          }
@@ -53,14 +53,14 @@ public class TotalAmmoSupply extends AmmoMetric{
       TreeMap<String, Integer> volleyValues = new TreeMap<>();
       for(Item item : loadout.getAllItems()){
          if( item instanceof AmmoWeapon ){
-            if( ammoValues.containsKey(((AmmoWeapon)item).getAmmoType()) ){
-               if( volleyValues.containsKey(((AmmoWeapon)item).getAmmoType().getName()) ){
-                  int tempVolleyAmount = volleyValues.get(((AmmoWeapon)item).getAmmoType().getName())
+            if( ammoValues.containsKey(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades())) ){
+               if( volleyValues.containsKey(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades()).getName()) ){
+                  int tempVolleyAmount = volleyValues.get(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades()).getName())
                                          + ((AmmoWeapon)item).getAmmoPerPerShot();
-                  volleyValues.put(((AmmoWeapon)item).getAmmoType().getName(), tempVolleyAmount);
+                  volleyValues.put(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades()).getName(), tempVolleyAmount);
                }
                else{
-                  volleyValues.put(((AmmoWeapon)item).getAmmoType().getName(), ((AmmoWeapon)item).getAmmoPerPerShot());
+                  volleyValues.put(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades()).getName(), ((AmmoWeapon)item).getAmmoPerPerShot());
                }
 
             }
