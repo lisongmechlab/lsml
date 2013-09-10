@@ -11,9 +11,13 @@ import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
+import lisong_mechlab.model.item.BallisticWeapon;
+import lisong_mechlab.model.item.EnergyWeapon;
+import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.loadout.metrics.TotalWeapons;
 
@@ -31,8 +35,21 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    private TreeMap<String, Double>      combatColumn;
    private TreeMap<Ammunition, Integer> ammoEquipped;
    private TreeMap<Weapon, Integer>     weaponsEquipped;
+   private Double                       srmVolleyTotal;
+   private Double                       lrmVolleyTotal;
+   private Ammunition                   srmAmmoType;
+   private Ammunition                   lrmAmmoType;
+   private ArrayList<Double>           srmCooldownList;
+   private ArrayList<Double>           lrmCooldownList;
+
+   
+   
    private String[]                     columnNames      = {"Weapon", "Ammo Type", "Ammo Quantity", "Volley Amount", "Number of Volleys",
          "Combat Seconds"                                };
+   
+   
+   
+   
    public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
       this.aLoadout = aloadout;
       totalAmmoSupply = new TotalAmmoSupply(aLoadout);
@@ -61,6 +78,8 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       volleyAmountColumn = new TreeMap<>();
       numberVolleyColumn = new TreeMap<>();
       combatColumn = new TreeMap<>();
+      srmCooldownList = new ArrayList<>();
+      lrmCooldownList = new ArrayList<>();
 
    }
 
@@ -71,20 +90,60 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    public void fillInData(){
       for(Weapon weapon : weaponsEquipped.keySet()){
-         weaponColumn.put(weapon.getName(), weapon);
-         if( weapon instanceof AmmoWeapon ){
+         
+         if( weapon instanceof BallisticWeapon ){
+            weaponColumn.put(weapon.getName(), weapon);
             ammoTypeColumn.put(weapon.getName(), ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName());
          }
-         else{
+         if(weapon instanceof EnergyWeapon){
+            weaponColumn.put(weapon.getName(), weapon);
             ammoTypeColumn.put(weapon.getName(), "Energy");
          }
+         
+            
       }
+      fillInMissileData();
 
+   }
+
+   private void fillInMissileData(){
+      srmVolleyTotal = (double)0;
+      lrmVolleyTotal = (double)0;
+      for(Weapon weapon : weaponsEquipped.keySet()){
+         if(weapon instanceof MissileWeapon){
+            if(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("SRM AMMO")){
+               srmVolleyTotal = weapon.getAmmoPerPerShot() * weaponsEquipped.get(weapon) + srmVolleyTotal;
+               srmAmmoType = ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades());
+               srmCooldownList.add(weapon.getSecondsPerShot());
+            }
+            if(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("LRM AMMO")){
+               lrmVolleyTotal = weapon.getAmmoPerPerShot() * weaponsEquipped.get(weapon) + lrmVolleyTotal;
+               lrmAmmoType = ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades());
+               lrmCooldownList.add(weapon.getSecondsPerShot());
+            }
+         }
+         
+      }
+      if(srmVolleyTotal != 0){
+         weaponColumn.put("SRM " + srmVolleyTotal, null);
+         ammoTypeColumn.put("SRM " + srmVolleyTotal, "SRM AMMO");
+         int volleyValue = srmVolleyTotal.intValue();
+         volleyAmountColumn.put("SRM " + srmVolleyTotal, volleyValue);
+         
+         
+      }
+      if(lrmVolleyTotal != 0){
+         int volleyValue = lrmVolleyTotal.intValue();
+         weaponColumn.put("LRM " + lrmVolleyTotal, null);
+         ammoTypeColumn.put("LRM " + lrmVolleyTotal, "LRM AMMO");
+         volleyAmountColumn.put("LRM " + lrmVolleyTotal, volleyValue);
+      }
+      
    }
 
    public void fillInAmmoQuantity(){
       for(String weaponName : weaponColumn.keySet()){
-         if( weaponColumn.get(weaponName) instanceof AmmoWeapon ){
+         if( weaponColumn.get(weaponName) instanceof BallisticWeapon ){
             Ammunition ammoTypeTemp = ((AmmoWeapon)weaponColumn.get(weaponName)).getAmmoType(aLoadout.getUpgrades());
             if( ammoEquipped.keySet().contains(ammoTypeTemp) ){
                ammoQuantityColumn.put(weaponName, (double)ammoTypeTemp.getShotsPerTon() * ammoEquipped.get(ammoTypeTemp));
@@ -95,6 +154,22 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          }
          else{
             ammoQuantityColumn.put(weaponName, Double.POSITIVE_INFINITY);
+         }
+         if(weaponName.contains("SRM")){
+            if( ammoEquipped.keySet().contains(srmAmmoType) ){
+               ammoQuantityColumn.put(weaponName, (double)srmAmmoType.getShotsPerTon() * ammoEquipped.get(srmAmmoType));
+            }
+            else{
+               ammoQuantityColumn.put(weaponName, (double)0);
+            }
+         }
+         if(weaponName.contains("LRM")){
+            if( ammoEquipped.keySet().contains(lrmAmmoType) ){
+               ammoQuantityColumn.put(weaponName, (double)lrmAmmoType.getShotsPerTon() * ammoEquipped.get(lrmAmmoType));
+            }
+            else{
+               ammoQuantityColumn.put(weaponName, (double)0);
+            }
          }
 
       }
@@ -127,7 +202,10 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
       }
       for(String weaponName : weaponColumn.keySet()){
-         if( weaponColumn.get(weaponName) == null ){
+         if( (weaponColumn.get(weaponName) == null) && !((weaponName.contains("SRM")) || (weaponName.contains("LRM ")))){
+            volleyAmountColumn.put(weaponName, 0);
+         }
+         else if(weaponName.contains("Only")){
             volleyAmountColumn.put(weaponName, 0);
          }
       }
@@ -135,8 +213,11 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    public void fillInNumberVolleys(){
       for(String weaponName : weaponColumn.keySet()){
-         if( weaponColumn.get(weaponName) != null ){
-            numberVolleyColumn.put(weaponName, (ammoQuantityColumn.get(weaponName) / volleyAmountColumn.get(weaponName)));
+         if( (weaponColumn.get(weaponName) != null ) || (weaponName.contains("SRM")) || (weaponName.contains("LRM"))){
+            if(weaponName.contains("Only")){
+               numberVolleyColumn.put(weaponName, (double)0);
+            }
+            else numberVolleyColumn.put(weaponName, (ammoQuantityColumn.get(weaponName) / volleyAmountColumn.get(weaponName)));
          }
          else{
             numberVolleyColumn.put(weaponName, (double)0);
@@ -146,14 +227,35 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    public void fillInCombatSeconds(){
       for(String weaponName : weaponColumn.keySet()){
-         if( weaponColumn.get(weaponName) != null ){
+         if( weaponColumn.get(weaponName) != null) {
             combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * weaponColumn.get(weaponName).getSecondsPerShot()));
 
          }
          else{
-            combatColumn.put(weaponName, (double)0);
+            if(weaponName.contains("SRM")){
+               combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * calculateSrmCooldownAverage()));
+            }else if(weaponName.contains("LRM")){
+               combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * calculateLrmCooldownAverage()));
+            }
+            else combatColumn.put(weaponName, (double)0);
          }
       }
+   }
+   
+   public double calculateSrmCooldownAverage(){
+      Double total = (double)0;
+      for(Double inter : srmCooldownList){
+         total = inter + total;
+      }
+      return total / srmCooldownList.size();
+   }
+   
+   public double calculateLrmCooldownAverage(){
+      Double total = (double)0;
+      for(Double inter : lrmCooldownList){
+         total = inter + total;
+      }
+      return total / lrmCooldownList.size();
    }
 
    @Override
@@ -243,7 +345,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg instanceof LoadoutPart.Message )
+      if( aMsg instanceof LoadoutPart.Message || aMsg instanceof Upgrades.Message )
          SwingUtilities.invokeLater(new Runnable(){
 
             @Override
