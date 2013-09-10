@@ -87,7 +87,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricHeatDissipation = new HeatDissipation(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
       metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
-      anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
+      anAmmoTableDataModel = new AmmoTableDataModel(loadout);
       topSpeedMetric = new TopSpeedMetric(loadout);
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       this.anXBar = anXBar;
@@ -308,7 +308,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                metricTotalAmmoSupply.calculate();
 
-               AmmoTableDataModel anAmmoTableDataModel1 = new AmmoTableDataModel(loadout, anXBar);
+               AmmoTableDataModel anAmmoTableDataModel1 = new AmmoTableDataModel(loadout);
                anAmmoTableDataModel1.fillInData();
                totalAmmoSupply.setModel(anAmmoTableDataModel1);
                

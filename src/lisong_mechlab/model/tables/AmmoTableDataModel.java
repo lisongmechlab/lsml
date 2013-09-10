@@ -31,6 +31,10 @@ public class AmmoTableDataModel extends AbstractTableModel{
 
    
    
+   /**
+    * 
+    */
+   private static final long serialVersionUID = 7209669818938655979L;
    protected String weaponNames;
    private Loadout aLoadout;
    private TotalAmmoSupply totalAmmoSupply;
@@ -45,7 +49,7 @@ public class AmmoTableDataModel extends AbstractTableModel{
    private TreeMap<Weapon, Integer> weaponsEquipped;
    private String[] columnNames = {"Weapon" , "Ammo Type",  "Ammo Quantity", "Volley Amount" , "Number of Volleys", "Combat Seconds"};
    
-   public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
+   public AmmoTableDataModel(Loadout aloadout){
       this.aLoadout = aloadout;
       totalAmmoSupply = new TotalAmmoSupply(aLoadout);
       totalAmmoSupply.calculate();
