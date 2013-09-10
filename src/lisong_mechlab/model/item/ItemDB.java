@@ -65,7 +65,10 @@ public class ItemDB{
    }
 
    static private String canonize(String aString){
-      return MissileWeapon.canonize(aString).toLowerCase();
+      String key = aString.toLowerCase();
+      if( !key.contains("ammo") && key.contains("rm") )
+         return MissileWeapon.canonize(aString).toLowerCase();
+      return key;
    }
 
    static{

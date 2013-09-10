@@ -11,6 +11,8 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.AmmoWeapon;
+import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
@@ -39,7 +41,7 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
 
       public enum Type{
-         ItemAdded, ItemRemoved, ArmorChanged
+         ItemAdded, ItemRemoved, ArmorChanged, ItemsChanged
       }
 
       final public LoadoutPart part;
@@ -282,6 +284,25 @@ public class LoadoutPart implements MessageXBar.Reader{
                while( items.remove(ItemDB.SHS) ){/* No-Op */}
             else
                while( items.remove(ItemDB.DHS) ){/* No-Op */}
+         }
+         else if( msg.msg == ChangeMsg.GUIDANCE ){
+            boolean changed = false;
+            for(AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)){
+               Upgrades oldUpgrades = new Upgrades(null);
+               oldUpgrades.setArtemis(!msg.source.hasArtemis());
+               Ammunition oldAmmoType = weapon.getAmmoType(oldUpgrades);
+               Ammunition newAmmoType = weapon.getAmmoType(msg.source);
+               if( oldAmmoType == newAmmoType )
+                  continue;
+
+               while( items.remove(oldAmmoType) ){
+                  items.add(newAmmoType);
+                  changed = true;
+               }
+            }
+            if( changed )
+               xBar.post(new Message(this, Type.ItemsChanged));
+
          }
       }
    }

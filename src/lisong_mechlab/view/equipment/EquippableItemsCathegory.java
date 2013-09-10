@@ -57,8 +57,13 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
             continue;
          if( loadout == null || item.isEquippableOn(loadout) ){
             equippableItems.add(item);
-            if( item instanceof AmmoWeapon )
-               equippableItems.add(((AmmoWeapon)item).getAmmoType());
+            if( item instanceof AmmoWeapon ){
+               if( loadout != null ){
+                  equippableItems.add(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades()));
+               }
+               else
+                  equippableItems.add(((AmmoWeapon)item).getAmmoType(null));
+            }
          }
       }
       HashSet<Item> h = new HashSet<>(equippableItems); // Get rid of duplicates

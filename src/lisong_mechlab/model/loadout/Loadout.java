@@ -329,7 +329,6 @@ public class Loadout implements MessageXBar.Reader{
                break;
             case GUIDANCE:
                checkArtemisAdditionLegal();
-
                break;
             case HEATSINKS:
                break;
