@@ -5,6 +5,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
 import lisong_mechlab.Pair;
 import lisong_mechlab.model.MessageXBar;
@@ -248,6 +251,17 @@ public class PartList extends JList<Item>{
             }
          }
       });
+
+      addMouseListener(new MouseAdapter(){
+         @Override
+         public void mouseClicked(MouseEvent e){
+            if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
+               for(Item item : getSelectedItems()){
+                  part.removeItem(item);
+               }
+            }
+         }
+      });
    }
 
    List<Item> getSelectedItems(){
@@ -255,7 +269,7 @@ public class PartList extends JList<Item>{
       int[] idxs = getSelectedIndices();
       for(int i : idxs){
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(i);
-         switch(pair.first){
+         switch( pair.first ){
             case Empty:
                break;
             case EngineHeatSink:
@@ -271,7 +285,7 @@ public class PartList extends JList<Item>{
                break;
             default:
                break;
-            
+
          }
       }
       return items;
