@@ -19,7 +19,7 @@ import lisong_mechlab.model.loadout.MechGarage;
 public class LSML extends JFrame{
    private static final long    serialVersionUID       = -2463321343234141728L;
    private static final String  GARAGE_FILEDESCRIPTION = "Li Song Mech Lab Garage File (.xml)";
-   private static final String  VERSION_STRING         = "(v1.0.0-rc1)";
+   private static final String  VERSION_STRING         = "(development)";
 
    private static LSML          instance;
    private final MessageXBar    xBar                   = new MessageXBar();
