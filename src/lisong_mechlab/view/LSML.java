@@ -171,12 +171,6 @@ public class LSML extends JFrame{
       super("LiSong MechLab " + VERSION_STRING);
       setDefaultCloseOperation(DISPOSE_ON_CLOSE);
       setDefaultLookAndFeelDecorated(true);
-      try{
-         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      }
-      catch( Exception e ){
-         System.out.println("Error setting native LAF: " + e);
-      }
 
       setJMenuBar(new MenuBar(this));
 
@@ -188,7 +182,7 @@ public class LSML extends JFrame{
       setContentPane(sp);
 
       Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-      setSize((int)(dim.width*0.9), (int)(dim.height*0.9));
+      setSize((int)(dim.width * 0.9), (int)(dim.height * 0.9));
       setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
       setVisible(true);
 
@@ -204,8 +198,17 @@ public class LSML extends JFrame{
    }
 
    public static void main(String[] args) throws Exception{
-      SplashScreen splash = new SplashScreen();
-      splash.waitUntilDone();
+      try{
+         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      }
+      catch( Exception e ){
+         JOptionPane.showMessageDialog(null, "Unable to set default look and feel. Something is seriously wrong with your java install!\nError: " + e);
+      }
+
+      ProgramInit splash = new ProgramInit();
+      if( !splash.waitUntilDone() ){
+         System.exit(1);
+      }
 
       javax.swing.SwingUtilities.invokeLater(new Runnable(){
          @Override
