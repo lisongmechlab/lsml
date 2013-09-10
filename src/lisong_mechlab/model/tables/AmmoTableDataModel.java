@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -18,6 +19,7 @@ import javax.swing.table.TableModel;
 import org.jfree.ui.tabbedui.AbstractTabbedUI;
 
 import lisong_mechlab.model.MessageXBar;
+import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
@@ -27,14 +29,10 @@ import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.loadout.metrics.TotalWeapons;
 
-public class AmmoTableDataModel extends AbstractTableModel{
+public class AmmoTableDataModel extends AbstractTableModel implements MessageXBar.Reader{
 
    
    
-   /**
-    * 
-    */
-   private static final long serialVersionUID = 7209669818938655979L;
    protected String weaponNames;
    private Loadout aLoadout;
    private TotalAmmoSupply totalAmmoSupply;
@@ -48,8 +46,9 @@ public class AmmoTableDataModel extends AbstractTableModel{
    private TreeMap<Ammunition, Integer> ammoEquipped;
    private TreeMap<Weapon, Integer> weaponsEquipped;
    private String[] columnNames = {"Weapon" , "Ammo Type",  "Ammo Quantity", "Volley Amount" , "Number of Volleys", "Combat Seconds"};
+   private MessageXBar anXBar;
    
-   public AmmoTableDataModel(Loadout aloadout){
+   public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
       this.aLoadout = aloadout;
       totalAmmoSupply = new TotalAmmoSupply(aLoadout);
       totalAmmoSupply.calculate();
@@ -57,13 +56,19 @@ public class AmmoTableDataModel extends AbstractTableModel{
       totalWeapons.calculate();
       initialiseLists();
       initialiseMaps();
+      fillInAllColumns();
+      anXBar = aXBar;
+      aXBar.attach(this);
+      
+
+   }
+
+   private void fillInAllColumns(){
       fillInData();
       fillInAmmoQuantity();
       fillInVolleyAmount();
       fillInNumberVolleys();
       fillInCombatSeconds();
-      
-
    }
    
    public void initialiseLists(){
@@ -263,6 +268,22 @@ public class AmmoTableDataModel extends AbstractTableModel{
          return combatArray[aRowIndex];
       }
       else return "false";
+   }
+
+   @Override
+   public void receive(Message aMsg){
+      if(aMsg instanceof LoadoutPart.Message)
+      SwingUtilities.invokeLater(new Runnable(){ 
+
+      @Override
+      public void run(){
+         initialiseLists();
+         initialiseMaps();
+         fillInAllColumns();
+         fireTableDataChanged();
+         
+      }});
+      
    }
   
 
