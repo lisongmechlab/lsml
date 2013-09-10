@@ -227,7 +227,7 @@ public class PartList extends JList<Item>{
       setModel(new Model(anXBar));
       setDragEnabled(true);
       setDropMode(DropMode.ON);
-      setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+      setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       setTransferHandler(new ItemTransferHandler());
       setCellRenderer(new Renderer());
 
@@ -255,14 +255,23 @@ public class PartList extends JList<Item>{
       int[] idxs = getSelectedIndices();
       for(int i : idxs){
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(i);
-         if( pair.first == ListEntryType.Item ){
-            items.add(pair.second);
-         }
-         else if( pair.first == ListEntryType.EngineHeatSink ){
-            if( part.getNumEngineHeatsinks() > 0 ){
-               items.add(ItemDB.SHS);
-               items.add(ItemDB.DHS);
-            }
+         switch(pair.first){
+            case Empty:
+               break;
+            case EngineHeatSink:
+               if( part.getNumEngineHeatsinks() > 0 ){
+                  items.add(ItemDB.SHS);
+                  items.add(ItemDB.DHS);
+               }
+               break;
+            case Item:
+            case LastSlot:
+            case MultiSlot:
+               items.add(pair.second);
+               break;
+            default:
+               break;
+            
          }
       }
       return items;
