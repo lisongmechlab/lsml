@@ -1,100 +1,182 @@
 package lisong_mechlab.model.tables;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
 
 import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.MessageXBar.Message;
+import lisong_mechlab.model.item.AmmoWeapon;
+import lisong_mechlab.model.item.Ammunition;
+import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
+import lisong_mechlab.model.loadout.metrics.TotalWeapons;
 
-public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
-
-   
-   private final List<TableModelListener>                     listeners = new ArrayList<TableModelListener>();
-   
-   protected String weaponNames;
-   private Loadout aLoadout;
-   private TotalAmmoSupply totalAmmoSupply;
-   private Object[][] data = {{"empty"}, {"empty"}, {"empty"}, {"empty"}};//Exception occurs if there arn't some values.
-   private String[] columnNames = {"Weapon" , "Ammo", "Volley Amount" , "Number of Volleys"};
-   private MessageXBar aXBar;
-   
+public class AmmoTableDataModel extends AbstractTableModel implements MessageXBar.Reader{
+   private static final long            serialVersionUID = -2671906919112648859L;
+   protected String                     weaponNames;
+   private Loadout                      aLoadout;
+   private TotalAmmoSupply              totalAmmoSupply;
+   private TotalWeapons                 totalWeapons;
+   private TreeMap<String, Weapon>      weaponColumn;
+   private TreeMap<String, String>      ammoTypeColumn;
+   private TreeMap<String, Double>      ammoQuantityColumn;
+   private TreeMap<String, Integer>     volleyAmountColumn;
+   private TreeMap<String, Double>      numberVolleyColumn;
+   private TreeMap<String, Double>      combatColumn;
+   private TreeMap<Ammunition, Integer> ammoEquipped;
+   private TreeMap<Weapon, Integer>     weaponsEquipped;
+   private String[]                     columnNames      = {"Weapon", "Ammo Type", "Ammo Quantity", "Volley Amount", "Number of Volleys",
+         "Combat Seconds"                                };
    public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
       this.aLoadout = aloadout;
       totalAmmoSupply = new TotalAmmoSupply(aLoadout);
       totalAmmoSupply.calculate();
-      fillInData();
-      this.aXBar = aXBar;
+      totalWeapons = new TotalWeapons(aloadout);
+      totalWeapons.calculate();
+      initialiseLists();
+      initialiseMaps();
+      fillInAllColumns();
       aXBar.attach(this);
 
    }
-   
+
+   private void fillInAllColumns(){
+      fillInData();
+      fillInAmmoQuantity();
+      fillInVolleyAmount();
+      fillInNumberVolleys();
+      fillInCombatSeconds();
+   }
+
+   public void initialiseLists(){
+      weaponColumn = new TreeMap<>();
+      ammoQuantityColumn = new TreeMap<>();
+      ammoTypeColumn = new TreeMap<>();
+      volleyAmountColumn = new TreeMap<>();
+      numberVolleyColumn = new TreeMap<>();
+      combatColumn = new TreeMap<>();
+
+   }
+
+   public void initialiseMaps(){
+      ammoEquipped = totalAmmoSupply.calculate();
+      weaponsEquipped = totalWeapons.calculate();
+   }
+
    public void fillInData(){
-      data = new Object[totalAmmoSupply.calculate().size()][4];
-      Set<Entry<Item, Integer>> entrySet = totalAmmoSupply.calculate().entrySet();
-      Iterator<Entry<Item, Integer>> entryIterator = entrySet.iterator();
-      int entryCounter = 0;
-      while( entryIterator.hasNext()){
-         Entry<Item, Integer> entryTemp = entryIterator.next();
-            data[entryCounter][0] = entryTemp.getKey().getName();
-          data[entryCounter][1] = entryTemp.getValue();
-          entryCounter++;
-      }
-      fillInVolleyData();
-      fillInTotalNumberOfVolleys();
-   }
-   
-   public void fillInVolleyData(){
-      
-      TreeMap<String, Integer> volleyMap = (TreeMap<String, Integer>)totalAmmoSupply.getShotsPerVolleyForEach();
-      Integer[] volleyArray = volleyMap.values().toArray(new Integer[volleyMap.values().size()]);
-      for(int i = 0; i < data.length; i++){
-         data[i][2] = volleyArray[i];
-      }
-      
-   }
-   
-   public void fillInTotalNumberOfVolleys(){
-      for(int i = 0; i < data.length; i++){
-         int allAmmo =  (int)data[i][1];
-         int volleyValue = (int)data[i][2];
-         if(volleyValue != 0){
-                     data[i][3] = allAmmo/volleyValue;
+      for(Weapon weapon : weaponsEquipped.keySet()){
+         weaponColumn.put(weapon.getName(), weapon);
+         if( weapon instanceof AmmoWeapon ){
+            ammoTypeColumn.put(weapon.getName(), ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName());
          }
          else{
-            data[i][3] = 0;
+            ammoTypeColumn.put(weapon.getName(), "Energy");
+         }
+      }
+
+   }
+
+   public void fillInAmmoQuantity(){
+      for(String weaponName : weaponColumn.keySet()){
+         if( weaponColumn.get(weaponName) instanceof AmmoWeapon ){
+            Ammunition ammoTypeTemp = ((AmmoWeapon)weaponColumn.get(weaponName)).getAmmoType(aLoadout.getUpgrades());
+            if( ammoEquipped.keySet().contains(ammoTypeTemp) ){
+               ammoQuantityColumn.put(weaponName, (double)ammoTypeTemp.getShotsPerTon() * ammoEquipped.get(ammoTypeTemp));
+            }
+            else{
+               ammoQuantityColumn.put(weaponName, (double)0);
+            }
+         }
+         else{
+            ammoQuantityColumn.put(weaponName, Double.POSITIVE_INFINITY);
+         }
+
+      }
+      ArrayList<Ammunition> tempListOfAmmo = new ArrayList<Ammunition>();
+      for(Ammunition ammo : ammoEquipped.keySet()){
+         tempListOfAmmo.add(ammo);
+      }
+      for(Weapon weapon : weaponsEquipped.keySet()){
+         if( weapon instanceof AmmoWeapon )
+            tempListOfAmmo.remove(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()));
+      }
+      for(Ammunition ammo : tempListOfAmmo){
+         ammoTypeColumn.put(ammo.getName() + " Only", ammo.getName());
+         ammoQuantityColumn.put(ammo.getName() + " Only", (double)ammoEquipped.get(ammo) * ammo.getShotsPerTon());
+         weaponColumn.put(ammo.getName() + " Only", null);
+      }
+
+   }
+
+   public void fillInVolleyAmount(){
+      for(Weapon weapon : weaponsEquipped.keySet()){
+         for(String weaponName : weaponColumn.keySet()){
+            if( weapon.getName() == weaponName ){
+
+               volleyAmountColumn.put(weaponName, weaponColumn.get(weaponName).getAmmoPerPerShot() * weaponsEquipped.get(weapon));
+
+            }
+
+         }
+
+      }
+      for(String weaponName : weaponColumn.keySet()){
+         if( weaponColumn.get(weaponName) == null ){
+            volleyAmountColumn.put(weaponName, 0);
+         }
+      }
+   }
+
+   public void fillInNumberVolleys(){
+      for(String weaponName : weaponColumn.keySet()){
+         if( weaponColumn.get(weaponName) != null ){
+            numberVolleyColumn.put(weaponName, (ammoQuantityColumn.get(weaponName) / volleyAmountColumn.get(weaponName)));
+         }
+         else{
+            numberVolleyColumn.put(weaponName, (double)0);
+         }
+      }
+   }
+
+   public void fillInCombatSeconds(){
+      for(String weaponName : weaponColumn.keySet()){
+         if( weaponColumn.get(weaponName) != null ){
+            combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * weaponColumn.get(weaponName).getSecondsPerShot()));
+
+         }
+         else{
+            combatColumn.put(weaponName, (double)0);
          }
       }
    }
 
    @Override
-   public void addTableModelListener(TableModelListener aL){
-     listeners.add(aL);
-      
-   }
-
-   public void notifyTreeChange(TableModelEvent e){
-      for(TableModelListener listener : listeners){
-         listener.tableChanged(e);
-      }
-   }
-   @Override
    public Class<?> getColumnClass(int aColumnIndex){
-      if(aColumnIndex == 0){
+      if( aColumnIndex == 0 ){
+         return Integer.class;
+      }
+      if( aColumnIndex == 1 ){
          return String.class;
       }
-      else
+      if( aColumnIndex == 2 ){
+         return Double.class;
+      }
+      if( aColumnIndex == 3 ){
          return Integer.class;
+      }
+      if( aColumnIndex == 4 ){
+         return Double.class;
+      }
+      if( aColumnIndex == 5 ){
+         return Double.class;
+      }
+      return String.class;
    }
 
    @Override
@@ -106,59 +188,73 @@ public class AmmoTableDataModel implements TableModel, MessageXBar.Reader{
    public String getColumnName(int aColumnIndex){
       return columnNames[aColumnIndex];
    }
-   
-  
+
    public void tableChanged(TableModelEvent e){
       totalAmmoSupply = new TotalAmmoSupply(aLoadout);
       totalAmmoSupply.calculate();
       fillInData();
-      
    }
 
    @Override
    public int getRowCount(){
-      return data.length;
+      if( weaponColumn.size() >= ammoTypeColumn.size() ){
+         return weaponColumn.size();
+      }
+      return ammoTypeColumn.size();
+
    }
 
    @Override
    public Object getValueAt(int aRowIndex, int aColumnIndex){
 
-      if(data.length == 1){
-         return "empty";
+      if( aColumnIndex == 0 ){
+         String[] weaponArray = new String[weaponColumn.size()];
+         weaponArray = weaponColumn.keySet().toArray(weaponArray);
+         return weaponArray[aRowIndex];
+
       }
-      else return data[aRowIndex][aColumnIndex];
-   }
-
-   @Override
-   public boolean isCellEditable(int aRowIndex, int aColumnIndex){
-      // TODO Auto-generated method stub
-      return false;
-   }
-
-   @Override
-   public void removeTableModelListener(TableModelListener aL){
-      // TODO Auto-generated method stub
-      
-   }
-
-   @Override
-   public void setValueAt(Object aValue, int aRowIndex, int aColumnIndex){
-      // TODO Auto-generated method stub
-      
-   }
-
-   @Override
-   public void receive(MessageXBar.Message aMsg){
-/*      if( this.aXBar != null ){
-         if( aMsg instanceof LoadoutPart.Message ){
-            totalAmmoSupply = new TotalAmmoSupply(aLoadout);
-            totalAmmoSupply.calculate();
-            fillInData();
-
-         }
+      if( aColumnIndex == 1 ){
+         String[] ammoTypeArray = new String[ammoTypeColumn.size()];
+         ammoTypeArray = ammoTypeColumn.values().toArray(ammoTypeArray);
+         return ammoTypeArray[aRowIndex];
       }
-    */
-      
+      if( aColumnIndex == 2 ){
+         Double[] ammoQuantityArray = new Double[ammoQuantityColumn.size()];
+         ammoQuantityArray = ammoQuantityColumn.values().toArray(ammoQuantityArray);
+         return ammoQuantityArray[aRowIndex];
+      }
+      if( aColumnIndex == 3 ){
+         Integer[] volleyAmountArray = new Integer[volleyAmountColumn.size()];
+         volleyAmountArray = volleyAmountColumn.values().toArray(volleyAmountArray);
+         return volleyAmountArray[aRowIndex];
+      }
+      if( aColumnIndex == 4 ){
+         Double[] numberVolleyArray = new Double[numberVolleyColumn.size()];
+         numberVolleyArray = numberVolleyColumn.values().toArray(numberVolleyArray);
+         return numberVolleyArray[aRowIndex];
+      }
+      if( aColumnIndex == 5 ){
+         Double[] combatArray = new Double[combatColumn.size()];
+         combatArray = combatColumn.values().toArray(combatArray);
+         return combatArray[aRowIndex];
+      }
+      return "false";
    }
 
+   @Override
+   public void receive(Message aMsg){
+      if( aMsg instanceof LoadoutPart.Message )
+         SwingUtilities.invokeLater(new Runnable(){
+
+            @Override
+            public void run(){
+               initialiseLists();
+               initialiseMaps();
+               fillInAllColumns();
+               fireTableDataChanged();
+
+            }
+         });
+
+   }
 }
