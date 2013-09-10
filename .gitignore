@@ -1,4 +1,5 @@
 *.class
 *.log
 *.xml
+/build
 /bin
