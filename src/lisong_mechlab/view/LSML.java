@@ -1,5 +1,7 @@
 package lisong_mechlab.view;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -185,7 +187,9 @@ public class LSML extends JFrame{
       sp.setDividerLocation(180);
       setContentPane(sp);
 
-      setSize(1024, 768);
+      Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+      setSize((int)(dim.width*0.9), (int)(dim.height*0.9));
+      setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
       setVisible(true);
 
       addWindowListener(new WindowAdapter(){
