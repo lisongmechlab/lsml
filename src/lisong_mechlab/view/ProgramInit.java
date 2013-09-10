@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.Chassi;
@@ -22,9 +23,13 @@ import lisong_mechlab.model.item.ItemDB;
  * 
  * @author Emily Björk
  */
-public class SplashScreen extends JFrame{
-   private static final long serialVersionUID   = -2877785947094537320L;
-   private static final long MIN_SPLASH_TIME_MS = 20;
+public class ProgramInit extends JFrame{
+   private static final long  serialVersionUID   = -2877785947094537320L;
+   private static final long  MIN_SPLASH_TIME_MS = 20;
+   private static ProgramInit instance;
+
+   private String             progressSubText    = "";
+   private String             progressText       = "";
 
    private class BackgroundImage extends JComponent{
       private static final long serialVersionUID = 2294812231919303690L;
@@ -37,10 +42,19 @@ public class SplashScreen extends JFrame{
       @Override
       protected void paintComponent(Graphics g){
          g.drawImage(image, 0, 0, this);
+
+         int penX = 190;
+         int penY = 140;
+
+         g.drawString(progressText, penX, penY);
+         penY += 20;
+
+         g.drawString(progressSubText, penX, penY);
       }
    }
 
-   SplashScreen(){
+   ProgramInit(){
+      instance = this;
       SwingUtilities.invokeLater(new Runnable(){
          @Override
          public void run(){
@@ -60,15 +74,38 @@ public class SplashScreen extends JFrame{
       });
    }
 
-   public void waitUntilDone(){
+   public static ProgramInit getInstance(){
+      return instance;
+   }
+
+   public void setProcessText(String aString){
+      progressText = aString;
+      repaint();
+   }
+
+   public void setSubText(String aString){
+      progressSubText = aString;
+      repaint();
+   }
+
+   public boolean waitUntilDone(){
       long startTimeMs = new Date().getTime();
 
-      @SuppressWarnings("unused")
-      // Causes static initialization to be ran.
-      Item bap = ItemDB.BAP;
-      @SuppressWarnings("unused")
-      // Causes static initialization to be ran.
-      Chassi chassi = ChassiDB.lookup("JR7-D");
+      try{
+         @SuppressWarnings("unused")
+         // Causes static initialization to be ran.
+         Item bap = ItemDB.BAP;
+
+         @SuppressWarnings("unused")
+         // Causes static initialization to be ran.
+         Chassi chassi = ChassiDB.lookup("JR7-D");
+      }
+      catch( Throwable e ){
+         JOptionPane.showMessageDialog(this,
+                                       "Unable to find game data files!\nLSML requires an up-to-date installation of MW:Online to parse data files from.");
+         return false;
+      }
+
       long endTimeMs = new Date().getTime();
       long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
       try{
@@ -78,5 +115,7 @@ public class SplashScreen extends JFrame{
          // No-Op
       }
       dispose();
+      instance = null;
+      return true;
    }
 }
