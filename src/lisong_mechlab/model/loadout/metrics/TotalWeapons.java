@@ -19,13 +19,18 @@ public class TotalWeapons extends TableMetric{
    }
    @Override
    public TreeMap<Weapon, Integer> calculate(){
+      weaponValues.clear();
       for(Item item : loadout.getAllItems()){
          if( item instanceof Weapon ){
             if(weaponValues.containsKey(item)){
                int tempValue = weaponValues.get(item);
-               weaponValues.put((Weapon) item, ++tempValue);
+               tempValue++;
+               weaponValues.put((Weapon) item, tempValue);
             }
-            weaponValues.put((Weapon) item, 1);
+            else{
+                         weaponValues.put((Weapon) item, 1);  
+            }
+
          }
          
       }
