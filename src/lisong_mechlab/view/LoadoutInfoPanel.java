@@ -362,7 +362,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          }
       }
       catch( RuntimeException e ){
-         JOptionPane.showMessageDialog(this, e.getMessage());
+         JOptionPane.showMessageDialog(this, "Error while changing upgrades or efficiency!: " + e.getStackTrace());
       }
    }
 
