@@ -1,0 +1,14 @@
+Here is how you build the nightly/release builds and package them.
+
+1) Open LSML.java and change the version string to include version number if it is a release; Or the date and time of the build in ISO format like so: "(nightly 2013-09-10 20:45)" if it is a nightly build.
+2) Right click the LSML project in eclipse and select "Export..." select "Runnable Jar file".
+3) Make sure "Launch configuration:" is "LSML - LSML"
+4) Make sure "Export destination:" is "LSML/build/lsml_nightly.jar" for nightlies or LSML/build/lsml.jar" for release.
+5) Make sure "Library handling:" is "Package required libraries into generated JAR".
+6) Click finish.
+7) Open launch4j gui and open the "l4j_nightly.xml" file for nightlies or l4j_release.xml for releases.
+8) Press the "build wrapper" button (cog wheel).
+9) Check in the LSML.java file.
+10) Zip the build folder and put it on the web.
+
+TODO: Make an ant script for this.
