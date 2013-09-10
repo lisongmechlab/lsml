@@ -9,11 +9,16 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 
@@ -324,6 +329,10 @@ public class LoadoutTest{
       // Verify
       assertEquals(tons + 3, cut.getMass(), 0.0);
       assertEquals(slots - 3, cut.getNumCriticalSlotsFree());
+      
+      List<Item> itemsRt = new ArrayList<>(cut.getPart(Part.RightTorso).getItems()); 
+      assertTrue(itemsRt.remove(ItemDB.lookup("LRM AMMO + ARTEMIS IV")));
+      assertTrue(itemsRt.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
       /*
        * assertEquals("SRM 6 + ARTEMIS", cut.getPart(Part.LeftTorso).getItems().get(0).getName());
        * assertEquals("SRM 2 + ARTEMIS", cut.getPart(Part.LeftTorso).getItems().get(1).getName());

@@ -56,28 +56,32 @@ public class Upgrades{
    public void setArtemis(boolean anArtemis){
       if( anArtemis != artemis ){
          artemis = anArtemis;
-         xBar.post(new Message(ChangeMsg.GUIDANCE, this));
+         if( xBar != null )
+            xBar.post(new Message(ChangeMsg.GUIDANCE, this));
       }
    }
 
    public void setDoubleHeatSinks(boolean aDHS){
       if( aDHS != dhs ){
          dhs = aDHS;
-         xBar.post(new Message(ChangeMsg.HEATSINKS, this));
+         if( xBar != null )
+            xBar.post(new Message(ChangeMsg.HEATSINKS, this));
       }
    }
 
    public void setEndoSteel(boolean anEndoSteel){
       if( anEndoSteel != endoSteel ){
          endoSteel = anEndoSteel;
-         xBar.post(new Message(ChangeMsg.STRUCTURE, this));
+         if( xBar != null )
+            xBar.post(new Message(ChangeMsg.STRUCTURE, this));
       }
    }
 
    public void setFerroFibrous(boolean aFerroFibrous){
       if( aFerroFibrous != ferroFibrous ){
          ferroFibrous = aFerroFibrous;
-         xBar.post(new Message(ChangeMsg.ARMOR, this));
+         if( xBar != null )
+            xBar.post(new Message(ChangeMsg.ARMOR, this));
       }
    }
 }
