@@ -49,7 +49,7 @@ public class TotalAmmoSupplyTest{
          }
 
       }
-      TreeMap<Item, Integer> ammoValuesTest = totalAmmoSupply.calculate();
+      TreeMap<Ammunition, Integer> ammoValuesTest = totalAmmoSupply.calculate();
       Integer actual = ammoValuesTest.get(testItem);
       assertEquals(200, actual.intValue());
 
