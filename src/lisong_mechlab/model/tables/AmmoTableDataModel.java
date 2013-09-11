@@ -41,7 +41,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 	private ArrayList<Double>				srmCooldownList;
 	private ArrayList<Double>				lrmCooldownList;
 
-	private String[]						columnNames			= { "Weapon",  "Ammo Quantity", "Volley Amount", "Number of Volleys", "Combat Seconds" };
+	private String[]						columnNames			= { "Weapon",  "Ammo Quantity", "Number of Volleys", "Combat Seconds" };
 
 	public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar) {
 		this.aLoadout = aloadout;
@@ -290,15 +290,11 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 			return Double.class;
 		}
 		if (aColumnIndex == 2) {
-			return Integer.class;
+			return Double.class;
 		}
 		if (aColumnIndex == 3) {
 			return Double.class;
 		}
-		if (aColumnIndex == 4) {
-			return Double.class;
-		}
-
 		return String.class;
 	}
 
@@ -341,16 +337,11 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 			return ammoQuantityArray[aRowIndex];
 		}
 		if (aColumnIndex == 2) {
-			Integer[] volleyAmountArray = new Integer[volleyAmountColumn.size()];
-			volleyAmountArray = volleyAmountColumn.values().toArray(volleyAmountArray);
-			return volleyAmountArray[aRowIndex];
-		}
-		if (aColumnIndex == 3) {
 			Double[] numberVolleyArray = new Double[numberVolleyColumn.size()];
 			numberVolleyArray = numberVolleyColumn.values().toArray(numberVolleyArray);
 			return numberVolleyArray[aRowIndex];
 		}
-		if (aColumnIndex == 4) {
+		if (aColumnIndex == 3) {
 			Double[] combatArray = new Double[combatColumn.size()];
 			combatArray = combatColumn.values().toArray(combatArray);
 			return combatArray[aRowIndex];
