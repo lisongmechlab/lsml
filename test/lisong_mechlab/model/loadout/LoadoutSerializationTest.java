@@ -14,6 +14,7 @@ import java.util.List;
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
@@ -31,12 +32,12 @@ import org.mockito.MockitoAnnotations;
 public class LoadoutSerializationTest{
    @Mock
    MessageXBar xBar;
-   
+
    @Before
    public void setup(){
-       MockitoAnnotations.initMocks(this);
+      MockitoAnnotations.initMocks(this);
    }
-   
+
    /**
     * We can save and load loadouts.
     * 
@@ -107,7 +108,7 @@ public class LoadoutSerializationTest{
 
          assertTrue(items.remove(ItemDB.lookup("XL ENGINE 290")));
          assertTrue(items.remove(ItemDB.DHS));
-         
+
          assertEquals(1, part.getNumEngineHeatsinks());
 
          assertOnlyInternals(items);
@@ -218,27 +219,36 @@ public class LoadoutSerializationTest{
       Loadout cut = new Loadout("JR7-F", xBar);
       cut.loadStock();
    }
-   
+
    /**
-    * We can load the KTO-19 stock (issue #105)
-    * @throws Exception 
+    * All stock builds should be loadable without error!
+    * 
+    * @throws Exception
     */
    @Test
-   public void testStockLoadoutKTO19() throws Exception{
-      Loadout cut = new Loadout("KTO-19", xBar);
-      cut.loadStock();
+   public void testStockLoadout() throws Exception{
+      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+
+      for(Chassi chassi : chassii){
+         Loadout cut = new Loadout(chassi, xBar);
+         cut.loadStock();
+      }
    }
 
    /**
-    * We can load stocks for special mechs such as the Ilya Muromets
-    * @throws Exception 
+    * {@link Loadout#Loadout(String, MessageXBar)} works even for the special names.
+    * 
+    * @throws Exception
     */
    @Test
    public void testStockLoadoutIlya() throws Exception{
       Loadout cut = new Loadout("Ilya Muromets", xBar);
       cut.loadStock();
    }
-   
+
    /**
     * We can load stock loadouts. (AS7-D)
     * 
@@ -525,117 +535,55 @@ public class LoadoutSerializationTest{
 
    // TODO: Move these to statistics test!
    /*
-   @Test
-   public void testHeatSHS_SmallEngine(){
-      Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
-
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 210"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
-
-      assertEquals(9, cut.getHeatsinksCount());
-      assertEquals(9.0, cut.getHeatCapacity(), 0.0);
-      assertEquals(0.9, cut.getHeatDissapation(), 0.0);
-
-      cut.getEfficiencies().setCoolRun(true);
-
-      assertEquals(9, cut.getHeatsinksCount());
-      assertEquals(9.0, cut.getHeatCapacity(), 0.0);
-      assertEquals(0.9 * 1.075, cut.getHeatDissapation(), 0.0);
-
-      cut.getEfficiencies().setHeatContainment(true);
-      cut.getEfficiencies().setCoolRun(false);
-
-      assertEquals(9, cut.getHeatsinksCount());
-      assertEquals(9.0 * 1.075, cut.getHeatCapacity(), 0.0);
-      assertEquals(0.9, cut.getHeatDissapation(), 0.0);
-   }
-
-   @Test
-   public void testHeatDHS_SmallEngine(){
-      Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
-
-      cut.getUpgrades().setDoubleHeatSinks(true);
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 210")); // 8 internal
-      cut.getInternalPartLoadout(InternalPartType.LeftArm).addItem(ItemDB.DHS);
-
-      assertEquals(9, cut.getHeatsinksCount());
-      assertEquals(8 * 2 + 1.4 * 1, cut.getHeatCapacity(), 0.0);
-      assertEquals((8 * 2 + 1.4 * 1) / 10.0, cut.getHeatDissapation(), 0.0);
-
-      cut.getEfficiencies().setCoolRun(true);
-
-      assertEquals(9, cut.getHeatsinksCount());
-      assertEquals((8 * 2 + 1.4 * 1), cut.getHeatCapacity(), 0.0);
-      assertEquals((8 * 2 + 1.4 * 1) / 10.0 * 1.075, cut.getHeatDissapation(), 0.0);
-
-      cut.getEfficiencies().setHeatContainment(true);
-      cut.getEfficiencies().setCoolRun(false);
-
-      assertEquals(9, cut.getHeatsinksCount());
-      assertEquals((8 * 2 + 1.4 * 1) * 1.075, cut.getHeatCapacity(), 0.0);
-      assertEquals((8 * 2 + 1.4 * 1) / 10.0, cut.getHeatDissapation(), 0.0);
-   }
-
-   @Test
-   public void testHeatSHS_BigEngine(){
-      Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
-
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 355"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
-
-      assertEquals(16, cut.getHeatsinksCount());
-      assertEquals(16.0, cut.getHeatCapacity(), 0.0);
-      assertEquals(1.6, cut.getHeatDissapation(), 0.0);
-
-      cut.getEfficiencies().setCoolRun(true);
-
-      assertEquals(16, cut.getHeatsinksCount());
-      assertEquals(16.0, cut.getHeatCapacity(), 0.0);
-      assertEquals(1.6 * 1.075, cut.getHeatDissapation(), 0.0);
-
-      cut.getEfficiencies().setHeatContainment(true);
-      cut.getEfficiencies().setCoolRun(false);
-
-      assertEquals(16, cut.getHeatsinksCount());
-      assertEquals(16.0 * 1.075, cut.getHeatCapacity(), 0.0);
-      assertEquals(1.6, cut.getHeatDissapation(), 0.0);
-   }
-
-   @Test
-   public void testHeatDHS_BigEngine(){
-      Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
-      cut.getUpgrades().setDoubleHeatSinks(true);
-
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 355"));
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
-      cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
-      cut.getInternalPartLoadout(InternalPartType.LeftTorso).addItem(ItemDB.DHS);
-      cut.getInternalPartLoadout(InternalPartType.LeftTorso).addItem(ItemDB.DHS);
-
-      assertEquals(16, cut.getHeatsinksCount());
-      assertEquals((2 * 10 + 1.4 * 6), cut.getHeatCapacity(), 0.0);
-      assertEquals((2 * 10 + 1.4 * 6) / 10.0, cut.getHeatDissapation(), 0.0);
-
-      cut.getEfficiencies().setCoolRun(true);
-
-      assertEquals(16, cut.getHeatsinksCount());
-      assertEquals((2 * 10 + 1.4 * 6), cut.getHeatCapacity(), 0.0);
-      assertEquals((2 * 10 + 1.4 * 6) / 10.0 * 1.075, cut.getHeatDissapation(), 0.0);
-
-      cut.getEfficiencies().setHeatContainment(true);
-      cut.getEfficiencies().setCoolRun(false);
-
-      assertEquals(16, cut.getHeatsinksCount());
-      assertEquals((2 * 10 + 1.4 * 6) * 1.075, cut.getHeatCapacity(), 0.0);
-      assertEquals((2 * 10 + 1.4 * 6) / 10.0, cut.getHeatDissapation(), 0.0);
-   }*/
+    * @Test public void testHeatSHS_SmallEngine(){ Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 210"));
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS); assertEquals(9,
+    * cut.getHeatsinksCount()); assertEquals(9.0, cut.getHeatCapacity(), 0.0); assertEquals(0.9,
+    * cut.getHeatDissapation(), 0.0); cut.getEfficiencies().setCoolRun(true); assertEquals(9, cut.getHeatsinksCount());
+    * assertEquals(9.0, cut.getHeatCapacity(), 0.0); assertEquals(0.9 * 1.075, cut.getHeatDissapation(), 0.0);
+    * cut.getEfficiencies().setHeatContainment(true); cut.getEfficiencies().setCoolRun(false); assertEquals(9,
+    * cut.getHeatsinksCount()); assertEquals(9.0 * 1.075, cut.getHeatCapacity(), 0.0); assertEquals(0.9,
+    * cut.getHeatDissapation(), 0.0); }
+    * @Test public void testHeatDHS_SmallEngine(){ Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
+    * cut.getUpgrades().setDoubleHeatSinks(true);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 210")); // 8 internal
+    * cut.getInternalPartLoadout(InternalPartType.LeftArm).addItem(ItemDB.DHS); assertEquals(9,
+    * cut.getHeatsinksCount()); assertEquals(8 * 2 + 1.4 * 1, cut.getHeatCapacity(), 0.0); assertEquals((8 * 2 + 1.4 *
+    * 1) / 10.0, cut.getHeatDissapation(), 0.0); cut.getEfficiencies().setCoolRun(true); assertEquals(9,
+    * cut.getHeatsinksCount()); assertEquals((8 * 2 + 1.4 * 1), cut.getHeatCapacity(), 0.0); assertEquals((8 * 2 + 1.4 *
+    * 1) / 10.0 * 1.075, cut.getHeatDissapation(), 0.0); cut.getEfficiencies().setHeatContainment(true);
+    * cut.getEfficiencies().setCoolRun(false); assertEquals(9, cut.getHeatsinksCount()); assertEquals((8 * 2 + 1.4 * 1)
+    * * 1.075, cut.getHeatCapacity(), 0.0); assertEquals((8 * 2 + 1.4 * 1) / 10.0, cut.getHeatDissapation(), 0.0); }
+    * @Test public void testHeatSHS_BigEngine(){ Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 355"));
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.SHS); assertEquals(16,
+    * cut.getHeatsinksCount()); assertEquals(16.0, cut.getHeatCapacity(), 0.0); assertEquals(1.6,
+    * cut.getHeatDissapation(), 0.0); cut.getEfficiencies().setCoolRun(true); assertEquals(16, cut.getHeatsinksCount());
+    * assertEquals(16.0, cut.getHeatCapacity(), 0.0); assertEquals(1.6 * 1.075, cut.getHeatDissapation(), 0.0);
+    * cut.getEfficiencies().setHeatContainment(true); cut.getEfficiencies().setCoolRun(false); assertEquals(16,
+    * cut.getHeatsinksCount()); assertEquals(16.0 * 1.075, cut.getHeatCapacity(), 0.0); assertEquals(1.6,
+    * cut.getHeatDissapation(), 0.0); }
+    * @Test public void testHeatDHS_BigEngine(){ Loadout cut = new Loadout(ChassiDB.lookup("ATLAS", "as7-k"));
+    * cut.getUpgrades().setDoubleHeatSinks(true);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.lookup("STD ENGINE 355"));
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
+    * cut.getInternalPartLoadout(InternalPartType.CenterTorso).addItem(ItemDB.DHS);
+    * cut.getInternalPartLoadout(InternalPartType.LeftTorso).addItem(ItemDB.DHS);
+    * cut.getInternalPartLoadout(InternalPartType.LeftTorso).addItem(ItemDB.DHS); assertEquals(16,
+    * cut.getHeatsinksCount()); assertEquals((2 * 10 + 1.4 * 6), cut.getHeatCapacity(), 0.0); assertEquals((2 * 10 + 1.4
+    * * 6) / 10.0, cut.getHeatDissapation(), 0.0); cut.getEfficiencies().setCoolRun(true); assertEquals(16,
+    * cut.getHeatsinksCount()); assertEquals((2 * 10 + 1.4 * 6), cut.getHeatCapacity(), 0.0); assertEquals((2 * 10 + 1.4
+    * * 6) / 10.0 * 1.075, cut.getHeatDissapation(), 0.0); cut.getEfficiencies().setHeatContainment(true);
+    * cut.getEfficiencies().setCoolRun(false); assertEquals(16, cut.getHeatsinksCount()); assertEquals((2 * 10 + 1.4 *
+    * 6) * 1.075, cut.getHeatCapacity(), 0.0); assertEquals((2 * 10 + 1.4 * 6) / 10.0, cut.getHeatDissapation(), 0.0); }
+    */
 
    private void assertOnlyInternals(List<Item> aList){
       for(Item item : aList){
