@@ -148,9 +148,14 @@ public class Loadout implements MessageXBar.Reader{
          Element stockUpgrades = maybeUpgrades.get(0);
          // TODO: We really should fix issue #75 to get rid of these hard coded constants.
          getUpgrades().setDoubleHeatSinks(reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double"));
-         getUpgrades().setFerroFibrous(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2800"));
+         getUpgrades().setFerroFibrous(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801"));
          getUpgrades().setEndoSteel(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101"));
          getUpgrades().setArtemis(reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1"));
+
+         // FIXME: Revisit this fix! The game files are broken.
+         if( chassi.getNameShort().equals("KTO-19") ){
+            getUpgrades().setFerroFibrous(true);
+         }
       }
 
       for(Element component : reader.getElementsByTagName("component")){
