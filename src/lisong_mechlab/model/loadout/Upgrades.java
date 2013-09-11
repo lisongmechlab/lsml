@@ -1,6 +1,6 @@
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.MessageXBar;
+import lisong_mechlab.util.MessageXBar;
 
 public class Upgrades{
    private boolean                     artemis;

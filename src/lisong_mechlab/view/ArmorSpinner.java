@@ -5,11 +5,11 @@ import java.awt.Toolkit;
 import javax.swing.AbstractSpinnerModel;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
 
 public class ArmorSpinner extends AbstractSpinnerModel implements MessageXBar.Reader{
    private static final long serialVersionUID = 2130487332299251881L;

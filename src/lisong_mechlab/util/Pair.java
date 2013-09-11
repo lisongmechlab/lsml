@@ -1,4 +1,4 @@
-package lisong_mechlab;
+package lisong_mechlab.util;
 
 public class Pair<F, S> {
    public final F first;

@@ -24,8 +24,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.CoolingRatio;
@@ -39,6 +37,8 @@ import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.tables.AmmoTableDataModel;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long        serialVersionUID = 4720126200474042446L;
