@@ -12,8 +12,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.util.MessageXBar;
 
 /**
  * This class is the {@link JDesktopPane} where all the {@link LoadoutFrame} are shown to the user. It provides a method

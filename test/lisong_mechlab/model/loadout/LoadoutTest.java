@@ -13,7 +13,6 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.InternalPart;
@@ -21,6 +20,7 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;

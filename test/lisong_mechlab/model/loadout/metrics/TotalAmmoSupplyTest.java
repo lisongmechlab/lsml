@@ -5,11 +5,11 @@ import static org.junit.Assert.fail;
 
 import java.util.TreeMap;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

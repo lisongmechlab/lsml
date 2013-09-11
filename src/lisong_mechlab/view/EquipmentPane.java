@@ -16,7 +16,6 @@ import javax.swing.event.InternalFrameListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.item.HeatSource;
@@ -24,6 +23,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.equipment.EquipmentTreeModel;

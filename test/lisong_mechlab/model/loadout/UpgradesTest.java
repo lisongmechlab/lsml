@@ -1,8 +1,8 @@
 package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.*;
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
+import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;
