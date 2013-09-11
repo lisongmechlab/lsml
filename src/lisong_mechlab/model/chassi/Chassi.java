@@ -78,6 +78,18 @@ public class Chassi{
       return getNameShort();
    }
 
+   @Override
+   public int hashCode(){
+      return mwoId;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( !(obj instanceof Chassi) )
+         return false;
+      return (mwoId == ((Chassi)obj).mwoId);
+   }
+
    public int getEngineMax(){
       return engineMax;
    }
