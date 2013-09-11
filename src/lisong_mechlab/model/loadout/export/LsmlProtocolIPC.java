@@ -5,12 +5,16 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.SwingUtilities;
+
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.Base64;
+import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.view.LSML;
 
 /**
@@ -20,15 +24,15 @@ import lisong_mechlab.view.LSML;
  */
 public class LsmlProtocolIPC{
    // In the private (ephemeral) ports
-   private static final int               port    = 63782;
-   private final ServerSocket             socket;
-   private final Thread                   thread;
-   private transient boolean              done    = false;
-   private final transient LoadoutCoderV1 coderV1 = new LoadoutCoderV1(LSML.getInstance().getXBar());
-   private final transient Base64         base64  = new Base64();
+   private static final int   port = 63782;
+   private final ServerSocket socket;
+   private final Thread       thread;
+   private transient boolean  done = false;
 
    public LsmlProtocolIPC() throws UnknownHostException, IOException{
-      socket = new ServerSocket(port);
+      socket = new ServerSocket();
+      socket.setReuseAddress(true);
+      socket.bind(new InetSocketAddress(port));
 
       thread = new Thread(new Runnable(){
          @Override
@@ -40,8 +44,21 @@ public class LsmlProtocolIPC{
                   client = socket.accept();
                   in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-                  String url = in.readLine();
-                  LSML.getInstance().getDesktop().openLoadout(ExternalLoadout.parse(url));
+                  final String url = in.readLine();
+                  SwingUtilities.invokeLater(new Runnable(){
+
+                     @Override
+                     public void run(){
+                        try{
+                           LSML.getInstance().getDesktop().openLoadout(ExternalLoadout.parse(url));
+                        }
+                        catch( IOException e ){
+                           e.printStackTrace();
+                        }
+                     }
+
+                  });
+
                }
                catch( Exception e ){
                   System.err.println(e);
@@ -60,6 +77,8 @@ public class LsmlProtocolIPC{
             }
          }
       });
+      thread.setName("IPC THREAD");
+      thread.start();
    }
 
    /**

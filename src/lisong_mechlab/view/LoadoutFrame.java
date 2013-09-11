@@ -26,6 +26,7 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
+import lisong_mechlab.view.action.ShareLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
@@ -54,6 +55,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menuBar.add(createMenuLoadout());
       menuBar.add(createMenuArmor());
       menuBar.add(createMenuGraphs());
+      menuBar.add(new JMenuItem(new ShareLoadoutAction(loadout)));
       setJMenuBar(menuBar);
 
       // Set the window's location.
