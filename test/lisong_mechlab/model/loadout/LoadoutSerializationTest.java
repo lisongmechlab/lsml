@@ -218,6 +218,16 @@ public class LoadoutSerializationTest{
       Loadout cut = new Loadout("JR7-F", xBar);
       cut.loadStock();
    }
+   
+   /**
+    * We can load the KTO-19 stock (issue #105)
+    * @throws Exception 
+    */
+   @Test
+   public void testStockLoadoutKTO19() throws Exception{
+      Loadout cut = new Loadout("KTO-19", xBar);
+      cut.loadStock();
+   }
 
    /**
     * We can load stocks for special mechs such as the Ilya Muromets

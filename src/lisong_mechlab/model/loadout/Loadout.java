@@ -146,8 +146,9 @@ public class Loadout implements MessageXBar.Reader{
       List<Element> maybeUpgrades = reader.getElementsByTagName("Upgrades");
       if( maybeUpgrades.size() == 1 ){
          Element stockUpgrades = maybeUpgrades.get(0);
+         // TODO: We really should fix issue #75 to get rid of these hard coded constants.
          getUpgrades().setDoubleHeatSinks(reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double"));
-         getUpgrades().setFerroFibrous(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801"));
+         getUpgrades().setFerroFibrous(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2800"));
          getUpgrades().setEndoSteel(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101"));
          getUpgrades().setArtemis(reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1"));
       }
