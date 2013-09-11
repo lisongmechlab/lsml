@@ -85,7 +85,7 @@ public class Loadout implements MessageXBar.Reader{
    private final Map<Part, LoadoutPart> parts = new TreeMap<Part, LoadoutPart>();
    private final Upgrades               upgrades;
    private final Efficiencies           efficiencies;
-   private final MessageXBar            xBar;
+   private final transient MessageXBar  xBar;
 
    /**
     * Will create a new, empty load out based on the given chassi.
@@ -129,6 +129,38 @@ public class Loadout implements MessageXBar.Reader{
       if( getName().contains(chassi.getNameShort()) )
          return getName();
       return getName() + " (" + chassi.getNameShort() + ")";
+   }
+
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((chassi == null) ? 0 : chassi.hashCode());
+      result = prime * result + ((efficiencies == null) ? 0 : efficiencies.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((parts == null) ? 0 : parts.hashCode());
+      result = prime * result + ((upgrades == null) ? 0 : upgrades.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( !(obj instanceof Loadout) )
+         return false;
+      Loadout that = (Loadout)obj;
+      if( !chassi.equals(that.chassi) )
+         return false;
+      if( !efficiencies.equals(that.efficiencies) )
+         return false;
+      if( !name.equals(that.name) )
+         return false;
+      if( !parts.equals(that.parts) )
+         return false;
+      if( !upgrades.equals(that.upgrades) )
+         return false;
+      return true;
    }
 
    public static Loadout load(File aFile, MessageXBar crossBar){

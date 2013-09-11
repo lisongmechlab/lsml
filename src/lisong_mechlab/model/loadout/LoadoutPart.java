@@ -50,15 +50,15 @@ public class LoadoutPart implements MessageXBar.Reader{
 
    public final static double            ARMOR_PER_TON   = 32.0;
 
-   public final Internal                 ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
+   public final static Internal          ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
 
    private final InternalPart            internalPart;
-   private final Loadout                 loadout;
+   private final transient Loadout       loadout;
    private final List<Item>              items;
    private final Map<ArmorSide, Integer> armor;
    private int                           engineHeatsinks = 0;
 
-   private final MessageXBar             xBar;
+   private final transient MessageXBar   xBar;
 
    LoadoutPart(Loadout aLoadOut, InternalPart anInternalPart, MessageXBar aXBar){
       internalPart = anInternalPart;
@@ -75,6 +75,49 @@ public class LoadoutPart implements MessageXBar.Reader{
       else{
          armor.put(ArmorSide.ONLY, 0);
       }
+   }
+
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((armor == null) ? 0 : armor.hashCode());
+      result = prime * result + engineHeatsinks;
+      result = prime * result + ((internalPart == null) ? 0 : internalPart.hashCode());
+      result = prime * result + ((items == null) ? 0 : items.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( obj == null )
+         return false;
+      if( !(obj instanceof LoadoutPart) )
+         return false;
+      LoadoutPart other = (LoadoutPart)obj;
+      if( armor == null ){
+         if( other.armor != null )
+            return false;
+      }
+      else if( !armor.equals(other.armor) )
+         return false;
+      if( engineHeatsinks != other.engineHeatsinks )
+         return false;
+      if( internalPart == null ){
+         if( other.internalPart != null )
+            return false;
+      }
+      else if( !internalPart.equals(other.internalPart) )
+         return false;
+      if( items == null ){
+         if( other.items != null )
+            return false;
+      }
+      else if( !items.equals(other.items) )
+         return false;
+      return true;
    }
 
    public InternalPart getInternalPart(){

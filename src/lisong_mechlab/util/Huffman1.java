@@ -111,8 +111,9 @@ public class Huffman1<T> {
     * @param aSymbolList
     *           The list of symbols to be encoded.
     * @return The encoded bit stream as an array of <code>byte</code>s.
+    * @throws DecodingException 
     */
-   public byte[] encode(List<T> aSymbolList){
+   public byte[] encode(List<T> aSymbolList) throws DecodingException{
       // ----------------------------------------------------------------------
       // WARNING: THE OUTPUT BITSTREAM OF THIS METHOD MUST NOT CHANGE TO
       // PERSERVE COMPATIBILITY WITH PREVIOUSLY ENCODED STREAMS.
@@ -125,6 +126,10 @@ public class Huffman1<T> {
       int bits = 0;
       for(T symbol : aSymbolList){
          Leaf<T> node = leafs.get(symbol);
+         if(node == null){
+            throw new DecodingException(); // Symbol not found!
+         }
+            
          long prefix = node.prefix;
          int prefixBitsLeft = node.prefixSize;
 

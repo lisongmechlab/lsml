@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -16,6 +17,9 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
 import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.model.loadout.export.ExternalLoadout;
+import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
+import lisong_mechlab.model.loadout.export.LsmlStreamHandlerFactory;
 import lisong_mechlab.util.MessageXBar;
 
 public class LSML extends JFrame{
@@ -197,9 +201,16 @@ public class LSML extends JFrame{
       initGarage();
    }
 
-   public static void main(String[] args) throws Exception{
+   public static void main(final String[] args) throws Exception{
+      // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
+      if( args.length > 0 ){
+         if( LsmlProtocolIPC.sendLoadout(args[0]) )
+            return; // Message received we can close this program.
+      }
+
       try{
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+         URL.setURLStreamHandlerFactory(new LsmlStreamHandlerFactory());
       }
       catch( Exception e ){
          JOptionPane.showMessageDialog(null, "Unable to set default look and feel. Something is seriously wrong with your java install!\nError: " + e);
@@ -215,6 +226,9 @@ public class LSML extends JFrame{
          public void run(){
             try{
                instance = new LSML();
+
+               if( args.length > 0 )
+                  instance.getDesktop().openLoadout(ExternalLoadout.parse(args[0]));
             }
             catch( Exception e ){
                JOptionPane.showMessageDialog(null, "Unable to start! Error: " + e);
