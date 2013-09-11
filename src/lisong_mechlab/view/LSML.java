@@ -6,7 +6,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -19,7 +18,6 @@ import javax.swing.filechooser.FileFilter;
 import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.model.loadout.export.ExternalLoadout;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
-import lisong_mechlab.model.loadout.export.LsmlStreamHandlerFactory;
 import lisong_mechlab.util.MessageXBar;
 
 public class LSML extends JFrame{
@@ -31,6 +29,7 @@ public class LSML extends JFrame{
    private final MessageXBar    xBar                   = new MessageXBar();
    private final LoadoutDesktop desktop                = new LoadoutDesktop(xBar);
    private MechGarage           garage;
+   static LsmlProtocolIPC              lsmlProtocolIPC;
 
    public void initGarage(){
       String garageFileName = LsmlPreferences.getString(LsmlPreferences.GARAGEFILE_KEY);
@@ -210,11 +209,12 @@ public class LSML extends JFrame{
 
       try{
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-         URL.setURLStreamHandlerFactory(new LsmlStreamHandlerFactory());
       }
       catch( Exception e ){
          JOptionPane.showMessageDialog(null, "Unable to set default look and feel. Something is seriously wrong with your java install!\nError: " + e);
       }
+
+      lsmlProtocolIPC = new LsmlProtocolIPC(); // FIXME: Needs to be closed!
 
       ProgramInit splash = new ProgramInit();
       if( !splash.waitUntilDone() ){

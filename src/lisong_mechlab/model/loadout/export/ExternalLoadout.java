@@ -16,13 +16,21 @@ public class ExternalLoadout{
       if( url.toLowerCase().contains("lsml://") ){
          url = url.substring(7);
       }
+      if(url.endsWith("/"))
+         url = url.substring(0, url.length()-1);
       Loadout loadout = coderV1.decode(base64.decode(url.toCharArray()));
       return loadout;
    }
 
    public static String encode(Loadout aLoadout){
-
-      return null;
+      try{
+         return "lsml://" + new String(base64.encode(coderV1.encode(aLoadout)));
+      }
+      catch( Exception e ){
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+      return "Export failed!";
    }
 
 }
