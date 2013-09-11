@@ -10,9 +10,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.TreeMap;
 
-import lisong_mechlab.XmlReader;
 import lisong_mechlab.converter.GameDataFile;
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
@@ -28,6 +26,8 @@ import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutPartConverter;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.XmlReader;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

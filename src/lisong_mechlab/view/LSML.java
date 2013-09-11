@@ -15,8 +15,8 @@ import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.util.MessageXBar;
 
 public class LSML extends JFrame{
    private static final long    serialVersionUID       = -2463321343234141728L;

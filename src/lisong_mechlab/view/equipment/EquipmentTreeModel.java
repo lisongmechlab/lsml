@@ -11,7 +11,6 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
@@ -25,6 +24,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.LSML;
 
 public class EquipmentTreeModel implements TreeModel, InternalFrameListener{

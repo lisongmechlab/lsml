@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;

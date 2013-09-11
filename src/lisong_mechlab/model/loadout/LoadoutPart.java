@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
@@ -23,6 +22,7 @@ import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
+import lisong_mechlab.util.MessageXBar;
 
 public class LoadoutPart implements MessageXBar.Reader{
    public static class Message implements MessageXBar.Message{

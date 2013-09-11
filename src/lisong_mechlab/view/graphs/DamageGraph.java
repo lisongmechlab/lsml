@@ -19,9 +19,6 @@ import javax.swing.KeyStroke;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.Pair;
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
@@ -29,6 +26,9 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.Pair;
+import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.action.OpenHelp;
 
 import org.jfree.chart.ChartFactory;

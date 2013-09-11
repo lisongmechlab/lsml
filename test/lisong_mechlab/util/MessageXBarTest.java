@@ -1,10 +1,10 @@
-package lisong_mechlab.model;
+package lisong_mechlab.util;
 
 import java.lang.ref.WeakReference;
 import static org.mockito.Mockito.*;
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
-import lisong_mechlab.model.MessageXBar.Reader;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.MessageXBar.Reader;
 
 import org.junit.Test;
 

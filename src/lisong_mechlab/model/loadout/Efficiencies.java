@@ -1,7 +1,7 @@
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.Efficiencies.Message.Type;
+import lisong_mechlab.util.MessageXBar;
 
 public class Efficiencies{
    // TODO: Add module slots
