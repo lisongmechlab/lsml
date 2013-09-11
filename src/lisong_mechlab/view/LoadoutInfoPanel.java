@@ -382,8 +382,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else{
-            throw new RuntimeException("Unkown source control!");
+            throw new RuntimeException("Unknown source control!");
          }
+      }
+      catch(IllegalArgumentException e){
+    	  JOptionPane.showMessageDialog(this, e.getMessage());
       }
       catch( RuntimeException e ){
          JOptionPane.showMessageDialog(this, "Error while changing upgrades or efficiency!: " + e.getStackTrace());
