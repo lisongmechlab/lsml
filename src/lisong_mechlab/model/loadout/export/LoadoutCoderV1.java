@@ -3,9 +3,9 @@ package lisong_mechlab.model.loadout.export;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -25,7 +25,6 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.Huffman1;
 import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.view.LSML;
 
 /**
  * A first simple implementation of a {@link LoadoutCoder}.
@@ -35,59 +34,25 @@ import lisong_mechlab.view.LSML;
 public class LoadoutCoderV1 implements LoadoutCoder{
 
    private final Huffman1<Integer> huff;
-
+   private final MessageXBar       xBar;
    private final Part[]            partOrder = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso,
          Part.LeftTorso, Part.LeftLeg, Part.LeftArm};
 
-   /**
-    * Will process the stock builds and generate statistics
-    * 
-    * @param arg
-    * @throws Exception
-    */
-   public static void main(String[] arg) throws Exception{
-      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
-
-      Map<Integer, Integer> freqs = new TreeMap<>();
-      MessageXBar anXBar = new MessageXBar();
-      for(Chassi chassi : chassii){
-         Loadout loadout = new Loadout(chassi, anXBar);
-         loadout.loadStock();
-
-         for(Item item : loadout.getAllItems()){
-            if( !(item instanceof Internal) ){
-               int id = item.getMwoIdx();
-               if( freqs.containsKey(id) ){
-                  freqs.put(id, freqs.get(id) + 1);
-               }
-               else{
-                  freqs.put(id, 1);
-               }
-            }
-         }
-      }
-
-      // Make sure all items are in the statistics even if they have a very low probability
-      for(Item item : ItemDB.lookup(Item.class)){
-         int id = item.getMwoIdx();
-         if( !freqs.containsKey(id) )
-            freqs.put(id, 1);
-      }
-
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("resources/resources/coderstats.txt"));
-      out.writeObject(freqs);
-      out.close();
-   }
-
-   public LoadoutCoderV1() throws FileNotFoundException, IOException, ClassNotFoundException{
+   public LoadoutCoderV1(MessageXBar anXBar){
+      xBar = anXBar;
       ObjectInputStream in = null;
       try{
-         in = new ObjectInputStream(new FileInputStream("resources/resources/coderstats.txt"));
+         InputStream is;
+         // = LoadoutCoderV1.class.getResourceAsStream("/resources/coderstats.bin");
+         // if( is == null ){
+         is = new FileInputStream("resources/resources/coderstats.bin");
+         // }
+         in = new ObjectInputStream(is);
          Map<Integer, Integer> freqs = (Map<Integer, Integer>)in.readObject();
          huff = new Huffman1<Integer>(freqs, null);
+      }
+      catch( Exception e ){
+         throw new RuntimeException(e);
       }
       finally{
          if( in != null ){
@@ -179,7 +144,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
                                                                                            // 1700
 
          Chassi chassi = ChassiDB.lookup(chassiId);
-         loadout = new Loadout(chassi, LSML.getInstance().getXBar());
+         loadout = new Loadout(chassi, xBar);
 
          loadout.getUpgrades().setArtemis((upeff & (1 << 7)) != 0);
          loadout.getUpgrades().setDoubleHeatSinks((upeff & (1 << 6)) != 0);
@@ -211,11 +176,60 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          List<Integer> ids = huff.decode(rest);
          for(Part part : partOrder){
             Integer v;
-            while( -1 != (v = ids.remove(0)) ){
+            while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
                loadout.getPart(part).addItem(ItemDB.lookup(v));
             }
          }
       }
       return loadout;
+   }
+
+   /**
+    * Will process the stock builds and generate statistics
+    * 
+    * @param arg
+    * @throws Exception
+    */
+   public static void main(String[] arg) throws Exception{
+      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+   
+      Map<Integer, Integer> freqs = new TreeMap<>();
+      MessageXBar anXBar = new MessageXBar();
+      for(Chassi chassi : chassii){
+         Loadout loadout = new Loadout(chassi, anXBar);
+         loadout.loadStock();
+   
+         for(Item item : loadout.getAllItems()){
+            if( item == null ){
+               throw new RuntimeException("FFAIL");
+            }
+   
+            if( !(item instanceof Internal) ){
+               int id = item.getMwoIdx();
+               if( freqs.containsKey(id) ){
+                  freqs.put(id, freqs.get(id) + 1);
+               }
+               else{
+                  freqs.put(id, 1);
+               }
+            }
+         }
+      }
+   
+      // Make sure all items are in the statistics even if they have a very low probability
+      for(Item item : ItemDB.lookup(Item.class)){
+         int id = item.getMwoIdx();
+         if( !freqs.containsKey(id) )
+            freqs.put(id, 1);
+      }
+   
+      freqs.put(-1, chassii.size() * 7); // 7 separators per chassi
+   
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("resources/resources/coderstats.bin"));
+      out.writeObject(freqs);
+      out.close();
    }
 }
