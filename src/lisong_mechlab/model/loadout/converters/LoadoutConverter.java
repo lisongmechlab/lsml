@@ -1,12 +1,12 @@
 package lisong_mechlab.model.loadout.converters;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.util.MessageXBar;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

@@ -37,8 +37,13 @@ public class GameDataFile{
    private final Map<File, File> entryCache     = new HashMap<File, File>();
    private final Path            gamePath;
 
+   private final ProgramInit     init;
+
    public GameDataFile() throws IOException{
-      ProgramInit.getInstance().setProcessText("Searching for game files:");
+
+      init = ProgramInit.getInstance();
+      if( null != init )
+         init.setProcessText("Searching for game files:");
 
       String gameDir = LsmlPreferences.getString(PREF_GAMEDIR);
       if( isValidGameDirectory(new File(gameDir).toPath()) ){
@@ -54,10 +59,12 @@ public class GameDataFile{
       }
       LsmlPreferences.setString(PREF_GAMEDIR, gamePath.toString());
 
-      ProgramInit.getInstance().setProcessText("Parsing game files...");
+      if( null != init )
+         init.setProcessText("Parsing game files...");
    }
 
    public GameDataFile(File aGameRoot) throws FileNotFoundException{
+      init = ProgramInit.getInstance();
       if( isValidGameDirectory(aGameRoot.toPath()) ){
          gamePath = aGameRoot.toPath();
       }
@@ -189,7 +196,8 @@ public class GameDataFile{
 
          @Override
          public FileVisitResult visitFile(Path file, BasicFileAttributes attrs){
-            ProgramInit.getInstance().setSubText(file.toString());
+            if( null != init )
+               init.setSubText(file.toString());
             if( file.endsWith("Game/Objects.pak") ){
                int answer = JOptionPane.showConfirmDialog(null, "Found the game files at: " + file.getParent().getParent().toString()
                                                                 + "\nIs this your primary game install?", "Confirm game directory",

@@ -12,14 +12,17 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 
 /**
- * This class shows a splash screen while the program is loading.
+ * This class handles the initial program startup. Things that need to be done before the {@link LSML} instance is
+ * created. And it does it while showing a nifty splash screen!
  * 
  * @author Emily Björk
  */
@@ -27,6 +30,7 @@ public class ProgramInit extends JFrame{
    private static final long  serialVersionUID   = -2877785947094537320L;
    private static final long  MIN_SPLASH_TIME_MS = 20;
    private static ProgramInit instance;
+   private static LSML        instanceL;
 
    private String             progressSubText    = "";
    private String             progressText       = "";
@@ -117,5 +121,46 @@ public class ProgramInit extends JFrame{
       dispose();
       instance = null;
       return true;
+   }
+
+   public static void main(final String[] args) throws Exception{
+      // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
+      if( args.length > 0 ){
+         if( LsmlProtocolIPC.sendLoadout(args[0]) )
+            return; // Message received we can close this program.
+      }
+
+      try{
+         // Static global initialization. Stuff that needs to be done before anything else.
+         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+         JFrame.setDefaultLookAndFeelDecorated(true);
+      }
+      catch( Exception e ){
+         JOptionPane.showMessageDialog(null, "Unable to set default look and feel. Something is seriously wrong with your java install!\nError: " + e);
+      }
+
+      ProgramInit splash = new ProgramInit();
+      if( !splash.waitUntilDone() ){
+         System.exit(1);
+      }
+
+      javax.swing.SwingUtilities.invokeLater(new Runnable(){
+         @Override
+         public void run(){
+            try{
+               instanceL = new LSML();
+
+               if( args.length > 0 )
+                  instanceL.desktop.openLoadout(instanceL.loadoutCoder.parse(args[0]));
+            }
+            catch( Exception e ){
+               JOptionPane.showMessageDialog(null, "Unable to start! Error: " + e);
+            }
+         }
+      });
+   }
+
+   public static LSML lsml(){
+      return instanceL;
    }
 }

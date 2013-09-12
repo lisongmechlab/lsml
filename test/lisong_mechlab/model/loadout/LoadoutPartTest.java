@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
@@ -26,6 +26,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
+import lisong_mechlab.util.MessageXBar;
 
 import org.junit.After;
 import org.junit.Before;
@@ -77,12 +78,12 @@ public class LoadoutPartTest{
 
       int usedCrits = 0;
       for(Item i : internals){
-         usedCrits += i.getNumCriticalSlots();
+         usedCrits += i.getNumCriticalSlots(mlc.upgrades);
       }
 
       // Execute
       LoadoutPart cut = new LoadoutPart(mlc.loadout, part, xBar);
-      verify(xBar).attach(cut);
+      verify(xBar, atLeast(1)).attach(cut);
 
       // Verify default state
       assertSame(part, cut.getInternalPart());
@@ -260,6 +261,7 @@ public class LoadoutPartTest{
    @Test
    public void testAddItem_CASE_invalid() throws Exception{
       for(Part testPart : new Part[] {Part.LeftArm, Part.LeftLeg, Part.CenterTorso, Part.Head, Part.RightArm, Part.RightLeg}){
+         
          LoadoutPart cut = makeCUT(0, testPart, 12);
 
          try{
@@ -281,7 +283,7 @@ public class LoadoutPartTest{
    @Test
    public void testCanAddItem_TooFewSlots() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots() - 1);
+      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots(null) - 1);
 
       assertFalse(cut.canAddItem(ItemDB.BAP));
    }
