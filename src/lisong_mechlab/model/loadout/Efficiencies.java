@@ -1,7 +1,7 @@
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.Efficiencies.Message.Type;
+import lisong_mechlab.util.MessageXBar;
 
 public class Efficiencies{
    // TODO: Add module slots
@@ -9,12 +9,13 @@ public class Efficiencies{
    public static class Message implements MessageXBar.Message{
       @Override
       public boolean equals(Object obj){
-         if( obj instanceof Message){
+         if( obj instanceof Message ){
             Message other = (Message)obj;
             return efficiencies == other.efficiencies && type == other.type;
          }
          return false;
       }
+
       public Message(Efficiencies aEfficiencies, Type aType){
          efficiencies = aEfficiencies;
          type = aType;
@@ -29,14 +30,14 @@ public class Efficiencies{
    }
 
    // Elite
-   private boolean speedTweak;
+   private boolean                     speedTweak;
 
    // Basic
-   private boolean coolRun;
-   private boolean heatContainment;
+   private boolean                     coolRun;
+   private boolean                     heatContainment;
 
    // Meta
-   private boolean doubleBasics;
+   private boolean                     doubleBasics;
 
    private transient final MessageXBar xBar;
 
@@ -58,6 +59,37 @@ public class Efficiencies{
 
    public boolean hasDoubleBasics(){
       return doubleBasics;
+   }
+
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + (coolRun ? 1231 : 1237);
+      result = prime * result + (doubleBasics ? 1231 : 1237);
+      result = prime * result + (heatContainment ? 1231 : 1237);
+      result = prime * result + (speedTweak ? 1231 : 1237);
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( obj == null )
+         return false;
+      if( !(obj instanceof Efficiencies) )
+         return false;
+      Efficiencies other = (Efficiencies)obj;
+      if( coolRun != other.coolRun )
+         return false;
+      if( doubleBasics != other.doubleBasics )
+         return false;
+      if( heatContainment != other.heatContainment )
+         return false;
+      if( speedTweak != other.speedTweak )
+         return false;
+      return true;
    }
 
    public void setSpeedTweak(boolean aSpeedTweak){

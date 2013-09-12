@@ -9,9 +9,9 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.MechGarage.Message;
+import lisong_mechlab.util.MessageXBar;
 
 import org.junit.After;
 import org.junit.Before;

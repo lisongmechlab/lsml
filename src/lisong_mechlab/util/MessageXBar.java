@@ -1,4 +1,4 @@
-package lisong_mechlab.model;
+package lisong_mechlab.util;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

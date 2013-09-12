@@ -19,15 +19,15 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.Pair;
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.Pair;
+import lisong_mechlab.util.MessageXBar.Message;
 
 public class PartList extends JList<Item>{
    private static final long            serialVersionUID = 5995694414450060827L;

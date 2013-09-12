@@ -45,7 +45,7 @@ public class HeatGenerationTest{
       items.add(jj);
       when(mlc.loadout.getAllItems()).thenReturn(items);
 
-      final double expected = ppc.getStat("h/s") + ll.getStat("h/s") + lrm20.getStat("h/s") + lb10x.getStat("h/s") + engine.getHeat();
+      final double expected = ppc.getStat("h/s", null) + ll.getStat("h/s", null) + lrm20.getStat("h/s", null) + lb10x.getStat("h/s", null) + engine.getHeat();
       assertEquals(expected, cut.calculate(), 0.0);
    }
 
