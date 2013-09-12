@@ -50,7 +50,7 @@ public class LsmlProtocolIPC{
                      @Override
                      public void run(){
                         try{
-                           LSML.getInstance().getDesktop().openLoadout(ExternalLoadout.parse(url));
+                           LSML.getInstance().getDesktop().openLoadout(Base64Import.parse(url));
                         }
                         catch( IOException e ){
                            e.printStackTrace();

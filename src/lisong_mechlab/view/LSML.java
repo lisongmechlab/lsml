@@ -16,7 +16,7 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
 import lisong_mechlab.model.loadout.MechGarage;
-import lisong_mechlab.model.loadout.export.ExternalLoadout;
+import lisong_mechlab.model.loadout.export.Base64Import;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
 
@@ -228,7 +228,7 @@ public class LSML extends JFrame{
                instance = new LSML();
 
                if( args.length > 0 )
-                  instance.getDesktop().openLoadout(ExternalLoadout.parse(args[0]));
+                  instance.getDesktop().openLoadout(Base64Import.parse(args[0]));
             }
             catch( Exception e ){
                JOptionPane.showMessageDialog(null, "Unable to start! Error: " + e);
