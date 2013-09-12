@@ -26,6 +26,7 @@ import javax.swing.table.TableCellRenderer;
 
 import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.MessageXBar.Message;
+import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.CoolingRatio;
@@ -82,7 +83,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final AlphaStrike        metricAlphaStrike;
    private final MaxDPS             metricMaxDPS;
    private final MaxSustainedDPS    metricSustainedDps;
-   private final TotalAmmoSupply    metricTotalAmmoSupply;
    private final AmmoTableDataModel anAmmoTableDataModel;
    private transient Boolean        inhibitChanges   = false;
 
@@ -99,7 +99,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricAlphaStrike = new AlphaStrike(loadout);
       metricMaxDPS = new MaxDPS(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
-      metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
+      new TotalAmmoSupply(loadout);
 
       anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
 
@@ -358,7 +358,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-            loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+        	 ArtemisHandler artemisChecker = new ArtemisHandler(loadout);
+             if(artemisChecker.checkLoadoutStillValid() && !loadout.getUpgrades().hasArtemis()){
+            	 loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+             }
+             else if(loadout.getUpgrades().hasArtemis()){
+            	 loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+             }
+             updateDisplay();
+            
          }
          else if( source == endoSteel ){
             loadout.getUpgrades().setEndoSteel(anEvent.getStateChange() == ItemEvent.SELECTED);
