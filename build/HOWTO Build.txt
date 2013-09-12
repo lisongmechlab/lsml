@@ -9,8 +9,8 @@ Here is how you build the nightly/release builds and package them.
 7) Open launch4j gui and open the "l4j_nightly.xml" file for nightlies or l4j_release.xml for releases.
 8) Press the "build wrapper" button (cog wheel).
 9) Check in the LSML.java file.
-10) Run candle "LSML Setup.wxs".
-11) Run light "LSML Setup.wixobj".
+10) Run `candle "LSML Setup.wxs"`.
+11) Run `light -ext WixUIExtension "LSML Setup.wixobj"`.
 12) Upload "LSML Setup.exe" to the google drive.
 
 
