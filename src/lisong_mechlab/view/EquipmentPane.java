@@ -100,7 +100,7 @@ public class EquipmentPane extends JTree{
       }
    }
 
-   public EquipmentPane(final LoadoutDesktop aLoadoutDesktop, final LSML aLsml, MessageXBar crossBar) throws Exception{
+   public EquipmentPane(final LoadoutDesktop aLoadoutDesktop, final LSML aLsml, MessageXBar crossBar){
       model = new EquipmentTreeModel(aLsml, crossBar);
       xBar = crossBar;
 
@@ -129,7 +129,7 @@ public class EquipmentPane extends JTree{
                   label.setEnabled(false);
                   menu.add(label);
                   menu.add(new JMenuItem(new RenameLoadoutAction(loadout, KeyStroke.getKeyStroke("R"))));
-                  menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
+                  menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
                   menu.show(EquipmentPane.this, e.getX(), e.getY());
                }
             }
@@ -166,6 +166,7 @@ public class EquipmentPane extends JTree{
             DecimalFormat df = new DecimalFormat("#####.#");
             sb.append("<html>");
             sb.append(item.getDescription()).append("<br>");
+            // TODO: Get a hold of the current loadout some how and show the applicable critslots and mass according to artemis etc
             sb.append("Slots: ").append(item.getNumCriticalSlots()).append(" Tons: ").append(df.format(item.getMass())).append("<br>");
             if( item instanceof HeatSource ){
                if( item instanceof Weapon ){
