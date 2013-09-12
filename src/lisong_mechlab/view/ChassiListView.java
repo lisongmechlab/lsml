@@ -229,7 +229,7 @@ public class ChassiListView extends JFrame{
                final Object cell = target.getValueAt(row, column);
                if( cell instanceof Chassi ){
                   Chassi chassi = (Chassi)cell;
-                  LSML.getInstance().getDesktop().openLoadout(new Loadout(chassi, LSML.getInstance().getXBar()));
+                  ProgramInit.lsml().desktop.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
                }
             }
          }

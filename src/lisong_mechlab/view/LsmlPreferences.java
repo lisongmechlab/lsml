@@ -19,6 +19,10 @@ public class LsmlPreferences{
    static public String getString(String key){
       return properties.getProperty(key, "");
    }
+   
+   static public String getString(String key, String aDefault){
+      return properties.getProperty(key, aDefault);
+   }
 
    static public void setString(String key, String value){
       properties.setProperty(key, value);

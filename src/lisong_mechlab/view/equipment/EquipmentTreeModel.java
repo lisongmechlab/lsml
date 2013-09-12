@@ -31,13 +31,13 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
    private final List<TreeModelListener>                     listeners = new ArrayList<TreeModelListener>();
    private final DefaultTreeCathegory<AbstractTreeCathegory> root;
 
-   public EquipmentTreeModel(LSML aLSML, MessageXBar xBar) throws Exception{
+   public EquipmentTreeModel(LSML aLSML, MessageXBar xBar){
       root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
 
       List<Item> items = ItemDB.lookup(Item.class);
 
       DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
-      GarageCathegory garage = new GarageCathegory("Garage", root, this, aLSML.getXBar());
+      GarageCathegory garage = new GarageCathegory("Garage", root, this, aLSML.xBar);
 
       // Process the items list
       List<Item> energy = new ArrayList<>();

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -82,7 +83,7 @@ public class LoadoutPartTest{
 
       // Execute
       LoadoutPart cut = new LoadoutPart(mlc.loadout, part, xBar);
-      verify(xBar).attach(cut);
+      verify(xBar, atLeast(1)).attach(cut);
 
       // Verify default state
       assertSame(part, cut.getInternalPart());
@@ -260,6 +261,7 @@ public class LoadoutPartTest{
    @Test
    public void testAddItem_CASE_invalid() throws Exception{
       for(Part testPart : new Part[] {Part.LeftArm, Part.LeftLeg, Part.CenterTorso, Part.Head, Part.RightArm, Part.RightLeg}){
+         
          LoadoutPart cut = makeCUT(0, testPart, 12);
 
          try{
