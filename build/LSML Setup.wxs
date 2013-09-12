@@ -13,16 +13,31 @@
 			Description="A tool for creating mech configurations for MechWarrior: Online (r)"
 			Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes" />
 		<Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
+		<Icon Id="icon.ico" SourceFile="icon.ico" />
+		<WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
+		<Property Id="ARPPRODUCTICON">icon.ico</Property>
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+		<UIRef Id="WixUI_InstallDir" />
+		<UIRef Id="WixUI_ErrorProgressText" />
+		<Feature Id="DefaultFeature" Title="$(var.g_fname)"
+			Description="A tool for building 'mech configurations for PGI's MechWarrior: Online (r)"
+			Display="expand" Level="1" ConfigurableDirectory='INSTALLDIR'>
+			<ComponentRef Id="LICENSE.RTF" />
+			<ComponentRef Id="LSML.EXE" />
+			<ComponentRef Id="LSML.JAR" />
+			<ComponentRef Id="README.TXT" />
+			<ComponentRef Id="ProgramMenuDir" />
+		</Feature>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder" Name="PFiles">
 				<Directory Id="CompanyFolder" Name="$(var.g_mfg)">
-					<Directory Id="$(var.g_sname)" Name="$(var.g_sname)">
-						<Component Id="LICENSE.TXT" DiskId="1"
+					<Directory Id="INSTALLDIR" Name="$(var.g_sname)">
+						<Component Id="LICENSE.RTF" DiskId="1"
 							Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2">
-							<File Id="LICENSE.TXT" Name="LICENSE.txt" Source="LICENSE.txt"
+							<File Id="LICENSE.RTF" Name="LICENSE.rtf" Source="LICENSE.rtf"
 								KeyPath="yes">
 								<Shortcut Id="shtct_pmd_license" Directory="ProgramMenuDir"
-									Name="LICENSE.txt" Advertise="yes" />
+									Name="LICENSE.rtf" Advertise="yes" />
 							</File>
 						</Component>
 						<Component Id="README.TXT" DiskId="1"
@@ -81,15 +96,5 @@
 				</Directory>
 			</Directory>
 		</Directory>
-		<Feature Id="DefaultFeature" Title="Main Feature" Level="1">
-			<ComponentRef Id="LICENSE.TXT" />
-			<ComponentRef Id="LSML.EXE" />
-			<ComponentRef Id="LSML.JAR" />
-			<ComponentRef Id="README.TXT" />
-			<ComponentRef Id="ProgramMenuDir" />
-		</Feature>
-		<Icon Id="icon.ico" SourceFile="icon.ico" />
-		
-		<Property Id='ARPPRODUCTICON'>icon.ico</Property>
 	</Product>
 </Wix>
