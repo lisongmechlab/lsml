@@ -51,11 +51,6 @@ public class Item implements Comparable<Item>{
       return locName;
    }
 
-   @Deprecated
-   public int getNumCriticalSlots(){
-      return slots;
-   }
-
    public int getNumCriticalSlots(Upgrades aUpgrades){
       if(aUpgrades == null)
          return slots;
@@ -64,11 +59,6 @@ public class Item implements Comparable<Item>{
 
    public HardpointType getHardpointType(){
       return hardpointType;
-   }
-
-   @Deprecated
-   public double getMass(){
-      return tons;
    }
 
    public double getMass(Upgrades aUpgrades){
