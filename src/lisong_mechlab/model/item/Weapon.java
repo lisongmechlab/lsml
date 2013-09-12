@@ -2,6 +2,7 @@ package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class Weapon extends HeatSource{
@@ -84,7 +85,7 @@ public class Weapon extends HeatSource{
     *           "[dsthc]+(/[dsthc]+)?".
     * @return The calculated statistic.
     */
-   public double getStat(String aWeaponStat){
+   public double getStat(String aWeaponStat, Upgrades anUpgrades){
       double nominator = 1;
       int index = 0;
       while( index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/' ){
@@ -96,13 +97,13 @@ public class Weapon extends HeatSource{
                nominator *= getSecondsPerShot();
                break;
             case 't':
-               nominator *= getMass();
+               nominator *= getMass(anUpgrades);
                break;
             case 'h':
                nominator *= getHeat();
                break;
             case 'c':
-               nominator *= getNumCriticalSlots();
+               nominator *= getNumCriticalSlots(anUpgrades);
                break;
             default:
                throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
@@ -121,13 +122,13 @@ public class Weapon extends HeatSource{
                denominator *= getSecondsPerShot();
                break;
             case 't':
-               denominator *= getMass();
+               denominator *= getMass(anUpgrades);
                break;
             case 'h':
                denominator *= getHeat();
                break;
             case 'c':
-               denominator *= getNumCriticalSlots();
+               denominator *= getNumCriticalSlots(anUpgrades);
                break;
             default:
                throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));

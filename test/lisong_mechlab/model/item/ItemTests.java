@@ -75,15 +75,15 @@ public class ItemTests{
       Engine xl330 = (Engine)ItemDB.lookup("XL ENGINE 330");
       Engine xl335 = (Engine)ItemDB.lookup("XL ENGINE 335");
 
-      assertEquals(6, std175.getNumCriticalSlots());
-      assertEquals(6, std180.getNumCriticalSlots());
+      assertEquals(6, std175.getNumCriticalSlots(hm.getUpgrades()));
+      assertEquals(6, std180.getNumCriticalSlots(hm.getUpgrades()));
       // assertEquals(12, xl330.getNumCriticalSlots());
       // assertEquals(12, xl335.getNumCriticalSlots());
 
-      assertEquals(9.0, std175.getMass(), 0.0);
-      assertEquals(9.0, std180.getMass(), 0.0);
-      assertEquals(19.5, xl330.getMass(), 0.0);
-      assertEquals(20.0, xl335.getMass(), 0.0);
+      assertEquals(9.0, std175.getMass(hm.getUpgrades()), 0.0);
+      assertEquals(9.0, std180.getMass(hm.getUpgrades()), 0.0);
+      assertEquals(19.5, xl330.getMass(hm.getUpgrades()), 0.0);
+      assertEquals(20.0, xl335.getMass(hm.getUpgrades()), 0.0);
 
       // Heavy Metal can equip 180-330 engines
       assertFalse(std175.isEquippableOn(hm));
@@ -105,8 +105,8 @@ public class ItemTests{
    public void testAMS(){
       AmmoWeapon ams = (AmmoWeapon)ItemDB.lookup("ANTI-MISSILE SYSTEM");
       assertSame(ams, ItemDB.AMS);
-      assertEquals(1, ams.getNumCriticalSlots());
-      assertEquals(0.5, ams.getMass(), 0.0);
+      assertEquals(1, ams.getNumCriticalSlots(null));
+      assertEquals(0.5, ams.getMass(null), 0.0);
       assertEquals(HardpointType.AMS, ams.getHardpointType());
    }
 
@@ -127,21 +127,21 @@ public class ItemTests{
       Item JJC4 = ItemDB.lookup("Jump Jets - Class IV");
       Item JJC5 = ItemDB.lookup("Jump Jets - Class V");
 
-      assertEquals(2, ECM.getNumCriticalSlots());
-      assertEquals(1, CC.getNumCriticalSlots());
-      assertEquals(2, BAP.getNumCriticalSlots());
-      assertEquals(1, Case.getNumCriticalSlots());
-      assertEquals(1, JJC3.getNumCriticalSlots());
-      assertEquals(1, JJC4.getNumCriticalSlots());
-      assertEquals(1, JJC5.getNumCriticalSlots());
+      assertEquals(2, ECM.getNumCriticalSlots(null));
+      assertEquals(1, CC.getNumCriticalSlots(null));
+      assertEquals(2, BAP.getNumCriticalSlots(null));
+      assertEquals(1, Case.getNumCriticalSlots(null));
+      assertEquals(1, JJC3.getNumCriticalSlots(null));
+      assertEquals(1, JJC4.getNumCriticalSlots(null));
+      assertEquals(1, JJC5.getNumCriticalSlots(null));
 
-      assertEquals(1.5, ECM.getMass(), 0.0);
-      assertEquals(3, CC.getMass(), 0.0);
-      assertEquals(1.5, BAP.getMass(), 0.0);
-      assertEquals(0.5, Case.getMass(), 0.0);
-      assertEquals(1, JJC3.getMass(), 0.0);
-      assertEquals(0.5, JJC4.getMass(), 0.0);
-      assertEquals(0.5, JJC5.getMass(), 0.0);
+      assertEquals(1.5, ECM.getMass(null), 0.0);
+      assertEquals(3, CC.getMass(null), 0.0);
+      assertEquals(1.5, BAP.getMass(null), 0.0);
+      assertEquals(0.5, Case.getMass(null), 0.0);
+      assertEquals(1, JJC3.getMass(null), 0.0);
+      assertEquals(0.5, JJC4.getMass(null), 0.0);
+      assertEquals(0.5, JJC5.getMass(null), 0.0);
 
       assertTrue(ECM.isEquippableOn(new Loadout("AS7-D-DC", xBar)));
       assertFalse(ECM.isEquippableOn(new Loadout("JR7-K", xBar)));
@@ -189,10 +189,10 @@ public class ItemTests{
          Ammunition ammunition = item.getAmmoType(null);
          assertNotNull(ammunition);
 
-         assertEquals(1.0, ammunition.getMass(), 0.0); // All ammo weigh 1 ton!
+         assertEquals(1.0, ammunition.getMass(null), 0.0); // All ammo weigh 1 ton!
          assertNotNull(ammunition.getName()); // All ammo must have a name!
 
-         assertEquals(1, ammunition.getNumCriticalSlots());
+         assertEquals(1, ammunition.getNumCriticalSlots(null));
          assertTrue(ammunition.getShotsPerTon() > 0);
 
          // The name of the ammo must be traceable to the weapon
@@ -251,7 +251,7 @@ public class ItemTests{
       assertTrue(dhs.getDissipation() > shs.getDissipation());
       assertTrue(dhs.getCapacity() > shs.getCapacity());
 
-      assertEquals(3, dhs.getNumCriticalSlots());
-      assertEquals(1, shs.getNumCriticalSlots());
+      assertEquals(3, dhs.getNumCriticalSlots(null));
+      assertEquals(1, shs.getNumCriticalSlots(null));
    }
 }

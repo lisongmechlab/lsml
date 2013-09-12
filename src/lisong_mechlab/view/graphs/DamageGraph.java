@@ -78,7 +78,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
 
       chartPanel.setLayout(new OverlayLayout(chartPanel));
       JButton button = new JButton(new OpenHelp("What is this?", "Max-sustained-dps-graph", KeyStroke.getKeyStroke('w')));
-      button.setMargin(new Insets(10,10,10,10));
+      button.setMargin(new Insets(10, 10, 10, 10));
       button.setFocusable(false);
       button.setAlignmentX(Component.RIGHT_ALIGNMENT);
       button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
@@ -129,7 +129,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
             Weapon weapon = entry.getKey();
             double ratio = entry.getValue();
-            double dps = weapon.getStat("d/s");
+            double dps = weapon.getStat("d/s", loadout.getUpgrades());
 
             if( !data.containsKey(weapon) ){
                data.put(weapon, new ArrayList<Pair<Double, Double>>());

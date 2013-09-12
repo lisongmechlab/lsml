@@ -22,7 +22,7 @@ public class MaxDPS implements Metric{
       double ans = 0;
       for(Item item : loadout.getAllItems()){
          if( item instanceof Weapon && item != ItemDB.AMS ){
-            ans += ((Weapon)item).getStat("d/s");
+            ans += ((Weapon)item).getStat("d/s", loadout.getUpgrades());
          }
       }
       return ans;
