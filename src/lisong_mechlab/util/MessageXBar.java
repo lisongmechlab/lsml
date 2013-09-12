@@ -11,7 +11,7 @@ import java.util.List;
  * @author Emily
  */
 public class MessageXBar{
-   private final List<WeakReference<Reader>> readers = new ArrayList<WeakReference<MessageXBar.Reader>>();
+   private transient final List<WeakReference<Reader>> readers = new ArrayList<WeakReference<MessageXBar.Reader>>();
 
    public interface Reader{
       void receive(Message aMsg);
