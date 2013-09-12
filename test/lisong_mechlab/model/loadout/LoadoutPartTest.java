@@ -78,7 +78,7 @@ public class LoadoutPartTest{
 
       int usedCrits = 0;
       for(Item i : internals){
-         usedCrits += i.getNumCriticalSlots();
+         usedCrits += i.getNumCriticalSlots(mlc.upgrades);
       }
 
       // Execute
@@ -283,7 +283,7 @@ public class LoadoutPartTest{
    @Test
    public void testCanAddItem_TooFewSlots() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots() - 1);
+      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots(null) - 1);
 
       assertFalse(cut.canAddItem(ItemDB.BAP));
    }

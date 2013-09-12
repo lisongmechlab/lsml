@@ -85,7 +85,7 @@ public class MaxSustainedDPSTest{
 
       double result = cut.calculate();
 
-      assertEquals(gauss.getStat("d/s"), result, 0.0);
+      assertEquals(gauss.getStat("d/s", null), result, 0.0);
    }
 
    /**
@@ -132,7 +132,7 @@ public class MaxSustainedDPSTest{
       Collections.shuffle(items, rng); // "Deterministically random" shuffle
 
       // There is enough heat to dissipate the GAUSS, LLaser and 1.5 ER PPCs
-      double heat = gauss.getStat("h/s") + erppc.getStat("h/s") * 1.5 + llas.getStat("h/s");
+      double heat = gauss.getStat("h/s", null) + erppc.getStat("h/s", null) * 1.5 + llas.getStat("h/s", null);
 
       when(loadout.getAllItems()).thenReturn(items);
       when(heatDissipation.calculate()).thenReturn(heat);
@@ -141,7 +141,7 @@ public class MaxSustainedDPSTest{
       double result = cut.calculate();
 
       // Verify
-      double expected = gauss.getStat("d/s") + erppc.getStat("d/s") * 1.5 + llas.getStat("d/s");
+      double expected = gauss.getStat("d/s", null) + erppc.getStat("d/s", null) * 1.5 + llas.getStat("d/s", null);
       assertEquals(expected, result, 0.0);
    }
 }

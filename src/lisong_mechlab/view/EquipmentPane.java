@@ -32,10 +32,10 @@ public class EquipmentPane extends JTree{
    private static final long serialVersionUID = -8856874024057864775L;
    EquipmentTreeModel        model            = null;
    private final MessageXBar xBar;
+   private Loadout           loadout;
 
-   private static class Renderer extends DefaultTreeCellRenderer implements InternalFrameListener{
+   private class Renderer extends DefaultTreeCellRenderer implements InternalFrameListener{
       private static final long serialVersionUID = 5198340883942696537L;
-      private Loadout           loadout;
 
       @Override
       public Component getTreeCellRendererComponent(JTree aTree, Object aValue, boolean aSel, boolean anExpanded, boolean aLeaf, int aRow,
@@ -123,13 +123,13 @@ public class EquipmentPane extends JTree{
                if( clicked instanceof Loadout ){
                   EquipmentPane.this.setSelectionPath(getClosestPathForLocation(e.getX(), e.getY()));
 
-                  Loadout loadout = (Loadout)clicked;
+                  Loadout clickedLoadout = (Loadout)clicked;
                   JPopupMenu menu = new JPopupMenu();
-                  JMenuItem label = new JMenuItem(loadout.getName());
+                  JMenuItem label = new JMenuItem(clickedLoadout.getName());
                   label.setEnabled(false);
                   menu.add(label);
-                  menu.add(new JMenuItem(new RenameLoadoutAction(loadout, KeyStroke.getKeyStroke("R"))));
-                  menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
+                  menu.add(new JMenuItem(new RenameLoadoutAction(clickedLoadout, KeyStroke.getKeyStroke("R"))));
+                  menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), clickedLoadout, KeyStroke.getKeyStroke("D"))));
                   menu.show(EquipmentPane.this, e.getX(), e.getY());
                }
             }
@@ -137,8 +137,8 @@ public class EquipmentPane extends JTree{
                Object clicked = getClickedObject(e);
                if( clicked instanceof Chassi ){
                   Chassi chassi = (Chassi)clicked;
-                  Loadout loadout = new Loadout(chassi, xBar);
-                  aLoadoutDesktop.openLoadout(loadout);
+                  Loadout clickedLoadout = new Loadout(chassi, xBar);
+                  aLoadoutDesktop.openLoadout(clickedLoadout);
                }
                else if( clicked instanceof Loadout ){
                   aLoadoutDesktop.openLoadout((Loadout)clicked);
@@ -166,8 +166,10 @@ public class EquipmentPane extends JTree{
             DecimalFormat df = new DecimalFormat("#####.#");
             sb.append("<html>");
             sb.append(item.getDescription()).append("<br>");
-            // TODO: Get a hold of the current loadout some how and show the applicable critslots and mass according to artemis etc
-            sb.append("Slots: ").append(item.getNumCriticalSlots()).append(" Tons: ").append(df.format(item.getMass())).append("<br>");
+            // TODO: Get a hold of the current loadout some how and show the applicable critslots and mass according to
+            // artemis etc
+            sb.append("Slots: ").append(item.getNumCriticalSlots(loadout.getUpgrades())).append(" Tons: ")
+              .append(df.format(item.getMass(loadout.getUpgrades()))).append("<br>");
             if( item instanceof HeatSource ){
                if( item instanceof Weapon ){
                   Weapon weapon = (Weapon)item;
@@ -175,8 +177,9 @@ public class EquipmentPane extends JTree{
                     .append(df.format(weapon.getSecondsPerShot())).append("<br>");
                   sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
                     .append(df.format(weapon.getRangeMax())).append("<br>");
-                  sb.append("DPS: ").append(df.format(weapon.getStat("d/s"))).append(" DPH: ").append(df.format(weapon.getStat("d/h")))
-                    .append(" HPS: ").append(df.format(weapon.getStat("h/s"))).append("<br>");
+                  sb.append("DPS: ").append(df.format(weapon.getStat("d/s", loadout.getUpgrades()))).append(" DPH: ")
+                    .append(df.format(weapon.getStat("d/h", loadout.getUpgrades()))).append(" HPS: ")
+                    .append(df.format(weapon.getStat("h/s", loadout.getUpgrades()))).append("<br>");
                }
                sb.append("Heat: ").append(df.format(((HeatSource)item).getHeat())).append("<br>");
             }
