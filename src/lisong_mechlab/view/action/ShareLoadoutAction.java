@@ -6,7 +6,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.export.ExternalLoadout;
+import lisong_mechlab.model.loadout.export.Base64Import;
 
 /**
  * This action opens up a share frame where the user can copy the link to the build.
@@ -24,7 +24,7 @@ public class ShareLoadoutAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      JOptionPane.showMessageDialog(null, ExternalLoadout.encode(loadout));
+      JOptionPane.showMessageDialog(null, Base64Import.encode(loadout));
    }
 
 }
