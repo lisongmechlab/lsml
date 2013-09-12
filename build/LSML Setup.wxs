@@ -3,7 +3,7 @@
 
     <?define g_fname = "Li Song Mech Lab"?>
     <?define g_sname = "LSML"?>
-    <?define g_mfg = "LSML"?>
+    <?define g_mfg = "Li-Soft"?>
     <?define g_version = "1.0.0"?>
 
 	<Product Id="E646F8A1-CF0E-4369-94DD-5E6734CBCCBB" Name="$(var.g_fname)"
@@ -15,54 +15,56 @@
 		<Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder" Name="PFiles">
-				<Directory Id="$(var.g_mfg)" Name="$(var.g_mfg)">
-					<Component Id="LICENSE.TXT" DiskId="1"
-						Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2">
-						<File Id="LICENSE.TXT" Name="LICENSE.txt" Source="LICENSE.txt"
-							KeyPath="yes">
-							<Shortcut Id="shtct_pmd_license" Directory="ProgramMenuDir"
-								Name="LICENSE.txt" Advertise="yes" />
-						</File>
-					</Component>
-					<Component Id="README.TXT" DiskId="1"
-						Guid="65220797-70D0-41D6-9479-FB0F113E10A1">
-						<File Id="README.TXT" Name="README.txt" Source="README.txt"
-							KeyPath="yes">
-							<Shortcut Id="shtct_pmd_readme" Directory="ProgramMenuDir"
-								Name="README.txt" Advertise="yes" />
-						</File>
-					</Component>
-					<Component Id="LSML.EXE" DiskId="1"
-						Guid="F5FBF318-D03C-402F-9D7A-175A186250D1">
-						<File Id="LSML.EXE" Name="lsml.exe" Source="lsml.exe"
-							KeyPath="yes">
-							<Shortcut Id="shtct_dtp_exe" Directory="DesktopFolder"
-								Name="$(var.g_fname)" WorkingDirectory="INSTALLDIR" Advertise="yes"
-								Icon="icon.ico" IconIndex="0" />
-							<Shortcut Id="shtct_pmd_exe" Directory="ProgramMenuDir"
-								Name="$(var.g_fname)" Advertise="yes" Icon="icon.ico"
-								IconIndex="0" />
-						</File>
-						<RegistryKey Id="reg_hkcr_lsml" Root="HKCR" Key="lsml"
-							ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-							<RegistryValue Type="string" Name="URL Protocol"
-								Value="" />
-						</RegistryKey>
-						<RegistryKey Id="reg_hkcr_lsml_defaulticon" Root="HKCR"
-							Key="lsml\DefaultIcon" ForceCreateOnInstall="yes"
-							ForceDeleteOnUninstall="yes">
-							<RegistryValue Type="string" Value="[#LSML.EXE],1" />
-						</RegistryKey>
-						<RegistryKey Id="reg_hkcr_lsml_command" Root="HKCR"
-							Key="lsml\shell\open\command" ForceCreateOnInstall="yes"
-							ForceDeleteOnUninstall="yes">
-							<RegistryValue Type="string" Value='"[#LSML.EXE]" "%1"' />
-						</RegistryKey>
-					</Component>
-					<Component Id="LSML.JAR" DiskId="1"
-						Guid="B4A1398E-1357-4B69-B432-EF01EFF1C3F7">
-						<File Id="LSML.JAR" Name="lsml.jar" Source="lsml.jar" />
-					</Component>
+				<Directory Id="CompanyFolder" Name="$(var.g_mfg)">
+					<Directory Id="$(var.g_sname)" Name="$(var.g_sname)">
+						<Component Id="LICENSE.TXT" DiskId="1"
+							Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2">
+							<File Id="LICENSE.TXT" Name="LICENSE.txt" Source="LICENSE.txt"
+								KeyPath="yes">
+								<Shortcut Id="shtct_pmd_license" Directory="ProgramMenuDir"
+									Name="LICENSE.txt" Advertise="yes" />
+							</File>
+						</Component>
+						<Component Id="README.TXT" DiskId="1"
+							Guid="65220797-70D0-41D6-9479-FB0F113E10A1">
+							<File Id="README.TXT" Name="README.txt" Source="README.txt"
+								KeyPath="yes">
+								<Shortcut Id="shtct_pmd_readme" Directory="ProgramMenuDir"
+									Name="README.txt" Advertise="yes" />
+							</File>
+						</Component>
+						<Component Id="LSML.EXE" DiskId="1"
+							Guid="F5FBF318-D03C-402F-9D7A-175A186250D1">
+							<File Id="LSML.EXE" Name="lsml.exe" Source="lsml.exe"
+								KeyPath="yes">
+								<Shortcut Id="shtct_dtp_exe" Directory="DesktopFolder"
+									Name="$(var.g_fname)" WorkingDirectory="INSTALLDIR" Advertise="yes"
+									Icon="icon.ico" IconIndex="0" />
+								<Shortcut Id="shtct_pmd_exe" Directory="ProgramMenuDir"
+									Name="$(var.g_fname)" Advertise="yes" Icon="icon.ico"
+									IconIndex="0" />
+							</File>
+							<RegistryKey Id="reg_hkcr_lsml" Root="HKCR" Key="lsml"
+								ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+								<RegistryValue Type="string" Name="URL Protocol"
+									Value="" />
+							</RegistryKey>
+							<RegistryKey Id="reg_hkcr_lsml_defaulticon" Root="HKCR"
+								Key="lsml\DefaultIcon" ForceCreateOnInstall="yes"
+								ForceDeleteOnUninstall="yes">
+								<RegistryValue Type="string" Value="[#LSML.EXE],1" />
+							</RegistryKey>
+							<RegistryKey Id="reg_hkcr_lsml_command" Root="HKCR"
+								Key="lsml\shell\open\command" ForceCreateOnInstall="yes"
+								ForceDeleteOnUninstall="yes">
+								<RegistryValue Type="string" Value='"[#LSML.EXE]" "%1"' />
+							</RegistryKey>
+						</Component>
+						<Component Id="LSML.JAR" DiskId="1"
+							Guid="B4A1398E-1357-4B69-B432-EF01EFF1C3F7">
+							<File Id="LSML.JAR" Name="lsml.jar" Source="lsml.jar" />
+						</Component>
+					</Directory>
 				</Directory>
 			</Directory>
 			<Directory Id="DesktopFolder" />
@@ -87,5 +89,7 @@
 			<ComponentRef Id="ProgramMenuDir" />
 		</Feature>
 		<Icon Id="icon.ico" SourceFile="icon.ico" />
+		
+		<Property Id='ARPPRODUCTICON'>icon.ico</Property>
 	</Product>
 </Wix>
