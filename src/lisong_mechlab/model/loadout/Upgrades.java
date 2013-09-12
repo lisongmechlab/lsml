@@ -54,6 +54,7 @@ public class Upgrades{
    }
 
    public void setArtemis(boolean anArtemis){
+	   
       if( anArtemis != artemis ){
          artemis = anArtemis;
          if( xBar != null )
