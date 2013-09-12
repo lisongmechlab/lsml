@@ -1,5 +1,6 @@
 package lisong_mechlab.util;
 
+
 /**
  * An exception that is thrown from various decoding algorithms in the case that they fail to handle the given data.
  * 
@@ -10,5 +11,9 @@ public class DecodingException extends Exception{
 
    public DecodingException(String aString){
       super(aString);
+   }
+
+   public DecodingException(Throwable aThrowable){
+      super(aThrowable);
    }
 }

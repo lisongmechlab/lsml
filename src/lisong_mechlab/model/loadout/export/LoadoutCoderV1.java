@@ -2,7 +2,6 @@ package lisong_mechlab.model.loadout.export;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,30 +22,27 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.DecodingException;
+import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
 import lisong_mechlab.util.MessageXBar;
 
 /**
- * A first simple implementation of a {@link LoadoutCoder}.
+ * The first version of {@link LoadoutCoder} for LSML.
  * 
  * @author Li Song
  */
 public class LoadoutCoderV1 implements LoadoutCoder{
-
+   private static final int        HEADER_MAGIC = 0xAC;
    private final Huffman1<Integer> huff;
    private final MessageXBar       xBar;
-   private final Part[]            partOrder = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso,
+   private final Part[]            partOrder    = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso,
          Part.LeftTorso, Part.LeftLeg, Part.LeftArm};
 
    public LoadoutCoderV1(MessageXBar anXBar){
       xBar = anXBar;
       ObjectInputStream in = null;
       try{
-         InputStream is;
-         // = LoadoutCoderV1.class.getResourceAsStream("/resources/coderstats.bin");
-         // if( is == null ){
-         is = new FileInputStream("resources/resources/coderstats.bin");
-         // }
+         InputStream is = LoadoutCoderV1.class.getResourceAsStream("/resources/coderstats.bin");
          in = new ObjectInputStream(is);
          Map<Integer, Integer> freqs = (Map<Integer, Integer>)in.readObject();
          huff = new Huffman1<Integer>(freqs, null);
@@ -67,12 +63,12 @@ public class LoadoutCoderV1 implements LoadoutCoder{
    }
 
    @Override
-   public byte[] encode(final Loadout aLoadout) throws IOException{
+   public byte[] encode(final Loadout aLoadout) throws EncodingException{
       final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
 
       // Write header (32 bits)
       {
-         buffer.write(0xAC); // 8 bits for version number
+         buffer.write(HEADER_MAGIC); // 8 bits for version number
 
          int upeff = 0; // 8 bits for efficiencies
          upeff = (upeff << 1) | (aLoadout.getUpgrades().hasArtemis() ? 1 : 0);
@@ -122,20 +118,26 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          ids.remove(ids.size() - 1); // Remove the last separator
 
          // Encode the list with huffman
-         buffer.write(huff.encode(ids));
+         byte[] data = huff.encode(ids);
+         try{
+            buffer.write(data);
+         }
+         catch( IOException e ){
+            throw new EncodingException(e);
+         }
       }
       return buffer.toByteArray();
    }
 
    @Override
-   public Loadout decode(final byte[] aBitStream) throws IOException{
+   public Loadout decode(final byte[] aBitStream) throws DecodingException{
       final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
       final Loadout loadout;
 
       // Read header
       {
-         if( buffer.read() != 0xAC ){
-            throw new DecodingException(); // Wrong format
+         if( buffer.read() != HEADER_MAGIC ){
+            throw new DecodingException("Wrong format!"); // Wrong format
          }
 
          int upeff = buffer.read() & 0xFF; // 8 bits for efficiencies and
@@ -172,7 +174,12 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       // The order is the same as for armor: RA, RT, RL, HD, CT, LT, LL, LA
       {
          byte[] rest = new byte[buffer.available()];
-         buffer.read(rest);
+         try{
+            buffer.read(rest);
+         }
+         catch( IOException e ){
+            throw new DecodingException(e);
+         }
          List<Integer> ids = huff.decode(rest);
          for(Part part : partOrder){
             Integer v;
@@ -184,29 +191,32 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       return loadout;
    }
 
+   @Override
+   public boolean canDecode(byte[] aBitStream){
+      final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
+      return buffer.read() == HEADER_MAGIC;
+   }
+
    /**
-    * Will process the stock builds and generate statistics
-    * 
-    * @param arg
-    * @throws Exception
+    * Will process the stock builds and generate statistics and dump it to a file.
     */
    public static void main(String[] arg) throws Exception{
       List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
-   
+
       Map<Integer, Integer> freqs = new TreeMap<>();
       MessageXBar anXBar = new MessageXBar();
       for(Chassi chassi : chassii){
          Loadout loadout = new Loadout(chassi, anXBar);
          loadout.loadStock();
-   
+
          for(Item item : loadout.getAllItems()){
             if( item == null ){
                throw new RuntimeException("FFAIL");
             }
-   
+
             if( !(item instanceof Internal) ){
                int id = item.getMwoIdx();
                if( freqs.containsKey(id) ){
@@ -218,16 +228,16 @@ public class LoadoutCoderV1 implements LoadoutCoder{
             }
          }
       }
-   
+
       // Make sure all items are in the statistics even if they have a very low probability
       for(Item item : ItemDB.lookup(Item.class)){
          int id = item.getMwoIdx();
          if( !freqs.containsKey(id) )
             freqs.put(id, 1);
       }
-   
+
       freqs.put(-1, chassii.size() * 7); // 7 separators per chassi
-   
+
       ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("resources/resources/coderstats.bin"));
       out.writeObject(freqs);
       out.close();

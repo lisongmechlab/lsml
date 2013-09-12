@@ -13,4 +13,8 @@ public class EncodingException extends IOException{
    public EncodingException(String aMessage){
       super(aMessage);
    }
+
+   public EncodingException(Throwable aThrowable){
+      super(aThrowable);
+   }
 }

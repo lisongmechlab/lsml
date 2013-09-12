@@ -80,7 +80,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to save " + loadout.getName() + " to your garage?",
                                                        "Save to garage?", JOptionPane.YES_NO_OPTION);
                if( ans == JOptionPane.YES_OPTION ){
-                  LSML.getInstance().getGarage().add(loadout);
+                  ProgramInit.lsml().getGarage().add(loadout);
                }
             }
          }
@@ -88,7 +88,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    }
 
    public boolean isSaved(){
-      return LSML.getInstance().getGarage().getMechs().contains(loadout);
+      return ProgramInit.lsml().getGarage().getMechs().contains(loadout);
    }
 
    public Loadout getLoadout(){
@@ -188,7 +188,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             public void actionPerformed(ActionEvent aArg0){
                try{
                   // TODO: This should be an Action class
-                  LSML.getInstance().getGarage().add(loadout);
+                  ProgramInit.lsml().getGarage().add(loadout);
                }
                catch( IllegalArgumentException e ){
                   JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't add to garage! Error: " + e.getMessage());
@@ -198,7 +198,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       menu.add(addToGarage);
       menu.add(new JMenuItem(new RenameLoadoutAction(loadout, KeyStroke.getKeyStroke("R"))));
-      menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
+      menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
 
       menu.add(createMenuItem("Load stock", new ActionListener(){
          @Override

@@ -8,6 +8,7 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
@@ -117,6 +118,7 @@ public class MockLoadoutContainer{
       when(internalItem.toString()).thenReturn(aName);
       when(internalItem.getNumCriticalSlots()).thenReturn(aNumSlots);
       when(internalItem.getMass()).thenReturn(aTons);
+      when(internalItem.compareTo(any(Item.class))).thenCallRealMethod();
       return internalItem;
    }
 }
