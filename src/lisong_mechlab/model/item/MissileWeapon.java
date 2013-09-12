@@ -31,15 +31,15 @@ public class MissileWeapon extends AmmoWeapon{
    @Override
    public int getNumCriticalSlots(Upgrades aUpgrades){
       if( aUpgrades != null && aUpgrades.hasArtemis() && isArtemisCapable() )
-         return super.getNumCriticalSlots() + 1;
-      return super.getNumCriticalSlots();
+         return super.getNumCriticalSlots(aUpgrades) + 1;
+      return super.getNumCriticalSlots(aUpgrades);
    }
 
    @Override
    public double getMass(Upgrades aUpgrades){
       if( aUpgrades != null && aUpgrades.hasArtemis() && isArtemisCapable() )
-         return super.getMass() + 1.0;
-      return super.getMass();
+         return super.getMass(aUpgrades) + 1.0;
+      return super.getMass(aUpgrades);
    }
 
    @Override

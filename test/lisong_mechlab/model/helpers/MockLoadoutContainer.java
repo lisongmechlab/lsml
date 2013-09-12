@@ -116,8 +116,8 @@ public class MockLoadoutContainer{
    public Internal makeInternal(String aName, int aNumSlots, double aTons){
       Internal internalItem = mock(Internal.class);
       when(internalItem.toString()).thenReturn(aName);
-      when(internalItem.getNumCriticalSlots()).thenReturn(aNumSlots);
-      when(internalItem.getMass()).thenReturn(aTons);
+      when(internalItem.getNumCriticalSlots(any(Upgrades.class))).thenReturn(aNumSlots);
+      when(internalItem.getMass(any(Upgrades.class))).thenReturn(aTons);
       when(internalItem.compareTo(any(Item.class))).thenCallRealMethod();
       return internalItem;
    }
