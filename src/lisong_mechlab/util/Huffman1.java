@@ -14,20 +14,17 @@ import java.util.TreeMap;
  */
 public class Huffman1<T> {
    private static class Leaf<TT> extends Node{
-      private static final long LONG_HIGH_BIT = ((long)1 << 63);
-      
-      final TT                  symbol;
-      long                      prefix;
-      int                       prefixSize;
+      static final long LONG_HIGH_BIT = ((long)1 << 63);
+      final TT          symbol;
+      long              prefix;
+      int               prefixSize;
 
       void createPrefix(){
          prefix = 0;
          prefixSize = 0;
-
          Node n = this;
          while( n.parent != null ){
             prefix = (prefix >>> 1);
-
             if( n.parent.childOne == n ){
                prefix |= LONG_HIGH_BIT;
             }
@@ -36,7 +33,7 @@ public class Huffman1<T> {
          }
       }
 
-      public Leaf(TT aSymbol, int aFrequency){
+      Leaf(TT aSymbol, int aFrequency){
          super(aFrequency);
          symbol = aSymbol;
       }
@@ -46,13 +43,7 @@ public class Huffman1<T> {
       final Node childZero;
       final Node childOne;
 
-      /**
-       * Right child first guarantees that the lowest priority node is 11...1
-       * 
-       * @param aRightChild
-       * @param aLeftChild
-       */
-      public Branch(Node aRightChild, Node aLeftChild){
+      Branch(Node aRightChild, Node aLeftChild){
          super(aLeftChild.frequency + aRightChild.frequency);
          childZero = aLeftChild;
          childOne = aRightChild;
@@ -79,10 +70,36 @@ public class Huffman1<T> {
    private final Node            root;
    private final Leaf<T>         stopLeaf;
 
-   public Huffman1(Map<T, Integer> aSymbolFrequency, T aStopSymbol){
+   /**
+    * Instantiates a new Huffman coder using the given frequency table to generate codewords.
+    * <p>
+    * The top symbol is treated specially. It must be a symbol that does not occur in the frequency table and it may be
+    * <code>null</code> iff <code>null</code> is not in the frequency table.
+    * <p>
+    * If the encoded bit stream is not an even multiple of 8 bits, the encoder fills the remaining bits in the last byte
+    * with a stop symbol. If the stop symbol's codeword didn't fit into the remaining bits, a partial stop symbol is
+    * encoded and no extra byte is emitted. When decoding the stream and the decoder encounters a fully encoded stop
+    * symbol, it stops the decoding and returns the decoded data up to the stop symbol. If the stop symbol was only
+    * partially encoded the decoder will stop before fully decoding the symbol. In both cases the output has the correct
+    * number of symbols.
+    * 
+    * @param aSymbolFrequencyTable
+    *           A {@link Map} where each symbol <code>T</code> has a frequency associated with it. These frequencies are
+    *           used to generate symbol probabilities.
+    * @param aStopSymbol
+    *           The special symbol to use as a stop symbol. Must not be represented in aSymbolFrequencyTable. Can be
+    *           <code>null</code> iff <code>null</code> is not represented in aSymbolFrequencyTable.
+    * @throws IllegalArgumentException
+    *            Thrown if <code>aStopSymbol</code> exists in the <code>aSymbolFrequencyTable</code> {@link Map}.
+    */
+   public Huffman1(Map<T, Integer> aSymbolFrequencyTable, T aStopSymbol) throws IllegalArgumentException{
+      if( aStopSymbol != null && aSymbolFrequencyTable.containsKey(aStopSymbol) ){
+         throw new IllegalArgumentException("Frequency table contains stop symbol!");
+      }
+
       // Populate initial forest of leaves and the leaves map
-      PriorityQueue<Node> forest = new PriorityQueue<>(aSymbolFrequency.size());
-      for(Map.Entry<T, Integer> pair : aSymbolFrequency.entrySet()){
+      PriorityQueue<Node> forest = new PriorityQueue<>(aSymbolFrequencyTable.size());
+      for(Map.Entry<T, Integer> pair : aSymbolFrequencyTable.entrySet()){
          if( pair.getValue() < 1 )
             continue;
          final Leaf<T> leaf = new Leaf<T>(pair.getKey(), pair.getValue());
@@ -109,11 +126,13 @@ public class Huffman1<T> {
     * Encodes a {@link List} of symbols, in order, into a bit stream using Huffman codes.
     * 
     * @param aSymbolList
-    *           The list of symbols to be encoded.
+    *           A {@link List} of symbols to be encoded.
     * @return The encoded bit stream as an array of <code>byte</code>s.
-    * @throws DecodingException 
+    * @throws EncodingException
+    *            Thrown if <code>aSymbolList</code> contains a symbol which doesn't exist in the frequency table given
+    *            to the constructor.
     */
-   public byte[] encode(List<T> aSymbolList) throws DecodingException{
+   public byte[] encode(List<T> aSymbolList) throws EncodingException{
       // ----------------------------------------------------------------------
       // WARNING: THE OUTPUT BITSTREAM OF THIS METHOD MUST NOT CHANGE TO
       // PERSERVE COMPATIBILITY WITH PREVIOUSLY ENCODED STREAMS.
@@ -126,10 +145,10 @@ public class Huffman1<T> {
       int bits = 0;
       for(T symbol : aSymbolList){
          Leaf<T> node = leafs.get(symbol);
-         if(node == null){
-            throw new DecodingException(); // Symbol not found!
+         if( node == null ){
+            throw new EncodingException("Error encoding symbol [" + symbol.toString() + "]! It was not present in the frequency map!");
          }
-            
+
          long prefix = node.prefix;
          int prefixBitsLeft = node.prefixSize;
 
@@ -147,7 +166,7 @@ public class Huffman1<T> {
       }
 
       if( bits != 0 ){
-         // Fill the rest with a (possibly partially) decoded stop symbol.
+         // Fill the rest with a (possibly partially) encoded stop symbol.
          long prefix = stopLeaf.prefix;
          int prefixBitsLeft = stopLeaf.prefixSize;
 
@@ -162,12 +181,20 @@ public class Huffman1<T> {
                break; // Don't emit another byte to contain the stop symbol.
             }
          }
-
          bytes++;
       }
       return Arrays.copyOf(output, bytes);
    }
 
+   /**
+    * Decodes a given bit stream into a {@link List} of symbols.
+    * 
+    * @param aBitstream
+    *           The bit stream to decode.
+    * @return A {@link List} of symbols decoded (excluding the stop symbol)
+    * @throws DecodingException
+    *            Thrown if the bit stream is broken.
+    */
    public List<T> decode(final byte[] aBitstream) throws DecodingException{
       List<T> output = new ArrayList<>();
       Node n = root;
@@ -182,27 +209,19 @@ public class Huffman1<T> {
                   n = ((Branch)n).childOne;
                }
                else
-                  throw new DecodingException();
+                  throw new DecodingException("The bitstream is corrupt!");
             }
             else{
                if( n instanceof Branch ){
                   n = ((Branch)n).childZero;
                }
                else
-                  throw new DecodingException();
+                  throw new DecodingException("The bitstream is corrupt!");
             }
 
             if( n instanceof Leaf ){
-               final Leaf<T> leaf;
-               try{
-                  @SuppressWarnings("unchecked")
-                  Leaf<T> leaf1 = (Leaf<T>)n;
-                  leaf = leaf1;
-               }
-               catch( ClassCastException e ){
-                  throw new DecodingException();
-               }
-               T symbol = leaf.symbol;
+               @SuppressWarnings("unchecked")
+               T symbol = ((Leaf<T>)n).symbol;
                if( symbol == stopLeaf.symbol ){
                   stop = true;
                   break;

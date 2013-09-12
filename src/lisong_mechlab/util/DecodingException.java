@@ -1,8 +1,14 @@
 package lisong_mechlab.util;
 
-import java.io.IOException;
-
-public class DecodingException extends IOException{
+/**
+ * An exception that is thrown from various decoding algorithms in the case that they fail to handle the given data.
+ * 
+ * @author Emily Björk
+ */
+public class DecodingException extends Exception{
    private static final long serialVersionUID = 8948178136779804692L;
 
+   public DecodingException(String aString){
+      super(aString);
+   }
 }
