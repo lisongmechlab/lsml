@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+    <?define g_fname = "Li Song Mech Lab"?>
+    <?define g_sname = "LSML"?>
+    <?define g_mfg = "LSML"?>
+    <?define g_version = "1.0.0"?>
+
+	<Product Id="E646F8A1-CF0E-4369-94DD-5E6734CBCCBB" Name="$(var.g_fname)"
+		Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)"
+		UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
+		<Package
+			Description="A tool for creating mech configurations for MechWarrior: Online (r)"
+			Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes" />
+		<Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder" Name="PFiles">
+				<Directory Id="$(var.g_mfg)" Name="$(var.g_mfg)">
+					<Component Id="LICENSE.TXT" DiskId="1"
+						Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2">
+						<File Id="LICENSE.TXT" Name="LICENSE.txt" Source="LICENSE.txt"
+							KeyPath="yes">
+							<Shortcut Id="shtct_pmd_license" Directory="ProgramMenuDir"
+								Name="LICENSE.txt" Advertise="yes" />
+						</File>
+					</Component>
+					<Component Id="README.TXT" DiskId="1"
+						Guid="65220797-70D0-41D6-9479-FB0F113E10A1">
+						<File Id="README.TXT" Name="README.txt" Source="README.txt"
+							KeyPath="yes">
+							<Shortcut Id="shtct_pmd_readme" Directory="ProgramMenuDir"
+								Name="README.txt" Advertise="yes" />
+						</File>
+					</Component>
+					<Component Id="LSML.EXE" DiskId="1"
+						Guid="F5FBF318-D03C-402F-9D7A-175A186250D1">
+						<File Id="LSML.EXE" Name="lsml.exe" Source="lsml.exe"
+							KeyPath="yes">
+							<Shortcut Id="shtct_dtp_exe" Directory="DesktopFolder"
+								Name="$(var.g_fname)" WorkingDirectory="INSTALLDIR" Advertise="yes"
+								Icon="icon.ico" IconIndex="0" />
+							<Shortcut Id="shtct_pmd_exe" Directory="ProgramMenuDir"
+								Name="$(var.g_fname)" Advertise="yes" Icon="icon.ico"
+								IconIndex="0" />
+						</File>
+						<RegistryKey Id="reg_hkcr_lsml" Root="HKCR" Key="lsml"
+							ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+							<RegistryValue Type="string" Name="URL Protocol"
+								Value="" />
+						</RegistryKey>
+						<RegistryKey Id="reg_hkcr_lsml_defaulticon" Root="HKCR"
+							Key="lsml\DefaultIcon" ForceCreateOnInstall="yes"
+							ForceDeleteOnUninstall="yes">
+							<RegistryValue Type="string" Value="[#LSML.EXE],1" />
+						</RegistryKey>
+						<RegistryKey Id="reg_hkcr_lsml_command" Root="HKCR"
+							Key="lsml\shell\open\command" ForceCreateOnInstall="yes"
+							ForceDeleteOnUninstall="yes">
+							<RegistryValue Type="string" Value='"[#LSML.EXE]" "%1"' />
+						</RegistryKey>
+					</Component>
+					<Component Id="LSML.JAR" DiskId="1"
+						Guid="B4A1398E-1357-4B69-B432-EF01EFF1C3F7">
+						<File Id="LSML.JAR" Name="lsml.jar" Source="lsml.jar" />
+					</Component>
+				</Directory>
+			</Directory>
+			<Directory Id="DesktopFolder" />
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="ProgramMenuDir" Name="$(var.g_fname)">
+					<Component Id="ProgramMenuDir" Guid="F7BB09AC-5D86-41AA-BFEA-60FBB32C5A46">
+						<RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+						<RegistryValue Root="HKCU"
+							Key="Software\[Manufacturer]\[ProductName]" Type="string" Value=""
+							KeyPath="yes" />
+						<!-- <util:InternetShortcut Id="WebsiteShortcut" Name="The Fine Manual" 
+							Target="https://github.com/EmilyBjoerk/lsml/wiki/User-Manual" /> -->
+					</Component>
+				</Directory>
+			</Directory>
+		</Directory>
+		<Feature Id="DefaultFeature" Title="Main Feature" Level="1">
+			<ComponentRef Id="LICENSE.TXT" />
+			<ComponentRef Id="LSML.EXE" />
+			<ComponentRef Id="LSML.JAR" />
+			<ComponentRef Id="README.TXT" />
+			<ComponentRef Id="ProgramMenuDir" />
+		</Feature>
+		<Icon Id="icon.ico" SourceFile="icon.ico" />
+	</Product>
+</Wix>
