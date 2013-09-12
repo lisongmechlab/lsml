@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.MessageXBar;
+import lisong_mechlab.util.MessageXBar;
 
 import com.thoughtworks.xstream.XStream;
 

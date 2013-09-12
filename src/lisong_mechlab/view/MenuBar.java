@@ -33,7 +33,7 @@ public class MenuBar extends JMenuBar{
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent arg0){
-                  application.close();
+                  application.shutdown();
                }
             });
             menu.add(item);

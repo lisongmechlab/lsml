@@ -29,8 +29,7 @@ public class MissileWeaponTest{
          Upgrades noartemis = mock(Upgrades.class);
          when(noartemis.hasArtemis()).thenReturn(false);
 
-         assertEquals(weapon.getNumCriticalSlots(), weapon.getNumCriticalSlots(noartemis));
-         assertEquals(weapon.getNumCriticalSlots(), weapon.getNumCriticalSlots(null));
+         assertEquals(weapon.getNumCriticalSlots(null), weapon.getNumCriticalSlots(noartemis));
          if( weapon.isArtemisCapable() ){
             assertEquals(weapon.getNumCriticalSlots(noartemis) + 1, weapon.getNumCriticalSlots(artemis));
          }
@@ -51,8 +50,7 @@ public class MissileWeaponTest{
          Upgrades noartemis = mock(Upgrades.class);
          when(noartemis.hasArtemis()).thenReturn(false);
 
-         assertEquals(weapon.getMass(), weapon.getMass(noartemis),  0.0);
-         assertEquals(weapon.getMass(), weapon.getMass(null),  0.0);
+         assertEquals(weapon.getMass(null), weapon.getMass(noartemis),  0.0);
          if( weapon.isArtemisCapable() ){
             assertEquals(weapon.getMass(noartemis) + 1.0, weapon.getMass(artemis), 0.0);
          }

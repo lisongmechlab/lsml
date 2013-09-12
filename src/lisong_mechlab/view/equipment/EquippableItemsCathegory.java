@@ -9,13 +9,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.TreeModelEvent;
 
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
-import lisong_mechlab.model.MessageXBar.Reader;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.MessageXBar.Reader;
 import lisong_mechlab.view.LoadoutFrame;
 
 class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{

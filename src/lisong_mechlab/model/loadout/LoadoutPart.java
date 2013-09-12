@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
@@ -20,9 +19,9 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
+import lisong_mechlab.util.MessageXBar;
 
 public class LoadoutPart implements MessageXBar.Reader{
    public static class Message implements MessageXBar.Message{
@@ -50,15 +49,15 @@ public class LoadoutPart implements MessageXBar.Reader{
 
    public final static double            ARMOR_PER_TON   = 32.0;
 
-   public final Internal                 ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
+   public final static Internal          ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
 
    private final InternalPart            internalPart;
-   private final Loadout                 loadout;
+   private final transient Loadout       loadout;
    private final List<Item>              items;
    private final Map<ArmorSide, Integer> armor;
    private int                           engineHeatsinks = 0;
 
-   private final MessageXBar             xBar;
+   private final transient MessageXBar   xBar;
 
    LoadoutPart(Loadout aLoadOut, InternalPart anInternalPart, MessageXBar aXBar){
       internalPart = anInternalPart;
@@ -77,6 +76,40 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
    }
 
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((armor == null) ? 0 : armor.hashCode());
+      result = prime * result + engineHeatsinks;
+      result = prime * result + ((internalPart == null) ? 0 : internalPart.hashCode());
+      result = prime * result + ((items == null) ? 0 : items.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( !(obj instanceof LoadoutPart) )
+         return false;
+      LoadoutPart that = (LoadoutPart)obj;
+      if( !armor.equals(that.armor) )
+         return false;
+      if( engineHeatsinks != that.engineHeatsinks )
+         return false;
+      if( !internalPart.equals(that.internalPart) )
+         return false;
+
+      List<Item> this_items = new ArrayList<>(this.items);
+      List<Item> that_items = new ArrayList<>(that.items);
+      Collections.sort(this_items);
+      Collections.sort(that_items);
+      if( !this_items.equals(that_items) )
+         return false;
+      return true;
+   }
+
    public InternalPart getInternalPart(){
       return internalPart;
    }
@@ -89,16 +122,11 @@ public class LoadoutPart implements MessageXBar.Reader{
       int crits = 0;
       int engineHsLeft = getNumEngineHeatsinksMax();
       for(Item item : items){
-         if( item instanceof MissileWeapon )
-            crits += ((MissileWeapon)item).getNumCriticalSlots(loadout.getUpgrades());
-         else if( item instanceof HeatSink ){
-            if( engineHsLeft > 0 )
-               engineHsLeft--;
-            else
-               crits += item.getNumCriticalSlots();
+         if( item instanceof HeatSink && engineHsLeft > 0 ){
+            engineHsLeft--;
+            continue;
          }
-         else
-            crits += item.getNumCriticalSlots();
+         crits += item.getNumCriticalSlots(loadout.getUpgrades());
       }
       return crits;
    }
@@ -245,10 +273,7 @@ public class LoadoutPart implements MessageXBar.Reader{
    public double getItemMass(){
       double ans = engineHeatsinks * 1.0;
       for(Item item : items){
-         if( item instanceof MissileWeapon )
-            ans += ((MissileWeapon)item).getMass(loadout.getUpgrades());
-         else
-            ans += item.getMass();
+         ans += item.getMass(loadout.getUpgrades());
       }
       return ans;
    }
@@ -391,7 +416,8 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
 
       // Allow engine slot heat sinks even if there are no critical slots
-      if( getNumEngineHeatsinks() < getNumEngineHeatsinksMax() && loadout.getMass() + anItem.getMass() <= loadout.getChassi().getMassMax() ){
+      if( getNumEngineHeatsinks() < getNumEngineHeatsinksMax()
+          && loadout.getMass() + anItem.getMass(loadout.getUpgrades()) <= loadout.getChassi().getMassMax() ){
          return true;
       }
       return checkCommonRules(anItem);
