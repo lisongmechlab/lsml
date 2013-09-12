@@ -287,23 +287,29 @@ public class LoadoutPart implements MessageXBar.Reader{
          }
          else if( msg.msg == ChangeMsg.GUIDANCE ){
             boolean changed = false;
-            for(AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)){
-               Upgrades oldUpgrades = new Upgrades(null);
-               oldUpgrades.setArtemis(!msg.source.hasArtemis());
-               Ammunition oldAmmoType = weapon.getAmmoType(oldUpgrades);
-               Ammunition newAmmoType = weapon.getAmmoType(msg.source);
-               if( oldAmmoType == newAmmoType )
-                  continue;
+            
+            	for(AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)){
+                    Upgrades oldUpgrades = new Upgrades(null);
+                    oldUpgrades.setArtemis(!msg.source.hasArtemis());
+                    Ammunition oldAmmoType = weapon.getAmmoType(oldUpgrades);
+                    Ammunition newAmmoType = weapon.getAmmoType(msg.source);
+                    if( oldAmmoType == newAmmoType )
+                       continue;
 
-               while( items.remove(oldAmmoType) ){
-                  items.add(newAmmoType);
-                  changed = true;
-               }
+                    while( items.remove(oldAmmoType) ){
+                       items.add(newAmmoType);
+                       changed = true;
+                    }
+                 }
+                 if( changed )
+                    xBar.post(new Message(this, Type.ItemsChanged));
+
+              
+            
+//            	loadout.getUpgrades().setArtemis(false);
+            
             }
-            if( changed )
-               xBar.post(new Message(this, Type.ItemsChanged));
-
-         }
+            
       }
    }
 
@@ -323,7 +329,7 @@ public class LoadoutPart implements MessageXBar.Reader{
       return getItemCriticalSlots(items.get(index));
    }
 
-   private boolean checkCommonRules(Item anItem){
+   boolean checkCommonRules(Item anItem){
       // Check enough free mass
       if( loadout.getMass() + anItem.getMass(loadout.getUpgrades()) > loadout.getChassi().getMassMax() ){
          return false;
