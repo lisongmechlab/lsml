@@ -328,7 +328,6 @@ public class Loadout implements MessageXBar.Reader{
                }
                break;
             case GUIDANCE:
-               checkArtemisAdditionLegal();
                break;
             case HEATSINKS:
                break;
@@ -345,16 +344,7 @@ public class Loadout implements MessageXBar.Reader{
       }
    }
 
-   private void checkArtemisAdditionLegal() throws IllegalArgumentException{
-      if( getMass() > chassi.getMassMax() ){
-         getUpgrades().setArtemis(false);
-         throw new IllegalArgumentException("Not enough free mass!");
-      }
-      if( getNumCriticalSlotsFree() < 0 ){
-         getUpgrades().setArtemis(false);
-         throw new IllegalArgumentException("Not enough free crit slots!");
-      }
-   }
+   
 
    public double getFreeMass(){
       double freeMass = chassi.getMassMax() - getMass();
