@@ -133,6 +133,38 @@ public class LoadoutPartTest{
    }
 
    @Test
+   public void testGetNumEngineHs(){
+      LoadoutPart cut = makeCUT(0, Part.CenterTorso, 7);
+      when(mlc.chassi.getEngineMax()).thenReturn(400);
+      when(mlc.chassi.getEngineMin()).thenReturn(0);
+
+      assertEquals(0, cut.getNumEngineHeatsinks());
+
+      cut.addItem(ItemDB.SHS);
+      assertEquals(0, cut.getNumEngineHeatsinks());
+
+      cut.addItem(ItemDB.lookup("STD ENGINE 300"));
+      assertEquals(1, cut.getNumEngineHeatsinks());
+
+      cut.addItem(ItemDB.SHS);
+      assertEquals(2, cut.getNumEngineHeatsinks());
+
+      cut.addItem(ItemDB.SHS);
+      assertEquals(2, cut.getNumEngineHeatsinks());
+      
+
+      verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+   }
+
+   @Test
+   public void testGetNumEngineHs_notCT(){
+      LoadoutPart cut = makeCUT(0, Part.LeftTorso, 7);
+      cut.addItem(ItemDB.SHS);
+      assertEquals(0, cut.getNumEngineHeatsinks());
+      verify(xBar, times(1)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+   }
+
+   @Test
    public void testGetNumCriticalSlotsUsed() throws Exception{
       // Setup
       MissileWeapon srm = (MissileWeapon)ItemDB.lookup("STREAK SRM 2");
@@ -261,7 +293,7 @@ public class LoadoutPartTest{
    @Test
    public void testAddItem_CASE_invalid() throws Exception{
       for(Part testPart : new Part[] {Part.LeftArm, Part.LeftLeg, Part.CenterTorso, Part.Head, Part.RightArm, Part.RightLeg}){
-         
+
          LoadoutPart cut = makeCUT(0, testPart, 12);
 
          try{
@@ -403,23 +435,24 @@ public class LoadoutPartTest{
    }
 
    /**
-    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct type.
+    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct
+    * type.
     */
    @Test
    public void testReceive_artemisEnabled(){
       when(mlc.upgrades.hasArtemis()).thenReturn(false);
-      
+
       LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
       cut.addItem("SRM AMMO");
       cut.addItem("LRM AMMO");
       cut.addItem("STREAK SRM AMMO");
       cut.addItem("NARC AMMO");
       verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      
+
       when(mlc.upgrades.hasArtemis()).thenReturn(true);
       cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemsChanged));
-      
+
       List<Item> items = new ArrayList<>(cut.getItems());
       assertTrue(items.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
       assertTrue(items.remove(ItemDB.lookup("LRM AMMO + ARTEMIS IV")));
@@ -427,25 +460,26 @@ public class LoadoutPartTest{
       assertTrue(items.remove(ItemDB.lookup("NARC AMMO")));
       assertTrue(items.isEmpty());
    }
-   
+
    /**
-    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct type.
+    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct
+    * type.
     */
    @Test
    public void testReceive_artemisDisabled(){
       when(mlc.upgrades.hasArtemis()).thenReturn(true);
-      
+
       LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
       cut.addItem("SRM AMMO + ARTEMIS IV");
       cut.addItem("LRM AMMO + ARTEMIS IV");
       cut.addItem("STREAK SRM AMMO");
       cut.addItem("NARC AMMO");
       verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      
+
       when(mlc.upgrades.hasArtemis()).thenReturn(false);
       cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemsChanged));
-      
+
       List<Item> items = new ArrayList<>(cut.getItems());
       assertTrue(items.remove(ItemDB.lookup("SRM AMMO")));
       assertTrue(items.remove(ItemDB.lookup("LRM AMMO")));
@@ -453,24 +487,25 @@ public class LoadoutPartTest{
       assertTrue(items.remove(ItemDB.lookup("NARC AMMO")));
       assertTrue(items.isEmpty());
    }
-   
+
    /**
-    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct type.
+    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct
+    * type.
     */
    @Test
    public void testReceive_artemisNoChange(){
       when(mlc.upgrades.hasArtemis()).thenReturn(true);
-      
+
       LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
       cut.addItem("SRM AMMO + ARTEMIS IV");
       cut.addItem("LRM AMMO + ARTEMIS IV");
       cut.addItem("STREAK SRM AMMO");
       cut.addItem("NARC AMMO");
       verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      
+
       when(mlc.upgrades.hasArtemis()).thenReturn(true);
       cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
-      
+
       List<Item> items = new ArrayList<>(cut.getItems());
       assertTrue(items.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
       assertTrue(items.remove(ItemDB.lookup("LRM AMMO + ARTEMIS IV")));

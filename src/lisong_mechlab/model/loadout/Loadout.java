@@ -466,4 +466,27 @@ public class Loadout implements MessageXBar.Reader{
          }
       }
    }
+
+   public void addItem(String aString){
+      addItem(ItemDB.lookup(aString));
+   }
+
+   public void addItem(Item anItem){
+      LoadoutPart ct = parts.get(Part.CenterTorso);
+      if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canAddItem(anItem) ){
+         ct.addItem(anItem);
+         return;
+      }
+
+      Part[] partOrder = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso, Part.LeftTorso, Part.LeftLeg,
+            Part.LeftArm};
+
+      for(Part part : partOrder){
+         LoadoutPart loadoutPart = parts.get(part);
+         if( loadoutPart.canAddItem(anItem) ){
+            loadoutPart.addItem(anItem);
+            return;
+         }
+      }
+   }
 }
