@@ -40,6 +40,7 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
       GarageCathegory garage = new GarageCathegory("Garage", root, this, aLSML.xBar);
 
       // Process the items list
+      List<Item> weapons = new ArrayList<>();
       List<Item> energy = new ArrayList<>();
       List<Item> ballistic = new ArrayList<>();
       List<Item> missile = new ArrayList<>();
@@ -78,12 +79,14 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
             misc.add(item);
          }
       }
+      
+      weapons.addAll(energy);
+      weapons.addAll(ballistic);
+      weapons.addAll(missile);
 
       root.addChild(chassii);
       root.addChild(garage);
-      root.addChild(new EquippableItemsCathegory(energy, "Energy", root, this, xBar));
-      root.addChild(new EquippableItemsCathegory(ballistic, "Ballistic", root, this, xBar));
-      root.addChild(new EquippableItemsCathegory(missile, "Missile", root, this, xBar));
+      root.addChild(new EquippableItemsCathegory(weapons, "Weapons", root, this, xBar));
       root.addChild(new EquippableItemsCathegory(engineStd, "Engine - STD", root, this, xBar));
       root.addChild(new EquippableItemsCathegory(engineXl, "Engine - XL", root, this, xBar));
       root.addChild(new EquippableItemsCathegory(misc, "Misc", root, this, xBar));
