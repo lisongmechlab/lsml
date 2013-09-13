@@ -54,8 +54,6 @@ public class ArtemisHandler {
 	
 	public void checkArtemisAdditionLegal() throws IllegalArgumentException{
 	   if(!loadout.getUpgrades().hasArtemis()){
-	      System.out.println(loadout.getMass() + additionalMass);
-	      System.out.println(loadout.getNumCriticalSlotsFree() - additionalCritSlots);
 	      if( (loadout.getMass() + additionalMass) > chassi.getMassMax() ){
 	         throw new IllegalArgumentException("Not enough free mass!");
 	      }
