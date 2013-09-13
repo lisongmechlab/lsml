@@ -18,6 +18,7 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
@@ -509,42 +510,41 @@ public class LoadoutTest{
    @Test
    public void testAddItem(){
       Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
-     
+
       cut.getUpgrades().setDoubleHeatSinks(true);
-      
+
       cut.addItem("MEDIUM LASER");
       assertTrue(cut.getPart(Part.RightArm).getItems().contains(ItemDB.lookup("MEDIUM LASER")));
-      
+
       cut.addItem(ItemDB.lookup("MEDIUM LASER"));
       assertTrue(cut.getPart(Part.LeftArm).getItems().contains(ItemDB.lookup("MEDIUM LASER")));
-      
+
       cut.addItem(ItemDB.lookup("AC/20"));
       assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.lookup("AC/20")));
-      
+
       cut.addItem("LRM 5");
       assertTrue(cut.getPart(Part.LeftTorso).getItems().contains(ItemDB.lookup("LRM 5")));
-      
+
       cut.addItem("LRM 15");
       assertTrue(cut.getPart(Part.LeftTorso).getItems().contains(ItemDB.lookup("LRM 15")));
-      
+
       cut.addItem("STD ENGINE 250");
       assertTrue(cut.getPart(Part.CenterTorso).getItems().contains(ItemDB.lookup("STD ENGINE 250")));
-      
+
       // Fill right arm
       cut.addItem(ItemDB.DHS);
       cut.addItem(ItemDB.DHS);
       assertTrue(cut.getPart(Part.RightArm).getItems().contains(ItemDB.DHS));
-      verify(xBar, times(1+2)).post(new LoadoutPart.Message(cut.getPart(Part.RightArm), Type.ItemAdded));
-      
-      // Skips RA, RT, RL, HD, CT (too few slots) and places the item in LT 
+      verify(xBar, times(1 + 2)).post(new LoadoutPart.Message(cut.getPart(Part.RightArm), Type.ItemAdded));
+
+      // Skips RA, RT, RL, HD, CT (too few slots) and places the item in LT
       cut.addItem(ItemDB.DHS);
       assertTrue(cut.getPart(Part.LeftTorso).getItems().contains(ItemDB.DHS));
-      
-      // Skips RA (too few slots) and places the item in RT 
+
+      // Skips RA (too few slots) and places the item in RT
       cut.addItem(ItemDB.BAP);
       assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.BAP));
    }
-   
 
    /**
     * {@link Loadout#addItem()} shall prioritize engine slots for heat sinks
@@ -552,15 +552,24 @@ public class LoadoutTest{
    @Test
    public void testAddItem_engineHS(){
       Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
-      
+
       cut.addItem("STD ENGINE 300");
       assertTrue(cut.getPart(Part.CenterTorso).getItems().contains(ItemDB.lookup("STD ENGINE 300")));
-      
+
       cut.addItem(ItemDB.SHS); // Engine HS slot 1
       cut.addItem(ItemDB.SHS); // Engine HS slot 2
       cut.addItem(ItemDB.SHS); // Right arm
-      verify(xBar, times(1+2)).post(new LoadoutPart.Message(cut.getPart(Part.CenterTorso), Type.ItemAdded));
+      verify(xBar, times(1 + 2)).post(new LoadoutPart.Message(cut.getPart(Part.CenterTorso), Type.ItemAdded));
       assertTrue(cut.getPart(Part.CenterTorso).getItems().contains(ItemDB.SHS)); // 1 remaining
       assertTrue(cut.getPart(Part.RightArm).getItems().contains(ItemDB.SHS));
+   }
+
+   /**
+    * {@link Loadout#isEquippable(Item)} If item is {@link Ammunition}, then it shall only return true if the loadout
+    * contains a weapon that can use it.
+    */
+   @Test
+   public void testIsEquippable(){
+
    }
 }
