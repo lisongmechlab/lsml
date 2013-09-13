@@ -133,8 +133,9 @@ public class EquipmentPane extends JTree{
                   menu.show(EquipmentPane.this, e.getX(), e.getY());
                }
             }
-            if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2 ){
+            if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                Object clicked = getClickedObject(e);
+               int clicks = e.getClickCount()/2;
                if( clicked instanceof Chassi ){
                   Chassi chassi = (Chassi)clicked;
                   Loadout clickedLoadout = new Loadout(chassi, xBar);
@@ -142,6 +143,18 @@ public class EquipmentPane extends JTree{
                }
                else if( clicked instanceof Loadout ){
                   aLoadoutDesktop.openLoadout((Loadout)clicked);
+               }
+               else if( clicked instanceof Item ){
+                  if( loadout != null ){
+                     while( clicks-- > 0 )
+                        loadout.addItem((Item)clicked);
+                  }
+               }
+               else if( clicked instanceof String ){
+                  if( loadout != null ){
+                     while( clicks-- > 0 )
+                        loadout.addItem((String)clicked);
+                  }
                }
             }
          }
