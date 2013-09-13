@@ -359,12 +359,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       try{
          if( source == artemis ){
         	 ArtemisHandler artemisChecker = new ArtemisHandler(loadout);
-             if(artemisChecker.checkLoadoutStillValid() && !loadout.getUpgrades().hasArtemis()){
-            	 loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
-             }
-             else if(loadout.getUpgrades().hasArtemis()){
-            	 loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
-             }
+        	 try{
+        	    artemisChecker.checkLoadoutStillValid();
+        	    artemisChecker.checkArtemisAdditionLegal();
+        	    loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+        	 }
+        	 catch(IllegalArgumentException e){
+        	    throw e;
+        	 }
+             
              updateDisplay();
             
          }
