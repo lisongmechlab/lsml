@@ -8,7 +8,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -29,7 +28,7 @@ import lisong_mechlab.util.MessageXBar;
  */
 public class LSML extends JFrame{
    private static final long       serialVersionUID       = -2463321343234141728L;
-   private static final String     VERSION_STRING         = "(v1.0.0-rc2)";
+   private static final String     VERSION_STRING         = "(v1.0.0-rc3)";
    private static final String     GARAGE_FILEDESCRIPTION = "Li Song Mech Lab Garage File (.xml)";
    private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter(){
                                                              @Override
