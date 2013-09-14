@@ -23,6 +23,13 @@ import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 
+/**
+ * This class represents a configured {@link InternalPart}.
+ * <p>
+ * TODO: Change structure for "Loadoutpart has an internal part" to "Loadout part is an internal part"
+ * 
+ * @author Li Song
+ */
 public class LoadoutPart implements MessageXBar.Reader{
    public static class Message implements MessageXBar.Message{
       public Message(LoadoutPart aPart, Type aType){

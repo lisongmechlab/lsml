@@ -1,21 +1,35 @@
 package lisong_mechlab.model.loadout;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import lisong_mechlab.model.chassi.Part;
 
+/**
+ * This class handles distribution of dynamic slots from Ferro Fibrous armor and Endo Steel internal structure.
+ * <p>
+ * It only tells you how many slots of each type should be visualized for a given part. It doesn't actually add any
+ * thing to those parts.
+ * 
+ * @author Li Song
+ */
 public class DynamicSlotDistributor{
-   private final Loadout           loadout;
-   private static final List<Part> PART_PRIORITY = Collections.unmodifiableList(Arrays.asList(Part.RightArm, Part.RightTorso, Part.RightLeg,
-                                                                                              Part.Head, Part.CenterTorso, Part.LeftTorso,
-                                                                                              Part.LeftLeg, Part.LeftArm));
+   private final Loadout loadout;
 
+   /**
+    * Creates a new {@link DynamicSlotDistributor} for the given {@link Loadout}.
+    * 
+    * @param aLoadout
+    *           The {@link Loadout} to distribute dynamic slots for.
+    */
    public DynamicSlotDistributor(Loadout aLoadout){
       loadout = aLoadout;
    }
 
+   /**
+    * Returns the number of dynamic structure slots that should be visualized for the given {@link LoadoutPart}.
+    * 
+    * @param aPart
+    *           The {@link LoadoutPart} to get results for.
+    * @return A number of slots to display, can be 0.
+    */
    public int getDynamicStructureSlots(LoadoutPart aPart){
       if( !loadout.getUpgrades().hasEndoSteel() )
          return 0;
@@ -28,6 +42,13 @@ public class DynamicSlotDistributor{
       return Math.min(freeSlotsInPart, Math.max(numSlotsToFill - filled, 0));
    }
 
+   /**
+    * Returns the number of dynamic armor slots that should be visualized for the given {@link LoadoutPart}.
+    * 
+    * @param aPart
+    *           The {@link LoadoutPart} to get results for.
+    * @return A number of slots to display, can be 0.
+    */
    public int getDynamicArmorSlots(LoadoutPart aPart){
       if( !loadout.getUpgrades().hasFerroFibrous() )
          return 0;
@@ -47,12 +68,11 @@ public class DynamicSlotDistributor{
     */
    private int getCumulativeFreeSlots(Part aPart){
       int ans = 0;
-      for(Part part : PART_PRIORITY){
+      for(Part part : Part.leftToRight()){
          if( part == aPart )
             break;
          ans += loadout.getPart(part).getNumCriticalSlotsFree();
       }
       return ans;
    }
-
 }

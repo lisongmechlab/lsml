@@ -35,6 +35,13 @@ import org.w3c.dom.Node;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
+/**
+ * This class represents the complete state of a 'mechs configuration.
+ * <p>
+ * TODO: Strip some logic from this class.
+ * 
+ * @author Li Song
+ */
 public class Loadout implements MessageXBar.Reader{
    public static class Message implements MessageXBar.Message{
       @Override

@@ -3,8 +3,12 @@ package lisong_mechlab.model.loadout;
 import lisong_mechlab.model.loadout.Efficiencies.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 
+/**
+ * Handles efficiencies for a mech.
+ * 
+ * @author Li Song
+ */
 public class Efficiencies{
-   // TODO: Add module slots
 
    public static class Message implements MessageXBar.Message{
       @Override
@@ -41,22 +45,41 @@ public class Efficiencies{
 
    private transient final MessageXBar xBar;
 
+   /**
+    * Creates a new efficiencies object.
+    * 
+    * @param aXBar
+    *           The {@link MessageXBar} on which messages about changes to the efficiencies are to be sent.
+    */
    public Efficiencies(MessageXBar aXBar){
       xBar = aXBar;
    }
 
+   /**
+    * @return <code>true</code> if speed tweak is enabled (10% faster movement speed).
+    */
    public boolean hasSpeedTweak(){
       return speedTweak;
    }
 
+   /**
+    * @return <code>true</code> if cool run is enabled (7.5% more heat dissipation).
+    */
    public boolean hasCoolRun(){
       return coolRun;
    }
 
+   /**
+    * @return <code>true</code> if heat containment is enabled (10% more heat capactity).
+    */
    public boolean hasHeatContainment(){
       return heatContainment;
    }
 
+   /**
+    * @return <code>true</code> if all elite skills are unlocked. Effectiveness of cool run and heat containment is
+    *         doubled.
+    */
    public boolean hasDoubleBasics(){
       return doubleBasics;
    }
@@ -92,6 +115,12 @@ public class Efficiencies{
       return true;
    }
 
+   /**
+    * Sets speed tweak status.
+    * 
+    * @param aSpeedTweak
+    *           The value to set.
+    */
    public void setSpeedTweak(boolean aSpeedTweak){
       if( aSpeedTweak != speedTweak ){
          speedTweak = aSpeedTweak;
@@ -99,6 +128,12 @@ public class Efficiencies{
       }
    }
 
+   /**
+    * Sets cool run status.
+    * 
+    * @param aCoolRun
+    *           The value to set.
+    */
    public void setCoolRun(boolean aCoolRun){
       if( aCoolRun != coolRun ){
          coolRun = aCoolRun;
@@ -106,6 +141,12 @@ public class Efficiencies{
       }
    }
 
+   /**
+    * Sets heat containment status.
+    * 
+    * @param aHeatContainment
+    *           The value to set.
+    */
    public void setHeatContainment(boolean aHeatContainment){
       if( aHeatContainment != heatContainment ){
          heatContainment = aHeatContainment;
@@ -113,6 +154,12 @@ public class Efficiencies{
       }
    }
 
+   /**
+    * Sets double basics.
+    * 
+    * @param aDoubleBasics
+    *           The value to set.
+    */
    public void setDoubleBasics(boolean aDoubleBasics){
       if( aDoubleBasics != doubleBasics ){
          doubleBasics = aDoubleBasics;
@@ -120,6 +167,9 @@ public class Efficiencies{
       }
    }
 
+   /**
+    * @return The modifier that should be applied to a 'mechs heat capacity with the current efficiencies.
+    */
    public double getHeatCapacityModifier(){
       if( heatContainment ){
          if( doubleBasics )
@@ -129,15 +179,21 @@ public class Efficiencies{
       return 1.0;
    }
 
+   /**
+    * @return The modifier that should be applied to a 'mechs heat dissipation with the current efficiencies.
+    */
    public double getHeatDissipationModifier(){
       if( coolRun ){
          if( doubleBasics )
-            return 1 + 0.075 * 2;
+            return 1.15;
          return 1.075;
       }
       return 1.0;
    }
 
+   /**
+    * @return The modifier that should be applied to a 'mechs top speed with the current efficiencies.
+    */
    public double getSpeedModifier(){
       if( speedTweak )
          return 1.1;
