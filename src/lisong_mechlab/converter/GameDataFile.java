@@ -218,6 +218,13 @@ public class GameDataFile{
                return SKIP_SUBTREE;
             return CONTINUE;
          }
+
+         @Override
+         public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException{
+            if( file.toFile().isDirectory() )
+               return SKIP_SUBTREE;
+            return CONTINUE;
+         }
       }
 
       // Look for a quick exit in the default install directories.
