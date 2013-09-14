@@ -25,6 +25,7 @@ public class ItemStatsXml{
    public List<ItemStatsMech>     MechList;
    public List<ItemStatsWeapon>   WeaponList;
    public List<ItemStatsModule> ModuleList;
+   public List<ItemStatsUpgradeType> UpgradeTypeList;
 
    public final static ItemStatsXml            stats;
 
@@ -51,6 +52,7 @@ public class ItemStatsXml{
       xstream.alias("Mech", ItemStatsMech.class);
       xstream.alias("Weapon", ItemStatsWeapon.class);
       xstream.alias("Module", ItemStatsModule.class);
+      xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
       
       // Fixes for broken XML from PGI
       xstream.aliasAttribute("Ctype", "CType");
