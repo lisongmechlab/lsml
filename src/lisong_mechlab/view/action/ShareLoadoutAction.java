@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.EncodingException;
@@ -27,7 +29,13 @@ public class ShareLoadoutAction extends AbstractAction{
    @Override
    public void actionPerformed(ActionEvent aArg0){
       try{
-         JOptionPane.showMessageDialog(null, ProgramInit.lsml().loadoutCoder.encode(loadout));
+         String text = ProgramInit.lsml().loadoutCoder.encode(loadout);
+         JTextArea textArea = new JTextArea(text);
+         textArea.setColumns(50);
+         textArea.setLineWrap(true);
+         textArea.setWrapStyleWord(true);
+         textArea.setSize(textArea.getPreferredSize().width, 1);
+         JOptionPane.showMessageDialog(null, textArea, "Link to share this loadout!", JOptionPane.PLAIN_MESSAGE);
       }
       catch( HeadlessException e ){
          // TODO Auto-generated catch block
