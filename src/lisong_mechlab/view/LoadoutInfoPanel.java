@@ -23,7 +23,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
@@ -40,8 +42,6 @@ import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.tables.AmmoTableDataModel;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long        serialVersionUID = 4720126200474042446L;
@@ -85,7 +85,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final AlphaStrike        metricAlphaStrike;
    private final MaxDPS             metricMaxDPS;
    private final MaxSustainedDPS    metricSustainedDps;
-   private final TotalAmmoSupply    metricTotalAmmoSupply;
    private final AmmoTableDataModel anAmmoTableDataModel;
    private transient Boolean        inhibitChanges   = false;
 
@@ -102,7 +101,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricAlphaStrike = new AlphaStrike(loadout);
       metricMaxDPS = new MaxDPS(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
-      metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
+      new TotalAmmoSupply(loadout);
 
       anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
 
@@ -361,7 +360,18 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-            loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+        	 ArtemisHandler artemisChecker = new ArtemisHandler(loadout);
+        	 try{
+        	    artemisChecker.checkLoadoutStillValid();
+        	    artemisChecker.checkArtemisAdditionLegal();
+        	    loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+        	 }
+        	 catch(IllegalArgumentException e){
+        	    throw e;
+        	 }
+             
+             updateDisplay();
+            
          }
          else if( source == endoSteel ){
             loadout.getUpgrades().setEndoSteel(anEvent.getStateChange() == ItemEvent.SELECTED);
@@ -392,7 +402,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          JOptionPane.showMessageDialog(this, e.getMessage());
       }
       catch( RuntimeException e ){
-         JOptionPane.showMessageDialog(this, "Error while changing upgrades or efficiency!: " + e.getStackTrace());
+         JOptionPane.showMessageDialog(this, "Error while changing upgrades or efficiency!: " + e.getMessage());
       }
    }
 
