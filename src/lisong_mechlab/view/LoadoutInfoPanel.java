@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -271,7 +272,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       public HeaderRenderer(JTable table){
          if( table.getTableHeader().getDefaultRenderer() instanceof DefaultTableCellRenderer ){
             renderer = (DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer();
-            renderer.setHorizontalAlignment(JLabel.CENTER);
+            renderer.setHorizontalAlignment(SwingConstants.CENTER);
          }
 
       }

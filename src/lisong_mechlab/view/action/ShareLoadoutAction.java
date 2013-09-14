@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.EncodingException;
