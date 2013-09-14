@@ -7,6 +7,7 @@ import java.util.List;
 import lisong_mechlab.converter.GameDataFile;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsMech;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
+import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 import com.thoughtworks.xstream.XStream;
@@ -25,6 +26,7 @@ public class ItemStatsXml{
    public List<ItemStatsMech>     MechList;
    public List<ItemStatsWeapon>   WeaponList;
    public List<ItemStatsModule> ModuleList;
+   public List<ItemStatsUpgradeType> UpgradeTypeList;
 
    public final static ItemStatsXml            stats;
 
@@ -51,6 +53,7 @@ public class ItemStatsXml{
       xstream.alias("Mech", ItemStatsMech.class);
       xstream.alias("Weapon", ItemStatsWeapon.class);
       xstream.alias("Module", ItemStatsModule.class);
+      xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
       
       // Fixes for broken XML from PGI
       xstream.aliasAttribute("Ctype", "CType");
