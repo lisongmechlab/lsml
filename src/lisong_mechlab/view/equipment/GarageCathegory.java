@@ -2,10 +2,10 @@ package lisong_mechlab.view.equipment;
 
 import javax.swing.event.TreeModelEvent;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.model.loadout.MechGarage.Message.Type;
+import lisong_mechlab.util.MessageXBar;
 
 class GarageCathegory extends AbstractTreeCathegory implements MessageXBar.Reader{
    private MechGarage garage = null;

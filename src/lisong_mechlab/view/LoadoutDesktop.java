@@ -8,12 +8,14 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.util.DecodingException;
+import lisong_mechlab.util.MessageXBar;
 
 /**
  * This class is the {@link JDesktopPane} where all the {@link LoadoutFrame} are shown to the user. It provides a method
@@ -60,6 +62,22 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
       }
       catch( PropertyVetoException e ){
          // No-Op
+      }
+   }
+
+   /**
+    * Will open the given {@link Loadout} into the desktop pane by creating a new {@link LoadoutFrame}.
+    * 
+    * @param aLoadout
+    *           The {@link Loadout} to create the frame for.
+    */
+   public void openLoadout(String aLSMLUrl){
+      assert (SwingUtilities.isEventDispatchThread());
+      try{
+         openLoadout(ProgramInit.lsml().loadoutCoder.parse(aLSMLUrl));
+      }
+      catch( DecodingException e ){
+         JOptionPane.showMessageDialog(null, "Unable to import loadout from \"" + aLSMLUrl + "\"! Error:" + e);
       }
    }
 

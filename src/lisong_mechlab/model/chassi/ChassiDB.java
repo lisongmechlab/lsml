@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import lisong_mechlab.converter.GameDataFile;
 import lisong_mechlab.model.mwo_parsing.ItemStatsXml;
@@ -12,6 +13,7 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsMech;
 public class ChassiDB{
    static private final Map<String, Chassi>       variation2chassi;
    static private final Map<String, List<Chassi>> series2chassi;
+   static private final Map<Integer, Chassi>      id2chassi;
 
    /**
     * Looks up a chassi by a short name such as "AS7-D-DC"
@@ -25,6 +27,10 @@ public class ChassiDB{
          throw new IllegalArgumentException("No chassi variation named: " + aShortName + " !");
       }
       return variation2chassi.get(keyShortName);
+   }
+
+   public static Chassi lookup(int aChassiId){
+      return id2chassi.get(aChassiId);
    }
 
    /**
@@ -66,6 +72,7 @@ public class ChassiDB{
 
       variation2chassi = new HashMap<>();
       series2chassi = new HashMap<>();
+      id2chassi = new TreeMap<>();
 
       ItemStatsXml statsXml = ItemStatsXml.stats;
       for(ItemStatsMech mech : statsXml.MechList){
@@ -75,12 +82,13 @@ public class ChassiDB{
 
          variation2chassi.put(modelShort, chassi);
          variation2chassi.put(model, chassi);
-         
+         id2chassi.put(chassi.getMwoId(), chassi);
+
          // Figure out the name of the series and add to series list
-         String []mdfsplit = mech.mdf.split("\\\\");
+         String[] mdfsplit = mech.mdf.split("\\\\");
          String series = mdfsplit[1];
          String seriesShort = mech.name.split("-")[0];
-         if(!series2chassi.containsKey(series)){
+         if( !series2chassi.containsKey(series) ){
             List<Chassi> chassilist = new ArrayList<>();
             series2chassi.put(series, chassilist);
             series2chassi.put(seriesShort, chassilist);

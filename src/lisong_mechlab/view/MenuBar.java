@@ -9,6 +9,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import lisong_mechlab.view.action.ImportMechAction;
 import lisong_mechlab.view.action.OpenHelp;
 import lisong_mechlab.view.action.OpenMechSelectorAction;
 
@@ -27,19 +28,19 @@ public class MenuBar extends JMenuBar{
          menu.add(new JMenuItem(new OpenHelp("About", "About", KeyStroke.getKeyStroke('a'))));
          menu.add(new JMenuItem(new OpenHelp("User Manual", "User-Manual", KeyStroke.getKeyStroke('m'))));
          menu.add(new JMenuItem(new OpenHelp("Legal", "Legal", KeyStroke.getKeyStroke('m'))));
-         
+
          {
             JMenuItem item = new JMenuItem("Quit", KeyEvent.VK_Q);
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent arg0){
-                  application.close();
+                  application.shutdown();
                }
             });
             menu.add(item);
          }
       }
-      
+
       {
          JMenu menu = new JMenu("Mech");
          menu.setMnemonic(KeyEvent.VK_M);
@@ -47,6 +48,7 @@ public class MenuBar extends JMenuBar{
          add(menu);
 
          menu.add(new JMenuItem(new OpenMechSelectorAction("New...", KeyStroke.getKeyStroke('n'))));
+         menu.add(new JMenuItem(new ImportMechAction("Import...", KeyStroke.getKeyStroke('i'))));
       }
 
       {
