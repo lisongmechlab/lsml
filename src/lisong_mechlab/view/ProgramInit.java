@@ -46,13 +46,11 @@ public class ProgramInit extends JFrame{
       @Override
       protected void paintComponent(Graphics g){
          g.drawImage(image, 0, 0, this);
-
-         int penX = 190;
-         int penY = 140;
-
+         int penX = 20;
+         int penY = 250;
+         g.setColor(Color.WHITE);
          g.drawString(progressText, penX, penY);
          penY += 20;
-
          g.drawString(progressSubText, penX, penY);
       }
    }
@@ -69,7 +67,7 @@ public class ProgramInit extends JFrame{
             setResizable(false);
             setUndecorated(true);
             setTitle("loading...");
-            setSize(500, 300);
+            setSize(350, 350);
             setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
             setVisible(true);
             getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK));
