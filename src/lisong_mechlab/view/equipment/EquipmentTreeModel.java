@@ -11,7 +11,6 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
@@ -25,21 +24,23 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.LSML;
 
 public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
    private final List<TreeModelListener>                     listeners = new ArrayList<TreeModelListener>();
    private final DefaultTreeCathegory<AbstractTreeCathegory> root;
 
-   public EquipmentTreeModel(LSML aLSML, MessageXBar xBar) throws Exception{
+   public EquipmentTreeModel(LSML aLSML, MessageXBar xBar){
       root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
 
       List<Item> items = ItemDB.lookup(Item.class);
 
       DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
-      GarageCathegory garage = new GarageCathegory("Garage", root, this, aLSML.getXBar());
+      GarageCathegory garage = new GarageCathegory("Garage", root, this, aLSML.xBar);
 
       // Process the items list
+      List<Item> weapons = new ArrayList<>();
       List<Item> energy = new ArrayList<>();
       List<Item> ballistic = new ArrayList<>();
       List<Item> missile = new ArrayList<>();
@@ -78,12 +79,14 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
             misc.add(item);
          }
       }
+      
+      weapons.addAll(energy);
+      weapons.addAll(ballistic);
+      weapons.addAll(missile);
 
       root.addChild(chassii);
       root.addChild(garage);
-      root.addChild(new EquippableItemsCathegory(energy, "Energy", root, this, xBar));
-      root.addChild(new EquippableItemsCathegory(ballistic, "Ballistic", root, this, xBar));
-      root.addChild(new EquippableItemsCathegory(missile, "Missile", root, this, xBar));
+      root.addChild(new EquippableItemsCathegory(weapons, "Weapons", root, this, xBar));
       root.addChild(new EquippableItemsCathegory(engineStd, "Engine - STD", root, this, xBar));
       root.addChild(new EquippableItemsCathegory(engineXl, "Engine - XL", root, this, xBar));
       root.addChild(new EquippableItemsCathegory(misc, "Misc", root, this, xBar));

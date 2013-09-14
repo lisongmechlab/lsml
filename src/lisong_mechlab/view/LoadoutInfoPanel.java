@@ -23,75 +23,89 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.model.loadout.ArtemisHandler;
+import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Statistics;
+import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.AlphaStrike;
+import lisong_mechlab.model.loadout.metrics.CoolingRatio;
+import lisong_mechlab.model.loadout.metrics.HeatCapacity;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
+import lisong_mechlab.model.loadout.metrics.HeatGeneration;
+import lisong_mechlab.model.loadout.metrics.JumpDistance;
 import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
+import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.tables.AmmoTableDataModel;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long        serialVersionUID = 4720126200474042446L;
-   final private Loadout            loadout;
-   private MessageXBar              xBar;
+   private final Loadout            loadout;
+   private final JProgressBar       massBar;
+   private final JLabel             massValue        = new JLabel("xxx");
+   private final JProgressBar       armorBar;
+   private final JLabel             armorValue       = new JLabel("xxx");
+   private final JProgressBar       critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
+   private final JLabel             critslotsValue   = new JLabel("xxx");
+   private final JCheckBox          ferroFibros      = new JCheckBox("Ferro-Fibrous");
+   private final JCheckBox          endoSteel        = new JCheckBox("Endo-Steel");
+   private final JCheckBox          artemis          = new JCheckBox("Artemis IV");
 
-   final private JProgressBar       massBar;
-   final private JLabel             massValue        = new JLabel("xxx");
-   final private JProgressBar       armorBar;
-   final private JLabel             armorValue       = new JLabel("xxx");
-   final private JProgressBar       critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
-   final private JLabel             critslotsValue   = new JLabel("xxx");
-   final private JCheckBox          ferroFibros      = new JCheckBox("Ferro-Fibrous");
-   final private JCheckBox          endoSteel        = new JCheckBox("Endo-Steel");
-   final private JCheckBox          artemis          = new JCheckBox("Artemis IV");
+   private final JLabel             heatsinks        = new JLabel("xxx");
+   private final JLabel             effectiveHS      = new JLabel("xxx");
+   private final JLabel             timeToOverheat   = new JLabel("xxx");
+   private final JLabel             coolingRatio     = new JLabel("xxx");
+   private final JCheckBox          doubleHeatSinks  = new JCheckBox("Double Heatsinks");
+   private final JCheckBox          coolRun          = new JCheckBox("Cool Run");
+   private final JCheckBox          heatContainment  = new JCheckBox("Heat Containment");
+   private final JCheckBox          doubleBasics     = new JCheckBox("Double Basics");
 
-   final private JLabel             heatsinks        = new JLabel("xxx");
-   final private JLabel             effectiveHS      = new JLabel("xxx");
-   final private JLabel             timeToOverheat   = new JLabel("xxx");
-   final private JLabel             coolingRatio     = new JLabel("xxx");
-   final private JCheckBox          doubleHeatSinks  = new JCheckBox("Double Heatsinks");
-   final private JCheckBox          coolRun          = new JCheckBox("Cool Run");
-   final private JCheckBox          heatContainment  = new JCheckBox("Heat Containment");
-   final private JCheckBox          doubleBasics     = new JCheckBox("Double Basics");
+   private final JLabel             alphaStrike      = new JLabel("xxx");
+   private final JLabel             dpsMax           = new JLabel("xxx");
+   private final JLabel             dpsSustained     = new JLabel("xxx");
+   private final JTable             totalAmmoSupply;
 
-   final private JLabel             alphaStrike      = new JLabel("xxx");
-   final private JLabel             dpsMax           = new JLabel("xxx");
-   final private JLabel             dpsSustained     = new JLabel("xxx");
-   private JTable                   totalAmmoSupply  = new JTable();
+   private final JLabel             jumpJets         = new JLabel("xxx");
+   private final JLabel             topSpeed         = new JLabel("xxx");
+   private final JCheckBox          speedTweak       = new JCheckBox("Speed Tweak");
 
-   final private JLabel             jumpJets         = new JLabel("xxx");
-   final private JLabel             topSpeed         = new JLabel("xxx");
-   final private JCheckBox          speedTweak       = new JCheckBox("Speed Tweak");
-
-   final private Statistics         statistics;
-   final private HeatDissipation    metricHeatDissipation;
-   final private AlphaStrike        metricAlphaStrike;
-   final private MaxDPS             metricMaxDPS;
-   final private MaxSustainedDPS    metricSustainedDps;
-   final private TotalAmmoSupply    metricTotalAmmoSupply;
-   final private AmmoTableDataModel anAmmoTableDataModel;
-   final private TopSpeed     topSpeedMetric;
-   transient private Boolean        inhibitChanges   = false;
+   // Metrics
+   private final TopSpeed           metricTopSpeed;
+   private final JumpDistance       metricJumpDistance;
+   private final HeatGeneration     metricHeatGeneration;
+   private final HeatDissipation    metricHeatDissipation;
+   private final HeatCapacity       metricHeatCapacity;
+   private final CoolingRatio       metricCoolingRatio;
+   private final TimeToOverHeat     metricTimeToOverHeat;
+   private final AlphaStrike        metricAlphaStrike;
+   private final MaxDPS             metricMaxDPS;
+   private final MaxSustainedDPS    metricSustainedDps;
+   private final AmmoTableDataModel anAmmoTableDataModel;
+   private transient Boolean        inhibitChanges   = false;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
-      statistics = new Statistics(loadout);
+
+      metricTopSpeed = new TopSpeed(loadout);
+      metricJumpDistance = new JumpDistance(loadout);
+      metricHeatGeneration = new HeatGeneration(loadout);
+      metricHeatDissipation = new HeatDissipation(loadout);
+      metricHeatCapacity = new HeatCapacity(loadout);
+      metricCoolingRatio = new CoolingRatio(metricHeatDissipation, metricHeatGeneration);
+      metricTimeToOverHeat = new TimeToOverHeat(metricHeatCapacity, metricHeatDissipation, metricHeatGeneration);
       metricAlphaStrike = new AlphaStrike(loadout);
       metricMaxDPS = new MaxDPS(loadout);
-      metricHeatDissipation = new HeatDissipation(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
-      metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
-      anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
-      topSpeedMetric = new TopSpeed(loadout);
-      setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-      this.xBar = anXBar;
+      new TotalAmmoSupply(loadout);
 
+      anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
+
+      setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       anXBar.attach(this);
 
       // General
@@ -227,16 +241,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // Ammo
       {
 
-         
          JPanel ammo = new JPanel();
          totalAmmoSupply = new JTable(anAmmoTableDataModel);
-            
-         
+
          totalAmmoSupply.setModel(anAmmoTableDataModel);
-         JTableHeader header =  totalAmmoSupply.getTableHeader();
+         JTableHeader header = totalAmmoSupply.getTableHeader();
          header.setDefaultRenderer(new HeaderRenderer(totalAmmoSupply));
-//          totalAmmoSupply.updateUI();
-       
+         // totalAmmoSupply.updateUI();
+
          ammo.setLayout(new BorderLayout()); // unless already there
          ammo.add(totalAmmoSupply, BorderLayout.CENTER);
          ammo.add(totalAmmoSupply.getTableHeader(), BorderLayout.NORTH);
@@ -249,30 +261,26 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       updateDisplay();
    }
-   
-// TODO sets formatting correctly but throws exception on system exit need to 
-private static class HeaderRenderer implements TableCellRenderer {
 
-   DefaultTableCellRenderer renderer;
+   // TODO sets formatting correctly but throws exception on system exit need to
+   // FIXME: Move this somewhere else.
+   private static class HeaderRenderer implements TableCellRenderer{
 
-   public HeaderRenderer(JTable table) {
-      if(table.getTableHeader().getDefaultRenderer() instanceof DefaultTableCellRenderer){
-         renderer = (DefaultTableCellRenderer)
-               table.getTableHeader().getDefaultRenderer();
-           renderer.setHorizontalAlignment(JLabel.CENTER);
+      DefaultTableCellRenderer renderer;
+
+      public HeaderRenderer(JTable table){
+         if( table.getTableHeader().getDefaultRenderer() instanceof DefaultTableCellRenderer ){
+            renderer = (DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer();
+            renderer.setHorizontalAlignment(SwingConstants.CENTER);
+         }
+
       }
-      
-   }
 
-   @Override
-   public Component getTableCellRendererComponent(
-       JTable table, Object value, boolean isSelected,
-       boolean hasFocus, int row, int col) {
-       return renderer.getTableCellRendererComponent(
-           table, value, isSelected, hasFocus, row, col);
+      @Override
+      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col){
+         return renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+      }
    }
-}
-
 
    public void updateDisplay(){
       SwingUtilities.invokeLater(new Runnable(){
@@ -304,9 +312,9 @@ private static class HeaderRenderer implements TableCellRenderer {
 
                // Mobility
                // ----------------------------------------------------------------------
-               topSpeed.setText("Top speed: " + df.format(topSpeedMetric.calculate()) + " km/h");
+               topSpeed.setText("Top speed: " + df.format(metricTopSpeed.calculate()) + " km/h");
                jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassi().getMaxJumpJets() + " ("
-                                + df.format(statistics.getJumpDistance()) + " m)");
+                                + df.format(metricJumpDistance.calculate()) + " m)");
                speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
 
                // Heat
@@ -324,9 +332,9 @@ private static class HeaderRenderer implements TableCellRenderer {
                }
 
                heatsinks.setText("Heatsinks: " + loadout.getHeatsinksCount());
-               effectiveHS.setText("Heat capacity: " + df.format(statistics.getHeatCapacity()));
-               timeToOverheat.setText("Seconds to Overheat: " + df.format(statistics.getTimeToOverHeat()));
-               coolingRatio.setText("Cooling efficiency: " + df.format(statistics.getCoolingRatio()));
+               effectiveHS.setText("Heat capacity: " + df.format(metricHeatCapacity.calculate()));
+               timeToOverheat.setText("Seconds to Overheat: " + df.format(metricTimeToOverHeat.calculate()));
+               coolingRatio.setText("Cooling efficiency: " + df.format(metricCoolingRatio.calculate()));
 
                // Offense
                // ----------------------------------------------------------------------
@@ -334,13 +342,12 @@ private static class HeaderRenderer implements TableCellRenderer {
                dpsMax.setText("Max DPS: " + df.format(metricMaxDPS.calculate()));
                dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
 
-                inhibitChanges = false;
+               inhibitChanges = false;
             }
          }
       });
 
    }
-   
 
    @Override
    public void itemStateChanged(ItemEvent anEvent){
@@ -353,7 +360,18 @@ private static class HeaderRenderer implements TableCellRenderer {
 
       try{
          if( source == artemis ){
-            loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+        	 ArtemisHandler artemisChecker = new ArtemisHandler(loadout);
+        	 try{
+        	    artemisChecker.checkLoadoutStillValid();
+        	    artemisChecker.checkArtemisAdditionLegal();
+        	    loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+        	 }
+        	 catch(IllegalArgumentException e){
+        	    throw e;
+        	 }
+             
+             updateDisplay();
+            
          }
          else if( source == endoSteel ){
             loadout.getUpgrades().setEndoSteel(anEvent.getStateChange() == ItemEvent.SELECTED);
@@ -380,16 +398,36 @@ private static class HeaderRenderer implements TableCellRenderer {
             throw new RuntimeException("Unknown source control!");
          }
       }
-      catch(IllegalArgumentException e){
-    	  JOptionPane.showMessageDialog(this, e.getMessage());
+      catch( IllegalArgumentException e ){
+         JOptionPane.showMessageDialog(this, e.getMessage());
       }
       catch( RuntimeException e ){
-         JOptionPane.showMessageDialog(this, "Error while changing upgrades or efficiency!: " + e.getStackTrace());
+         JOptionPane.showMessageDialog(this, "Error while changing upgrades or efficiency!: " + e.getMessage());
       }
    }
 
    @Override
    public void receive(Message aMsg){
-      updateDisplay(); // TODO be a bit more selective when to update
+      if( aMsg instanceof Efficiencies.Message ){
+         Efficiencies.Message m = (Efficiencies.Message)aMsg;
+         if( m.efficiencies == loadout.getEfficiencies() )
+            updateDisplay();
+      }
+      else if( aMsg instanceof Upgrades.Message ){
+         Upgrades.Message m = (Upgrades.Message)aMsg;
+         if( m.source == loadout.getUpgrades() )
+            updateDisplay();
+      }
+      else if( aMsg instanceof LoadoutPart.Message ){
+         LoadoutPart.Message m = (LoadoutPart.Message)aMsg;
+         if( loadout.getPart(m.part.getInternalPart().getType()) == m.part )
+            updateDisplay();
+      }
+      else if( aMsg instanceof Loadout.Message ){
+         Loadout.Message m = (Loadout.Message)aMsg;
+         if( m.loadout == loadout )
+            updateDisplay();
+      }
+
    }
 }

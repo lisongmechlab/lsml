@@ -1,4 +1,4 @@
-package lisong_mechlab;
+package lisong_mechlab.util;
 
 import java.io.IOException;
 import java.io.InputStream;

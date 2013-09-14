@@ -2,6 +2,7 @@ package lisong_mechlab.view.equipment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -9,13 +10,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.TreeModelEvent;
 
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
-import lisong_mechlab.model.MessageXBar.Reader;
+import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.MessageXBar.Reader;
 import lisong_mechlab.view.LoadoutFrame;
 
 class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
@@ -53,13 +55,17 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
    private void determineEquippable(){
       equippableItems.clear();
       for(Item item : allItems){
-         if( item instanceof Ammunition )
+         if( item instanceof Ammunition ){
             continue;
-         if( loadout == null || item.isEquippableOn(loadout) ){
+
+         }
+         else if( loadout == null || item.isEquippableOn(loadout) ){
             equippableItems.add(item);
             if( item instanceof AmmoWeapon ){
                if( loadout != null ){
-                  equippableItems.add(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades()));
+                  if( loadout.getAllItems().contains(item) ){
+                     equippableItems.add(((AmmoWeapon)item).getAmmoType(loadout.getUpgrades()));
+                  }
                }
                else
                   equippableItems.add(((AmmoWeapon)item).getAmmoType(null));
@@ -69,7 +75,19 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
       HashSet<Item> h = new HashSet<>(equippableItems); // Get rid of duplicates
       equippableItems.clear();
       equippableItems.addAll(h);
-      Collections.sort(equippableItems);
+      Collections.sort(equippableItems, new Comparator<Item>(){
+         @Override
+         public int compare(Item aO1, Item aO2){
+            HardpointType h1 = (aO1 instanceof Ammunition) ? ((Ammunition)aO1).getWeaponHardpointType() : aO1.getHardpointType();
+            HardpointType h2 = (aO2 instanceof Ammunition) ? ((Ammunition)aO2).getWeaponHardpointType() : aO2.getHardpointType();
+
+            if( h1 == h2 ){
+               return aO1.compareTo(aO2);
+            }
+            return h1.compareTo(h2);
+         }
+      });
+
       getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
    }
 

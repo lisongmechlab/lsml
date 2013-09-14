@@ -32,6 +32,7 @@ public class Chassi{
    private final int                     engineMin;
    private final int                     engineMax;
    private final double                  engineFactor;
+   private final int                     mwoId;
 
    public Chassi(ItemStatsMech aStatsMech, GameDataFile aGameData){
       MechDefinition mdf = null;
@@ -49,6 +50,7 @@ public class Chassi{
       name = Localization.key2string(aStatsMech.Loc.nameTag);
       shortName = Localization.key2string(aStatsMech.Loc.shortNameTag);
       mwoName = aStatsMech.name;
+      mwoId = aStatsMech.id;
       engineMin = mdfMech.MinEngineRating;
       engineMax = mdfMech.MaxEngineRating;
       maxJumpJets = mdfMech.MaxJumpJets;
@@ -66,14 +68,26 @@ public class Chassi{
       }
       parts = Collections.unmodifiableMap(tempParts);
    }
-   
+
    public double getSpeedFactor(){
-      return engineFactor; 
+      return engineFactor;
    }
 
    @Override
    public String toString(){
       return getNameShort();
+   }
+
+   @Override
+   public int hashCode(){
+      return mwoId;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( !(obj instanceof Chassi) )
+         return false;
+      return (mwoId == ((Chassi)obj).mwoId);
    }
 
    public int getEngineMax(){
@@ -138,5 +152,9 @@ public class Chassi{
          sum += part.getNumHardpoints(aHardpointType);
       }
       return sum;
+   }
+
+   public int getMwoId(){
+      return mwoId;
    }
 }
