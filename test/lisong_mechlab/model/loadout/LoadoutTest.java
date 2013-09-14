@@ -25,6 +25,7 @@ import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -421,6 +422,7 @@ public class LoadoutTest{
       assertEquals(90, cut.getFreeMass(), 0.0);
    }
 
+   @Ignore // This test has been superceded 
    @Test
    public void testCheckArtemisAdditionLegal(){
       // Setup
