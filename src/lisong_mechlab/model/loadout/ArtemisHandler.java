@@ -24,6 +24,8 @@ public class ArtemisHandler {
 	public void checkLoadoutStillValid(){
 		if(!loadout.getUpgrades().hasArtemis()){
 		   for(LoadoutPart part : loadout.getPartLoadOuts()){
+		      additionalCritSlots = 0;
+	         additionalMass = 0;
 	         if(!checkPartCanHoldArtemis(part)) {
 	            throw new IllegalArgumentException("Not enough free crit slots!");
 	         }
@@ -53,6 +55,15 @@ public class ArtemisHandler {
 	}
 	
 	public void checkArtemisAdditionLegal() throws IllegalArgumentException{
+	   additionalCritSlots = 0;
+      additionalMass = 0;
+      for(Item item : loadout.getAllItems()){
+         if((item instanceof MissileWeapon) ){
+            additionalCritSlots++;
+            additionalMass++;
+         }
+
+      }
 	   if(!loadout.getUpgrades().hasArtemis()){
 	      if( (loadout.getMass() + additionalMass) > chassi.getMassMax() ){
 	         throw new IllegalArgumentException("Not enough free mass!");
