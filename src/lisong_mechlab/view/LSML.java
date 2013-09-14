@@ -1,12 +1,14 @@
 package lisong_mechlab.view;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -37,7 +39,8 @@ public class LSML extends JFrame{
 
                                                              @Override
                                                              public boolean accept(File aArg0){
-                                                                return aArg0.isFile() && aArg0.getName().toLowerCase().endsWith(".xml");
+                                                                return aArg0.isDirectory()
+                                                                       || (aArg0.isFile() && aArg0.getName().toLowerCase().endsWith(".xml"));
                                                              }
                                                           };
 
@@ -185,6 +188,9 @@ public class LSML extends JFrame{
       final JScrollPane jScrollPane = new JScrollPane(equipmentPane);
       final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, desktop);
       splitPane.setDividerLocation(180);
+
+      Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icon.png"));
+      setIconImage(icon);
 
       setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
       setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
