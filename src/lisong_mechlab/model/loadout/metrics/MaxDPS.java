@@ -5,8 +5,12 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 
-public class MaxDPS extends Metric{
-
+/**
+ * This {@link Metric} calculates the maximal DPS a {@link Loadout} can output.
+ * 
+ * @author Li Song
+ */
+public class MaxDPS implements Metric{
    private final Loadout loadout;
 
    public MaxDPS(Loadout aLoadout){
@@ -18,7 +22,7 @@ public class MaxDPS extends Metric{
       double ans = 0;
       for(Item item : loadout.getAllItems()){
          if( item instanceof Weapon && item != ItemDB.AMS ){
-            ans += ((Weapon)item).getStat("d/s");
+            ans += ((Weapon)item).getStat("d/s", loadout.getUpgrades());
          }
       }
       return ans;

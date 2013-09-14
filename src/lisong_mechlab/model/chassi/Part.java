@@ -23,7 +23,7 @@ public enum Part{
    private final String  shortName;
    private final String  longName;
    private final boolean twosided;
-   
+
    public String longName(){
       return longName;
    }
@@ -34,6 +34,13 @@ public enum Part{
 
    public boolean isTwoSided(){
       return twosided;
+   }
+
+   private final static Part[] left2right = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso, Part.LeftTorso,
+         Part.LeftLeg, Part.LeftArm       };
+
+   public static Part[] leftToRight(){
+      return left2right;
    }
 
    public static Part fromMwoName(String componentName){

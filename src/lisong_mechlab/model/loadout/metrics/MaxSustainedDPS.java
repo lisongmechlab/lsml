@@ -12,11 +12,16 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 
-public class MaxSustainedDPS extends Metric{
+/**
+ * This {@link Metric} calculates the maximal DPS that a {@link Loadout} can sustain indefinitely.
+ * 
+ * @author Li Song
+ */
+public class MaxSustainedDPS implements Metric{
    private final Loadout         loadout;
    private final HeatDissipation dissipation;
 
-   public MaxSustainedDPS(Loadout aLoadout, HeatDissipation aHeatDissipation){
+   public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation){
       loadout = aLoadout;
       dissipation = aHeatDissipation;
    }
@@ -24,20 +29,22 @@ public class MaxSustainedDPS extends Metric{
    @Override
    public double calculate(){
       double ans = 0.0;
-      Map<Weapon, Double> dd = getDamageDistribution(-1);
+      Map<Weapon, Double> dd = getWeaponRatios(-1);
       for(Map.Entry<Weapon, Double> entry : dd.entrySet()){
-         ans += entry.getKey().getStat("d/s") * entry.getValue();
+         ans += entry.getKey().getStat("d/s", loadout.getUpgrades()) * entry.getValue();
       }
       return ans;
    }
 
    /**
-    * Calculates a distribution of damage over the weapons that achieves the maximal sustained damage throughput.
+    * Calculates the ratio with each weapon should be fired to obtain the maximal sustained DPS. A ratio of 0.0 means
+    * the weapon is never fired and a ratio of 0.5 means the weapon is fired every 2 cooldowns and a ratio of 1.0 means
+    * the weapon is fired every time it is available.
     * 
     * @return A {@link Map} with {@link Weapon} as key and a {@link Double} as value representing a % of how often the
     *         weapon is used.
     */
-   public Map<Weapon, Double> getDamageDistribution(final double range){
+   public Map<Weapon, Double> getWeaponRatios(final double range){
       double heatleft = dissipation.calculate();
       List<Weapon> weapons = new ArrayList<>(15);
       for(Item item : loadout.getAllItems()){
@@ -49,7 +56,9 @@ public class MaxSustainedDPS extends Metric{
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
-               return Double.compare(aO2.getRangeEffectivity(range) * aO2.getStat("d/h"), aO1.getRangeEffectivity(range) * aO1.getStat("d/h"));
+               return Double.compare(aO2.getRangeEffectivity(range) * aO2.getStat("d/h", loadout.getUpgrades()), aO1.getRangeEffectivity(range)
+                                                                                                                 * aO1.getStat("d/h",
+                                                                                                                               loadout.getUpgrades()));
             }
          });
       }
@@ -57,7 +66,7 @@ public class MaxSustainedDPS extends Metric{
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
-               return Double.compare(aO2.getStat("d/h"), aO1.getStat("d/h"));
+               return Double.compare(aO2.getStat("d/h", loadout.getUpgrades()), aO1.getStat("d/h", loadout.getUpgrades()));
             }
          });
       }
@@ -65,7 +74,7 @@ public class MaxSustainedDPS extends Metric{
       Map<Weapon, Double> ans = new HashMap<>();
       while( !weapons.isEmpty() ){
          Weapon weapon = weapons.remove(0);
-         final double heat = weapon.getStat("h/s");
+         final double heat = weapon.getStat("h/s", loadout.getUpgrades());
          final double ratio;
          final double rangefactor = (range >= 0) ? weapon.getRangeEffectivity(range) : 1.0;
 
@@ -74,7 +83,7 @@ public class MaxSustainedDPS extends Metric{
             heatleft -= heat;
          }
          else{
-            ratio = heatleft / weapon.getStat("h/s") * rangefactor;
+            ratio = heatleft / weapon.getStat("h/s", loadout.getUpgrades()) * rangefactor;
             heatleft = 0;
          }
 

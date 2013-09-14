@@ -2,11 +2,16 @@ package lisong_mechlab.model.loadout.metrics;
 
 import lisong_mechlab.model.loadout.Loadout;
 
-public class HeatCapacity extends Metric{
+/**
+ * This {@link Metric} calculates the total heat capacity of a {@link Loadout}.
+ * 
+ * @author Li Song
+ */
+public class HeatCapacity implements Metric{
    private final Loadout       loadout;
    private static final double MECH_BASE_HEAT_CAPACITY = 30;
 
-   public HeatCapacity(Loadout aLoadout){
+   public HeatCapacity(final Loadout aLoadout){
       loadout = aLoadout;
    }
 

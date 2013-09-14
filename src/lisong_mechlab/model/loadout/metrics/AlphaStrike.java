@@ -4,10 +4,15 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 
-public class AlphaStrike extends Metric{
+/**
+ * This metric calculates the alpha strike for a given {@link Loadout}.
+ * 
+ * @author Li Song
+ */
+public class AlphaStrike implements Metric{
    private final Loadout loadout;
 
-   public AlphaStrike(Loadout aLoadout){
+   public AlphaStrike(final Loadout aLoadout){
       loadout = aLoadout;
    }
 

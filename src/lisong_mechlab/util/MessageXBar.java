@@ -1,4 +1,4 @@
-package lisong_mechlab.model;
+package lisong_mechlab.util;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author Li Song
  */
 public class MessageXBar{
-   private final List<WeakReference<Reader>> readers = new ArrayList<WeakReference<MessageXBar.Reader>>();
+   private transient final List<WeakReference<Reader>> readers = new ArrayList<WeakReference<MessageXBar.Reader>>();
 
    public interface Reader{
       void receive(Message aMsg);

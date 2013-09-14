@@ -60,6 +60,53 @@ public class InternalPart{
       return getType().toString();
    }
 
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + criticalslots;
+      result = prime * result + ((hardpoints == null) ? 0 : hardpoints.hashCode());
+      long temp;
+      temp = Double.doubleToLongBits(hitpoints);
+      result = prime * result + (int)(temp ^ (temp >>> 32));
+      result = prime * result + ((internals == null) ? 0 : internals.hashCode());
+      result = prime * result + maxarmor;
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( obj == null )
+         return false;
+      if( !(obj instanceof InternalPart) )
+         return false;
+      InternalPart other = (InternalPart)obj;
+      if( criticalslots != other.criticalslots )
+         return false;
+      if( hardpoints == null ){
+         if( other.hardpoints != null )
+            return false;
+      }
+      else if( !hardpoints.equals(other.hardpoints) )
+         return false;
+      if( Double.doubleToLongBits(hitpoints) != Double.doubleToLongBits(other.hitpoints) )
+         return false;
+      if( internals == null ){
+         if( other.internals != null )
+            return false;
+      }
+      else if( !internals.equals(other.internals) )
+         return false;
+      if( maxarmor != other.maxarmor )
+         return false;
+      if( type != other.type )
+         return false;
+      return true;
+   }
+
    public Part getType(){
       return type;
    }

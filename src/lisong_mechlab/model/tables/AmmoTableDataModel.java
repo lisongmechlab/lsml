@@ -7,8 +7,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.BallisticWeapon;
@@ -20,6 +18,8 @@ import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.loadout.metrics.TotalWeapons;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
 
 public class AmmoTableDataModel extends AbstractTableModel implements MessageXBar.Reader {
 	private static final long				serialVersionUID	= -2671906919112648859L;

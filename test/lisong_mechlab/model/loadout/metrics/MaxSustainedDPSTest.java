@@ -35,7 +35,7 @@ public class MaxSustainedDPSTest{
    private MaxSustainedDPS cut;
 
    @Test
-   public void testGetDamageDistribution() throws Exception{
+   public void testGetWeaponRatios() throws Exception{
       // Setup
       List<Item> items = new ArrayList<>();
       when(loadout.getAllItems()).thenReturn(items);
@@ -53,7 +53,7 @@ public class MaxSustainedDPSTest{
       when(heatDissipation.calculate()).thenReturn(1.0);
 
       // Execute & Verify Range = 0
-      Map<Weapon, Double> range0 = cut.getDamageDistribution(0);
+      Map<Weapon, Double> range0 = cut.getWeaponRatios(0);
       assertEquals(2.0, range0.remove(ItemDB.lookup("MACHINE GUN")), 0.0); // Two of them!
       assertEquals(1.0, range0.remove(ItemDB.lookup("GAUSS RIFLE")), 0.0);
       assertTrue(range0.remove(ItemDB.lookup("STREAK SRM 2")) > 0.0);
@@ -61,7 +61,7 @@ public class MaxSustainedDPSTest{
       assertFalse(range0.containsKey(ItemDB.AMS));
 
       // Execute & Verify Range = 750
-      Map<Weapon, Double> range750 = cut.getDamageDistribution(750);
+      Map<Weapon, Double> range750 = cut.getWeaponRatios(750);
       assertEquals(0.0, range750.remove(ItemDB.lookup("MACHINE GUN")), 0.0); // Two of them!
       assertEquals(0.931818, range750.remove(ItemDB.lookup("GAUSS RIFLE")), 0.00001);
       assertEquals(0.0, range750.remove(ItemDB.lookup("STREAK SRM 2")), 0.0);
@@ -85,14 +85,14 @@ public class MaxSustainedDPSTest{
 
       double result = cut.calculate();
 
-      assertEquals(gauss.getStat("d/s"), result, 0.0);
+      assertEquals(gauss.getStat("d/s", null), result, 0.0);
    }
 
    /**
     * PPC shall have an instant fall off (patch 2013-09-03)
     */
    @Test
-   public void testGetDamageDistribution_ppc(){
+   public void testGetWeaponRatios_ppc(){
       // Setup
       List<Item> items = new ArrayList<>();
       EnergyWeapon ppc = (EnergyWeapon)ItemDB.lookup("PPC");
@@ -101,8 +101,8 @@ public class MaxSustainedDPSTest{
       when(loadout.getAllItems()).thenReturn(items);
       when(heatDissipation.calculate()).thenReturn(10.0);
 
-      Map<Weapon, Double> result_0 = cut.getDamageDistribution(90.0 - 0.001);
-      Map<Weapon, Double> result_1 = cut.getDamageDistribution(90.0 + 0.001);
+      Map<Weapon, Double> result_0 = cut.getWeaponRatios(90.0 - 0.001);
+      Map<Weapon, Double> result_1 = cut.getWeaponRatios(90.0 + 0.001);
 
       assertTrue(result_0.containsKey(ppc));
       assertEquals(0.0, result_0.get(ppc).doubleValue(), 0.0);
@@ -132,7 +132,7 @@ public class MaxSustainedDPSTest{
       Collections.shuffle(items, rng); // "Deterministically random" shuffle
 
       // There is enough heat to dissipate the GAUSS, LLaser and 1.5 ER PPCs
-      double heat = gauss.getStat("h/s") + erppc.getStat("h/s") * 1.5 + llas.getStat("h/s");
+      double heat = gauss.getStat("h/s", null) + erppc.getStat("h/s", null) * 1.5 + llas.getStat("h/s", null);
 
       when(loadout.getAllItems()).thenReturn(items);
       when(heatDissipation.calculate()).thenReturn(heat);
@@ -141,7 +141,7 @@ public class MaxSustainedDPSTest{
       double result = cut.calculate();
 
       // Verify
-      double expected = gauss.getStat("d/s") + erppc.getStat("d/s") * 1.5 + llas.getStat("d/s");
+      double expected = gauss.getStat("d/s", null) + erppc.getStat("d/s", null) * 1.5 + llas.getStat("d/s", null);
       assertEquals(expected, result, 0.0);
    }
 }
