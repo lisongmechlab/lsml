@@ -55,7 +55,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menuBar.add(createMenuLoadout());
       menuBar.add(createMenuArmor());
       menuBar.add(createMenuGraphs());
-      menuBar.add(new JMenuItem(new ShareLoadoutAction(loadout)));
+      menuBar.add(createMenuShare());
       setJMenuBar(menuBar);
 
       // Set the window's location.
@@ -174,6 +174,12 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       JMenuItem item = new JMenuItem(text);
       item.addActionListener(anActionListener);
       return item;
+   }
+
+   private JMenu createMenuShare(){
+      JMenu menu = new JMenu("Share!");
+      menu.add(new JMenuItem(new ShareLoadoutAction(loadout)));
+      return menu;
    }
 
    private JMenu createMenuLoadout(){
