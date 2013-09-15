@@ -68,6 +68,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       sp.setDividerLocation(-1);
       sp.setDividerSize(0);
 
+      setFrameIcon(null);
       setContentPane(sp);
 
       pack();
