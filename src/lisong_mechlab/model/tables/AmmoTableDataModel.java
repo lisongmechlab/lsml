@@ -1,5 +1,6 @@
 package lisong_mechlab.model.tables;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -344,7 +345,13 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 		if (aColumnIndex == 3) {
 			Double[] combatArray = new Double[combatColumn.size()];
 			combatArray = combatColumn.values().toArray(combatArray);
-			return combatArray[aRowIndex];
+			DecimalFormat decFormat = new DecimalFormat();
+			decFormat.setMaximumFractionDigits(0);
+			if(!combatArray[aRowIndex].isInfinite()){
+			   String decOut = decFormat.format(combatArray[aRowIndex]);
+			return new Double(decOut);
+			}
+         return combatArray[aRowIndex];
 		}
 		return "false";
 	}
