@@ -28,6 +28,6 @@ public class HeatSink extends Module{
    
    @Override
    public boolean isEquippableOn(Loadout aLoadout){
-      return aLoadout.getUpgrades().hasDoubleHeatSinks() == isDouble();
+      return aLoadout.getUpgrades().getHeatSink().getAllowedType() == this;
    }
 }

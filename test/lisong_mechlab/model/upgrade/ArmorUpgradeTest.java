@@ -32,6 +32,7 @@ public class ArmorUpgradeTest{
       assertFalse(cut.getDescription().equals(""));
       assertEquals(0, cut.getExtraSlots());
       assertEquals(32.0, cut.getArmorPerTon(), 0.0);
+      assertEquals(2.0, cut.getArmorMass(64), 0.0);
    }
 
    /**
@@ -48,5 +49,6 @@ public class ArmorUpgradeTest{
       assertFalse(cut.getDescription().equals(""));
       assertEquals(14, cut.getExtraSlots());
       assertEquals(35.84, cut.getArmorPerTon(), 0.0);
+      assertEquals(64.0 / 35.84, cut.getArmorMass(64), 0.0);
    }
 }

@@ -26,6 +26,11 @@ import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutPartConverter;
+import lisong_mechlab.model.upgrade.ArmorUpgrade;
+import lisong_mechlab.model.upgrade.GuidanceUpgrade;
+import lisong_mechlab.model.upgrade.HeatsinkUpgrade;
+import lisong_mechlab.model.upgrade.StructureUpgrade;
+import lisong_mechlab.model.upgrade.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.XmlReader;
 
@@ -42,7 +47,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * 
  * @author Emily Björk
  */
-public class Loadout implements MessageXBar.Reader{
+public class Loadout{
    public static class Message implements MessageXBar.Message{
       @Override
       public int hashCode(){
@@ -112,7 +117,6 @@ public class Loadout implements MessageXBar.Reader{
       }
 
       xBar = anXBar;
-      xBar.attach(this);
       xBar.post(new Message(this, Type.CREATE));
 
       efficiencies = new Efficiencies(xBar);
@@ -186,14 +190,20 @@ public class Loadout implements MessageXBar.Reader{
       if( maybeUpgrades.size() == 1 ){
          Element stockUpgrades = maybeUpgrades.get(0);
          // TODO: We really should fix issue #75 to get rid of these hard coded constants.
-         getUpgrades().setDoubleHeatSinks(reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double"));
-         getUpgrades().setFerroFibrous(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801"));
-         getUpgrades().setEndoSteel(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101"));
-         getUpgrades().setArtemis(reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1"));
+
+         final int armorId = Integer.parseInt(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID"));
+         final int structureId = Integer.parseInt(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID"));
+         final int heatsinksId = reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double") ? 3001 : 3000;
+         final int guidanceId = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1") ? 3050 : 3051;
+
+         upgrades.setArmor((ArmorUpgrade)UpgradeDB.lookup(armorId));
+         upgrades.setStructure((StructureUpgrade)UpgradeDB.lookup(structureId));
+         upgrades.setHeatSink((HeatsinkUpgrade)UpgradeDB.lookup(heatsinksId));
+         upgrades.setGuidance((GuidanceUpgrade)UpgradeDB.lookup(guidanceId));
 
          // FIXME: Revisit this fix! The game files are broken.
          if( chassi.getNameShort().equals("KTO-19") ){
-            getUpgrades().setFerroFibrous(true);
+            upgrades.setArmor((ArmorUpgrade)UpgradeDB.lookup(2801));
          }
       }
 
@@ -229,23 +239,17 @@ public class Loadout implements MessageXBar.Reader{
       for(LoadoutPart loadoutPart : parts.values()){
          loadoutPart.removeAllItems();
       }
-      upgrades.setArtemis(false);
-      upgrades.setEndoSteel(false);
-      upgrades.setFerroFibrous(false);
-      upgrades.setDoubleHeatSinks(false);
+      upgrades.setArmor(UpgradeDB.STANDARD_ARMOR);
+      upgrades.setStructure(UpgradeDB.STANDARD_STRUCTURE);
+      upgrades.setHeatSink(UpgradeDB.STANDARD_HEATSINNKS);
+      upgrades.setGuidance(UpgradeDB.STANDARD_GUIDANCE);
    }
 
    public double getMass(){
-      double ans = chassi.getInternalMass();
-      if( getUpgrades().hasEndoSteel() ){
-         ans *= 0.5;
-         ans += (chassi.getMassMax() % 10) * 0.05;
-      }
+      double ans = upgrades.getStructure().getStructureMass(chassi) + upgrades.getArmor().getArmorMass(getArmor());
       for(LoadoutPart partConf : parts.values()){
          ans += partConf.getItemMass();
       }
-
-      ans += getArmor() / (LoadoutPart.ARMOR_PER_TON * (getUpgrades().hasFerroFibrous() ? 1.12 : 1));
       return ans;
    }
 
@@ -261,6 +265,10 @@ public class Loadout implements MessageXBar.Reader{
       return parts.get(aPartType);
    }
 
+   public Collection<LoadoutPart> getPartLoadOuts(){
+      return parts.values();
+   }
+
    public int getArmor(){
       int ans = 0;
       for(LoadoutPart partConf : parts.values()){
@@ -274,15 +282,7 @@ public class Loadout implements MessageXBar.Reader{
    }
 
    public int getNumCriticalSlotsUsed(){
-      int ans = 0;
-
-      if( getUpgrades().hasFerroFibrous() ){
-         ans += 14; // TODO: We need to prepare to handle Clan FF
-      }
-      if( getUpgrades().hasEndoSteel() ){
-         ans += 14; // TODO: We need to prepare to handle Clan ES
-      }
-
+      int ans = upgrades.getStructure().getExtraSlots() + upgrades.getArmor().getExtraSlots();
       for(LoadoutPart partConf : parts.values()){
          ans += partConf.getNumCriticalSlotsUsed();
       }
@@ -320,10 +320,6 @@ public class Loadout implements MessageXBar.Reader{
       return ans;
    }
 
-   public Collection<LoadoutPart> getPartLoadOuts(){
-      return parts.values();
-   }
-
    public void save(File aFile) throws IOException{
       FileWriter fileWriter = null;
       try{
@@ -357,39 +353,6 @@ public class Loadout implements MessageXBar.Reader{
       stream.addImplicitMap(Loadout.class, "parts", LoadoutPart.class, "internalpart");
       return stream;
    }
-
-   @Override
-   public void receive(MessageXBar.Message aMsg){
-      if( aMsg instanceof Upgrades.Message ){
-         Upgrades.Message msg = (Upgrades.Message)aMsg;
-         if( msg.source != upgrades ){
-            return;
-         }
-         switch( msg.msg ){
-            case ARMOR:
-               if( getNumCriticalSlotsFree() < 0 ){
-                  upgrades.setFerroFibrous(false);
-                  throw new IllegalArgumentException("Not enough free slots!");
-               }
-               break;
-            case GUIDANCE:
-               break;
-            case HEATSINKS:
-               break;
-            case STRUCTURE:
-               if( getNumCriticalSlotsFree() < 0 ){
-                  upgrades.setEndoSteel(false);
-                  throw new IllegalArgumentException("Not enough free slots!");
-               }
-               break;
-            default:
-               break;
-
-         }
-      }
-   }
-
-   
 
    public double getFreeMass(){
       double freeMass = chassi.getMassMax() - getMass();
