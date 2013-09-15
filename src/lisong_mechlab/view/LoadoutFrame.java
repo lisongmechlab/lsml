@@ -264,28 +264,27 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
    @Override
    public void receive(Message aMsg){
+      if( !aMsg.isForMe(loadout) )
+         return;
+
       if( aMsg instanceof MechGarage.Message ){
          MechGarage.Message msg = (MechGarage.Message)aMsg;
-         if( msg.loadout == loadout ){
-            if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
-               dispose(); // Closes frame
-            }
-            else if( msg.type == MechGarage.Message.Type.LoadoutAdded ){
-               SwingUtilities.invokeLater(new Runnable(){
-                  @Override
-                  public void run(){
-                     addToGarage.setEnabled(false);
-                  }
-               });
-            }
+         if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
+            dispose(); // Closes frame
+         }
+         else if( msg.type == MechGarage.Message.Type.LoadoutAdded ){
+            SwingUtilities.invokeLater(new Runnable(){
+               @Override
+               public void run(){
+                  addToGarage.setEnabled(false);
+               }
+            });
          }
       }
       else if( aMsg instanceof Loadout.Message ){
          Loadout.Message msg = (Loadout.Message)aMsg;
-         if( msg.loadout == loadout ){
-            if( msg.type == Loadout.Message.Type.RENAME ){
-               setTitle(loadout.toString());
-            }
+         if( msg.type == Loadout.Message.Type.RENAME ){
+            setTitle(loadout.toString());
          }
       }
    }
