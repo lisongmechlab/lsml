@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import javax.swing.SwingUtilities;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import lisong_mechlab.model.item.AmmoWeapon;
@@ -308,7 +307,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 		return columnNames[aColumnIndex];
 	}
 
-	public void tableChanged(TableModelEvent e) {
+	public void tableChanged() {
 		totalAmmoSupply = new TotalAmmoSupply(aLoadout);
 		totalAmmoSupply.calculate();
 		fillInData();
