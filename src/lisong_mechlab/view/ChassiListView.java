@@ -210,6 +210,7 @@ public class ChassiListView extends JFrame{
       }
 
       Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+      setIconImage(ProgramInit.programIcon);
       setResizable(true);
       setTitle("Chassi selection");
       setSize(500, 300);

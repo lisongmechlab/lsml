@@ -29,6 +29,7 @@ import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.OpenHelp;
 
 import org.jfree.chart.ChartFactory;
@@ -84,6 +85,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
       chartPanel.add(button);
 
+      setIconImage(ProgramInit.programIcon);
       setSize(800, 600);
       setVisible(true);
    }
