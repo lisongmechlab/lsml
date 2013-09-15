@@ -31,9 +31,7 @@ import lisong_mechlab.util.MessageXBar.Message;
 
 public class PartList extends JList<Item>{
    private static final long            serialVersionUID = 5995694414450060827L;
-
    private final LoadoutPart            part;
-
    private final DynamicSlotDistributor slotDistributor;
 
    private enum ListEntryType{
@@ -41,7 +39,6 @@ public class PartList extends JList<Item>{
    }
 
    private class Renderer extends JLabel implements ListCellRenderer<Object>{
-
       private static final long serialVersionUID = -8157859670319431469L;
 
       @Override
@@ -90,12 +87,9 @@ public class PartList extends JList<Item>{
                break;
             }
          }
-
-         if( isSelected && pair.first != ListEntryType.Empty ){
-            setForeground(getForeground().brighter());
-            setBackground(getBackground().brighter());
-         }
-
+         /*
+          * if( isSelected && pair.first != ListEntryType.Empty ){ setBackground(getBackground().brighter()); }
+          */
          return this;
       }
 
