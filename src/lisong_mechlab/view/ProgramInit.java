@@ -31,6 +31,7 @@ public class ProgramInit extends JFrame{
    private static final long  MIN_SPLASH_TIME_MS = 20;
    private static ProgramInit instance;
    private static LSML        instanceL;
+   public static Image        programIcon;
 
    private String             progressSubText    = "";
    private String             progressText       = "";
@@ -58,12 +59,15 @@ public class ProgramInit extends JFrame{
    ProgramInit(){
       instance = this;
       SwingUtilities.invokeLater(new Runnable(){
+
          @Override
          public void run(){
             Image splash = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/splash.png"));
             setContentPane(new BackgroundImage(splash));
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
+            programIcon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icon.png"));
+            setIconImage(programIcon);
             setResizable(false);
             setUndecorated(true);
             setTitle("loading...");
