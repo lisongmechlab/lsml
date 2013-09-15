@@ -12,6 +12,10 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
  * @author Li Song
  */
 public class UpgradeDB{
+   public static final ArmorUpgrade     STANDARD_ARMOR;
+   public static final StructureUpgrade STANDARD_STRUCTURE;
+   public static final GuidanceUpgrade  STANDARD_GUIDANCE;
+   public static final HeatsinkUpgrade  STANDARD_HEATSINNKS;
    private static Map<Integer, Upgrade> id2upgrade;
 
    public static void initialize(){
@@ -22,19 +26,27 @@ public class UpgradeDB{
          UpgradeType type = UpgradeType.fromMwo(upgradeType.UpgradeTypeStats.type);
          switch( type ){
             case ARMOR:
-               addUpgrade(new ArmorUpgrade(upgradeType));
+               addUpgrade(new ArmorUpgrade(upgradeType), upgradeType);
                break;
             case GUIDANCE:
-               addUpgrade(new GuidanceUpgrade(upgradeType));
+               addUpgrade(new GuidanceUpgrade(upgradeType), upgradeType);
                break;
             case HEATSINKS:
-               addUpgrade(new HeatsinkUpgrade(upgradeType));
+               addUpgrade(new HeatsinkUpgrade(upgradeType), upgradeType);
                break;
             case STRUCTURE:
-               addUpgrade(new StructureUpgrade(upgradeType));
+               addUpgrade(new StructureUpgrade(upgradeType), upgradeType);
                break;
          }
       }
+   }
+
+   static{
+      initialize();
+      STANDARD_ARMOR = (ArmorUpgrade)lookup(2810);
+      STANDARD_STRUCTURE = (StructureUpgrade)lookup(3100);
+      STANDARD_GUIDANCE = (GuidanceUpgrade)lookup(3003);
+      STANDARD_HEATSINNKS = (HeatsinkUpgrade)lookup(3051);
    }
 
    /**
@@ -54,7 +66,9 @@ public class UpgradeDB{
       return ans;
    }
 
-   private static void addUpgrade(Upgrade anUpgrade){
+   private static void addUpgrade(Upgrade anUpgrade, ItemStatsUpgradeType anUpgradeType){
       id2upgrade.put(anUpgrade.getMwoId(), anUpgrade);
+      if( anUpgradeType.UpgradeTypeStats.associatedItem > 0 )
+         id2upgrade.put(anUpgradeType.UpgradeTypeStats.associatedItem, anUpgrade);
    }
 }

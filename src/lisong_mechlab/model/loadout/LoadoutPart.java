@@ -10,8 +10,6 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.item.AmmoWeapon;
-import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
@@ -24,12 +22,10 @@ import lisong_mechlab.util.MessageXBar;
 
 /**
  * This class represents a configured {@link InternalPart}.
- * <p>
- * TODO: Change structure for "Loadoutpart has an internal part" to "Loadout part is an internal part"
  * 
  * @author Li Song
  */
-public class LoadoutPart implements MessageXBar.Reader{
+public class LoadoutPart{
    public static class Message implements MessageXBar.Message{
       public Message(LoadoutPart aPart, Type aType){
          part = aPart;
@@ -53,8 +49,6 @@ public class LoadoutPart implements MessageXBar.Reader{
       final public Type        type;
    }
 
-   public final static double            ARMOR_PER_TON   = 32.0;
-
    public final static Internal          ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
 
    private final InternalPart            internalPart;
@@ -71,7 +65,6 @@ public class LoadoutPart implements MessageXBar.Reader{
       loadout = aLoadOut;
       armor = new TreeMap<ArmorSide, Integer>();
       xBar = aXBar;
-      xBar.attach(this);
 
       if( internalPart.getType().isTwoSided() ){
          armor.put(ArmorSide.FRONT, 0);
@@ -302,46 +295,6 @@ public class LoadoutPart implements MessageXBar.Reader{
       return Math.min(ans, getNumEngineHeatsinksMax());
    }
 
-   @Override
-   public void receive(MessageXBar.Message aMsg){
-      if( aMsg instanceof Upgrades.Message ){
-         Upgrades.Message msg = (Upgrades.Message)aMsg;
-         if( msg.source != loadout.getUpgrades() ){
-            return;
-         }
-
-         if( msg.msg == Upgrades.Message.ChangeMsg.HEATSINKS ){
-            if( msg.source.hasDoubleHeatSinks() )
-               while( items.remove(ItemDB.SHS) ){/* No-Op */}
-            else
-               while( items.remove(ItemDB.DHS) ){/* No-Op */}
-         }
-         else if( msg.msg == Upgrades.Message.ChangeMsg.GUIDANCE ){
-            boolean changed = false;
-
-            for(AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)){
-               Upgrades oldUpgrades = new Upgrades(null);
-               oldUpgrades.setArtemis(!msg.source.hasArtemis());
-               Ammunition oldAmmoType = weapon.getAmmoType(oldUpgrades);
-               Ammunition newAmmoType = weapon.getAmmoType(msg.source);
-               if( oldAmmoType == newAmmoType )
-                  continue;
-
-               while( items.remove(oldAmmoType) ){
-                  items.add(newAmmoType);
-                  changed = true;
-               }
-            }
-            if( changed )
-               xBar.post(new Message(this, Type.ItemsChanged));
-
-            // loadout.getUpgrades().setArtemis(false);
-
-         }
-
-      }
-   }
-
    public String getItemDisplayName(Item anItem){
       return anItem.getName(loadout.getUpgrades());
    }
@@ -418,10 +371,7 @@ public class LoadoutPart implements MessageXBar.Reader{
 
    private boolean checkHeatsinkRules(HeatSink anItem){
       // Don't allow standard heat sinks when double heat sinks are upgraded etc.
-      if( loadout.getUpgrades().hasDoubleHeatSinks() && anItem != ItemDB.lookup(3001) ){
-         return false;
-      }
-      if( !loadout.getUpgrades().hasDoubleHeatSinks() && anItem != ItemDB.lookup(3000) ){
+      if( loadout.getUpgrades().getHeatSink().getAllowedType() != anItem ){
          return false;
       }
 

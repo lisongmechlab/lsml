@@ -31,14 +31,14 @@ public class DynamicSlotDistributor{
     * @return A number of slots to display, can be 0.
     */
    public int getDynamicStructureSlots(LoadoutPart aPart){
-      if( !loadout.getUpgrades().hasEndoSteel() )
+      final int structSlots = loadout.getUpgrades().getStructure().getExtraSlots();
+      final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();
+      if( structSlots < 1 )
          return 0;
-      // FIXME: hard coded constants
-      final int numFF = loadout.getUpgrades().hasFerroFibrous() ? 14 : 0;
 
       final int filled = getCumulativeFreeSlots(aPart.getInternalPart().getType());
-      final int freeSlotsInPart = Math.min(aPart.getNumCriticalSlotsFree(), Math.max(0, aPart.getNumCriticalSlotsFree() + filled - numFF));
-      final int numSlotsToFill = 14 + numFF;
+      final int freeSlotsInPart = Math.min(aPart.getNumCriticalSlotsFree(), Math.max(0, aPart.getNumCriticalSlotsFree() + filled - armorSlots));
+      final int numSlotsToFill = structSlots + armorSlots;
       return Math.min(freeSlotsInPart, Math.max(numSlotsToFill - filled, 0));
    }
 
@@ -50,13 +50,12 @@ public class DynamicSlotDistributor{
     * @return A number of slots to display, can be 0.
     */
    public int getDynamicArmorSlots(LoadoutPart aPart){
-      if( !loadout.getUpgrades().hasFerroFibrous() )
+      final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();
+      if( armorSlots < 1 )
          return 0;
 
       int filled = getCumulativeFreeSlots(aPart.getInternalPart().getType());
-      // FIXME: hard coded constant
-      final int numSlotsToFill = 14;
-      return Math.min(aPart.getNumCriticalSlotsFree(), Math.max(numSlotsToFill - filled, 0));
+      return Math.min(aPart.getNumCriticalSlotsFree(), Math.max(armorSlots - filled, 0));
    }
 
    /**

@@ -1,14 +1,14 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.upgrade.Upgrade;
 
 /**
- * This interface represents a base for handling changing upgrades on a mech. Such as armor type, internal structure,
- * guidance and double heat sinks.
+ * This interface defines handling of one upgrade type for a {@link Loadout}; such as armor, structure and guidance.
  * 
  * @author Li Song
  */
-public interface UpgradeHandler{
+public interface UpgradeHandler<T extends Upgrade> {
    /**
     * Return true if the {@link Loadout} given in the constructor can handle the upgrade in the {@link Item}.
     * 
@@ -16,7 +16,7 @@ public interface UpgradeHandler{
     *           The upgrade to apply.
     * @return <code>true</code> if the {@link Loadout} can take the upgrade and still remain in a legal state.
     */
-   public boolean canApplyUpgrade(Item anUpgradeItem);
+   public boolean canApplyUpgrade(T anUpgradeItem);
 
    /**
     * Will apply the given upgrade to the {@link Loadout} given in the constructor. If the {@link Loadout} is unable to
@@ -26,5 +26,10 @@ public interface UpgradeHandler{
     * @throws IllegalArgumentException
     *            Thrown if the {@link Loadout} would end up in an illegal state after the upgrade.
     */
-   public void applyUpgrade(Item anUpgradeItem) throws IllegalArgumentException;
+   public void applyUpgrade(T anUpgradeItem) throws IllegalArgumentException;
+
+   /**
+    * @return The current type for
+    */
+   public T getUpgrade();
 }

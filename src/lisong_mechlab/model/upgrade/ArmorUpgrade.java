@@ -30,4 +30,15 @@ public class ArmorUpgrade extends Upgrade{
    public double getArmorPerTon(){
       return armorPerTon;
    }
+
+   /**
+    * Calculates the mass of the given amount of armor points.
+    * 
+    * @param aArmor
+    *           The amount of armor.
+    * @return
+    */
+   public double getArmorMass(int aArmor){
+      return aArmor / armorPerTon;
+   }
 }
