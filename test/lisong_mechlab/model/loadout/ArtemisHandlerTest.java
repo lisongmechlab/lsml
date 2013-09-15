@@ -11,6 +11,7 @@ import lisong_mechlab.model.helpers.MockLoadoutContainer;
  */
 public class ArtemisHandlerTest{
    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
+   @SuppressWarnings("unused")
    private final ArtemisHandler       cut = new ArtemisHandler(mlc.loadout);
    
    @Test

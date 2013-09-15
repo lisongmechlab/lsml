@@ -1,5 +1,6 @@
 package lisong_mechlab.model.loadout;
 
+import lisong_mechlab.model.loadout.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 
 public class Upgrades{
@@ -14,6 +15,10 @@ public class Upgrades{
       public final ChangeMsg msg;
       public final Upgrades  source;
 
+      public enum ChangeMsg{
+         GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
+      }
+
       @Override
       public boolean equals(Object obj){
          if( obj instanceof Message ){
@@ -27,10 +32,6 @@ public class Upgrades{
          msg = aChangeMsg;
          source = anUpgrades;
       }
-   }
-
-   public enum ChangeMsg{
-      GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
    }
 
    public Upgrades(MessageXBar anXBar){

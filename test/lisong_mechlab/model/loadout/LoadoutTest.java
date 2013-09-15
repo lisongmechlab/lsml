@@ -158,7 +158,7 @@ public class LoadoutTest{
 
       // Verify
       assertTrue(cut.getUpgrades().hasDoubleHeatSinks());
-      verify(xBar).post(new Upgrades.Message(Upgrades.ChangeMsg.HEATSINKS, cut.getUpgrades()));
+      verify(xBar).post(new Upgrades.Message(Upgrades.Message.ChangeMsg.HEATSINKS, cut.getUpgrades()));
       assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.SHS));
 
    }
@@ -179,7 +179,7 @@ public class LoadoutTest{
 
       // Verify
       assertFalse(cut.getUpgrades().hasDoubleHeatSinks());
-      verify(xBar).post(new Upgrades.Message(Upgrades.ChangeMsg.HEATSINKS, cut.getUpgrades()));
+      verify(xBar).post(new Upgrades.Message(Upgrades.Message.ChangeMsg.HEATSINKS, cut.getUpgrades()));
       assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.DHS));
    }
 
