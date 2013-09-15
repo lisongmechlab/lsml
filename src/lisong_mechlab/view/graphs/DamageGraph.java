@@ -155,27 +155,20 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
 
    @Override
    public void receive(Message aMsg){
+      if( !aMsg.isForMe(loadout) )
+         return;
+
       if( aMsg instanceof LoadoutPart.Message ){
          LoadoutPart.Message msg = (LoadoutPart.Message)aMsg;
-         if( !loadout.getPartLoadOuts().contains(msg.part) )
-            return;
-
          if( msg.type == LoadoutPart.Message.Type.ArmorChanged )
             return;
       }
       else if( aMsg instanceof Upgrades.Message ){
          Upgrades.Message msg = (Upgrades.Message)aMsg;
-         if( msg.source != loadout.getUpgrades() )
-            return;
          if( msg.msg != Upgrades.Message.ChangeMsg.HEATSINKS )
             return;
       }
-      else if( aMsg instanceof Efficiencies.Message ){
-         Efficiencies.Message msg = (Efficiencies.Message)aMsg;
-         if( msg.efficiencies != loadout.getEfficiencies() )
-            return;
-      }
-      else{
+      else if( !(aMsg instanceof Efficiencies.Message) ){
          return;
       }
 

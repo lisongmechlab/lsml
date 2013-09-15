@@ -13,7 +13,7 @@ public class Upgrades{
 
    public static class Message implements MessageXBar.Message{
       public final ChangeMsg msg;
-      public final Upgrades  source;
+      private final Upgrades source;
 
       public enum ChangeMsg{
          GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
@@ -31,6 +31,11 @@ public class Upgrades{
       Message(ChangeMsg aChangeMsg, Upgrades anUpgrades){
          msg = aChangeMsg;
          source = anUpgrades;
+      }
+
+      @Override
+      public boolean isForMe(Loadout aLoadout){
+         return aLoadout.getUpgrades() == source;
       }
    }
 
@@ -86,7 +91,7 @@ public class Upgrades{
    }
 
    public void setArtemis(boolean anArtemis){
-	   
+
       if( anArtemis != artemis ){
          artemis = anArtemis;
          if( xBar != null )

@@ -39,7 +39,7 @@ public class MechGarage{
 
       public final Type       type;
       public final MechGarage garage;
-      public final Loadout    loadout;
+      private final Loadout   loadout;
 
       public Message(Type aType, MechGarage aGarage, Loadout aLoadout){
          type = aType;
@@ -51,6 +51,10 @@ public class MechGarage{
          this(aType, aGarage, null);
       }
 
+      @Override
+      public boolean isForMe(Loadout aLoadout){
+         return aLoadout == loadout;
+      }
    }
 
    private final List<Loadout>   mechs = new ArrayList<Loadout>();

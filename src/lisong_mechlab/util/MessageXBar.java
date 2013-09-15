@@ -4,6 +4,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import lisong_mechlab.model.loadout.Loadout;
+
 /**
  * Implements a message passing framework for an UI where the components don't have to know about each other, only about
  * the crossbar.
@@ -13,14 +15,31 @@ import java.util.List;
 public class MessageXBar{
    private transient final List<WeakReference<Reader>> readers = new ArrayList<WeakReference<MessageXBar.Reader>>();
 
+   /**
+    * Classes that need to be able to listen in on the {@link MessageXBar} should implement this interface.
+    * 
+    * @author Li Song
+    */
    public interface Reader{
       void receive(Message aMsg);
    }
 
+   /**
+    * A base interface for all messages sent on the {@link MessageXBar}.
+    * 
+    * @author Li Song
+    */
    public interface Message{
-      /* Empty interface. */
+      public boolean isForMe(Loadout aLoadout);
    }
 
+   /**
+    * Sends a message to all listeners on the {@link MessageXBar}. Those listeners which have been disposed of since the
+    * last call to {@link #post(Message)} will be automatically disposed of.
+    * 
+    * @param aMessage
+    *           The message to send.
+    */
    public void post(Message aMessage){
       List<WeakReference<Reader>> toBeRemoved = new ArrayList<WeakReference<Reader>>();
       for(WeakReference<Reader> ref : readers){
@@ -33,10 +52,35 @@ public class MessageXBar{
       readers.removeAll(toBeRemoved);
    }
 
+   /**
+    * Attaches a new {@link Reader} to this {@link MessageXBar}. The {@link Reader} is automatically converted to a weak
+    * reference.
+    * 
+    * @see #attach(Reader)
+    * @param aReader
+    *           The {@link Reader} to add.
+    */
+   public void attach(Reader aReader){
+      attach(new WeakReference<MessageXBar.Reader>(aReader));
+   }
+
+   /**
+    * Attaches a new {@link Reader} to this {@link MessageXBar}. The {@link MessageXBar} only keeps weak references so
+    * this won't prevent objects from being garbage collected.
+    * 
+    * @param aWeakReference
+    *           The object that shall receive messages.
+    */
    public void attach(WeakReference<Reader> aWeakReference){
       readers.add(aWeakReference);
    }
 
+   /**
+    * Detaches a {@link Reader} from the {@link MessageXBar}.
+    * 
+    * @param aReader
+    *           The object that shall be removed messages.
+    */
    public void detach(Reader aReader){
       List<WeakReference<Reader>> toBeRemoved = new ArrayList<WeakReference<Reader>>();
       for(WeakReference<Reader> ref : readers){
@@ -45,9 +89,5 @@ public class MessageXBar{
          }
       }
       readers.removeAll(toBeRemoved);
-   }
-
-   public void attach(Reader aReader){
-      attach(new WeakReference<MessageXBar.Reader>(aReader));
    }
 }

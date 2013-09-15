@@ -23,13 +23,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
+
 import lisong_mechlab.model.loadout.ArtemisHandler;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.CoolingRatio;
 import lisong_mechlab.model.loadout.metrics.HeatCapacity;
@@ -42,6 +38,8 @@ import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.tables.AmmoTableDataModel;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long        serialVersionUID = 4720126200474042446L;
@@ -360,18 +358,18 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-        	 ArtemisHandler artemisChecker = new ArtemisHandler(loadout);
-        	 try{
-        	    artemisChecker.checkLoadoutStillValid();
-        	    artemisChecker.checkArtemisAdditionLegal();
-        	    loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
-        	 }
-        	 catch(IllegalArgumentException e){
-        	    throw e;
-        	 }
-             
-             updateDisplay();
-            
+            ArtemisHandler artemisChecker = new ArtemisHandler(loadout);
+            try{
+               artemisChecker.checkLoadoutStillValid();
+               artemisChecker.checkArtemisAdditionLegal();
+               loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+            }
+            catch( IllegalArgumentException e ){
+               throw e;
+            }
+
+            updateDisplay();
+
          }
          else if( source == endoSteel ){
             loadout.getUpgrades().setEndoSteel(anEvent.getStateChange() == ItemEvent.SELECTED);
@@ -408,26 +406,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg instanceof Efficiencies.Message ){
-         Efficiencies.Message m = (Efficiencies.Message)aMsg;
-         if( m.efficiencies == loadout.getEfficiencies() )
-            updateDisplay();
+      if( aMsg.isForMe(loadout) ){
+         updateDisplay();
       }
-      else if( aMsg instanceof Upgrades.Message ){
-         Upgrades.Message m = (Upgrades.Message)aMsg;
-         if( m.source == loadout.getUpgrades() )
-            updateDisplay();
-      }
-      else if( aMsg instanceof LoadoutPart.Message ){
-         LoadoutPart.Message m = (LoadoutPart.Message)aMsg;
-         if( loadout.getPart(m.part.getInternalPart().getType()) == m.part )
-            updateDisplay();
-      }
-      else if( aMsg instanceof Loadout.Message ){
-         Loadout.Message m = (Loadout.Message)aMsg;
-         if( m.loadout == loadout )
-            updateDisplay();
-      }
-
    }
 }
