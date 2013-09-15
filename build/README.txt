@@ -1,12 +1,12 @@
-Li Song Mech Lab
+Li Song Mechlab
 ----------------
-Li Song Mech Lab (LSML) is a tool for building mech configurations for PGI's MechWarrior: Online. 
+Li Song Mechlab (LSML) is a tool for building mech configurations for PGI's MechWarrior: Online. 
 
 Download & Install
 --------
 Download a release installer from:
     
-    http://goo.gl/JjDke8
+    http://li-soft.org
 
 The installer will set everything up for you. If you're a hacker you can get the sources at:
 
