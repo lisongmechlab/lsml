@@ -56,9 +56,9 @@ public class ArmorSpinner extends AbstractSpinnerModel implements MessageXBar.Re
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg instanceof LoadoutPart.Message ){
+      if( aMsg.isForMe(part.getLoadout()) && aMsg instanceof LoadoutPart.Message ){
          LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
-         if( message.part == part && message.type == Type.ArmorChanged ){
+         if( message.type == Type.ArmorChanged ){
             SwingUtilities.invokeLater(new Runnable(){
                @Override
                public void run(){
