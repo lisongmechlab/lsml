@@ -1,13 +1,17 @@
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.*;
-import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import lisong_mechlab.model.loadout.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import static org.mockito.Mockito.*;
 import org.mockito.MockitoAnnotations;
 
 public class UpgradesTest{

@@ -1,7 +1,6 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.chassi.Chassi;
-import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
 

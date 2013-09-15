@@ -82,7 +82,7 @@ public class Loadout implements MessageXBar.Reader{
       }
 
       public enum Type{
-         RENAME, CREATE, UPGRADES
+         RENAME, CREATE
       }
 
    }

@@ -25,7 +25,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
-import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
+import lisong_mechlab.model.loadout.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.After;

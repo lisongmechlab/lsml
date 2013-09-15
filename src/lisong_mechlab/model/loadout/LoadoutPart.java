@@ -20,7 +20,6 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
-import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 
 /**
@@ -311,37 +310,35 @@ public class LoadoutPart implements MessageXBar.Reader{
             return;
          }
 
-         if( msg.msg == ChangeMsg.HEATSINKS ){
+         if( msg.msg == Upgrades.Message.ChangeMsg.HEATSINKS ){
             if( msg.source.hasDoubleHeatSinks() )
                while( items.remove(ItemDB.SHS) ){/* No-Op */}
             else
                while( items.remove(ItemDB.DHS) ){/* No-Op */}
          }
-         else if( msg.msg == ChangeMsg.GUIDANCE ){
+         else if( msg.msg == Upgrades.Message.ChangeMsg.GUIDANCE ){
             boolean changed = false;
-            
-            	for(AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)){
-                    Upgrades oldUpgrades = new Upgrades(null);
-                    oldUpgrades.setArtemis(!msg.source.hasArtemis());
-                    Ammunition oldAmmoType = weapon.getAmmoType(oldUpgrades);
-                    Ammunition newAmmoType = weapon.getAmmoType(msg.source);
-                    if( oldAmmoType == newAmmoType )
-                       continue;
 
-                    while( items.remove(oldAmmoType) ){
-                       items.add(newAmmoType);
-                       changed = true;
-                    }
-                 }
-                 if( changed )
-                    xBar.post(new Message(this, Type.ItemsChanged));
+            for(AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)){
+               Upgrades oldUpgrades = new Upgrades(null);
+               oldUpgrades.setArtemis(!msg.source.hasArtemis());
+               Ammunition oldAmmoType = weapon.getAmmoType(oldUpgrades);
+               Ammunition newAmmoType = weapon.getAmmoType(msg.source);
+               if( oldAmmoType == newAmmoType )
+                  continue;
 
-              
-            
-//            	loadout.getUpgrades().setArtemis(false);
-            
+               while( items.remove(oldAmmoType) ){
+                  items.add(newAmmoType);
+                  changed = true;
+               }
             }
-            
+            if( changed )
+               xBar.post(new Message(this, Type.ItemsChanged));
+
+            // loadout.getUpgrades().setArtemis(false);
+
+         }
+
       }
    }
 
