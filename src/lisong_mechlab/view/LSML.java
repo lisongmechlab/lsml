@@ -188,8 +188,7 @@ public class LSML extends JFrame{
       final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, desktop);
       splitPane.setDividerLocation(180);
 
-      Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icon.png"));
-      setIconImage(icon);
+      setIconImage(ProgramInit.programIcon);
 
       setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
       setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
