@@ -41,6 +41,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 	private Ammunition						lrmAmmoType;
 	private ArrayList<Double>				srmCooldownList;
 	private ArrayList<Double>				lrmCooldownList;
+	private DecimalFormat                 decFormat;
 
 	private String[]						columnNames			= { "Weapon",  "Ammo Quantity", "Number of Volleys", "Combat Seconds" };
 
@@ -73,6 +74,8 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 		combatColumn = new TreeMap<>();
 		srmCooldownList = new ArrayList<>();
 		lrmCooldownList = new ArrayList<>();
+		 decFormat = new DecimalFormat();
+       decFormat.setMaximumFractionDigits(0);
 
 	}
 
@@ -340,13 +343,15 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 		if (aColumnIndex == 2) {
 			Double[] numberVolleyArray = new Double[numberVolleyColumn.size()];
 			numberVolleyArray = numberVolleyColumn.values().toArray(numberVolleyArray);
+			if(!numberVolleyArray[aRowIndex].isInfinite()){
+            String decOut = decFormat.format(numberVolleyArray[aRowIndex]);
+         return new Double(decOut);
+         }
 			return numberVolleyArray[aRowIndex];
 		}
 		if (aColumnIndex == 3) {
 			Double[] combatArray = new Double[combatColumn.size()];
 			combatArray = combatColumn.values().toArray(combatArray);
-			DecimalFormat decFormat = new DecimalFormat();
-			decFormat.setMaximumFractionDigits(0);
 			if(!combatArray[aRowIndex].isInfinite()){
 			   String decOut = decFormat.format(combatArray[aRowIndex]);
 			return new Double(decOut);
