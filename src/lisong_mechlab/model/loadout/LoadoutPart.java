@@ -410,6 +410,11 @@ public class LoadoutPart implements MessageXBar.Reader{
          if( loadout.getPart(Part.RightTorso).getNumCriticalSlotsFree() < 3 ){
             return false;
          }
+         if( loadout.getNumCriticalSlotsFree() < 3 * 2 + engine.getNumCriticalSlots(loadout.getUpgrades()) ){
+            // XL engines return same number of slots as standard engine, check enough slots to cover the
+            // side torsi.
+            return false;
+         }
       }
 
       if( engine.getRating() > loadout.getChassi().getEngineMax() || engine.getRating() < loadout.getChassi().getEngineMin() ){
