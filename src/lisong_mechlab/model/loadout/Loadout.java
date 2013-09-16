@@ -371,6 +371,10 @@ public class Loadout implements MessageXBar.Reader{
                   upgrades.setFerroFibrous(false);
                   throw new IllegalArgumentException("Not enough free slots!");
                }
+               else if(getFreeMass() < 0.0){
+                  upgrades.setFerroFibrous(true);
+                  throw new IllegalArgumentException("Not enough free tonnage!");
+               }
                break;
             case GUIDANCE:
                break;
@@ -380,6 +384,10 @@ public class Loadout implements MessageXBar.Reader{
                if( getNumCriticalSlotsFree() < 0 ){
                   upgrades.setEndoSteel(false);
                   throw new IllegalArgumentException("Not enough free slots!");
+               }
+               else if(getFreeMass() < 0.0){
+                  upgrades.setEndoSteel(true);
+                  throw new IllegalArgumentException("Not enough free tonnage!");
                }
                break;
             default:
