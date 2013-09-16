@@ -34,7 +34,7 @@ public class ArtemisHandler{
    private boolean checkPartCanHoldArtemis(LoadoutPart aPart){
 
       for(Item item : aPart.getItems()){
-         if( (item instanceof MissileWeapon) ){
+         if( (item instanceof MissileWeapon) && !item.getName().toLowerCase().contains("streak") && !item.getName().toLowerCase().contains("narc") ){
             additionalCritSlots++;
             additionalMass++;
          }
@@ -52,7 +52,7 @@ public class ArtemisHandler{
       additionalCritSlots = 0;
       additionalMass = 0;
       for(Item item : loadout.getAllItems()){
-         if( (item instanceof MissileWeapon) ){
+         if( (item instanceof MissileWeapon) && !item.getName().toLowerCase().contains("streak") && !item.getName().toLowerCase().contains("narc") ){
             additionalCritSlots++;
             additionalMass++;
          }
