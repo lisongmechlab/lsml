@@ -1,6 +1,6 @@
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -197,6 +197,17 @@ public class LoadoutPartTest{
 
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
       assertTrue(cut.getItems().contains(ItemDB.lookup("AC/20 AMMO")));
+   }
+   
+   @Test
+   public void testCanAddItem_xlEngineTooFewSlots() throws Exception{
+      LoadoutPart cut = makeCUT(0, Part.CenterTorso, 8);
+      when(mlc.chassi.getEngineMax()).thenReturn(400);
+      when(mlc.chassi.getEngineMin()).thenReturn(100);
+      when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(3);
+      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(8);
+      when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(3);
+      assertFalse(cut.canAddItem(ItemDB.lookup("XL ENGINE 100")));
    }
 
    @Test
