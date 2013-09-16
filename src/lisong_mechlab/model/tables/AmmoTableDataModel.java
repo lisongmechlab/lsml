@@ -342,7 +342,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 		if (aColumnIndex == 2) {
 			Double[] numberVolleyArray = new Double[numberVolleyColumn.size()];
 			numberVolleyArray = numberVolleyColumn.values().toArray(numberVolleyArray);
-			if(!numberVolleyArray[aRowIndex].isInfinite()){
+			if(!numberVolleyArray[aRowIndex].isInfinite() && !numberVolleyArray[aRowIndex].isNaN()){
             String decOut = decFormat.format(numberVolleyArray[aRowIndex]);
          return new Double(decOut);
          }
@@ -351,6 +351,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 		if (aColumnIndex == 3) {
 			Double[] combatArray = new Double[combatColumn.size()];
 			combatArray = combatColumn.values().toArray(combatArray);
+			if(combatArray[aRowIndex].isNaN()) return (double)0;
 			if(!combatArray[aRowIndex].isInfinite()){
 			   String decOut = decFormat.format(combatArray[aRowIndex]);
 			return new Double(decOut);
