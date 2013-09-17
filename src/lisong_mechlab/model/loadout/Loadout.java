@@ -10,9 +10,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.TreeMap;
 
-import lisong_mechlab.XmlReader;
 import lisong_mechlab.converter.GameDataFile;
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
@@ -28,6 +26,8 @@ import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutPartConverter;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.XmlReader;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,6 +35,13 @@ import org.w3c.dom.Node;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
+/**
+ * This class represents the complete state of a 'mechs configuration.
+ * <p>
+ * TODO: Strip some logic from this class.
+ * 
+ * @author Emily Björk
+ */
 public class Loadout implements MessageXBar.Reader{
    public static class Message implements MessageXBar.Message{
       @Override
@@ -75,7 +82,7 @@ public class Loadout implements MessageXBar.Reader{
       }
 
       public enum Type{
-         RENAME, CREATE, UPGRADES
+         RENAME, CREATE
       }
 
    }
@@ -85,7 +92,7 @@ public class Loadout implements MessageXBar.Reader{
    private final Map<Part, LoadoutPart> parts = new TreeMap<Part, LoadoutPart>();
    private final Upgrades               upgrades;
    private final Efficiencies           efficiencies;
-   private final MessageXBar            xBar;
+   private final transient MessageXBar  xBar;
 
    /**
     * Will create a new, empty load out based on the given chassi.
@@ -131,6 +138,38 @@ public class Loadout implements MessageXBar.Reader{
       return getName() + " (" + chassi.getNameShort() + ")";
    }
 
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((chassi == null) ? 0 : chassi.hashCode());
+      result = prime * result + ((efficiencies == null) ? 0 : efficiencies.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((parts == null) ? 0 : parts.hashCode());
+      result = prime * result + ((upgrades == null) ? 0 : upgrades.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( !(obj instanceof Loadout) )
+         return false;
+      Loadout that = (Loadout)obj;
+      if( !chassi.equals(that.chassi) )
+         return false;
+      if( !efficiencies.equals(that.efficiencies) )
+         return false;
+      if( !name.equals(that.name) )
+         return false;
+      if( !parts.equals(that.parts) )
+         return false;
+      if( !upgrades.equals(that.upgrades) )
+         return false;
+      return true;
+   }
+
    public static Loadout load(File aFile, MessageXBar crossBar){
       XStream stream = loadoutXstream(crossBar);
       return (Loadout)stream.fromXML(aFile);
@@ -146,10 +185,16 @@ public class Loadout implements MessageXBar.Reader{
       List<Element> maybeUpgrades = reader.getElementsByTagName("Upgrades");
       if( maybeUpgrades.size() == 1 ){
          Element stockUpgrades = maybeUpgrades.get(0);
+         // TODO: We really should fix issue #75 to get rid of these hard coded constants.
          getUpgrades().setDoubleHeatSinks(reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double"));
          getUpgrades().setFerroFibrous(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801"));
          getUpgrades().setEndoSteel(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101"));
          getUpgrades().setArtemis(reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1"));
+
+         // FIXME: Revisit this fix! The game files are broken.
+         if( chassi.getNameShort().equals("KTO-19") ){
+            getUpgrades().setFerroFibrous(true);
+         }
       }
 
       for(Element component : reader.getElementsByTagName("component")){
@@ -326,9 +371,12 @@ public class Loadout implements MessageXBar.Reader{
                   upgrades.setFerroFibrous(false);
                   throw new IllegalArgumentException("Not enough free slots!");
                }
+               else if(getFreeMass() < 0.0){
+                  upgrades.setFerroFibrous(true);
+                  throw new IllegalArgumentException("Not enough free tonnage!");
+               }
                break;
             case GUIDANCE:
-               checkArtemisAdditionLegal();
                break;
             case HEATSINKS:
                break;
@@ -336,6 +384,10 @@ public class Loadout implements MessageXBar.Reader{
                if( getNumCriticalSlotsFree() < 0 ){
                   upgrades.setEndoSteel(false);
                   throw new IllegalArgumentException("Not enough free slots!");
+               }
+               else if(getFreeMass() < 0.0){
+                  upgrades.setEndoSteel(true);
+                  throw new IllegalArgumentException("Not enough free tonnage!");
                }
                break;
             default:
@@ -345,16 +397,7 @@ public class Loadout implements MessageXBar.Reader{
       }
    }
 
-   private void checkArtemisAdditionLegal() throws IllegalArgumentException{
-      if( getMass() > chassi.getMassMax() ){
-         getUpgrades().setArtemis(false);
-         throw new IllegalArgumentException("Not enough free mass!");
-      }
-      if( getNumCriticalSlotsFree() < 0 ){
-         getUpgrades().setArtemis(false);
-         throw new IllegalArgumentException("Not enough free crit slots!");
-      }
-   }
+   
 
    public double getFreeMass(){
       double freeMass = chassi.getMassMax() - getMass();
@@ -425,6 +468,29 @@ public class Loadout implements MessageXBar.Reader{
          }
          else{
             loadoutPart.setArmor(ArmorSide.ONLY, 0);
+         }
+      }
+   }
+
+   public void addItem(String aString){
+      addItem(ItemDB.lookup(aString));
+   }
+
+   public void addItem(Item anItem){
+      LoadoutPart ct = parts.get(Part.CenterTorso);
+      if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canAddItem(anItem) ){
+         ct.addItem(anItem);
+         return;
+      }
+
+      Part[] partOrder = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso, Part.LeftTorso, Part.LeftLeg,
+            Part.LeftArm};
+
+      for(Part part : partOrder){
+         LoadoutPart loadoutPart = parts.get(part);
+         if( loadoutPart.canAddItem(anItem) ){
+            loadoutPart.addItem(anItem);
+            return;
          }
       }
    }

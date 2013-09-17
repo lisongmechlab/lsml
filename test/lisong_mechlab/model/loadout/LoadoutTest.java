@@ -8,12 +8,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.InternalPart;
@@ -21,8 +21,11 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
+import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -155,7 +158,7 @@ public class LoadoutTest{
 
       // Verify
       assertTrue(cut.getUpgrades().hasDoubleHeatSinks());
-      verify(xBar).post(new Upgrades.Message(Upgrades.ChangeMsg.HEATSINKS, cut.getUpgrades()));
+      verify(xBar).post(new Upgrades.Message(Upgrades.Message.ChangeMsg.HEATSINKS, cut.getUpgrades()));
       assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.SHS));
 
    }
@@ -176,7 +179,7 @@ public class LoadoutTest{
 
       // Verify
       assertFalse(cut.getUpgrades().hasDoubleHeatSinks());
-      verify(xBar).post(new Upgrades.Message(Upgrades.ChangeMsg.HEATSINKS, cut.getUpgrades()));
+      verify(xBar).post(new Upgrades.Message(Upgrades.Message.ChangeMsg.HEATSINKS, cut.getUpgrades()));
       assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.DHS));
    }
 
@@ -329,8 +332,8 @@ public class LoadoutTest{
       // Verify
       assertEquals(tons + 3, cut.getMass(), 0.0);
       assertEquals(slots - 3, cut.getNumCriticalSlotsFree());
-      
-      List<Item> itemsRt = new ArrayList<>(cut.getPart(Part.RightTorso).getItems()); 
+
+      List<Item> itemsRt = new ArrayList<>(cut.getPart(Part.RightTorso).getItems());
       assertTrue(itemsRt.remove(ItemDB.lookup("LRM AMMO + ARTEMIS IV")));
       assertTrue(itemsRt.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
       /*
@@ -409,44 +412,45 @@ public class LoadoutTest{
             verify(xBar).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
       }
    }
-   
+
    @Test
    public void testFreeMass(){
-   // Setup
+      // Setup
       Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
-      
-// Verify
+
+      // Verify
       assertEquals(90, cut.getFreeMass(), 0.0);
    }
-   
+
+   @Ignore // This test has been superceded 
    @Test
    public void testCheckArtemisAdditionLegal(){
       // Setup
-         Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
-         Loadout anotherCut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
-         anotherCut.getPart(Part.LeftTorso).addItem("SRM 6");
-         try{
-            cut.loadStock();
-         }
-         catch( Exception e ){
-            fail("Unexpected exception when loading stock loadout!");
-         }
-      //Verify
-         try{
-//            cut.checkArtemisAdditionLegal();
-            cut.getUpgrades().setArtemis(true);
-            fail("Exception expected!");
-         }
-         catch( Exception e ){
-            //Success!
-         }
-         try{
-            anotherCut.getUpgrades().setArtemis(true);
-         }
-         catch(Exception e){
-            fail("Should not throw exception!");
-         }
+      Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
+      Loadout anotherCut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+      anotherCut.getPart(Part.LeftTorso).addItem("SRM 6");
+      try{
+         cut.loadStock();
       }
+      catch( Exception e ){
+         fail("Unexpected exception when loading stock loadout!");
+      }
+      // Verify
+      try{
+         // cut.checkArtemisAdditionLegal();
+         cut.getUpgrades().setArtemis(true);
+         fail("Exception expected!");
+      }
+      catch( Exception e ){
+         // Success!
+      }
+      try{
+         anotherCut.getUpgrades().setArtemis(true);
+      }
+      catch( Exception e ){
+         fail("Should not throw exception!");
+      }
+   }
 
    // -------------------------------------------------------------------------
    //
@@ -498,5 +502,66 @@ public class LoadoutTest{
       assertEquals(232, cut.getArmor());
       assertTrue("mass = " + cut.getMass(), cut.getMass() > 35.0 - 1.0 / 32.0);
       assertTrue("mass = " + cut.getMass(), cut.getMass() <= 35.0);
+   }
+
+   /**
+    * {@link Loadout#addItem()} shall add an item to the first applicable slot in this loadout. Order the items are
+    * added is: RA, RT, RL, HD, CT, LT, LL, LA
+    */
+   @Test
+   public void testAddItem(){
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+
+      cut.getUpgrades().setDoubleHeatSinks(true);
+
+      cut.addItem("MEDIUM LASER");
+      assertTrue(cut.getPart(Part.RightArm).getItems().contains(ItemDB.lookup("MEDIUM LASER")));
+
+      cut.addItem(ItemDB.lookup("MEDIUM LASER"));
+      assertTrue(cut.getPart(Part.LeftArm).getItems().contains(ItemDB.lookup("MEDIUM LASER")));
+
+      cut.addItem(ItemDB.lookup("AC/20"));
+      assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.lookup("AC/20")));
+
+      cut.addItem("LRM 5");
+      assertTrue(cut.getPart(Part.LeftTorso).getItems().contains(ItemDB.lookup("LRM 5")));
+
+      cut.addItem("LRM 15");
+      assertTrue(cut.getPart(Part.LeftTorso).getItems().contains(ItemDB.lookup("LRM 15")));
+
+      cut.addItem("STD ENGINE 250");
+      assertTrue(cut.getPart(Part.CenterTorso).getItems().contains(ItemDB.lookup("STD ENGINE 250")));
+
+      // Fill right arm
+      cut.addItem(ItemDB.DHS);
+      cut.addItem(ItemDB.DHS);
+      assertTrue(cut.getPart(Part.RightArm).getItems().contains(ItemDB.DHS));
+      verify(xBar, times(1 + 2)).post(new LoadoutPart.Message(cut.getPart(Part.RightArm), Type.ItemAdded));
+
+      // Skips RA, RT, RL, HD, CT (too few slots) and places the item in LT
+      cut.addItem(ItemDB.DHS);
+      assertTrue(cut.getPart(Part.LeftTorso).getItems().contains(ItemDB.DHS));
+
+      // Skips RA (too few slots) and places the item in RT
+      cut.addItem(ItemDB.BAP);
+      assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.BAP));
+   }
+
+   /**
+    * {@link Loadout#addItem()} shall prioritize engine slots for heat sinks
+    */
+   @Test
+   public void testAddItem_engineHS(){
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+
+      cut.addItem("STD ENGINE 300");
+      assertTrue(cut.getPart(Part.CenterTorso).getItems().contains(ItemDB.lookup("STD ENGINE 300")));
+
+      cut.addItem(ItemDB.SHS); // Engine HS slot 1
+      cut.addItem(ItemDB.SHS); // Engine HS slot 2
+      cut.addItem(ItemDB.SHS); // Right arm
+      verify(xBar, times(1 + 2)).post(new LoadoutPart.Message(cut.getPart(Part.CenterTorso), Type.ItemAdded));
+      assertTrue(cut.getPart(Part.CenterTorso).getItems().contains(ItemDB.SHS)); // 1 remaining
+      assertTrue(cut.getPart(Part.RightArm).getItems().contains(ItemDB.SHS));
    }
 }

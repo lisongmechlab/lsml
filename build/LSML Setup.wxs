@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+    <?define g_fname = "Li Song Mechlab"?>
+    <?define g_sname = "LSML"?>
+    <?define g_mfg = "Li-Soft"?>
+    <?define g_version = "1.0.0"?>
+
+	<Product Id="E646F8A1-CF0E-4369-94DD-5E6734CBCCBB" Name="$(var.g_fname)"
+		Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)"
+		UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
+		<Package
+			Description="A tool for creating mech configurations for MechWarrior: Online (r)"
+			Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes" />
+		<Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
+		<Icon Id="icon.ico" SourceFile="icon.ico" />
+		<WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
+		<WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+		<WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
+		<Property Id="ARPPRODUCTICON">icon.ico</Property>
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+		<UIRef Id="WixUI_InstallDir" />
+		<UIRef Id="WixUI_ErrorProgressText" />
+		<Feature Id="DefaultFeature" Title="$(var.g_fname)"
+			Description="A tool for building 'mech configurations for PGI's MechWarrior: Online (r)"
+			Display="expand" Level="1" ConfigurableDirectory='INSTALLDIR'>
+			<ComponentRef Id="LICENSE.RTF" />
+			<ComponentRef Id="LSML.EXE" />
+			<ComponentRef Id="LSML.JAR" />
+			<ComponentRef Id="README.TXT" />
+			<ComponentRef Id="ProgramMenuDir" />
+		</Feature>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder" Name="PFiles">
+				<Directory Id="CompanyFolder" Name="$(var.g_mfg)">
+					<Directory Id="INSTALLDIR" Name="$(var.g_sname)">
+						<Component Id="LICENSE.RTF" DiskId="1"
+							Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2">
+							<File Id="LICENSE.RTF" Name="LICENSE.rtf" Source="LICENSE.rtf"
+								KeyPath="yes">
+								<Shortcut Id="shtct_pmd_license" Directory="ProgramMenuDir"
+									Name="LICENSE.rtf" Advertise="yes" />
+							</File>
+						</Component>
+						<Component Id="README.TXT" DiskId="1"
+							Guid="65220797-70D0-41D6-9479-FB0F113E10A1">
+							<File Id="README.TXT" Name="README.txt" Source="README.txt"
+								KeyPath="yes">
+								<Shortcut Id="shtct_pmd_readme" Directory="ProgramMenuDir"
+									Name="README.txt" Advertise="yes" />
+							</File>
+						</Component>
+						<Component Id="LSML.EXE" DiskId="1"
+							Guid="F5FBF318-D03C-402F-9D7A-175A186250D1">
+							<File Id="LSML.EXE" Name="lsml.exe" Source="lsml.exe"
+								KeyPath="yes">
+								<Shortcut Id="shtct_dtp_exe" Directory="DesktopFolder"
+									Name="$(var.g_fname)" WorkingDirectory="INSTALLDIR" Advertise="yes"
+									Icon="icon.ico" IconIndex="0" />
+								<Shortcut Id="shtct_pmd_exe" Directory="ProgramMenuDir"
+									Name="$(var.g_fname)" Advertise="yes" Icon="icon.ico"
+									IconIndex="0" />
+							</File>
+							<RegistryKey Id="reg_hkcr_lsml" Root="HKCR" Key="lsml"
+								ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+								<RegistryValue Type="string" Name="URL Protocol"
+									Value="" />
+							</RegistryKey>
+							<RegistryKey Id="reg_hkcr_lsml_defaulticon" Root="HKCR"
+								Key="lsml\DefaultIcon" ForceCreateOnInstall="yes"
+								ForceDeleteOnUninstall="yes">
+								<RegistryValue Type="string" Value="[#LSML.EXE],1" />
+							</RegistryKey>
+							<RegistryKey Id="reg_hkcr_lsml_command" Root="HKCR"
+								Key="lsml\shell\open\command" ForceCreateOnInstall="yes"
+								ForceDeleteOnUninstall="yes">
+								<RegistryValue Type="string" Value='"[#LSML.EXE]" "%1"' />
+							</RegistryKey>
+						</Component>
+						<Component Id="LSML.JAR" DiskId="1"
+							Guid="B4A1398E-1357-4B69-B432-EF01EFF1C3F7">
+							<File Id="LSML.JAR" Name="lsml.jar" Source="lsml.jar" />
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+			<Directory Id="DesktopFolder" />
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="ProgramMenuDir" Name="$(var.g_fname)">
+					<Component Id="ProgramMenuDir" Guid="F7BB09AC-5D86-41AA-BFEA-60FBB32C5A46">
+						<RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+						<RegistryValue Root="HKCU"
+							Key="Software\[Manufacturer]\[ProductName]" Type="string" Value=""
+							KeyPath="yes" />
+						<!-- <util:InternetShortcut Id="WebsiteShortcut" Name="The Fine Manual" 
+							Target="https://github.com/EmilyBjoerk/lsml/wiki/User-Manual" /> -->
+					</Component>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Product>
+</Wix>

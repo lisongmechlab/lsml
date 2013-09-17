@@ -51,10 +51,6 @@ public class Item implements Comparable<Item>{
       return locName;
    }
 
-   public int getNumCriticalSlots(){
-      return slots;
-   }
-
    public int getNumCriticalSlots(Upgrades aUpgrades){
       if(aUpgrades == null)
          return slots;
@@ -65,14 +61,10 @@ public class Item implements Comparable<Item>{
       return hardpointType;
    }
 
-   public double getMass(){
-      return tons;
-   }
-
    public double getMass(Upgrades aUpgrades){
       if(aUpgrades == null)
-         return getMass();
-      return getMass();
+         return tons;
+      return tons;
    }
 
    public int getMwoIdx(){
@@ -102,7 +94,7 @@ public class Item implements Comparable<Item>{
     */
    @Override
    public int compareTo(Item rhs){
-      return locName.compareTo(rhs.locName);
+      return toString().compareTo(rhs.toString());
    }
 
    public String getName(Upgrades aUpgrades){
