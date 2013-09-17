@@ -23,10 +23,13 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.model.loadout.ArtemisHandler;
+import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.CoolingRatio;
 import lisong_mechlab.model.loadout.metrics.HeatCapacity;
@@ -82,7 +85,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final AlphaStrike        metricAlphaStrike;
    private final MaxDPS             metricMaxDPS;
    private final MaxSustainedDPS    metricSustainedDps;
-   private final TotalAmmoSupply    metricTotalAmmoSupply;
    private final AmmoTableDataModel anAmmoTableDataModel;
    private transient Boolean        inhibitChanges   = false;
 
@@ -99,7 +101,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricAlphaStrike = new AlphaStrike(loadout);
       metricMaxDPS = new MaxDPS(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
-      metricTotalAmmoSupply = new TotalAmmoSupply(loadout);
+      new TotalAmmoSupply(loadout);
 
       anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
 
@@ -261,7 +263,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    }
 
    // TODO sets formatting correctly but throws exception on system exit need to
-   // FIXME: Move this somewhere else. 
+   // FIXME: Move this somewhere else.
    private static class HeaderRenderer implements TableCellRenderer{
 
       DefaultTableCellRenderer renderer;
@@ -269,7 +271,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       public HeaderRenderer(JTable table){
          if( table.getTableHeader().getDefaultRenderer() instanceof DefaultTableCellRenderer ){
             renderer = (DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer();
-            renderer.setHorizontalAlignment(JLabel.CENTER);
+            renderer.setHorizontalAlignment(SwingConstants.CENTER);
          }
 
       }
@@ -293,6 +295,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                // ----------------------------------------------------------------------
                final DecimalFormat df = new DecimalFormat("#.##");
                df.setMinimumFractionDigits(2);
+               
+               final DecimalFormat dfshort = new DecimalFormat("#");
 
                double mass = loadout.getMass();
                massBar.setValue((int)Math.ceil(mass));
@@ -332,7 +336,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                heatsinks.setText("Heatsinks: " + loadout.getHeatsinksCount());
                effectiveHS.setText("Heat capacity: " + df.format(metricHeatCapacity.calculate()));
                timeToOverheat.setText("Seconds to Overheat: " + df.format(metricTimeToOverHeat.calculate()));
-               coolingRatio.setText("Cooling efficiency: " + df.format(metricCoolingRatio.calculate()));
+               coolingRatio.setText("Cooling efficiency: " + dfshort.format(metricCoolingRatio.calculate()*100.0)+"%");
 
                // Offense
                // ----------------------------------------------------------------------
@@ -358,7 +362,18 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-            loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+        	 ArtemisHandler artemisChecker = new ArtemisHandler(loadout);
+        	 try{
+        	    artemisChecker.checkLoadoutStillValid();
+        	    artemisChecker.checkArtemisAdditionLegal();
+        	    loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
+        	 }
+        	 catch(IllegalArgumentException e){
+        	    throw e;
+        	 }
+             
+             updateDisplay();
+            
          }
          else if( source == endoSteel ){
             loadout.getUpgrades().setEndoSteel(anEvent.getStateChange() == ItemEvent.SELECTED);
@@ -382,16 +397,39 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else{
-            throw new RuntimeException("Unkown source control!");
+            throw new RuntimeException("Unknown source control!");
          }
       }
+      catch( IllegalArgumentException e ){
+         JOptionPane.showMessageDialog(this, e.getMessage());
+      }
       catch( RuntimeException e ){
-         JOptionPane.showMessageDialog(this, "Error while changing upgrades or efficiency!: " + e.getStackTrace());
+         JOptionPane.showMessageDialog(this, "Error while changing upgrades or efficiency!: " + e.getMessage());
       }
    }
 
    @Override
    public void receive(Message aMsg){
-      updateDisplay(); // TODO be a bit more selective when to update
+      if( aMsg instanceof Efficiencies.Message ){
+         Efficiencies.Message m = (Efficiencies.Message)aMsg;
+         if( m.efficiencies == loadout.getEfficiencies() )
+            updateDisplay();
+      }
+      else if( aMsg instanceof Upgrades.Message ){
+         Upgrades.Message m = (Upgrades.Message)aMsg;
+         if( m.source == loadout.getUpgrades() )
+            updateDisplay();
+      }
+      else if( aMsg instanceof LoadoutPart.Message ){
+         LoadoutPart.Message m = (LoadoutPart.Message)aMsg;
+         if( loadout.getPart(m.part.getInternalPart().getType()) == m.part )
+            updateDisplay();
+      }
+      else if( aMsg instanceof Loadout.Message ){
+         Loadout.Message m = (Loadout.Message)aMsg;
+         if( m.loadout == loadout )
+            updateDisplay();
+      }
+
    }
 }

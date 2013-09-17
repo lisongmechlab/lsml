@@ -19,16 +19,19 @@ import javax.swing.KeyStroke;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.Pair;
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.Pair;
+import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.OpenHelp;
 
 import org.jfree.chart.ChartFactory;
@@ -78,12 +81,13 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
 
       chartPanel.setLayout(new OverlayLayout(chartPanel));
       JButton button = new JButton(new OpenHelp("What is this?", "Max-sustained-dps-graph", KeyStroke.getKeyStroke('w')));
-      button.setMargin(new Insets(10,10,10,10));
+      button.setMargin(new Insets(10, 10, 10, 10));
       button.setFocusable(false);
       button.setAlignmentX(Component.RIGHT_ALIGNMENT);
       button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
       chartPanel.add(button);
 
+      setIconImage(ProgramInit.programIcon);
       setSize(800, 600);
       setVisible(true);
    }
@@ -129,7 +133,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
             Weapon weapon = entry.getKey();
             double ratio = entry.getValue();
-            double dps = weapon.getStat("d/s");
+            double dps = weapon.getStat("d/s", loadout.getUpgrades());
 
             if( !data.containsKey(weapon) ){
                data.put(weapon, new ArrayList<Pair<Double, Double>>());
@@ -153,18 +157,33 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
    public void receive(Message aMsg){
       if( aMsg instanceof LoadoutPart.Message ){
          LoadoutPart.Message msg = (LoadoutPart.Message)aMsg;
-         if( !loadout.getPartLoadOuts().contains(msg.part) ){
+         if( !loadout.getPartLoadOuts().contains(msg.part) )
             return;
-         }
 
-         if( msg.type == LoadoutPart.Message.Type.ItemAdded || msg.type == LoadoutPart.Message.Type.ItemRemoved ){
-            SwingUtilities.invokeLater(new Runnable(){
-               @Override
-               public void run(){
-                  chartPanel.setChart(makechart());
-               }
-            });
-         }
+         if( msg.type == LoadoutPart.Message.Type.ArmorChanged )
+            return;
       }
+      else if( aMsg instanceof Upgrades.Message ){
+         Upgrades.Message msg = (Upgrades.Message)aMsg;
+         if( msg.source != loadout.getUpgrades() )
+            return;
+         if( msg.msg != Upgrades.Message.ChangeMsg.HEATSINKS )
+            return;
+      }
+      else if( aMsg instanceof Efficiencies.Message ){
+         Efficiencies.Message msg = (Efficiencies.Message)aMsg;
+         if( msg.efficiencies != loadout.getEfficiencies() )
+            return;
+      }
+      else{
+         return;
+      }
+
+      SwingUtilities.invokeLater(new Runnable(){
+         @Override
+         public void run(){
+            chartPanel.setChart(makechart());
+         }
+      });
    }
 }

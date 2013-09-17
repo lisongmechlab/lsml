@@ -1,6 +1,7 @@
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.MessageXBar;
+import lisong_mechlab.model.loadout.Upgrades.Message.ChangeMsg;
+import lisong_mechlab.util.MessageXBar;
 
 public class Upgrades{
    private boolean                     artemis;
@@ -13,6 +14,10 @@ public class Upgrades{
    public static class Message implements MessageXBar.Message{
       public final ChangeMsg msg;
       public final Upgrades  source;
+
+      public enum ChangeMsg{
+         GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
+      }
 
       @Override
       public boolean equals(Object obj){
@@ -29,12 +34,39 @@ public class Upgrades{
       }
    }
 
-   public enum ChangeMsg{
-      GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
-   }
-
    public Upgrades(MessageXBar anXBar){
       xBar = anXBar;
+   }
+
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + (artemis ? 1231 : 1237);
+      result = prime * result + (dhs ? 1231 : 1237);
+      result = prime * result + (endoSteel ? 1231 : 1237);
+      result = prime * result + (ferroFibrous ? 1231 : 1237);
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( obj == null )
+         return false;
+      if( !(obj instanceof Upgrades) )
+         return false;
+      Upgrades other = (Upgrades)obj;
+      if( artemis != other.artemis )
+         return false;
+      if( dhs != other.dhs )
+         return false;
+      if( endoSteel != other.endoSteel )
+         return false;
+      if( ferroFibrous != other.ferroFibrous )
+         return false;
+      return true;
    }
 
    public boolean hasArtemis(){
@@ -54,6 +86,7 @@ public class Upgrades{
    }
 
    public void setArtemis(boolean anArtemis){
+	   
       if( anArtemis != artemis ){
          artemis = anArtemis;
          if( xBar != null )

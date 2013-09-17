@@ -18,14 +18,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
+import lisong_mechlab.view.action.MaxArmorAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
+import lisong_mechlab.view.action.ShareLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
@@ -54,6 +56,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menuBar.add(createMenuLoadout());
       menuBar.add(createMenuArmor());
       menuBar.add(createMenuGraphs());
+      menuBar.add(createMenuShare());
       setJMenuBar(menuBar);
 
       // Set the window's location.
@@ -66,6 +69,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       sp.setDividerLocation(-1);
       sp.setDividerSize(0);
 
+      setFrameIcon(null);
       setContentPane(sp);
 
       pack();
@@ -78,7 +82,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to save " + loadout.getName() + " to your garage?",
                                                        "Save to garage?", JOptionPane.YES_NO_OPTION);
                if( ans == JOptionPane.YES_OPTION ){
-                  LSML.getInstance().getGarage().add(loadout);
+                  ProgramInit.lsml().getGarage().add(loadout);
                }
             }
          }
@@ -86,7 +90,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    }
 
    public boolean isSaved(){
-      return LSML.getInstance().getGarage().getMechs().contains(loadout);
+      return ProgramInit.lsml().getGarage().getMechs().contains(loadout);
    }
 
    public Loadout getLoadout(){
@@ -131,7 +135,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, false, slotDistributor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, true, slotDistributor));
          subPanel.add(new PartPanel(aConfiguration.getPart(Part.CenterTorso), anXBar, true, slotDistributor));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
@@ -174,6 +178,12 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       return item;
    }
 
+   private JMenu createMenuShare(){
+      JMenu menu = new JMenu("Share!");
+      menu.add(new JMenuItem(new ShareLoadoutAction(loadout)));
+      return menu;
+   }
+
    private JMenu createMenuLoadout(){
       JMenu menu = new JMenu("Loadout");
 
@@ -186,7 +196,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             public void actionPerformed(ActionEvent aArg0){
                try{
                   // TODO: This should be an Action class
-                  LSML.getInstance().getGarage().add(loadout);
+                  ProgramInit.lsml().getGarage().add(loadout);
                }
                catch( IllegalArgumentException e ){
                   JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't add to garage! Error: " + e.getMessage());
@@ -196,7 +206,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       menu.add(addToGarage);
       menu.add(new JMenuItem(new RenameLoadoutAction(loadout, KeyStroke.getKeyStroke("R"))));
-      menu.add(new JMenuItem(new DeleteLoadoutAction(LSML.getInstance().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
+      menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
 
       menu.add(createMenuItem("Load stock", new ActionListener(){
          @Override
@@ -232,51 +242,10 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          JMenu subMenu = new JMenu("Max Armor");
          menu.add(subMenu);
-
-         subMenu.add(createMenuItem("3:1", new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent aArg0){
-               loadout.setMaxArmor(3);
-            }
-         }));
-
-         subMenu.add(createMenuItem("5:1", new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent aArg0){
-               loadout.setMaxArmor(5);
-            }
-         }));
-
-         subMenu.add(createMenuItem("10:1", new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent aArg0){
-               loadout.setMaxArmor(10);
-            }
-         }));
-
-         subMenu.add(createMenuItem("Custom...", new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent aArg0){
-               String input = (String)JOptionPane.showInputDialog(LoadoutFrame.this,
-                                                                  "Please enter the ratio between front and back armor as front:back.Example 3:1",
-                                                                  "Maximizing armor...", JOptionPane.INFORMATION_MESSAGE, null, null, "3:1");
-               String[] s = input.split(":");
-               if( s.length == 2 ){
-                  double front, back;
-                  try{
-                     front = Double.parseDouble(s[0]);
-                     back = Double.parseDouble(s[1]);
-                  }
-                  catch( Exception e ){
-                     JOptionPane.showMessageDialog(LoadoutFrame.this, "Error parsing ratio! Loadout was not changed!");
-                     return;
-                  }
-                  loadout.setMaxArmor(front / back);
-               }
-               else
-                  JOptionPane.showMessageDialog(LoadoutFrame.this, "Error parsing ratio! Loadout was not changed!");
-            }
-         }));
+         subMenu.add(new JMenuItem(new MaxArmorAction("3:1", loadout, 3)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("5:1", loadout, 5)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("10:1", loadout, 10)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("Custom...", loadout, -1)));
       }
       return menu;
    }

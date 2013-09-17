@@ -1,10 +1,11 @@
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import lisong_mechlab.model.MessageXBar;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
@@ -25,7 +25,8 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
-import lisong_mechlab.model.loadout.Upgrades.ChangeMsg;
+import lisong_mechlab.model.loadout.Upgrades.Message.ChangeMsg;
+import lisong_mechlab.util.MessageXBar;
 
 import org.junit.After;
 import org.junit.Before;
@@ -77,12 +78,12 @@ public class LoadoutPartTest{
 
       int usedCrits = 0;
       for(Item i : internals){
-         usedCrits += i.getNumCriticalSlots();
+         usedCrits += i.getNumCriticalSlots(mlc.upgrades);
       }
 
       // Execute
       LoadoutPart cut = new LoadoutPart(mlc.loadout, part, xBar);
-      verify(xBar).attach(cut);
+      verify(xBar, atLeast(1)).attach(cut);
 
       // Verify default state
       assertSame(part, cut.getInternalPart());
@@ -132,6 +133,38 @@ public class LoadoutPartTest{
    }
 
    @Test
+   public void testGetNumEngineHs(){
+      LoadoutPart cut = makeCUT(0, Part.CenterTorso, 7);
+      when(mlc.chassi.getEngineMax()).thenReturn(400);
+      when(mlc.chassi.getEngineMin()).thenReturn(0);
+
+      assertEquals(0, cut.getNumEngineHeatsinks());
+
+      cut.addItem(ItemDB.SHS);
+      assertEquals(0, cut.getNumEngineHeatsinks());
+
+      cut.addItem(ItemDB.lookup("STD ENGINE 300"));
+      assertEquals(1, cut.getNumEngineHeatsinks());
+
+      cut.addItem(ItemDB.SHS);
+      assertEquals(2, cut.getNumEngineHeatsinks());
+
+      cut.addItem(ItemDB.SHS);
+      assertEquals(2, cut.getNumEngineHeatsinks());
+      
+
+      verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+   }
+
+   @Test
+   public void testGetNumEngineHs_notCT(){
+      LoadoutPart cut = makeCUT(0, Part.LeftTorso, 7);
+      cut.addItem(ItemDB.SHS);
+      assertEquals(0, cut.getNumEngineHeatsinks());
+      verify(xBar, times(1)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+   }
+
+   @Test
    public void testGetNumCriticalSlotsUsed() throws Exception{
       // Setup
       MissileWeapon srm = (MissileWeapon)ItemDB.lookup("STREAK SRM 2");
@@ -164,6 +197,17 @@ public class LoadoutPartTest{
 
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
       assertTrue(cut.getItems().contains(ItemDB.lookup("AC/20 AMMO")));
+   }
+   
+   @Test
+   public void testCanAddItem_xlEngineTooFewSlots() throws Exception{
+      LoadoutPart cut = makeCUT(0, Part.CenterTorso, 8);
+      when(mlc.chassi.getEngineMax()).thenReturn(400);
+      when(mlc.chassi.getEngineMin()).thenReturn(100);
+      when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(3);
+      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(8);
+      when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(3);
+      assertFalse(cut.canAddItem(ItemDB.lookup("XL ENGINE 100")));
    }
 
    @Test
@@ -260,6 +304,7 @@ public class LoadoutPartTest{
    @Test
    public void testAddItem_CASE_invalid() throws Exception{
       for(Part testPart : new Part[] {Part.LeftArm, Part.LeftLeg, Part.CenterTorso, Part.Head, Part.RightArm, Part.RightLeg}){
+
          LoadoutPart cut = makeCUT(0, testPart, 12);
 
          try{
@@ -281,7 +326,7 @@ public class LoadoutPartTest{
    @Test
    public void testCanAddItem_TooFewSlots() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots() - 1);
+      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots(null) - 1);
 
       assertFalse(cut.canAddItem(ItemDB.BAP));
    }
@@ -401,23 +446,24 @@ public class LoadoutPartTest{
    }
 
    /**
-    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct type.
+    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct
+    * type.
     */
    @Test
    public void testReceive_artemisEnabled(){
       when(mlc.upgrades.hasArtemis()).thenReturn(false);
-      
+
       LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
       cut.addItem("SRM AMMO");
       cut.addItem("LRM AMMO");
       cut.addItem("STREAK SRM AMMO");
       cut.addItem("NARC AMMO");
       verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      
+
       when(mlc.upgrades.hasArtemis()).thenReturn(true);
       cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemsChanged));
-      
+
       List<Item> items = new ArrayList<>(cut.getItems());
       assertTrue(items.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
       assertTrue(items.remove(ItemDB.lookup("LRM AMMO + ARTEMIS IV")));
@@ -425,25 +471,26 @@ public class LoadoutPartTest{
       assertTrue(items.remove(ItemDB.lookup("NARC AMMO")));
       assertTrue(items.isEmpty());
    }
-   
+
    /**
-    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct type.
+    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct
+    * type.
     */
    @Test
    public void testReceive_artemisDisabled(){
       when(mlc.upgrades.hasArtemis()).thenReturn(true);
-      
+
       LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
       cut.addItem("SRM AMMO + ARTEMIS IV");
       cut.addItem("LRM AMMO + ARTEMIS IV");
       cut.addItem("STREAK SRM AMMO");
       cut.addItem("NARC AMMO");
       verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      
+
       when(mlc.upgrades.hasArtemis()).thenReturn(false);
       cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemsChanged));
-      
+
       List<Item> items = new ArrayList<>(cut.getItems());
       assertTrue(items.remove(ItemDB.lookup("SRM AMMO")));
       assertTrue(items.remove(ItemDB.lookup("LRM AMMO")));
@@ -451,24 +498,25 @@ public class LoadoutPartTest{
       assertTrue(items.remove(ItemDB.lookup("NARC AMMO")));
       assertTrue(items.isEmpty());
    }
-   
+
    /**
-    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct type.
+    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct
+    * type.
     */
    @Test
    public void testReceive_artemisNoChange(){
       when(mlc.upgrades.hasArtemis()).thenReturn(true);
-      
+
       LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
       cut.addItem("SRM AMMO + ARTEMIS IV");
       cut.addItem("LRM AMMO + ARTEMIS IV");
       cut.addItem("STREAK SRM AMMO");
       cut.addItem("NARC AMMO");
       verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      
+
       when(mlc.upgrades.hasArtemis()).thenReturn(true);
       cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
-      
+
       List<Item> items = new ArrayList<>(cut.getItems());
       assertTrue(items.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
       assertTrue(items.remove(ItemDB.lookup("LRM AMMO + ARTEMIS IV")));

@@ -5,6 +5,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,22 +17,21 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
-import lisong_mechlab.Pair;
-import lisong_mechlab.model.MessageXBar;
-import lisong_mechlab.model.MessageXBar.Message;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.Pair;
+import lisong_mechlab.util.MessageXBar.Message;
 
 public class PartList extends JList<Item>{
    private static final long            serialVersionUID = 5995694414450060827L;
-
    private final LoadoutPart            part;
-
    private final DynamicSlotDistributor slotDistributor;
 
    private enum ListEntryType{
@@ -38,7 +39,6 @@ public class PartList extends JList<Item>{
    }
 
    private class Renderer extends JLabel implements ListCellRenderer<Object>{
-
       private static final long serialVersionUID = -8157859670319431469L;
 
       @Override
@@ -87,12 +87,9 @@ public class PartList extends JList<Item>{
                break;
             }
          }
-
-         if( isSelected && pair.first != ListEntryType.Empty ){
-            setForeground(getForeground().brighter());
-            setBackground(getBackground().brighter());
-         }
-
+         /*
+          * if( isSelected && pair.first != ListEntryType.Empty ){ setBackground(getBackground().brighter()); }
+          */
          return this;
       }
 
@@ -227,7 +224,7 @@ public class PartList extends JList<Item>{
       setModel(new Model(anXBar));
       setDragEnabled(true);
       setDropMode(DropMode.ON);
-      setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+      setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       setTransferHandler(new ItemTransferHandler());
       setCellRenderer(new Renderer());
 
@@ -248,6 +245,17 @@ public class PartList extends JList<Item>{
             }
          }
       });
+
+      addMouseListener(new MouseAdapter(){
+         @Override
+         public void mouseClicked(MouseEvent e){
+            if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
+               for(Item item : getSelectedItems()){
+                  part.removeItem(item);
+               }
+            }
+         }
+      });
    }
 
    List<Item> getSelectedItems(){
@@ -255,14 +263,23 @@ public class PartList extends JList<Item>{
       int[] idxs = getSelectedIndices();
       for(int i : idxs){
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(i);
-         if( pair.first == ListEntryType.Item ){
-            items.add(pair.second);
-         }
-         else if( pair.first == ListEntryType.EngineHeatSink ){
-            if( part.getNumEngineHeatsinks() > 0 ){
-               items.add(ItemDB.SHS);
-               items.add(ItemDB.DHS);
-            }
+         switch( pair.first ){
+            case Empty:
+               break;
+            case EngineHeatSink:
+               if( part.getNumEngineHeatsinks() > 0 ){
+                  items.add(ItemDB.SHS);
+                  items.add(ItemDB.DHS);
+               }
+               break;
+            case Item:
+            case LastSlot:
+            case MultiSlot:
+               items.add(pair.second);
+               break;
+            default:
+               break;
+
          }
       }
       return items;
