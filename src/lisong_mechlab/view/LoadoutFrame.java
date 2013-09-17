@@ -135,7 +135,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, false, slotDistributor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, true, slotDistributor));
          subPanel.add(new PartPanel(aConfiguration.getPart(Part.CenterTorso), anXBar, true, slotDistributor));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
