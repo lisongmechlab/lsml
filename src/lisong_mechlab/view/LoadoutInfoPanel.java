@@ -293,6 +293,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                // ----------------------------------------------------------------------
                final DecimalFormat df = new DecimalFormat("#.##");
                df.setMinimumFractionDigits(2);
+               
+               final DecimalFormat dfshort = new DecimalFormat("#");
 
                double mass = loadout.getMass();
                massBar.setValue((int)Math.ceil(mass));
@@ -332,7 +334,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                heatsinks.setText("Heatsinks: " + loadout.getHeatsinksCount());
                effectiveHS.setText("Heat capacity: " + df.format(metricHeatCapacity.calculate()));
                timeToOverheat.setText("Seconds to Overheat: " + df.format(metricTimeToOverHeat.calculate()));
-               coolingRatio.setText("Cooling efficiency: " + df.format(metricCoolingRatio.calculate()));
+               coolingRatio.setText("Cooling efficiency: " + dfshort.format(metricCoolingRatio.calculate()*100.0)+"%");
 
                // Offense
                // ----------------------------------------------------------------------
