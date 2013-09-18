@@ -86,10 +86,10 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
 
       root.addChild(chassii);
       root.addChild(garage);
+      root.addChild(new EquippableItemsCathegory(misc, "Misc", root, this, xBar));
       root.addChild(new EquippableItemsCathegory(weapons, "Weapons", root, this, xBar));
       root.addChild(new EquippableItemsCathegory(engineStd, "Engine - STD", root, this, xBar));
       root.addChild(new EquippableItemsCathegory(engineXl, "Engine - XL", root, this, xBar));
-      root.addChild(new EquippableItemsCathegory(misc, "Misc", root, this, xBar));
 
       // Chassii
       for(ChassiClass chassiClass : ChassiClass.values()){
