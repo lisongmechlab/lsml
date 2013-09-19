@@ -51,7 +51,7 @@ public class ProgramInit extends JFrame{
          int penY = 250;
          g.setColor(Color.WHITE);
          g.drawString(progressText, penX, penY);
-         penY += 20;
+         penY += 15;
          g.drawString(progressSubText, penX, penY);
       }
    }
@@ -80,18 +80,18 @@ public class ProgramInit extends JFrame{
       });
    }
 
-   public static ProgramInit getInstance(){
-      return instance;
+   public static void setProcessText(String aString){
+      if( null != instance ){
+         instance.progressText = aString;
+         instance.repaint();
+      }
    }
 
-   public void setProcessText(String aString){
-      progressText = aString;
-      repaint();
-   }
-
-   public void setSubText(String aString){
-      progressSubText = aString;
-      repaint();
+   public static void setSubText(String aString){
+      if( null != instance ){
+         instance.progressSubText = aString;
+         instance.repaint();
+      }
    }
 
    public boolean waitUntilDone(){

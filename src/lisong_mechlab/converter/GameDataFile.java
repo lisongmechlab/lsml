@@ -6,7 +6,6 @@ import static java.nio.file.FileVisitResult.TERMINATE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,14 +15,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import lisong_mechlab.view.LsmlPreferences;
@@ -35,15 +37,11 @@ public class GameDataFile{
    public static final File      MDF_ROOT       = new File("Game/Objects/mechs/");
 
    private final Map<File, File> entryCache     = new HashMap<File, File>();
-   private final Path            gamePath;
-
-   private final ProgramInit     init;
+   private static Path           gamePath;
 
    public GameDataFile() throws IOException{
 
-      init = ProgramInit.getInstance();
-      if( null != init )
-         init.setProcessText("Searching for game files:");
+      ProgramInit.setProcessText("Searching for game files:");
 
       String gameDir = LsmlPreferences.getString(PREF_GAMEDIR);
       if( isValidGameDirectory(new File(gameDir).toPath()) ){
@@ -59,12 +57,10 @@ public class GameDataFile{
       }
       LsmlPreferences.setString(PREF_GAMEDIR, gamePath.toString());
 
-      if( null != init )
-         init.setProcessText("Parsing game files...");
+      ProgramInit.setProcessText("Parsing game files...");
    }
 
    public GameDataFile(File aGameRoot) throws FileNotFoundException{
-      init = ProgramInit.getInstance();
       if( isValidGameDirectory(aGameRoot.toPath()) ){
          gamePath = aGameRoot.toPath();
       }
@@ -84,13 +80,14 @@ public class GameDataFile{
     * @throws ZipException
     */
    public InputStream openGameFile(File aPath) throws ZipException, IOException{
-      // Try finding a raw file
-      {
-         File file = new File(gamePath.toFile(), aPath.toString());
-         if( file.exists() ){
-            return new FileInputStream(file);
-         }
-      }
+      // Cause of issue #118, we don't need this functionality atm so it is disabled until needed.
+      // // Try finding a raw file
+      // {
+      // File file = new File(gamePath.toFile(), aPath.toString());
+      // if( file.exists() ){
+      // return new FileInputStream(file);
+      // }
+      // }
 
       // Try looking in archive cache
       File sourceArchive = null;
@@ -185,9 +182,15 @@ public class GameDataFile{
       }
    }
 
+   /**
+    * Determine if the given {@link Path} points to the root of a valid game install.
+    * 
+    * @param aPath
+    *           The path to check.
+    * @return <code>true</code> if <code>aPath</code> points to a valid game install, false otherwise.
+    */
    private boolean isValidGameDirectory(Path aPath){
-      File file = new File(aPath.toFile(), "Game/Objects.pak");
-      return file.exists();
+      return (new File(aPath.toFile(), "Game/Objects.pak")).exists() && (new File(aPath.toFile(), "Bin32/MechWarriorOnline.exe")).exists();
    }
 
    private Path findGameDirectory() throws IOException{
@@ -196,8 +199,7 @@ public class GameDataFile{
 
          @Override
          public FileVisitResult visitFile(Path file, BasicFileAttributes attrs){
-            if( null != init )
-               init.setSubText(file.toString());
+            ProgramInit.setSubText(file.toString());
             if( file.endsWith("Game/Objects.pak") ){
                int answer = JOptionPane.showConfirmDialog(null, "Found the game files at: " + file.getParent().getParent().toString()
                                                                 + "\nIs this your primary game install?", "Confirm game directory",
@@ -228,35 +230,56 @@ public class GameDataFile{
       }
 
       // Look for a quick exit in the default install directories.
-      Path defaultPath = getDefaultGameFileLocation();
-      if( defaultPath.toFile().exists() ){
-         return defaultPath;
+      for(Path path : getDefaultGameFileLocations()){
+         if( isValidGameDirectory(path) ){
+            return path;
+         }
       }
 
-      // Walk all the file roots, or drives in windows
-      GameFinder finder = new GameFinder();
-      File[] roots = File.listRoots();
-      for(File root : roots){
-         // But only if they have enough space to hold the game install and enough space to be a usable disk (5 Mb)
-         if( root.getTotalSpace() > 1024 * 1024 * 1500 && root.getFreeSpace() > 1024 * 1024 * 5 ){
-            Files.walkFileTree(root.toPath(), finder);
-            if( null != finder.gameRoot ){
-               return finder.gameRoot;
+      int answer = JOptionPane.showOptionDialog(null, "The game was not installed in any of the default locations.\nHow would you like to proceed?",
+                                                "Determining game install...", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                                                new String[] {"Automatic search", "Manual browse"}, null);
+      if( answer == 0 ){
+         // Walk all the file roots, or drives in windows
+         GameFinder finder = new GameFinder();
+         File[] roots = File.listRoots();
+         for(File root : roots){
+            // But only if they have enough space to hold the game install and enough space to be a usable disk (5 Mb)
+            if( root.getTotalSpace() > 1024 * 1024 * 1500 && root.getFreeSpace() > 1024 * 1024 * 5 ){
+               Files.walkFileTree(root.toPath(), finder);
+               if( null != finder.gameRoot ){
+                  return finder.gameRoot;
+               }
             }
+         }
+      }
+      else if( answer == 1 ){
+         JFileChooser fc = new JFileChooser();
+         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+         while( JFileChooser.APPROVE_OPTION == fc.showOpenDialog(null) ){
+            Path selectedPath = fc.getSelectedFile().toPath();
+            if( isValidGameDirectory(selectedPath) ){
+               return selectedPath;
+            }
+            int tryagain = JOptionPane.showConfirmDialog(null,
+                                                         "The selected folder doesn't contain a valid game install.\nWould you like to try again?",
+                                                         "Ooops!", JOptionPane.YES_NO_OPTION);
+            if( tryagain != JOptionPane.YES_OPTION )
+               break;
          }
       }
       return null;
    }
 
-   private Path getDefaultGameFileLocation(){
+   /**
+    * @return A {@link List} of {@link Path}s that are likely to contain the game.
+    */
+   private List<Path> getDefaultGameFileLocations(){
+      List<Path> ans = new ArrayList<>();
       // Uses two variations one for x64 and one for x86
-      Path defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online");
-      if( !defaultGameFileLocation.toFile().exists() ){
-         defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online");
-      }
-      if( !defaultGameFileLocation.toFile().exists() ){
-         defaultGameFileLocation = FileSystems.getDefault().getPath("C:\\Games\\Piranha Games\\MechWarrior Online");
-      }
-      return defaultGameFileLocation;
+      ans.add(FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online"));
+      ans.add(FileSystems.getDefault().getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online"));
+      ans.add(FileSystems.getDefault().getPath("C:\\Games\\Piranha Games\\MechWarrior Online"));
+      return ans;
    }
 }
