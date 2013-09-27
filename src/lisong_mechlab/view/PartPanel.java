@@ -21,6 +21,7 @@ import lisong_mechlab.view.render.StyleManager;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
    private static final int  ARMOR_LABEL_WIDTH = 30;
+   private static final int  ARMOR_SPINNER_WIDTH = 20;
 
    private static final long serialVersionUID  = -4399442572295284661L;
 
@@ -90,18 +91,23 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private JPanel makeArmorPanel(MessageXBar anXBar){
       JPanel panel = new JPanel();
+      Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT);
+      Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
 
       if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+         
          frontArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
-         frontArmorLabel.setPreferredSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         frontArmorLabel.setPreferredSize(labelDimension);
          backArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
-         backArmorLabel.setPreferredSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         backArmorLabel.setPreferredSize(labelDimension);
 
          JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar));
-         frontSpinner.setMaximumSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         frontSpinner.setMaximumSize(labelDimension);
+         frontSpinner.getEditor().setPreferredSize(spinnerDimension);
 
          JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar));
-         backSpinner.setMaximumSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         backSpinner.setMaximumSize(labelDimension);
+         backSpinner.getEditor().setPreferredSize(spinnerDimension);
 
          JPanel frontPanel = new JPanel();
          frontPanel.setLayout(new BoxLayout(frontPanel, BoxLayout.LINE_AXIS));
@@ -123,10 +129,11 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       }
       else{
          JLabel armorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()));
-         armorLabel.setPreferredSize(new Dimension(ARMOR_LABEL_WIDTH, 0));
+         armorLabel.setPreferredSize(labelDimension);
 
          JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar));
-         spinner.setMaximumSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         spinner.setMaximumSize(labelDimension);
+         spinner.getEditor().setPreferredSize(spinnerDimension);
 
          panel.add(new JLabel("Armor:"));
          panel.add(Box.createHorizontalGlue());
