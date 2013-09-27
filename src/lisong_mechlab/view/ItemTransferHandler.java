@@ -14,6 +14,7 @@ import javax.swing.TransferHandler;
 
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.render.ItemRenderer;
@@ -65,10 +66,11 @@ class ItemTransferHandler extends TransferHandler{
          else{
             return null;
          }
-         setDragImage(ItemRenderer.render(item, equipmentPane.getCurrentLoadout().getUpgrades()));
+         Loadout loadout = equipmentPane.getCurrentLoadout();
+         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
          // Point mouse = equipmentPane.getMousePosition();
          // mouse.y -= equipmentPane.getRowHeight() * equipmentPane.getSelectionRows()[0];
-         Point mouse = new Point(ItemRenderer.ITEM_BASE_WIDTH / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
+         Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
          setDragImageOffset(mouse);
          return new StringSelection(item.getName());
       }
