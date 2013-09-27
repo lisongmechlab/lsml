@@ -118,7 +118,6 @@ public class Chassi{
       return parts.values();
    }
 
-   @Deprecated // Use the new StructureUpgrade#getStructureMass() instead.
    public double getInternalMass(){
       return getMassMax() * 0.10;
    }
