@@ -215,4 +215,8 @@ public class EquipmentPane extends JTree{
       }
       return null;
    }
+
+   public Loadout getCurrentLoadout(){
+      return loadout;
+   }
 }
