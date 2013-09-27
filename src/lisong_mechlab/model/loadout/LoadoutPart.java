@@ -443,8 +443,4 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
       return checkCommonRules(anItem);
    }
-
-   public Loadout getLoadout(){
-      return loadout;
-   }
 }
