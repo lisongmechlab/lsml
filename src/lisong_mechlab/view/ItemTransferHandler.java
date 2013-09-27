@@ -50,6 +50,10 @@ class ItemTransferHandler extends TransferHandler{
       else if( aComponent instanceof EquipmentPane ){
          sourcePart = null;
          EquipmentPane equipmentPane = (EquipmentPane)aComponent;
+
+         if( equipmentPane.getSelectionPath() == null )
+            return null;
+
          Object dragged = equipmentPane.getSelectionPath().getLastPathComponent();
          Item item = null;
          if( dragged instanceof String ){
