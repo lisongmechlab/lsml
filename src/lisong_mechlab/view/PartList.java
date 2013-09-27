@@ -28,6 +28,7 @@ import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
    private static final long            serialVersionUID = 5995694414450060827L;
@@ -43,6 +44,11 @@ public class PartList extends JList<Item>{
 
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus){
+         JList.DropLocation dropLocation = list.getDropLocation();
+         if( dropLocation != null && !dropLocation.isInsert() && dropLocation.getIndex() == index ){
+            setCursor(null);
+         }
+
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(index);
          setBorder(BorderFactory.createEmptyBorder());
          switch( pair.first ){
@@ -109,7 +115,7 @@ public class PartList extends JList<Item>{
    private class Model extends AbstractListModel<Item> implements MessageXBar.Reader{
       private static final String HEATSINKS_STRING = "HEATSINKS: ";
       private static final String EMPTY            = "EMPTY";
-      private static final String MULTISLOT        = "---";
+      private static final String MULTISLOT        = "";
       private static final String DYN_ARMOR        = "DYNAMIC ARMOR";
       private static final String DYN_STRUCT       = "DYNAMIC STRUCTURE";
       private static final long   serialVersionUID = 2438473891359444131L;
@@ -239,8 +245,8 @@ public class PartList extends JList<Item>{
          @Override
          public void keyPressed(KeyEvent aArg0){
             if( aArg0.getKeyCode() == KeyEvent.VK_DELETE ){
-               for(Item item : getSelectedItems()){
-                  part.removeItem(item);
+               for(Pair<Item, Integer> itemPair : getSelectedItems()){
+                  part.removeItem(itemPair.first);
                }
             }
          }
@@ -250,32 +256,36 @@ public class PartList extends JList<Item>{
          @Override
          public void mouseClicked(MouseEvent e){
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
-               for(Item item : getSelectedItems()){
-                  part.removeItem(item);
+               for(Pair<Item, Integer> itemPair : getSelectedItems()){
+                  part.removeItem(itemPair.first);
                }
             }
          }
       });
    }
 
-   List<Item> getSelectedItems(){
-      List<Item> items = new ArrayList<Item>();
+   List<Pair<Item, Integer>> getSelectedItems(){
+      List<Pair<Item, Integer>> items = new ArrayList<>();
       int[] idxs = getSelectedIndices();
       for(int i : idxs){
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(i);
+         int rootId = i;
+         while( rootId >= 0 && ((Model)getModel()).getElementAt(rootId) == null )
+            rootId--;
+         
          switch( pair.first ){
             case Empty:
                break;
             case EngineHeatSink:
                if( part.getNumEngineHeatsinks() > 0 ){
-                  items.add(ItemDB.SHS);
-                  items.add(ItemDB.DHS);
+                  items.add(new Pair<Item, Integer>(ItemDB.SHS, i));
+                  items.add(new Pair<Item, Integer>(ItemDB.DHS, i));
                }
                break;
             case Item:
             case LastSlot:
             case MultiSlot:
-               items.add(pair.second);
+               items.add(new Pair<Item, Integer>(pair.second, rootId));
                break;
             default:
                break;

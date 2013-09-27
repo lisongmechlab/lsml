@@ -289,6 +289,10 @@ public class LoadoutPart implements MessageXBar.Reader{
       return ans;
    }
 
+   public Loadout getLoadout(){
+      return loadout;
+   }
+
    public int getNumEngineHeatsinksMax(){
       for(Item item : items){
          if( item instanceof Engine ){
