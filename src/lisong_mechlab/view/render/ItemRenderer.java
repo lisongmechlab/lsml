@@ -37,24 +37,39 @@ public class ItemRenderer{
    }
 
    public static Image render(Item item, Upgrades aUpgrades){
+      final int x_offs;
+      final int x_slots;
       if( item instanceof Engine && ((Engine)item).getType() == EngineType.XL ){
-         // Draw side torsos too
-         return null;
+         x_offs = ITEM_BASE_WIDTH;
+         x_slots = 3;
+      }
+      else{
+         x_offs = 0;
+         x_slots = 1;
       }
       final int slots = item.getNumCriticalSlots(aUpgrades);
       final int h = ITEM_BASE_HEIGHT * slots;
       final int w = ITEM_BASE_WIDTH;
-      BufferedImage image = configuration.createCompatibleImage(ITEM_BASE_WIDTH, ITEM_BASE_HEIGHT * slots, Transparency.TRANSLUCENT);
+      BufferedImage image = configuration.createCompatibleImage(ITEM_BASE_WIDTH * x_slots, ITEM_BASE_HEIGHT * slots, Transparency.TRANSLUCENT);
       Graphics2D g = image.createGraphics();
-      RoundRectangle2D.Float rect = new RoundRectangle2D.Float(PADDING, PADDING, w - PADDING, h - PADDING, RADII, RADII);
 
       g.setRenderingHints(hints);
       g.setColor(StyleManager.getBgColorFor(item));
-      g.fill(rect);
+      g.fill(new RoundRectangle2D.Float(x_offs + PADDING, PADDING, w - PADDING, h - PADDING, RADII, RADII));
+      if( x_slots > 1 ){
+         final int engine_h = ITEM_BASE_HEIGHT*3;
+         g.fill(new RoundRectangle2D.Float(PADDING, PADDING, w - PADDING, engine_h - PADDING, RADII, RADII));
+         g.fill(new RoundRectangle2D.Float(2*x_offs + PADDING, PADDING, w - PADDING, engine_h - PADDING, RADII, RADII));
+      }
 
       g.setFont(g.getFont().deriveFont(11.0f));
       g.setColor(StyleManager.getFgColorFor(item));
-      g.drawString(item.getName(aUpgrades), RADII - PADDING + 1, ITEM_BASE_HEIGHT - ITEM_BASE_LINE);
+      g.drawString(item.getName(aUpgrades), x_offs + RADII - PADDING + 1, ITEM_BASE_HEIGHT - ITEM_BASE_LINE);
+      if( x_slots > 1 ){
+         g.drawString("ENGINE", 0 + RADII - PADDING + 1, ITEM_BASE_HEIGHT - ITEM_BASE_LINE);
+         g.drawString("ENGINE", 2*x_offs + RADII - PADDING + 1, ITEM_BASE_HEIGHT - ITEM_BASE_LINE);
+      }
+      
       g.dispose();
       return image;
    }
