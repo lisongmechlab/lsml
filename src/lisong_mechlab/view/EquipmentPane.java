@@ -24,6 +24,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.equipment.EquipmentTreeModel;
@@ -131,6 +132,7 @@ public class EquipmentPane extends JTree{
                   menu.add(label);
                   menu.add(new JMenuItem(new RenameLoadoutAction(clickedLoadout, KeyStroke.getKeyStroke("R"))));
                   menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), clickedLoadout, KeyStroke.getKeyStroke("D"))));
+                  menu.add(new JMenuItem(new CloneLoadoutAction("Clone", clickedLoadout, KeyStroke.getKeyStroke("C"))));
                   menu.show(EquipmentPane.this, e.getX(), e.getY());
                }
             }
