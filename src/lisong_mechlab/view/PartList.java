@@ -28,6 +28,7 @@ import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
    private static final long            serialVersionUID = 5995694414450060827L;
@@ -43,6 +44,11 @@ public class PartList extends JList<Item>{
 
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus){
+         JList.DropLocation dropLocation = list.getDropLocation();
+         if(dropLocation != null && !dropLocation.isInsert() && dropLocation.getIndex() == index){
+            setCursor(null);
+         }
+         
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(index);
          setBorder(BorderFactory.createEmptyBorder());
          switch( pair.first ){
@@ -227,6 +233,7 @@ public class PartList extends JList<Item>{
       setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       setTransferHandler(new ItemTransferHandler());
       setCellRenderer(new Renderer());
+      
 
       addFocusListener(new FocusAdapter(){
          @Override
@@ -284,7 +291,7 @@ public class PartList extends JList<Item>{
       }
       return items;
    }
-
+   
    LoadoutPart getPart(){
       return part;
    }
