@@ -1,9 +1,13 @@
 package lisong_mechlab.view;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +18,16 @@ import javax.swing.TransferHandler;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.view.render.ItemRenderer;
 
 class ItemTransferHandler extends TransferHandler{
    private static final long  serialVersionUID = -8109855943478269304L;
-
    private static LoadoutPart sourcePart       = null;
-   private static List<Item>  sourceItems      = null;
+   private BufferedImage      bufferedImage    = null;
+
+   private void render(Item item){
+      setDragImage(ItemRenderer.render(item, null));
+   }
 
    @Override
    public int getSourceActions(JComponent aComponent){
@@ -29,7 +37,7 @@ class ItemTransferHandler extends TransferHandler{
    @Override
    protected Transferable createTransferable(JComponent aComponent){
       if( aComponent instanceof PartList ){
-         sourceItems = ((PartList)aComponent).getSelectedItems();
+         List<Item> sourceItems = ((PartList)aComponent).getSelectedItems();
          sourcePart = ((PartList)aComponent).getPart();
 
          StringBuffer buff = new StringBuffer();
@@ -39,15 +47,24 @@ class ItemTransferHandler extends TransferHandler{
          for(Item item : sourceItems){
             sourcePart.removeItem(item);
          }
+         render(sourceItems.get(0));
          return new StringSelection(buff.toString());
       }
       else if( aComponent instanceof EquipmentPane ){
          sourcePart = null;
          Object dragged = ((EquipmentPane)aComponent).getSelectionPath().getLastPathComponent();
-         if( dragged instanceof String )
-            return new StringSelection((String)dragged);
-         else if( dragged instanceof Item )
-            return new StringSelection(((Item)dragged).getName());
+         Item item = null;
+         if( dragged instanceof String ){
+            item = ItemDB.lookup((String)dragged);
+         }
+         else if( dragged instanceof Item ){
+            item = (Item)dragged;
+         }
+         else{
+            return null;
+         }
+         render(item);
+         return new StringSelection(item.getName());
       }
       return null;
    }
@@ -88,7 +105,6 @@ class ItemTransferHandler extends TransferHandler{
 
       if( null != sourcePart && info.getDropAction() != COPY ){
          sourcePart = null;
-         sourceItems = null;
       }
 
       Component component = info.getComponent();
