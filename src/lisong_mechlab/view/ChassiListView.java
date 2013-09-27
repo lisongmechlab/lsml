@@ -28,6 +28,7 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
+import lisong_mechlab.view.render.StyleManager;
 
 public class ChassiListView extends JFrame{
    static public class ChassiTableModel extends AbstractTableModel{

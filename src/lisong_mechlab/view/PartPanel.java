@@ -17,6 +17,7 @@ import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.render.StyleManager;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
    private static final int  ARMOR_LABEL_WIDTH = 30;

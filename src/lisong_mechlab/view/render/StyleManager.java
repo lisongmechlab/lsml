@@ -1,4 +1,4 @@
-package lisong_mechlab.view;
+package lisong_mechlab.view.render;
 
 import java.awt.Color;
 import java.awt.Insets;
@@ -14,6 +14,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.view.RoundedBorders;
 
 public class StyleManager{
    private static final Insets PADDING                 = new Insets(2, 5, 2, 5);

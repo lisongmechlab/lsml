@@ -1,5 +1,18 @@
 package lisong_mechlab.model.mwo_parsing.helpers;
 
-public class ItemStatsUpgradeType{
-   /* TBD */
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+public class ItemStatsUpgradeType extends ItemStats{
+   public static class UpgradeTypeStatsTag{
+      @XStreamAsAttribute
+      public int    type;
+      @XStreamAsAttribute
+      public int    slots;
+      @XStreamAsAttribute
+      public double pointMultiplier;
+      @XStreamAsAttribute
+      public int    associatedItem;
+   }
+
+   public UpgradeTypeStatsTag UpgradeTypeStats;
 }
