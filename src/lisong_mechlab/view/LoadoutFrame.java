@@ -24,6 +24,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.MaxArmorAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
@@ -226,6 +227,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             loadout.strip();
          }
       }));
+      
+      menu.add(new JMenuItem(new CloneLoadoutAction("Clone", loadout, KeyStroke.getKeyStroke("C"))));
       return menu;
    }
 
