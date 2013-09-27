@@ -214,6 +214,15 @@ public class LoadoutPart implements MessageXBar.Reader{
             loadout.getPart(Part.LeftTorso).items.remove(ENGINE_INTERNAL);
             loadout.getPart(Part.RightTorso).items.remove(ENGINE_INTERNAL);
          }
+
+         int engineHsLeft = getNumEngineHeatsinks();
+         while( engineHsLeft > 0 ){
+            engineHsLeft--;
+            if( loadout.getUpgrades().hasDoubleHeatSinks() )
+               removeItem(ItemDB.DHS);
+            else
+               removeItem(ItemDB.SHS);
+         }
       }
       if( items.remove(anItem) )
          xBar.post(new Message(this, Type.ItemRemoved));
