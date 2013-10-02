@@ -24,6 +24,9 @@ public class ChassiDB{
    static public Chassi lookup(String aShortName){
       String keyShortName = canonize(aShortName);
       if( !variation2chassi.containsKey(keyShortName) ){
+         if(keyShortName.contains("muro")){
+            return lookup("CTF-IM");
+         }
          throw new IllegalArgumentException("No chassi variation named: " + aShortName + " !");
       }
       return variation2chassi.get(keyShortName);
