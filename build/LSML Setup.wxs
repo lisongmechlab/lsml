@@ -4,14 +4,16 @@
     <?define g_fname = "Li Song Mechlab"?>
     <?define g_sname = "LSML"?>
     <?define g_mfg = "Li-Soft"?>
-    <?define g_version = "1.0.0"?>
+    <?define g_version = "1.0.1"?>
 
-	<Product Id="E646F8A1-CF0E-4369-94DD-5E6734CBCCBB" Name="$(var.g_fname)"
+	<Product Id="22FF1465-30B8-4228-AE67-084C386C9856" Name="$(var.g_fname)"
 		Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)"
 		UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
-		<Package
+		<Package Id="*"
 			Description="A tool for creating mech configurations for MechWarrior: Online (r)"
 			Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes" />
+		<MajorUpgrade
+			DowngradeErrorMessage="A later version of $(var.g_fname) is already installed. Setup will now exit." />
 		<Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
 		<Icon Id="icon.ico" SourceFile="icon.ico" />
 		<WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
