@@ -14,9 +14,9 @@ public class ChassiTest{
       assertEquals(340, cut.getEngineMax());
 
       assertEquals("ILYA MUROMETS", cut.getName());
-      assertEquals("ILYA-MURO", cut.getNameShort());
+      assertEquals("CTF-IM", cut.getNameShort());
       assertEquals(cut.getNameShort(), cut.toString());
-      assertEquals("ctf-hero01", cut.getMwoName());
+      assertEquals("ctf-im", cut.getMwoName());
 
       assertEquals(7.0, cut.getInternalMass(), 0.0);
       assertEquals(70.0, cut.getMassMax(), 0.0);
