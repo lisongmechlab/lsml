@@ -127,12 +127,7 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
 
    @Override
    public void receive(Message aMsg){
-      if(aMsg instanceof LoadoutPart.Message){
-         LoadoutPart.Message msg = (LoadoutPart.Message)aMsg;
-         if(msg.type == Type.ArmorChanged)
-            return;
-      }
-
+      // TODO: BE MORE SELECTIVE!
       SwingUtilities.invokeLater(new Runnable(){
          @Override
          public void run(){
