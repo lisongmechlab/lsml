@@ -4,32 +4,44 @@
     <?define g_fname = "Li Song Mechlab"?>
     <?define g_sname = "LSML"?>
     <?define g_mfg = "Li-Soft"?>
-    <?define g_version = "1.1.0"?>
+    <?define g_version = "1.0.2"?>
 
-	<Product Id="E646F8A1-CF0E-4369-94DD-5E6734CBCCBB" Name="$(var.g_fname)"
+	<Product Id="EC5DD046-3AD3-46CF-B111-AA61CDD15F0B" Name="$(var.g_fname) $(var.g_version)"
 		Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)"
 		UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
 
 		<Package
 			Description="A tool for creating mech configurations for MechWarrior: Online (r)"
 			Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes" />
-		<Upgrade Id='DA3D057B-836F-46C9-9BD5-EBF29A56347B'>
-			<UpgradeVersion OnlyDetect='no' Property='PREVIOUSFOUND'
-				Minimum='0.0.1' IncludeMinimum='yes' Maximum='$(var.g_version)'
-				IncludeMaximum='no' />
-		</Upgrade>
-		<InstallExecuteSequence>
-			<RemoveExistingProducts After="InstallInitialize" />
-		</InstallExecuteSequence>
+
+		<!-- Every upgrade is a major upgrade as we don't want to require our users 
+			to run the installer from the command line nor do we want to have a launcher 
+			for the installer as that is just silly. -->
+		<MajorUpgrade
+			DowngradeErrorMessage="A later version of $(var.g_fname) is already installed. Setup will now exit." />
+
+		<!-- We only have one media file -->
 		<Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
+
+		<!-- Remember the installation directory and pass it to the WIXUI -->
+		<Property Id="INSTALLDIR">
+			<RegistrySearch Id="RegistrySearch" Type="raw" Root="HKLM"
+				Key="SOFTWARE\$(var.g_mfg)\$(var.g_sname)" Name="InstallDir" />
+		</Property>
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+		<UIRef Id="WixUI_InstallDir" />
+
+		<!-- Set the product icon -->
 		<Icon Id="icon.ico" SourceFile="icon.ico" />
+		<Property Id="ARPPRODUCTICON">icon.ico</Property>
+
+		<!-- Customize the look of the installer -->
 		<WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
 		<WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
 		<WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
-		<Property Id="ARPPRODUCTICON">icon.ico</Property>
-		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
-		<UIRef Id="WixUI_InstallDir" />
 		<UIRef Id="WixUI_ErrorProgressText" />
+
+		<!-- We only have one feature -->
 		<Feature Id="DefaultFeature" Title="$(var.g_fname)"
 			Description="A tool for building 'mech configurations for PGI's MechWarrior: Online (r)"
 			Display="expand" Level="1" ConfigurableDirectory='INSTALLDIR'>
@@ -39,6 +51,8 @@
 			<ComponentRef Id="README.TXT" />
 			<ComponentRef Id="ProgramMenuDir" />
 		</Feature>
+
+		<!-- The installation target -->
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder" Name="PFiles">
 				<Directory Id="CompanyFolder" Name="$(var.g_mfg)">
