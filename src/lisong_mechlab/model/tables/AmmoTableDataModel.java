@@ -1,6 +1,5 @@
 package lisong_mechlab.model.tables;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -40,8 +39,6 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    private Ammunition                   lrmAmmoType;
    private ArrayList<Double>            srmCooldownList;
    private ArrayList<Double>            lrmCooldownList;
-   private DecimalFormat                decFormat;
-
    private String[]                     columnNames      = {"Weapon", "Ammo Quantity", "Number of Volleys", "Combat Seconds"};
 
    public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
@@ -73,9 +70,6 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       combatColumn = new TreeMap<>();
       srmCooldownList = new ArrayList<>();
       lrmCooldownList = new ArrayList<>();
-      decFormat = new DecimalFormat();
-      decFormat.setMaximumFractionDigits(0);
-
    }
 
    public void initialiseMaps(){
@@ -351,8 +345,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          Double[] numberVolleyArray = new Double[numberVolleyColumn.size()];
          numberVolleyArray = numberVolleyColumn.values().toArray(numberVolleyArray);
          if( !numberVolleyArray[aRowIndex].isInfinite() ){
-            String decOut = decFormat.format(numberVolleyArray[aRowIndex]);
-            return new Double(decOut);
+            return Math.floor(numberVolleyArray[aRowIndex]);
          }
          return numberVolleyArray[aRowIndex];
       }
@@ -360,8 +353,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          Double[] combatArray = new Double[combatColumn.size()];
          combatArray = combatColumn.values().toArray(combatArray);
          if( !combatArray[aRowIndex].isInfinite() ){
-            String decOut = decFormat.format(combatArray[aRowIndex]);
-            return new Double(decOut);
+            return Math.floor(combatArray[aRowIndex]);
          }
          return combatArray[aRowIndex];
       }
