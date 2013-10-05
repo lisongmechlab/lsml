@@ -40,6 +40,7 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
       setBorder(BorderFactory.createLoweredSoftBevelBorder());
       setBackground(Color.GRAY.brighter());
       setTransferHandler(new ItemTransferHandler());
+      setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
    }
 
    /**
