@@ -20,7 +20,7 @@ public class StyleManager{
    private static final Insets PADDING                 = new Insets(2, 5, 2, 5);
    private static final Insets THIN_PADDING            = new Insets(1, 2, 1, 2);
    private static final int    RADII                   = ItemRenderer.RADII;
-   private static final int    MARGIN                  = 2;
+   private static final int    MARGIN                  = 1;
    private static final Border thinItemBorder          = new RoundedBorders(new Insets(0, MARGIN, 0, MARGIN), THIN_PADDING, RADII, false, false);
    private static final Border topBorder               = new RoundedBorders(new Insets(MARGIN, MARGIN, 0, MARGIN), PADDING, RADII, false, true);
    private static final Border middleBorder            = new RoundedBorders(new Insets(0, MARGIN, 0, MARGIN), PADDING, RADII, true, true);
