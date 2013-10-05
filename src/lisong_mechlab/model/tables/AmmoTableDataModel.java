@@ -362,18 +362,19 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg instanceof LoadoutPart.Message || aMsg instanceof Upgrades.Message )
-         SwingUtilities.invokeLater(new Runnable(){
+      if( aMsg.isForMe(aLoadout) )
+         return;
 
+      if( (aMsg instanceof LoadoutPart.Message && ((LoadoutPart.Message)aMsg).type != LoadoutPart.Message.Type.ArmorChanged)
+          || aMsg instanceof Upgrades.Message )
+         SwingUtilities.invokeLater(new Runnable(){
             @Override
             public void run(){
                initialiseLists();
                initialiseMaps();
                fillInAllColumns();
                fireTableDataChanged();
-
             }
          });
-
    }
 }

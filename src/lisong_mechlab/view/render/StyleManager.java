@@ -19,19 +19,13 @@ import lisong_mechlab.view.RoundedBorders;
 public class StyleManager{
    private static final Insets PADDING                 = new Insets(2, 5, 2, 5);
    private static final Insets THIN_PADDING            = new Insets(1, 2, 1, 2);
-   private static final int    THICKNESS               = 2;
-   private static final int    RADII                   = 10;
+   private static final int    RADII                   = ItemRenderer.RADII;
    private static final int    MARGIN                  = 2;
-   private static final Border thinItemBorder          = new RoundedBorders(null, new Insets(0, MARGIN, 0, MARGIN), THIN_PADDING, THICKNESS, RADII,
-                                                                            false, false);
-   private static final Border topBorder               = new RoundedBorders(null, new Insets(MARGIN, MARGIN, 0, MARGIN), PADDING, THICKNESS, RADII,
-                                                                            false, true);
-   private static final Border middleBorder            = new RoundedBorders(null, new Insets(0, MARGIN, 0, MARGIN), PADDING, THICKNESS, RADII, true,
-                                                                            true);
-   private static final Border bottomBorder            = new RoundedBorders(null, new Insets(0, MARGIN, MARGIN, MARGIN), PADDING, THICKNESS, RADII,
-                                                                            true, false);
-   private static final Border singleBorder            = new RoundedBorders(null, new Insets(MARGIN, MARGIN, MARGIN, MARGIN), PADDING, THICKNESS,
-                                                                            RADII, false, false);
+   private static final Border thinItemBorder          = new RoundedBorders(new Insets(0, MARGIN, 0, MARGIN), THIN_PADDING, RADII, false, false);
+   private static final Border topBorder               = new RoundedBorders(new Insets(MARGIN, MARGIN, 0, MARGIN), PADDING, RADII, false, true);
+   private static final Border middleBorder            = new RoundedBorders(new Insets(0, MARGIN, 0, MARGIN), PADDING, RADII, true, true);
+   private static final Border bottomBorder            = new RoundedBorders(new Insets(0, MARGIN, MARGIN, MARGIN), PADDING, RADII, true, false);
+   private static final Border singleBorder            = new RoundedBorders(new Insets(MARGIN, MARGIN, MARGIN, MARGIN), PADDING, RADII, false, false);
 
    private static Color        COLOR_BG_DYNAMIC        = new Color(0xeeeeec);
    private static Color        COLOR_BG_AMS            = new Color(0x2e3436);
