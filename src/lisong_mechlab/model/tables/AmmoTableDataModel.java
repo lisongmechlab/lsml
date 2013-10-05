@@ -362,7 +362,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(aLoadout) )
+      if( !aMsg.isForMe(aLoadout) )
          return;
 
       if( (aMsg instanceof LoadoutPart.Message && ((LoadoutPart.Message)aMsg).type != LoadoutPart.Message.Type.ArmorChanged)
