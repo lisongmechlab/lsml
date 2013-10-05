@@ -6,7 +6,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
 import lisong_mechlab.model.item.Engine;
@@ -28,8 +27,8 @@ public class ItemRenderer{
    private static final GraphicsConfiguration configuration    = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
                                                                                     .getDefaultConfiguration();
    private static final RenderingHints        hints;
-   private static final float                 PADDING          = 3;
-   private static final float                 RADII            = 12;
+   private static final int                   PADDING          = 3;
+   public static final int                    RADII            = 5;
 
    static{
       hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -55,11 +54,11 @@ public class ItemRenderer{
 
       g.setRenderingHints(hints);
       g.setColor(StyleManager.getBgColorFor(item));
-      g.fill(new RoundRectangle2D.Float(x_offs + PADDING, PADDING, w - PADDING, h - PADDING, RADII, RADII));
+      g.fillRoundRect(x_offs + PADDING, PADDING, w - PADDING, h - PADDING - 1, RADII * 2, RADII * 2);
       if( x_slots > 1 ){
-         final int engine_h = ITEM_BASE_HEIGHT*3;
-         g.fill(new RoundRectangle2D.Float(PADDING, PADDING, w - PADDING, engine_h - PADDING, RADII, RADII));
-         g.fill(new RoundRectangle2D.Float(2*x_offs + PADDING, PADDING, w - PADDING, engine_h - PADDING, RADII, RADII));
+         final int engine_h = ITEM_BASE_HEIGHT * 3;
+         g.fillRoundRect(PADDING, PADDING, w - PADDING, engine_h - PADDING, RADII * 2, RADII * 2);
+         g.fillRoundRect(2 * x_offs + PADDING, PADDING, w - PADDING, engine_h - PADDING, RADII * 2, RADII * 2);
       }
 
       g.setFont(g.getFont().deriveFont(11.0f));
@@ -67,9 +66,9 @@ public class ItemRenderer{
       g.drawString(item.getName(aUpgrades), x_offs + RADII - PADDING + 1, ITEM_BASE_HEIGHT - ITEM_BASE_LINE);
       if( x_slots > 1 ){
          g.drawString("ENGINE", 0 + RADII - PADDING + 1, ITEM_BASE_HEIGHT - ITEM_BASE_LINE);
-         g.drawString("ENGINE", 2*x_offs + RADII - PADDING + 1, ITEM_BASE_HEIGHT - ITEM_BASE_LINE);
+         g.drawString("ENGINE", 2 * x_offs + RADII - PADDING + 1, ITEM_BASE_HEIGHT - ITEM_BASE_LINE);
       }
-      
+
       g.dispose();
       return image;
    }

@@ -25,6 +25,8 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -219,8 +221,17 @@ public class PartList extends JList<Item>{
 
       @Override
       public void receive(Message aMsg){
-         // TODO be a bit more selective when to update
-         fireContentsChanged(this, 0, part.getInternalPart().getNumCriticalslots());
+         if( !aMsg.isForMe(PartList.this.part.getLoadout()) ){
+            return;
+         }
+
+         // Only update on item changes or upgrades
+         if( aMsg instanceof LoadoutPart.Message || aMsg instanceof Upgrades.Message ){
+            if( aMsg instanceof LoadoutPart.Message && ((LoadoutPart.Message)aMsg).type == Type.ArmorChanged ){
+               return; // Don't react to armor changes
+            }
+            fireContentsChanged(this, 0, part.getInternalPart().getNumCriticalslots());
+         }
       }
    }
 
@@ -272,7 +283,7 @@ public class PartList extends JList<Item>{
          int rootId = i;
          while( rootId >= 0 && ((Model)getModel()).getElementAt(rootId) == null )
             rootId--;
-         
+
          switch( pair.first ){
             case Empty:
                break;

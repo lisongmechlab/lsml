@@ -17,16 +17,17 @@ import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.render.ItemRenderer;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
-   private static final int  ARMOR_LABEL_WIDTH = 30;
+   private static final int  ARMOR_LABEL_WIDTH   = 30;
    private static final int  ARMOR_SPINNER_WIDTH = 20;
 
-   private static final long serialVersionUID  = -4399442572295284661L;
+   private static final long serialVersionUID    = -4399442572295284661L;
 
-   private final int         CELL_HEIGHT       = 20;
-   private final int         CELL_WIDTH        = 120;
+   private final int         CELL_HEIGHT         = 20;
+   private final int         CELL_WIDTH          = 120;
 
    private JLabel            frontArmorLabel;
    private JLabel            backArmorLabel;
@@ -71,7 +72,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
             JLabel label = new JLabel(hp.shortName());
             label.setBackground(StyleManager.getBgColorFor(hp));
             label.setForeground(StyleManager.getFgColorFor(hp));
-            label.setBorder(new RoundedBorders());
+            label.setBorder(new RoundedBorders(2, 3, ItemRenderer.RADII));
             label.setOpaque(true);
             panel.add(label);
          }
@@ -79,7 +80,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
             JLabel label = new JLabel(hardpoints + " " + hp.shortName());
             label.setBackground(StyleManager.getBgColorFor(hp));
             label.setForeground(StyleManager.getFgColorFor(hp));
-            label.setBorder(new RoundedBorders());
+            label.setBorder(new RoundedBorders(2, 3, ItemRenderer.RADII));
             label.setOpaque(true);
             panel.add(label);
          }
@@ -95,7 +96,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
 
       if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-         
+
          frontArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
          frontArmorLabel.setPreferredSize(labelDimension);
          backArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
