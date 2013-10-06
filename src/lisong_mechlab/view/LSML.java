@@ -27,7 +27,7 @@ import lisong_mechlab.util.MessageXBar;
  */
 public class LSML extends JFrame{
    public static final String      PROGRAM_FNAME          = "Li Song Mechlab";
-   private static final String     VERSION_STRING         = "(v1.0.1)";
+   private static final String     VERSION_STRING         = "1.0.2";
    private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
    private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter(){
                                                              @Override
