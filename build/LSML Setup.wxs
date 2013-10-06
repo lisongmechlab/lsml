@@ -36,7 +36,7 @@
 		<Property Id="ARPPRODUCTICON">icon.ico</Property>
 
 		<!-- Customize the look of the installer -->
-		<WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
+		<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
 		<WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
 		<WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
 		<UIRef Id="WixUI_ErrorProgressText" />
@@ -57,12 +57,12 @@
 			<Directory Id="ProgramFilesFolder" Name="PFiles">
 				<Directory Id="CompanyFolder" Name="$(var.g_mfg)">
 					<Directory Id="INSTALLDIR" Name="$(var.g_sname)">
-						<Component Id="LICENSE.RTF" DiskId="1"
+						<Component Id="license.RTF" DiskId="1"
 							Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2">
-							<File Id="LICENSE.RTF" Name="LICENSE.rtf" Source="LICENSE.rtf"
+							<File Id="LICENSE.RTF" Name="license.rtf" Source="license.rtf"
 								KeyPath="yes">
 								<Shortcut Id="shtct_pmd_license" Directory="ProgramMenuDir"
-									Name="LICENSE.rtf" Advertise="yes" />
+									Name="license.rtf" Advertise="yes" />
 							</File>
 						</Component>
 						<Component Id="README.TXT" DiskId="1"
