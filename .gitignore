@@ -1,6 +1,11 @@
 *.class
 *.log
 *.xml
-/build
+*.msi
+*.wixobj
+*.wixpdb
+*.exe
+*.jar
+!/lib/**/*.jar
 /bin
 *#
