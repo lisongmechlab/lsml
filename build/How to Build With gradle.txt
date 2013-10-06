@@ -1,0 +1,22 @@
+First make sure you have gradle installed.
+
+you need launch4j, candle and light available from the command line
+
+first enter a command line at the project root
+
+enter 'gradle tasks' into the command line
+
+enter 'gradle jar'
+
+enter 'gradle launch4j'
+
+enter 'gradle copyInstaller'
+
+enter 'gradle buildCandle'
+
+enter 'gradle buildLight'
+
+you should now have a working installer inside /build
+
+Need to create a tasks that runs all of those tasks at once
+need to create task to auto increment build number
