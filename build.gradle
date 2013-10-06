@@ -108,7 +108,7 @@ buildLight.mustRunAfter buildCandle
 buildscript {
     repositories {
         ivy {
-            artifactPattern project.rootDir.toString() + '/launch4jplugin/[module]-[revision].[ext]'
+            artifactPattern project.rootDir.toString() + '/build/launch4jplugin/[module]-[revision].[ext]'
         }
     
        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
