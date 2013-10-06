@@ -1,0 +1,9 @@
+
+
+task buildLight(type: Exec) {
+    commandLine 'cmd', '/C', 'light.exe', '-ext', 'WixUIExtension', '"LSML Setup.wixobj"'
+}
+
+task buildCandle(type: Exec) {
+    commandLine 'cmd', '/C', 'candle.exe', '"LSML Setup.wxs"'
+}
