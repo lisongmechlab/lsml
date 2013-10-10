@@ -2,6 +2,8 @@ package lisong_mechlab.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
+import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
@@ -21,11 +23,11 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.CoolingRatio;
 import lisong_mechlab.model.loadout.metrics.HeatCapacity;
@@ -36,12 +38,9 @@ import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
-import lisong_mechlab.model.loadout.metrics.TotalAmmoSupply;
 import lisong_mechlab.model.tables.AmmoTableDataModel;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long        serialVersionUID = 4720126200474042446L;
@@ -87,18 +86,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final MaxSustainedDPS    metricSustainedDps;
    private final AmmoTableDataModel anAmmoTableDataModel;
    private transient Boolean        inhibitChanges   = false;
-   private final Box horizontalBox_1 = Box.createHorizontalBox();
-   private JLabel FFSpaceRequired;
-   private final JLabel label = new JLabel("- Space Change:");
-   private final JLabel ESSpaceRequired = new JLabel("0");
-   private final JLabel label_1 = new JLabel("- Space Change:");
-   private final JLabel ASpaceRequired = new JLabel("0.0");
-   private final JLabel lblNewLabel = new JLabel("  - Slots Change:");
-   private final JLabel FFSlotsChange = new JLabel("0");
-   private final JLabel label_2 = new JLabel("  - Slots Change:");
-   private final JLabel label_3 = new JLabel("14");
-   private final JLabel label_4 = new JLabel("  - Slots Change:");
-   private final JLabel ASlotsChange = new JLabel("14");
+   private final ArtemisHandler     artemisChecker;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
@@ -113,8 +101,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricAlphaStrike = new AlphaStrike(loadout);
       metricMaxDPS = new MaxDPS(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
-      new TotalAmmoSupply(loadout);
 
+      artemisChecker = new ArtemisHandler(loadout);
       anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -124,108 +112,51 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // ----------------------------------------------------------------------
       {
          JPanel general = new JPanel();
-         general.setBorder(new CompoundBorder(new TitledBorder(null, "General"), new EmptyBorder(5, 5, 5, 5)));
+         general.setBorder(new CompoundBorder(new TitledBorder(null, "General ("+loadout.getChassi().getMassMax()+" tons)"), new EmptyBorder(5, 5, 5, 5)));
          add(general);
 
-         JLabel critslotsTxt = new JLabel("Critical Slots:");
+         JLabel critslotsTxt = new JLabel("Slots:");
 
-         JLabel massTxt = new JLabel("Tonnage:");
+         JLabel massTxt = new JLabel("Tons:");
          massBar = new JProgressBar(0, loadout.getChassi().getMassMax());
 
          JLabel armorTxt = new JLabel("Armor:");
          armorBar = new JProgressBar(0, loadout.getChassi().getArmorMax());
 
          ferroFibros.addItemListener(this);
+         endoSteel.addItemListener(this);
+         artemis.addItemListener(this);
 
          Box upgradesBox = Box.createHorizontalBox();
          upgradesBox.add(ferroFibros);
-         
-         Box horizontalBox = Box.createHorizontalBox();
-         
-         Box horizontalBox_2 = Box.createHorizontalBox();
+         upgradesBox.add(endoSteel);
+         upgradesBox.add(artemis);
 
          GroupLayout gl_general = new GroupLayout(general);
-         gl_general.setHorizontalGroup(
-            gl_general.createParallelGroup(Alignment.LEADING)
-               .addGroup(gl_general.createSequentialGroup()
-                  .addGroup(gl_general.createParallelGroup(Alignment.LEADING)
-                     .addComponent(massTxt)
-                     .addComponent(armorTxt)
-                     .addComponent(critslotsTxt))
-                  .addGroup(gl_general.createParallelGroup(Alignment.LEADING)
-                     .addComponent(massBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                     .addComponent(armorBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                     .addComponent(critslotsBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                  .addGroup(gl_general.createParallelGroup(Alignment.LEADING)
-                     .addComponent(massValue)
-                     .addComponent(armorValue)
-                     .addComponent(critslotsValue))
-                  .addContainerGap(56, Short.MAX_VALUE))
-               .addGroup(gl_general.createSequentialGroup()
-                  .addComponent(upgradesBox, GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                  .addContainerGap())
-               .addGroup(Alignment.TRAILING, gl_general.createSequentialGroup()
-                  .addContainerGap()
-                  .addGroup(gl_general.createParallelGroup(Alignment.TRAILING)
-                     .addComponent(horizontalBox_2, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                     .addComponent(horizontalBox, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
-                  .addContainerGap())
-         );
-         gl_general.setVerticalGroup(
-            gl_general.createParallelGroup(Alignment.LEADING)
-               .addGroup(gl_general.createSequentialGroup()
-                  .addGroup(gl_general.createParallelGroup(Alignment.LEADING)
-                     .addComponent(massTxt)
-                     .addComponent(massBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                     .addComponent(massValue))
-                  .addGroup(gl_general.createParallelGroup(Alignment.LEADING)
-                     .addComponent(armorTxt)
-                     .addComponent(armorBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                     .addComponent(armorValue))
-                  .addGroup(gl_general.createParallelGroup(Alignment.LEADING)
-                     .addComponent(critslotsTxt)
-                     .addComponent(critslotsBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                     .addComponent(critslotsValue))
-                  .addPreferredGap(ComponentPlacement.RELATED)
-                  .addComponent(upgradesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                  .addPreferredGap(ComponentPlacement.RELATED)
-                  .addComponent(horizontalBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                  .addPreferredGap(ComponentPlacement.RELATED)
-                  .addComponent(horizontalBox_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                  .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-         );
-         
-         JLabel lblspaceRequired = new JLabel("- Space Change:");
-         upgradesBox.add(lblspaceRequired);
-         
-         FFSpaceRequired = new JLabel("0");
-         upgradesBox.add(FFSpaceRequired);
-         
-         upgradesBox.add(lblNewLabel);
-         
-         upgradesBox.add(FFSlotsChange);
-         horizontalBox_2.add(artemis);
-         
-         horizontalBox_2.add(label_1);
-         
-         horizontalBox_2.add(ASpaceRequired);
-         
-         horizontalBox_2.add(label_4);
-         
-         horizontalBox_2.add(ASlotsChange);
-         artemis.addItemListener(this);
-         horizontalBox.add(endoSteel);
-         
-         horizontalBox.add(label);
-         
-         horizontalBox.add(ESSpaceRequired);
-         
-         horizontalBox.add(label_2);
-         
-         horizontalBox.add(label_3);
-         endoSteel.addItemListener(this);
-         gl_general.setAutoCreateContainerGaps(true);
          gl_general.setAutoCreateGaps(true);
+
+         // @formatter:off
+         gl_general.setHorizontalGroup(
+            gl_general.createParallelGroup().addGroup(
+               gl_general.createSequentialGroup().addGroup(
+                  gl_general.createParallelGroup().addComponent(massTxt).addComponent(armorTxt).addComponent(critslotsTxt)
+               ).addGroup(
+                  gl_general.createParallelGroup().addComponent(massBar).addComponent(armorBar).addComponent(critslotsBar)
+               ).addGroup(
+                  gl_general.createParallelGroup().addComponent(massValue).addComponent(armorValue).addComponent(critslotsValue)
+               )
+            ).addComponent(upgradesBox)
+         );
+      
+         gl_general.setVerticalGroup(
+            gl_general.createSequentialGroup().addGroup(
+               gl_general.createParallelGroup().addComponent(massTxt).addComponent(massBar).addComponent(massValue)
+            ).addGroup(
+               gl_general.createParallelGroup().addComponent(armorTxt).addComponent(armorBar).addComponent(armorValue)
+            ).addGroup(
+               gl_general.createParallelGroup().addComponent(critslotsTxt).addComponent(critslotsBar).addComponent(critslotsValue)
+            ).addComponent(upgradesBox)
+         );
          // @formatter:on
 
          general.setLayout(gl_general);
@@ -271,21 +202,25 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(coolingRatio);
-
-         Box horizontalBox = Box.createHorizontalBox();
-         horizontalBox.setAlignmentY(Component.CENTER_ALIGNMENT);
-         horizontalBox.add(doubleHeatSinks);
-         horizontalBox.add(coolRun);
-         heat.add(horizontalBox);
          
-         heat.add(horizontalBox_1);
-         horizontalBox_1.add(heatContainment);
-         horizontalBox_1.add(doubleBasics);
+
+         GridLayout gridLayout = new GridLayout(2, 2);
+         JPanel upgrades = new JPanel(gridLayout);
+         
+         upgrades.setAlignmentY(Component.CENTER_ALIGNMENT);
+         coolRun.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+         upgrades.add(coolRun);
+         upgrades.add(heatContainment);
+         
+         doubleHeatSinks.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+         upgrades.add(doubleHeatSinks);
+         upgrades.add(doubleBasics);
+         heat.add(upgrades);
+
          doubleBasics.addItemListener(this);
          heatContainment.addItemListener(this);
          doubleHeatSinks.addItemListener(this);
          coolRun.addItemListener(this);
-
       }
 
       // Offense
@@ -305,27 +240,19 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(dpsSustained);
-      }
-      // Ammo
-      {
+
+         offence.add(Box.createVerticalStrut(5));
 
          JPanel ammo = new JPanel();
          totalAmmoSupply = new JTable(anAmmoTableDataModel);
-
          totalAmmoSupply.setModel(anAmmoTableDataModel);
-         JTableHeader header = totalAmmoSupply.getTableHeader();
-         header.setDefaultRenderer(new HeaderRenderer(totalAmmoSupply));
-         // totalAmmoSupply.updateUI();
-
+         totalAmmoSupply.getTableHeader().setDefaultRenderer(new HeaderRenderer(totalAmmoSupply));
          ammo.setLayout(new BorderLayout()); // unless already there
          ammo.add(totalAmmoSupply, BorderLayout.CENTER);
          ammo.add(totalAmmoSupply.getTableHeader(), BorderLayout.NORTH);
-         ammo.setBorder(new CompoundBorder(new TitledBorder(null, "Weapons"), new EmptyBorder(5, 5, 5, 5)));
-         add(ammo);
-
+         offence.add(ammo);
+         offence.add(Box.createVerticalGlue());
       }
-
-      add(Box.createVerticalGlue());
 
       updateDisplay();
    }
@@ -363,12 +290,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                // ----------------------------------------------------------------------
                final DecimalFormat df = new DecimalFormat("#.##");
                df.setMinimumFractionDigits(2);
-               
+
                final DecimalFormat dfshort = new DecimalFormat("#");
 
                double mass = loadout.getMass();
                massBar.setValue((int)Math.ceil(mass));
-               massValue.setText(df.format(mass) + " (" + df.format(loadout.getChassi().getMassMax() - mass) + " free)");
+               //massValue.setText(df.format(mass) + " (" + df.format(loadout.getChassi().getMassMax() - mass) + " free)");
+               massValue.setText(df.format(loadout.getChassi().getMassMax() - mass) + " free");
+               //massValue.setText("<html><span style=\"color: green;\">"+df.format(loadout.getChassi().getMassMax() - mass) + "</span> / " + loadout.getChassi().getMassMax());
 
                armorBar.setValue(loadout.getArmor());
                armorValue.setText(loadout.getArmor() + " / " + loadout.getChassi().getArmorMax());
@@ -379,14 +308,44 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                artemis.setSelected(loadout.getUpgrades().hasArtemis());
                endoSteel.setSelected(loadout.getUpgrades().hasEndoSteel());
                ferroFibros.setSelected(loadout.getUpgrades().hasFerroFibrous());
-               int standardArmorSpace = loadout.getArmor()/32;
-               double FFArmorSpace = (loadout.getArmor()/32) /1.12;
-               FFSpaceRequired.setText("" + (df.format(standardArmorSpace - FFArmorSpace)));
-               FFSlotsChange.setText("14");
-               ESSpaceRequired.setText("" + loadout.getChassi().getMassMax() * 0.05);
-               
-               ASpaceRequired.setText("" + new ArtemisHandler(loadout).getAdditionalMass());
-               ASlotsChange.setText("" + new ArtemisHandler(loadout).getAdditionalSlots());
+
+               {
+                  final String esSavedMass = df.format(loadout.getChassi().getMassMax() * 0.05);
+                  if( loadout.getUpgrades().hasEndoSteel() ){
+                     endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: green;\">-" + esSavedMass + "t</span>, "
+                                       + "<span style=\"color: red;\">+14s</span>)" + "</html>");
+                  }
+                  else{
+                     endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: gray;\">-" + esSavedMass + "t</span>, "
+                                       + "<span style=\"color: gray;\">+14s</span>)" + "</html>");
+                  }
+               }
+
+               {
+                  final double armorMass = loadout.getArmor() / LoadoutPart.ARMOR_PER_TON;
+                  final String ffSavedMass = df.format(armorMass - armorMass / 1.12);
+                  if( loadout.getUpgrades().hasFerroFibrous() ){
+                     ferroFibros.setText("<html>Ferro-Fibrous<br>(<span style=\"color: green;\">-" + ffSavedMass + "t</span>, "
+                                         + "<span style=\"color: red;\">+14s</span>)" + "</html>");
+                  }
+                  else{
+                     ferroFibros.setText("<html>Ferro-Fibrous<br>(<span style=\"color: gray;\">-" + ffSavedMass + "t</span>, "
+                                         + "<span style=\"color: gray;\">+14s</span>)" + "</html>");
+                  }
+               }
+
+               {
+                  final String artemisMass = dfshort.format(artemisChecker.getAdditionalMass());
+                  final int artemisSlots = artemisChecker.getAdditionalSlots();
+                  if( loadout.getUpgrades().hasArtemis() ){
+                     artemis.setText("<html>Artemis IV<br>(<span style=\"color: red;\">+" + artemisMass + "t</span>, "
+                                     + "<span style=\"color: red;\">+" + artemisSlots + "s</span>)" + "</html>");
+                  }
+                  else{
+                     artemis.setText("<html>Artemis IV<br>(<span style=\"color: gray;\">+" + artemisMass + "t</span>, "
+                                     + "<span style=\"color: gray;\">+" + artemisSlots + "s</span>)" + "</html>");
+                  }
+               }
 
                // Mobility
                // ----------------------------------------------------------------------
@@ -412,7 +371,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                heatsinks.setText("Heatsinks: " + loadout.getHeatsinksCount());
                effectiveHS.setText("Heat capacity: " + df.format(metricHeatCapacity.calculate()));
                timeToOverheat.setText("Seconds to Overheat: " + df.format(metricTimeToOverHeat.calculate()));
-               coolingRatio.setText("Cooling efficiency: " + dfshort.format(metricCoolingRatio.calculate()*100.0)+"%");
+               coolingRatio.setText("Cooling efficiency: " + dfshort.format(metricCoolingRatio.calculate() * 100.0) + "%");
 
                // Offense
                // ----------------------------------------------------------------------
@@ -438,7 +397,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-            ArtemisHandler artemisChecker = new ArtemisHandler(loadout);
             try{
                artemisChecker.checkLoadoutStillValid();
                artemisChecker.checkArtemisAdditionLegal();
