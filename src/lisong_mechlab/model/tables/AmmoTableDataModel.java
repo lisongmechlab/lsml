@@ -39,7 +39,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    private Ammunition                   lrmAmmoType;
    private ArrayList<Double>            srmCooldownList;
    private ArrayList<Double>            lrmCooldownList;
-   private String[]                     columnNames      = {"Weapon", "Ammo Quantity", "Number of Volleys", "Combat Seconds"};
+   private String[]                     columnNames      = {"Weapon", "Ammo", "Volleys", "Seconds"};
 
    public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
       this.aLoadout = aloadout;
