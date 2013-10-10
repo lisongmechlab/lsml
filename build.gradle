@@ -6,7 +6,7 @@ apply plugin: 'launch4j'
 apply plugin: 'ecj'
 
 sourceCompatibility = 1.7
-version = '1.1'
+def version = '1.1'
 project.buildDir = 'buildTemp'
 jar {
     manifest {
@@ -63,8 +63,8 @@ task buildLight(dependsOn: 'build:buildLight') {
 
 launch4j {
     mainClassName = "lisong_mechlab.view.ProgramInit"
-
-   jar = "lsml.jar"
+   def jarName = "lsml-" + version + ".jar"
+   jar = jarName
    dontWrapJar = true
    icon = project.rootDir.toString() + "//build//icon.ico"
    manifest = "lsml.manifest"
@@ -76,7 +76,7 @@ task copyLaunch4j () << {
    copy{
       from 'buildTemp/libs'
       into 'buildTemp/launch4j'
-      rename { String fileName -> fileName.replace('-1.1', '')}
+      //rename { String fileName -> fileName.replace('-1.1', '')}
    
   }
 }
