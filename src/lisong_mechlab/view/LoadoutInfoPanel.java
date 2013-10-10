@@ -85,6 +85,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final MaxSustainedDPS    metricSustainedDps;
    private final AmmoTableDataModel anAmmoTableDataModel;
    private transient Boolean        inhibitChanges   = false;
+   private final Box horizontalBox_1 = Box.createHorizontalBox();
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
@@ -208,13 +209,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          horizontalBox.setAlignmentY(Component.CENTER_ALIGNMENT);
          horizontalBox.add(doubleHeatSinks);
          horizontalBox.add(coolRun);
-         horizontalBox.add(heatContainment);
-         horizontalBox.add(doubleBasics);
          heat.add(horizontalBox);
+         
+         heat.add(horizontalBox_1);
+         horizontalBox_1.add(heatContainment);
+         horizontalBox_1.add(doubleBasics);
+         doubleBasics.addItemListener(this);
+         heatContainment.addItemListener(this);
          doubleHeatSinks.addItemListener(this);
          coolRun.addItemListener(this);
-         heatContainment.addItemListener(this);
-         doubleBasics.addItemListener(this);
 
       }
 
