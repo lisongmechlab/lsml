@@ -10,11 +10,8 @@ enter 'gradle jar'
 
 enter 'gradle launch4j'
 
-enter 'gradle copyInstaller'
+enter 'gradle createInstaller'
 
-enter 'gradle buildCandle'
-
-enter 'gradle buildLight'
 
 you should now have a working installer inside /build
 
