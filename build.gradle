@@ -90,15 +90,11 @@ task copyInstaller (dependsOn: copyLaunch4j) << {
 
 }
 
-task createInstaller << {
+task createInstaller (dependsOn: [jar, copyInstaller, buildLight, buildCandle]) << {
    println ('BuildingInstaller...')
 }
 
-createInstaller.dependsOn {
-   buildCandle
-   buildLight
-   
-}
+
 
 buildLight.mustRunAfter buildCandle
 
