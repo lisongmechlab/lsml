@@ -8,21 +8,17 @@ public class ArtemisHandler{
 
    private Loadout loadout;
    private Chassi  chassi;
-   private int     additionalCritSlots;
-   private int     additionalMass;
+  // private int     additionalCritSlots;
+ //  private int     additionalMass;
 
    public ArtemisHandler(Loadout loadoutUnderTest){
       loadout = loadoutUnderTest;
       chassi = loadout.getChassi();
-      additionalCritSlots = 0;
-      additionalMass = 0;
    }
 
    public void checkLoadoutStillValid(){
       if( !loadout.getUpgrades().hasArtemis() ){
          for(LoadoutPart part : loadout.getPartLoadOuts()){
-            additionalCritSlots = 0;
-            additionalMass = 0;
             if( !checkPartCanHoldArtemis(part) ){
                throw new IllegalArgumentException("Not enough free crit slots!");
             }
@@ -32,11 +28,10 @@ public class ArtemisHandler{
    }
 
    private boolean checkPartCanHoldArtemis(LoadoutPart aPart){
-
+      int additionalCritSlots = 0;
       for(Item item : aPart.getItems()){
          if( (item instanceof MissileWeapon) && !item.getName().toLowerCase().contains("streak") && !item.getName().toLowerCase().contains("narc") ){
             additionalCritSlots++;
-            additionalMass++;
          }
 
       }
@@ -49,8 +44,8 @@ public class ArtemisHandler{
    }
 
    public void checkArtemisAdditionLegal() throws IllegalArgumentException{
-      additionalCritSlots = 0;
-      additionalMass = 0;
+      int additionalCritSlots = 0;
+      int additionalMass = 0;
       for(Item item : loadout.getAllItems()){
          if( (item instanceof MissileWeapon) && !item.getName().toLowerCase().contains("streak") && !item.getName().toLowerCase().contains("narc") ){
             additionalCritSlots++;
@@ -67,6 +62,28 @@ public class ArtemisHandler{
          }
       }
 
+   }
+   
+   public int getAdditionalMass() {
+      int additionalMass = 0;
+      for(Item item : loadout.getAllItems()){
+         if( (item instanceof MissileWeapon) && !item.getName().toLowerCase().contains("streak") && !item.getName().toLowerCase().contains("narc") ){
+            additionalMass++;
+         }
+
+      }
+      return additionalMass;
+   }
+   
+   public int getAdditionalSlots() {
+      int additionalCritSlots = 0;
+      for(Item item : loadout.getAllItems()){
+         if( (item instanceof MissileWeapon) && !item.getName().toLowerCase().contains("streak") && !item.getName().toLowerCase().contains("narc") ){
+            additionalCritSlots++;
+         }
+
+      }
+      return additionalCritSlots;
    }
 
 }
