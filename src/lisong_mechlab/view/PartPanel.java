@@ -26,8 +26,8 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private static final long serialVersionUID    = -4399442572295284661L;
 
-   private final int         CELL_HEIGHT         = 20;
-   private final int         CELL_WIDTH          = 120;
+   private final int         CELL_HEIGHT       = 20;
+   private final int         CELL_WIDTH        = 100;
 
    private JLabel            frontArmorLabel;
    private JLabel            backArmorLabel;
@@ -44,7 +44,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(aLoadoutPart.getInternalPart().getType().longName()),
-                                                   BorderFactory.createEmptyBorder(0, 4, 4, 8)));
+                                                   BorderFactory.createEmptyBorder(0, 2, 2, 4)));
       add(makeArmorPanel(anXBar));
 
       if( canHaveHardpoints )
@@ -56,7 +56,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       list.setFixedCellWidth(CELL_WIDTH);
 
       add(list);
-      add(Box.createRigidArea(new Dimension(0, 10)));
+      add(Box.createRigidArea(new Dimension(0, 1)));
    }
 
    private JPanel makeHardpointsPanel(){

@@ -15,8 +15,6 @@ import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
