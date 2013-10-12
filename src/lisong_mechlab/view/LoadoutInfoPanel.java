@@ -1,9 +1,12 @@
 package lisong_mechlab.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
@@ -16,9 +19,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -108,24 +113,37 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       anXBar.attach(this);
 
+      Border innerBorder = new EmptyBorder(0, 4, 4, 4);
       // General
       // ----------------------------------------------------------------------
       {
          JPanel general = new JPanel();
-         general.setBorder(new CompoundBorder(new TitledBorder(null, "General ("+loadout.getChassi().getMassMax()+" tons)"), new EmptyBorder(5, 5, 5, 5)));
+         general.setBorder(new CompoundBorder(new TitledBorder(null, "General"), innerBorder));
          add(general);
 
          JLabel critslotsTxt = new JLabel("Slots:");
+         critslotsBar.setUI(new ProgressBarRenderer());
+         critslotsTxt.setAlignmentY(CENTER_ALIGNMENT);
 
          JLabel massTxt = new JLabel("Tons:");
          massBar = new JProgressBar(0, loadout.getChassi().getMassMax());
+         massBar.setUI(new ProgressBarRenderer());
 
          JLabel armorTxt = new JLabel("Armor:");
          armorBar = new JProgressBar(0, loadout.getChassi().getArmorMax());
+         armorBar.setUI(new ProgressBarRenderer());
 
+         Insets upgradeInsets = new Insets(0, 0, 0, 0);
          ferroFibros.addItemListener(this);
+         ferroFibros.setVerticalTextPosition(SwingConstants.TOP);
+         ferroFibros.setMargin(upgradeInsets);
+         ferroFibros.setMultiClickThreshhold(100);
          endoSteel.addItemListener(this);
+         endoSteel.setVerticalTextPosition(SwingConstants.TOP);
+         endoSteel.setMargin(upgradeInsets);
          artemis.addItemListener(this);
+         artemis.setVerticalTextPosition(SwingConstants.TOP);
+         artemis.setMargin(upgradeInsets);
 
          Box upgradesBox = Box.createHorizontalBox();
          upgradesBox.add(ferroFibros);
@@ -143,18 +161,18 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                ).addGroup(
                   gl_general.createParallelGroup().addComponent(massBar).addComponent(armorBar).addComponent(critslotsBar)
                ).addGroup(
-                  gl_general.createParallelGroup().addComponent(massValue).addComponent(armorValue).addComponent(critslotsValue)
+                  gl_general.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(massValue).addComponent(armorValue).addComponent(critslotsValue)
                )
             ).addComponent(upgradesBox)
          );
       
          gl_general.setVerticalGroup(
             gl_general.createSequentialGroup().addGroup(
-               gl_general.createParallelGroup().addComponent(massTxt).addComponent(massBar).addComponent(massValue)
+               gl_general.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(massTxt).addComponent(massBar).addComponent(massValue)
             ).addGroup(
-               gl_general.createParallelGroup().addComponent(armorTxt).addComponent(armorBar).addComponent(armorValue)
+               gl_general.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(armorTxt).addComponent(armorBar).addComponent(armorValue)
             ).addGroup(
-               gl_general.createParallelGroup().addComponent(critslotsTxt).addComponent(critslotsBar).addComponent(critslotsValue)
+               gl_general.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(critslotsTxt).addComponent(critslotsBar).addComponent(critslotsValue)
             ).addComponent(upgradesBox)
          );
          // @formatter:on
@@ -166,7 +184,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // ----------------------------------------------------------------------
       {
          JPanel mobility = new JPanel();
-         mobility.setBorder(new CompoundBorder(new TitledBorder(null, "Mobility"), new EmptyBorder(5, 5, 5, 5)));
+         mobility.setBorder(new TitledBorder(null, "Mobility"));
          mobility.setLayout(new BoxLayout(mobility, BoxLayout.PAGE_AXIS));
          mobility.add(Box.createHorizontalGlue());
          add(mobility);
@@ -186,7 +204,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // ----------------------------------------------------------------------
       {
          JPanel heat = new JPanel();
-         heat.setBorder(new CompoundBorder(new TitledBorder(null, "Heat"), new EmptyBorder(5, 5, 5, 5)));
+         heat.setBorder(new CompoundBorder(new TitledBorder(null, "Heat"), innerBorder));
          heat.setLayout(new BoxLayout(heat, BoxLayout.PAGE_AXIS));
          heat.add(Box.createHorizontalGlue());
          add(heat);
@@ -202,16 +220,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(coolingRatio);
-         
 
          GridLayout gridLayout = new GridLayout(2, 2);
          JPanel upgrades = new JPanel(gridLayout);
-         
+
          upgrades.setAlignmentY(Component.CENTER_ALIGNMENT);
          coolRun.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
          upgrades.add(coolRun);
          upgrades.add(heatContainment);
-         
+
          doubleHeatSinks.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
          upgrades.add(doubleHeatSinks);
          upgrades.add(doubleBasics);
@@ -227,7 +244,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // ----------------------------------------------------------------------
       {
          JPanel offence = new JPanel();
-         offence.setBorder(new CompoundBorder(new TitledBorder(null, "Offense"), new EmptyBorder(5, 5, 5, 5)));
+         offence.setBorder(new CompoundBorder(new TitledBorder(null, "Offense"), innerBorder));
          offence.setLayout(new BoxLayout(offence, BoxLayout.PAGE_AXIS));
          offence.add(Box.createHorizontalGlue());
          add(offence);
@@ -243,38 +260,16 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          offence.add(Box.createVerticalStrut(5));
 
-         JPanel ammo = new JPanel();
          totalAmmoSupply = new JTable(anAmmoTableDataModel);
+         totalAmmoSupply.setFillsViewportHeight(true);
          totalAmmoSupply.setModel(anAmmoTableDataModel);
-         totalAmmoSupply.getTableHeader().setDefaultRenderer(new HeaderRenderer(totalAmmoSupply));
-         ammo.setLayout(new BorderLayout()); // unless already there
-         ammo.add(totalAmmoSupply, BorderLayout.CENTER);
-         ammo.add(totalAmmoSupply.getTableHeader(), BorderLayout.NORTH);
+         ((DefaultTableCellRenderer)totalAmmoSupply.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+         JScrollPane ammo = new JScrollPane(totalAmmoSupply);
+         ammo.setPreferredSize(new Dimension(260, 100));
          offence.add(ammo);
-         offence.add(Box.createVerticalGlue());
       }
 
       updateDisplay();
-   }
-
-   // TODO sets formatting correctly but throws exception on system exit need to
-   // FIXME: Move this somewhere else.
-   private static class HeaderRenderer implements TableCellRenderer{
-
-      DefaultTableCellRenderer renderer;
-
-      public HeaderRenderer(JTable table){
-         if( table.getTableHeader().getDefaultRenderer() instanceof DefaultTableCellRenderer ){
-            renderer = (DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer();
-            renderer.setHorizontalAlignment(SwingConstants.CENTER);
-         }
-
-      }
-
-      @Override
-      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col){
-         return renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-      }
    }
 
    public void updateDisplay(){
@@ -288,21 +283,25 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // General
                // ----------------------------------------------------------------------
-               final DecimalFormat df = new DecimalFormat("#.##");
-               df.setMinimumFractionDigits(2);
+               final DecimalFormat df2 = new DecimalFormat("#.##");
+               df2.setMinimumFractionDigits(2);
 
-               final DecimalFormat dfshort = new DecimalFormat("#");
+               final DecimalFormat df1 = new DecimalFormat("#.#");
+               df1.setMinimumFractionDigits(1);
+
+               final DecimalFormat df0 = new DecimalFormat("#");
 
                double mass = loadout.getMass();
                massBar.setValue((int)Math.ceil(mass));
-               //massValue.setText(df.format(mass) + " (" + df.format(loadout.getChassi().getMassMax() - mass) + " free)");
-               massValue.setText(df.format(loadout.getChassi().getMassMax() - mass) + " free");
-               //massValue.setText("<html><span style=\"color: green;\">"+df.format(loadout.getChassi().getMassMax() - mass) + "</span> / " + loadout.getChassi().getMassMax());
+               massValue.setText(df2.format(loadout.getChassi().getMassMax() - mass) + " free");
+               massBar.setString(df1.format(mass) + " / " + df0.format(loadout.getChassi().getMassMax()));
 
                armorBar.setValue(loadout.getArmor());
-               armorValue.setText(loadout.getArmor() + " / " + loadout.getChassi().getArmorMax());
+               armorBar.setString(loadout.getArmor() + " / " + loadout.getChassi().getArmorMax());
+               armorValue.setText((loadout.getChassi().getArmorMax() - loadout.getArmor()) + " free");
 
                critslotsBar.setValue(loadout.getNumCriticalSlotsUsed());
+               critslotsBar.setString(loadout.getNumCriticalSlotsUsed() + " / " + (12 * 5 + 3 * 6));
                critslotsValue.setText(loadout.getNumCriticalSlotsFree() + " free");
 
                artemis.setSelected(loadout.getUpgrades().hasArtemis());
@@ -310,7 +309,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                ferroFibros.setSelected(loadout.getUpgrades().hasFerroFibrous());
 
                {
-                  final String esSavedMass = df.format(loadout.getChassi().getMassMax() * 0.05);
+                  final String esSavedMass = df2.format(loadout.getChassi().getMassMax() * 0.05);
                   if( loadout.getUpgrades().hasEndoSteel() ){
                      endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: green;\">-" + esSavedMass + "t</span>, "
                                        + "<span style=\"color: red;\">+14s</span>)" + "</html>");
@@ -323,7 +322,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                {
                   final double armorMass = loadout.getArmor() / LoadoutPart.ARMOR_PER_TON;
-                  final String ffSavedMass = df.format(armorMass - armorMass / 1.12);
+                  final String ffSavedMass = df2.format(armorMass - armorMass / 1.12);
                   if( loadout.getUpgrades().hasFerroFibrous() ){
                      ferroFibros.setText("<html>Ferro-Fibrous<br>(<span style=\"color: green;\">-" + ffSavedMass + "t</span>, "
                                          + "<span style=\"color: red;\">+14s</span>)" + "</html>");
@@ -335,7 +334,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                }
 
                {
-                  final String artemisMass = dfshort.format(artemisChecker.getAdditionalMass());
+                  final String artemisMass = df0.format(artemisChecker.getAdditionalMass());
                   final int artemisSlots = artemisChecker.getAdditionalSlots();
                   if( loadout.getUpgrades().hasArtemis() ){
                      artemis.setText("<html>Artemis IV<br>(<span style=\"color: red;\">+" + artemisMass + "t</span>, "
@@ -349,9 +348,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // Mobility
                // ----------------------------------------------------------------------
-               topSpeed.setText("Top speed: " + df.format(metricTopSpeed.calculate()) + " km/h");
+               topSpeed.setText("Top speed: " + df2.format(metricTopSpeed.calculate()) + " km/h");
                jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassi().getMaxJumpJets() + " ("
-                                + df.format(metricJumpDistance.calculate()) + " m)");
+                                + df2.format(metricJumpDistance.calculate()) + " m)");
                speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
 
                // Heat
@@ -369,15 +368,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                }
 
                heatsinks.setText("Heatsinks: " + loadout.getHeatsinksCount());
-               effectiveHS.setText("Heat capacity: " + df.format(metricHeatCapacity.calculate()));
-               timeToOverheat.setText("Seconds to Overheat: " + df.format(metricTimeToOverHeat.calculate()));
-               coolingRatio.setText("Cooling efficiency: " + dfshort.format(metricCoolingRatio.calculate() * 100.0) + "%");
+               effectiveHS.setText("Heat capacity: " + df2.format(metricHeatCapacity.calculate()));
+               timeToOverheat.setText("Seconds to Overheat: " + df2.format(metricTimeToOverHeat.calculate()));
+               coolingRatio.setText("Cooling efficiency: " + df0.format(metricCoolingRatio.calculate() * 100.0) + "%");
 
                // Offense
                // ----------------------------------------------------------------------
-               alphaStrike.setText("Alpha strike: " + df.format(metricAlphaStrike.calculate()));
-               dpsMax.setText("Max DPS: " + df.format(metricMaxDPS.calculate()));
-               dpsSustained.setText("Max Sustained DPS: " + df.format(metricSustainedDps.calculate()));
+               alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()));
+               dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()));
+               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()));
 
                inhibitChanges = false;
             }
