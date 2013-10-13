@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -59,7 +60,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menuBar.add(createMenuGraphs());
       menuBar.add(createMenuShare());
       setJMenuBar(menuBar);
-
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       // Set the window's location.
       setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
       openFrameCount++;
@@ -80,10 +81,25 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          @Override
          public void internalFrameClosing(InternalFrameEvent e){
             if( !isSaved() ){
-               int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to save " + loadout.getName() + " to your garage?",
+               int saveAns = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to save " + loadout.getName() + " to your garage?",
                                                        "Save to garage?", JOptionPane.YES_NO_OPTION);
-               if( ans == JOptionPane.YES_OPTION ){
+               if( saveAns == JOptionPane.YES_OPTION ){
                   ProgramInit.lsml().getGarage().add(loadout);
+                  dispose();
+               }
+               if(saveAns == JOptionPane.NO_OPTION){
+                  int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to close this window?",
+                                                          "", JOptionPane.YES_NO_OPTION);
+                  if( ans == JOptionPane.YES_OPTION ){
+                     dispose();
+                  }
+               }
+            }
+            else {
+               int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to close this window?",
+                                                       "", JOptionPane.YES_NO_OPTION);
+               if( ans == JOptionPane.YES_OPTION ){
+                  dispose();
                }
             }
          }
