@@ -1,7 +1,6 @@
 package lisong_mechlab.view;
 
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -190,39 +189,23 @@ public class LSML extends JFrame{
       splitPane.setDividerLocation(180);
 
       setIconImage(ProgramInit.programIcon);
-      
-      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
       setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
       setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
       setVisible(true);
-
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       setJMenuBar(new MenuBar(this));
       setContentPane(splitPane);
       addWindowListener(new WindowAdapter(){
          @Override
          public void windowClosing(WindowEvent e){
-
-            int ans = JOptionPane.showConfirmDialog(null, "Would you like to save your garage?",
-                                                    "Save garage?", JOptionPane.YES_NO_CANCEL_OPTION);
-            if( ans == JOptionPane.YES_OPTION ){
+            if( desktop.closeAll() ){
                saveGarage();
                if( null != lsmlProtocolIPC ){
-                lsmlProtocolIPC.close();
-             }
-               desktop.closeAll();
+                  lsmlProtocolIPC.close();
+               }
                dispose();
             }
-            if(ans == JOptionPane.NO_OPTION){
-               if( null != lsmlProtocolIPC ){
-                lsmlProtocolIPC.close();
-             }
-               desktop.closeAll();
-               dispose();
-               
-            }
-            
-            
          }
       });
 
