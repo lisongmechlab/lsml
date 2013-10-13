@@ -26,9 +26,6 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private static final long serialVersionUID    = -4399442572295284661L;
 
-   private final int         CELL_HEIGHT       = 20;
-   private final int         CELL_WIDTH        = 100;
-
    private JLabel            frontArmorLabel;
    private JLabel            backArmorLabel;
 
@@ -52,8 +49,8 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       // Critical slots
       PartList list = new PartList(aLoadoutPart, anXBar, aSlotDistributor);
-      list.setFixedCellHeight(CELL_HEIGHT);
-      list.setFixedCellWidth(CELL_WIDTH);
+      list.setFixedCellHeight(ItemRenderer.ITEM_BASE_HEIGHT);
+      list.setFixedCellWidth(ItemRenderer.ITEM_BASE_WIDTH);
 
       add(list);
       add(Box.createRigidArea(new Dimension(0, 1)));
@@ -64,7 +61,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       BoxLayout layoutManager = new BoxLayout(panel, BoxLayout.LINE_AXIS);
       panel.setLayout(layoutManager);
       // /panel.setBackground(Color.PINK.darker());
-      panel.add(Box.createVerticalStrut(CELL_HEIGHT + CELL_HEIGHT / 2));
+      panel.add(Box.createVerticalStrut(ItemRenderer.ITEM_BASE_HEIGHT + ItemRenderer.ITEM_BASE_HEIGHT / 2));
 
       for(HardpointType hp : HardpointType.values()){
          final int hardpoints = loadoutPart.getInternalPart().getNumHardpoints(hp);
@@ -92,7 +89,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private JPanel makeArmorPanel(MessageXBar anXBar){
       JPanel panel = new JPanel();
-      Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT);
+      Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, ItemRenderer.ITEM_BASE_HEIGHT);
       Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
 
       if( loadoutPart.getInternalPart().getType().isTwoSided() ){

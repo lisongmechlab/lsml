@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 
 import javax.swing.JComponent;
 import javax.swing.JProgressBar;
@@ -12,6 +13,13 @@ import javax.swing.plaf.ProgressBarUI;
 
 public class ProgressBarRenderer extends ProgressBarUI{
 
+   final RenderingHints hints;
+   
+   public ProgressBarRenderer(){
+      Toolkit tk = Toolkit.getDefaultToolkit(); 
+      hints = (RenderingHints)tk.getDesktopProperty("awt.font.desktophints"); 
+   }   
+   
    @Override
    public Dimension getMinimumSize(JComponent c){
       return new Dimension(0, c.getFontMetrics(c.getFont()).getHeight() + 4);
@@ -40,7 +48,9 @@ public class ProgressBarRenderer extends ProgressBarUI{
 
       // Draw text in bar
       Graphics2D g2d = (Graphics2D)g;
-      g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
+      g2d.setRenderingHints(hints);
+      
       g2d.setColor(Color.BLACK);
       int ascent = c.getFontMetrics(c.getFont()).getAscent();
       int stringWidth = c.getFontMetrics(c.getFont()).stringWidth(progressBar.getString());
