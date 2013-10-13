@@ -211,12 +211,14 @@ public class LSML extends JFrame{
                 lsmlProtocolIPC.close();
              }
                desktop.closeAll();
+               dispose();
             }
             if(ans == JOptionPane.NO_OPTION){
                if( null != lsmlProtocolIPC ){
                 lsmlProtocolIPC.close();
              }
                desktop.closeAll();
+               dispose();
                
             }
             
