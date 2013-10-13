@@ -10,7 +10,7 @@
   <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
   <stayAlive>false</stayAlive>
-  <manifest>C:\Users\Emily\winix\MinGW\msys\1.0\home\Emily\git\lsml\build\lsml.manifest</manifest>
+  <manifest>lsml.manifest</manifest>
   <icon>icon.ico</icon>
   <jre>
     <path></path>
