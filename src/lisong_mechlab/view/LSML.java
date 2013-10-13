@@ -1,6 +1,7 @@
 package lisong_mechlab.view;
 
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -13,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
 import lisong_mechlab.model.loadout.MechGarage;
@@ -188,21 +190,37 @@ public class LSML extends JFrame{
       splitPane.setDividerLocation(180);
 
       setIconImage(ProgramInit.programIcon);
+      
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
       setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
       setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
       setVisible(true);
-      setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
       setJMenuBar(new MenuBar(this));
       setContentPane(splitPane);
       addWindowListener(new WindowAdapter(){
          @Override
          public void windowClosing(WindowEvent e){
-            if( null != lsmlProtocolIPC ){
-               lsmlProtocolIPC.close();
+
+            int ans = JOptionPane.showConfirmDialog(null, "Would you like to save your garage?",
+                                                    "Save garage?", JOptionPane.YES_NO_CANCEL_OPTION);
+            if( ans == JOptionPane.YES_OPTION ){
+               saveGarage();
+               if( null != lsmlProtocolIPC ){
+                lsmlProtocolIPC.close();
+             }
+               desktop.closeAll();
             }
-            desktop.closeAll();
-            saveGarage();
+            if(ans == JOptionPane.NO_OPTION){
+               if( null != lsmlProtocolIPC ){
+                lsmlProtocolIPC.close();
+             }
+               desktop.closeAll();
+               
+            }
+            
+            
          }
       });
 
