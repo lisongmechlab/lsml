@@ -57,7 +57,7 @@
 			<Directory Id="ProgramFilesFolder" Name="PFiles">
 				<Directory Id="CompanyFolder" Name="$(var.g_mfg)">
 					<Directory Id="INSTALLDIR" Name="$(var.g_sname)">
-						<Component Id="license.RTF" DiskId="1"
+						<Component Id="LICENSE.RTF" DiskId="1"
 							Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2">
 							<File Id="LICENSE.RTF" Name="license.rtf" Source="license.rtf"
 								KeyPath="yes">
