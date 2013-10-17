@@ -1,26 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-
     <?define g_fname = "Li Song Mechlab"?>
     <?define g_sname = "LSML"?>
     <?define g_mfg = "Li-Soft"?>
-    <?define g_version = "1.0.0"?>
+    <?define g_version = "1.1.0"?>
 
-	<Product Id="E646F8A1-CF0E-4369-94DD-5E6734CBCCBB" Name="$(var.g_fname)"
+	<Product Id="88B89921-CF85-451E-B48F-70F5B1954ABF" Name="$(var.g_fname) $(var.g_version)"
 		Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)"
 		UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
+
 		<Package
 			Description="A tool for creating mech configurations for MechWarrior: Online (r)"
-			Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes" />
+			Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes"
+			Platform="x64" />
+
+		<!-- Every upgrade is a major upgrade as we don't want to require our users 
+			to run the installer from the command line nor do we want to have a launcher 
+			for the installer as that is just silly. -->
+		<MajorUpgrade
+			DowngradeErrorMessage="A later version of $(var.g_fname) is already installed. Setup will now exit." />
+
+		<!-- We only have one media file -->
 		<Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
-		<Icon Id="icon.ico" SourceFile="icon.ico" />
-		<WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
-		<WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
-		<WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
-		<Property Id="ARPPRODUCTICON">icon.ico</Property>
+
+		<!-- Remember the installation directory and pass it to the WIXUI -->
+		<Property Id="INSTALLDIR">
+			<RegistrySearch Id="RegistrySearch" Type="raw" Root="HKLM"
+				Key="SOFTWARE\$(var.g_mfg)\$(var.g_sname)" Name="InstallDir" Win64="yes"/>
+		</Property>
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 		<UIRef Id="WixUI_InstallDir" />
+
+		<!-- Set the product icon -->
+		<Icon Id="icon.ico" SourceFile="icon.ico" />
+		<Property Id="ARPPRODUCTICON">icon.ico</Property>
+
+		<!-- Customize the look of the installer -->
+		<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+		<WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+		<WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
 		<UIRef Id="WixUI_ErrorProgressText" />
+
+		<!-- We only have one feature -->
 		<Feature Id="DefaultFeature" Title="$(var.g_fname)"
 			Description="A tool for building 'mech configurations for PGI's MechWarrior: Online (r)"
 			Display="expand" Level="1" ConfigurableDirectory='INSTALLDIR'>
@@ -30,20 +51,22 @@
 			<ComponentRef Id="README.TXT" />
 			<ComponentRef Id="ProgramMenuDir" />
 		</Feature>
+
+		<!-- The installation target -->
 		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder" Name="PFiles">
+			<Directory Id="ProgramFiles64Folder" Name="PFiles">
 				<Directory Id="CompanyFolder" Name="$(var.g_mfg)">
 					<Directory Id="INSTALLDIR" Name="$(var.g_sname)">
 						<Component Id="LICENSE.RTF" DiskId="1"
-							Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2">
-							<File Id="LICENSE.RTF" Name="LICENSE.rtf" Source="LICENSE.rtf"
+							Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2" Win64="yes">
+							<File Id="LICENSE.RTF" Name="license.rtf" Source="license.rtf"
 								KeyPath="yes">
 								<Shortcut Id="shtct_pmd_license" Directory="ProgramMenuDir"
-									Name="LICENSE.rtf" Advertise="yes" />
+									Name="license.rtf" Advertise="yes" />
 							</File>
 						</Component>
 						<Component Id="README.TXT" DiskId="1"
-							Guid="65220797-70D0-41D6-9479-FB0F113E10A1">
+							Guid="65220797-70D0-41D6-9479-FB0F113E10A1" Win64="yes">
 							<File Id="README.TXT" Name="README.txt" Source="README.txt"
 								KeyPath="yes">
 								<Shortcut Id="shtct_pmd_readme" Directory="ProgramMenuDir"
@@ -51,7 +74,7 @@
 							</File>
 						</Component>
 						<Component Id="LSML.EXE" DiskId="1"
-							Guid="F5FBF318-D03C-402F-9D7A-175A186250D1">
+							Guid="F5FBF318-D03C-402F-9D7A-175A186250D1" Win64="yes">
 							<File Id="LSML.EXE" Name="lsml.exe" Source="lsml.exe"
 								KeyPath="yes">
 								<Shortcut Id="shtct_dtp_exe" Directory="DesktopFolder"
@@ -76,9 +99,15 @@
 								ForceDeleteOnUninstall="yes">
 								<RegistryValue Type="string" Value='"[#LSML.EXE]" "%1"' />
 							</RegistryKey>
+							<RegistryKey Id="reg_hklm_lsml_install"
+								ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes"
+								Key="SOFTWARE\$(var.g_mfg)\$(var.g_sname)" Root="HKLM">
+								<RegistryValue Id="FoobarRegInstallDir" Type="string"
+									Name="InstallDir" Value="[INSTALLDIR]" />
+							</RegistryKey>
 						</Component>
 						<Component Id="LSML.JAR" DiskId="1"
-							Guid="B4A1398E-1357-4B69-B432-EF01EFF1C3F7">
+							Guid="B4A1398E-1357-4B69-B432-EF01EFF1C3F7" Win64="yes">
 							<File Id="LSML.JAR" Name="lsml.jar" Source="lsml.jar" />
 						</Component>
 					</Directory>
