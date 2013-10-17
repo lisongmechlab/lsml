@@ -29,8 +29,13 @@ public class Efficiencies{
          Changed
       }
 
-      public final Efficiencies efficiencies;
-      public final Type         type;
+      private final Efficiencies efficiencies;
+      public final Type          type;
+
+      @Override
+      public boolean isForMe(Loadout aLoadout){
+         return aLoadout.getEfficiencies() == efficiencies;
+      }
    }
 
    // Elite

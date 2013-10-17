@@ -10,7 +10,7 @@
   <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
   <stayAlive>false</stayAlive>
-  <manifest></manifest>
+  <manifest>lsml.manifest</manifest>
   <icon>icon.ico</icon>
   <jre>
     <path></path>

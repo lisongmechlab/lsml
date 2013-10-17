@@ -1,6 +1,7 @@
 package lisong_mechlab.view;
 
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -13,13 +14,14 @@ import javax.swing.TransferHandler;
 
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.util.Pair;
+import lisong_mechlab.view.render.ItemRenderer;
 
 class ItemTransferHandler extends TransferHandler{
    private static final long  serialVersionUID = -8109855943478269304L;
-
    private static LoadoutPart sourcePart       = null;
-   private static List<Item>  sourceItems      = null;
 
    @Override
    public int getSourceActions(JComponent aComponent){
@@ -29,25 +31,48 @@ class ItemTransferHandler extends TransferHandler{
    @Override
    protected Transferable createTransferable(JComponent aComponent){
       if( aComponent instanceof PartList ){
-         sourceItems = ((PartList)aComponent).getSelectedItems();
-         sourcePart = ((PartList)aComponent).getPart();
+         PartList partList = (PartList)aComponent;
+         List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
+         sourcePart = partList.getPart();
 
          StringBuffer buff = new StringBuffer();
-         for(Item it : sourceItems){
-            buff.append(it.getName()).append('\n');
+         for(Pair<Item, Integer> it : sourceItems){
+            buff.append(it.first.getName()).append('\n');
          }
-         for(Item item : sourceItems){
-            sourcePart.removeItem(item);
+         for(Pair<Item, Integer> it : sourceItems){
+            sourcePart.removeItem(it.first);
          }
+         setDragImage(ItemRenderer.render(sourceItems.get(0).first, sourcePart.getLoadout().getUpgrades()));
+         Point mouse = partList.getMousePosition();
+         mouse.y -= partList.getFixedCellHeight() * sourceItems.get(0).second;
+         setDragImageOffset(mouse);
          return new StringSelection(buff.toString());
       }
       else if( aComponent instanceof EquipmentPane ){
          sourcePart = null;
-         Object dragged = ((EquipmentPane)aComponent).getSelectionPath().getLastPathComponent();
-         if( dragged instanceof String )
-            return new StringSelection((String)dragged);
-         else if( dragged instanceof Item )
-            return new StringSelection(((Item)dragged).getName());
+         EquipmentPane equipmentPane = (EquipmentPane)aComponent;
+
+         if( equipmentPane.getSelectionPath() == null )
+            return null;
+
+         Object dragged = equipmentPane.getSelectionPath().getLastPathComponent();
+         Item item = null;
+         if( dragged instanceof String ){
+            item = ItemDB.lookup((String)dragged);
+         }
+         else if( dragged instanceof Item ){
+            item = (Item)dragged;
+         }
+         else{
+            return null;
+         }
+         Loadout loadout = equipmentPane.getCurrentLoadout();
+         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
+         // Point mouse = equipmentPane.getMousePosition();
+         // mouse.y -= equipmentPane.getRowHeight() * equipmentPane.getSelectionRows()[0];
+         Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
+         setDragImageOffset(mouse);
+         return new StringSelection(item.getName());
       }
       return null;
    }
@@ -88,7 +113,6 @@ class ItemTransferHandler extends TransferHandler{
 
       if( null != sourcePart && info.getDropAction() != COPY ){
          sourcePart = null;
-         sourceItems = null;
       }
 
       Component component = info.getComponent();

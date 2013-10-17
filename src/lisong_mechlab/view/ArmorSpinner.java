@@ -2,7 +2,7 @@ package lisong_mechlab.view;
 
 import java.awt.Toolkit;
 
-import javax.swing.AbstractSpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.ArmorSide;
@@ -11,7 +11,7 @@ import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 
-public class ArmorSpinner extends AbstractSpinnerModel implements MessageXBar.Reader{
+public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Reader{
    private static final long serialVersionUID = 2130487332299251881L;
    private final LoadoutPart part;
    private final ArmorSide   side;
@@ -56,9 +56,9 @@ public class ArmorSpinner extends AbstractSpinnerModel implements MessageXBar.Re
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg instanceof LoadoutPart.Message ){
+      if( aMsg.isForMe(part.getLoadout()) && aMsg instanceof LoadoutPart.Message ){
          LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
-         if( message.part == part && message.type == Type.ArmorChanged ){
+         if( message.type == Type.ArmorChanged ){
             SwingUtilities.invokeLater(new Runnable(){
                @Override
                public void run(){
