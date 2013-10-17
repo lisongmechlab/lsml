@@ -78,8 +78,8 @@ public class MaxSustainedDPS implements Metric{
          
          final double ratio;
          final double rangefactor = (range >= 0) ? weapon.getRangeEffectivity(range) : 1.0;
-         
-         if(weapon.getStat("h/s", loadout.getUpgrades()) == 0){
+         // The formula of ratio = heatleft / (hps * range) had a domain of 0 < hps when heatleft = 0. Weapons with a heat production of zero are therefore given a very small heat value to keep them in the domain.
+         if(weapon.getStat("h/s", loadout.getUpgrades()) == 0){ 
             heatPerSecond = 0.0001;
         }
         else{
