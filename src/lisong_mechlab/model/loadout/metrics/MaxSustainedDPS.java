@@ -78,12 +78,15 @@ public class MaxSustainedDPS implements Metric{
          final double ratio;
          final double rangefactor = (range >= 0) ? weapon.getRangeEffectivity(range) : 1.0;
 
-         if( heat < heatleft ){
+         if( heatleft == 0 ){
+            ratio = 0;
+         }
+         else if( heat < heatleft ){
             ratio = rangefactor;
             heatleft -= heat;
          }
          else{
-            ratio = heatleft / weapon.getStat("h/s", loadout.getUpgrades()) * rangefactor;
+            ratio = heatleft / heat * rangefactor;
             heatleft = 0;
          }
 
