@@ -17,14 +17,14 @@ import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.render.ItemRenderer;
+import lisong_mechlab.view.render.StyleManager;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
-   private static final int  ARMOR_LABEL_WIDTH = 30;
+   private static final int  ARMOR_LABEL_WIDTH   = 30;
+   private static final int  ARMOR_SPINNER_WIDTH = 20;
 
-   private static final long serialVersionUID  = -4399442572295284661L;
-
-   private final int         CELL_HEIGHT       = 20;
-   private final int         CELL_WIDTH        = 120;
+   private static final long serialVersionUID    = -4399442572295284661L;
 
    private JLabel            frontArmorLabel;
    private JLabel            backArmorLabel;
@@ -41,7 +41,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(aLoadoutPart.getInternalPart().getType().longName()),
-                                                   BorderFactory.createEmptyBorder(0, 4, 4, 8)));
+                                                   BorderFactory.createEmptyBorder(0, 2, 2, 4)));
       add(makeArmorPanel(anXBar));
 
       if( canHaveHardpoints )
@@ -49,11 +49,11 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       // Critical slots
       PartList list = new PartList(aLoadoutPart, anXBar, aSlotDistributor);
-      list.setFixedCellHeight(CELL_HEIGHT);
-      list.setFixedCellWidth(CELL_WIDTH);
+      list.setFixedCellHeight(ItemRenderer.ITEM_BASE_HEIGHT);
+      list.setFixedCellWidth(ItemRenderer.ITEM_BASE_WIDTH);
 
       add(list);
-      add(Box.createRigidArea(new Dimension(0, 10)));
+      add(Box.createRigidArea(new Dimension(0, 1)));
    }
 
    private JPanel makeHardpointsPanel(){
@@ -61,7 +61,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       BoxLayout layoutManager = new BoxLayout(panel, BoxLayout.LINE_AXIS);
       panel.setLayout(layoutManager);
       // /panel.setBackground(Color.PINK.darker());
-      panel.add(Box.createVerticalStrut(CELL_HEIGHT + CELL_HEIGHT / 2));
+      panel.add(Box.createVerticalStrut(ItemRenderer.ITEM_BASE_HEIGHT + ItemRenderer.ITEM_BASE_HEIGHT / 2));
 
       for(HardpointType hp : HardpointType.values()){
          final int hardpoints = loadoutPart.getInternalPart().getNumHardpoints(hp);
@@ -69,7 +69,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
             JLabel label = new JLabel(hp.shortName());
             label.setBackground(StyleManager.getBgColorFor(hp));
             label.setForeground(StyleManager.getFgColorFor(hp));
-            label.setBorder(new RoundedBorders());
+            label.setBorder(new RoundedBorders(2, 3, ItemRenderer.RADII));
             label.setOpaque(true);
             panel.add(label);
          }
@@ -77,7 +77,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
             JLabel label = new JLabel(hardpoints + " " + hp.shortName());
             label.setBackground(StyleManager.getBgColorFor(hp));
             label.setForeground(StyleManager.getFgColorFor(hp));
-            label.setBorder(new RoundedBorders());
+            label.setBorder(new RoundedBorders(2, 3, ItemRenderer.RADII));
             label.setOpaque(true);
             panel.add(label);
          }
@@ -89,18 +89,23 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private JPanel makeArmorPanel(MessageXBar anXBar){
       JPanel panel = new JPanel();
+      Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, ItemRenderer.ITEM_BASE_HEIGHT);
+      Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
 
       if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+
          frontArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
-         frontArmorLabel.setPreferredSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         frontArmorLabel.setPreferredSize(labelDimension);
          backArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
-         backArmorLabel.setPreferredSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         backArmorLabel.setPreferredSize(labelDimension);
 
          JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar));
-         frontSpinner.setMaximumSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         frontSpinner.setMaximumSize(labelDimension);
+         frontSpinner.getEditor().setPreferredSize(spinnerDimension);
 
          JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar));
-         backSpinner.setMaximumSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         backSpinner.setMaximumSize(labelDimension);
+         backSpinner.getEditor().setPreferredSize(spinnerDimension);
 
          JPanel frontPanel = new JPanel();
          frontPanel.setLayout(new BoxLayout(frontPanel, BoxLayout.LINE_AXIS));
@@ -122,10 +127,11 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       }
       else{
          JLabel armorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()));
-         armorLabel.setPreferredSize(new Dimension(ARMOR_LABEL_WIDTH, 0));
+         armorLabel.setPreferredSize(labelDimension);
 
          JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar));
-         spinner.setMaximumSize(new Dimension(ARMOR_LABEL_WIDTH, CELL_HEIGHT));
+         spinner.setMaximumSize(labelDimension);
+         spinner.getEditor().setPreferredSize(spinnerDimension);
 
          panel.add(new JLabel("Armor:"));
          panel.add(Box.createHorizontalGlue());

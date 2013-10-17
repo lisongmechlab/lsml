@@ -125,6 +125,7 @@ class EquippableItemsCathegory extends AbstractTreeCathegory implements Reader{
 
    @Override
    public void receive(Message aMsg){
+      // TODO: BE MORE SELECTIVE!
       SwingUtilities.invokeLater(new Runnable(){
          @Override
          public void run(){

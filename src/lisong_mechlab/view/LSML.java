@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
 import lisong_mechlab.model.loadout.MechGarage;
@@ -27,7 +28,7 @@ import lisong_mechlab.util.MessageXBar;
  */
 public class LSML extends JFrame{
    public static final String      PROGRAM_FNAME          = "Li Song Mechlab";
-   private static final String     VERSION_STRING         = " 1.0.2";
+   private static final String     VERSION_STRING         = " 1.1.0";
    private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
    private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter(){
                                                              @Override
@@ -192,17 +193,19 @@ public class LSML extends JFrame{
       setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
       setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
       setVisible(true);
-      setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       setJMenuBar(new MenuBar(this));
       setContentPane(splitPane);
       addWindowListener(new WindowAdapter(){
          @Override
          public void windowClosing(WindowEvent e){
-            if( null != lsmlProtocolIPC ){
-               lsmlProtocolIPC.close();
+            if( desktop.closeAll() ){
+               saveGarage();
+               if( null != lsmlProtocolIPC ){
+                  lsmlProtocolIPC.close();
+               }
+               dispose();
             }
-            desktop.closeAll();
-            saveGarage();
          }
       });
 

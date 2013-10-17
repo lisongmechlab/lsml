@@ -1,6 +1,6 @@
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -360,6 +360,32 @@ public class LoadoutPartTest{
 
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
+   }
+   
+   /**
+    * Removing an engine shall remove all heat sinks in the engine but none of the external heat sinks.
+    * @throws Exception
+    */
+   @Test
+   public void testRemoveItem_EngineWithHS() throws Exception{
+      Internal gyro = mlc.makeInternal(4);
+      LoadoutPart cut = makeCUT(Arrays.asList((Item)gyro), 0, Part.CenterTorso, 12);
+      when(mlc.chassi.getEngineMax()).thenReturn(400);
+      when(mlc.chassi.getEngineMin()).thenReturn(100);
+      cut.addItem(ItemDB.lookup("STD ENGINE 300")); // 2 slots
+      cut.addItem(ItemDB.SHS);
+      cut.addItem(ItemDB.SHS);
+      cut.addItem(ItemDB.SHS);
+      cut.addItem(ItemDB.SHS);
+      
+      cut.removeItem(ItemDB.lookup("STD ENGINE 300"));
+      
+      assertEquals(3, cut.getItems().size());
+      assertSame(gyro, cut.getItems().get(0));
+      assertSame(ItemDB.SHS, cut.getItems().get(1));
+      assertSame(ItemDB.SHS, cut.getItems().get(2));
+      verify(xBar, times(5)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      verify(xBar, times(3)).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
    }
 
    @Test

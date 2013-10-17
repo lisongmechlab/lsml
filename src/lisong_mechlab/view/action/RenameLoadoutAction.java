@@ -28,5 +28,4 @@ public class RenameLoadoutAction extends AbstractAction{
       }
       loadout.rename(name);
    }
-
 }

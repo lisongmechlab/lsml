@@ -40,6 +40,7 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
       setBorder(BorderFactory.createLoweredSoftBevelBorder());
       setBackground(Color.GRAY.brighter());
       setTransferHandler(new ItemTransferHandler());
+      setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
    }
 
    /**
@@ -83,19 +84,22 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
 
    /**
     * Closes all open {@link LoadoutFrame}s. Exceptions from the frames are swallowed.
+    * 
+    * @return <code>true</code> if all {@link LoadoutFrame}s were closed with the user's permssion.
     */
-   public void closeAll(){
+   boolean closeAll(){
       assert (SwingUtilities.isEventDispatchThread());
 
       for(JInternalFrame frame : getAllFrames()){
          try{
             frame.setClosed(true);
+            frame.dispose();
          }
          catch( PropertyVetoException e ){
-            // No-Op
+            return false;
          }
-         frame.dispose();
       }
+      return true;
    }
 
    /**

@@ -73,8 +73,8 @@ public class Loadout implements MessageXBar.Reader{
          return true;
       }
 
-      public final Loadout loadout;
-      public final Type    type;
+      private final Loadout loadout;
+      public final Type     type;
 
       public Message(Loadout aLoadout, Type aType){
          loadout = aLoadout;
@@ -85,6 +85,10 @@ public class Loadout implements MessageXBar.Reader{
          RENAME, CREATE
       }
 
+      @Override
+      public boolean isForMe(Loadout aLoadout){
+         return loadout == aLoadout;
+      }
    }
 
    private String                       name;
@@ -360,11 +364,8 @@ public class Loadout implements MessageXBar.Reader{
 
    @Override
    public void receive(MessageXBar.Message aMsg){
-      if( aMsg instanceof Upgrades.Message ){
+      if( aMsg.isForMe(this) && aMsg instanceof Upgrades.Message ){
          Upgrades.Message msg = (Upgrades.Message)aMsg;
-         if( msg.source != upgrades ){
-            return;
-         }
          switch( msg.msg ){
             case ARMOR:
                if( getNumCriticalSlotsFree() < 0 ){
@@ -392,12 +393,9 @@ public class Loadout implements MessageXBar.Reader{
                break;
             default:
                break;
-
          }
       }
    }
-
-   
 
    public double getFreeMass(){
       double freeMass = chassi.getMassMax() - getMass();

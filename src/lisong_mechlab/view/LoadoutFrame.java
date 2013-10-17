@@ -3,6 +3,9 @@ package lisong_mechlab.view;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -15,8 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
@@ -24,6 +25,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.MaxArmorAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
@@ -58,7 +60,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menuBar.add(createMenuGraphs());
       menuBar.add(createMenuShare());
       setJMenuBar(menuBar);
-
+      
       // Set the window's location.
       setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
       openFrameCount++;
@@ -75,14 +77,22 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       pack();
       setVisible(true);
 
-      addInternalFrameListener(new InternalFrameAdapter(){
+      addVetoableChangeListener(new VetoableChangeListener(){
          @Override
-         public void internalFrameClosing(InternalFrameEvent e){
-            if( !isSaved() ){
-               int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to save " + loadout.getName() + " to your garage?",
-                                                       "Save to garage?", JOptionPane.YES_NO_OPTION);
-               if( ans == JOptionPane.YES_OPTION ){
-                  ProgramInit.lsml().getGarage().add(loadout);
+         public void vetoableChange(PropertyChangeEvent aE) throws PropertyVetoException{
+            if(aE.getPropertyName().equals("closed") && aE.getNewValue().equals(true)){
+               if( !isSaved() ){
+                  int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to save " + loadout.getName() + " to your garage?",
+                                                          "Save to garage?", JOptionPane.YES_NO_CANCEL_OPTION);
+                  if( ans == JOptionPane.YES_OPTION ){
+                     ProgramInit.lsml().getGarage().add(loadout);
+                  }
+                  else if( ans == JOptionPane.NO_OPTION ){
+                     // Discard loadout
+                  }
+                  else{
+                     throw new PropertyVetoException("Save canceled!", aE);
+                  }
                }
             }
          }
@@ -226,6 +236,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             loadout.strip();
          }
       }));
+
+      menu.add(new JMenuItem(new CloneLoadoutAction("Clone", loadout, KeyStroke.getKeyStroke("C"))));
       return menu;
    }
 
@@ -264,28 +276,27 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
    @Override
    public void receive(Message aMsg){
+      if( !aMsg.isForMe(loadout) )
+         return;
+
       if( aMsg instanceof MechGarage.Message ){
          MechGarage.Message msg = (MechGarage.Message)aMsg;
-         if( msg.loadout == loadout ){
-            if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
-               dispose(); // Closes frame
-            }
-            else if( msg.type == MechGarage.Message.Type.LoadoutAdded ){
-               SwingUtilities.invokeLater(new Runnable(){
-                  @Override
-                  public void run(){
-                     addToGarage.setEnabled(false);
-                  }
-               });
-            }
+         if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
+            dispose(); // Closes frame
+         }
+         else if( msg.type == MechGarage.Message.Type.LoadoutAdded ){
+            SwingUtilities.invokeLater(new Runnable(){
+               @Override
+               public void run(){
+                  addToGarage.setEnabled(false);
+               }
+            });
          }
       }
       else if( aMsg instanceof Loadout.Message ){
          Loadout.Message msg = (Loadout.Message)aMsg;
-         if( msg.loadout == loadout ){
-            if( msg.type == Loadout.Message.Type.RENAME ){
-               setTitle(loadout.toString());
-            }
+         if( msg.type == Loadout.Message.Type.RENAME ){
+            setTitle(loadout.toString());
          }
       }
    }

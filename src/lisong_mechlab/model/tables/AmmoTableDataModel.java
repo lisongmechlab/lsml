@@ -39,7 +39,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    private Ammunition                   lrmAmmoType;
    private ArrayList<Double>            srmCooldownList;
    private ArrayList<Double>            lrmCooldownList;
-   private String[]                     columnNames      = {"Weapon", "Ammo Quantity", "Number of Volleys", "Combat Seconds"};
+   private String[]                     columnNames      = {"Weapon", "Ammo", "Volleys", "Seconds"};
 
    public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
       this.aLoadout = aloadout;
@@ -362,18 +362,19 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg instanceof LoadoutPart.Message || aMsg instanceof Upgrades.Message )
-         SwingUtilities.invokeLater(new Runnable(){
+      if( !aMsg.isForMe(aLoadout) )
+         return;
 
+      if( (aMsg instanceof LoadoutPart.Message && ((LoadoutPart.Message)aMsg).type != LoadoutPart.Message.Type.ArmorChanged)
+          || aMsg instanceof Upgrades.Message )
+         SwingUtilities.invokeLater(new Runnable(){
             @Override
             public void run(){
                initialiseLists();
                initialiseMaps();
                fillInAllColumns();
                fireTableDataChanged();
-
             }
          });
-
    }
 }

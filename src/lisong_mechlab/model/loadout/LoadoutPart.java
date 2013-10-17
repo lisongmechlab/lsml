@@ -49,8 +49,13 @@ public class LoadoutPart implements MessageXBar.Reader{
          ItemAdded, ItemRemoved, ArmorChanged, ItemsChanged
       }
 
-      final public LoadoutPart part;
-      final public Type        type;
+      private final LoadoutPart part;
+      public final Type         type;
+
+      @Override
+      public boolean isForMe(Loadout aLoadout){
+         return aLoadout.getPartLoadOuts().contains(part);
+      }
    }
 
    public final static double            ARMOR_PER_TON   = 32.0;
@@ -209,6 +214,15 @@ public class LoadoutPart implements MessageXBar.Reader{
             loadout.getPart(Part.LeftTorso).items.remove(ENGINE_INTERNAL);
             loadout.getPart(Part.RightTorso).items.remove(ENGINE_INTERNAL);
          }
+
+         int engineHsLeft = getNumEngineHeatsinks();
+         while( engineHsLeft > 0 ){
+            engineHsLeft--;
+            if( loadout.getUpgrades().hasDoubleHeatSinks() )
+               removeItem(ItemDB.DHS);
+            else
+               removeItem(ItemDB.SHS);
+         }
       }
       if( items.remove(anItem) )
          xBar.post(new Message(this, Type.ItemRemoved));
@@ -284,6 +298,10 @@ public class LoadoutPart implements MessageXBar.Reader{
       return ans;
    }
 
+   public Loadout getLoadout(){
+      return loadout;
+   }
+
    public int getNumEngineHeatsinksMax(){
       for(Item item : items){
          if( item instanceof Engine ){
@@ -304,14 +322,11 @@ public class LoadoutPart implements MessageXBar.Reader{
 
    @Override
    public void receive(MessageXBar.Message aMsg){
-      if( aMsg instanceof Upgrades.Message ){
+      if( aMsg.isForMe(loadout) && aMsg instanceof Upgrades.Message ){
          Upgrades.Message msg = (Upgrades.Message)aMsg;
-         if( msg.source != loadout.getUpgrades() ){
-            return;
-         }
 
          if( msg.msg == Upgrades.Message.ChangeMsg.HEATSINKS ){
-            if( msg.source.hasDoubleHeatSinks() )
+            if( loadout.getUpgrades().hasDoubleHeatSinks() )
                while( items.remove(ItemDB.SHS) ){/* No-Op */}
             else
                while( items.remove(ItemDB.DHS) ){/* No-Op */}
@@ -321,9 +336,9 @@ public class LoadoutPart implements MessageXBar.Reader{
 
             for(AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)){
                Upgrades oldUpgrades = new Upgrades(null);
-               oldUpgrades.setArtemis(!msg.source.hasArtemis());
+               oldUpgrades.setArtemis(!loadout.getUpgrades().hasArtemis());
                Ammunition oldAmmoType = weapon.getAmmoType(oldUpgrades);
-               Ammunition newAmmoType = weapon.getAmmoType(msg.source);
+               Ammunition newAmmoType = weapon.getAmmoType(loadout.getUpgrades());
                if( oldAmmoType == newAmmoType )
                   continue;
 
