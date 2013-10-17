@@ -74,16 +74,24 @@ public class MaxSustainedDPS implements Metric{
       Map<Weapon, Double> ans = new HashMap<>();
       while( !weapons.isEmpty() ){
          Weapon weapon = weapons.remove(0);
-         final double heat = weapon.getStat("h/s", loadout.getUpgrades());
+         final double heatPerSecond;
+         
          final double ratio;
          final double rangefactor = (range >= 0) ? weapon.getRangeEffectivity(range) : 1.0;
+         
+         if(weapon.getStat("h/s", loadout.getUpgrades()) == 0){
+            heatPerSecond = 0.0001;
+        }
+        else{
+            heatPerSecond = weapon.getStat("h/s", loadout.getUpgrades());
+        }
 
-         if( heat < heatleft ){
+         if( heatPerSecond < heatleft ){
             ratio = rangefactor;
-            heatleft -= heat;
+            heatleft -= heatPerSecond;
          }
-         else{
-            ratio = heatleft / weapon.getStat("h/s", loadout.getUpgrades()) * rangefactor;
+         else{            
+            ratio = heatleft / heatPerSecond * rangefactor; 
             heatleft = 0;
          }
 
