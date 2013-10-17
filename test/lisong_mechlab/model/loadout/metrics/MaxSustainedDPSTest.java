@@ -110,6 +110,27 @@ public class MaxSustainedDPSTest{
       assertTrue(result_1.containsKey(ppc));
       assertEquals(1.0, result_1.get(ppc).doubleValue(), 0.0);
    }
+   
+   
+   /**Tests that getWeaponRatios correctly handles the machine guns zero heat production.
+    * 
+    */
+   @Test
+   public void testGetWeaponRatios_machineGun(){
+      // Setup
+      List<Item> items = new ArrayList<>();
+      BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("MACHINE GUN");
+      items.add(mg);
+
+      when(loadout.getAllItems()).thenReturn(items);
+      when(heatDissipation.calculate()).thenReturn(0.0);
+
+      Map<Weapon, Double> result_0 = cut.getWeaponRatios(-1);
+
+      assertTrue(result_0.containsKey(mg));
+      assertEquals(0.0, result_0.get(mg).doubleValue(), 0.0);
+
+   }
 
    /**
     * Damage shall be correctly calculated, taking high DpH weapons into account first regardless of order they are
