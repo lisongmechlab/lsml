@@ -338,13 +338,13 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          damageMap.put(weaponName, totalDamage);
          
          }else if( weaponName.contains("SRM") && !weaponName.contains("STREAK") ){
-            damageMap.put(weaponName, numberVolleyColumn.get(weaponName)  * calculateSrmDamageAverage());
+            damageMap.put(weaponName, ammoQuantityColumn.get(weaponName)  * calculateSrmDamageAverage());
          }
          else if( weaponName.contains("STREAK") ){
-            damageMap.put(weaponName, (numberVolleyColumn.get(weaponName)  * calculateStreakDamageAverage()));
+            damageMap.put(weaponName, (ammoQuantityColumn.get(weaponName)  * calculateStreakDamageAverage()));
          }
          else if( weaponName.contains("LRM") ){
-            damageMap.put(weaponName, (numberVolleyColumn.get(weaponName)  * calculateLrmDamageAverage()));
+            damageMap.put(weaponName, (ammoQuantityColumn.get(weaponName)  * calculateLrmDamageAverage()));
          }
          else
             damageMap.put(weaponName, (double)0);
@@ -359,7 +359,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       for(Double inter : streakDamageList){
          total += inter;
       }
-      return total / streakDamageList.size();
+      return total / streakVolleyTotal;
    }
 
    private Double calculateSrmDamageAverage(){
@@ -368,7 +368,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       for(Double inter : srmDamageList){
          total += inter;
       }
-      return total / srmDamageList.size();
+      return total / srmVolleyTotal;
    }
    
    private Double calculateLrmDamageAverage(){
@@ -377,7 +377,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       for(Double inter : lrmDamageList){
          total += inter;
       }
-      return total / lrmDamageList.size();
+      return total / lrmVolleyTotal;
    }
 
    public double calculateSrmCooldownAverage(){
