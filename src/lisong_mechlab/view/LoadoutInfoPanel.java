@@ -72,7 +72,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JLabel             dpsMax           = new JLabel("xxx");
    private final JLabel             dpsSustained     = new JLabel("xxx");
    private final JTable             weaponTable;
-   private final String[]           weaponTableTooltips = {"Weapon: The Weapon equipped or the ammo if only ammo is equipped.",
+   private final String[]           weaponTableTooltips = {"Weapon: The weapon equipped or the ammo if only ammo is equipped.",
                                                            "Ammo: The amount of ammo equipped.", 
                                                            "Vlys: The number of times a weapon can be fired.", 
                                                            "Scs: The amount of time to use all ammo given a constant fire rate.",
