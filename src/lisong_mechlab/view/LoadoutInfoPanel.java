@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
 import javax.swing.Box;
@@ -26,6 +27,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 
 import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Loadout;
@@ -69,7 +71,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JLabel             alphaStrike      = new JLabel("xxx");
    private final JLabel             dpsMax           = new JLabel("xxx");
    private final JLabel             dpsSustained     = new JLabel("xxx");
-   private final JTable             totalAmmoSupply;
+   private final JTable             weaponTable;
+   private final String[]           weaponTableTooltips = {"Weapon: The Weapon equipped or the ammo if only ammo is equipped.",
+                                                           "Ammo: The amount of ammo equipped.", 
+                                                           "Vlys: The number of times a weapon can be fired.", 
+                                                           "Scs: The amount of time to use all ammo given a constant fire rate.",
+                                                           "Dmg: The total damage potential for the ammo equipped."
+                                                            };
+   
+
 
    private final JLabel             jumpJets         = new JLabel("xxx");
    private final JLabel             topSpeed         = new JLabel("xxx");
@@ -257,16 +267,49 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          offence.add(Box.createVerticalStrut(5));
 
-         totalAmmoSupply = new JTable(anAmmoTableDataModel);
-         totalAmmoSupply.setFillsViewportHeight(true);
-         totalAmmoSupply.setModel(anAmmoTableDataModel);
-         ((DefaultTableCellRenderer)totalAmmoSupply.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-         JScrollPane ammo = new JScrollPane(totalAmmoSupply);
-         ammo.setPreferredSize(new Dimension(260, 100));
-         offence.add(ammo);
+         weaponTable = createNewWeaponTable();
+         weaponTable.setFillsViewportHeight(true);
+         weaponTable.setModel(anAmmoTableDataModel);
+         ((DefaultTableCellRenderer)weaponTable.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+         weaponTable.getColumnModel().getColumn(0).setMinWidth(110);
+         weaponTable.getColumnModel().getColumn(1).setMinWidth(30);
+         weaponTable.getTableHeader();
+
+         
+         JScrollPane weapons = new JScrollPane(weaponTable);
+         weapons.setPreferredSize(new Dimension(260, 100));
+         offence.add(weapons);
       }
 
       updateDisplay();
+   }
+
+   private JTable createNewWeaponTable(){
+      JTable newWeaponTable = new JTable(anAmmoTableDataModel){
+         /**
+          * 
+          */
+         private static final long serialVersionUID = 1L;
+
+         @Override
+         protected JTableHeader createDefaultTableHeader() {
+            return new JTableHeader(columnModel) {
+                /**
+                * 
+                */
+               private static final long serialVersionUID = 1L;
+
+               @Override
+               public String getToolTipText(MouseEvent e) {
+                    java.awt.Point p = e.getPoint();
+                    int index = columnModel.getColumnIndexAtX(p.x);
+                    int realIndex = columnModel.getColumn(index).getModelIndex();
+                    return weaponTableTooltips[realIndex];
+                }
+            };
+        }
+      };
+      return newWeaponTable;
    }
 
    public void updateDisplay(){

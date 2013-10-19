@@ -39,7 +39,10 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    private Ammunition                   lrmAmmoType;
    private ArrayList<Double>            srmCooldownList;
    private ArrayList<Double>            lrmCooldownList;
-   private String[]                     columnNames      = {"Weapon", "Ammo", "Volleys", "Seconds"};
+   private ArrayList<Double>            srmDamageList;
+   private ArrayList<Double>            lrmDamageList;
+   private String[]                     columnNames      = {"Weapon", "Ammo", "Vlys", "Scs", "Dmg"};
+   private TreeMap<String, Double>      damageMap;
 
    public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
       this.aLoadout = aloadout;
@@ -60,6 +63,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       fillInVolleyAmount();
       fillInNumberVolleys();
       fillInCombatSeconds();
+      fillInDamageList();
    }
 
    public void initialiseLists(){
@@ -70,6 +74,10 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       combatColumn = new TreeMap<>();
       srmCooldownList = new ArrayList<>();
       lrmCooldownList = new ArrayList<>();
+      srmDamageList = new ArrayList<>();
+      lrmDamageList = new ArrayList<>();
+      damageMap = new TreeMap<>();
+      
    }
 
    public void initialiseMaps(){
@@ -112,6 +120,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          lrmVolleyTotal = weapon.getAmmoPerPerShot() * weaponsEquipped.get(weapon) + lrmVolleyTotal;
          lrmAmmoType = ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades());
          lrmCooldownList.add(weapon.getSecondsPerShot());
+         lrmDamageList.add(weapon.getDamagePerShot());
       }
    }
 
@@ -120,6 +129,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          srmVolleyTotal = weapon.getAmmoPerPerShot() * weaponsEquipped.get(weapon) + srmVolleyTotal;
          srmAmmoType = ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades());
          srmCooldownList.add(weapon.getSecondsPerShot());
+         srmDamageList.add(weapon.getDamagePerShot());
       }
    }
 
@@ -270,6 +280,41 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       else
          combatColumn.put(weaponName, (double)0);
    }
+   
+   private void fillInDamageList(){
+      for(String weaponName : weaponColumn.keySet()){
+         if( (weaponColumn.get(weaponName) != null) && !(weaponName.contains("SRM")) && !(weaponName.contains("LRM")) ){
+         double totalDamage = weaponColumn.get(weaponName).getDamagePerShot() * ammoQuantityColumn.get(weaponName);
+         damageMap.put(weaponName, totalDamage);
+         
+         }else if( weaponName.contains("SRM") ){
+            damageMap.put(weaponName, numberVolleyColumn.get(weaponName)  * calculateSrmDamageAverage());
+         }
+         else if( weaponName.contains("LRM") ){
+            damageMap.put(weaponName, (numberVolleyColumn.get(weaponName)  * calculateLrmDamageAverage()));
+         }
+         else
+            combatColumn.put(weaponName, (double)0);
+      }
+      
+      
+   }
+
+   private Double calculateSrmDamageAverage(){
+      Double total = (double)0;
+      for(Double inter : srmDamageList){
+         total += inter;
+      }
+      return total / srmDamageList.size();
+   }
+   
+   private Double calculateLrmDamageAverage(){
+      Double total = (double)0;
+      for(Double inter : lrmDamageList){
+         total += inter;
+      }
+      return total / lrmDamageList.size();
+   }
 
    public double calculateSrmCooldownAverage(){
       Double total = (double)0;
@@ -299,6 +344,9 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          return Double.class;
       }
       if( aColumnIndex == 3 ){
+         return Double.class;
+      }
+      if( aColumnIndex == 4 ){
          return Double.class;
       }
       return String.class;
@@ -356,6 +404,14 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
             return Math.floor(combatArray[aRowIndex]);
          }
          return combatArray[aRowIndex];
+      }
+      if( aColumnIndex == 4 ){
+         Double[] damageArray = new Double[damageMap.size()];
+         damageArray = damageMap.values().toArray(damageArray);
+         if( !damageArray[aRowIndex].isInfinite() ){
+            return Math.floor(damageArray[aRowIndex]);
+         }
+         return damageArray[aRowIndex];
       }
       return "false";
    }
