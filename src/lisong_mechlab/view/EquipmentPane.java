@@ -139,7 +139,7 @@ public class EquipmentPane extends JTree{
             }
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                Object clicked = getClickedObject(e);
-               int clicks = e.getClickCount()/2;
+               int clicks = e.getClickCount() / 2;
                if( clicked instanceof Chassi ){
                   Chassi chassi = (Chassi)clicked;
                   Loadout clickedLoadout = new Loadout(chassi, xBar);
@@ -179,16 +179,10 @@ public class EquipmentPane extends JTree{
          StringBuilder sb = new StringBuilder(100);
          Object leaf = mouseover.getLastPathComponent();
          if( leaf instanceof String ){
-            Item item = ItemDB.lookup((String)leaf);
-            DecimalFormat df = new DecimalFormat("#####.#");
             sb.append("<html>");
-            sb.append(item.getDescription()).append("<br>");
-            // TODO: Get a hold of the current loadout some how and show the applicable critslots and mass according to
-            // artemis etc
-            Upgrades upgrades = (loadout != null)?(loadout.getUpgrades()):(null);
-            
-            return generateItemTooltip(sb, item, df, upgrades);
-            
+            generateItemTooltip(sb, ItemDB.lookup((String)leaf));
+            sb.append("</html>");
+            return sb.toString();
          }
          else if( leaf instanceof Chassi ){
             Chassi chassi = (Chassi)leaf;
@@ -206,29 +200,31 @@ public class EquipmentPane extends JTree{
       return null;
    }
 
-   private String generateItemTooltip(StringBuilder sb, Item item, DecimalFormat df, Upgrades upgrades){
-      
-      
-      sb.append("Slots: ").append(item.getNumCriticalSlots(upgrades)).append(" Tons: ")
-      .append(df.format(item.getMass(upgrades))).append("<br>");
-    if( item instanceof HeatSource ){
-       if( item instanceof Weapon ){
-          Weapon weapon = (Weapon)item;
-          sb.append("Damage: ").append(df.format(weapon.getDamagePerShot())).append(" Cooldown: ")
-            .append(df.format(weapon.getSecondsPerShot())).append("<br>");
-          sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
-            .append(df.format(weapon.getRangeMax())).append("<br>");
-          sb.append("DPS: ").append(df.format(weapon.getStat("d/s", upgrades))).append(" DPH: ")
-            .append(df.format(weapon.getStat("d/h", upgrades))).append(" HPS: ")
-            .append(df.format(weapon.getStat("h/s", upgrades))).append("<br>");
-       }
-       sb.append("Heat: ").append(df.format(((HeatSource)item).getHeat())).append("<br>");
-    }
-    sb.append("</html>");
-    return sb.toString();
-      
-   }
+   /**
+    * Formats a tooltip for the current item into the given {@link StringBuilder}.
+    * 
+    * @param sb
+    * @param item
+    */
+   private void generateItemTooltip(StringBuilder sb, Item item){
+      Upgrades upgrades = (loadout != null) ? (loadout.getUpgrades()) : (null);
+      DecimalFormat df = new DecimalFormat("#####.#");
 
+      sb.append(item.getDescription()).append("<br>");
+      sb.append("Slots: ").append(item.getNumCriticalSlots(upgrades)).append(" Tons: ").append(df.format(item.getMass(upgrades))).append("<br>");
+      if( item instanceof HeatSource ){
+         if( item instanceof Weapon ){
+            Weapon weapon = (Weapon)item;
+            sb.append("Damage: ").append(df.format(weapon.getDamagePerShot())).append(" Cooldown: ").append(df.format(weapon.getSecondsPerShot()))
+              .append("<br>");
+            sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
+              .append(df.format(weapon.getRangeMax())).append("<br>");
+            sb.append("DPS: ").append(df.format(weapon.getStat("d/s", upgrades))).append(" DPH: ").append(df.format(weapon.getStat("d/h", upgrades)))
+              .append(" HPS: ").append(df.format(weapon.getStat("h/s", upgrades))).append("<br>");
+         }
+         sb.append("Heat: ").append(df.format(((HeatSource)item).getHeat())).append("<br>");
+      }
+   }
 
    public Loadout getCurrentLoadout(){
       return loadout;
