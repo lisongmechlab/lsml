@@ -75,7 +75,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final String[]           weaponTableTooltips = {"Weapon: The weapon equipped or the ammo if only ammo is equipped.",
                                                            "Ammo: The amount of ammo equipped.", 
                                                            "Vlys: The number of times a weapon can be fired.", 
-                                                           "Scs: The amount of time to use all ammo given a constant fire rate.",
+                                                           "Scs: The amount of time to use all ammo given a constant maximum fire rate.",
                                                            "Dmg: The total damage potential for the ammo equipped."
                                                             };
    
