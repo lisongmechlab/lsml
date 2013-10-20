@@ -41,7 +41,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    private ArrayList<Double>            lrmCooldownList;
    private ArrayList<Double>            srmDamageList;
    private ArrayList<Double>            lrmDamageList;
-   private String[]                     columnNames      = {"Weapon", "Ammo", "Volleys", "Sec", "T.Dmg"};
+   private String[]                     columnNames      = {"Weapon", "Ammo", "Volleys", "Cmbt", "T.Dmg"};
    private TreeMap<String, Double>      damageMap;
    private int streakVolleyTotal;
    private Ammunition streakAmmoType;
