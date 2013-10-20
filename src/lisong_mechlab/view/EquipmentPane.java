@@ -23,6 +23,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
@@ -184,23 +185,20 @@ public class EquipmentPane extends JTree{
             sb.append(item.getDescription()).append("<br>");
             // TODO: Get a hold of the current loadout some how and show the applicable critslots and mass according to
             // artemis etc
-            sb.append("Slots: ").append(item.getNumCriticalSlots(loadout.getUpgrades())).append(" Tons: ")
-              .append(df.format(item.getMass(loadout.getUpgrades()))).append("<br>");
-            if( item instanceof HeatSource ){
-               if( item instanceof Weapon ){
-                  Weapon weapon = (Weapon)item;
-                  sb.append("Damage: ").append(df.format(weapon.getDamagePerShot())).append(" Cooldown: ")
-                    .append(df.format(weapon.getSecondsPerShot())).append("<br>");
-                  sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
-                    .append(df.format(weapon.getRangeMax())).append("<br>");
-                  sb.append("DPS: ").append(df.format(weapon.getStat("d/s", loadout.getUpgrades()))).append(" DPH: ")
-                    .append(df.format(weapon.getStat("d/h", loadout.getUpgrades()))).append(" HPS: ")
-                    .append(df.format(weapon.getStat("h/s", loadout.getUpgrades()))).append("<br>");
-               }
-               sb.append("Heat: ").append(df.format(((HeatSource)item).getHeat())).append("<br>");
+            Upgrades upgrades;
+            try{
+                upgrades = loadout.getUpgrades();
+               
             }
-            sb.append("</html>");
-            return sb.toString();
+            catch( NullPointerException e ){
+                upgrades = new Upgrades(new MessageXBar());
+               upgrades.setArtemis(false);
+               upgrades.setDoubleHeatSinks(false);
+               upgrades.setEndoSteel(false);
+               upgrades.setFerroFibrous(false);
+            }
+            return generateItemTooltip(sb, item, df, upgrades);
+            
          }
          else if( leaf instanceof Chassi ){
             Chassi chassi = (Chassi)leaf;
@@ -217,6 +215,30 @@ public class EquipmentPane extends JTree{
       }
       return null;
    }
+
+   private String generateItemTooltip(StringBuilder sb, Item item, DecimalFormat df, Upgrades upgrades){
+      
+      
+      sb.append("Slots: ").append(item.getNumCriticalSlots(upgrades)).append(" Tons: ")
+      .append(df.format(item.getMass(upgrades))).append("<br>");
+    if( item instanceof HeatSource ){
+       if( item instanceof Weapon ){
+          Weapon weapon = (Weapon)item;
+          sb.append("Damage: ").append(df.format(weapon.getDamagePerShot())).append(" Cooldown: ")
+            .append(df.format(weapon.getSecondsPerShot())).append("<br>");
+          sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
+            .append(df.format(weapon.getRangeMax())).append("<br>");
+          sb.append("DPS: ").append(df.format(weapon.getStat("d/s", upgrades))).append(" DPH: ")
+            .append(df.format(weapon.getStat("d/h", upgrades))).append(" HPS: ")
+            .append(df.format(weapon.getStat("h/s", upgrades))).append("<br>");
+       }
+       sb.append("Heat: ").append(df.format(((HeatSource)item).getHeat())).append("<br>");
+    }
+    sb.append("</html>");
+    return sb.toString();
+      
+   }
+
 
    public Loadout getCurrentLoadout(){
       return loadout;
