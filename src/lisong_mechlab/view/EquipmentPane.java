@@ -185,12 +185,19 @@ public class EquipmentPane extends JTree{
             sb.append(item.getDescription()).append("<br>");
             // TODO: Get a hold of the current loadout some how and show the applicable critslots and mass according to
             // artemis etc
+            Upgrades upgrades;
             try{
-               return generateLoadoutBasedTooltip(sb, item, df);
+                upgrades = loadout.getUpgrades();
+               
             }
             catch( NullPointerException e ){
-               return generateGenericTooltip(sb, item, df);
+                upgrades = new Upgrades(new MessageXBar());
+               upgrades.setArtemis(false);
+               upgrades.setDoubleHeatSinks(false);
+               upgrades.setEndoSteel(false);
+               upgrades.setFerroFibrous(false);
             }
+            return generateItemTooltip(sb, item, df, upgrades);
             
          }
          else if( leaf instanceof Chassi ){
@@ -209,15 +216,11 @@ public class EquipmentPane extends JTree{
       return null;
    }
 
-   private String generateGenericTooltip(StringBuilder sb, Item item, DecimalFormat df){
-      Upgrades genericUpgrades = new Upgrades(new MessageXBar());
-      genericUpgrades.setArtemis(false);
-      genericUpgrades.setDoubleHeatSinks(false);
-      genericUpgrades.setEndoSteel(false);
-      genericUpgrades.setFerroFibrous(false);
+   private String generateItemTooltip(StringBuilder sb, Item item, DecimalFormat df, Upgrades upgrades){
       
-      sb.append("Slots: ").append(item.getNumCriticalSlots(genericUpgrades)).append(" Tons: ")
-      .append(df.format(item.getMass(genericUpgrades))).append("<br>");
+      
+      sb.append("Slots: ").append(item.getNumCriticalSlots(upgrades)).append(" Tons: ")
+      .append(df.format(item.getMass(upgrades))).append("<br>");
     if( item instanceof HeatSource ){
        if( item instanceof Weapon ){
           Weapon weapon = (Weapon)item;
@@ -225,9 +228,9 @@ public class EquipmentPane extends JTree{
             .append(df.format(weapon.getSecondsPerShot())).append("<br>");
           sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
             .append(df.format(weapon.getRangeMax())).append("<br>");
-          sb.append("DPS: ").append(df.format(weapon.getStat("d/s", genericUpgrades))).append(" DPH: ")
-            .append(df.format(weapon.getStat("d/h", genericUpgrades))).append(" HPS: ")
-            .append(df.format(weapon.getStat("h/s", genericUpgrades))).append("<br>");
+          sb.append("DPS: ").append(df.format(weapon.getStat("d/s", upgrades))).append(" DPH: ")
+            .append(df.format(weapon.getStat("d/h", upgrades))).append(" HPS: ")
+            .append(df.format(weapon.getStat("h/s", upgrades))).append("<br>");
        }
        sb.append("Heat: ").append(df.format(((HeatSource)item).getHeat())).append("<br>");
     }
@@ -236,25 +239,6 @@ public class EquipmentPane extends JTree{
       
    }
 
-   private String generateLoadoutBasedTooltip(StringBuilder sb, Item item, DecimalFormat df){
-      sb.append("Slots: ").append(item.getNumCriticalSlots(loadout.getUpgrades())).append(" Tons: ")
-        .append(df.format(item.getMass(loadout.getUpgrades()))).append("<br>");
-      if( item instanceof HeatSource ){
-         if( item instanceof Weapon ){
-            Weapon weapon = (Weapon)item;
-            sb.append("Damage: ").append(df.format(weapon.getDamagePerShot())).append(" Cooldown: ")
-              .append(df.format(weapon.getSecondsPerShot())).append("<br>");
-            sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
-              .append(df.format(weapon.getRangeMax())).append("<br>");
-            sb.append("DPS: ").append(df.format(weapon.getStat("d/s", loadout.getUpgrades()))).append(" DPH: ")
-              .append(df.format(weapon.getStat("d/h", loadout.getUpgrades()))).append(" HPS: ")
-              .append(df.format(weapon.getStat("h/s", loadout.getUpgrades()))).append("<br>");
-         }
-         sb.append("Heat: ").append(df.format(((HeatSource)item).getHeat())).append("<br>");
-      }
-      sb.append("</html>");
-      return sb.toString();
-   }
 
    public Loadout getCurrentLoadout(){
       return loadout;
