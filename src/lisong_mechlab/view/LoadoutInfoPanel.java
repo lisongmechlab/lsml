@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
 import javax.swing.Box;
@@ -26,8 +25,6 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
 
 import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Loadout;
@@ -42,13 +39,14 @@ import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
-import lisong_mechlab.model.tables.AmmoTableDataModel;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long        serialVersionUID = 4720126200474042446L;
    private final Loadout            loadout;
+   
+   // General pane
    private final JProgressBar       massBar;
    private final JLabel             massValue        = new JLabel("xxx");
    private final JProgressBar       armorBar;
@@ -59,6 +57,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JCheckBox          endoSteel        = new JCheckBox("Endo-Steel");
    private final JCheckBox          artemis          = new JCheckBox("Artemis IV");
 
+   // Movement pane
+   private final JLabel             topSpeed         = new JLabel("xxx");
+   private final JCheckBox          speedTweak       = new JCheckBox("Speed Tweak");
+   private final JLabel             jumpJets         = new JLabel("xxx");
+   
+   // Heat pane
    private final JLabel             heatsinks        = new JLabel("xxx");
    private final JLabel             effectiveHS      = new JLabel("xxx");
    private final JLabel             timeToOverheat   = new JLabel("xxx");
@@ -68,22 +72,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JCheckBox          heatContainment  = new JCheckBox("Heat Containment");
    private final JCheckBox          doubleBasics     = new JCheckBox("Double Basics");
 
+   // Offense pane
    private final JLabel             alphaStrike      = new JLabel("xxx");
    private final JLabel             dpsMax           = new JLabel("xxx");
    private final JLabel             dpsSustained     = new JLabel("xxx");
    private final JTable             weaponTable;
-   private final String[]           weaponTableTooltips = {"Weapon: The weapon equipped or the ammo if only ammo is equipped.",
-                                                           "Ammo: The amount of ammo equipped.", 
-                                                           "Vlys: The number of times a weapon can be fired.", 
-                                                           "Scs: The amount of time to use all ammo given a constant maximum fire rate.",
-                                                           "Dmg: The total damage potential for the ammo equipped."
-                                                            };
-   
-
-
-   private final JLabel             jumpJets         = new JLabel("xxx");
-   private final JLabel             topSpeed         = new JLabel("xxx");
-   private final JCheckBox          speedTweak       = new JCheckBox("Speed Tweak");
 
    // Metrics
    private final TopSpeed           metricTopSpeed;
@@ -96,10 +89,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final AlphaStrike        metricAlphaStrike;
    private final MaxDPS             metricMaxDPS;
    private final MaxSustainedDPS    metricSustainedDps;
-   private final AmmoTableDataModel anAmmoTableDataModel;
    private transient Boolean        inhibitChanges   = false;
    private final ArtemisHandler     artemisChecker;
 
+   
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
 
@@ -115,7 +108,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
 
       artemisChecker = new ArtemisHandler(loadout);
-      anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
+
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       anXBar.attach(this);
@@ -254,6 +247,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.setBorder(new CompoundBorder(new TitledBorder(null, "Offense"), innerBorder));
          offence.setLayout(new BoxLayout(offence, BoxLayout.PAGE_AXIS));
          offence.add(Box.createHorizontalGlue());
+         offence.add(Box.createVerticalGlue());
          add(offence);
 
          alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -267,14 +261,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          offence.add(Box.createVerticalStrut(5));
 
-         weaponTable = createNewWeaponTable();
-         weaponTable.setFillsViewportHeight(true);
-         weaponTable.setModel(anAmmoTableDataModel);
-         ((DefaultTableCellRenderer)weaponTable.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-         weaponTable.getColumnModel().getColumn(0).setMinWidth(110);
-         weaponTable.getColumnModel().getColumn(1).setMinWidth(30);
-         weaponTable.getTableHeader();
-
+         weaponTable = new WeaponSummaryTable(loadout, anXBar);
          
          JScrollPane weapons = new JScrollPane(weaponTable);
          weapons.setPreferredSize(new Dimension(260, 100));
@@ -282,34 +269,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       }
 
       updateDisplay();
-   }
-
-   private JTable createNewWeaponTable(){
-      JTable newWeaponTable = new JTable(anAmmoTableDataModel){
-         /**
-          * 
-          */
-         private static final long serialVersionUID = 1L;
-
-         @Override
-         protected JTableHeader createDefaultTableHeader() {
-            return new JTableHeader(columnModel) {
-                /**
-                * 
-                */
-               private static final long serialVersionUID = 1L;
-
-               @Override
-               public String getToolTipText(MouseEvent e) {
-                    java.awt.Point p = e.getPoint();
-                    int index = columnModel.getColumnIndexAtX(p.x);
-                    int realIndex = columnModel.getColumn(index).getModelIndex();
-                    return weaponTableTooltips[realIndex];
-                }
-            };
-        }
-      };
-      return newWeaponTable;
    }
 
    public void updateDisplay(){
