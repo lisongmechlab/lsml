@@ -14,9 +14,10 @@ import lisong_mechlab.util.MessageXBar;
 public class WeaponSummaryTable extends JTable{
    private static final long        serialVersionUID    = 868861599143353045L;
    private final AmmoTableDataModel ammoTableDataModel;
-   private final String[]           weaponTableTooltips = {"Weapon: The weapon equipped or the ammo if only ammo is equipped.",
-         "Ammo: The amount of ammo equipped.", "Volleys: The number of times a weapon can be fired.",
-         "Sec: The amount of time to use all ammo given a constant maximum fire rate.", "Dmg: The total damage potential for the ammo equipped."};
+   private final String[]           weaponTableTooltips = {"The weapon equipped or the ammo if only ammo is equipped.",
+         "The amount of ammo equipped.", "The number of times a weapon can be fired.",
+         "<html>The amount of time to use all ammo given a constant maximum fire rate.<br>I.e. how long you can use it in sustained combat.</html>",
+         "The total damage potential for the ammo equipped."};
 
    public WeaponSummaryTable(Loadout aLoadout, MessageXBar aXBar){
       ammoTableDataModel = new AmmoTableDataModel(aLoadout, aXBar);
