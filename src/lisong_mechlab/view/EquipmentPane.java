@@ -185,18 +185,8 @@ public class EquipmentPane extends JTree{
             sb.append(item.getDescription()).append("<br>");
             // TODO: Get a hold of the current loadout some how and show the applicable critslots and mass according to
             // artemis etc
-            Upgrades upgrades;
-            try{
-                upgrades = loadout.getUpgrades();
-               
-            }
-            catch( NullPointerException e ){
-                upgrades = new Upgrades(new MessageXBar());
-               upgrades.setArtemis(false);
-               upgrades.setDoubleHeatSinks(false);
-               upgrades.setEndoSteel(false);
-               upgrades.setFerroFibrous(false);
-            }
+            Upgrades upgrades = (loadout != null)?(loadout.getUpgrades()):(null);
+            
             return generateItemTooltip(sb, item, df, upgrades);
             
          }
