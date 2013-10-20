@@ -78,7 +78,7 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
          openLoadout(ProgramInit.lsml().loadoutCoder.parse(aLSMLUrl));
       }
       catch( DecodingException e ){
-         JOptionPane.showMessageDialog(null, "Unable to import loadout from \"" + aLSMLUrl + "\"! Error:" + e);
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to import loadout from \"" + aLSMLUrl + "\"! Error:" + e);
       }
    }
 

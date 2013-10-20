@@ -33,10 +33,10 @@ public class LsmlPreferences{
          properties.storeToXML(outputStream, "Written by LSML");
       }
       catch( FileNotFoundException e ){
-         JOptionPane.showMessageDialog(null, "Program settings file not found! :" + e);
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Program settings file not found! :" + e);
       }
       catch( IOException e ){
-         JOptionPane.showMessageDialog(null, "Unspecified IO error while writing program settings file! :" + e);
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unspecified IO error while writing program settings file! :" + e);
       }
       finally{
          if( outputStream != null ){
@@ -44,7 +44,7 @@ public class LsmlPreferences{
                outputStream.close();
             }
             catch( IOException e ){
-               JOptionPane.showMessageDialog(null, "Error closing program settings file! :" + e);
+               JOptionPane.showMessageDialog(ProgramInit.lsml(), "Error closing program settings file! :" + e);
             }
          }
       }
@@ -67,13 +67,13 @@ public class LsmlPreferences{
             properties.loadFromXML(inputStream);
          }
          catch( FileNotFoundException e ){
-            JOptionPane.showMessageDialog(null, "Program settings file not found! :" + e);
+            JOptionPane.showMessageDialog(ProgramInit.lsml(), "Program settings file not found! :" + e);
          }
          catch( InvalidPropertiesFormatException e ){
-            JOptionPane.showMessageDialog(null, "Program settings file is corrupt! :" + e);
+            JOptionPane.showMessageDialog(ProgramInit.lsml(), "Program settings file is corrupt! :" + e);
          }
          catch( IOException e ){
-            JOptionPane.showMessageDialog(null, "Unspecified IO error while reading program settings file! :" + e);
+            JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unspecified IO error while reading program settings file! :" + e);
          }
          finally{
             if( inputStream != null )
@@ -81,7 +81,7 @@ public class LsmlPreferences{
                   inputStream.close();
                }
                catch( IOException e ){
-                  JOptionPane.showMessageDialog(null, "Error closing program settings file! :" + e);
+                  JOptionPane.showMessageDialog(ProgramInit.lsml(), "Error closing program settings file! :" + e);
                }
          }
       }
