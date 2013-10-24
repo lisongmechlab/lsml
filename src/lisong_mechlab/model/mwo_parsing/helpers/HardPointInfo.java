@@ -10,5 +10,5 @@ public class HardPointInfo{
    public int id;
    
    @XStreamImplicit(itemFieldName = "WeaponSlot")
-   public List<HardPointWeaponSlot> weaponslots;
+   public List<HardPointWeaponSlot> weaponslots;  
 }
