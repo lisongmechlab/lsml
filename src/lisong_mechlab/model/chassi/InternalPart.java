@@ -2,35 +2,27 @@ package lisong_mechlab.model.chassi;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.mwo_parsing.HardpointsXml;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent;
-import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent.Hardpoint;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
 
 public class InternalPart{
-   private final int                         criticalslots;
-   private final Part                        type;
-   private final int                         maxarmor;
-   private final double                      hitpoints;
-   private final List<Item>                  internals;
-   private final Map<HardpointType, Integer> hardpoints;
+   private final int             criticalslots;
+   private final Part            type;
+   private final int             maxarmor;
+   private final double          hitpoints;
+   private final List<Item>      internals;
+   private final List<Hardpoint> hardpoints;
 
    public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints){
       criticalslots = aComponent.Slots;
       type = aPart;
       hitpoints = aComponent.HP;
-      if( type == Part.Head ){
-         maxarmor = 18;
-      }
-      else{
-         maxarmor = (int)(hitpoints * 2);
-      }
+      maxarmor = (type == Part.Head) ? 18 : (int)(hitpoints * 2);
 
       internals = new ArrayList<Item>();
       if( null != aComponent.internals ){
@@ -39,20 +31,27 @@ public class InternalPart{
          }
       }
 
-      hardpoints = new HashMap<HardpointType, Integer>();
+      hardpoints = new ArrayList<>();
       if( null != aComponent.hardpoints ){
-         for(Hardpoint hardpoint : aComponent.hardpoints){
+         for(MdfComponent.Hardpoint hardpoint : aComponent.hardpoints){
             final HardpointType hardpointType = HardpointType.fromMwoType(hardpoint.Type);
-            if( !hardpoints.containsKey(hardpointType) ){
-               hardpoints.put(hardpointType, Integer.valueOf(0));
+
+            if( hardpointType == HardpointType.MISSILE ){
+               List<Integer> tubes = aHardpoints.tubesForId(hardpoint.ID);
+               for(Integer tube : tubes){
+                  hardpoints.add(new Hardpoint(HardpointType.MISSILE, tube));
+               }
             }
-            hardpoints.put(hardpointType, hardpoints.get(hardpointType) + aHardpoints.slotsForId(hardpoint.ID));
+            else{
+               for(int i = 0; i < aHardpoints.slotsForId(hardpoint.ID); ++i)
+                  hardpoints.add(new Hardpoint(hardpointType));
+            }
          }
       }
 
       // Stupid PGI making hacks to put ECM on a hardpoint... now I have to change my code...
       if( aComponent.CanEquipECM == 1 )
-         hardpoints.put(HardpointType.ECM, 1);
+         hardpoints.add(new Hardpoint(HardpointType.ECM));
    }
 
    @Override
@@ -120,10 +119,13 @@ public class InternalPart{
    }
 
    public int getNumHardpoints(HardpointType aHardpointType){
-      if( hardpoints.containsKey(aHardpointType) ){
-         return hardpoints.get(aHardpointType);
+      int ans = 0;
+      for(Hardpoint it : hardpoints){
+         if( it.getType() == aHardpointType ){
+            ans++;
+         }
       }
-      return 0;
+      return ans;
    }
 
    public List<Item> getInternalItems(){
