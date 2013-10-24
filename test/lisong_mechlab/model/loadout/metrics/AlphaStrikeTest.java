@@ -1,6 +1,7 @@
 package lisong_mechlab.model.loadout.metrics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
@@ -39,5 +40,16 @@ public class AlphaStrikeTest{
 
       double expected = ppc.getDamagePerShot() + ll.getDamagePerShot() + lrm20.getDamagePerShot() + lb10x.getDamagePerShot();
       assertEquals(expected, cut.calculate(), 0.0);
+   }
+   
+   /**
+    * AMS shall not be counted to the alpha strike.
+    */
+   @Test
+   public void testCalculate_NoAMS(){
+      List<Item> items = Arrays.asList((Item)ItemDB.AMS);
+      when(mlc.loadout.getAllItems()).thenReturn(items);
+      
+      assertEquals(0, cut.calculate(), 0.0);
    }
 }
