@@ -190,7 +190,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
    private JMenu createMenuShare(){
       JMenu menu = new JMenu("Share!");
-      menu.add(new JMenuItem(new ShareLoadoutAction(loadout)));
+      menu.add(new JMenuItem(new ShareLoadoutAction(this)));
       return menu;
    }
 
@@ -215,8 +215,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          });
 
       menu.add(addToGarage);
-      menu.add(new JMenuItem(new RenameLoadoutAction(loadout, KeyStroke.getKeyStroke("R"))));
-      menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), loadout, KeyStroke.getKeyStroke("D"))));
+      menu.add(new JMenuItem(new RenameLoadoutAction(this, KeyStroke.getKeyStroke("R"))));
+      menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), this, KeyStroke.getKeyStroke("D"))));
 
       menu.add(createMenuItem("Load stock", new ActionListener(){
          @Override
@@ -254,10 +254,10 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          JMenu subMenu = new JMenu("Max Armor");
          menu.add(subMenu);
-         subMenu.add(new JMenuItem(new MaxArmorAction("3:1", loadout, 3)));
-         subMenu.add(new JMenuItem(new MaxArmorAction("5:1", loadout, 5)));
-         subMenu.add(new JMenuItem(new MaxArmorAction("10:1", loadout, 10)));
-         subMenu.add(new JMenuItem(new MaxArmorAction("Custom...", loadout, -1)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("3:1", this, 3)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("5:1", this, 5)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("10:1", this, 10)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("Custom...", this, -1)));
       }
       return menu;
    }
