@@ -59,8 +59,11 @@ public class HardpointsXml{
                int maxTubes = 0;
                for(HardPointWeaponSlot.Attachment attachment : weaponslot.attachments){
                   Matcher matcher = pattern.matcher(attachment.AName);
-                  if( matcher.groupCount() == 2 ){
+                  if( matcher.matches() && matcher.groupCount() == 1 ){
                      maxTubes = Math.max(maxTubes, Integer.parseInt(matcher.group(1)));
+                  }
+                  else if( attachment.AName.toLowerCase().contains("narc") ){
+                     maxTubes = 1;
                   }
                }
                tubes.add(maxTubes);

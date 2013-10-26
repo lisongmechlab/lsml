@@ -14,7 +14,7 @@ public class Hardpoint{
    }
 
    public Hardpoint(HardpointType aType, int aNumTubes){
-      if( aType == HardpointType.MISSILE ){
+      if( aType == HardpointType.MISSILE  && aNumTubes < 1){
          throw new IllegalArgumentException("Missile hard points must have a positive, non-zero number of tubes");
       }
       type = aType;

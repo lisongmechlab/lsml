@@ -1,6 +1,7 @@
 package lisong_mechlab.model.chassi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class InternalPart{
    private final List<Item>      internals;
    private final List<Hardpoint> hardpoints;
 
-   public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints){
+   public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints, Chassi aChassi){
       criticalslots = aComponent.Slots;
       type = aPart;
       hitpoints = aComponent.HP;
@@ -39,7 +40,12 @@ public class InternalPart{
             if( hardpointType == HardpointType.MISSILE ){
                List<Integer> tubes = aHardpoints.tubesForId(hardpoint.ID);
                for(Integer tube : tubes){
-                  hardpoints.add(new Hardpoint(HardpointType.MISSILE, tube));
+                  if( tube < 1 ){
+                     hardpoints.add(HardpointCache.getHardpoint(hardpoint.ID, aChassi.getMwoName(), aPart));
+                  }
+                  else{
+                     hardpoints.add(new Hardpoint(HardpointType.MISSILE, tube));
+                  }
                }
             }
             else{
@@ -134,5 +140,9 @@ public class InternalPart{
 
    public double getHitpoints(){
       return hitpoints;
+   }
+
+   public Collection<Hardpoint> getHardpoints(){
+      return hardpoints;
    }
 }
