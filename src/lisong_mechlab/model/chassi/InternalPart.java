@@ -40,6 +40,10 @@ public class InternalPart{
             if( hardpointType == HardpointType.MISSILE ){
                List<Integer> tubes = aHardpoints.tubesForId(hardpoint.ID);
                for(Integer tube : tubes){
+                  // FIXME: Hardcoded case for hbk-4j which has 2 LRM10s as an LRM20 but the data files are missleading
+                  if(aChassi.getNameShort().equals("HBK-4J") && aPart == Part.RightTorso){
+                     tube = 10;
+                  }
                   if( tube < 1 ){
                      hardpoints.add(HardpointCache.getHardpoint(hardpoint.ID, aChassi.getMwoName(), aPart));
                   }
