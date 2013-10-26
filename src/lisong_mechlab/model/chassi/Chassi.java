@@ -64,7 +64,7 @@ public class Chassi{
             continue;
          }
          final Part part = Part.fromMwoName(component.Name);
-         tempParts.put(part, new InternalPart(component, part, hardpoints));
+         tempParts.put(part, new InternalPart(component, part, hardpoints, this));
       }
       parts = Collections.unmodifiableMap(tempParts);
    }
