@@ -18,7 +18,7 @@ public class ImportMechAction extends AbstractAction{
    }
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      String input = JOptionPane.showInputDialog(null, "Paste the lsml:// link:", "Import mech...", JOptionPane.PLAIN_MESSAGE);
+      String input = JOptionPane.showInputDialog(ProgramInit.lsml(), "Paste the lsml:// link:", "Import mech...", JOptionPane.PLAIN_MESSAGE);
       ProgramInit.lsml().desktop.openLoadout(input);
    }
 
