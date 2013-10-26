@@ -27,8 +27,10 @@ import lisong_mechlab.util.MessageXBar;
  */
 public class LoadoutDesktop extends JDesktopPane implements InternalFrameListener{
    private static final long                 serialVersionUID = -3967290040803547940L;
+   private static final int                  MAX_OPEN_WINDOWS = 10;
    private final List<InternalFrameListener> listeners        = new ArrayList<InternalFrameListener>();
    private final MessageXBar                 xBar;
+   private transient int                     opened_windows;
 
    /**
     * Creates a new {@link LoadoutDesktop}.
@@ -55,6 +57,9 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
       LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar);
       frame.addInternalFrameListener(this); // The desktop acts as forwarder of frame events from the frames.
       add(frame);
+
+      frame.setLocation(20 * (opened_windows % MAX_OPEN_WINDOWS), 20 * (opened_windows % MAX_OPEN_WINDOWS));
+      opened_windows++;
 
       try{
          frame.setVisible(true);
