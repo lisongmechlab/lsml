@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -214,10 +216,34 @@ public class GameDataFile{
 
          @Override
          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
-            if( dir.getFileName() != null
-                && (dir.getFileName().toString().toLowerCase().equals("windows") || dir.getFileName().toString().toLowerCase().equals("users")) )
-               // Skip windows folder, it's big and slow and we don't expect to find the game there.
-               return SKIP_SUBTREE;
+            if( dir.getFileName() != null ){
+               if( System.getProperty("os.name").toLowerCase().contains("win") ){
+                  // On windows we can skip some folders
+                  Set<String> skipList = new HashSet<>();
+                  skipList.add("windows");
+                  skipList.add("users");
+                  if( skipList.contains(dir.getFileName().toString().toLowerCase()) )
+                     return SKIP_SUBTREE;
+               }
+               else{
+                  // Assume Linux, skip some folders
+                  Set<String> skipList = new HashSet<>();
+                  skipList.add("/bin");
+                  skipList.add("/boot");
+                  skipList.add("/dev");
+                  skipList.add("/etc");
+                  skipList.add("/lib");
+                  skipList.add("/lib64");
+                  skipList.add("/proc");
+                  skipList.add("/sys");
+                  skipList.add("/run");
+                  skipList.add("/sbin");
+                  skipList.add("/tmp");
+
+                  if( skipList.contains(dir.toAbsolutePath().toString()) )
+                     return SKIP_SUBTREE;
+               }
+            }
             return CONTINUE;
          }
 
