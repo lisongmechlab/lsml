@@ -63,7 +63,7 @@ public class HardpointsXml{
                      maxTubes = Math.max(maxTubes, Integer.parseInt(matcher.group(1)));
                   }
                   else if( attachment.AName.toLowerCase().contains("narc") ){
-                     maxTubes = 1;
+                     maxTubes = Math.max(1, maxTubes);
                   }
                }
                tubes.add(maxTubes);

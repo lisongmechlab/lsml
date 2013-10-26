@@ -38,7 +38,7 @@ public class HardpointCache{
       
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
-         m.put(10, new Hardpoint(HardpointType.MISSILE, 5));
+         m.put(10, new Hardpoint(HardpointType.MISSILE, 10));
          map.put("drg-1n", m);
       }
       
