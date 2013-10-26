@@ -1,7 +1,10 @@
 package lisong_mechlab.model.mwo_parsing;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lisong_mechlab.model.mwo_parsing.helpers.HardPointInfo;
 import lisong_mechlab.model.mwo_parsing.helpers.HardPointWeaponSlot;
@@ -39,16 +42,42 @@ public class HardpointsXml{
 
    public int slotsForId(int aID){
       for(HardPointInfo hardPointInfo : hardpoints){
-         if(hardPointInfo.id == aID){
+         if( hardPointInfo.id == aID ){
             return hardPointInfo.weaponslots.size();
          }
       }
       throw new RuntimeException("Problem reading hardpoint info!");
    }
 
-//   public static void main(String[] arg) throws IOException{
-//      GameDataFile dataFile = new GameDataFile();
-//      HardpointsXml mechDef = HardpointsXml.fromXml(dataFile.openGameFile(new File(GameDataFile.MDF_ROOT, "jenner/jenner-hardpoints.xml")));
-//      System.out.println(mechDef);
-//   }
+   public List<Integer> tubesForId(int aID){
+      Pattern pattern = Pattern.compile(".*(?:(?:[ls]rm)|(?:missile))(\\d+).*", Pattern.CASE_INSENSITIVE);
+
+      for(HardPointInfo hardPointInfo : hardpoints){
+         if( hardPointInfo.id == aID ){
+            List<Integer> tubes = new ArrayList<>();
+            for(HardPointWeaponSlot weaponslot : hardPointInfo.weaponslots){
+               int maxTubes = 0;
+               for(HardPointWeaponSlot.Attachment attachment : weaponslot.attachments){
+                  Matcher matcher = pattern.matcher(attachment.AName);
+                  if( matcher.matches() && matcher.groupCount() == 1 ){
+                     maxTubes = Math.max(maxTubes, Integer.parseInt(matcher.group(1)));
+                  }
+                  else if( attachment.AName.toLowerCase().contains("narc") ){
+                     maxTubes = Math.max(1, maxTubes);
+                  }
+               }
+               tubes.add(maxTubes);
+            }
+            return tubes;
+         }
+      }
+      throw new RuntimeException("Problem reading hardpoint couldn't parse missile tube counts!");
+   }
+
+   // public static void main(String[] arg) throws IOException{
+   // GameDataFile dataFile = new GameDataFile();
+   // HardpointsXml mechDef = HardpointsXml.fromXml(dataFile.openGameFile(new File(GameDataFile.MDF_ROOT,
+   // "jenner/jenner-hardpoints.xml")));
+   // System.out.println(mechDef);
+   // }
 }
