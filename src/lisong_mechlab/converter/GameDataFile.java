@@ -30,8 +30,8 @@ import java.util.zip.ZipFile;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import lisong_mechlab.view.LsmlPreferences;
 import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.settings.LsmlPreferences;
 
 public class GameDataFile{
    private static final String   PREF_GAMEDIR   = "gamedir";

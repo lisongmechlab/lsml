@@ -1,4 +1,23 @@
-package lisong_mechlab.view;
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
+package lisong_mechlab.view.settings;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,8 +27,16 @@ import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import lisong_mechlab.view.ProgramInit;
+
+/**
+ * Handles storing and loading of preferences.
+ * 
+ * @author Li Song
+ */
 public class LsmlPreferences{
    public static final String      GARAGEFILE_KEY     = "garagefile";
    public static final String      GARAGEFILE_DEFAULT = "garage.xml";
@@ -19,7 +46,7 @@ public class LsmlPreferences{
    static public String getString(String key){
       return properties.getProperty(key, "");
    }
-   
+
    static public String getString(String key, String aDefault){
       return properties.getProperty(key, aDefault);
    }
@@ -51,13 +78,13 @@ public class LsmlPreferences{
    }
 
    static{
-      if(System.getProperties().getProperty("os.name").toLowerCase().contains("win")){
+      if( System.getProperties().getProperty("os.name").toLowerCase().contains("win") ){
          propertiesFile = new File(System.getenv("AppData") + "/lsml_settings.xml");
       }
       else{
          propertiesFile = new File(System.getProperty("user.home") + "/.lsml.xml");
       }
-      
+
       properties = new Properties();
       if( propertiesFile.exists() ){
          FileInputStream inputStream = null;
