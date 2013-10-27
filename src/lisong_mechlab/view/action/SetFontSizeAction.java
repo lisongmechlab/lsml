@@ -23,27 +23,33 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import lisong_mechlab.view.preferences.PreferencesDialog;
-
-
+import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.preferences.FontPreferences;
+import lisong_mechlab.view.preferences.FontPreferences.FontSize;
 
 /**
- * This action will open up the settings dialog.
+ * Sets the application font size.
  * 
  * @author Emily Björk
  */
-public class OpenPreferences extends AbstractAction{
-   private static final long serialVersionUID = -2615543435137494754L;
+public class SetFontSizeAction extends AbstractAction{
+   private static final long    serialVersionUID = -8145859026953437134L;
+   private FontPreferences.FontSize fontSize;
 
-   public OpenPreferences(String aString, KeyStroke aKeyStroke){
-      super(aString);
+   public SetFontSizeAction(String aTitle, KeyStroke aKeyStroke, FontSize aFontSize){
+      super(aTitle);
       putValue(Action.ACCELERATOR_KEY, aKeyStroke);
+      fontSize = aFontSize;
    }
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      new PreferencesDialog();
+      ProgramInit.lsml().preferences.fontPreferences.setFontSize(fontSize);
+      JOptionPane.showMessageDialog(ProgramInit.lsml(), "Font changes will take effect after LSML is restarted.", "Restart required",
+                                    JOptionPane.PLAIN_MESSAGE);
    }
+
 }

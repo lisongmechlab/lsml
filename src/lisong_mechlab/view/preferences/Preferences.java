@@ -17,23 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view.settings;
-
-import javax.swing.JDialog;
-
-import lisong_mechlab.view.ProgramInit;
+package lisong_mechlab.view.preferences;
 
 /**
- * This class contains the settings dialog for LSML.
+ * This class is a container class for all the individual preferences classes.
  * 
  * @author Emily Björk
  */
-public class PreferencesDialog extends JDialog{
-   private static final long serialVersionUID = -7028706949151487418L;
-
-   public PreferencesDialog(){
-      super(ProgramInit.lsml(), "Settings", ModalityType.APPLICATION_MODAL);
-      
-      
-   }
+public class Preferences{
+   public FontPreferences fontPreferences = new FontPreferences();
 }

@@ -39,7 +39,8 @@ import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.view.settings.LsmlPreferences;
+import lisong_mechlab.view.preferences.PreferenceStore;
+import lisong_mechlab.view.preferences.Preferences;
 
 /**
  * This is the main program instance. It contains some program globals and startup and shutdown procedures.
@@ -68,6 +69,7 @@ public class LSML extends JFrame{
    public final MessageXBar        xBar                   = new MessageXBar();
    public final LoadoutDesktop     desktop                = new LoadoutDesktop(xBar);
    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
+   public final Preferences        preferences            = new Preferences();
 
    public MechGarage getGarage(){
       return garage;
@@ -76,7 +78,7 @@ public class LSML extends JFrame{
    public void openLastGarage(){
       assert (SwingUtilities.isEventDispatchThread());
 
-      String garageFileName = LsmlPreferences.getString(LsmlPreferences.GARAGEFILE_KEY, LsmlPreferences.GARAGEFILE_DEFAULT);
+      String garageFileName = PreferenceStore.getString(PreferenceStore.GARAGEFILE_KEY, PreferenceStore.GARAGEFILE_DEFAULT);
       File garageFile = new File(garageFileName);
       if( garageFile.exists() ){
          try{
@@ -107,7 +109,7 @@ public class LSML extends JFrame{
       }
       try{
          garage = MechGarage.open(chooser.getSelectedFile(), xBar);
-         LsmlPreferences.setString(LsmlPreferences.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
+         PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
       }
       catch( IOException e ){
          JOptionPane.showOptionDialog(this, "Error: " + e.getMessage(), "Couldn't open garage!", JOptionPane.DEFAULT_OPTION,
@@ -172,7 +174,7 @@ public class LSML extends JFrame{
          }
          try{
             garage.saveas(file, overwrite);
-            LsmlPreferences.setString(LsmlPreferences.GARAGEFILE_KEY, file.getAbsolutePath());
+            PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, file.getAbsolutePath());
             break;
          }
          catch( IOException e ){

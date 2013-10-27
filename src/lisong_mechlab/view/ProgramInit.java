@@ -71,11 +71,11 @@ public class ProgramInit extends JFrame{
             setUndecorated(true);
             setTitle("loading...");
             setSize(350, 350);
-            
+
             // This works for multi-screen configurations in linux as well.
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             DisplayMode mode = ge.getDefaultScreenDevice().getDisplayMode();
-            
+
             setLocation(mode.getWidth() / 2 - getSize().width / 2, mode.getHeight() / 2 - getSize().height / 2);
             setVisible(true);
             getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -112,7 +112,7 @@ public class ProgramInit extends JFrame{
       }
       catch( Throwable e ){
          JOptionPane.showMessageDialog(this,
-                                       "Unable to find/parse game data files!\nLSML requires an up-to-date installation of MW:Online to parse data files from.\nError: " + e.getCause().getMessage());
+                                       "Unable to find/parse game data files!\nLSML requires an up-to-date installation of MW:Online to parse data files from.");
          e.printStackTrace();
          return false;
       }

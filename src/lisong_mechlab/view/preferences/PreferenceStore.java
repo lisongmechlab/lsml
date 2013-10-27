@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view.settings;
+package lisong_mechlab.view.preferences;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import lisong_mechlab.view.ProgramInit;
@@ -37,7 +36,9 @@ import lisong_mechlab.view.ProgramInit;
  * 
  * @author Emily Björk
  */
-public class LsmlPreferences{
+public class PreferenceStore{
+
+   public static final String     GAMEDIRECTORY_KEY  = "gamedir";
    public static final String      GARAGEFILE_KEY     = "garagefile";
    public static final String      GARAGEFILE_DEFAULT = "garage.xml";
    private static final File       propertiesFile;
