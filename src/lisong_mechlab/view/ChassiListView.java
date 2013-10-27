@@ -1,19 +1,33 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.view;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,7 +44,12 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.view.render.StyleManager;
 
-public class ChassiListView extends JFrame{
+/**
+ * Displays all available {@link Chassi} in a pane.
+ * 
+ * @author Emily Björk
+ */
+public class ChassiListView extends JScrollPane{
    static public class ChassiTableModel extends AbstractTableModel{
       private static final long          serialVersionUID = -2726840937519789976L;
 
@@ -198,25 +217,10 @@ public class ChassiListView extends JFrame{
       }
    }
 
-   private static final long     serialVersionUID = -4134588793726908789L;
-
-   private static ChassiListView current          = null;
+   private static final long serialVersionUID = -4134588793726908789L;
 
    public ChassiListView(){
-      if( current != null ){
-         current.setState(NORMAL);
-         current.toFront();
-         current.repaint();
-         return;
-      }
-
-      Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-      setIconImage(ProgramInit.programIcon);
-      setResizable(true);
-      setTitle("Chassi selection");
-      setSize(500, 300);
-      setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
-      setVisible(true);
+      super();
 
       final JTable table = new JTable(new ChassiTableModel());
       table.setDefaultRenderer(ChassiTableModel.WeaponsColumn.class, new ChassiTableModel.WeaponsColumn().getRenderer());
@@ -231,24 +235,13 @@ public class ChassiListView extends JFrame{
                final Object cell = target.getValueAt(row, column);
                if( cell instanceof Chassi ){
                   Chassi chassi = (Chassi)cell;
-                  ProgramInit.lsml().desktop.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
+                  ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
                }
             }
          }
       });
-      JScrollPane scrollPane = new JScrollPane(table);
-      add(scrollPane);
 
-      setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-      addWindowListener(new WindowAdapter(){
-         @Override
-         public void windowClosing(WindowEvent aArg0){
-            current = null;
-         }
-      });
-
-      current = this;
+      setViewportView(table);
    }
 
 }
