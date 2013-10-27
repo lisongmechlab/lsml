@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.view;
 
 import java.awt.Dimension;
@@ -20,6 +39,8 @@ import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.preferences.PreferenceStore;
+import lisong_mechlab.view.preferences.Preferences;
 
 /**
  * This is the main program instance. It contains some program globals and startup and shutdown procedures.
@@ -48,6 +69,7 @@ public class LSML extends JFrame{
    public final MessageXBar        xBar                   = new MessageXBar();
    public final LoadoutDesktop     desktop                = new LoadoutDesktop(xBar);
    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
+   public final Preferences        preferences            = new Preferences();
 
    public MechGarage getGarage(){
       return garage;
@@ -56,7 +78,7 @@ public class LSML extends JFrame{
    public void openLastGarage(){
       assert (SwingUtilities.isEventDispatchThread());
 
-      String garageFileName = LsmlPreferences.getString(LsmlPreferences.GARAGEFILE_KEY, LsmlPreferences.GARAGEFILE_DEFAULT);
+      String garageFileName = PreferenceStore.getString(PreferenceStore.GARAGEFILE_KEY, PreferenceStore.GARAGEFILE_DEFAULT);
       File garageFile = new File(garageFileName);
       if( garageFile.exists() ){
          try{
@@ -87,7 +109,7 @@ public class LSML extends JFrame{
       }
       try{
          garage = MechGarage.open(chooser.getSelectedFile(), xBar);
-         LsmlPreferences.setString(LsmlPreferences.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
+         PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
       }
       catch( IOException e ){
          JOptionPane.showOptionDialog(this, "Error: " + e.getMessage(), "Couldn't open garage!", JOptionPane.DEFAULT_OPTION,
@@ -152,7 +174,7 @@ public class LSML extends JFrame{
          }
          try{
             garage.saveas(file, overwrite);
-            LsmlPreferences.setString(LsmlPreferences.GARAGEFILE_KEY, file.getAbsolutePath());
+            PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, file.getAbsolutePath());
             break;
          }
          catch( IOException e ){
