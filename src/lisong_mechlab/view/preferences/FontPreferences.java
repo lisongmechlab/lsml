@@ -19,7 +19,14 @@
 //@formatter:on
 package lisong_mechlab.view.preferences;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
+
+import lisong_mechlab.view.ProgramInit;
 
 /**
  * This class manages everything to do with settings fonts for the application.
@@ -41,10 +48,20 @@ public class FontPreferences{
       }
    }
 
-   public static final String FONTSIZE_KEY = "fontSize";
-   private FontSize           fontSize;
+   public static final String   FONTSIZE_KEY = "fontSize";
+   private FontSize             fontSize;
+   private Map<Object, Integer> defaultSizes = new HashMap<>();
 
    public FontPreferences(){
+      for(Map.Entry<Object, Object> entry : UIManager.getDefaults().entrySet()){
+         Object key = entry.getKey();
+         Object value = UIManager.get(key);
+         if( value != null && value instanceof FontUIResource ){
+            FontUIResource fr = (FontUIResource)value;
+            defaultSizes.put(key, fr.getSize());
+         }
+      }
+
       fontSize = FontSize.valueOf(PreferenceStore.getString(FONTSIZE_KEY, FontSize.Normal.name()));
       updateFonts();
    }
@@ -53,16 +70,19 @@ public class FontPreferences{
     * Sets the fonts for the application. This must be called before the main frame has opened.
     */
    public void updateFonts(){
-      for(Map.Entry<Object, Object> entry : javax.swing.UIManager.getDefaults().entrySet()){
-         Object key = entry.getKey();
-         Object value = javax.swing.UIManager.get(key);
-         if( value != null && value instanceof javax.swing.plaf.FontUIResource ){
-            javax.swing.plaf.FontUIResource fr = (javax.swing.plaf.FontUIResource)value;
-            javax.swing.plaf.FontUIResource f = new javax.swing.plaf.FontUIResource(fr.getFamily(), fr.getStyle(),
-                                                                                    (int)(fr.getSize() * fontSize.getSizeFactor()));
-            javax.swing.UIManager.put(key, f);
-         }
+      for(Map.Entry<Object, Integer> e : defaultSizes.entrySet()){
+         Object key = e.getKey();
+         FontUIResource fr = (FontUIResource)UIManager.get(key);
+
+         UIManager.put(key, new FontUIResource(fr.getFamily(), fr.getStyle(), (int)(e.getValue() * fontSize.getSizeFactor())));
       }
+
+      /*
+       * for(Map.Entry<Object, Object> entry : UIManager.getDefaults().entrySet()){ Object key = entry.getKey(); Object
+       * value = UIManager.get(key); if( value != null && value instanceof FontUIResource ){ FontUIResource fr =
+       * (FontUIResource)value; FontUIResource f = new FontUIResource(fr.getFamily(), fr.getStyle(), (int)(fr.getSize()
+       * * fontSize.getSizeFactor())); UIManager.put(key, f); } }
+       */
    }
 
    /**
@@ -74,6 +94,8 @@ public class FontPreferences{
    public void setFontSize(FontSize aFontSize){
       fontSize = aFontSize;
       PreferenceStore.setString(FONTSIZE_KEY, fontSize.name());
+      updateFonts();
+      SwingUtilities.updateComponentTreeUI(ProgramInit.lsml());
    }
 
    /**

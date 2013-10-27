@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.view.ProgramInit;
@@ -36,7 +35,7 @@ import lisong_mechlab.view.preferences.FontPreferences.FontSize;
  * @author Li Song
  */
 public class SetFontSizeAction extends AbstractAction{
-   private static final long    serialVersionUID = -8145859026953437134L;
+   private static final long        serialVersionUID = -8145859026953437134L;
    private FontPreferences.FontSize fontSize;
 
    public SetFontSizeAction(String aTitle, KeyStroke aKeyStroke, FontSize aFontSize){
@@ -48,8 +47,6 @@ public class SetFontSizeAction extends AbstractAction{
    @Override
    public void actionPerformed(ActionEvent aArg0){
       ProgramInit.lsml().preferences.fontPreferences.setFontSize(fontSize);
-      JOptionPane.showMessageDialog(ProgramInit.lsml(), "Font changes will take effect after LSML is restarted.", "Restart required",
-                                    JOptionPane.PLAIN_MESSAGE);
    }
 
 }

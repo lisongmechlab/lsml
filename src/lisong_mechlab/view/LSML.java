@@ -29,8 +29,7 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
@@ -67,9 +66,53 @@ public class LSML extends JFrame{
    private LsmlProtocolIPC         lsmlProtocolIPC;
    private MechGarage              garage;
    public final MessageXBar        xBar                   = new MessageXBar();
-   public final LoadoutDesktop     desktop                = new LoadoutDesktop(xBar);
    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
    public final Preferences        preferences            = new Preferences();
+
+   public final MechLabPane        mechLabPane;
+
+   public LSML(){
+      super(PROGRAM_FNAME + VERSION_STRING);
+      final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      setIconImage(ProgramInit.programIcon);
+      setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
+      setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
+      setVisible(true);
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+      setJMenuBar(new MenuBar(this));
+
+      mechLabPane = new MechLabPane(xBar);
+
+      JTabbedPane tabbedPane = new JTabbedPane();
+      tabbedPane.addTab("Mech Lab", mechLabPane);
+      tabbedPane.addTab("Mechs", new ChassiListView());
+
+      setContentPane(tabbedPane);
+      addWindowListener(new WindowAdapter(){
+         @Override
+         public void windowClosing(WindowEvent e){
+            if( mechLabPane.close() ){
+               saveGarage();
+               if( null != lsmlProtocolIPC ){
+                  lsmlProtocolIPC.close();
+               }
+               dispose();
+            }
+         }
+      });
+
+      openLastGarage();
+
+      // Open the IPC socket first after everything else has succeeded.
+
+      try{
+         lsmlProtocolIPC = new LsmlProtocolIPC();
+      }
+      catch( IOException e ){
+         lsmlProtocolIPC = null;
+         JOptionPane.showMessageDialog(this, "Unable to startup IPC. Links with builds (lsml://...) will not work.\nError: " + e);
+      }
+   }
 
    public MechGarage getGarage(){
       return garage;
@@ -199,48 +242,5 @@ public class LSML extends JFrame{
 
    public void shutdown(){
       dispose();
-   }
-
-   public LSML(){
-      super(PROGRAM_FNAME + VERSION_STRING);
-
-      final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-      final EquipmentPane equipmentPane = new EquipmentPane(desktop, this, xBar);
-      final JScrollPane jScrollPane = new JScrollPane(equipmentPane);
-      final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, desktop);
-      splitPane.setDividerLocation(180);
-
-      setIconImage(ProgramInit.programIcon);
-
-      setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
-      setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
-      setVisible(true);
-      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-      setJMenuBar(new MenuBar(this));
-      setContentPane(splitPane);
-      addWindowListener(new WindowAdapter(){
-         @Override
-         public void windowClosing(WindowEvent e){
-            if( desktop.closeAll() ){
-               saveGarage();
-               if( null != lsmlProtocolIPC ){
-                  lsmlProtocolIPC.close();
-               }
-               dispose();
-            }
-         }
-      });
-
-      openLastGarage();
-
-      // Open the IPC socket first after everything else has succeeded.
-
-      try{
-         lsmlProtocolIPC = new LsmlProtocolIPC();
-      }
-      catch( IOException e ){
-         lsmlProtocolIPC = null;
-         JOptionPane.showMessageDialog(this, "Unable to startup IPC. Links with builds (lsml://...) will not work.\nError: " + e);
-      }
    }
 }

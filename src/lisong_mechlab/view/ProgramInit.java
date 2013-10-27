@@ -158,7 +158,7 @@ public class ProgramInit extends JFrame{
                instanceL = new LSML();
 
                if( args.length > 0 )
-                  instanceL.desktop.openLoadout(instanceL.loadoutCoder.parse(args[0]));
+                  instanceL.mechLabPane.openLoadout(instanceL.loadoutCoder.parse(args[0]));
             }
             catch( Exception e ){
                JOptionPane.showMessageDialog(null, "Unable to start! Error: " + e);
