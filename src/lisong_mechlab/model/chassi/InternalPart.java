@@ -41,7 +41,7 @@ public class InternalPart{
                List<Integer> tubes = aHardpoints.tubesForId(hardpoint.ID);
                for(Integer tube : tubes){
                   // FIXME: Hardcoded case for hbk-4j which has 2 LRM10s as an LRM20 but the data files are missleading
-                  if(aChassi.getNameShort().equals("HBK-4J") && aPart == Part.RightTorso){
+                  if( aChassi.getNameShort().equals("HBK-4J") && aPart == Part.RightTorso ){
                      tube = 10;
                   }
                   if( tube < 1 ){
@@ -55,6 +55,27 @@ public class InternalPart{
             else{
                for(int i = 0; i < aHardpoints.slotsForId(hardpoint.ID); ++i)
                   hardpoints.add(new Hardpoint(hardpointType));
+            }
+         }
+
+         // For any mech with more than 2 missile hardpoints in CT, any launcher beyond the largest one can only
+         // have 5 tubes (anything else is impossible to fit)
+         if( type == Part.CenterTorso && getNumHardpoints(HardpointType.MISSILE) > 1 ){
+            int maxTubes = 0;
+            for(Hardpoint hardpoint : hardpoints){
+               maxTubes = Math.max(hardpoint.getNumMissileTubes(), maxTubes);
+            }
+
+            boolean maxAdded = false;
+            for(int i = 0; i < hardpoints.size(); ++i){
+               if( hardpoints.get(i).getType() != HardpointType.MISSILE )
+                  continue;
+               int tubes = hardpoints.get(i).getNumMissileTubes();
+               if( (tubes < maxTubes && tubes > 5) || (tubes == maxTubes && maxAdded == true && tubes > 5) ){
+                  hardpoints.set(i, new Hardpoint(HardpointType.MISSILE, 5));
+               }
+               if( tubes == maxTubes )
+                  maxAdded = true;
             }
          }
       }
