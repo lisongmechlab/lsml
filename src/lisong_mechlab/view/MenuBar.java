@@ -30,7 +30,6 @@ import javax.swing.KeyStroke;
 
 import lisong_mechlab.view.action.ImportMechAction;
 import lisong_mechlab.view.action.OpenHelp;
-import lisong_mechlab.view.action.OpenMechSelectorAction;
 import lisong_mechlab.view.action.OpenPreferences;
 
 public class MenuBar extends JMenuBar{
@@ -68,7 +67,6 @@ public class MenuBar extends JMenuBar{
          menu.getAccessibleContext().setAccessibleDescription("Actions relating to mech configurations");
          add(menu);
 
-         menu.add(new JMenuItem(new OpenMechSelectorAction("New...", KeyStroke.getKeyStroke('n'))));
          menu.add(new JMenuItem(new ImportMechAction("Import...", KeyStroke.getKeyStroke('i'))));
       }
 

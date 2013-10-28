@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.view;
 
 import java.awt.BorderLayout;
@@ -17,6 +36,7 @@ import javax.swing.SwingUtilities;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Hardpoint;
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
@@ -72,7 +92,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          if( 1 == hardpoints ){
             JLabel label = new JLabel(hp.shortName());
             if( hp == HardpointType.MISSILE ){
-               label.setText(formatMissileHardpointText());
+               label.setText(formatMissileHardpointText(loadoutPart.getInternalPart()));
             }
             label.setBackground(StyleManager.getBgColorFor(hp));
             label.setForeground(StyleManager.getFgColorFor(hp));
@@ -83,7 +103,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          else if( 1 < hardpoints ){
             JLabel label = new JLabel(hardpoints + " " + hp.shortName());
             if( hp == HardpointType.MISSILE ){
-               label.setText(formatMissileHardpointText());
+               label.setText(formatMissileHardpointText(loadoutPart.getInternalPart()));
             }
             label.setBackground(StyleManager.getBgColorFor(hp));
             label.setForeground(StyleManager.getFgColorFor(hp));
@@ -97,10 +117,11 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       return panel;
    }
 
-   private String formatMissileHardpointText(){
+   // FIXME: This should be moved somewhere else...
+   public static String formatMissileHardpointText(InternalPart aPart){
       Map<Integer, Integer> tubecounts = new TreeMap<>();
 
-      for(Hardpoint hp : loadoutPart.getInternalPart().getHardpoints()){
+      for(Hardpoint hp : aPart.getHardpoints()){
          if( hp.getType() == HardpointType.MISSILE ){
             final int tubes = hp.getNumMissileTubes();
             if( tubecounts.containsKey(tubes) )
@@ -110,7 +131,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          }
       }
 
-      String ans = loadoutPart.getInternalPart().getNumHardpoints(HardpointType.MISSILE) + " M (";
+      String ans = aPart.getNumHardpoints(HardpointType.MISSILE) + " M (";
       boolean first = true;
       for(Entry<Integer, Integer> it : tubecounts.entrySet()){
          if( !first )
