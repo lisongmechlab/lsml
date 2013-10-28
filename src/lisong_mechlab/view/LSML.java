@@ -70,6 +70,7 @@ public class LSML extends JFrame{
    public final Preferences        preferences            = new Preferences();
 
    public final MechLabPane        mechLabPane;
+   public final JTabbedPane        tabbedPane;
 
    public LSML(){
       super(PROGRAM_FNAME + VERSION_STRING);
@@ -83,7 +84,7 @@ public class LSML extends JFrame{
 
       mechLabPane = new MechLabPane(xBar);
 
-      JTabbedPane tabbedPane = new JTabbedPane();
+      tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Mech Lab", mechLabPane);
       tabbedPane.addTab("Mechs", new ChassiListView());
 
