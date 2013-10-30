@@ -8,7 +8,6 @@ import javax.swing.table.AbstractTableModel;
 
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
-import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Weapon;
@@ -22,7 +21,6 @@ import lisong_mechlab.util.MessageXBar.Message;
 
 public class AmmoTableDataModel extends AbstractTableModel implements MessageXBar.Reader{
    private static final long            serialVersionUID = -2671906919112648859L;
-   protected String                     weaponNames;
    private Loadout                      aLoadout;
    private TotalAmmoSupply              totalAmmoSupply;
    private TotalWeapons                 totalWeapons;
@@ -86,10 +84,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    public void fillInData(){
       for(Weapon weapon : weaponsEquipped.keySet()){
 
-         if( weapon instanceof BallisticWeapon ){
-            weaponColumn.put(weapon.getName() + " x " + weaponsEquipped.get(weapon), weapon);
-         }
-         if( weapon instanceof EnergyWeapon ){
+         if( !(weapon instanceof MissileWeapon )){
             weaponColumn.put(weapon.getName() + " x " + weaponsEquipped.get(weapon), weapon);
          }
 
@@ -175,7 +170,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    public void fillInAmmoQuantity(){
       for(String weaponName : weaponColumn.keySet()){
-         if( weaponColumn.get(weaponName) instanceof BallisticWeapon ){
+         if( weaponColumn.get(weaponName) instanceof AmmoWeapon ){
             Ammunition ammoTypeTemp = ((AmmoWeapon)weaponColumn.get(weaponName)).getAmmoType(aLoadout.getUpgrades());
             if( ammoEquipped.keySet().contains(ammoTypeTemp) ){
                ammoQuantityColumn.put(weaponName, (double)ammoTypeTemp.getShotsPerTon() * ammoEquipped.get(ammoTypeTemp));
@@ -197,7 +192,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    }
 
    private void fillInAmmoOnlyAmmoQuantity(){
-      ArrayList<Ammunition> tempListOfAmmo = new ArrayList<Ammunition>();
+      ArrayList<Ammunition> tempListOfAmmo = new ArrayList<>();
       for(Ammunition ammo : ammoEquipped.keySet()){
          tempListOfAmmo.add(ammo);
       }
