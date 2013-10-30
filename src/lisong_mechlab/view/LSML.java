@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.view;
 
 import java.awt.Dimension;
@@ -10,8 +29,7 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
@@ -20,6 +38,8 @@ import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.preferences.PreferenceStore;
+import lisong_mechlab.view.preferences.Preferences;
 
 /**
  * This is the main program instance. It contains some program globals and startup and shutdown procedures.
@@ -46,8 +66,54 @@ public class LSML extends JFrame{
    private LsmlProtocolIPC         lsmlProtocolIPC;
    private MechGarage              garage;
    public final MessageXBar        xBar                   = new MessageXBar();
-   public final LoadoutDesktop     desktop                = new LoadoutDesktop(xBar);
    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
+   public final Preferences        preferences            = new Preferences();
+
+   public final MechLabPane        mechLabPane;
+   public final JTabbedPane        tabbedPane;
+
+   public LSML(){
+      super(PROGRAM_FNAME + VERSION_STRING);
+      final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      setIconImage(ProgramInit.programIcon);
+      setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
+      setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
+      setVisible(true);
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+      setJMenuBar(new MenuBar(this));
+
+      mechLabPane = new MechLabPane(xBar);
+
+      tabbedPane = new JTabbedPane();
+      tabbedPane.addTab("Mech Lab", mechLabPane);
+      tabbedPane.addTab("Mechs", new ChassiListView());
+
+      setContentPane(tabbedPane);
+      addWindowListener(new WindowAdapter(){
+         @Override
+         public void windowClosing(WindowEvent e){
+            if( mechLabPane.close() ){
+               saveGarage();
+               if( null != lsmlProtocolIPC ){
+                  lsmlProtocolIPC.close();
+               }
+               dispose();
+            }
+         }
+      });
+
+      openLastGarage();
+
+      // Open the IPC socket first after everything else has succeeded.
+
+      try{
+         lsmlProtocolIPC = new LsmlProtocolIPC();
+      }
+      catch( IOException e ){
+         lsmlProtocolIPC = null;
+         JOptionPane.showMessageDialog(this, "Unable to startup IPC. Links with builds (lsml://...) will not work.\nError: " + e);
+      }
+   }
 
    public MechGarage getGarage(){
       return garage;
@@ -56,7 +122,7 @@ public class LSML extends JFrame{
    public void openLastGarage(){
       assert (SwingUtilities.isEventDispatchThread());
 
-      String garageFileName = LsmlPreferences.getString(LsmlPreferences.GARAGEFILE_KEY, LsmlPreferences.GARAGEFILE_DEFAULT);
+      String garageFileName = PreferenceStore.getString(PreferenceStore.GARAGEFILE_KEY, PreferenceStore.GARAGEFILE_DEFAULT);
       File garageFile = new File(garageFileName);
       if( garageFile.exists() ){
          try{
@@ -87,7 +153,7 @@ public class LSML extends JFrame{
       }
       try{
          garage = MechGarage.open(chooser.getSelectedFile(), xBar);
-         LsmlPreferences.setString(LsmlPreferences.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
+         PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
       }
       catch( IOException e ){
          JOptionPane.showOptionDialog(this, "Error: " + e.getMessage(), "Couldn't open garage!", JOptionPane.DEFAULT_OPTION,
@@ -152,7 +218,7 @@ public class LSML extends JFrame{
          }
          try{
             garage.saveas(file, overwrite);
-            LsmlPreferences.setString(LsmlPreferences.GARAGEFILE_KEY, file.getAbsolutePath());
+            PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, file.getAbsolutePath());
             break;
          }
          catch( IOException e ){
@@ -177,48 +243,5 @@ public class LSML extends JFrame{
 
    public void shutdown(){
       dispose();
-   }
-
-   public LSML(){
-      super(PROGRAM_FNAME + VERSION_STRING);
-
-      final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-      final EquipmentPane equipmentPane = new EquipmentPane(desktop, this, xBar);
-      final JScrollPane jScrollPane = new JScrollPane(equipmentPane);
-      final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, desktop);
-      splitPane.setDividerLocation(180);
-
-      setIconImage(ProgramInit.programIcon);
-
-      setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
-      setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
-      setVisible(true);
-      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-      setJMenuBar(new MenuBar(this));
-      setContentPane(splitPane);
-      addWindowListener(new WindowAdapter(){
-         @Override
-         public void windowClosing(WindowEvent e){
-            if( desktop.closeAll() ){
-               saveGarage();
-               if( null != lsmlProtocolIPC ){
-                  lsmlProtocolIPC.close();
-               }
-               dispose();
-            }
-         }
-      });
-
-      openLastGarage();
-
-      // Open the IPC socket first after everything else has succeeded.
-
-      try{
-         lsmlProtocolIPC = new LsmlProtocolIPC();
-      }
-      catch( IOException e ){
-         lsmlProtocolIPC = null;
-         JOptionPane.showMessageDialog(this, "Unable to startup IPC. Links with builds (lsml://...) will not work.\nError: " + e);
-      }
    }
 }

@@ -1,6 +1,7 @@
 package lisong_mechlab.model.loadout.metrics;
 
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -20,7 +21,7 @@ public class AlphaStrike implements Metric{
    public double calculate(){
       double ans = 0;
       for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon ){
+         if( item instanceof Weapon && item != ItemDB.AMS){
             ans += ((Weapon)item).getDamagePerShot();
          }
       }

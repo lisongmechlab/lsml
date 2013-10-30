@@ -29,8 +29,8 @@ import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.Pair;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.OpenHelp;
 

@@ -25,33 +25,28 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.preferences.FontPreferences;
+import lisong_mechlab.view.preferences.FontPreferences.FontSize;
 
 /**
- * Clones an existing loadout under a new name.
+ * Sets the application font size.
  * 
  * @author Emily Björk
  */
-public class CloneLoadoutAction extends AbstractAction{
-   private static final long serialVersionUID = 2146995440483341395L;
-   private final Loadout loadout;
-   
-   public CloneLoadoutAction(String aTitle, Loadout aLoadout, KeyStroke aKeyStroke){
+public class SetFontSizeAction extends AbstractAction{
+   private static final long        serialVersionUID = -8145859026953437134L;
+   private FontPreferences.FontSize fontSize;
+
+   public SetFontSizeAction(String aTitle, KeyStroke aKeyStroke, FontSize aFontSize){
       super(aTitle);
-      loadout = aLoadout;
       putValue(Action.ACCELERATOR_KEY, aKeyStroke);
+      fontSize = aFontSize;
    }
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      try{
-         // TODO: Create a proper clone function, encoding to a string and recoding is silly
-         ProgramInit.lsml().mechLabPane.openLoadout(ProgramInit.lsml().loadoutCoder.encode(loadout));
-      }
-      catch( EncodingException e ){
-         throw new RuntimeException(e);
-      }
+      ProgramInit.lsml().preferences.fontPreferences.setFontSize(fontSize);
    }
+
 }

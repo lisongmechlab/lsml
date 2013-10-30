@@ -17,28 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view.action;
+package lisong_mechlab.view.preferences;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-
-import lisong_mechlab.view.ProgramInit;
-
-public class ImportMechAction extends AbstractAction{
-   private static final long serialVersionUID = -9019953619423428349L;
-
-   public ImportMechAction(String aTitle, KeyStroke key){
-      super(aTitle);
-      putValue(Action.ACCELERATOR_KEY, key);
-   }
-   @Override
-   public void actionPerformed(ActionEvent aArg0){
-      String input = JOptionPane.showInputDialog(ProgramInit.lsml(), "Paste the lsml:// link:", "Import mech...", JOptionPane.PLAIN_MESSAGE);
-      ProgramInit.lsml().mechLabPane.openLoadout(input);
-   }
-
+/**
+ * This class is a container class for all the individual preferences classes.
+ * 
+ * @author Emily Björk
+ */
+public class Preferences{
+   public FontPreferences fontPreferences = new FontPreferences();
 }
