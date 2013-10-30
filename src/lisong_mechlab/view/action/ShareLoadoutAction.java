@@ -7,8 +7,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
-import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.EncodingException;
+import lisong_mechlab.view.LoadoutFrame;
 import lisong_mechlab.view.ProgramInit;
 
 /**
@@ -17,31 +17,31 @@ import lisong_mechlab.view.ProgramInit;
  * @author Li Song
  */
 public class ShareLoadoutAction extends AbstractAction{
-   private static final long serialVersionUID = 6535485629587481198L;
-   private final Loadout     loadout;
+   private static final long  serialVersionUID = 6535485629587481198L;
+   private final LoadoutFrame loadoutFrame;
 
-   public ShareLoadoutAction(Loadout aLoadout){
+   public ShareLoadoutAction(LoadoutFrame aLoadoutFrame){
       super("Share!");
-      loadout = aLoadout;
+      loadoutFrame = aLoadoutFrame;
    }
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
       try{
-         String text = ProgramInit.lsml().loadoutCoder.encode(loadout);
+         String text = ProgramInit.lsml().loadoutCoder.encode(loadoutFrame.getLoadout());
          JTextArea textArea = new JTextArea(text);
          textArea.setColumns(50);
          textArea.setLineWrap(true);
          textArea.setWrapStyleWord(true);
          textArea.setSize(textArea.getPreferredSize().width, 1);
-         JOptionPane.showMessageDialog(null, textArea, "Link to share this loadout!", JOptionPane.PLAIN_MESSAGE);
+         JOptionPane.showMessageDialog(loadoutFrame, textArea, "Link to share this loadout!", JOptionPane.PLAIN_MESSAGE);
       }
       catch( HeadlessException e ){
          // TODO Auto-generated catch block
          e.printStackTrace();
       }
       catch( EncodingException e ){
-         JOptionPane.showMessageDialog(null, "Unable to encode loadout!" + e);
+         JOptionPane.showMessageDialog(loadoutFrame, "Unable to encode loadout!" + e);
       }
    }
 

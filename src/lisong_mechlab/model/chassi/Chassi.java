@@ -39,7 +39,8 @@ public class Chassi{
       HardpointsXml hardpoints = null;
       MdfMech mdfMech = null;
       try{
-         mdf = MechDefinition.fromXml(aGameData.openGameFile(new File(GameDataFile.MDF_ROOT, aStatsMech.mdf)));
+         String mdfFile = aStatsMech.mdf.replace('\\', '/');
+         mdf = MechDefinition.fromXml(aGameData.openGameFile(new File(GameDataFile.MDF_ROOT, mdfFile)));
          hardpoints = HardpointsXml.fromXml(aGameData.openGameFile(new File("Game", mdf.HardpointPath)));
          mdfMech = mdf.Mech;
       }
@@ -64,7 +65,7 @@ public class Chassi{
             continue;
          }
          final Part part = Part.fromMwoName(component.Name);
-         tempParts.put(part, new InternalPart(component, part, hardpoints));
+         tempParts.put(part, new InternalPart(component, part, hardpoints, this));
       }
       parts = Collections.unmodifiableMap(tempParts);
    }
