@@ -87,6 +87,7 @@ public class LSML extends JFrame{
       tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Mech Lab", mechLabPane);
       tabbedPane.addTab("Mechs", new ChassiListView());
+      tabbedPane.addTab("Weapons", new WeaponsListView());
 
       setContentPane(tabbedPane);
       addWindowListener(new WindowAdapter(){

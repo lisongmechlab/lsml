@@ -114,66 +114,45 @@ public class ChassiListView extends JScrollPane{
       }
    }
 
-   static class NameColumn extends TableColumn{
+   static class NameColumn extends AttributeTableColumn{
       private static final long serialVersionUID = -816217603635882304L;
 
       public NameColumn(){
-         super(0);
-         setHeaderValue("Chassi");
+         super("Chassi", 0);
       }
 
       @Override
-      public TableCellRenderer getCellRenderer(){
-         return new TableCellRenderer(){
-            @Override
-            public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassi chassi = (Chassi)aValue;
-               return new JLabel(chassi.getName());
-            }
-         };
+      public String valueOf(Object aSourceRowObject){
+         return ((Chassi)aSourceRowObject).getName();
       }
    }
 
-   static class TonsColumn extends TableColumn{
+   static class TonsColumn extends AttributeTableColumn{
       private static final long serialVersionUID = -3845466109033447928L;
 
       public TonsColumn(){
-         super(0);
-         setHeaderValue("Tons");
+         super("Tons", 0);
       }
 
       @Override
-      public TableCellRenderer getCellRenderer(){
-         return new TableCellRenderer(){
-            @Override
-            public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassi chassi = (Chassi)aValue;
-               return new JLabel(Integer.toString(chassi.getMassMax()));
-            }
-         };
+      public String valueOf(Object aSourceRowObject){
+         return Integer.toString(((Chassi)aSourceRowObject).getMassMax());
       }
    }
 
-   static class SpeedColumn extends TableColumn{
+   static class SpeedColumn extends AttributeTableColumn{
       private static final long serialVersionUID = -1453377097733119292L;
       DecimalFormat             df               = new DecimalFormat("###.#");
 
       public SpeedColumn(){
-         super(0);
-         setHeaderValue("Max Speed");
+         super("Max Speed", 0);
       }
-
       @Override
-      public TableCellRenderer getCellRenderer(){
-         return new TableCellRenderer(){
-            @Override
-            public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassi chassi = (Chassi)aValue;
-               final double maxSpeed = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.0);
-               final double maxSpeedTweak = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.1);
-               return new JLabel(df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)");
-            }
-         };
+      public String valueOf(Object aSourceRowObject){
+         Chassi chassi = (Chassi)aSourceRowObject;
+         final double maxSpeed = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.0);
+         final double maxSpeedTweak = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.1);
+         return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
       }
    }
 
