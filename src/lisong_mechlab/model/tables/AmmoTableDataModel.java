@@ -1,3 +1,23 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+//@formatter:on
+
 package lisong_mechlab.model.tables;
 
 import java.util.ArrayList;
@@ -176,7 +196,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
                ammoQuantityColumn.put(weaponName, (double)ammoTypeTemp.getShotsPerTon() * ammoEquipped.get(ammoTypeTemp));
             }
             else{
-               ammoQuantityColumn.put(weaponName, (double)0);
+               ammoQuantityColumn.put(weaponName, 0.0);
             }
          }
          else{
@@ -212,7 +232,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
             ammoQuantityColumn.put(weaponName, (double)streakEntry.getAmmoType().getShotsPerTon() * ammoEquipped.get(streakEntry.getAmmoType()));
          }
          else{
-            ammoQuantityColumn.put(weaponName, (double)0);
+            ammoQuantityColumn.put(weaponName, 0.0);
          }
       }
    }
@@ -223,7 +243,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
             ammoQuantityColumn.put(weaponName, (double)srmEntry.getAmmoType().getShotsPerTon() * ammoEquipped.get(srmEntry.getAmmoType()));
          }
          else{
-            ammoQuantityColumn.put(weaponName, (double)0);
+            ammoQuantityColumn.put(weaponName, 0.0);
          }
       }
    }
@@ -234,7 +254,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
             ammoQuantityColumn.put(weaponName, (double)lrmEntry.getAmmoType().getShotsPerTon() * ammoEquipped.get(lrmEntry.getAmmoType()));
          }
          else{
-            ammoQuantityColumn.put(weaponName, (double)0);
+            ammoQuantityColumn.put(weaponName, 0.0);
          }
       }
    }
@@ -277,13 +297,13 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       for(String weaponName : weaponColumn.keySet()){
          if( (weaponColumn.get(weaponName) != null) || (weaponName.contains("SRM"))  || (weaponName.contains("LRM")) ){
             if( weaponName.contains("Only") ){
-               numberVolleyColumn.put(weaponName, (double)0);
+               numberVolleyColumn.put(weaponName, 0.0);
             }
             else
                numberVolleyColumn.put(weaponName, (ammoQuantityColumn.get(weaponName) / volleyAmountColumn.get(weaponName)));
          }
          else{
-            numberVolleyColumn.put(weaponName, (double)0);
+            numberVolleyColumn.put(weaponName, 0.0);
          }
       }
    }
@@ -311,7 +331,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * lrmEntry.getCooldownAverage()));
       }
       else
-         combatColumn.put(weaponName, (double)0);
+         combatColumn.put(weaponName, 0.0);
    }
    
 
@@ -331,7 +351,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
             damageMap.put(weaponName, (ammoQuantityColumn.get(weaponName)  * lrmEntry.getDamageAverage()));
          }
          else
-            damageMap.put(weaponName, (double)0);
+            damageMap.put(weaponName, 0.0);
       }
       
       
@@ -371,11 +391,6 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       return columnNames[aColumnIndex];
    }
 
-   public void tableChanged(){
-      totalAmmoSupply = new TotalAmmoSupply(aLoadout);
-      totalAmmoSupply.calculate();
-      fillInData();
-   }
 
    @Override
    public int getRowCount(){
@@ -413,7 +428,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
             return Math.floor(combatArray[aRowIndex]);
          }
          if(combatArray[aRowIndex].isNaN()){
-            return (double)0;
+            return 0.0;
          }
          return combatArray[aRowIndex];
       }
@@ -424,7 +439,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
             return Math.floor(damageArray[aRowIndex]);
          }
          if(damageArray[aRowIndex].isNaN()){
-            return (double)0;
+            return 0.0;
          }
          return damageArray[aRowIndex];
       }
