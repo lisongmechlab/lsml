@@ -116,9 +116,12 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    private void fillInMissileData(){
       for(Weapon weapon : weaponsEquipped.keySet()){
          if( weapon instanceof MissileWeapon ){
-            initialiseSrmFields(weapon);
-            initialiseLrmFields(weapon);
-            initialiseStreakFields(weapon);
+             for(int counter = 0; counter < weaponsEquipped.get(weapon); counter++){
+                 initialiseSrmFields(weapon);
+                 initialiseLrmFields(weapon);
+                 initialiseStreakFields(weapon);
+             }
+
          }
 
       }
