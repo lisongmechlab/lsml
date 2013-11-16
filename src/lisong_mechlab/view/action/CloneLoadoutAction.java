@@ -48,7 +48,7 @@ public class CloneLoadoutAction extends AbstractAction{
    public void actionPerformed(ActionEvent aArg0){
       try{
          // TODO: Create a proper clone function, encoding to a string and recoding is silly
-         ProgramInit.lsml().mechLabPane.openLoadout(ProgramInit.lsml().loadoutCoder.encode(loadout));
+         ProgramInit.lsml().mechLabPane.openLoadout(ProgramInit.lsml().loadoutCoder.encodeLSML(loadout));
       }
       catch( EncodingException e ){
          throw new RuntimeException(e);

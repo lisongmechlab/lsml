@@ -14,6 +14,7 @@ import lisong_mechlab.util.MessageXBar;
  */
 public class Base64LoadoutCoder{
    private static final String            LSML_PROTOCOL = "lsml://";
+   private static final String            LSML_TRAMPOLINE = "http://t.li-soft.org/?l=";
    private final transient LoadoutCoderV1 coderV1;
    private final transient Base64         base64;
 
@@ -48,7 +49,7 @@ public class Base64LoadoutCoder{
    }
 
    /**
-    * Will encode a given {@link Loadout} into a Base64 {@link String}.
+    * Will encode a given {@link Loadout} into a LSML protocol {@link String}.
     * 
     * @param aLoadout
     *           The {@link Loadout} to encode.
@@ -56,7 +57,20 @@ public class Base64LoadoutCoder{
     * @throws EncodingException
     *            Thrown if encoding failed for some reason. Shouldn't happen.
     */
-   public String encode(Loadout aLoadout) throws EncodingException{
+   public String encodeLSML(Loadout aLoadout) throws EncodingException{
       return LSML_PROTOCOL + String.valueOf(base64.encode(coderV1.encode(aLoadout)));
+   }
+   
+   /**
+    * Will encode a given {@link Loadout} into a HTTP trampoline LSML protocol {@link String}.
+    * 
+    * @param aLoadout
+    *           The {@link Loadout} to encode.
+    * @return A HTTP URI as a {@link String} with a Base64 encoding of the {@link Loadout}.
+    * @throws EncodingException
+    *            Thrown if encoding failed for some reason. Shouldn't happen.
+    */
+   public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException{
+      return LSML_TRAMPOLINE + String.valueOf(base64.encode(coderV1.encode(aLoadout)));
    }
 }
