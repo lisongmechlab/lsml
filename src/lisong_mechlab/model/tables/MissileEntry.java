@@ -40,7 +40,7 @@ public class MissileEntry{
    }
    
    public void addAnotherWeapon(Weapon weapon){
-      volleyAmount = weapon.getAmmoPerPerShot();
+      volleyAmount += weapon.getAmmoPerPerShot();
       damageList.add(weapon.getDamagePerShot());
       coolDownList.add(weapon.getSecondsPerShot());      
    }
@@ -66,7 +66,7 @@ public class MissileEntry{
       Double total = 0.0;
       if(coolDownList.isEmpty()) return 0;
       for(Double inter : coolDownList){
-         total = inter + total;
+         total += inter;
       }
       return total / coolDownList.size();
    }
