@@ -9,6 +9,7 @@ import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.view.LoadoutFrame;
+import lisong_mechlab.view.ProgramInit;
 
 public class RenameLoadoutAction extends AbstractAction{
    private static final long  serialVersionUID = -673375419929455179L;
@@ -31,9 +32,9 @@ public class RenameLoadoutAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aE){
-      String name = JOptionPane.showInputDialog(loadoutFrame, "Give a name", loadout.getName());
+      String name = JOptionPane.showInputDialog(ProgramInit.lsml(), "Give a name", loadout.getName());
       if( name == null || name.isEmpty() ){
-         JOptionPane.showMessageDialog(loadoutFrame, "No name given!");
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "No name given!");
          return;
       }
       loadout.rename(name);
