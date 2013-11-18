@@ -70,14 +70,14 @@ public class ShareLoadoutAction extends AbstractAction{
          p.add(lsmlLabel);
          p.add(textArea);
 
-         JOptionPane.showMessageDialog(loadoutFrame, p, "Link to share this loadout!", JOptionPane.PLAIN_MESSAGE);
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), p, "Link to share this loadout!", JOptionPane.PLAIN_MESSAGE);
       }
       catch( HeadlessException e ){
          // TODO Auto-generated catch block
          e.printStackTrace();
       }
       catch( EncodingException e ){
-         JOptionPane.showMessageDialog(loadoutFrame, "Unable to encode loadout!" + e);
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to encode loadout!" + e);
       }
    }
 

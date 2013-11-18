@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.view.LoadoutFrame;
+import lisong_mechlab.view.ProgramInit;
 
 /**
  * This action sets the armor to max on the given {@link Loadout}.
@@ -44,7 +45,7 @@ public class MaxArmorAction extends AbstractAction{
             loadout.setMaxArmor(ratio);
          }
          else{
-            String input = (String)JOptionPane.showInputDialog(loadoutFrame,
+            String input = (String)JOptionPane.showInputDialog(ProgramInit.lsml(),
                                                                "Please enter the ratio between front and back armor as front:back.Example 3:1",
                                                                "Maximizing armor...", JOptionPane.INFORMATION_MESSAGE, null, null, "3:1");
             String[] s = input.split(":");
@@ -55,20 +56,20 @@ public class MaxArmorAction extends AbstractAction{
                   back = Double.parseDouble(s[1]);
                }
                catch( Exception e ){
-                  JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");
+                  JOptionPane.showMessageDialog(ProgramInit.lsml(), "Error parsing ratio! Loadout was not changed!");
                   return;
                }
                loadout.setMaxArmor(front / back);
             }
             else
-               JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");
+               JOptionPane.showMessageDialog(ProgramInit.lsml(), "Error parsing ratio! Loadout was not changed!");
          }
       }
       catch( IllegalArgumentException e ){
-         JOptionPane.showMessageDialog(loadoutFrame, "Unable to set max armor! Error: " + e.getMessage());
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to set max armor! Error: " + e.getMessage());
       }
       catch( Throwable e ){
-         JOptionPane.showMessageDialog(loadoutFrame, "Unexpected exception! Error: " + e);
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unexpected exception! Error: " + e);
       }
    }
 }
