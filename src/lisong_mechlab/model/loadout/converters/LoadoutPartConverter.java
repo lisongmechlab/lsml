@@ -14,6 +14,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import lisong_mechlab.view.ProgramInit;
 
 public class LoadoutPartConverter implements Converter{
 
@@ -76,7 +77,7 @@ public class LoadoutPartConverter implements Converter{
          }
       }
       catch( IllegalArgumentException exception ){
-         JOptionPane.showMessageDialog(null, "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
       }
       
       while( aReader.hasMoreChildren() ){
@@ -86,7 +87,7 @@ public class LoadoutPartConverter implements Converter{
                loadoutPart.addItem((Item)aContext.convertAnother(null, Item.class));
             }
             catch( IllegalArgumentException exception ){
-               JOptionPane.showMessageDialog(null, "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
+               JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
             }
          }
          aReader.moveUp();

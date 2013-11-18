@@ -82,7 +82,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          public void vetoableChange(PropertyChangeEvent aE) throws PropertyVetoException{
             if(aE.getPropertyName().equals("closed") && aE.getNewValue().equals(true)){
                if( !isSaved() ){
-                  int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to save " + loadout.getName() + " to your garage?",
+                  int ans = JOptionPane.showConfirmDialog(ProgramInit.lsml(), "Would you like to save " + loadout.getName() + " to your garage?",
                                                           "Save to garage?", JOptionPane.YES_NO_CANCEL_OPTION);
                   if( ans == JOptionPane.YES_OPTION ){
                      ProgramInit.lsml().getGarage().add(loadout);
@@ -209,7 +209,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                   ProgramInit.lsml().getGarage().add(loadout);
                }
                catch( IllegalArgumentException e ){
-                  JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't add to garage! Error: " + e.getMessage());
+                  JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't add to garage! Error: " + e.getMessage());
                }
             }
          });
@@ -225,7 +225,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                loadout.loadStock();
             }
             catch( Exception e ){
-               JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't load stock loadout! Error: " + e.getMessage());
+               JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't load stock loadout! Error: " + e.getMessage());
             }
          }
       }));
