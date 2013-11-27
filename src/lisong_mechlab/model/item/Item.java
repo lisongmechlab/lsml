@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
@@ -52,7 +71,7 @@ public class Item implements Comparable<Item>{
    }
 
    public int getNumCriticalSlots(Upgrades aUpgrades){
-      if(aUpgrades == null)
+      if( aUpgrades == null )
          return slots;
       return slots;
    }
@@ -62,13 +81,17 @@ public class Item implements Comparable<Item>{
    }
 
    public double getMass(Upgrades aUpgrades){
-      if(aUpgrades == null)
+      if( aUpgrades == null )
          return tons;
       return tons;
    }
 
    public int getMwoIdx(){
       return mwoIdx;
+   }
+
+   public String getShortName(Upgrades aUpgrades){
+      return getName(aUpgrades);
    }
 
    public String getDescription(){
@@ -83,22 +106,38 @@ public class Item implements Comparable<Item>{
     * @return True if the {@link Loadout} is able to carry the weapon with current upgrades.
     */
    public boolean isEquippableOn(Loadout aLoadout){
-      if(aLoadout == null)
+      if( aLoadout == null )
          return true;
       return true;
    }
 
-   /*
-    * (non-Javadoc) Defines sorting order for items. Default is lexicographical order.
-    * @see java.lang.Comparable#compareTo(java.lang.Object)
+   /**
+    * Defines the default sorting of arbitrary items. The sorting order is as follows: 1) Energy weapons 2) Ballistic
+    * weapons + ammo 3) Missile weapons + ammo 4) AMS + ammo 5) ECM 6) Other items except engines 7) Engines.
     */
    @Override
    public int compareTo(Item rhs){
-      return toString().compareTo(rhs.toString());
+      if(this instanceof Engine && !(rhs instanceof Engine)){
+         return 1;
+      }
+      else if(!(this instanceof Engine) && rhs instanceof Engine){
+         return -1;
+      }
+      HardpointType lhsHp = this instanceof Ammunition ? ((Ammunition)this).getWeaponHardpointType() : this.getHardpointType();
+      HardpointType rhsHp = rhs instanceof Ammunition ? ((Ammunition)rhs).getWeaponHardpointType() : rhs.getHardpointType();
+      int hp = lhsHp.compareTo(rhsHp);
+      if( hp == 0 ){
+         int classCompare = this.getClass().getName().compareTo(rhs.getClass().getName());
+         if( classCompare == 0 ){
+            return toString().compareTo(rhs.toString());
+         }
+         return classCompare;
+      }
+      return hp;
    }
 
    public String getName(Upgrades aUpgrades){
-      if(aUpgrades == null)
+      if( aUpgrades == null )
          return getName();
       return getName();
    }

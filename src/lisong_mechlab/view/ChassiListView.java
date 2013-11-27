@@ -231,8 +231,8 @@ public class ChassiListView extends JScrollPane{
                final Object cell = target.getValueAt(row, column);
                if( cell instanceof Chassi ){
                   Chassi chassi = (Chassi)cell;
-                  ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
                   ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
+                  ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
                }
             }
          }

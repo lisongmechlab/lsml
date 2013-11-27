@@ -80,8 +80,9 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
 
       try{
          frame.setVisible(true);
-         frame.setSelected(true);
          frame.setFocusable(true);
+         frame.setSelected(true);
+         System.out.println("f");
       }
       catch( PropertyVetoException e ){
          // No-Op
