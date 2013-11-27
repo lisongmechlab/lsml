@@ -22,11 +22,13 @@ package lisong_mechlab.view;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.equipment.EquipmentPanel;
 
 /**
  * This class shows the 'mech lab panel.
@@ -45,12 +47,14 @@ public class MechLabPane extends JSplitPane{
       xBar = aXBar;
       desktop = new LoadoutDesktop(xBar);
       equipmentPane = new EquipmentPane(desktop, xBar);
-      jScrollPane = new JScrollPane(equipmentPane);
+      EquipmentPanel panel = new EquipmentPanel(desktop, xBar);
+      jScrollPane = new JScrollPane(panel);
+      setLeftComponent(panel);
 
-      setLeftComponent(jScrollPane);
+      //setLeftComponent(jScrollPane);
       setRightComponent(desktop);
 
-      setDividerLocation(180);
+      setDividerLocation(panel.getMinimumSize().width);
    }
 
    /**
