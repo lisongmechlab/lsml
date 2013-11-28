@@ -17,41 +17,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view;
+package lisong_mechlab.view.mechlab;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.view.equipment.EquipmentPanel;
+import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.mechlab.equipment.EquipmentPanel;
 
 /**
- * This class shows the 'mech lab panel.
+ * This class shows the 'mech lab pane in the main tabbed pane.
  * 
  * @author Li Song
  */
 public class MechLabPane extends JSplitPane{
    private static final long    serialVersionUID = 1079910953509846928L;
    private final LoadoutDesktop desktop;
-   private final EquipmentPane  equipmentPane;
+   private final EquipmentTree  equipmentPane;
    private final JScrollPane    jScrollPane;
    private final MessageXBar    xBar;
 
-   MechLabPane(MessageXBar aXBar){
+   public MechLabPane(MessageXBar aXBar, MechGarage aGarage){
       super(JSplitPane.HORIZONTAL_SPLIT, true);
       xBar = aXBar;
       desktop = new LoadoutDesktop(xBar);
-      equipmentPane = new EquipmentPane(desktop, xBar);
+      equipmentPane = new EquipmentTree(desktop, xBar);
       EquipmentPanel panel = new EquipmentPanel(desktop, xBar);
-      jScrollPane = new JScrollPane(panel);
-      setLeftComponent(panel);
+      jScrollPane = new JScrollPane(equipmentPane);
 
-      //setLeftComponent(jScrollPane);
+      JTabbedPane tabbedPane = new JTabbedPane();
+      tabbedPane.addTab("Equipment", panel);
+      tabbedPane.addTab("Garage", jScrollPane);
+      tabbedPane.addTab("G", new GaragePanel(aGarage, aXBar));
+
+      setLeftComponent(tabbedPane);
+
+      // setLeftComponent(jScrollPane);
       setRightComponent(desktop);
 
       setDividerLocation(panel.getMinimumSize().width);

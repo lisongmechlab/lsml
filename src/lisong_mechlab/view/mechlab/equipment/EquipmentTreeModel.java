@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view.equipment;
+package lisong_mechlab.view.mechlab.equipment;
 
 import java.util.ArrayList;
 import java.util.Comparator;

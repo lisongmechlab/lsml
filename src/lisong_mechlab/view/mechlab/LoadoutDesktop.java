@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view;
+package lisong_mechlab.view.mechlab;
 
 import java.awt.Color;
 import java.beans.PropertyVetoException;
@@ -33,6 +33,7 @@ import javax.swing.event.InternalFrameListener;
 
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.ItemTransferHandler;
 
 /**
  * This class is the {@link JDesktopPane} where all the {@link LoadoutFrame} are shown to the user. It provides a method
@@ -82,7 +83,6 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
          frame.setVisible(true);
          frame.setFocusable(true);
          frame.setSelected(true);
-         System.out.println("f");
       }
       catch( PropertyVetoException e ){
          // No-Op

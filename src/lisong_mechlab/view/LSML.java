@@ -38,6 +38,7 @@ import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.mechlab.MechLabPane;
 import lisong_mechlab.view.preferences.PreferenceStore;
 import lisong_mechlab.view.preferences.Preferences;
 
@@ -82,11 +83,13 @@ public class LSML extends JFrame{
       setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       setJMenuBar(new MenuBar(this));
 
-      mechLabPane = new MechLabPane(xBar);
+
+      openLastGarage();
+      mechLabPane = new MechLabPane(xBar, garage);
 
       tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Mech Lab", mechLabPane);
-      tabbedPane.addTab("Mechs", new ChassiListView());
+      tabbedPane.addTab("Mechs", new ChassiSelectionPane());
       tabbedPane.addTab("Weapons", new WeaponsListView());
 
       setContentPane(tabbedPane);
@@ -102,8 +105,6 @@ public class LSML extends JFrame{
             }
          }
       });
-
-      openLastGarage();
 
       // Open the IPC socket first after everything else has succeeded.
 

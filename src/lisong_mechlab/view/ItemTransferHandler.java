@@ -36,7 +36,9 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.Pair;
-import lisong_mechlab.view.equipment.ItemLabel;
+import lisong_mechlab.view.mechlab.EquipmentTree;
+import lisong_mechlab.view.mechlab.ItemLabel;
+import lisong_mechlab.view.mechlab.PartList;
 import lisong_mechlab.view.render.ItemRenderer;
 
 public class ItemTransferHandler extends TransferHandler{
@@ -54,8 +56,8 @@ public class ItemTransferHandler extends TransferHandler{
          PartList partList = (PartList)aComponent;
          List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
          sourcePart = partList.getPart();
-         
-         if(sourceItems.size() < 1)
+
+         if( sourceItems.size() < 1 )
             return null;
 
          StringBuffer buff = new StringBuffer();
@@ -71,9 +73,9 @@ public class ItemTransferHandler extends TransferHandler{
          setDragImageOffset(mouse);
          return new StringSelection(buff.toString());
       }
-      else if( aComponent instanceof EquipmentPane ){
+      else if( aComponent instanceof EquipmentTree ){
          sourcePart = null;
-         EquipmentPane equipmentPane = (EquipmentPane)aComponent;
+         EquipmentTree equipmentPane = (EquipmentTree)aComponent;
 
          if( equipmentPane.getSelectionPath() == null )
             return null;
@@ -97,7 +99,7 @@ public class ItemTransferHandler extends TransferHandler{
          setDragImageOffset(mouse);
          return new StringSelection(item.getName());
       }
-      else if( aComponent instanceof ItemLabel){
+      else if( aComponent instanceof ItemLabel ){
          Loadout loadout = null;
          Item item = ((ItemLabel)aComponent).getItem();
          setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
