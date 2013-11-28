@@ -29,7 +29,7 @@ import lisong_mechlab.util.MessageXBar;
 class GarageCathegory extends AbstractTreeCathegory implements MessageXBar.Reader{
    private MechGarage garage = null;
 
-   public GarageCathegory(String aName, TreeCathegory aParent, EquipmentTreeModel aModel, MessageXBar xbar){
+   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar){
       super(aName, aParent, aModel);
       xbar.attach(this);
    }
@@ -52,16 +52,22 @@ class GarageCathegory extends AbstractTreeCathegory implements MessageXBar.Reade
 
    @Override
    public int getChildCount(){
+      if(null == garage)
+         return 0;
       return garage.getMechs().size();
    }
 
    @Override
    public int getIndex(Object aChild){
+      if(null == garage)
+         return -1;
       return garage.getMechs().indexOf(aChild);
    }
 
    @Override
    public Object getChild(int aIndex){
+      if(null == garage)
+         return null;
       return garage.getMechs().get(aIndex);
    }
 }

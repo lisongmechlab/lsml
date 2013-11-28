@@ -36,9 +36,9 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.Pair;
-import lisong_mechlab.view.mechlab.EquipmentTree;
 import lisong_mechlab.view.mechlab.ItemLabel;
 import lisong_mechlab.view.mechlab.PartList;
+import lisong_mechlab.view.mechlab.equipment.GarageTree;
 import lisong_mechlab.view.render.ItemRenderer;
 
 public class ItemTransferHandler extends TransferHandler{
@@ -73,9 +73,9 @@ public class ItemTransferHandler extends TransferHandler{
          setDragImageOffset(mouse);
          return new StringSelection(buff.toString());
       }
-      else if( aComponent instanceof EquipmentTree ){
+      else if( aComponent instanceof GarageTree ){
          sourcePart = null;
-         EquipmentTree equipmentPane = (EquipmentTree)aComponent;
+         GarageTree equipmentPane = (GarageTree)aComponent;
 
          if( equipmentPane.getSelectionPath() == null )
             return null;
@@ -91,7 +91,7 @@ public class ItemTransferHandler extends TransferHandler{
          else{
             return null;
          }
-         Loadout loadout = equipmentPane.getCurrentLoadout();
+         Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
          setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
          // Point mouse = equipmentPane.getMousePosition();
          // mouse.y -= equipmentPane.getRowHeight() * equipmentPane.getSelectionRows()[0];
@@ -100,7 +100,7 @@ public class ItemTransferHandler extends TransferHandler{
          return new StringSelection(item.getName());
       }
       else if( aComponent instanceof ItemLabel ){
-         Loadout loadout = null;
+         Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
          Item item = ((ItemLabel)aComponent).getItem();
          setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
          Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
