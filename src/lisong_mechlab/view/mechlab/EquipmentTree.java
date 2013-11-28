@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view;
+package lisong_mechlab.view.mechlab;
 
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
@@ -44,13 +44,15 @@ import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.ItemTransferHandler;
+import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
-import lisong_mechlab.view.equipment.EquipmentTreeModel;
+import lisong_mechlab.view.mechlab.equipment.EquipmentTreeModel;
 import lisong_mechlab.view.render.StyleManager;
 
-public class EquipmentPane extends JTree{
+public class EquipmentTree extends JTree{
    private static final long serialVersionUID = -8856874024057864775L;
    EquipmentTreeModel        model            = null;
    private final MessageXBar xBar;
@@ -122,7 +124,7 @@ public class EquipmentPane extends JTree{
       }
    }
 
-   public EquipmentPane(final LoadoutDesktop aLoadoutDesktop, MessageXBar crossBar){
+   public EquipmentTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar crossBar){
       model = new EquipmentTreeModel(crossBar);
       xBar = crossBar;
 
@@ -143,7 +145,7 @@ public class EquipmentPane extends JTree{
             if( SwingUtilities.isRightMouseButton(e) ){
                Object clicked = getClickedObject(e);
                if( clicked instanceof Loadout ){
-                  EquipmentPane.this.setSelectionPath(getClosestPathForLocation(e.getX(), e.getY()));
+                  EquipmentTree.this.setSelectionPath(getClosestPathForLocation(e.getX(), e.getY()));
 
                   Loadout clickedLoadout = (Loadout)clicked;
                   JPopupMenu menu = new JPopupMenu();
@@ -153,7 +155,7 @@ public class EquipmentPane extends JTree{
                   menu.add(new JMenuItem(new RenameLoadoutAction(clickedLoadout, KeyStroke.getKeyStroke("R"))));
                   menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), clickedLoadout, KeyStroke.getKeyStroke("D"))));
                   menu.add(new JMenuItem(new CloneLoadoutAction("Clone", clickedLoadout, KeyStroke.getKeyStroke("C"))));
-                  menu.show(EquipmentPane.this, e.getX(), e.getY());
+                  menu.show(EquipmentTree.this, e.getX(), e.getY());
                }
             }
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){

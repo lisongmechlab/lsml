@@ -45,6 +45,7 @@ import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
+import lisong_mechlab.view.mechlab.PartPanel;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
@@ -52,7 +53,7 @@ import lisong_mechlab.view.render.StyleManager;
  * 
  * @author Emily Björk
  */
-public class ChassiListView extends JScrollPane{
+public class ChassiSelectionPane extends JScrollPane{
    static public class ChassiTableModel extends AbstractTableModel{
       private static final long  serialVersionUID = -2726840937519789976L;
       private final List<Chassi> lights           = new ArrayList<>();
@@ -218,7 +219,7 @@ public class ChassiListView extends JScrollPane{
 
    private static final long serialVersionUID = -4134588793726908789L;
 
-   public ChassiListView(){
+   public ChassiSelectionPane(){
       final JTable table = new JTable(new ChassiTableModel());
       table.setRowHeight(30);
       table.addMouseListener(new MouseAdapter(){

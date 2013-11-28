@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view;
+package lisong_mechlab.view.mechlab;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -61,6 +61,9 @@ import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.WeaponSummaryTable;
+import lisong_mechlab.view.render.ProgressBarRenderer;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long     serialVersionUID = 4720126200474042446L;
