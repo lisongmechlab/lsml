@@ -84,9 +84,9 @@ public class LSML extends JFrame{
       setJMenuBar(new MenuBar(this));
 
 
+      mechLabPane = new MechLabPane(xBar);
       openLastGarage();
-      mechLabPane = new MechLabPane(xBar, garage);
-
+      
       tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Mech Lab", mechLabPane);
       tabbedPane.addTab("Mechs", new ChassiSelectionPane());

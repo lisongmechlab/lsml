@@ -24,15 +24,15 @@ import javax.swing.tree.TreePath;
 abstract class AbstractTreeCathegory extends TreeCathegory{
    private final String             name;
    private final TreePath           path;
-   private final EquipmentTreeModel model;
+   private final GarageTreeModel model;
 
-   public AbstractTreeCathegory(String aName, EquipmentTreeModel aModel){
+   public AbstractTreeCathegory(String aName, GarageTreeModel aModel){
       name = aName;
       path = new TreePath(this);
       model = aModel;
    }
 
-   public AbstractTreeCathegory(String aName, TreeCathegory aParent, EquipmentTreeModel aModel){
+   public AbstractTreeCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel){
       name = aName;
       path = aParent.getPath().pathByAddingChild(this);
       model = aModel;
@@ -49,7 +49,7 @@ abstract class AbstractTreeCathegory extends TreeCathegory{
    }
 
    @Override
-   public EquipmentTreeModel getModel(){
+   public GarageTreeModel getModel(){
       return model;
    }
 }

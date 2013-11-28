@@ -26,11 +26,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.equipment.EquipmentPanel;
+import lisong_mechlab.view.mechlab.equipment.GarageTree;
 
 /**
  * This class shows the 'mech lab pane in the main tabbed pane.
@@ -40,22 +40,21 @@ import lisong_mechlab.view.mechlab.equipment.EquipmentPanel;
 public class MechLabPane extends JSplitPane{
    private static final long    serialVersionUID = 1079910953509846928L;
    private final LoadoutDesktop desktop;
-   private final EquipmentTree  equipmentPane;
+   private final GarageTree     equipmentPane;
    private final JScrollPane    jScrollPane;
    private final MessageXBar    xBar;
 
-   public MechLabPane(MessageXBar aXBar, MechGarage aGarage){
+   public MechLabPane(MessageXBar aXBar){
       super(JSplitPane.HORIZONTAL_SPLIT, true);
       xBar = aXBar;
       desktop = new LoadoutDesktop(xBar);
-      equipmentPane = new EquipmentTree(desktop, xBar);
+      equipmentPane = new GarageTree(desktop, xBar);
       EquipmentPanel panel = new EquipmentPanel(desktop, xBar);
       jScrollPane = new JScrollPane(equipmentPane);
 
       JTabbedPane tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Equipment", panel);
       tabbedPane.addTab("Garage", jScrollPane);
-      tabbedPane.addTab("G", new GaragePanel(aGarage, aXBar));
 
       setLeftComponent(tabbedPane);
 
@@ -73,6 +72,15 @@ public class MechLabPane extends JSplitPane{
     */
    public void openLoadout(Loadout aLoadout){
       desktop.openLoadout(aLoadout);
+   }
+
+   /**
+    * @return The currently selected loadout.
+    */
+   public Loadout getCurrentLoadout(){
+      if( null != desktop.getSelectedFrame() )
+         return ((LoadoutFrame)desktop.getSelectedFrame()).getLoadout();
+      return null;
    }
 
    /**

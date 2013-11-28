@@ -33,81 +33,20 @@ import javax.swing.tree.TreePath;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.item.AmmoWeapon;
-import lisong_mechlab.model.item.Ammunition;
-import lisong_mechlab.model.item.BallisticWeapon;
-import lisong_mechlab.model.item.EnergyWeapon;
-import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.EngineType;
-import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.item.MissileWeapon;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
-public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
+public class GarageTreeModel implements TreeModel, InternalFrameListener{
    private final List<TreeModelListener>                     listeners = new ArrayList<TreeModelListener>();
    private final DefaultTreeCathegory<AbstractTreeCathegory> root;
 
-   public EquipmentTreeModel(MessageXBar xBar){
+   public GarageTreeModel(MessageXBar xBar){
       root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
-
-      List<Item> items = ItemDB.lookup(Item.class);
 
       DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
       GarageCathegory garage = new GarageCathegory("Garage", root, this, xBar);
 
-      // Process the items list
-      List<Item> weapons = new ArrayList<>();
-      List<Item> energy = new ArrayList<>();
-      List<Item> ballistic = new ArrayList<>();
-      List<Item> missile = new ArrayList<>();
-      List<Item> engineStd = new ArrayList<>();
-      List<Item> engineXl = new ArrayList<>();
-      List<Item> misc = new ArrayList<>();
-      for(Item item : items){
-         if( item instanceof Ammunition ){
-            continue;
-         }
-         else if( item instanceof EnergyWeapon )
-            energy.add(item);
-         else if( item instanceof BallisticWeapon ){
-            Ammunition ammo = ((AmmoWeapon)item).getAmmoType(null);
-            ballistic.add(item);
-            ballistic.add(ammo);
-         }
-         else if( item instanceof MissileWeapon ){
-            missile.add(item);
-            Upgrades upgrades = new Upgrades(null);
-            upgrades.setArtemis(true);
-            missile.add(((AmmoWeapon)item).getAmmoType(upgrades));
-            upgrades.setArtemis(false);
-            missile.add(((AmmoWeapon)item).getAmmoType(upgrades));
-         }
-         else if( item instanceof Engine ){
-            Engine engine = (Engine)item;
-            if( engine.getType() == EngineType.STD )
-               engineStd.add(engine);
-            else
-               engineXl.add(engine);
-         }
-         else{
-            if( item instanceof AmmoWeapon )
-               misc.add(((AmmoWeapon)item).getAmmoType(null));
-            misc.add(item);
-         }
-      }
-
-      weapons.addAll(energy);
-      weapons.addAll(ballistic);
-      weapons.addAll(missile);
-
       root.addChild(chassii);
       root.addChild(garage);
-      root.addChild(new EquippableItemsCathegory(misc, "Misc", root, this, xBar));
-      root.addChild(new EquippableItemsCathegory(weapons, "Weapons", root, this, xBar));
-      root.addChild(new EquippableItemsCathegory(engineStd, "Engine - STD", root, this, xBar));
-      root.addChild(new EquippableItemsCathegory(engineXl, "Engine - XL", root, this, xBar));
 
       // Chassii
       for(ChassiClass chassiClass : ChassiClass.values()){

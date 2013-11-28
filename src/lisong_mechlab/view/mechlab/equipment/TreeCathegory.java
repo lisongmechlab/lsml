@@ -32,5 +32,5 @@ abstract class TreeCathegory extends InternalFrameAdapter{
 
    public abstract TreePath getPath();
 
-   public abstract EquipmentTreeModel getModel();
+   public abstract GarageTreeModel getModel();
 }
