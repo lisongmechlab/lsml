@@ -43,10 +43,10 @@ public class WeaponsListView extends JPanel{
 
    public WeaponsListView(){
       setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-      
+
       JPanel inner = new JPanel();
       inner.setLayout(new BoxLayout(inner, BoxLayout.PAGE_AXIS));
-      
+
       add(Box.createHorizontalGlue());
       add(inner);
       add(Box.createHorizontalGlue());
@@ -59,7 +59,7 @@ public class WeaponsListView extends JPanel{
       missilePane.setPreferredSize(new Dimension(500, 100));
       missilePane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
       inner.add(missilePane);
-      
+
       JLabel ballisticLabel = new JLabel("Ballistic Weapons", SwingConstants.CENTER);
       ballisticLabel.setFont(missileLabel.getFont().deriveFont(ballisticLabel.getFont().getSize() * FONT_FACTOR));
       ballisticLabel.setAlignmentX(0.5f);

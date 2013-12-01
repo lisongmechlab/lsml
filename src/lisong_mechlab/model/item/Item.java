@@ -117,10 +117,10 @@ public class Item implements Comparable<Item>{
     */
    @Override
    public int compareTo(Item rhs){
-      if(this instanceof Engine && !(rhs instanceof Engine)){
+      if( this instanceof Engine && !(rhs instanceof Engine) ){
          return 1;
       }
-      else if(!(this instanceof Engine) && rhs instanceof Engine){
+      else if( !(this instanceof Engine) && rhs instanceof Engine ){
          return -1;
       }
       HardpointType lhsHp = this instanceof Ammunition ? ((Ammunition)this).getWeaponHardpointType() : this.getHardpointType();

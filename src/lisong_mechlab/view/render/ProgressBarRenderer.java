@@ -33,17 +33,17 @@ import javax.swing.plaf.ProgressBarUI;
 public class ProgressBarRenderer extends ProgressBarUI{
 
    final RenderingHints hints;
-   
+
    public ProgressBarRenderer(){
-      Toolkit tk = Toolkit.getDefaultToolkit(); 
-      hints = (RenderingHints)tk.getDesktopProperty("awt.font.desktophints"); 
-   }   
-   
+      Toolkit tk = Toolkit.getDefaultToolkit();
+      hints = (RenderingHints)tk.getDesktopProperty("awt.font.desktophints");
+   }
+
    @Override
    public Dimension getMinimumSize(JComponent c){
       return new Dimension(0, c.getFontMetrics(c.getFont()).getHeight() + 4);
    }
-   
+
    @Override
    public Dimension getMaximumSize(JComponent c){
       return new Dimension(200, c.getFontMetrics(c.getFont()).getHeight() + 5);
@@ -69,10 +69,10 @@ public class ProgressBarRenderer extends ProgressBarUI{
       Graphics2D g2d = (Graphics2D)g;
 
       g2d.setRenderingHints(hints);
-      
+
       g2d.setColor(Color.BLACK);
       int ascent = c.getFontMetrics(c.getFont()).getAscent();
       int stringWidth = c.getFontMetrics(c.getFont()).stringWidth(progressBar.getString());
-      g2d.drawString(progressBar.getString(), (w - stringWidth) / 2, (h - 4 + ascent+1) / 2);
+      g2d.drawString(progressBar.getString(), (w - stringWidth) / 2, (h - 4 + ascent + 1) / 2);
    }
 }

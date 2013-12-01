@@ -58,7 +58,7 @@ public class DeleteLoadoutAction extends AbstractAction{
    public void actionPerformed(ActionEvent aE){
       if( garage.getMechs().contains(loadout) ){
          Component source = loadoutFrame == null ? ProgramInit.lsml() : loadoutFrame;
-         
+
          int result = JOptionPane.showConfirmDialog(source, "Are you certain you want to delete the loadout: " + loadout.getName() + "?",
                                                     "Confirm operation", JOptionPane.YES_NO_OPTION);
          if( JOptionPane.YES_OPTION == result ){

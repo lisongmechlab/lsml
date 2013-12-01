@@ -29,7 +29,7 @@ public class JumpJet extends Module{
    private final double boost_z;
    private final double duration;
    private final double heat;
-   
+
    public JumpJet(ItemStatsModule aModule){
       super(aModule);
       minTons = aModule.JumpJetStats.minTons;

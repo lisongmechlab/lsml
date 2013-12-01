@@ -148,6 +148,7 @@ public class ChassiSelectionPane extends JScrollPane{
       public SpeedColumn(){
          super("Max Speed", 0);
       }
+
       @Override
       public String valueOf(Object aSourceRowObject){
          Chassi chassi = (Chassi)aSourceRowObject;

@@ -109,7 +109,7 @@ public class ItemTests{
       assertTrue(std180.isEquippableOn(hm));
       assertTrue(xl330.isEquippableOn(hm));
       assertFalse(xl335.isEquippableOn(hm));
-      
+
       // Engines have a base heat of the dissipation equal to 2 standard heat sinks when using 100% throttle.
       assertEquals(0.2, std175.getHeat(), 0.0);
       assertEquals(0.2, std180.getHeat(), 0.0);
@@ -262,7 +262,7 @@ public class ItemTests{
             }
          }
       }
-      
+
       assertNotNull(dhs);
       assertNotNull(shs);
 

@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.chassi;
 
 import java.util.Map;
@@ -22,26 +41,26 @@ public class HardpointCache{
          map.put("jr7-d-founder", m);
          map.put("jr7-ds", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(20, new Hardpoint(HardpointType.MISSILE, 4));
          map.put("jr7-k", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(42, new Hardpoint(HardpointType.MISSILE, 2));
          m.put(45, new Hardpoint(HardpointType.MISSILE, 2));
          map.put("cda-x5", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(10, new Hardpoint(HardpointType.MISSILE, 10));
          map.put("drg-1n", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(0, new Hardpoint(HardpointType.MISSILE, 10));
@@ -54,7 +73,7 @@ public class HardpointCache{
          map.put("drg-5n", m);
          map.put("drg-5nc", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(13, new Hardpoint(HardpointType.MISSILE, 15));
@@ -62,7 +81,7 @@ public class HardpointCache{
          map.put("cplt-c1", m);
          map.put("cplt-c1-founder", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(0, new Hardpoint(HardpointType.MISSILE, 15));
@@ -70,52 +89,52 @@ public class HardpointCache{
          map.put("cplt-a1", m);
          map.put("cplt-a1c", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(21, new Hardpoint(HardpointType.MISSILE, 20));
          m.put(22, new Hardpoint(HardpointType.MISSILE, 20));
          map.put("cplt-c4", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(25, new Hardpoint(HardpointType.MISSILE, 4));
          map.put("ctf-2x", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(30, new Hardpoint(HardpointType.MISSILE, 5));
          map.put("ctf-4x", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(11, new Hardpoint(HardpointType.MISSILE, 15));
          m.put(12, new Hardpoint(HardpointType.MISSILE, 15));
          map.put("aws-8r", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(21, new Hardpoint(HardpointType.MISSILE, 15));
          m.put(22, new Hardpoint(HardpointType.MISSILE, 15));
          map.put("aws-8t", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(32, new Hardpoint(HardpointType.MISSILE, 15));
          map.put("aws-8v", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(52, new Hardpoint(HardpointType.MISSILE, 15));
          map.put("aws-pb", m);
       }
-      
+
       {
          Map<Integer, Hardpoint> m = new TreeMap<>();
          m.put(44, new Hardpoint(HardpointType.MISSILE, 2));

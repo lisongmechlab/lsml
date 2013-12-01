@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
@@ -138,25 +157,25 @@ public class EfficienciesTest{
    }
 
    @Test
-      public void testGetHeatDissipationModifier() throws Exception{
-         assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
-   
-         // These don't affect heat capacity
-         cut.setHeatContainment(true);
-         cut.setSpeedTweak(true);
-         cut.setDoubleBasics(true); // Only if we have heat containment
-         assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
-   
-         cut.setHeatContainment(false);
-         cut.setSpeedTweak(false);
-         cut.setDoubleBasics(false);
-   
-         // These do
-         cut.setCoolRun(true);
-         assertEquals(1.075, cut.getHeatDissipationModifier(), 0.0);
-         cut.setDoubleBasics(true);
-         assertEquals(1.15, cut.getHeatDissipationModifier(), 0.0);
-      }
+   public void testGetHeatDissipationModifier() throws Exception{
+      assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
+
+      // These don't affect heat capacity
+      cut.setHeatContainment(true);
+      cut.setSpeedTweak(true);
+      cut.setDoubleBasics(true); // Only if we have heat containment
+      assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
+
+      cut.setHeatContainment(false);
+      cut.setSpeedTweak(false);
+      cut.setDoubleBasics(false);
+
+      // These do
+      cut.setCoolRun(true);
+      assertEquals(1.075, cut.getHeatDissipationModifier(), 0.0);
+      cut.setDoubleBasics(true);
+      assertEquals(1.15, cut.getHeatDissipationModifier(), 0.0);
+   }
 
    @Test
    public void testGetSpeedModifier() throws Exception{

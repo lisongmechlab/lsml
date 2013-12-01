@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
@@ -151,7 +170,6 @@ public class LoadoutPartTest{
 
       cut.addItem(ItemDB.SHS);
       assertEquals(2, cut.getNumEngineHeatsinks());
-      
 
       verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
    }
@@ -198,7 +216,7 @@ public class LoadoutPartTest{
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
       assertTrue(cut.getItems().contains(ItemDB.lookup("AC/20 AMMO")));
    }
-   
+
    @Test
    public void testCanAddItem_xlEngineTooFewSlots() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.CenterTorso, 8);
@@ -361,9 +379,10 @@ public class LoadoutPartTest{
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
    }
-   
+
    /**
     * Removing an engine shall remove all heat sinks in the engine but none of the external heat sinks.
+    * 
     * @throws Exception
     */
    @Test
@@ -377,9 +396,9 @@ public class LoadoutPartTest{
       cut.addItem(ItemDB.SHS);
       cut.addItem(ItemDB.SHS);
       cut.addItem(ItemDB.SHS);
-      
+
       cut.removeItem(ItemDB.lookup("STD ENGINE 300"));
-      
+
       assertEquals(3, cut.getItems().size());
       assertSame(gyro, cut.getItems().get(0));
       assertSame(ItemDB.SHS, cut.getItems().get(1));

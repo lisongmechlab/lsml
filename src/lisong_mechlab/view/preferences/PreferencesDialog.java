@@ -59,7 +59,7 @@ public class PreferencesDialog extends JDialog{
       JRadioButton fontNormal = new JRadioButton();
       JRadioButton fontLarge = new JRadioButton();
       JRadioButton fontVeryLarge = new JRadioButton();
-      
+
       fontVerySmall.setAction(new SetFontSizeAction("Very Small", null, FontSize.VerySmall));
       fontSmall.setAction(new SetFontSizeAction("Small", null, FontSize.Small));
       fontNormal.setAction(new SetFontSizeAction("Normal", null, FontSize.Normal));

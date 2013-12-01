@@ -26,11 +26,11 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Weapon;
 
 public class MissileEntry{
-   
-    private ArrayList<Double> damageList;
-    private ArrayList<Double> coolDownList;
-    private int volleyAmount;
-    private Ammunition ammoType;
+
+   private ArrayList<Double> damageList;
+   private ArrayList<Double> coolDownList;
+   private int               volleyAmount;
+   private Ammunition        ammoType;
 
    public MissileEntry(Ammunition theType){
       damageList = new ArrayList<>();
@@ -38,11 +38,11 @@ public class MissileEntry{
       volleyAmount = 0;
       ammoType = theType;
    }
-   
+
    public void addAnotherWeapon(Weapon weapon){
       volleyAmount += weapon.getAmmoPerPerShot();
       damageList.add(weapon.getDamagePerShot());
-      coolDownList.add(weapon.getSecondsPerShot());      
+      coolDownList.add(weapon.getSecondsPerShot());
    }
 
    public int getVolleyTotal(){
@@ -52,19 +52,21 @@ public class MissileEntry{
    public Ammunition getAmmoType(){
       return ammoType;
    }
-   
+
    public double getDamageAverage(){
       Double total = 0.0;
-      if(damageList.isEmpty()) return 0.0;
+      if( damageList.isEmpty() )
+         return 0.0;
       for(Double inter : damageList){
          total += inter;
       }
       return total / volleyAmount;
    }
-   
+
    public double getCooldownAverage(){
       Double total = 0.0;
-      if(coolDownList.isEmpty()) return 0;
+      if( coolDownList.isEmpty() )
+         return 0;
       for(Double inter : coolDownList){
          total += inter;
       }
