@@ -20,6 +20,7 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
@@ -44,8 +45,8 @@ public class EnergyWeapon extends Weapon{
    }
 
    @Override
-   public double getSecondsPerShot(){
-      return cycleTime + burnTime;
+   public double getSecondsPerShot(Efficiencies aEfficiencies){
+      return getCycleTime(aEfficiencies) + burnTime;
    }
 
    @Override

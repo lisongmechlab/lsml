@@ -78,13 +78,13 @@ public class WeaponTest{
    @Test
    public void testGetSecondsPerShot_mg() throws Exception{
       Weapon mg = (Weapon)ItemDB.lookup("MACHINE GUN");
-      assertTrue(mg.getSecondsPerShot() > 0.05);
+      assertTrue(mg.getSecondsPerShot(null) > 0.05);
    }
 
    @Test
    public void testGetSecondsPerShot_gauss() throws Exception{
       Weapon mg = (Weapon)ItemDB.lookup("GAUSS RIFLE");
-      assertTrue(mg.getSecondsPerShot() > 3);
+      assertTrue(mg.getSecondsPerShot(null) > 3);
    }
 
    @Test
@@ -129,7 +129,7 @@ public class WeaponTest{
    @Test
    public void testGetStat_gauss() throws Exception{
       BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      assertEquals(gauss.getDamagePerShot() / gauss.getHeat(), gauss.getStat("d/h", null), 0.0);
+      assertEquals(gauss.getDamagePerShot() / gauss.getHeat(), gauss.getStat("d/h", null, null), 0.0);
    }
 
 }

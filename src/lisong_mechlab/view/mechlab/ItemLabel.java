@@ -58,9 +58,11 @@ public class ItemLabel extends JLabel{
       addMouseListener(new MouseAdapter(){
          @Override
          public void mousePressed(MouseEvent anEvent){
+            Loadout loadout = aEquipmentPanel.getCurrentLoadout();
+
             Component component = anEvent.getComponent();
             if( component instanceof ItemLabel ){
-               aInfoPanel.showItem(item);
+               aInfoPanel.showItem(item, null != loadout ? loadout.getEfficiencies() : null);
             }
 
             ItemLabel button = (ItemLabel)anEvent.getSource();
@@ -68,7 +70,6 @@ public class ItemLabel extends JLabel{
             handle.exportAsDrag(button, anEvent, TransferHandler.COPY);
 
             if( SwingUtilities.isLeftMouseButton(anEvent) && anEvent.getClickCount() >= 2 ){
-               Loadout loadout = aEquipmentPanel.getCurrentLoadout();
                if( null != loadout )
                   loadout.addItem(item);
             }

@@ -32,6 +32,7 @@ import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.loadout.Efficiencies;
 
 /**
  * This class implements a panel that will show information about an item.
@@ -84,10 +85,10 @@ public class ItemInfoPanel extends JPanel{
       add(ammoperton);
       add(description);
 
-      showItem(null);
+      showItem(null, null);
    }
 
-   public void showItem(Item anItem){
+   public void showItem(Item anItem, Efficiencies aEfficiencies){
       if( anItem == null ){
          name.setText("Name: N/A");
          slots.setText("Slots: N/A");
@@ -114,7 +115,7 @@ public class ItemInfoPanel extends JPanel{
 
             damage.setText("Damage: " + weapon.getDamagePerShot());
             heat.setText("Heat: " + weapon.getHeat());
-            cycletime.setText("Cooldown: " + weapon.getSecondsPerShot());
+            cycletime.setText("Cooldown: " + weapon.getSecondsPerShot(aEfficiencies));
 
             if( weapon instanceof AmmoWeapon ){
                AmmoWeapon ammoWeapon = (AmmoWeapon)weapon;

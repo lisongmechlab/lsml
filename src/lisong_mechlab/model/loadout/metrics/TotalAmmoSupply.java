@@ -92,11 +92,11 @@ public class TotalAmmoSupply extends TableMetric{
             Ammunition ammo = weapon.getAmmoType(loadout.getUpgrades());
             if( ammoValues.containsKey(ammo) ){
                if( secondValues.containsKey(ammo.getName()) ){
-                  double tempVolleyAmount = secondValues.get(ammo.getName()) + weapon.getSecondsPerShot();
+                  double tempVolleyAmount = secondValues.get(ammo.getName()) + weapon.getSecondsPerShot(loadout.getEfficiencies());
                   secondValues.put(ammo.getName(), tempVolleyAmount);
                }
                else{
-                  secondValues.put(ammo.getName(), weapon.getSecondsPerShot());
+                  secondValues.put(ammo.getName(), weapon.getSecondsPerShot(loadout.getEfficiencies()));
                }
 
             }

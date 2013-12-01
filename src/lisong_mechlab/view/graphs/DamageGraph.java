@@ -152,7 +152,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
             Weapon weapon = entry.getKey();
             double ratio = entry.getValue();
-            double dps = weapon.getStat("d/s", loadout.getUpgrades());
+            double dps = weapon.getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies());
 
             if( !data.containsKey(weapon) ){
                data.put(weapon, new ArrayList<Pair<Double, Double>>());

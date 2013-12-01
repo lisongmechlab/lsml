@@ -99,6 +99,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JLabel          alphaStrike      = new JLabel("xxx");
    private final JLabel          dpsMax           = new JLabel("xxx");
    private final JLabel          dpsSustained     = new JLabel("xxx");
+   private final JCheckBox       fastFire         = new JCheckBox("Fast Fire");
    private final JTable          weaponTable;
 
    // Metrics
@@ -270,6 +271,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.add(Box.createHorizontalGlue());
          offence.add(Box.createVerticalGlue());
          add(offence);
+         
+         offence.add(fastFire);
+         fastFire.addItemListener(this);
 
          alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(alphaStrike);
@@ -400,6 +404,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // Offense
                // ----------------------------------------------------------------------
+               fastFire.setSelected(loadout.getEfficiencies().hasFastFire());
                alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()));
                dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()));
                dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()));
@@ -454,6 +459,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          }
          else if( source == doubleBasics ){
             loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == fastFire){
+            loadout.getEfficiencies().setFastFire(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else{
             throw new RuntimeException("Unknown source control!");

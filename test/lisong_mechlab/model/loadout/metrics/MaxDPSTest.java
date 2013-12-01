@@ -52,7 +52,7 @@ public class MaxDPSTest{
       items.add(ItemDB.AMS);
       items.add(mg);
 
-      assertEquals(mg.getStat("d/s", null), cut.calculate(), 0.0);
+      assertEquals(mg.getStat("d/s", null, null), cut.calculate(), 0.0);
    }
 
    @Test
@@ -67,7 +67,7 @@ public class MaxDPSTest{
       items.add(ItemDB.lookup("STD ENGINE 300")); // Unrelated items shall not skew the values
       items.add(ItemDB.lookup("AMS AMMO"));
 
-      assertEquals(mg.getStat("d/s", null) + lrm20.getStat("d/s", null), cut.calculate(), 0.0);
+      assertEquals(mg.getStat("d/s", null, null) + lrm20.getStat("d/s", null, null), cut.calculate(), 0.0);
    }
 
 }

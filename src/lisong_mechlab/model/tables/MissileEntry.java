@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.loadout.Loadout;
 
 public class MissileEntry{
 
@@ -39,10 +40,10 @@ public class MissileEntry{
       ammoType = theType;
    }
 
-   public void addAnotherWeapon(Weapon weapon){
+   public void addAnotherWeapon(Weapon weapon, Loadout aLoadout){
       volleyAmount += weapon.getAmmoPerPerShot();
       damageList.add(weapon.getDamagePerShot());
-      coolDownList.add(weapon.getSecondsPerShot());
+      coolDownList.add(weapon.getSecondsPerShot(aLoadout.getEfficiencies()));
    }
 
    public int getVolleyTotal(){
