@@ -56,10 +56,18 @@ import lisong_mechlab.view.action.OpenHelp;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTitleAnnotation;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.StackedAreaRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.DefaultTableXYDataset;
 import org.jfree.data.xy.TableXYDataset;
 import org.jfree.data.xy.XYSeries;
+import org.jfree.ui.HorizontalAlignment;
+import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.VerticalAlignment;
 
 /**
  * <p>
@@ -97,6 +105,14 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       maxSustainedDPS = new MaxSustainedDPS(loadout, new HeatDissipation(loadout));
       chartPanel = new ChartPanel(makechart());
       setContentPane(chartPanel);
+      chartPanel.getChart().getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
+      chartPanel.getChart().getLegend().setVerticalAlignment(VerticalAlignment.TOP);
+      
+      LegendTitle legendTitle = chartPanel.getChart().getLegend();
+      XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
+      titleAnnotation.setMaxWidth(0.4);
+      ((XYPlot)(chartPanel.getChart().getPlot())).addAnnotation(titleAnnotation);
+      chartPanel.getChart().removeLegend();
 
       chartPanel.setLayout(new OverlayLayout(chartPanel));
       JButton button = new JButton(new OpenHelp("What is this?", "Max-sustained-dps-graph", KeyStroke.getKeyStroke('w')));
