@@ -95,7 +95,7 @@ public class MechLabPane extends JSplitPane{
          openLoadout(ProgramInit.lsml().loadoutCoder.parse(aLSMLUrl));
       }
       catch( DecodingException e ){
-         JOptionPane.showMessageDialog(this, "Unable to import loadout from \"" + aLSMLUrl + "\"! Error:" + e);
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to import loadout from \"" + aLSMLUrl + "\"! Error:" + e);
       }
    }
 

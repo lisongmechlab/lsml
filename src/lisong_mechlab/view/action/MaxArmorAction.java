@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
+
 /**
  * This action sets the armor to max on the given {@link Loadout}.
  * 
