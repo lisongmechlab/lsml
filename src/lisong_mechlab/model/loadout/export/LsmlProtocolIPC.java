@@ -71,7 +71,7 @@ public class LsmlProtocolIPC implements Runnable{
             System.err.println(e);
          }
       }
-      
+
       if( thread != null ){
          thread.interrupt();
          try{

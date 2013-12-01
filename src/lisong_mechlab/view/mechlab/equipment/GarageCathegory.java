@@ -52,21 +52,21 @@ class GarageCathegory extends AbstractTreeCathegory implements MessageXBar.Reade
 
    @Override
    public int getChildCount(){
-      if(null == garage)
+      if( null == garage )
          return 0;
       return garage.getMechs().size();
    }
 
    @Override
    public int getIndex(Object aChild){
-      if(null == garage)
+      if( null == garage )
          return -1;
       return garage.getMechs().indexOf(aChild);
    }
 
    @Override
    public Object getChild(int aIndex){
-      if(null == garage)
+      if( null == garage )
          return null;
       return garage.getMechs().get(aIndex);
    }

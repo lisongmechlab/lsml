@@ -37,7 +37,7 @@ public class EnergyWeapon extends Weapon{
          zeroRange = 0;
       }
    }
-   
+
    @Override
    public double getRangeZero(){
       return zeroRange;
@@ -47,7 +47,7 @@ public class EnergyWeapon extends Weapon{
    public double getSecondsPerShot(){
       return cycleTime + burnTime;
    }
-   
+
    @Override
    public String getShortName(Upgrades anUpgrades){
       String name = getName(anUpgrades);

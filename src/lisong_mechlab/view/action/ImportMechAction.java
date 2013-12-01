@@ -35,6 +35,7 @@ public class ImportMechAction extends AbstractAction{
       super(aTitle);
       putValue(Action.ACCELERATOR_KEY, key);
    }
+
    @Override
    public void actionPerformed(ActionEvent aArg0){
       String input = JOptionPane.showInputDialog(ProgramInit.lsml(), "Paste the lsml:// link:", "Import mech...", JOptionPane.PLAIN_MESSAGE);

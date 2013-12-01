@@ -55,11 +55,10 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    private MissileEntry                 lrmEntry;
    private MissileEntry                 streakEntry;
 
-
    private String[]                     columnNames      = {"Weapon", "Ammo", "Volleys", "Cmbt", "T.Dmg"};
    private TreeMap<String, Double>      damageMap;
 
-   private MissileEntry srmEntry;
+   private MissileEntry                 srmEntry;
 
    public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
       this.aLoadout = aloadout;
@@ -93,7 +92,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       lrmEntry = null;
       srmEntry = null;
       streakEntry = null;
-      
+
    }
 
    public void initialiseMaps(){
@@ -104,7 +103,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    public void fillInData(){
       for(Weapon weapon : weaponsEquipped.keySet()){
 
-         if( !(weapon instanceof MissileWeapon )){
+         if( !(weapon instanceof MissileWeapon) ){
             weaponColumn.put(weapon.getName() + " x " + weaponsEquipped.get(weapon), weapon);
          }
 
@@ -116,11 +115,11 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    private void fillInMissileData(){
       for(Weapon weapon : weaponsEquipped.keySet()){
          if( weapon instanceof MissileWeapon ){
-             for(int counter = 0; counter < weaponsEquipped.get(weapon); counter++){
-                 initialiseSrmFields(weapon);
-                 initialiseLrmFields(weapon);
-                 initialiseStreakFields(weapon);
-             }
+            for(int counter = 0; counter < weaponsEquipped.get(weapon); counter++){
+               initialiseSrmFields(weapon);
+               initialiseLrmFields(weapon);
+               initialiseStreakFields(weapon);
+            }
 
          }
 
@@ -132,21 +131,22 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    }
 
    private void initialiseLrmFields(Weapon weapon){
-      if(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("LRM")){
-         if(lrmEntry == null){
-         lrmEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()));
-         lrmEntry.addAnotherWeapon(weapon);
+      if( ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("LRM") ){
+         if( lrmEntry == null ){
+            lrmEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()));
+            lrmEntry.addAnotherWeapon(weapon);
+         }
+         else{
+            lrmEntry.addAnotherWeapon(weapon);
+         }
       }
-      else{
-         lrmEntry.addAnotherWeapon(weapon);
-      }
-      }
-      
+
    }
 
    private void initialiseSrmFields(Weapon weapon){
-      if( ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("SRM AMMO") && !((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("STREAK") ){
-         if(srmEntry == null){
+      if( ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("SRM AMMO")
+          && !((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("STREAK") ){
+         if( srmEntry == null ){
             srmEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()));
             srmEntry.addAnotherWeapon(weapon);
          }
@@ -155,10 +155,10 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          }
       }
    }
-   
+
    private void initialiseStreakFields(Weapon weapon){
       if( ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("STREAK") ){
-         if(streakEntry == null){
+         if( streakEntry == null ){
             streakEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()));
             streakEntry.addAnotherWeapon(weapon);
          }
@@ -167,7 +167,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          }
       }
    }
-   
+
    private void fillInStreakTableValues(){
       if( streakEntry != null ){
          weaponColumn.put("STREAK SRM " + streakEntry.getVolleyTotal(), null);
@@ -176,8 +176,8 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    }
 
    private void fillInLrmTableValues(){
-      if( lrmEntry != null){
-         
+      if( lrmEntry != null ){
+
          weaponColumn.put("LRM " + lrmEntry.getVolleyTotal(), null);
          volleyAmountColumn.put("LRM " + lrmEntry.getVolleyTotal(), lrmEntry.getVolleyTotal());
       }
@@ -239,7 +239,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          }
       }
    }
-   
+
    private void fillInSrmAmmoQuanitity(String weaponName){
       if( weaponName.contains("SRM") && !weaponName.contains("STREAK") ){
          if( ammoEquipped.keySet().contains(srmEntry.getAmmoType()) ){
@@ -298,7 +298,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    public void fillInNumberVolleys(){
       for(String weaponName : weaponColumn.keySet()){
-         if( (weaponColumn.get(weaponName) != null) || (weaponName.contains("SRM"))  || (weaponName.contains("LRM")) ){
+         if( (weaponColumn.get(weaponName) != null) || (weaponName.contains("SRM")) || (weaponName.contains("LRM")) ){
             if( weaponName.contains("Only") ){
                numberVolleyColumn.put(weaponName, 0.0);
             }
@@ -324,10 +324,10 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    }
 
    private void fillInMissileCombatSeconds(String weaponName){
-      if( weaponName.contains("SRM") && !weaponName.contains("STREAK") && srmEntry != null){
+      if( weaponName.contains("SRM") && !weaponName.contains("STREAK") && srmEntry != null ){
          combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * srmEntry.getCooldownAverage()));
       }
-      else if(weaponName.contains("STREAK") && streakEntry != null){
+      else if( weaponName.contains("STREAK") && streakEntry != null ){
          combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * streakEntry.getCooldownAverage()));
       }
       else if( weaponName.contains("LRM") && lrmEntry != null ){
@@ -336,33 +336,28 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       else
          combatColumn.put(weaponName, 0.0);
    }
-   
 
    private void fillInDamageList(){
       for(String weaponName : weaponColumn.keySet()){
          if( (weaponColumn.get(weaponName) != null) && !(weaponName.contains("SRM")) && !(weaponName.contains("LRM")) ){
-         double totalDamage = weaponColumn.get(weaponName).getDamagePerShot() * ammoQuantityColumn.get(weaponName);
-         damageMap.put(weaponName, totalDamage);
-         
-         }else if( weaponName.contains("SRM") && !weaponName.contains("STREAK") && srmEntry != null ){
-            damageMap.put(weaponName, ammoQuantityColumn.get(weaponName)  * srmEntry.getDamageAverage());
+            double totalDamage = weaponColumn.get(weaponName).getDamagePerShot() * ammoQuantityColumn.get(weaponName);
+            damageMap.put(weaponName, totalDamage);
+
+         }
+         else if( weaponName.contains("SRM") && !weaponName.contains("STREAK") && srmEntry != null ){
+            damageMap.put(weaponName, ammoQuantityColumn.get(weaponName) * srmEntry.getDamageAverage());
          }
          else if( weaponName.contains("STREAK") && streakEntry != null ){
-            damageMap.put(weaponName, (ammoQuantityColumn.get(weaponName)  * streakEntry.getDamageAverage()));
+            damageMap.put(weaponName, (ammoQuantityColumn.get(weaponName) * streakEntry.getDamageAverage()));
          }
-         else if( weaponName.contains("LRM") && lrmEntry != null){
-            damageMap.put(weaponName, (ammoQuantityColumn.get(weaponName)  * lrmEntry.getDamageAverage()));
+         else if( weaponName.contains("LRM") && lrmEntry != null ){
+            damageMap.put(weaponName, (ammoQuantityColumn.get(weaponName) * lrmEntry.getDamageAverage()));
          }
          else
             damageMap.put(weaponName, 0.0);
       }
-      
-      
+
    }
-
-
-
- 
 
    @Override
    public Class<?> getColumnClass(int aColumnIndex){
@@ -393,7 +388,6 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    public String getColumnName(int aColumnIndex){
       return columnNames[aColumnIndex];
    }
-
 
    @Override
    public int getRowCount(){
@@ -430,7 +424,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          if( !combatArray[aRowIndex].isInfinite() ){
             return Math.floor(combatArray[aRowIndex]);
          }
-         if(combatArray[aRowIndex].isNaN()){
+         if( combatArray[aRowIndex].isNaN() ){
             return 0.0;
          }
          return combatArray[aRowIndex];
@@ -441,7 +435,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
          if( !damageArray[aRowIndex].isInfinite() ){
             return Math.floor(damageArray[aRowIndex]);
          }
-         if(damageArray[aRowIndex].isNaN()){
+         if( damageArray[aRowIndex].isNaN() ){
             return 0.0;
          }
          return damageArray[aRowIndex];

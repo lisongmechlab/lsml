@@ -27,8 +27,6 @@ import javax.swing.KeyStroke;
 
 import lisong_mechlab.view.preferences.PreferencesDialog;
 
-
-
 /**
  * This action will open up the settings dialog.
  * 

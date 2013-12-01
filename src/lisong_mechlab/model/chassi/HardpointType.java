@@ -44,7 +44,7 @@ public enum HardpointType{
             throw new RuntimeException("Unknown hardpoint type!");
       }
    }
-   
+
    public static HardpointType fromMwoType(int type){
       switch( type ){
          case 1:

@@ -64,7 +64,7 @@ public class Engine extends HeatSource{
       name = name.replace("ENGINE ", "");
       return name;
    }
-   
+
    @Override
    public boolean isEquippableOn(Loadout aLoadout){
       return aLoadout.getChassi().getEngineMax() >= rating && aLoadout.getChassi().getEngineMin() <= rating;

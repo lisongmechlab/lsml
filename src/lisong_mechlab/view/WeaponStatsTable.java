@@ -186,21 +186,21 @@ public class WeaponStatsTable extends JTable{
    }
 
    @Override
-   protected JTableHeader createDefaultTableHeader() {
-      return new JTableHeader(columnModel) {
+   protected JTableHeader createDefaultTableHeader(){
+      return new JTableHeader(columnModel){
          private static final long serialVersionUID = 8692956739102109610L;
 
          @Override
-         public String getToolTipText(MouseEvent e) {
-              java.awt.Point p = e.getPoint();
-              int index = columnModel.getColumnIndexAtX(p.x);
-              TableColumn c = getColumnModel().getColumn(index);
-              if( c instanceof StatColumn ){
-                 StatColumn sc = (StatColumn)c;
-                 return sc.getToolTip();
-              }
-              return null;
-          }
+         public String getToolTipText(MouseEvent e){
+            java.awt.Point p = e.getPoint();
+            int index = columnModel.getColumnIndexAtX(p.x);
+            TableColumn c = getColumnModel().getColumn(index);
+            if( c instanceof StatColumn ){
+               StatColumn sc = (StatColumn)c;
+               return sc.getToolTip();
+            }
+            return null;
+         }
       };
-  }
+   }
 }

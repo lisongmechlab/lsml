@@ -38,7 +38,7 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class PreferenceStore{
 
-   public static final String     GAMEDIRECTORY_KEY  = "gamedir";
+   public static final String      GAMEDIRECTORY_KEY  = "gamedir";
    public static final String      GARAGEFILE_KEY     = "garagefile";
    public static final String      GARAGEFILE_DEFAULT = "garage.xml";
    private static final File       propertiesFile;
