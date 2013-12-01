@@ -69,6 +69,8 @@ public class Efficiencies{
 
    private transient final MessageXBar xBar;
 
+   private boolean                     fastfire;
+
    /**
     * Creates a new efficiencies object.
     * 
@@ -222,5 +224,34 @@ public class Efficiencies{
       if( speedTweak )
          return 1.1;
       return 1.0;
+   }
+
+   /**
+    * @return <code>true</code> if the fast fire efficiency is enabled.
+    */
+   public boolean hasFastFire(){
+      return fastfire;
+   }
+
+   /**
+    * @return The modifier to be applied to weapon recycle times given the current status of the fast fire efficiency.
+    */
+   public double getWeaponCycleTimeModifier(){
+      if( fastfire )
+         return 0.95;
+      return 1.0;
+   }
+
+   /**
+    * Sets the status of the fast fire efficiency.
+    * 
+    * @param aFastFire
+    *           The new status of the fast fire efficiency.
+    */
+   public void setFastFire(boolean aFastFire){
+      if( aFastFire != fastfire ){
+         fastfire = aFastFire;
+         xBar.post(new Message(this, Type.Changed));
+      }
    }
 }

@@ -50,7 +50,7 @@ public class MaxSustainedDPS implements Metric{
       double ans = 0.0;
       Map<Weapon, Double> dd = getWeaponRatios(-1);
       for(Map.Entry<Weapon, Double> entry : dd.entrySet()){
-         ans += entry.getKey().getStat("d/s", loadout.getUpgrades()) * entry.getValue();
+         ans += entry.getKey().getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies()) * entry.getValue();
       }
       return ans;
    }
@@ -75,9 +75,8 @@ public class MaxSustainedDPS implements Metric{
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
-               return Double.compare(aO2.getRangeEffectivity(range) * aO2.getStat("d/h", loadout.getUpgrades()), aO1.getRangeEffectivity(range)
-                                                                                                                 * aO1.getStat("d/h",
-                                                                                                                               loadout.getUpgrades()));
+               return Double.compare(aO2.getRangeEffectivity(range) * aO2.getStat("d/h", loadout.getUpgrades(), loadout.getEfficiencies()),
+                                     aO1.getRangeEffectivity(range) * aO1.getStat("d/h", loadout.getUpgrades(), loadout.getEfficiencies()));
             }
          });
       }
@@ -85,7 +84,8 @@ public class MaxSustainedDPS implements Metric{
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
-               return Double.compare(aO2.getStat("d/h", loadout.getUpgrades()), aO1.getStat("d/h", loadout.getUpgrades()));
+               return Double.compare(aO2.getStat("d/h", loadout.getUpgrades(), loadout.getEfficiencies()), aO1.getStat("d/h", loadout.getUpgrades(),
+                                                                                                                       loadout.getEfficiencies()));
             }
          });
       }
@@ -93,7 +93,7 @@ public class MaxSustainedDPS implements Metric{
       Map<Weapon, Double> ans = new HashMap<>();
       while( !weapons.isEmpty() ){
          Weapon weapon = weapons.remove(0);
-         final double heat = weapon.getStat("h/s", loadout.getUpgrades());
+         final double heat = weapon.getStat("h/s", loadout.getUpgrades(), loadout.getEfficiencies());
          final double ratio;
          final double rangefactor = (range >= 0) ? weapon.getRangeEffectivity(range) : 1.0;
 

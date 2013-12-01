@@ -41,7 +41,7 @@ import lisong_mechlab.util.MessageXBar.Message;
 
 public class AmmoTableDataModel extends AbstractTableModel implements MessageXBar.Reader{
    private static final long            serialVersionUID = -2671906919112648859L;
-   private Loadout                      aLoadout;
+   private Loadout                      loadout;
    private TotalAmmoSupply              totalAmmoSupply;
    private TotalWeapons                 totalWeapons;
    private TreeMap<String, Weapon>      weaponColumn;
@@ -60,11 +60,11 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    private MissileEntry                 srmEntry;
 
-   public AmmoTableDataModel(Loadout aloadout, MessageXBar aXBar){
-      this.aLoadout = aloadout;
-      totalAmmoSupply = new TotalAmmoSupply(aLoadout);
+   public AmmoTableDataModel(Loadout aLoadout, MessageXBar aXBar){
+      loadout = aLoadout;
+      totalAmmoSupply = new TotalAmmoSupply(loadout);
       totalAmmoSupply.calculate();
-      totalWeapons = new TotalWeapons(aloadout);
+      totalWeapons = new TotalWeapons(aLoadout);
       totalWeapons.calculate();
       initialiseLists();
       initialiseMaps();
@@ -131,39 +131,39 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    }
 
    private void initialiseLrmFields(Weapon weapon){
-      if( ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("LRM") ){
+      if( ((AmmoWeapon)weapon).getAmmoType(loadout.getUpgrades()).getName().contains("LRM") ){
          if( lrmEntry == null ){
-            lrmEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()));
-            lrmEntry.addAnotherWeapon(weapon);
+            lrmEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(loadout.getUpgrades()));
+            lrmEntry.addAnotherWeapon(weapon, loadout);
          }
          else{
-            lrmEntry.addAnotherWeapon(weapon);
+            lrmEntry.addAnotherWeapon(weapon, loadout);
          }
       }
 
    }
 
    private void initialiseSrmFields(Weapon weapon){
-      if( ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("SRM AMMO")
-          && !((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("STREAK") ){
+      if( ((AmmoWeapon)weapon).getAmmoType(loadout.getUpgrades()).getName().contains("SRM AMMO")
+          && !((AmmoWeapon)weapon).getAmmoType(loadout.getUpgrades()).getName().contains("STREAK") ){
          if( srmEntry == null ){
-            srmEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()));
-            srmEntry.addAnotherWeapon(weapon);
+            srmEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(loadout.getUpgrades()));
+            srmEntry.addAnotherWeapon(weapon, loadout);
          }
          else{
-            srmEntry.addAnotherWeapon(weapon);
+            srmEntry.addAnotherWeapon(weapon, loadout);
          }
       }
    }
 
    private void initialiseStreakFields(Weapon weapon){
-      if( ((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()).getName().contains("STREAK") ){
+      if( ((AmmoWeapon)weapon).getAmmoType(loadout.getUpgrades()).getName().contains("STREAK") ){
          if( streakEntry == null ){
-            streakEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()));
-            streakEntry.addAnotherWeapon(weapon);
+            streakEntry = new MissileEntry(((AmmoWeapon)weapon).getAmmoType(loadout.getUpgrades()));
+            streakEntry.addAnotherWeapon(weapon, loadout);
          }
          else{
-            streakEntry.addAnotherWeapon(weapon);
+            streakEntry.addAnotherWeapon(weapon, loadout);
          }
       }
    }
@@ -194,7 +194,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    public void fillInAmmoQuantity(){
       for(String weaponName : weaponColumn.keySet()){
          if( weaponColumn.get(weaponName) instanceof AmmoWeapon ){
-            Ammunition ammoTypeTemp = ((AmmoWeapon)weaponColumn.get(weaponName)).getAmmoType(aLoadout.getUpgrades());
+            Ammunition ammoTypeTemp = ((AmmoWeapon)weaponColumn.get(weaponName)).getAmmoType(loadout.getUpgrades());
             if( ammoEquipped.keySet().contains(ammoTypeTemp) ){
                ammoQuantityColumn.put(weaponName, (double)ammoTypeTemp.getShotsPerTon() * ammoEquipped.get(ammoTypeTemp));
             }
@@ -221,7 +221,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       }
       for(Weapon weapon : weaponsEquipped.keySet()){
          if( weapon instanceof AmmoWeapon )
-            tempListOfAmmo.remove(((AmmoWeapon)weapon).getAmmoType(aLoadout.getUpgrades()));
+            tempListOfAmmo.remove(((AmmoWeapon)weapon).getAmmoType(loadout.getUpgrades()));
       }
       for(Ammunition ammo : tempListOfAmmo){
          ammoQuantityColumn.put(ammo.getName() + " Only", (double)ammoEquipped.get(ammo) * ammo.getShotsPerTon());
@@ -314,7 +314,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    public void fillInCombatSeconds(){
       for(String weaponName : weaponColumn.keySet()){
          if( weaponColumn.get(weaponName) != null ){
-            combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * weaponColumn.get(weaponName).getSecondsPerShot()));
+            combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * weaponColumn.get(weaponName).getSecondsPerShot(loadout.getEfficiencies())));
 
          }
          else{
@@ -445,7 +445,7 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
 
    @Override
    public void receive(Message aMsg){
-      if( !aMsg.isForMe(aLoadout) )
+      if( !aMsg.isForMe(loadout) )
          return;
 
       if( (aMsg instanceof LoadoutPart.Message && ((LoadoutPart.Message)aMsg).type != LoadoutPart.Message.Type.ArmorChanged)
