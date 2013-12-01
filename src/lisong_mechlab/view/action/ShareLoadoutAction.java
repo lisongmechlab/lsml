@@ -76,7 +76,7 @@ public class ShareLoadoutAction extends AbstractAction{
          Font labelFont = trampolineLabel.getFont().deriveFont(Font.BOLD);
          trampolineLabel.setToolTipText("Use this for forums and programs that doesn't support LSML:// protocol links (most forums/software).");
          trampolineLabel.setFont(labelFont);
-         
+
          JLabel lsmlLabel = new JLabel("LSML Link:");
          lsmlLabel.setToolTipText("Use this if it is supported by your forum/software, for example credditmwo.com.");
          lsmlLabel.setFont(labelFont);
