@@ -6,6 +6,6 @@ public class ItemStats{
    @XStreamAsAttribute
    public String       name;
    @XStreamAsAttribute
-   public int          id;
+   public String       id;
    public ItemStatsLoc Loc;
 }
