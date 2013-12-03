@@ -51,6 +51,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.CoolingRatio;
+import lisong_mechlab.model.loadout.metrics.GhostHeat;
 import lisong_mechlab.model.loadout.metrics.HeatCapacity;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.HeatGeneration;
@@ -100,6 +101,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JLabel          dpsMax           = new JLabel("xxx");
    private final JLabel          dpsSustained     = new JLabel("xxx");
    private final JCheckBox       fastFire         = new JCheckBox("Fast Fire");
+   private final JLabel          ghostHeat        = new JLabel("xxx");
    private final JTable          weaponTable;
 
    // Metrics
@@ -111,6 +113,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final CoolingRatio    metricCoolingRatio;
    private final TimeToOverHeat  metricTimeToOverHeat;
    private final AlphaStrike     metricAlphaStrike;
+   private final GhostHeat       metricGhostHeat;
+
    private final MaxDPS          metricMaxDPS;
    private final MaxSustainedDPS metricSustainedDps;
    private transient Boolean     inhibitChanges   = false;
@@ -119,6 +123,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
 
+      metricGhostHeat = new GhostHeat(loadout);
       metricTopSpeed = new TopSpeed(loadout);
       metricJumpDistance = new JumpDistance(loadout);
       metricHeatGeneration = new HeatGeneration(loadout);
@@ -238,6 +243,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          heat.add(effectiveHS);
 
          timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);
+         timeToOverheat.setToolTipText("The number of seconds your mech can go \"All guns a'blazing\" before it overheats, assuming no ghost heat.");
          heat.add(timeToOverheat);
 
          coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -271,9 +277,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.add(Box.createHorizontalGlue());
          offence.add(Box.createVerticalGlue());
          add(offence);
-         
+
          offence.add(fastFire);
          fastFire.addItemListener(this);
+         fastFire.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+         ghostHeat.setAlignmentX(Component.CENTER_ALIGNMENT);
+         ghostHeat.setToolTipText("The amount of extra heat incurred during an alpha strike.");
+         offence.add(ghostHeat);
 
          alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(alphaStrike);
@@ -298,7 +309,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    public void updateDisplay(){
       SwingUtilities.invokeLater(new Runnable(){
-
          @Override
          public void run(){
             synchronized( inhibitChanges ){
@@ -405,6 +415,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                // Offense
                // ----------------------------------------------------------------------
                fastFire.setSelected(loadout.getEfficiencies().hasFastFire());
+               double ghostHeatPenalty = metricGhostHeat.calculate();
+               if( ghostHeatPenalty > 0 )
+                  ghostHeat.setForeground(Color.RED);
+               else
+                  ghostHeat.setForeground(alphaStrike.getForeground());
+               ghostHeat.setText("Ghost heat: " + df2.format(ghostHeatPenalty));
                alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()));
                dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()));
                dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()));
@@ -460,7 +476,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          else if( source == doubleBasics ){
             loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
-         else if( source == fastFire){
+         else if( source == fastFire ){
             loadout.getEfficiencies().setFastFire(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else{

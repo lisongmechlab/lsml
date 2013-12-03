@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
 import java.util.Arrays;
 
 import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
@@ -138,6 +139,7 @@ public class MockLoadoutContainer{
       when(internalItem.getNumCriticalSlots(any(Upgrades.class))).thenReturn(aNumSlots);
       when(internalItem.getMass(any(Upgrades.class))).thenReturn(aTons);
       when(internalItem.compareTo(any(Item.class))).thenCallRealMethod();
+      when(internalItem.getHardpointType()).thenReturn(HardpointType.NONE);
       return internalItem;
    }
 }
