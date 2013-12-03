@@ -135,6 +135,10 @@ public class Weapon extends HeatSource{
          }
          index++;
       }
+      if(nominator == 0.0 && denominator == 0.0){
+         // We take the Brahmaguptan interpretation of 0/0 to be 0 (year 628). 
+         return 0;
+      }
       return nominator / denominator;
    }
 

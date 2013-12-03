@@ -1,8 +1,9 @@
 package lisong_mechlab.view;
 
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.Date;
@@ -64,15 +65,18 @@ public class ProgramInit extends JFrame{
          public void run(){
             Image splash = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/splash.png"));
             setContentPane(new BackgroundImage(splash));
-            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
             programIcon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icon.png"));
             setIconImage(programIcon);
             setResizable(false);
             setUndecorated(true);
             setTitle("loading...");
             setSize(350, 350);
-            setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
+
+            // This works for multi-screen configurations in linux as well.
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            DisplayMode mode = ge.getDefaultScreenDevice().getDisplayMode();
+
+            setLocation(mode.getWidth() / 2 - getSize().width / 2, mode.getHeight() / 2 - getSize().height / 2);
             setVisible(true);
             getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK));
             getRootPane().putClientProperty("Window.shadow", Boolean.TRUE);
@@ -108,7 +112,8 @@ public class ProgramInit extends JFrame{
       }
       catch( Throwable e ){
          JOptionPane.showMessageDialog(this,
-                                       "Unable to find game data files!\nLSML requires an up-to-date installation of MW:Online to parse data files from.");
+                                       "Unable to find/parse game data files!\nLSML requires an up-to-date installation of MW:Online to parse data files from.");
+         e.printStackTrace();
          return false;
       }
 
@@ -153,7 +158,7 @@ public class ProgramInit extends JFrame{
                instanceL = new LSML();
 
                if( args.length > 0 )
-                  instanceL.desktop.openLoadout(instanceL.loadoutCoder.parse(args[0]));
+                  instanceL.mechLabPane.openLoadout(instanceL.loadoutCoder.parse(args[0]));
             }
             catch( Exception e ){
                JOptionPane.showMessageDialog(null, "Unable to start! Error: " + e);

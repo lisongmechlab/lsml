@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.view.equipment;
 
 import java.util.ArrayList;
@@ -25,19 +44,18 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.view.LSML;
 
 public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
    private final List<TreeModelListener>                     listeners = new ArrayList<TreeModelListener>();
    private final DefaultTreeCathegory<AbstractTreeCathegory> root;
 
-   public EquipmentTreeModel(LSML aLSML, MessageXBar xBar){
+   public EquipmentTreeModel(MessageXBar xBar){
       root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
 
       List<Item> items = ItemDB.lookup(Item.class);
 
       DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
-      GarageCathegory garage = new GarageCathegory("Garage", root, this, aLSML.xBar);
+      GarageCathegory garage = new GarageCathegory("Garage", root, this, xBar);
 
       // Process the items list
       List<Item> weapons = new ArrayList<>();
@@ -79,7 +97,7 @@ public class EquipmentTreeModel implements TreeModel, InternalFrameListener{
             misc.add(item);
          }
       }
-      
+
       weapons.addAll(energy);
       weapons.addAll(ballistic);
       weapons.addAll(missile);

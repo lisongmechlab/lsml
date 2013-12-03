@@ -1,19 +1,34 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.view;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,120 +36,31 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.view.render.StyleManager;
 
-public class ChassiListView extends JFrame{
+/**
+ * Displays all available {@link Chassi} in a pane.
+ * 
+ * @author Li Song
+ */
+public class ChassiListView extends JScrollPane{
    static public class ChassiTableModel extends AbstractTableModel{
-      private static final long          serialVersionUID = -2726840937519789976L;
-
-      private final List<Chassi>         lights           = new ArrayList<>();
-      private final List<Chassi>         mediums          = new ArrayList<>();
-      private final List<Chassi>         heavies          = new ArrayList<>();
-      private final List<Chassi>         assaults         = new ArrayList<>();
-
-      private final List<TableColumn<?>> columns          = new ArrayList<>();
-
-      static class NameColumn extends TableColumn<Chassi>{
-         public NameColumn(){
-            super("Chassi", Chassi.class);
-         }
-
-         @Override
-         public Chassi value(Chassi aChassi){
-            return aChassi;
-         }
-      }
-
-      static class TonsColumn extends TableColumn<String>{
-         public TonsColumn(){
-            super("Tons", String.class);
-         }
-
-         @Override
-         public String value(Chassi aChassi){
-            return "" + aChassi.getMassMax();
-         }
-      }
-
-      static class SpeedColumn extends TableColumn<String>{
-         DecimalFormat df = new DecimalFormat("###.#");
-
-         public SpeedColumn(){
-            super("Max Speed", String.class);
-         }
-
-         @Override
-         public String value(Chassi aChassi){
-            final double maxSpeed = TopSpeed.calculate(aChassi.getEngineMax(), aChassi, 1.0);
-            final double maxSpeedTweak = TopSpeed.calculate(aChassi.getEngineMax(), aChassi, 1.1);
-            return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
-         }
-      }
-
-      static class WeaponsColumn extends TableColumn<Chassi>{
-         JPanel panel     = new JPanel();
-         JLabel energy    = new JLabel();
-         JLabel ballistic = new JLabel();
-         JLabel missile   = new JLabel();
-
-         public WeaponsColumn(){
-            super("Hardpoints", Chassi.class);
-            StyleManager.styleThinItem(energy, HardpointType.ENERGY);
-            StyleManager.styleThinItem(ballistic, HardpointType.BALLISTIC);
-            StyleManager.styleThinItem(missile, HardpointType.MISSILE);
-            panel.add(energy);
-            panel.add(ballistic);
-            panel.add(missile);
-         }
-
-         @Override
-         public Chassi value(Chassi aChassi){
-            return aChassi;
-         }
-
-         @Override
-         public TableCellRenderer getRenderer(){
-            return new TableCellRenderer(){
-               @Override
-               public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow,
-                                                              int aColumn){
-                  Chassi chassi = (Chassi)aValue;
-                  int e = chassi.getHardpointsCount(HardpointType.ENERGY);
-                  int b = chassi.getHardpointsCount(HardpointType.BALLISTIC);
-                  int m = chassi.getHardpointsCount(HardpointType.MISSILE);
-                  panel.removeAll();
-
-                  if( e > 0 ){
-                     energy.setText(e + " E");
-                     panel.add(energy);
-                  }
-                  if( b > 0 ){
-                     ballistic.setText(b + " B");
-                     panel.add(ballistic);
-                  }
-                  if( m > 0 ){
-                     missile.setText(m + " M");
-                     panel.add(missile);
-                  }
-                  return panel;
-               }
-            };
-         }
-      }
+      private static final long  serialVersionUID = -2726840937519789976L;
+      private final List<Chassi> lights           = new ArrayList<>();
+      private final List<Chassi> mediums          = new ArrayList<>();
+      private final List<Chassi> heavies          = new ArrayList<>();
+      private final List<Chassi> assaults         = new ArrayList<>();
 
       public ChassiTableModel(){
-         columns.add(new NameColumn());
-         columns.add(new SpeedColumn());
-         columns.add(new TonsColumn());
-         columns.add(new WeaponsColumn());
-
          Comparator<Chassi> cmp = new Comparator<Chassi>(){
             @Override
             public int compare(Chassi aArg0, Chassi aArg1){
@@ -158,18 +84,8 @@ public class ChassiListView extends JFrame{
       }
 
       @Override
-      public Class<?> getColumnClass(int columnIndex){
-         return columns.get(columnIndex).getClass();
-      }
-
-      @Override
-      public String getColumnName(int col){
-         return columns.get(col).header();
-      }
-
-      @Override
       public int getColumnCount(){
-         return columns.size();
+         return 1;
       }
 
       @Override
@@ -180,46 +96,130 @@ public class ChassiListView extends JFrame{
       @Override
       public Object getValueAt(int row, int col){
          if( row < lights.size() )
-            return columns.get(col).value(lights.get(row));
+            return lights.get(row);
 
          row -= lights.size();
          if( row >= 0 && row < mediums.size() )
-            return columns.get(col).value(mediums.get(row));
+            return mediums.get(row);
 
          row -= mediums.size();
          if( row >= 0 && row < heavies.size() )
-            return columns.get(col).value(heavies.get(row));
+            return heavies.get(row);
 
          row -= heavies.size();
          if( row >= 0 && row < assaults.size() )
-            return columns.get(col).value(assaults.get(row));
+            return assaults.get(row);
 
          return "";
       }
    }
 
-   private static final long     serialVersionUID = -4134588793726908789L;
+   static class NameColumn extends AttributeTableColumn{
+      private static final long serialVersionUID = -816217603635882304L;
 
-   private static ChassiListView current          = null;
-
-   public ChassiListView(){
-      if( current != null ){
-         current.setState(NORMAL);
-         current.toFront();
-         current.repaint();
-         return;
+      public NameColumn(){
+         super("Chassi", 0);
       }
 
-      Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-      setIconImage(ProgramInit.programIcon);
-      setResizable(true);
-      setTitle("Chassi selection");
-      setSize(500, 300);
-      setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
-      setVisible(true);
+      @Override
+      public String valueOf(Object aSourceRowObject){
+         return ((Chassi)aSourceRowObject).getName();
+      }
+   }
 
+   static class TonsColumn extends AttributeTableColumn{
+      private static final long serialVersionUID = -3845466109033447928L;
+
+      public TonsColumn(){
+         super("Tons", 0);
+      }
+
+      @Override
+      public String valueOf(Object aSourceRowObject){
+         return Integer.toString(((Chassi)aSourceRowObject).getMassMax());
+      }
+   }
+
+   static class SpeedColumn extends AttributeTableColumn{
+      private static final long serialVersionUID = -1453377097733119292L;
+      DecimalFormat             df               = new DecimalFormat("###.#");
+
+      public SpeedColumn(){
+         super("Max Speed", 0);
+      }
+      @Override
+      public String valueOf(Object aSourceRowObject){
+         Chassi chassi = (Chassi)aSourceRowObject;
+         final double maxSpeed = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.0);
+         final double maxSpeedTweak = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.1);
+         return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
+      }
+   }
+
+   static class PartColumn extends TableColumn{
+      private static final long serialVersionUID = -6290392366218233232L;
+      private final JPanel      panel            = new JPanel();
+      private final JLabel      energy           = new JLabel();
+      private final JLabel      ballistic        = new JLabel();
+      private final JLabel      missile          = new JLabel();
+      private final JLabel      ams              = new JLabel();
+      private final JLabel      ecm              = new JLabel();
+      private final Part        part;
+
+      public PartColumn(Part aPart){
+         super(0);
+         setHeaderValue(aPart.longName());
+         StyleManager.styleThinItem(energy, HardpointType.ENERGY);
+         StyleManager.styleThinItem(ballistic, HardpointType.BALLISTIC);
+         StyleManager.styleThinItem(missile, HardpointType.MISSILE);
+         StyleManager.styleThinItem(ams, HardpointType.AMS);
+         StyleManager.styleThinItem(ecm, HardpointType.ECM);
+         part = aPart;
+      }
+
+      @Override
+      public TableCellRenderer getCellRenderer(){
+         return new TableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
+               Chassi chassi = (Chassi)aValue;
+               int e = chassi.getInternalPart(part).getNumHardpoints(HardpointType.ENERGY);
+               int b = chassi.getInternalPart(part).getNumHardpoints(HardpointType.BALLISTIC);
+               int m = chassi.getInternalPart(part).getNumHardpoints(HardpointType.MISSILE);
+               int a = chassi.getInternalPart(part).getNumHardpoints(HardpointType.AMS);
+               int c = chassi.getInternalPart(part).getNumHardpoints(HardpointType.ECM);
+               panel.removeAll();
+
+               if( e > 0 ){
+                  energy.setText(e + " E");
+                  panel.add(energy);
+               }
+               if( b > 0 ){
+                  ballistic.setText(b + " B");
+                  panel.add(ballistic);
+               }
+               if( m > 0 ){
+                  missile.setText(PartPanel.formatMissileHardpointText(chassi.getInternalPart(part)));
+                  panel.add(missile);
+               }
+               if( a > 0 ){
+                  ams.setText("AMS");
+                  panel.add(ams);
+               }
+               if( c > 0 ){
+                  ecm.setText("ECM");
+                  panel.add(ecm);
+               }
+               return panel;
+            }
+         };
+      }
+   }
+
+   private static final long serialVersionUID = -4134588793726908789L;
+
+   public ChassiListView(){
       final JTable table = new JTable(new ChassiTableModel());
-      table.setDefaultRenderer(ChassiTableModel.WeaponsColumn.class, new ChassiTableModel.WeaponsColumn().getRenderer());
       table.setRowHeight(30);
       table.addMouseListener(new MouseAdapter(){
          @Override
@@ -231,24 +231,22 @@ public class ChassiListView extends JFrame{
                final Object cell = target.getValueAt(row, column);
                if( cell instanceof Chassi ){
                   Chassi chassi = (Chassi)cell;
-                  ProgramInit.lsml().desktop.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
+                  ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
+                  ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
                }
             }
          }
       });
-      JScrollPane scrollPane = new JScrollPane(table);
-      add(scrollPane);
 
-      setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+      table.removeColumn(table.getColumnModel().getColumn(0)); // Remove auto-generated column
+      table.addColumn(new NameColumn());
+      table.addColumn(new SpeedColumn());
+      table.addColumn(new TonsColumn());
+      for(Part part : Arrays.asList(Part.RightArm, Part.RightTorso, Part.CenterTorso, Part.LeftTorso, Part.LeftArm, Part.Head)){
+         table.addColumn(new PartColumn(part));
+      }
 
-      addWindowListener(new WindowAdapter(){
-         @Override
-         public void windowClosing(WindowEvent aArg0){
-            current = null;
-         }
-      });
-
-      current = this;
+      setViewportView(table);
    }
 
 }

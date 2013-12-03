@@ -1,7 +1,9 @@
 package lisong_mechlab.util;
 
+import static lisong_mechlab.util.ByteUtil.lsl;
+import static lisong_mechlab.util.ByteUtil.lsr;
+
 import java.util.Arrays;
-import static lisong_mechlab.util.ByteUtil.*;
 
 /**
  * This class handles conversions between raw <code>byte</code> arrays and base64 strings.
