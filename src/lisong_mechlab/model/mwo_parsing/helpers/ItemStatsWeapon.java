@@ -66,6 +66,12 @@ public class ItemStatsWeapon extends ItemStats{
       public String artemisAmmoType;
       @XStreamAsAttribute
       public int    numPerShot;
+      @XStreamAsAttribute
+      public int minheatpenaltylevel;
+      @XStreamAsAttribute
+      public double heatpenalty;
+      @XStreamAsAttribute
+      public int heatPenaltyID;
    }
 
    public WeaponStatsTag WeaponStats;

@@ -28,15 +28,18 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 public class Weapon extends HeatSource{
    public static final int RANGE_ULP_FUZZ = 5;
 
-   protected final double  damagePerProjectile;
-   protected final double  cycleTime;
-   protected final double  rangeMin;
-   protected final double  rangeLong;
-   protected final double  rangeMax;
-   protected final int     ammoPerShot;
-   protected final int     projectilesPerShot;
+   private final double    damagePerProjectile;
+   private final double    cycleTime;
+   private final double    rangeMin;
+   private final double    rangeLong;
+   private final double    rangeMax;
+   private final int       ammoPerShot;
+   private final int       projectilesPerShot;
+   private final int       shotsPerFiring;
 
-   protected final int     shotsPerFiring;
+   private final int       ghostHeatGroupId;
+   private final double    ghostHeatMultiplier;
+   private final int       ghostHeatFreeAlpha;
 
    public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
       super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat);
@@ -49,6 +52,38 @@ public class Weapon extends HeatSource{
       shotsPerFiring = aStatsWeapon.WeaponStats.numFiring;
       projectilesPerShot = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
       ammoPerShot = aStatsWeapon.WeaponStats.ammoPerShot;
+
+      if( aStatsWeapon.WeaponStats.minheatpenaltylevel != 0 ){
+         ghostHeatGroupId = aStatsWeapon.WeaponStats.heatPenaltyID;
+         ghostHeatMultiplier = aStatsWeapon.WeaponStats.heatpenalty;
+         ghostHeatFreeAlpha = aStatsWeapon.WeaponStats.minheatpenaltylevel - 1;
+      }
+      else{
+         ghostHeatGroupId = -1;
+         ghostHeatMultiplier = 0;
+         ghostHeatFreeAlpha = -1;
+      }
+   }
+
+   /**
+    * 
+    * 0 = ungrouped
+    * 1 = PPC, ER PPC
+    * 2 = LRM20/15/10
+    * 3 = LL, ER LL, LPL
+    * 4 = SRM6 SRM4
+    * @return The ID of the group this weapon belongs to.
+    */
+   public int getGhostHeatGroup(){
+      return ghostHeatGroupId;
+   }
+
+   public double getGhostHeatMultiplier(){
+      return ghostHeatMultiplier;
+   }
+
+   public int getGhostHeatMaxFreeAlpha(){
+      return ghostHeatFreeAlpha;
    }
 
    public double getDamagePerShot(){

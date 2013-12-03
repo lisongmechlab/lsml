@@ -164,6 +164,31 @@ public class LoadoutTest{
    }
 
    /**
+    * Stripping a loadout shall remove all upgrades, items and armor.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testStrip() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("HBK-4J"), xBar);
+      cut.loadStock();
+
+      // Execute
+      cut.strip();
+
+      // Verify
+      for(LoadoutPart loadoutPart : cut.getPartLoadOuts()){
+         assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
+         assertEquals(0, loadoutPart.getArmorTotal());
+      }
+      assertFalse(cut.getUpgrades().hasArtemis());
+      assertFalse(cut.getUpgrades().hasDoubleHeatSinks());
+      assertFalse(cut.getUpgrades().hasFerroFibrous());
+      assertFalse(cut.getUpgrades().hasEndoSteel());
+   }
+
+   /**
     * Enabling DHS when it was disabled shall remove all heat sinks. TODO: Make it convert all heat sinks but not now.
     */
    @Test

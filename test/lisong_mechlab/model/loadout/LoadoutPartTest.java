@@ -380,6 +380,28 @@ public class LoadoutPartTest{
       verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
    }
 
+   @Test
+   public void testRemoveAll_success() throws Exception{
+      LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
+      Item item = ItemDB.lookup("AC/20 AMMO");
+
+      cut.addItem(item);
+      cut.removeAllItems();
+
+      assertTrue(cut.getItems().isEmpty());
+      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
+   }
+
+   @Test
+   public void testRemoveAll_noitems() throws Exception{
+      LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
+      cut.removeAllItems();
+
+      assertTrue(cut.getItems().isEmpty());
+      verifyNoMoreInteractions(xBar);
+   }
+
    /**
     * Removing an engine shall remove all heat sinks in the engine but none of the external heat sinks.
     * 

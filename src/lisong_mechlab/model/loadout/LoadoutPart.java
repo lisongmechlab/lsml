@@ -253,8 +253,12 @@ public class LoadoutPart implements MessageXBar.Reader{
    }
 
    public void removeAllItems(){
+      if( getItems().isEmpty() )
+         return;
+
       items.clear();
       items.addAll(internalPart.getInternalItems());
+      xBar.post(new Message(this, Type.ItemRemoved));
    }
 
    /**

@@ -20,6 +20,7 @@
 package lisong_mechlab.view.mechlab;
 
 import java.awt.Dimension;
+import java.text.DecimalFormat;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -50,6 +51,7 @@ public class ItemInfoPanel extends JPanel{
    private final JLabel      damage           = new JLabel();
    private final JLabel      heat             = new JLabel();
    private final JLabel      cycletime        = new JLabel();
+   private final JLabel      gh_MaxFreeAlpha  = new JLabel();
 
    // Ammo info
    private final JLabel      ammoperton       = new JLabel();
@@ -66,7 +68,7 @@ public class ItemInfoPanel extends JPanel{
       description.setFocusable(false);
       description.setLineWrap(true);
       description.setMinimumSize(new Dimension(300, 50));
-      description.setMaximumSize(new Dimension(2000, 50));
+      description.setMaximumSize(new Dimension(2000, 80));
       description.setAlignmentX(LEFT_ALIGNMENT);
       description.setFont(name.getFont());
       description.setBackground(name.getBackground());
@@ -81,6 +83,7 @@ public class ItemInfoPanel extends JPanel{
       add(basicInfo);
       add(damage);
       add(heat);
+      add(gh_MaxFreeAlpha);
       add(cycletime);
       add(ammoperton);
       add(description);
@@ -97,6 +100,7 @@ public class ItemInfoPanel extends JPanel{
 
          damage.setVisible(false);
          heat.setVisible(false);
+         gh_MaxFreeAlpha.setVisible(false);
          cycletime.setVisible(false);
          ammoperton.setVisible(false);
       }
@@ -111,10 +115,19 @@ public class ItemInfoPanel extends JPanel{
 
             damage.setVisible(true);
             heat.setVisible(true);
+            gh_MaxFreeAlpha.setVisible(true);
             cycletime.setVisible(true);
 
             damage.setText("Damage: " + weapon.getDamagePerShot());
             heat.setText("Heat: " + weapon.getHeat());
+            if( weapon.getGhostHeatGroup() >= 0 ){
+               gh_MaxFreeAlpha.setText("Max free alpha: " + weapon.getGhostHeatMaxFreeAlpha());
+            }
+            else{
+               DecimalFormat decimalFormat = new DecimalFormat("#");
+               gh_MaxFreeAlpha.setText("Max free alpha: " + decimalFormat.format(Double.POSITIVE_INFINITY));
+            }
+            gh_MaxFreeAlpha.setToolTipText("The maximum number of weapons in this group that may be fired simultaneously without incurring ghost heat.");
             cycletime.setText("Cooldown: " + weapon.getSecondsPerShot(aEfficiencies));
 
             if( weapon instanceof AmmoWeapon ){
@@ -130,6 +143,7 @@ public class ItemInfoPanel extends JPanel{
          else{
             damage.setVisible(false);
             heat.setVisible(false);
+            gh_MaxFreeAlpha.setVisible(false);
             cycletime.setVisible(false);
 
             if( anItem instanceof Ammunition ){
