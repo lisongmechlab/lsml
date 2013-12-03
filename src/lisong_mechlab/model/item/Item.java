@@ -39,7 +39,7 @@ public class Item implements Comparable<Item>{
       locName = Localization.key2string(anItemStats.Loc.nameTag);
       locDesc = Localization.key2string(anItemStats.Loc.descTag);
       mwoName = anItemStats.name;
-      mwoIdx = anItemStats.id;
+      mwoIdx = Integer.parseInt(anItemStats.id);
 
       slots = aNumSlots;
       tons = aNumTons;
