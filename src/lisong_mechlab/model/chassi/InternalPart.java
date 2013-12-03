@@ -1,36 +1,29 @@
 package lisong_mechlab.model.chassi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.mwo_parsing.HardpointsXml;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent;
-import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent.Hardpoint;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
 
 public class InternalPart{
-   private final int                         criticalslots;
-   private final Part                        type;
-   private final int                         maxarmor;
-   private final double                      hitpoints;
-   private final List<Item>                  internals;
-   private final Map<HardpointType, Integer> hardpoints;
+   private final int             criticalslots;
+   private final Part            type;
+   private final int             maxarmor;
+   private final double          hitpoints;
+   private final List<Item>      internals;
+   private final List<Hardpoint> hardpoints;
 
-   public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints){
+   public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints, Chassi aChassi){
       criticalslots = aComponent.Slots;
       type = aPart;
       hitpoints = aComponent.HP;
-      if( type == Part.Head ){
-         maxarmor = 18;
-      }
-      else{
-         maxarmor = (int)(hitpoints * 2);
-      }
+      maxarmor = (type == Part.Head) ? 18 : (int)(hitpoints * 2);
 
       internals = new ArrayList<Item>();
       if( null != aComponent.internals ){
@@ -39,20 +32,57 @@ public class InternalPart{
          }
       }
 
-      hardpoints = new HashMap<HardpointType, Integer>();
+      hardpoints = new ArrayList<>();
       if( null != aComponent.hardpoints ){
-         for(Hardpoint hardpoint : aComponent.hardpoints){
+         for(MdfComponent.Hardpoint hardpoint : aComponent.hardpoints){
             final HardpointType hardpointType = HardpointType.fromMwoType(hardpoint.Type);
-            if( !hardpoints.containsKey(hardpointType) ){
-               hardpoints.put(hardpointType, Integer.valueOf(0));
+
+            if( hardpointType == HardpointType.MISSILE ){
+               List<Integer> tubes = aHardpoints.tubesForId(hardpoint.ID);
+               for(Integer tube : tubes){
+                  // FIXME: Hardcoded case for hbk-4j which has 2 LRM10s as an LRM20 but the data files are missleading
+                  if( aChassi.getNameShort().equals("HBK-4J") && aPart == Part.RightTorso ){
+                     tube = 10;
+                  }
+                  if( tube < 1 ){
+                     hardpoints.add(HardpointCache.getHardpoint(hardpoint.ID, aChassi.getMwoName(), aPart));
+                  }
+                  else{
+                     hardpoints.add(new Hardpoint(HardpointType.MISSILE, tube));
+                  }
+               }
             }
-            hardpoints.put(hardpointType, hardpoints.get(hardpointType) + aHardpoints.slotsForId(hardpoint.ID));
+            else{
+               for(int i = 0; i < aHardpoints.slotsForId(hardpoint.ID); ++i)
+                  hardpoints.add(new Hardpoint(hardpointType));
+            }
+         }
+
+         // For any mech with more than 2 missile hardpoints in CT, any launcher beyond the largest one can only
+         // have 5 tubes (anything else is impossible to fit)
+         if( type == Part.CenterTorso && getNumHardpoints(HardpointType.MISSILE) > 1 ){
+            int maxTubes = 0;
+            for(Hardpoint hardpoint : hardpoints){
+               maxTubes = Math.max(hardpoint.getNumMissileTubes(), maxTubes);
+            }
+
+            boolean maxAdded = false;
+            for(int i = 0; i < hardpoints.size(); ++i){
+               if( hardpoints.get(i).getType() != HardpointType.MISSILE )
+                  continue;
+               int tubes = hardpoints.get(i).getNumMissileTubes();
+               if( (tubes < maxTubes && tubes > 5) || (tubes == maxTubes && maxAdded == true && tubes > 5) ){
+                  hardpoints.set(i, new Hardpoint(HardpointType.MISSILE, 5));
+               }
+               if( tubes == maxTubes )
+                  maxAdded = true;
+            }
          }
       }
 
       // Stupid PGI making hacks to put ECM on a hardpoint... now I have to change my code...
       if( aComponent.CanEquipECM == 1 )
-         hardpoints.put(HardpointType.ECM, 1);
+         hardpoints.add(new Hardpoint(HardpointType.ECM));
    }
 
    @Override
@@ -120,10 +150,13 @@ public class InternalPart{
    }
 
    public int getNumHardpoints(HardpointType aHardpointType){
-      if( hardpoints.containsKey(aHardpointType) ){
-         return hardpoints.get(aHardpointType);
+      int ans = 0;
+      for(Hardpoint it : hardpoints){
+         if( it.getType() == aHardpointType ){
+            ans++;
+         }
       }
-      return 0;
+      return ans;
    }
 
    public List<Item> getInternalItems(){
@@ -132,5 +165,9 @@ public class InternalPart{
 
    public double getHitpoints(){
       return hitpoints;
+   }
+
+   public Collection<Hardpoint> getHardpoints(){
+      return hardpoints;
    }
 }

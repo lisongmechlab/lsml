@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.view;
 
 import java.awt.Component;
@@ -23,6 +42,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
@@ -102,8 +122,8 @@ public class EquipmentPane extends JTree{
       }
    }
 
-   public EquipmentPane(final LoadoutDesktop aLoadoutDesktop, final LSML aLsml, MessageXBar crossBar){
-      model = new EquipmentTreeModel(aLsml, crossBar);
+   public EquipmentPane(final LoadoutDesktop aLoadoutDesktop, MessageXBar crossBar){
+      model = new EquipmentTreeModel(crossBar);
       xBar = crossBar;
 
       ToolTipManager.sharedInstance().registerComponent(this);
@@ -138,7 +158,7 @@ public class EquipmentPane extends JTree{
             }
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                Object clicked = getClickedObject(e);
-               int clicks = e.getClickCount()/2;
+               int clicks = e.getClickCount() / 2;
                if( clicked instanceof Chassi ){
                   Chassi chassi = (Chassi)clicked;
                   Loadout clickedLoadout = new Loadout(chassi, xBar);
@@ -178,27 +198,8 @@ public class EquipmentPane extends JTree{
          StringBuilder sb = new StringBuilder(100);
          Object leaf = mouseover.getLastPathComponent();
          if( leaf instanceof String ){
-            Item item = ItemDB.lookup((String)leaf);
-            DecimalFormat df = new DecimalFormat("#####.#");
             sb.append("<html>");
-            sb.append(item.getDescription()).append("<br>");
-            // TODO: Get a hold of the current loadout some how and show the applicable critslots and mass according to
-            // artemis etc
-            sb.append("Slots: ").append(item.getNumCriticalSlots(loadout.getUpgrades())).append(" Tons: ")
-              .append(df.format(item.getMass(loadout.getUpgrades()))).append("<br>");
-            if( item instanceof HeatSource ){
-               if( item instanceof Weapon ){
-                  Weapon weapon = (Weapon)item;
-                  sb.append("Damage: ").append(df.format(weapon.getDamagePerShot())).append(" Cooldown: ")
-                    .append(df.format(weapon.getSecondsPerShot())).append("<br>");
-                  sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
-                    .append(df.format(weapon.getRangeMax())).append("<br>");
-                  sb.append("DPS: ").append(df.format(weapon.getStat("d/s", loadout.getUpgrades()))).append(" DPH: ")
-                    .append(df.format(weapon.getStat("d/h", loadout.getUpgrades()))).append(" HPS: ")
-                    .append(df.format(weapon.getStat("h/s", loadout.getUpgrades()))).append("<br>");
-               }
-               sb.append("Heat: ").append(df.format(((HeatSource)item).getHeat())).append("<br>");
-            }
+            generateItemTooltip(sb, ItemDB.lookup((String)leaf));
             sb.append("</html>");
             return sb.toString();
          }
@@ -216,6 +217,32 @@ public class EquipmentPane extends JTree{
          }
       }
       return null;
+   }
+
+   /**
+    * Formats a tooltip for the current item into the given {@link StringBuilder}.
+    * 
+    * @param sb
+    * @param item
+    */
+   private void generateItemTooltip(StringBuilder sb, Item item){
+      Upgrades upgrades = (loadout != null) ? (loadout.getUpgrades()) : (null);
+      DecimalFormat df = new DecimalFormat("#####.#");
+
+      sb.append(item.getDescription()).append("<br>");
+      sb.append("Slots: ").append(item.getNumCriticalSlots(upgrades)).append(" Tons: ").append(df.format(item.getMass(upgrades))).append("<br>");
+      if( item instanceof HeatSource ){
+         if( item instanceof Weapon ){
+            Weapon weapon = (Weapon)item;
+            sb.append("Damage: ").append(df.format(weapon.getDamagePerShot())).append(" Cooldown: ").append(df.format(weapon.getSecondsPerShot()))
+              .append("<br>");
+            sb.append("Optimal: ").append(df.format(weapon.getRangeMin())).append(" - ").append(df.format(weapon.getRangeLong())).append(" / ")
+              .append(df.format(weapon.getRangeMax())).append("<br>");
+            sb.append("DPS: ").append(df.format(weapon.getStat("d/s", upgrades))).append(" DPH: ").append(df.format(weapon.getStat("d/h", upgrades)))
+              .append(" HPS: ").append(df.format(weapon.getStat("h/s", upgrades))).append("<br>");
+         }
+         sb.append("Heat: ").append(df.format(((HeatSource)item).getHeat())).append("<br>");
+      }
    }
 
    public Loadout getCurrentLoadout(){

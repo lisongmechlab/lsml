@@ -3,9 +3,9 @@
     <?define g_fname = "Li Song Mechlab"?>
     <?define g_sname = "LSML"?>
     <?define g_mfg = "Li-Soft"?>
-    <?define g_version = "1.1.0"?>
+    <?define g_version = "1.2.0"?>
 
-	<Product Id="88B89921-CF85-451E-B48F-70F5B1954ABF" Name="$(var.g_fname) $(var.g_version)"
+	<Product Id="5BD7FF27-7A0C-4817-A36F-D5B0B021D202" Name="$(var.g_fname) $(var.g_version)"
 		Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)"
 		UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
 

@@ -25,7 +25,6 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 
 import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Loadout;
@@ -40,13 +39,14 @@ import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
-import lisong_mechlab.model.tables.AmmoTableDataModel;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long        serialVersionUID = 4720126200474042446L;
    private final Loadout            loadout;
+   
+   // General pane
    private final JProgressBar       massBar;
    private final JLabel             massValue        = new JLabel("xxx");
    private final JProgressBar       armorBar;
@@ -57,6 +57,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JCheckBox          endoSteel        = new JCheckBox("Endo-Steel");
    private final JCheckBox          artemis          = new JCheckBox("Artemis IV");
 
+   // Movement pane
+   private final JLabel             topSpeed         = new JLabel("xxx");
+   private final JCheckBox          speedTweak       = new JCheckBox("Speed Tweak");
+   private final JLabel             jumpJets         = new JLabel("xxx");
+   
+   // Heat pane
    private final JLabel             heatsinks        = new JLabel("xxx");
    private final JLabel             effectiveHS      = new JLabel("xxx");
    private final JLabel             timeToOverheat   = new JLabel("xxx");
@@ -66,14 +72,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JCheckBox          heatContainment  = new JCheckBox("Heat Containment");
    private final JCheckBox          doubleBasics     = new JCheckBox("Double Basics");
 
+   // Offense pane
    private final JLabel             alphaStrike      = new JLabel("xxx");
    private final JLabel             dpsMax           = new JLabel("xxx");
    private final JLabel             dpsSustained     = new JLabel("xxx");
-   private final JTable             totalAmmoSupply;
-
-   private final JLabel             jumpJets         = new JLabel("xxx");
-   private final JLabel             topSpeed         = new JLabel("xxx");
-   private final JCheckBox          speedTweak       = new JCheckBox("Speed Tweak");
+   private final JTable             weaponTable;
 
    // Metrics
    private final TopSpeed           metricTopSpeed;
@@ -86,10 +89,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final AlphaStrike        metricAlphaStrike;
    private final MaxDPS             metricMaxDPS;
    private final MaxSustainedDPS    metricSustainedDps;
-   private final AmmoTableDataModel anAmmoTableDataModel;
    private transient Boolean        inhibitChanges   = false;
    private final ArtemisHandler     artemisChecker;
 
+   
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
 
@@ -105,7 +108,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
 
       artemisChecker = new ArtemisHandler(loadout);
-      anAmmoTableDataModel = new AmmoTableDataModel(loadout, anXBar);
+
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       anXBar.attach(this);
@@ -244,6 +247,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.setBorder(new CompoundBorder(new TitledBorder(null, "Offense"), innerBorder));
          offence.setLayout(new BoxLayout(offence, BoxLayout.PAGE_AXIS));
          offence.add(Box.createHorizontalGlue());
+         offence.add(Box.createVerticalGlue());
          add(offence);
 
          alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -257,13 +261,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          offence.add(Box.createVerticalStrut(5));
 
-         totalAmmoSupply = new JTable(anAmmoTableDataModel);
-         totalAmmoSupply.setFillsViewportHeight(true);
-         totalAmmoSupply.setModel(anAmmoTableDataModel);
-         ((DefaultTableCellRenderer)totalAmmoSupply.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-         JScrollPane ammo = new JScrollPane(totalAmmoSupply);
-         ammo.setPreferredSize(new Dimension(260, 100));
-         offence.add(ammo);
+         weaponTable = new WeaponSummaryTable(loadout, anXBar);
+         
+         JScrollPane weapons = new JScrollPane(weaponTable);
+         weapons.setPreferredSize(new Dimension(260, 100));
+         offence.add(weapons);
       }
 
       updateDisplay();
@@ -431,10 +433,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          }
       }
       catch( IllegalArgumentException e ){
-         JOptionPane.showMessageDialog(this, e.getMessage());
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
       }
       catch( RuntimeException e ){
-         JOptionPane.showMessageDialog(this, "Error while changing upgrades or efficiency!: " + e.getMessage());
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Error while changing upgrades or efficiency!: " + e.getMessage());
       }
    }
 
