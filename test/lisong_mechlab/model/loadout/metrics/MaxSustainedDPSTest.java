@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import lisong_mechlab.model.item.BallisticWeapon;
-import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
@@ -43,6 +41,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+/**
+ * Test suite for {@link MaxSustainedDPS} {@link Metric}.
+ * 
+ * @author Li Song
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class MaxSustainedDPSTest{
    @Mock
@@ -231,7 +234,7 @@ public class MaxSustainedDPSTest{
 
       // Execute
       cut.changeRange(0);
-      
+
       // Verify
       cut.calculate();
       assertEquals(llas.getRangeLong(), cut.getRange(), 0.0);
