@@ -30,6 +30,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.util.WeaponRanges;
 
 /**
  * This {@link Metric} calculates the maximal DPS that a {@link Loadout} can sustain indefinitely.
@@ -40,15 +41,52 @@ public class MaxSustainedDPS implements Metric{
    private final Loadout         loadout;
    private final HeatDissipation dissipation;
 
+   private double                range      = -1;
+   private boolean               fixedRange = false;
+
    public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation){
       loadout = aLoadout;
       dissipation = aHeatDissipation;
    }
 
+   /**
+    * Changes the range for which the damage is calculated. A value of 0 or less will result in the range with maximum
+    * damage always being selected.
+    * 
+    * @param aRange
+    *           The range to calculate the damage at.
+    */
+   public void changeRange(double aRange){
+      fixedRange = aRange > 0;
+      range = aRange;
+   }
+
+   /**
+    * @return The range that the result of the last call to calculate() is for.
+    */
+   public double getRange(){
+      return range;
+   }
+
    @Override
    public double calculate(){
+      if( fixedRange )
+         return calculate(range);
+
+      double maxDps = Double.NEGATIVE_INFINITY;
+      for(Double r : WeaponRanges.getRanges(loadout)){
+         double dps = calculate(r);
+         if( dps >= maxDps ){
+            maxDps = dps;
+            range = r;
+         }
+      }
+      return maxDps;
+   }
+
+   public double calculate(double aRange){
       double ans = 0.0;
-      Map<Weapon, Double> dd = getWeaponRatios(-1);
+      Map<Weapon, Double> dd = getWeaponRatios(aRange);
       for(Map.Entry<Weapon, Double> entry : dd.entrySet()){
          ans += entry.getKey().getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies()) * entry.getValue();
       }
@@ -63,7 +101,7 @@ public class MaxSustainedDPS implements Metric{
     * @return A {@link Map} with {@link Weapon} as key and a {@link Double} as value representing a % of how often the
     *         weapon is used.
     */
-   public Map<Weapon, Double> getWeaponRatios(final double range){
+   public Map<Weapon, Double> getWeaponRatios(final double aRange){
       double heatleft = dissipation.calculate();
       List<Weapon> weapons = new ArrayList<>(15);
       for(Item item : loadout.getAllItems()){
@@ -71,12 +109,12 @@ public class MaxSustainedDPS implements Metric{
             weapons.add((Weapon)item);
          }
       }
-      if( range >= 0 ){
+      if( aRange >= 0 ){
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
-               return Double.compare(aO2.getRangeEffectivity(range) * aO2.getStat("d/h", loadout.getUpgrades(), loadout.getEfficiencies()),
-                                     aO1.getRangeEffectivity(range) * aO1.getStat("d/h", loadout.getUpgrades(), loadout.getEfficiencies()));
+               return Double.compare(aO2.getRangeEffectivity(aRange) * aO2.getStat("d/h", loadout.getUpgrades(), loadout.getEfficiencies()),
+                                     aO1.getRangeEffectivity(aRange) * aO1.getStat("d/h", loadout.getUpgrades(), loadout.getEfficiencies()));
             }
          });
       }
@@ -95,7 +133,7 @@ public class MaxSustainedDPS implements Metric{
          Weapon weapon = weapons.remove(0);
          final double heat = weapon.getStat("h/s", loadout.getUpgrades(), loadout.getEfficiencies());
          final double ratio;
-         final double rangefactor = (range >= 0) ? weapon.getRangeEffectivity(range) : 1.0;
+         final double rangefactor = (aRange >= 0) ? weapon.getRangeEffectivity(aRange) : 1.0;
 
          if( heatleft == 0 ){
             ratio = 0;

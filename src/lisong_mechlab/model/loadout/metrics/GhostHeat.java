@@ -74,7 +74,7 @@ public class GhostHeat implements Metric{
                it.remove();
             }
          }
-         penalty += penalty(weapon, count);
+         penalty += calculatePenalty(weapon, count);
       }
 
       // XXX: http://mwomercs.com/forums/topic/127904-heat-scale-the-maths/ is not completely
@@ -89,12 +89,12 @@ public class GhostHeat implements Metric{
                maxweapon = w;
             }
          }
-         penalty += penalty(maxweapon, group.size());
+         penalty += calculatePenalty(maxweapon, group.size());
       }
       return penalty;
    }
 
-   private double penalty(Weapon aWeapon, int aCount){
+   private double calculatePenalty(Weapon aWeapon, int aCount){
       double penalty = 0;
       int count = aCount;
       while( count > aWeapon.getGhostHeatMaxFreeAlpha() ){

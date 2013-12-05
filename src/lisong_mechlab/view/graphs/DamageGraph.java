@@ -28,9 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -38,8 +36,6 @@ import javax.swing.KeyStroke;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
@@ -50,6 +46,7 @@ import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.Pair;
+import lisong_mechlab.util.WeaponRanges;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.OpenHelp;
 
@@ -125,30 +122,6 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       setVisible(true);
    }
 
-   /**
-    * <p>
-    * Calculates a list of X-coordinates at which the weapon balance needs to be recalculated.
-    * <p>
-    * In essence, this is a unique sorted list of the union of all min/long/max ranges for the weapons.
-    * 
-    * @return A {@link SortedSet} with {@link Double}s for the ranges.
-    */
-   private Double[] getRangeIntervals(){
-      SortedSet<Double> ans = new TreeSet<>();
-
-      ans.add(Double.valueOf(0.0));
-      for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon && item != ItemDB.AMS ){
-            Weapon weapon = (Weapon)item;
-            ans.add(weapon.getRangeZero());
-            ans.add(weapon.getRangeMin());
-            ans.add(weapon.getRangeLong());
-            ans.add(weapon.getRangeMax());
-         }
-      }
-      return ans.toArray(new Double[ans.size()]);
-   }
-
    private TableXYDataset getSeries(){
       SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(new Comparator<Weapon>(){
          @Override
@@ -160,7 +133,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          }
       });
 
-      Double[] ranges = getRangeIntervals();
+      Double[] ranges = WeaponRanges.getRanges(loadout);
       for(double range : ranges){
          Set<Entry<Weapon, Double>> damageDistributio = maxSustainedDPS.getWeaponRatios(range).entrySet();
          for(Map.Entry<Weapon, Double> entry : damageDistributio){

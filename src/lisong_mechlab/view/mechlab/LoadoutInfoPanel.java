@@ -317,13 +317,13 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // General
                // ----------------------------------------------------------------------
-               final DecimalFormat df2 = new DecimalFormat("#.##");
+               final DecimalFormat df2 = new DecimalFormat("###.##");
                df2.setMinimumFractionDigits(2);
 
-               final DecimalFormat df1 = new DecimalFormat("#.#");
+               final DecimalFormat df1 = new DecimalFormat("###.#");
                df1.setMinimumFractionDigits(1);
 
-               final DecimalFormat df0 = new DecimalFormat("#");
+               final DecimalFormat df0 = new DecimalFormat("###");
 
                double mass = loadout.getMass();
                massBar.setValue((int)Math.ceil(mass));
@@ -422,8 +422,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                   ghostHeat.setForeground(alphaStrike.getForeground());
                ghostHeat.setText("Ghost heat: " + df2.format(ghostHeatPenalty));
                alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()));
-               dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()));
-               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()));
+               dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()) + " @ " + df0.format(metricMaxDPS.getRange())+"m");
+               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()) + " @ " + df0.format(metricMaxDPS.getRange())+"m");
 
                inhibitChanges = false;
             }

@@ -89,32 +89,13 @@ public class MaxSustainedDPSTest{
    }
 
    /**
-    * AMS shall not be added to DPS
-    */
-   @Test
-   public void testCalculate_ams(){
-      // Setup
-      List<Item> items = new ArrayList<>();
-      BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      items.add(gauss);
-      items.add(ItemDB.AMS);
-
-      when(loadout.getAllItems()).thenReturn(items);
-      when(heatDissipation.calculate()).thenReturn(1.0);
-
-      double result = cut.calculate();
-
-      assertEquals(gauss.getStat("d/s", null, null), result, 0.0);
-   }
-
-   /**
     * PPC shall have an instant fall off (patch 2013-09-03)
     */
    @Test
    public void testGetWeaponRatios_ppc(){
       // Setup
       List<Item> items = new ArrayList<>();
-      EnergyWeapon ppc = (EnergyWeapon)ItemDB.lookup("PPC");
+      Weapon ppc = (Weapon)ItemDB.lookup("PPC");
       items.add(ppc);
 
       when(loadout.getAllItems()).thenReturn(items);
@@ -137,7 +118,7 @@ public class MaxSustainedDPSTest{
    public void testGetWeaponRatios_machineGun(){
       // Setup
       List<Item> items = new ArrayList<>();
-      BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("MACHINE GUN");
+      Weapon mg = (Weapon)ItemDB.lookup("MACHINE GUN");
       items.add(mg);
 
       when(loadout.getAllItems()).thenReturn(items);
@@ -147,7 +128,6 @@ public class MaxSustainedDPSTest{
 
       assertTrue(result_0.containsKey(mg));
       assertEquals(0.0, result_0.get(mg).doubleValue(), 0.0);
-
    }
 
    /**
@@ -158,9 +138,9 @@ public class MaxSustainedDPSTest{
    public void testCalculate(){
       // Setup
       List<Item> items = new ArrayList<>();
-      BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      EnergyWeapon erppc = (EnergyWeapon)ItemDB.lookup("ER PPC");
-      EnergyWeapon llas = (EnergyWeapon)ItemDB.lookup("LARGE LASER");
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
+      Weapon erppc = (Weapon)ItemDB.lookup("ER PPC");
+      Weapon llas = (Weapon)ItemDB.lookup("LARGE LASER");
 
       final long seed = 1;
       Random rng = new Random(seed);
@@ -182,5 +162,78 @@ public class MaxSustainedDPSTest{
       // Verify
       double expected = gauss.getStat("d/s", null, null) + erppc.getStat("d/s", null, null) * 1.5 + llas.getStat("d/s", null, null);
       assertEquals(expected, result, 0.0);
+      assertEquals(llas.getRangeLong(), cut.getRange(), 0.0);
+   }
+
+   /**
+    * AMS shall not be added to DPS
+    */
+   @Test
+   public void testCalculate_ams(){
+      // Setup
+      List<Item> items = new ArrayList<>();
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
+      items.add(gauss);
+      items.add(ItemDB.AMS);
+
+      when(loadout.getAllItems()).thenReturn(items);
+      when(heatDissipation.calculate()).thenReturn(1.0);
+
+      double result = cut.calculate();
+
+      assertEquals(gauss.getStat("d/s", null, null), result, 0.0);
+      assertEquals(gauss.getRangeLong(), cut.getRange(), 0.0);
+   }
+
+   /**
+    * Calculate shall return the correct result at the requested range.
+    */
+   @Test
+   public void testCalculate_atRange(){
+      // Setup
+      List<Item> items = new ArrayList<>();
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
+      Weapon lrm20 = (Weapon)ItemDB.lookup("LRM20");
+      Weapon llas = (Weapon)ItemDB.lookup("LARGE LASER");
+      items.add(gauss);
+      items.add(lrm20);
+      items.add(llas);
+
+      // Enough heat dissipation to dissipate everything.
+      double heat = gauss.getStat("h/s", null, null) + lrm20.getStat("h/s", null, null) + llas.getStat("h/s", null, null);
+      when(loadout.getAllItems()).thenReturn(items);
+      when(heatDissipation.calculate()).thenReturn(heat);
+
+      cut.changeRange(100);
+      double result = cut.calculate();
+
+      // LRM not in range
+      assertEquals(gauss.getStat("d/s", null, null) + llas.getStat("d/s", null, null), result, 0.0);
+      assertEquals(100, cut.getRange(), 0.0);
+   }
+
+   /**
+    * Calculate shall return the correct result at best range if changeRange is called with 0 or less.
+    */
+   @Test
+   public void testChangeRange_reset(){
+      // Setup
+      List<Item> items = new ArrayList<>();
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
+      Weapon lrm20 = (Weapon)ItemDB.lookup("LRM20");
+      Weapon llas = (Weapon)ItemDB.lookup("LARGE LASER");
+      items.add(gauss);
+      items.add(lrm20);
+      items.add(llas);
+      when(loadout.getAllItems()).thenReturn(items);
+      when(heatDissipation.calculate()).thenReturn(1000.0);
+      cut.changeRange(100);
+
+      // Execute
+      cut.changeRange(0);
+      
+      // Verify
+      cut.calculate();
+      assertEquals(llas.getRangeLong(), cut.getRange(), 0.0);
    }
 }
