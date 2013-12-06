@@ -29,19 +29,19 @@ import lisong_mechlab.model.loadout.Loadout;
  * 
  * @author Li Song
  */
-public class AlphaStrike implements Metric{
-   private final Loadout loadout;
+public class AlphaStrike extends RangeMetric{
 
    public AlphaStrike(final Loadout aLoadout){
-      loadout = aLoadout;
+      super(aLoadout);
    }
 
    @Override
-   public double calculate(){
+   public double calculate(double aRange){
       double ans = 0;
       for(Item item : loadout.getAllItems()){
          if( item instanceof Weapon && item != ItemDB.AMS ){
-            ans += ((Weapon)item).getDamagePerShot();
+            Weapon weapon = (Weapon)item;
+            ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange);
          }
       }
       return ans;

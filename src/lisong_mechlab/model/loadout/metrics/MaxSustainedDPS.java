@@ -30,60 +30,21 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.util.WeaponRanges;
 
 /**
  * This {@link Metric} calculates the maximal DPS that a {@link Loadout} can sustain indefinitely.
  * 
  * @author Li Song
  */
-public class MaxSustainedDPS implements Metric{
-   private final Loadout         loadout;
+public class MaxSustainedDPS extends RangeMetric{
    private final HeatDissipation dissipation;
 
-   private double                range      = -1;
-   private boolean               fixedRange = false;
-
    public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation){
-      loadout = aLoadout;
+      super(aLoadout);
       dissipation = aHeatDissipation;
    }
 
-   /**
-    * Changes the range for which the damage is calculated. A value of 0 or less will result in the range with maximum
-    * damage always being selected.
-    * 
-    * @param aRange
-    *           The range to calculate the damage at.
-    */
-   public void changeRange(double aRange){
-      fixedRange = aRange > 0;
-      range = aRange;
-   }
-
-   /**
-    * @return The range that the result of the last call to calculate() is for.
-    */
-   public double getRange(){
-      return range;
-   }
-
    @Override
-   public double calculate(){
-      if( fixedRange )
-         return calculate(range);
-
-      double maxDps = Double.NEGATIVE_INFINITY;
-      for(Double r : WeaponRanges.getRanges(loadout)){
-         double dps = calculate(r);
-         if( dps >= maxDps ){
-            maxDps = dps;
-            range = r;
-         }
-      }
-      return maxDps;
-   }
-
    public double calculate(double aRange){
       double ans = 0.0;
       Map<Weapon, Double> dd = getWeaponRatios(aRange);

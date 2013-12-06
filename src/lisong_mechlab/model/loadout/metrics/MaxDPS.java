@@ -23,57 +23,18 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.util.WeaponRanges;
 
 /**
  * This {@link Metric} calculates the maximal DPS a {@link Loadout} can output.
  * 
  * @author Li Song
  */
-public class MaxDPS implements Metric{
-   private final Loadout loadout;
-   private double        range      = -1;
-   private boolean       fixedRange = false;
-
+public class MaxDPS extends RangeMetric{
    public MaxDPS(Loadout aLoadout){
-      loadout = aLoadout;
-   }
-
-   /**
-    * Changes the range for which the damage is calculated. A value of 0 or less will result in the range with maximum
-    * damage always being selected.
-    * 
-    * @param aRange
-    *           The range to calculate the damage at.
-    */
-   public void changeRange(double aRange){
-      fixedRange = aRange > 0;
-      range = aRange;
-   }
-
-   /**
-    * @return The range that the result of the last call to calculate() is for.
-    */
-   public double getRange(){
-      return range;
+      super(aLoadout);
    }
 
    @Override
-   public double calculate(){
-      if( fixedRange )
-         return calculate(range);
-
-      double maxDPS = Double.NEGATIVE_INFINITY;
-      for(Double currentRange : WeaponRanges.getRanges(loadout)){
-         double dps = calculate(currentRange);
-         if( dps >= maxDPS ){
-            maxDPS = dps;
-            range = currentRange;
-         }
-      }
-      return maxDPS;
-   }
-
    public double calculate(double aRange){
       double ans = 0;
       for(Item item : loadout.getAllItems()){
