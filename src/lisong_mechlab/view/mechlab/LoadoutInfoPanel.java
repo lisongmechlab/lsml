@@ -38,13 +38,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Loadout;
@@ -97,6 +101,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JCheckBox       doubleBasics     = new JCheckBox("Double Basics");
 
    // Offense pane
+   private final JSpinner        rangeSpinner     = new JSpinner(new SpinnerNumberModel(-1, -1, 3000, 10));
    private final JLabel          alphaStrike      = new JLabel("xxx");
    private final JLabel          dpsMax           = new JLabel("xxx");
    private final JLabel          dpsSustained     = new JLabel("xxx");
@@ -245,6 +250,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);
          timeToOverheat.setToolTipText("The number of seconds your mech can go \"All guns a'blazing\" before it overheats, assuming no ghost heat.");
          heat.add(timeToOverheat);
+         
+         ghostHeat.setAlignmentX(Component.CENTER_ALIGNMENT);
+         ghostHeat.setToolTipText("The amount of extra heat incurred during an alpha strike.");
+         heat.add(ghostHeat);
 
          coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(coolingRatio);
@@ -278,13 +287,24 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.add(Box.createVerticalGlue());
          add(offence);
 
-         offence.add(fastFire);
+         JPanel panel = new JPanel();
+         panel.add(new JLabel("Range:"));
+         panel.setToolTipText("Select the range of engagement that alpha strike, max and sustained DPS will be calculated for. Set this to -1 to automatically select your optimal ranges.");
+         panel.add(rangeSpinner);
+         rangeSpinner.setToolTipText(panel.getToolTipText());
+         rangeSpinner.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent aArg0){
+               metricAlphaStrike.changeRange(((Integer)rangeSpinner.getValue()));
+               metricMaxDPS.changeRange(((Integer)rangeSpinner.getValue()));
+               metricSustainedDps.changeRange(((Integer)rangeSpinner.getValue()));
+               updateDisplay();
+            }
+         });
+         panel.add(fastFire);
          fastFire.addItemListener(this);
          fastFire.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-         ghostHeat.setAlignmentX(Component.CENTER_ALIGNMENT);
-         ghostHeat.setToolTipText("The amount of extra heat incurred during an alpha strike.");
-         offence.add(ghostHeat);
+         offence.add(panel);
 
          alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(alphaStrike);
@@ -409,21 +429,22 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                }
                heatsinks.setText("Heatsinks: " + loadout.getHeatsinksCount());
                effectiveHS.setText("Heat capacity: " + df2.format(metricHeatCapacity.calculate()));
-               timeToOverheat.setText("Seconds to Overheat: " + df2.format(metricTimeToOverHeat.calculate()));
-               coolingRatio.setText("Cooling efficiency: " + df0.format(metricCoolingRatio.calculate() * 100.0) + "%");
-
-               // Offense
-               // ----------------------------------------------------------------------
-               fastFire.setSelected(loadout.getEfficiencies().hasFastFire());
                double ghostHeatPenalty = metricGhostHeat.calculate();
                if( ghostHeatPenalty > 0 )
                   ghostHeat.setForeground(Color.RED);
                else
                   ghostHeat.setForeground(alphaStrike.getForeground());
                ghostHeat.setText("Ghost heat: " + df2.format(ghostHeatPenalty));
-               alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()));
-               dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()) + " @ " + df0.format(metricMaxDPS.getRange())+"m");
-               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()) + " @ " + df0.format(metricMaxDPS.getRange())+"m");
+               timeToOverheat.setText("Seconds to Overheat: " + df2.format(metricTimeToOverHeat.calculate()));
+               coolingRatio.setText("Cooling efficiency: " + df0.format(metricCoolingRatio.calculate() * 100.0) + "%");
+
+               // Offense
+               // ----------------------------------------------------------------------
+               fastFire.setSelected(loadout.getEfficiencies().hasFastFire());
+               alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()) + " @ " + df0.format(metricAlphaStrike.getRange()) + "m");
+               dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()) + " @ " + df0.format(metricMaxDPS.getRange()) + "m");
+               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()) + " @ " + df0.format(metricSustainedDps.getRange())
+                                    + "m");
 
                inhibitChanges = false;
             }

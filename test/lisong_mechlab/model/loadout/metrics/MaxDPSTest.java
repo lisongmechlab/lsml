@@ -30,6 +30,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -44,124 +45,54 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class MaxDPSTest{
    @Mock
-   private Loadout loadout;
+   private Loadout    loadout;
    @InjectMocks
-   private MaxDPS  cut;
+   private MaxDPS     cut;
+   private List<Item> items = new ArrayList<>();
 
-   /**
-    * AMS is not counted into DPS
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testCalculate_AMS() throws Exception{
-      Weapon mg = (Weapon)ItemDB.lookup("MACHINE GUN");
-      List<Item> items = new ArrayList<>();
+   @Before
+   public void setup(){
       when(loadout.getAllItems()).thenReturn(items);
-      items.add(ItemDB.AMS);
-      items.add(mg);
-
-      assertEquals(mg.getStat("d/s", null, null), cut.calculate(), 0.0);
    }
 
    /**
-    * Default behavior without arguments is to find the range with highest DPS.
-    * <p>
-    * This case has the ranges completely overlap.
-    * 
-    * @throws Exception
+    * AMS is not counted into DPS.
     */
    @Test
-   public void testCalculate_overlap() throws Exception{
+   public void testCalculate_AMS(){
+      items.add(ItemDB.AMS);
+      assertEquals(0.0, cut.calculate(0), 0.0);
+   }
+
+   /**
+    * Non-Weapon types do not cause exceptions or affect the result.
+    */
+   @Test
+   public void testCalculate_otherItems(){
+      items.add(ItemDB.ECM);
+      items.add(ItemDB.BAP);
+      assertEquals(0.0, cut.calculate(0), 0.0);
+   }
+
+   /**
+    * {@link MaxDPS#calculate(double)} shall calculate the maximal DPS at a given range.
+    */
+   @Test
+   public void testCalculate(){
       Weapon ac5 = (Weapon)ItemDB.lookup("AC/5");
       Weapon lrm20 = (Weapon)ItemDB.lookup("LRM20");
-      List<Item> items = new ArrayList<>();
-      when(loadout.getAllItems()).thenReturn(items);
-      items.add(ItemDB.AMS);
+      Weapon slas = (Weapon)ItemDB.lookup("SMALL LASER");
       items.add(ac5);
       items.add(lrm20);
-      items.add(ItemDB.lookup("STD ENGINE 300")); // Unrelated items shall not skew the values
-      items.add(ItemDB.lookup("AMS AMMO"));
-
-      assertEquals(ac5.getStat("d/s", null, null) + lrm20.getStat("d/s", null, null), cut.calculate(), 0.0);
-      assertEquals(ac5.getRangeLong(), cut.getRange(), 0.0); // AC5 range dominates
-   }
-
-   /**
-    * Default behavior without arguments is to find the range with highest DPS.
-    * <p>
-    * This case has the ranges not overlapping.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testCalculate_noOverlap() throws Exception{
-      Weapon slas = (Weapon)ItemDB.lookup("SMALL LASER");
-      Weapon lrm20 = (Weapon)ItemDB.lookup("LRM20");
-      List<Item> items = new ArrayList<>();
-      when(loadout.getAllItems()).thenReturn(items);
-      items.add(ItemDB.AMS);
       items.add(slas);
-      items.add(lrm20);
-      items.add(ItemDB.lookup("STD ENGINE 300")); // Unrelated items shall not skew the values
-      items.add(ItemDB.lookup("AMS AMMO"));
 
-      assertEquals(lrm20.getStat("d/s", null, null), cut.calculate(), 0.0);
-      assertEquals(lrm20.getRangeLong(), cut.getRange(), 0.0); // LRM range dominates
-   }
+      double dps_ac5 = ac5.getStat("d/s", null, null);
+      double dps_lrm20 = lrm20.getStat("d/s", null, null);
+      double dps_slas = slas.getStat("d/s", null, null);
 
-   /**
-    * Default behavior without arguments is to find the range with highest DPS.
-    * <p>
-    * This case has a specific range to calculate at.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testCalculate_atRange() throws Exception{
-      Weapon slas = (Weapon)ItemDB.lookup("SMALL LASER");
-      Weapon ac5 = (Weapon)ItemDB.lookup("AC/5");
-      Weapon lrm20 = (Weapon)ItemDB.lookup("LRM20");
-      List<Item> items = new ArrayList<>();
-      when(loadout.getAllItems()).thenReturn(items);
-      items.add(ItemDB.AMS);
-      items.add(slas);
-      items.add(lrm20);
-      items.add(ac5);
-
-      cut.changeRange(80);
-      assertEquals(ac5.getStat("d/s", null, null) + slas.getStat("d/s", null, null), cut.calculate(), 0.0);
-      assertEquals(80, cut.getRange(), 0.0);
-
-      cut.changeRange(500);
-      assertEquals(ac5.getStat("d/s", null, null) + lrm20.getStat("d/s", null, null), cut.calculate(), 0.0);
-      assertEquals(500, cut.getRange(), 0.0);
-   }
-
-   /**
-    * Default behavior without arguments is to find the range with highest DPS.
-    * <p>
-    * This case checks that the default behaviour can be reactivated after having set a specific range.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testCalculate_atRangeNoMore() throws Exception{
-      Weapon slas = (Weapon)ItemDB.lookup("SMALL LASER");
-      Weapon ac5 = (Weapon)ItemDB.lookup("AC/5");
-      Weapon lrm20 = (Weapon)ItemDB.lookup("LRM20");
-      List<Item> items = new ArrayList<>();
-      when(loadout.getAllItems()).thenReturn(items);
-      items.add(ItemDB.AMS);
-      items.add(slas);
-      items.add(lrm20);
-      items.add(ac5);
-
-      cut.changeRange(80);
-
-      cut.changeRange(0);
-      assertEquals(ac5.getStat("d/s", null, null) + lrm20.getStat("d/s", null, null), cut.calculate(), 0.0);
-      assertEquals(ac5.getRangeLong(), cut.getRange(), 0.0);
+      assertEquals(dps_ac5 + dps_slas, cut.calculate(0), 0.0);
+      assertEquals(dps_ac5 + dps_slas, cut.calculate(90), 0.0);
+      assertEquals(dps_ac5 + dps_lrm20, cut.calculate(200), 0.0);
    }
 
 }

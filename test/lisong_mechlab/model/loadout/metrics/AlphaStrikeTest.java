@@ -19,56 +19,79 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.metrics;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import lisong_mechlab.model.loadout.Loadout;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test suite for {@link AlphaStrike}.
  * 
  * @author Emily Björk
  */
+@RunWith(MockitoJUnitRunner.class)
 public class AlphaStrikeTest{
-   private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-   private final AlphaStrike          cut = new AlphaStrike(mlc.loadout);
+   @Mock
+   Loadout             loadout;
+   @InjectMocks
+   private AlphaStrike cut;
+   private List<Item>  items = new ArrayList<>();
 
-   /**
-    * Calculate shall sum up the per volley damage of all weapons.
-    */
-   @Test
-   public void testCalculate(){
-      List<Item> items = new ArrayList<>();
-      Weapon ppc = (Weapon)ItemDB.lookup("PPC");
-      Weapon ll = (Weapon)ItemDB.lookup("LARGE LASER");
-      Weapon lrm20 = (Weapon)ItemDB.lookup("LRM 20");
-      Weapon lb10x = (Weapon)ItemDB.lookup("LB 10-X AC");
-      items.add(ItemDB.BAP); // Shall not barf on non-weapons
-      items.add(ppc);
-      items.add(ll);
-      items.add(lrm20);
-      items.add(lb10x);
-      when(mlc.loadout.getAllItems()).thenReturn(items);
-
-      double expected = ppc.getDamagePerShot() + ll.getDamagePerShot() + lrm20.getDamagePerShot() + lb10x.getDamagePerShot();
-      assertEquals(expected, cut.calculate(), 0.0);
+   @Before
+   public void setup(){
+      when(loadout.getAllItems()).thenReturn(items);
    }
 
    /**
-    * AMS shall not be counted to the alpha strike.
+    * AMS is not counted into the result.
     */
    @Test
-   public void testCalculate_NoAMS(){
-      List<Item> items = Arrays.asList((Item)ItemDB.AMS);
-      when(mlc.loadout.getAllItems()).thenReturn(items);
+   public void testCalculate_AMS(){
+      items.add(ItemDB.AMS);
+      assertEquals(0.0, cut.calculate(0), 0.0);
+   }
 
-      assertEquals(0, cut.calculate(), 0.0);
+   /**
+    * Non-Weapon types do not cause exceptions or affect the result.
+    */
+   @Test
+   public void testCalculate_otherItems(){
+      items.add(ItemDB.ECM);
+      items.add(ItemDB.BAP);
+      assertEquals(0.0, cut.calculate(0), 0.0);
+   }
+
+   /**
+    * Calculate shall sum up the per volley damage of all weapons at the given range.
+    */
+   @Test
+   public void testCalculate(){
+      Weapon ac5 = (Weapon)ItemDB.lookup("AC/5");
+      Weapon lrm20 = (Weapon)ItemDB.lookup("LRM20");
+      Weapon slas = (Weapon)ItemDB.lookup("SMALL LASER");
+      items.add(ac5);
+      items.add(lrm20);
+      items.add(slas);
+
+      double alpha_ac5 = ac5.getDamagePerShot();
+      double alpha_lrm20 = lrm20.getDamagePerShot();
+      double alpha_slas = slas.getDamagePerShot();
+
+      assertEquals(alpha_ac5 + alpha_slas, cut.calculate(0), 0.0);
+      assertEquals(alpha_ac5 + alpha_slas, cut.calculate(90), 0.0);
+      assertEquals(alpha_ac5 + alpha_lrm20, cut.calculate(200), 0.0);
    }
 }
