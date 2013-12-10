@@ -52,7 +52,7 @@ public class ItemLabel extends JLabel{
       item = anItem;
 
       StyleManager.styleItem(this, item);
-      setToolTipText(item.getDescription());
+      setToolTipText("<html>"+item.getName() + "<p>" + item.getDescription()+"</html>");
 
       setTransferHandler(new ItemTransferHandler());
       addMouseListener(new MouseAdapter(){

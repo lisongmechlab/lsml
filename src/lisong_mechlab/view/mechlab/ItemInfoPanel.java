@@ -67,7 +67,7 @@ public class ItemInfoPanel extends JPanel{
       description.setEditable(false);
       description.setFocusable(false);
       description.setLineWrap(true);
-      description.setMinimumSize(new Dimension(300, 50));
+      description.setMinimumSize(new Dimension(400, 50));
       description.setMaximumSize(new Dimension(2000, 80));
       description.setAlignmentX(LEFT_ALIGNMENT);
       description.setFont(name.getFont());
