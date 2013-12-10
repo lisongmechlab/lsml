@@ -127,6 +127,12 @@ public class Item implements Comparable<Item>{
       HardpointType rhsHp = rhs instanceof Ammunition ? ((Ammunition)rhs).getWeaponHardpointType() : rhs.getHardpointType();
       int hp = lhsHp.compareTo(rhsHp);
       if( hp == 0 ){
+         if( this instanceof Ammunition && !(rhs instanceof Ammunition) ){
+            return 1;
+         }
+         else if( !(this instanceof Ammunition) && rhs instanceof Ammunition ){
+            return -1;
+         }
          int classCompare = this.getClass().getName().compareTo(rhs.getClass().getName());
          if( classCompare == 0 ){
             return toString().compareTo(rhs.toString());

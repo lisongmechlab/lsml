@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,8 +33,14 @@ import javax.swing.Scrollable;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
+import lisong_mechlab.model.item.Ammunition;
+import lisong_mechlab.model.item.BallisticWeapon;
+import lisong_mechlab.model.item.EnergyWeapon;
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -90,16 +97,74 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
 
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-      JPanel itemFlowPanel = new ScrollablePanel();
-      itemFlowPanel.setLayout(new ModifiedFlowLayout());
       List<Item> items = ItemDB.lookup(Item.class);
       Collections.sort(items);
+
+      JPanel itemFlowPanel = new ScrollablePanel();
+      JPanel energyItems = new JPanel(new ModifiedFlowLayout());
+      energyItems.setBorder(BorderFactory.createTitledBorder("Energy"));
+      JPanel ballisticItems = new JPanel(new ModifiedFlowLayout());
+      ballisticItems.setBorder(BorderFactory.createTitledBorder("Ballistic"));
+      JPanel missileItems = new JPanel(new ModifiedFlowLayout());
+      missileItems.setBorder(BorderFactory.createTitledBorder("Missile"));
+      JPanel miscItems = new JPanel(new ModifiedFlowLayout());
+      miscItems.setBorder(BorderFactory.createTitledBorder("Misc"));
+      JPanel engineItems = new JPanel(new ModifiedFlowLayout());
+      engineItems.setBorder(BorderFactory.createTitledBorder("Engine - STD"));
+      JPanel engineXlItems = new JPanel(new ModifiedFlowLayout());
+      engineXlItems.setBorder(BorderFactory.createTitledBorder("Engine - XL"));
       for(Item item : items){
          ItemLabel itemLabel = new ItemLabel(item, this, infoPanel);
-         itemFlowPanel.add(itemLabel);
+         if( item instanceof Ammunition ){
+            Ammunition ammunition = (Ammunition)item;
+            switch( ammunition.getWeaponHardpointType() ){
+               case BALLISTIC:
+                  ballisticItems.add(itemLabel);
+                  break;
+               case ENERGY:
+                  energyItems.add(itemLabel);
+                  break;
+               case MISSILE:
+                  missileItems.add(itemLabel);
+                  break;
+               case AMS: // Fall-through
+               case ECM: // Fall-through
+               case NONE: // Fall-through
+               default:
+                  miscItems.add(itemLabel);
+                  break;
+            }
+         }
+         else if( item instanceof EnergyWeapon ){
+            energyItems.add(itemLabel);
+         }
+         else if( item instanceof BallisticWeapon ){
+            ballisticItems.add(itemLabel);
+         }
+         else if( item instanceof MissileWeapon ){
+            missileItems.add(itemLabel);
+         }
+         else if( item instanceof Engine ){
+            if( ((Engine)item).getType() == EngineType.XL ){
+               engineXlItems.add(itemLabel);
+            }
+            else{
+               engineItems.add(itemLabel);
+            }
+         }
+         else{
+            miscItems.add(itemLabel);
+         }
          itemLabels.add(itemLabel);
       }
 
+      itemFlowPanel.add(energyItems);
+      itemFlowPanel.add(ballisticItems);
+      itemFlowPanel.add(missileItems);
+      itemFlowPanel.add(miscItems);
+      itemFlowPanel.add(engineItems);
+      itemFlowPanel.add(engineXlItems);
+      itemFlowPanel.setLayout(new BoxLayout(itemFlowPanel, BoxLayout.PAGE_AXIS));
       JScrollPane itemFlowScrollPanel = new JScrollPane(itemFlowPanel);
       itemFlowScrollPanel.setAlignmentX(LEFT_ALIGNMENT);
 
