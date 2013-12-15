@@ -35,6 +35,7 @@ import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
 import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
@@ -69,6 +70,7 @@ public class LSML extends JFrame{
    public final MessageXBar        xBar                   = new MessageXBar();
    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
    public final Preferences        preferences            = new Preferences();
+   public final UndoStack          undoStack              = new UndoStack(xBar, 256);
 
    public final MechLabPane        mechLabPane;
    public final JTabbedPane        tabbedPane;
@@ -127,7 +129,7 @@ public class LSML extends JFrame{
       File garageFile = new File(garageFileName);
       if( garageFile.exists() ){
          try{
-            garage = MechGarage.open(garageFile, xBar);
+            garage = MechGarage.open(garageFile, xBar, undoStack);
          }
          catch( Exception e ){
             JOptionPane.showMessageDialog(this,
@@ -137,7 +139,7 @@ public class LSML extends JFrame{
          }
       }
       else{
-         garage = new MechGarage(xBar);
+         garage = new MechGarage(xBar, undoStack);
       }
    }
 
@@ -153,7 +155,7 @@ public class LSML extends JFrame{
          return;
       }
       try{
-         garage = MechGarage.open(chooser.getSelectedFile(), xBar);
+         garage = MechGarage.open(chooser.getSelectedFile(), xBar, undoStack);
          PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
       }
       catch( IOException e ){
@@ -182,7 +184,7 @@ public class LSML extends JFrame{
          }
       }
 
-      garage = new MechGarage(xBar);
+      garage = new MechGarage(xBar, undoStack);
    }
 
    public void saveGarageAs(){

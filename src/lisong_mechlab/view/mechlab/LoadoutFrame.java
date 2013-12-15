@@ -105,7 +105,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                   int ans = JOptionPane.showConfirmDialog(ProgramInit.lsml(), "Would you like to save " + loadout.getName() + " to your garage?",
                                                           "Save to garage?", JOptionPane.YES_NO_CANCEL_OPTION);
                   if( ans == JOptionPane.YES_OPTION ){
-                     ProgramInit.lsml().getGarage().add(loadout);
+                     ProgramInit.lsml().getGarage().add(loadout, true);
                   }
                   else if( ans == JOptionPane.NO_OPTION ){
                      // Discard loadout
@@ -226,7 +226,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             public void actionPerformed(ActionEvent aArg0){
                try{
                   // TODO: This should be an Action class
-                  ProgramInit.lsml().getGarage().add(loadout);
+                  ProgramInit.lsml().getGarage().add(loadout, true);
                }
                catch( IllegalArgumentException e ){
                   JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't add to garage! Error: " + e.getMessage());
