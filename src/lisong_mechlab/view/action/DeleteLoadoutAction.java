@@ -63,7 +63,7 @@ public class DeleteLoadoutAction extends AbstractAction{
                                                     "Confirm operation", JOptionPane.YES_NO_OPTION);
          if( JOptionPane.YES_OPTION == result ){
             try{
-               garage.remove(loadout);
+               garage.remove(loadout, true);
             }
             catch( RuntimeException e ){
                JOptionPane.showMessageDialog(source,
