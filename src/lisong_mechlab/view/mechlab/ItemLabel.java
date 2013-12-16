@@ -71,7 +71,7 @@ public class ItemLabel extends JLabel{
 
             if( SwingUtilities.isLeftMouseButton(anEvent) && anEvent.getClickCount() >= 2 ){
                if( null != loadout )
-                  loadout.addItem(item);
+                  loadout.addItem(item, true);
             }
          }
       });

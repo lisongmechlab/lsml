@@ -68,9 +68,9 @@ public class LSML extends JFrame{
    private LsmlProtocolIPC         lsmlProtocolIPC;
    private MechGarage              garage;
    public final MessageXBar        xBar                   = new MessageXBar();
-   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
-   public final Preferences        preferences            = new Preferences();
    public final UndoStack          undoStack              = new UndoStack(xBar, 256);
+   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar, undoStack);
+   public final Preferences        preferences            = new Preferences();
 
    public final MechLabPane        mechLabPane;
    public final JTabbedPane        tabbedPane;
@@ -85,7 +85,7 @@ public class LSML extends JFrame{
       setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       setJMenuBar(new MenuBar(this));
 
-      mechLabPane = new MechLabPane(xBar);
+      mechLabPane = new MechLabPane(xBar, undoStack);
       openLastGarage();
 
       tabbedPane = new JTabbedPane();

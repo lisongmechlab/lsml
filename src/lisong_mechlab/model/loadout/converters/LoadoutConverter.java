@@ -24,6 +24,7 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
@@ -36,9 +37,11 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 public class LoadoutConverter implements Converter{
 
    private final MessageXBar xBar;
+   private final UndoStack   undoStack;
 
-   public LoadoutConverter(MessageXBar anXBar){
+   public LoadoutConverter(MessageXBar anXBar, UndoStack anUndoStack){
       xBar = anXBar;
+      undoStack = anUndoStack;
    }
 
    @Override
@@ -74,7 +77,7 @@ public class LoadoutConverter implements Converter{
       String name = aReader.getAttribute("name");
       Chassi chassi = ChassiDB.lookup(chassiVariation);
 
-      Loadout loadout = new Loadout(chassi, xBar);
+      Loadout loadout = new Loadout(chassi, xBar, undoStack);
       loadout.rename(name);
 
       while( aReader.hasMoreChildren() ){

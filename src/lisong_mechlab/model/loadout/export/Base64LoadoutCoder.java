@@ -20,6 +20,7 @@
 package lisong_mechlab.model.loadout.export;
 
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
@@ -37,8 +38,8 @@ public class Base64LoadoutCoder{
    private final transient LoadoutCoderV1 coderV1;
    private final transient Base64         base64;
 
-   public Base64LoadoutCoder(MessageXBar anXBar){
-      coderV1 = new LoadoutCoderV1(anXBar);
+   public Base64LoadoutCoder(MessageXBar anXBar, UndoStack anUndoStack){
+      coderV1 = new LoadoutCoderV1(anXBar, anUndoStack);
       base64 = new Base64();
    }
 

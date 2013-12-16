@@ -116,6 +116,7 @@ public class Loadout implements MessageXBar.Reader{
    private final Upgrades               upgrades;
    private final Efficiencies           efficiencies;
    private final transient MessageXBar  xBar;
+   private final transient UndoStack    undoStack;
 
    /**
     * Will create a new, empty load out based on the given chassi.
@@ -124,16 +125,19 @@ public class Loadout implements MessageXBar.Reader{
     *           The chassi to base the load out on.
     * @param anXBar
     *           The {@link MessageXBar} to signal changes to this loadout on.
+    * @param anUndoStack
+    *           The {@link UndoStack} to use when altering this loadout.
     */
-   public Loadout(Chassi aChassi, MessageXBar anXBar){
+   public Loadout(Chassi aChassi, MessageXBar anXBar, UndoStack anUndoStack){
       name = aChassi.getNameShort();
       chassi = aChassi;
       upgrades = new Upgrades(anXBar);
       for(InternalPart part : chassi.getInternalParts()){
-         LoadoutPart confPart = new LoadoutPart(this, part, anXBar);
+         LoadoutPart confPart = new LoadoutPart(this, part, anXBar, anUndoStack);
          parts.put(part.getType(), confPart);
       }
 
+      undoStack = anUndoStack;
       xBar = anXBar;
       xBar.attach(this);
       xBar.post(new Message(this, Type.CREATE));
@@ -147,10 +151,11 @@ public class Loadout implements MessageXBar.Reader{
     * @param aString
     *           The name of the stock variation to load.
     * @param anXBar
+    * @param anUndoStack
     * @throws Exception
     */
-   public Loadout(String aString, MessageXBar anXBar) throws Exception{
-      this(ChassiDB.lookup(aString), anXBar);
+   public Loadout(String aString, MessageXBar anXBar, UndoStack anUndoStack) throws Exception{
+      this(ChassiDB.lookup(aString), anXBar, anUndoStack);
       loadStock();
    }
 
@@ -193,8 +198,8 @@ public class Loadout implements MessageXBar.Reader{
       return true;
    }
 
-   public static Loadout load(File aFile, MessageXBar crossBar){
-      XStream stream = loadoutXstream(crossBar);
+   public static Loadout load(File aFile, MessageXBar anXBar, UndoStack anUndoStack){
+      XStream stream = loadoutXstream(anXBar, anUndoStack);
       return (Loadout)stream.fromXML(aFile);
    }
 
@@ -240,7 +245,7 @@ public class Loadout implements MessageXBar.Reader{
          while( null != child ){
             if( child.getNodeType() == Node.ELEMENT_NODE ){
                Item item = ItemDB.lookup(Integer.parseInt(((Element)child).getAttribute("ItemID")));
-               part.addItem(item);
+               part.addItem(item, true);
             }
             child = child.getNextSibling();
          }
@@ -351,7 +356,7 @@ public class Loadout implements MessageXBar.Reader{
       FileWriter fileWriter = null;
       try{
          fileWriter = new FileWriter(aFile);
-         fileWriter.write(loadoutXstream(xBar).toXML(this));
+         fileWriter.write(loadoutXstream(xBar, undoStack).toXML(this));
       }
       finally{
          if( fileWriter != null ){
@@ -365,13 +370,13 @@ public class Loadout implements MessageXBar.Reader{
       xBar.post(new Message(this, Type.RENAME));
    }
 
-   static XStream loadoutXstream(MessageXBar anXBar){
+   static XStream loadoutXstream(MessageXBar anXBar, UndoStack anUndoStack){
       XStream stream = new XStream(new StaxDriver());
       stream.setMode(XStream.NO_REFERENCES);
       stream.registerConverter(new ChassiConverter());
       stream.registerConverter(new ItemConverter());
       stream.registerConverter(new LoadoutPartConverter(null));
-      stream.registerConverter(new LoadoutConverter(anXBar));
+      stream.registerConverter(new LoadoutConverter(anXBar, anUndoStack));
       stream.omitField(Observable.class, "changed");
       stream.omitField(Observable.class, "obs");
       stream.addImmutableType(Item.class);
@@ -489,14 +494,14 @@ public class Loadout implements MessageXBar.Reader{
       }
    }
 
-   public void addItem(String aString){
-      addItem(ItemDB.lookup(aString));
+   public void addItem(String aString, boolean isUndoable){
+      addItem(ItemDB.lookup(aString), isUndoable);
    }
 
-   public void addItem(Item anItem){
+   public void addItem(Item anItem, boolean isUndoable){
       LoadoutPart ct = parts.get(Part.CenterTorso);
       if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canAddItem(anItem) ){
-         ct.addItem(anItem);
+         ct.addItem(anItem, isUndoable);
          return;
       }
 
@@ -506,7 +511,7 @@ public class Loadout implements MessageXBar.Reader{
       for(Part part : partOrder){
          LoadoutPart loadoutPart = parts.get(part);
          if( loadoutPart.canAddItem(anItem) ){
-            loadoutPart.addItem(anItem);
+            loadoutPart.addItem(anItem, isUndoable);
             return;
          }
       }

@@ -24,11 +24,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,12 +45,17 @@ import lisong_mechlab.util.MessageXBar;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class LoadoutPartTest{
    @Mock
    MessageXBar          xBar;
+   @Mock
+   UndoStack            undoStack;
    MockLoadoutContainer mlc = new MockLoadoutContainer();
 
    @Mock
@@ -65,14 +65,15 @@ public class LoadoutPartTest{
    public void setup(){
       MockitoAnnotations.initMocks(this);
 
-      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(20);
-      when(mlc.chassi.getMassMax()).thenReturn(100);
+      Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(20);
+      Mockito.when(mlc.chassi.getMassMax()).thenReturn(100);
    }
 
    @After
    public void tearDown(){
       // We do not allow spurious messages on the crossbar!
-      verifyNoMoreInteractions(xBar);
+      Mockito.verifyNoMoreInteractions(xBar);
+      Mockito.verifyNoMoreInteractions(undoStack);
    }
 
    private LoadoutPart makeCUT(int max_armor, Part type, int numCritSlots){
@@ -90,10 +91,10 @@ public class LoadoutPartTest{
     * @return
     */
    private LoadoutPart makeCUT(List<Item> internals, int max_armor, Part type, int numCritSlots){
-      when(part.getNumCriticalslots()).thenReturn(numCritSlots);
-      when(part.getArmorMax()).thenReturn(max_armor);
-      when(part.getInternalItems()).thenReturn(internals);
-      when(part.getType()).thenReturn(type);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(numCritSlots);
+      Mockito.when(part.getArmorMax()).thenReturn(max_armor);
+      Mockito.when(part.getInternalItems()).thenReturn(internals);
+      Mockito.when(part.getType()).thenReturn(type);
 
       int usedCrits = 0;
       for(Item i : internals){
@@ -101,8 +102,8 @@ public class LoadoutPartTest{
       }
 
       // Execute
-      LoadoutPart cut = new LoadoutPart(mlc.loadout, part, xBar);
-      verify(xBar, atLeast(1)).attach(cut);
+      LoadoutPart cut = new LoadoutPart(mlc.loadout, part, xBar, undoStack);
+      Mockito.verify(xBar, Mockito.atLeast(1)).attach(cut);
 
       // Verify default state
       assertSame(part, cut.getInternalPart());
@@ -154,32 +155,32 @@ public class LoadoutPartTest{
    @Test
    public void testGetNumEngineHs(){
       LoadoutPart cut = makeCUT(0, Part.CenterTorso, 7);
-      when(mlc.chassi.getEngineMax()).thenReturn(400);
-      when(mlc.chassi.getEngineMin()).thenReturn(0);
+      Mockito.when(mlc.chassi.getEngineMax()).thenReturn(400);
+      Mockito.when(mlc.chassi.getEngineMin()).thenReturn(0);
 
       assertEquals(0, cut.getNumEngineHeatsinks());
 
-      cut.addItem(ItemDB.SHS);
+      cut.addItem(ItemDB.SHS, false);
       assertEquals(0, cut.getNumEngineHeatsinks());
 
-      cut.addItem(ItemDB.lookup("STD ENGINE 300"));
+      cut.addItem(ItemDB.lookup("STD ENGINE 300"), false);
       assertEquals(1, cut.getNumEngineHeatsinks());
 
-      cut.addItem(ItemDB.SHS);
+      cut.addItem(ItemDB.SHS, false);
       assertEquals(2, cut.getNumEngineHeatsinks());
 
-      cut.addItem(ItemDB.SHS);
+      cut.addItem(ItemDB.SHS, false);
       assertEquals(2, cut.getNumEngineHeatsinks());
 
-      verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      Mockito.verify(xBar, Mockito.times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
    }
 
    @Test
    public void testGetNumEngineHs_notCT(){
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 7);
-      cut.addItem(ItemDB.SHS);
+      cut.addItem(ItemDB.SHS, false);
       assertEquals(0, cut.getNumEngineHeatsinks());
-      verify(xBar, times(1)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      Mockito.verify(xBar, Mockito.times(1)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
    }
 
    @Test
@@ -188,13 +189,13 @@ public class LoadoutPartTest{
       MissileWeapon srm = (MissileWeapon)ItemDB.lookup("STREAK SRM 2");
       MissileWeapon lrm_artemis = (MissileWeapon)ItemDB.lookup("LRM5");
 
-      when(mlc.upgrades.hasArtemis()).thenReturn(true);
-      when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(2);
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      Mockito.when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(2);
 
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      cut.addItem(lrm_artemis);
-      cut.addItem(srm);
-      verify(xBar, times(2)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      cut.addItem(lrm_artemis, false);
+      cut.addItem(srm, false);
+      Mockito.verify(xBar, Mockito.times(2)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
 
       // Execute & verify
       assertEquals(3, cut.getNumCriticalSlotsUsed());
@@ -204,38 +205,55 @@ public class LoadoutPartTest{
    public void testAddItem_fail_nomessage() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
 
-      cut.addItem("AC/20");
+      cut.addItem("AC/20", false);
    }
 
    @Test
    public void testAddItem_success() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
 
-      cut.addItem("AC/20 AMMO");
+      cut.addItem("AC/20 AMMO", false);
 
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
       assertTrue(cut.getItems().contains(ItemDB.lookup("AC/20 AMMO")));
    }
 
    @Test
-   public void testCanAddItem_xlEngineTooFewSlots() throws Exception{
-      LoadoutPart cut = makeCUT(0, Part.CenterTorso, 8);
-      when(mlc.chassi.getEngineMax()).thenReturn(400);
-      when(mlc.chassi.getEngineMin()).thenReturn(100);
-      when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(3);
-      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(8);
-      when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(3);
-      assertFalse(cut.canAddItem(ItemDB.lookup("XL ENGINE 100")));
+   public void testAddItem_undo() throws Exception{
+      // Setup
+      LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
+      Loadout dummyLoadout = Mockito.mock(Loadout.class);
+      Item item = ItemDB.lookup("LRM5");
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      Mockito.when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(1);
+
+      // Execute
+      cut.addItem(item, true);
+
+      // Verify an undo action was created
+      ArgumentCaptor<UndoAction> argument = ArgumentCaptor.forClass(UndoAction.class);
+      Mockito.verify(undoStack, Mockito.only()).pushAction(argument.capture());
+      assertEquals("Undo add " + item.getName(mlc.upgrades) + " to " + part.getType().toString(), argument.getValue().describe());
+      assertTrue(argument.getValue().affects(mlc.loadout));
+      assertFalse(argument.getValue().affects(dummyLoadout));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+
+      // Execute undo action
+      argument.getValue().undo();
+
+      // Verify action was undone.
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
+      assertFalse(cut.getItems().contains(item));
    }
 
    @Test
    public void testAddItem_jumpJetsBadPart() throws Exception{
       for(Part testPart : new Part[] {Part.LeftArm, Part.RightArm, Part.Head}){
          LoadoutPart cut = makeCUT(0, testPart, 12);
-         when(mlc.loadout.getJumpJetCount()).thenReturn(0);
-         when(mlc.chassi.getMaxJumpJets()).thenReturn(5);
+         Mockito.when(mlc.loadout.getJumpJetCount()).thenReturn(0);
+         Mockito.when(mlc.chassi.getMaxJumpJets()).thenReturn(5);
          try{
-            cut.addItem("JUMP JETS - CLASS V");
+            cut.addItem("JUMP JETS - CLASS V", false);
             fail("Expected exception!");
          }
          catch( Exception e ){
@@ -254,13 +272,13 @@ public class LoadoutPartTest{
       for(Item i : items){
          Internal gyro = mlc.makeInternal(4);
          LoadoutPart cut = makeCUT(Arrays.asList((Item)gyro), 0, Part.CenterTorso, 12);
-         when(mlc.upgrades.hasDoubleHeatSinks()).thenReturn(i == ItemDB.DHS);
-         when(mlc.chassi.getEngineMax()).thenReturn(400);
-         when(mlc.chassi.getEngineMin()).thenReturn(100);
-         cut.addItem("STD ENGINE 400");
+         Mockito.when(mlc.upgrades.hasDoubleHeatSinks()).thenReturn(i == ItemDB.DHS);
+         Mockito.when(mlc.chassi.getEngineMax()).thenReturn(400);
+         Mockito.when(mlc.chassi.getEngineMin()).thenReturn(100);
+         cut.addItem("STD ENGINE 400", false);
 
          // Execute
-         cut.addItem(i);
+         cut.addItem(i, false);
 
          // Verify
          assertEquals(1, cut.getNumEngineHeatsinks());
@@ -268,11 +286,11 @@ public class LoadoutPartTest{
          assertEquals(10, cut.getNumCriticalSlotsUsed());
 
          // Execute
-         cut.addItem(i);
-         cut.addItem(i);
-         cut.addItem(i);
-         cut.addItem(i);
-         cut.addItem(i);
+         cut.addItem(i, false);
+         cut.addItem(i, false);
+         cut.addItem(i, false);
+         cut.addItem(i, false);
+         cut.addItem(i, false);
 
          // Verify
          assertEquals(6, cut.getNumEngineHeatsinks());
@@ -281,7 +299,7 @@ public class LoadoutPartTest{
          if( i == ItemDB.DHS ){
             // Execute
             try{
-               cut.addItem(i);
+               cut.addItem(i, false);
                fail();
             }
             catch( Exception e ){
@@ -292,17 +310,17 @@ public class LoadoutPartTest{
             assertEquals(6, cut.getNumEngineHeatsinks());
             assertEquals(10, cut.getNumCriticalSlotsUsed());
 
-            verify(xBar, times(7)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+            Mockito.verify(xBar, Mockito.times(7)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
          }
          else{
             // Execute
-            cut.addItem(i);
+            cut.addItem(i, false);
 
             // Verify (internal slots all occupied)
             assertEquals(6, cut.getNumEngineHeatsinks());
             assertEquals(11, cut.getNumCriticalSlotsUsed());
 
-            verify(xBar, times(8)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+            Mockito.verify(xBar, Mockito.times(8)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
          }
       }
    }
@@ -312,9 +330,9 @@ public class LoadoutPartTest{
       for(Part testPart : new Part[] {Part.LeftTorso, Part.RightTorso}){
          LoadoutPart cut = makeCUT(0, testPart, 12);
 
-         cut.addItem("C.A.S.E.");
+         cut.addItem("C.A.S.E.", false);
 
-         verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+         Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
          assertTrue(cut.getItems().contains(ItemDB.lookup("C.A.S.E.")));
       }
    }
@@ -326,7 +344,7 @@ public class LoadoutPartTest{
          LoadoutPart cut = makeCUT(0, testPart, 12);
 
          try{
-            cut.addItem("C.A.S.E.");
+            cut.addItem("C.A.S.E.", false);
             fail(); // No hardpoints
          }
          catch( Exception e ){
@@ -334,6 +352,31 @@ public class LoadoutPartTest{
          }
          assertFalse(cut.getItems().contains(ItemDB.lookup("C.A.S.E.")));
       }
+   }
+
+   @Test
+   public void testCanAddItem_xlEngineTooFewSlots() throws Exception{
+      LoadoutPart cut = makeCUT(0, Part.CenterTorso, 8);
+      Mockito.when(mlc.chassi.getEngineMax()).thenReturn(400);
+      Mockito.when(mlc.chassi.getEngineMin()).thenReturn(100);
+      Mockito.when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(3);
+      Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(8);
+      Mockito.when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(3);
+      assertFalse(cut.canAddItem(ItemDB.lookup("XL ENGINE 100")));
+   }
+
+   /**
+    * It is not possible to add internals to a loadout part.
+    */
+   @Test
+   public void testCanAddItem_internal() throws Exception{
+      LoadoutPart cut = makeCUT(0, Part.CenterTorso, 8);
+      Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(8);
+      Internal internal = Mockito.mock(Internal.class);
+      Mockito.when(internal.getHardpointType()).thenReturn(HardpointType.NONE);
+      Mockito.when(internal.getMass(Matchers.any(Upgrades.class))).thenReturn(0.0);
+      Mockito.when(internal.getNumCriticalSlots(Matchers.any(Upgrades.class))).thenReturn(1);
+      assertFalse(cut.canAddItem(internal));
    }
 
    /**
@@ -344,7 +387,7 @@ public class LoadoutPartTest{
    @Test
    public void testCanAddItem_TooFewSlots() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots(null) - 1);
+      Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots(null) - 1);
 
       assertFalse(cut.canAddItem(ItemDB.BAP));
    }
@@ -358,12 +401,12 @@ public class LoadoutPartTest{
    public void testCanAddItem_ArtemisSRM6CT() throws Exception{
       Internal gyro = mlc.makeInternal(4);
       LoadoutPart cut = makeCUT(Arrays.asList((Item)gyro), 31, Part.CenterTorso, 12);
-      when(mlc.upgrades.hasArtemis()).thenReturn(true);
-      when(mlc.chassi.getEngineMax()).thenReturn(400);
-      when(mlc.chassi.getEngineMin()).thenReturn(100);
-      when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(1);
-      cut.addItem(ItemDB.lookup("STD ENGINE 100"));
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      Mockito.when(mlc.chassi.getEngineMax()).thenReturn(400);
+      Mockito.when(mlc.chassi.getEngineMin()).thenReturn(100);
+      Mockito.when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(1);
+      cut.addItem(ItemDB.lookup("STD ENGINE 100"), false);
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
 
       assertFalse(cut.canAddItem(ItemDB.lookup("SRM 6")));
    }
@@ -373,11 +416,42 @@ public class LoadoutPartTest{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
       Item item = ItemDB.lookup("AC/20 AMMO");
 
-      cut.addItem(item);
-      cut.removeItem(item);
+      cut.addItem(item, false);
+      cut.removeItem(item, false);
 
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
+   }
+
+   @Test
+   public void testRemoveItem_undo() throws Exception{
+      // Setup
+      LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
+      Loadout dummyLoadout = Mockito.mock(Loadout.class);
+      Item item = ItemDB.lookup("LRM5");
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      Mockito.when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(1);
+      cut.addItem(item, false);
+      Mockito.reset(xBar);
+      Mockito.reset(undoStack);
+
+      // Execute
+      cut.removeItem(item, true);
+
+      // Verify an undo action was created
+      ArgumentCaptor<UndoAction> argument = ArgumentCaptor.forClass(UndoAction.class);
+      Mockito.verify(undoStack, Mockito.only()).pushAction(argument.capture());
+      assertEquals("Undo remove " + item.getName(mlc.upgrades) + " from " + part.getType().toString(), argument.getValue().describe());
+      assertTrue(argument.getValue().affects(mlc.loadout));
+      assertFalse(argument.getValue().affects(dummyLoadout));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
+
+      // Execute undo action
+      argument.getValue().undo();
+
+      // Verify action was undone.
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      assertTrue(cut.getItems().contains(item));
    }
 
    @Test
@@ -385,12 +459,12 @@ public class LoadoutPartTest{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
       Item item = ItemDB.lookup("AC/20 AMMO");
 
-      cut.addItem(item);
+      cut.addItem(item, false);
       cut.removeAllItems();
 
       assertTrue(cut.getItems().isEmpty());
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
    }
 
    @Test
@@ -399,7 +473,7 @@ public class LoadoutPartTest{
       cut.removeAllItems();
 
       assertTrue(cut.getItems().isEmpty());
-      verifyNoMoreInteractions(xBar);
+      Mockito.verifyNoMoreInteractions(xBar);
    }
 
    /**
@@ -411,22 +485,22 @@ public class LoadoutPartTest{
    public void testRemoveItem_EngineWithHS() throws Exception{
       Internal gyro = mlc.makeInternal(4);
       LoadoutPart cut = makeCUT(Arrays.asList((Item)gyro), 0, Part.CenterTorso, 12);
-      when(mlc.chassi.getEngineMax()).thenReturn(400);
-      when(mlc.chassi.getEngineMin()).thenReturn(100);
-      cut.addItem(ItemDB.lookup("STD ENGINE 300")); // 2 slots
-      cut.addItem(ItemDB.SHS);
-      cut.addItem(ItemDB.SHS);
-      cut.addItem(ItemDB.SHS);
-      cut.addItem(ItemDB.SHS);
+      Mockito.when(mlc.chassi.getEngineMax()).thenReturn(400);
+      Mockito.when(mlc.chassi.getEngineMin()).thenReturn(100);
+      cut.addItem(ItemDB.lookup("STD ENGINE 300"), false); // 2 slots
+      cut.addItem(ItemDB.SHS, false);
+      cut.addItem(ItemDB.SHS, false);
+      cut.addItem(ItemDB.SHS, false);
+      cut.addItem(ItemDB.SHS, false);
 
-      cut.removeItem(ItemDB.lookup("STD ENGINE 300"));
+      cut.removeItem(ItemDB.lookup("STD ENGINE 300"), false);
 
       assertEquals(3, cut.getItems().size());
       assertSame(gyro, cut.getItems().get(0));
       assertSame(ItemDB.SHS, cut.getItems().get(1));
       assertSame(ItemDB.SHS, cut.getItems().get(2));
-      verify(xBar, times(5)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
-      verify(xBar, times(3)).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
+      Mockito.verify(xBar, Mockito.times(5)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      Mockito.verify(xBar, Mockito.times(3)).post(new LoadoutPart.Message(cut, Type.ItemRemoved));
    }
 
    @Test
@@ -434,19 +508,19 @@ public class LoadoutPartTest{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
       Item item = ItemDB.lookup("AC/20 AMMO");
 
-      cut.removeItem(item);
+      cut.removeItem(item, false);
    }
 
    @Test
    public void testSetArmor() throws Exception{
       LoadoutPart cut = makeCUT(0, Part.LeftTorso, 12);
-      when(part.getArmorMax()).thenReturn(20);
+      Mockito.when(part.getArmorMax()).thenReturn(20);
 
       cut.setArmor(ArmorSide.FRONT, 10);
 
       assertEquals(10, cut.getArmor(ArmorSide.FRONT));
       assertEquals(0, cut.getArmor(ArmorSide.BACK));
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
    }
 
    /**
@@ -474,10 +548,10 @@ public class LoadoutPartTest{
       int max = 64;
       LoadoutPart cut = makeCUT(max, Part.LeftTorso, 12);
       cut.setArmor(ArmorSide.FRONT, max);
-      when(mlc.loadout.getFreeMass()).thenReturn(-0.1);
+      Mockito.when(mlc.loadout.getFreeMass()).thenReturn(-0.1);
 
       cut.setArmor(ArmorSide.FRONT, max - 1);
-      verify(xBar, times(2)).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
+      Mockito.verify(xBar, Mockito.times(2)).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
    }
 
    /**
@@ -490,7 +564,7 @@ public class LoadoutPartTest{
    public void testSetArmor_notEnoughTons() throws Exception{
       int maxArmor = 20;
       LoadoutPart cut = makeCUT(maxArmor + 1, Part.LeftTorso, 12);
-      when(mlc.loadout.getFreeMass()).thenReturn(-1.0);
+      Mockito.when(mlc.loadout.getFreeMass()).thenReturn(-1.0);
 
       cut.setArmor(ArmorSide.FRONT, maxArmor + 1);
    }
@@ -509,7 +583,7 @@ public class LoadoutPartTest{
 
       assertEquals(10, cut.getArmor(ArmorSide.FRONT));
       assertEquals(10, cut.getArmor(ArmorSide.BACK));
-      verify(xBar, times(3)).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
+      Mockito.verify(xBar, Mockito.times(3)).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
    }
 
    /**
@@ -518,18 +592,18 @@ public class LoadoutPartTest{
     */
    @Test
    public void testReceive_artemisEnabled(){
-      when(mlc.upgrades.hasArtemis()).thenReturn(false);
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(false);
 
       LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
-      cut.addItem("SRM AMMO");
-      cut.addItem("LRM AMMO");
-      cut.addItem("STREAK SRM AMMO");
-      cut.addItem("NARC AMMO");
-      verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      cut.addItem("SRM AMMO", false);
+      cut.addItem("LRM AMMO", false);
+      cut.addItem("STREAK SRM AMMO", false);
+      cut.addItem("NARC AMMO", false);
+      Mockito.verify(xBar, Mockito.times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
 
-      when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
       cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemsChanged));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemsChanged));
 
       List<Item> items = new ArrayList<>(cut.getItems());
       assertTrue(items.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
@@ -545,18 +619,18 @@ public class LoadoutPartTest{
     */
    @Test
    public void testReceive_artemisDisabled(){
-      when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
 
       LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
-      cut.addItem("SRM AMMO + ARTEMIS IV");
-      cut.addItem("LRM AMMO + ARTEMIS IV");
-      cut.addItem("STREAK SRM AMMO");
-      cut.addItem("NARC AMMO");
-      verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      cut.addItem("SRM AMMO + ARTEMIS IV", false);
+      cut.addItem("LRM AMMO + ARTEMIS IV", false);
+      cut.addItem("STREAK SRM AMMO", false);
+      cut.addItem("NARC AMMO", false);
+      Mockito.verify(xBar, Mockito.times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
 
-      when(mlc.upgrades.hasArtemis()).thenReturn(false);
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(false);
       cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
-      verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemsChanged));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemsChanged));
 
       List<Item> items = new ArrayList<>(cut.getItems());
       assertTrue(items.remove(ItemDB.lookup("SRM AMMO")));
@@ -572,16 +646,16 @@ public class LoadoutPartTest{
     */
    @Test
    public void testReceive_artemisNoChange(){
-      when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
 
       LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
-      cut.addItem("SRM AMMO + ARTEMIS IV");
-      cut.addItem("LRM AMMO + ARTEMIS IV");
-      cut.addItem("STREAK SRM AMMO");
-      cut.addItem("NARC AMMO");
-      verify(xBar, times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+      cut.addItem("SRM AMMO + ARTEMIS IV", false);
+      cut.addItem("LRM AMMO + ARTEMIS IV", false);
+      cut.addItem("STREAK SRM AMMO", false);
+      cut.addItem("NARC AMMO", false);
+      Mockito.verify(xBar, Mockito.times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
 
-      when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
       cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
 
       List<Item> items = new ArrayList<>(cut.getItems());

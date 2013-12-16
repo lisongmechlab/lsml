@@ -26,6 +26,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
@@ -44,11 +45,11 @@ public class MechLabPane extends JSplitPane{
    private final JScrollPane    jScrollPane;
    private final MessageXBar    xBar;
 
-   public MechLabPane(MessageXBar aXBar){
+   public MechLabPane(MessageXBar anXBar, UndoStack anUndoStack){
       super(JSplitPane.HORIZONTAL_SPLIT, true);
-      xBar = aXBar;
+      xBar = anXBar;
       desktop = new LoadoutDesktop(xBar);
-      equipmentPane = new GarageTree(desktop, xBar);
+      equipmentPane = new GarageTree(desktop, xBar, anUndoStack);
       EquipmentPanel panel = new EquipmentPanel(desktop, xBar);
       jScrollPane = new JScrollPane(equipmentPane);
 

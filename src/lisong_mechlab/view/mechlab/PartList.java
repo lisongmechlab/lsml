@@ -151,7 +151,7 @@ public class PartList extends JList<Item>{
          switch( target.first ){
             case EngineHeatSink:{
                if( anItem instanceof HeatSink && part.canAddItem(anItem) ){
-                  part.addItem(anItem);
+                  part.addItem(anItem, true);
                   return true;
                }
                return false;
@@ -161,13 +161,13 @@ public class PartList extends JList<Item>{
             case MultiSlot:{
                // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
                if( aShouldReplace && !(anItem instanceof HeatSink && target.second instanceof Engine) ){
-                  part.removeItem(target.second);
+                  part.removeItem(target.second, true);
                }
                // Fall through
             }
             case Empty:{
                if( part.canAddItem(anItem) ){
-                  part.addItem(anItem);
+                  part.addItem(anItem, true);
                   return true;
                }
                return false;
@@ -277,7 +277,7 @@ public class PartList extends JList<Item>{
          public void keyPressed(KeyEvent aArg0){
             if( aArg0.getKeyCode() == KeyEvent.VK_DELETE ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  part.removeItem(itemPair.first);
+                  part.removeItem(itemPair.first, true);
                }
             }
          }
@@ -288,7 +288,7 @@ public class PartList extends JList<Item>{
          public void mouseClicked(MouseEvent e){
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  part.removeItem(itemPair.first);
+                  part.removeItem(itemPair.first, true);
                }
             }
          }

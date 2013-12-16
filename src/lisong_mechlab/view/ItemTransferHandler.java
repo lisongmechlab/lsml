@@ -65,7 +65,7 @@ public class ItemTransferHandler extends TransferHandler{
             buff.append(it.first.getName()).append('\n');
          }
          for(Pair<Item, Integer> it : sourceItems){
-            sourcePart.removeItem(it.first);
+            sourcePart.removeItem(it.first, true);
          }
          setDragImage(ItemRenderer.render(sourceItems.get(0).first, sourcePart.getLoadout().getUpgrades()));
          Point mouse = partList.getMousePosition();

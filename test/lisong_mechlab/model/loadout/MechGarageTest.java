@@ -158,12 +158,13 @@ public class MechGarageTest{
    @Test
    public void testSaveAsOpen() throws Exception{
       // Setup
-      Loadout lo1 = new Loadout("as7-d-dc", xBar);
-      Loadout lo2 = new Loadout("as7-k", xBar);
+      Loadout lo1 = new Loadout("as7-d-dc", xBar, undoStack);
+      Loadout lo2 = new Loadout("as7-k", xBar, undoStack);
       MechGarage cut = new MechGarage(xBar, undoStack);
       cut.add(lo1, false);
       cut.add(lo2, false);
       reset(xBar);
+      reset(undoStack);
 
       // Execute
       cut.saveas(testFile);
@@ -184,14 +185,15 @@ public class MechGarageTest{
    @Test
    public void testSave() throws Exception{
       // Setup
-      Loadout lo1 = new Loadout("as7-d-dc", xBar);
-      Loadout lo2 = new Loadout("as7-k", xBar);
+      Loadout lo1 = new Loadout("as7-d-dc", xBar, undoStack);
+      Loadout lo2 = new Loadout("as7-k", xBar, undoStack);
       MechGarage cut = new MechGarage(xBar, undoStack);
       cut.add(lo1, false);
       cut.saveas(testFile); // Create garage with one mech and save it.
       cut = MechGarage.open(testFile, xBar, undoStack);
       cut.add(lo2, false); // Add a mech and use the save() function. The same file should have been overwritten.
       reset(xBar);
+      reset(undoStack);
 
       // Execute
       cut.save();
@@ -213,9 +215,10 @@ public class MechGarageTest{
    @Test
    public void testAddRemoveLoadout() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
       MechGarage cut = new MechGarage(xBar, undoStack);
-
+      reset(undoStack);
+      
       // Execute
       cut.add(loadout, false);
 
@@ -240,10 +243,13 @@ public class MechGarageTest{
    @Test
    public void testAddLoadout_undo() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
       MechGarage cut = new MechGarage(xBar, undoStack);
+      reset(xBar);
+      reset(undoStack);
+      
       cut.add(loadout, true);
-
+      
       ArgumentCaptor<UndoAction> argument = ArgumentCaptor.forClass(UndoAction.class);
       verify(undoStack, only()).pushAction(argument.capture());
       assertEquals("Undo add " + loadout.getName() + " to garage.", argument.getValue().describe());
@@ -264,10 +270,11 @@ public class MechGarageTest{
    @Test
    public void testRemoveLoadout_undo() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
       MechGarage cut = new MechGarage(xBar, undoStack);
       cut.add(loadout, false);
       reset(xBar);
+      reset(undoStack);
 
       cut.remove(loadout, true);
 
@@ -291,7 +298,7 @@ public class MechGarageTest{
    @Test
    public void testAddLoadoutTwice() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
       MechGarage cut = new MechGarage(xBar, undoStack);
 
       // Execute
@@ -299,6 +306,7 @@ public class MechGarageTest{
 
       try{
          reset(xBar);
+         reset(undoStack);
          cut.add(loadout, true);
          fail("Expected exception!");
       }
@@ -318,9 +326,10 @@ public class MechGarageTest{
    @Test
    public void testRemoveLoadoutNonexistent() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
       MechGarage cut = new MechGarage(xBar, undoStack);
       reset(xBar);
+      reset(undoStack);
       cut.remove(loadout, true);
 
       verifyZeroInteractions(xBar);
