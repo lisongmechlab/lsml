@@ -51,6 +51,8 @@ import org.mockito.MockitoAnnotations;
 public class LoadoutSerializationTest{
    @Mock
    MessageXBar xBar;
+   @Mock
+   UndoStack   undoStack;
 
    @Before
    public void setup(){
@@ -66,7 +68,7 @@ public class LoadoutSerializationTest{
    public void testSaveLoad() throws IOException{
       // Setup
       Chassi chassi = ChassiDB.lookup("RVN-3L");
-      Loadout cut = new Loadout(chassi, xBar);
+      Loadout cut = new Loadout(chassi, xBar, undoStack);
 
       cut.rename("ecraven");
       cut.getUpgrades().setDoubleHeatSinks(true);
@@ -82,20 +84,20 @@ public class LoadoutSerializationTest{
          }
       }
 
-      cut.getPart(Part.CenterTorso).addItem(ItemDB.lookup("XL ENGINE 290"));
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("GUARDIAN ECM"));
-      cut.getPart(Part.CenterTorso).addItem(ItemDB.DHS);
+      cut.getPart(Part.CenterTorso).addItem(ItemDB.lookup("XL ENGINE 290"), false);
+      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("GUARDIAN ECM"), false);
+      cut.getPart(Part.CenterTorso).addItem(ItemDB.DHS, false);
 
-      cut.getPart(Part.RightArm).addItem(ItemDB.lookup("MED PULSE LASER"));
-      cut.getPart(Part.RightArm).addItem(ItemDB.lookup("MED PULSE LASER"));
+      cut.getPart(Part.RightArm).addItem(ItemDB.lookup("MED PULSE LASER"), false);
+      cut.getPart(Part.RightArm).addItem(ItemDB.lookup("MED PULSE LASER"), false);
 
-      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("TAG"));
-      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("STREAK SRM 2"));
+      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("TAG"), false);
+      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("STREAK SRM 2"), false);
 
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.AMS);
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("AMS AMMO"));
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("STREAK SRM AMMO"));
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("STREAK SRM AMMO"));
+      cut.getPart(Part.LeftTorso).addItem(ItemDB.AMS, false);
+      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("AMS AMMO"), false);
+      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("STREAK SRM AMMO"), false);
+      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("STREAK SRM AMMO"), false);
 
       // cut.getInternalPartLoadout(InternalPartType.LeftArm).addItem(ItemDB.lookup("STREAK SRM 2")); // TODO: Add when
       // we can handle endo steel/ferrofib
@@ -103,7 +105,7 @@ public class LoadoutSerializationTest{
       // Execute
       File testFile = new File("test.xml");
       cut.save(testFile);
-      Loadout loaded = Loadout.load(testFile, xBar);
+      Loadout loaded = Loadout.load(testFile, xBar, undoStack);
 
       // Verify
       assertEquals("ecraven", loaded.getName());
@@ -191,7 +193,7 @@ public class LoadoutSerializationTest{
    @Test
    public void testEmptyLoadout(){
       Chassi chassi = ChassiDB.lookup("CPLT-K2");
-      Loadout cut = new Loadout(chassi, xBar);
+      Loadout cut = new Loadout(chassi, xBar, undoStack);
 
       assertEquals(0, cut.getArmor());
       assertSame(chassi, cut.getChassi());
@@ -217,13 +219,13 @@ public class LoadoutSerializationTest{
 
    @Test
    public void testLoadSavedLoadout() throws Exception{
-      Loadout cut = new Loadout("AS7-D-DC", xBar);
+      Loadout cut = new Loadout("AS7-D-DC", xBar, undoStack);
 
       File aFile = new File("test_Ddc7.xml");
       aFile.deleteOnExit();
       cut.save(aFile);
 
-      Loadout.load(aFile, xBar); // Does not throw
+      Loadout.load(aFile, xBar, undoStack); // Does not throw
 
       // TODO: Check that the same loadout was loaded
    }
@@ -235,7 +237,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testLoadStockTwice() throws Exception{
-      Loadout cut = new Loadout("JR7-F", xBar);
+      Loadout cut = new Loadout("JR7-F", xBar, undoStack);
       cut.loadStock();
    }
 
@@ -252,7 +254,7 @@ public class LoadoutSerializationTest{
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
 
       for(Chassi chassi : chassii){
-         Loadout cut = new Loadout(chassi, xBar);
+         Loadout cut = new Loadout(chassi, xBar, undoStack);
          cut.loadStock();
       }
    }
@@ -264,7 +266,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testStockLoadoutIlya() throws Exception{
-      Loadout cut = new Loadout("Ilya Muromets", xBar);
+      Loadout cut = new Loadout("Ilya Muromets", xBar, undoStack);
       cut.loadStock();
    }
 
@@ -276,7 +278,7 @@ public class LoadoutSerializationTest{
    @Test
    public void testStockLoadoutAS7D() throws Exception{
       Chassi chassi = ChassiDB.lookup("AS7-D");
-      Loadout cut = new Loadout("AS7-D", xBar);
+      Loadout cut = new Loadout("AS7-D", xBar, undoStack);
 
       assertEquals(608, cut.getArmor());
       assertSame(chassi, cut.getChassi());
@@ -423,7 +425,7 @@ public class LoadoutSerializationTest{
    @Test
    public void testStockLoadoutSDR5V() throws Exception{
       Chassi chassi = ChassiDB.lookup("SDR-5V");
-      Loadout cut = new Loadout("SDR-5V", xBar);
+      Loadout cut = new Loadout("SDR-5V", xBar, undoStack);
 
       assertEquals(112, cut.getArmor());
       assertSame(chassi, cut.getChassi());

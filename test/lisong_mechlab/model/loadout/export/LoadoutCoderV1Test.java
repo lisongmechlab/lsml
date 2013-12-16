@@ -20,7 +20,6 @@
 package lisong_mechlab.model.loadout.export;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,29 +28,29 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Tests the {@link LoadoutCoderV1}
  * 
  * @author Li Song
  */
+@RunWith(MockitoJUnitRunner.class)
 public class LoadoutCoderV1Test{
 
-   private MessageXBar    xBar = new MessageXBar();
+   @Mock
+   private MessageXBar    xBar;
+   @Mock
+   private UndoStack      undoStack;
+   @InjectMocks
    private LoadoutCoderV1 cut;
-
-   public LoadoutCoderV1Test(){
-      try{
-         cut = new LoadoutCoderV1(xBar);
-      }
-      catch( Exception e ){
-         cut = null;
-         fail();
-      }
-   }
 
    /**
     * The coder shall be able to encode and decode all stock mechs.
@@ -67,7 +66,7 @@ public class LoadoutCoderV1Test{
 
       MessageXBar anXBar = new MessageXBar();
       for(Chassi chassi : chassii){
-         Loadout loadout = new Loadout(chassi, anXBar);
+         Loadout loadout = new Loadout(chassi, anXBar, undoStack);
          loadout.loadStock();
 
          byte[] result = cut.encode(loadout);

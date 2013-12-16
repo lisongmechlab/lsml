@@ -50,6 +50,7 @@ import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.MaxArmorAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.action.ShareLoadoutAction;
+import lisong_mechlab.view.action.UndoLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
@@ -235,6 +236,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          });
 
       menu.add(addToGarage);
+      menu.add(new UndoLoadoutAction(KeyStroke.getKeyStroke('z'), xbar, loadout));
       menu.add(new JMenuItem(new RenameLoadoutAction(this, KeyStroke.getKeyStroke("R"))));
       menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), this, KeyStroke.getKeyStroke("D"))));
 

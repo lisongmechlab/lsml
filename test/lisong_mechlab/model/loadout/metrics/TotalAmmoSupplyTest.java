@@ -28,6 +28,7 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
@@ -44,6 +45,9 @@ public class TotalAmmoSupplyTest{
    MessageXBar             xBar;
 
    @Mock
+   UndoStack               undoStack;
+
+   @Mock
    private Loadout         loadout;
    @InjectMocks
    private TotalAmmoSupply totalAmmoSupply;
@@ -51,7 +55,7 @@ public class TotalAmmoSupplyTest{
    @Test
    public void testGenerate(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
+      Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar, undoStack);
       try{
          cut.loadStock();
       }

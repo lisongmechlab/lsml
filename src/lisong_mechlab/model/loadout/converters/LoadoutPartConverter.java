@@ -104,7 +104,7 @@ public class LoadoutPartConverter implements Converter{
          aReader.moveDown();
          if( "item".equals(aReader.getNodeName()) ){
             try{
-               loadoutPart.addItem((Item)aContext.convertAnother(null, Item.class));
+               loadoutPart.addItem((Item)aContext.convertAnother(null, Item.class), false);
             }
             catch( IllegalArgumentException exception ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()

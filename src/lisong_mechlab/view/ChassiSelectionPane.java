@@ -234,7 +234,7 @@ public class ChassiSelectionPane extends JScrollPane{
                if( cell instanceof Chassi ){
                   Chassi chassi = (Chassi)cell;
                   ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                  ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
+                  ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar, ProgramInit.lsml().undoStack));
                }
             }
          }

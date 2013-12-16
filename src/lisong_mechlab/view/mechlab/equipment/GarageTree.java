@@ -33,6 +33,7 @@ import javax.swing.tree.TreePath;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.ProgramInit;
@@ -46,9 +47,9 @@ public class GarageTree extends JTree{
    GarageTreeModel           model            = null;
    private final MessageXBar xBar;
 
-   public GarageTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar crossBar){
-      model = new GarageTreeModel(crossBar);
-      xBar = crossBar;
+   public GarageTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar anXBar, final UndoStack anUndoStack){
+      model = new GarageTreeModel(anXBar);
+      xBar = anXBar;
 
       ToolTipManager.sharedInstance().registerComponent(this);
       setModel(model);
@@ -86,7 +87,7 @@ public class GarageTree extends JTree{
                Object clicked = getClickedObject(e);
                if( clicked instanceof Chassi ){
                   Chassi chassi = (Chassi)clicked;
-                  Loadout clickedLoadout = new Loadout(chassi, xBar);
+                  Loadout clickedLoadout = new Loadout(chassi, xBar, anUndoStack);
                   aLoadoutDesktop.openLoadout(clickedLoadout);
                }
                else if( clicked instanceof Loadout ){
