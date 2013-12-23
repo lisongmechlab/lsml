@@ -26,6 +26,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JInternalFrame;
@@ -36,7 +37,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
@@ -44,7 +44,9 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.SwingHelpers;
 import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.action.AddToGarageAction;
 import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.MaxArmorAction;
@@ -54,12 +56,17 @@ import lisong_mechlab.view.action.UndoLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
-   private static final long serialVersionUID = -9181002222136052106L;
-   private static int        openFrameCount   = 0;
-   private static final int  xOffset          = 30, yOffset = 30;
-   private final Loadout     loadout;
-   private final MessageXBar xbar;
-   private JMenuItem         addToGarage;
+   private static final String CMD_UNDO_LOADOUT   = "undo loadout";
+   private static final String CMD_RENAME_LOADOUT = "rename loadout";
+   private static final String CMD_SAVE_TO_GARAGE = "add to garage";
+   private static final long   serialVersionUID   = -9181002222136052106L;
+   private static int          openFrameCount     = 0;
+   private static final int    xOffset            = 30, yOffset = 30;
+   private final Loadout       loadout;
+   private final MessageXBar   xbar;
+   private final Action        actionUndoLoadout;
+   private final Action        actionRename;
+   private final Action        actionAddToGarage;
 
    public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout.toString(), true, // resizable
@@ -69,11 +76,12 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       xbar = anXBar;
       xbar.attach(this);
-
-      // ...Create the GUI and put it in the zwindow...
-      // ...Then set the window size or call pack...
-
       loadout = aLoadout;
+
+      // Actions
+      actionUndoLoadout = new UndoLoadoutAction(xbar, loadout);
+      actionRename = new RenameLoadoutAction(this);
+      actionAddToGarage = new AddToGarageAction(loadout);
 
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(createMenuLoadout());
@@ -118,6 +126,13 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
             }
          }
       });
+      setupKeybindings();
+   }
+
+   private void setupKeybindings(){
+      SwingHelpers.bindAction(this, CMD_UNDO_LOADOUT, actionUndoLoadout);
+      SwingHelpers.bindAction(this, CMD_RENAME_LOADOUT, actionRename);
+      SwingHelpers.bindAction(this, CMD_SAVE_TO_GARAGE, actionAddToGarage);
    }
 
    public boolean isSaved(){
@@ -217,27 +232,9 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
    private JMenu createMenuLoadout(){
       JMenu menu = new JMenu("Loadout");
-
-      addToGarage = new JMenuItem("Add to garage");
-      if( isSaved() )
-         addToGarage.setEnabled(false);
-      else
-         addToGarage.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent aArg0){
-               try{
-                  // TODO: This should be an Action class
-                  ProgramInit.lsml().getGarage().add(loadout, true);
-               }
-               catch( IllegalArgumentException e ){
-                  JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't add to garage! Error: " + e.getMessage());
-               }
-            }
-         });
-
-      menu.add(addToGarage);
-      menu.add(new UndoLoadoutAction(KeyStroke.getKeyStroke('z'), xbar, loadout));
-      menu.add(new JMenuItem(new RenameLoadoutAction(this, KeyStroke.getKeyStroke("R"))));
+      menu.add(new JMenuItem(actionAddToGarage));
+      menu.add(new JMenuItem(actionUndoLoadout));
+      menu.add(new JMenuItem(actionRename));
       menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), this, KeyStroke.getKeyStroke("D"))));
 
       menu.add(createMenuItem("Load stock", new ActionListener(){
@@ -305,14 +302,6 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          MechGarage.Message msg = (MechGarage.Message)aMsg;
          if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
             dispose(); // Closes frame
-         }
-         else if( msg.type == MechGarage.Message.Type.LoadoutAdded ){
-            SwingUtilities.invokeLater(new Runnable(){
-               @Override
-               public void run(){
-                  addToGarage.setEnabled(false);
-               }
-            });
          }
       }
       else if( aMsg instanceof Loadout.Message ){

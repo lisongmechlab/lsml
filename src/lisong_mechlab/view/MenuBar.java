@@ -55,6 +55,7 @@ public class MenuBar extends JMenuBar{
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent arg0){
+                  // TODO: make an action out of this
                   application.shutdown();
                }
             });
@@ -82,18 +83,20 @@ public class MenuBar extends JMenuBar{
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent aArg0){
+                  // TODO: make an action out of this
                   application.newGarage();
                }
             });
 
             menu.add(item);
          }
-         menu.add(new UndoGarageAction(KeyStroke.getKeyStroke('z'), application.xBar));
+         menu.add(new UndoGarageAction(application.xBar));
          {
             JMenuItem item = new JMenuItem("Open", KeyEvent.VK_O);
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent aArg0){
+                  // TODO: make an action out of this
                   application.openGarage();
                }
             });
@@ -106,6 +109,7 @@ public class MenuBar extends JMenuBar{
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent aArg0){
+                  // TODO: make an action out of this
                   application.saveGarage();
                }
             });
@@ -117,6 +121,7 @@ public class MenuBar extends JMenuBar{
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent aArg0){
+                  // TODO: make an action out of this
                   application.saveGarageAs();
                }
             });
