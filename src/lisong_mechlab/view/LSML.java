@@ -39,6 +39,8 @@ import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.SwingHelpers;
+import lisong_mechlab.view.action.UndoGarageAction;
 import lisong_mechlab.view.mechlab.MechLabPane;
 import lisong_mechlab.view.preferences.PreferenceStore;
 import lisong_mechlab.view.preferences.Preferences;
@@ -65,15 +67,15 @@ public class LSML extends JFrame{
                                                              }
                                                           };
    private static final long       serialVersionUID       = -2463321343234141728L;
-   private LsmlProtocolIPC         lsmlProtocolIPC;
-   private MechGarage              garage;
+   private static final String     CMD_UNDO_GARAGE        = "undo garage action";
    public final MessageXBar        xBar                   = new MessageXBar();
    public final UndoStack          undoStack              = new UndoStack(xBar, 256);
    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar, undoStack);
    public final Preferences        preferences            = new Preferences();
-
-   public final MechLabPane        mechLabPane;
-   public final JTabbedPane        tabbedPane;
+   public final MechLabPane        mechLabPane            = new MechLabPane(xBar, undoStack);
+   public final JTabbedPane        tabbedPane             = new JTabbedPane();
+   private LsmlProtocolIPC         lsmlProtocolIPC;
+   private MechGarage              garage;
 
    public LSML(){
       super(PROGRAM_FNAME + VERSION_STRING);
@@ -85,10 +87,8 @@ public class LSML extends JFrame{
       setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       setJMenuBar(new MenuBar(this));
 
-      mechLabPane = new MechLabPane(xBar, undoStack);
       openLastGarage();
 
-      tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Mech Lab", mechLabPane);
       tabbedPane.addTab("Mechs", new ChassiSelectionPane());
       tabbedPane.addTab("Weapons", new WeaponsListView());
@@ -116,6 +116,12 @@ public class LSML extends JFrame{
          lsmlProtocolIPC = null;
          JOptionPane.showMessageDialog(this, "Unable to startup IPC. Links with builds (lsml://...) will not work.\nError: " + e);
       }
+
+      setupKeybindings();
+   }
+
+   private void setupKeybindings(){
+      SwingHelpers.bindAction(getRootPane(), CMD_UNDO_GARAGE, new UndoGarageAction(xBar));
    }
 
    public MechGarage getGarage(){

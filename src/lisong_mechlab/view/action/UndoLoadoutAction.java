@@ -26,59 +26,59 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
 import lisong_mechlab.view.ProgramInit;
 
 /**
- * This action will undo a change to the garage.
+ * This action will undo a change to the given loadout.
  * 
  * @author Emily Björk
  */
-public class UndoGarageAction extends AbstractAction implements Reader{
+public class UndoLoadoutAction extends AbstractAction implements Reader{
+   private static final String SHORTCUT_STROKE  = "control Z";
    private static final long   serialVersionUID = 665074705972425989L;
-   private static final String SHORTCUT_STROKE  = "control G";
+   private final Loadout       loadout;
 
-   public UndoGarageAction(MessageXBar anXBar){
+   public UndoLoadoutAction(MessageXBar anXBar, Loadout aLoadout){
       putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
       anXBar.attach(this);
       setEnabled(false); // Initially
+      loadout = aLoadout;
    }
 
    @Override
    public Object getValue(String key){
       if( key == Action.NAME ){
          if( isEnabled() ){
-            return ProgramInit.lsml().undoStack.latestGarage().describe();
+            return ProgramInit.lsml().undoStack.latestLoadout(loadout).describe();
          }
-         return "Undo Garage";
+         return "Undo";
       }
       return super.getValue(key);
    }
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      ProgramInit.lsml().undoStack.undoAction(ProgramInit.lsml().undoStack.latestGarage());
+      ProgramInit.lsml().undoStack.undoAction(ProgramInit.lsml().undoStack.latestLoadout(loadout));
    }
 
    @Override
    public void receive(final Message aMsg){
       SwingUtilities.invokeLater(new Runnable(){
-
          @Override
          public void run(){
-            if( aMsg instanceof MechGarage.Message ){
+            if( aMsg instanceof LoadoutPart.Message ){
                if( ProgramInit.lsml() == null || ProgramInit.lsml().undoStack == null )
                   setEnabled(false);
                else
-                  setEnabled(null != ProgramInit.lsml().undoStack.latestGarage());
+                  setEnabled(null != ProgramInit.lsml().undoStack.latestLoadout(loadout));
                firePropertyChange(NAME, "", getValue(NAME));
             }
          }
       });
-
    }
-
 }

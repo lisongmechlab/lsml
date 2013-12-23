@@ -76,13 +76,6 @@ public class FontPreferences{
 
          UIManager.put(key, new FontUIResource(fr.getFamily(), fr.getStyle(), (int)(e.getValue() * fontSize.getSizeFactor())));
       }
-
-      /*
-       * for(Map.Entry<Object, Object> entry : UIManager.getDefaults().entrySet()){ Object key = entry.getKey(); Object
-       * value = UIManager.get(key); if( value != null && value instanceof FontUIResource ){ FontUIResource fr =
-       * (FontUIResource)value; FontUIResource f = new FontUIResource(fr.getFamily(), fr.getStyle(), (int)(fr.getSize()
-       * * fontSize.getSizeFactor())); UIManager.put(key, f); } }
-       */
    }
 
    /**

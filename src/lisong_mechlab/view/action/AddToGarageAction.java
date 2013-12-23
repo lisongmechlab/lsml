@@ -27,35 +27,33 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.view.mechlab.LoadoutFrame;
+import lisong_mechlab.view.ProgramInit;
 
-public class RenameLoadoutAction extends AbstractAction{
-   private static final String SHORTCUT_STROKE  = "control R";
-   private static final long   serialVersionUID = -673375419929455179L;
-   private final LoadoutFrame  loadoutFrame;
+/**
+ * This action will add the given loadout to the garage.
+ * 
+ * @author Emily Björk
+ */
+public class AddToGarageAction extends AbstractAction{
+   private static final long   serialVersionUID = -1720149730950545006L;
+   private static final String SHORTCUT_STROKE  = "control S";
    private final Loadout       loadout;
 
-   public RenameLoadoutAction(Loadout aLoadout){
-      super("Rename loadout...");
+   public AddToGarageAction(Loadout aLoadout){
+      super("Add to garage");
       loadout = aLoadout;
-      loadoutFrame = null;
-      putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
-   }
-
-   public RenameLoadoutAction(LoadoutFrame aLoadoutFrame){
-      super("Rename loadout...");
-      loadout = aLoadoutFrame.getLoadout();
-      loadoutFrame = aLoadoutFrame;
+      setEnabled(!ProgramInit.lsml().getGarage().getMechs().contains(aLoadout));
       putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
    }
 
    @Override
-   public void actionPerformed(ActionEvent aE){
-      String name = JOptionPane.showInputDialog(loadoutFrame, "Give a name", loadout.getName());
-      if( name == null || name.isEmpty() ){
-         JOptionPane.showMessageDialog(loadoutFrame, "No name given!");
-         return;
+   public void actionPerformed(ActionEvent aArg0){
+      try{
+         ProgramInit.lsml().getGarage().add(loadout, true);
+         setEnabled(false);
       }
-      loadout.rename(name);
+      catch( IllegalArgumentException e ){
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't add to garage! Error: " + e.getMessage());
+      }
    }
 }
