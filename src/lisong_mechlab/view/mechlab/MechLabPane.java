@@ -48,7 +48,7 @@ public class MechLabPane extends JSplitPane{
    public MechLabPane(MessageXBar anXBar, UndoStack anUndoStack){
       super(JSplitPane.HORIZONTAL_SPLIT, true);
       xBar = anXBar;
-      desktop = new LoadoutDesktop(xBar);
+      desktop = new LoadoutDesktop(xBar, anUndoStack);
       equipmentPane = new GarageTree(desktop, xBar, anUndoStack);
       EquipmentPanel panel = new EquipmentPanel(desktop, xBar);
       jScrollPane = new JScrollPane(equipmentPane);
