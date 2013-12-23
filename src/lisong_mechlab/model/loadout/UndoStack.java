@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -119,12 +120,31 @@ public class UndoStack implements MessageXBar.Reader{
       }
    }
 
+   /*
+    * TODO: I'm not really happy about this as it doesn't follow the same pattern as clearLoadout. Leaving it for now
+    * though.
+    */
    @Override
    public void receive(Message aMsg){
       if( aMsg instanceof MechGarage.Message ){
          MechGarage.Message msg = (MechGarage.Message)aMsg;
          if( msg.type == Type.NewGarage )
             actions.clear();
+      }
+   }
+
+   /**
+    * Removes all {@link UndoAction}s pushed to this stack that affect the given loadout.
+    * 
+    * @param aLoadout
+    *           The loadout to clear all related actions for.
+    */
+   public void clearLoadout(Loadout aLoadout){
+      Iterator<UndoAction> it = actions.iterator();
+      while( it.hasNext() ){
+         UndoAction action = it.next();
+         if( action.affects(aLoadout) )
+            it.remove();
       }
    }
 }

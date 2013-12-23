@@ -42,6 +42,7 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.SwingHelpers;
@@ -64,16 +65,18 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private static final int    xOffset            = 30, yOffset = 30;
    private final Loadout       loadout;
    private final MessageXBar   xbar;
+   private final UndoStack     undoStack;
    private final Action        actionUndoLoadout;
    private final Action        actionRename;
    private final Action        actionAddToGarage;
 
-   public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar){
+   public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar, UndoStack anUndoStack){
       super(aLoadout.toString(), true, // resizable
             true, // closable
             false, // maximizable
             true);// iconifiable
 
+      undoStack = anUndoStack;
       xbar = anXBar;
       xbar.attach(this);
       loadout = aLoadout;
@@ -123,6 +126,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                      throw new PropertyVetoException("Save canceled!", aE);
                   }
                }
+               // Being closed, clear undo stack of references to this loadout.
+               undoStack.clearLoadout(loadout);
             }
          }
       });

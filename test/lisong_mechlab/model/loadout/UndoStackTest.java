@@ -254,7 +254,7 @@ public class UndoStackTest{
       // Verify
       assertSame(a0, cut.latestGlobal());
    }
-   
+
    /**
     * The undo stack shall not reset when other messages than new garage is received.
     */
@@ -303,5 +303,31 @@ public class UndoStackTest{
 
       // Verify
       Mockito.verify(action, Mockito.times(1)).undo();
+   }
+
+   /**
+    * {@link UndoStack#clearLoadout(Loadout)} shall remove all actions from the stack that affects the given loadout.
+    */
+   @Test
+   public final void testClearLoadout(){
+      // Setup
+      GarageUndoAction garageUndoAction0 = Mockito.mock(GarageUndoAction.class);
+      UndoAction a0 = Mockito.mock(UndoAction.class);
+      Loadout l0 = Mockito.mock(Loadout.class);
+      Mockito.when(a0.affects(l0)).thenReturn(true);
+      UndoAction a1 = Mockito.mock(UndoAction.class);
+      Loadout l1 = Mockito.mock(Loadout.class);
+      Mockito.when(a1.affects(l1)).thenReturn(true);
+      cut.pushAction(a0);
+      cut.pushAction(garageUndoAction0);
+      cut.pushAction(a1);
+
+      // Execute
+      cut.clearLoadout(l1);
+
+      // Verify
+      assertSame(garageUndoAction0, cut.latestGarage()); // unaffected
+      assertSame(a0, cut.latestLoadout(l0)); // unaffected
+      assertNull(cut.latestLoadout(l1)); // removed
    }
 }
