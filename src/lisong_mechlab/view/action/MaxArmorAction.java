@@ -66,6 +66,10 @@ public class MaxArmorAction extends AbstractAction{
             String input = (String)JOptionPane.showInputDialog(loadoutFrame,
                                                                "Please enter the ratio between front and back armor as front:back.Example 3:1",
                                                                "Maximizing armor...", JOptionPane.INFORMATION_MESSAGE, null, null, "3:1");
+            if( input == null ){
+               return;
+            }
+            
             String[] s = input.split(":");
             if( s.length == 2 ){
                double front, back;
@@ -86,7 +90,7 @@ public class MaxArmorAction extends AbstractAction{
       catch( IllegalArgumentException e ){
          JOptionPane.showMessageDialog(loadoutFrame, "Unable to set max armor! Error: " + e.getMessage());
       }
-      catch( Throwable e ){
+      catch( Exception e ){
          JOptionPane.showMessageDialog(loadoutFrame, "Unexpected exception! Error: " + e);
       }
    }
