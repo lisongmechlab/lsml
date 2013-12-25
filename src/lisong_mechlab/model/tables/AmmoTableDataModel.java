@@ -314,7 +314,8 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
    public void fillInCombatSeconds(){
       for(String weaponName : weaponColumn.keySet()){
          if( weaponColumn.get(weaponName) != null ){
-            combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * weaponColumn.get(weaponName).getSecondsPerShot(loadout.getEfficiencies())));
+            combatColumn.put(weaponName, (numberVolleyColumn.get(weaponName) * weaponColumn.get(weaponName)
+                                                                                           .getSecondsPerShot(loadout.getEfficiencies())));
 
          }
          else{
@@ -421,22 +422,22 @@ public class AmmoTableDataModel extends AbstractTableModel implements MessageXBa
       if( aColumnIndex == 3 ){
          Double[] combatArray = new Double[combatColumn.size()];
          combatArray = combatColumn.values().toArray(combatArray);
-         if( !combatArray[aRowIndex].isInfinite() ){
-            return Math.floor(combatArray[aRowIndex]);
-         }
          if( combatArray[aRowIndex].isNaN() ){
             return 0.0;
+         }
+         else if( !combatArray[aRowIndex].isInfinite() ){
+            return Math.floor(combatArray[aRowIndex]);
          }
          return combatArray[aRowIndex];
       }
       if( aColumnIndex == 4 ){
          Double[] damageArray = new Double[damageMap.size()];
          damageArray = damageMap.values().toArray(damageArray);
-         if( !damageArray[aRowIndex].isInfinite() ){
-            return Math.floor(damageArray[aRowIndex]);
-         }
          if( damageArray[aRowIndex].isNaN() ){
             return 0.0;
+         }
+         else if( !damageArray[aRowIndex].isInfinite() ){
+            return Math.floor(damageArray[aRowIndex]);
          }
          return damageArray[aRowIndex];
       }
