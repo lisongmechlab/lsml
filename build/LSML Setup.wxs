@@ -3,9 +3,9 @@
     <?define g_fname = "Li Song Mechlab"?>
     <?define g_sname = "LSML"?>
     <?define g_mfg = "Li-Soft"?>
-    <?define g_version = "1.1.0"?>
+    <?define g_version = "1.3.0"?>
 
-	<Product Id="88B89921-CF85-451E-B48F-70F5B1954ABF" Name="$(var.g_fname) $(var.g_version)"
+	<Product Id="D06FDC68-C209-4C7A-9068-C0933C459E28" Name="$(var.g_fname) $(var.g_version)"
 		Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)"
 		UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
 
@@ -26,7 +26,7 @@
 		<!-- Remember the installation directory and pass it to the WIXUI -->
 		<Property Id="INSTALLDIR">
 			<RegistrySearch Id="RegistrySearch" Type="raw" Root="HKLM"
-				Key="SOFTWARE\$(var.g_mfg)\$(var.g_sname)" Name="InstallDir" Win64="yes"/>
+				Key="SOFTWARE\$(var.g_mfg)\$(var.g_sname)" Name="InstallDir" Win64="yes" />
 		</Property>
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 		<UIRef Id="WixUI_InstallDir" />
@@ -79,10 +79,16 @@
 								KeyPath="yes">
 								<Shortcut Id="shtct_dtp_exe" Directory="DesktopFolder"
 									Name="$(var.g_fname)" WorkingDirectory="INSTALLDIR" Advertise="yes"
-									Icon="icon.ico" IconIndex="0" />
+									Icon="icon.ico" IconIndex="0">
+									<ShortcutProperty Key="System.AppUserModel.ID"
+										Value="lisong_mechlab.view.LSML" />
+								</Shortcut>
 								<Shortcut Id="shtct_pmd_exe" Directory="ProgramMenuDir"
 									Name="$(var.g_fname)" Advertise="yes" Icon="icon.ico"
-									IconIndex="0" />
+									IconIndex="0">
+									<ShortcutProperty Key="System.AppUserModel.ID"
+										Value="lisong_mechlab.view.LSML" />
+								</Shortcut>
 							</File>
 							<RegistryKey Id="reg_hkcr_lsml" Root="HKCR" Key="lsml"
 								ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
