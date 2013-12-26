@@ -150,6 +150,8 @@ public class ProgramInit extends JFrame{
    }
 
    public static void main(final String[] args) throws Exception{
+      Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
+      
       // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
       if( args.length > 0 ){
          if( LsmlProtocolIPC.sendLoadout(args[0]) )
