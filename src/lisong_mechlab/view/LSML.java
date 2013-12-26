@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Emily Björk
  *
  * This program is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ public class LSML extends JFrame{
 
       openLastGarage();
 
-      tabbedPane.addTab("Mech Lab", mechLabPane);
+      tabbedPane.addTab("Mechlab", mechLabPane);
       tabbedPane.addTab("Mechs", new ChassiSelectionPane());
       tabbedPane.addTab("Weapons", new WeaponsListView());
 
