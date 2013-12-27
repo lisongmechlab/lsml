@@ -19,6 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Comparator;
+
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
@@ -92,4 +94,5 @@ public class MissileWeapon extends AmmoWeapon{
       return (getName().contains("LRM") || getName().contains("SRM") && !getName().contains("STREAK"));
    }
 
+   public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;
 }

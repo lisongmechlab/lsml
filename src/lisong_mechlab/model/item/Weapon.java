@@ -19,6 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
@@ -205,5 +209,37 @@ public class Weapon extends HeatSource{
    @Override
    public boolean isEquippableOn(Loadout aLoadout){
       return aLoadout.getChassi().getHardpointsCount(getHardpointType()) > 0;
+   }
+   
+
+   public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
+   static{
+      DEFAULT_WEAPON_ORDERING = new Comparator<Item>(){
+         private final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
+
+         @Override
+         public int compare(Item aLhs, Item aRhs){
+            Matcher mLhs = p.matcher(aLhs.getName());
+            Matcher mRhs = p.matcher(aRhs.getName());
+            
+            if(!mLhs.matches())
+               throw new RuntimeException("LHS didn't match pattern! ["+aLhs.getName()+"]");
+
+            if(!mRhs.matches())
+               throw new RuntimeException("RHS didn't match pattern! ["+aRhs.getName()+"]");
+            
+            if( mLhs.groupCount() < 1 || mRhs.groupCount() < 1 ){
+               return aLhs.getName().compareTo(aRhs.getName()); // Fall back in case parsing failed miserably
+            }
+
+            if( mLhs.group(1).equals(mRhs.group(1)) ){
+               // Same prefix
+               if( mLhs.groupCount() < 2 || mRhs.groupCount() < 2 )
+                  throw new RuntimeException("Parse error comparing: [" + aLhs.getName() + "] and [" + aRhs.getName() + "]");
+               return -Integer.compare(Integer.parseInt(mLhs.group(2)), Integer.parseInt(mRhs.group(2)));
+            }
+            return mLhs.group(1).compareTo(mRhs.group(1));
+         }
+      };
    }
 }
