@@ -19,6 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Comparator;
+
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
@@ -29,4 +31,6 @@ public class BallisticWeapon extends AmmoWeapon{
       super(aStatsWeapon, HardpointType.BALLISTIC);
       projectileSpeed = aStatsWeapon.WeaponStats.speed;
    }
+
+   public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;
 }

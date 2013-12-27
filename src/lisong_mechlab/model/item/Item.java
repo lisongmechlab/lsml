@@ -112,29 +112,61 @@ public class Item implements Comparable<Item>{
    }
 
    /**
-    * Defines the default sorting of arbitrary items. The sorting order is as follows: 1) Energy weapons 2) Ballistic
-    * weapons + ammo 3) Missile weapons + ammo 4) AMS + ammo 5) ECM 6) Other items except engines 7) Engines.
+    * Defines the default sorting order of arbitrary items.
+    * <p>
+    * The sorting order is as follows:
+    * <ol>
+    * <li>Energy weapons</li>
+    * <li>Ballistic weapons + ammo</li>
+    * <li>Missile weapons + ammo</li>
+    * <li>AMS + ammo</li>
+    * <li>ECM</li>
+    * <li>Other items except engines</li>
+    * <li>Engines</li>
+    * </ol>.
     */
    @Override
    public int compareTo(Item rhs){
-      if( this instanceof Engine && !(rhs instanceof Engine) ){
+      // Engines last
+      if( this instanceof Engine && !(rhs instanceof Engine) )
          return 1;
-      }
-      else if( !(this instanceof Engine) && rhs instanceof Engine ){
+      else if( !(this instanceof Engine) && rhs instanceof Engine )
          return -1;
-      }
+
+      // Count ammunition types together with their parent weapon type.
       HardpointType lhsHp = this instanceof Ammunition ? ((Ammunition)this).getWeaponHardpointType() : this.getHardpointType();
       HardpointType rhsHp = rhs instanceof Ammunition ? ((Ammunition)rhs).getWeaponHardpointType() : rhs.getHardpointType();
+
+      // Sort by hard point type (order they appear in the enumeration declaration)
+      // This gives the main order of items as given in the java doc.
       int hp = lhsHp.compareTo(rhsHp);
+
+      // Resolve ties
       if( hp == 0 ){
-         if( this instanceof Ammunition && !(rhs instanceof Ammunition) ){
+
+         // Ammunition after weapons in same hard point.
+         if( this instanceof Ammunition && !(rhs instanceof Ammunition) )
             return 1;
-         }
-         else if( !(this instanceof Ammunition) && rhs instanceof Ammunition ){
+         else if( !(this instanceof Ammunition) && rhs instanceof Ammunition )
             return -1;
+
+         // Let weapon groups sort internally
+         if( this instanceof EnergyWeapon && rhs instanceof EnergyWeapon ){
+            return EnergyWeapon.DEFAULT_ORDERING.compare((EnergyWeapon)this, (EnergyWeapon)rhs);
          }
+         else if( lhsHp == HardpointType.BALLISTIC){
+            return BallisticWeapon.DEFAULT_ORDERING.compare(this, rhs);
+         }
+         else if( lhsHp == HardpointType.MISSILE ){
+            return MissileWeapon.DEFAULT_ORDERING.compare(this, rhs);
+         }
+
+         // Sort by class name, this groups single/double heat sinks together
          int classCompare = this.getClass().getName().compareTo(rhs.getClass().getName());
+
+         // Resolve ties
          if( classCompare == 0 ){
+            // Last resort: Lexicographical ordering
             return toString().compareTo(rhs.toString());
          }
          return classCompare;
