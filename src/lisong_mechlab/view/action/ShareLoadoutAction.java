@@ -33,7 +33,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
@@ -95,7 +94,7 @@ public class ShareLoadoutAction extends AbstractAction{
          // TODO Auto-generated catch block
          e.printStackTrace();
       }
-      catch( EncodingException e ){
+      catch( Exception e ){
          JOptionPane.showMessageDialog(loadoutFrame, "Unable to encode loadout!" + e);
       }
    }

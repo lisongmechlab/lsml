@@ -19,6 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+/**
+ * This enumeration names the sides of an {@link InternalPart} for use with armor.
+ * 
+ * @author Li Song
+ */
 public enum ArmorSide{
    ONLY, FRONT, BACK
 }
