@@ -38,7 +38,7 @@ import lisong_mechlab.model.mwo_parsing.helpers.MdfMech;
  * This class represents a bare mech chassi. The class is immutable as the chassii are fixed. To configure a 'mech use
  * {@link Loadout}.
  * 
- * @author Emily
+ * @author Emily Björk
  */
 public class Chassi{
    private final ChassiClass             chassiclass;

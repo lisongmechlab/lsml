@@ -19,6 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.export;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.Base64;
@@ -89,8 +92,9 @@ public class Base64LoadoutCoder{
     * @return A HTTP URI as a {@link String} with a Base64 encoding of the {@link Loadout}.
     * @throws EncodingException
     *            Thrown if encoding failed for some reason. Shouldn't happen.
+    * @throws UnsupportedEncodingException
     */
-   public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException{
-      return LSML_TRAMPOLINE + String.valueOf(base64.encode(coderV1.encode(aLoadout)));
+   public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException, UnsupportedEncodingException{
+      return LSML_TRAMPOLINE + URLEncoder.encode(String.valueOf(base64.encode(coderV1.encode(aLoadout))), "UTF-8");
    }
 }
