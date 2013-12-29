@@ -52,7 +52,7 @@ import lisong_mechlab.view.preferences.Preferences;
  */
 public class LSML extends JFrame{
    public static final String      PROGRAM_FNAME          = "Li Song Mechlab";
-   private static final String     VERSION_STRING         = "(develop)";
+   private static final String     VERSION_STRING         = " 1.3.0-RC1";
    private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
    private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter(){
                                                              @Override
