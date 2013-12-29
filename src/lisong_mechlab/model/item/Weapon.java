@@ -70,12 +70,8 @@ public class Weapon extends HeatSource{
    }
 
    /**
+    * 0 = ungrouped 1 = PPC, ER PPC 2 = LRM20/15/10 3 = LL, ER LL, LPL 4 = SRM6 SRM4
     * 
-    * 0 = ungrouped
-    * 1 = PPC, ER PPC
-    * 2 = LRM20/15/10
-    * 3 = LL, ER LL, LPL
-    * 4 = SRM6 SRM4
     * @return The ID of the group this weapon belongs to.
     */
    public int getGhostHeatGroup(){
@@ -210,7 +206,6 @@ public class Weapon extends HeatSource{
    public boolean isEquippableOn(Loadout aLoadout){
       return aLoadout.getChassi().getHardpointsCount(getHardpointType()) > 0;
    }
-   
 
    public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
    static{
@@ -221,22 +216,19 @@ public class Weapon extends HeatSource{
          public int compare(Item aLhs, Item aRhs){
             Matcher mLhs = p.matcher(aLhs.getName());
             Matcher mRhs = p.matcher(aRhs.getName());
-            
-            if(!mLhs.matches())
-               throw new RuntimeException("LHS didn't match pattern! ["+aLhs.getName()+"]");
 
-            if(!mRhs.matches())
-               throw new RuntimeException("RHS didn't match pattern! ["+aRhs.getName()+"]");
-            
-            if( mLhs.groupCount() < 1 || mRhs.groupCount() < 1 ){
-               return aLhs.getName().compareTo(aRhs.getName()); // Fall back in case parsing failed miserably
-            }
+            if( !mLhs.matches() )
+               throw new RuntimeException("LHS didn't match pattern! [" + aLhs.getName() + "]");
+
+            if( !mRhs.matches() )
+               throw new RuntimeException("RHS didn't match pattern! [" + aRhs.getName() + "]");
 
             if( mLhs.group(1).equals(mRhs.group(1)) ){
                // Same prefix
-               if( mLhs.groupCount() < 2 || mRhs.groupCount() < 2 )
-                  throw new RuntimeException("Parse error comparing: [" + aLhs.getName() + "] and [" + aRhs.getName() + "]");
-               return -Integer.compare(Integer.parseInt(mLhs.group(2)), Integer.parseInt(mRhs.group(2)));
+               String lhsSuffix = mLhs.group(2);
+               String rhsSuffix = mRhs.group(2);
+               if( lhsSuffix != null && lhsSuffix.length() > 0 && rhsSuffix != null && rhsSuffix.length() > 0 )
+                  return -Integer.compare(Integer.parseInt(lhsSuffix), Integer.parseInt(rhsSuffix));
             }
             return mLhs.group(1).compareTo(mRhs.group(1));
          }
