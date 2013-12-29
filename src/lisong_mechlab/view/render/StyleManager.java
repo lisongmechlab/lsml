@@ -32,6 +32,7 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.Weapon;
 
 public class StyleManager{
@@ -45,21 +46,44 @@ public class StyleManager{
    private static final Border bottomBorder            = new RoundedBorders(new Insets(0, MARGIN, MARGIN, MARGIN), PADDING, RADII, true, false);
    private static final Border singleBorder            = new RoundedBorders(new Insets(MARGIN, MARGIN, MARGIN, MARGIN), PADDING, RADII, false, false);
 
-   private static Color        COLOR_BG_DYNAMIC        = new Color(0xeeeeec);
-   private static Color        COLOR_BG_AMS            = new Color(0x2e3436);
-   private static Color        COLOR_BG_AMS_AMMO       = new Color(0x888a85);
-   private static Color        COLOR_BG_BALLISTIC      = new Color(0xc4a000);
-   private static Color        COLOR_BG_BALLISTIC_AMMO = new Color(0xfce94f);
-   private static Color        COLOR_BG_ECM            = new Color(0x204a87);
-   private static Color        COLOR_BG_ENERGY         = new Color(0xa40000);
-   private static Color        COLOR_BG_ENERGY_ALT     = new Color(0xef2929);
-   private static Color        COLOR_BG_MISSILE        = new Color(0x4e9a06);
-   private static Color        COLOR_BG_MISSILE_AMMO   = new Color(0x8ae234);
+   // Weapons
+   private static final Color  COLOR_FG_ENERGY         = Color.WHITE;
+   private static final Color  COLOR_BG_ENERGY         = new Color(0xa40000);
+   private static final Color  COLOR_FG_ENERGY_ALT     = Color.WHITE;
+   private static final Color  COLOR_BG_ENERGY_ALT     = new Color(0xef2929);
+   private static final Color  COLOR_FG_MISSILE        = Color.WHITE;
+   private static final Color  COLOR_BG_MISSILE        = new Color(0x4e9a06);
+   private static final Color  COLOR_FG_MISSILE_AMMO   = Color.BLACK;
+   private static final Color  COLOR_BG_MISSILE_AMMO   = new Color(0x8ae234);
+   private static final Color  COLOR_FG_BALLISTIC      = Color.WHITE;
+   private static final Color  COLOR_BG_BALLISTIC      = new Color(0xc4a000);
+   private static final Color  COLOR_FG_BALLISTIC_AMMO = Color.BLACK;
+   private static final Color  COLOR_BG_BALLISTIC_AMMO = new Color(0xfce94f);
 
-   private static Color        COLOR_BG_INTERNAL       = new Color(0xd3d7cf);
-   private static Color        COLOR_BG_ENGINE         = new Color(0x5c3566);
-   private static Color        COLOR_BG_HS             = new Color(0xad7fa8);
-   private static Color        COLOR_BG_MISC           = new Color(0x729fcf);
+   private static final Color  COLOR_FG_JJ             = Color.BLACK;
+   // Engine/Propulsion
+   private static final Color  COLOR_BG_JJ             = new Color(0x729fcf);
+   private static final Color  COLOR_FG_ENGINE         = Color.WHITE;
+   private static final Color  COLOR_BG_ENGINE         = new Color(0x5c3566);
+   private static final Color  COLOR_FG_HS             = Color.BLACK;
+   private static final Color  COLOR_BG_HS             = new Color(0xad7fa8);
+
+   // Structure/Internal
+   private static final Color  COLOR_FG_DYNAMIC        = (new Color(0xeeeeec)).darker();
+   private static final Color  COLOR_BG_DYNAMIC        = new Color(0xeeeeec);
+   private static final Color  COLOR_FG_INTERNAL       = Color.GRAY.darker();
+   private static final Color  COLOR_BG_INTERNAL       = new Color(0xd3d7cf);
+
+   // Counter measures
+   private static final Color  COLOR_FG_AMS            = Color.WHITE;
+   private static final Color  COLOR_BG_AMS            = new Color(0x2e3436);
+   private static final Color  COLOR_FG_AMS_AMMO       = Color.BLACK;
+   private static final Color  COLOR_BG_AMS_AMMO       = new Color(0x888a85);
+   private static final Color  COLOR_FG_ECM            = Color.WHITE;
+   private static final Color  COLOR_BG_ECM            = new Color(0x204a87);
+
+   // Others
+   private static final Color  COLOR_BG_MISC           = new Color(0x729fcf);
 
    public static void styleItem(JComponent aComponent){
       Item item = null;
@@ -105,7 +129,7 @@ public class StyleManager{
       aComponent.setOpaque(true);
       aComponent.setBorder(singleBorder);
       aComponent.setBackground(COLOR_BG_DYNAMIC);
-      aComponent.setForeground(Color.GRAY.brighter());
+      aComponent.setForeground(COLOR_FG_DYNAMIC);
    }
 
    public static void styleItem(JComponent aComponent, HardpointType aType){
@@ -173,6 +197,9 @@ public class StyleManager{
       else if( anItem instanceof Engine ){
          return COLOR_BG_ENGINE;
       }
+      else if( anItem instanceof JumpJet ){
+         return COLOR_BG_JJ;
+      }
       else if( anItem.getName().equals("TAG") ){
          return COLOR_BG_ENERGY_ALT;
       }
@@ -189,15 +216,15 @@ public class StyleManager{
    static public Color getFgColorFor(HardpointType aType){
       switch( aType ){
          case AMS:
-            return Color.WHITE;
+            return COLOR_FG_AMS;
          case BALLISTIC:
-            return Color.WHITE;
+            return COLOR_FG_BALLISTIC;
          case ECM:
-            return Color.WHITE;
+            return COLOR_FG_ECM;
          case ENERGY:
-            return Color.WHITE;
+            return COLOR_FG_ENERGY;
          case MISSILE:
-            return Color.WHITE;
+            return COLOR_FG_MISSILE;
          case NONE:
          default:
             return Color.BLACK;
@@ -209,28 +236,31 @@ public class StyleManager{
          return Color.BLACK;
       }
       else if( anItem instanceof Internal ){
-         return Color.GRAY.darker();
+         return COLOR_FG_INTERNAL;
       }
       else if( anItem instanceof Ammunition ){
          switch( ((Ammunition)anItem).getWeaponHardpointType() ){
             case AMS:
-               return Color.BLACK;
+               return COLOR_FG_AMS_AMMO;
             case BALLISTIC:
-               return Color.BLACK;
+               return COLOR_FG_BALLISTIC_AMMO;
             case MISSILE:
-               return Color.BLACK;
+               return COLOR_FG_MISSILE_AMMO;
             default:
                break;
          }
       }
       else if( anItem instanceof HeatSink ){
-         return Color.BLACK;
+         return COLOR_FG_HS;
       }
       else if( anItem instanceof Engine ){
-         return Color.WHITE;
+         return COLOR_FG_ENGINE;
+      }
+      else if( anItem instanceof JumpJet ){
+         return COLOR_FG_JJ;
       }
       else if( anItem.getName().contains("TAG") ){
-         return Color.WHITE;
+         return COLOR_FG_ENERGY_ALT;
       }
       else if( anItem instanceof Weapon || anItem == ItemDB.ECM ){
          return getFgColorFor(anItem.getHardpointType());
@@ -241,5 +271,4 @@ public class StyleManager{
    static public Color getFgColorInvalid(){
       return Color.GRAY.darker();
    }
-
 }
