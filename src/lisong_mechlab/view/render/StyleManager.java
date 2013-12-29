@@ -45,14 +45,14 @@ public class StyleManager{
    private static final Border bottomBorder            = new RoundedBorders(new Insets(0, MARGIN, MARGIN, MARGIN), PADDING, RADII, true, false);
    private static final Border singleBorder            = new RoundedBorders(new Insets(MARGIN, MARGIN, MARGIN, MARGIN), PADDING, RADII, false, false);
 
-   private static Color        COLOR_BG_DYNAMIC        = new Color(0xeeeeec);
+   private static Color        COLOR_BG_DYNAMIC        = new Color(0xe2e6dd);
    private static Color        COLOR_BG_AMS            = new Color(0x2e3436);
    private static Color        COLOR_BG_AMS_AMMO       = new Color(0x888a85);
    private static Color        COLOR_BG_BALLISTIC      = new Color(0xc4a000);
    private static Color        COLOR_BG_BALLISTIC_AMMO = new Color(0xfce94f);
    private static Color        COLOR_BG_ECM            = new Color(0x204a87);
    private static Color        COLOR_BG_ENERGY         = new Color(0xa40000);
-   private static Color        COLOR_BG_ENERGY_ALT     = new Color(0xef2929);
+   private static Color        COLOR_BG_ENERGY_ALT     = new Color(0xcc0000);
    private static Color        COLOR_BG_MISSILE        = new Color(0x4e9a06);
    private static Color        COLOR_BG_MISSILE_AMMO   = new Color(0x8ae234);
 
