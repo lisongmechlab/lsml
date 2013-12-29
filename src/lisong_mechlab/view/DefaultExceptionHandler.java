@@ -19,12 +19,17 @@
 //@formatter:on
 package lisong_mechlab.view;
 
+import java.awt.Component;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 /**
@@ -61,13 +66,19 @@ public class DefaultExceptionHandler implements UncaughtExceptionHandler{
       StringBuilder builder = new StringBuilder();
       builder.append("<html><p>An error has been encountered, in most cases LSML can still continue to function normally.</p>");
       builder.append("<br><p>However as a safety precaution it is recommended to \"save as\" your garage manually from the garage menu.</p>");
-
       builder.append("<br><p>Please copy the following and send it to <a href=\"lisongmechlab@gmail.com\">lisongmechlab@gmail.com</a> together with an explanation of what you were doing to make us aware of the problem.</p><br>");
+     
       StringWriter sw = new StringWriter();
       aThrowable.printStackTrace(new PrintWriter(sw));
-      builder.append(sw.toString());
-
-      JOptionPane.showMessageDialog(ProgramInit.lsml(), builder.toString(), "LSML has encountered an error.", JOptionPane.ERROR_MESSAGE);
+      
+      JPanel p = new JPanel();
+      p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
+      p.add(new JLabel(builder.toString()));
+      JTextArea text = new JTextArea(sw.toString());
+      text.setAlignmentX(Component.LEFT_ALIGNMENT);
+      text.setEditable(false);
+      p.add(text);
+      JOptionPane.showMessageDialog(ProgramInit.lsml(), p, "LSML has encountered an error.", JOptionPane.ERROR_MESSAGE);
    }
 
 }
