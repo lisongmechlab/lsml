@@ -19,16 +19,16 @@
 //@formatter:on
 package lisong_mechlab.util;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
-import lisong_mechlab.util.Huffman1;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Test suite for {@link Huffman1}

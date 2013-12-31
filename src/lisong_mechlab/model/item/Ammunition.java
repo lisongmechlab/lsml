@@ -20,6 +20,7 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 
 /**
@@ -34,7 +35,7 @@ public class Ammunition extends Item{
    protected final HardpointType type;
 
    public Ammunition(ItemStatsModule aStatsModule){
-      super(aStatsModule, HardpointType.NONE, 1, 1.0);
+      super(aStatsModule, HardpointType.NONE, 1, 1.0, aStatsModule.AmmoTypeStats.health);
       hp = aStatsModule.AmmoTypeStats.health;
       internalDamage = aStatsModule.AmmoTypeStats.internalDamage;
       shotsPerTon = aStatsModule.AmmoTypeStats.shotsPerTon;
@@ -65,4 +66,11 @@ public class Ammunition extends Item{
       return type;
    }
 
+   @Override
+   public String getShortName(Upgrades anUpgrades){
+      String name = getName(anUpgrades);
+      name = name.replace("ULTRA ", "U");
+      name = name.replace("MACHINE GUN", "MG");
+      return name;
+   }
 }

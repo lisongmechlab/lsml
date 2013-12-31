@@ -37,4 +37,10 @@ public class AmmoWeapon extends Weapon{
       return ammoType;
    }
 
+   @Override
+   public String getShortName(Upgrades anUpgrades){
+      String name = getName(anUpgrades);
+      name = name.replace("ANTI-MISSILE SYSTEM", "AMS");
+      return name;
+   }
 }
