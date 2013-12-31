@@ -28,10 +28,10 @@ import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
  */
 public class Internal extends Item{
    public Internal(MdfInternal aInternal){
-      super(aInternal.Name, aInternal.Desc, aInternal.Slots); // TODO: Check translation
+      super(aInternal.Name, aInternal.Desc, aInternal.Slots, 0); // TODO: Check translation
    }
 
    public Internal(String aNameTag, String aDescTag, int aSlots){
-      super(aNameTag, aDescTag, aSlots);
+      super(aNameTag, aDescTag, aSlots, 0);
    }
 }

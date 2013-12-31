@@ -102,7 +102,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       setContentPane(chartPanel);
       chartPanel.getChart().getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
       chartPanel.getChart().getLegend().setVerticalAlignment(VerticalAlignment.TOP);
-      
+
       LegendTitle legendTitle = chartPanel.getChart().getLegend();
       XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
       titleAnnotation.setMaxWidth(0.4);

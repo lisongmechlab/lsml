@@ -25,8 +25,8 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStats;
 public class HeatSource extends Item{
    protected final double heat;
 
-   protected HeatSource(ItemStats anItemStats, HardpointType aHardpointType, int aSlots, double aTons, double aHeat){
-      super(anItemStats, aHardpointType, aSlots, aTons);
+   protected HeatSource(ItemStats anItemStats, HardpointType aHardpointType, int aSlots, double aTons, double aHeat, int aHealth){
+      super(anItemStats, aHardpointType, aSlots, aTons, aHealth);
       heat = aHeat;
    }
 

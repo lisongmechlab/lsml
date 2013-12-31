@@ -46,7 +46,8 @@ public class Weapon extends HeatSource{
    private final int       ghostHeatFreeAlpha;
 
    public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
-      super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat);
+      super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat,
+            aStatsWeapon.WeaponStats.Health);
       damagePerProjectile = aStatsWeapon.WeaponStats.damage;
       cycleTime = aStatsWeapon.WeaponStats.cooldown;
       rangeMin = aStatsWeapon.WeaponStats.minRange;

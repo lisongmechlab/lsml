@@ -53,9 +53,9 @@ import org.mockito.Spy;
 public class LoadoutTest{
    @Spy
    MessageXBar xBar;
-   
+
    @Mock
-   UndoStack undoStack;
+   UndoStack   undoStack;
 
    @Before
    public void setup(){
