@@ -34,7 +34,10 @@ public class EnergyWeapon extends Weapon{
 
    public EnergyWeapon(ItemStatsWeapon aStatsWeapon){
       super(aStatsWeapon, HardpointType.ENERGY);
-      burnTime = aStatsWeapon.WeaponStats.duration;
+      if( aStatsWeapon.WeaponStats.duration < 0 )
+         burnTime = Double.POSITIVE_INFINITY;
+      else
+         burnTime = aStatsWeapon.WeaponStats.duration;
       if( getName().equals("PPC") ){
          zeroRange = getRangeMin() - Math.ulp(getRangeMin()) * RANGE_ULP_FUZZ;
       }
@@ -50,6 +53,9 @@ public class EnergyWeapon extends Weapon{
 
    @Override
    public double getSecondsPerShot(Efficiencies aEfficiencies){
+      if( burnTime == Double.POSITIVE_INFINITY ){
+         return getCycleTime(aEfficiencies);
+      }
       return getCycleTime(aEfficiencies) + burnTime;
    }
 
@@ -121,5 +127,9 @@ public class EnergyWeapon extends Weapon{
                throw new RuntimeException("Unknown laser size!");
          }
       };
+   }
+
+   public double getDuration(){
+      return burnTime;
    }
 }

@@ -46,9 +46,21 @@ public class Weapon extends HeatSource{
    private final int       ghostHeatFreeAlpha;
 
    public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
-      super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat);
+      super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat,
+            aStatsWeapon.WeaponStats.Health);
       damagePerProjectile = aStatsWeapon.WeaponStats.damage;
-      cycleTime = aStatsWeapon.WeaponStats.cooldown;
+      if( aStatsWeapon.WeaponStats.cooldown <= 0.0 ){
+         // Some weapons are troublesome in that they have zero cooldown in the data files.
+         // These include: Machine Gun, Flamer, TAG
+         if( aStatsWeapon.WeaponStats.type.toLowerCase().equals("energy") ){
+            cycleTime = 1;
+         }
+         else{
+            cycleTime = 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 = 0.10375
+         }
+      }
+      else
+         cycleTime = aStatsWeapon.WeaponStats.cooldown;
       rangeMin = aStatsWeapon.WeaponStats.minRange;
       rangeMax = aStatsWeapon.WeaponStats.maxRange;
       rangeLong = aStatsWeapon.WeaponStats.longRange;
@@ -99,8 +111,6 @@ public class Weapon extends HeatSource{
    }
 
    public double getCycleTime(Efficiencies aEfficiencies){
-      if( cycleTime < 0.1 )
-         return 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 = 0.10375
       double factor = (null == aEfficiencies) ? 1.0 : aEfficiencies.getWeaponCycleTimeModifier();
       return cycleTime * factor;
    }

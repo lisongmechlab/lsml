@@ -25,114 +25,176 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+
 /**
- * A modified version of FlowLayout that allows containers using this Layout to behave in a reasonable manner when
- * placed inside a JScrollPane.
+ * FlowLayout subclass that fully supports wrapping of components.
  * <p>
- * Taken from: http://stackoverflow.com/a/4611117/2498188
+ * http://tips4java.wordpress.com/2008/11/06/wrap-layout/
  * </p>
  * 
- * @author Babu Kalakrishnan Modifications by greearb and jzd
+ * @Author Rob Camick
  */
 public class ModifiedFlowLayout extends FlowLayout{
-   private static final long serialVersionUID = -3513413170985162574L;
+   private static final long serialVersionUID = 3554986002029127338L;
 
+   /**
+    * Constructs a new <code>WrapLayout</code> with a left alignment and a default 5-unit horizontal and vertical gap.
+    */
    public ModifiedFlowLayout(){
       super();
    }
 
+   /**
+    * Constructs a new <code>FlowLayout</code> with the specified alignment and a default 5-unit horizontal and vertical
+    * gap. The value of the alignment argument must be one of <code>WrapLayout</code>, <code>WrapLayout</code>, or
+    * <code>WrapLayout</code>.
+    * 
+    * @param align
+    *           the alignment value
+    */
    public ModifiedFlowLayout(int align){
       super(align);
    }
 
+   /**
+    * Creates a new flow layout manager with the indicated alignment and the indicated horizontal and vertical gaps.
+    * <p>
+    * The value of the alignment argument must be one of <code>WrapLayout</code>, <code>WrapLayout</code>, or
+    * <code>WrapLayout</code>.
+    * 
+    * @param align
+    *           the alignment value
+    * @param hgap
+    *           the horizontal gap between components
+    * @param vgap
+    *           the vertical gap between components
+    */
    public ModifiedFlowLayout(int align, int hgap, int vgap){
       super(align, hgap, vgap);
    }
 
-   @Override
-   public Dimension minimumLayoutSize(Container target){
-      // Size of largest component, so we can resize it in
-      // either direction with something like a split-pane.
-      return computeMinSize(target);
-   }
-
+   /**
+    * Returns the preferred dimensions for this layout given the <i>visible</i> components in the specified target
+    * container.
+    * 
+    * @param target
+    *           the component which needs to be laid out
+    * @return the preferred dimensions to lay out the subcomponents of the specified container
+    */
    @Override
    public Dimension preferredLayoutSize(Container target){
-      return computeSize(target);
+      return layoutSize(target, true);
    }
 
-   private Dimension computeSize(Container target){
+   /**
+    * Returns the minimum dimensions needed to layout the <i>visible</i> components contained in the specified target
+    * container.
+    * 
+    * @param target
+    *           the component which needs to be laid out
+    * @return the minimum dimensions to lay out the subcomponents of the specified container
+    */
+   @Override
+   public Dimension minimumLayoutSize(Container target){
+      Dimension minimum = layoutSize(target, false);
+      minimum.width -= (getHgap() + 1);
+      return minimum;
+   }
+
+   /**
+    * Returns the minimum or preferred dimension needed to layout the target container.
+    * 
+    * @param target
+    *           target to get layout size for
+    * @param preferred
+    *           should preferred size be calculated
+    * @return the dimension to layout the target container
+    */
+   private Dimension layoutSize(Container target, boolean preferred){
       synchronized( target.getTreeLock() ){
+         // Each row must fit with the width allocated to the containter.
+         // When the container width = 0, the preferred width of the container
+         // has not yet been calculated so lets ask for the maximum.
+
+         int targetWidth = target.getSize().width;
+
+         if( targetWidth == 0 )
+            targetWidth = Integer.MAX_VALUE;
+
          int hgap = getHgap();
          int vgap = getVgap();
-         int w = target.getWidth();
-
-         // Let this behave like a regular FlowLayout (single row)
-         // if the container hasn't been assigned any size yet
-         if( w == 0 ){
-            w = Integer.MAX_VALUE;
-         }
-
          Insets insets = target.getInsets();
-         if( insets == null ){
-            insets = new Insets(0, 0, 0, 0);
-         }
-         int reqdWidth = 0;
+         int horizontalInsetsAndGap = insets.left + insets.right + (hgap * 2);
+         int maxWidth = targetWidth - horizontalInsetsAndGap;
 
-         int maxwidth = w - (insets.left + insets.right + hgap * 2);
-         int n = target.getComponentCount();
-         int x = 0;
-         int y = insets.top + vgap; // FlowLayout starts by adding vgap, so do that here too.
+         // Fit components into the allowed width
+
+         Dimension dim = new Dimension(0, 0);
+         int rowWidth = 0;
          int rowHeight = 0;
 
-         for(int i = 0; i < n; i++){
-            Component c = target.getComponent(i);
-            if( c.isVisible() ){
-               Dimension d = c.getPreferredSize();
-               if( (x == 0) || ((x + d.width) <= maxwidth) ){
-                  // fits in current row.
-                  if( x > 0 ){
-                     x += hgap;
-                  }
-                  x += d.width;
-                  rowHeight = Math.max(rowHeight, d.height);
+         int nmembers = target.getComponentCount();
+
+         for(int i = 0; i < nmembers; i++){
+            Component m = target.getComponent(i);
+
+            if( m.isVisible() ){
+               Dimension d = preferred ? m.getPreferredSize() : m.getMinimumSize();
+
+               // Can't add the component to current row. Start a new row.
+
+               if( rowWidth + d.width > maxWidth ){
+                  addRow(dim, rowWidth, rowHeight);
+                  rowWidth = 0;
+                  rowHeight = 0;
                }
-               else{
-                  // Start of new row
-                  x = d.width;
-                  y += vgap + rowHeight;
-                  rowHeight = d.height;
+
+               // Add a horizontal gap for all components after the first
+
+               if( rowWidth != 0 ){
+                  rowWidth += hgap;
                }
-               reqdWidth = Math.max(reqdWidth, x);
+
+               rowWidth += d.width;
+               rowHeight = Math.max(rowHeight, d.height);
             }
          }
-         y += rowHeight;
-         y += insets.bottom;
-         return new Dimension(reqdWidth + insets.left + insets.right, y);
+
+         addRow(dim, rowWidth, rowHeight);
+
+         dim.width += horizontalInsetsAndGap;
+         dim.height += insets.top + insets.bottom + vgap * 2;
+
+         // When using a scroll pane or the DecoratedLookAndFeel we need to
+         // make sure the preferred size is less than the size of the
+         // target containter so shrinking the container size works
+         // correctly. Removing the horizontal gap is an easy way to do this.
+
+         Container scrollPane = SwingUtilities.getAncestorOfClass(JScrollPane.class, target);
+
+         if( scrollPane != null && target.isValid() ){
+            dim.width -= (hgap + 1);
+         }
+
+         return dim;
       }
    }
 
-   private Dimension computeMinSize(Container target){
-      synchronized( target.getTreeLock() ){
-         int minx = Integer.MAX_VALUE;
-         int miny = Integer.MIN_VALUE;
-         boolean found_one = false;
-         int n = target.getComponentCount();
+   /*
+    * A new row has been completed. Use the dimensions of this row to update the preferred size for the container.
+    * @param dim update the width and height when appropriate
+    * @param rowWidth the width of the row to add
+    * @param rowHeight the height of the row to add
+    */
+   private void addRow(Dimension dim, int rowWidth, int rowHeight){
+      dim.width = Math.max(dim.width, rowWidth);
 
-         for(int i = 0; i < n; i++){
-            Component c = target.getComponent(i);
-            if( c.isVisible() ){
-               found_one = true;
-               Dimension d = c.getPreferredSize();
-               minx = Math.min(minx, d.width);
-               miny = Math.min(miny, d.height);
-            }
-         }
-         if( found_one ){
-            return new Dimension(minx, miny);
-         }
-         return new Dimension(0, 0);
+      if( dim.height > 0 ){
+         dim.height += getVgap();
       }
-   }
 
+      dim.height += rowHeight;
+   }
 }

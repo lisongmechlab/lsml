@@ -34,7 +34,7 @@ public class Engine extends HeatSource{
    final private int          heatsinkslots;
 
    public Engine(ItemStatsModule aStatsModule){
-      super(aStatsModule, HardpointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE);
+      super(aStatsModule, HardpointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE, aStatsModule.EngineStats.health);
       int hs = aStatsModule.EngineStats.heatsinks;
       internalHs = Math.min(10, hs);
       heatsinkslots = hs - internalHs;

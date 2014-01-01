@@ -1,6 +1,6 @@
 package lisong_mechlab.model.loadout.metrics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,10 +105,10 @@ public class RangeMetricTest{
    @Test
    public final void testCalculate_changeRange() throws Exception{
       double range = 20.0;
-      
+
       Mockito.when(cut.calculate(Matchers.anyDouble())).thenReturn(0.0);
       Mockito.when(cut.calculate(range)).thenReturn(1.0);
-      
+
       cut.changeRange(range);
       assertEquals(1.0, cut.calculate(), 0.0);
    }

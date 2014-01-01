@@ -52,7 +52,7 @@ public class ItemLabel extends JLabel{
       item = anItem;
 
       StyleManager.styleItem(this, item);
-      setToolTipText("<html>"+item.getName() + "<p>" + item.getDescription()+"</html>");
+      setToolTipText("<html>" + item.getName() + "<p>" + item.getDescription() + "</html>");
 
       setTransferHandler(new ItemTransferHandler());
       addMouseListener(new MouseAdapter(){
@@ -62,7 +62,7 @@ public class ItemLabel extends JLabel{
 
             Component component = anEvent.getComponent();
             if( component instanceof ItemLabel ){
-               aInfoPanel.showItem(item, null != loadout ? loadout.getEfficiencies() : null);
+               aInfoPanel.showItem(item, null != loadout ? loadout.getUpgrades() : null, null != loadout ? loadout.getEfficiencies() : null);
             }
 
             ItemLabel button = (ItemLabel)anEvent.getSource();
