@@ -25,14 +25,19 @@ import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -50,6 +55,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
@@ -71,59 +77,60 @@ import lisong_mechlab.view.WeaponSummaryTable;
 import lisong_mechlab.view.render.ProgressBarRenderer;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
-   private static final long     serialVersionUID = 4720126200474042446L;
-   private final Loadout         loadout;
+   private static final long            serialVersionUID = 4720126200474042446L;
+   private final Loadout                loadout;
 
    // General pane
-   private final JProgressBar    massBar;
-   private final JLabel          massValue        = new JLabel("xxx");
-   private final JProgressBar    armorBar;
-   private final JLabel          armorValue       = new JLabel("xxx");
-   private final JProgressBar    critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
-   private final JLabel          critslotsValue   = new JLabel("xxx");
-   private final JCheckBox       ferroFibros      = new JCheckBox("Ferro-Fibrous");
-   private final JCheckBox       endoSteel        = new JCheckBox("Endo-Steel");
-   private final JCheckBox       artemis          = new JCheckBox("Artemis IV");
+   private final JProgressBar           massBar;
+   private final JLabel                 massValue        = new JLabel("xxx");
+   private final JProgressBar           armorBar;
+   private final JLabel                 armorValue       = new JLabel("xxx");
+   private final JProgressBar           critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
+   private final JLabel                 critslotsValue   = new JLabel("xxx");
+   private final JCheckBox              ferroFibros      = new JCheckBox("Ferro-Fibrous");
+   private final JCheckBox              endoSteel        = new JCheckBox("Endo-Steel");
+   private final JCheckBox              artemis          = new JCheckBox("Artemis IV");
 
    // Movement pane
-   private final JLabel          topSpeed         = new JLabel("xxx");
-   private final JCheckBox       speedTweak       = new JCheckBox("Speed Tweak");
-   private final JLabel          jumpJets         = new JLabel("xxx");
+   private final JLabel                 topSpeed         = new JLabel("xxx");
+   private final JCheckBox              speedTweak       = new JCheckBox("Speed Tweak");
+   private final JLabel                 jumpJets         = new JLabel("xxx");
 
    // Heat pane
-   private final JLabel          heatsinks        = new JLabel("xxx");
-   private final JLabel          effectiveHS      = new JLabel("xxx");
-   private final JLabel          timeToOverheat   = new JLabel("xxx");
-   private final JLabel          coolingRatio     = new JLabel("xxx");
-   private final JCheckBox       doubleHeatSinks  = new JCheckBox("Double Heatsinks");
-   private final JCheckBox       coolRun          = new JCheckBox("Cool Run");
-   private final JCheckBox       heatContainment  = new JCheckBox("Heat Containment");
-   private final JCheckBox       doubleBasics     = new JCheckBox("Double Basics");
+   private final JLabel                 heatsinks        = new JLabel("xxx");
+   private final JLabel                 effectiveHS      = new JLabel("xxx");
+   private final JLabel                 timeToOverheat   = new JLabel("xxx");
+   private final JLabel                 coolingRatio     = new JLabel("xxx");
+   private final JCheckBox              doubleHeatSinks  = new JCheckBox("Double Heatsinks");
+   private final JCheckBox              coolRun          = new JCheckBox("Cool Run");
+   private final JCheckBox              heatContainment  = new JCheckBox("Heat Containment");
+   private final JCheckBox              doubleBasics     = new JCheckBox("Double Basics");
+   private final JComboBox<Environment> environemnts;
 
    // Offense pane
-   private final JSpinner        rangeSpinner     = new JSpinner(new SpinnerNumberModel(-1, -1, 3000, 10));
-   private final JLabel          alphaStrike      = new JLabel("xxx");
-   private final JLabel          dpsMax           = new JLabel("xxx");
-   private final JLabel          dpsSustained     = new JLabel("xxx");
-   private final JCheckBox       fastFire         = new JCheckBox("Fast Fire");
-   private final JLabel          ghostHeat        = new JLabel("xxx");
-   private final JTable          weaponTable;
+   private final JSpinner               rangeSpinner     = new JSpinner(new SpinnerNumberModel(-1, -1, 3000, 10));
+   private final JLabel                 alphaStrike      = new JLabel("xxx");
+   private final JLabel                 dpsMax           = new JLabel("xxx");
+   private final JLabel                 dpsSustained     = new JLabel("xxx");
+   private final JCheckBox              fastFire         = new JCheckBox("Fast Fire");
+   private final JLabel                 ghostHeat        = new JLabel("xxx");
+   private final JTable                 weaponTable;
 
    // Metrics
-   private final TopSpeed        metricTopSpeed;
-   private final JumpDistance    metricJumpDistance;
-   private final HeatGeneration  metricHeatGeneration;
-   private final HeatDissipation metricHeatDissipation;
-   private final HeatCapacity    metricHeatCapacity;
-   private final CoolingRatio    metricCoolingRatio;
-   private final TimeToOverHeat  metricTimeToOverHeat;
-   private final AlphaStrike     metricAlphaStrike;
-   private final GhostHeat       metricGhostHeat;
+   private final TopSpeed               metricTopSpeed;
+   private final JumpDistance           metricJumpDistance;
+   private final HeatGeneration         metricHeatGeneration;
+   private final HeatDissipation        metricHeatDissipation;
+   private final HeatCapacity           metricHeatCapacity;
+   private final CoolingRatio           metricCoolingRatio;
+   private final TimeToOverHeat         metricTimeToOverHeat;
+   private final AlphaStrike            metricAlphaStrike;
+   private final GhostHeat              metricGhostHeat;
 
-   private final MaxDPS          metricMaxDPS;
-   private final MaxSustainedDPS metricSustainedDps;
-   private transient Boolean     inhibitChanges   = false;
-   private final ArtemisHandler  artemisChecker;
+   private final MaxDPS                 metricMaxDPS;
+   private final MaxSustainedDPS        metricSustainedDps;
+   private transient Boolean            inhibitChanges   = false;
+   private final ArtemisHandler         artemisChecker;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
@@ -132,7 +139,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricTopSpeed = new TopSpeed(loadout);
       metricJumpDistance = new JumpDistance(loadout);
       metricHeatGeneration = new HeatGeneration(loadout);
-      metricHeatDissipation = new HeatDissipation(loadout);
+      metricHeatDissipation = new HeatDissipation(loadout, null);
       metricHeatCapacity = new HeatCapacity(loadout);
       metricCoolingRatio = new CoolingRatio(metricHeatDissipation, metricHeatGeneration);
       metricTimeToOverHeat = new TimeToOverHeat(metricHeatCapacity, metricHeatDissipation, metricHeatGeneration);
@@ -240,6 +247,20 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          heat.setLayout(new BoxLayout(heat, BoxLayout.PAGE_AXIS));
          heat.add(Box.createHorizontalGlue());
          add(heat);
+
+         List<Environment> evs = new ArrayList<>(ProgramInit.ENVIRONMENT_DB.lookupAll());
+         evs.add(0, new Environment("neutral", 0.0));
+         environemnts = new JComboBox<>(evs.toArray(new Environment[evs.size()]));
+         environemnts.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aArg0){
+               Environment environment = (Environment)environemnts.getSelectedItem();
+               metricHeatDissipation.changeEnvironment(environment);
+               updateDisplay();
+            }
+         });
+         environemnts.setSelectedIndex(0);
+         heat.add(environemnts);
 
          heatsinks.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(heatsinks);
@@ -518,5 +539,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       if( aMsg.isForMe(loadout) ){
          updateDisplay();
       }
+   }
+
+   public MaxSustainedDPS getMaxSustainedDPSMetric(){
+      return metricSustainedDps;
    }
 }

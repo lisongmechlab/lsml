@@ -22,6 +22,7 @@ package lisong_mechlab.model.loadout.metrics;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Engine;
 
@@ -34,7 +35,7 @@ import org.junit.Test;
  */
 public class HeatDissipationTest{
    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-   private final HeatDissipation      cut = new HeatDissipation(mlc.loadout);
+   private HeatDissipation            cut= new HeatDissipation(mlc.loadout, null);
 
    /**
     * The heat dissipation of a 'mech is dependent on the heat sink types. > For single heat sinks it is simply the
@@ -58,6 +59,21 @@ public class HeatDissipationTest{
       when(mlc.loadout.getHeatsinksCount()).thenReturn(externalHs + internalHs);
 
       double expectedDissipation = (internalHs * internalHsDissipation + externalHs * externalHsDissipation) * dissipationFactor;
+      assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);
+   }
+
+   @Test
+   public void testCalculateEnvironment(){
+      Environment environment = mock(Environment.class);
+      final double environmentHeat = 0.3;
+
+      when(mlc.efficiencies.getHeatDissipationModifier()).thenReturn(1.0);
+      when(mlc.loadout.getHeatsinksCount()).thenReturn(10);
+      when(environment.getHeat()).thenReturn(environmentHeat);
+
+      cut.changeEnvironment(environment);
+      
+      double expectedDissipation = 1.0 - environmentHeat;
       assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);
    }
 }

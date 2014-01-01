@@ -57,18 +57,19 @@ import lisong_mechlab.view.action.UndoLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
-   private static final String CMD_UNDO_LOADOUT   = "undo loadout";
-   private static final String CMD_RENAME_LOADOUT = "rename loadout";
-   private static final String CMD_SAVE_TO_GARAGE = "add to garage";
-   private static final long   serialVersionUID   = -9181002222136052106L;
-   private static int          openFrameCount     = 0;
-   private static final int    xOffset            = 30, yOffset = 30;
-   private final Loadout       loadout;
-   private final MessageXBar   xbar;
-   private final UndoStack     undoStack;
-   private final Action        actionUndoLoadout;
-   private final Action        actionRename;
-   private final Action        actionAddToGarage;
+   private static final String    CMD_UNDO_LOADOUT   = "undo loadout";
+   private static final String    CMD_RENAME_LOADOUT = "rename loadout";
+   private static final String    CMD_SAVE_TO_GARAGE = "add to garage";
+   private static final long      serialVersionUID   = -9181002222136052106L;
+   private static int             openFrameCount     = 0;
+   private static final int       xOffset            = 30, yOffset = 30;
+   private final Loadout          loadout;
+   private final MessageXBar      xbar;
+   private final UndoStack        undoStack;
+   private final Action           actionUndoLoadout;
+   private final Action           actionRename;
+   private final Action           actionAddToGarage;
+   private final LoadoutInfoPanel infoPanel;
 
    public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar, UndoStack anUndoStack){
       super(aLoadout.toString(), true, // resizable
@@ -97,8 +98,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
       openFrameCount++;
 
-      JPanel r = new LoadoutInfoPanel(aLoadout, anXBar);
-      JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, createMechView(aLoadout, anXBar), r);
+      infoPanel = new LoadoutInfoPanel(aLoadout, anXBar);
+      JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, createMechView(aLoadout, anXBar), infoPanel);
 
       sp.setDividerLocation(-1);
       sp.setDividerSize(0);
@@ -292,7 +293,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(createMenuItem("Damage", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
-            new DamageGraph(loadout, xbar);
+            new DamageGraph(loadout, xbar, infoPanel.getMaxSustainedDPSMetric());
          }
       }));
       return menu;
