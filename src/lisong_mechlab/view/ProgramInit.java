@@ -178,7 +178,7 @@ public class ProgramInit extends JFrame{
             setCurrentProcessExplicitAppUserModelID(LSML.class.getName());
          }
       }
-      
+
       // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
       if( args.length > 0 ){
          if( LsmlProtocolIPC.sendLoadout(args[0]) )
