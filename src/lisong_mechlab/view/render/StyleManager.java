@@ -50,7 +50,7 @@ public class StyleManager{
    private static final Color  COLOR_FG_ENERGY         = Color.WHITE;
    private static final Color  COLOR_BG_ENERGY         = new Color(0xa40000);
    private static final Color  COLOR_FG_ENERGY_ALT     = Color.WHITE;
-   private static final Color  COLOR_BG_ENERGY_ALT     = new Color(0xcc0000);
+   private static final Color  COLOR_BG_ENERGY_ALT     = new Color(0xd40000);
    private static final Color  COLOR_FG_MISSILE        = Color.WHITE;
    private static final Color  COLOR_BG_MISSILE        = new Color(0x4e9a06);
    private static final Color  COLOR_FG_MISSILE_AMMO   = Color.BLACK;
@@ -59,26 +59,26 @@ public class StyleManager{
    private static final Color  COLOR_BG_BALLISTIC      = new Color(0xc4a000);
    private static final Color  COLOR_FG_BALLISTIC_AMMO = Color.BLACK;
    private static final Color  COLOR_BG_BALLISTIC_AMMO = new Color(0xfce94f);
-
-   private static final Color  COLOR_FG_JJ             = Color.BLACK;
+   
    // Engine/Propulsion
-   private static final Color  COLOR_BG_JJ             = new Color(0x729fcf);
+   private static final Color  COLOR_FG_JJ             = Color.WHITE;
+   private static final Color  COLOR_BG_JJ             = new Color(0x815887);
    private static final Color  COLOR_FG_ENGINE         = Color.WHITE;
    private static final Color  COLOR_BG_ENGINE         = new Color(0x5c3566);
    private static final Color  COLOR_FG_HS             = Color.BLACK;
    private static final Color  COLOR_BG_HS             = new Color(0xad7fa8);
 
    // Structure/Internal
-   private static final Color  COLOR_FG_DYNAMIC        = (new Color(0xeeeeec)).darker();
-   private static final Color  COLOR_BG_DYNAMIC        = new Color(0xe2e6dd);
+   private static final Color  COLOR_FG_DYNAMIC        = (new Color(0xe1e6dd)).darker();
+   private static final Color  COLOR_BG_DYNAMIC        = new Color(0xe1e6dd);
    private static final Color  COLOR_FG_INTERNAL       = Color.GRAY.darker();
    private static final Color  COLOR_BG_INTERNAL       = new Color(0xd3d7cf);
 
    // Counter measures
    private static final Color  COLOR_FG_AMS            = Color.WHITE;
    private static final Color  COLOR_BG_AMS            = new Color(0x2e3436);
-   private static final Color  COLOR_FG_AMS_AMMO       = Color.BLACK;
-   private static final Color  COLOR_BG_AMS_AMMO       = new Color(0x888a85);
+   private static final Color  COLOR_FG_AMS_AMMO       = Color.WHITE;
+   private static final Color  COLOR_BG_AMS_AMMO       = new Color(0x65676b);
    private static final Color  COLOR_FG_ECM            = Color.WHITE;
    private static final Color  COLOR_BG_ECM            = new Color(0x204a87);
 
