@@ -166,7 +166,7 @@ public class MaxSustainedDPSTest{
       double expected = gauss.getStat("d/s", null, null) + erppc.getStat("d/s", null, null) * 1.5 + llas.getStat("d/s", null, null);
       assertEquals(expected, result, 0.0);
    }
-   
+
    /**
     * AMS shall not be added to DPS
     */

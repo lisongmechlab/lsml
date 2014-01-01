@@ -67,11 +67,11 @@ public class ItemStatsWeapon extends ItemStats{
       @XStreamAsAttribute
       public int    numPerShot;
       @XStreamAsAttribute
-      public int minheatpenaltylevel;
+      public int    minheatpenaltylevel;
       @XStreamAsAttribute
       public double heatpenalty;
       @XStreamAsAttribute
-      public int heatPenaltyID;
+      public int    heatPenaltyID;
    }
 
    public WeaponStatsTag WeaponStats;

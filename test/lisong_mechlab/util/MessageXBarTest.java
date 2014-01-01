@@ -19,9 +19,14 @@
 //@formatter:on
 package lisong_mechlab.util;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.lang.ref.WeakReference;
-import static org.mockito.Mockito.*;
-import lisong_mechlab.util.MessageXBar;
+
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
 

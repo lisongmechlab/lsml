@@ -19,9 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import org.junit.Test;
-
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
+
+import org.junit.Test;
 
 /**
  * Tests the {@link ArtemisHandler} class.

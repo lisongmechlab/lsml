@@ -34,23 +34,26 @@ public class Item implements Comparable<Item>{
    private final int           slots;
    private final double        tons;
    private final HardpointType hardpointType;
+   private final int           health;
 
-   public Item(ItemStats anItemStats, HardpointType aHardpointType, int aNumSlots, double aNumTons){
+   public Item(ItemStats anItemStats, HardpointType aHardpointType, int aNumSlots, double aNumTons, int aHealth){
       locName = Localization.key2string(anItemStats.Loc.nameTag);
       locDesc = Localization.key2string(anItemStats.Loc.descTag);
       mwoName = anItemStats.name;
       mwoIdx = Integer.parseInt(anItemStats.id);
+      health = aHealth;
 
       slots = aNumSlots;
       tons = aNumTons;
       hardpointType = aHardpointType;
    }
 
-   public Item(String aNameTag, String aDesc, int aSlots){
+   public Item(String aNameTag, String aDesc, int aSlots, int aHealth){
       locName = Localization.key2string(aNameTag);
       locDesc = Localization.key2string(aDesc);
       mwoName = "";
       mwoIdx = -1;
+      health = aHealth;
 
       slots = aSlots;
       tons = 0;
@@ -154,7 +157,7 @@ public class Item implements Comparable<Item>{
          if( this instanceof EnergyWeapon && rhs instanceof EnergyWeapon ){
             return EnergyWeapon.DEFAULT_ORDERING.compare((EnergyWeapon)this, (EnergyWeapon)rhs);
          }
-         else if( lhsHp == HardpointType.BALLISTIC){
+         else if( lhsHp == HardpointType.BALLISTIC ){
             return BallisticWeapon.DEFAULT_ORDERING.compare(this, rhs);
          }
          else if( lhsHp == HardpointType.MISSILE ){
@@ -178,5 +181,9 @@ public class Item implements Comparable<Item>{
       if( aUpgrades == null )
          return getName();
       return getName();
+   }
+
+   public int getHealth(){
+      return health;
    }
 }

@@ -69,7 +69,7 @@ public class MaxArmorAction extends AbstractAction{
             if( input == null ){
                return;
             }
-            
+
             String[] s = input.split(":");
             if( s.length == 2 ){
                double front, back;

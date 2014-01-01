@@ -19,7 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.helpers;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
