@@ -198,7 +198,7 @@ public class ItemInfoPanel extends JPanel{
 
       if( aWeapon instanceof EnergyWeapon ){
          duration.setVisible(true);
-         duration.setText("Duration: " + ((EnergyWeapon)aWeapon).getDuration());
+         duration.setText("Duration: " + df0.format(((EnergyWeapon)aWeapon).getDuration()));
       }
       else{
          duration.setVisible(false);
