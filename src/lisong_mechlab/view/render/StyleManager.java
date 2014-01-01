@@ -62,10 +62,10 @@ public class StyleManager{
    
    // Engine/Propulsion
    private static final Color  COLOR_FG_JJ             = Color.WHITE;
-   private static final Color  COLOR_BG_JJ             = new Color(0x815887);
+   private static final Color  COLOR_BG_JJ             = new Color(0x8d6094);
    private static final Color  COLOR_FG_ENGINE         = Color.WHITE;
    private static final Color  COLOR_BG_ENGINE         = new Color(0x5c3566);
-   private static final Color  COLOR_FG_HS             = Color.BLACK;
+   private static final Color  COLOR_FG_HS             = Color.WHITE;
    private static final Color  COLOR_BG_HS             = new Color(0xad7fa8);
 
    // Structure/Internal
