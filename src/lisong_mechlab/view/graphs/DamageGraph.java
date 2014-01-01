@@ -41,7 +41,6 @@ import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.Upgrades;
-import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -90,14 +89,16 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
     *           The title for the diagram.
     * @param aLoadout
     *           Which load out the diagram is for.
+    * @param aMaxSustainedDpsMetric
+    *           A {@link MaxSustainedDPS} instance to use in calculation.
     */
-   public DamageGraph(Loadout aLoadout, MessageXBar anXbar){
+   public DamageGraph(Loadout aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric){
       super("Max Sustained DPS over range for " + aLoadout);
 
       anXbar.attach(this);
 
       loadout = aLoadout;
-      maxSustainedDPS = new MaxSustainedDPS(loadout, new HeatDissipation(loadout));
+      maxSustainedDPS = aMaxSustainedDpsMetric;
       chartPanel = new ChartPanel(makechart());
       setContentPane(chartPanel);
       chartPanel.getChart().getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);

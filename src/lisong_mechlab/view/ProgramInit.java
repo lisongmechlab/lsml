@@ -38,6 +38,7 @@ import javax.swing.UIManager;
 
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.environment.EnvironmentDB;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
@@ -53,14 +54,16 @@ import com.sun.jna.WString;
  * @author Emily Björk
  */
 public class ProgramInit extends JFrame{
-   private static final long  serialVersionUID   = -2877785947094537320L;
-   private static final long  MIN_SPLASH_TIME_MS = 20;
-   private static ProgramInit instance;
-   private static LSML        instanceL;
-   public static Image        programIcon;
+   private static final long         serialVersionUID   = -2877785947094537320L;
+   private static final long         MIN_SPLASH_TIME_MS = 20;
+   private static ProgramInit        instance;
+   private static LSML               instanceL;
+   public static Image               programIcon;
 
-   private String             progressSubText    = "";
-   private String             progressText       = "";
+   private String                    progressSubText    = "";
+   private String                    progressText       = "";
+
+   public static final EnvironmentDB ENVIRONMENT_DB     = new EnvironmentDB();
 
    private class BackgroundImage extends JComponent{
       private static final long serialVersionUID = 2294812231919303690L;
@@ -134,6 +137,8 @@ public class ProgramInit extends JFrame{
          @SuppressWarnings("unused")
          // Causes static initialization to be ran.
          Chassi chassi = ChassiDB.lookup("JR7-D");
+
+         ENVIRONMENT_DB.initialize();
       }
       catch( Throwable e ){
          JOptionPane.showMessageDialog(this,

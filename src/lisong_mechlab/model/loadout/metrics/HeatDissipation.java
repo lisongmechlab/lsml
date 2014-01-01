@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.metrics;
 
+import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.loadout.Loadout;
 
 /**
@@ -28,9 +29,11 @@ import lisong_mechlab.model.loadout.Loadout;
  */
 public class HeatDissipation implements Metric{
    private final Loadout loadout;
+   private Environment   environment;
 
-   public HeatDissipation(final Loadout aLoadout){
+   public HeatDissipation(final Loadout aLoadout, final Environment anEnvironment){
       loadout = aLoadout;
+      environment = anEnvironment;
    }
 
    @Override
@@ -46,6 +49,14 @@ public class HeatDissipation implements Metric{
 
       // Other doubles count as 1.4
       ans += (loadout.getHeatsinksCount() - enginehs) * (loadout.getUpgrades().hasDoubleHeatSinks() ? 0.14 : 0.1);
-      return ans * loadout.getEfficiencies().getHeatDissipationModifier();
+      ans *= loadout.getEfficiencies().getHeatDissipationModifier();
+      if( environment != null ){
+         ans -= environment.getHeat();
+      }
+      return ans;
+   }
+
+   public void changeEnvironment(Environment anEnvironment){
+      environment = anEnvironment;
    }
 }
