@@ -19,14 +19,18 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 
 import lisong_mechlab.model.loadout.Upgrades;
 
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 public class ItemLookupTest{
 

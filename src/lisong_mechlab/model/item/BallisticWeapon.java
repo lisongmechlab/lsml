@@ -22,6 +22,7 @@ package lisong_mechlab.model.item;
 import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class BallisticWeapon extends AmmoWeapon{
@@ -30,6 +31,14 @@ public class BallisticWeapon extends AmmoWeapon{
    public BallisticWeapon(ItemStatsWeapon aStatsWeapon){
       super(aStatsWeapon, HardpointType.BALLISTIC);
       projectileSpeed = aStatsWeapon.WeaponStats.speed;
+   }
+
+   @Override
+   public String getShortName(Upgrades anUpgrades){
+      String name = getName(anUpgrades);
+      name = name.replace("ULTRA ", "U");
+      name = name.replace("MACHINE GUN", "MG");
+      return name;
    }
 
    public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;

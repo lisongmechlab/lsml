@@ -27,5 +27,5 @@ public class ItemStatsModuleStats{
    @XStreamAsAttribute
    public double tons;
    @XStreamAsAttribute
-   public double health;
+   public int    health;
 }

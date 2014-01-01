@@ -218,7 +218,7 @@ public class MechGarageTest{
       Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
       MechGarage cut = new MechGarage(xBar, undoStack);
       reset(undoStack);
-      
+
       // Execute
       cut.add(loadout, false);
 
@@ -247,9 +247,9 @@ public class MechGarageTest{
       MechGarage cut = new MechGarage(xBar, undoStack);
       reset(xBar);
       reset(undoStack);
-      
+
       cut.add(loadout, true);
-      
+
       ArgumentCaptor<UndoAction> argument = ArgumentCaptor.forClass(UndoAction.class);
       verify(undoStack, only()).pushAction(argument.capture());
       assertEquals("Undo add " + loadout.getName() + " to garage.", argument.getValue().describe());

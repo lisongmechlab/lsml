@@ -250,7 +250,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);
          timeToOverheat.setToolTipText("The number of seconds your mech can go \"All guns a'blazing\" before it overheats, assuming no ghost heat.");
          heat.add(timeToOverheat);
-         
+
          ghostHeat.setAlignmentX(Component.CENTER_ALIGNMENT);
          ghostHeat.setToolTipText("The amount of extra heat incurred during an alpha strike.");
          heat.add(ghostHeat);
@@ -441,10 +441,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                // Offense
                // ----------------------------------------------------------------------
                fastFire.setSelected(loadout.getEfficiencies().hasFastFire());
-               alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()) + " @ " + df0.format(metricAlphaStrike.getRange()) + "m");
+               alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()) + " @ " + df0.format(metricAlphaStrike.getRange())
+                                   + "m");
                dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()) + " @ " + df0.format(metricMaxDPS.getRange()) + "m");
-               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()) + " @ " + df0.format(metricSustainedDps.getRange())
-                                    + "m");
+               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()) + " @ "
+                                    + df0.format(metricSustainedDps.getRange()) + "m");
 
                inhibitChanges = false;
             }
