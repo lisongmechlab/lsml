@@ -52,7 +52,10 @@ public class Weapon extends HeatSource{
       if( aStatsWeapon.WeaponStats.cooldown <= 0.0 ){
          // Some weapons are troublesome in that they have zero cooldown in the data files.
          // These include: Machine Gun, Flamer, TAG
-         if( aStatsWeapon.WeaponStats.type.toLowerCase().equals("energy") ){
+         if( aStatsWeapon.WeaponStats.rof > 0.0 ){
+            cycleTime = 1.0 / aStatsWeapon.WeaponStats.rof;
+         }
+         else if( aStatsWeapon.WeaponStats.type.toLowerCase().equals("energy") ){
             cycleTime = 1;
          }
          else{
@@ -210,6 +213,10 @@ public class Weapon extends HeatSource{
          return 0;
       }
       return nominator / denominator;
+   }
+
+   public boolean hasSpread(){
+      return false;
    }
 
    @Override

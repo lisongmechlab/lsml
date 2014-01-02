@@ -43,7 +43,19 @@ public class WeaponRanges{
 
       ans.add(Double.valueOf(0.0));
       for(Weapon weapon : aWeaponCollection){
-         if( weapon != ItemDB.AMS ){
+         if( weapon.hasSpread() ){
+            ans.add(weapon.getRangeZero());
+            double min = weapon.getRangeMin();
+            double max = weapon.getRangeMax();
+            ans.add(min);
+            final double step = 10;
+            while( min + step < max ){
+               min += step;
+               ans.add(min);
+            }
+            ans.add(max);
+         }
+         else if( weapon != ItemDB.AMS ){
             ans.add(weapon.getRangeZero());
             ans.add(weapon.getRangeMin());
             ans.add(weapon.getRangeLong());
