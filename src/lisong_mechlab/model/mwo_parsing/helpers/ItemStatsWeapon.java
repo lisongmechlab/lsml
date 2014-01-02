@@ -72,6 +72,10 @@ public class ItemStatsWeapon extends ItemStats{
       public double heatpenalty;
       @XStreamAsAttribute
       public int    heatPenaltyID;
+      @XStreamAsAttribute
+      public double rof;
+      @XStreamAsAttribute
+      public double spread;
    }
 
    public WeaponStatsTag WeaponStats;

@@ -134,18 +134,19 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          }
       });
 
-      Double[] ranges = WeaponRanges.getRanges(loadout);
+      Double[] ranges = WeaponRanges.getRanges(loadout);     
       for(double range : ranges){
          Set<Entry<Weapon, Double>> damageDistributio = maxSustainedDPS.getWeaponRatios(range).entrySet();
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
-            Weapon weapon = entry.getKey();
-            double ratio = entry.getValue();
-            double dps = weapon.getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies());
+            final Weapon weapon = entry.getKey();
+            final double ratio = entry.getValue();
+            final double dps = weapon.getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies());
+            final double rangeEff = weapon.getRangeEffectivity(range);
 
             if( !data.containsKey(weapon) ){
                data.put(weapon, new ArrayList<Pair<Double, Double>>());
             }
-            data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio));
+            data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio * rangeEff));
          }
       }
 

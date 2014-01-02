@@ -27,10 +27,15 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class BallisticWeapon extends AmmoWeapon{
    protected final double projectileSpeed;
+   protected final double spread;
 
    public BallisticWeapon(ItemStatsWeapon aStatsWeapon){
       super(aStatsWeapon, HardpointType.BALLISTIC);
       projectileSpeed = aStatsWeapon.WeaponStats.speed;
+      if( aStatsWeapon.WeaponStats.spread > 0 )
+         spread = aStatsWeapon.WeaponStats.spread;
+      else
+         spread = 0;
    }
 
    @Override
@@ -39,6 +44,30 @@ public class BallisticWeapon extends AmmoWeapon{
       name = name.replace("ULTRA ", "U");
       name = name.replace("MACHINE GUN", "MG");
       return name;
+   }
+
+   @Override
+   public boolean hasSpread(){
+      return spread > 0;
+   }
+
+   @Override
+   public double getRangeEffectivity(double range){
+
+      double spreadFactor = 1.0;
+      if( hasSpread() ){
+         // Assumptions:
+         // 1) The spread value is the half size of the scatter area after 100m.
+         // I.e. a weapon with spread 2, will have a 4x4m spread area at 100m.
+         // 2) An assault mech is about 16m tall. We'll consider any spread that
+         // lands all pellets on the target, and relatively close to the aimed component, as full damage.
+         // As such we assume that full damage is achieved at spreads of less than 4x4m.
+
+         final double maxDamageSpread_m = 3; // Any spread less than this in radius will land full damage.
+
+         spreadFactor = Math.min(1.0, (maxDamageSpread_m * maxDamageSpread_m) / (range * range / 10000 * spread * spread));
+      }
+      return spreadFactor * super.getRangeEffectivity(range);
    }
 
    public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;

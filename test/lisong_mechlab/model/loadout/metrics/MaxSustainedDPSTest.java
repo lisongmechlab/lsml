@@ -85,7 +85,7 @@ public class MaxSustainedDPSTest{
       // Execute & Verify Range = 750
       Map<Weapon, Double> range750 = cut.getWeaponRatios(750);
       assertEquals(0.0, range750.remove(ItemDB.lookup("MACHINE GUN")), 0.0); // Two of them!
-      assertEquals(0.931818, range750.remove(ItemDB.lookup("GAUSS RIFLE")), 0.00001);
+      assertEquals(1.0, range750.remove(ItemDB.lookup("GAUSS RIFLE")), 0.00001);
       assertEquals(0.0, range750.remove(ItemDB.lookup("STREAK SRM 2")), 0.0);
       assertTrue(range750.remove(ItemDB.lookup("LRM 20")) > 0.0);
       assertFalse(range750.containsKey(ItemDB.AMS));
@@ -103,15 +103,9 @@ public class MaxSustainedDPSTest{
 
       when(loadout.getAllItems()).thenReturn(items);
       when(heatDissipation.calculate()).thenReturn(10.0);
-
-      Map<Weapon, Double> result_0 = cut.getWeaponRatios(90.0 - 0.001);
-      Map<Weapon, Double> result_1 = cut.getWeaponRatios(90.0 + 0.001);
-
-      assertTrue(result_0.containsKey(ppc));
-      assertEquals(0.0, result_0.get(ppc).doubleValue(), 0.0);
-
-      assertTrue(result_1.containsKey(ppc));
-      assertEquals(1.0, result_1.get(ppc).doubleValue(), 0.0);
+      
+      assertEquals(ppc.getStat("d/s", null, null), cut.calculate(90.0 + 0.001), 0.0);
+      assertEquals(0.0, cut.calculate(90.0 - 0.001), 0.0);
    }
 
    /**
