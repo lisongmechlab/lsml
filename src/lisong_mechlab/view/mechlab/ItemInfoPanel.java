@@ -61,8 +61,8 @@ public class ItemInfoPanel extends JPanel{
    private final JLabel      damage           = new JLabel();
    private final JLabel      heat             = new JLabel();
    private final JLabel      heatPerSecond    = new JLabel();
-   private final JLabel      cycletime        = new JLabel();
-   private final JLabel      secondspershot   = new JLabel();
+   private final JLabel      cycleTime        = new JLabel();
+   private final JLabel      secondsPerShot   = new JLabel();
    private final JLabel      burntime         = new JLabel();
    private final JLabel      gh_MaxFreeAlpha  = new JLabel();
    private final JLabel      range            = new JLabel();
@@ -90,6 +90,13 @@ public class ItemInfoPanel extends JPanel{
       description.setAlignmentX(LEFT_ALIGNMENT);
       description.setFont(name.getFont());
       description.setBackground(name.getBackground());
+
+      gh_MaxFreeAlpha.setToolTipText("The maximum number of weapons in this group that may be fired simultaneously without incurring ghost heat.");
+      secondsPerShot.setToolTipText("Shows how many seconds between shots. "
+                                    + "For weapons which can double fire, such as the UAC/5, this includes double fire with chance of jamming. "
+                                    + "For beam weapons this incudes the beam's burn time.");
+      cycleTime.setToolTipText("The time it takes for the weapon to cool down before the next shot.");
+      burntime.setToolTipText("The time the beam is active and needs to be kept on the target to deal full damage. After this the weapon starts to cool down.");
 
       JPanel basicInfo = new JPanel();
       basicInfo.setLayout(new BoxLayout(basicInfo, BoxLayout.X_AXIS));
@@ -126,9 +133,9 @@ public class ItemInfoPanel extends JPanel{
       damageInfo.add(Box.createHorizontalGlue());
       damageInfo.add(burntime);
       damageInfo.add(Box.createHorizontalGlue());
-      damageInfo.add(cycletime);
+      damageInfo.add(cycleTime);
       damageInfo.add(Box.createHorizontalGlue());
-      damageInfo.add(secondspershot);
+      damageInfo.add(secondsPerShot);
       damageInfo.add(Box.createHorizontalGlue());
       damageInfo.add(duration);
       damageInfo.add(Box.createHorizontalGlue());
@@ -136,7 +143,6 @@ public class ItemInfoPanel extends JPanel{
       add(damageInfo);
 
       add(gh_MaxFreeAlpha);
-      gh_MaxFreeAlpha.setToolTipText("The maximum number of weapons in this group that may be fired simultaneously without incurring ghost heat.");
       add(ammoperton);
       add(engineHSSlots);
       add(engineInternalHS);
@@ -186,14 +192,14 @@ public class ItemInfoPanel extends JPanel{
       gh_MaxFreeAlpha.setText("Max free alpha: "
                               + df0.format((aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha() : Double.POSITIVE_INFINITY));
 
-      cycletime.setVisible(true);
-      cycletime.setText("Cycle time: " + aWeapon.getCycleTime(aEfficiencies));
+      cycleTime.setVisible(true);
+      cycleTime.setText("Cycle time: " + aWeapon.getCycleTime(aEfficiencies));
       if( aWeapon instanceof EnergyWeapon ){
          burntime.setVisible(true);
          burntime.setText("Burn time: " + ((EnergyWeapon)aWeapon).getDuration());
       }
-      secondspershot.setVisible(true);
-      secondspershot.setText("Avg. Seconds per shot: " + aWeapon.getSecondsPerShot(aEfficiencies));
+      secondsPerShot.setVisible(true);
+      secondsPerShot.setText("Avg. Seconds per shot: " + aWeapon.getSecondsPerShot(aEfficiencies));
 
       heatPerSecond.setVisible(true);
       heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", anUpgrades, aEfficiencies)));
@@ -234,13 +240,13 @@ public class ItemInfoPanel extends JPanel{
       burntime.setVisible(false);
       heat.setVisible(false);
       heatPerSecond.setVisible(false);
-      cycletime.setVisible(false);
+      cycleTime.setVisible(false);
       gh_MaxFreeAlpha.setVisible(false);
       range.setVisible(false);
       dps.setVisible(false);
       dph.setVisible(false);
       duration.setVisible(false);
-      secondspershot.setVisible(false);
+      secondsPerShot.setVisible(false);
 
       ammoperton.setVisible(false);
    }
