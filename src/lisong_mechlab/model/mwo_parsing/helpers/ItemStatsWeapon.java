@@ -76,6 +76,12 @@ public class ItemStatsWeapon extends ItemStats{
       public double rof;
       @XStreamAsAttribute
       public double spread;
+      @XStreamAsAttribute
+      public double JammingChance;
+      @XStreamAsAttribute
+      public double JammedTime;
+      @XStreamAsAttribute
+      public int ShotsDuringCooldown;
    }
 
    public WeaponStatsTag WeaponStats;
