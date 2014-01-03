@@ -62,6 +62,8 @@ public class ItemInfoPanel extends JPanel{
    private final JLabel      heat             = new JLabel();
    private final JLabel      heatPerSecond    = new JLabel();
    private final JLabel      cycletime        = new JLabel();
+   private final JLabel      secondspershot   = new JLabel();
+   private final JLabel      burntime         = new JLabel();
    private final JLabel      gh_MaxFreeAlpha  = new JLabel();
    private final JLabel      range            = new JLabel();
    private final JLabel      dps              = new JLabel();
@@ -122,7 +124,11 @@ public class ItemInfoPanel extends JPanel{
       damageInfo.setAlignmentX(LEFT_ALIGNMENT);
       damageInfo.add(damage);
       damageInfo.add(Box.createHorizontalGlue());
+      damageInfo.add(burntime);
+      damageInfo.add(Box.createHorizontalGlue());
       damageInfo.add(cycletime);
+      damageInfo.add(Box.createHorizontalGlue());
+      damageInfo.add(secondspershot);
       damageInfo.add(Box.createHorizontalGlue());
       damageInfo.add(duration);
       damageInfo.add(Box.createHorizontalGlue());
@@ -181,7 +187,13 @@ public class ItemInfoPanel extends JPanel{
                               + df0.format((aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha() : Double.POSITIVE_INFINITY));
 
       cycletime.setVisible(true);
-      cycletime.setText("Cycletime: " + aWeapon.getSecondsPerShot(aEfficiencies));
+      cycletime.setText("Cycle time: " + aWeapon.getCycleTime(aEfficiencies));
+      if( aWeapon instanceof EnergyWeapon ){
+         burntime.setVisible(true);
+         burntime.setText("Burn time: " + ((EnergyWeapon)aWeapon).getDuration());
+      }
+      secondspershot.setVisible(true);
+      secondspershot.setText("Avg. Seconds per shot: " + aWeapon.getSecondsPerShot(aEfficiencies));
 
       heatPerSecond.setVisible(true);
       heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", anUpgrades, aEfficiencies)));
@@ -219,6 +231,7 @@ public class ItemInfoPanel extends JPanel{
       engineHSSlots.setVisible(false);
 
       damage.setVisible(false);
+      burntime.setVisible(false);
       heat.setVisible(false);
       heatPerSecond.setVisible(false);
       cycletime.setVisible(false);
@@ -227,6 +240,7 @@ public class ItemInfoPanel extends JPanel{
       dps.setVisible(false);
       dph.setVisible(false);
       duration.setVisible(false);
+      secondspershot.setVisible(false);
 
       ammoperton.setVisible(false);
    }

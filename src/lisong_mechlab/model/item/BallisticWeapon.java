@@ -22,12 +22,16 @@ package lisong_mechlab.model.item;
 import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class BallisticWeapon extends AmmoWeapon{
    protected final double projectileSpeed;
    protected final double spread;
+   protected final double jammingChance;
+   protected final int    shotsduringcooldown;
+   protected final double jammingTime;
 
    public BallisticWeapon(ItemStatsWeapon aStatsWeapon){
       super(aStatsWeapon, HardpointType.BALLISTIC);
@@ -36,6 +40,17 @@ public class BallisticWeapon extends AmmoWeapon{
          spread = aStatsWeapon.WeaponStats.spread;
       else
          spread = 0;
+
+      if( aStatsWeapon.WeaponStats.JammingChance >= 0 ){
+         jammingChance = aStatsWeapon.WeaponStats.JammingChance;
+         shotsduringcooldown = aStatsWeapon.WeaponStats.ShotsDuringCooldown;
+         jammingTime = aStatsWeapon.WeaponStats.JammedTime;
+      }
+      else{
+         jammingChance = 0.0;
+         shotsduringcooldown = 0;
+         jammingTime = 0.0;
+      }
    }
 
    @Override
@@ -51,9 +66,20 @@ public class BallisticWeapon extends AmmoWeapon{
       return spread > 0;
    }
 
+   public boolean canDoubleFire(){
+      return jammingChance > 0.0;
+   }
+
+   @Override
+   public double getSecondsPerShot(Efficiencies aEfficiencies){
+      if( canDoubleFire() ){
+         return (1.0 - jammingChance) * getCycleTime(aEfficiencies) / (1 + shotsduringcooldown) + jammingChance * jammingTime;
+      }
+      return getCycleTime(aEfficiencies);
+   }
+
    @Override
    public double getRangeEffectivity(double range){
-
       double spreadFactor = 1.0;
       if( hasSpread() ){
          // Assumptions:
