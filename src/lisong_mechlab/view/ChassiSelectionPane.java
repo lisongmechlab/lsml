@@ -43,6 +43,7 @@ import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.view.mechlab.PartPanel;
@@ -138,6 +139,37 @@ public class ChassiSelectionPane extends JScrollPane{
       @Override
       public String valueOf(Object aSourceRowObject){
          return Integer.toString(((Chassi)aSourceRowObject).getMassMax());
+      }
+   }
+
+   static class JumpJetsColumn extends TableColumn{
+      private static final long serialVersionUID = -3845466109033447928L;
+      private final JPanel      panel            = new JPanel();
+      private final JLabel      jjs              = new JLabel();
+
+      public JumpJetsColumn(){
+         super(0);
+         setHeaderValue("Jump Jets");
+         StyleManager.styleThinItem(jjs, ItemDB.lookup("JUMP JETS - CLASS V"));
+      }
+      
+      @Override
+      public TableCellRenderer getCellRenderer(){
+         return new TableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
+               Chassi chassi = (Chassi)aValue;
+               panel.removeAll();
+               
+               int jjsa = chassi.getMaxJumpJets();
+
+               if( jjsa > 0 ){
+                  jjs.setText(jjsa + " JJ");
+                  panel.add(jjs);
+               }
+               return panel;
+            }
+         };
       }
    }
 
@@ -247,6 +279,7 @@ public class ChassiSelectionPane extends JScrollPane{
       for(Part part : Arrays.asList(Part.RightArm, Part.RightTorso, Part.CenterTorso, Part.LeftTorso, Part.LeftArm, Part.Head)){
          table.addColumn(new PartColumn(part));
       }
+      table.addColumn(new JumpJetsColumn());
 
       setViewportView(table);
    }
