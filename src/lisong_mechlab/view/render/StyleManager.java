@@ -96,7 +96,14 @@ public class StyleManager{
       aComponent.setBackground(getBgColorFor(anItem));
       aComponent.setForeground(getFgColorFor(anItem));
    }
-
+   
+   public static void styleThinItem(JComponent aComponent, Item anItem){
+      aComponent.setOpaque(true);
+      aComponent.setBorder(thinItemBorder);
+      aComponent.setBackground(getBgColorFor(anItem));
+      aComponent.setForeground(getFgColorFor(anItem));
+   }
+   
    static public void styleItemTop(JComponent aComponent, Item anItem){
       aComponent.setOpaque(true);
       aComponent.setBorder(topBorder);
@@ -124,7 +131,7 @@ public class StyleManager{
       aComponent.setBackground(getBgColorFor(aType));
       aComponent.setForeground(getFgColorFor(aType));
    }
-
+   
    public static void styleDynamicEntry(JComponent aComponent){
       aComponent.setOpaque(true);
       aComponent.setBorder(singleBorder);
