@@ -59,8 +59,9 @@ public class Weapon extends HeatSource{
             cycleTime = 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 = 0.10375
          }
       }
-      else
+      else{
          cycleTime = aStatsWeapon.WeaponStats.cooldown;
+      }
       rangeMin = aStatsWeapon.WeaponStats.minRange;
       rangeMax = aStatsWeapon.WeaponStats.maxRange;
       rangeLong = aStatsWeapon.WeaponStats.longRange;

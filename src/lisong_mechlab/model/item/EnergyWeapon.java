@@ -109,7 +109,7 @@ public class EnergyWeapon extends Weapon{
             else if( mLhs.matches() && !mRhs.matches() ){
                return -1;
             }
-            else if( !mLhs.matches() && !mRhs.matches() ){
+            else if( !mLhs.matches() && mRhs.matches() ){
                return 1;
             }
 
