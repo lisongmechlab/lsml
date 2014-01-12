@@ -25,6 +25,8 @@ import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
@@ -33,22 +35,19 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTable;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Loadout;
@@ -101,13 +100,13 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JCheckBox       doubleBasics     = new JCheckBox("Double Basics");
 
    // Offense pane
-   private final JSpinner        rangeSpinner     = new JSpinner(new SpinnerNumberModel(-1, -1, 3000, 10));
-   private final JLabel          alphaStrike      = new JLabel("xxx");
-   private final JLabel          dpsMax           = new JLabel("xxx");
-   private final JLabel          dpsSustained     = new JLabel("xxx");
-   private final JCheckBox       fastFire         = new JCheckBox("Fast Fire");
-   private final JLabel          ghostHeat        = new JLabel("xxx");
-   private final JTable          weaponTable;
+   private final JComboBox<String>      range;
+   private final JLabel                 alphaStrike      = new JLabel("xxx");
+   private final JLabel                 dpsMax           = new JLabel("xxx");
+   private final JLabel                 dpsSustained     = new JLabel("xxx");
+   private final JCheckBox              fastFire         = new JCheckBox("Fast Fire");
+   private final JLabel                 ghostHeat        = new JLabel("xxx");
+   private final JTable                 weaponTable;
 
    // Metrics
    private final TopSpeed        metricTopSpeed;
@@ -289,18 +288,35 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          JPanel panel = new JPanel();
          panel.add(new JLabel("Range:"));
-         panel.setToolTipText("Select the range of engagement that alpha strike, max and sustained DPS will be calculated for. Set this to -1 to automatically select your optimal ranges.");
-         panel.add(rangeSpinner);
-         rangeSpinner.setToolTipText(panel.getToolTipText());
-         rangeSpinner.addChangeListener(new ChangeListener(){
+         panel.setToolTipText("Select the range of engagement that alpha strike, max and sustained DPS will be calculated for. Set this to \"opt\" or \"optimal\" to automatically select your optimal ranges.");
+         
+         String ranges[] = new String[]{"Optimal", "90", "180", "270", "300", "450","675", "720",  "810", "900", "1080", "1350", "1620", "1980", "2160"}; 
+         range = new JComboBox<String>(ranges);
+         range.setEditable(true);
+         range.setToolTipText(panel.getToolTipText());
+         range.addActionListener(new ActionListener(){
             @Override
-            public void stateChanged(ChangeEvent aArg0){
-               metricAlphaStrike.changeRange(((Integer)rangeSpinner.getValue()));
-               metricMaxDPS.changeRange(((Integer)rangeSpinner.getValue()));
-               metricSustainedDps.changeRange(((Integer)rangeSpinner.getValue()));
+            public void actionPerformed(ActionEvent aArg0){
+               String value = (String)range.getSelectedItem();
+               final int r;
+               if(value.toLowerCase().contains("opt")){
+                  r = -1;
+               }else{
+                  try{
+                     r = Integer.parseInt(value);
+                  }catch(NumberFormatException e){
+                     JOptionPane.showMessageDialog(LoadoutInfoPanel.this, "Please enter an integer range or \"optimal\" or \"opt\" to select the optimal range automatically.");
+                     range.setSelectedIndex(0);
+                     return;
+                  }
+               }
+               metricAlphaStrike.changeRange(r);
+               metricMaxDPS.changeRange(r);
+               metricSustainedDps.changeRange(r);
                updateDisplay();
             }
          });
+         panel.add(range);
          panel.add(fastFire);
          fastFire.addItemListener(this);
          fastFire.setAlignmentX(Component.CENTER_ALIGNMENT);
