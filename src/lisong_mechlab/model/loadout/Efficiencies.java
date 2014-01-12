@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.loadout.Efficiencies.Message.Type;
@@ -49,6 +68,8 @@ public class Efficiencies{
    private boolean                     doubleBasics;
 
    private transient final MessageXBar xBar;
+
+   private boolean                     fastfire;
 
    /**
     * Creates a new efficiencies object.
@@ -203,5 +224,34 @@ public class Efficiencies{
       if( speedTweak )
          return 1.1;
       return 1.0;
+   }
+
+   /**
+    * @return <code>true</code> if the fast fire efficiency is enabled.
+    */
+   public boolean hasFastFire(){
+      return fastfire;
+   }
+
+   /**
+    * @return The modifier to be applied to weapon recycle times given the current status of the fast fire efficiency.
+    */
+   public double getWeaponCycleTimeModifier(){
+      if( fastfire )
+         return 0.95;
+      return 1.0;
+   }
+
+   /**
+    * Sets the status of the fast fire efficiency.
+    * 
+    * @param aFastFire
+    *           The new status of the fast fire efficiency.
+    */
+   public void setFastFire(boolean aFastFire){
+      if( aFastFire != fastfire ){
+         fastfire = aFastFire;
+         xBar.post(new Message(this, Type.Changed));
+      }
    }
 }

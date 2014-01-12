@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
@@ -50,7 +69,7 @@ public class MissileWeaponTest{
          Upgrades noartemis = mock(Upgrades.class);
          when(noartemis.hasArtemis()).thenReturn(false);
 
-         assertEquals(weapon.getMass(null), weapon.getMass(noartemis),  0.0);
+         assertEquals(weapon.getMass(null), weapon.getMass(noartemis), 0.0);
          if( weapon.isArtemisCapable() ){
             assertEquals(weapon.getMass(noartemis) + 1.0, weapon.getMass(artemis), 0.0);
          }
@@ -59,7 +78,7 @@ public class MissileWeaponTest{
          }
       }
    }
-   
+
    /**
     * The name is affected by Artemis.
     */
@@ -70,7 +89,7 @@ public class MissileWeaponTest{
          when(artemis.hasArtemis()).thenReturn(true);
          Upgrades noartemis = mock(Upgrades.class);
          when(noartemis.hasArtemis()).thenReturn(false);
-         
+
          assertEquals(weapon.getName(), weapon.getName(noartemis));
          assertEquals(weapon.getName(), weapon.getName(null));
          if( weapon.isArtemisCapable() ){
@@ -131,7 +150,7 @@ public class MissileWeaponTest{
          when(artemis.hasArtemis()).thenReturn(true);
          Upgrades noartemis = mock(Upgrades.class);
          when(noartemis.hasArtemis()).thenReturn(false);
-         
+
          assertEquals(weapon.getName(), MissileWeapon.canonize(weapon.getName(noartemis)));
          assertEquals(weapon.getName(), MissileWeapon.canonize(weapon.getName(artemis)));
       }

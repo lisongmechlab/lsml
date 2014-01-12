@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout.export;
 
 import java.io.ByteArrayInputStream;
@@ -21,6 +40,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
@@ -37,9 +57,11 @@ public class LoadoutCoderV1 implements LoadoutCoder{
    private final MessageXBar       xBar;
    private final Part[]            partOrder    = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso,
          Part.LeftTorso, Part.LeftLeg, Part.LeftArm};
+   private final UndoStack         undoStack;
 
-   public LoadoutCoderV1(MessageXBar anXBar){
+   public LoadoutCoderV1(MessageXBar anXBar, UndoStack anUndoStack){
       xBar = anXBar;
+      undoStack = anUndoStack;
       ObjectInputStream in = null;
       try{
          InputStream is = LoadoutCoderV1.class.getResourceAsStream("/resources/coderstats.bin");
@@ -146,7 +168,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
                                                                                            // 1700
 
          Chassi chassi = ChassiDB.lookup(chassiId);
-         loadout = new Loadout(chassi, xBar);
+         loadout = new Loadout(chassi, xBar, undoStack);
 
          loadout.getUpgrades().setArtemis((upeff & (1 << 7)) != 0);
          loadout.getUpgrades().setDoubleHeatSinks((upeff & (1 << 6)) != 0);
@@ -184,7 +206,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          for(Part part : partOrder){
             Integer v;
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
-               loadout.getPart(part).addItem(ItemDB.lookup(v));
+               loadout.getPart(part).addItem(ItemDB.lookup(v), false);
             }
          }
       }
@@ -208,8 +230,9 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
       Map<Integer, Integer> freqs = new TreeMap<>();
       MessageXBar anXBar = new MessageXBar();
+      UndoStack anUndoStack = new UndoStack(anXBar, 0);
       for(Chassi chassi : chassii){
-         Loadout loadout = new Loadout(chassi, anXBar);
+         Loadout loadout = new Loadout(chassi, anXBar, anUndoStack);
          loadout.loadStock();
 
          for(Item item : loadout.getAllItems()){

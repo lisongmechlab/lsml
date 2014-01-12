@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Emily Björk
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ package lisong_mechlab.view;
 import java.awt.Component;
 import java.awt.Insets;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
@@ -39,9 +40,26 @@ abstract public class AttributeTableColumn extends TableColumn{
    private final JLabel      renderer         = new JLabel();
 
    public AttributeTableColumn(Object aHeader, int aModelIndex){
+      this(aHeader, aModelIndex, null);
+   }
+
+   public AttributeTableColumn(Object aHeader, int aModelIndex, final String aTooltip){
       super(aModelIndex);
       setHeaderValue(aHeader);
       renderer.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
+
+      if( aTooltip != null ){
+         setHeaderRenderer(new TableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
+               final TableCellRenderer tableRenderer = aTable.getTableHeader().getDefaultRenderer();
+               final JComponent component = (JComponent)tableRenderer.getTableCellRendererComponent(aTable, aValue, aIsSelected, aHasFocus, aRow,
+                                                                                                    aColumn);
+               component.setToolTipText(aTooltip);
+               return component;
+            }
+         });
+      }
    }
 
    /**

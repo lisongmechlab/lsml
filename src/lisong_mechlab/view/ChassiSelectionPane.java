@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Emily Björk
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,6 +45,7 @@ import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
+import lisong_mechlab.view.mechlab.PartPanel;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
@@ -52,7 +53,7 @@ import lisong_mechlab.view.render.StyleManager;
  * 
  * @author Emily Björk
  */
-public class ChassiListView extends JScrollPane{
+public class ChassiSelectionPane extends JScrollPane{
    static public class ChassiTableModel extends AbstractTableModel{
       private static final long  serialVersionUID = -2726840937519789976L;
       private final List<Chassi> lights           = new ArrayList<>();
@@ -147,6 +148,7 @@ public class ChassiListView extends JScrollPane{
       public SpeedColumn(){
          super("Max Speed", 0);
       }
+
       @Override
       public String valueOf(Object aSourceRowObject){
          Chassi chassi = (Chassi)aSourceRowObject;
@@ -218,7 +220,7 @@ public class ChassiListView extends JScrollPane{
 
    private static final long serialVersionUID = -4134588793726908789L;
 
-   public ChassiListView(){
+   public ChassiSelectionPane(){
       final JTable table = new JTable(new ChassiTableModel());
       table.setRowHeight(30);
       table.addMouseListener(new MouseAdapter(){
@@ -231,8 +233,8 @@ public class ChassiListView extends JScrollPane{
                final Object cell = target.getValueAt(row, column);
                if( cell instanceof Chassi ){
                   Chassi chassi = (Chassi)cell;
-                  ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
                   ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
+                  ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar, ProgramInit.lsml().undoStack));
                }
             }
          }

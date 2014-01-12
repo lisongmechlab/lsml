@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout.metrics;
 
 import static org.junit.Assert.assertEquals;
@@ -11,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import lisong_mechlab.model.item.BallisticWeapon;
-import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
@@ -24,6 +41,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+/**
+ * Test suite for {@link MaxSustainedDPS} {@link Metric}.
+ * 
+ * @author Emily Björk
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class MaxSustainedDPSTest{
    @Mock
@@ -70,32 +92,13 @@ public class MaxSustainedDPSTest{
    }
 
    /**
-    * AMS shall not be added to DPS
-    */
-   @Test
-   public void testCalculate_ams(){
-      // Setup
-      List<Item> items = new ArrayList<>();
-      BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      items.add(gauss);
-      items.add(ItemDB.AMS);
-
-      when(loadout.getAllItems()).thenReturn(items);
-      when(heatDissipation.calculate()).thenReturn(1.0);
-
-      double result = cut.calculate();
-
-      assertEquals(gauss.getStat("d/s", null), result, 0.0);
-   }
-
-   /**
     * PPC shall have an instant fall off (patch 2013-09-03)
     */
    @Test
    public void testGetWeaponRatios_ppc(){
       // Setup
       List<Item> items = new ArrayList<>();
-      EnergyWeapon ppc = (EnergyWeapon)ItemDB.lookup("PPC");
+      Weapon ppc = (Weapon)ItemDB.lookup("PPC");
       items.add(ppc);
 
       when(loadout.getAllItems()).thenReturn(items);
@@ -118,7 +121,7 @@ public class MaxSustainedDPSTest{
    public void testGetWeaponRatios_machineGun(){
       // Setup
       List<Item> items = new ArrayList<>();
-      BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("MACHINE GUN");
+      Weapon mg = (Weapon)ItemDB.lookup("MACHINE GUN");
       items.add(mg);
 
       when(loadout.getAllItems()).thenReturn(items);
@@ -128,7 +131,6 @@ public class MaxSustainedDPSTest{
 
       assertTrue(result_0.containsKey(mg));
       assertEquals(0.0, result_0.get(mg).doubleValue(), 0.0);
-
    }
 
    /**
@@ -139,9 +141,9 @@ public class MaxSustainedDPSTest{
    public void testCalculate(){
       // Setup
       List<Item> items = new ArrayList<>();
-      BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      EnergyWeapon erppc = (EnergyWeapon)ItemDB.lookup("ER PPC");
-      EnergyWeapon llas = (EnergyWeapon)ItemDB.lookup("LARGE LASER");
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
+      Weapon erppc = (Weapon)ItemDB.lookup("ER PPC");
+      Weapon llas = (Weapon)ItemDB.lookup("LARGE LASER");
 
       final long seed = 1;
       Random rng = new Random(seed);
@@ -152,16 +154,35 @@ public class MaxSustainedDPSTest{
       Collections.shuffle(items, rng); // "Deterministically random" shuffle
 
       // There is enough heat to dissipate the GAUSS, LLaser and 1.5 ER PPCs
-      double heat = gauss.getStat("h/s", null) + erppc.getStat("h/s", null) * 1.5 + llas.getStat("h/s", null);
+      double heat = gauss.getStat("h/s", null, null) + erppc.getStat("h/s", null, null) * 1.5 + llas.getStat("h/s", null, null);
 
       when(loadout.getAllItems()).thenReturn(items);
       when(heatDissipation.calculate()).thenReturn(heat);
 
       // Execute
-      double result = cut.calculate();
+      double result = cut.calculate(300.0); // 300.0 is inside LLAS optimal
 
       // Verify
-      double expected = gauss.getStat("d/s", null) + erppc.getStat("d/s", null) * 1.5 + llas.getStat("d/s", null);
+      double expected = gauss.getStat("d/s", null, null) + erppc.getStat("d/s", null, null) * 1.5 + llas.getStat("d/s", null, null);
       assertEquals(expected, result, 0.0);
+   }
+
+   /**
+    * AMS shall not be added to DPS
+    */
+   @Test
+   public void testCalculate_ams(){
+      // Setup
+      List<Item> items = new ArrayList<>();
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
+      items.add(gauss);
+      items.add(ItemDB.AMS);
+
+      when(loadout.getAllItems()).thenReturn(items);
+      when(heatDissipation.calculate()).thenReturn(1.0);
+
+      double result = cut.calculate(0.0);
+
+      assertEquals(gauss.getStat("d/s", null, null), result, 0.0);
    }
 }

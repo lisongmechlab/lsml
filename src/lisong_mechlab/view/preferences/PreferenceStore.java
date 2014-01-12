@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Emily Björk
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class PreferenceStore{
 
-   public static final String     GAMEDIRECTORY_KEY  = "gamedir";
+   public static final String      GAMEDIRECTORY_KEY  = "gamedir";
    public static final String      GARAGEFILE_KEY     = "garagefile";
    public static final String      GARAGEFILE_DEFAULT = "garage.xml";
    private static final File       propertiesFile;

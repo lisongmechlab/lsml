@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.view.render;
 
 import java.awt.Color;
@@ -39,16 +58,17 @@ public class ItemRenderer{
       // hints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
    }
 
-   private static void drawString(String text, int x, int y, Graphics2D g, Color bg){    
+   private static void drawString(String text, int x, int y, Graphics2D g, Color bg){
       // Prepare an off-screen image to draw the string to
       Rectangle2D bounds = g.getFontMetrics().getStringBounds(text, g);
-      BufferedImage image = configuration.createCompatibleImage((int)(bounds.getWidth() + 1.0f), (int)(bounds.getHeight() + 1.0f), Transparency.OPAQUE);
+      BufferedImage image = configuration.createCompatibleImage((int)(bounds.getWidth() + 1.0f), (int)(bounds.getHeight() + 1.0f),
+                                                                Transparency.OPAQUE);
       Graphics2D ig = image.createGraphics();
-      
+
       // Fill the background color
       ig.setColor(bg);
       ig.fillRect(0, 0, image.getWidth(), image.getHeight());
-      
+
       // Draw the string
       int x0 = 0;
       int y0 = ig.getFontMetrics().getAscent();
@@ -57,18 +77,18 @@ public class ItemRenderer{
       ig.setFont(g.getFont());
       ig.drawString(text, x0, y0);
       ig.dispose();
-      
+
       // Blit the image to the destination
-      g.drawImage(image, x-x0, y-y0, null);
+      g.drawImage(image, x - x0, y - y0, null);
    }
 
    public static Image render(Item item, Upgrades aUpgrades){
       final int slots = item.getNumCriticalSlots(aUpgrades);
       final int item_w = ITEM_BASE_WIDTH - 2; // Compensate for padding added by JList in drawing the loadout
       final int item_h = ITEM_BASE_HEIGHT * slots - 2; // Compensate for padding added by JList in drawing the loadout
-      
+
       final int x_offs;
-      final int x_slots;      
+      final int x_slots;
       if( item instanceof Engine && ((Engine)item).getType() == EngineType.XL ){
          x_offs = item_w + PADDING;
          x_slots = 3;
@@ -77,9 +97,8 @@ public class ItemRenderer{
          x_offs = 0;
          x_slots = 1;
       }
-      
 
-      final int image_w = item_w * x_slots + (x_slots -1) * PADDING;
+      final int image_w = item_w * x_slots + (x_slots - 1) * PADDING;
       BufferedImage image = configuration.createCompatibleImage(image_w, item_h, Transparency.TRANSLUCENT);
       Graphics2D g = image.createGraphics();
 
@@ -104,7 +123,7 @@ public class ItemRenderer{
       drawString(item.getName(aUpgrades), x_offs + RADII, ITEM_BASE_LINE, g, StyleManager.getBgColorFor(item));
       if( x_slots > 1 ){
          drawString("ENGINE", RADII, ITEM_BASE_LINE, g, StyleManager.getBgColorFor(item));
-         drawString("ENGINE", 2*x_offs + RADII, ITEM_BASE_LINE, g, StyleManager.getBgColorFor(item));
+         drawString("ENGINE", 2 * x_offs + RADII, ITEM_BASE_LINE, g, StyleManager.getBgColorFor(item));
       }
 
       g.dispose();

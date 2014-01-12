@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Emily Björk
  *
  * This program is free software: you can redistribute it and/or modify
@@ -71,7 +71,7 @@ public class LsmlProtocolIPC implements Runnable{
             System.err.println(e);
          }
       }
-      
+
       if( thread != null ){
          thread.interrupt();
          try{

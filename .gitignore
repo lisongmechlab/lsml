@@ -9,3 +9,5 @@
 !/lib/**/*.jar
 /bin
 *#
+build/build.sh
+*~

@@ -1,6 +1,30 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
@@ -8,20 +32,36 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 public class Weapon extends HeatSource{
    public static final int RANGE_ULP_FUZZ = 5;
 
-   protected final double  damagePerProjectile;
-   protected final double  cycleTime;
-   protected final double  rangeMin;
-   protected final double  rangeLong;
-   protected final double  rangeMax;
-   protected final int     ammoPerShot;
-   protected final int     projectilesPerShot;
+   private final double    damagePerProjectile;
+   private final double    cycleTime;
+   private final double    rangeMin;
+   private final double    rangeLong;
+   private final double    rangeMax;
+   private final int       ammoPerShot;
+   private final int       projectilesPerShot;
+   private final int       shotsPerFiring;
 
-   protected final int     shotsPerFiring;
+   private final int       ghostHeatGroupId;
+   private final double    ghostHeatMultiplier;
+   private final int       ghostHeatFreeAlpha;
 
    public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
-      super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat);
+      super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat,
+            aStatsWeapon.WeaponStats.Health);
       damagePerProjectile = aStatsWeapon.WeaponStats.damage;
-      cycleTime = aStatsWeapon.WeaponStats.cooldown;
+      if( aStatsWeapon.WeaponStats.cooldown <= 0.0 ){
+         // Some weapons are troublesome in that they have zero cooldown in the data files.
+         // These include: Machine Gun, Flamer, TAG
+         if( aStatsWeapon.WeaponStats.type.toLowerCase().equals("energy") ){
+            cycleTime = 1;
+         }
+         else{
+            cycleTime = 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 = 0.10375
+         }
+      }
+      else{
+         cycleTime = aStatsWeapon.WeaponStats.cooldown;
+      }
       rangeMin = aStatsWeapon.WeaponStats.minRange;
       rangeMax = aStatsWeapon.WeaponStats.maxRange;
       rangeLong = aStatsWeapon.WeaponStats.longRange;
@@ -29,6 +69,34 @@ public class Weapon extends HeatSource{
       shotsPerFiring = aStatsWeapon.WeaponStats.numFiring;
       projectilesPerShot = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
       ammoPerShot = aStatsWeapon.WeaponStats.ammoPerShot;
+
+      if( aStatsWeapon.WeaponStats.minheatpenaltylevel != 0 ){
+         ghostHeatGroupId = aStatsWeapon.WeaponStats.heatPenaltyID;
+         ghostHeatMultiplier = aStatsWeapon.WeaponStats.heatpenalty;
+         ghostHeatFreeAlpha = aStatsWeapon.WeaponStats.minheatpenaltylevel - 1;
+      }
+      else{
+         ghostHeatGroupId = -1;
+         ghostHeatMultiplier = 0;
+         ghostHeatFreeAlpha = -1;
+      }
+   }
+
+   /**
+    * 0 = ungrouped 1 = PPC, ER PPC 2 = LRM20/15/10 3 = LL, ER LL, LPL 4 = SRM6 SRM4
+    * 
+    * @return The ID of the group this weapon belongs to.
+    */
+   public int getGhostHeatGroup(){
+      return ghostHeatGroupId;
+   }
+
+   public double getGhostHeatMultiplier(){
+      return ghostHeatMultiplier;
+   }
+
+   public int getGhostHeatMaxFreeAlpha(){
+      return ghostHeatFreeAlpha;
    }
 
    public double getDamagePerShot(){
@@ -39,10 +107,13 @@ public class Weapon extends HeatSource{
       return ammoPerShot;
    }
 
-   public double getSecondsPerShot(){
-      if( cycleTime < 0.1 )
-         return 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 = 0.10375
-      return cycleTime;
+   public double getSecondsPerShot(Efficiencies aEfficiencies){
+      return getCycleTime(aEfficiencies);
+   }
+
+   public double getCycleTime(Efficiencies aEfficiencies){
+      double factor = (null == aEfficiencies) ? 1.0 : aEfficiencies.getWeaponCycleTimeModifier();
+      return cycleTime * factor;
    }
 
    public double getRangeZero(){
@@ -85,7 +156,7 @@ public class Weapon extends HeatSource{
     *           "[dsthc]+(/[dsthc]+)?".
     * @return The calculated statistic.
     */
-   public double getStat(String aWeaponStat, Upgrades anUpgrades){
+   public double getStat(String aWeaponStat, Upgrades anUpgrades, Efficiencies aEfficiencies){
       double nominator = 1;
       int index = 0;
       while( index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/' ){
@@ -94,7 +165,7 @@ public class Weapon extends HeatSource{
                nominator *= getDamagePerShot();
                break;
             case 's':
-               nominator *= getSecondsPerShot();
+               nominator *= getSecondsPerShot(aEfficiencies);
                break;
             case 't':
                nominator *= getMass(anUpgrades);
@@ -119,7 +190,7 @@ public class Weapon extends HeatSource{
                denominator *= getDamagePerShot();
                break;
             case 's':
-               denominator *= getSecondsPerShot();
+               denominator *= getSecondsPerShot(aEfficiencies);
                break;
             case 't':
                denominator *= getMass(anUpgrades);
@@ -135,8 +206,8 @@ public class Weapon extends HeatSource{
          }
          index++;
       }
-      if(nominator == 0.0 && denominator == 0.0){
-         // We take the Brahmaguptan interpretation of 0/0 to be 0 (year 628). 
+      if( nominator == 0.0 && denominator == 0.0 ){
+         // We take the Brahmaguptan interpretation of 0/0 to be 0 (year 628).
          return 0;
       }
       return nominator / denominator;
@@ -145,5 +216,33 @@ public class Weapon extends HeatSource{
    @Override
    public boolean isEquippableOn(Loadout aLoadout){
       return aLoadout.getChassi().getHardpointsCount(getHardpointType()) > 0;
+   }
+
+   public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
+   static{
+      DEFAULT_WEAPON_ORDERING = new Comparator<Item>(){
+         private final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
+
+         @Override
+         public int compare(Item aLhs, Item aRhs){
+            Matcher mLhs = p.matcher(aLhs.getName());
+            Matcher mRhs = p.matcher(aRhs.getName());
+
+            if( !mLhs.matches() )
+               throw new RuntimeException("LHS didn't match pattern! [" + aLhs.getName() + "]");
+
+            if( !mRhs.matches() )
+               throw new RuntimeException("RHS didn't match pattern! [" + aRhs.getName() + "]");
+
+            if( mLhs.group(1).equals(mRhs.group(1)) ){
+               // Same prefix
+               String lhsSuffix = mLhs.group(2);
+               String rhsSuffix = mRhs.group(2);
+               if( lhsSuffix != null && lhsSuffix.length() > 0 && rhsSuffix != null && rhsSuffix.length() > 0 )
+                  return -Integer.compare(Integer.parseInt(lhsSuffix), Integer.parseInt(rhsSuffix));
+            }
+            return mLhs.group(1).compareTo(mRhs.group(1));
+         }
+      };
    }
 }

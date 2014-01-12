@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Emily Björk
  *
  * This program is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ public class WeaponStatsTable extends JTable{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return df.format(((Weapon)aSourceRowObject).getStat(statString, null));
+         return df.format(((Weapon)aSourceRowObject).getStat(statString, null, null));
       }
 
       public String getToolTip(){
@@ -122,7 +122,7 @@ public class WeaponStatsTable extends JTable{
          List<Double> stats = new ArrayList<Double>();
 
          for(Weapon weapon : weapons){
-            double stat = weapon.getStat(statString, null);
+            double stat = weapon.getStat(statString, null, null);
             if( !stats.contains(stat) ){
                stats.add(stat);
             }
@@ -130,7 +130,7 @@ public class WeaponStatsTable extends JTable{
          Collections.sort(stats);
 
          final int position;
-         int i = stats.indexOf(((Weapon)aSourceRowObject).getStat(statString, null));
+         int i = stats.indexOf(((Weapon)aSourceRowObject).getStat(statString, null, null));
          if( lowestBest ){
             position = i;
          }
@@ -186,21 +186,21 @@ public class WeaponStatsTable extends JTable{
    }
 
    @Override
-   protected JTableHeader createDefaultTableHeader() {
-      return new JTableHeader(columnModel) {
+   protected JTableHeader createDefaultTableHeader(){
+      return new JTableHeader(columnModel){
          private static final long serialVersionUID = 8692956739102109610L;
 
          @Override
-         public String getToolTipText(MouseEvent e) {
-              java.awt.Point p = e.getPoint();
-              int index = columnModel.getColumnIndexAtX(p.x);
-              TableColumn c = getColumnModel().getColumn(index);
-              if( c instanceof StatColumn ){
-                 StatColumn sc = (StatColumn)c;
-                 return sc.getToolTip();
-              }
-              return null;
-          }
+         public String getToolTipText(MouseEvent e){
+            java.awt.Point p = e.getPoint();
+            int index = columnModel.getColumnIndexAtX(p.x);
+            TableColumn c = getColumnModel().getColumn(index);
+            if( c instanceof StatColumn ){
+               StatColumn sc = (StatColumn)c;
+               return sc.getToolTip();
+            }
+            return null;
+         }
       };
-  }
+   }
 }

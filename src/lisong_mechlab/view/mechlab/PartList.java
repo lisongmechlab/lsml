@@ -1,4 +1,23 @@
-package lisong_mechlab.view;
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
+package lisong_mechlab.view.mechlab;
 
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
@@ -30,6 +49,7 @@ import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.Pair;
+import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
@@ -131,7 +151,7 @@ public class PartList extends JList<Item>{
          switch( target.first ){
             case EngineHeatSink:{
                if( anItem instanceof HeatSink && part.canAddItem(anItem) ){
-                  part.addItem(anItem);
+                  part.addItem(anItem, true);
                   return true;
                }
                return false;
@@ -141,13 +161,13 @@ public class PartList extends JList<Item>{
             case MultiSlot:{
                // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
                if( aShouldReplace && !(anItem instanceof HeatSink && target.second instanceof Engine) ){
-                  part.removeItem(target.second);
+                  part.removeItem(target.second, true);
                }
                // Fall through
             }
             case Empty:{
                if( part.canAddItem(anItem) ){
-                  part.addItem(anItem);
+                  part.addItem(anItem, true);
                   return true;
                }
                return false;
@@ -257,7 +277,7 @@ public class PartList extends JList<Item>{
          public void keyPressed(KeyEvent aArg0){
             if( aArg0.getKeyCode() == KeyEvent.VK_DELETE ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  part.removeItem(itemPair.first);
+                  part.removeItem(itemPair.first, true);
                }
             }
          }
@@ -268,14 +288,14 @@ public class PartList extends JList<Item>{
          public void mouseClicked(MouseEvent e){
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  part.removeItem(itemPair.first);
+                  part.removeItem(itemPair.first, true);
                }
             }
          }
       });
    }
 
-   List<Pair<Item, Integer>> getSelectedItems(){
+   public List<Pair<Item, Integer>> getSelectedItems(){
       List<Pair<Item, Integer>> items = new ArrayList<>();
       int[] idxs = getSelectedIndices();
       for(int i : idxs){
@@ -306,7 +326,7 @@ public class PartList extends JList<Item>{
       return items;
    }
 
-   LoadoutPart getPart(){
+   public LoadoutPart getPart(){
       return part;
    }
 

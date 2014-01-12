@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Emily Björk
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,8 +36,8 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class CloneLoadoutAction extends AbstractAction{
    private static final long serialVersionUID = 2146995440483341395L;
-   private final Loadout loadout;
-   
+   private final Loadout     loadout;
+
    public CloneLoadoutAction(String aTitle, Loadout aLoadout, KeyStroke aKeyStroke){
       super(aTitle);
       loadout = aLoadout;
@@ -48,7 +48,7 @@ public class CloneLoadoutAction extends AbstractAction{
    public void actionPerformed(ActionEvent aArg0){
       try{
          // TODO: Create a proper clone function, encoding to a string and recoding is silly
-         ProgramInit.lsml().mechLabPane.openLoadout(ProgramInit.lsml().loadoutCoder.encode(loadout));
+         ProgramInit.lsml().mechLabPane.openLoadout(ProgramInit.lsml().loadoutCoder.encodeLSML(loadout));
       }
       catch( EncodingException e ){
          throw new RuntimeException(e);

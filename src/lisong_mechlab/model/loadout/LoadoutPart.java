@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout;
 
 import java.util.ArrayList;
@@ -20,6 +39,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
+import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
 
 /**
@@ -30,6 +50,52 @@ import lisong_mechlab.util.MessageXBar;
  * @author Emily Björk
  */
 public class LoadoutPart implements MessageXBar.Reader{
+   public class AddItemAction implements UndoAction{
+      private final Item item;
+
+      AddItemAction(Item anItem){
+         item = anItem;
+      }
+
+      @Override
+      public String describe(){
+         return "Undo add " + item.getName(loadout.getUpgrades()) + " to " + internalPart.getType();
+      }
+
+      @Override
+      public void undo(){
+         removeItem(item, false);
+      }
+
+      @Override
+      public boolean affects(Loadout aLoadout){
+         return loadout == aLoadout;
+      }
+   }
+
+   public class RemoveItemAction implements UndoAction{
+      private final Item item;
+
+      RemoveItemAction(Item anItem){
+         item = anItem;
+      }
+
+      @Override
+      public String describe(){
+         return "Undo remove " + item.getName(loadout.getUpgrades()) + " from " + internalPart.getType();
+      }
+
+      @Override
+      public void undo(){
+         addItem(item, false);
+      }
+
+      @Override
+      public boolean affects(Loadout aLoadout){
+         return loadout == aLoadout;
+      }
+   }
+
    public static class Message implements MessageXBar.Message{
       public Message(LoadoutPart aPart, Type aType){
          part = aPart;
@@ -45,12 +111,17 @@ public class LoadoutPart implements MessageXBar.Reader{
          return false;
       }
 
+      @Override
+      public String toString(){
+         return type.toString() + " for " + part.getInternalPart().getType().toString() + " of " + part.getLoadout();
+      }
+
       public enum Type{
          ItemAdded, ItemRemoved, ArmorChanged, ItemsChanged
       }
 
-      private final LoadoutPart part;
-      public final Type         type;
+      public final LoadoutPart part;
+      public final Type        type;
 
       @Override
       public boolean isForMe(Loadout aLoadout){
@@ -59,22 +130,21 @@ public class LoadoutPart implements MessageXBar.Reader{
    }
 
    public final static double            ARMOR_PER_TON   = 32.0;
-
    public final static Internal          ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
 
-   private final InternalPart            internalPart;
+   private final transient UndoStack     undoStack;
+   private final transient MessageXBar   xBar;
    private final transient Loadout       loadout;
-   private final List<Item>              items;
-   private final Map<ArmorSide, Integer> armor;
+   private final InternalPart            internalPart;
+   private final List<Item>              items           = new ArrayList<Item>();
+   private final Map<ArmorSide, Integer> armor           = new TreeMap<ArmorSide, Integer>();
    private int                           engineHeatsinks = 0;
 
-   private final transient MessageXBar   xBar;
-
-   LoadoutPart(Loadout aLoadOut, InternalPart anInternalPart, MessageXBar aXBar){
+   LoadoutPart(Loadout aLoadOut, InternalPart anInternalPart, MessageXBar aXBar, UndoStack anUndoStack){
       internalPart = anInternalPart;
-      items = new ArrayList<Item>(internalPart.getInternalItems());
+      items.addAll(internalPart.getInternalItems());
       loadout = aLoadOut;
-      armor = new TreeMap<ArmorSide, Integer>();
+      undoStack = anUndoStack;
       xBar = aXBar;
       xBar.attach(this);
 
@@ -105,20 +175,14 @@ public class LoadoutPart implements MessageXBar.Reader{
       if( !(obj instanceof LoadoutPart) )
          return false;
       LoadoutPart that = (LoadoutPart)obj;
-      if( !armor.equals(that.armor) )
-         return false;
-      if( engineHeatsinks != that.engineHeatsinks )
-         return false;
-      if( !internalPart.equals(that.internalPart) )
-         return false;
 
-      List<Item> this_items = new ArrayList<>(this.items);
-      List<Item> that_items = new ArrayList<>(that.items);
-      Collections.sort(this_items);
-      Collections.sort(that_items);
-      if( !this_items.equals(that_items) )
-         return false;
-      return true;
+      // @formatter:off
+      return // loadout.equals(that.loadout) && // Two LoadoutParts can be equal without having equal Loadouts.
+             internalPart.equals(that.internalPart) &&
+             ArrayUtils.equalsUnordered(items, that.items) &&
+             armor.equals(that.armor) &&
+             engineHeatsinks == that.engineHeatsinks;
+      // @formatter:on;
    }
 
    public InternalPart getInternalPart(){
@@ -156,11 +220,11 @@ public class LoadoutPart implements MessageXBar.Reader{
       return Collections.unmodifiableList(items);
    }
 
-   public void addItem(String aString){
-      addItem(ItemDB.lookup(aString));
+   public void addItem(String aString, boolean isUndoable){
+      addItem(ItemDB.lookup(aString), isUndoable);
    }
 
-   public void addItem(Item anItem){
+   public void addItem(Item anItem, boolean isUndoable){
       if( !canAddItem(anItem) ){
          throw new IllegalArgumentException("Can't add " + anItem + "!");
       }
@@ -173,6 +237,8 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
       items.add(anItem);
       xBar.post(new Message(this, Type.ItemAdded));
+      if( isUndoable )
+         undoStack.pushAction(new AddItemAction(anItem));
    }
 
    public boolean canAddItem(Item anItem){
@@ -199,7 +265,7 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
    }
 
-   public void removeItem(Item anItem){
+   public void removeItem(Item anItem, boolean isUndoable){
       if( internalPart.getInternalItems().contains(anItem) || anItem instanceof Internal ){
          return; // Don't remove internals!
       }
@@ -219,18 +285,25 @@ public class LoadoutPart implements MessageXBar.Reader{
          while( engineHsLeft > 0 ){
             engineHsLeft--;
             if( loadout.getUpgrades().hasDoubleHeatSinks() )
-               removeItem(ItemDB.DHS);
+               removeItem(ItemDB.DHS, isUndoable);
             else
-               removeItem(ItemDB.SHS);
+               removeItem(ItemDB.SHS, isUndoable);
          }
       }
-      if( items.remove(anItem) )
+      if( items.remove(anItem) ){
          xBar.post(new Message(this, Type.ItemRemoved));
+         if( isUndoable )
+            undoStack.pushAction(new RemoveItemAction(anItem));
+      }
    }
 
    public void removeAllItems(){
+      if( getItems().isEmpty() )
+         return;
+
       items.clear();
       items.addAll(internalPart.getInternalItems());
+      xBar.post(new Message(this, Type.ItemRemoved));
    }
 
    /**
@@ -373,7 +446,7 @@ public class LoadoutPart implements MessageXBar.Reader{
       return getItemCriticalSlots(items.get(index));
    }
 
-   boolean checkCommonRules(Item anItem){
+   private boolean checkCommonRules(Item anItem){
       // Check enough free mass
       if( loadout.getMass() + anItem.getMass(loadout.getUpgrades()) > loadout.getChassi().getMassMax() ){
          return false;

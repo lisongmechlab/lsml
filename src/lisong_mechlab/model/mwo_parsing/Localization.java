@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.mwo_parsing;
 
 import java.io.File;
@@ -59,9 +78,10 @@ public class Localization{
          throw new RuntimeException("Couldn't load data files!", e1);
       }
       File[] files = new File[] {new File("Game/Localized/Languages/Loc.xml")};
-      /*, new File("Game/Localized/Languages/ui_Mech_Loc.xml"),
-         new File("Game/Localized/Languages/General.xml"), new File("Game/Localized/Languages/Mechlab.xml"),
-         new File("Game/Localized/Languages/text_ui_menus.xml")};*/
+      /*
+       * , new File("Game/Localized/Languages/ui_Mech_Loc.xml"), new File("Game/Localized/Languages/General.xml"), new
+       * File("Game/Localized/Languages/Mechlab.xml"), new File("Game/Localized/Languages/text_ui_menus.xml")};
+       */
       /*
        * for(File file : files){ try{ XmlReader reader = new XmlReader(dataFile.openGameFile(file)); for(Element row :
        * reader.getElementsByTagName("Row")){ List<Element> cells = reader.getElementsByTagName("Cell", row); if(
@@ -94,11 +114,11 @@ public class Localization{
             Workbook workbook = (Workbook)xstream.fromXML(dataFile.openGameFile(file));
             for(Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows){ // Skip past junk
                if( row.cells == null || row.cells.size() < 1 ){
-                  //debugprintrow(row);
+                  // debugprintrow(row);
                   continue;
                }
                if( row.cells.get(0).Data == null ){
-                  //debugprintrow(row);
+                  // debugprintrow(row);
                   continue;
                }
                if( row.cells.size() >= 2 ){
@@ -123,12 +143,12 @@ public class Localization{
 
    @SuppressWarnings("unused")
    static private void debugprintrow(Workbook.Worksheet.Table.Row row){
-//      if( row.cells != null ){
-//         System.out.print("{");
-//         for(Workbook.Worksheet.Table.Row.Cell cell : row.cells){
-//            System.out.print(cell.Data + "##");
-//         }
-//         System.out.println("}");
-//      }
+      // if( row.cells != null ){
+      // System.out.print("{");
+      // for(Workbook.Worksheet.Table.Row.Cell cell : row.cells){
+      // System.out.print(cell.Data + "##");
+      // }
+      // System.out.println("}");
+      // }
    }
 }

@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Emily Björk
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ import javax.swing.KeyStroke;
 import lisong_mechlab.view.action.ImportMechAction;
 import lisong_mechlab.view.action.OpenHelp;
 import lisong_mechlab.view.action.OpenPreferences;
+import lisong_mechlab.view.action.UndoGarageAction;
 
 public class MenuBar extends JMenuBar{
    private static final long serialVersionUID = -8841283911101837906L;
@@ -54,6 +55,7 @@ public class MenuBar extends JMenuBar{
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent arg0){
+                  // TODO: make an action out of this
                   application.shutdown();
                }
             });
@@ -81,17 +83,20 @@ public class MenuBar extends JMenuBar{
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent aArg0){
+                  // TODO: make an action out of this
                   application.newGarage();
                }
             });
 
             menu.add(item);
          }
+         menu.add(new UndoGarageAction(application.xBar));
          {
             JMenuItem item = new JMenuItem("Open", KeyEvent.VK_O);
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent aArg0){
+                  // TODO: make an action out of this
                   application.openGarage();
                }
             });
@@ -104,6 +109,7 @@ public class MenuBar extends JMenuBar{
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent aArg0){
+                  // TODO: make an action out of this
                   application.saveGarage();
                }
             });
@@ -115,6 +121,7 @@ public class MenuBar extends JMenuBar{
             item.addActionListener(new ActionListener(){
                @Override
                public void actionPerformed(ActionEvent aArg0){
+                  // TODO: make an action out of this
                   application.saveGarageAs();
                }
             });

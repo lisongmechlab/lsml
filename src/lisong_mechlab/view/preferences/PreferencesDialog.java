@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Emily Björk
  *
  * This program is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ public class PreferencesDialog extends JDialog{
       JRadioButton fontNormal = new JRadioButton();
       JRadioButton fontLarge = new JRadioButton();
       JRadioButton fontVeryLarge = new JRadioButton();
-      
+
       fontVerySmall.setAction(new SetFontSizeAction("Very Small", null, FontSize.VerySmall));
       fontSmall.setAction(new SetFontSizeAction("Small", null, FontSize.Small));
       fontNormal.setAction(new SetFontSizeAction("Normal", null, FontSize.Normal));

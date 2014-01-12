@@ -1,6 +1,28 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.chassi;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -30,7 +52,7 @@ public class ChassiTest{
       // Do a through test only on the Ilyas components
       {
          InternalPart pt = cut.getInternalPart(Part.Head);
-         
+
          assertEquals(18, pt.getArmorMax());
          assertEquals(15.0, pt.getHitpoints(), 0.0);
          assertEquals(6, pt.getNumCriticalslots());
@@ -41,7 +63,7 @@ public class ChassiTest{
          assertEquals(Part.Head, pt.getType());
          assertFalse(pt.getType().isTwoSided());
          assertEquals(pt.getType().toString(), pt.toString());
-         
+
          assertEquals(3, pt.getInternalItems().size());
       }
 
@@ -61,7 +83,7 @@ public class ChassiTest{
       }
 
       {
-         InternalPart pt = cut.getInternalPart(Part.LeftArm);        
+         InternalPart pt = cut.getInternalPart(Part.LeftArm);
          assertEquals(44, pt.getArmorMax());
          assertEquals(22.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
@@ -89,7 +111,7 @@ public class ChassiTest{
          assertEquals(pt.getType().toString(), pt.toString());
          assertEquals(0, pt.getInternalItems().size());
       }
-      
+
       {
          InternalPart pt = cut.getInternalPart(Part.LeftTorso);
          assertEquals(60, pt.getArmorMax());
@@ -104,7 +126,7 @@ public class ChassiTest{
          assertEquals(pt.getType().toString(), pt.toString());
          assertEquals(0, pt.getInternalItems().size());
       }
-      
+
       {
          InternalPart pt = cut.getInternalPart(Part.CenterTorso);
          assertEquals(88, pt.getArmorMax());
@@ -119,7 +141,7 @@ public class ChassiTest{
          assertEquals(pt.getType().toString(), pt.toString());
          assertEquals(1, pt.getInternalItems().size());
       }
-      
+
       {
          InternalPart pt = cut.getInternalPart(Part.RightLeg);
          assertEquals(60, pt.getArmorMax());
@@ -134,7 +156,7 @@ public class ChassiTest{
          assertEquals(pt.getType().toString(), pt.toString());
          assertEquals(4, pt.getInternalItems().size());
       }
-      
+
       {
          InternalPart pt = cut.getInternalPart(Part.LeftLeg);
          assertEquals(60, pt.getArmorMax());
