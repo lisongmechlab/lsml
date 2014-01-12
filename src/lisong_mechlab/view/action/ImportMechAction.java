@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,9 +35,12 @@ public class ImportMechAction extends AbstractAction{
       super(aTitle);
       putValue(Action.ACCELERATOR_KEY, key);
    }
+
    @Override
    public void actionPerformed(ActionEvent aArg0){
       String input = JOptionPane.showInputDialog(ProgramInit.lsml(), "Paste the lsml:// link:", "Import mech...", JOptionPane.PLAIN_MESSAGE);
+      if( null == input )
+         return;
       ProgramInit.lsml().mechLabPane.openLoadout(input);
    }
 

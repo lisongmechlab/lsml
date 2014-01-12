@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
@@ -46,6 +47,8 @@ import org.mockito.MockitoAnnotations;
 public class ItemTests{
    @Mock
    MessageXBar xBar;
+   @Mock
+   UndoStack   undoStack;
 
    @Before
    public void setup(){
@@ -87,7 +90,7 @@ public class ItemTests{
 
    @Test
    public void testEngines() throws Exception{
-      Loadout hm = new Loadout(ChassiDB.lookup("Heavy Metal"), xBar);
+      Loadout hm = new Loadout(ChassiDB.lookup("Heavy Metal"), xBar, undoStack);
 
       Engine std175 = (Engine)ItemDB.lookup("STD ENGINE 175");
       Engine std180 = (Engine)ItemDB.lookup("STD ENGINE 180");
@@ -109,7 +112,7 @@ public class ItemTests{
       assertTrue(std180.isEquippableOn(hm));
       assertTrue(xl330.isEquippableOn(hm));
       assertFalse(xl335.isEquippableOn(hm));
-      
+
       // Engines have a base heat of the dissipation equal to 2 standard heat sinks when using 100% throttle.
       assertEquals(0.2, std175.getHeat(), 0.0);
       assertEquals(0.2, std180.getHeat(), 0.0);
@@ -162,23 +165,23 @@ public class ItemTests{
       assertEquals(0.5, JJC4.getMass(null), 0.0);
       assertEquals(0.5, JJC5.getMass(null), 0.0);
 
-      assertTrue(ECM.isEquippableOn(new Loadout("AS7-D-DC", xBar)));
-      assertFalse(ECM.isEquippableOn(new Loadout("JR7-K", xBar)));
+      assertTrue(ECM.isEquippableOn(new Loadout("AS7-D-DC", xBar, undoStack)));
+      assertFalse(ECM.isEquippableOn(new Loadout("JR7-K", xBar, undoStack)));
 
-      assertTrue(JJC5.isEquippableOn(new Loadout("JR7-F", xBar)));
-      assertFalse(JJC5.isEquippableOn(new Loadout("RVN-3L", xBar)));
-      assertFalse(JJC5.isEquippableOn(new Loadout("TBT-5J", xBar)));
-      assertFalse(JJC5.isEquippableOn(new Loadout("CTF-3D", xBar)));
+      assertTrue(JJC5.isEquippableOn(new Loadout("JR7-F", xBar, undoStack)));
+      assertFalse(JJC5.isEquippableOn(new Loadout("RVN-3L", xBar, undoStack)));
+      assertFalse(JJC5.isEquippableOn(new Loadout("TBT-5J", xBar, undoStack)));
+      assertFalse(JJC5.isEquippableOn(new Loadout("CTF-3D", xBar, undoStack)));
 
-      assertFalse(JJC4.isEquippableOn(new Loadout("JR7-F", xBar)));
-      assertFalse(JJC4.isEquippableOn(new Loadout("hbk-4j", xBar)));
-      assertTrue(JJC4.isEquippableOn(new Loadout("TBT-5J", xBar)));
-      assertFalse(JJC4.isEquippableOn(new Loadout("CTF-3D", xBar)));
+      assertFalse(JJC4.isEquippableOn(new Loadout("JR7-F", xBar, undoStack)));
+      assertFalse(JJC4.isEquippableOn(new Loadout("hbk-4j", xBar, undoStack)));
+      assertTrue(JJC4.isEquippableOn(new Loadout("TBT-5J", xBar, undoStack)));
+      assertFalse(JJC4.isEquippableOn(new Loadout("CTF-3D", xBar, undoStack)));
 
-      assertFalse(JJC3.isEquippableOn(new Loadout("JR7-F", xBar)));
-      assertFalse(JJC3.isEquippableOn(new Loadout("ILYA MUROMETS", xBar)));
-      assertFalse(JJC3.isEquippableOn(new Loadout("TBT-5J", xBar)));
-      assertTrue(JJC3.isEquippableOn(new Loadout("CTF-3D", xBar)));
+      assertFalse(JJC3.isEquippableOn(new Loadout("JR7-F", xBar, undoStack)));
+      assertFalse(JJC3.isEquippableOn(new Loadout("ILYA MUROMETS", xBar, undoStack)));
+      assertFalse(JJC3.isEquippableOn(new Loadout("TBT-5J", xBar, undoStack)));
+      assertTrue(JJC3.isEquippableOn(new Loadout("CTF-3D", xBar, undoStack)));
    }
 
    /**
@@ -262,7 +265,7 @@ public class ItemTests{
             }
          }
       }
-      
+
       assertNotNull(dhs);
       assertNotNull(shs);
 

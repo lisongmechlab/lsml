@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.view;
 
 import java.awt.Color;
@@ -7,6 +26,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -20,6 +41,10 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
+
+import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
+import com.sun.jna.WString;
 
 /**
  * This class handles the initial program startup. Things that need to be done before the {@link LSML} instance is
@@ -130,7 +155,30 @@ public class ProgramInit extends JFrame{
       return true;
    }
 
+   static{
+      Native.register("shell32");
+   }
+
+   private static native NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
+
+   public static void setCurrentProcessExplicitAppUserModelID(final String appID){
+      if( SetCurrentProcessExplicitAppUserModelID(new WString(appID)).longValue() != 0 )
+         throw new RuntimeException("Unable to set current process explicit AppUserModelID to: " + appID);
+   }
+
    public static void main(final String[] args) throws Exception{
+      Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
+
+      {
+         // Setup AppUserModelID if windows 7 or later.
+         String os = System.getProperty("os.name");
+         Pattern pattern = Pattern.compile(".*win\\D*(\\d*).*", Pattern.CASE_INSENSITIVE);
+         Matcher matcher = pattern.matcher(os);
+         if( matcher.matches() && matcher.groupCount() == 1 && Integer.parseInt(matcher.group(1)) >= 7 ){
+            setCurrentProcessExplicitAppUserModelID(LSML.class.getName());
+         }
+      }
+
       // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
       if( args.length > 0 ){
          if( LsmlProtocolIPC.sendLoadout(args[0]) )

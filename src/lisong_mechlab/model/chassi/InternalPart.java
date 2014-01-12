@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.chassi;
 
 import java.util.ArrayList;
@@ -10,29 +29,47 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.mwo_parsing.HardpointsXml;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
+import lisong_mechlab.util.ArrayUtils;
 
+/**
+ * This class is a data structure representing an arbitrary internal part of the 'mech's structure.
+ * <p>
+ * It is implemented as immutable.
+ * 
+ * @author Li Song
+ */
 public class InternalPart{
    private final int             criticalslots;
    private final Part            type;
    private final int             maxarmor;
    private final double          hitpoints;
-   private final List<Item>      internals;
-   private final List<Hardpoint> hardpoints;
+   private final List<Item>      internals  = new ArrayList<Item>();
+   private final List<Hardpoint> hardpoints = new ArrayList<>();
 
+   /**
+    * Constructs a new {@link InternalPart} from MWO datafiles that are parsed.
+    * 
+    * @param aComponent
+    *           The component as parsed from the MWO .mdf for the chassis.
+    * @param aPart
+    *           The {@link Part} (head,leg etc) this {@link InternalPart} is for.
+    * @param aHardpoints
+    *           The hardpoints as parsed from the MWO .xml for hard points for the chassis.
+    * @param aChassi
+    *           The chassi that this internal part will be a part of.
+    */
    public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints, Chassi aChassi){
       criticalslots = aComponent.Slots;
       type = aPart;
       hitpoints = aComponent.HP;
       maxarmor = (type == Part.Head) ? 18 : (int)(hitpoints * 2);
 
-      internals = new ArrayList<Item>();
       if( null != aComponent.internals ){
          for(MdfInternal internal : aComponent.internals){
             internals.add(new Internal(internal));
          }
       }
 
-      hardpoints = new ArrayList<>();
       if( null != aComponent.hardpoints ){
          for(MdfComponent.Hardpoint hardpoint : aComponent.hardpoints){
             final HardpointType hardpointType = HardpointType.fromMwoType(hardpoint.Type);
@@ -95,13 +132,13 @@ public class InternalPart{
       final int prime = 31;
       int result = 1;
       result = prime * result + criticalslots;
-      result = prime * result + ((hardpoints == null) ? 0 : hardpoints.hashCode());
+      result = prime * result + hardpoints.hashCode();
       long temp;
       temp = Double.doubleToLongBits(hitpoints);
       result = prime * result + (int)(temp ^ (temp >>> 32));
-      result = prime * result + ((internals == null) ? 0 : internals.hashCode());
+      result = prime * result + internals.hashCode();
       result = prime * result + maxarmor;
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
+      result = prime * result + type.hashCode();
       return result;
    }
 
@@ -109,32 +146,18 @@ public class InternalPart{
    public boolean equals(Object obj){
       if( this == obj )
          return true;
-      if( obj == null )
-         return false;
       if( !(obj instanceof InternalPart) )
          return false;
       InternalPart other = (InternalPart)obj;
-      if( criticalslots != other.criticalslots )
-         return false;
-      if( hardpoints == null ){
-         if( other.hardpoints != null )
-            return false;
-      }
-      else if( !hardpoints.equals(other.hardpoints) )
-         return false;
-      if( Double.doubleToLongBits(hitpoints) != Double.doubleToLongBits(other.hitpoints) )
-         return false;
-      if( internals == null ){
-         if( other.internals != null )
-            return false;
-      }
-      else if( !internals.equals(other.internals) )
-         return false;
-      if( maxarmor != other.maxarmor )
-         return false;
-      if( type != other.type )
-         return false;
-      return true;
+
+      //@formatter:off
+      return criticalslots == other.criticalslots && 
+             type == other.type && 
+             maxarmor == other.maxarmor && 
+             hitpoints == other.hitpoints && 
+             ArrayUtils.equalsUnordered(internals, other.internals) && 
+             ArrayUtils.equalsUnordered(hardpoints, other.hardpoints);
+      //@formatter:on
    }
 
    public Part getType(){
@@ -159,7 +182,7 @@ public class InternalPart{
       return ans;
    }
 
-   public List<Item> getInternalItems(){
+   public Collection<Item> getInternalItems(){
       return Collections.unmodifiableList(internals);
    }
 
@@ -168,6 +191,6 @@ public class InternalPart{
    }
 
    public Collection<Hardpoint> getHardpoints(){
-      return hardpoints;
+      return Collections.unmodifiableList(hardpoints);
    }
 }

@@ -1,4 +1,23 @@
-package lisong_mechlab.view;
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
+package lisong_mechlab.view.mechlab;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -7,6 +26,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JInternalFrame;
@@ -17,42 +37,54 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.SwingHelpers;
+import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.action.AddToGarageAction;
 import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.MaxArmorAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.action.ShareLoadoutAction;
+import lisong_mechlab.view.action.UndoLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
-   private static final long serialVersionUID = -9181002222136052106L;
-   private static int        openFrameCount   = 0;
-   private static final int  xOffset          = 30, yOffset = 30;
-   private final Loadout     loadout;
-   private final MessageXBar xbar;
-   private JMenuItem         addToGarage;
+   private static final String CMD_UNDO_LOADOUT   = "undo loadout";
+   private static final String CMD_RENAME_LOADOUT = "rename loadout";
+   private static final String CMD_SAVE_TO_GARAGE = "add to garage";
+   private static final long   serialVersionUID   = -9181002222136052106L;
+   private static int          openFrameCount     = 0;
+   private static final int    xOffset            = 30, yOffset = 30;
+   private final Loadout       loadout;
+   private final MessageXBar   xbar;
+   private final UndoStack     undoStack;
+   private final Action        actionUndoLoadout;
+   private final Action        actionRename;
+   private final Action        actionAddToGarage;
 
-   public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar){
+   public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar, UndoStack anUndoStack){
       super(aLoadout.toString(), true, // resizable
             true, // closable
             false, // maximizable
             true);// iconifiable
 
+      undoStack = anUndoStack;
       xbar = anXBar;
       xbar.attach(this);
-
-      // ...Create the GUI and put it in the zwindow...
-      // ...Then set the window size or call pack...
-
       loadout = aLoadout;
+
+      // Actions
+      actionUndoLoadout = new UndoLoadoutAction(xbar, loadout);
+      actionRename = new RenameLoadoutAction(this);
+      actionAddToGarage = new AddToGarageAction(loadout);
 
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(createMenuLoadout());
@@ -60,7 +92,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menuBar.add(createMenuGraphs());
       menuBar.add(createMenuShare());
       setJMenuBar(menuBar);
-      
+
       // Set the window's location.
       setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
       openFrameCount++;
@@ -80,12 +112,12 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       addVetoableChangeListener(new VetoableChangeListener(){
          @Override
          public void vetoableChange(PropertyChangeEvent aE) throws PropertyVetoException{
-            if(aE.getPropertyName().equals("closed") && aE.getNewValue().equals(true)){
+            if( aE.getPropertyName().equals("closed") && aE.getNewValue().equals(true) ){
                if( !isSaved() ){
-                  int ans = JOptionPane.showConfirmDialog(LoadoutFrame.this, "Would you like to save " + loadout.getName() + " to your garage?",
+                  int ans = JOptionPane.showConfirmDialog(ProgramInit.lsml(), "Would you like to save " + loadout.getName() + " to your garage?",
                                                           "Save to garage?", JOptionPane.YES_NO_CANCEL_OPTION);
                   if( ans == JOptionPane.YES_OPTION ){
-                     ProgramInit.lsml().getGarage().add(loadout);
+                     ProgramInit.lsml().getGarage().add(loadout, true);
                   }
                   else if( ans == JOptionPane.NO_OPTION ){
                      // Discard loadout
@@ -94,9 +126,18 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                      throw new PropertyVetoException("Save canceled!", aE);
                   }
                }
+               // Being closed, clear undo stack of references to this loadout.
+               undoStack.clearLoadout(loadout);
             }
          }
       });
+      setupKeybindings();
+   }
+
+   private void setupKeybindings(){
+      SwingHelpers.bindAction(this, CMD_UNDO_LOADOUT, actionUndoLoadout);
+      SwingHelpers.bindAction(this, CMD_RENAME_LOADOUT, actionRename);
+      SwingHelpers.bindAction(this, CMD_SAVE_TO_GARAGE, actionAddToGarage);
    }
 
    public boolean isSaved(){
@@ -196,26 +237,9 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
    private JMenu createMenuLoadout(){
       JMenu menu = new JMenu("Loadout");
-
-      addToGarage = new JMenuItem("Add to garage");
-      if( isSaved() )
-         addToGarage.setEnabled(false);
-      else
-         addToGarage.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent aArg0){
-               try{
-                  // TODO: This should be an Action class
-                  ProgramInit.lsml().getGarage().add(loadout);
-               }
-               catch( IllegalArgumentException e ){
-                  JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't add to garage! Error: " + e.getMessage());
-               }
-            }
-         });
-
-      menu.add(addToGarage);
-      menu.add(new JMenuItem(new RenameLoadoutAction(this, KeyStroke.getKeyStroke("R"))));
+      menu.add(new JMenuItem(actionAddToGarage));
+      menu.add(new JMenuItem(actionUndoLoadout));
+      menu.add(new JMenuItem(actionRename));
       menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), this, KeyStroke.getKeyStroke("D"))));
 
       menu.add(createMenuItem("Load stock", new ActionListener(){
@@ -225,7 +249,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                loadout.loadStock();
             }
             catch( Exception e ){
-               JOptionPane.showMessageDialog(LoadoutFrame.this, "Couldn't load stock loadout! Error: " + e.getMessage());
+               JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't load stock loadout! Error: " + e.getMessage());
             }
          }
       }));
@@ -283,14 +307,6 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          MechGarage.Message msg = (MechGarage.Message)aMsg;
          if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
             dispose(); // Closes frame
-         }
-         else if( msg.type == MechGarage.Message.Type.LoadoutAdded ){
-            SwingUtilities.invokeLater(new Runnable(){
-               @Override
-               public void run(){
-                  addToGarage.setEnabled(false);
-               }
-            });
          }
       }
       else if( aMsg instanceof Loadout.Message ){

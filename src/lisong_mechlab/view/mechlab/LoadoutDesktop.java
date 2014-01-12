@@ -1,6 +1,6 @@
 /*
  * @formatter:off
- * Li Song Mech Lab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view;
+package lisong_mechlab.view.mechlab;
 
 import java.awt.Color;
 import java.beans.PropertyVetoException;
@@ -32,7 +32,9 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.ItemTransferHandler;
 
 /**
  * This class is the {@link JDesktopPane} where all the {@link LoadoutFrame} are shown to the user. It provides a method
@@ -47,14 +49,16 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
    private static final int                  MAX_OPEN_WINDOWS = 10;
    private final List<InternalFrameListener> listeners        = new ArrayList<InternalFrameListener>();
    private final MessageXBar                 xBar;
+   private final UndoStack                   undoStack;
    private transient int                     opened_windows;
 
    /**
     * Creates a new {@link LoadoutDesktop}.
     */
-   public LoadoutDesktop(MessageXBar anXBar){
+   public LoadoutDesktop(MessageXBar anXBar, UndoStack anUndoStack){
       assert (SwingUtilities.isEventDispatchThread());
 
+      undoStack = anUndoStack;
       xBar = anXBar;
       setBorder(BorderFactory.createLoweredSoftBevelBorder());
       setBackground(Color.GRAY.brighter());
@@ -71,7 +75,7 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
    public void openLoadout(Loadout aLoadout){
       assert (SwingUtilities.isEventDispatchThread());
 
-      LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar);
+      LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar, undoStack);
       frame.addInternalFrameListener(this); // The desktop acts as forwarder of frame events from the frames.
       add(frame);
 
@@ -80,8 +84,8 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
 
       try{
          frame.setVisible(true);
-         frame.setSelected(true);
          frame.setFocusable(true);
+         frame.setSelected(true);
       }
       catch( PropertyVetoException e ){
          // No-Op

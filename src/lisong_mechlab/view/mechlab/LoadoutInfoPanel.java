@@ -1,10 +1,32 @@
-package lisong_mechlab.view;
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
+package lisong_mechlab.view.mechlab;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
@@ -13,6 +35,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,6 +54,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.CoolingRatio;
+import lisong_mechlab.model.loadout.metrics.GhostHeat;
 import lisong_mechlab.model.loadout.metrics.HeatCapacity;
 import lisong_mechlab.model.loadout.metrics.HeatDissipation;
 import lisong_mechlab.model.loadout.metrics.HeatGeneration;
@@ -41,61 +65,69 @@ import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.WeaponSummaryTable;
+import lisong_mechlab.view.render.ProgressBarRenderer;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
-   private static final long        serialVersionUID = 4720126200474042446L;
-   private final Loadout            loadout;
-   
+   private static final long     serialVersionUID = 4720126200474042446L;
+   private final Loadout         loadout;
+
    // General pane
-   private final JProgressBar       massBar;
-   private final JLabel             massValue        = new JLabel("xxx");
-   private final JProgressBar       armorBar;
-   private final JLabel             armorValue       = new JLabel("xxx");
-   private final JProgressBar       critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
-   private final JLabel             critslotsValue   = new JLabel("xxx");
-   private final JCheckBox          ferroFibros      = new JCheckBox("Ferro-Fibrous");
-   private final JCheckBox          endoSteel        = new JCheckBox("Endo-Steel");
-   private final JCheckBox          artemis          = new JCheckBox("Artemis IV");
+   private final JProgressBar    massBar;
+   private final JLabel          massValue        = new JLabel("xxx");
+   private final JProgressBar    armorBar;
+   private final JLabel          armorValue       = new JLabel("xxx");
+   private final JProgressBar    critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
+   private final JLabel          critslotsValue   = new JLabel("xxx");
+   private final JCheckBox       ferroFibros      = new JCheckBox("Ferro-Fibrous");
+   private final JCheckBox       endoSteel        = new JCheckBox("Endo-Steel");
+   private final JCheckBox       artemis          = new JCheckBox("Artemis IV");
 
    // Movement pane
-   private final JLabel             topSpeed         = new JLabel("xxx");
-   private final JCheckBox          speedTweak       = new JCheckBox("Speed Tweak");
-   private final JLabel             jumpJets         = new JLabel("xxx");
-   
+   private final JLabel          topSpeed         = new JLabel("xxx");
+   private final JCheckBox       speedTweak       = new JCheckBox("Speed Tweak");
+   private final JLabel          jumpJets         = new JLabel("xxx");
+
    // Heat pane
-   private final JLabel             heatsinks        = new JLabel("xxx");
-   private final JLabel             effectiveHS      = new JLabel("xxx");
-   private final JLabel             timeToOverheat   = new JLabel("xxx");
-   private final JLabel             coolingRatio     = new JLabel("xxx");
-   private final JCheckBox          doubleHeatSinks  = new JCheckBox("Double Heatsinks");
-   private final JCheckBox          coolRun          = new JCheckBox("Cool Run");
-   private final JCheckBox          heatContainment  = new JCheckBox("Heat Containment");
-   private final JCheckBox          doubleBasics     = new JCheckBox("Double Basics");
+   private final JLabel          heatsinks        = new JLabel("xxx");
+   private final JLabel          effectiveHS      = new JLabel("xxx");
+   private final JLabel          timeToOverheat   = new JLabel("xxx");
+   private final JLabel          coolingRatio     = new JLabel("xxx");
+   private final JCheckBox       doubleHeatSinks  = new JCheckBox("Double Heatsinks");
+   private final JCheckBox       coolRun          = new JCheckBox("Cool Run");
+   private final JCheckBox       heatContainment  = new JCheckBox("Heat Containment");
+   private final JCheckBox       doubleBasics     = new JCheckBox("Double Basics");
 
    // Offense pane
-   private final JLabel             alphaStrike      = new JLabel("xxx");
-   private final JLabel             dpsMax           = new JLabel("xxx");
-   private final JLabel             dpsSustained     = new JLabel("xxx");
-   private final JTable             weaponTable;
+   private final JComboBox<String>      range;
+   private final JLabel                 alphaStrike      = new JLabel("xxx");
+   private final JLabel                 dpsMax           = new JLabel("xxx");
+   private final JLabel                 dpsSustained     = new JLabel("xxx");
+   private final JCheckBox              fastFire         = new JCheckBox("Fast Fire");
+   private final JLabel                 ghostHeat        = new JLabel("xxx");
+   private final JTable                 weaponTable;
 
    // Metrics
-   private final TopSpeed           metricTopSpeed;
-   private final JumpDistance       metricJumpDistance;
-   private final HeatGeneration     metricHeatGeneration;
-   private final HeatDissipation    metricHeatDissipation;
-   private final HeatCapacity       metricHeatCapacity;
-   private final CoolingRatio       metricCoolingRatio;
-   private final TimeToOverHeat     metricTimeToOverHeat;
-   private final AlphaStrike        metricAlphaStrike;
-   private final MaxDPS             metricMaxDPS;
-   private final MaxSustainedDPS    metricSustainedDps;
-   private transient Boolean        inhibitChanges   = false;
-   private final ArtemisHandler     artemisChecker;
+   private final TopSpeed        metricTopSpeed;
+   private final JumpDistance    metricJumpDistance;
+   private final HeatGeneration  metricHeatGeneration;
+   private final HeatDissipation metricHeatDissipation;
+   private final HeatCapacity    metricHeatCapacity;
+   private final CoolingRatio    metricCoolingRatio;
+   private final TimeToOverHeat  metricTimeToOverHeat;
+   private final AlphaStrike     metricAlphaStrike;
+   private final GhostHeat       metricGhostHeat;
 
-   
+   private final MaxDPS          metricMaxDPS;
+   private final MaxSustainedDPS metricSustainedDps;
+   private transient Boolean     inhibitChanges   = false;
+   private final ArtemisHandler  artemisChecker;
+
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
 
+      metricGhostHeat = new GhostHeat(loadout);
       metricTopSpeed = new TopSpeed(loadout);
       metricJumpDistance = new JumpDistance(loadout);
       metricHeatGeneration = new HeatGeneration(loadout);
@@ -108,7 +140,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
 
       artemisChecker = new ArtemisHandler(loadout);
-
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       anXBar.attach(this);
@@ -216,7 +247,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          heat.add(effectiveHS);
 
          timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);
+         timeToOverheat.setToolTipText("The number of seconds your mech can go \"All guns a'blazing\" before it overheats, assuming no ghost heat.");
          heat.add(timeToOverheat);
+
+         ghostHeat.setAlignmentX(Component.CENTER_ALIGNMENT);
+         ghostHeat.setToolTipText("The amount of extra heat incurred during an alpha strike.");
+         heat.add(ghostHeat);
 
          coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(coolingRatio);
@@ -250,6 +286,42 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.add(Box.createVerticalGlue());
          add(offence);
 
+         JPanel panel = new JPanel();
+         panel.add(new JLabel("Range:"));
+         panel.setToolTipText("Select the range of engagement that alpha strike, max and sustained DPS will be calculated for. Set this to \"opt\" or \"optimal\" to automatically select your optimal ranges.");
+         
+         String ranges[] = new String[]{"Optimal", "90", "180", "270", "300", "450","675", "720",  "810", "900", "1080", "1350", "1620", "1980", "2160"}; 
+         range = new JComboBox<String>(ranges);
+         range.setEditable(true);
+         range.setToolTipText(panel.getToolTipText());
+         range.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aArg0){
+               String value = (String)range.getSelectedItem();
+               final int r;
+               if(value.toLowerCase().contains("opt")){
+                  r = -1;
+               }else{
+                  try{
+                     r = Integer.parseInt(value);
+                  }catch(NumberFormatException e){
+                     JOptionPane.showMessageDialog(LoadoutInfoPanel.this, "Please enter an integer range or \"optimal\" or \"opt\" to select the optimal range automatically.");
+                     range.setSelectedIndex(0);
+                     return;
+                  }
+               }
+               metricAlphaStrike.changeRange(r);
+               metricMaxDPS.changeRange(r);
+               metricSustainedDps.changeRange(r);
+               updateDisplay();
+            }
+         });
+         panel.add(range);
+         panel.add(fastFire);
+         fastFire.addItemListener(this);
+         fastFire.setAlignmentX(Component.CENTER_ALIGNMENT);
+         offence.add(panel);
+
          alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(alphaStrike);
 
@@ -262,7 +334,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.add(Box.createVerticalStrut(5));
 
          weaponTable = new WeaponSummaryTable(loadout, anXBar);
-         
+
          JScrollPane weapons = new JScrollPane(weaponTable);
          weapons.setPreferredSize(new Dimension(260, 100));
          offence.add(weapons);
@@ -273,7 +345,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    public void updateDisplay(){
       SwingUtilities.invokeLater(new Runnable(){
-
          @Override
          public void run(){
             synchronized( inhibitChanges ){
@@ -282,13 +353,13 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // General
                // ----------------------------------------------------------------------
-               final DecimalFormat df2 = new DecimalFormat("#.##");
+               final DecimalFormat df2 = new DecimalFormat("###.##");
                df2.setMinimumFractionDigits(2);
 
-               final DecimalFormat df1 = new DecimalFormat("#.#");
+               final DecimalFormat df1 = new DecimalFormat("###.#");
                df1.setMinimumFractionDigits(1);
 
-               final DecimalFormat df0 = new DecimalFormat("#");
+               final DecimalFormat df0 = new DecimalFormat("###");
 
                double mass = loadout.getMass();
                massBar.setValue((int)Math.ceil(mass));
@@ -366,16 +437,31 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                   doubleBasics.setSelected(loadout.getEfficiencies().hasDoubleBasics());
                }
 
+               if( loadout.getHeatsinksCount() < 10 ){
+                  heatsinks.setForeground(Color.RED);
+               }
+               else{
+                  heatsinks.setForeground(effectiveHS.getForeground());
+               }
                heatsinks.setText("Heatsinks: " + loadout.getHeatsinksCount());
                effectiveHS.setText("Heat capacity: " + df2.format(metricHeatCapacity.calculate()));
+               double ghostHeatPenalty = metricGhostHeat.calculate();
+               if( ghostHeatPenalty > 0 )
+                  ghostHeat.setForeground(Color.RED);
+               else
+                  ghostHeat.setForeground(alphaStrike.getForeground());
+               ghostHeat.setText("Ghost heat: " + df2.format(ghostHeatPenalty));
                timeToOverheat.setText("Seconds to Overheat: " + df2.format(metricTimeToOverHeat.calculate()));
                coolingRatio.setText("Cooling efficiency: " + df0.format(metricCoolingRatio.calculate() * 100.0) + "%");
 
                // Offense
                // ----------------------------------------------------------------------
-               alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()));
-               dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()));
-               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()));
+               fastFire.setSelected(loadout.getEfficiencies().hasFastFire());
+               alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()) + " @ " + df0.format(metricAlphaStrike.getRange())
+                                   + "m");
+               dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()) + " @ " + df0.format(metricMaxDPS.getRange()) + "m");
+               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()) + " @ "
+                                    + df0.format(metricSustainedDps.getRange()) + "m");
 
                inhibitChanges = false;
             }
@@ -427,6 +513,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          }
          else if( source == doubleBasics ){
             loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == fastFire ){
+            loadout.getEfficiencies().setFastFire(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else{
             throw new RuntimeException("Unknown source control!");
