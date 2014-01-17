@@ -49,6 +49,8 @@ import java.util.zip.ZipFile;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import lisong_mechlab.util.OS;
+import lisong_mechlab.util.OS.WindowsVersion;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.preferences.PreferenceStore;
 
@@ -250,7 +252,7 @@ public class GameDataFile{
          @Override
          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
             if( dir.getFileName() != null ){
-               if( System.getProperty("os.name").toLowerCase().contains("win") ){
+               if( OS.isWindowsOrNewer(WindowsVersion.WinOld)){
                   // On windows we can skip some folders
                   Set<String> skipList = new HashSet<>();
                   skipList.add("windows");
@@ -259,7 +261,7 @@ public class GameDataFile{
                      return SKIP_SUBTREE;
                }
                else{
-                  // Assume Linux, skip some folders
+                  // Assume Unix, skip some folders
                   Set<String> skipList = new HashSet<>();
                   skipList.add("/bin");
                   skipList.add("/boot");

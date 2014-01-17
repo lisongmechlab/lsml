@@ -29,6 +29,8 @@ import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
+import lisong_mechlab.util.OS;
+import lisong_mechlab.util.OS.WindowsVersion;
 import lisong_mechlab.view.ProgramInit;
 
 /**
@@ -79,7 +81,7 @@ public class PreferenceStore{
    }
 
    static{
-      if( System.getProperties().getProperty("os.name").toLowerCase().contains("win") ){
+      if( OS.isWindowsOrNewer(WindowsVersion.WinOld) ){
          propertiesFile = new File(System.getenv("AppData") + "/lsml_settings.xml");
       }
       else{
