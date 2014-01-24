@@ -59,7 +59,7 @@ public class OS{
       if( matcher.matches() ){
          OS_TYPE = Variant.Windows;
          String version = matcher.group(2).toLowerCase();
-         if( matcher.group(1).toLowerCase().equals("server") ){
+         if( matcher.group(1) != null && matcher.group(1).length() > 0 ){
             if( version.equals("2003") )
                WINDOWS_VERSION = WindowsVersion.WinServer2003;
             else if( version.equals("2008") )
