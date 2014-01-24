@@ -21,18 +21,17 @@ package lisong_mechlab.view.graphs;
 
 import java.util.Collection;
 
-import javax.swing.JPanel;
+import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
+import lisong_mechlab.model.loadout.metrics.TopSpeed;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.DefaultTableXYDataset;
-
-import lisong_mechlab.model.chassi.Chassi;
-import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
 
 /**
  * Will draw a payload over speed graph for selected chassis.
@@ -45,13 +44,35 @@ public class PayloadGraphPanel extends ChartPanel{
    private static final long  serialVersionUID = -5907483118809173045L;
    private Collection<Chassi> chassis;
 
-   public PayloadGraphPanel(JFreeChart aChart, PayloadStatistics aPayloadStatistics){
-      super(
-            ChartFactory.createXYLineChart("title", "km/h", "payload tons", new DefaultTableXYDataset(), PlotOrientation.VERTICAL, true, false, false));
+   public PayloadGraphPanel(PayloadStatistics aPayloadStatistics){
+      super(makeChart(new DefaultTableXYDataset()));
       payloadStatistics = aPayloadStatistics;
    }
 
    public void selectChassis(Collection<Chassi> aChassisCollection){
       chassis = aChassisCollection;
+      updateGraph();
+   }
+   
+   private void updateGraph(){
+      DefaultTableXYDataset dataset = new DefaultTableXYDataset();
+      for(Chassi chassi: chassis){
+         XYSeries series = new XYSeries(chassi.getName(), false, false);
+         for(int rating = chassi.getEngineMin(); rating <= chassi.getEngineMax(); rating += 5){
+            if(rating < 100){
+               continue; // TODO: Remove this when they remove the engine limit.
+            }
+            double speed = TopSpeed.calculate(rating, chassi, 1.0);
+            series.add(speed, payloadStatistics.calculate(chassi, rating));
+         }
+         dataset.addSeries(series);
+      }
+      
+      setChart(makeChart(dataset));
+      
+   }
+   
+   private static JFreeChart makeChart(XYDataset aDataset){
+      return ChartFactory.createXYLineChart("Comparing payload tonnage for given speeds", "km/h", "payload tons", aDataset, PlotOrientation.VERTICAL, true, false, false);
    }
 }

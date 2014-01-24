@@ -41,6 +41,7 @@ import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.SwingHelpers;
 import lisong_mechlab.view.action.UndoGarageAction;
+import lisong_mechlab.view.graphs.PayloadSelectionPanel;
 import lisong_mechlab.view.mechlab.MechLabPane;
 import lisong_mechlab.view.preferences.PreferenceStore;
 import lisong_mechlab.view.preferences.Preferences;
@@ -88,9 +89,14 @@ public class LSML extends JFrame{
       setJMenuBar(new MenuBar(this));
 
       openLastGarage();
+      
+      JTabbedPane mechTab = new JTabbedPane();
+      mechTab.add("By tonnage", new ChassiSelectionPane());
+      mechTab.add("By payload", new PayloadSelectionPanel());
+      
 
       tabbedPane.addTab("Mechlab", mechLabPane);
-      tabbedPane.addTab("Mechs", new ChassiSelectionPane());
+      tabbedPane.addTab("Mechs", mechTab);
       tabbedPane.addTab("Weapons", new WeaponsListView());
 
       setContentPane(tabbedPane);
