@@ -62,6 +62,25 @@ public enum Part{
       return left2right;
    }
 
+   public Part oppositeSide(){
+      switch( this ){
+         case LeftArm:
+            return RightArm;
+         case LeftLeg:
+            return RightLeg;
+         case LeftTorso:
+            return RightTorso;
+         case RightArm:
+            return LeftArm;
+         case RightLeg:
+            return LeftLeg;
+         case RightTorso:
+            return LeftTorso;
+         default:
+            return null;
+      }
+   }
+
    public static Part fromMwoName(String componentName){
       if( componentName.equals("head") ){
          return Head;
