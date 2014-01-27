@@ -177,4 +177,12 @@ public class Chassi{
    public int getMwoId(){
       return mwoId;
    }
+   
+   public boolean isSameSeries(Chassi aChassi){
+      return shortName.split("-")[0].equals(aChassi.shortName.split("-")[0]);
+   }
+   
+   public boolean isSpecialVariant(){
+      return shortName.contains("(");
+   }
 }

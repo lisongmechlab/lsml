@@ -72,6 +72,7 @@ public class PayloadStatistics{
 
       Engine engine = (Engine)ItemDB.lookup((xlEngine ? "XL" : "STD") + " ENGINE " + anEngineRating);
       maxPayload -= engine.getMass(null);
+      maxPayload -= Math.max(0, (250 + 20 - anEngineRating) / 25);
 
       if( maxArmor ){
          double armorMass;
