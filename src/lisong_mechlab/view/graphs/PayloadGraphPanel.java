@@ -19,12 +19,6 @@
 //@formatter:on
 package lisong_mechlab.view.graphs;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -41,7 +35,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultTableXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
-import org.jfree.util.ShapeUtilities;
 
 /**
  * Will draw a payload over speed graph for selected chassis.
