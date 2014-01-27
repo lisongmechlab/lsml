@@ -29,10 +29,12 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
+import javax.swing.text.DefaultFormatter;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Hardpoint;
@@ -168,6 +170,8 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric));
          frontSpinner.setMaximumSize(labelDimension);
          frontSpinner.getEditor().setPreferredSize(spinnerDimension);
+         JFormattedTextField field = (JFormattedTextField)frontSpinner.getEditor().getComponent(0);
+         ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
          JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric));
          backSpinner.setMaximumSize(labelDimension);
@@ -198,7 +202,9 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric));
          spinner.setMaximumSize(labelDimension);
          spinner.getEditor().setPreferredSize(spinnerDimension);
-
+         JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
+         ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
+         
          panel.add(new JLabel("Armor:"));
          panel.add(Box.createHorizontalGlue());
          panel.add(spinner);
