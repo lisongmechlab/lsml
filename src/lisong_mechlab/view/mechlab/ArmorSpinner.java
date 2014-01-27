@@ -21,10 +21,12 @@ package lisong_mechlab.view.mechlab;
 
 import java.awt.Toolkit;
 
+import javax.swing.JCheckBox;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.util.MessageXBar;
@@ -34,10 +36,12 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
    private static final long serialVersionUID = 2130487332299251881L;
    private final LoadoutPart part;
    private final ArmorSide   side;
+   private final JCheckBox   symmetric;
 
-   public ArmorSpinner(LoadoutPart aPart, ArmorSide anArmorSide, MessageXBar anXBar){
+   public ArmorSpinner(LoadoutPart aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric){
       part = aPart;
       side = anArmorSide;
+      symmetric = aSymmetric;
       anXBar.attach(this);
    }
 
@@ -63,11 +67,18 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
 
    @Override
    public void setValue(Object arg0){
+      int oldValue = part.getArmor(side);
       try{
-         part.setArmor(side, ((Integer)arg0).intValue());
+         int armor = ((Integer)arg0).intValue();
+         part.setArmor(side, armor);
+         Part otherSide = part.getInternalPart().getType().oppositeSide();
+         if( symmetric.isSelected() && otherSide != null ){
+            part.getLoadout().getPart(otherSide).setArmor(side, armor);
+         }
          fireStateChanged();
       }
       catch( IllegalArgumentException exception ){
+         part.setArmor(side, oldValue);
          // TODO: Show message in status bar
          Toolkit.getDefaultToolkit().beep();
       }

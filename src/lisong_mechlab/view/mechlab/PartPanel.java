@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -58,7 +59,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private boolean           canHaveHardpoints;
 
-   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor){
+   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric){
       super(new BorderLayout());
       anXBar.attach(this);
       loadoutPart = aLoadoutPart;
@@ -67,7 +68,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(aLoadoutPart.getInternalPart().getType().longName()),
                                                    BorderFactory.createEmptyBorder(0, 2, 2, 4)));
-      add(makeArmorPanel(anXBar));
+      add(makeArmorPanel(anXBar, aSymmetric));
 
       if( canHaveHardpoints )
          add(makeHardpointsPanel());
@@ -77,6 +78,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       list.setFixedCellHeight(ItemRenderer.ITEM_BASE_HEIGHT);
       list.setFixedCellWidth(ItemRenderer.ITEM_BASE_WIDTH);
 
+      setAlignmentX(LEFT_ALIGNMENT);
       add(list);
       add(Box.createRigidArea(new Dimension(0, 1)));
    }
@@ -151,7 +153,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       return ans + ")";
    }
 
-   private JPanel makeArmorPanel(MessageXBar anXBar){
+   private JPanel makeArmorPanel(MessageXBar anXBar, JCheckBox aSymmetric){
       JPanel panel = new JPanel();
       Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, ItemRenderer.ITEM_BASE_HEIGHT);
       Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
@@ -163,11 +165,11 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          backArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
          backArmorLabel.setPreferredSize(labelDimension);
 
-         JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar));
+         JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric));
          frontSpinner.setMaximumSize(labelDimension);
          frontSpinner.getEditor().setPreferredSize(spinnerDimension);
 
-         JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar));
+         JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric));
          backSpinner.setMaximumSize(labelDimension);
          backSpinner.getEditor().setPreferredSize(spinnerDimension);
 
@@ -193,7 +195,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          JLabel armorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()));
          armorLabel.setPreferredSize(labelDimension);
 
-         JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar));
+         JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric));
          spinner.setMaximumSize(labelDimension);
          spinner.getEditor().setPreferredSize(spinnerDimension);
 
