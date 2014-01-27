@@ -19,7 +19,14 @@
 //@formatter:on
 package lisong_mechlab.view.graphs;
 
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.Iterator;
 
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
@@ -29,9 +36,12 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultTableXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
+import org.jfree.util.ShapeUtilities;
 
 /**
  * Will draw a payload over speed graph for selected chassis.
@@ -39,40 +49,63 @@ import org.jfree.data.xy.XYSeries;
  * @author Li Song
  */
 public class PayloadGraphPanel extends ChartPanel{
-   private final PayloadStatistics payloadStatistics;
+   public static class Entry{
+      private final String name;
+      private final Chassi representant;
 
-   private static final long  serialVersionUID = -5907483118809173045L;
-   private Collection<Chassi> chassis;
+      public Entry(Collection<Chassi> aCollection){
+         Iterator<Chassi> iterator = aCollection.iterator();
+         String series = iterator.next().getNameShort();
+         while( iterator.hasNext() ){
+            series += ",";
+            Chassi chassi = iterator.next();
+            series += chassi.getNameShort().split("-")[1];
+         }
+         name = series;
+         representant = aCollection.iterator().next();
+      }
+
+      @Override
+      public String toString(){
+         return name;
+      }
+   }
+
+   private static final long       serialVersionUID = -5907483118809173045L;
+   private final PayloadStatistics payloadStatistics;
+   private Collection<Entry>       chassis;
 
    public PayloadGraphPanel(PayloadStatistics aPayloadStatistics){
       super(makeChart(new DefaultTableXYDataset()));
       payloadStatistics = aPayloadStatistics;
    }
 
-   public void selectChassis(Collection<Chassi> aChassisCollection){
+   public void selectChassis(Collection<Entry> aChassisCollection){
       chassis = aChassisCollection;
-      updateGraph();
    }
-   
-   private void updateGraph(){
+
+   public void updateGraph(){
       DefaultTableXYDataset dataset = new DefaultTableXYDataset();
-      for(Chassi chassi: chassis){
-         XYSeries series = new XYSeries(chassi.getName(), false, false);
-         for(int rating = chassi.getEngineMin(); rating <= chassi.getEngineMax(); rating += 5){
-            if(rating < 100){
+      for(Entry entry : chassis){
+         XYSeries series = new XYSeries(entry.name, false, false);
+         for(int rating = entry.representant.getEngineMin(); rating <= entry.representant.getEngineMax(); rating += 5){
+            if( rating < 100 ){
                continue; // TODO: Remove this when they remove the engine limit.
             }
-            double speed = TopSpeed.calculate(rating, chassi, 1.0);
-            series.add(speed, payloadStatistics.calculate(chassi, rating));
+            double speed = TopSpeed.calculate(rating, entry.representant, 1.0);
+            series.add(speed, payloadStatistics.calculate(entry.representant, rating));
          }
          dataset.addSeries(series);
       }
-      
       setChart(makeChart(dataset));
-      
+      XYPlot plot = (XYPlot)getChart().getPlot();
+      XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, true);
+      renderer.setBaseShapesFilled(false);
+      plot.setRenderer(renderer);
    }
-   
+
    private static JFreeChart makeChart(XYDataset aDataset){
-      return ChartFactory.createXYLineChart("Comparing payload tonnage for given speeds", "km/h", "payload tons", aDataset, PlotOrientation.VERTICAL, true, false, false);
+      return ChartFactory.createXYLineChart("Comparing payload tonnage for given speeds", "km/h", "payload tons", aDataset, PlotOrientation.VERTICAL,
+                                            true, false, false);
    }
 }

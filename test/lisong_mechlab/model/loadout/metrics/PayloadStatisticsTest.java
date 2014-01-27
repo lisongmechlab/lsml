@@ -38,7 +38,7 @@ public class PayloadStatisticsTest{
       
       cut.changeUseXLEngine(true);
       
-      assertEquals(51.0, cut.calculate(jm6_a, 200), 0.0);
+      assertEquals(46.0, cut.calculate(jm6_a, 250), 0.0);
    }
 
    @Test
@@ -49,7 +49,7 @@ public class PayloadStatisticsTest{
       
       cut.changeUseMaxArmor(true);
       
-      assertEquals(33.81, cut.calculate(jm6_a, 200), 0.01);
+      assertEquals(26.81, cut.calculate(jm6_a, 250), 0.01);
    }
    
    @Test
@@ -62,7 +62,18 @@ public class PayloadStatisticsTest{
       
       cut.changeUpgrades(upgradesNew);
       
-      assertEquals(50.0, cut.calculate(jm6_a, 200), 0.0);
+      assertEquals(43.0, cut.calculate(jm6_a, 250), 0.0);
+   }
+   
+   @Test
+   public final void testCalculate_smallEngine() throws Exception{
+      Chassi jm6_a = ChassiDB.lookup("JM6-A");
+      Upgrades upgrades = Mockito.mock(Upgrades.class);
+
+      PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
+      assertEquals(45.0, cut.calculate(jm6_a, 200), 0.0); // Needs two additional heat sinks
+      assertEquals(44.0, cut.calculate(jm6_a, 205), 0.0); // Needs two additional heat sinks
+      assertEquals(42.5, cut.calculate(jm6_a, 220), 0.0); // Needs two additional heat sinks
    }
    
    @Test
@@ -71,7 +82,6 @@ public class PayloadStatisticsTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
 
       PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
-      assertEquals(47.0, cut.calculate(jm6_a, 200), 0.0);
       assertEquals(40.0, cut.calculate(jm6_a, 250), 0.0);
       assertEquals(33.5, cut.calculate(jm6_a, 300), 0.0);
    }
@@ -82,7 +92,6 @@ public class PayloadStatisticsTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
 
       PayloadStatistics cut = new PayloadStatistics(true, false, upgrades);
-      assertEquals(51.0, cut.calculate(jm6_a, 200), 0.0);
       assertEquals(46.0, cut.calculate(jm6_a, 250), 0.0);
       assertEquals(43.0, cut.calculate(jm6_a, 300), 0.0);
    }
@@ -93,7 +102,6 @@ public class PayloadStatisticsTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
 
       PayloadStatistics cut = new PayloadStatistics(false, true, upgrades);
-      assertEquals(33.81, cut.calculate(jm6_a, 200), 0.01);
       assertEquals(26.81, cut.calculate(jm6_a, 250), 0.01);
       assertEquals(20.31, cut.calculate(jm6_a, 300), 0.01);
    }
@@ -105,7 +113,6 @@ public class PayloadStatisticsTest{
       Mockito.when(upgrades.hasFerroFibrous()).thenReturn(true);
    
       PayloadStatistics cut = new PayloadStatistics(false, true, upgrades);
-      assertEquals(35.23, cut.calculate(jm6_a, 200), 0.01);
       assertEquals(28.23, cut.calculate(jm6_a, 250), 0.01);
       assertEquals(21.73, cut.calculate(jm6_a, 300), 0.01);
    }
@@ -117,7 +124,6 @@ public class PayloadStatisticsTest{
       Mockito.when(upgrades.hasEndoSteel()).thenReturn(true);
    
       PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
-      assertEquals(50.0, cut.calculate(jm6_a, 200), 0.0);
       assertEquals(43.0, cut.calculate(jm6_a, 250), 0.0);
       assertEquals(36.5, cut.calculate(jm6_a, 300), 0.0);
    }
