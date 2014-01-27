@@ -38,7 +38,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
