@@ -25,6 +25,7 @@ import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.util.GaussianDistribution;
 
 public class BallisticWeapon extends AmmoWeapon{
    protected final double projectileSpeed;
@@ -82,16 +83,19 @@ public class BallisticWeapon extends AmmoWeapon{
    public double getRangeEffectivity(double range){
       double spreadFactor = 1.0;
       if( hasSpread() ){
-         // Assumptions:
-         // 1) The spread value is the half size of the scatter area after 100m.
-         // I.e. a weapon with spread 2, will have a 4x4m spread area at 100m.
-         // 2) An assault mech is about 16m tall. We'll consider any spread that
-         // lands all pellets on the target, and relatively close to the aimed component, as full damage.
-         // As such we assume that full damage is achieved at spreads of less than 4x4m.
-
-         final double maxDamageSpread_m = 3; // Any spread less than this in radius will land full damage.
-
-         spreadFactor = Math.min(1.0, (maxDamageSpread_m * maxDamageSpread_m) / (range * range / 10000 * spread * spread));
+         // Assumption:
+         // The 'spread' value is the standard deviation of a zero-mean gaussian distribution of angles.
+         GaussianDistribution gaussianDistribution = new GaussianDistribution();
+         
+         final double targetRadius = 6; // [m]
+         double maxAngle = Math.atan2(targetRadius, range) * 180 / Math.PI; // [deg]
+         
+         // X ~= N(0, spread)
+         // P_hit = P(-maxAngle <= X; X <= +maxangle)
+         // Xn = (X - 0) / spread ~ N(0,1)
+         // P_hit = cdf(maxangle / spread)  - cdf(-maxangle / spread) = 2*cdf(maxangle / spread) - 1.0;
+         double P_hit = 2*gaussianDistribution.cdf(maxAngle / spread) - 1;
+         spreadFactor = P_hit;
       }
       return spreadFactor * super.getRangeEffectivity(range);
    }
