@@ -110,7 +110,7 @@ public class WeaponTest{
       BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("MACHINE GUN");
       assertEquals(1.0, mg.getRangeEffectivity(0), 0.0);
       assertEquals(1.0, mg.getRangeEffectivity(mg.getRangeLong()), 0.0);
-      assertTrue(0.5 > mg.getRangeEffectivity((mg.getRangeLong() + mg.getRangeMax()) / 2)); // Spread + falloff
+      assertTrue(0.5 >= mg.getRangeEffectivity((mg.getRangeLong() + mg.getRangeMax()) / 2)); // Spread + falloff
       assertEquals(0.0, mg.getRangeEffectivity(mg.getRangeMax()), 0.0);
    }
 
