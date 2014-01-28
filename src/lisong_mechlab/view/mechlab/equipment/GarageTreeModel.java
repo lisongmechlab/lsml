@@ -43,8 +43,12 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
       root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
 
       DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
-      GarageCathegory garage = new GarageCathegory("Garage", root, this, xBar);
 
+      DefaultTreeCathegory<GarageCathegory> garage = new DefaultTreeCathegory<>("Garage", root, this);
+      for(ChassiClass chassiClass : ChassiClass.values()){
+         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), root, this, xBar, chassiClass);
+         garage.addChild(clazz);
+      }
       root.addChild(chassii);
       root.addChild(garage);
 

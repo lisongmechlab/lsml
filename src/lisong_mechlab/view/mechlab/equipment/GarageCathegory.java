@@ -19,8 +19,12 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab.equipment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.event.TreeModelEvent;
 
+import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.model.loadout.MechGarage.Message.Type;
@@ -28,9 +32,11 @@ import lisong_mechlab.util.MessageXBar;
 
 class GarageCathegory extends AbstractTreeCathegory implements MessageXBar.Reader{
    private MechGarage garage = null;
+   private final ChassiClass chassiClass;
 
-   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar){
+   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar, ChassiClass aChassiClass){
       super(aName, aParent, aModel);
+      chassiClass = aChassiClass;
       xbar.attach(this);
    }
 
@@ -54,20 +60,30 @@ class GarageCathegory extends AbstractTreeCathegory implements MessageXBar.Reade
    public int getChildCount(){
       if( null == garage )
          return 0;
-      return garage.getMechs().size();
+      return filterMechs().size();
    }
 
    @Override
    public int getIndex(Object aChild){
       if( null == garage )
          return -1;
-      return garage.getMechs().indexOf(aChild);
+      return filterMechs().indexOf(aChild);
    }
 
    @Override
    public Object getChild(int aIndex){
       if( null == garage )
          return null;
-      return garage.getMechs().get(aIndex);
+      return filterMechs().get(aIndex);
+   }
+   
+   private List<Loadout> filterMechs(){
+      List<Loadout> ans = new ArrayList<>();
+      for(Loadout loadout : garage.getMechs()){
+         if(loadout.getChassi().getChassiClass() == chassiClass){
+            ans.add(loadout);
+         }
+      }
+      return ans;
    }
 }
