@@ -46,7 +46,7 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
 
       DefaultTreeCathegory<GarageCathegory> garage = new DefaultTreeCathegory<>("Garage", root, this);
       for(ChassiClass chassiClass : ChassiClass.values()){
-         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), root, this, xBar, chassiClass);
+         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garage, this, xBar, chassiClass);
          garage.addChild(clazz);
       }
       root.addChild(chassii);

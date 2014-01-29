@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
 import lisong_mechlab.model.item.Item;
@@ -52,26 +53,29 @@ public class ItemTransferHandler extends TransferHandler{
 
    @Override
    protected Transferable createTransferable(JComponent aComponent){
+      assert(SwingUtilities.isEventDispatchThread());
       if( aComponent instanceof PartList ){
          PartList partList = (PartList)aComponent;
-         List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
-         sourcePart = partList.getPart();
+         synchronized( partList ){
 
-         if( sourceItems.size() < 1 )
-            return null;
+            List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
+            sourcePart = partList.getPart();
 
-         StringBuffer buff = new StringBuffer();
-         for(Pair<Item, Integer> it : sourceItems){
-            buff.append(it.first.getName()).append('\n');
+            if( sourceItems.size() < 1 || sourcePart == null )
+               return null;
+
+            StringBuffer buff = new StringBuffer();
+            for(Pair<Item, Integer> it : sourceItems){
+               buff.append(it.first.getName()).append('\n');
+               sourcePart.removeItem(it.first, true);
+            }
+
+            Point mouse = partList.getMousePosition();
+            mouse.y -= partList.getFixedCellHeight() * sourceItems.get(0).second;
+            setDragImage(ItemRenderer.render(sourceItems.get(0).first, sourcePart.getLoadout().getUpgrades()));
+            setDragImageOffset(mouse);
+            return new StringSelection(buff.toString());
          }
-         for(Pair<Item, Integer> it : sourceItems){
-            sourcePart.removeItem(it.first, true);
-         }
-         setDragImage(ItemRenderer.render(sourceItems.get(0).first, sourcePart.getLoadout().getUpgrades()));
-         Point mouse = partList.getMousePosition();
-         mouse.y -= partList.getFixedCellHeight() * sourceItems.get(0).second;
-         setDragImageOffset(mouse);
-         return new StringSelection(buff.toString());
       }
       else if( aComponent instanceof GarageTree ){
          sourcePart = null;
@@ -92,18 +96,16 @@ public class ItemTransferHandler extends TransferHandler{
             return null;
          }
          Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
-         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
-         // Point mouse = equipmentPane.getMousePosition();
-         // mouse.y -= equipmentPane.getRowHeight() * equipmentPane.getSelectionRows()[0];
          Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
+         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
          setDragImageOffset(mouse);
          return new StringSelection(item.getName());
       }
       else if( aComponent instanceof ItemLabel ){
          Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
          Item item = ((ItemLabel)aComponent).getItem();
-         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
          Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
+         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
          setDragImageOffset(mouse);
          return new StringSelection(item.getName());
       }
