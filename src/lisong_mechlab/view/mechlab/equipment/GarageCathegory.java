@@ -22,6 +22,7 @@ package lisong_mechlab.view.mechlab.equipment;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 
 import lisong_mechlab.model.chassi.ChassiClass;
@@ -42,6 +43,7 @@ class GarageCathegory extends AbstractTreeCathegory implements MessageXBar.Reade
 
    @Override
    public void receive(MessageXBar.Message aMsg){
+      assert(SwingUtilities.isEventDispatchThread());
       if( aMsg instanceof MechGarage.Message ){
          MechGarage.Message msg = (MechGarage.Message)aMsg;
          if( msg.type == Type.NewGarage ){

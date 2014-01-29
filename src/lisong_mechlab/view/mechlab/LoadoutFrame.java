@@ -249,7 +249,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(new JMenuItem(actionAddToGarage));
       menu.add(new JMenuItem(actionUndoLoadout));
       menu.add(new JMenuItem(actionRename));
-      menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), this, KeyStroke.getKeyStroke("D"))));
+      menu.add(new JMenuItem(new DeleteLoadoutAction(xbar, ProgramInit.lsml().getGarage(), this)));
 
       menu.add(createMenuItem("Load stock", new ActionListener(){
          @Override
