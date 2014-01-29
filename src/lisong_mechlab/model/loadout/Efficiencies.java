@@ -150,7 +150,8 @@ public class Efficiencies{
    public void setSpeedTweak(boolean aSpeedTweak){
       if( aSpeedTweak != speedTweak ){
          speedTweak = aSpeedTweak;
-         xBar.post(new Message(this, Type.Changed));
+         if( xBar != null )
+            xBar.post(new Message(this, Type.Changed));
       }
    }
 
@@ -163,7 +164,8 @@ public class Efficiencies{
    public void setCoolRun(boolean aCoolRun){
       if( aCoolRun != coolRun ){
          coolRun = aCoolRun;
-         xBar.post(new Message(this, Type.Changed));
+         if( xBar != null )
+            xBar.post(new Message(this, Type.Changed));
       }
    }
 
@@ -176,7 +178,8 @@ public class Efficiencies{
    public void setHeatContainment(boolean aHeatContainment){
       if( aHeatContainment != heatContainment ){
          heatContainment = aHeatContainment;
-         xBar.post(new Message(this, Type.Changed));
+         if( xBar != null )
+            xBar.post(new Message(this, Type.Changed));
       }
    }
 
@@ -189,7 +192,8 @@ public class Efficiencies{
    public void setDoubleBasics(boolean aDoubleBasics){
       if( aDoubleBasics != doubleBasics ){
          doubleBasics = aDoubleBasics;
-         xBar.post(new Message(this, Type.Changed));
+         if( xBar != null )
+            xBar.post(new Message(this, Type.Changed));
       }
    }
 
@@ -251,7 +255,8 @@ public class Efficiencies{
    public void setFastFire(boolean aFastFire){
       if( aFastFire != fastfire ){
          fastfire = aFastFire;
-         xBar.post(new Message(this, Type.Changed));
+         if( xBar != null )
+            xBar.post(new Message(this, Type.Changed));
       }
    }
 }
