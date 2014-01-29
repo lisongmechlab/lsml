@@ -44,6 +44,7 @@ import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
+import lisong_mechlab.view.graphs.PayloadGraphPanel.Entry;
 
 /**
  * Draws the panel where one can select chassis by payload tonnage.
@@ -51,7 +52,7 @@ import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
  * @author Li Song
  */
 public class PayloadSelectionPanel extends JPanel{
-   private class PayloadSettingsPanel extends JPanel{
+   private static class PayloadSettingsPanel extends JPanel{
       private static final long                    serialVersionUID = 4965116372512246203L;
       private final JRadioButton                   xlEngine         = new JRadioButton("XL engine", false);
       private final JRadioButton                   stdEngine        = new JRadioButton("STD engine", true);
@@ -61,10 +62,12 @@ public class PayloadSelectionPanel extends JPanel{
       private final ButtonGroup                    armorGroup       = new ButtonGroup();
       private final JCheckBox                      endoSteel        = new JCheckBox("Endo-Steel");
       private final JCheckBox                      ferroFibrous     = new JCheckBox("Ferro-Fibrous");
-      private final JList<PayloadGraphPanel.Entry> graphEntries     = new JList<>(chassis.toArray(new PayloadGraphPanel.Entry[chassis.size()]));
+      private final JCheckBox                      speedTweak       = new JCheckBox("Speed Tweak");
+      private final JList<PayloadGraphPanel.Entry> graphEntries;
 
-      public PayloadSettingsPanel(){
+      public PayloadSettingsPanel(Collection<Entry> aChassis){
          setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+         graphEntries = new JList<>(aChassis.toArray(new PayloadGraphPanel.Entry[aChassis.size()]));
          engineGroup.add(stdEngine);
          engineGroup.add(xlEngine);
          armorGroup.add(noArmor);
@@ -82,9 +85,10 @@ public class PayloadSelectionPanel extends JPanel{
          armorPanel.add(maxArmor);
          add(armorPanel);
 
+         add(speedTweak);
          add(endoSteel);
          add(ferroFibrous);
-         
+
          JPanel entriesPanel = new JPanel();
          entriesPanel.setLayout(new BoxLayout(entriesPanel, BoxLayout.Y_AXIS));
          entriesPanel.setBorder(BorderFactory.createTitledBorder("Chassis to include"));
@@ -92,58 +96,61 @@ public class PayloadSelectionPanel extends JPanel{
          add(entriesPanel);
 
          graphEntries.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+         graphEntries.addSelectionInterval(0, graphEntries.getModel().getSize() - 1);
+      }
+
+      void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel, final Upgrades aUpgrades){
          graphEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             @Override
             public void valueChanged(ListSelectionEvent aArg0){
-               graphPanel.selectChassis(graphEntries.getSelectedValuesList());
-               graphPanel.updateGraph();
+               aGraphPanel.selectChassis(graphEntries.getSelectedValuesList());
+               aGraphPanel.updateGraph();
             }
          });
 
          xlEngine.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aArg0){
-               payloadStatistics.changeUseXLEngine(xlEngine.isSelected());
-               graphPanel.updateGraph();
+               aPayloadStatistics.changeUseXLEngine(xlEngine.isSelected());
+               aGraphPanel.updateGraph();
             }
          });
          stdEngine.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               payloadStatistics.changeUseXLEngine(!stdEngine.isSelected());
-               graphPanel.updateGraph();
+               aPayloadStatistics.changeUseXLEngine(!stdEngine.isSelected());
+               aGraphPanel.updateGraph();
             }
          });
          noArmor.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               payloadStatistics.changeUseMaxArmor(!noArmor.isSelected());
-               graphPanel.updateGraph();
+               aPayloadStatistics.changeUseMaxArmor(!noArmor.isSelected());
+               aGraphPanel.updateGraph();
             }
          });
          maxArmor.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               payloadStatistics.changeUseMaxArmor(maxArmor.isSelected());
-               graphPanel.updateGraph();
+               aPayloadStatistics.changeUseMaxArmor(maxArmor.isSelected());
+               aGraphPanel.updateGraph();
             }
          });
          endoSteel.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               upgrades.setEndoSteel(endoSteel.isSelected());
-               graphPanel.updateGraph();
+               aUpgrades.setEndoSteel(endoSteel.isSelected());
+               aGraphPanel.updateGraph();
             }
          });
          ferroFibrous.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               upgrades.setFerroFibrous(ferroFibrous.isSelected());
-               graphPanel.updateGraph();
+               aUpgrades.setFerroFibrous(ferroFibrous.isSelected());
+               aGraphPanel.updateGraph();
             }
          });
-         
-         graphEntries.addSelectionInterval(0, chassis.size()-1);
+
       }
    }
 
@@ -157,17 +164,19 @@ public class PayloadSelectionPanel extends JPanel{
    public PayloadSelectionPanel(){
       setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
+      chassis = calculateUniqueSpeedChassis();
+      PayloadSettingsPanel settingsPanel = new PayloadSettingsPanel(chassis);
+
       upgrades = new Upgrades(null);
       payloadStatistics = new PayloadStatistics(false, true, upgrades);
-      graphPanel = new PayloadGraphPanel(payloadStatistics);
-
-      chassis = calculateUniqueSpeedChassis();
+      graphPanel = new PayloadGraphPanel(payloadStatistics, settingsPanel.speedTweak);
       graphPanel.selectChassis(chassis);
       graphPanel.updateGraph();
 
-      add(new PayloadSettingsPanel());
+      settingsPanel.setupListeners(payloadStatistics, graphPanel, upgrades);
+      
+      add(settingsPanel);
       add(graphPanel);
-
    }
 
    private Collection<PayloadGraphPanel.Entry> calculateUniqueSpeedChassis(){

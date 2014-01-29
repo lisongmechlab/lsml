@@ -19,10 +19,15 @@
 //@formatter:on
 package lisong_mechlab.view.graphs;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.swing.JCheckBox;
+
 import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 
@@ -66,10 +71,18 @@ public class PayloadGraphPanel extends ChartPanel{
 
    private static final long       serialVersionUID = -5907483118809173045L;
    private final PayloadStatistics payloadStatistics;
+   private final Efficiencies      efficiencies     = new Efficiencies(null);
    private Collection<Entry>       chassis;
 
-   public PayloadGraphPanel(PayloadStatistics aPayloadStatistics){
+   public PayloadGraphPanel(PayloadStatistics aPayloadStatistics, final JCheckBox aSpeedTweak){
       super(makeChart(new DefaultTableXYDataset()));
+      aSpeedTweak.addActionListener(new ActionListener(){
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            efficiencies.setSpeedTweak(aSpeedTweak.isSelected());
+            updateGraph();
+         }
+      });
       payloadStatistics = aPayloadStatistics;
    }
 
@@ -85,7 +98,7 @@ public class PayloadGraphPanel extends ChartPanel{
             if( rating < 100 ){
                continue; // TODO: Remove this when they remove the engine limit.
             }
-            double speed = TopSpeed.calculate(rating, entry.representant, 1.0);
+            double speed = TopSpeed.calculate(rating, entry.representant, efficiencies.getSpeedModifier());
             series.add(speed, payloadStatistics.calculate(entry.representant, rating));
          }
          dataset.addSeries(series);
