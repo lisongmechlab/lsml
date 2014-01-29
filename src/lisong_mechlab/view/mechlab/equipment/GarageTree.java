@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -47,8 +48,8 @@ public class GarageTree extends JTree{
    GarageTreeModel           model            = null;
    private final MessageXBar xBar;
 
-   public GarageTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar anXBar, final UndoStack anUndoStack){
-      model = new GarageTreeModel(anXBar);
+   public GarageTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar anXBar, final UndoStack anUndoStack, JTextField aFilterBar){
+      model = new GarageTreeModel(anXBar, aFilterBar, this);
       xBar = anXBar;
 
       ToolTipManager.sharedInstance().registerComponent(this);
