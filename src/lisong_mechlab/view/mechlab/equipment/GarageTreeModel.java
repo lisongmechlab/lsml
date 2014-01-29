@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.JTextField;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import javax.swing.event.TreeModelEvent;
@@ -39,22 +40,27 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
    private final List<TreeModelListener>                     listeners = new ArrayList<TreeModelListener>();
    private final DefaultTreeCathegory<AbstractTreeCathegory> root;
 
-   public GarageTreeModel(MessageXBar xBar){
+   public GarageTreeModel(MessageXBar xBar, JTextField aFilterBar, GarageTree aGarageTree){
       root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
 
       DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
 
       DefaultTreeCathegory<GarageCathegory> garage = new DefaultTreeCathegory<>("Garage", root, this);
       for(ChassiClass chassiClass : ChassiClass.values()){
-         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garage, this, xBar, chassiClass);
+         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garage, this, xBar, chassiClass, aFilterBar, aGarageTree);
          garage.addChild(clazz);
       }
       root.addChild(chassii);
       root.addChild(garage);
 
       // Chassii
-      for(ChassiClass chassiClass : ChassiClass.values()){
-         DefaultTreeCathegory<Chassi> chassiiSub = new DefaultTreeCathegory<Chassi>(chassiClass.toString(), chassii, this);
+      for(final ChassiClass chassiClass : ChassiClass.values()){
+         DefaultTreeCathegory<Chassi> chassiiSub = new FilterTreeCathegory<Chassi>(chassiClass.toString(), chassii, this, aFilterBar, aGarageTree){
+            @Override
+            protected boolean filter(Chassi c){
+               return c.getName().toLowerCase().contains(getFilterString());
+            }};
+
          for(Chassi chassi : ChassiDB.lookup(chassiClass)){
             chassiiSub.addChild(chassi);
          }
