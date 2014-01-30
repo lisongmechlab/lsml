@@ -1,3 +1,5 @@
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=LiSong&url=http://li-soft.org&title=Li Song Mechlab&language=&tags=github&category=software) 
+
 Li Song Mechlab
 ----------------
 Li Song Mechlab (LSML) is a tool for building mech configurations for PGI's MechWarrior: Online. 
@@ -35,4 +37,3 @@ If your issue is not mentioned in the manual, please contact me at:
 
 However I don't check the email every day.
 
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=LiSong&url=http://li-soft.org&title=Li Song Mechlab&language=&tags=github&category=software) 
