@@ -13,6 +13,15 @@
     <![endif]-->
   </head>
   <body>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+ var js, fjs = d.getElementsByTagName(s)[0];
+ if (d.getElementById(id)) return;
+ js = d.createElement(s); js.id = id;
+ js.src = "//connect.facebook.net/sv_SE/all.js#xfbml=1";
+ fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
     <div class="wrapper">
       <header>
         <h1>Li Song Mechlab</h1>
@@ -33,22 +42,19 @@
           <li><a href="https://github.com/lisongmechlab/lsml">View On <strong>GitHub</strong></a></li>
         </ul>
 
-<script src="https://apis.google.com/js/plusone.js"></script>
-<g:plus action="share">SHARE ME</g:plus>
+        <!-- Social media stuff -->
+        <g:plus action="share"></g:plus>
+        <script type="text/javascript">
+          (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/plusone.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
 
-<!-- Place this tag where you want the share button to render. -->
-<div class="g-plus" data-action="share" data-annotation="bubble" data-height="24"></div>
+        <div class="fb-like" data-href="https://www.facebook.com/lisongmechlab" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
 
-<!-- Place this tag after the last share tag. -->
-<script type="text/javascript">
-  window.___gcfg = {lang: 'en-GB'};
-
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/platform.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
-</script>
+        <!-- End of social media stuff -->
       </header>
       <section>
         <h2>
