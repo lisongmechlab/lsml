@@ -26,8 +26,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -41,6 +39,7 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
+import lisong_mechlab.util.OS;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
@@ -155,10 +154,6 @@ public class ProgramInit extends JFrame{
       return true;
    }
 
-   static{
-      Native.register("shell32");
-   }
-
    private static native NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
 
    public static void setCurrentProcessExplicitAppUserModelID(final String appID){
@@ -169,14 +164,11 @@ public class ProgramInit extends JFrame{
    public static void main(final String[] args) throws Exception{
       Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
 
-      {
+      if( OS.isWindowsOrNewer(OS.WindowsVersion.Win7) ){
          // Setup AppUserModelID if windows 7 or later.
-         String os = System.getProperty("os.name");
-         Pattern pattern = Pattern.compile(".*win\\D*(\\d*).*", Pattern.CASE_INSENSITIVE);
-         Matcher matcher = pattern.matcher(os);
-         if( matcher.matches() && matcher.groupCount() == 1 && Integer.parseInt(matcher.group(1)) >= 7 ){
-            setCurrentProcessExplicitAppUserModelID(LSML.class.getName());
-         }
+         Native.register("shell32");
+         setCurrentProcessExplicitAppUserModelID(LSML.class.getName());
+         Native.unregister();
       }
 
       // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
