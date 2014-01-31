@@ -62,7 +62,7 @@ img.float {
     border: solid;
     padding: 1em;
     z-index: 999;
-    position: static;
+    position: fixed;
     background: white;
     max-width: 400px;
 }
