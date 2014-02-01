@@ -55,7 +55,7 @@ public class LoadoutPartTest{
    @Mock
    MessageXBar          xBar;
    @Mock
-   UndoStack            undoStack;
+   OperationStack            undoStack;
    MockLoadoutContainer mlc = new MockLoadoutContainer();
 
    @Mock
@@ -231,7 +231,7 @@ public class LoadoutPartTest{
       cut.addItem(item, true);
 
       // Verify an undo action was created
-      ArgumentCaptor<UndoAction> argument = ArgumentCaptor.forClass(UndoAction.class);
+      ArgumentCaptor<Operation> argument = ArgumentCaptor.forClass(Operation.class);
       Mockito.verify(undoStack, Mockito.only()).pushAction(argument.capture());
       assertEquals("Undo add " + item.getName(mlc.upgrades) + " to " + part.getType().toString(), argument.getValue().describe());
       assertTrue(argument.getValue().affects(mlc.loadout));
@@ -439,7 +439,7 @@ public class LoadoutPartTest{
       cut.removeItem(item, true);
 
       // Verify an undo action was created
-      ArgumentCaptor<UndoAction> argument = ArgumentCaptor.forClass(UndoAction.class);
+      ArgumentCaptor<Operation> argument = ArgumentCaptor.forClass(Operation.class);
       Mockito.verify(undoStack, Mockito.only()).pushAction(argument.capture());
       assertEquals("Undo remove " + item.getName(mlc.upgrades) + " from " + part.getType().toString(), argument.getValue().describe());
       assertTrue(argument.getValue().affects(mlc.loadout));

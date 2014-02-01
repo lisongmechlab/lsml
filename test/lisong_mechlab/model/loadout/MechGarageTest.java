@@ -52,7 +52,7 @@ public class MechGarageTest{
    MessageXBar xBar;
 
    @Mock
-   UndoStack   undoStack;
+   OperationStack   undoStack;
 
    @Before
    public void setup(){
@@ -152,7 +152,7 @@ public class MechGarageTest{
 
    /**
     * {@link MechGarage#saveas(File)} shall produce a file that can be subsequently
-    * {@link MechGarage#open(File, MessageXBar, UndoStack)}ed to restore the contents of the garage before the call to
+    * {@link MechGarage#open(File, MessageXBar, OperationStack)}ed to restore the contents of the garage before the call to
     * {@link MechGarage#saveas(File)}
     */
    @Test
@@ -250,7 +250,7 @@ public class MechGarageTest{
 
       cut.add(loadout, true);
 
-      ArgumentCaptor<UndoAction> argument = ArgumentCaptor.forClass(UndoAction.class);
+      ArgumentCaptor<Operation> argument = ArgumentCaptor.forClass(Operation.class);
       verify(undoStack, only()).pushAction(argument.capture());
       assertEquals("Undo add " + loadout.getName() + " to garage.", argument.getValue().describe());
       assertFalse(argument.getValue().affects(loadout));
@@ -278,7 +278,7 @@ public class MechGarageTest{
 
       cut.remove(loadout, true);
 
-      ArgumentCaptor<UndoAction> argument = ArgumentCaptor.forClass(UndoAction.class);
+      ArgumentCaptor<Operation> argument = ArgumentCaptor.forClass(Operation.class);
       verify(undoStack, only()).pushAction(argument.capture());
       assertEquals("Undo remove " + loadout.getName() + " from garage.", argument.getValue().describe());
       assertFalse(argument.getValue().affects(loadout));

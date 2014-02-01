@@ -49,7 +49,7 @@ public class LoadoutSerializationTest{
    @Mock
    MessageXBar xBar;
    @Mock
-   UndoStack   undoStack;
+   OperationStack   undoStack;
 
    @Before
    public void setup(){

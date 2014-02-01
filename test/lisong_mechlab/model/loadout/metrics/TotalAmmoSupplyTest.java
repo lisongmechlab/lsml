@@ -28,7 +28,7 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.UndoStack;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class TotalAmmoSupplyTest{
    MessageXBar             xBar;
 
    @Mock
-   UndoStack               undoStack;
+   OperationStack               undoStack;
 
    @Mock
    private Loadout         loadout;

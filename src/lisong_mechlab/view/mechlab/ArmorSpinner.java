@@ -29,6 +29,8 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.OperationStack;
+import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 
@@ -37,12 +39,14 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
    private final LoadoutPart part;
    private final ArmorSide   side;
    private final JCheckBox   symmetric;
+   private final OperationStack opStack;
 
-   public ArmorSpinner(LoadoutPart aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric){
+   public ArmorSpinner(LoadoutPart aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
       part = aPart;
       side = anArmorSide;
       symmetric = aSymmetric;
       anXBar.attach(this);
+      opStack = anOperationStack;
    }
 
    @Override
@@ -67,19 +71,19 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
 
    @Override
    public void setValue(Object arg0){
-      int oldValue = part.getArmor(side);
       try{
          int armor = ((Integer)arg0).intValue();
-         part.setArmor(side, armor);
+         opStack.pushAndApply(part.new SetArmorOperation(side, armor));
+         
          Part otherSide = part.getInternalPart().getType().oppositeSide();
          if( symmetric.isSelected() && otherSide != null ){
-            part.getLoadout().getPart(otherSide).setArmor(side, armor);
+            Operation op2 = part.getLoadout().getPart(otherSide). new SetArmorOperation(side, armor);
+            opStack.pushAndApply(op2);
          }
          fireStateChanged();
       }
       catch( IllegalArgumentException exception ){
-         part.setArmor(side, oldValue);
-         // TODO: Show message in status bar
+         //TODO: Handle failed case better!
          Toolkit.getDefaultToolkit().beep();
       }
    }

@@ -26,12 +26,12 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
 import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 /**
  * This action will undo a change to the given loadout.
@@ -41,20 +41,20 @@ import lisong_mechlab.view.ProgramInit;
 public class UndoLoadoutAction extends AbstractAction implements Reader{
    private static final String SHORTCUT_STROKE  = "control Z";
    private static final long   serialVersionUID = 665074705972425989L;
-   private final Loadout       loadout;
+   private final LoadoutFrame  loadoutFrame;
 
-   public UndoLoadoutAction(MessageXBar anXBar, Loadout aLoadout){
+   public UndoLoadoutAction(MessageXBar anXBar, LoadoutFrame aLoadoutFrame){
       putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
       anXBar.attach(this);
       setEnabled(false); // Initially
-      loadout = aLoadout;
+      loadoutFrame = aLoadoutFrame;
    }
 
    @Override
    public Object getValue(String key){
       if( key == Action.NAME ){
          if( isEnabled() ){
-            return ProgramInit.lsml().undoStack.latestLoadout(loadout).describe();
+            return "Undo " + loadoutFrame.getOpStack().nextUndo().describe();
          }
          return "Undo";
       }
@@ -63,7 +63,7 @@ public class UndoLoadoutAction extends AbstractAction implements Reader{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      ProgramInit.lsml().undoStack.undoAction(ProgramInit.lsml().undoStack.latestLoadout(loadout));
+      loadoutFrame.getOpStack().undo();
    }
 
    @Override
@@ -72,10 +72,10 @@ public class UndoLoadoutAction extends AbstractAction implements Reader{
          @Override
          public void run(){
             if( aMsg instanceof LoadoutPart.Message ){
-               if( ProgramInit.lsml() == null || ProgramInit.lsml().undoStack == null )
+               if( ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null )
                   setEnabled(false);
                else
-                  setEnabled(null != ProgramInit.lsml().undoStack.latestLoadout(loadout));
+                  setEnabled(null != loadoutFrame.getOpStack().nextUndo());
                firePropertyChange(NAME, "", getValue(NAME));
             }
          }

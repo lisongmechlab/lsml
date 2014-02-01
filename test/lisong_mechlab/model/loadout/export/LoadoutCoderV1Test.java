@@ -28,7 +28,7 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.UndoStack;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class LoadoutCoderV1Test{
    @Mock
    private MessageXBar    xBar;
    @Mock
-   private UndoStack      undoStack;
+   private OperationStack      undoStack;
    @InjectMocks
    private LoadoutCoderV1 cut;
 

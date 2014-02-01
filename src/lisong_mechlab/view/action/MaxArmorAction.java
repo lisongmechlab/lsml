@@ -60,7 +60,7 @@ public class MaxArmorAction extends AbstractAction{
    public void actionPerformed(ActionEvent aArg0){
       try{
          if( ratio > 0 ){
-            loadout.setMaxArmor(ratio);
+            loadoutFrame.getOpStack().pushAndApply(loadout.new SetMaxArmorOperation(ratio));
          }
          else{
             String input = (String)JOptionPane.showInputDialog(loadoutFrame,
@@ -81,7 +81,7 @@ public class MaxArmorAction extends AbstractAction{
                   JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");
                   return;
                }
-               loadout.setMaxArmor(front / back);
+               loadoutFrame.getOpStack().pushAndApply(loadout.new SetMaxArmorOperation(front / back));
             }
             else
                JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");

@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.view.LSML;
 import lisong_mechlab.view.ProgramInit;
 
 /**
@@ -49,7 +50,8 @@ public class AddToGarageAction extends AbstractAction{
    @Override
    public void actionPerformed(ActionEvent aArg0){
       try{
-         ProgramInit.lsml().getGarage().add(loadout, true);
+         LSML lsml = ProgramInit.lsml();
+         lsml.garageOperationStack.pushAndApply(lsml.getGarage().new AddToGarageOperation(loadout));
          setEnabled(false);
       }
       catch( IllegalArgumentException e ){

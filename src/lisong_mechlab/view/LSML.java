@@ -35,7 +35,7 @@ import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
 import lisong_mechlab.model.loadout.MechGarage;
-import lisong_mechlab.model.loadout.UndoStack;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
@@ -71,10 +71,10 @@ public class LSML extends JFrame{
    private static final long       serialVersionUID       = -2463321343234141728L;
    private static final String     CMD_UNDO_GARAGE        = "undo garage action";
    public final MessageXBar        xBar                   = new MessageXBar();
-   public final UndoStack          undoStack              = new UndoStack(xBar, 256);
-   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar, undoStack);
+   public final OperationStack     garageOperationStack   = new OperationStack(256);
+   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
    public final Preferences        preferences            = new Preferences();
-   public final MechLabPane        mechLabPane            = new MechLabPane(xBar, undoStack);
+   public final MechLabPane        mechLabPane            = new MechLabPane(xBar, garageOperationStack);
    public final JTabbedPane        tabbedPane             = new JTabbedPane();
    private LsmlProtocolIPC         lsmlProtocolIPC;
    private MechGarage              garage;
@@ -137,7 +137,7 @@ public class LSML extends JFrame{
       File garageFile = new File(garageFileName);
       if( garageFile.exists() ){
          try{
-            garage = MechGarage.open(garageFile, xBar, undoStack);
+            garage = MechGarage.open(garageFile, xBar, garageOperationStack);
          }
          catch( Exception e ){
             JOptionPane.showMessageDialog(this,
@@ -198,7 +198,7 @@ public class LSML extends JFrame{
          return;
       }
       try{
-         garage = MechGarage.open(chooser.getSelectedFile(), xBar, undoStack);
+         garage = MechGarage.open(chooser.getSelectedFile(), xBar, garageOperationStack);
          PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
       }
       catch( IOException e ){
@@ -227,7 +227,7 @@ public class LSML extends JFrame{
          }
       }
 
-      garage = new MechGarage(xBar, undoStack);
+      garage = new MechGarage(xBar, garageOperationStack);
    }
 
    public void saveGarageAs(){
@@ -250,8 +250,9 @@ public class LSML extends JFrame{
          }
 
          if( file.exists() ){
-            int choice = JOptionPane.showOptionDialog(this, "How would you like to proceed?", "File already exists!", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                                      null, new String[] {"Overwrite", "Cancel", "Pick another file"}, 0);
+            int choice = JOptionPane.showOptionDialog(this, "How would you like to proceed?", "File already exists!", JOptionPane.DEFAULT_OPTION,
+                                                      JOptionPane.QUESTION_MESSAGE, null, new String[] {"Overwrite", "Cancel", "Pick another file"},
+                                                      0);
             if( 0 == choice ){
                overwrite = true;
             }

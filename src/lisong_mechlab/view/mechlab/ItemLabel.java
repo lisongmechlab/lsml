@@ -36,6 +36,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.view.ItemTransferHandler;
+import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.equipment.EquipmentPanel;
 import lisong_mechlab.view.render.StyleManager;
 
@@ -58,6 +59,7 @@ public class ItemLabel extends JLabel{
       addMouseListener(new MouseAdapter(){
          @Override
          public void mousePressed(MouseEvent anEvent){
+            LoadoutFrame frame = ProgramInit.lsml().mechLabPane.getActiveLoadoutFrame();
             Loadout loadout = aEquipmentPanel.getCurrentLoadout();
 
             Component component = anEvent.getComponent();
@@ -71,7 +73,7 @@ public class ItemLabel extends JLabel{
 
             if( SwingUtilities.isLeftMouseButton(anEvent) && anEvent.getClickCount() >= 2 ){
                if( null != loadout )
-                  loadout.addItem(item, true);
+                  frame.getOpStack().pushAndApply(loadout.new AddItemOperation(item));
             }
          }
       });

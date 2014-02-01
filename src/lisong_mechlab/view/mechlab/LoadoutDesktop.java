@@ -32,7 +32,6 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
 
@@ -49,16 +48,14 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
    private static final int                  MAX_OPEN_WINDOWS = 10;
    private final List<InternalFrameListener> listeners        = new ArrayList<InternalFrameListener>();
    private final MessageXBar                 xBar;
-   private final UndoStack                   undoStack;
    private transient int                     opened_windows;
 
    /**
     * Creates a new {@link LoadoutDesktop}.
     */
-   public LoadoutDesktop(MessageXBar anXBar, UndoStack anUndoStack){
+   public LoadoutDesktop(MessageXBar anXBar){
       assert (SwingUtilities.isEventDispatchThread());
 
-      undoStack = anUndoStack;
       xBar = anXBar;
       setBorder(BorderFactory.createLoweredSoftBevelBorder());
       setBackground(Color.GRAY.brighter());
@@ -75,7 +72,7 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
    public void openLoadout(Loadout aLoadout){
       assert (SwingUtilities.isEventDispatchThread());
 
-      LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar, undoStack);
+      LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar);
       frame.addInternalFrameListener(this); // The desktop acts as forwarder of frame events from the frames.
       add(frame);
 
