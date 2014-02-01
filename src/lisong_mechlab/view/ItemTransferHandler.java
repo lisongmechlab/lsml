@@ -20,6 +20,7 @@
 package lisong_mechlab.view;
 
 import java.awt.Component;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -53,7 +54,7 @@ public class ItemTransferHandler extends TransferHandler{
 
    @Override
    protected Transferable createTransferable(JComponent aComponent){
-      assert(SwingUtilities.isEventDispatchThread());
+      assert (SwingUtilities.isEventDispatchThread());
       if( aComponent instanceof PartList ){
          PartList partList = (PartList)aComponent;
          synchronized( partList ){
@@ -96,22 +97,25 @@ public class ItemTransferHandler extends TransferHandler{
             return null;
          }
          Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
-         Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
-         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
-         setDragImageOffset(mouse);
+         setPreview(item, loadout);
          return new StringSelection(item.getName());
       }
       else if( aComponent instanceof ItemLabel ){
          Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
          Item item = ((ItemLabel)aComponent).getItem();
-         Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
-         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
-         setDragImageOffset(mouse);
+         setPreview(item, loadout);
          return new StringSelection(item.getName());
       }
       return null;
    }
 
+   private void setPreview(Item anItem, Loadout aLoadout){
+      Image preview = ItemRenderer.render(anItem, aLoadout != null ? aLoadout.getUpgrades() : null);
+      setDragImage(preview);
+      Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
+      setDragImageOffset(mouse);
+   }
+   
    @Override
    protected void exportDone(JComponent c, Transferable t, int action){
       // NO-OP

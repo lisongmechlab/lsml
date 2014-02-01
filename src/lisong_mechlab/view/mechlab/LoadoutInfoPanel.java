@@ -66,6 +66,8 @@ import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
+import lisong_mechlab.model.loadout.metrics.TurningSpeed;
+import lisong_mechlab.model.loadout.metrics.TwistSpeed;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.ProgramInit;
@@ -89,6 +91,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    // Movement pane
    private final JLabel                 topSpeed         = new JLabel("xxx");
+   private final JLabel                 turnSpeed        = new JLabel("xxx");
+   private final JLabel                 twistSpeed       = new JLabel("xxx");
    private final JCheckBox              speedTweak       = new JCheckBox("Speed Tweak");
    private final JLabel                 jumpJets         = new JLabel("xxx");
 
@@ -114,6 +118,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    // Metrics
    private final TopSpeed               metricTopSpeed;
+   private final TurningSpeed           metricTurnSpeed;
+   private final TwistSpeed             metricTwistSpeed;
    private final JumpDistance           metricJumpDistance;
    private final HeatGeneration         metricHeatGeneration;
    private final HeatDissipation        metricHeatDissipation;
@@ -142,6 +148,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       metricAlphaStrike = new AlphaStrike(loadout);
       metricMaxDPS = new MaxDPS(loadout);
       metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
+      metricTurnSpeed = new TurningSpeed(loadout);
+      metricTwistSpeed = new TwistSpeed(loadout);
 
       artemisChecker = new ArtemisHandler(loadout);
 
@@ -230,6 +238,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          topSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
          mobility.add(topSpeed);
 
+         turnSpeed.setAlignmentX(CENTER_ALIGNMENT);
+         mobility.add(turnSpeed);
+
+         twistSpeed.setAlignmentX(CENTER_ALIGNMENT);
+         mobility.add(twistSpeed);
+
          speedTweak.setAlignmentX(Component.CENTER_ALIGNMENT);
          mobility.add(speedTweak);
          speedTweak.addItemListener(this);
@@ -307,8 +321,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          JPanel panel = new JPanel();
          panel.add(new JLabel("Range:"));
          panel.setToolTipText("Select the range of engagement that alpha strike, max and sustained DPS will be calculated for. Set this to \"opt\" or \"optimal\" to automatically select your optimal ranges.");
-         
-         String ranges[] = new String[]{"Optimal", "90", "180", "270", "300", "450","675", "720",  "810", "900", "1080", "1350", "1620", "1980", "2160"}; 
+
+         String ranges[] = new String[] {"Optimal", "90", "180", "270", "300", "450", "675", "720", "810", "900", "1080", "1350", "1620", "1980",
+               "2160"};
          range = new JComboBox<String>(ranges);
          range.setEditable(true);
          range.setToolTipText(panel.getToolTipText());
@@ -317,13 +332,16 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             public void actionPerformed(ActionEvent aArg0){
                String value = (String)range.getSelectedItem();
                final int r;
-               if(value.toLowerCase().contains("opt")){
+               if( value.toLowerCase().contains("opt") ){
                   r = -1;
-               }else{
+               }
+               else{
                   try{
                      r = Integer.parseInt(value);
-                  }catch(NumberFormatException e){
-                     JOptionPane.showMessageDialog(LoadoutInfoPanel.this, "Please enter an integer range or \"optimal\" or \"opt\" to select the optimal range automatically.");
+                  }
+                  catch( NumberFormatException e ){
+                     JOptionPane.showMessageDialog(LoadoutInfoPanel.this,
+                                                   "Please enter an integer range or \"optimal\" or \"opt\" to select the optimal range automatically.");
                      range.setSelectedIndex(0);
                      return;
                   }
@@ -439,6 +457,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                topSpeed.setText("Top speed: " + df2.format(metricTopSpeed.calculate()) + " km/h");
                jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassi().getMaxJumpJets() + " ("
                                 + df2.format(metricJumpDistance.calculate()) + " m)");
+               turnSpeed.setText("Turn speed: " + df2.format(metricTurnSpeed.calculate()) + "°/s");
+               twistSpeed.setText("Twist speed: " + df2.format(metricTwistSpeed.calculate()) + "°/s");
                speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
 
                // Heat

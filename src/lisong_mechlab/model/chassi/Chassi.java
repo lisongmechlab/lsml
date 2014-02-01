@@ -52,6 +52,8 @@ public class Chassi{
    private final int                     engineMax;
    private final double                  engineFactor;
    private final int                     mwoId;
+   private final double                  turnFactor;
+   private final double                  twistFactor;
 
    public Chassi(ItemStatsMech aStatsMech, GameDataFile aGameData){
       MechDefinition mdf = null;
@@ -77,6 +79,8 @@ public class Chassi{
       maxTons = mdfMech.MaxTons;
       engineFactor = mdf.MovementTuningConfiguration.MaxMovementSpeed;
       chassiclass = ChassiClass.fromMaxTons(maxTons);
+      turnFactor = mdf.MovementTuningConfiguration.TorsoTurnSpeedPitch;
+      twistFactor = mdf.MovementTuningConfiguration.TorsoTurnSpeedYaw;
 
       Map<Part, InternalPart> tempParts = new HashMap<Part, InternalPart>();
       for(MdfComponent component : mdf.ComponentList){
@@ -177,12 +181,20 @@ public class Chassi{
    public int getMwoId(){
       return mwoId;
    }
-   
+
    public boolean isSameSeries(Chassi aChassi){
       return shortName.split("-")[0].equals(aChassi.shortName.split("-")[0]);
    }
-   
+
    public boolean isSpecialVariant(){
       return shortName.contains("(");
+   }
+
+   public double getTurnFactor(){
+      return turnFactor;
+   }
+
+   public double getTwistFactor(){
+      return twistFactor;
    }
 }
