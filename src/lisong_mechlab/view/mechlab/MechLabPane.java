@@ -32,7 +32,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
@@ -49,10 +48,10 @@ public class MechLabPane extends JSplitPane{
    private final LoadoutDesktop desktop;
    private final MessageXBar    xBar;
 
-   public MechLabPane(MessageXBar anXBar, UndoStack anUndoStack){
+   public MechLabPane(MessageXBar anXBar){
       super(JSplitPane.HORIZONTAL_SPLIT, true);
       xBar = anXBar;
-      desktop = new LoadoutDesktop(xBar, anUndoStack);
+      desktop = new LoadoutDesktop(xBar);
       
       JTextField filterBar = new JTextField();
       JPanel filterPanel = new JPanel(new BorderLayout(5, 5));
@@ -62,7 +61,7 @@ public class MechLabPane extends JSplitPane{
             
       JPanel garagePanel = new JPanel(new BorderLayout());
       garagePanel.add(filterPanel, BorderLayout.PAGE_START);
-      garagePanel.add(new JScrollPane(new GarageTree(desktop, xBar, anUndoStack, filterBar)), BorderLayout.CENTER);
+      garagePanel.add(new JScrollPane(new GarageTree(desktop, xBar, filterBar)), BorderLayout.CENTER);
       
       JTabbedPane tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
@@ -87,9 +86,16 @@ public class MechLabPane extends JSplitPane{
     * @return The currently selected loadout.
     */
    public Loadout getCurrentLoadout(){
-      if( null != desktop.getSelectedFrame() )
-         return ((LoadoutFrame)desktop.getSelectedFrame()).getLoadout();
+      if( null != getActiveLoadoutFrame() )
+         return getActiveLoadoutFrame().getLoadout();
       return null;
+   }
+   
+   /**
+    * @return The currently selected {@link LoadoutFrame}.
+    */
+   public LoadoutFrame getActiveLoadoutFrame(){
+      return (LoadoutFrame)desktop.getSelectedFrame();
    }
 
    /**

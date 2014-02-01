@@ -51,7 +51,7 @@ public class UndoGarageAction extends AbstractAction implements Reader{
    public Object getValue(String key){
       if( key == Action.NAME ){
          if( isEnabled() ){
-            return ProgramInit.lsml().undoStack.latestGarage().describe();
+            return "Undo " + ProgramInit.lsml().garageOperationStack.nextUndo().describe();
          }
          return "Undo Garage";
       }
@@ -60,7 +60,7 @@ public class UndoGarageAction extends AbstractAction implements Reader{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      ProgramInit.lsml().undoStack.undoAction(ProgramInit.lsml().undoStack.latestGarage());
+      ProgramInit.lsml().garageOperationStack.undo();
    }
 
    @Override
@@ -70,10 +70,10 @@ public class UndoGarageAction extends AbstractAction implements Reader{
          @Override
          public void run(){
             if( aMsg instanceof MechGarage.Message ){
-               if( ProgramInit.lsml() == null || ProgramInit.lsml().undoStack == null )
+               if( ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null )
                   setEnabled(false);
                else
-                  setEnabled(null != ProgramInit.lsml().undoStack.latestGarage());
+                  setEnabled(null != ProgramInit.lsml().garageOperationStack.nextUndo());
                firePropertyChange(NAME, "", getValue(NAME));
             }
          }

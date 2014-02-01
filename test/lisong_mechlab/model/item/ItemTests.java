@@ -36,7 +36,7 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.UndoStack;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
@@ -48,7 +48,7 @@ public class ItemTests{
    @Mock
    MessageXBar xBar;
    @Mock
-   UndoStack   undoStack;
+   OperationStack   undoStack;
 
    @Before
    public void setup(){

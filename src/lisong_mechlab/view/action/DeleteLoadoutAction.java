@@ -69,7 +69,7 @@ public class DeleteLoadoutAction extends AbstractAction implements Reader{
                                                     "Confirm operation", JOptionPane.YES_NO_OPTION);
          if( JOptionPane.YES_OPTION == result ){
             try{
-               garage.remove(loadout, true);
+               ProgramInit.lsml().garageOperationStack.pushAndApply(garage.new RemoveFromGarageOperation(loadout));
             }
             catch( RuntimeException e ){
                JOptionPane.showMessageDialog(source,

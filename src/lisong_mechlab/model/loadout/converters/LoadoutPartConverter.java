@@ -27,6 +27,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -80,6 +81,8 @@ public class LoadoutPartConverter implements Converter{
    @Override
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
 
+      OperationStack operationStack = new OperationStack(0);
+      
       Part partType = Part.valueOf(aReader.getAttribute("part"));
       LoadoutPart loadoutPart = loadout.getPart(partType);
 
@@ -87,12 +90,12 @@ public class LoadoutPartConverter implements Converter{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");
             if( armors.length == 2 ){
-               loadoutPart.setArmor(ArmorSide.FRONT, Integer.parseInt(armors[0]));
-               loadoutPart.setArmor(ArmorSide.BACK, Integer.parseInt(armors[1]));
+               operationStack.pushAndApply(loadoutPart.new SetArmorOperation(ArmorSide.FRONT, Integer.parseInt(armors[0])));
+               operationStack.pushAndApply(loadoutPart.new SetArmorOperation(ArmorSide.BACK, Integer.parseInt(armors[1])));
             }
          }
          else{
-            loadoutPart.setArmor(ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")));
+            operationStack.pushAndApply(loadoutPart.new SetArmorOperation(ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor"))));
          }
       }
       catch( IllegalArgumentException exception ){
@@ -104,7 +107,7 @@ public class LoadoutPartConverter implements Converter{
          aReader.moveDown();
          if( "item".equals(aReader.getNodeName()) ){
             try{
-               loadoutPart.addItem((Item)aContext.convertAnother(null, Item.class), false);
+               operationStack.pushAndApply(loadoutPart.new AddItemOperation((Item)aContext.convertAnother(null, Item.class)));
             }
             catch( IllegalArgumentException exception ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()

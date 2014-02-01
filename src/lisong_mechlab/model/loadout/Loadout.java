@@ -41,6 +41,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.Loadout.Message.Type;
+import lisong_mechlab.model.loadout.OperationStack.CompositeOperation;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutConverter;
@@ -110,13 +111,12 @@ public class Loadout implements MessageXBar.Reader{
       }
    }
 
-   private String                       name;
-   private final Chassi                 chassi;
-   private final Map<Part, LoadoutPart> parts = new TreeMap<Part, LoadoutPart>();
-   private final Upgrades               upgrades;
-   private final Efficiencies           efficiencies;
-   private final transient MessageXBar  xBar;
-   private final transient UndoStack    undoStack;
+   private String                         name;
+   private final Chassi                   chassi;
+   private final Map<Part, LoadoutPart>   parts = new TreeMap<Part, LoadoutPart>();
+   private final Upgrades                 upgrades;
+   private final Efficiencies             efficiencies;
+   private final transient MessageXBar    xBar;
 
    /**
     * Will create a new, empty load out based on the given chassi.
@@ -126,18 +126,17 @@ public class Loadout implements MessageXBar.Reader{
     * @param anXBar
     *           The {@link MessageXBar} to signal changes to this loadout on.
     * @param anUndoStack
-    *           The {@link UndoStack} to use when altering this loadout.
+    *           The {@link OperationStack} to use when altering this loadout.
     */
-   public Loadout(Chassi aChassi, MessageXBar anXBar, UndoStack anUndoStack){
+   public Loadout(Chassi aChassi, MessageXBar anXBar){
       name = aChassi.getNameShort();
       chassi = aChassi;
       upgrades = new Upgrades(anXBar);
       for(InternalPart part : chassi.getInternalParts()){
-         LoadoutPart confPart = new LoadoutPart(this, part, anXBar, anUndoStack);
+         LoadoutPart confPart = new LoadoutPart(this, part, anXBar);
          parts.put(part.getType(), confPart);
       }
 
-      undoStack = anUndoStack;
       xBar = anXBar;
       xBar.attach(this);
       xBar.post(new Message(this, Type.CREATE));
@@ -154,9 +153,10 @@ public class Loadout implements MessageXBar.Reader{
     * @param anUndoStack
     * @throws Exception
     */
-   public Loadout(String aString, MessageXBar anXBar, UndoStack anUndoStack) throws Exception{
-      this(ChassiDB.lookup(aString), anXBar, anUndoStack);
-      loadStock();
+   public Loadout(String aString, MessageXBar anXBar) throws Exception{
+      this(ChassiDB.lookup(aString), anXBar);
+      OperationStack operationStack = new OperationStack(0);
+      operationStack.pushAndApply(new LoadStockOperation());
    }
 
    @Override
@@ -198,69 +198,137 @@ public class Loadout implements MessageXBar.Reader{
       return true;
    }
 
-   public static Loadout load(File aFile, MessageXBar anXBar, UndoStack anUndoStack){
-      XStream stream = loadoutXstream(anXBar, anUndoStack);
+   public static Loadout load(File aFile, MessageXBar anXBar){
+      XStream stream = loadoutXstream(anXBar);
       return (Loadout)stream.fromXML(aFile);
    }
 
-   public void loadStock() throws Exception{
-      strip();
+   public class LoadStockOperation extends CompositeOperation{
+      private final boolean artemis;
+      private final boolean endo;
+      private final boolean ferro;
+      private final boolean dhs;
+      // FIXME: This will not work!
+      private final boolean stockArtemis;
+      private final boolean stockEndo;
+      private final boolean stockFerro;
+      private final boolean stockDhs;
 
-      File loadoutXml = new File("Game/Libs/MechLoadout/" + chassi.getMwoName().toLowerCase() + ".xml");
-      GameDataFile dataFile = new GameDataFile();
-      XmlReader reader = new XmlReader(dataFile.openGameFile(loadoutXml));
+      public LoadStockOperation() throws Exception{
+         super("load stock");
 
-      List<Element> maybeUpgrades = reader.getElementsByTagName("Upgrades");
-      if( maybeUpgrades.size() == 1 ){
-         Element stockUpgrades = maybeUpgrades.get(0);
-         // TODO: We really should fix issue #75 to get rid of these hard coded constants.
-         getUpgrades().setDoubleHeatSinks(reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double"));
-         getUpgrades().setFerroFibrous(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801"));
-         getUpgrades().setEndoSteel(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101"));
-         getUpgrades().setArtemis(reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1"));
+         artemis = upgrades.hasArtemis();
+         endo = upgrades.hasEndoSteel();
+         ferro = upgrades.hasFerroFibrous();
+         dhs = upgrades.hasFerroFibrous();
+         addOp(new StripOperation());
 
-         // FIXME: Revisit this fix! The game files are broken.
-         if( chassi.getNameShort().equals("KTO-19") ){
-            getUpgrades().setFerroFibrous(true);
+         File loadoutXml = new File("Game/Libs/MechLoadout/" + chassi.getMwoName().toLowerCase() + ".xml");
+         GameDataFile dataFile = new GameDataFile();
+         XmlReader reader = new XmlReader(dataFile.openGameFile(loadoutXml));
+
+         List<Element> maybeUpgrades = reader.getElementsByTagName("Upgrades");
+         if( maybeUpgrades.size() == 1 ){
+            Element stockUpgrades = maybeUpgrades.get(0);
+            // TODO: We really should fix issue #75 to get rid of these hard coded constants.
+            stockDhs = reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double");
+            stockFerro = reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801");
+            stockEndo = reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101");
+            stockArtemis = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1");
+
+            // FIXME: Revisit this fix! The game files are broken.
+            if( chassi.getNameShort().equals("KTO-19") ){
+               getUpgrades().setFerroFibrous(true);
+            }
+         }
+         else{
+            stockArtemis = false;
+            stockEndo = false;
+            stockFerro = false;
+            stockDhs = false;
+         }
+
+         for(Element component : reader.getElementsByTagName("component")){
+            String componentName = component.getAttribute("Name");
+            int componentArmor = Integer.parseInt(component.getAttribute("Armor"));
+
+            Part partType = Part.fromMwoName(componentName);
+
+            LoadoutPart part = getPart(partType);
+            if( partType.isTwoSided() ){
+               if( Part.isRear(componentName) )
+                  addOp(part.new SetArmorOperation(ArmorSide.BACK, componentArmor));
+               else
+                  addOp(part.new SetArmorOperation(ArmorSide.FRONT, componentArmor));
+            }
+            else
+               addOp(part.new SetArmorOperation(ArmorSide.ONLY, componentArmor));
+
+            Node child = component.getFirstChild();
+            while( null != child ){
+               if( child.getNodeType() == Node.ELEMENT_NODE ){
+                  Item item = ItemDB.lookup(Integer.parseInt(((Element)child).getAttribute("ItemID")));
+                  addOp(part.new AddItemOperation(item));
+               }
+               child = child.getNextSibling();
+            }
          }
       }
 
-      for(Element component : reader.getElementsByTagName("component")){
-         String componentName = component.getAttribute("Name");
-         int componentArmor = Integer.parseInt(component.getAttribute("Armor"));
+      @Override
+      public void apply(){
+         super.apply();
+         upgrades.setArtemis(stockArtemis);
+         upgrades.setEndoSteel(stockEndo);
+         upgrades.setFerroFibrous(stockFerro);
+         upgrades.setDoubleHeatSinks(stockDhs);
+      }
 
-         Part partType = Part.fromMwoName(componentName);
-
-         LoadoutPart part = getPart(partType);
-         if( partType.isTwoSided() ){
-            if( Part.isRear(componentName) )
-               part.setArmor(ArmorSide.BACK, componentArmor);
-            else
-               part.setArmor(ArmorSide.FRONT, componentArmor);
-         }
-         else
-            part.setArmor(ArmorSide.ONLY, componentArmor);
-
-         Node child = component.getFirstChild();
-         while( null != child ){
-            if( child.getNodeType() == Node.ELEMENT_NODE ){
-               Item item = ItemDB.lookup(Integer.parseInt(((Element)child).getAttribute("ItemID")));
-               part.addItem(item, true);
-            }
-            child = child.getNextSibling();
-         }
+      @Override
+      public void undo(){
+         upgrades.setArtemis(artemis);
+         upgrades.setEndoSteel(endo);
+         upgrades.setFerroFibrous(ferro);
+         upgrades.setDoubleHeatSinks(dhs);
+         super.apply();
       }
    }
 
-   public void strip(){
-      stripArmor();
-      for(LoadoutPart loadoutPart : parts.values()){
-         loadoutPart.removeAllItems();
+   public class StripOperation extends CompositeOperation{
+      private final boolean artemis;
+      private final boolean endo;
+      private final boolean ferro;
+      private final boolean dhs;
+
+      public StripOperation(){
+         super("strip mech");
+         for(LoadoutPart loadoutPart : parts.values()){
+            addOp(loadoutPart.new StripPartOperation());
+         }
+         artemis = upgrades.hasArtemis();
+         endo = upgrades.hasEndoSteel();
+         ferro = upgrades.hasFerroFibrous();
+         dhs = upgrades.hasFerroFibrous();
+
       }
-      upgrades.setArtemis(false);
-      upgrades.setEndoSteel(false);
-      upgrades.setFerroFibrous(false);
-      upgrades.setDoubleHeatSinks(false);
+
+      @Override
+      public void apply(){
+         super.apply();
+         upgrades.setArtemis(false);
+         upgrades.setEndoSteel(false);
+         upgrades.setFerroFibrous(false);
+         upgrades.setDoubleHeatSinks(false);
+      }
+
+      @Override
+      public void undo(){
+         upgrades.setArtemis(artemis);
+         upgrades.setEndoSteel(endo);
+         upgrades.setFerroFibrous(ferro);
+         upgrades.setDoubleHeatSinks(dhs);
+         super.apply();
+      }
    }
 
    public double getMass(){
@@ -356,7 +424,7 @@ public class Loadout implements MessageXBar.Reader{
       FileWriter fileWriter = null;
       try{
          fileWriter = new FileWriter(aFile);
-         fileWriter.write(loadoutXstream(xBar, undoStack).toXML(this));
+         fileWriter.write(loadoutXstream(xBar).toXML(this));
       }
       finally{
          if( fileWriter != null ){
@@ -370,13 +438,13 @@ public class Loadout implements MessageXBar.Reader{
       xBar.post(new Message(this, Type.RENAME));
    }
 
-   static XStream loadoutXstream(MessageXBar anXBar, UndoStack anUndoStack){
+   static XStream loadoutXstream(MessageXBar anXBar){
       XStream stream = new XStream(new StaxDriver());
       stream.setMode(XStream.NO_REFERENCES);
       stream.registerConverter(new ChassiConverter());
       stream.registerConverter(new ItemConverter());
       stream.registerConverter(new LoadoutPartConverter(null));
-      stream.registerConverter(new LoadoutConverter(anXBar, anUndoStack));
+      stream.registerConverter(new LoadoutConverter(anXBar));
       stream.omitField(Observable.class, "changed");
       stream.omitField(Observable.class, "obs");
       stream.addImmutableType(Item.class);
@@ -425,25 +493,28 @@ public class Loadout implements MessageXBar.Reader{
       double freeMass = chassi.getMassMax() - getMass();
       return freeMass;
    }
+   
+   public class SetMaxArmorOperation extends CompositeOperation{
+      public SetMaxArmorOperation(double aRatio){
+         super("set max armor");
+         for(LoadoutPart part : parts.values()){
+            final int max = part.getInternalPart().getArmorMax();
+            if( part.getInternalPart().getType().isTwoSided() ){
+               // 1) front + back = max
+               // 2) front / back = ratio
+               // front = back * ratio
+               // front = max - back
+               // = > back * ratio = max - back
+               int back = (int)(max / (aRatio + 1));
+               int front = max - back;
 
-   public void setMaxArmor(double aRatio){
-      for(LoadoutPart part : parts.values()){
-         final int max = part.getInternalPart().getArmorMax();
-         if( part.getInternalPart().getType().isTwoSided() ){
-            // 1) front + back = max
-            // 2) front / back = ratio
-            // front = back * ratio
-            // front = max - back
-            // = > back * ratio = max - back
-            int back = (int)(max / (aRatio + 1));
-            int front = max - back;
-
-            part.setArmor(ArmorSide.BACK, 0);
-            part.setArmor(ArmorSide.FRONT, front);
-            part.setArmor(ArmorSide.BACK, back);
-         }
-         else{
-            part.setArmor(ArmorSide.ONLY, max);
+               addOp(part.new SetArmorOperation(ArmorSide.BACK, 0));
+               addOp(part.new SetArmorOperation(ArmorSide.FRONT, front));
+               addOp(part.new SetArmorOperation(ArmorSide.BACK, back));
+            }
+            else{
+               addOp(part.new SetArmorOperation(ArmorSide.ONLY, max));
+            }
          }
       }
    }
@@ -482,38 +553,40 @@ public class Loadout implements MessageXBar.Reader{
       return false;
    }
 
-   public void stripArmor(){
-      for(LoadoutPart loadoutPart : parts.values()){
-         if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-            loadoutPart.setArmor(ArmorSide.FRONT, 0);
-            loadoutPart.setArmor(ArmorSide.BACK, 0);
-         }
-         else{
-            loadoutPart.setArmor(ArmorSide.ONLY, 0);
+   public class StripArmorOperation extends CompositeOperation{
+      public StripArmorOperation(){
+         super("strip armor");
+         for(LoadoutPart loadoutPart : parts.values()){
+            if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+               addOp(loadoutPart.new SetArmorOperation(ArmorSide.FRONT, 0));
+               addOp(loadoutPart.new SetArmorOperation(ArmorSide.BACK, 0));
+            }
+            else{
+               addOp(loadoutPart.new SetArmorOperation(ArmorSide.ONLY, 0));
+            }
          }
       }
    }
 
-   public void addItem(String aString, boolean isUndoable){
-      addItem(ItemDB.lookup(aString), isUndoable);
-   }
-
-   public void addItem(Item anItem, boolean isUndoable){
-      LoadoutPart ct = parts.get(Part.CenterTorso);
-      if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canAddItem(anItem) ){
-         ct.addItem(anItem, isUndoable);
-         return;
-      }
-
-      Part[] partOrder = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso, Part.LeftTorso, Part.LeftLeg,
-            Part.LeftArm};
-
-      for(Part part : partOrder){
-         LoadoutPart loadoutPart = parts.get(part);
-         if( loadoutPart.canAddItem(anItem) ){
-            loadoutPart.addItem(anItem, isUndoable);
+   public class AddItemOperation extends CompositeOperation{
+      public AddItemOperation(Item anItem){
+         super("auto place item");
+         LoadoutPart ct = parts.get(Part.CenterTorso);
+         if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canAddItem(anItem) ){
+            addOp(ct.new AddItemOperation(anItem));
             return;
          }
-      }
+
+         Part[] partOrder = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso, Part.LeftTorso, Part.LeftLeg,
+               Part.LeftArm};
+
+         for(Part part : partOrder){
+            LoadoutPart loadoutPart = parts.get(part);
+            if( loadoutPart.canAddItem(anItem) ){
+               addOp(loadoutPart.new AddItemOperation(anItem));
+               return;
+            }
+         }
+      }      
    }
 }

@@ -43,7 +43,7 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.MechGarage;
-import lisong_mechlab.model.loadout.UndoStack;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.SwingHelpers;
@@ -67,25 +67,23 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private static final int       xOffset            = 30, yOffset = 30;
    private final Loadout          loadout;
    private final MessageXBar      xbar;
-   private final UndoStack        undoStack;
+   private final OperationStack   loadoutOperationStack = new OperationStack(128);
    private final Action           actionUndoLoadout;
    private final Action           actionRename;
    private final Action           actionAddToGarage;
    private final LoadoutInfoPanel infoPanel;
 
-   public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar, UndoStack anUndoStack){
+   public LoadoutFrame(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout.toString(), true, // resizable
             true, // closable
             false, // maximizable
             true);// iconifiable
-
-      undoStack = anUndoStack;
       xbar = anXBar;
       xbar.attach(this);
       loadout = aLoadout;
 
       // Actions
-      actionUndoLoadout = new UndoLoadoutAction(xbar, loadout);
+      actionUndoLoadout = new UndoLoadoutAction(xbar, this);
       actionRename = new RenameLoadoutAction(this);
       actionAddToGarage = new AddToGarageAction(loadout);
 
@@ -120,7 +118,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                   int ans = JOptionPane.showConfirmDialog(ProgramInit.lsml(), "Would you like to save " + loadout.getName() + " to your garage?",
                                                           "Save to garage?", JOptionPane.YES_NO_CANCEL_OPTION);
                   if( ans == JOptionPane.YES_OPTION ){
-                     ProgramInit.lsml().getGarage().add(loadout, true);
+                     (new AddToGarageAction(loadout)).actionPerformed(null);
                   }
                   else if( ans == JOptionPane.NO_OPTION ){
                      // Discard loadout
@@ -129,8 +127,6 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
                      throw new PropertyVetoException("Save canceled!", aE);
                   }
                }
-               // Being closed, clear undo stack of references to this loadout.
-               undoStack.clearLoadout(loadout);
             }
          }
       });
@@ -149,6 +145,10 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
    public Loadout getLoadout(){
       return loadout;
+   }
+   
+   public OperationStack getOpStack(){
+      return loadoutOperationStack;
    }
 
    private JPanel createMechView(Loadout aConfiguration, MessageXBar anXBar){
@@ -255,7 +255,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          @Override
          public void actionPerformed(ActionEvent aArg0){
             try{
-               loadout.loadStock();
+               loadoutOperationStack.pushAndApply(loadout.new LoadStockOperation());
             }
             catch( Exception e ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't load stock loadout! Error: " + e.getMessage());
@@ -266,7 +266,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(createMenuItem("Strip mech", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
-            loadout.strip();
+            loadoutOperationStack.pushAndApply(loadout.new StripOperation());
          }
       }));
 
@@ -280,7 +280,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(createMenuItem("Strip Armor", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
-            loadout.stripArmor();
+            loadoutOperationStack.pushAndApply(loadout.new StripArmorOperation());
          }
       }));
 

@@ -39,60 +39,234 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.OperationStack.CompositeOperation;
+import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
 
 /**
  * This class represents a configured {@link InternalPart}.
  * <p>
- * TODO: Change structure for "Loadoutpart has an internal part" to "Loadout part is an internal part"
+ * This class is immutable. The only way to alter it is by creating instances of the nested {@link Operation}s and
+ * adding them to an {@link OperationStack}.
  * 
  * @author Emily Björk
  */
 public class LoadoutPart implements MessageXBar.Reader{
-   public class AddItemAction implements UndoAction{
-      private final Item item;
-
-      AddItemAction(Item anItem){
-         item = anItem;
-      }
-
-      @Override
-      public String describe(){
-         return "Undo add " + item.getName(loadout.getUpgrades()) + " to " + internalPart.getType();
-      }
-
-      @Override
-      public void undo(){
-         removeItem(item, false);
-      }
-
-      @Override
-      public boolean affects(Loadout aLoadout){
-         return loadout == aLoadout;
+   /**
+    * This {@link Operation} will remove all items and armor of this component.
+    * 
+    * @author Emily Björk
+    */
+   public class StripPartOperation extends CompositeOperation{
+      public StripPartOperation(){
+         super("strip part");
+         for(Item item : getItems()){
+            addOp(new RemoveItemAction(item));
+         }
+         if( internalPart.getType().isTwoSided() ){
+            addOp(new SetArmorOperation(ArmorSide.FRONT, 0));
+            addOp(new SetArmorOperation(ArmorSide.BACK, 0));
+         }
+         else{
+            addOp(new SetArmorOperation(ArmorSide.ONLY, 0));
+         }
       }
    }
 
-   public class RemoveItemAction implements UndoAction{
-      private final Item item;
+   /**
+    * This {@link Operation} will change the armor of a {@link LoadoutPart}.
+    * 
+    * @author Emily Björk
+    */
+   public class SetArmorOperation extends Operation{
+      private final ArmorSide side;
+      private final int       amount;
+      private final int       oldAmount;
 
-      RemoveItemAction(Item anItem){
-         item = anItem;
+      /**
+       * Sets the armor for a given side of the component. Throws if the operation will fail.
+       * 
+       * @param anArmorSide
+       *           The side to set the armor for.
+       * @param anArmorAmount
+       *           The amount to set the armor to.
+       * @throws IllegalArgumentException
+       *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage
+       *            to support the armor.
+       */
+      public SetArmorOperation(ArmorSide anArmorSide, int anArmorAmount){
+         side = anArmorSide;
+         amount = anArmorAmount;
+         oldAmount = armor.get(side);
+
+         if( amount > getArmorMax(side) ){
+            throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + getArmorMax(side) + " Was: " + amount);
+         }
+
+         // TODO: This is an ugly way to check if the loadout can hold that amount of armor
+         armor.put(side, amount);
+         if( amount >= oldAmount && loadout.getFreeMass() < 0 ){
+            armor.put(side, oldAmount);
+            throw new IllegalArgumentException("Not enough tonnage to add more armor!");
+         }
+         armor.put(side, oldAmount);
       }
 
       @Override
       public String describe(){
-         return "Undo remove " + item.getName(loadout.getUpgrades()) + " from " + internalPart.getType();
+         return "change armor";
+      }
+
+      @Override
+      protected void apply(){
+         armor.put(side, amount);
+         xBar.post(new Message(LoadoutPart.this, Type.ArmorChanged));
+      }
+
+      @Override
+      protected void undo(){
+         armor.put(side, oldAmount);
+         xBar.post(new Message(LoadoutPart.this, Type.ArmorChanged));
+      }
+   }
+
+   /**
+    * A helper class for implementing {@link Operation}s that affect items on a {@link LoadoutPart}.
+    * 
+    * @author Emily Björk
+    */
+   public abstract class ItemOperation extends Operation{
+      protected final Item item;
+      private int          numEngineHS = 0;
+
+      /**
+       * Creates a new {@link ItemOperation}. The deriving classes shall throw if the the operation with the given item
+       * would violate the {@link Loadout} or {@link LoadoutPart} invariant.
+       * 
+       * @param anItem
+       *           The item that shall be affected.
+       */
+      public ItemOperation(Item anItem){
+         item = anItem;
+      }
+
+      /**
+       * Removes an item without checks. Will count up the numEngineHS variable to the number of heat sinks removed.
+       */
+      protected void removeItem(){
+         if( item instanceof Engine ){
+            Engine engine = (Engine)item;
+            if( engine.getType() == EngineType.XL ){
+               loadout.getPart(Part.LeftTorso).items.remove(ENGINE_INTERNAL);
+               loadout.getPart(Part.RightTorso).items.remove(ENGINE_INTERNAL);
+            }
+
+            int engineHsLeft = getNumEngineHeatsinks();
+            while( engineHsLeft > 0 ){
+               engineHsLeft--;
+               numEngineHS++;
+               if( loadout.getUpgrades().hasDoubleHeatSinks() )
+                  items.remove(ItemDB.DHS);
+               else
+                  items.remove(ItemDB.SHS);
+            }
+         }
+         items.remove(item);
+         xBar.post(new Message(LoadoutPart.this, Type.ItemRemoved));
+      }
+
+      /**
+       * Adds an item without checks. Will add numEngineHS heat sinks if the item is an engine.
+       */
+      protected void addItem(){
+         if( item instanceof Engine ){
+            Engine engine = (Engine)item;
+            if( engine.getType() == EngineType.XL ){
+               loadout.getPart(Part.LeftTorso).items.add(ENGINE_INTERNAL);
+               loadout.getPart(Part.RightTorso).items.add(ENGINE_INTERNAL);
+            }
+            while( numEngineHS > 0 ){
+               numEngineHS--;
+               if( loadout.getUpgrades().hasDoubleHeatSinks() )
+                  items.add(ItemDB.DHS);
+               else
+                  items.add(ItemDB.SHS);
+            }
+         }
+         items.add(item);
+         xBar.post(new Message(LoadoutPart.this, Type.ItemAdded));
+      }
+   }
+
+   /**
+    * This {@link Operation} adds an {@link Item} to a {@link LoadoutPart}.
+    * 
+    * @author Emily Björk
+    */
+   public class AddItemOperation extends ItemOperation{
+
+      /**
+       * Creates a new operation.
+       * 
+       * @param anItem
+       *           The {@link Item} to add.
+       */
+      public AddItemOperation(Item anItem){
+         super(anItem);
+         if( internalPart.getInternalItems().contains(anItem) || anItem instanceof Internal )
+            throw new IllegalArgumentException("Can't add internals to a loadout!");
+         if( !canAddItem(item) )
+            throw new IllegalArgumentException("Can't add " + item + "!");
+      }
+
+      @Override
+      public String describe(){
+         return "add " + item.getName(loadout.getUpgrades()) + " to " + internalPart.getType();
       }
 
       @Override
       public void undo(){
-         addItem(item, false);
+         removeItem();
       }
 
       @Override
-      public boolean affects(Loadout aLoadout){
-         return loadout == aLoadout;
+      public void apply(){
+         addItem();
+      }
+   }
+
+   /**
+    * This {@link Operation} removes an {@link Item} from a {@link LoadoutPart}.
+    * 
+    * @author Emily Björk
+    */
+   public class RemoveItemAction extends ItemOperation{
+      /**
+       * Creates a new operation.
+       * 
+       * @param anItem
+       *           The {@link Item} to remove.
+       */
+      RemoveItemAction(Item anItem){
+         super(anItem);
+         if( !items.contains(item) )
+            throw new IllegalArgumentException("Can't remove " + item + "!");
+      }
+
+      @Override
+      public String describe(){
+         return "remove " + item.getName(loadout.getUpgrades()) + " from " + internalPart.getType();
+      }
+
+      @Override
+      public void undo(){
+         addItem();
+      }
+
+      @Override
+      public void apply(){
+         removeItem();
       }
    }
 
@@ -129,22 +303,26 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
    }
 
-   public final static double            ARMOR_PER_TON   = 32.0;
-   public final static Internal          ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
+   public final static double             ARMOR_PER_TON   = 32.0;                                           // TODO:
+                                                                                                             // Should
+                                                                                                             // be
+                                                                                                             // replaced
+                                                                                                             // with
+                                                                                                             // upgrade
+                                                                                                             // handlers
+   public final static Internal           ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
 
-   private final transient UndoStack     undoStack;
-   private final transient MessageXBar   xBar;
-   private final transient Loadout       loadout;
-   private final InternalPart            internalPart;
-   private final List<Item>              items           = new ArrayList<Item>();
-   private final Map<ArmorSide, Integer> armor           = new TreeMap<ArmorSide, Integer>();
-   private int                           engineHeatsinks = 0;
+   private final transient MessageXBar    xBar;
+   private final transient Loadout        loadout;
+   private final InternalPart             internalPart;
+   private final List<Item>               items           = new ArrayList<Item>();
+   private final Map<ArmorSide, Integer>  armor           = new TreeMap<ArmorSide, Integer>();
+   private int                            engineHeatsinks = 0;
 
-   LoadoutPart(Loadout aLoadOut, InternalPart anInternalPart, MessageXBar aXBar, UndoStack anUndoStack){
+   LoadoutPart(Loadout aLoadOut, InternalPart anInternalPart, MessageXBar aXBar){
       internalPart = anInternalPart;
       items.addAll(internalPart.getInternalItems());
       loadout = aLoadOut;
-      undoStack = anUndoStack;
       xBar = aXBar;
       xBar.attach(this);
 
@@ -220,27 +398,6 @@ public class LoadoutPart implements MessageXBar.Reader{
       return Collections.unmodifiableList(items);
    }
 
-   public void addItem(String aString, boolean isUndoable){
-      addItem(ItemDB.lookup(aString), isUndoable);
-   }
-
-   public void addItem(Item anItem, boolean isUndoable){
-      if( !canAddItem(anItem) ){
-         throw new IllegalArgumentException("Can't add " + anItem + "!");
-      }
-      if( anItem instanceof Engine ){
-         Engine engine = (Engine)anItem;
-         if( engine.getType() == EngineType.XL ){
-            loadout.getPart(Part.LeftTorso).items.add(ENGINE_INTERNAL);
-            loadout.getPart(Part.RightTorso).items.add(ENGINE_INTERNAL);
-         }
-      }
-      items.add(anItem);
-      xBar.post(new Message(this, Type.ItemAdded));
-      if( isUndoable )
-         undoStack.pushAction(new AddItemAction(anItem));
-   }
-
    public boolean canAddItem(Item anItem){
       if( anItem instanceof Internal ){
          return false; // Can't add internals!
@@ -255,45 +412,13 @@ public class LoadoutPart implements MessageXBar.Reader{
          return checkJumpJetRules((JumpJet)anItem);
       }
       else{
-         // Case can only be put in side torsi
+         // Case can only be put in side torsii
          if( anItem == ItemDB.lookup("C.A.S.E.") ){
             if( internalPart.getType() != Part.LeftTorso && internalPart.getType() != Part.RightTorso ){
                return false;
             }
          }
          return checkCommonRules(anItem);
-      }
-   }
-
-   public void removeItem(Item anItem, boolean isUndoable){
-      if( internalPart.getInternalItems().contains(anItem) || anItem instanceof Internal ){
-         return; // Don't remove internals!
-      }
-
-      if( anItem instanceof Engine ){
-         Engine engine = (Engine)anItem;
-         if( !items.contains(engine) )
-            return; // Don't remove anything we don't have (only dangerous if we accidentally remove LT/RT engine
-                    // sides).
-
-         if( engine.getType() == EngineType.XL ){
-            loadout.getPart(Part.LeftTorso).items.remove(ENGINE_INTERNAL);
-            loadout.getPart(Part.RightTorso).items.remove(ENGINE_INTERNAL);
-         }
-
-         int engineHsLeft = getNumEngineHeatsinks();
-         while( engineHsLeft > 0 ){
-            engineHsLeft--;
-            if( loadout.getUpgrades().hasDoubleHeatSinks() )
-               removeItem(ItemDB.DHS, isUndoable);
-            else
-               removeItem(ItemDB.SHS, isUndoable);
-         }
-      }
-      if( items.remove(anItem) ){
-         xBar.post(new Message(this, Type.ItemRemoved));
-         if( isUndoable )
-            undoStack.pushAction(new RemoveItemAction(anItem));
       }
    }
 
@@ -304,30 +429,6 @@ public class LoadoutPart implements MessageXBar.Reader{
       items.clear();
       items.addAll(internalPart.getInternalItems());
       xBar.post(new Message(this, Type.ItemRemoved));
-   }
-
-   /**
-    * Sets the armor for a given side of the component. Throws if the operation fails.
-    * 
-    * @param anArmorSide
-    *           The side to set the armor for.
-    * @param anArmorAmount
-    *           The amount to set the armor to.
-    * @throws IllegalArgumentException
-    *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
-    *            support the armor.
-    */
-   public void setArmor(ArmorSide anArmorSide, int anArmorAmount) throws IllegalArgumentException{
-      if( anArmorAmount > getArmorMax(anArmorSide) ){
-         throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + getArmorMax(anArmorSide) + " Was: " + anArmorAmount);
-      }
-      int oldArmor = armor.get(anArmorSide);
-      armor.put(anArmorSide, anArmorAmount);
-      if( anArmorAmount >= oldArmor && loadout.getFreeMass() < 0 ){
-         armor.put(anArmorSide, oldArmor);
-         throw new IllegalArgumentException("Not enough tonnage to add more armor!");
-      }
-      xBar.post(new Message(this, Type.ArmorChanged));
    }
 
    public int getArmorTotal(){
@@ -424,9 +525,7 @@ public class LoadoutPart implements MessageXBar.Reader{
                xBar.post(new Message(this, Type.ItemsChanged));
 
             // loadout.getUpgrades().setArtemis(false);
-
          }
-
       }
    }
 
