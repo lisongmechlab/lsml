@@ -265,8 +265,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          effectiveHS.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(effectiveHS);
 
-         timeToOverheat = new MetricDisplay(new TimeToOverHeat(heatCapacity, heatDissipation, heatGeneration), "Seconds to Overheat: %.1f s",
-                                            "The amount of time you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.",
+         timeToOverheat = new MetricDisplay(new TimeToOverHeat(heatCapacity, heatDissipation, heatGeneration), "Seconds to Overheat: %.1f",
+                                            "The amount of seconds you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.",
                                             anXBar, loadout);
          timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(timeToOverheat);
