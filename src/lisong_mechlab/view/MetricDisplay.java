@@ -80,6 +80,10 @@ public class MetricDisplay extends JLabel implements Reader{
       else{
          formatter.format(format, value);
       }
+      if( Double.isInfinite(value) ){
+         int i = sb.indexOf("Infinity");
+         sb.replace(i, i + "Infinity".length(), "∞");
+      }
       setText(sb.toString());
    }
 }
