@@ -64,12 +64,14 @@ import lisong_mechlab.model.loadout.metrics.HeatGeneration;
 import lisong_mechlab.model.loadout.metrics.JumpDistance;
 import lisong_mechlab.model.loadout.metrics.MaxDPS;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
+import lisong_mechlab.model.loadout.metrics.RangeMetric;
 import lisong_mechlab.model.loadout.metrics.TimeToOverHeat;
 import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.model.loadout.metrics.TurningSpeed;
 import lisong_mechlab.model.loadout.metrics.TwistSpeed;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.view.MetricDisplay;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.WeaponSummaryTable;
 import lisong_mechlab.view.render.ProgressBarRenderer;
@@ -90,17 +92,17 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JCheckBox              artemis          = new JCheckBox("Artemis IV");
 
    // Movement pane
-   private final JLabel                 topSpeed         = new JLabel("xxx");
-   private final JLabel                 turnSpeed        = new JLabel("xxx");
-   private final JLabel                 twistSpeed       = new JLabel("xxx");
+   private final MetricDisplay          topSpeed;
+   private final MetricDisplay          turnSpeed;
+   private final MetricDisplay          twistSpeed;
    private final JCheckBox              speedTweak       = new JCheckBox("Speed Tweak");
    private final JLabel                 jumpJets         = new JLabel("xxx");
 
    // Heat pane
    private final JLabel                 heatsinks        = new JLabel("xxx");
-   private final JLabel                 effectiveHS      = new JLabel("xxx");
-   private final JLabel                 timeToOverheat   = new JLabel("xxx");
-   private final JLabel                 coolingRatio     = new JLabel("xxx");
+   private final MetricDisplay          effectiveHS;
+   private final MetricDisplay          timeToOverheat;
+   private final MetricDisplay          coolingRatio;
    private final JCheckBox              doubleHeatSinks  = new JCheckBox("Double Heatsinks");
    private final JCheckBox              coolRun          = new JCheckBox("Cool Run");
    private final JCheckBox              heatContainment  = new JCheckBox("Heat Containment");
@@ -109,48 +111,22 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
    // Offense pane
    private final JComboBox<String>      range;
-   private final JLabel                 alphaStrike      = new JLabel("xxx");
-   private final JLabel                 dpsMax           = new JLabel("xxx");
-   private final JLabel                 dpsSustained     = new JLabel("xxx");
+   private final MetricDisplay          alphaStrike;
+   private final MetricDisplay          dpsMax;
+   private final MetricDisplay          dpsSustained;
    private final JCheckBox              fastFire         = new JCheckBox("Fast Fire");
-   private final JLabel                 ghostHeat        = new JLabel("xxx");
+   private final MetricDisplay          ghostHeat;
    private final JTable                 weaponTable;
 
-   // Metrics
-   private final TopSpeed               metricTopSpeed;
-   private final TurningSpeed           metricTurnSpeed;
-   private final TwistSpeed             metricTwistSpeed;
    private final JumpDistance           metricJumpDistance;
-   private final HeatGeneration         metricHeatGeneration;
-   private final HeatDissipation        metricHeatDissipation;
-   private final HeatCapacity           metricHeatCapacity;
-   private final CoolingRatio           metricCoolingRatio;
-   private final TimeToOverHeat         metricTimeToOverHeat;
-   private final AlphaStrike            metricAlphaStrike;
-   private final GhostHeat              metricGhostHeat;
-
-   private final MaxDPS                 metricMaxDPS;
-   private final MaxSustainedDPS        metricSustainedDps;
    private transient Boolean            inhibitChanges   = false;
    private final ArtemisHandler         artemisChecker;
+   private final MaxSustainedDPS        metricSustainedDps;
 
    public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
       loadout = aConfiguration;
 
-      metricGhostHeat = new GhostHeat(loadout);
-      metricTopSpeed = new TopSpeed(loadout);
       metricJumpDistance = new JumpDistance(loadout);
-      metricHeatGeneration = new HeatGeneration(loadout);
-      metricHeatDissipation = new HeatDissipation(loadout, null);
-      metricHeatCapacity = new HeatCapacity(loadout);
-      metricCoolingRatio = new CoolingRatio(metricHeatDissipation, metricHeatGeneration);
-      metricTimeToOverHeat = new TimeToOverHeat(metricHeatCapacity, metricHeatDissipation, metricHeatGeneration);
-      metricAlphaStrike = new AlphaStrike(loadout);
-      metricMaxDPS = new MaxDPS(loadout);
-      metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
-      metricTurnSpeed = new TurningSpeed(loadout);
-      metricTwistSpeed = new TwistSpeed(loadout);
-
       artemisChecker = new ArtemisHandler(loadout);
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -235,12 +211,17 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          jumpJets.setAlignmentX(Component.CENTER_ALIGNMENT);
          mobility.add(jumpJets);
 
+         topSpeed = new MetricDisplay(new TopSpeed(loadout), "Top Speed: %.1f km/h", "The maximum speed the mech can move at.", anXBar, loadout);
          topSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
          mobility.add(topSpeed);
 
+         turnSpeed = new MetricDisplay(new TurningSpeed(loadout), "Turn Speed: %.1f °/s", "The rate at which your mech can turn its legs.", anXBar,
+                                       loadout);
          turnSpeed.setAlignmentX(CENTER_ALIGNMENT);
          mobility.add(turnSpeed);
 
+         twistSpeed = new MetricDisplay(new TwistSpeed(loadout), "Twist Speed: %.1f °/s",
+                                        "The rate at which your mech can turn its tors in relation to the legs.", anXBar, loadout);
          twistSpeed.setAlignmentX(CENTER_ALIGNMENT);
          mobility.add(twistSpeed);
 
@@ -248,6 +229,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          mobility.add(speedTweak);
          speedTweak.addItemListener(this);
       }
+
+      final HeatCapacity heatCapacity = new HeatCapacity(loadout);
+      final HeatDissipation heatDissipation = new HeatDissipation(loadout, null);
+      final HeatGeneration heatGeneration = new HeatGeneration(aConfiguration);
 
       // Heat
       // ----------------------------------------------------------------------
@@ -265,7 +250,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             @Override
             public void actionPerformed(ActionEvent aArg0){
                Environment environment = (Environment)environemnts.getSelectedItem();
-               metricHeatDissipation.changeEnvironment(environment);
+               heatDissipation.changeEnvironment(environment);
                updateDisplay();
             }
          });
@@ -275,17 +260,37 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          heatsinks.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(heatsinks);
 
+         effectiveHS = new MetricDisplay(heatCapacity, "Heat capacity: %.1f", "The amount of heat your mech can hold without overheating.", anXBar,
+                                         loadout);
          effectiveHS.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(effectiveHS);
 
+         timeToOverheat = new MetricDisplay(new TimeToOverHeat(heatCapacity, heatDissipation, heatGeneration), "Seconds to Overheat: %.1f s",
+                                            "The amount of time you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.",
+                                            anXBar, loadout);
          timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);
-         timeToOverheat.setToolTipText("The number of seconds your mech can go \"All guns a'blazing\" before it overheats, assuming no ghost heat.");
          heat.add(timeToOverheat);
 
+         ghostHeat = new MetricDisplay(new GhostHeat(loadout), "Ghost heat: %.1f",
+                                       "The amount of extra heat you receive on an alpha strike due to the ghost heat mechanic.", anXBar, loadout){
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void updateText(){
+               if( metric.calculate() > 0 )
+                  setForeground(Color.RED);
+               else
+                  setForeground(effectiveHS.getForeground());
+               super.updateText();
+            }
+         };
+
          ghostHeat.setAlignmentX(Component.CENTER_ALIGNMENT);
-         ghostHeat.setToolTipText("The amount of extra heat incurred during an alpha strike.");
          heat.add(ghostHeat);
 
+         coolingRatio = new MetricDisplay(new CoolingRatio(heatDissipation, heatGeneration), "Cooling ratio: %.0f %%",
+                                          "How much of your maximal heat generation that can be dissipated. "
+                                                + "A value of 100% means that you will never overheat.", anXBar, loadout, true);
          coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(coolingRatio);
 
@@ -317,6 +322,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.add(Box.createHorizontalGlue());
          offence.add(Box.createVerticalGlue());
          add(offence);
+
+         final RangeMetric metricAlphaStrike = new AlphaStrike(loadout);
+         final RangeMetric metricMaxDPS = new MaxDPS(loadout);
+         metricSustainedDps = new MaxSustainedDPS(aConfiguration, heatDissipation);
 
          JPanel panel = new JPanel();
          panel.add(new JLabel("Range:"));
@@ -358,12 +367,19 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          fastFire.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(panel);
 
+         alphaStrike = new MetricDisplay(metricAlphaStrike, "Alpha strike: %.1f @ %.0f m",
+                                         "The maximum damage you can deal at the displayed range in one volley.", anXBar, loadout);
          alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(alphaStrike);
 
+         dpsMax = new MetricDisplay(metricMaxDPS, "Max DPS: %.1f @ %.0f m", "The maximum damage you can deal per second at the displayed range.",
+                                    anXBar, loadout);
          dpsMax.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(dpsMax);
 
+         dpsSustained = new MetricDisplay(metricSustainedDps, "Max Sustained DPS: %.1f @ %.0f m",
+                                          "The maximum damage you can deal per second at the displayed range, over a long period"
+                                                + " of time. This depends on your heat dissipation and weapon heat generation.", anXBar, loadout);
          dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
          offence.add(dpsSustained);
 
@@ -454,11 +470,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // Mobility
                // ----------------------------------------------------------------------
-               topSpeed.setText("Top speed: " + df2.format(metricTopSpeed.calculate()) + " km/h");
                jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassi().getMaxJumpJets() + " ("
                                 + df2.format(metricJumpDistance.calculate()) + " m)");
-               turnSpeed.setText("Turn speed: " + df2.format(metricTurnSpeed.calculate()) + "°/s");
-               twistSpeed.setText("Twist speed: " + df2.format(metricTwistSpeed.calculate()) + "°/s");
                speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
 
                // Heat
@@ -482,24 +495,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                   heatsinks.setForeground(effectiveHS.getForeground());
                }
                heatsinks.setText("Heatsinks: " + loadout.getHeatsinksCount());
-               effectiveHS.setText("Heat capacity: " + df2.format(metricHeatCapacity.calculate()));
-               double ghostHeatPenalty = metricGhostHeat.calculate();
-               if( ghostHeatPenalty > 0 )
-                  ghostHeat.setForeground(Color.RED);
-               else
-                  ghostHeat.setForeground(alphaStrike.getForeground());
-               ghostHeat.setText("Ghost heat: " + df2.format(ghostHeatPenalty));
-               timeToOverheat.setText("Seconds to Overheat: " + df2.format(metricTimeToOverHeat.calculate()));
-               coolingRatio.setText("Cooling efficiency: " + df0.format(metricCoolingRatio.calculate() * 100.0) + "%");
 
                // Offense
                // ----------------------------------------------------------------------
                fastFire.setSelected(loadout.getEfficiencies().hasFastFire());
-               alphaStrike.setText("Alpha strike: " + df2.format(metricAlphaStrike.calculate()) + " @ " + df0.format(metricAlphaStrike.getRange())
-                                   + "m");
-               dpsMax.setText("Max DPS: " + df2.format(metricMaxDPS.calculate()) + " @ " + df0.format(metricMaxDPS.getRange()) + "m");
-               dpsSustained.setText("Max Sustained DPS: " + df2.format(metricSustainedDps.calculate()) + " @ "
-                                    + df0.format(metricSustainedDps.getRange()) + "m");
 
                inhibitChanges = false;
             }
