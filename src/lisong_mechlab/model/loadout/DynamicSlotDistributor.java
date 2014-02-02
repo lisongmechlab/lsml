@@ -20,6 +20,7 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
 
 /**
  * This class handles distribution of dynamic slots from Ferro Fibrous armor and Endo Steel internal structure.

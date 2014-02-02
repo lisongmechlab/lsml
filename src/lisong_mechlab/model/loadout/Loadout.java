@@ -46,6 +46,10 @@ import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutPartConverter;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.loadout.part.StripPartOperation;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.XmlReader;
 
@@ -111,12 +115,12 @@ public class Loadout{
       }
    }
 
-   private String                         name;
-   private final Chassi                   chassi;
-   private final Map<Part, LoadoutPart>   parts = new TreeMap<Part, LoadoutPart>();
-   private final Upgrades                 upgrades;
-   private final Efficiencies             efficiencies;
-   private final transient MessageXBar    xBar;
+   private String                       name;
+   private final Chassi                 chassi;
+   private final Map<Part, LoadoutPart> parts = new TreeMap<Part, LoadoutPart>();
+   private final Upgrades               upgrades;
+   private final Efficiencies           efficiencies;
+   private final transient MessageXBar  xBar;
 
    /**
     * Will create a new, empty load out based on the given chassi.
@@ -125,15 +129,13 @@ public class Loadout{
     *           The chassi to base the load out on.
     * @param anXBar
     *           The {@link MessageXBar} to signal changes to this loadout on.
-    * @param anUndoStack
-    *           The {@link OperationStack} to use when altering this loadout.
     */
    public Loadout(Chassi aChassi, MessageXBar anXBar){
       name = aChassi.getNameShort();
       chassi = aChassi;
       upgrades = new Upgrades(anXBar);
       for(InternalPart part : chassi.getInternalParts()){
-         LoadoutPart confPart = new LoadoutPart(this, part, anXBar);
+         LoadoutPart confPart = new LoadoutPart(this, part);
          parts.put(part.getType(), confPart);
       }
 
@@ -149,7 +151,6 @@ public class Loadout{
     * @param aString
     *           The name of the stock variation to load.
     * @param anXBar
-    * @param anUndoStack
     * @throws Exception
     */
    public Loadout(String aString, MessageXBar anXBar) throws Exception{
@@ -204,11 +205,9 @@ public class Loadout{
 
    public class LoadStockOperation extends CompositeOperation{
 
-
       public LoadStockOperation() throws Exception{
          super("load stock");
          addOp(new StripOperation());
-
 
          File loadoutXml = new File("Game/Libs/MechLoadout/" + chassi.getMwoName().toLowerCase() + ".xml");
          GameDataFile dataFile = new GameDataFile();
@@ -226,10 +225,10 @@ public class Loadout{
             addOp(upgrades.new SetArtemisOperation(Loadout.this, stockArtemis));
             addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, stockFerro));
             addOp(upgrades.new SetDHSOperation(Loadout.this, stockDhs));
-            
+
             // FIXME: Revisit this fix! The game files are broken.
             if( chassi.getNameShort().equals("KTO-19") ){
-               //addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, true));
+               // addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, true));
             }
          }
          else{
@@ -248,18 +247,18 @@ public class Loadout{
             LoadoutPart part = getPart(partType);
             if( partType.isTwoSided() ){
                if( Part.isRear(componentName) )
-                  addOp(part.new SetArmorOperation(ArmorSide.BACK, componentArmor));
+                  addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, componentArmor));
                else
-                  addOp(part.new SetArmorOperation(ArmorSide.FRONT, componentArmor));
+                  addOp(new SetArmorOperation(xBar, part, ArmorSide.FRONT, componentArmor));
             }
             else
-               addOp(part.new SetArmorOperation(ArmorSide.ONLY, componentArmor));
+               addOp(new SetArmorOperation(xBar, part, ArmorSide.ONLY, componentArmor));
 
             Node child = component.getFirstChild();
             while( null != child ){
                if( child.getNodeType() == Node.ELEMENT_NODE ){
                   Item item = ItemDB.lookup(Integer.parseInt(((Element)child).getAttribute("ItemID")));
-                  addOp(part.new AddItemOperation(item));
+                  addOp(new AddItemOperation(xBar, part, item));
                }
                child = child.getNextSibling();
             }
@@ -271,7 +270,7 @@ public class Loadout{
       public StripOperation(){
          super("strip mech");
          for(LoadoutPart loadoutPart : parts.values()){
-            addOp(loadoutPart.new StripPartOperation());
+            addOp(new StripPartOperation(xBar, loadoutPart));
          }
          addOp(upgrades.new SetEndoSteelOperation(Loadout.this, false));
          addOp(upgrades.new SetArtemisOperation(Loadout.this, false));
@@ -392,7 +391,7 @@ public class Loadout{
       stream.setMode(XStream.NO_REFERENCES);
       stream.registerConverter(new ChassiConverter());
       stream.registerConverter(new ItemConverter());
-      stream.registerConverter(new LoadoutPartConverter(null));
+      stream.registerConverter(new LoadoutPartConverter(anXBar, null));
       stream.registerConverter(new LoadoutConverter(anXBar));
       stream.omitField(Observable.class, "changed");
       stream.omitField(Observable.class, "obs");
@@ -407,7 +406,7 @@ public class Loadout{
       double freeMass = chassi.getMassMax() - getMass();
       return freeMass;
    }
-   
+
    public class SetMaxArmorOperation extends CompositeOperation{
       public SetMaxArmorOperation(double aRatio){
          super("set max armor");
@@ -422,12 +421,12 @@ public class Loadout{
                int back = (int)(max / (aRatio + 1));
                int front = max - back;
 
-               addOp(part.new SetArmorOperation(ArmorSide.BACK, 0));
-               addOp(part.new SetArmorOperation(ArmorSide.FRONT, front));
-               addOp(part.new SetArmorOperation(ArmorSide.BACK, back));
+               addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, 0));
+               addOp(new SetArmorOperation(xBar, part, ArmorSide.FRONT, front));
+               addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, back));
             }
             else{
-               addOp(part.new SetArmorOperation(ArmorSide.ONLY, max));
+               addOp(new SetArmorOperation(xBar, part, ArmorSide.ONLY, max));
             }
          }
       }
@@ -472,22 +471,22 @@ public class Loadout{
          super("strip armor");
          for(LoadoutPart loadoutPart : parts.values()){
             if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-               addOp(loadoutPart.new SetArmorOperation(ArmorSide.FRONT, 0));
-               addOp(loadoutPart.new SetArmorOperation(ArmorSide.BACK, 0));
+               addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, 0));
+               addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, 0));
             }
             else{
-               addOp(loadoutPart.new SetArmorOperation(ArmorSide.ONLY, 0));
+               addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, 0));
             }
          }
       }
    }
 
-   public class AddItemOperation extends CompositeOperation{
-      public AddItemOperation(Item anItem){
+   public class AutoAddItemOperation extends CompositeOperation{
+      public AutoAddItemOperation(Item anItem){
          super("auto place item");
          LoadoutPart ct = parts.get(Part.CenterTorso);
          if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canAddItem(anItem) ){
-            addOp(ct.new AddItemOperation(anItem));
+            addOp(new AddItemOperation(xBar, ct, anItem));
             return;
          }
 
@@ -497,10 +496,10 @@ public class Loadout{
          for(Part part : partOrder){
             LoadoutPart loadoutPart = parts.get(part);
             if( loadoutPart.canAddItem(anItem) ){
-               addOp(loadoutPart.new AddItemOperation(anItem));
+               addOp(new AddItemOperation(xBar, loadoutPart, anItem));
                return;
             }
          }
-      }      
+      }
    }
 }

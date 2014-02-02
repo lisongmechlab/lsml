@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
 
 import org.junit.Before;
 import org.junit.Test;

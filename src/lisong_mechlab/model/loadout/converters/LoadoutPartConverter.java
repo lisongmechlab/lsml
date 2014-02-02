@@ -26,8 +26,11 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.OperationStack;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -38,10 +41,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class LoadoutPartConverter implements Converter{
 
-   private final Loadout loadout;
+   private final Loadout     loadout;
+   private final MessageXBar xBar;
 
-   public LoadoutPartConverter(Loadout aLoadout){
+   public LoadoutPartConverter(MessageXBar anXBar, Loadout aLoadout){
       loadout = aLoadout;
+      xBar = anXBar;
    }
 
    @Override
@@ -82,7 +87,7 @@ public class LoadoutPartConverter implements Converter{
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
 
       OperationStack operationStack = new OperationStack(0);
-      
+
       Part partType = Part.valueOf(aReader.getAttribute("part"));
       LoadoutPart loadoutPart = loadout.getPart(partType);
 
@@ -90,12 +95,12 @@ public class LoadoutPartConverter implements Converter{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");
             if( armors.length == 2 ){
-               operationStack.pushAndApply(loadoutPart.new SetArmorOperation(ArmorSide.FRONT, Integer.parseInt(armors[0])));
-               operationStack.pushAndApply(loadoutPart.new SetArmorOperation(ArmorSide.BACK, Integer.parseInt(armors[1])));
+               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0])));
+               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1])));
             }
          }
          else{
-            operationStack.pushAndApply(loadoutPart.new SetArmorOperation(ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor"))));
+            operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor"))));
          }
       }
       catch( IllegalArgumentException exception ){
@@ -107,7 +112,7 @@ public class LoadoutPartConverter implements Converter{
          aReader.moveDown();
          if( "item".equals(aReader.getNodeName()) ){
             try{
-               operationStack.pushAndApply(loadoutPart.new AddItemOperation((Item)aContext.convertAnother(null, Item.class)));
+               operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, (Item)aContext.convertAnother(null, Item.class)));
             }
             catch( IllegalArgumentException exception ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()

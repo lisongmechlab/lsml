@@ -37,7 +37,8 @@ import javax.swing.TransferHandler;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.RemoveItemOperation;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.mechlab.ItemLabel;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
@@ -76,7 +77,7 @@ public class ItemTransferHandler extends TransferHandler{
             StringBuffer buff = new StringBuffer();
             for(Pair<Item, Integer> it : sourceItems){
                buff.append(it.first.getName()).append('\n');
-               frame.getOpStack().pushAndApply(sourcePart.new RemoveItemOperation(it.first));
+               frame.getOpStack().pushAndApply(new RemoveItemOperation(ProgramInit.lsml().xBar, sourcePart, it.first));
             }
 
             Point mouse = partList.getMousePosition();

@@ -22,8 +22,8 @@ package lisong_mechlab.model.loadout.metrics;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
 
 /**
  * This class calculates how many tons of payload a mech chassis can carry given a specific engine rating/type,

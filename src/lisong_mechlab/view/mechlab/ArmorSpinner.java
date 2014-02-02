@@ -27,10 +27,11 @@ import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.OperationStack.Operation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 
@@ -40,12 +41,14 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
    private final ArmorSide      side;
    private final JCheckBox      symmetric;
    private final OperationStack opStack;
+   private final MessageXBar    xBar;
 
    public ArmorSpinner(LoadoutPart aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
       part = aPart;
       side = anArmorSide;
       symmetric = aSymmetric;
-      anXBar.attach(this);
+      xBar = anXBar;
+      xBar.attach(this);
       opStack = anOperationStack;
    }
 
@@ -76,11 +79,11 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
 
       try{
          int armor = ((Integer)arg0).intValue();
-         opStack.pushAndApply(part.new SetArmorOperation(side, armor));
+         opStack.pushAndApply(new SetArmorOperation(xBar, part, side, armor));
 
          Part otherSide = part.getInternalPart().getType().oppositeSide();
          if( symmetric.isSelected() && otherSide != null ){
-            Operation op2 = part.getLoadout().getPart(otherSide).new SetArmorOperation(side, armor);
+            Operation op2 = new SetArmorOperation(xBar, part.getLoadout().getPart(otherSide), side, armor);
             opStack.pushAndApply(op2);
          }
          fireStateChanged();

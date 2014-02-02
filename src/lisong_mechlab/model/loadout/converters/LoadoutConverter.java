@@ -23,9 +23,9 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -97,7 +97,7 @@ public class LoadoutConverter implements Converter{
             loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak());
          }
          else if( "component".equals(aReader.getNodeName()) ){
-            aContext.convertAnother(loadout, LoadoutPart.class, new LoadoutPartConverter(loadout));
+            aContext.convertAnother(loadout, LoadoutPart.class, new LoadoutPartConverter(xBar, loadout));
          }
          aReader.moveUp();
       }
