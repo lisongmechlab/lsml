@@ -24,6 +24,7 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
@@ -74,6 +75,8 @@ public class LoadoutConverter implements Converter{
       String name = aReader.getAttribute("name");
       Chassi chassi = ChassiDB.lookup(chassiVariation);
 
+      OperationStack stack = new OperationStack(0);
+      
       Loadout loadout = new Loadout(chassi, xBar);
       loadout.rename(name);
 
@@ -81,10 +84,10 @@ public class LoadoutConverter implements Converter{
          aReader.moveDown();
          if( "upgrades".equals(aReader.getNodeName()) ){
             Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
-            loadout.getUpgrades().setArtemis(upgrades.hasArtemis());
-            loadout.getUpgrades().setDoubleHeatSinks(upgrades.hasDoubleHeatSinks());
-            loadout.getUpgrades().setEndoSteel(upgrades.hasEndoSteel());
-            loadout.getUpgrades().setFerroFibrous(upgrades.hasFerroFibrous());
+            stack.pushAndApply(loadout.getUpgrades().new SetArtemisOperation(loadout, upgrades.hasArtemis()));
+            stack.pushAndApply(loadout.getUpgrades().new SetDHSOperation(loadout, upgrades.hasDoubleHeatSinks()));
+            stack.pushAndApply(loadout.getUpgrades().new SetEndoSteelOperation(loadout, upgrades.hasEndoSteel()));
+            stack.pushAndApply(loadout.getUpgrades().new SetFerroFibrousOperation(loadout, upgrades.hasFerroFibrous()));
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadout, Efficiencies.class);

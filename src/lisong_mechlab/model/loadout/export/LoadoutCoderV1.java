@@ -169,10 +169,10 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          Chassi chassi = ChassiDB.lookup(chassiId);
          loadout = new Loadout(chassi, xBar);
 
-         loadout.getUpgrades().setArtemis((upeff & (1 << 7)) != 0);
-         loadout.getUpgrades().setDoubleHeatSinks((upeff & (1 << 6)) != 0);
-         loadout.getUpgrades().setFerroFibrous((upeff & (1 << 5)) != 0);
-         loadout.getUpgrades().setEndoSteel((upeff & (1 << 4)) != 0);
+         operationStack.pushAndApply(loadout.getUpgrades().new SetArtemisOperation(loadout, (upeff & (1 << 7)) != 0));
+         operationStack.pushAndApply(loadout.getUpgrades().new SetDHSOperation(loadout, (upeff & (1 << 6)) != 0));
+         operationStack.pushAndApply(loadout.getUpgrades().new SetEndoSteelOperation(loadout, (upeff & (1 << 4)) != 0));
+         operationStack.pushAndApply(loadout.getUpgrades().new SetFerroFibrousOperation(loadout, (upeff & (1 << 5)) != 0));
          loadout.getEfficiencies().setCoolRun((upeff & (1 << 3)) != 0);
          loadout.getEfficiencies().setHeatContainment((upeff & (1 << 2)) != 0);
          loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 1)) != 0);

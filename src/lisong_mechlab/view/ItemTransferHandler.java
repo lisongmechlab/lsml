@@ -20,6 +20,7 @@
 package lisong_mechlab.view;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
@@ -39,6 +40,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.mechlab.ItemLabel;
+import lisong_mechlab.view.mechlab.LoadoutFrame;
 import lisong_mechlab.view.mechlab.PartList;
 import lisong_mechlab.view.mechlab.equipment.GarageTree;
 import lisong_mechlab.view.render.ItemRenderer;
@@ -64,11 +66,17 @@ public class ItemTransferHandler extends TransferHandler{
 
             if( sourceItems.size() < 1 || sourcePart == null )
                return null;
-
+            
+            Container f = aComponent;
+            while(!(f instanceof LoadoutFrame)){
+               f = f.getParent();
+            }
+            
+            LoadoutFrame frame = (LoadoutFrame)f;
             StringBuffer buff = new StringBuffer();
             for(Pair<Item, Integer> it : sourceItems){
                buff.append(it.first.getName()).append('\n');
-               sourcePart.removeItem(it.first, true);
+               frame.getOpStack().pushAndApply(sourcePart.new RemoveItemOperation(it.first));
             }
 
             Point mouse = partList.getMousePosition();

@@ -27,6 +27,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
@@ -71,7 +72,7 @@ public class UndoLoadoutAction extends AbstractAction implements Reader{
       SwingUtilities.invokeLater(new Runnable(){
          @Override
          public void run(){
-            if( aMsg instanceof LoadoutPart.Message ){
+            if( aMsg instanceof LoadoutPart.Message || aMsg instanceof Upgrades.Message){
                if( ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null )
                   setEnabled(false);
                else

@@ -35,10 +35,10 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 
 public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Reader{
-   private static final long serialVersionUID = 2130487332299251881L;
-   private final LoadoutPart part;
-   private final ArmorSide   side;
-   private final JCheckBox   symmetric;
+   private static final long    serialVersionUID = 2130487332299251881L;
+   private final LoadoutPart    part;
+   private final ArmorSide      side;
+   private final JCheckBox      symmetric;
    private final OperationStack opStack;
 
    public ArmorSpinner(LoadoutPart aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
@@ -71,19 +71,22 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
 
    @Override
    public void setValue(Object arg0){
+      if( getValue().equals(arg0) )
+         return;
+
       try{
          int armor = ((Integer)arg0).intValue();
          opStack.pushAndApply(part.new SetArmorOperation(side, armor));
-         
+
          Part otherSide = part.getInternalPart().getType().oppositeSide();
          if( symmetric.isSelected() && otherSide != null ){
-            Operation op2 = part.getLoadout().getPart(otherSide). new SetArmorOperation(side, armor);
+            Operation op2 = part.getLoadout().getPart(otherSide).new SetArmorOperation(side, armor);
             opStack.pushAndApply(op2);
          }
          fireStateChanged();
       }
       catch( IllegalArgumentException exception ){
-         //TODO: Handle failed case better!
+         // TODO: Handle failed case better!
          Toolkit.getDefaultToolkit().beep();
       }
    }
@@ -92,6 +95,8 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
    public void receive(Message aMsg){
       if( aMsg.isForMe(part.getLoadout()) && aMsg instanceof LoadoutPart.Message ){
          LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
+         if( message.part != part )
+            return;
          if( message.type == Type.ArmorChanged ){
             SwingUtilities.invokeLater(new Runnable(){
                @Override

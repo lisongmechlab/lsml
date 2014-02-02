@@ -42,6 +42,7 @@ import javax.swing.event.ListSelectionListener;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
 import lisong_mechlab.view.graphs.PayloadGraphPanel.Entry;
@@ -100,6 +101,8 @@ public class PayloadSelectionPanel extends JPanel{
       }
 
       void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel, final Upgrades aUpgrades){
+         final OperationStack stack = new OperationStack(0);
+         
          graphEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             @Override
             public void valueChanged(ListSelectionEvent aArg0){
@@ -139,14 +142,14 @@ public class PayloadSelectionPanel extends JPanel{
          endoSteel.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               aUpgrades.setEndoSteel(endoSteel.isSelected());
+               stack.pushAndApply(aUpgrades.new SetEndoSteelOperation(null, endoSteel.isSelected()));
                aGraphPanel.updateGraph();
             }
          });
          ferroFibrous.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               aUpgrades.setFerroFibrous(ferroFibrous.isSelected());
+               stack.pushAndApply(aUpgrades.new SetFerroFibrousOperation(null, ferroFibrous.isSelected()));
                aGraphPanel.updateGraph();
             }
          });

@@ -29,8 +29,6 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.item.AmmoWeapon;
-import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
@@ -52,7 +50,7 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Li Song
  */
-public class LoadoutPart implements MessageXBar.Reader{
+public class LoadoutPart{
    /**
     * This {@link Operation} will remove all items and armor of this component.
     * 
@@ -61,8 +59,17 @@ public class LoadoutPart implements MessageXBar.Reader{
    public class StripPartOperation extends CompositeOperation{
       public StripPartOperation(){
          super("strip part");
+         int hsSkipp = getNumEngineHeatsinks();
          for(Item item : getItems()){
-            addOp(new RemoveItemAction(item));
+            if( !(item instanceof Internal) ){
+               if(item instanceof HeatSink){
+                  if(hsSkipp > 0){
+                     hsSkipp--;
+                     continue;
+                  }                     
+               }
+               addOp(new RemoveItemOperation(item));
+            }
          }
          if( internalPart.getType().isTwoSided() ){
             addOp(new SetArmorOperation(ArmorSide.FRONT, 0));
@@ -120,14 +127,18 @@ public class LoadoutPart implements MessageXBar.Reader{
 
       @Override
       protected void apply(){
-         armor.put(side, amount);
-         xBar.post(new Message(LoadoutPart.this, Type.ArmorChanged));
+         if( amount != oldAmount ){
+            armor.put(side, amount);
+            xBar.post(new Message(LoadoutPart.this, Type.ArmorChanged));
+         }
       }
 
       @Override
       protected void undo(){
-         armor.put(side, oldAmount);
-         xBar.post(new Message(LoadoutPart.this, Type.ArmorChanged));
+         if( amount != oldAmount ){
+            armor.put(side, oldAmount);
+            xBar.post(new Message(LoadoutPart.this, Type.ArmorChanged));
+         }
       }
    }
 
@@ -214,10 +225,8 @@ public class LoadoutPart implements MessageXBar.Reader{
        */
       public AddItemOperation(Item anItem){
          super(anItem);
-         if( internalPart.getInternalItems().contains(anItem) || anItem instanceof Internal )
+         if( internalPart.getInternalItems().contains(item) || item instanceof Internal )
             throw new IllegalArgumentException("Can't add internals to a loadout!");
-         if( !canAddItem(item) )
-            throw new IllegalArgumentException("Can't add " + item + "!");
       }
 
       @Override
@@ -232,6 +241,8 @@ public class LoadoutPart implements MessageXBar.Reader{
 
       @Override
       public void apply(){
+         if( !canAddItem(item) )
+            throw new IllegalArgumentException("Can't add " + item + "!");
          addItem();
       }
    }
@@ -241,17 +252,15 @@ public class LoadoutPart implements MessageXBar.Reader{
     * 
     * @author Li Song
     */
-   public class RemoveItemAction extends ItemOperation{
+   public class RemoveItemOperation extends ItemOperation{
       /**
        * Creates a new operation.
        * 
        * @param anItem
        *           The {@link Item} to remove.
        */
-      RemoveItemAction(Item anItem){
+      public RemoveItemOperation(Item anItem){
          super(anItem);
-         if( !items.contains(item) )
-            throw new IllegalArgumentException("Can't remove " + item + "!");
       }
 
       @Override
@@ -266,6 +275,8 @@ public class LoadoutPart implements MessageXBar.Reader{
 
       @Override
       public void apply(){
+         if( !items.contains(item) )
+            throw new IllegalArgumentException("Can't remove " + item + "!");
          removeItem();
       }
    }
@@ -303,28 +314,27 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
    }
 
-   public final static double             ARMOR_PER_TON   = 32.0;                                           // TODO:
-                                                                                                             // Should
-                                                                                                             // be
-                                                                                                             // replaced
-                                                                                                             // with
-                                                                                                             // upgrade
-                                                                                                             // handlers
-   public final static Internal           ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
+   public final static double            ARMOR_PER_TON   = 32.0;                                           // TODO:
+                                                                                                            // Should
+                                                                                                            // be
+                                                                                                            // replaced
+                                                                                                            // with
+                                                                                                            // upgrade
+                                                                                                            // handlers
+   public final static Internal          ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
 
-   private final transient MessageXBar    xBar;
-   private final transient Loadout        loadout;
-   private final InternalPart             internalPart;
-   private final List<Item>               items           = new ArrayList<Item>();
-   private final Map<ArmorSide, Integer>  armor           = new TreeMap<ArmorSide, Integer>();
-   private int                            engineHeatsinks = 0;
+   private final transient MessageXBar   xBar;
+   private final transient Loadout       loadout;
+   private final InternalPart            internalPart;
+   private final List<Item>              items           = new ArrayList<Item>();
+   private final Map<ArmorSide, Integer> armor           = new TreeMap<ArmorSide, Integer>();
+   private int                           engineHeatsinks = 0;
 
    LoadoutPart(Loadout aLoadOut, InternalPart anInternalPart, MessageXBar aXBar){
       internalPart = anInternalPart;
       items.addAll(internalPart.getInternalItems());
       loadout = aLoadOut;
       xBar = aXBar;
-      xBar.attach(this);
 
       if( internalPart.getType().isTwoSided() ){
          armor.put(ArmorSide.FRONT, 0);
@@ -422,15 +432,6 @@ public class LoadoutPart implements MessageXBar.Reader{
       }
    }
 
-   public void removeAllItems(){
-      if( getItems().isEmpty() )
-         return;
-
-      items.clear();
-      items.addAll(internalPart.getInternalItems());
-      xBar.post(new Message(this, Type.ItemRemoved));
-   }
-
    public int getArmorTotal(){
       int sum = 0;
       for(Integer i : armor.values()){
@@ -492,41 +493,6 @@ public class LoadoutPart implements MessageXBar.Reader{
             ans++;
       }
       return Math.min(ans, getNumEngineHeatsinksMax());
-   }
-
-   @Override
-   public void receive(MessageXBar.Message aMsg){
-      if( aMsg.isForMe(loadout) && aMsg instanceof Upgrades.Message ){
-         Upgrades.Message msg = (Upgrades.Message)aMsg;
-
-         if( msg.msg == Upgrades.Message.ChangeMsg.HEATSINKS ){
-            if( loadout.getUpgrades().hasDoubleHeatSinks() )
-               while( items.remove(ItemDB.SHS) ){/* No-Op */}
-            else
-               while( items.remove(ItemDB.DHS) ){/* No-Op */}
-         }
-         else if( msg.msg == Upgrades.Message.ChangeMsg.GUIDANCE ){
-            boolean changed = false;
-
-            for(AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)){
-               Upgrades oldUpgrades = new Upgrades(null);
-               oldUpgrades.setArtemis(!loadout.getUpgrades().hasArtemis());
-               Ammunition oldAmmoType = weapon.getAmmoType(oldUpgrades);
-               Ammunition newAmmoType = weapon.getAmmoType(loadout.getUpgrades());
-               if( oldAmmoType == newAmmoType )
-                  continue;
-
-               while( items.remove(oldAmmoType) ){
-                  items.add(newAmmoType);
-                  changed = true;
-               }
-            }
-            if( changed )
-               xBar.post(new Message(this, Type.ItemsChanged));
-
-            // loadout.getUpgrades().setArtemis(false);
-         }
-      }
    }
 
    public String getItemDisplayName(Item anItem){

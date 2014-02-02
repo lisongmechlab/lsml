@@ -55,6 +55,7 @@ import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.loadout.ArtemisHandler;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.metrics.AlphaStrike;
 import lisong_mechlab.model.loadout.metrics.CoolingRatio;
 import lisong_mechlab.model.loadout.metrics.GhostHeat;
@@ -122,9 +123,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private transient Boolean            inhibitChanges   = false;
    private final ArtemisHandler         artemisChecker;
    private final MaxSustainedDPS        metricSustainedDps;
-
-   public LoadoutInfoPanel(Loadout aConfiguration, MessageXBar anXBar){
-      loadout = aConfiguration;
+   private final OperationStack opStack;
+   
+   public LoadoutInfoPanel(LoadoutFrame aLoadoutFrame, MessageXBar anXBar){
+      loadout = aLoadoutFrame.getLoadout();
+      opStack = aLoadoutFrame.getOpStack();
 
       metricJumpDistance = new JumpDistance(loadout);
       artemisChecker = new ArtemisHandler(loadout);
@@ -232,7 +235,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       final HeatCapacity heatCapacity = new HeatCapacity(loadout);
       final HeatDissipation heatDissipation = new HeatDissipation(loadout, null);
-      final HeatGeneration heatGeneration = new HeatGeneration(aConfiguration);
+      final HeatGeneration heatGeneration = new HeatGeneration(loadout);
 
       // Heat
       // ----------------------------------------------------------------------
@@ -325,7 +328,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          final RangeMetric metricAlphaStrike = new AlphaStrike(loadout);
          final RangeMetric metricMaxDPS = new MaxDPS(loadout);
-         metricSustainedDps = new MaxSustainedDPS(aConfiguration, heatDissipation);
+         metricSustainedDps = new MaxSustainedDPS(loadout, heatDissipation);
 
          JPanel panel = new JPanel();
          panel.add(new JLabel("Range:"));
@@ -518,29 +521,19 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-            try{
-               artemisChecker.checkLoadoutStillValid();
-               artemisChecker.checkArtemisAdditionLegal();
-               loadout.getUpgrades().setArtemis(anEvent.getStateChange() == ItemEvent.SELECTED);
-            }
-            catch( IllegalArgumentException e ){
-               throw e;
-            }
-
-            updateDisplay();
-
+            opStack.pushAndApply(loadout.getUpgrades().new SetArtemisOperation(loadout, artemis.isSelected()));
          }
          else if( source == endoSteel ){
-            loadout.getUpgrades().setEndoSteel(anEvent.getStateChange() == ItemEvent.SELECTED);
+            opStack.pushAndApply(loadout.getUpgrades().new SetEndoSteelOperation(loadout, endoSteel.isSelected()));
          }
          else if( source == ferroFibros ){
-            loadout.getUpgrades().setFerroFibrous(anEvent.getStateChange() == ItemEvent.SELECTED);
+            opStack.pushAndApply(loadout.getUpgrades().new SetFerroFibrousOperation(loadout, ferroFibros.isSelected()));
          }
          else if( source == speedTweak ){
             loadout.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else if( source == doubleHeatSinks ){
-            loadout.getUpgrades().setDoubleHeatSinks(anEvent.getStateChange() == ItemEvent.SELECTED);
+            opStack.pushAndApply(loadout.getUpgrades().new SetDHSOperation(loadout, doubleHeatSinks.isSelected()));
          }
          else if( source == coolRun ){
             loadout.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED);

@@ -59,7 +59,7 @@ public class OperationStack{
 
    /**
     * This class models an operation that should be considered as one but actually consists of many smaller operations
-    * that are all performed simultaneously.
+    * that are all performed in order as one transaction.
     * 
     * @author Li Song
     */

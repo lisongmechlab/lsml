@@ -19,6 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
+import lisong_mechlab.model.item.Ammunition;
+import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.MissileWeapon;
+import lisong_mechlab.model.loadout.OperationStack.CompositeOperation;
 import lisong_mechlab.model.loadout.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 
@@ -109,36 +115,224 @@ public class Upgrades{
       return ferroFibrous;
    }
 
-   public void setArtemis(boolean anArtemis){
+   private abstract class UpgradeOperation extends CompositeOperation{
+      final Loadout loadout;
 
-      if( anArtemis != artemis ){
-         artemis = anArtemis;
-         if( xBar != null )
-            xBar.post(new Message(ChangeMsg.GUIDANCE, this));
+      public UpgradeOperation(Loadout aLoadout, String aDescription){
+         super(aDescription);
+         loadout = aLoadout;
+      }
+
+      protected void verifyLoadoutInvariant(){
+         if( loadout.getFreeMass() < 0 ){
+            throw new IllegalArgumentException("Not enough tonnage!");
+         }
+         if( loadout.getNumCriticalSlotsFree() < 0 ){
+            throw new IllegalArgumentException("Not enough free slots!");
+         }
+         for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
+            if( loadoutPart.getNumCriticalSlotsFree() < 0 ){
+               throw new IllegalArgumentException("Not enough free slots!");
+            }
+         }
       }
    }
 
-   public void setDoubleHeatSinks(boolean aDHS){
-      if( aDHS != dhs ){
-         dhs = aDHS;
-         if( xBar != null )
-            xBar.post(new Message(ChangeMsg.HEATSINKS, this));
+   public class SetArtemisOperation extends UpgradeOperation{
+      final boolean oldValue;
+      final boolean newValue;
+
+      public SetArtemisOperation(Loadout aLoadout, boolean anArtemis){
+         super(aLoadout, anArtemis ? "enable artemis" : "disable artemis");
+         oldValue = artemis;
+         newValue = anArtemis;
+      }
+
+      @Override
+      protected void apply(){
+         set(newValue);
+         super.apply();
+      }
+
+      @Override
+      protected void undo(){
+         super.undo();
+         set(oldValue);
+      }
+
+      protected void set(boolean aValue){
+         if( aValue != artemis ){
+            boolean old = artemis;
+            artemis = aValue;
+
+            try{
+               verifyLoadoutInvariant();
+            }
+            catch( Exception e ){
+               artemis = old;
+               throw new IllegalArgumentException("Couldn't change artemis: ", e);
+            }
+
+            for(MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)){
+               artemis = old;
+               Ammunition oldAmmo = weapon.getAmmoType(Upgrades.this);
+               artemis = aValue;
+               Ammunition newAmmo = weapon.getAmmoType(Upgrades.this);
+               if( oldAmmo != newAmmo ){
+                  for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
+                     for(Item item : loadoutPart.getItems()){
+                        if( item == oldAmmo ){
+                           addOp(loadoutPart.new RemoveItemOperation(oldAmmo));
+                           addOp(loadoutPart.new AddItemOperation(newAmmo));
+                        }
+                     }
+                  }
+               }
+            }
+
+            if( xBar != null )
+               xBar.post(new Message(ChangeMsg.GUIDANCE, Upgrades.this));
+         }
       }
    }
 
-   public void setEndoSteel(boolean anEndoSteel){
-      if( anEndoSteel != endoSteel ){
-         endoSteel = anEndoSteel;
-         if( xBar != null )
-            xBar.post(new Message(ChangeMsg.STRUCTURE, this));
+   public class SetDHSOperation extends UpgradeOperation{
+      final boolean oldValue;
+      final boolean newValue;
+
+      public SetDHSOperation(Loadout aLoadout, boolean aDHS){
+         super(aLoadout, aDHS ? "enable DHS" : "disable DHS");
+         oldValue = dhs;
+         newValue = aDHS;
+
+         if( oldValue != newValue ){
+            for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
+               int hsRemoved = 0;
+               for(Item item : loadoutPart.getItems()){
+                  if( item instanceof HeatSink ){
+                     addOp(loadoutPart.new RemoveItemOperation(item));
+                     hsRemoved++;
+                  }
+               }
+
+               HeatSink oldHsType = oldValue ? ItemDB.DHS : ItemDB.SHS;
+               HeatSink newHsType = newValue ? ItemDB.DHS : ItemDB.SHS;
+               int slotsFree = oldHsType.getNumCriticalSlots(Upgrades.this) * hsRemoved + loadoutPart.getNumCriticalSlotsFree();
+               int hsToAdd = Math.min(hsRemoved, slotsFree / newHsType.getNumCriticalSlots(Upgrades.this));
+               while( hsToAdd > 0 ){
+                  hsToAdd--;
+                  addOp(loadoutPart.new AddItemOperation(newHsType));
+               }
+            }
+         }
+      }
+
+      @Override
+      protected void apply(){
+         set(newValue);
+         super.apply();
+      }
+
+      @Override
+      protected void undo(){
+         super.undo();
+         set(oldValue);
+      }
+
+      protected void set(boolean aValue){
+         if( aValue != dhs ){
+            boolean old = dhs;
+            dhs = aValue;
+
+            try{
+               verifyLoadoutInvariant();
+            }
+            catch( Exception e ){
+               dhs = old;
+               throw new IllegalArgumentException("Couldn't change heat sinks: ", e);
+            }
+
+            if( xBar != null )
+               xBar.post(new Message(ChangeMsg.HEATSINKS, Upgrades.this));
+         }
       }
    }
 
-   public void setFerroFibrous(boolean aFerroFibrous){
-      if( aFerroFibrous != ferroFibrous ){
-         ferroFibrous = aFerroFibrous;
-         if( xBar != null )
-            xBar.post(new Message(ChangeMsg.ARMOR, this));
+   public class SetEndoSteelOperation extends UpgradeOperation{
+      final boolean oldValue;
+      final boolean newValue;
+
+      public SetEndoSteelOperation(Loadout aLoadout, boolean aEndoSteel){
+         super(aLoadout, aEndoSteel ? "enable Endo Steel" : "disable Endo Steel");
+         oldValue = endoSteel;
+         newValue = aEndoSteel;
+      }
+
+      @Override
+      protected void apply(){
+         set(newValue);
+      }
+
+      @Override
+      protected void undo(){
+         set(oldValue);
+      }
+
+      protected void set(boolean aValue){
+         if( aValue != endoSteel ){
+            boolean old = endoSteel;
+            endoSteel = aValue;
+
+            try{
+               verifyLoadoutInvariant();
+            }
+            catch( Exception e ){
+               endoSteel = old;
+               throw new IllegalArgumentException("Couldn't change internal structure: ", e);
+            }
+
+            if( xBar != null )
+               xBar.post(new Message(ChangeMsg.STRUCTURE, Upgrades.this));
+         }
+      }
+   }
+
+   public class SetFerroFibrousOperation extends UpgradeOperation{
+      final boolean oldValue;
+      final boolean newValue;
+
+      public SetFerroFibrousOperation(Loadout aLoadout, boolean aFerroFibrous){
+         super(aLoadout, aFerroFibrous ? "enable Ferro Fibrous" : "disable Ferro Fibrous");
+         oldValue = ferroFibrous;
+         newValue = aFerroFibrous;
+      }
+
+      @Override
+      protected void apply(){
+         set(newValue);
+      }
+
+      @Override
+      protected void undo(){
+         set(oldValue);
+      }
+
+      protected void set(boolean aValue){
+         if( aValue != ferroFibrous ){
+            boolean old = ferroFibrous;
+            ferroFibrous = aValue;
+
+            try{
+               verifyLoadoutInvariant();
+            }
+            catch( Exception e ){
+               ferroFibrous = old;
+               throw new IllegalArgumentException("Couldn't change armour type: ", e);
+            }
+
+            if( xBar != null )
+               xBar.post(new Message(ChangeMsg.ARMOR, Upgrades.this));
+         }
       }
    }
 }

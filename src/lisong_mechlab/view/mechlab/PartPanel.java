@@ -42,6 +42,7 @@ import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.render.ItemRenderer;
@@ -61,7 +62,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private boolean           canHaveHardpoints;
 
-   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric){
+   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric, OperationStack aStack){
       super(new BorderLayout());
       anXBar.attach(this);
       loadoutPart = aLoadoutPart;
@@ -70,13 +71,13 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(aLoadoutPart.getInternalPart().getType().longName()),
                                                    BorderFactory.createEmptyBorder(0, 2, 2, 4)));
-      add(makeArmorPanel(anXBar, aSymmetric));
+      add(makeArmorPanel(anXBar, aSymmetric, aStack));
 
       if( canHaveHardpoints )
          add(makeHardpointsPanel());
 
       // Critical slots
-      PartList list = new PartList(aLoadoutPart, anXBar, aSlotDistributor);
+      PartList list = new PartList(aStack, aLoadoutPart, anXBar, aSlotDistributor);
       list.setFixedCellHeight(ItemRenderer.ITEM_BASE_HEIGHT);
       list.setFixedCellWidth(ItemRenderer.ITEM_BASE_WIDTH);
 
@@ -155,7 +156,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       return ans + ")";
    }
 
-   private JPanel makeArmorPanel(MessageXBar anXBar, JCheckBox aSymmetric){
+   private JPanel makeArmorPanel(MessageXBar anXBar, JCheckBox aSymmetric, OperationStack aStack){
       JPanel panel = new JPanel();
       Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, ItemRenderer.ITEM_BASE_HEIGHT);
       Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
@@ -167,13 +168,13 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          backArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
          backArmorLabel.setPreferredSize(labelDimension);
 
-         JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric));
+         JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
          frontSpinner.setMaximumSize(labelDimension);
          frontSpinner.getEditor().setPreferredSize(spinnerDimension);
          JFormattedTextField field = (JFormattedTextField)frontSpinner.getEditor().getComponent(0);
          ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
-         JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric));
+         JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric, aStack));
          backSpinner.setMaximumSize(labelDimension);
          backSpinner.getEditor().setPreferredSize(spinnerDimension);
 
@@ -199,7 +200,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          JLabel armorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()));
          armorLabel.setPreferredSize(labelDimension);
 
-         JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric));
+         JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
          spinner.setMaximumSize(labelDimension);
          spinner.getEditor().setPreferredSize(spinnerDimension);
          JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
