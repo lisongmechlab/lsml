@@ -98,7 +98,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
       openFrameCount++;
 
-      infoPanel = new LoadoutInfoPanel(aLoadout, anXBar);
+      infoPanel = new LoadoutInfoPanel(this, anXBar);
       JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, createMechView(aLoadout, anXBar), infoPanel);
 
       sp.setDividerLocation(-1);
@@ -172,7 +172,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          subPanel.add(symmetricArmor);
          symmetricArmor.setAlignmentX(LEFT_ALIGNMENT);
          subPanel.add(Box.createVerticalStrut(50 - symmHeight - 3));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightArm), anXBar, true, slotDistributor, symmetricArmor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightArm), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -183,8 +183,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightTorso), anXBar, true, slotDistributor, symmetricArmor));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightLeg), anXBar, false, slotDistributor, symmetricArmor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightTorso), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightLeg), anXBar, false, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -195,8 +195,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, true, slotDistributor, symmetricArmor));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.CenterTorso), anXBar, true, slotDistributor, symmetricArmor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.CenterTorso), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -207,8 +207,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftTorso), anXBar, true, slotDistributor, symmetricArmor));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftLeg), anXBar, false, slotDistributor, symmetricArmor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftTorso), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftLeg), anXBar, false, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -220,7 +220,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
          subPanel.add(Box.createVerticalStrut(50));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftArm), anXBar, true, slotDistributor, symmetricArmor));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftArm), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }

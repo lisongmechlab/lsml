@@ -74,7 +74,7 @@ public class LSML extends JFrame{
    public final OperationStack     garageOperationStack   = new OperationStack(256);
    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
    public final Preferences        preferences            = new Preferences();
-   public final MechLabPane        mechLabPane            = new MechLabPane(xBar, garageOperationStack);
+   public final MechLabPane        mechLabPane            = new MechLabPane(xBar);
    public final JTabbedPane        tabbedPane             = new JTabbedPane();
    private LsmlProtocolIPC         lsmlProtocolIPC;
    private MechGarage              garage;
@@ -137,7 +137,7 @@ public class LSML extends JFrame{
       File garageFile = new File(garageFileName);
       if( garageFile.exists() ){
          try{
-            garage = MechGarage.open(garageFile, xBar, garageOperationStack);
+            garage = MechGarage.open(garageFile, xBar);
          }
          catch( Exception e ){
             JOptionPane.showMessageDialog(this,
@@ -198,7 +198,7 @@ public class LSML extends JFrame{
          return;
       }
       try{
-         garage = MechGarage.open(chooser.getSelectedFile(), xBar, garageOperationStack);
+         garage = MechGarage.open(chooser.getSelectedFile(), xBar);
          PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
       }
       catch( IOException e ){
@@ -227,7 +227,7 @@ public class LSML extends JFrame{
          }
       }
 
-      garage = new MechGarage(xBar, garageOperationStack);
+      garage = new MechGarage(xBar);
    }
 
    public void saveGarageAs(){

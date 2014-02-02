@@ -62,7 +62,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * 
  * @author Emily Björk
  */
-public class Loadout implements MessageXBar.Reader{
+public class Loadout{
    public static class Message implements MessageXBar.Message{
       @Override
       public int hashCode(){
@@ -138,7 +138,6 @@ public class Loadout implements MessageXBar.Reader{
       }
 
       xBar = anXBar;
-      xBar.attach(this);
       xBar.post(new Message(this, Type.CREATE));
 
       efficiencies = new Efficiencies(xBar);
@@ -204,24 +203,12 @@ public class Loadout implements MessageXBar.Reader{
    }
 
    public class LoadStockOperation extends CompositeOperation{
-      private final boolean artemis;
-      private final boolean endo;
-      private final boolean ferro;
-      private final boolean dhs;
-      // FIXME: This will not work!
-      private final boolean stockArtemis;
-      private final boolean stockEndo;
-      private final boolean stockFerro;
-      private final boolean stockDhs;
+
 
       public LoadStockOperation() throws Exception{
          super("load stock");
-
-         artemis = upgrades.hasArtemis();
-         endo = upgrades.hasEndoSteel();
-         ferro = upgrades.hasFerroFibrous();
-         dhs = upgrades.hasFerroFibrous();
          addOp(new StripOperation());
+
 
          File loadoutXml = new File("Game/Libs/MechLoadout/" + chassi.getMwoName().toLowerCase() + ".xml");
          GameDataFile dataFile = new GameDataFile();
@@ -231,21 +218,25 @@ public class Loadout implements MessageXBar.Reader{
          if( maybeUpgrades.size() == 1 ){
             Element stockUpgrades = maybeUpgrades.get(0);
             // TODO: We really should fix issue #75 to get rid of these hard coded constants.
-            stockDhs = reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double");
-            stockFerro = reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801");
-            stockEndo = reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101");
-            stockArtemis = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1");
-
+            boolean stockDhs = reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double");
+            boolean stockFerro = reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801");
+            boolean stockEndo = reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101");
+            boolean stockArtemis = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1");
+            addOp(upgrades.new SetEndoSteelOperation(Loadout.this, stockEndo));
+            addOp(upgrades.new SetArtemisOperation(Loadout.this, stockArtemis));
+            addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, stockFerro));
+            addOp(upgrades.new SetDHSOperation(Loadout.this, stockDhs));
+            
             // FIXME: Revisit this fix! The game files are broken.
             if( chassi.getNameShort().equals("KTO-19") ){
-               getUpgrades().setFerroFibrous(true);
+               //addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, true));
             }
          }
          else{
-            stockArtemis = false;
-            stockEndo = false;
-            stockFerro = false;
-            stockDhs = false;
+            addOp(upgrades.new SetEndoSteelOperation(Loadout.this, false));
+            addOp(upgrades.new SetArtemisOperation(Loadout.this, false));
+            addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, false));
+            addOp(upgrades.new SetDHSOperation(Loadout.this, false));
          }
 
          for(Element component : reader.getElementsByTagName("component")){
@@ -274,60 +265,18 @@ public class Loadout implements MessageXBar.Reader{
             }
          }
       }
-
-      @Override
-      public void apply(){
-         super.apply();
-         upgrades.setArtemis(stockArtemis);
-         upgrades.setEndoSteel(stockEndo);
-         upgrades.setFerroFibrous(stockFerro);
-         upgrades.setDoubleHeatSinks(stockDhs);
-      }
-
-      @Override
-      public void undo(){
-         upgrades.setArtemis(artemis);
-         upgrades.setEndoSteel(endo);
-         upgrades.setFerroFibrous(ferro);
-         upgrades.setDoubleHeatSinks(dhs);
-         super.apply();
-      }
    }
 
    public class StripOperation extends CompositeOperation{
-      private final boolean artemis;
-      private final boolean endo;
-      private final boolean ferro;
-      private final boolean dhs;
-
       public StripOperation(){
          super("strip mech");
          for(LoadoutPart loadoutPart : parts.values()){
             addOp(loadoutPart.new StripPartOperation());
          }
-         artemis = upgrades.hasArtemis();
-         endo = upgrades.hasEndoSteel();
-         ferro = upgrades.hasFerroFibrous();
-         dhs = upgrades.hasFerroFibrous();
-
-      }
-
-      @Override
-      public void apply(){
-         super.apply();
-         upgrades.setArtemis(false);
-         upgrades.setEndoSteel(false);
-         upgrades.setFerroFibrous(false);
-         upgrades.setDoubleHeatSinks(false);
-      }
-
-      @Override
-      public void undo(){
-         upgrades.setArtemis(artemis);
-         upgrades.setEndoSteel(endo);
-         upgrades.setFerroFibrous(ferro);
-         upgrades.setDoubleHeatSinks(dhs);
-         super.apply();
+         addOp(upgrades.new SetEndoSteelOperation(Loadout.this, false));
+         addOp(upgrades.new SetArtemisOperation(Loadout.this, false));
+         addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, false));
+         addOp(upgrades.new SetDHSOperation(Loadout.this, false));
       }
    }
 
@@ -452,41 +401,6 @@ public class Loadout implements MessageXBar.Reader{
       stream.alias("loadout", Loadout.class);
       stream.addImplicitMap(Loadout.class, "parts", LoadoutPart.class, "internalpart");
       return stream;
-   }
-
-   @Override
-   public void receive(MessageXBar.Message aMsg){
-      if( aMsg.isForMe(this) && aMsg instanceof Upgrades.Message ){
-         Upgrades.Message msg = (Upgrades.Message)aMsg;
-         switch( msg.msg ){
-            case ARMOR:
-               if( getNumCriticalSlotsFree() < 0 ){
-                  upgrades.setFerroFibrous(false);
-                  throw new IllegalArgumentException("Not enough free slots!");
-               }
-               else if( getFreeMass() < 0.0 ){
-                  upgrades.setFerroFibrous(true);
-                  throw new IllegalArgumentException("Not enough free tonnage!");
-               }
-               break;
-            case GUIDANCE:
-               break;
-            case HEATSINKS:
-               break;
-            case STRUCTURE:
-               if( getNumCriticalSlotsFree() < 0 ){
-                  upgrades.setEndoSteel(false);
-                  throw new IllegalArgumentException("Not enough free slots!");
-               }
-               else if( getFreeMass() < 0.0 ){
-                  upgrades.setEndoSteel(true);
-                  throw new IllegalArgumentException("Not enough free tonnage!");
-               }
-               break;
-            default:
-               break;
-         }
-      }
    }
 
    public double getFreeMass(){
