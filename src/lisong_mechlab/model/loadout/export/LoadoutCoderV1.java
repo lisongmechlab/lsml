@@ -41,6 +41,8 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.OperationStack;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
@@ -154,7 +156,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
       final Loadout loadout;
       final OperationStack operationStack = new OperationStack(0);
-      
+
       // Read header
       {
          if( buffer.read() != HEADER_MAGIC ){
@@ -183,11 +185,11 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       // 1 byte per armor value (2 for RT,CT,LT front first)
       for(Part part : partOrder){
          if( part.isTwoSided() ){
-            operationStack.pushAndApply(loadout.getPart(part).new SetArmorOperation(ArmorSide.FRONT, buffer.read()));
-            operationStack.pushAndApply(loadout.getPart(part).new SetArmorOperation(ArmorSide.BACK, buffer.read()));
+            operationStack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.FRONT, buffer.read()));
+            operationStack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.BACK, buffer.read()));
          }
          else{
-            operationStack.pushAndApply(loadout.getPart(part).new SetArmorOperation(ArmorSide.ONLY, buffer.read()));
+            operationStack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.ONLY, buffer.read()));
          }
       }
 
@@ -205,7 +207,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          for(Part part : partOrder){
             Integer v;
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
-               operationStack.pushAndApply(loadout.getPart(part).new AddItemOperation(ItemDB.lookup(v)));
+               operationStack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), ItemDB.lookup(v)));
             }
          }
       }

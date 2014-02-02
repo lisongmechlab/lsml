@@ -40,7 +40,8 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;

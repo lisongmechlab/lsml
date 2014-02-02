@@ -26,6 +26,9 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.OperationStack.CompositeOperation;
 import lisong_mechlab.model.loadout.Upgrades.Message.ChangeMsg;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.RemoveItemOperation;
 import lisong_mechlab.util.MessageXBar;
 
 public class Upgrades{
@@ -182,8 +185,8 @@ public class Upgrades{
                   for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
                      for(Item item : loadoutPart.getItems()){
                         if( item == oldAmmo ){
-                           addOp(loadoutPart.new RemoveItemOperation(oldAmmo));
-                           addOp(loadoutPart.new AddItemOperation(newAmmo));
+                           addOp(new RemoveItemOperation(xBar, loadoutPart, oldAmmo));
+                           addOp(new AddItemOperation(xBar, loadoutPart, newAmmo));
                         }
                      }
                   }
@@ -210,7 +213,7 @@ public class Upgrades{
                int hsRemoved = 0;
                for(Item item : loadoutPart.getItems()){
                   if( item instanceof HeatSink ){
-                     addOp(loadoutPart.new RemoveItemOperation(item));
+                     addOp(new RemoveItemOperation(xBar, loadoutPart, item));
                      hsRemoved++;
                   }
                }
@@ -221,7 +224,7 @@ public class Upgrades{
                int hsToAdd = Math.min(hsRemoved, slotsFree / newHsType.getNumCriticalSlots(Upgrades.this));
                while( hsToAdd > 0 ){
                   hsToAdd--;
-                  addOp(loadoutPart.new AddItemOperation(newHsType));
+                  addOp(new AddItemOperation(xBar, loadoutPart, newHsType));
                }
             }
          }

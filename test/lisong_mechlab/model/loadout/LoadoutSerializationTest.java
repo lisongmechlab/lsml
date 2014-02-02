@@ -38,6 +38,7 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;

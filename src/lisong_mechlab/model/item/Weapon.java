@@ -157,6 +157,11 @@ public class Weapon extends HeatSource{
     * @param aWeaponStat
     *           A string specifying the statistic to be calculated. Must match the regexp pattern
     *           "[dsthc]+(/[dsthc]+)?".
+    * @param anUpgrades
+    *           Any {@link Upgrades} that can affect the stats, can be <code>null</code> to assume no {@link Upgrades}.
+    * @param aEfficiencies
+    *           Any {@link Efficiencies} that can affect the stats, can be <code>null</code> to assume no
+    *           {@link Efficiencies}.
     * @return The calculated statistic.
     */
    public double getStat(String aWeaponStat, Upgrades anUpgrades, Efficiencies aEfficiencies){

@@ -43,8 +43,10 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.RemoveItemOperation;
 import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -57,7 +59,7 @@ public class PartList extends JList<Item>{
    private static final long            serialVersionUID = 5995694414450060827L;
    private final LoadoutPart            part;
    private final DynamicSlotDistributor slotDistributor;
-   private OperationStack opStack;
+   private OperationStack               opStack;
 
    private enum ListEntryType{
       Empty, MultiSlot, Item, EngineHeatSink, LastSlot
@@ -143,9 +145,11 @@ public class PartList extends JList<Item>{
       private static final String DYN_ARMOR        = "DYNAMIC ARMOR";
       private static final String DYN_STRUCT       = "DYNAMIC STRUCTURE";
       private static final long   serialVersionUID = 2438473891359444131L;
+      private final MessageXBar   xBar;
 
       Model(MessageXBar aXBar){
-         aXBar.attach(this);
+         xBar = aXBar;
+         xBar.attach(this);
       }
 
       boolean putElement(Item anItem, int anIndex, boolean aShouldReplace){
@@ -153,7 +157,7 @@ public class PartList extends JList<Item>{
          switch( target.first ){
             case EngineHeatSink:{
                if( anItem instanceof HeatSink && part.canAddItem(anItem) ){
-                  opStack.pushAndApply(part.new AddItemOperation(anItem));
+                  opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
                   return true;
                }
                return false;
@@ -163,13 +167,13 @@ public class PartList extends JList<Item>{
             case MultiSlot:{
                // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
                if( aShouldReplace && !(anItem instanceof HeatSink && target.second instanceof Engine) ){
-                  opStack.pushAndApply(part.new RemoveItemOperation(target.second));
+                  opStack.pushAndApply(new RemoveItemOperation(xBar, part, target.second));
                }
                // Fall through
             }
             case Empty:{
                if( part.canAddItem(anItem) ){
-                  opStack.pushAndApply(part.new AddItemOperation(anItem));
+                  opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
                   return true;
                }
                return false;
@@ -257,10 +261,10 @@ public class PartList extends JList<Item>{
       }
    }
 
-   PartList(OperationStack aStack, LoadoutPart aPartConf, MessageXBar anXBar, DynamicSlotDistributor aSlotDistributor){
+   PartList(OperationStack aStack, final LoadoutPart aLoadoutPart, final MessageXBar anXBar, DynamicSlotDistributor aSlotDistributor){
       slotDistributor = aSlotDistributor;
       opStack = aStack;
-      part = aPartConf;
+      part = aLoadoutPart;
       setModel(new Model(anXBar));
       setDragEnabled(true);
       setDropMode(DropMode.ON);
@@ -280,7 +284,7 @@ public class PartList extends JList<Item>{
          public void keyPressed(KeyEvent aArg0){
             if( aArg0.getKeyCode() == KeyEvent.VK_DELETE ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  opStack.pushAndApply(part.new RemoveItemOperation(itemPair.first));
+                  opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
                }
             }
          }
@@ -291,7 +295,7 @@ public class PartList extends JList<Item>{
          public void mouseClicked(MouseEvent e){
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  opStack.pushAndApply(part.new RemoveItemOperation(itemPair.first));
+                  opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
                }
             }
          }

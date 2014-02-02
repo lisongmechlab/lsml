@@ -25,12 +25,22 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Upgrades.Message.ChangeMsg;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class UpgradesTest{
@@ -51,6 +61,60 @@ public class UpgradesTest{
       assertFalse(cut.hasEndoSteel());
       assertFalse(cut.hasFerroFibrous());
    }
+
+   //@formatter:off
+   /**
+    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct
+    * type.
+    *//*
+   @Test
+   public void testReceive_artemisEnabled(){
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(false);
+
+      LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
+      cut.addItem("SRM AMMO", false);
+      cut.addItem("LRM AMMO", false);
+      cut.addItem("STREAK SRM AMMO", false);
+      cut.addItem("NARC AMMO", false);
+      Mockito.verify(xBar, Mockito.times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
+      Mockito.verify(xBar).post(new LoadoutPart.Message(cut, Type.ItemsChanged));
+
+      List<Item> items = new ArrayList<>(cut.getItems());
+      assertTrue(items.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
+      assertTrue(items.remove(ItemDB.lookup("LRM AMMO + ARTEMIS IV")));
+      assertTrue(items.remove(ItemDB.lookup("STREAK SRM AMMO")));
+      assertTrue(items.remove(ItemDB.lookup("NARC AMMO")));
+      assertTrue(items.isEmpty());
+   }
+    
+    * When the Artemis status for the loadout changes, the ammo which is affected should be replaced with the correct
+    * type.
+   @Test
+   public void testReceive_artemisNoChange(){
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
+
+      LoadoutPart cut = makeCUT(100, Part.LeftTorso, 12);
+      cut.addItem("SRM AMMO + ARTEMIS IV", false);
+      cut.addItem("LRM AMMO + ARTEMIS IV", false);
+      cut.addItem("STREAK SRM AMMO", false);
+      cut.addItem("NARC AMMO", false);
+      Mockito.verify(xBar, Mockito.times(4)).post(new LoadoutPart.Message(cut, Type.ItemAdded));
+
+      Mockito.when(mlc.upgrades.hasArtemis()).thenReturn(true);
+      cut.receive(new Upgrades.Message(ChangeMsg.GUIDANCE, mlc.upgrades));
+
+      List<Item> items = new ArrayList<>(cut.getItems());
+      assertTrue(items.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
+      assertTrue(items.remove(ItemDB.lookup("LRM AMMO + ARTEMIS IV")));
+      assertTrue(items.remove(ItemDB.lookup("STREAK SRM AMMO")));
+      assertTrue(items.remove(ItemDB.lookup("NARC AMMO")));
+      assertTrue(items.isEmpty());
+   }
+   */
+   //@formatter:on
 
    @Test
    public void testDHS_disable_disabled(){

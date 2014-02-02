@@ -22,6 +22,7 @@ package lisong_mechlab.model.loadout;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
 
 public class ArtemisHandler{
 

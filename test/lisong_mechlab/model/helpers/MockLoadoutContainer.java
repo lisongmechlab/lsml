@@ -33,8 +33,8 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
 
 /**
  * The purpose of this class is to provide a default mock structure of a {@link Loadout} which is easy to configure for
