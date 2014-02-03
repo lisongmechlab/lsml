@@ -228,7 +228,7 @@ public class Loadout{
 
             // FIXME: Revisit this fix! The game files are broken.
             if( chassi.getNameShort().equals("KTO-19") ){
-               // addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, true));
+               addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, true));
             }
          }
          else{
@@ -386,7 +386,7 @@ public class Loadout{
       xBar.post(new Message(this, Type.RENAME));
    }
 
-   static XStream loadoutXstream(MessageXBar anXBar){
+   public static XStream loadoutXstream(MessageXBar anXBar){
       XStream stream = new XStream(new StaxDriver());
       stream.setMode(XStream.NO_REFERENCES);
       stream.registerConverter(new ChassiConverter());

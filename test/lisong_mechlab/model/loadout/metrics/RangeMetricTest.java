@@ -70,7 +70,7 @@ public class RangeMetricTest{
     * {@link WeaponRanges#getRanges(Loadout)}.
     */
    @Test
-   public final void testCalculate_noChangeRange() throws Exception{
+   public final void testCalculate_noChangeRange(){
       // Should give ranges: 0, 270, 450, 540, 900
       items.add(ItemDB.lookup("MEDIUM LASER"));
       items.add(ItemDB.lookup("LARGE LASER"));
@@ -90,7 +90,7 @@ public class RangeMetricTest{
     * the ranges returned by {@link WeaponRanges#getRanges(Loadout)}.
     */
    @Test
-   public final void testCalculate_negativeChangeRange() throws Exception{
+   public final void testCalculate_negativeChangeRange(){
       cut.changeRange(10.0);
       cut.changeRange(-1.0);
 
@@ -103,7 +103,7 @@ public class RangeMetricTest{
     * same argument as {@link RangeMetric#changeRange(double)} was called.
     */
    @Test
-   public final void testCalculate_changeRange() throws Exception{
+   public final void testCalculate_changeRange(){
       double range = 20.0;
 
       Mockito.when(cut.calculate(Matchers.anyDouble())).thenReturn(0.0);

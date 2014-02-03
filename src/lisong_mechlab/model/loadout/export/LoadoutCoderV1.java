@@ -222,6 +222,9 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    /**
     * Will process the stock builds and generate statistics and dump it to a file.
+    * 
+    * @param arg
+    * @throws Exception
     */
    public static void main(String[] arg) throws Exception{
       List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));

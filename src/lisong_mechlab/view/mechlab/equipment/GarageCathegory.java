@@ -25,9 +25,9 @@ import javax.swing.event.TreeModelEvent;
 
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
+import lisong_mechlab.model.garage.MechGarage;
+import lisong_mechlab.model.garage.MechGarage.Message.Type;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.MechGarage;
-import lisong_mechlab.model.loadout.MechGarage.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 
 class GarageCathegory extends FilterTreeCathegory<Loadout> implements MessageXBar.Reader{

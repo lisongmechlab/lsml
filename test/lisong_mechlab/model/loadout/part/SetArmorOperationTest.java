@@ -113,7 +113,7 @@ public class SetArmorOperationTest{
    }
 
    @Test
-   public final void testApply_noChange(){
+   public final void testApply_NoChange(){
       // Setup
       final int oldArmor = 20;
       final int newArmor = oldArmor;
@@ -194,10 +194,44 @@ public class SetArmorOperationTest{
    }
 
    /**
+    * Apply shall successfully change the armor value if called with an armor
+    * amount less than the current amount and the 'mech is over-tonnage.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testApply_ReduceWhenOverTonnage() throws Exception{
+      
+      // Setup
+      final double freeTons = -0.1; // Over-tonned
+      final int oldArmor = 20;
+      final int newArmor = 1;
+
+      Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);
+      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
+      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
+      SetArmorOperation cut = null;
+      try{
+         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+      }
+      catch( Throwable t ){
+         fail("Setup threw!");
+         return;
+      }
+
+      // Execute
+      cut.apply();
+
+      // Verify
+      Mockito.verify(loadoutPart).setArmor(armorSide, newArmor);
+      Mockito.verify(xBar).post(new LoadoutPart.Message(loadoutPart, Type.ArmorChanged));
+   }
+
+   /**
     * Undoing an operation where the new value is the old value shall not do anything.
     */
    @Test
-   public final void testUndo_noChange(){
+   public final void testUndo_NoChange(){
       // Setup
       int newArmor = 20;
       int oldArmor = 20;
@@ -221,7 +255,7 @@ public class SetArmorOperationTest{
     * Undoing when apply has not been called shall throw an instance of {@link RuntimeException}.
     */
    @Test(expected = RuntimeException.class)
-   public final void testUndo_withoutApply(){
+   public final void testUndo_WithoutApply(){
       // Setup
       SetArmorOperation cut = null;
       try{
@@ -247,7 +281,7 @@ public class SetArmorOperationTest{
     * Undoing twice to only one apply shall throw an instance of {@link RuntimeException}.
     */
    @Test(expected = RuntimeException.class)
-   public final void testUndo_doubleUndoAfterApply(){
+   public final void testUndo_DoubleUndoAfterApply(){
       // Setup
       SetArmorOperation cut = null;
       try{
@@ -298,23 +332,5 @@ public class SetArmorOperationTest{
       inOrder.verify(xBar).post(new LoadoutPart.Message(loadoutPart, Type.ArmorChanged));
       inOrder.verify(loadoutPart).setArmor(armorSide, oldArmor);
       inOrder.verify(xBar).post(new LoadoutPart.Message(loadoutPart, Type.ArmorChanged));
-   }
-   
-
-   /**
-    * {@link LoadoutPart#setArmor(ArmorSide, int)} shall successfully change the armor value if called with an armor
-    * amount less than the current amount and the 'mech is over-tonnage.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testSetArmor_reduceWhenOverTonnage() throws Exception{
-      int max = 64;
-      LoadoutPart cut = makeCUT(max, Part.LeftTorso, 12);
-      cut.setArmor(ArmorSide.FRONT, max);
-      Mockito.when(mlc.loadout.getFreeMass()).thenReturn(-0.1);
-
-      cut.setArmor(ArmorSide.FRONT, max - 1);
-      Mockito.verify(xBar, Mockito.times(2)).post(new LoadoutPart.Message(cut, Type.ArmorChanged));
    }
 }

@@ -83,7 +83,7 @@ public class MissileWeaponTest{
     * The name is affected by Artemis.
     */
    @Test
-   public void testGetName() throws Exception{
+   public void testGetName(){
       for(MissileWeapon weapon : allMissileWeapons){
          Upgrades artemis = mock(Upgrades.class);
          when(artemis.hasArtemis()).thenReturn(true);
@@ -137,7 +137,7 @@ public class MissileWeaponTest{
     * All missiles have an instant fall off on the max range
     */
    @Test
-   public void testGetRangeMax() throws Exception{
+   public void testGetRangeMax(){
       for(MissileWeapon weapon : allMissileWeapons){
          assertTrue(weapon.getRangeMax() - weapon.getRangeLong() < 0.0001);
       }

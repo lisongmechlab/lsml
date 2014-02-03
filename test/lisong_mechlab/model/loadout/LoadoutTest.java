@@ -63,6 +63,18 @@ public class LoadoutTest{
       MockitoAnnotations.initMocks(this);
    }
 
+
+   /**
+    * Loading stock configuration shall succeed even if the loadout isn't empty to start with.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testLoadStockTwice() throws Exception{
+      Loadout cut = new Loadout("JR7-F", xBar);
+      cut.loadStock();
+   }
+   
    // -------------------------------------------------------------------------
    //
    // Jump jet related tests
@@ -70,37 +82,37 @@ public class LoadoutTest{
    // -------------------------------------------------------------------------
    @Test
    public void testGetJumpJetCount_noJJCapability() throws Exception{
-      Loadout cut = new Loadout("HBK-4J", xBar, undoStack);
+      Loadout cut = new Loadout("HBK-4J", xBar);
       assertEquals(0, cut.getJumpJetCount());
    }
 
    @Test
    public void testGetJumpJetCount_noJJEquipped() throws Exception{
-      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
       assertEquals(0, cut.getJumpJetCount());
    }
 
    @Test
    public void testGetJumpJetCount() throws Exception{
-      Loadout cut = new Loadout("SDR-5D", xBar, undoStack);
+      Loadout cut = new Loadout("SDR-5D", xBar);
       assertEquals(8, cut.getJumpJetCount()); // 8 stock
    }
 
    @Test
    public void testGetJumpJetType_noJJCapability() throws Exception{
-      Loadout cut = new Loadout("HBK-4J", xBar, undoStack);
+      Loadout cut = new Loadout("HBK-4J", xBar);
       assertNull(cut.getJumpJetType());
    }
 
    @Test
    public void testGetJumpJetType_noJJEquipped() throws Exception{
-      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
       assertNull(cut.getJumpJetType());
    }
 
    @Test
    public void testGetJumpJetType() throws Exception{
-      Loadout cut = new Loadout("SDR-5D", xBar, undoStack);
+      Loadout cut = new Loadout("SDR-5D", xBar);
       assertSame(ItemDB.lookup("JUMP JETS - CLASS V"), cut.getJumpJetType());
    }
 
@@ -109,7 +121,7 @@ public class LoadoutTest{
       Loadout cut = null;
       JumpJet jjv = null;
       try{
-         cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar, undoStack);
+         cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
          jjv = (JumpJet)ItemDB.lookup("JUMP JETS - CLASS V");
 
          Part parts[] = new Part[] {Part.RightTorso, Part.LeftTorso, Part.CenterTorso, Part.LeftLeg, Part.RightLeg};
@@ -138,7 +150,7 @@ public class LoadoutTest{
     */
    @Test
    public void testLoadout_empty() throws Exception{
-      Loadout cut = new Loadout(ChassiDB.lookup("HBK-4J"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("HBK-4J"), xBar);
 
       assertEquals(0, cut.getArmor());
       assertEquals(ChassiDB.lookup("hbk-4j"), cut.getChassi());
@@ -156,7 +168,7 @@ public class LoadoutTest{
    @Test
    public void testRename(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("HBK-4J"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("HBK-4J"), xBar);
       assertEquals("HBK-4J", cut.getName());
 
       // Execute
@@ -176,7 +188,7 @@ public class LoadoutTest{
    @Test
    public void testStrip() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("HBK-4J"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("HBK-4J"), xBar);
       cut.loadStock();
 
       // Execute
@@ -199,7 +211,7 @@ public class LoadoutTest{
    @Test
    public void testDHSToggleOn(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
       cut.getPart(Part.RightTorso).addItem(ItemDB.SHS, false);
 
       // Execute
@@ -218,7 +230,7 @@ public class LoadoutTest{
    @Test
    public void testDHSToggleOff(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
       cut.getUpgrades().setDoubleHeatSinks(true);
       cut.getPart(Part.RightTorso).addItem(ItemDB.DHS, false);
       reset(xBar);
@@ -238,7 +250,7 @@ public class LoadoutTest{
    @Test
    public void testDHSNoChange_enable_enabled(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
       cut.getUpgrades().setDoubleHeatSinks(true);
       cut.getPart(Part.RightTorso).addItem(ItemDB.DHS, false);
 
@@ -255,7 +267,7 @@ public class LoadoutTest{
    @Test
    public void testDHSNoChange_disable_disabled(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
       cut.getUpgrades().setDoubleHeatSinks(false);
       cut.getPart(Part.RightTorso).addItem(ItemDB.SHS, false);
 
@@ -268,7 +280,7 @@ public class LoadoutTest{
 
    @Test
    public void testFFEnableDisable() throws Exception{
-      Loadout cut = new Loadout("as7-d", xBar, undoStack);
+      Loadout cut = new Loadout("as7-d", xBar);
       cut.getPart(Part.RightArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
       cut.getPart(Part.LeftArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
 
@@ -287,7 +299,7 @@ public class LoadoutTest{
 
    @Test
    public void testFFEnableNotEnoughSlots() throws Exception{
-      Loadout cut = new Loadout("as7-d", xBar, undoStack);
+      Loadout cut = new Loadout("as7-d", xBar);
 
       // Execute (13 free slots, failure)
       assertEquals(13, cut.getNumCriticalSlotsFree());
@@ -309,7 +321,7 @@ public class LoadoutTest{
 
    @Test
    public void testESEnableDisable() throws Exception{
-      Loadout cut = new Loadout("as7-d", xBar, undoStack);
+      Loadout cut = new Loadout("as7-d", xBar);
       cut.getPart(Part.RightArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
       cut.getPart(Part.LeftArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
 
@@ -334,7 +346,7 @@ public class LoadoutTest{
     */
    @Test
    public void testES_oddtonnage() throws Exception{
-      Loadout cut = new Loadout(ChassiDB.lookup("JR7-F"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("JR7-F"), xBar);
       cut.getUpgrades().setEndoSteel(true);
       assertEquals(2.0, cut.getMass(), 0.0);
    }
@@ -364,7 +376,7 @@ public class LoadoutTest{
    @Test
    public void testArtemisEnable(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
 
       cut.getPart(Part.RightTorso).addItem("LRM AMMO", false);
       cut.getPart(Part.RightTorso).addItem("SRM AMMO", false);
@@ -397,7 +409,7 @@ public class LoadoutTest{
    @Test
    public void testMaxArmor(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
 
@@ -430,7 +442,7 @@ public class LoadoutTest{
    @Test
    public void testMaxArmor_twice(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
 
@@ -465,7 +477,7 @@ public class LoadoutTest{
    @Test
    public void testFreeMass(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
 
       // Verify
       assertEquals(90, cut.getFreeMass(), 0.0);
@@ -509,7 +521,7 @@ public class LoadoutTest{
    // -------------------------------------------------------------------------
    @Test
    public void testBuild_jr7f(){
-      Loadout cut = new Loadout(ChassiDB.lookup("JR7-F"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("JR7-F"), xBar);
 
       cut.getUpgrades().setDoubleHeatSinks(true);
       cut.getUpgrades().setFerroFibrous(true);
@@ -560,7 +572,7 @@ public class LoadoutTest{
     */
    @Test
    public void testAddItem(){
-      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
 
       cut.getUpgrades().setDoubleHeatSinks(true);
 
@@ -602,7 +614,7 @@ public class LoadoutTest{
     */
    @Test
    public void testAddItem_engineHS(){
-      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar, undoStack);
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
 
       cut.addItem("STD ENGINE 300", false);
       assertTrue(cut.getPart(Part.CenterTorso).getItems().contains(ItemDB.lookup("STD ENGINE 300")));

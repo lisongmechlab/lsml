@@ -58,7 +58,7 @@ public class PayloadStatistics{
    /**
     * @param aChassi
     * @param anEngineRating
-    * @return
+    * @return the calculated value
     */
    public double calculate(Chassi aChassi, int anEngineRating){
       double internalMass = aChassi.getInternalMass();

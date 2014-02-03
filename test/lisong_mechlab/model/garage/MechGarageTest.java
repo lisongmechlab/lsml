@@ -17,15 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout;
+package lisong_mechlab.model.garage;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -33,26 +31,27 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import java.io.File;
 import java.io.IOException;
 
-import lisong_mechlab.model.loadout.MechGarage.Message;
-import lisong_mechlab.model.loadout.MechGarage.Message.Type;
+import lisong_mechlab.model.garage.MechGarage.Message;
+import lisong_mechlab.model.garage.MechGarage.Message.Type;
+import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class MechGarageTest{
 
-   File        testFile = null;
+   File           testFile = null;
 
    @Mock
-   MessageXBar xBar;
+   MessageXBar    xBar;
 
    @Mock
-   OperationStack   undoStack;
+   OperationStack undoStack;
 
    @Before
    public void setup(){
@@ -71,7 +70,7 @@ public class MechGarageTest{
    @Test
    public void testMechGarage(){
       // Execute
-      MechGarage cut = new MechGarage(xBar, undoStack);
+      MechGarage cut = new MechGarage(xBar);
 
       // Verify
       verify(xBar).post(new Message(MechGarage.Message.Type.NewGarage, cut));
@@ -83,16 +82,18 @@ public class MechGarageTest{
 
    /**
     * Loading an empty garage shall produce an empty garage with the correct file path set.
+    * 
+    * @throws IOException
     */
    @Test
    public void testOpen() throws IOException{
       // Setup
-      MechGarage savedGarage = new MechGarage(xBar, null);
+      MechGarage savedGarage = new MechGarage(xBar);
       savedGarage.saveas(testFile);
       reset(xBar);
 
       // Execute
-      MechGarage c = MechGarage.open(testFile, xBar, undoStack);
+      MechGarage c = MechGarage.open(testFile, xBar);
 
       // Verify
       verify(xBar).post(new Message(MechGarage.Message.Type.NewGarage, c));
@@ -109,7 +110,7 @@ public class MechGarageTest{
    @Test
    public void testSaveWithoutName(){
       // Setup
-      MechGarage cut = new MechGarage(xBar, undoStack);
+      MechGarage cut = new MechGarage(xBar);
       reset(xBar);
 
       // Execute
@@ -127,11 +128,14 @@ public class MechGarageTest{
    /**
     * Attempting to use {@link MechGarage#saveas(File)} on a file that already exist shall throw without editing the
     * file.
+    * 
+    * @throws IOException
+    *            Shouldn't be thrown.
     */
    @Test
    public void testSaveOverwrite() throws IOException{
       // Setup
-      MechGarage cut = new MechGarage(xBar, undoStack);
+      MechGarage cut = new MechGarage(xBar);
       cut.saveas(testFile);
       testFile.setLastModified(0);
       reset(xBar);
@@ -152,23 +156,26 @@ public class MechGarageTest{
 
    /**
     * {@link MechGarage#saveas(File)} shall produce a file that can be subsequently
-    * {@link MechGarage#open(File, MessageXBar, OperationStack)}ed to restore the contents of the garage before the call to
+    * {@link MechGarage#open(File, MessageXBar)}ed to restore the contents of the garage before the call to
     * {@link MechGarage#saveas(File)}
+    * 
+    * @throws Exception
+    *            Shouldn't be thrown.
     */
    @Test
    public void testSaveAsOpen() throws Exception{
       // Setup
-      Loadout lo1 = new Loadout("as7-d-dc", xBar, undoStack);
-      Loadout lo2 = new Loadout("as7-k", xBar, undoStack);
-      MechGarage cut = new MechGarage(xBar, undoStack);
-      cut.add(lo1, false);
-      cut.add(lo2, false);
+      Loadout lo1 = new Loadout("as7-d-dc", xBar);
+      Loadout lo2 = new Loadout("as7-k", xBar);
+      MechGarage cut = new MechGarage(xBar);
+      cut.add(lo1);
+      cut.add(lo2);
       reset(xBar);
       reset(undoStack);
 
       // Execute
       cut.saveas(testFile);
-      MechGarage loadedGarage = MechGarage.open(testFile, xBar, undoStack);
+      MechGarage loadedGarage = MechGarage.open(testFile, xBar);
 
       // Verify
       verify(xBar).post(new MechGarage.Message(Type.Saved, cut));
@@ -181,17 +188,20 @@ public class MechGarageTest{
 
    /**
     * {@link MechGarage#save()} shall overwrite previously saved garage.
+    * 
+    * @throws Exception
+    *            Shouldn't be thrown.
     */
    @Test
    public void testSave() throws Exception{
       // Setup
-      Loadout lo1 = new Loadout("as7-d-dc", xBar, undoStack);
-      Loadout lo2 = new Loadout("as7-k", xBar, undoStack);
-      MechGarage cut = new MechGarage(xBar, undoStack);
-      cut.add(lo1, false);
+      Loadout lo1 = new Loadout("as7-d-dc", xBar);
+      Loadout lo2 = new Loadout("as7-k", xBar);
+      MechGarage cut = new MechGarage(xBar);
+      cut.add(lo1);
       cut.saveas(testFile); // Create garage with one mech and save it.
-      cut = MechGarage.open(testFile, xBar, undoStack);
-      cut.add(lo2, false); // Add a mech and use the save() function. The same file should have been overwritten.
+      cut = MechGarage.open(testFile, xBar);
+      cut.add(lo2); // Add a mech and use the save() function. The same file should have been overwritten.
       reset(xBar);
       reset(undoStack);
 
@@ -202,25 +212,28 @@ public class MechGarageTest{
       verify(xBar).post(new MechGarage.Message(Type.Saved, cut));
       verifyZeroInteractions(undoStack);
 
-      cut = MechGarage.open(testFile, xBar, undoStack);
+      cut = MechGarage.open(testFile, xBar);
       assertEquals(2, cut.getMechs().size());
       assertEquals(lo1, cut.getMechs().get(0));
       assertEquals(lo2, cut.getMechs().get(1));
    }
 
    /**
-    * {@link MechGarage#add(Loadout, boolean)} shall add a loadout to the garage that can subsequently be removed with
-    * {@link MechGarage#remove(Loadout, boolean)}.
+    * add(Loadout, boolean) shall add a loadout to the garage that can subsequently be removed with remove(Loadout,
+    * boolean).
+    * 
+    * @throws Exception
+    *            Shouldn't be thrown.
     */
    @Test
    public void testAddRemoveLoadout() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
-      MechGarage cut = new MechGarage(xBar, undoStack);
+      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      MechGarage cut = new MechGarage(xBar);
       reset(undoStack);
 
       // Execute
-      cut.add(loadout, false);
+      cut.add(loadout);
 
       // Verify
       assertEquals(1, cut.getMechs().size());
@@ -229,7 +242,7 @@ public class MechGarageTest{
       verifyZeroInteractions(undoStack);
 
       // Execute
-      cut.remove(loadout, false);
+      cut.remove(loadout);
 
       // Verify
       assertTrue(cut.getMechs().isEmpty());
@@ -238,76 +251,24 @@ public class MechGarageTest{
    }
 
    /**
-    * When the second argument to {@link MechGarage#add(Loadout, boolean)} is true, the action can be undone.
-    */
-   @Test
-   public void testAddLoadout_undo() throws Exception{
-      // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
-      MechGarage cut = new MechGarage(xBar, undoStack);
-      reset(xBar);
-      reset(undoStack);
-
-      cut.add(loadout, true);
-
-      ArgumentCaptor<Operation> argument = ArgumentCaptor.forClass(Operation.class);
-      verify(undoStack, only()).pushAction(argument.capture());
-      assertEquals("Undo add " + loadout.getName() + " to garage.", argument.getValue().describe());
-      assertFalse(argument.getValue().affects(loadout));
-      assertTrue(argument.getValue() instanceof MechGarage.GarageUndoAction);
-
-      // Execute
-      argument.getValue().undo();
-
-      // Verify
-      assertTrue(cut.getMechs().isEmpty());
-      verify(xBar).post(new Message(MechGarage.Message.Type.LoadoutRemoved, cut, loadout));
-   }
-
-   /**
-    * When the second argument to {@link MechGarage#remove(Loadout, boolean)} is true, the action can be undone.
-    */
-   @Test
-   public void testRemoveLoadout_undo() throws Exception{
-      // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
-      MechGarage cut = new MechGarage(xBar, undoStack);
-      cut.add(loadout, false);
-      reset(xBar);
-      reset(undoStack);
-
-      cut.remove(loadout, true);
-
-      ArgumentCaptor<Operation> argument = ArgumentCaptor.forClass(Operation.class);
-      verify(undoStack, only()).pushAction(argument.capture());
-      assertEquals("Undo remove " + loadout.getName() + " from garage.", argument.getValue().describe());
-      assertFalse(argument.getValue().affects(loadout));
-      assertTrue(argument.getValue() instanceof MechGarage.GarageUndoAction);
-
-      // Execute
-      argument.getValue().undo();
-
-      // Verify
-      assertTrue(cut.getMechs().contains(loadout));
-      verify(xBar).post(new Message(MechGarage.Message.Type.LoadoutAdded, cut, loadout));
-   }
-
-   /**
     * Adding the same {@link Loadout} twice is an error and shall throw an {@link IllegalArgumentException}.
+    * 
+    * @throws Exception
+    *            Shouldn't be thrown.
     */
    @Test
    public void testAddLoadoutTwice() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
-      MechGarage cut = new MechGarage(xBar, undoStack);
+      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      MechGarage cut = new MechGarage(xBar);
 
       // Execute
-      cut.add(loadout, false);
+      cut.add(loadout);
 
       try{
          reset(xBar);
          reset(undoStack);
-         cut.add(loadout, true);
+         cut.add(loadout);
          fail("Expected exception!");
       }
       catch( IllegalArgumentException e ){
@@ -322,15 +283,18 @@ public class MechGarageTest{
 
    /**
     * Removing an nonexistent loadout is a no-op.
+    * 
+    * @throws Exception
+    *            Shouldn't be thrown.
     */
    @Test
    public void testRemoveLoadoutNonexistent() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar, undoStack);
-      MechGarage cut = new MechGarage(xBar, undoStack);
+      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      MechGarage cut = new MechGarage(xBar);
       reset(xBar);
       reset(undoStack);
-      cut.remove(loadout, true);
+      cut.remove(loadout);
 
       verifyZeroInteractions(xBar);
       verifyZeroInteractions(undoStack);

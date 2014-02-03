@@ -451,10 +451,7 @@ public class LoadoutPartTest{
    }
 
    @Test
-   @Parameters({"CenterTorso, 6, 6, 100.0, 300, 300",
-      "LeftTorso, 6, 6, 100.0, 300, 300",
-      "RightTorso, 6, 6, 100.0, 300, 300",
-      })
+   @Parameters({"CenterTorso, 6, 6, 100.0, 300, 300", "LeftTorso, 6, 6, 100.0, 300, 300", "RightTorso, 6, 6, 100.0, 300, 300",})
    public void testCanAddEngine(Part aPart, int ctFreeSlots, int globalSlots, double freeMass, int engineMin, int engineMax){
       // Setup
       Chassi chassi = Mockito.mock(Chassi.class);
@@ -609,6 +606,95 @@ public class LoadoutPartTest{
       LoadoutPart cut = new LoadoutPart(loadout, part);
 
       assertFalse(cut.canAddItem(ItemDB.lookup("SRM 6")));
+   }
+
+   /**
+    * Engine heat sinks of the correct type can be added if there is enough space in the engine, even though there is
+    * not enough space in the component.
+    * 
+    * @param aDHS
+    *           <code>true</code> if testing with DHS enabled.
+    * @param freeMass
+    *           The amount of free mass in the loadout.
+    */
+   @Test
+   @Parameters({"true, 10.0", "false, 10.0", "true, 0.0", "false, 0.0"})
+   public void testCanAddItem_engineHs(boolean aDHS, double freeMass){
+      Upgrades upgrades = Mockito.mock(Upgrades.class);
+      Mockito.when(upgrades.hasDoubleHeatSinks()).thenReturn(aDHS);
+
+      Loadout loadout = Mockito.mock(Loadout.class);
+      Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+      Mockito.when(loadout.getFreeMass()).thenReturn(freeMass);
+      Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(0);
+
+      Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(0);
+
+      Engine engine = Mockito.mock(Engine.class);
+      Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(2);
+      LoadoutPart cut = new LoadoutPart(loadout, part);
+      cut.addItem(engine);
+
+      // Only allow heat sinks of correct type.
+      if( aDHS ){
+         if( freeMass >= ItemDB.DHS.getMass(upgrades) )
+            assertTrue(cut.canAddItem(ItemDB.DHS));
+         else
+            assertFalse(cut.canAddItem(ItemDB.DHS));
+         assertFalse(cut.canAddItem(ItemDB.SHS));
+      }
+      else{
+         if( freeMass >= ItemDB.SHS.getMass(upgrades) )
+            assertTrue(cut.canAddItem(ItemDB.SHS));
+         else
+            assertFalse(cut.canAddItem(ItemDB.SHS));
+         assertFalse(cut.canAddItem(ItemDB.DHS));
+      }
+
+      cut.addItem(aDHS ? ItemDB.DHS : ItemDB.SHS);
+      cut.addItem(aDHS ? ItemDB.DHS : ItemDB.SHS);
+
+      assertEquals(2, cut.getNumEngineHeatsinksMax());
+      assertEquals(2, cut.getNumEngineHeatsinks());
+
+      // No more space in engine
+      assertFalse(cut.canAddItem(ItemDB.DHS));
+      assertFalse(cut.canAddItem(ItemDB.SHS));
+   }
+
+   /**
+    * Items that require hard points can not be added unless there is a free hard point.
+    */
+   @Test
+   public void testCanAddItem_noHardpoints(){
+      Loadout loadout = Mockito.mock(Loadout.class);
+      Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
+      Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(0);
+
+      Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(0);
+      Mockito.when(part.getNumHardpoints(HardpointType.ENERGY)).thenReturn(3);
+      Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(1);
+      
+      Item item = Mockito.mock(Item.class);
+      Mockito.when(item.getHardpointType()).thenReturn(HardpointType.ENERGY);
+      
+      Item otherItem = Mockito.mock(Item.class);
+      Mockito.when(otherItem.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
+      
+      LoadoutPart cut = new LoadoutPart(loadout, part);
+      
+      cut.addItem(otherItem);
+      assertFalse(cut.canAddItem(otherItem));
+      
+      assertTrue(cut.canAddItem(item));
+      cut.addItem(item);
+      assertTrue(cut.canAddItem(item));
+      cut.addItem(item);
+      assertTrue(cut.canAddItem(item));
+      cut.addItem(item);
+      assertFalse(cut.canAddItem(item));
    }
 
    @Test

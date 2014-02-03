@@ -44,11 +44,9 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class LoadoutCoderV1Test{
-
+   private OperationStack stack = new OperationStack(0);
    @Mock
    private MessageXBar    xBar;
-   @Mock
-   private OperationStack      undoStack;
    @InjectMocks
    private LoadoutCoderV1 cut;
 
@@ -66,8 +64,8 @@ public class LoadoutCoderV1Test{
 
       MessageXBar anXBar = new MessageXBar();
       for(Chassi chassi : chassii){
-         Loadout loadout = new Loadout(chassi, anXBar, undoStack);
-         loadout.loadStock();
+         Loadout loadout = new Loadout(chassi, anXBar);
+         stack.pushAndApply(loadout.new LoadStockOperation());
 
          byte[] result = cut.encode(loadout);
          Loadout decoded = cut.decode(result);

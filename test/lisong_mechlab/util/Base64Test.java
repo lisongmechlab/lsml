@@ -52,6 +52,9 @@ public class Base64Test{
     * Test that {@link Base64#decode(char[])} can decode a standard compatible Base64 string.
     * <p>
     * Example string from Wikipedia article on Base64.
+    * 
+    * @throws DecodingException
+    *            Should not be thrown.
     */
    @Test
    public void testDecode() throws DecodingException{
@@ -63,6 +66,9 @@ public class Base64Test{
 
    /**
     * Test that {@link Base64#encode(byte[])} and {@link Base64#decode(char[])} can handle raw data and not just ascii.
+    * 
+    * @throws DecodingException
+    *            Should not be thrown.
     */
    @Test
    public void testEncodeDecodeRawData() throws DecodingException{
@@ -100,6 +106,9 @@ public class Base64Test{
 
    /**
     * Test that {@link Base64#encode(byte[])} correctly handles all cases of padding according to the standard.
+    * 
+    * @throws DecodingException
+    *            Should not be thrown.
     */
    @Test
    public void testDecodePadding() throws DecodingException{
@@ -124,6 +133,9 @@ public class Base64Test{
 
    /**
     * Test that {@link Base64#decode(char[])} throws a {@link DecodingException} on an input of the wrong length.
+    * 
+    * @throws DecodingException
+    *            Should not be thrown.
     */
    @Test(expected = DecodingException.class)
    public void testDecode_wronglength() throws DecodingException{

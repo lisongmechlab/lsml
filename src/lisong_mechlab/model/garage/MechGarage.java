@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout;
+package lisong_mechlab.model.garage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.util.MessageXBar;
 
@@ -39,8 +41,8 @@ import com.thoughtworks.xstream.XStream;
  */
 public class MechGarage{
    /**
-    * This class implements {@link MessageXBar.Message}s for the {@link MechGarage} so that other components can react
-    * to changes in the garage.
+    * This class implements {@link lisong_mechlab.util.MessageXBar.Message}s for the {@link MechGarage} so that other
+    * components can react to changes in the garage.
     * 
     * @author Emily Björk
     */
@@ -205,91 +207,35 @@ public class MechGarage{
       return file;
    }
 
-   public abstract class GarageOperation extends Operation{
-      private final Loadout loadout;
-
-      public GarageOperation(Loadout aLoadout){
-         loadout = aLoadout;
-      }
-
-      /**
-       * Adds a new {@link Loadout} to this garage. This will submit an {@link Operation} to the {@link OperationStack}
-       * given in the constructor so that the action can be undone.
-       * 
-       * @param aLoadout
-       *           The {@link Loadout} to add.
-       */
-      protected void add(){
-         mechs.add(loadout);
-         xBar.post(new Message(Message.Type.LoadoutAdded, MechGarage.this, loadout));
-      }
-
-      /**
-       * Removes the given {@link Loadout} from the garage. This will submit an {@link Operation} to the
-       * {@link OperationStack} given in the constructor so that the action can be undone.
-       * 
-       * @param aLoadout
-       *           The {@link Loadout} to be removed.
-       */
-      protected void remove(){
-         if( mechs.remove(loadout) ){
-            xBar.post(new Message(Message.Type.LoadoutRemoved, MechGarage.this, loadout));
-         }
-      }
+   /**
+    * Adds a new {@link Loadout} to this garage. This will submit an {@link Operation} to the {@link OperationStack}
+    * given in the constructor so that the action can be undone.
+    * 
+    * @param aLoadout
+    *           The {@link Loadout} to add.
+    */
+   void add(Loadout aLoadout){
+      mechs.add(aLoadout);
+      xBar.post(new Message(Message.Type.LoadoutAdded, MechGarage.this, aLoadout));
    }
 
-   public class AddToGarageOperation extends GarageOperation{
-      public AddToGarageOperation(Loadout aLoadout){
-         super(aLoadout);
-         if( mechs.contains(aLoadout) ){
-            throw new IllegalArgumentException("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
-         }
-      }
-
-      @Override
-      public String describe(){
-         return "add mech to garage";
-      }
-
-      @Override
-      protected void apply(){
-         add();
-      }
-
-      @Override
-      protected void undo(){
-         remove();
-      }
-   }
-
-   public class RemoveFromGarageOperation extends GarageOperation{
-      public RemoveFromGarageOperation(Loadout aLoadout){
-         super(aLoadout);
-         if( !mechs.contains(aLoadout) ){
-            throw new IllegalArgumentException("The loadout \"" + aLoadout.getName() + "\" is not in the garage!");
-         }
-      }
-
-      @Override
-      public String describe(){
-         return "remove mech from garage";
-      }
-
-      @Override
-      protected void apply(){
-         remove();
-      }
-
-      @Override
-      protected void undo(){
-         add();
+   /**
+    * Removes the given {@link Loadout} from the garage. This will submit an {@link Operation} to the
+    * {@link OperationStack} given in the constructor so that the action can be undone.
+    * 
+    * @param aLoadout
+    *           The {@link Loadout} to remove.
+    */
+   void remove(Loadout aLoadout){
+      if( mechs.remove(aLoadout) ){
+         xBar.post(new Message(Message.Type.LoadoutRemoved, MechGarage.this, aLoadout));
       }
    }
 
    /**
     * Private helper method for the {@link XStream} serialization.
     * 
-    * @param crossBar
+    * @param anXBar
     *           The {@link MessageXBar} to use for any {@link Loadout}s loaded from files.
     * @return An {@link XStream} object usable for deserialization of garages.
     */

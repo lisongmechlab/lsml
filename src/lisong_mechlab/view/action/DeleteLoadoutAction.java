@@ -27,8 +27,9 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import lisong_mechlab.model.garage.MechGarage;
+import lisong_mechlab.model.garage.RemoveFromGarageOperation;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
@@ -36,11 +37,11 @@ import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 public class DeleteLoadoutAction extends AbstractAction implements Reader{
-   private static final long  serialVersionUID = -4813215864397617783L;
+   private static final long   serialVersionUID = -4813215864397617783L;
    private static final String SHORTCUT_STROKE  = "control D";
-   private final Loadout      loadout;
-   private final MechGarage   garage;
-   private final LoadoutFrame loadoutFrame;
+   private final Loadout       loadout;
+   private final MechGarage    garage;
+   private final LoadoutFrame  loadoutFrame;
 
    public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame){
       this(anXBar, aGarage, aLoadoutFrame, aLoadoutFrame.getLoadout());
@@ -49,7 +50,7 @@ public class DeleteLoadoutAction extends AbstractAction implements Reader{
    public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, Loadout aLoadout){
       this(anXBar, aGarage, null, aLoadout);
    }
-   
+
    private DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame, Loadout aLoadout){
       super("Delete loadout");
       loadoutFrame = aLoadoutFrame;
@@ -59,7 +60,7 @@ public class DeleteLoadoutAction extends AbstractAction implements Reader{
       setEnabled(garage.getMechs().contains(loadout));
       anXBar.attach(this);
    }
-   
+
    @Override
    public void actionPerformed(ActionEvent aE){
       if( garage.getMechs().contains(loadout) ){
@@ -69,7 +70,7 @@ public class DeleteLoadoutAction extends AbstractAction implements Reader{
                                                     "Confirm operation", JOptionPane.YES_NO_OPTION);
          if( JOptionPane.YES_OPTION == result ){
             try{
-               ProgramInit.lsml().garageOperationStack.pushAndApply(garage.new RemoveFromGarageOperation(loadout));
+               ProgramInit.lsml().garageOperationStack.pushAndApply(new RemoveFromGarageOperation(garage, loadout));
             }
             catch( RuntimeException e ){
                JOptionPane.showMessageDialog(source,
@@ -83,9 +84,9 @@ public class DeleteLoadoutAction extends AbstractAction implements Reader{
 
    @Override
    public void receive(Message aMsg){
-      if(aMsg instanceof MechGarage.Message){
+      if( aMsg instanceof MechGarage.Message ){
          MechGarage.Message msg = (MechGarage.Message)aMsg;
-         if(msg.isForMe(loadout)){
+         if( msg.isForMe(loadout) ){
             setEnabled(garage.getMechs().contains(loadout));
          }
       }

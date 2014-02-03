@@ -40,9 +40,9 @@ import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.loadout.DynamicSlotDistributor;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.MechGarage;
 import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
