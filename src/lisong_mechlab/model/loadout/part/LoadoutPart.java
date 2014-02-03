@@ -193,8 +193,7 @@ public class LoadoutPart{
       }
 
       // Allow engine slot heat sinks even if there are no critical slots
-      if( getNumEngineHeatsinks() < getNumEngineHeatsinksMax()
-          && loadout.getMass() + anItem.getMass(loadout.getUpgrades()) <= loadout.getChassi().getMassMax() ){
+      if( getNumEngineHeatsinks() < getNumEngineHeatsinksMax() && anItem.getMass(loadout.getUpgrades()) <= loadout.getFreeMass() ){
          return true;
       }
       return checkCommonRules(anItem);

@@ -88,7 +88,7 @@ public class LsmlProtocolIPC implements Runnable{
     * @return <code>true</code> if the message was sent (some one listened to the socket) <code>false</code> if the
     *         message couldn't be sent.
     */
-   static public boolean sendLoadout(String url) throws Exception{
+   static public boolean sendLoadout(String url){
       Socket socket = null;
       BufferedWriter bw = null;
       try{
@@ -100,10 +100,15 @@ public class LsmlProtocolIPC implements Runnable{
          return false;
       }
       finally{
-         if( bw != null )
-            bw.close();
-         if( socket != null )
-            socket.close();
+         try{
+            if( bw != null )
+               bw.close();
+            if( socket != null )
+               socket.close();
+         }
+         catch( IOException e ){
+            // Failed to close socket... whaaaaaat?!
+         }
       }
       return true;
    }

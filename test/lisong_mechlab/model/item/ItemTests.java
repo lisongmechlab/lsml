@@ -36,7 +36,6 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
@@ -46,10 +45,8 @@ import org.mockito.MockitoAnnotations;
 
 public class ItemTests{
    @Mock
-   MessageXBar xBar;
-   @Mock
-   OperationStack   undoStack;
-
+   MessageXBar    xBar;
+   
    @Before
    public void setup(){
       MockitoAnnotations.initMocks(this);
@@ -90,7 +87,7 @@ public class ItemTests{
 
    @Test
    public void testEngines() throws Exception{
-      Loadout hm = new Loadout(ChassiDB.lookup("Heavy Metal"), xBar, undoStack);
+      Loadout hm = new Loadout(ChassiDB.lookup("Heavy Metal"), xBar);
 
       Engine std175 = (Engine)ItemDB.lookup("STD ENGINE 175");
       Engine std180 = (Engine)ItemDB.lookup("STD ENGINE 180");
@@ -165,23 +162,23 @@ public class ItemTests{
       assertEquals(0.5, JJC4.getMass(null), 0.0);
       assertEquals(0.5, JJC5.getMass(null), 0.0);
 
-      assertTrue(ECM.isEquippableOn(new Loadout("AS7-D-DC", xBar, undoStack)));
-      assertFalse(ECM.isEquippableOn(new Loadout("JR7-K", xBar, undoStack)));
+      assertTrue(ECM.isEquippableOn(new Loadout("AS7-D-DC", xBar)));
+      assertFalse(ECM.isEquippableOn(new Loadout("JR7-K", xBar)));
 
-      assertTrue(JJC5.isEquippableOn(new Loadout("JR7-F", xBar, undoStack)));
-      assertFalse(JJC5.isEquippableOn(new Loadout("RVN-3L", xBar, undoStack)));
-      assertFalse(JJC5.isEquippableOn(new Loadout("TBT-5J", xBar, undoStack)));
-      assertFalse(JJC5.isEquippableOn(new Loadout("CTF-3D", xBar, undoStack)));
+      assertTrue(JJC5.isEquippableOn(new Loadout("JR7-F", xBar)));
+      assertFalse(JJC5.isEquippableOn(new Loadout("RVN-3L", xBar)));
+      assertFalse(JJC5.isEquippableOn(new Loadout("TBT-5J", xBar)));
+      assertFalse(JJC5.isEquippableOn(new Loadout("CTF-3D", xBar)));
 
-      assertFalse(JJC4.isEquippableOn(new Loadout("JR7-F", xBar, undoStack)));
-      assertFalse(JJC4.isEquippableOn(new Loadout("hbk-4j", xBar, undoStack)));
-      assertTrue(JJC4.isEquippableOn(new Loadout("TBT-5J", xBar, undoStack)));
-      assertFalse(JJC4.isEquippableOn(new Loadout("CTF-3D", xBar, undoStack)));
+      assertFalse(JJC4.isEquippableOn(new Loadout("JR7-F", xBar)));
+      assertFalse(JJC4.isEquippableOn(new Loadout("hbk-4j", xBar)));
+      assertTrue(JJC4.isEquippableOn(new Loadout("TBT-5J", xBar)));
+      assertFalse(JJC4.isEquippableOn(new Loadout("CTF-3D", xBar)));
 
-      assertFalse(JJC3.isEquippableOn(new Loadout("JR7-F", xBar, undoStack)));
-      assertFalse(JJC3.isEquippableOn(new Loadout("ILYA MUROMETS", xBar, undoStack)));
-      assertFalse(JJC3.isEquippableOn(new Loadout("TBT-5J", xBar, undoStack)));
-      assertTrue(JJC3.isEquippableOn(new Loadout("CTF-3D", xBar, undoStack)));
+      assertFalse(JJC3.isEquippableOn(new Loadout("JR7-F", xBar)));
+      assertFalse(JJC3.isEquippableOn(new Loadout("ILYA MUROMETS", xBar)));
+      assertFalse(JJC3.isEquippableOn(new Loadout("TBT-5J", xBar)));
+      assertTrue(JJC3.isEquippableOn(new Loadout("CTF-3D", xBar)));
    }
 
    /**

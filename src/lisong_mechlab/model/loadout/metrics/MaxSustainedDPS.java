@@ -61,9 +61,11 @@ public class MaxSustainedDPS extends RangeMetric{
 
    /**
     * Calculates the ratio with each weapon should be fired to obtain the maximal sustained DPS. A ratio of 0.0 means
-    * the weapon is never fired and a ratio of 0.5 means the weapon is fired every 2 cooldowns and a ratio of 1.0 means
+    * the weapon is never fired and a ratio of 0.5 means the weapon is fired every 2 cool downs and a ratio of 1.0 means
     * the weapon is fired every time it is available.
     * 
+    * @param aRange
+    *           The range to calculate for.
     * @return A {@link Map} with {@link Weapon} as key and a {@link Double} as value representing a % of how often the
     *         weapon is used.
     */

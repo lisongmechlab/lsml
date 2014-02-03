@@ -34,7 +34,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
-import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
