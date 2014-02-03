@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Test;
 

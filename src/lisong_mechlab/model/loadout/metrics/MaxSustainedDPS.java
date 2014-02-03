@@ -31,7 +31,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
  * This {@link Metric} calculates the maximal DPS that a {@link Loadout} can sustain indefinitely.

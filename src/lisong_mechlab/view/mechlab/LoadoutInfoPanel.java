@@ -70,6 +70,10 @@ import lisong_mechlab.model.loadout.metrics.TopSpeed;
 import lisong_mechlab.model.loadout.metrics.TurningSpeed;
 import lisong_mechlab.model.loadout.metrics.TwistSpeed;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.upgrades.SetArtemisOperation;
+import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
+import lisong_mechlab.model.upgrades.SetFerroFibrousOperation;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.MetricDisplay;
@@ -123,8 +127,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private transient Boolean            inhibitChanges   = false;
    private final ArtemisHandler         artemisChecker;
    private final MaxSustainedDPS        metricSustainedDps;
-   private final OperationStack opStack;
-   
+   private final OperationStack         opStack;
+   private final transient MessageXBar  xBar;
+
    public LoadoutInfoPanel(LoadoutFrame aLoadoutFrame, MessageXBar anXBar){
       loadout = aLoadoutFrame.getLoadout();
       opStack = aLoadoutFrame.getOpStack();
@@ -133,7 +138,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       artemisChecker = new ArtemisHandler(loadout);
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-      anXBar.attach(this);
+      xBar = anXBar;
+      xBar.attach(this);
 
       Border innerBorder = new EmptyBorder(0, 4, 4, 4);
       // General
@@ -521,19 +527,19 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-            opStack.pushAndApply(loadout.getUpgrades().new SetArtemisOperation(loadout, artemis.isSelected()));
+            opStack.pushAndApply(new SetArtemisOperation(xBar, loadout, artemis.isSelected()));
          }
          else if( source == endoSteel ){
-            opStack.pushAndApply(loadout.getUpgrades().new SetEndoSteelOperation(loadout, endoSteel.isSelected()));
+            opStack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, endoSteel.isSelected()));
          }
          else if( source == ferroFibros ){
-            opStack.pushAndApply(loadout.getUpgrades().new SetFerroFibrousOperation(loadout, ferroFibros.isSelected()));
+            opStack.pushAndApply(new SetFerroFibrousOperation(xBar, loadout, ferroFibros.isSelected()));
          }
          else if( source == speedTweak ){
             loadout.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else if( source == doubleHeatSinks ){
-            opStack.pushAndApply(loadout.getUpgrades().new SetDHSOperation(loadout, doubleHeatSinks.isSelected()));
+            opStack.pushAndApply(new SetDHSOperation(xBar, loadout, doubleHeatSinks.isSelected()));
          }
          else if( source == coolRun ){
             loadout.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED);

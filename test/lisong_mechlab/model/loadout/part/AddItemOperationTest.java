@@ -19,13 +19,14 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.part;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;

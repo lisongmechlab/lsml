@@ -42,6 +42,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
@@ -53,16 +54,15 @@ import org.mockito.Spy;
 
 public class LoadoutTest{
    @Spy
-   MessageXBar xBar;
+   MessageXBar    xBar;
 
    @Mock
-   OperationStack   undoStack;
+   OperationStack undoStack;
 
    @Before
    public void setup(){
       MockitoAnnotations.initMocks(this);
    }
-
 
    /**
     * Loading stock configuration shall succeed even if the loadout isn't empty to start with.
@@ -74,7 +74,7 @@ public class LoadoutTest{
       Loadout cut = new Loadout("JR7-F", xBar);
       cut.loadStock();
    }
-   
+
    // -------------------------------------------------------------------------
    //
    // Jump jet related tests

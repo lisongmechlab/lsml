@@ -29,8 +29,8 @@ import lisong_mechlab.model.loadout.OperationStack.Operation;
  */
 public class AddToGarageOperation extends Operation{
    private final MechGarage garage;
-   private final Loadout loadout;
-   
+   private final Loadout    loadout;
+
    public AddToGarageOperation(MechGarage aGarage, Loadout aLoadout){
       garage = aGarage;
       loadout = aLoadout;

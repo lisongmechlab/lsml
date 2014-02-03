@@ -48,7 +48,7 @@ public class TwistSpeedTest{
       TwistSpeed cut = new TwistSpeed(loadout);
       assertEquals(0, cut.calculate(), 0.0);
    }
-   
+
    @Test
    public final void testCalculate() throws Exception{
       Loadout loadout = Mockito.mock(Loadout.class);

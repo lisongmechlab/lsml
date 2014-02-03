@@ -36,7 +36,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Efficiencies;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
  * This class implements a panel that will show information about an item.

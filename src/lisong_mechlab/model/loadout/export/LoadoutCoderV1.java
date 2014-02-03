@@ -43,6 +43,10 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.upgrades.SetArtemisOperation;
+import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
+import lisong_mechlab.model.upgrades.SetFerroFibrousOperation;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
@@ -171,10 +175,10 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          Chassi chassi = ChassiDB.lookup(chassiId);
          loadout = new Loadout(chassi, xBar);
 
-         operationStack.pushAndApply(loadout.getUpgrades().new SetArtemisOperation(loadout, (upeff & (1 << 7)) != 0));
-         operationStack.pushAndApply(loadout.getUpgrades().new SetDHSOperation(loadout, (upeff & (1 << 6)) != 0));
-         operationStack.pushAndApply(loadout.getUpgrades().new SetEndoSteelOperation(loadout, (upeff & (1 << 4)) != 0));
-         operationStack.pushAndApply(loadout.getUpgrades().new SetFerroFibrousOperation(loadout, (upeff & (1 << 5)) != 0));
+         operationStack.pushAndApply(new SetArtemisOperation(xBar, loadout, (upeff & (1 << 7)) != 0));
+         operationStack.pushAndApply(new SetDHSOperation(xBar, loadout, (upeff & (1 << 6)) != 0));
+         operationStack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, (upeff & (1 << 4)) != 0));
+         operationStack.pushAndApply(new SetFerroFibrousOperation(xBar, loadout, (upeff & (1 << 5)) != 0));
          loadout.getEfficiencies().setCoolRun((upeff & (1 << 3)) != 0);
          loadout.getEfficiencies().setHeatContainment((upeff & (1 << 2)) != 0);
          loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 1)) != 0);

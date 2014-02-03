@@ -22,8 +22,8 @@ package lisong_mechlab.model.item;
 import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 public class MissileWeapon extends AmmoWeapon{
    private static final String ARTEMIS = " + ARTEMIS";

@@ -76,8 +76,8 @@ public class LoadoutSerializationTest{
 
    /**
     * We can save and load all stock Loadouts.
-    * @param aChassi 
     * 
+    * @param aChassi
     * @throws Exception
     */
    @Test

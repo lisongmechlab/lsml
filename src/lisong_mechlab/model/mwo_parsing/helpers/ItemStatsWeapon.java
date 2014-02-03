@@ -81,7 +81,7 @@ public class ItemStatsWeapon extends ItemStats{
       @XStreamAsAttribute
       public double JammedTime;
       @XStreamAsAttribute
-      public int ShotsDuringCooldown;
+      public int    ShotsDuringCooldown;
    }
 
    public WeaponStatsTag WeaponStats;

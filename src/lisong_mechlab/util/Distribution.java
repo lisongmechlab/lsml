@@ -26,5 +26,6 @@ package lisong_mechlab.util;
  */
 public interface Distribution{
    public double pdf(double x);
+
    public double cdf(double x);
 }

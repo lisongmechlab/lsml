@@ -74,7 +74,7 @@ public class WeaponTest{
       Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
       assertEquals(1.0, gauss.getHeat(), 0.0);
    }
-   
+
    @Test
    public void testGetHeat_chargeDps(){
       Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");

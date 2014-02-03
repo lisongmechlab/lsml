@@ -50,6 +50,11 @@ import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.model.loadout.part.StripPartOperation;
+import lisong_mechlab.model.upgrades.SetArtemisOperation;
+import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
+import lisong_mechlab.model.upgrades.SetFerroFibrousOperation;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.XmlReader;
 
@@ -117,8 +122,8 @@ public class Loadout{
 
    private String                       name;
    private final Chassi                 chassi;
-   private final Map<Part, LoadoutPart> parts = new TreeMap<Part, LoadoutPart>();
-   private final Upgrades               upgrades;
+   private final Map<Part, LoadoutPart> parts    = new TreeMap<Part, LoadoutPart>();
+   private final Upgrades               upgrades = new Upgrades();
    private final Efficiencies           efficiencies;
    private final transient MessageXBar  xBar;
 
@@ -133,7 +138,6 @@ public class Loadout{
    public Loadout(Chassi aChassi, MessageXBar anXBar){
       name = aChassi.getNameShort();
       chassi = aChassi;
-      upgrades = new Upgrades(anXBar);
       for(InternalPart part : chassi.getInternalParts()){
          LoadoutPart confPart = new LoadoutPart(this, part);
          parts.put(part.getType(), confPart);
@@ -221,21 +225,21 @@ public class Loadout{
             boolean stockFerro = reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID").equals("2801");
             boolean stockEndo = reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID").equals("3101");
             boolean stockArtemis = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1");
-            addOp(upgrades.new SetEndoSteelOperation(Loadout.this, stockEndo));
-            addOp(upgrades.new SetArtemisOperation(Loadout.this, stockArtemis));
-            addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, stockFerro));
-            addOp(upgrades.new SetDHSOperation(Loadout.this, stockDhs));
+            addOp(new SetEndoSteelOperation(xBar, Loadout.this, stockEndo));
+            addOp(new SetArtemisOperation(xBar, Loadout.this, stockArtemis));
+            addOp(new SetFerroFibrousOperation(xBar, Loadout.this, stockFerro));
+            addOp(new SetDHSOperation(xBar, Loadout.this, stockDhs));
 
             // FIXME: Revisit this fix! The game files are broken.
             if( chassi.getNameShort().equals("KTO-19") ){
-               addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, true));
+               addOp(new SetFerroFibrousOperation(xBar, Loadout.this, true));
             }
          }
          else{
-            addOp(upgrades.new SetEndoSteelOperation(Loadout.this, false));
-            addOp(upgrades.new SetArtemisOperation(Loadout.this, false));
-            addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, false));
-            addOp(upgrades.new SetDHSOperation(Loadout.this, false));
+            addOp(new SetEndoSteelOperation(xBar, Loadout.this, false));
+            addOp(new SetArtemisOperation(xBar, Loadout.this, false));
+            addOp(new SetFerroFibrousOperation(xBar, Loadout.this, false));
+            addOp(new SetDHSOperation(xBar, Loadout.this, false));
          }
 
          for(Element component : reader.getElementsByTagName("component")){
@@ -272,10 +276,10 @@ public class Loadout{
          for(LoadoutPart loadoutPart : parts.values()){
             addOp(new StripPartOperation(xBar, loadoutPart));
          }
-         addOp(upgrades.new SetEndoSteelOperation(Loadout.this, false));
-         addOp(upgrades.new SetArtemisOperation(Loadout.this, false));
-         addOp(upgrades.new SetFerroFibrousOperation(Loadout.this, false));
-         addOp(upgrades.new SetDHSOperation(Loadout.this, false));
+         addOp(new SetEndoSteelOperation(xBar, Loadout.this, false));
+         addOp(new SetArtemisOperation(xBar, Loadout.this, false));
+         addOp(new SetFerroFibrousOperation(xBar, Loadout.this, false));
+         addOp(new SetDHSOperation(xBar, Loadout.this, false));
       }
    }
 

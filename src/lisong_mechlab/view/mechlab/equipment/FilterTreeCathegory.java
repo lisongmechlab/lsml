@@ -36,7 +36,7 @@ public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T>{
                      // Ongoing filtering
                      garageTree.expandPath(getPath());
                   }
-                  
+
                   nameFilter = aFilterBar.getText().toLowerCase();
                   getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
                }

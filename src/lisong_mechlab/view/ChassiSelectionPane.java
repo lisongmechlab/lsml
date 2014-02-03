@@ -152,7 +152,7 @@ public class ChassiSelectionPane extends JScrollPane{
          setHeaderValue("Jump Jets");
          StyleManager.styleThinItem(jjs, ItemDB.lookup("JUMP JETS - CLASS V"));
       }
-      
+
       @Override
       public TableCellRenderer getCellRenderer(){
          return new TableCellRenderer(){
@@ -160,7 +160,7 @@ public class ChassiSelectionPane extends JScrollPane{
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
                Chassi chassi = (Chassi)aValue;
                panel.removeAll();
-               
+
                int jjsa = chassi.getMaxJumpJets();
 
                if( jjsa > 0 ){

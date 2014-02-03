@@ -59,7 +59,8 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
             @Override
             protected boolean filter(Chassi c){
                return c.getName().toLowerCase().contains(getFilterString());
-            }};
+            }
+         };
 
          for(Chassi chassi : ChassiDB.lookup(chassiClass)){
             chassiiSub.addChild(chassi);

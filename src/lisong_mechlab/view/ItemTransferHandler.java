@@ -67,12 +67,12 @@ public class ItemTransferHandler extends TransferHandler{
 
             if( sourceItems.size() < 1 || sourcePart == null )
                return null;
-            
+
             Container f = aComponent;
-            while(!(f instanceof LoadoutFrame)){
+            while( !(f instanceof LoadoutFrame) ){
                f = f.getParent();
             }
-            
+
             LoadoutFrame frame = (LoadoutFrame)f;
             StringBuffer buff = new StringBuffer();
             for(Pair<Item, Integer> it : sourceItems){
@@ -124,7 +124,7 @@ public class ItemTransferHandler extends TransferHandler{
       Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
       setDragImageOffset(mouse);
    }
-   
+
    @Override
    protected void exportDone(JComponent c, Transferable t, int action){
       // NO-OP

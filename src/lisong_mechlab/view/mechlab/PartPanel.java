@@ -62,7 +62,8 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private boolean           canHaveHardpoints;
 
-   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric, OperationStack aStack){
+   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
+             OperationStack aStack){
       super(new BorderLayout());
       anXBar.attach(this);
       loadoutPart = aLoadoutPart;
@@ -205,7 +206,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          spinner.getEditor().setPreferredSize(spinnerDimension);
          JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
          ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
-         
+
          panel.add(new JLabel("Armor:"));
          panel.add(Box.createHorizontalGlue());
          panel.add(spinner);

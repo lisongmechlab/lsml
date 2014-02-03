@@ -19,7 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import lisong_mechlab.model.loadout.OperationStack.Operation;
 
 import org.junit.Before;
@@ -68,14 +69,14 @@ public class OperationStackTest{
 
       assertSame(op, cut.nextUndo());
    }
-   
+
    /**
     * {@link OperationStack#nextUndo()} shall return <code>null</code> if there is nothing to undo.
     */
    @Test
    public final void testNextUndo_empty(){
       assertNull(cut.nextUndo());
-      
+
       Operation op = Mockito.mock(Operation.class);
       cut.pushAndApply(op);
       cut.undo();
@@ -86,29 +87,31 @@ public class OperationStackTest{
    /**
     * {@link OperationStack#nextRedo()} shall return the {@link Operation} that would be done if
     * {@link OperationStack#redo()} was called now.
-    */   @Test
+    */
+   @Test
    public final void testNextRedo(){
-       Operation op = Mockito.mock(Operation.class);
-       cut.pushAndApply(op);
-       cut.undo();
-       
-       assertSame(op, cut.nextRedo());
+      Operation op = Mockito.mock(Operation.class);
+      cut.pushAndApply(op);
+      cut.undo();
+
+      assertSame(op, cut.nextRedo());
    }
 
-    /**
-     * {@link OperationStack#nextRedo()} shall return null if there is nothing to redo.
-     */   @Test
-    public final void testNextRedo_empty(){
-        assertNull(cut.nextRedo());
-        
-        Operation op = Mockito.mock(Operation.class);
-        cut.pushAndApply(op);
-        cut.undo();
-        cut.redo();
-        
-        assertNull(cut.nextRedo());
-    }
-    
+   /**
+    * {@link OperationStack#nextRedo()} shall return null if there is nothing to redo.
+    */
+   @Test
+   public final void testNextRedo_empty(){
+      assertNull(cut.nextRedo());
+
+      Operation op = Mockito.mock(Operation.class);
+      cut.pushAndApply(op);
+      cut.undo();
+      cut.redo();
+
+      assertNull(cut.nextRedo());
+   }
+
    @Test
    public final void testUndo(){
       Operation op = Mockito.mock(Operation.class);

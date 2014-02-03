@@ -252,7 +252,7 @@ public class GameDataFile{
          @Override
          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
             if( dir.getFileName() != null ){
-               if( OS.isWindowsOrNewer(WindowsVersion.WinOld)){
+               if( OS.isWindowsOrNewer(WindowsVersion.WinOld) ){
                   // On windows we can skip some folders
                   Set<String> skipList = new HashSet<>();
                   skipList.add("windows");

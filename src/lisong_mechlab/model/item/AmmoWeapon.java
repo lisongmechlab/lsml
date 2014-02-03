@@ -20,8 +20,8 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 public class AmmoWeapon extends Weapon{
    private final Ammunition ammoType;

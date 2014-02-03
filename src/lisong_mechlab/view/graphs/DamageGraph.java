@@ -39,9 +39,9 @@ import javax.swing.SwingUtilities;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.Pair;
@@ -134,7 +134,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          }
       });
 
-      Double[] ranges = WeaponRanges.getRanges(loadout);     
+      Double[] ranges = WeaponRanges.getRanges(loadout);
       for(double range : ranges){
          Set<Entry<Weapon, Double>> damageDistributio = maxSustainedDPS.getWeaponRatios(range).entrySet();
          for(Map.Entry<Weapon, Double> entry : damageDistributio){

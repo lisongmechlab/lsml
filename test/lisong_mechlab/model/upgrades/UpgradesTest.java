@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout;
+package lisong_mechlab.model.upgrades;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -25,22 +25,12 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Upgrades.Message.ChangeMsg;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class UpgradesTest{
@@ -51,7 +41,7 @@ public class UpgradesTest{
    @Before
    public void setup(){
       MockitoAnnotations.initMocks(this);
-      cut = new Upgrades(xbar);
+      cut = new Upgrades();
    }
 
    @Test

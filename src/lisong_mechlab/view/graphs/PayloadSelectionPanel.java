@@ -43,8 +43,10 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.OperationStack;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
+import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
+import lisong_mechlab.model.upgrades.SetFerroFibrousOperation;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.view.graphs.PayloadGraphPanel.Entry;
 
 /**
@@ -102,7 +104,7 @@ public class PayloadSelectionPanel extends JPanel{
 
       void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel, final Upgrades aUpgrades){
          final OperationStack stack = new OperationStack(0);
-         
+
          graphEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             @Override
             public void valueChanged(ListSelectionEvent aArg0){
@@ -142,14 +144,14 @@ public class PayloadSelectionPanel extends JPanel{
          endoSteel.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               stack.pushAndApply(aUpgrades.new SetEndoSteelOperation(null, endoSteel.isSelected()));
+               stack.pushAndApply(new SetEndoSteelOperation(aUpgrades, endoSteel.isSelected()));
                aGraphPanel.updateGraph();
             }
          });
          ferroFibrous.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               stack.pushAndApply(aUpgrades.new SetFerroFibrousOperation(null, ferroFibrous.isSelected()));
+               stack.pushAndApply(new SetFerroFibrousOperation(aUpgrades, ferroFibrous.isSelected()));
                aGraphPanel.updateGraph();
             }
          });
@@ -170,14 +172,14 @@ public class PayloadSelectionPanel extends JPanel{
       chassis = calculateUniqueSpeedChassis();
       PayloadSettingsPanel settingsPanel = new PayloadSettingsPanel(chassis);
 
-      upgrades = new Upgrades(null);
+      upgrades = new Upgrades();
       payloadStatistics = new PayloadStatistics(false, true, upgrades);
       graphPanel = new PayloadGraphPanel(payloadStatistics, settingsPanel.speedTweak);
       graphPanel.selectChassis(chassis);
       graphPanel.updateGraph();
 
       settingsPanel.setupListeners(payloadStatistics, graphPanel, upgrades);
-      
+
       add(settingsPanel);
       add(graphPanel);
    }

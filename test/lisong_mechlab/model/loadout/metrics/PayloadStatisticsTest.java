@@ -19,11 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.metrics;
 
-
 import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -35,9 +34,9 @@ public class PayloadStatisticsTest{
       Chassi jm6_a = ChassiDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
-      
+
       cut.changeUseXLEngine(true);
-      
+
       assertEquals(46.0, cut.calculate(jm6_a, 250), 0.0);
    }
 
@@ -46,12 +45,12 @@ public class PayloadStatisticsTest{
       Chassi jm6_a = ChassiDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
-      
+
       cut.changeUseMaxArmor(true);
-      
+
       assertEquals(26.81, cut.calculate(jm6_a, 250), 0.01);
    }
-   
+
    @Test
    public final void testChangeUpgrades() throws Exception{
       Chassi jm6_a = ChassiDB.lookup("JM6-A");
@@ -59,12 +58,12 @@ public class PayloadStatisticsTest{
       PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
       Upgrades upgradesNew = Mockito.mock(Upgrades.class);
       Mockito.when(upgradesNew.hasEndoSteel()).thenReturn(true);
-      
+
       cut.changeUpgrades(upgradesNew);
-      
+
       assertEquals(43.0, cut.calculate(jm6_a, 250), 0.0);
    }
-   
+
    @Test
    public final void testCalculate_smallEngine() throws Exception{
       Chassi jm6_a = ChassiDB.lookup("JM6-A");
@@ -75,7 +74,7 @@ public class PayloadStatisticsTest{
       assertEquals(44.0, cut.calculate(jm6_a, 205), 0.0); // Needs two additional heat sinks
       assertEquals(42.5, cut.calculate(jm6_a, 220), 0.0); // Needs two additional heat sinks
    }
-   
+
    @Test
    public final void testCalculate() throws Exception{
       Chassi jm6_a = ChassiDB.lookup("JM6-A");
@@ -95,7 +94,7 @@ public class PayloadStatisticsTest{
       assertEquals(46.0, cut.calculate(jm6_a, 250), 0.0);
       assertEquals(43.0, cut.calculate(jm6_a, 300), 0.0);
    }
-   
+
    @Test
    public final void testCalculate_maxArmor() throws Exception{
       Chassi jm6_a = ChassiDB.lookup("JM6-A");
@@ -111,7 +110,7 @@ public class PayloadStatisticsTest{
       Chassi jm6_a = ChassiDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.hasFerroFibrous()).thenReturn(true);
-   
+
       PayloadStatistics cut = new PayloadStatistics(false, true, upgrades);
       assertEquals(28.23, cut.calculate(jm6_a, 250), 0.01);
       assertEquals(21.73, cut.calculate(jm6_a, 300), 0.01);
@@ -122,7 +121,7 @@ public class PayloadStatisticsTest{
       Chassi jm6_a = ChassiDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.hasEndoSteel()).thenReturn(true);
-   
+
       PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
       assertEquals(43.0, cut.calculate(jm6_a, 250), 0.0);
       assertEquals(36.5, cut.calculate(jm6_a, 300), 0.0);

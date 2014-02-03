@@ -23,9 +23,9 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
@@ -212,13 +212,13 @@ public class ItemOperationTest{
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
       Item item = ItemDB.lookup("STD ENGINE 300");
       CutClass cut = new CutClass(xBar, loadoutPart, item);
-      
+
       cut.removeItem();
       cut.addItem();
-      
+
       Mockito.verify(loadoutPart, Mockito.times(numEngineHs)).addItem(ItemDB.SHS);
    }
-   
+
    /**
     * addItem() has a special case where it shall re-add engine heat sinks that were removed in a previous call to
     * removeItem(). This is to facilitate undo behavior on engines to include heat sinks (DHS)
@@ -234,11 +234,11 @@ public class ItemOperationTest{
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
       Item item = ItemDB.lookup("STD ENGINE 300");
       CutClass cut = new CutClass(xBar, loadoutPart, item);
-      
+
       cut.removeItem();
       cut.addItem();
-      
+
       Mockito.verify(loadoutPart, Mockito.times(numEngineHs)).addItem(ItemDB.DHS);
-   }   
+   }
 
 }

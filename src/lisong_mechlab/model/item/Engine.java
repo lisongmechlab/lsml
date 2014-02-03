@@ -21,8 +21,8 @@ package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 public class Engine extends HeatSource{
    public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;

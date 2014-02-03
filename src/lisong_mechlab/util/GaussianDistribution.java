@@ -36,7 +36,7 @@ public class GaussianDistribution implements Distribution{
    @Override
    public double cdf(double x){
       final double pdf = pdf(x);
-      if(pdf < PRECISION)
+      if( pdf < PRECISION )
          return x < 0 ? 0 : 1.0;
 
       int i = 0;
