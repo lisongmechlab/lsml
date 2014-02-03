@@ -6,8 +6,8 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
@@ -194,14 +194,14 @@ public class SetArmorOperationTest{
    }
 
    /**
-    * Apply shall successfully change the armor value if called with an armor
-    * amount less than the current amount and the 'mech is over-tonnage.
+    * Apply shall successfully change the armor value if called with an armor amount less than the current amount and
+    * the 'mech is over-tonnage.
     * 
     * @throws Exception
     */
    @Test
    public void testApply_ReduceWhenOverTonnage() throws Exception{
-      
+
       // Setup
       final double freeTons = -0.1; // Over-tonned
       final int oldArmor = 20;
@@ -276,7 +276,7 @@ public class SetArmorOperationTest{
       // Execute
       cut.undo();
    }
-   
+
    /**
     * Undoing twice to only one apply shall throw an instance of {@link RuntimeException}.
     */
@@ -299,7 +299,7 @@ public class SetArmorOperationTest{
          fail("Setup threw!");
          return;
       }
-      
+
       // Execute
       cut.apply();
       cut.undo();

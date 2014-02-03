@@ -52,17 +52,17 @@ public class MechLabPane extends JSplitPane{
       super(JSplitPane.HORIZONTAL_SPLIT, true);
       xBar = anXBar;
       desktop = new LoadoutDesktop(xBar);
-      
+
       JTextField filterBar = new JTextField();
       JPanel filterPanel = new JPanel(new BorderLayout(5, 5));
       filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       filterPanel.add(new JLabel("Filter:"), BorderLayout.LINE_START);
       filterPanel.add(filterBar, BorderLayout.CENTER);
-            
+
       JPanel garagePanel = new JPanel(new BorderLayout());
       garagePanel.add(filterPanel, BorderLayout.PAGE_START);
       garagePanel.add(new JScrollPane(new GarageTree(desktop, xBar, filterBar)), BorderLayout.CENTER);
-      
+
       JTabbedPane tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
       tabbedPane.addTab("Garage", garagePanel);
@@ -90,7 +90,7 @@ public class MechLabPane extends JSplitPane{
          return getActiveLoadoutFrame().getLoadout();
       return null;
    }
-   
+
    /**
     * @return The currently selected {@link LoadoutFrame}.
     */

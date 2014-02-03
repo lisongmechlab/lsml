@@ -103,7 +103,7 @@ public class MaxSustainedDPSTest{
 
       when(loadout.getAllItems()).thenReturn(items);
       when(heatDissipation.calculate()).thenReturn(10.0);
-      
+
       assertEquals(ppc.getStat("d/s", null, null), cut.calculate(90.0 + 0.001), 0.0);
       assertEquals(0.0, cut.calculate(90.0 - 0.001), 0.0);
    }

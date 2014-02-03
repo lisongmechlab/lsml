@@ -42,7 +42,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.OperationStack;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.After;
@@ -676,18 +676,18 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumCriticalslots()).thenReturn(0);
       Mockito.when(part.getNumHardpoints(HardpointType.ENERGY)).thenReturn(3);
       Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(1);
-      
+
       Item item = Mockito.mock(Item.class);
       Mockito.when(item.getHardpointType()).thenReturn(HardpointType.ENERGY);
-      
+
       Item otherItem = Mockito.mock(Item.class);
       Mockito.when(otherItem.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
-      
+
       LoadoutPart cut = new LoadoutPart(loadout, part);
-      
+
       cut.addItem(otherItem);
       assertFalse(cut.canAddItem(otherItem));
-      
+
       assertTrue(cut.canAddItem(item));
       cut.addItem(item);
       assertTrue(cut.canAddItem(item));

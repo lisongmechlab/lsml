@@ -38,7 +38,7 @@ public class StringUtilTest{
       assertEquals("cdef", StringUtil.longestCommonSubstring(a, b));
       assertEquals("cdef", StringUtil.longestCommonSubstring(b, a));
    }
-   
+
    @Test
    public final void testLongestCommonSubstring_lowEdge() throws Exception{
       String a = "abcdefgh";

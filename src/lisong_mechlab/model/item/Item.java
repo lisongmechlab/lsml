@@ -21,9 +21,9 @@ package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.Localization;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStats;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 public class Item implements Comparable<Item>{
    private final String        locName;

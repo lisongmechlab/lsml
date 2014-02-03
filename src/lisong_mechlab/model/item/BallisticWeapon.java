@@ -23,8 +23,8 @@ import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Efficiencies;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.GaussianDistribution;
 
 public class BallisticWeapon extends AmmoWeapon{
@@ -76,7 +76,7 @@ public class BallisticWeapon extends AmmoWeapon{
       if( canDoubleFire() ){
          return (1.0 - jammingChance) * getCycleTime(aEfficiencies) / (1 + shotsduringcooldown) + jammingChance * jammingTime;
       }
-      if( getMwoIdx() == 1021) { // Gauss rifle
+      if( getMwoIdx() == 1021 ){ // Gauss rifle
          return getCycleTime(aEfficiencies) + 0.75; // TODO: Fix this when they add the charge time to the itemstats.xml
       }
       return getCycleTime(aEfficiencies);
@@ -89,15 +89,15 @@ public class BallisticWeapon extends AmmoWeapon{
          // Assumption:
          // The 'spread' value is the standard deviation of a zero-mean gaussian distribution of angles.
          GaussianDistribution gaussianDistribution = new GaussianDistribution();
-         
+
          final double targetRadius = 6; // [m]
          double maxAngle = Math.atan2(targetRadius, range) * 180 / Math.PI; // [deg]
-         
+
          // X ~= N(0, spread)
          // P_hit = P(-maxAngle <= X; X <= +maxangle)
          // Xn = (X - 0) / spread ~ N(0,1)
-         // P_hit = cdf(maxangle / spread)  - cdf(-maxangle / spread) = 2*cdf(maxangle / spread) - 1.0;
-         double P_hit = 2*gaussianDistribution.cdf(maxAngle / spread) - 1;
+         // P_hit = cdf(maxangle / spread) - cdf(-maxangle / spread) = 2*cdf(maxangle / spread) - 1.0;
+         double P_hit = 2 * gaussianDistribution.cdf(maxAngle / spread) - 1;
          spreadFactor = P_hit;
       }
       return spreadFactor * super.getRangeEffectivity(range);

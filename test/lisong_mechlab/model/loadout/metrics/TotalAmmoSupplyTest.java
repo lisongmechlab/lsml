@@ -48,7 +48,7 @@ public class TotalAmmoSupplyTest{
    public void testGenerate() throws Exception{
       // Setup
       Loadout cut = new Loadout("COM-2D", xBar);
-      
+
       // Execute
       totalAmmoSupply = new TotalAmmoSupply(cut);
 

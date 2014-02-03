@@ -24,8 +24,12 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.OperationStack;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.upgrades.SetArtemisOperation;
+import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
+import lisong_mechlab.model.upgrades.SetFerroFibrousOperation;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -76,7 +80,7 @@ public class LoadoutConverter implements Converter{
       Chassi chassi = ChassiDB.lookup(chassiVariation);
 
       OperationStack stack = new OperationStack(0);
-      
+
       Loadout loadout = new Loadout(chassi, xBar);
       loadout.rename(name);
 
@@ -84,10 +88,10 @@ public class LoadoutConverter implements Converter{
          aReader.moveDown();
          if( "upgrades".equals(aReader.getNodeName()) ){
             Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
-            stack.pushAndApply(loadout.getUpgrades().new SetArtemisOperation(loadout, upgrades.hasArtemis()));
-            stack.pushAndApply(loadout.getUpgrades().new SetDHSOperation(loadout, upgrades.hasDoubleHeatSinks()));
-            stack.pushAndApply(loadout.getUpgrades().new SetEndoSteelOperation(loadout, upgrades.hasEndoSteel()));
-            stack.pushAndApply(loadout.getUpgrades().new SetFerroFibrousOperation(loadout, upgrades.hasFerroFibrous()));
+            stack.pushAndApply(new SetArtemisOperation(xBar, loadout, upgrades.hasArtemis()));
+            stack.pushAndApply(new SetDHSOperation(xBar, loadout, upgrades.hasDoubleHeatSinks()));
+            stack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, upgrades.hasEndoSteel()));
+            stack.pushAndApply(new SetFerroFibrousOperation(xBar, loadout, upgrades.hasFerroFibrous()));
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadout, Efficiencies.class);

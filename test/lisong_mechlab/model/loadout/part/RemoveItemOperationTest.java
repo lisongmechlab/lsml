@@ -10,7 +10,7 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
@@ -23,16 +23,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveItemOperationTest{
    @Mock
-   private LoadoutPart loadoutPart;
+   private LoadoutPart  loadoutPart;
    @Mock
-   private Loadout loadout;
+   private Loadout      loadout;
    @Mock
-   private Upgrades upgrades;
+   private Upgrades     upgrades;
    @Mock
-   private MessageXBar xBar;
+   private MessageXBar  xBar;
    @Mock
    private InternalPart internalPart;
-   
+
    @Before
    public void setup(){
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);

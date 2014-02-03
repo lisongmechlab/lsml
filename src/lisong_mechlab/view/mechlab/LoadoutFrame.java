@@ -59,12 +59,12 @@ import lisong_mechlab.view.graphs.DamageGraph;
 import lisong_mechlab.view.render.ItemRenderer;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
-   private static final String    CMD_UNDO_LOADOUT   = "undo loadout";
-   private static final String    CMD_RENAME_LOADOUT = "rename loadout";
-   private static final String    CMD_SAVE_TO_GARAGE = "add to garage";
-   private static final long      serialVersionUID   = -9181002222136052106L;
-   private static int             openFrameCount     = 0;
-   private static final int       xOffset            = 30, yOffset = 30;
+   private static final String    CMD_UNDO_LOADOUT      = "undo loadout";
+   private static final String    CMD_RENAME_LOADOUT    = "rename loadout";
+   private static final String    CMD_SAVE_TO_GARAGE    = "add to garage";
+   private static final long      serialVersionUID      = -9181002222136052106L;
+   private static int             openFrameCount        = 0;
+   private static final int       xOffset               = 30, yOffset = 30;
    private final Loadout          loadout;
    private final MessageXBar      xbar;
    private final OperationStack   loadoutOperationStack = new OperationStack(128);
@@ -146,7 +146,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    public Loadout getLoadout(){
       return loadout;
    }
-   
+
    public OperationStack getOpStack(){
       return loadoutOperationStack;
    }
@@ -168,7 +168,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       // Right Arm
       {
          final JPanel subPanel = new JPanel();
-         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));                  
+         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
          subPanel.add(symmetricArmor);
          symmetricArmor.setAlignmentX(LEFT_ALIGNMENT);
          subPanel.add(Box.createVerticalStrut(50 - symmHeight - 3));

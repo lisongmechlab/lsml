@@ -35,7 +35,7 @@ import org.junit.Test;
  */
 public class HeatDissipationTest{
    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-   private HeatDissipation            cut= new HeatDissipation(mlc.loadout, null);
+   private HeatDissipation            cut = new HeatDissipation(mlc.loadout, null);
 
    /**
     * The heat dissipation of a 'mech is dependent on the heat sink types. > For single heat sinks it is simply the
@@ -72,7 +72,7 @@ public class HeatDissipationTest{
       when(environment.getHeat()).thenReturn(environmentHeat);
 
       cut.changeEnvironment(environment);
-      
+
       double expectedDissipation = 1.0 - environmentHeat;
       assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);
    }

@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ public class EnergyWeaponTest{
 
    @Test
    public void testCompare_flamers_flamers(){
-         EnergyWeapon weapon = (EnergyWeapon)ItemDB.lookup("FLAMER");        
-         assertEquals(0, weapon.compareTo(weapon));
+      EnergyWeapon weapon = (EnergyWeapon)ItemDB.lookup("FLAMER");
+      assertEquals(0, weapon.compareTo(weapon));
    }
 }
