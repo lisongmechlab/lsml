@@ -20,7 +20,6 @@
 package lisong_mechlab.model.loadout.export;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +38,9 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutPart;
 import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
@@ -86,7 +87,10 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @Override
    public byte[] encode(final Loadout aLoadout) throws EncodingException{
-      final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
+      // FIXME
+      throw new EncodingException("Protocol version 1 encoding is no longer allowed. Please update to 1.3.3 when it is out");
+      //@formatter:off
+      /*final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
 
       // Write header (32 bits)
       {
@@ -149,6 +153,8 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          }
       }
       return buffer.toByteArray();
+      */
+      //@formatter:on
    }
 
    @Override
@@ -206,6 +212,13 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          for(Part part : partOrder){
             Integer v;
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
+               Item item = ItemDB.lookup(v);
+               if( item instanceof MissileWeapon && loadout.getUpgrades().hasArtemis() ){
+                  MissileWeapon weapon = (MissileWeapon)item;
+                  if( weapon.isArtemisCapable() ){
+                     item = ItemDB.lookup(weapon.getName() + " + ARTEMIS");
+                  }
+               }
                loadout.getPart(part).addItem(ItemDB.lookup(v), false);
             }
          }
@@ -223,6 +236,40 @@ public class LoadoutCoderV1 implements LoadoutCoder{
     * Will process the stock builds and generate statistics and dump it to a file.
     */
    public static void main(String[] arg) throws Exception{
+      // generateAllLoadouts();
+      // generateStatsFromStock();
+   }
+
+   @SuppressWarnings("unused")
+   private static void generateAllLoadouts() throws Exception{
+      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+      MessageXBar anXBar = new MessageXBar();
+      UndoStack anUndoStack = new UndoStack(anXBar, 0);
+
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(anXBar, anUndoStack);
+
+      for(Chassi chassi : chassii){
+         Loadout loadout = new Loadout(chassi, anXBar, anUndoStack);
+         loadout.loadStock();
+
+         for(LoadoutPart part : loadout.getPartLoadOuts()){
+            for(Item item : new ArrayList<>(part.getItems())){
+               if( item.getName().toLowerCase().contains("artemis") ){
+                  part.removeItem(item, false);
+                  part.addItem(ItemDB.lookup(item.getName().substring(0, item.getName().indexOf(" + ARTEMIS"))), false);
+               }
+            }
+         }
+
+         System.out.println("[" + chassi.getName() + "]=" + coder.encodeLSML(loadout));
+      }
+   }
+
+   @SuppressWarnings("unused")
+   private static void generateStatsFromStock() throws Exception{
       List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));

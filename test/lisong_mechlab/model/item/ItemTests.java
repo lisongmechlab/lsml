@@ -118,6 +118,11 @@ public class ItemTests{
       assertEquals(0.2, std180.getHeat(), 0.0);
       assertEquals(0.2, xl330.getHeat(), 0.0);
       assertEquals(0.2, xl335.getHeat(), 0.0);
+      
+      assertEquals(EngineType.STD, std175.getType());
+      assertEquals(EngineType.STD, std175.getType());
+      assertEquals(EngineType.XL, std175.getType());
+      assertEquals(EngineType.XL, std175.getType());
    }
 
    /**

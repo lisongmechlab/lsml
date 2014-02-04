@@ -38,6 +38,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
 import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
@@ -407,17 +408,36 @@ public class LoadoutPart implements MessageXBar.Reader{
          else if( msg.msg == Upgrades.Message.ChangeMsg.GUIDANCE ){
             boolean changed = false;
 
-            for(AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)){
+            for(MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)){
                Upgrades oldUpgrades = new Upgrades(null);
                oldUpgrades.setArtemis(!loadout.getUpgrades().hasArtemis());
+
                Ammunition oldAmmoType = weapon.getAmmoType(oldUpgrades);
                Ammunition newAmmoType = weapon.getAmmoType(loadout.getUpgrades());
-               if( oldAmmoType == newAmmoType )
-                  continue;
+               if( oldAmmoType != newAmmoType ){
+                  while( items.remove(oldAmmoType) ){
+                     items.add(newAmmoType);
+                     changed = true;
+                  }
+               }
 
-               while( items.remove(oldAmmoType) ){
-                  items.add(newAmmoType);
-                  changed = true;
+               if( weapon.isArtemisCapable() ){
+                  MissileWeapon newWeapon = null;
+                  if( loadout.getUpgrades().hasArtemis() && !weapon.getName().contains("ARTEMIS")){ // Now with artemis
+                     newWeapon = (MissileWeapon)ItemDB.lookup(weapon.getName() + " + ARTEMIS");
+
+                     while( items.remove(weapon) ){
+                        items.add(newWeapon);
+                        changed = true;
+                     }
+                  }else if(!loadout.getUpgrades().hasArtemis() && weapon.getName().contains("ARTEMIS")) {
+                     newWeapon = (MissileWeapon)ItemDB.lookup(weapon.getName().substring(0, weapon.getName().indexOf(" + ARTEMIS")));
+
+                     while( items.remove(weapon) ){
+                        items.add(newWeapon);
+                        changed = true;
+                     }
+                  }
                }
             }
             if( changed )
