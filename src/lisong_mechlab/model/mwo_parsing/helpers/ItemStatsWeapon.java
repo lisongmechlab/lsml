@@ -75,4 +75,8 @@ public class ItemStatsWeapon extends ItemStats{
    }
 
    public WeaponStatsTag WeaponStats;
+   
+   // Special case handling of inherit from
+   @XStreamAsAttribute
+   public int InheritFrom;
 }

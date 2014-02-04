@@ -77,7 +77,7 @@ public class Localization{
       catch( IOException e1 ){
          throw new RuntimeException("Couldn't load data files!", e1);
       }
-      File[] files = new File[] {new File("Game/Localized/Languages/Loc.xml")};
+      File[] files = new File[] {new File("Game/Localized/Languages/TheRealLoc.xml")};
       /*
        * , new File("Game/Localized/Languages/ui_Mech_Loc.xml"), new File("Game/Localized/Languages/General.xml"), new
        * File("Game/Localized/Languages/Mechlab.xml"), new File("Game/Localized/Languages/text_ui_menus.xml")};
