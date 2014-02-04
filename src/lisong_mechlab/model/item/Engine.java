@@ -38,7 +38,7 @@ public class Engine extends HeatSource{
       int hs = aStatsModule.EngineStats.heatsinks;
       internalHs = Math.min(10, hs);
       heatsinkslots = hs - internalHs;
-      type = (aStatsModule.EngineStats.slots == 12) ? (EngineType.XL) : (EngineType.STD);
+      type = (getName().toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
       rating = aStatsModule.EngineStats.rating;
    }
 
