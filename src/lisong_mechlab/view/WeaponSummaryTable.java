@@ -264,7 +264,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
          Weapon protoWeapon = entry.getWeapons().get(0);
          String weaponName = protoWeapon.getShortName(loadout.getUpgrades());
          if( protoWeapon.getName().toLowerCase().contains("srm") || protoWeapon.getName().toLowerCase().contains("lrm") ){
-            Pattern pattern = Pattern.compile("(\\D+)(\\d+)");
+            Pattern pattern = Pattern.compile("(\\D+)(\\d+).*");
             String prefix = null;
             int size = 0;
             for(Weapon weapon : entry.getWeapons()){

@@ -20,13 +20,14 @@
 package lisong_mechlab.model.item;
 
 import java.util.Comparator;
+import java.util.jar.Attributes.Name;
 
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class MissileWeapon extends AmmoWeapon{
-   private static final String ARTEMIS = " + ARTEMIS";
+   //private static final String ARTEMIS = " + ARTEMIS";
    protected final double      flightSpeed;
    protected final Ammunition  artemisAmmo;
 
@@ -51,22 +52,24 @@ public class MissileWeapon extends AmmoWeapon{
 
    @Override
    public int getNumCriticalSlots(Upgrades aUpgrades){
-      if( aUpgrades != null && aUpgrades.hasArtemis() && isArtemisCapable() )
+      // TODO: Ugly fix
+      if( getName().contains("ARTEMIS") || ( aUpgrades != null && aUpgrades.hasArtemis() && isArtemisCapable() ))
          return super.getNumCriticalSlots(aUpgrades) + 1;
       return super.getNumCriticalSlots(aUpgrades);
    }
 
    @Override
    public double getMass(Upgrades aUpgrades){
-      if( aUpgrades != null && aUpgrades.hasArtemis() && isArtemisCapable() )
+      // TODO: Ugly fix
+      if( getName().contains("ARTEMIS") || (aUpgrades != null && aUpgrades.hasArtemis() && isArtemisCapable() ))
          return super.getMass(aUpgrades) + 1.0;
       return super.getMass(aUpgrades);
    }
 
    @Override
    public String getName(Upgrades aUpgrades){
-      if( aUpgrades != null && aUpgrades.hasArtemis() && isArtemisCapable() )
-         return super.getName() + ARTEMIS;
+//      if( aUpgrades != null && aUpgrades.hasArtemis() && isArtemisCapable() )
+//         return super.getName() + ARTEMIS;
       return super.getName();
    }
 
@@ -75,19 +78,6 @@ public class MissileWeapon extends AmmoWeapon{
       if( aUpgrades != null && aUpgrades.hasArtemis() && isArtemisCapable() )
          return artemisAmmo;
       return super.getAmmoType(aUpgrades);
-   }
-
-   /**
-    * Canonizes an item name with respect to MissileWeapon specifics.
-    * 
-    * @param name
-    *           The item name to canonize
-    * @return A canonized version of the argument.
-    */
-   static public String canonize(String name){
-      if( name.endsWith(ARTEMIS) )
-         return name.replace(ARTEMIS, "");
-      return name;
    }
 
    public boolean isArtemisCapable(){
