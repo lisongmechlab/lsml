@@ -3,7 +3,7 @@
     <?define g_fname = "Li Song Mechlab"?>
     <?define g_sname = "LSML"?>
     <?define g_mfg = "Li-Soft"?>
-    <?define g_version = "1.3.1"?>
+    <?define g_version = "1.3.3"?>
     <!-- <?define g_64bit = "yes"?> -->
     
     <?if $(var.g_64bit) = yes ?>

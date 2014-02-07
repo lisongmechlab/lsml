@@ -39,10 +39,14 @@ public class Base64LoadoutCoder{
    private static final String            LSML_PROTOCOL   = "lsml://";
    private static final String            LSML_TRAMPOLINE = "http://t.li-soft.org/?l=";
    private final transient LoadoutCoderV1 coderV1;
+   private final transient LoadoutCoderV2 coderV2;
+   private final transient LoadoutCoder   preferredEncoder;
    private final transient Base64         base64;
 
    public Base64LoadoutCoder(MessageXBar anXBar, UndoStack anUndoStack){
       coderV1 = new LoadoutCoderV1(anXBar, anUndoStack);
+      coderV2 = new LoadoutCoderV2(anXBar, anUndoStack);
+      preferredEncoder = coderV2;
       base64 = new Base64();
    }
 
@@ -68,7 +72,18 @@ public class Base64LoadoutCoder{
             throw new DecodingException("The string [" + aUrl + "] is invalid!");
          }
       }
-      return coderV1.decode(base64.decode(url.toCharArray()));
+
+      byte[] bitstream = base64.decode(url.toCharArray());
+
+      if( coderV1.canDecode(bitstream) ){
+         return coderV1.decode(bitstream);
+      }
+      else if( coderV2.canDecode(bitstream) ){
+         return coderV2.decode(bitstream);
+      }
+      else{
+         throw new DecodingException("No suitable decoder found to decode : " + aUrl + " with!");
+      }
    }
 
    /**
@@ -81,7 +96,7 @@ public class Base64LoadoutCoder{
     *            Thrown if encoding failed for some reason. Shouldn't happen.
     */
    public String encodeLSML(Loadout aLoadout) throws EncodingException{
-      return LSML_PROTOCOL + String.valueOf(base64.encode(coderV1.encode(aLoadout)));
+      return LSML_PROTOCOL + String.valueOf(base64.encode(preferredEncoder.encode(aLoadout)));
    }
 
    /**
@@ -95,6 +110,6 @@ public class Base64LoadoutCoder{
     * @throws UnsupportedEncodingException
     */
    public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException, UnsupportedEncodingException{
-      return LSML_TRAMPOLINE + URLEncoder.encode(String.valueOf(base64.encode(coderV1.encode(aLoadout))), "UTF-8");
+      return LSML_TRAMPOLINE + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
    }
 }
