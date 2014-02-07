@@ -20,6 +20,7 @@
 package lisong_mechlab.view;
 
 import java.awt.Component;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -35,6 +36,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.mechlab.ItemLabel;
 import lisong_mechlab.view.mechlab.PartList;
@@ -67,9 +69,19 @@ public class ItemTransferHandler extends TransferHandler{
          for(Pair<Item, Integer> it : sourceItems){
             sourcePart.removeItem(it.first, true);
          }
-         setDragImage(ItemRenderer.render(sourceItems.get(0).first, sourcePart.getLoadout().getUpgrades()));
-         Point mouse = partList.getMousePosition();
-         mouse.y -= partList.getFixedCellHeight() * sourceItems.get(0).second;
+         Item item = sourceItems.get(0).first;
+         //int clickedSlot = sourceItems.get(0).second;
+         Upgrades upgrades = sourcePart.getLoadout().getUpgrades();
+         Image image = ItemRenderer.render(item, upgrades);
+         setDragImage(image);
+         // Apparently partList.getMousePosition() is slow to react and returns
+         // null for quick moves, do it this way instead.
+         /*Point mouse = MouseInfo.getPointerInfo().getLocation();
+         Point comploc = partList.getLocationOnScreen();
+         mouse.x -= comploc.x;
+         mouse.y -= comploc.y;
+         mouse.y -= partList.getFixedCellHeight() * clickedSlot;*/
+         Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
          setDragImageOffset(mouse);
          return new StringSelection(buff.toString());
       }
