@@ -241,7 +241,6 @@ public class ItemTests{
    /**
     * There must be heat sinks in the item database
     */
-   @SuppressWarnings("null")
    @Test
    public void testHeatsinks(){
       Collection<HeatSink> heatsinks = ItemDB.lookup(HeatSink.class);
