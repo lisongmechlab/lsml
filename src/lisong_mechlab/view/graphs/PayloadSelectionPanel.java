@@ -42,11 +42,11 @@ import javax.swing.event.ListSelectionListener;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.loadout.OperationStack;
-import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
+import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
 import lisong_mechlab.model.upgrades.SetFerroFibrousOperation;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.graphs.PayloadGraphPanel.Entry;
 
 /**

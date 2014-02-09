@@ -114,7 +114,7 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
       JPanel engineXlItems = new JPanel(new ModifiedFlowLayout());
       engineXlItems.setBorder(BorderFactory.createTitledBorder("Engine - XL"));
       for(Item item : items){
-         ItemLabel itemLabel = new ItemLabel(item, this, infoPanel);
+         ItemLabel itemLabel = new ItemLabel(item, this, infoPanel, aXBar);
          if( item instanceof Ammunition ){
             Ammunition ammunition = (Ammunition)item;
             switch( ammunition.getWeaponHardpointType() ){

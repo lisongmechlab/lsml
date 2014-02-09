@@ -20,7 +20,7 @@
 package lisong_mechlab.model.garage;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * This operation adds a new {@link Loadout} to a {@link MechGarage}.

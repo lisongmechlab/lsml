@@ -20,10 +20,10 @@
 package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack.CompositeOperation;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.CompositeOperation;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * An abstract package local class that facilitates implementing {@link Operation}s that relate to {@link Upgrades}.

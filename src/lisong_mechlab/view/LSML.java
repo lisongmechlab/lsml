@@ -35,10 +35,10 @@ import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
 import lisong_mechlab.model.garage.MechGarage;
-import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.SwingHelpers;
 import lisong_mechlab.view.action.UndoGarageAction;
 import lisong_mechlab.view.graphs.PayloadSelectionPanel;

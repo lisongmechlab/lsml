@@ -20,10 +20,10 @@
 package lisong_mechlab.model.loadout.part;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * This {@link Operation} will change the armor of a {@link LoadoutPart}.

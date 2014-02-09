@@ -45,7 +45,7 @@ import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.metrics.TopSpeed;
+import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.view.mechlab.PartPanel;
 import lisong_mechlab.view.render.StyleManager;
 

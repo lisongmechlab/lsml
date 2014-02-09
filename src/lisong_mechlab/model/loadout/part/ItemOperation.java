@@ -25,10 +25,10 @@ import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * A helper class for implementing {@link Operation}s that affect items on a {@link LoadoutPart}.

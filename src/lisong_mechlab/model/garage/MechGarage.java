@@ -28,9 +28,9 @@ import java.util.Collections;
 import java.util.List;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.OperationStack.Operation;
 
 import com.thoughtworks.xstream.XStream;
 

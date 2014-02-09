@@ -26,10 +26,10 @@ import java.util.Iterator;
 
 import javax.swing.JCheckBox;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.Chassi;
-import lisong_mechlab.model.loadout.Efficiencies;
-import lisong_mechlab.model.loadout.metrics.PayloadStatistics;
-import lisong_mechlab.model.loadout.metrics.TopSpeed;
+import lisong_mechlab.model.metrics.PayloadStatistics;
+import lisong_mechlab.model.metrics.TopSpeed;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;

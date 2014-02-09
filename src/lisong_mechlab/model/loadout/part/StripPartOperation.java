@@ -23,9 +23,9 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.OperationStack.CompositeOperation;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.CompositeOperation;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * This {@link Operation} will remove all items and armor of this component.

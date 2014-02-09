@@ -57,7 +57,12 @@ public class RoundedBorders extends AbstractBorder{
    /**
     * Will paint the border using the given color <a href="http://www.w3.org/TR/CSS2/images/boxdim.png">box model</a>
     * 
-    * @param color
+    * @param aMargin
+    *           The margin to have outside of the rounded border.
+    * @param aPadding
+    *           The padding to have inside of the rounded border for text displayed.
+    * @param aRadii
+    *           The radius of the borders corners.
     */
    public RoundedBorders(int aMargin, int aPadding, int aRadii){
       this(new Insets(aMargin, aMargin, aMargin, aMargin), new Insets(aPadding, aPadding, aPadding, aPadding), aRadii, false, false);

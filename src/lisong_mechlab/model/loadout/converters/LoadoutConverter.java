@@ -19,11 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.upgrades.SetArtemisOperation;
 import lisong_mechlab.model.upgrades.SetDHSOperation;
@@ -31,6 +30,7 @@ import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
 import lisong_mechlab.model.upgrades.SetFerroFibrousOperation;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

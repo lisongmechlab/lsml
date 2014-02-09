@@ -39,13 +39,16 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
+import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.garage.MechGarage;
-import lisong_mechlab.model.loadout.DynamicSlotDistributor;
+import lisong_mechlab.model.loadout.LoadStockOperation;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack;
+import lisong_mechlab.model.loadout.StripArmorOperation;
+import lisong_mechlab.model.loadout.StripOperation;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.SwingHelpers;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.AddToGarageAction;
@@ -255,7 +258,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          @Override
          public void actionPerformed(ActionEvent aArg0){
             try{
-               loadoutOperationStack.pushAndApply(loadout.new LoadStockOperation());
+               loadoutOperationStack.pushAndApply(new LoadStockOperation(loadout, xbar));
             }
             catch( Exception e ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't load stock loadout! Error: " + e.getMessage());
@@ -266,7 +269,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(createMenuItem("Strip mech", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
-            loadoutOperationStack.pushAndApply(loadout.new StripOperation());
+            loadoutOperationStack.pushAndApply(new StripOperation(loadout, xbar));
          }
       }));
 
@@ -280,17 +283,17 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(createMenuItem("Strip Armor", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
-            loadoutOperationStack.pushAndApply(loadout.new StripArmorOperation());
+            loadoutOperationStack.pushAndApply(new StripArmorOperation(loadout, xbar));
          }
       }));
 
       {
          JMenu subMenu = new JMenu("Max Armor");
          menu.add(subMenu);
-         subMenu.add(new JMenuItem(new MaxArmorAction("3:1", this, 3)));
-         subMenu.add(new JMenuItem(new MaxArmorAction("5:1", this, 5)));
-         subMenu.add(new JMenuItem(new MaxArmorAction("10:1", this, 10)));
-         subMenu.add(new JMenuItem(new MaxArmorAction("Custom...", this, -1)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("3:1", this, 3, xbar)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("5:1", this, 5, xbar)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("10:1", this, 10, xbar)));
+         subMenu.add(new JMenuItem(new MaxArmorAction("Custom...", this, -1, xbar)));
       }
       return menu;
    }

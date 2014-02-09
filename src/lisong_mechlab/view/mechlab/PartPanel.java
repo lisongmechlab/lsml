@@ -36,14 +36,14 @@ import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultFormatter;
 
+import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Hardpoint;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
-import lisong_mechlab.model.loadout.DynamicSlotDistributor;
-import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.render.ItemRenderer;
 import lisong_mechlab.view.render.RoundedBorders;
