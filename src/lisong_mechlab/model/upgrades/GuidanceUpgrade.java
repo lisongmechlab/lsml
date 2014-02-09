@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
@@ -111,5 +112,23 @@ public class GuidanceUpgrade extends Upgrade{
          }
       }
       return ans;
+   }
+
+   /**
+    * @param aOldWeapon
+    * @return
+    */
+   public MissileWeapon upgrade(MissileWeapon aOldWeapon){
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   /**
+    * @param aOldAmmo
+    * @return
+    */
+   public Ammunition upgrade(Ammunition aOldAmmo){
+      // TODO Auto-generated method stub
+      return null;
    }
 }

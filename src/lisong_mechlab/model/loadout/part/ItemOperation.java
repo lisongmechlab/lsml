@@ -35,9 +35,9 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 abstract class ItemOperation extends Operation{
-   private int                 numEngineHS = 0;
-   protected final LoadoutPart loadoutPart;
-   private MessageXBar         xBar;
+   private int                   numEngineHS = 0;
+   protected final LoadoutPart   loadoutPart;
+   private transient MessageXBar xBar;
 
    /**
     * Creates a new {@link ItemOperation}. The deriving classes shall throw if the the operation with the given item
@@ -51,6 +51,24 @@ abstract class ItemOperation extends Operation{
    ItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart){
       loadoutPart = aLoadoutPart;
       xBar = anXBar;
+   }
+
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((loadoutPart == null) ? 0 : loadoutPart.hashCode());
+      result = prime * result + numEngineHS;
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if(!(obj instanceof ItemOperation))
+         return false;
+      
+      ItemOperation other = (ItemOperation)obj;
+      return loadoutPart == other.loadoutPart;
    }
 
    /**

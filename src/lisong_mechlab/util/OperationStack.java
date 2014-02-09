@@ -94,6 +94,39 @@ public class OperationStack{
             it.previous().undo();
          }
       }
+
+      @Override
+      public int hashCode(){
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((desciption == null) ? 0 : desciption.hashCode());
+         result = prime * result + ((operations == null) ? 0 : operations.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj){
+         if( this == obj )
+            return true;
+         if( obj == null )
+            return false;
+         if( !(obj instanceof CompositeOperation) )
+            return false;
+         CompositeOperation other = (CompositeOperation)obj;
+         if( desciption == null ){
+            if( other.desciption != null )
+               return false;
+         }
+         else if( !desciption.equals(other.desciption) )
+            return false;
+         if( operations == null ){
+            if( other.operations != null )
+               return false;
+         }
+         else if( !operations.equals(other.operations) )
+            return false;
+         return true;
+      }
    }
 
    private final List<Operation> actions   = new LinkedList<>();

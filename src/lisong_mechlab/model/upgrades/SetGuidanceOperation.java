@@ -21,7 +21,6 @@ package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
@@ -86,37 +85,42 @@ public class SetGuidanceOperation extends UpgradeOperation{
 
    protected void set(GuidanceUpgrade aValue){
       if( aValue != upgrades.getGuidance() ){
-         GuidanceUpgrade old = upgrades.getGuidance();
-         upgrades.setGuidance(aValue);
-
-         try{
-            verifyLoadoutInvariant();
-         }
-         catch( Exception e ){
-            upgrades.setGuidance(old);
-            throw new IllegalArgumentException("Couldn't change artemis: ", e);
-         }
-
          if( loadout != null ){
-            for(MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)){
-               upgrades.setGuidance(old);
-               Ammunition oldAmmo = weapon.getAmmoType(upgrades);
-               upgrades.setGuidance(aValue);
-               Ammunition newAmmo = weapon.getAmmoType(upgrades);
-               if( oldAmmo == newAmmo ){
-                  continue;
-               }
-               for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
-                  for(Item item : loadoutPart.getItems()){
-                     if( item == oldAmmo ){
-                        addOp(new RemoveItemOperation(xBar, loadoutPart, oldAmmo));
-                        addOp(new AddItemOperation(xBar, loadoutPart, newAmmo));
+            if( aValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree() )
+               throw new IllegalArgumentException("Too few critical slots available in loadout!");
+
+            for(LoadoutPart part : loadout.getPartLoadOuts()){
+               if( aValue.getExtraSlots(part) > part.getNumCriticalSlotsFree() )
+                  throw new IllegalArgumentException("Too few critical slots available in " + part.getInternalPart().getType() + "!");
+            }
+
+            if( aValue.getExtraTons(loadout) > loadout.getFreeMass() ){
+               throw new IllegalArgumentException("Too heavy to add artmemis!");
+            }
+
+            for(LoadoutPart part : loadout.getPartLoadOuts()){
+               for(Item item : part.getItems()){
+                  if( item instanceof MissileWeapon ){
+                     MissileWeapon oldWeapon = (MissileWeapon)item;
+                     MissileWeapon newWeapon = aValue.upgrade(oldWeapon);
+                     if( oldWeapon != newWeapon ){
+                        addOp(new RemoveItemOperation(xBar, part, oldWeapon));
+                        addOp(new AddItemOperation(xBar, part, newWeapon));
+                     }
+                  }
+                  else if( item instanceof Ammunition ){
+                     Ammunition oldAmmo = (Ammunition)item;
+                     Ammunition newAmmo = aValue.upgrade(oldAmmo);
+                     if( oldAmmo != newAmmo ){
+                        addOp(new RemoveItemOperation(xBar, part, oldAmmo));
+                        addOp(new AddItemOperation(xBar, part, newAmmo));
                      }
                   }
                }
-               // TODO: Change launchers!
             }
          }
+
+         upgrades.setGuidance(aValue);
 
          if( xBar != null )
             xBar.post(new Message(ChangeMsg.GUIDANCE, upgrades));
