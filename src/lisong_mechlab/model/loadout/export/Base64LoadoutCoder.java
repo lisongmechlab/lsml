@@ -1,4 +1,26 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout.export;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.Base64;
@@ -13,12 +35,17 @@ import lisong_mechlab.util.MessageXBar;
  * @author Li Song
  */
 public class Base64LoadoutCoder{
-   private static final String            LSML_PROTOCOL = "lsml://";
+   private static final String            LSML_PROTOCOL   = "lsml://";
+   private static final String            LSML_TRAMPOLINE = "http://t.li-soft.org/?l=";
    private final transient LoadoutCoderV1 coderV1;
+   private final transient LoadoutCoderV2 coderV2;
+   private final transient LoadoutCoder   preferredEncoder;
    private final transient Base64         base64;
 
    public Base64LoadoutCoder(MessageXBar anXBar){
       coderV1 = new LoadoutCoderV1(anXBar);
+      coderV2 = new LoadoutCoderV2(anXBar);
+      preferredEncoder = coderV2;
       base64 = new Base64();
    }
 
@@ -44,11 +71,22 @@ public class Base64LoadoutCoder{
             throw new DecodingException("The string [" + aUrl + "] is invalid!");
          }
       }
-      return coderV1.decode(base64.decode(url.toCharArray()));
+
+      byte[] bitstream = base64.decode(url.toCharArray());
+
+      if( coderV1.canDecode(bitstream) ){
+         return coderV1.decode(bitstream);
+      }
+      else if( coderV2.canDecode(bitstream) ){
+         return coderV2.decode(bitstream);
+      }
+      else{
+         throw new DecodingException("No suitable decoder found to decode : " + aUrl + " with!");
+      }
    }
 
    /**
-    * Will encode a given {@link Loadout} into a Base64 {@link String}.
+    * Will encode a given {@link Loadout} into a LSML protocol {@link String}.
     * 
     * @param aLoadout
     *           The {@link Loadout} to encode.
@@ -56,7 +94,21 @@ public class Base64LoadoutCoder{
     * @throws EncodingException
     *            Thrown if encoding failed for some reason. Shouldn't happen.
     */
-   public String encode(Loadout aLoadout) throws EncodingException{
-      return LSML_PROTOCOL + String.valueOf(base64.encode(coderV1.encode(aLoadout)));
+   public String encodeLSML(Loadout aLoadout) throws EncodingException{
+      return LSML_PROTOCOL + String.valueOf(base64.encode(preferredEncoder.encode(aLoadout)));
+   }
+
+   /**
+    * Will encode a given {@link Loadout} into a HTTP trampoline LSML protocol {@link String}.
+    * 
+    * @param aLoadout
+    *           The {@link Loadout} to encode.
+    * @return A HTTP URI as a {@link String} with a Base64 encoding of the {@link Loadout}.
+    * @throws EncodingException
+    *            Thrown if encoding failed for some reason. Shouldn't happen.
+    * @throws UnsupportedEncodingException
+    */
+   public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException, UnsupportedEncodingException{
+      return LSML_TRAMPOLINE + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
    }
 }

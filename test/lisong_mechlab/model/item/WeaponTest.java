@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
@@ -57,15 +76,21 @@ public class WeaponTest{
    }
 
    @Test
+   public void testGetHeat_chargeDps(){
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
+      assertEquals(gauss.getCycleTime(null) + 0.75, gauss.getSecondsPerShot(null), 0.0);
+   }
+
+   @Test
    public void testGetSecondsPerShot_mg() throws Exception{
       Weapon mg = (Weapon)ItemDB.lookup("MACHINE GUN");
-      assertTrue(mg.getSecondsPerShot() > 0.05);
+      assertTrue(mg.getSecondsPerShot(null) > 0.05);
    }
 
    @Test
    public void testGetSecondsPerShot_gauss() throws Exception{
       Weapon mg = (Weapon)ItemDB.lookup("GAUSS RIFLE");
-      assertTrue(mg.getSecondsPerShot() > 3);
+      assertTrue(mg.getSecondsPerShot(null) > 3);
    }
 
    @Test
@@ -86,13 +111,12 @@ public class WeaponTest{
       assertEquals(540.0, ppc.getRangeLong(), 0.0);
    }
 
-
    @Test
    public void testGetRangeEffectivity_mg() throws Exception{
       BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("MACHINE GUN");
       assertEquals(1.0, mg.getRangeEffectivity(0), 0.0);
-      assertEquals(1.0, mg.getRangeEffectivity(mg.getRangeLong()), 0.0);
-      assertEquals(0.5, mg.getRangeEffectivity((mg.getRangeLong() + mg.getRangeMax()) / 2), 0.0);
+      assertEquals(1.0, mg.getRangeEffectivity(mg.getRangeLong()), 0.1); // High spread on MG
+      assertTrue(0.5 >= mg.getRangeEffectivity((mg.getRangeLong() + mg.getRangeMax()) / 2)); // Spread + falloff
       assertEquals(0.0, mg.getRangeEffectivity(mg.getRangeMax()), 0.0);
    }
 
@@ -111,7 +135,7 @@ public class WeaponTest{
    @Test
    public void testGetStat_gauss() throws Exception{
       BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      assertEquals(gauss.getDamagePerShot() / gauss.getHeat(), gauss.getStat("d/h", null), 0.0);
+      assertEquals(gauss.getDamagePerShot() / gauss.getHeat(), gauss.getStat("d/h", null, null), 0.0);
    }
 
 }

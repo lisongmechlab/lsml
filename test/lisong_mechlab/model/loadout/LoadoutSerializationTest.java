@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
@@ -6,11 +25,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import junitparams.JUnitParamsRunner;
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
@@ -19,151 +38,41 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Efficiencies;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+/**
+ * Test suite for {@link LoadoutSerializationTest}.
+ * 
+ * @author Li Song
+ */
+@RunWith(JUnitParamsRunner.class)
 public class LoadoutSerializationTest{
    @Mock
-   MessageXBar xBar;
+   MessageXBar    xBar;
+   @Mock
+   OperationStack undoStack;
 
    @Before
    public void setup(){
       MockitoAnnotations.initMocks(this);
    }
 
-   /**
-    * We can save and load loadouts.
-    * 
-    * @throws IOException
-    */
-   @Test
-   public void testSaveLoad() throws IOException{
-      // Setup
-      Chassi chassi = ChassiDB.lookup("RVN-3L");
-      Loadout cut = new Loadout(chassi, xBar);
-
-      cut.rename("ecraven");
-      cut.getUpgrades().setDoubleHeatSinks(true);
-      cut.getUpgrades().setEndoSteel(true);
-
-      for(Part part : Part.values()){
-         if( part.isTwoSided() ){
-            cut.getPart(part).setArmor(ArmorSide.FRONT, 10);
-            cut.getPart(part).setArmor(ArmorSide.BACK, 10);
-         }
-         else{
-            cut.getPart(part).setArmor(ArmorSide.ONLY, 10);
-         }
-      }
-
-      cut.getPart(Part.CenterTorso).addItem(ItemDB.lookup("XL ENGINE 290"));
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("GUARDIAN ECM"));
-      cut.getPart(Part.CenterTorso).addItem(ItemDB.DHS);
-
-      cut.getPart(Part.RightArm).addItem(ItemDB.lookup("MED PULSE LASER"));
-      cut.getPart(Part.RightArm).addItem(ItemDB.lookup("MED PULSE LASER"));
-
-      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("TAG"));
-      cut.getPart(Part.RightTorso).addItem(ItemDB.lookup("STREAK SRM 2"));
-
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.AMS);
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("AMS AMMO"));
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("STREAK SRM AMMO"));
-      cut.getPart(Part.LeftTorso).addItem(ItemDB.lookup("STREAK SRM AMMO"));
-
-      // cut.getInternalPartLoadout(InternalPartType.LeftArm).addItem(ItemDB.lookup("STREAK SRM 2")); // TODO: Add when
-      // we can handle endo steel/ferrofib
-
-      // Execute
-      File testFile = new File("test.xml");
-      cut.save(testFile);
-      Loadout loaded = Loadout.load(testFile, xBar);
-
-      // Verify
-      assertEquals("ecraven", loaded.getName());
-      assertTrue(loaded.getUpgrades().hasDoubleHeatSinks());
-      assertTrue(loaded.getUpgrades().hasEndoSteel());
-
-      for(Part part : Part.values()){
-         if( part.isTwoSided() ){
-            assertEquals(10, loaded.getPart(part).getArmor(ArmorSide.FRONT));
-            assertEquals(10, loaded.getPart(part).getArmor(ArmorSide.BACK));
-         }
-         else{
-            assertEquals(10, loaded.getPart(part).getArmor(ArmorSide.ONLY));
-         }
-      }
-
-      // CT:
-      {
-         LoadoutPart part = loaded.getPart(Part.CenterTorso);
-         List<Item> items = new ArrayList<Item>(part.getItems());
-
-         assertTrue(items.remove(ItemDB.lookup("XL ENGINE 290")));
-         assertTrue(items.remove(ItemDB.DHS));
-
-         assertEquals(1, part.getNumEngineHeatsinks());
-
-         assertOnlyInternals(items);
-         assertEquals(1, items.size());
-      }
-
-      // RA:
-      {
-         LoadoutPart part = loaded.getPart(Part.RightArm);
-         List<Item> items = new ArrayList<Item>(part.getItems());
-
-         assertTrue(items.remove(ItemDB.lookup("MED PULSE LASER")));
-         assertTrue(items.remove(ItemDB.lookup("MED PULSE LASER")));
-
-         assertOnlyInternals(items);
-         assertEquals(2, items.size());
-      }
-
-      // LA:
-      {
-         LoadoutPart part = loaded.getPart(Part.LeftArm);
-         List<Item> items = new ArrayList<Item>(part.getItems());
-
-         // assertTrue(items.remove(ItemDB.lookup("STREAK SRM 2")));
-
-         assertOnlyInternals(items);
-         assertEquals(2, items.size());
-      }
-
-      // RT:
-      {
-         LoadoutPart part = loaded.getPart(Part.RightTorso);
-         List<Item> items = new ArrayList<Item>(part.getItems());
-
-         assertTrue(items.remove(ItemDB.lookup("TAG")));
-         assertTrue(items.remove(ItemDB.lookup("STREAK SRM 2")));
-
-         assertOnlyInternals(items);
-         assertEquals(1, items.size()); // xl engine
-      }
-
-      // LT:
-      {
-         LoadoutPart part = loaded.getPart(Part.LeftTorso);
-         List<Item> items = new ArrayList<Item>(part.getItems());
-
-         assertTrue(items.remove(ItemDB.lookup("GUARDIAN ECM")));
-         assertTrue(items.remove(ItemDB.AMS));
-         assertTrue(items.remove(ItemDB.lookup("AMS AMMO")));
-         assertTrue(items.remove(ItemDB.lookup("STREAK SRM AMMO")));
-         assertTrue(items.remove(ItemDB.lookup("STREAK SRM AMMO")));
-
-         assertOnlyInternals(items);
-         assertEquals(1, items.size()); // xl engine
-      }
+   @SuppressWarnings("unused")
+   private Object[] allChassisL(){
+      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+      return chassii.toArray();
    }
 
    /**
@@ -190,63 +99,10 @@ public class LoadoutSerializationTest{
       assertFalse(efficiencies.hasHeatContainment());
       assertFalse(efficiencies.hasSpeedTweak());
 
-      assertFalse(cut.getUpgrades().hasArtemis());
-      assertFalse(cut.getUpgrades().hasEndoSteel());
-      assertFalse(cut.getUpgrades().hasFerroFibrous());
-      assertFalse(cut.getUpgrades().hasDoubleHeatSinks());
-   }
-
-   @Test
-   public void testLoadSavedLoadout() throws Exception{
-      Loadout cut = new Loadout("AS7-D-DC", xBar);
-
-      File aFile = new File("test_Ddc7.xml");
-      aFile.deleteOnExit();
-      cut.save(aFile);
-
-      Loadout.load(aFile, xBar); // Does not throw
-
-      // TODO: Check that the same loadout was loaded
-   }
-
-   /**
-    * Loading stock configuration shall succeed even if the loadout isn't empty to start with.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testLoadStockTwice() throws Exception{
-      Loadout cut = new Loadout("JR7-F", xBar);
-      cut.loadStock();
-   }
-
-   /**
-    * All stock builds should be loadable without error!
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testStockLoadout() throws Exception{
-      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
-
-      for(Chassi chassi : chassii){
-         Loadout cut = new Loadout(chassi, xBar);
-         cut.loadStock();
-      }
-   }
-
-   /**
-    * {@link Loadout#Loadout(String, MessageXBar)} works even for the special names.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testStockLoadoutIlya() throws Exception{
-      Loadout cut = new Loadout("Ilya Muromets", xBar);
-      cut.loadStock();
+      assertEquals(UpgradeDB.STANDARD_GUIDANCE, cut.getUpgrades().getGuidance());
+      assertEquals(UpgradeDB.STANDARD_STRUCTURE, cut.getUpgrades().getStructure());
+      assertEquals(UpgradeDB.STANDARD_ARMOR, cut.getUpgrades().getArmor());
+      assertEquals(UpgradeDB.STANDARD_HEATSINKS, cut.getUpgrades().getHeatSink());
    }
 
    /**
@@ -269,10 +125,10 @@ public class LoadoutSerializationTest{
       assertEquals(13, cut.getNumCriticalSlotsFree()); // 13 for stock AS7-D
       assertEquals(8, cut.getPartLoadOuts().size());
 
-      assertFalse(cut.getUpgrades().hasArtemis());
-      assertFalse(cut.getUpgrades().hasEndoSteel());
-      assertFalse(cut.getUpgrades().hasFerroFibrous());
-      assertFalse(cut.getUpgrades().hasDoubleHeatSinks());
+      assertEquals(UpgradeDB.STANDARD_GUIDANCE, cut.getUpgrades().getGuidance());
+      assertEquals(UpgradeDB.STANDARD_STRUCTURE, cut.getUpgrades().getStructure());
+      assertEquals(UpgradeDB.STANDARD_ARMOR, cut.getUpgrades().getArmor());
+      assertEquals(UpgradeDB.STANDARD_HEATSINKS, cut.getUpgrades().getHeatSink());
 
       // Right leg:
       {
@@ -416,10 +272,10 @@ public class LoadoutSerializationTest{
       assertEquals(36, cut.getNumCriticalSlotsFree());
       assertEquals(8, cut.getPartLoadOuts().size());
 
-      assertFalse(cut.getUpgrades().hasArtemis());
-      assertFalse(cut.getUpgrades().hasEndoSteel());
-      assertFalse(cut.getUpgrades().hasFerroFibrous());
-      assertFalse(cut.getUpgrades().hasDoubleHeatSinks());
+      assertEquals(UpgradeDB.STANDARD_GUIDANCE, cut.getUpgrades().getGuidance());
+      assertEquals(UpgradeDB.STANDARD_STRUCTURE, cut.getUpgrades().getStructure());
+      assertEquals(UpgradeDB.STANDARD_ARMOR, cut.getUpgrades().getArmor());
+      assertEquals(UpgradeDB.STANDARD_HEATSINKS, cut.getUpgrades().getHeatSink());
 
       // Right leg:
       {

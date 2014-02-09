@@ -1,13 +1,32 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.item;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
-import lisong_mechlab.model.loadout.Upgrades;
-
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 public class ItemLookupTest{
 
@@ -54,15 +73,6 @@ public class ItemLookupTest{
 
       // Lookup by MWO name key (ducked up case)
       assertSame(expected, ItemDB.lookup("EnGine_stD_105"));
-   }
-
-   @Test
-   public void testArtemisLookup(){
-      MissileWeapon missileWeapon = (MissileWeapon)ItemDB.lookup("LRM 20");
-      Upgrades upgrades = mock(Upgrades.class);
-      when(upgrades.hasArtemis()).thenReturn(true);
-
-      assertSame(missileWeapon, ItemDB.lookup(missileWeapon.getName(upgrades)));
    }
 
    @Test(expected = IllegalArgumentException.class)

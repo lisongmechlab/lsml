@@ -1,12 +1,37 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.loadout.RenameOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.upgrades.SetGuidanceOperation;
+import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
+import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -17,11 +42,11 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 public class LoadoutConverter implements Converter{
 
    private final MessageXBar xBar;
-   
+
    public LoadoutConverter(MessageXBar anXBar){
       xBar = anXBar;
    }
-   
+
    @Override
    public boolean canConvert(Class aClass){
       return Loadout.class.isAssignableFrom(aClass);
@@ -54,32 +79,34 @@ public class LoadoutConverter implements Converter{
       String chassiVariation = aReader.getAttribute("chassi");
       String name = aReader.getAttribute("name");
       Chassi chassi = ChassiDB.lookup(chassiVariation);
-      
+
+      OperationStack stack = new OperationStack(0);
+
       Loadout loadout = new Loadout(chassi, xBar);
-      loadout.rename(name);
-      
+      stack.pushAndApply(new RenameOperation(loadout, xBar, name));
+
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
-         if("upgrades".equals(aReader.getNodeName())){
+         if( "upgrades".equals(aReader.getNodeName()) ){
             Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
-            loadout.getUpgrades().setArtemis(upgrades.hasArtemis());
-            loadout.getUpgrades().setDoubleHeatSinks(upgrades.hasDoubleHeatSinks());
-            loadout.getUpgrades().setEndoSteel(upgrades.hasEndoSteel());
-            loadout.getUpgrades().setFerroFibrous(upgrades.hasFerroFibrous());
+            stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, upgrades.getGuidance()));
+            stack.pushAndApply(new SetDHSOperation(xBar, loadout, upgrades.getHeatSink()));
+            stack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, upgrades.getStructure()));
+            stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, upgrades.getArmor()));
          }
-         else if("efficiencies".equals(aReader.getNodeName())){
+         else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadout, Efficiencies.class);
             loadout.getEfficiencies().setCoolRun(eff.hasCoolRun());
             loadout.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics());
             loadout.getEfficiencies().setHeatContainment(eff.hasHeatContainment());
             loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak());
          }
-         else if("component".equals(aReader.getNodeName())){
-            aContext.convertAnother(loadout, LoadoutPart.class, new LoadoutPartConverter(loadout));
+         else if( "component".equals(aReader.getNodeName()) ){
+            aContext.convertAnother(loadout, LoadoutPart.class, new LoadoutPartConverter(xBar, loadout));
          }
          aReader.moveUp();
       }
-      
+
       return loadout;
    }
 

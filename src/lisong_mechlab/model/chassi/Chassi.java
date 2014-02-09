@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.chassi;
 
 import java.io.File;
@@ -33,13 +52,16 @@ public class Chassi{
    private final int                     engineMax;
    private final double                  engineFactor;
    private final int                     mwoId;
+   private final double                  turnFactor;
+   private final double                  twistFactor;
 
    public Chassi(ItemStatsMech aStatsMech, GameDataFile aGameData){
       MechDefinition mdf = null;
       HardpointsXml hardpoints = null;
       MdfMech mdfMech = null;
       try{
-         mdf = MechDefinition.fromXml(aGameData.openGameFile(new File(GameDataFile.MDF_ROOT, aStatsMech.mdf)));
+         String mdfFile = aStatsMech.mdf.replace('\\', '/');
+         mdf = MechDefinition.fromXml(aGameData.openGameFile(new File(GameDataFile.MDF_ROOT, mdfFile)));
          hardpoints = HardpointsXml.fromXml(aGameData.openGameFile(new File("Game", mdf.HardpointPath)));
          mdfMech = mdf.Mech;
       }
@@ -57,6 +79,8 @@ public class Chassi{
       maxTons = mdfMech.MaxTons;
       engineFactor = mdf.MovementTuningConfiguration.MaxMovementSpeed;
       chassiclass = ChassiClass.fromMaxTons(maxTons);
+      turnFactor = mdf.MovementTuningConfiguration.TorsoTurnSpeedPitch;
+      twistFactor = mdf.MovementTuningConfiguration.TorsoTurnSpeedYaw;
 
       Map<Part, InternalPart> tempParts = new HashMap<Part, InternalPart>();
       for(MdfComponent component : mdf.ComponentList){
@@ -64,7 +88,7 @@ public class Chassi{
             continue;
          }
          final Part part = Part.fromMwoName(component.Name);
-         tempParts.put(part, new InternalPart(component, part, hardpoints));
+         tempParts.put(part, new InternalPart(component, part, hardpoints, this));
       }
       parts = Collections.unmodifiableMap(tempParts);
    }
@@ -156,5 +180,21 @@ public class Chassi{
 
    public int getMwoId(){
       return mwoId;
+   }
+
+   public boolean isSameSeries(Chassi aChassi){
+      return shortName.split("-")[0].equals(aChassi.shortName.split("-")[0]);
+   }
+
+   public boolean isSpecialVariant(){
+      return shortName.contains("(");
+   }
+
+   public double getTurnFactor(){
+      return turnFactor;
+   }
+
+   public double getTwistFactor(){
+      return twistFactor;
    }
 }
