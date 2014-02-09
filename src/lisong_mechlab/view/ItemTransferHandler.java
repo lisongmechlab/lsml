@@ -60,32 +60,27 @@ public class ItemTransferHandler extends TransferHandler{
       assert (SwingUtilities.isEventDispatchThread());
       if( aComponent instanceof PartList ){
          PartList partList = (PartList)aComponent;
-         synchronized( partList ){
 
-            List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
-            sourcePart = partList.getPart();
+         List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
+         sourcePart = partList.getPart();
 
-            if( sourceItems.size() < 1 || sourcePart == null )
-               return null;
+         if( sourceItems.size() < 1 )
+            return null;
 
-            Container f = aComponent;
-            while( !(f instanceof LoadoutFrame) ){
-               f = f.getParent();
-            }
-
-            LoadoutFrame frame = (LoadoutFrame)f;
-            StringBuffer buff = new StringBuffer();
-            for(Pair<Item, Integer> it : sourceItems){
-               buff.append(it.first.getName()).append('\n');
-               frame.getOpStack().pushAndApply(new RemoveItemOperation(ProgramInit.lsml().xBar, sourcePart, it.first));
-            }
-
-            Point mouse = partList.getMousePosition();
-            mouse.y -= partList.getFixedCellHeight() * sourceItems.get(0).second;
-            setDragImage(ItemRenderer.render(sourceItems.get(0).first, sourcePart.getLoadout().getUpgrades()));
-            setDragImageOffset(mouse);
-            return new StringSelection(buff.toString());
+         Container f = aComponent;
+         while( !(f instanceof LoadoutFrame) ){
+            f = f.getParent();
          }
+         LoadoutFrame frame = (LoadoutFrame)f;
+
+         StringBuffer buff = new StringBuffer();
+         for(Pair<Item, Integer> it : sourceItems){
+            buff.append(it.first.getName()).append('\n');
+            frame.getOpStack().pushAndApply(new RemoveItemOperation(ProgramInit.lsml().xBar, sourcePart, it.first));
+         }
+
+         setPreview(sourceItems.get(0).first, sourcePart.getLoadout());
+         return new StringSelection(buff.toString());
       }
       else if( aComponent instanceof GarageTree ){
          sourcePart = null;

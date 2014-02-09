@@ -22,7 +22,6 @@ package lisong_mechlab.model.metrics;
 import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Test;

@@ -20,7 +20,6 @@
 package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
-import lisong_mechlab.model.upgrades.ArtemisHandler;
 
 import org.junit.Test;
 

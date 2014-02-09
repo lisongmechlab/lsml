@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.metrics.TopSpeed;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

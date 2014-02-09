@@ -8,7 +8,6 @@ import java.util.List;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.metrics.RangeMetric;
 import lisong_mechlab.util.WeaponRanges;
 
 import org.junit.Before;

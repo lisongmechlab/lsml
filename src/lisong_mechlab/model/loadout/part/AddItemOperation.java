@@ -21,6 +21,7 @@ package lisong_mechlab.model.loadout.part;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.loadout.export.CompatibilityHelper;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
@@ -42,7 +43,7 @@ public class AddItemOperation extends ItemOperation{
     *           The {@link Item} to add.
     */
    public AddItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item anItem){
-      super(anXBar, aLoadoutPart, anItem);
+      super(anXBar, aLoadoutPart, CompatibilityHelper.fixArtemis(anItem, aLoadoutPart.getLoadout().getUpgrades().hasArtemis()));
       if( item instanceof Internal )
          throw new IllegalArgumentException("Can't add internals to a loadout!");
    }

@@ -23,9 +23,6 @@ import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.metrics.Metric;
-import lisong_mechlab.model.metrics.Metric;
-import lisong_mechlab.model.metrics.TwistSpeed;
 
 import org.junit.Test;
 import org.mockito.Mockito;

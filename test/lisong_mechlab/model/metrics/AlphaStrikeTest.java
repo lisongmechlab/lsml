@@ -29,7 +29,6 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.metrics.AlphaStrike;
 
 import org.junit.Before;
 import org.junit.Test;

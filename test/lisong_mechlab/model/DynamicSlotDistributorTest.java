@@ -25,9 +25,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
-import lisong_mechlab.model.DynamicSlotDistributor;
-importimport lisong_mechlab.model.loadout.DynamicSlotDistributor;
- lisong_mechlab.model.helpers.MockLoadoutContainer;
+import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 
 import org.junit.Before;

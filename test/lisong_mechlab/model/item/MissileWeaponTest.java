@@ -42,20 +42,10 @@ public class MissileWeaponTest{
     */
    @Test
    public void testGetNumCriticalSlots(){
-      for(MissileWeapon weapon : allMissileWeapons){
-         Upgrades artemis = mock(Upgrades.class);
-         when(artemis.hasArtemis()).thenReturn(true);
-         Upgrades noartemis = mock(Upgrades.class);
-         when(noartemis.hasArtemis()).thenReturn(false);
-
-         assertEquals(weapon.getNumCriticalSlots(null), weapon.getNumCriticalSlots(noartemis));
-         if( weapon.isArtemisCapable() ){
-            assertEquals(weapon.getNumCriticalSlots(noartemis) + 1, weapon.getNumCriticalSlots(artemis));
-         }
-         else{
-            assertEquals(weapon.getNumCriticalSlots(noartemis) + 0, weapon.getNumCriticalSlots(artemis));
-         }
-      }
+      MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
+      MissileWeapon srm6artemis = (MissileWeapon)ItemDB.lookup("SRM 6 + ARTEMIS");
+      
+      assertEquals(srm6artemis.getNumCriticalSlots(null), srm6.getNumCriticalSlots(null) + 1);
    }
 
    /**
@@ -63,20 +53,10 @@ public class MissileWeaponTest{
     */
    @Test
    public void testGetMass(){
-      for(MissileWeapon weapon : allMissileWeapons){
-         Upgrades artemis = mock(Upgrades.class);
-         when(artemis.hasArtemis()).thenReturn(true);
-         Upgrades noartemis = mock(Upgrades.class);
-         when(noartemis.hasArtemis()).thenReturn(false);
-
-         assertEquals(weapon.getMass(null), weapon.getMass(noartemis), 0.0);
-         if( weapon.isArtemisCapable() ){
-            assertEquals(weapon.getMass(noartemis) + 1.0, weapon.getMass(artemis), 0.0);
-         }
-         else{
-            assertEquals(weapon.getMass(noartemis) + 0.0, weapon.getMass(artemis), 0.0);
-         }
-      }
+      MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
+      MissileWeapon srm6artemis = (MissileWeapon)ItemDB.lookup("SRM 6 + ARTEMIS");
+      
+      assertEquals(srm6artemis.getMass(null), srm6.getMass(null) + 1.0, 0.0);
    }
 
    /**
@@ -143,19 +123,6 @@ public class MissileWeaponTest{
       }
    }
 
-   @Test
-   public void testCanonize() throws Exception{
-      for(MissileWeapon weapon : allMissileWeapons){
-         Upgrades artemis = mock(Upgrades.class);
-         when(artemis.hasArtemis()).thenReturn(true);
-         Upgrades noartemis = mock(Upgrades.class);
-         when(noartemis.hasArtemis()).thenReturn(false);
-
-         assertEquals(weapon.getName(), MissileWeapon.canonize(weapon.getName(noartemis)));
-         assertEquals(weapon.getName(), MissileWeapon.canonize(weapon.getName(artemis)));
-      }
-   }
-
    /**
     * Only SRMs and LRMs are Artemis capable
     */
@@ -170,6 +137,12 @@ public class MissileWeaponTest{
             assertTrue(weapon.isArtemisCapable());
          }
       }
+   }
+   
+   @Test
+   public void testNotArtemisMissiles(){
+      MissileWeapon lrm = (MissileWeapon)ItemDB.lookup("LRM 20");
+      assertFalse(lrm.getName().toLowerCase().contains("artemis"));
    }
 
    /**

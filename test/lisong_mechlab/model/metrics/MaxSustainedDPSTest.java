@@ -34,11 +34,6 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.metrics.HeatDissipation;
-import lisong_mechlab.model.loadout.metrics.Metric;
-import lisong_mechlab.model.metrics.HeatDissipation;
-import lisong_mechlab.model.metrics.MaxSustainedDPS;
-import lisong_mechlab.model.metrics.Metric;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
