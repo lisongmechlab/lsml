@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.metrics.JumpDistance;
 
 import org.junit.Test;
 

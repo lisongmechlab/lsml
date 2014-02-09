@@ -21,11 +21,6 @@ package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
-import lisong_mechlab.model.loadout.metrics.HeatDissipation;
-import lisong_mechlab.model.loadout.metrics.HeatGeneration;
-import lisong_mechlab.model.metrics.CoolingRatio;
-import lisong_mechlab.model.metrics.HeatDissipation;
-import lisong_mechlab.model.metrics.HeatGeneration;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -21,13 +21,6 @@ package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
-import lisong_mechlab.model.loadout.metrics.HeatCapacity;
-import lisong_mechlab.model.loadout.metrics.HeatDissipation;
-import lisong_mechlab.model.loadout.metrics.HeatGeneration;
-import lisong_mechlab.model.metrics.HeatCapacity;
-import lisong_mechlab.model.metrics.HeatDissipation;
-import lisong_mechlab.model.metrics.HeatGeneration;
-import lisong_mechlab.model.metrics.TimeToOverHeat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

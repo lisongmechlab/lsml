@@ -22,11 +22,14 @@ package lisong_mechlab.model.loadout.export;
 import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.Base64;
@@ -39,43 +42,43 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Tests the {@link LoadoutCoderV1}
+ * A test suite for {@link LoadoutCoderV2}.
  * 
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class LoadoutCoderV1Test{
+public class LoadoutCoderV2Test{
+
    @Mock
    private MessageXBar    xBar;
    @InjectMocks
-   private LoadoutCoderV1 cut;
+   private LoadoutCoderV2 cut;
 
    /**
-    * The coder shall handle the artemis change.
+    * The coder shall be able to decode all stock mechs.
     * 
     * @throws Exception
     */
    @Test
-   public void testArtemis() throws Exception{
+   public void testEncodeAllStock() throws Exception{
+      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
 
-      Base64 base64 = new Base64();
-      String line = "[CENTURION CN9-D]=lsml://rJAAHSAaDCASJA4aDCAg9D7+/hCK32zHWw==";
-      Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
-      Matcher m = pat.matcher(line);
-      m.matches();
-      Chassi chassi = ChassiDB.lookup(m.group(1));
-      String lsml = m.group(2);
-      Loadout reference = new Loadout(chassi.getName(), xBar);
-      
-      // Execute
-      Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
+      MessageXBar anXBar = new MessageXBar();
+      for(Chassi chassi : chassii){
+         Loadout loadout = new Loadout(chassi.getName(), anXBar);
 
-      // Name is not encoded
-      decoded.rename(reference.getName());
+         byte[] result = cut.encode(loadout);
+         Loadout decoded = cut.decode(result);
 
-      // Verify
-      assertEquals(reference, decoded);
+         // Name is not encoded
+         decoded.rename(loadout.getName());
 
+         // Verify
+         assertEquals(loadout, decoded);
+      }
    }
 
    /**
@@ -84,9 +87,10 @@ public class LoadoutCoderV1Test{
     * @throws Exception
     */
    @Test
-   public void testAllStock() throws Exception{
-      InputStream is = LoadoutCoderV1.class.getResourceAsStream("/resources/lsmlv1stock.txt");
+   public void testDecodeAllStock() throws Exception{
+      InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv2stock.txt");
       Scanner sc = new Scanner(is);
+
       Base64 base64 = new Base64();
 
       // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==

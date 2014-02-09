@@ -31,7 +31,7 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 
 public class ItemDB{
-   // Special global "item constants" use full when checking special cases.
+   // Special global "item constants" useful when checking special cases.
    // Feel free to populate if you find yourself consistently using
    // ItemDB.lookup() with constant strings.
 
@@ -78,6 +78,7 @@ public class ItemDB{
 
    static private void put(Item anItem){
       assert anItem != null;
+      assert(!locname2item.containsKey(anItem));
       mwoname2item.put(canonize(anItem.getKey()), anItem);
       locname2item.put(canonize(anItem.getName()), anItem);
       mwoidx2item.put(anItem.getMwoIdx(), anItem);
@@ -85,8 +86,9 @@ public class ItemDB{
 
    static private String canonize(String aString){
       String key = aString.toLowerCase();
-      if( !key.contains("ammo") && key.contains("rm") )
-         return MissileWeapon.canonize(aString).toLowerCase();
+      if(key.equals("anti-missile system")){
+         return "ams"; // TODO: Update references
+      }
       return key;
    }
 
@@ -127,6 +129,26 @@ public class ItemDB{
 
       // Weapons next.
       for(ItemStatsWeapon statsWeapon : stats.WeaponList){
+         if( statsWeapon.InheritFrom > 0 ){
+            for(ItemStatsWeapon w : stats.WeaponList){
+               try{
+                  if( Integer.parseInt(w.id) == statsWeapon.InheritFrom ){
+                     statsWeapon.WeaponStats = w.WeaponStats;
+                     if(statsWeapon.Loc.descTag == null){
+                        statsWeapon.Loc.descTag = w.Loc.descTag;
+                     }
+                     break;
+                  }
+               }
+               catch( NumberFormatException e ){
+                  continue;
+               }
+            }
+            if(statsWeapon.WeaponStats == null){
+               throw new RuntimeException("Unable to find referenced item in \"inherit statement from clause\" for: " + statsWeapon.name);
+            }
+         }
+
          switch( HardpointType.fromMwoType(statsWeapon.WeaponStats.type) ){
             case AMS:
                put(new AmmoWeapon(statsWeapon, HardpointType.AMS));

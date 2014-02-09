@@ -29,9 +29,6 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.metrics.Metric;
-import lisong_mechlab.model.metrics.MaxDPS;
-import lisong_mechlab.model.metrics.Metric;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -25,6 +25,8 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
@@ -112,7 +114,15 @@ public class LoadoutPartConverter implements Converter{
          aReader.moveDown();
          if( "item".equals(aReader.getNodeName()) ){
             try{
-               operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, (Item)aContext.convertAnother(null, Item.class)));
+               Item item = (Item)aContext.convertAnother(null, Item.class);
+               // FIXME: Do this prettier, copied from LoadoutCoder
+               if( item instanceof MissileWeapon && loadout.getUpgrades().hasArtemis() && !item.getName().contains("ARTEMIS") ){
+                  MissileWeapon weapon = (MissileWeapon)item;
+                  if( weapon.isArtemisCapable() ){
+                     item = ItemDB.lookup(weapon.getName() + " + ARTEMIS");
+                  }
+               }
+               operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, item));
             }
             catch( IllegalArgumentException exception ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()

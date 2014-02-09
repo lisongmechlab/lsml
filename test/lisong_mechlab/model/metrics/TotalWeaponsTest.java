@@ -26,7 +26,6 @@ import java.util.TreeMap;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.metrics.TotalWeapons;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;

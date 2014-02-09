@@ -25,7 +25,6 @@ import static org.mockito.Mockito.when;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.metrics.HeatDissipation;
 
 import org.junit.Test;
 

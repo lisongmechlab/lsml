@@ -23,8 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import lisong_mechlab.model.loadout.Efficiencies.Message;
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.Efficiencies.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 
