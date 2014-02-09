@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
@@ -90,12 +109,17 @@ public class ItemTests{
       assertTrue(std180.isEquippableOn(hm));
       assertTrue(xl330.isEquippableOn(hm));
       assertFalse(xl335.isEquippableOn(hm));
-      
+
       // Engines have a base heat of the dissipation equal to 2 standard heat sinks when using 100% throttle.
       assertEquals(0.2, std175.getHeat(), 0.0);
       assertEquals(0.2, std180.getHeat(), 0.0);
       assertEquals(0.2, xl330.getHeat(), 0.0);
       assertEquals(0.2, xl335.getHeat(), 0.0);
+      
+      assertEquals(EngineType.STD, std175.getType());
+      assertEquals(EngineType.STD, std180.getType());
+      assertEquals(EngineType.XL, xl330.getType());
+      assertEquals(EngineType.XL, xl335.getType());
    }
 
    /**
@@ -214,7 +238,6 @@ public class ItemTests{
    /**
     * There must be heat sinks in the item database
     */
-   @SuppressWarnings("null")
    @Test
    public void testHeatsinks(){
       Collection<HeatSink> heatsinks = ItemDB.lookup(HeatSink.class);
@@ -243,7 +266,7 @@ public class ItemTests{
             }
          }
       }
-      
+
       assertNotNull(dhs);
       assertNotNull(shs);
 

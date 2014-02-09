@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
 import javax.swing.JOptionPane;
@@ -7,7 +26,13 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.export.CompatibilityHelper;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -17,10 +42,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class LoadoutPartConverter implements Converter{
 
-   private final Loadout loadout;
+   private final Loadout     loadout;
+   private final MessageXBar xBar;
 
-   public LoadoutPartConverter(Loadout aLoadout){
+   public LoadoutPartConverter(MessageXBar anXBar, Loadout aLoadout){
       loadout = aLoadout;
+      xBar = anXBar;
    }
 
    @Override
@@ -60,6 +87,8 @@ public class LoadoutPartConverter implements Converter{
    @Override
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
 
+      OperationStack operationStack = new OperationStack(0);
+
       Part partType = Part.valueOf(aReader.getAttribute("part"));
       LoadoutPart loadoutPart = loadout.getPart(partType);
 
@@ -67,26 +96,30 @@ public class LoadoutPartConverter implements Converter{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");
             if( armors.length == 2 ){
-               loadoutPart.setArmor(ArmorSide.FRONT, Integer.parseInt(armors[0]));
-               loadoutPart.setArmor(ArmorSide.BACK, Integer.parseInt(armors[1]));
+               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0])));
+               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1])));
             }
          }
          else{
-            loadoutPart.setArmor(ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")));
+            operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor"))));
          }
       }
       catch( IllegalArgumentException exception ){
-         JOptionPane.showMessageDialog(null, "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
+                                                           + " is corrupt. Continuing to load as much as possible.");
       }
-      
+
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
          if( "item".equals(aReader.getNodeName()) ){
             try{
-               loadoutPart.addItem((Item)aContext.convertAnother(null, Item.class));
+               Item item = (Item)aContext.convertAnother(null, Item.class);
+               item = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().getGuidance());
+               operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, item));
             }
             catch( IllegalArgumentException exception ){
-               JOptionPane.showMessageDialog(null, "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
+               JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
+                                                                 + " is corrupt. Continuing to load as much as possible.");
             }
          }
          aReader.moveUp();

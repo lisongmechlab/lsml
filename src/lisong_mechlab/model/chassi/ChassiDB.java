@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.chassi;
 
 import java.util.ArrayList;
@@ -16,14 +35,17 @@ public class ChassiDB{
    static private final Map<Integer, Chassi>      id2chassi;
 
    /**
-    * Looks up a chassi by a short name such as "AS7-D-DC"
+    * Looks up a chassis by a short name such as "AS7-D-DC"
     * 
     * @param aShortName
-    * @return
+    * @return The chassis that matches the lookup string.
     */
    static public Chassi lookup(String aShortName){
       String keyShortName = canonize(aShortName);
       if( !variation2chassi.containsKey(keyShortName) ){
+         if( keyShortName.contains("muro") ){
+            return lookup("CTF-IM");
+         }
          throw new IllegalArgumentException("No chassi variation named: " + aShortName + " !");
       }
       return variation2chassi.get(keyShortName);
@@ -34,10 +56,10 @@ public class ChassiDB{
    }
 
    /**
-    * Looks up all chassi of the given chassi class.
+    * Looks up all chassis of the given chassis class.
     * 
     * @param aChassiClass
-    * @return
+    * @return An {@link List} of all {@link Chassi} with the given {@link ChassiClass}.
     */
    static public List<Chassi> lookup(ChassiClass aChassiClass){
       List<Chassi> chassii = new ArrayList<>(4 * 4);
