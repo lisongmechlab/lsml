@@ -23,8 +23,8 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.Upgrades;
 

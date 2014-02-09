@@ -29,13 +29,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 /**

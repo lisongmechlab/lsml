@@ -20,10 +20,10 @@
 package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * This {@link Upgrades} can change the armor type of a {@link Loadout}.

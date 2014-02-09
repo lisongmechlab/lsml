@@ -37,10 +37,10 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * This class represents a configured {@link InternalPart}.

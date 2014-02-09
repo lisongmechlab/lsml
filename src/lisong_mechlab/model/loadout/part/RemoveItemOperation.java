@@ -20,8 +20,8 @@
 package lisong_mechlab.model.loadout.part;
 
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * This {@link Operation} removes an {@link Item} from a {@link LoadoutPart}.

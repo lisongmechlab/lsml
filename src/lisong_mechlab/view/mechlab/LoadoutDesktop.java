@@ -52,6 +52,9 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
 
    /**
     * Creates a new {@link LoadoutDesktop}.
+    * 
+    * @param anXBar
+    *           A {@link MessageXBar} to send messages to when a new loadout is opened.
     */
    public LoadoutDesktop(MessageXBar anXBar){
       assert (SwingUtilities.isEventDispatchThread());

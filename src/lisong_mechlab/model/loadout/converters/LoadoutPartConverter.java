@@ -26,11 +26,11 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;

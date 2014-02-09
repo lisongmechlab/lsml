@@ -25,8 +25,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.metrics.Metric;
-import lisong_mechlab.model.loadout.metrics.RangeMetric;
+import lisong_mechlab.model.metrics.Metric;
+import lisong_mechlab.model.metrics.RangeMetric;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;

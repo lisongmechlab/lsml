@@ -25,13 +25,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.upgrades.Upgrades;

@@ -36,11 +36,11 @@ import javax.swing.KeyStroke;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingUtilities;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -85,10 +85,10 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
    /**
     * Creates and displays the {@link DamageGraph}.
     * 
-    * @param aTitle
-    *           The title for the diagram.
     * @param aLoadout
     *           Which load out the diagram is for.
+    * @param anXbar
+    *           A {@link MessageXBar} to listen for changes to the loadout on.
     * @param aMaxSustainedDpsMetric
     *           A {@link MaxSustainedDPS} instance to use in calculation.
     */

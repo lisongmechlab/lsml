@@ -21,8 +21,8 @@ package lisong_mechlab.model.item;
 
 import java.util.Comparator;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.GaussianDistribution;

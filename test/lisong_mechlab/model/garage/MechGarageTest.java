@@ -34,8 +34,8 @@ import java.io.IOException;
 import lisong_mechlab.model.garage.MechGarage.Message;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.OperationStack;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import org.junit.After;
 import org.junit.Before;

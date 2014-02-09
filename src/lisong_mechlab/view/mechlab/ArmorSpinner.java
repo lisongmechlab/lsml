@@ -27,13 +27,13 @@ import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.loadout.OperationStack;
-import lisong_mechlab.model.loadout.OperationStack.Operation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.OperationStack.Operation;
 
 public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Reader{
    private static final long    serialVersionUID = 2130487332299251881L;

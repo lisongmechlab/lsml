@@ -31,6 +31,7 @@ import java.util.List;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
@@ -41,6 +42,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -101,8 +101,8 @@ public class MechLabPane extends JSplitPane{
    /**
     * Will open the given {@link Loadout} into the desktop pane by creating a new {@link LoadoutFrame}.
     * 
-    * @param aLoadout
-    *           The {@link Loadout} to create the frame for.
+    * @param aLSMLUrl
+    *           The LSML link to open.
     */
    public void openLoadout(String aLSMLUrl){
       assert (SwingUtilities.isEventDispatchThread());
