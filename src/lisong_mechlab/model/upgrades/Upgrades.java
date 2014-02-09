@@ -45,7 +45,7 @@ public class Upgrades{
          return false;
       }
 
-      Message(ChangeMsg aChangeMsg, Upgrades anUpgrades){
+      public Message(ChangeMsg aChangeMsg, Upgrades anUpgrades){
          msg = aChangeMsg;
          source = anUpgrades;
       }

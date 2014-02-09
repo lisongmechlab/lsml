@@ -62,7 +62,7 @@ public class SetArmorOperation extends Operation{
          throw new IllegalArgumentException("Armor must be positive!");
 
       if( amount > loadoutPart.getInternalPart().getArmorMax() )
-         throw new IllegalArgumentException("Armor must be positive!");
+         throw new IllegalArgumentException("Armor must be less than components max armor!");
    }
 
    @Override

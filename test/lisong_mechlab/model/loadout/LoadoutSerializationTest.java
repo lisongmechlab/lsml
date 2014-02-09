@@ -68,7 +68,7 @@ public class LoadoutSerializationTest{
    }
 
    @SuppressWarnings("unused")
-   private Object[] allChassis(){
+   private Object[] allChassisL(){
       List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
@@ -83,7 +83,7 @@ public class LoadoutSerializationTest{
     * @throws Exception
     */
    @Test
-   @Parameters(method = "allChassis")
+   @Parameters(method = "allChassisL")
    public void testSaveLoad(Chassi aChassi) throws Exception{
       Loadout cut = new Loadout(aChassi.getNameShort(), xBar);
       cut.rename(cut.getName() + "x");
