@@ -21,6 +21,7 @@ package lisong_mechlab.model.loadout;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,7 +30,6 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
@@ -40,6 +40,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.export.CompatibilityHelper;
 import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
 
@@ -177,13 +178,16 @@ public class LoadoutPart implements MessageXBar.Reader{
          return false;
       LoadoutPart that = (LoadoutPart)obj;
 
-      // @formatter:off
-      return // loadout.equals(that.loadout) && // Two LoadoutParts can be equal without having equal Loadouts.
-             internalPart.equals(that.internalPart) &&
-             ArrayUtils.equalsUnordered(items, that.items) &&
-             armor.equals(that.armor) &&
-             engineHeatsinks == that.engineHeatsinks;
-      // @formatter:on;
+      if( !internalPart.equals(that.internalPart) )
+         return false;
+      if( !ArrayUtils.equalsUnordered(items, that.items) )
+         return false;
+      if( !armor.equals(that.armor) )
+         return false;
+      if( engineHeatsinks != that.engineHeatsinks )
+         return false;
+      return true;
+
    }
 
    public InternalPart getInternalPart(){
@@ -420,26 +424,21 @@ public class LoadoutPart implements MessageXBar.Reader{
                      changed = true;
                   }
                }
-
-               if( weapon.isArtemisCapable() ){
-                  MissileWeapon newWeapon = null;
-                  if( loadout.getUpgrades().hasArtemis() && !weapon.getName().contains("ARTEMIS")){ // Now with artemis
-                     newWeapon = (MissileWeapon)ItemDB.lookup(weapon.getName() + " + ARTEMIS");
-
-                     while( items.remove(weapon) ){
-                        items.add(newWeapon);
-                        changed = true;
-                     }
-                  }else if(!loadout.getUpgrades().hasArtemis() && weapon.getName().contains("ARTEMIS")) {
-                     newWeapon = (MissileWeapon)ItemDB.lookup(weapon.getName().substring(0, weapon.getName().indexOf(" + ARTEMIS")));
-
-                     while( items.remove(weapon) ){
-                        items.add(newWeapon);
-                        changed = true;
-                     }
-                  }
+            }
+            
+            // Check and convert any old builds that have old-type artemis
+            List<Item> newItems = new ArrayList<>();
+            Iterator<Item> it = items.iterator();
+            while(it.hasNext()){
+               Item item = it.next();
+               Item itemFixed = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().hasArtemis());
+               if(item != itemFixed){
+                  it.remove();
+                  newItems.add(itemFixed);
+                  changed = true;
                }
             }
+            items.addAll(newItems);
             if( changed )
                xBar.post(new Message(this, Type.ItemsChanged));
 
