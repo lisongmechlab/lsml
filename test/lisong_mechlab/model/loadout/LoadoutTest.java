@@ -65,16 +65,6 @@ public class LoadoutTest{
       MockitoAnnotations.initMocks(this);
    }
 
-   /**
-    * Loading stock configuration shall succeed even if the loadout isn't empty to start with.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testLoadStockTwice() throws Exception{
-      Loadout cut = new Loadout("JR7-F", xBar);
-      cut.loadStock();
-   }
 
    // -------------------------------------------------------------------------
    //
