@@ -29,6 +29,8 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class RemoveItemOperation extends ItemOperation{
+   private final Item item;
+
    /**
     * Creates a new operation.
     * 
@@ -40,7 +42,8 @@ public class RemoveItemOperation extends ItemOperation{
     *           The {@link Item} to remove.
     */
    public RemoveItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item anItem){
-      super(anXBar, aLoadoutPart, anItem);
+      super(anXBar, aLoadoutPart);
+      item = anItem;
    }
 
    @Override
@@ -50,13 +53,13 @@ public class RemoveItemOperation extends ItemOperation{
 
    @Override
    public void undo(){
-      addItem();
+      addItem(item);
    }
 
    @Override
    public void apply(){
       if( !loadoutPart.getItems().contains(item) )
          throw new IllegalArgumentException("Can't remove " + item + "!");
-      removeItem();
+      removeItem(item);
    }
 }

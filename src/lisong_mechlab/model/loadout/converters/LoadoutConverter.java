@@ -23,6 +23,7 @@ import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.RenameOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.upgrades.SetArtemisOperation;
 import lisong_mechlab.model.upgrades.SetDHSOperation;
@@ -82,7 +83,7 @@ public class LoadoutConverter implements Converter{
       OperationStack stack = new OperationStack(0);
 
       Loadout loadout = new Loadout(chassi, xBar);
-      loadout.rename(name);
+      stack.pushAndApply(new RenameOperation(loadout, xBar, name));
 
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();

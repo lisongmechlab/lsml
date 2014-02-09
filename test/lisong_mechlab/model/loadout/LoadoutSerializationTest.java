@@ -25,12 +25,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Chassi;
@@ -74,28 +72,6 @@ public class LoadoutSerializationTest{
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
       return chassii.toArray();
-   }
-
-   /**
-    * We can save and load all stock Loadouts.
-    * 
-    * @param aChassi
-    * @throws Exception
-    */
-   @Test
-   @Parameters(method = "allChassisL")
-   public void testSaveLoad(Chassi aChassi) throws Exception{
-      Loadout cut = new Loadout(aChassi.getNameShort(), xBar);
-      cut.rename(cut.getName() + "x");
-
-      File testFile = new File(cut.getName() + ".xml");
-      testFile.deleteOnExit();
-
-      cut.save(testFile);
-
-      Loadout loaded = Loadout.load(testFile, xBar);
-
-      assertEquals(cut, loaded);
    }
 
    /**

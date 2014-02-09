@@ -87,7 +87,7 @@ public class SetArtemisOperation extends UpgradeOperation{
    protected void set(boolean aValue){
       if( aValue != upgrades.hasArtemis() ){
          boolean old = upgrades.hasArtemis();
-         loadout.getUpgrades().setArtemis(aValue);
+         upgrades.setArtemis(aValue);
 
          try{
             verifyLoadoutInvariant();

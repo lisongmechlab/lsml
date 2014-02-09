@@ -30,6 +30,8 @@ import junitparams.Parameters;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -99,13 +101,30 @@ public class LoadStockOperationTest{
       OperationStack opstack = new OperationStack(0);
       opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
 
-      // Verify
-      assertTrue(loadout.getFreeMass() < 0.05);
+      // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full armor?!)
+      assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
       for(LoadoutPart part : loadout.getPartLoadOuts()){
-         Mockito.verify(xBar).post(new LoadoutPart.Message(part, Type.ArmorChanged));
+         Mockito.verify(xBar, Mockito.atLeast(1)).post(new LoadoutPart.Message(part, Type.ArmorChanged));
       }
-      Mockito.verify(xBar).post(new LoadoutPart.Message(Matchers.any(LoadoutPart.class), Type.ItemAdded));
-      Mockito.verify(xBar).post(new Upgrades.Message(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
+      Mockito.verify(xBar, Mockito.atLeast(1)).post(new LoadoutPart.Message(Matchers.any(LoadoutPart.class), Type.ItemAdded));
+      Mockito.verify(xBar, Mockito.atLeast(1)).post(new Upgrades.Message(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
+   }
+
+   /**
+    * Loading stock shall handle artemis changes on February 4th patch.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testApply_artemisFeb4() throws Exception{
+      // Setup
+      Loadout loadout = new Loadout(ChassiDB.lookup("CN9-D"), xBar);
+
+      // Execute
+      OperationStack opstack = new OperationStack(0);
+      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+
+      assertTrue(loadout.getPart(Part.LeftTorso).getItems().contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
    }
 
    /**

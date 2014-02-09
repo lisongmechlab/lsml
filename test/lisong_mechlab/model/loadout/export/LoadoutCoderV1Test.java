@@ -29,8 +29,10 @@ import java.util.regex.Pattern;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.RenameOperation;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,7 +73,8 @@ public class LoadoutCoderV1Test{
       Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
       // Name is not encoded
-      decoded.rename(reference.getName());
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new RenameOperation(decoded, xBar, reference.getName()));
 
       // Verify
       assertEquals(reference, decoded);
@@ -101,7 +104,8 @@ public class LoadoutCoderV1Test{
          Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
          // Name is not encoded
-         decoded.rename(reference.getName());
+         OperationStack stack = new OperationStack(0);
+         stack.pushAndApply(new RenameOperation(decoded, xBar, reference.getName()));
 
          // Verify
          assertEquals(reference, decoded);
