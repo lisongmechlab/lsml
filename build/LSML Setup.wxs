@@ -14,7 +14,7 @@
         <?define g_progfiles = "ProgramFilesFolder" ?>
     <?endif ?>
 
-	<Product Id="B8537F57-48BD-481A-95F6-666FB72B6033" Name="$(var.g_fname) $(var.g_version)"
+	<Product Id="EE06C132-67D3-48D5-970A-1E22C7BCF365" Name="$(var.g_fname) $(var.g_version)"
 		Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)"
 		UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
 
