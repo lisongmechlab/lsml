@@ -26,6 +26,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -40,6 +41,7 @@ import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.SwingHelpers;
+import lisong_mechlab.view.action.RedoGarageAction;
 import lisong_mechlab.view.action.UndoGarageAction;
 import lisong_mechlab.view.graphs.PayloadSelectionPanel;
 import lisong_mechlab.view.help.OnlineHelp;
@@ -70,6 +72,7 @@ public class LSML extends JFrame{
                                                           };
    private static final long       serialVersionUID       = -2463321343234141728L;
    private static final String     CMD_UNDO_GARAGE        = "undo garage action";
+   private static final String     CMD_REDO_GARAGE        = "redo garage action";
    public final MessageXBar        xBar                   = new MessageXBar();
    public final OperationStack     garageOperationStack   = new OperationStack(256);
    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
@@ -78,6 +81,9 @@ public class LSML extends JFrame{
    public final JTabbedPane        tabbedPane             = new JTabbedPane();
    private LsmlProtocolIPC         lsmlProtocolIPC;
    private MechGarage              garage;
+
+   final Action                    undoGarageAction       = new UndoGarageAction(xBar);
+   final Action                    redoGarageAction       = new RedoGarageAction(xBar);
 
    public LSML(){
       super(PROGRAM_FNAME + VERSION_STRING);
@@ -116,14 +122,14 @@ public class LSML extends JFrame{
          lsmlProtocolIPC = null;
          JOptionPane.showMessageDialog(this, "Unable to startup IPC. Links with builds (lsml://...) will not work.\nError: " + e);
       }
-
       setupKeybindings();
 
       openLastGarage();
    }
 
    private void setupKeybindings(){
-      SwingHelpers.bindAction(getRootPane(), CMD_UNDO_GARAGE, new UndoGarageAction(xBar));
+      SwingHelpers.bindAction(getRootPane(), CMD_UNDO_GARAGE, undoGarageAction);
+      SwingHelpers.bindAction(getRootPane(), CMD_REDO_GARAGE, redoGarageAction);
    }
 
    public MechGarage getGarage(){

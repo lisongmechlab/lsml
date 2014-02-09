@@ -41,7 +41,6 @@ import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.loadout.LoadStockOperation;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.StripArmorOperation;
@@ -55,6 +54,7 @@ import lisong_mechlab.view.action.AddToGarageAction;
 import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.MaxArmorAction;
+import lisong_mechlab.view.action.RedoLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.action.ShareLoadoutAction;
 import lisong_mechlab.view.action.UndoLoadoutAction;
@@ -63,6 +63,7 @@ import lisong_mechlab.view.render.ItemRenderer;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private static final String    CMD_UNDO_LOADOUT      = "undo loadout";
+   private static final String    CMD_REDO_LOADOUT      = "redo loadout";
    private static final String    CMD_RENAME_LOADOUT    = "rename loadout";
    private static final String    CMD_SAVE_TO_GARAGE    = "add to garage";
    private static final long      serialVersionUID      = -9181002222136052106L;
@@ -72,6 +73,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private final MessageXBar      xbar;
    private final OperationStack   loadoutOperationStack = new OperationStack(128);
    private final Action           actionUndoLoadout;
+   private final Action           actionRedoLoadout;
    private final Action           actionRename;
    private final Action           actionAddToGarage;
    private final LoadoutInfoPanel infoPanel;
@@ -87,6 +89,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       // Actions
       actionUndoLoadout = new UndoLoadoutAction(xbar, this);
+      actionRedoLoadout = new RedoLoadoutAction(xbar, this);
       actionRename = new RenameLoadoutAction(this, xbar);
       actionAddToGarage = new AddToGarageAction(loadout);
 
@@ -138,6 +141,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
    private void setupKeybindings(){
       SwingHelpers.bindAction(this, CMD_UNDO_LOADOUT, actionUndoLoadout);
+      SwingHelpers.bindAction(this, CMD_REDO_LOADOUT, actionRedoLoadout);
       SwingHelpers.bindAction(this, CMD_RENAME_LOADOUT, actionRename);
       SwingHelpers.bindAction(this, CMD_SAVE_TO_GARAGE, actionAddToGarage);
    }
@@ -251,6 +255,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       JMenu menu = new JMenu("Loadout");
       menu.add(new JMenuItem(actionAddToGarage));
       menu.add(new JMenuItem(actionUndoLoadout));
+      menu.add(new JMenuItem(actionRedoLoadout));
       menu.add(new JMenuItem(actionRename));
       menu.add(new JMenuItem(new DeleteLoadoutAction(xbar, ProgramInit.lsml().getGarage(), this)));
 
@@ -315,13 +320,14 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       if( !aMsg.isForMe(loadout) )
          return;
 
-      if( aMsg instanceof MechGarage.Message ){
-         MechGarage.Message msg = (MechGarage.Message)aMsg;
-         if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
-            dispose(); // Closes frame
-         }
-      }
-      else if( aMsg instanceof Loadout.Message ){
+      // if( aMsg instanceof MechGarage.Message ){
+      // MechGarage.Message msg = (MechGarage.Message)aMsg;
+      // if( msg.type == MechGarage.Message.Type.LoadoutRemoved ){
+      // dispose(); // Closes frame
+      // }
+      // }
+      // else
+      if( aMsg instanceof Loadout.Message ){
          Loadout.Message msg = (Loadout.Message)aMsg;
          if( msg.type == Loadout.Message.Type.RENAME ){
             setTitle(loadout.toString());
