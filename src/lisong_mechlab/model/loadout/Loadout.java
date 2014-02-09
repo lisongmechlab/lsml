@@ -20,8 +20,6 @@
 package lisong_mechlab.model.loadout;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -67,6 +65,7 @@ public class Loadout{
       private final Loadout loadout;
 
       public final Type     type;
+
       public Message(Loadout aLoadout, Type aType){
          loadout = aLoadout;
          type = aType;
@@ -111,6 +110,7 @@ public class Loadout{
       XStream stream = loadoutXstream(anXBar);
       return (Loadout)stream.fromXML(aFile);
    }
+
    public static XStream loadoutXstream(MessageXBar anXBar){
       XStream stream = new XStream(new StaxDriver());
       stream.setMode(XStream.NO_REFERENCES);
@@ -126,17 +126,17 @@ public class Loadout{
       stream.addImplicitMap(Loadout.class, "parts", LoadoutPart.class, "internalpart");
       return stream;
    }
+
    private String                       name;
    private final Chassi                 chassi;
    private final Map<Part, LoadoutPart> parts    = new TreeMap<Part, LoadoutPart>();
    private final Upgrades               upgrades = new Upgrades();
-
    private final Efficiencies           efficiencies;
-
-   private final transient MessageXBar  xBar;
 
    /**
     * Will create a new, empty load out based on the given chassi.
+    * 
+    * TODO: Is anXBar really needed?
     * 
     * @param aChassi
     *           The chassi to base the load out on.
@@ -151,10 +151,9 @@ public class Loadout{
          parts.put(part.getType(), confPart);
       }
 
-      xBar = anXBar;
-      xBar.post(new Message(this, Type.CREATE));
+      anXBar.post(new Message(this, Type.CREATE));
 
-      efficiencies = new Efficiencies(xBar);
+      efficiencies = new Efficiencies(anXBar);
    }
 
    /**
@@ -330,28 +329,20 @@ public class Loadout{
       return false;
    }
 
-   public void rename(String aName){
-      name = aName;
-      xBar.post(new Message(this, Type.RENAME));
-   }
-
-   public void save(File aFile) throws IOException{
-      FileWriter fileWriter = null;
-      try{
-         fileWriter = new FileWriter(aFile);
-         fileWriter.write(loadoutXstream(xBar).toXML(this));
-      }
-      finally{
-         if( fileWriter != null ){
-            fileWriter.close();
-         }
-      }
-   }
-
    @Override
    public String toString(){
       if( getName().contains(chassi.getNameShort()) )
          return getName();
       return getName() + " (" + chassi.getNameShort() + ")";
+   }
+
+   /**
+    * Package internal function. Use {@link RenameOperation} to change the name.
+    * 
+    * @param aNewName
+    *           The new name of the loadout.
+    */
+   void rename(String aNewName){
+      name = aNewName;
    }
 }

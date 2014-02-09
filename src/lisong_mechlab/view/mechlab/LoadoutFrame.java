@@ -87,7 +87,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       // Actions
       actionUndoLoadout = new UndoLoadoutAction(xbar, this);
-      actionRename = new RenameLoadoutAction(this);
+      actionRename = new RenameLoadoutAction(this, xbar);
       actionAddToGarage = new AddToGarageAction(loadout);
 
       JMenuBar menuBar = new JMenuBar();

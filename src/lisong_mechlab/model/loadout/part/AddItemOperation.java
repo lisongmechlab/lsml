@@ -31,6 +31,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class AddItemOperation extends ItemOperation{
+   private Item item;
 
    /**
     * Creates a new operation.
@@ -43,7 +44,8 @@ public class AddItemOperation extends ItemOperation{
     *           The {@link Item} to add.
     */
    public AddItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item anItem){
-      super(anXBar, aLoadoutPart, CompatibilityHelper.fixArtemis(anItem, aLoadoutPart.getLoadout().getUpgrades().hasArtemis()));
+      super(anXBar, aLoadoutPart);
+      item = anItem;
       if( item instanceof Internal )
          throw new IllegalArgumentException("Can't add internals to a loadout!");
    }
@@ -55,13 +57,14 @@ public class AddItemOperation extends ItemOperation{
 
    @Override
    public void undo(){
-      removeItem();
+      removeItem(item);
    }
 
    @Override
    public void apply(){
+      item = CompatibilityHelper.fixArtemis(item, loadoutPart.getLoadout().getUpgrades().hasArtemis());
       if( !loadoutPart.canAddItem(item) )
          throw new IllegalArgumentException("Can't add " + item + "!");
-      addItem();
+      addItem(item);
    }
 }

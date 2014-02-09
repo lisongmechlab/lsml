@@ -35,7 +35,6 @@ import lisong_mechlab.model.garage.MechGarage.Message;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.OperationStack;
 
 import org.junit.After;
 import org.junit.Before;
@@ -49,9 +48,6 @@ public class MechGarageTest{
 
    @Mock
    MessageXBar    xBar;
-
-   @Mock
-   OperationStack undoStack;
 
    @Before
    public void setup(){
@@ -74,7 +70,6 @@ public class MechGarageTest{
 
       // Verify
       verify(xBar).post(new Message(MechGarage.Message.Type.NewGarage, cut));
-      verifyZeroInteractions(undoStack);
 
       assertTrue(cut.getMechs().isEmpty());
       assertNull(cut.getFile());
@@ -97,7 +92,6 @@ public class MechGarageTest{
 
       // Verify
       verify(xBar).post(new Message(MechGarage.Message.Type.NewGarage, c));
-      verifyZeroInteractions(undoStack);
 
       assertTrue(c.getMechs().isEmpty());
       assertSame(testFile, c.getFile());
@@ -122,7 +116,6 @@ public class MechGarageTest{
       // Verify
       catch( IOException exception ){/* Expected exception */}
       verifyZeroInteractions(xBar);
-      verifyZeroInteractions(undoStack);
    }
 
    /**
@@ -151,7 +144,6 @@ public class MechGarageTest{
          assertEquals(0, testFile.lastModified()); // Must not have been modified
       }
       verifyZeroInteractions(xBar);
-      verifyZeroInteractions(undoStack);
    }
 
    /**
@@ -171,7 +163,6 @@ public class MechGarageTest{
       cut.add(lo1);
       cut.add(lo2);
       reset(xBar);
-      reset(undoStack);
 
       // Execute
       cut.saveas(testFile);
@@ -180,7 +171,6 @@ public class MechGarageTest{
       // Verify
       verify(xBar).post(new MechGarage.Message(Type.Saved, cut));
       verify(xBar).post(new MechGarage.Message(Type.NewGarage, loadedGarage));
-      verifyZeroInteractions(undoStack);
       assertEquals(2, loadedGarage.getMechs().size());
       assertEquals(lo1, loadedGarage.getMechs().get(0));
       assertEquals(lo2, loadedGarage.getMechs().get(1));
@@ -203,14 +193,12 @@ public class MechGarageTest{
       cut = MechGarage.open(testFile, xBar);
       cut.add(lo2); // Add a mech and use the save() function. The same file should have been overwritten.
       reset(xBar);
-      reset(undoStack);
 
       // Execute
       cut.save();
 
       // Open the garage to verify.
       verify(xBar).post(new MechGarage.Message(Type.Saved, cut));
-      verifyZeroInteractions(undoStack);
 
       cut = MechGarage.open(testFile, xBar);
       assertEquals(2, cut.getMechs().size());
@@ -230,7 +218,6 @@ public class MechGarageTest{
       // Setup
       Loadout loadout = new Loadout("as7-d-dc", xBar);
       MechGarage cut = new MechGarage(xBar);
-      reset(undoStack);
 
       // Execute
       cut.add(loadout);
@@ -239,7 +226,6 @@ public class MechGarageTest{
       assertEquals(1, cut.getMechs().size());
       assertSame(loadout, cut.getMechs().get(0));
       verify(xBar).post(new Message(MechGarage.Message.Type.LoadoutAdded, cut, loadout));
-      verifyZeroInteractions(undoStack);
 
       // Execute
       cut.remove(loadout);
@@ -247,38 +233,6 @@ public class MechGarageTest{
       // Verify
       assertTrue(cut.getMechs().isEmpty());
       verify(xBar).post(new Message(MechGarage.Message.Type.LoadoutRemoved, cut, loadout));
-      verifyZeroInteractions(undoStack);
-   }
-
-   /**
-    * Adding the same {@link Loadout} twice is an error and shall throw an {@link IllegalArgumentException}.
-    * 
-    * @throws Exception
-    *            Shouldn't be thrown.
-    */
-   @Test
-   public void testAddLoadoutTwice() throws Exception{
-      // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
-      MechGarage cut = new MechGarage(xBar);
-
-      // Execute
-      cut.add(loadout);
-
-      try{
-         reset(xBar);
-         reset(undoStack);
-         cut.add(loadout);
-         fail("Expected exception!");
-      }
-      catch( IllegalArgumentException e ){
-         // Success!
-         verifyZeroInteractions(xBar);
-         verifyZeroInteractions(undoStack);
-      }
-      catch( Exception e ){
-         fail("Wrong exception!");
-      }
    }
 
    /**
@@ -293,11 +247,9 @@ public class MechGarageTest{
       Loadout loadout = new Loadout("as7-d-dc", xBar);
       MechGarage cut = new MechGarage(xBar);
       reset(xBar);
-      reset(undoStack);
       cut.remove(loadout);
 
       verifyZeroInteractions(xBar);
-      verifyZeroInteractions(undoStack);
    }
 
 }

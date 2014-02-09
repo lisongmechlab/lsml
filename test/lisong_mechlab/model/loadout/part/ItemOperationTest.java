@@ -28,6 +28,7 @@ import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -46,10 +47,9 @@ public class ItemOperationTest{
       /**
        * @param anXBar
        * @param aLoadoutPart
-       * @param anItem
        */
-      public CutClass(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item anItem){
-         super(anXBar, aLoadoutPart, anItem);
+      public CutClass(MessageXBar anXBar, LoadoutPart aLoadoutPart){
+         super(anXBar, aLoadoutPart);
       }
 
       // @formatter:off
@@ -64,15 +64,21 @@ public class ItemOperationTest{
    @Mock
    private MessageXBar xBar;
 
+   private CutClass    cut;
+
+   @Before
+   public void setup(){
+      cut = new CutClass(xBar, loadoutPart);
+   }
+
    /**
     * removeItem() shall remove the item without qeustinos.
     */
    @Test
    public final void testRemoveItem(){
       Item ecm = ItemDB.ECM;
-      CutClass cut = new CutClass(xBar, loadoutPart, ecm);
 
-      cut.removeItem();
+      cut.removeItem(ecm);
 
       Mockito.verify(loadoutPart).removeItem(ecm);
       Mockito.verify(xBar).post(new Message(loadoutPart, Type.ItemRemoved));
@@ -84,9 +90,8 @@ public class ItemOperationTest{
    @Test
    public final void testAddItem(){
       Item ecm = ItemDB.ECM;
-      CutClass cut = new CutClass(xBar, loadoutPart, ecm);
 
-      cut.addItem();
+      cut.addItem(ecm);
 
       Mockito.verify(loadoutPart).addItem(ecm);
       Mockito.verify(xBar).post(new Message(loadoutPart, Type.ItemAdded));
@@ -98,9 +103,8 @@ public class ItemOperationTest{
    @Test
    public final void testAddItem_StdEngine(){
       Item item = ItemDB.lookup("STD ENGINE 300");
-      CutClass cut = new CutClass(xBar, loadoutPart, item);
 
-      cut.addItem();
+      cut.addItem(item);
 
       Mockito.verify(loadoutPart).addItem(item);
       Mockito.verify(xBar).post(new Message(loadoutPart, Type.ItemAdded));
@@ -118,9 +122,8 @@ public class ItemOperationTest{
       Mockito.when(loadout.getPart(Part.LeftTorso)).thenReturn(lt);
       Mockito.when(loadout.getPart(Part.RightTorso)).thenReturn(rt);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
-      CutClass cut = new CutClass(xBar, loadoutPart, item);
 
-      cut.removeItem();
+      cut.removeItem(item);
 
       Mockito.verify(loadoutPart).removeItem(item);
       Mockito.verify(lt).removeItem(LoadoutPart.ENGINE_INTERNAL);
@@ -143,9 +146,8 @@ public class ItemOperationTest{
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
-      CutClass cut = new CutClass(xBar, loadoutPart, item);
 
-      cut.removeItem();
+      cut.removeItem(item);
 
       Mockito.verify(loadoutPart).removeItem(item);
       Mockito.verify(loadoutPart, Mockito.times(numEngineHs)).removeItem(ItemDB.DHS);
@@ -165,9 +167,8 @@ public class ItemOperationTest{
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
-      CutClass cut = new CutClass(xBar, loadoutPart, item);
 
-      cut.removeItem();
+      cut.removeItem(item);
 
       Mockito.verify(loadoutPart).removeItem(item);
       Mockito.verify(loadoutPart, Mockito.times(numEngineHs)).removeItem(ItemDB.SHS);
@@ -186,9 +187,8 @@ public class ItemOperationTest{
       Mockito.when(loadout.getPart(Part.RightTorso)).thenReturn(rt);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Item item = ItemDB.lookup("XL ENGINE 300");
-      CutClass cut = new CutClass(xBar, loadoutPart, item);
 
-      cut.addItem();
+      cut.addItem(item);
 
       Mockito.verify(loadoutPart).addItem(item);
       Mockito.verify(lt).addItem(LoadoutPart.ENGINE_INTERNAL);
@@ -211,10 +211,9 @@ public class ItemOperationTest{
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
       Item item = ItemDB.lookup("STD ENGINE 300");
-      CutClass cut = new CutClass(xBar, loadoutPart, item);
 
-      cut.removeItem();
-      cut.addItem();
+      cut.removeItem(item);
+      cut.addItem(item);
 
       Mockito.verify(loadoutPart, Mockito.times(numEngineHs)).addItem(ItemDB.SHS);
    }
@@ -233,10 +232,9 @@ public class ItemOperationTest{
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
       Item item = ItemDB.lookup("STD ENGINE 300");
-      CutClass cut = new CutClass(xBar, loadoutPart, item);
 
-      cut.removeItem();
-      cut.addItem();
+      cut.removeItem(item);
+      cut.addItem(item);
 
       Mockito.verify(loadoutPart, Mockito.times(numEngineHs)).addItem(ItemDB.DHS);
    }

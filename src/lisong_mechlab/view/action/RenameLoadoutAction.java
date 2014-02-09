@@ -27,25 +27,37 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.RenameOperation;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 public class RenameLoadoutAction extends AbstractAction{
-   private static final String SHORTCUT_STROKE  = "control R";
-   private static final long   serialVersionUID = -673375419929455179L;
-   private final LoadoutFrame  loadoutFrame;
-   private final Loadout       loadout;
+   private static final String  SHORTCUT_STROKE  = "control R";
+   private static final long    serialVersionUID = -673375419929455179L;
+   private final LoadoutFrame   loadoutFrame;
+   private final Loadout        loadout;
+   private final MessageXBar    xBar;
+   private final OperationStack stack;
 
-   public RenameLoadoutAction(Loadout aLoadout){
+   public RenameLoadoutAction(Loadout aLoadout, MessageXBar aXBar, OperationStack aStack){
       super("Rename loadout...");
       loadout = aLoadout;
       loadoutFrame = null;
+      xBar = aXBar;
+      if( aStack == null )
+         stack = new OperationStack(0); // Not undoable
+      else
+         stack = aStack;
       putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
    }
 
-   public RenameLoadoutAction(LoadoutFrame aLoadoutFrame){
+   public RenameLoadoutAction(LoadoutFrame aLoadoutFrame, MessageXBar aXBar){
       super("Rename loadout...");
       loadout = aLoadoutFrame.getLoadout();
       loadoutFrame = aLoadoutFrame;
+      xBar = aXBar;
+      stack = loadoutFrame.getOpStack();
       putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
    }
 
@@ -56,6 +68,6 @@ public class RenameLoadoutAction extends AbstractAction{
          JOptionPane.showMessageDialog(loadoutFrame, "No name given!");
          return;
       }
-      loadout.rename(name);
+      stack.pushAndApply(new RenameOperation(loadout, xBar, name));
    }
 }

@@ -36,7 +36,6 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 abstract class ItemOperation extends Operation{
-   protected final Item        item;
    private int                 numEngineHS = 0;
    protected final LoadoutPart loadoutPart;
    private MessageXBar         xBar;
@@ -49,21 +48,21 @@ abstract class ItemOperation extends Operation{
     *           The {@link MessageXBar} to send messages to when changes occur.
     * @param aLoadoutPart
     *           The {@link LoadoutPart} that this operation will affect.
-    * @param anItem
-    *           The item that shall be affected.
     */
-   ItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item anItem){
-      item = anItem;
+   ItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart){
       loadoutPart = aLoadoutPart;
       xBar = anXBar;
    }
 
    /**
     * Removes an item without checks. Will count up the numEngineHS variable to the number of heat sinks removed.
+    * 
+    * @param anItem
+    *           The item to remove.
     */
-   protected void removeItem(){
-      if( item instanceof Engine ){
-         Engine engine = (Engine)item;
+   protected void removeItem(Item anItem){
+      if( anItem instanceof Engine ){
+         Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
             LoadoutPart lt = loadoutPart.getLoadout().getPart(Part.LeftTorso);
             LoadoutPart rt = loadoutPart.getLoadout().getPart(Part.RightTorso);
@@ -83,16 +82,19 @@ abstract class ItemOperation extends Operation{
                loadoutPart.removeItem(ItemDB.SHS);
          }
       }
-      loadoutPart.removeItem(item);
+      loadoutPart.removeItem(anItem);
       xBar.post(new Message(loadoutPart, Type.ItemRemoved));
    }
 
    /**
     * Adds an item without checks. Will add numEngineHS heat sinks if the item is an engine.
+    * 
+    * @param anItem
+    *           The item to add.
     */
-   protected void addItem(){
-      if( item instanceof Engine ){
-         Engine engine = (Engine)item;
+   protected void addItem(Item anItem){
+      if( anItem instanceof Engine ){
+         Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
             LoadoutPart lt = loadoutPart.getLoadout().getPart(Part.LeftTorso);
             LoadoutPart rt = loadoutPart.getLoadout().getPart(Part.RightTorso);
@@ -109,7 +111,7 @@ abstract class ItemOperation extends Operation{
                loadoutPart.addItem(ItemDB.SHS);
          }
       }
-      loadoutPart.addItem(item);
+      loadoutPart.addItem(anItem);
       xBar.post(new Message(loadoutPart, Type.ItemAdded));
    }
 }

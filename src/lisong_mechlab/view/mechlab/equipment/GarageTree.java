@@ -77,7 +77,7 @@ public class GarageTree extends JTree{
                   JMenuItem label = new JMenuItem(clickedLoadout.getName());
                   label.setEnabled(false);
                   menu.add(label);
-                  menu.add(new JMenuItem(new RenameLoadoutAction(clickedLoadout)));
+                  menu.add(new JMenuItem(new RenameLoadoutAction(clickedLoadout, xBar, null)));
                   menu.add(new JMenuItem(new DeleteLoadoutAction(xBar, ProgramInit.lsml().getGarage(), clickedLoadout)));
                   menu.add(new JMenuItem(new CloneLoadoutAction("Clone", clickedLoadout, KeyStroke.getKeyStroke("C"))));
                   menu.show(GarageTree.this, e.getX(), e.getY());
