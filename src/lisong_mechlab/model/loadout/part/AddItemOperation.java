@@ -51,6 +51,22 @@ public class AddItemOperation extends ItemOperation{
    }
 
    @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((item == null) ? 0 : item.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( !(obj instanceof RemoveItemOperation) )
+         return false;
+      AddItemOperation other = (AddItemOperation)obj;
+      return item == other.item && super.equals(other);
+   }
+
+   @Override
    public String describe(){
       return "add " + item.getName(loadoutPart.getLoadout().getUpgrades()) + " to " + loadoutPart.getInternalPart().getType();
    }

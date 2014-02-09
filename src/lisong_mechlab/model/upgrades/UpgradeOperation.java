@@ -72,5 +72,5 @@ abstract class UpgradeOperation extends CompositeOperation{
             throw new IllegalArgumentException("Not enough free slots!");
          }
       }
-   }
+   }   
 }

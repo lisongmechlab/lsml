@@ -105,6 +105,15 @@ public class MockLoadoutContainer{
       when(ll.getInternalPart()).thenReturn(ill);
       when(la.getInternalPart()).thenReturn(ila);
 
+      when(ra.getLoadout()).thenReturn(loadout);
+      when(rt.getLoadout()).thenReturn(loadout);
+      when(rl.getLoadout()).thenReturn(loadout);
+      when(hd.getLoadout()).thenReturn(loadout);
+      when(ct.getLoadout()).thenReturn(loadout);
+      when(lt.getLoadout()).thenReturn(loadout);
+      when(ll.getLoadout()).thenReturn(loadout);
+      when(la.getLoadout()).thenReturn(loadout);
+      
       when(ra.toString()).thenReturn("RA");
       when(rt.toString()).thenReturn("RT");
       when(rl.toString()).thenReturn("RL");
