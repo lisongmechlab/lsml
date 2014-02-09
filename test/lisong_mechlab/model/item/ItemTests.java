@@ -120,9 +120,9 @@ public class ItemTests{
       assertEquals(0.2, xl335.getHeat(), 0.0);
       
       assertEquals(EngineType.STD, std175.getType());
-      assertEquals(EngineType.STD, std175.getType());
-      assertEquals(EngineType.XL, std175.getType());
-      assertEquals(EngineType.XL, std175.getType());
+      assertEquals(EngineType.STD, std180.getType());
+      assertEquals(EngineType.XL, xl330.getType());
+      assertEquals(EngineType.XL, xl335.getType());
    }
 
    /**

@@ -57,26 +57,21 @@ public class ItemTransferHandler extends TransferHandler{
       assert (SwingUtilities.isEventDispatchThread());
       if( aComponent instanceof PartList ){
          PartList partList = (PartList)aComponent;
-         synchronized( partList ){
 
-            List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
-            sourcePart = partList.getPart();
+         List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
+         sourcePart = partList.getPart();
 
-            if( sourceItems.size() < 1 || sourcePart == null )
-               return null;
+         if( sourceItems.size() < 1 )
+            return null;
 
-            StringBuffer buff = new StringBuffer();
-            for(Pair<Item, Integer> it : sourceItems){
-               buff.append(it.first.getName()).append('\n');
-               sourcePart.removeItem(it.first, true);
-            }
-
-            Point mouse = partList.getMousePosition();
-            mouse.y -= partList.getFixedCellHeight() * sourceItems.get(0).second;
-            setDragImage(ItemRenderer.render(sourceItems.get(0).first, sourcePart.getLoadout().getUpgrades()));
-            setDragImageOffset(mouse);
-            return new StringSelection(buff.toString());
+         StringBuffer buff = new StringBuffer();
+         for(Pair<Item, Integer> it : sourceItems){
+            buff.append(it.first.getName()).append('\n');
+            sourcePart.removeItem(it.first, true);
          }
+
+         setPreview(sourceItems.get(0).first, sourcePart.getLoadout());
+         return new StringSelection(buff.toString());
       }
       else if( aComponent instanceof GarageTree ){
          sourcePart = null;
@@ -115,7 +110,7 @@ public class ItemTransferHandler extends TransferHandler{
       Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
       setDragImageOffset(mouse);
    }
-   
+
    @Override
    protected void exportDone(JComponent c, Transferable t, int action){
       // NO-OP
