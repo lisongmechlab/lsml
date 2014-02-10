@@ -32,9 +32,9 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.junit.runner.RunWith;
 
 /**
  * Test suite for {@link SetMaxArmorOperation}.

@@ -146,6 +146,9 @@ public class LoadoutPart{
          return false;
       }
 
+      if( !anItem.isEquippableOn(loadout) )
+         return false;
+
       // Check enough free hard points
       if( anItem.getHardpointType() != HardpointType.NONE
           && getNumItemsOfHardpointType(anItem.getHardpointType()) >= getInternalPart().getNumHardpoints(anItem.getHardpointType()) ){
@@ -182,7 +185,7 @@ public class LoadoutPart{
 
    private boolean checkHeatsinkRules(HeatSink anItem){
       // Don't allow standard heat sinks when double heat sinks are upgraded etc.
-      if(loadout.getUpgrades().getHeatSink().getHeatSinkType() != anItem){
+      if( loadout.getUpgrades().getHeatSink().getHeatSinkType() != anItem ){
          return false;
       }
 
@@ -215,13 +218,15 @@ public class LoadoutPart{
          return false;
       LoadoutPart that = (LoadoutPart)obj;
 
-      // @formatter:off
-      return // loadout.equals(that.loadout) && // Two LoadoutParts can be equal without having equal Loadouts.
-             internalPart.equals(that.internalPart) &&
-             ArrayUtils.equalsUnordered(items, that.items) &&
-             armor.equals(that.armor) &&
-             engineHeatsinks == that.engineHeatsinks;
-      // @formatter:on;
+      if( !internalPart.equals(that.internalPart) )
+         return false;
+      if( !ArrayUtils.equalsUnordered(items, that.items) )
+         return false;
+      if( !armor.equals(that.armor) )
+         return false;
+      if( engineHeatsinks != that.engineHeatsinks )
+         return false;
+      return true;
    }
 
    public int getArmor(ArmorSide anArmorSide){
@@ -258,26 +263,6 @@ public class LoadoutPart{
 
    public InternalPart getInternalPart(){
       return internalPart;
-   }
-
-   @Deprecated
-   public int getItemCriticalSlots(int index){
-      return getItemCriticalSlots(items.get(index));
-   }
-
-   @Deprecated
-   public int getItemCriticalSlots(Item anItem){
-      return anItem.getNumCriticalSlots(loadout.getUpgrades());
-   }
-
-   @Deprecated
-   public String getItemDisplayName(int index){
-      return getItemDisplayName(items.get(index));
-   }
-
-   @Deprecated
-   public String getItemDisplayName(Item anItem){
-      return anItem.getName(loadout.getUpgrades());
    }
 
    public double getItemMass(){
@@ -355,7 +340,7 @@ public class LoadoutPart{
    void setArmor(ArmorSide anArmorSide, int anAmount){
       armor.put(anArmorSide, anAmount);
    }
-   
+
    void addItem(Item anItem){
       items.add(anItem);
    }

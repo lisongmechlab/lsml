@@ -49,8 +49,8 @@ import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.part.RemoveItemOperation;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.render.StyleManager;
@@ -94,8 +94,9 @@ public class PartList extends JList<Item>{
                break;
             }
             case Item:{
-               setText(part.getItemDisplayName(pair.second));
-               if( part.getItemCriticalSlots(pair.second) == 1 ){
+               Item item = pair.second;
+               setText(item.getName());
+               if( item.getNumCriticalSlots(null) == 1 ){
                   StyleManager.styleItem(this, pair.second);
                }
                else{
@@ -207,25 +208,25 @@ public class PartList extends JList<Item>{
          Item item = items.get(itemsIdx);
          itemsIdx++;
 
-         int spaceLeft = part.getItemCriticalSlots(item);
+         int spaceLeft = item.getNumCriticalSlots(null);
          for(int slot = 0; slot < arg0; ++slot){
             spaceLeft--;
             if( spaceLeft == 0 ){
                if( itemsIdx < items.size() ){
                   item = items.get(itemsIdx);
                   itemsIdx++;
-                  spaceLeft = part.getItemCriticalSlots(item);
+                  spaceLeft = item.getNumCriticalSlots(null);
                }
                else
                   return new Pair<ListEntryType, Item>(ListEntryType.Empty, null);
             }
          }
-         if( spaceLeft == 1 && part.getItemCriticalSlots(item) > 1 ){
+         if( spaceLeft == 1 && item.getNumCriticalSlots(null) > 1 ){
             if( item instanceof Engine )
                return new Pair<ListEntryType, Item>(ListEntryType.EngineHeatSink, item);
             return new Pair<ListEntryType, Item>(ListEntryType.LastSlot, item);
          }
-         if( spaceLeft == part.getItemCriticalSlots(item) )
+         if( spaceLeft == item.getNumCriticalSlots(null) )
             return new Pair<ListEntryType, Item>(ListEntryType.Item, item);
          if( spaceLeft > 0 )
             return new Pair<ListEntryType, Item>(ListEntryType.MultiSlot, item);

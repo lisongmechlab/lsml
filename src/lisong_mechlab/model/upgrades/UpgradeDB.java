@@ -22,6 +22,8 @@ package lisong_mechlab.model.upgrades;
 import java.util.Map;
 import java.util.TreeMap;
 
+import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.mwo_parsing.ItemStatsXml;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
 
@@ -44,6 +46,8 @@ public class UpgradeDB{
    public static void initialize(){
       ItemStatsXml xml = ItemStatsXml.stats;
       id2upgrade = new TreeMap<Integer, Upgrade>();
+      @SuppressWarnings("unused")
+      Item dummy = ItemDB.DHS; // force itemDB to become loaded
 
       for(ItemStatsUpgradeType upgradeType : xml.UpgradeTypeList){
          UpgradeType type = UpgradeType.fromMwo(upgradeType.UpgradeTypeStats.type);

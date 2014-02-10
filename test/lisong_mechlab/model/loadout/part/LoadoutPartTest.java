@@ -256,7 +256,7 @@ public class LoadoutPartTest{
    public void testGetNumCriticalSlotsUsedFree() throws Exception{
       // Setup
       MissileWeapon srm = (MissileWeapon)ItemDB.lookup("STREAK SRM 2");
-      MissileWeapon lrm_artemis = (MissileWeapon)ItemDB.lookup("LRM5");
+      MissileWeapon lrm_artemis = (MissileWeapon)ItemDB.lookup("LRM 5 + ARTEMIS");
       final int critSlots = 12;
 
       Upgrades upgrades = Mockito.mock(Upgrades.class);
@@ -360,16 +360,17 @@ public class LoadoutPartTest{
    public void testCanAddItem_jumpJets(){
       for(Part p : Part.values()){
          // Setup
-         Item jumpjet = ItemDB.lookup("JUMP JETS - CLASS V");
+         Item jumpjet = ItemDB.lookup("JUMP JETS - CLASS I");
          int critSlots = 12;
 
          Chassi chassi = Mockito.mock(Chassi.class);
+         Mockito.when(chassi.getMassMax()).thenReturn(90);
          Mockito.when(chassi.getMaxJumpJets()).thenReturn(5);
 
          Loadout loadout = Mockito.mock(Loadout.class);
          Mockito.when(loadout.getJumpJetCount()).thenReturn(0);
          Mockito.when(loadout.getChassi()).thenReturn(chassi);
-         Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
+         Mockito.when(loadout.getFreeMass()).thenReturn(90.0);
          Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(100);
 
          Mockito.when(part.getType()).thenReturn(p);
@@ -622,7 +623,7 @@ public class LoadoutPartTest{
    @Parameters({"true, 10.0", "false, 10.0", "true, 0.0", "false, 0.0"})
    public void testCanAddItem_engineHs(boolean aDHS, double freeMass){
       Upgrades upgrades = Mockito.mock(Upgrades.class);
-      Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
+      Mockito.when(upgrades.getHeatSink()).thenReturn(aDHS ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS);
 
       Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
@@ -679,9 +680,11 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(1);
 
       Item item = Mockito.mock(Item.class);
+      Mockito.when(item.isEquippableOn(loadout)).thenReturn(true);
       Mockito.when(item.getHardpointType()).thenReturn(HardpointType.ENERGY);
 
       Item otherItem = Mockito.mock(Item.class);
+      Mockito.when(otherItem.isEquippableOn(loadout)).thenReturn(true);
       Mockito.when(otherItem.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
 
       LoadoutPart cut = new LoadoutPart(loadout, part);

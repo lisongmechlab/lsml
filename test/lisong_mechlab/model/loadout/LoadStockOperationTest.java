@@ -72,6 +72,8 @@ public class LoadStockOperationTest{
       OperationStack opstack = new OperationStack(0);
       opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
 
+      assertTrue(loadout.getMass() > 34.9);
+      
       // Execute
       opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
    }

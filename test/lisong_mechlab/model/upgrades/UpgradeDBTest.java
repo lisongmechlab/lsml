@@ -1,19 +1,12 @@
 package lisong_mechlab.model.upgrades;
 
-import static org.junit.Assert.*;
-import lisong_mechlab.model.upgrades.UpgradeDB;
+import static org.junit.Assert.assertSame;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 
 
 public class UpgradeDBTest{
-   
-   @BeforeClass
-   public static void staticSetup(){
-      UpgradeDB.initialize();
-   }
    
    @Test(expected=IllegalArgumentException.class)
    public void testLookup_BadId(){

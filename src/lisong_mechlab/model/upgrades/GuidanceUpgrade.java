@@ -19,13 +19,20 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
 
+/**
+ * This class models a guidance upgrade.
+ * 
+ * @author Li Song
+ */
 public class GuidanceUpgrade extends Upgrade{
    final private int    slots;
    final private double tons;
@@ -115,20 +122,43 @@ public class GuidanceUpgrade extends Upgrade{
    }
 
    /**
+    * Upgrades a {@link MissileWeapon} to match this guidance type.
+    * 
     * @param aOldWeapon
-    * @return
+    *           The {@link MissileWeapon} to upgrade.
+    * @return A {@link MissileWeapon} which is an appropriate variant for this guidance type.
     */
    public MissileWeapon upgrade(MissileWeapon aOldWeapon){
-      // TODO Auto-generated method stub
-      return null;
+      MissileWeapon baseVariant = aOldWeapon.getBaseVariant();
+      if( null == baseVariant )
+         return aOldWeapon;
+
+      for(MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)){
+         if( weapon.getBaseVariant() == baseVariant && weapon.getRequiredUpgrade() == this ){
+            return weapon;
+         }
+      }
+      throw new RuntimeException("Unable to find upgraded version of: " + baseVariant);
    }
 
    /**
+    * Upgrades a {@link Ammunition} to match this guidance type.
+    * 
     * @param aOldAmmo
-    * @return
+    *           The {@link Ammunition} to upgrade.
+    * @return An {@link Ammunition} object of the appropriate type for this guidance.
     */
    public Ammunition upgrade(Ammunition aOldAmmo){
-      // TODO Auto-generated method stub
-      return null;
+      if( aOldAmmo.getWeaponHardpointType() != HardpointType.MISSILE ){
+         return aOldAmmo;
+      }
+
+      for(MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)){
+         if( weapon.getAmmoType(null) == aOldAmmo ){
+            return upgrade(weapon).getAmmoType(null);
+         }
+      }
+
+      throw new RuntimeException("Unable to find upgraded version of: " + aOldAmmo);
    }
 }

@@ -164,7 +164,7 @@ public class ItemOperationTest{
       Item item = ItemDB.lookup("STD ENGINE 300");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Loadout loadout = Mockito.mock(Loadout.class);
-      Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
+      Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.STANDARD_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
@@ -208,6 +208,7 @@ public class ItemOperationTest{
       final int numEngineHs = 2;
       Loadout loadout = Mockito.mock(Loadout.class);
       Upgrades upgrades = Mockito.mock(Upgrades.class);
+      Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
@@ -216,7 +217,7 @@ public class ItemOperationTest{
       cut.removeItem(item);
       cut.addItem(item);
 
-      Mockito.verify(loadoutPart, Mockito.times(numEngineHs)).addItem(ItemDB.SHS);
+      Mockito.verify(loadoutPart, Mockito.times(numEngineHs)).addItem(ItemDB.DHS);
    }
 
    /**

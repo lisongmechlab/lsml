@@ -67,7 +67,7 @@ public class LoadoutSerializationTest{
    }
 
    @SuppressWarnings("unused")
-   private Object[] allChassisL(){
+   private Object[] allChassis(){
       List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));

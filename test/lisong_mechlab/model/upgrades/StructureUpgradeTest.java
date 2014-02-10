@@ -3,12 +3,10 @@ package lisong_mechlab.model.upgrades;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import lisong_mechlab.model.chassi.Chassi;
-import lisong_mechlab.model.upgrades.StructureUpgrade;
-import lisong_mechlab.model.upgrades.UpgradeDB;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -17,11 +15,6 @@ import org.junit.Test;
  * @author Li Song
  */
 public class StructureUpgradeTest{
-   @BeforeClass
-   public static void staticSetup(){
-      UpgradeDB.initialize();
-   }
-
    /**
     * Test properties of standard structure
     */
@@ -31,7 +24,7 @@ public class StructureUpgradeTest{
       StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(ss_id);
 
       Chassi chassi = mock(Chassi.class);
-      final int chassiMass = 30;
+      final int chassiMass = 35;
       when(chassi.getMassMax()).thenReturn(chassiMass);
 
       assertNotNull(cut);
@@ -51,7 +44,7 @@ public class StructureUpgradeTest{
       StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(es_id);
 
       Chassi chassi = mock(Chassi.class);
-      final int chassiMass = 30;
+      final int chassiMass = 35;
       when(chassi.getMassMax()).thenReturn(chassiMass);
 
       assertNotNull(cut);
@@ -59,7 +52,7 @@ public class StructureUpgradeTest{
       assertEquals("ENDO-STEEL STRUCTURE", cut.getName());
       assertFalse(cut.getDescription().equals(""));
       assertEquals(14, cut.getExtraSlots());
-      assertEquals(chassiMass * 0.05, cut.getStructureMass(chassi), 0.0);
+      assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
    }
    
    /**
@@ -71,8 +64,8 @@ public class StructureUpgradeTest{
       StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(es_id);
 
       Chassi chassi = mock(Chassi.class);
-      final int chassiMass = 85;
+      final int chassiMass = 35;
       when(chassi.getMassMax()).thenReturn(chassiMass);
-      assertEquals(4.5, cut.getStructureMass(chassi), 0.0);
+      assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
    }
 }

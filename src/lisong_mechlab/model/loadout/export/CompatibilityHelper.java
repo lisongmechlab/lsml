@@ -19,16 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.export;
 
-import java.util.List;
-
-import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
-import lisong_mechlab.model.upgrades.UpgradeDB;
-import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
  * This class helps dealing with compatibility issues that arise along the way.
@@ -36,8 +30,6 @@ import lisong_mechlab.model.upgrades.Upgrades;
  * @author Li Song
  */
 public class CompatibilityHelper{
-
-   private final static List<MissileWeapon> missileWeapons = ItemDB.lookup(MissileWeapon.class);
 
    /**
     * February 4th patch introduced new weapon IDs for artemis enabled missile launchers. This function canonizes old
@@ -48,47 +40,14 @@ public class CompatibilityHelper{
     * @return A canonized item.
     */
    public static Item fixArtemis(final Item anItem, GuidanceUpgrade aGuidanceType){
-      Upgrades withArtemis = new Upgrades(null, null, UpgradeDB.ARTEMIS_IV, null);
-      Upgrades withoutArtemis = new Upgrades(null, null, UpgradeDB.STANDARD_GUIDANCE, null);
-
       Item ans = anItem;
-      if( aGuidanceType != UpgradeDB.STANDARD_GUIDANCE ){
-         if( anItem instanceof MissileWeapon ){
-            MissileWeapon weapon = (MissileWeapon)anItem;
-            if( weapon.isArtemisCapable() && !weapon.getName(null).contains("ARTEMIS") ){
-               ans = ItemDB.lookup(weapon.getName() + " + ARTEMIS");
-            }
-         }
-         else if( anItem instanceof Ammunition ){
-            Ammunition ammunition = (Ammunition)anItem;
-            if( ammunition.getWeaponHardpointType() == HardpointType.MISSILE ){
-               for(MissileWeapon weapon : missileWeapons){
-                  if( weapon.getAmmoType(withoutArtemis) == ammunition ){
-                     ans = weapon.getAmmoType(withArtemis);
-                     break;
-                  }
-               }
-            }
-         }
+      if( anItem instanceof MissileWeapon ){
+         MissileWeapon weapon = (MissileWeapon)anItem;
+         ans = aGuidanceType.upgrade(weapon);
       }
-      else{ // No Artemis
-         if( anItem instanceof MissileWeapon ){
-            MissileWeapon weapon = (MissileWeapon)anItem;
-            if( weapon.isArtemisCapable() && weapon.getName(null).contains("ARTEMIS") ){
-               ans = ItemDB.lookup(weapon.getName().substring(0, weapon.getName().indexOf(" + ARTEMIS")));
-            }
-         }
-         else if( anItem instanceof Ammunition ){
-            Ammunition ammunition = (Ammunition)anItem;
-            if( ammunition.getWeaponHardpointType() == HardpointType.MISSILE ){
-               for(MissileWeapon weapon : missileWeapons){
-                  if( weapon.getAmmoType(withArtemis) == ammunition ){
-                     ans = weapon.getAmmoType(withoutArtemis);
-                     break;
-                  }
-               }
-            }
-         }
+      else if( anItem instanceof Ammunition ){
+         Ammunition ammunition = (Ammunition)anItem;
+         ans = aGuidanceType.upgrade(ammunition);
       }
       return ans;
    }
