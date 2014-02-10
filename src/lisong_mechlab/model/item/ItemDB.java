@@ -129,7 +129,9 @@ public class ItemDB{
 
       // Weapons next.
       for(ItemStatsWeapon statsWeapon : stats.WeaponList){
+         int baseType = -1;
          if( statsWeapon.InheritFrom > 0 ){
+            baseType = statsWeapon.InheritFrom;
             for(ItemStatsWeapon w : stats.WeaponList){
                try{
                   if( Integer.parseInt(w.id) == statsWeapon.InheritFrom ){
@@ -160,7 +162,7 @@ public class ItemDB{
                put(new EnergyWeapon(statsWeapon));
                break;
             case MISSILE:
-               put(new MissileWeapon(statsWeapon));
+               put(new MissileWeapon(statsWeapon, baseType));
                break;
             default:
                throw new RuntimeException("Unknown value for type field in ItemStatsXML. Please update the program!");

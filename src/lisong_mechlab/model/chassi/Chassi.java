@@ -166,10 +166,6 @@ public class Chassi{
       return maxJumpJets;
    }
 
-   public boolean isEcmCapable(){
-      return getHardpointsCount(HardpointType.ECM) > 0;
-   }
-
    public int getHardpointsCount(HardpointType aHardpointType){
       int sum = 0;
       for(InternalPart part : parts.values()){

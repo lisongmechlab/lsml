@@ -116,7 +116,8 @@ public class GarageTree extends JTree{
             sb.append("<html>");
             sb.append("Max Tons: ").append(chassi.getMassMax()).append(" Engine: ").append(chassi.getEngineMin()).append(" - ")
               .append(chassi.getEngineMax()).append("<br>");
-            sb.append("Max Jump Jets: ").append(chassi.getMaxJumpJets()).append(" ECM: ").append(chassi.isEcmCapable() ? "Yes" : "No").append("<br>");
+            sb.append("Max Jump Jets: ").append(chassi.getMaxJumpJets()).append(" ECM: ")
+              .append(chassi.getHardpointsCount(HardpointType.ECM) > 0 ? "Yes" : "No").append("<br>");
             sb.append("Ballistics: ").append(chassi.getHardpointsCount(HardpointType.BALLISTIC)).append(" Energy: ")
               .append(chassi.getHardpointsCount(HardpointType.ENERGY)).append(" Missile: ").append(chassi.getHardpointsCount(HardpointType.MISSILE))
               .append(" AMS: ").append(chassi.getHardpointsCount(HardpointType.AMS)).append("<br>");

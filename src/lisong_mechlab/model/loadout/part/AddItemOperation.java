@@ -21,7 +21,6 @@ package lisong_mechlab.model.loadout.part;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.export.CompatibilityHelper;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
@@ -78,7 +77,6 @@ public class AddItemOperation extends ItemOperation{
 
    @Override
    public void apply(){
-      item = CompatibilityHelper.fixArtemis(item, loadoutPart.getLoadout().getUpgrades().getGuidance());
       if( !loadoutPart.canAddItem(item) )
          throw new IllegalArgumentException("Can't add " + item + "!");
       addItem(item);

@@ -1,10 +1,9 @@
 package lisong_mechlab.model.upgrades;
 
-import static org.junit.Assert.*;
-import lisong_mechlab.model.upgrades.ArmorUpgrade;
-import lisong_mechlab.model.upgrades.UpgradeDB;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -13,11 +12,6 @@ import org.junit.Test;
  * @author Emily Björk
  */
 public class ArmorUpgradeTest{
-   @BeforeClass
-   public static void staticSetup(){
-      UpgradeDB.initialize();
-   }
-
    /**
     * Test properties of standard armor
     */

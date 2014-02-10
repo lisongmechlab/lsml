@@ -25,14 +25,16 @@ import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
+import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 public class MissileWeapon extends AmmoWeapon{
    protected final double flightSpeed;
    protected final int    requiredGuidancetype;
+   private final int      baseItemId;
 
-   public MissileWeapon(ItemStatsWeapon aStatsWeapon){
+   public MissileWeapon(ItemStatsWeapon aStatsWeapon, int aBaseItemId){
       super(aStatsWeapon, HardpointType.MISSILE, getAmmoType(aStatsWeapon));
       flightSpeed = aStatsWeapon.WeaponStats.speed;
 
@@ -40,6 +42,8 @@ public class MissileWeapon extends AmmoWeapon{
          requiredGuidancetype = aStatsWeapon.Artemis.RestrictedTo;
       else
          requiredGuidancetype = -1;
+
+      baseItemId = aBaseItemId == -1 ? (isArtemisCapable() ? getMwoIdx() : -1) : aBaseItemId;
    }
 
    static private Ammunition getAmmoType(ItemStatsWeapon aStatsWeapon){
@@ -86,7 +90,7 @@ public class MissileWeapon extends AmmoWeapon{
    @Override
    public double getMass(Upgrades aUpgrades){
       if( isArtemisCapable() ){
-         return super.getNumCriticalSlots(aUpgrades) + ((GuidanceUpgrade)UpgradeDB.lookup(requiredGuidancetype)).getTons();
+         return super.getMass(aUpgrades) + ((GuidanceUpgrade)UpgradeDB.lookup(requiredGuidancetype)).getTons();
       }
       return super.getMass(aUpgrades);
    }
@@ -95,5 +99,20 @@ public class MissileWeapon extends AmmoWeapon{
       return requiredGuidancetype != -1;
    }
 
+   public MissileWeapon getBaseVariant(){
+      if( baseItemId <= 0 ){
+         return null;
+      }
+      return (MissileWeapon)ItemDB.lookup(baseItemId);
+   }
+
    public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;
+
+   /**
+    * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns
+    *         <code>null</code>.
+    */
+   public Upgrade getRequiredUpgrade(){
+      return UpgradeDB.lookup(requiredGuidancetype);
+   }
 }

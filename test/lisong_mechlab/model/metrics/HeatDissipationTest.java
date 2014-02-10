@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 
 import org.junit.Test;
@@ -45,16 +46,17 @@ public class HeatDissipationTest{
     */
    @Test
    public void testCalculate(){
+      HeatsinkUpgrade hs = UpgradeDB.DOUBLE_HEATSINKS;
       final double dissipationFactor = 1.3;
       final int externalHs = 5;
       final int internalHs = 9;
       final double internalHsDissipation = 0.2;
-      final double externalHsDissipation = 0.14;
+      final double externalHsDissipation = hs.getHeatSinkType().getDissipation();
 
       Engine engine = mock(Engine.class);
       when(engine.getNumInternalHeatsinks()).thenReturn(internalHs);
       when(mlc.efficiencies.getHeatDissipationModifier()).thenReturn(dissipationFactor);
-      when(mlc.upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
+      when(mlc.upgrades.getHeatSink()).thenReturn(hs);
       when(mlc.loadout.getEngine()).thenReturn(engine);
       when(mlc.loadout.getHeatsinksCount()).thenReturn(externalHs + internalHs);
 
@@ -67,6 +69,7 @@ public class HeatDissipationTest{
       Environment environment = mock(Environment.class);
       final double environmentHeat = 0.3;
 
+      when(mlc.upgrades.getHeatSink()).thenReturn(UpgradeDB.STANDARD_HEATSINKS);
       when(mlc.efficiencies.getHeatDissipationModifier()).thenReturn(1.0);
       when(mlc.loadout.getHeatsinksCount()).thenReturn(10);
       when(environment.getHeat()).thenReturn(environmentHeat);

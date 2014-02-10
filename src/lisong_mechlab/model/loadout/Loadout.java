@@ -263,6 +263,7 @@ public class Loadout{
       for(LoadoutPart partConf : parts.values()){
          ans += partConf.getItemMass();
       }
+      ans += upgrades.getArmor().getArmorMass(getArmor());
       return ans;
    }
 

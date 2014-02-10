@@ -21,7 +21,6 @@ package lisong_mechlab.util;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
 
 import org.junit.Before;

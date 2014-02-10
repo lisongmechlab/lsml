@@ -21,10 +21,10 @@ package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.StripPartOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceOperation;
+import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
 import lisong_mechlab.model.upgrades.SetDHSOperation;
 import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
-import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
+import lisong_mechlab.model.upgrades.SetGuidanceOperation;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 

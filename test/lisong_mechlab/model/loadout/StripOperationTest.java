@@ -20,6 +20,7 @@
 package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -50,8 +51,10 @@ public class StripOperationTest{
    @Test
    public void testStrip() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("KTO-19").getName(), xBar); // Has Ferro-Fib standard
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-BH").getName(), xBar); // Has Endo-Steel standard and lots of stuff
 
+      assertTrue(cut.getMass() > 99.0);
+      
       // Execute
       OperationStack opStack = new OperationStack(0);
       opStack.pushAndApply(new StripOperation(cut, xBar));

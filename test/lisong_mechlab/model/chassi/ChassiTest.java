@@ -23,11 +23,50 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+/**
+ * Test suite for {@link Chassi}.
+ * 
+ * @author Emily Björk
+ */
+@RunWith(JUnitParamsRunner.class)
 public class ChassiTest{
 
+   @Test(expected = UnsupportedOperationException.class)
+   public void getParts_NoMod(){
+      Chassi cut = ChassiDB.lookup("Ilya Muromets");
+      cut.getInternalParts().add(null);
+   }
+
+   @Parameters({"HBK-4J, HBK-4P","CTF-3D, Ilya Muromets"})
+   @Test
+   public void testIsSameSeries(String aChassiA, String aChassiB){
+      assertTrue(ChassiDB.lookup(aChassiA).isSameSeries(ChassiDB.lookup(aChassiB)));
+   }
+   
+   @Parameters({"HBK-4J, CTF-3D","EMBER, Ilya Muromets"})
+   @Test
+   public void testIsNotSameSeries(String aChassiA, String aChassiB){
+      assertFalse(ChassiDB.lookup(aChassiA).isSameSeries(ChassiDB.lookup(aChassiB)));
+   }
+   
+   @Parameters({"SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)"})
+   @Test
+   public void testIsSpecialVariant(String aChassiA){
+      assertTrue(ChassiDB.lookup(aChassiA).isSpecialVariant());
+   }
+   
+   @Parameters({"SDR-5K", "JR7-D", "CDA-2A"})
+   @Test
+   public void testIsNotSpecialVariant(String aChassiA){
+      assertFalse(ChassiDB.lookup(aChassiA).isSpecialVariant());
+   }
+   
    @Test
    public void testLoadHeroMech(){
       Chassi cut = ChassiDB.lookup("Ilya Muromets");
@@ -45,9 +84,11 @@ public class ChassiTest{
 
       assertEquals(434, cut.getArmorMax());
 
+      assertEquals(16.2, cut.getSpeedFactor(), 0.0);
+
       assertSame(ChassiClass.HEAVY, cut.getChassiClass());
       assertEquals(0, cut.getMaxJumpJets());
-      assertEquals(false, cut.isEcmCapable());
+      assertEquals(0, cut.getHardpointsCount(HardpointType.ECM));
 
       // Do a through test only on the Ilyas components
       {
@@ -192,7 +233,7 @@ public class ChassiTest{
 
       assertSame(ChassiClass.ASSAULT, cut.getChassiClass());
       assertEquals(0, cut.getMaxJumpJets());
-      assertEquals(true, cut.isEcmCapable());
+      assertEquals(1, cut.getHardpointsCount(HardpointType.ECM));
 
       assertEquals(3, cut.getInternalPart(Part.Head).getInternalItems().size());
 
@@ -228,7 +269,7 @@ public class ChassiTest{
 
       assertSame(ChassiClass.LIGHT, cut.getChassiClass());
       assertEquals(5, cut.getMaxJumpJets());
-      assertEquals(false, cut.isEcmCapable());
+      assertEquals(0, cut.getHardpointsCount(HardpointType.ECM));
 
       assertEquals(3, cut.getInternalPart(Part.Head).getInternalItems().size());
 

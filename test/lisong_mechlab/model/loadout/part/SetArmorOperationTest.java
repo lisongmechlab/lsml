@@ -95,6 +95,7 @@ public class SetArmorOperationTest{
       final int oldArmor = 20;
       final int newArmor = oldArmor + (int)(freeTons * 32) + 1;
 
+      Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
       Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
@@ -208,6 +209,7 @@ public class SetArmorOperationTest{
       final int oldArmor = 20;
       final int newArmor = 1;
 
+      Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
       Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
@@ -316,6 +318,7 @@ public class SetArmorOperationTest{
       int newArmor = 20;
       int oldArmor = 25;
 
+      Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
       Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(0);

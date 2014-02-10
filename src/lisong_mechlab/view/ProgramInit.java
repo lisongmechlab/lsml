@@ -140,8 +140,10 @@ public class ProgramInit extends JFrame{
          ENVIRONMENT_DB.initialize();
       }
       catch( Throwable e ){
-         JOptionPane.showMessageDialog(this,
-                                       "Unable to find/parse game data files!\nLSML requires an up-to-date installation of MW:Online to parse data files from.");
+         JOptionPane.showMessageDialog(this, "Please make sure you have the latest version of LSML (http://li-soft.org) installed\n"
+                                             + "and make sure that your MWO install is up-to-date.\n"
+                                             + "If the problem persists, please consult the FAQ and User Manual on the website.",
+                                       "LSML is unable to parse your game files.", JOptionPane.ERROR_MESSAGE);
          e.printStackTrace();
          return false;
       }

@@ -33,10 +33,10 @@ import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
-import lisong_mechlab.model.upgrades.SetGuidanceOperation;
+import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
 import lisong_mechlab.model.upgrades.SetDHSOperation;
 import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
-import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
+import lisong_mechlab.model.upgrades.SetGuidanceOperation;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
@@ -66,7 +66,7 @@ public class LoadStockOperation extends LoadoutOperation{
          int armorId = Integer.parseInt(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID"));
          int structureId = Integer.parseInt(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID"));
          int heatsinkId = reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double") ? 3002 : 3003;
-         int guidanceId = reader.getElementByTagName("Structure", stockUpgrades).getAttribute("Equipped").equals("1") ? 3050 : 3051;
+         int guidanceId = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1") ? 3050 : 3051;
 
          // FIXME: Revisit this fix! The game files are broken.
          if( loadout.getChassi().getNameShort().equals("KTO-19") ){
