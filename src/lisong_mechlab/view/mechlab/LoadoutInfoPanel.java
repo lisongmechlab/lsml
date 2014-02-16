@@ -100,6 +100,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final MetricDisplay          turnSpeed;
    private final MetricDisplay          twistSpeed;
    private final JCheckBox              speedTweak       = new JCheckBox("Speed Tweak");
+   private final JCheckBox              anchorTurn       = new JCheckBox("Anchor Turn");
    private final JLabel                 jumpJets         = new JLabel("xxx");
 
    // Heat pane
@@ -231,9 +232,16 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          twistSpeed.setAlignmentX(CENTER_ALIGNMENT);
          mobility.add(twistSpeed);
 
-         speedTweak.setAlignmentX(Component.CENTER_ALIGNMENT);
-         mobility.add(speedTweak);
+         JPanel eff = new JPanel(new GridLayout(1, 2));
+         eff.setAlignmentY(Component.CENTER_ALIGNMENT);
+         
+         speedTweak.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+
+         eff.add(speedTweak);
+         eff.add(anchorTurn);
+         mobility.add(eff);
          speedTweak.addItemListener(this);
+         anchorTurn.addItemListener(this);
       }
 
       final HeatCapacity heatCapacity = new HeatCapacity(loadout);
@@ -300,9 +308,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(coolingRatio);
 
-         GridLayout gridLayout = new GridLayout(2, 2);
-         JPanel upgrades = new JPanel(gridLayout);
-
+         JPanel upgrades = new JPanel(new GridLayout(2, 2));
          upgrades.setAlignmentY(Component.CENTER_ALIGNMENT);
          coolRun.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
          upgrades.add(coolRun);
@@ -479,6 +485,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassi().getMaxJumpJets() + " ("
                                 + df2.format(metricJumpDistance.calculate()) + " m)");
                speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
+               anchorTurn.setSelected(loadout.getEfficiencies().hasAnchorTurn());
 
                // Heat
                // ----------------------------------------------------------------------
@@ -536,6 +543,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          }
          else if( source == speedTweak ){
             loadout.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED);
+         }
+         else if( source == anchorTurn ){
+            loadout.getEfficiencies().setAnchorTurn(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else if( source == doubleHeatSinks ){
             opStack.pushAndApply(new SetDHSOperation(xBar, loadout, doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS
