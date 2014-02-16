@@ -64,6 +64,7 @@ public class Efficiencies{
    // Basic
    private boolean                     coolRun;
    private boolean                     heatContainment;
+   private boolean                     anchorTurn;
 
    // Meta
    private boolean                     doubleBasics;
@@ -87,6 +88,13 @@ public class Efficiencies{
     */
    public boolean hasSpeedTweak(){
       return speedTweak;
+   }
+
+   /**
+    * @return <code>true</code> if anchor turn is enabled (10% faster turn speed).
+    */
+   public boolean hasAnchorTurn(){
+      return anchorTurn;
    }
 
    /**
@@ -151,6 +159,20 @@ public class Efficiencies{
    public void setSpeedTweak(boolean aSpeedTweak){
       if( aSpeedTweak != speedTweak ){
          speedTweak = aSpeedTweak;
+         if( xBar != null )
+            xBar.post(new Message(this, Type.Changed));
+      }
+   }
+
+   /**
+    * Sets anchor turn status.
+    * 
+    * @param aAnchorTurn
+    *           The value to set.
+    */
+   public void setAnchorTurn(boolean aAnchorTurn){
+      if( aAnchorTurn != anchorTurn ){
+         anchorTurn = aAnchorTurn;
          if( xBar != null )
             xBar.post(new Message(this, Type.Changed));
       }
@@ -228,6 +250,19 @@ public class Efficiencies{
    public double getSpeedModifier(){
       if( speedTweak )
          return 1.1;
+      return 1.0;
+   }
+
+   /**
+    * @return The modifier that should be applied to a 'mechs turn speed with the current efficiencies.
+    */
+   public double getTurnSpeedModifier(){
+      if( anchorTurn ){
+         if( doubleBasics ){
+            return 1.2;
+         }
+         return 1.1;
+      }
       return 1.0;
    }
 

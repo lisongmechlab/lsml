@@ -187,7 +187,7 @@ public class Chassi{
    }
 
    public double getTurnFactor(){
-      return turnFactor;
+      return 360.0/31.4; // Matching smurfy for now, this should be somewhere in the data files. 
    }
 
    public double getTwistFactor(){
