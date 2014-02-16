@@ -19,10 +19,9 @@
 //@formatter:on
 package lisong_mechlab.view;
 
-import java.awt.Dimension;
 import java.awt.Insets;
 
-import javax.swing.Box;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,17 +45,14 @@ public class WeaponsListView extends JPanel{
 
       JPanel inner = new JPanel();
       inner.setLayout(new BoxLayout(inner, BoxLayout.PAGE_AXIS));
-
-      add(Box.createHorizontalGlue());
+      inner.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
       add(inner);
-      add(Box.createHorizontalGlue());
 
       JLabel missileLabel = new JLabel("Missile Weapons", SwingConstants.CENTER);
       missileLabel.setFont(missileLabel.getFont().deriveFont(missileLabel.getFont().getSize() * FONT_FACTOR));
       missileLabel.setAlignmentX(0.5f);
       inner.add(missileLabel);
       JScrollPane missilePane = new JScrollPane(new WeaponStatsTable(HardpointType.MISSILE));
-      missilePane.setPreferredSize(new Dimension(500, 100));
       missilePane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
       inner.add(missilePane);
 
@@ -65,7 +61,6 @@ public class WeaponsListView extends JPanel{
       ballisticLabel.setAlignmentX(0.5f);
       inner.add(ballisticLabel);
       JScrollPane ballisticPane = new JScrollPane(new WeaponStatsTable(HardpointType.BALLISTIC));
-      ballisticPane.setPreferredSize(new Dimension(500, 100));
       ballisticPane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
       inner.add(ballisticPane);
 
@@ -74,7 +69,6 @@ public class WeaponsListView extends JPanel{
       energyLabel.setAlignmentX(0.5f);
       inner.add(energyLabel);
       JScrollPane energyPane = new JScrollPane(new WeaponStatsTable(HardpointType.ENERGY));
-      energyPane.setPreferredSize(new Dimension(500, 100));
       energyPane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
       inner.add(energyPane);
    }
