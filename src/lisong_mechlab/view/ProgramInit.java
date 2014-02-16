@@ -204,8 +204,15 @@ public class ProgramInit extends JFrame{
             try{
                instanceL = new LSML();
 
-               if( args.length > 0 )
-                  instanceL.mechLabPane.openLoadout(instanceL.loadoutCoder.parse(args[0]));
+               if( args.length > 0 ){
+                  // This has to be done after other events have been processed and the UI is constructed.
+                  SwingUtilities.invokeLater(new Runnable(){
+                     @Override
+                     public void run(){
+                        instanceL.mechLabPane.openLoadout(args[0]);
+                     }
+                  });
+               }
             }
             catch( Exception e ){
                JOptionPane.showMessageDialog(null, "Unable to start! Error: " + e);
