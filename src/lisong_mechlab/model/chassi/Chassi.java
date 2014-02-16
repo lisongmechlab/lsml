@@ -52,6 +52,7 @@ public class Chassi{
    private final int                     engineMax;
    private final double                  engineFactor;
    private final int                     mwoId;
+   @SuppressWarnings("unused")
    private final double                  turnFactor;
    private final double                  twistFactor;
 

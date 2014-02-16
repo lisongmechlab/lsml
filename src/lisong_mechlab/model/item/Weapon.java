@@ -45,6 +45,8 @@ public class Weapon extends HeatSource{
    private final double    ghostHeatMultiplier;
    private final int       ghostHeatFreeAlpha;
 
+   private final double    projectileSpeed;
+
    public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
       super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat,
             aStatsWeapon.WeaponStats.Health);
@@ -73,6 +75,8 @@ public class Weapon extends HeatSource{
       projectilesPerShot = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
       ammoPerShot = aStatsWeapon.WeaponStats.ammoPerShot;
 
+      projectileSpeed = aStatsWeapon.WeaponStats.speed;
+      
       if( aStatsWeapon.WeaponStats.minheatpenaltylevel != 0 ){
          ghostHeatGroupId = aStatsWeapon.WeaponStats.heatPenaltyID;
          ghostHeatMultiplier = aStatsWeapon.WeaponStats.heatpenalty;
@@ -117,6 +121,10 @@ public class Weapon extends HeatSource{
    public double getCycleTime(Efficiencies aEfficiencies){
       double factor = (null == aEfficiencies) ? 1.0 : aEfficiencies.getWeaponCycleTimeModifier();
       return cycleTime * factor;
+   }
+
+   public double getProjectileSpeed(){
+      return projectileSpeed;
    }
 
    public double getRangeZero(){
