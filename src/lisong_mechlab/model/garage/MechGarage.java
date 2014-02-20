@@ -21,8 +21,9 @@ package lisong_mechlab.model.garage;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -179,14 +180,19 @@ public class MechGarage{
          throw new IOException("File already exists!");
       }
 
-      FileWriter fileWriter = null;
+      FileOutputStream fileWriter = null;
+      OutputStreamWriter writer = null;
       try{
-         fileWriter = new FileWriter(aFile);
-         fileWriter.write(garageXstream(xBar).toXML(this));
+         fileWriter = new FileOutputStream(aFile);
+         writer = new OutputStreamWriter(fileWriter, "UTF-8");
+         writer.write(garageXstream(xBar).toXML(this));
          file = aFile;
       }
       finally{
-         if( fileWriter != null ){
+         if( writer != null ){
+            writer.close();
+         }
+         else if( fileWriter != null ){
             fileWriter.close();
          }
       }
