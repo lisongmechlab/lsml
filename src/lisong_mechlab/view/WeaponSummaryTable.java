@@ -312,6 +312,11 @@ public class WeaponSummaryTable extends JTable implements Reader{
    }
 
    @Override
+   public boolean getScrollableTracksViewportWidth(){
+      return true;
+   }
+   
+   @Override
    public void receive(Message aMsg){
       if( aMsg.isForMe(loadout) ){
          if( aMsg instanceof LoadoutPart.Message ){
