@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.preferences;
 
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,9 +73,7 @@ public class FontPreferences{
    public void updateFonts(){
       for(Map.Entry<Object, Integer> e : defaultSizes.entrySet()){
          Object key = e.getKey();
-         FontUIResource fr = (FontUIResource)UIManager.get(key);
-
-         UIManager.put(key, new FontUIResource(fr.getFamily(), fr.getStyle(), (int)(e.getValue() * fontSize.getSizeFactor())));
+         UIManager.put(key, new FontUIResource(new Font("SansSerif", Font.PLAIN, (int)(e.getValue() * fontSize.getSizeFactor()))));
       }
    }
 
