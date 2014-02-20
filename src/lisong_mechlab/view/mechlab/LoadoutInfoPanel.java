@@ -257,6 +257,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          heat.add(Box.createHorizontalGlue());
          add(heat);
 
+         JPanel envPanel = new JPanel();
          List<Environment> evs = new ArrayList<>(ProgramInit.ENVIRONMENT_DB.lookupAll());
          evs.add(0, new Environment("neutral", 0.0));
          environemnts = new JComboBox<>(evs.toArray(new Environment[evs.size()]));
@@ -270,7 +271,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             }
          });
          environemnts.setSelectedIndex(0);
-         heat.add(environemnts);
+         
+         envPanel.add(new JLabel("Environment:"));
+         envPanel.add(environemnts);
+         heat.add(envPanel);
 
          heatsinks.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(heatsinks);
@@ -399,12 +403,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.add(Box.createVerticalStrut(5));
 
          weaponTable = new WeaponSummaryTable(loadout, anXBar);
-
+         weaponTable.setFillsViewportHeight(true);
          JScrollPane weapons = new JScrollPane(weaponTable);
-         weapons.setPreferredSize(new Dimension(260, 100));
+         weapons.setPreferredSize(new Dimension(260, 150));
          offence.add(weapons);
+         offence.add(Box.createVerticalGlue());
       }
-
       updateDisplay();
    }
 
