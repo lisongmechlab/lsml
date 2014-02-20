@@ -266,6 +266,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                Environment environment = (Environment)environemnts.getSelectedItem();
                heatDissipation.changeEnvironment(environment);
                updateDisplay();
+               xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.RENAME));
             }
          });
          environemnts.setSelectedIndex(0);
