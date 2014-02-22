@@ -26,6 +26,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +42,16 @@ import javax.swing.SwingUtilities;
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.metrics.CriticalItemDamage;
+import lisong_mechlab.model.metrics.CriticalStrikeProbability;
+import lisong_mechlab.model.metrics.ItemEffectiveHP;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -56,10 +61,15 @@ import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
-   private static final long            serialVersionUID = 5995694414450060827L;
-   private final LoadoutPart            part;
-   private final DynamicSlotDistributor slotDistributor;
-   private OperationStack               opStack;
+   private static final long               serialVersionUID = 5995694414450060827L;
+   private final LoadoutPart               part;
+   private final DynamicSlotDistributor    slotDistributor;
+   private OperationStack                  opStack;
+
+   private final DecimalFormat             df               = new DecimalFormat("###.#");
+   private final ItemEffectiveHP           effectiveHP;
+   private final CriticalItemDamage        criticalItemDamage;
+   private final CriticalStrikeProbability criticalStrikeProbability;
 
    private enum ListEntryType{
       Empty, MultiSlot, Item, EngineHeatSink, LastSlot
@@ -67,6 +77,49 @@ public class PartList extends JList<Item>{
 
    private class Renderer extends JLabel implements ListCellRenderer<Object>{
       private static final long serialVersionUID = -8157859670319431469L;
+
+      void setTooltipForItem(Item aItem){
+         if( aItem instanceof Internal ){
+            setToolTipText("");
+            return;
+         }
+
+         StringBuilder sb = new StringBuilder();
+
+         sb.append("<html>");
+         sb.append(aItem.getName());
+         if( !aItem.getName().equals(aItem.getShortName(null)) ){
+            sb.append(" (").append(aItem.getShortName(null)).append(")");
+         }
+
+         sb.append("<p>");
+         sb.append("Critical victim probability: ").append(df.format(100 * criticalStrikeProbability.calculate(aItem))).append("%");
+         sb.append("<br/>");
+         sb.append("Critical victim multiplicity: ").append(df.format(100 * criticalItemDamage.calculate(aItem))).append("%");
+         sb.append("</p>");
+
+         sb.append("<p>");
+         sb.append("HP: ").append(aItem.getHealth());
+         sb.append("<br/>");
+         sb.append("SI-EHP: ").append(df.format(effectiveHP.calculate(aItem)));
+         sb.append("</p>");
+
+         sb.append("<br/>");
+         sb.append("<div style='width:300px'>")
+           .append("<p>")
+           .append("<b>Critical victim probability</b> is the chance that any one hit on the component will critically hit this item dealing damage to it.")
+           .append("If the weapon shooting does equal to, or more damage than the HP of this item, the item will break.")
+           .append("</p><p>")
+           .append("<b>Critical victim multiplicity</b> is the amount of damage the item will take (statistically) for every one damage dealt to the component. ")
+           .append("This mainly applies to lasers and does not include increased chance to critically hit from MG and LB 10-X AC and Flamers.")
+           .append("</p><p>")
+           .append("<b>SI-EHP</b> is the Statistical, Infinitesmal Effective-HP of this component. Under the assumption that damage is ")
+           .append("applied in small chunks (lasers) this is how much damage the component can take before this item breaks (statistically).")
+           .append("</p>").append("</div>");
+
+         sb.append("</html>");
+         setToolTipText(sb.toString());
+      }
 
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus){
@@ -77,6 +130,7 @@ public class PartList extends JList<Item>{
 
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(index);
          setBorder(BorderFactory.createEmptyBorder());
+         Item item = pair.second;
          switch( pair.first ){
             case Empty:{
                if( isDynArmor(index) ){
@@ -91,32 +145,36 @@ public class PartList extends JList<Item>{
                   StyleManager.styleItem(this);
                   setText(Model.EMPTY);
                }
+               setToolTipText("");
                break;
             }
             case Item:{
-               Item item = pair.second;
+               setTooltipForItem(item);
                setText(item.getName());
                if( item.getNumCriticalSlots(null) == 1 ){
-                  StyleManager.styleItem(this, pair.second);
+                  StyleManager.styleItem(this, item);
                }
                else{
-                  StyleManager.styleItemTop(this, pair.second);
+                  StyleManager.styleItemTop(this, item);
                }
                break;
             }
             case LastSlot:{
                setText(Model.MULTISLOT);
-               StyleManager.styleItemBottom(this, pair.second);
+               setTooltipForItem(item);
+               StyleManager.styleItemBottom(this, item);
                break;
             }
             case MultiSlot:{
                setText(Model.MULTISLOT);
-               StyleManager.styleItemMiddle(this, pair.second);
+               setTooltipForItem(item);
+               StyleManager.styleItemMiddle(this, item);
                break;
             }
             case EngineHeatSink:{
+               setTooltipForItem(item);
                setText(Model.HEATSINKS_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
-               StyleManager.styleItemBottom(this, pair.second);
+               StyleManager.styleItemBottom(this, item);
                break;
             }
          }
@@ -266,6 +324,9 @@ public class PartList extends JList<Item>{
       slotDistributor = aSlotDistributor;
       opStack = aStack;
       part = aLoadoutPart;
+      effectiveHP = new ItemEffectiveHP(part);
+      criticalItemDamage = new CriticalItemDamage(part);
+      criticalStrikeProbability = new CriticalStrikeProbability(part);
       setModel(new Model(anXBar));
       setDragEnabled(true);
       setDropMode(DropMode.ON);

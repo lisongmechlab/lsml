@@ -17,25 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.item;
+package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
+import lisong_mechlab.model.item.Item;
 
 /**
- * Internals are special items that do not exist in the ItemDB. Instead they are created and owned by the chassii.
+ * This is an other type of metric that performs calculations for a specific item on a loadout or part.
  * 
  * @author Li Song
  */
-public class Internal extends Item{
-   public Internal(MdfInternal aInternal){
-      super(aInternal.Name, aInternal.Desc, aInternal.Slots, 0); // TODO: Check translation
-   }
-
-   public Internal(String aNameTag, String aDescTag, int aSlots){
-      super(aNameTag, aDescTag, aSlots, 0);
-   }
-   
-   public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth){
-      super(aNameTag, aDescTag, aSlots, aHealth);
-   }
+public interface ItemMetric{
+   /**
+    * Calculates the value of the metric. May employ caching but the caching must be transparent.
+    * 
+    * @param aItem
+    *           The {@link Item} to calculate the metric for.
+    * @return The value of the metric.
+    */
+   public double calculate(Item aItem);
 }
