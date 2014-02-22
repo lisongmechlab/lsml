@@ -49,7 +49,9 @@ import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.part.RemoveItemOperation;
-import lisong_mechlab.model.metrics.CriticalStrikeMultiplier;
+import lisong_mechlab.model.metrics.CriticalItemDamage;
+import lisong_mechlab.model.metrics.CriticalStrikeProbability;
+import lisong_mechlab.model.metrics.ItemEffectiveHP;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -59,11 +61,15 @@ import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
-   private static final long            serialVersionUID = 5995694414450060827L;
-   private final LoadoutPart            part;
-   private final DynamicSlotDistributor slotDistributor;
-   private OperationStack               opStack;
-   private final DecimalFormat          df               = new DecimalFormat("###.#");
+   private static final long               serialVersionUID = 5995694414450060827L;
+   private final LoadoutPart               part;
+   private final DynamicSlotDistributor    slotDistributor;
+   private OperationStack                  opStack;
+
+   private final DecimalFormat             df               = new DecimalFormat("###.#");
+   private final ItemEffectiveHP           effectiveHP;
+   private final CriticalItemDamage        criticalItemDamage;
+   private final CriticalStrikeProbability criticalStrikeProbability;
 
    private enum ListEntryType{
       Empty, MultiSlot, Item, EngineHeatSink, LastSlot
@@ -80,24 +86,37 @@ public class PartList extends JList<Item>{
 
          StringBuilder sb = new StringBuilder();
 
-         double critProb = CriticalStrikeMultiplier.calculate(aItem, part);
-
          sb.append("<html>");
          sb.append(aItem.getName());
          if( !aItem.getName().equals(aItem.getShortName(null)) ){
             sb.append(" (").append(aItem.getShortName(null)).append(")");
          }
-         sb.append("<br/>");
 
-         sb.append("Critical suspectibility: ").append(df.format(100 * critProb)).append("%");
+         sb.append("<p>");
+         sb.append("Critical victim probability: ").append(df.format(100 * criticalStrikeProbability.calculate(aItem))).append("%");
          sb.append("<br/>");
+         sb.append("Critical victim multiplicity: ").append(df.format(100 * criticalItemDamage.calculate(aItem))).append("%");
+         sb.append("</p>");
 
+         sb.append("<p>");
          sb.append("HP: ").append(aItem.getHealth());
          sb.append("<br/>");
-         sb.append("EHP: ").append(df.format(aItem.getHealth() / critProb));
-         sb.append("<br/>");
+         sb.append("SI-EHP: ").append(df.format(effectiveHP.calculate(aItem)));
+         sb.append("</p>");
 
-         sb.append("EHP is the amount of damage the component can take after armor is removed before this equipment breaks.");
+         sb.append("<br/>");
+         sb.append("<div style='width:300px'>")
+           .append("<p>")
+           .append("<b>Critical victim probability</b> is the chance that any one hit on the component will critically hit this item dealing damage to it.")
+           .append("If the weapon shooting does equal to, or more damage than the HP of this item, the item will break.")
+           .append("</p><p>")
+           .append("<b>Critical victim multiplicity</b> is the amount of damage the item will take (statistically) for every one damage dealt to the component. ")
+           .append("This mainly applies to lasers and does not include increased chance to critically hit from MG and LB 10-X AC and Flamers.")
+           .append("</p><p>")
+           .append("<b>SI-EHP</b> is the Statistical, Infinitesmal Effective-HP of this component. Under the assumption that damage is ")
+           .append("applied in small chunks (lasers) this is how much damage the component can take before this item breaks (statistically).")
+           .append("</p>").append("</div>");
+
          sb.append("</html>");
          setToolTipText(sb.toString());
       }
@@ -305,6 +324,9 @@ public class PartList extends JList<Item>{
       slotDistributor = aSlotDistributor;
       opStack = aStack;
       part = aLoadoutPart;
+      effectiveHP = new ItemEffectiveHP(part);
+      criticalItemDamage = new CriticalItemDamage(part);
+      criticalStrikeProbability = new CriticalStrikeProbability(part);
       setModel(new Model(anXBar));
       setDragEnabled(true);
       setDropMode(DropMode.ON);

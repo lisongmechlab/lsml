@@ -22,54 +22,46 @@ package lisong_mechlab.model.metrics;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.BinomialDistribution;
 
 /**
- * This {@link Metric} calculates the multiplier of internal HP of the item lost per shot at the component.
+ * This {@link ItemMetric} calculates the probability that the given item will be critically hit by a shot.
  * <p>
- * For example shooting an AC/20 at a component with 1 MLAS and 1 DHS has 25% chance to deal 1 critical hit, 14% chance
- * to deal 2 hits and 3% chance to deal 3 hits. The DHS has a 75% chance of being hit by every critical hit. The actual
- * number of critical hits on the DHS is 0.25*bin(0.75, 1) + 0.14*bin(0.75, 2) + 0.03*bin(0.
+ * This applies to high alpha weapons such as PPC, Gauss, AC/20,10,5.
  * 
  * @author Li Song
  */
-public class CriticalStrikeMultiplier implements ItemMetric{
-   private final static double CRIT_CHANCE[] = {0.25, 0.14, 0.03};
-   private final LoadoutPart   loadoutPart;
+public class CriticalStrikeProbability implements ItemMetric{
+   public final static double CRIT_CHANCE[] = {0.25, 0.14, 0.03};
+   private final LoadoutPart  loadoutPart;
 
-   public CriticalStrikeMultiplier(LoadoutPart aLoadoutPart){
+   public CriticalStrikeProbability(LoadoutPart aLoadoutPart){
       loadoutPart = aLoadoutPart;
    }
 
    @Override
    public double calculate(Item aItem){
-      return calculate(aItem, loadoutPart);
-   }
-
-   public static double calculate(Item anItem, LoadoutPart aLoadoutPart){
       int slots = 0;
-      for(Item it : aLoadoutPart.getItems()){
+      Upgrades upgrades = loadoutPart.getLoadout().getUpgrades();
+      for(Item it : loadoutPart.getItems()){
          if( it instanceof Internal && it != LoadoutPart.ENGINE_INTERNAL ){
-            continue; // Internals (apart from engine side torsos) cannot be crit.
+            continue;
          }
-         slots += it.getNumCriticalSlots(aLoadoutPart.getLoadout().getUpgrades());
+         slots += it.getNumCriticalSlots(upgrades);
       }
-      return calculate(anItem.getNumCriticalSlots(aLoadoutPart.getLoadout().getUpgrades()), slots);
-   }
-
-   public static double calculate(int aItemCrits, int aTotalCrits){
-      double p_hit = (double)aItemCrits / aTotalCrits;
+      
+      double p_hit = (double)aItem.getNumCriticalSlots(upgrades) / slots;
 
       double ans = 0;
-      for(int i = 0; i < CRIT_CHANCE.length; ++i){
+      for(int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i){
          final int numCritRolls = i + 1;
          BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
 
          for(int numHits = 1; numHits <= numCritRolls; ++numHits){
-            ans += bin.pdf(numHits) * numHits * CRIT_CHANCE[i];
+            ans += bin.pdf(numHits) * CriticalStrikeProbability.CRIT_CHANCE[i];
          }
       }
       return ans;
    }
-   
 }
