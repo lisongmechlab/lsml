@@ -22,7 +22,7 @@ package lisong_mechlab.model.loadout;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.StripPartOperation;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceOperation;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -36,12 +36,13 @@ import lisong_mechlab.util.MessageXBar;
 public class StripOperation extends LoadoutOperation{
    public StripOperation(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "strip mech");
+      
       for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
          addOp(new StripPartOperation(xBar, loadoutPart));
       }
       addOp(new SetEndoSteelOperation(xBar, loadout, UpgradeDB.STANDARD_STRUCTURE));
       addOp(new SetGuidanceOperation(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
       addOp(new SetArmorTypeOperation(xBar, loadout, UpgradeDB.STANDARD_ARMOR));
-      addOp(new SetDHSOperation(xBar, loadout, UpgradeDB.STANDARD_HEATSINKS));
+      addOp(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.STANDARD_HEATSINKS));
    }
 }
