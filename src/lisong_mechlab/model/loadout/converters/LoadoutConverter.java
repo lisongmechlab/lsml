@@ -26,7 +26,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.RenameOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceOperation;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -90,7 +90,7 @@ public class LoadoutConverter implements Converter{
          if( "upgrades".equals(aReader.getNodeName()) ){
             Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
             stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, upgrades.getGuidance()));
-            stack.pushAndApply(new SetDHSOperation(xBar, loadout, upgrades.getHeatSink()));
+            stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, upgrades.getHeatSink()));
             stack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, upgrades.getStructure()));
             stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, upgrades.getArmor()));
          }

@@ -34,7 +34,7 @@ import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceOperation;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -76,13 +76,13 @@ public class LoadStockOperation extends LoadoutOperation{
          addOp(new SetEndoSteelOperation(xBar, loadout, (StructureUpgrade)UpgradeDB.lookup(structureId)));
          addOp(new SetGuidanceOperation(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(guidanceId)));
          addOp(new SetArmorTypeOperation(xBar, loadout, (ArmorUpgrade)UpgradeDB.lookup(armorId)));
-         addOp(new SetDHSOperation(xBar, loadout, (HeatsinkUpgrade)UpgradeDB.lookup(heatsinkId)));
+         addOp(new SetHeatSinkTypeOperation(xBar, loadout, (HeatsinkUpgrade)UpgradeDB.lookup(heatsinkId)));
       }
       else{
          addOp(new SetEndoSteelOperation(xBar, loadout, UpgradeDB.STANDARD_STRUCTURE));
          addOp(new SetGuidanceOperation(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
          addOp(new SetArmorTypeOperation(xBar, loadout, UpgradeDB.STANDARD_ARMOR));
-         addOp(new SetDHSOperation(xBar, loadout, UpgradeDB.STANDARD_HEATSINKS));
+         addOp(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.STANDARD_HEATSINKS));
       }
 
       for(Element component : reader.getElementsByTagName("component")){

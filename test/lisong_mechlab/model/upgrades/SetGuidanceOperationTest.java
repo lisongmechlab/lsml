@@ -19,6 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,6 +29,8 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
+import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -109,5 +113,18 @@ public class SetGuidanceOperationTest{
       // assertTrue(ltItems.remove(lrmAmmoArtemis));
       // assertTrue(ltItems.remove(narcAmmo));
       // assertTrue(ltItems.remove(narc));
+   }
+
+   @Test
+   public void testUndo() throws DecodingException{
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
+      Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+      Loadout loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+      OperationStack stack = new OperationStack(1);
+
+      stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
+      stack.undo();
+
+      assertEquals(loadoutOriginal, loadout);
    }
 }
