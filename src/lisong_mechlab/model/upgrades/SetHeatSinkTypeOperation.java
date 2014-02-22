@@ -35,27 +35,29 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class SetDHSOperation extends UpgradeOperation{
-   final HeatsinkUpgrade oldValue;
-   final HeatsinkUpgrade newValue;
+public class SetHeatSinkTypeOperation extends UpgradeOperation{
+   private final HeatsinkUpgrade oldValue;
+   private final HeatsinkUpgrade newValue;
+
+   private boolean               operationReady = false;
 
    /**
-    * Creates a {@link SetDHSOperation} that only affects a stand-alone {@link Upgrades} object This is useful only for
-    * altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
+    * Creates a {@link SetHeatSinkTypeOperation} that only affects a stand-alone {@link Upgrades} object This is useful
+    * only for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
     * 
     * @param anUpgrades
     *           The {@link Upgrades} object to alter with this {@link Operation}.
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public SetDHSOperation(Upgrades anUpgrades, HeatsinkUpgrade aHeatsinkUpgrade){
+   public SetHeatSinkTypeOperation(Upgrades anUpgrades, HeatsinkUpgrade aHeatsinkUpgrade){
       super(anUpgrades, aHeatsinkUpgrade.getName());
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
    }
 
    /**
-    * Creates a new {@link SetDHSOperation} that will change the heat sink type of a {@link Loadout}.
+    * Creates a new {@link SetHeatSinkTypeOperation} that will change the heat sink type of a {@link Loadout}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in DHS status on.
@@ -64,35 +66,15 @@ public class SetDHSOperation extends UpgradeOperation{
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public SetDHSOperation(MessageXBar anXBar, Loadout aLoadout, HeatsinkUpgrade aHeatsinkUpgrade){
+   public SetHeatSinkTypeOperation(MessageXBar anXBar, Loadout aLoadout, HeatsinkUpgrade aHeatsinkUpgrade){
       super(anXBar, aLoadout, aHeatsinkUpgrade.getName());
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
-
-      if( oldValue != newValue ){
-         for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
-            int hsRemoved = 0;
-            for(Item item : loadoutPart.getItems()){
-               if( item instanceof HeatSink ){
-                  addOp(new RemoveItemOperation(xBar, loadoutPart, item));
-                  hsRemoved++;
-               }
-            }
-
-            HeatSink oldHsType = oldValue.getHeatSinkType();
-            HeatSink newHsType = newValue.getHeatSinkType();
-            int slotsFree = oldHsType.getNumCriticalSlots(upgrades) * hsRemoved + loadoutPart.getNumCriticalSlotsFree();
-            int hsToAdd = Math.min(hsRemoved, slotsFree / newHsType.getNumCriticalSlots(upgrades));
-            while( hsToAdd > 0 ){
-               hsToAdd--;
-               addOp(new AddItemOperation(xBar, loadoutPart, newHsType));
-            }
-         }
-      }
    }
 
    @Override
    protected void apply(){
+      prepareOperation();
       set(newValue);
       super.apply();
    }
@@ -118,6 +100,33 @@ public class SetDHSOperation extends UpgradeOperation{
 
          if( xBar != null )
             xBar.post(new Message(ChangeMsg.HEATSINKS, upgrades));
+      }
+   }
+
+   private void prepareOperation(){
+      if( operationReady )
+         return;
+      operationReady = true;
+
+      if( oldValue != newValue ){
+         for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
+            int hsRemoved = 0;
+            for(Item item : loadoutPart.getItems()){
+               if( item instanceof HeatSink ){
+                  addOp(new RemoveItemOperation(xBar, loadoutPart, item));
+                  hsRemoved++;
+               }
+            }
+
+            HeatSink oldHsType = oldValue.getHeatSinkType();
+            HeatSink newHsType = newValue.getHeatSinkType();
+            int slotsFree = oldHsType.getNumCriticalSlots(upgrades) * hsRemoved + loadoutPart.getNumCriticalSlotsFree();
+            int hsToAdd = Math.min(hsRemoved, slotsFree / newHsType.getNumCriticalSlots(upgrades));
+            while( hsToAdd > 0 ){
+               hsToAdd--;
+               addOp(new AddItemOperation(xBar, loadoutPart, newHsType));
+            }
+         }
       }
    }
 }

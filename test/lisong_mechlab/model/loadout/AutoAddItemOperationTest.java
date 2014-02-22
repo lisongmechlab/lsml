@@ -28,7 +28,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
-import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -57,7 +57,7 @@ public class AutoAddItemOperationTest{
    @Test
    public void testAddItem(){
       Loadout loadout = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
-      stack.pushAndApply(new SetDHSOperation(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
 
       Item mlas = ItemDB.lookup("MEDIUM LASER");
       Item ac20 = ItemDB.lookup("AC/20");

@@ -68,7 +68,7 @@ import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.metrics.TurningSpeed;
 import lisong_mechlab.model.metrics.TwistSpeed;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetDHSOperation;
+import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceOperation;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -553,7 +553,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             loadout.getEfficiencies().setAnchorTurn(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else if( source == doubleHeatSinks ){
-            opStack.pushAndApply(new SetDHSOperation(xBar, loadout, doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS
+            opStack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS
                                                                                                 : UpgradeDB.STANDARD_HEATSINKS));
          }
          else if( source == coolRun ){
