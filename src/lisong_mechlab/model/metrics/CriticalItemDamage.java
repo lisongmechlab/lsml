@@ -25,19 +25,18 @@ import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.BinomialDistribution;
 
 /**
- * This {@link Metric} calculates the multiplier of internal HP of the item lost per shot at the component.
+ * This {@link ItemMetric} calculates statistically how much damage the given item takes per 1 damage to the component
+ * applied in infinitesimal chunks.
  * <p>
- * For example shooting an AC/20 at a component with 1 MLAS and 1 DHS has 25% chance to deal 1 critical hit, 14% chance
- * to deal 2 hits and 3% chance to deal 3 hits. The DHS has a 75% chance of being hit by every critical hit. The actual
- * number of critical hits on the DHS is 0.25*bin(0.75, 1) + 0.14*bin(0.75, 2) + 0.03*bin(0.
+ * This applies mostly to for lasers. MG and LB 10-X AC have higher critical hit probabilities and different
+ * multipliers.
  * 
  * @author Emily Björk
  */
-public class CriticalStrikeMultiplier implements ItemMetric{
-   private final static double CRIT_CHANCE[] = {0.25, 0.14, 0.03};
+public class CriticalItemDamage implements ItemMetric{
    private final LoadoutPart   loadoutPart;
 
-   public CriticalStrikeMultiplier(LoadoutPart aLoadoutPart){
+   public CriticalItemDamage(LoadoutPart aLoadoutPart){
       loadoutPart = aLoadoutPart;
    }
 
@@ -61,15 +60,15 @@ public class CriticalStrikeMultiplier implements ItemMetric{
       double p_hit = (double)aItemCrits / aTotalCrits;
 
       double ans = 0;
-      for(int i = 0; i < CRIT_CHANCE.length; ++i){
+      for(int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i){
          final int numCritRolls = i + 1;
          BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
 
          for(int numHits = 1; numHits <= numCritRolls; ++numHits){
-            ans += bin.pdf(numHits) * numHits * CRIT_CHANCE[i];
+            ans += bin.pdf(numHits) * numHits * CriticalStrikeProbability.CRIT_CHANCE[i];
          }
       }
       return ans;
    }
-   
+
 }
