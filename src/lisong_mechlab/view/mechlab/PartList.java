@@ -26,6 +26,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +42,14 @@ import javax.swing.SwingUtilities;
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.metrics.CriticalStrikeMultiplier;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -60,6 +63,7 @@ public class PartList extends JList<Item>{
    private final LoadoutPart            part;
    private final DynamicSlotDistributor slotDistributor;
    private OperationStack               opStack;
+   private final DecimalFormat          df               = new DecimalFormat("###.#");
 
    private enum ListEntryType{
       Empty, MultiSlot, Item, EngineHeatSink, LastSlot
@@ -67,6 +71,36 @@ public class PartList extends JList<Item>{
 
    private class Renderer extends JLabel implements ListCellRenderer<Object>{
       private static final long serialVersionUID = -8157859670319431469L;
+
+      void setTooltipForItem(Item aItem){
+         if( aItem instanceof Internal ){
+            setToolTipText("");
+            return;
+         }
+
+         StringBuilder sb = new StringBuilder();
+
+         double critProb = CriticalStrikeMultiplier.calculate(aItem, part);
+
+         sb.append("<html>");
+         sb.append(aItem.getName());
+         if( !aItem.getName().equals(aItem.getShortName(null)) ){
+            sb.append(" (").append(aItem.getShortName(null)).append(")");
+         }
+         sb.append("<br/>");
+
+         sb.append("Critical suspectibility: ").append(df.format(100 * critProb)).append("%");
+         sb.append("<br/>");
+
+         sb.append("HP: ").append(aItem.getHealth());
+         sb.append("<br/>");
+         sb.append("EHP: ").append(df.format(aItem.getHealth() / critProb));
+         sb.append("<br/>");
+
+         sb.append("EHP is the amount of damage the component can take after armor is removed before this equipment breaks.");
+         sb.append("</html>");
+         setToolTipText(sb.toString());
+      }
 
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus){
@@ -77,6 +111,7 @@ public class PartList extends JList<Item>{
 
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(index);
          setBorder(BorderFactory.createEmptyBorder());
+         Item item = pair.second;
          switch( pair.first ){
             case Empty:{
                if( isDynArmor(index) ){
@@ -91,32 +126,36 @@ public class PartList extends JList<Item>{
                   StyleManager.styleItem(this);
                   setText(Model.EMPTY);
                }
+               setToolTipText("");
                break;
             }
             case Item:{
-               Item item = pair.second;
+               setTooltipForItem(item);
                setText(item.getName());
                if( item.getNumCriticalSlots(null) == 1 ){
-                  StyleManager.styleItem(this, pair.second);
+                  StyleManager.styleItem(this, item);
                }
                else{
-                  StyleManager.styleItemTop(this, pair.second);
+                  StyleManager.styleItemTop(this, item);
                }
                break;
             }
             case LastSlot:{
                setText(Model.MULTISLOT);
-               StyleManager.styleItemBottom(this, pair.second);
+               setTooltipForItem(item);
+               StyleManager.styleItemBottom(this, item);
                break;
             }
             case MultiSlot:{
                setText(Model.MULTISLOT);
-               StyleManager.styleItemMiddle(this, pair.second);
+               setTooltipForItem(item);
+               StyleManager.styleItemMiddle(this, item);
                break;
             }
             case EngineHeatSink:{
+               setTooltipForItem(item);
                setText(Model.HEATSINKS_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
-               StyleManager.styleItemBottom(this, pair.second);
+               StyleManager.styleItemBottom(this, item);
                break;
             }
          }

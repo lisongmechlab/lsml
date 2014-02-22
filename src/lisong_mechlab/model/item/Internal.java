@@ -34,4 +34,8 @@ public class Internal extends Item{
    public Internal(String aNameTag, String aDescTag, int aSlots){
       super(aNameTag, aDescTag, aSlots, 0);
    }
+   
+   public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth){
+      super(aNameTag, aDescTag, aSlots, aHealth);
+   }
 }
