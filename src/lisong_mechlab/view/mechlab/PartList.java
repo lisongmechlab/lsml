@@ -67,6 +67,7 @@ public class PartList extends JList<Item>{
    private OperationStack                  opStack;
 
    private final DecimalFormat             df               = new DecimalFormat("###.#");
+   private final DecimalFormat             df2               = new DecimalFormat("###.##");
    private final ItemEffectiveHP           effectiveHP;
    private final CriticalItemDamage        criticalItemDamage;
    private final CriticalStrikeProbability criticalStrikeProbability;
@@ -95,7 +96,7 @@ public class PartList extends JList<Item>{
          sb.append("<p>");
          sb.append("Critical victim probability: ").append(df.format(100 * criticalStrikeProbability.calculate(aItem))).append("%");
          sb.append("<br/>");
-         sb.append("Critical victim multiplicity: ").append(df.format(100 * criticalItemDamage.calculate(aItem))).append("%");
+         sb.append("Critical victim multiplicity: ").append(df2.format(criticalItemDamage.calculate(aItem)));
          sb.append("</p>");
 
          sb.append("<p>");
