@@ -267,7 +267,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                Environment environment = (Environment)environemnts.getSelectedItem();
                heatDissipation.changeEnvironment(environment);
                updateDisplay();
-               xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.RENAME));
+               xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
             }
          });
          environemnts.setSelectedIndex(0);
@@ -376,6 +376,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                metricMaxDPS.changeRange(r);
                metricSustainedDps.changeRange(r);
                updateDisplay();
+               xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
             }
          });
          panel.add(range);
