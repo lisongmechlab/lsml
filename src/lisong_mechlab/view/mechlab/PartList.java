@@ -42,7 +42,6 @@ import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
@@ -317,8 +316,8 @@ public class PartList extends JList<Item>{
                break;
             case EngineHeatSink:
                if( part.getNumEngineHeatsinks() > 0 ){
-                  items.add(new Pair<Item, Integer>(ItemDB.SHS, i));
-                  items.add(new Pair<Item, Integer>(ItemDB.DHS, i));
+                  Item heatSink = part.getLoadout().getUpgrades().getHeatSink().getHeatSinkType();
+                  items.add(new Pair<Item, Integer>(heatSink, i));
                }
                break;
             case Item:
