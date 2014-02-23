@@ -59,7 +59,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 public class Loadout{
    public static class Message implements MessageXBar.Message{
       public enum Type{
-         RENAME, CREATE
+         RENAME, CREATE, UPDATE
       }
 
       private final Loadout loadout;
