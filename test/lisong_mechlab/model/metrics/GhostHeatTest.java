@@ -74,9 +74,12 @@ public class GhostHeatTest{
       when(loadout.getAllItems()).thenReturn(weapons);
 
       Weapon lpl = (Weapon)ItemDB.lookup("LRG PULSE LASER");
+      Weapon erll = (Weapon)ItemDB.lookup("ER LARGE LASER");
 
+      Weapon max = lpl.getHeat() > erll.getHeat() ? lpl : erll;
+      
       double result = cut.calculate();
-      assertEquals(lpl.getGhostHeatMultiplier() * lpl.getHeat() * (0.18 + 0.30), result, 0.0001);
+      assertEquals(max.getGhostHeatMultiplier() * max.getHeat() * (0.18 + 0.30), result, 0.0001);
    }
 
    @Test

@@ -20,6 +20,7 @@
 package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.Loadout;
@@ -54,6 +55,10 @@ public class TurningSpeedTest{
       Loadout loadout = Mockito.mock(Loadout.class);
       Chassi chassi = Mockito.mock(Chassi.class);
       Engine engine = Mockito.mock(Engine.class);
+      Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
+      double modifier = 1.1;
+      Mockito.when(efficiencies.getTurnSpeedModifier()).thenReturn(modifier);
+      Mockito.when(loadout.getEfficiencies()).thenReturn(efficiencies);
       Mockito.when(loadout.getChassi()).thenReturn(chassi);
       Mockito.when(loadout.getEngine()).thenReturn(engine);
       double factor = 0.2;
@@ -64,7 +69,7 @@ public class TurningSpeedTest{
       Mockito.when(engine.getRating()).thenReturn(rating);
 
       TurningSpeed cut = new TurningSpeed(loadout);
-      assertEquals(factor * rating / mass, cut.calculate(), 0.0);
+      assertEquals(modifier*factor * rating / mass, cut.calculate(), 0.0);
    }
 
 }
