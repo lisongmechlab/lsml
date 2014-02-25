@@ -20,6 +20,7 @@
 package lisong_mechlab.model.loadout.export;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -28,9 +29,12 @@ import java.util.regex.Pattern;
 
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.RenameOperation;
 import lisong_mechlab.util.Base64;
+import lisong_mechlab.util.DecodingException;
+import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -112,5 +116,21 @@ public class LoadoutCoderV1Test{
       }
 
       sc.close();
+   }
+   
+   /**
+    * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
+    * sinks.
+    * 
+    * @throws DecodingException
+    * @throws EncodingException 
+    */
+   @Test
+   public void testDecodeHeatsinksBeforeEngine() throws DecodingException, EncodingException{
+      Base64 base64 = new Base64();
+      Loadout l = cut.decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY=".toCharArray()));
+
+      assertTrue(l.getFreeMass() < 0.005);
+      assertEquals(3, l.getPart(Part.CenterTorso).getNumEngineHeatsinks());
    }
 }

@@ -35,6 +35,7 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
@@ -48,9 +49,9 @@ import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceOperation;
+import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.DecodingException;
@@ -97,20 +98,20 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @Override
    public byte[] encode(final Loadout aLoadout) throws EncodingException{
-      // FIXME
-      throw new EncodingException("Protocol version 1 encoding is no longer allowed. Please update to 1.3.3 when it is out");
+      throw new EncodingException("Protocol version 1 encoding is no longer allowed.");
       //@formatter:off
-      /*final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
+      /*
+      final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
 
       // Write header (32 bits)
       {
          buffer.write(HEADER_MAGIC); // 8 bits for version number
 
          int upeff = 0; // 8 bits for efficiencies
-         upeff = (upeff << 1) | (aLoadout.getUpgrades().hasArtemis() ? 1 : 0);
-         upeff = (upeff << 1) | (aLoadout.getUpgrades().hasDoubleHeatSinks() ? 1 : 0);
-         upeff = (upeff << 1) | (aLoadout.getUpgrades().hasFerroFibrous() ? 1 : 0);
-         upeff = (upeff << 1) | (aLoadout.getUpgrades().hasEndoSteel() ? 1 : 0);
+         upeff = (upeff << 1) | (aLoadout.getUpgrades().getGuidance() != UpgradeDB.STANDARD_GUIDANCE ? 1 : 0);
+         upeff = (upeff << 1) | (aLoadout.getUpgrades().getHeatSink() != UpgradeDB.STANDARD_HEATSINKS ? 1 : 0);
+         upeff = (upeff << 1) | (aLoadout.getUpgrades().getArmor() != UpgradeDB.STANDARD_ARMOR ? 1 : 0);
+         upeff = (upeff << 1) | (aLoadout.getUpgrades().getStructure() != UpgradeDB.STANDARD_STRUCTURE ? 1 : 0);
          upeff = (upeff << 1) | (aLoadout.getEfficiencies().hasCoolRun() ? 1 : 0);
          upeff = (upeff << 1) | (aLoadout.getEfficiencies().hasHeatContainment() ? 1 : 0);
          upeff = (upeff << 1) | (aLoadout.getEfficiencies().hasSpeedTweak() ? 1 : 0);
@@ -231,10 +232,18 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          List<Integer> ids = huff.decode(rest);
          for(Part part : partOrder){
             Integer v;
+            List<Item> later = new ArrayList<>();
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
                Item pItem = ItemDB.lookup(v);
                Item item = CompatibilityHelper.fixArtemis(pItem, loadout.getUpgrades().getGuidance());
+               if(item instanceof HeatSink){
+                  later.add(item); // Add heat sinks last after engine has been added
+                  continue;
+               }
                stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), item));
+            }
+            for(Item i : later){
+               stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), i));
             }
          }
       }
