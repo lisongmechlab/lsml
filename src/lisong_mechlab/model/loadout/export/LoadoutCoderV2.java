@@ -37,6 +37,7 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
@@ -237,9 +238,19 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
          for(Part part : partOrder){
             Integer v;
+            List<Item> later = new ArrayList<>();
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
+               Item item = ItemDB.lookup(v);
+               if(item instanceof HeatSink){
+                  later.add(item); // Add heat sinks last after engine has been added
+                  continue;
+               }
                stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), ItemDB.lookup(v)));
             }
+            for(Item i : later){
+               stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), i));
+            }
+            
          }
 
          // TODO: read pilot modules

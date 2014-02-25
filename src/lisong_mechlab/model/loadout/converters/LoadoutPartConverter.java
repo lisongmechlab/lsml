@@ -19,10 +19,14 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
@@ -109,13 +113,20 @@ public class LoadoutPartConverter implements Converter{
                                                            + " is corrupt. Continuing to load as much as possible.");
       }
 
+      List<Item> later = new ArrayList<>();
+
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
          if( "item".equals(aReader.getNodeName()) ){
             try{
                Item item = (Item)aContext.convertAnother(null, Item.class);
                item = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().getGuidance());
-               operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, item));
+               if( item instanceof HeatSink ){
+                  later.add(item);
+               }
+               else{
+                  operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, item));
+               }
             }
             catch( IllegalArgumentException exception ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
@@ -124,6 +135,17 @@ public class LoadoutPartConverter implements Converter{
          }
          aReader.moveUp();
       }
+
+      try{
+         for(Item item : later){
+            operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, item));
+         }
+      }
+      catch( IllegalArgumentException exception ){
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
+                                                           + " is corrupt. Continuing to load as much as possible.");
+      }
+
       return null; // We address directly into the given loadout, this is a trap.
    }
 
