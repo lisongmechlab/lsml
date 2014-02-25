@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verify;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -33,6 +34,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+
+import com.thoughtworks.xstream.XStream;
 
 public class LoadoutTest{
    @Spy
@@ -87,6 +90,16 @@ public class LoadoutTest{
       assertSame(ItemDB.lookup("JUMP JETS - CLASS V"), cut.getJumpJetType());
    }
 
+   @Test
+   public void testUnMarshalDhsBeforeEngine(){
+      String xml = "<?xml version=\"1.0\" ?><loadout name=\"AS7-BH\" chassi=\"AS7-BH\"><upgrades version=\"2\"><armor>2810</armor><structure>3100</structure><guidance>3051</guidance><heatsinks>3002</heatsinks></upgrades><efficiencies><speedTweak>false</speedTweak><coolRun>false</coolRun><heatContainment>false</heatContainment><anchorTurn>false</anchorTurn><doubleBasics>false</doubleBasics><fastfire>false</fastfire></efficiencies><component part=\"Head\" armor=\"0\" /><component part=\"LeftArm\" armor=\"0\" /><component part=\"LeftLeg\" armor=\"0\" /><component part=\"LeftTorso\" armor=\"0/0\" /><component part=\"CenterTorso\" armor=\"0/0\"><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3278</item></component><component part=\"RightTorso\" armor=\"0/0\" /><component part=\"RightLeg\" armor=\"0\" /><component part=\"RightArm\" armor=\"0\" /></loadout>";
+      
+      XStream stream = Loadout.loadoutXstream(xBar);
+      Loadout loadout = (Loadout)stream.fromXML(xml);
+      
+      assertEquals(6, loadout.getPart(Part.CenterTorso).getNumEngineHeatsinks());
+   }
+
    // -------------------------------------------------------------------------
    //
    // Unsorted tests
@@ -110,7 +123,6 @@ public class LoadoutTest{
 
       verify(xBar).post(new Loadout.Message(cut, Loadout.Message.Type.CREATE));
    }
-
 
 //@formatter:off
 //   /**
@@ -317,34 +329,34 @@ public class LoadoutTest{
       assertEquals(90, cut.getFreeMass(), 0.0);
    }
 
-//   @Ignore
-//   // This test has been superseded
-//   @Test
-//   public void testCheckArtemisAdditionLegal(){
-//      // Setup
-//      Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
-//      Loadout anotherCut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
-//      anotherCut.getPart(Part.LeftTorso).addItem("SRM 6", false);
-//      try{
-//         cut.loadStock();
-//      }
-//      catch( Exception e ){
-//         fail("Unexpected exception when loading stock loadout!");
-//      }
-//      // Verify
-//      try{
-//         // cut.checkArtemisAdditionLegal();
-//         cut.getUpgrades().setArtemis(true);
-//         fail("Exception expected!");
-//      }
-//      catch( Exception e ){
-//         // Success!
-//      }
-//      try{
-//         anotherCut.getUpgrades().setArtemis(true);
-//      }
-//      catch( Exception e ){
-//         fail("Should not throw exception!");
-//      }
-//   }
+   // @Ignore
+   // // This test has been superseded
+   // @Test
+   // public void testCheckArtemisAdditionLegal(){
+   // // Setup
+   // Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
+   // Loadout anotherCut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+   // anotherCut.getPart(Part.LeftTorso).addItem("SRM 6", false);
+   // try{
+   // cut.loadStock();
+   // }
+   // catch( Exception e ){
+   // fail("Unexpected exception when loading stock loadout!");
+   // }
+   // // Verify
+   // try{
+   // // cut.checkArtemisAdditionLegal();
+   // cut.getUpgrades().setArtemis(true);
+   // fail("Exception expected!");
+   // }
+   // catch( Exception e ){
+   // // Success!
+   // }
+   // try{
+   // anotherCut.getUpgrades().setArtemis(true);
+   // }
+   // catch( Exception e ){
+   // fail("Should not throw exception!");
+   // }
+   // }
 }

@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,22 @@ import lisong_mechlab.view.render.ProgressBarRenderer;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long            serialVersionUID = 4720126200474042446L;
+
+   private final static DecimalFormat   df2_floor        = new DecimalFormat("###.##");
+   private final static DecimalFormat   df2              = new DecimalFormat("###.##");
+   private final static DecimalFormat   df1_floor        = new DecimalFormat("###.#");
+   private final static DecimalFormat   df1              = new DecimalFormat("###.#");
+   private final static DecimalFormat   df0              = new DecimalFormat("###");
+
+   static{
+      df2_floor.setMinimumFractionDigits(2);
+      df2_floor.setRoundingMode(RoundingMode.FLOOR);
+      df2.setMinimumFractionDigits(2);
+      df1_floor.setMinimumFractionDigits(1);
+      df1_floor.setRoundingMode(RoundingMode.FLOOR);
+      df1.setMinimumFractionDigits(1);
+   }
+
    private final Loadout                loadout;
 
    // General pane
@@ -234,7 +251,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          JPanel eff = new JPanel(new GridLayout(1, 2));
          eff.setAlignmentY(Component.CENTER_ALIGNMENT);
-         
+
          speedTweak.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
          eff.add(speedTweak);
@@ -271,7 +288,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             }
          });
          environemnts.setSelectedIndex(0);
-         
+
          envPanel.add(new JLabel("Environment:"));
          envPanel.add(environemnts);
          heat.add(envPanel);
@@ -423,18 +440,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // General
                // ----------------------------------------------------------------------
-               final DecimalFormat df2 = new DecimalFormat("###.##");
-               df2.setMinimumFractionDigits(2);
-
-               final DecimalFormat df1 = new DecimalFormat("###.#");
-               df1.setMinimumFractionDigits(1);
-
-               final DecimalFormat df0 = new DecimalFormat("###");
-
                double mass = loadout.getMass();
                massBar.setValue((int)Math.ceil(mass));
-               massValue.setText(df2.format(loadout.getChassi().getMassMax() - mass) + " free");
-               massBar.setString(df1.format(mass) + " / " + df0.format(loadout.getChassi().getMassMax()));
+               massValue.setText(df2_floor.format(loadout.getChassi().getMassMax() - mass) + " free");
+               massBar.setString(df1_floor.format(mass) + " / " + df0.format(loadout.getChassi().getMassMax()));
 
                armorBar.setValue(loadout.getArmor());
                armorBar.setString(loadout.getArmor() + " / " + loadout.getChassi().getArmorMax());
@@ -555,7 +564,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          }
          else if( source == doubleHeatSinks ){
             opStack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS
-                                                                                                : UpgradeDB.STANDARD_HEATSINKS));
+                                                                                                         : UpgradeDB.STANDARD_HEATSINKS));
          }
          else if( source == coolRun ){
             loadout.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED);
