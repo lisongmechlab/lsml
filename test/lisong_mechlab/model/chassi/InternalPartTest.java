@@ -67,7 +67,11 @@ public class InternalPartTest{
 
    @Test
    public void testGetNumHardpoints() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      assertEquals(3, chassi.getInternalPart(Part.LeftTorso).getNumHardpoints(HardpointType.ENERGY));
+      assertEquals(0, chassi.getInternalPart(Part.LeftTorso).getNumHardpoints(HardpointType.BALLISTIC));
+
+      assertEquals(1, chassi.getInternalPart(Part.RightTorso).getNumHardpoints(HardpointType.AMS));
+      assertEquals(2, chassi.getInternalPart(Part.RightTorso).getNumHardpoints(HardpointType.MISSILE));
    }
 
    @Test

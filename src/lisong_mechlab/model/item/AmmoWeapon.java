@@ -20,8 +20,8 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 public class AmmoWeapon extends Weapon{
    private final Ammunition ammoType;
@@ -30,7 +30,12 @@ public class AmmoWeapon extends Weapon{
       super(aStatsWeapon, aHardpointType);
       ammoType = (Ammunition)ItemDB.lookup(aStatsWeapon.WeaponStats.ammoType); // MWO Name
    }
-
+   
+   public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType, Ammunition anAmmoType){
+      super(aStatsWeapon, aHardpointType);
+      ammoType = anAmmoType;
+   }
+   
    public Ammunition getAmmoType(Upgrades aUpgrades){
       if( aUpgrades == null )
          return ammoType;

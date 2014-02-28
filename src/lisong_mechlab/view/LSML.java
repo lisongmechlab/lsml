@@ -26,6 +26,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -34,13 +35,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
-import lisong_mechlab.model.loadout.MechGarage;
-import lisong_mechlab.model.loadout.UndoStack;
+import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.SwingHelpers;
+import lisong_mechlab.view.action.RedoGarageAction;
 import lisong_mechlab.view.action.UndoGarageAction;
+import lisong_mechlab.view.graphs.PayloadSelectionPanel;
+import lisong_mechlab.view.help.OnlineHelp;
 import lisong_mechlab.view.mechlab.MechLabPane;
 import lisong_mechlab.view.preferences.PreferenceStore;
 import lisong_mechlab.view.preferences.Preferences;
@@ -52,7 +56,7 @@ import lisong_mechlab.view.preferences.Preferences;
  */
 public class LSML extends JFrame{
    public static final String      PROGRAM_FNAME          = "Li Song Mechlab";
-   private static final String     VERSION_STRING         = " 1.3.3";
+   private static final String     VERSION_STRING         = " 1.4.0";
    private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
    private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter(){
                                                              @Override
@@ -68,14 +72,18 @@ public class LSML extends JFrame{
                                                           };
    private static final long       serialVersionUID       = -2463321343234141728L;
    private static final String     CMD_UNDO_GARAGE        = "undo garage action";
+   private static final String     CMD_REDO_GARAGE        = "redo garage action";
    public final MessageXBar        xBar                   = new MessageXBar();
-   public final UndoStack          undoStack              = new UndoStack(xBar, 256);
-   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar, undoStack);
+   public final OperationStack     garageOperationStack   = new OperationStack(256);
+   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
    public final Preferences        preferences            = new Preferences();
-   public final MechLabPane        mechLabPane            = new MechLabPane(xBar, undoStack);
+   public final MechLabPane        mechLabPane            = new MechLabPane(xBar);
    public final JTabbedPane        tabbedPane             = new JTabbedPane();
    private LsmlProtocolIPC         lsmlProtocolIPC;
    private MechGarage              garage;
+
+   final Action                    undoGarageAction       = new UndoGarageAction(xBar);
+   final Action                    redoGarageAction       = new RedoGarageAction(xBar);
 
    public LSML(){
       super(PROGRAM_FNAME + VERSION_STRING);
@@ -87,10 +95,12 @@ public class LSML extends JFrame{
       setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       setJMenuBar(new MenuBar(this));
 
-      openLastGarage();
+      JTabbedPane mechTab = new JTabbedPane();
+      mechTab.add("By tonnage", new ChassiSelectionPane());
+      mechTab.add("By payload", new PayloadSelectionPanel());
 
       tabbedPane.addTab("Mechlab", mechLabPane);
-      tabbedPane.addTab("Mechs", new ChassiSelectionPane());
+      tabbedPane.addTab("Mechs", mechTab);
       tabbedPane.addTab("Weapons", new WeaponsListView());
 
       setContentPane(tabbedPane);
@@ -98,11 +108,7 @@ public class LSML extends JFrame{
          @Override
          public void windowClosing(WindowEvent e){
             if( mechLabPane.close() ){
-               saveGarage();
-               if( null != lsmlProtocolIPC ){
-                  lsmlProtocolIPC.close();
-               }
-               dispose();
+               shutdown();
             }
          }
       });
@@ -116,12 +122,14 @@ public class LSML extends JFrame{
          lsmlProtocolIPC = null;
          JOptionPane.showMessageDialog(this, "Unable to startup IPC. Links with builds (lsml://...) will not work.\nError: " + e);
       }
-
       setupKeybindings();
+
+      openLastGarage();
    }
 
    private void setupKeybindings(){
-      SwingHelpers.bindAction(getRootPane(), CMD_UNDO_GARAGE, new UndoGarageAction(xBar));
+      SwingHelpers.bindAction(getRootPane(), CMD_UNDO_GARAGE, undoGarageAction);
+      SwingHelpers.bindAction(getRootPane(), CMD_REDO_GARAGE, redoGarageAction);
    }
 
    public MechGarage getGarage(){
@@ -135,7 +143,7 @@ public class LSML extends JFrame{
       File garageFile = new File(garageFileName);
       if( garageFile.exists() ){
          try{
-            garage = MechGarage.open(garageFile, xBar, undoStack);
+            garage = MechGarage.open(garageFile, xBar);
          }
          catch( Exception e ){
             JOptionPane.showMessageDialog(this,
@@ -145,14 +153,49 @@ public class LSML extends JFrame{
          }
       }
       else{
-         garage = new MechGarage(xBar, undoStack);
+         Object[] options = {"Create a new garage", "Open a saved garage", "Show Help", "Exit LSML"};
+
+         boolean done = false;
+
+         while( !done ){
+            int ans = JOptionPane.showOptionDialog(this,
+                                                   "Your last garage could not be found. This is normal if this is the first time you are using LSML or if you have moved your garage file manually.\n\n"
+                                                         + "All your mechs will be stored in a \"garage\" and the garage is saved to a \"garage file\".\n"
+                                                         + "The last opened garage is automatically opened when you start LSML and your currently open garage is always saved automatically on exit.\n"
+                                                         + "How would you like to proceed?", "No garage found", JOptionPane.YES_NO_CANCEL_OPTION,
+                                                   JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+            if( ans == 0 ){
+               newGarage();
+               saveGarageAs();
+               if( garage.getFile() == null ){
+                  JOptionPane.showMessageDialog(this, "Please select a location to store your garage to avoid loosing any of your mechs.",
+                                                "Garage was not saved", JOptionPane.OK_OPTION);
+               }
+               done = garage.getFile() != null;
+            }
+            else if( ans == 1 ){
+               openGarage();
+               if( garage == null ){
+                  JOptionPane.showMessageDialog(this, "A garage must be opened or created.", "No garage selected", JOptionPane.OK_OPTION);
+               }
+               done = garage != null;
+            }
+            if( ans == 2 ){
+               OnlineHelp.openHelp("Garage");
+            }
+            else if( ans == 3 ){
+               shutdown();
+               done = true;
+            }
+         }
       }
    }
 
    public void openGarage(){
       assert (SwingUtilities.isEventDispatchThread());
 
-      JFileChooser chooser = new JFileChooser(garage.getFile());
+      File startingPosition = garage != null ? garage.getFile() : new File(System.getProperty("user.home"));
+      JFileChooser chooser = new JFileChooser(startingPosition);
       chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
       chooser.setMultiSelectionEnabled(false);
       chooser.setFileFilter(GARAGE_FILE_FILTER);
@@ -161,7 +204,7 @@ public class LSML extends JFrame{
          return;
       }
       try{
-         garage = MechGarage.open(chooser.getSelectedFile(), xBar, undoStack);
+         garage = MechGarage.open(chooser.getSelectedFile(), xBar);
          PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
       }
       catch( IOException e ){
@@ -173,7 +216,7 @@ public class LSML extends JFrame{
    public void newGarage(){
       assert (SwingUtilities.isEventDispatchThread());
 
-      if( !garage.getMechs().isEmpty() ){
+      if( garage != null && !garage.getMechs().isEmpty() ){
          try{
             garage.save();
          }
@@ -190,7 +233,7 @@ public class LSML extends JFrame{
          }
       }
 
-      garage = new MechGarage(xBar, undoStack);
+      garage = new MechGarage(xBar);
    }
 
    public void saveGarageAs(){
@@ -213,8 +256,9 @@ public class LSML extends JFrame{
          }
 
          if( file.exists() ){
-            int choice = JOptionPane.showOptionDialog(this, "", "File already exists!", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                                      null, new String[] {"Overwrite", "Cancel", "Pick another file"}, 0);
+            int choice = JOptionPane.showOptionDialog(this, "How would you like to proceed?", "File already exists!", JOptionPane.DEFAULT_OPTION,
+                                                      JOptionPane.QUESTION_MESSAGE, null, new String[] {"Overwrite", "Cancel", "Pick another file"},
+                                                      0);
             if( 0 == choice ){
                overwrite = true;
             }
@@ -243,7 +287,8 @@ public class LSML extends JFrame{
       assert (SwingUtilities.isEventDispatchThread());
 
       try{
-         garage.save();
+         if( garage != null )
+            garage.save();
       }
       catch( IOException e ){
          saveGarageAs();
@@ -251,6 +296,9 @@ public class LSML extends JFrame{
    }
 
    public void shutdown(){
+      saveGarage();
+      if( lsmlProtocolIPC != null )
+         lsmlProtocolIPC.close();
       dispose();
    }
 }

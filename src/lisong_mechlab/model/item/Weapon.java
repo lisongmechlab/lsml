@@ -23,11 +23,11 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 public class Weapon extends HeatSource{
    public static final int RANGE_ULP_FUZZ = 5;
@@ -45,6 +45,8 @@ public class Weapon extends HeatSource{
    private final double    ghostHeatMultiplier;
    private final int       ghostHeatFreeAlpha;
 
+   private final double    projectileSpeed;
+
    public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
       super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat,
             aStatsWeapon.WeaponStats.Health);
@@ -52,7 +54,10 @@ public class Weapon extends HeatSource{
       if( aStatsWeapon.WeaponStats.cooldown <= 0.0 ){
          // Some weapons are troublesome in that they have zero cooldown in the data files.
          // These include: Machine Gun, Flamer, TAG
-         if( aStatsWeapon.WeaponStats.type.toLowerCase().equals("energy") ){
+         if( aStatsWeapon.WeaponStats.rof > 0.0 ){
+            cycleTime = 1.0 / aStatsWeapon.WeaponStats.rof;
+         }
+         else if( aStatsWeapon.WeaponStats.type.toLowerCase().equals("energy") ){
             cycleTime = 1;
          }
          else{
@@ -70,6 +75,8 @@ public class Weapon extends HeatSource{
       projectilesPerShot = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
       ammoPerShot = aStatsWeapon.WeaponStats.ammoPerShot;
 
+      projectileSpeed = aStatsWeapon.WeaponStats.speed;
+      
       if( aStatsWeapon.WeaponStats.minheatpenaltylevel != 0 ){
          ghostHeatGroupId = aStatsWeapon.WeaponStats.heatPenaltyID;
          ghostHeatMultiplier = aStatsWeapon.WeaponStats.heatpenalty;
@@ -116,6 +123,10 @@ public class Weapon extends HeatSource{
       return cycleTime * factor;
    }
 
+   public double getProjectileSpeed(){
+      return projectileSpeed;
+   }
+
    public double getRangeZero(){
       return 0;
    }
@@ -154,6 +165,11 @@ public class Weapon extends HeatSource{
     * @param aWeaponStat
     *           A string specifying the statistic to be calculated. Must match the regexp pattern
     *           "[dsthc]+(/[dsthc]+)?".
+    * @param anUpgrades
+    *           Any {@link Upgrades} that can affect the stats, can be <code>null</code> to assume no {@link Upgrades}.
+    * @param aEfficiencies
+    *           Any {@link Efficiencies} that can affect the stats, can be <code>null</code> to assume no
+    *           {@link Efficiencies}.
     * @return The calculated statistic.
     */
    public double getStat(String aWeaponStat, Upgrades anUpgrades, Efficiencies aEfficiencies){
@@ -211,6 +227,10 @@ public class Weapon extends HeatSource{
          return 0;
       }
       return nominator / denominator;
+   }
+
+   public boolean hasSpread(){
+      return false;
    }
 
    @Override

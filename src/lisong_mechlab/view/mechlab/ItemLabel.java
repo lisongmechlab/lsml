@@ -32,10 +32,13 @@ import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.loadout.AutoAddItemOperation;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Upgrades;
-import lisong_mechlab.model.loadout.metrics.TopSpeed;
+import lisong_mechlab.model.metrics.TopSpeed;
+import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
+import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.equipment.EquipmentPanel;
 import lisong_mechlab.view.render.StyleManager;
 
@@ -48,7 +51,7 @@ public class ItemLabel extends JLabel{
    private static final long serialVersionUID = 1237952620487557121L;
    private final Item        item;
 
-   public ItemLabel(Item anItem, final EquipmentPanel aEquipmentPanel, final ItemInfoPanel aInfoPanel){
+   public ItemLabel(Item anItem, final EquipmentPanel aEquipmentPanel, final ItemInfoPanel aInfoPanel, final MessageXBar anXBar){
       item = anItem;
 
       StyleManager.styleItem(this, item);
@@ -58,6 +61,7 @@ public class ItemLabel extends JLabel{
       addMouseListener(new MouseAdapter(){
          @Override
          public void mousePressed(MouseEvent anEvent){
+            LoadoutFrame frame = ProgramInit.lsml().mechLabPane.getActiveLoadoutFrame();
             Loadout loadout = aEquipmentPanel.getCurrentLoadout();
 
             Component component = anEvent.getComponent();
@@ -71,7 +75,7 @@ public class ItemLabel extends JLabel{
 
             if( SwingUtilities.isLeftMouseButton(anEvent) && anEvent.getClickCount() >= 2 ){
                if( null != loadout )
-                  loadout.addItem(item, true);
+                  frame.getOpStack().pushAndApply(new AutoAddItemOperation(loadout, anXBar, item));
             }
          }
       });

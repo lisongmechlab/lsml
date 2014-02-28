@@ -19,8 +19,6 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab.equipment;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +27,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.Scrollable;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
@@ -50,6 +47,7 @@ import lisong_mechlab.view.mechlab.ItemLabel;
 import lisong_mechlab.view.mechlab.LoadoutDesktop;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 import lisong_mechlab.view.render.ModifiedFlowLayout;
+import lisong_mechlab.view.render.ScrollablePanel;
 
 /**
  * This class renders the equipment panel that contains all the equippable items on the selected loadout.
@@ -61,35 +59,6 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
    private final ItemInfoPanel   infoPanel        = new ItemInfoPanel();
    private final List<ItemLabel> itemLabels       = new ArrayList<>();
    private Loadout               currentLoadout;
-
-   class ScrollablePanel extends JPanel implements Scrollable{
-      private static final long serialVersionUID = -5231044372862875923L;
-
-      @Override
-      public Dimension getPreferredScrollableViewportSize(){
-         return null;
-      }
-
-      @Override
-      public int getScrollableBlockIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection){
-         return 150; // Arbitrary number, works well enough.
-      }
-
-      @Override
-      public boolean getScrollableTracksViewportHeight(){
-         return false;
-      }
-
-      @Override
-      public boolean getScrollableTracksViewportWidth(){
-         return true;
-      }
-
-      @Override
-      public int getScrollableUnitIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection){
-         return 50; // Arbitrary number, works well enough.
-      }
-   }
 
    public EquipmentPanel(LoadoutDesktop aDesktop, MessageXBar aXBar){
       aXBar.attach(this);
@@ -114,7 +83,7 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
       JPanel engineXlItems = new JPanel(new ModifiedFlowLayout());
       engineXlItems.setBorder(BorderFactory.createTitledBorder("Engine - XL"));
       for(Item item : items){
-         ItemLabel itemLabel = new ItemLabel(item, this, infoPanel);
+         ItemLabel itemLabel = new ItemLabel(item, this, infoPanel, aXBar);
          if( item instanceof Ammunition ){
             Ammunition ammunition = (Ammunition)item;
             switch( ammunition.getWeaponHardpointType() ){

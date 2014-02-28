@@ -36,6 +36,7 @@ import javax.swing.UIManager;
 
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.environment.EnvironmentDB;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
@@ -52,14 +53,16 @@ import com.sun.jna.WString;
  * @author Li Song
  */
 public class ProgramInit extends JFrame{
-   private static final long  serialVersionUID   = -2877785947094537320L;
-   private static final long  MIN_SPLASH_TIME_MS = 20;
-   private static ProgramInit instance;
-   private static LSML        instanceL;
-   public static Image        programIcon;
+   private static final long         serialVersionUID   = -2877785947094537320L;
+   private static final long         MIN_SPLASH_TIME_MS = 20;
+   private static ProgramInit        instance;
+   private static LSML               instanceL;
+   public static Image               programIcon;
 
-   private String             progressSubText    = "";
-   private String             progressText       = "";
+   private String                    progressSubText    = "";
+   private String                    progressText       = "";
+
+   public static final EnvironmentDB ENVIRONMENT_DB     = new EnvironmentDB();
 
    private class BackgroundImage extends JComponent{
       private static final long serialVersionUID = 2294812231919303690L;
@@ -133,10 +136,14 @@ public class ProgramInit extends JFrame{
          @SuppressWarnings("unused")
          // Causes static initialization to be ran.
          Chassi chassi = ChassiDB.lookup("JR7-D");
+
+         ENVIRONMENT_DB.initialize();
       }
       catch( Throwable e ){
-         JOptionPane.showMessageDialog(this,
-                                       "Unable to find/parse game data files!\nLSML requires an up-to-date installation of MW:Online to parse data files from.");
+         JOptionPane.showMessageDialog(this, "Please make sure you have the latest version of LSML (http://li-soft.org) installed\n"
+                                             + "and make sure that your MWO install is up-to-date.\n"
+                                             + "If the problem persists, please consult the FAQ and User Manual on the website.",
+                                       "LSML is unable to parse your game files.", JOptionPane.ERROR_MESSAGE);
          e.printStackTrace();
          return false;
       }
@@ -197,8 +204,15 @@ public class ProgramInit extends JFrame{
             try{
                instanceL = new LSML();
 
-               if( args.length > 0 )
-                  instanceL.mechLabPane.openLoadout(instanceL.loadoutCoder.parse(args[0]));
+               if( args.length > 0 ){
+                  // This has to be done after other events have been processed and the UI is constructed.
+                  SwingUtilities.invokeLater(new Runnable(){
+                     @Override
+                     public void run(){
+                        instanceL.mechLabPane.openLoadout(args[0]);
+                     }
+                  });
+               }
             }
             catch( Exception e ){
                JOptionPane.showMessageDialog(null, "Unable to start! Error: " + e);

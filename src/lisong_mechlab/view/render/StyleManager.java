@@ -59,7 +59,7 @@ public class StyleManager{
    private static final Color  COLOR_BG_BALLISTIC      = new Color(0xc4a000);
    private static final Color  COLOR_FG_BALLISTIC_AMMO = Color.BLACK;
    private static final Color  COLOR_BG_BALLISTIC_AMMO = new Color(0xfce94f);
-   
+
    // Engine/Propulsion
    private static final Color  COLOR_FG_JJ             = Color.WHITE;
    private static final Color  COLOR_BG_JJ             = new Color(0x8d6094);
@@ -93,6 +93,13 @@ public class StyleManager{
    static public void styleItem(JComponent aComponent, Item anItem){
       aComponent.setOpaque(true);
       aComponent.setBorder(singleBorder);
+      aComponent.setBackground(getBgColorFor(anItem));
+      aComponent.setForeground(getFgColorFor(anItem));
+   }
+
+   public static void styleThinItem(JComponent aComponent, Item anItem){
+      aComponent.setOpaque(true);
+      aComponent.setBorder(thinItemBorder);
       aComponent.setBackground(getBgColorFor(anItem));
       aComponent.setForeground(getFgColorFor(anItem));
    }

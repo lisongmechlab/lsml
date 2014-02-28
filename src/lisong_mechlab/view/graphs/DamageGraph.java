@@ -36,13 +36,12 @@ import javax.swing.KeyStroke;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingUtilities;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.Upgrades;
-import lisong_mechlab.model.loadout.metrics.HeatDissipation;
-import lisong_mechlab.model.loadout.metrics.MaxSustainedDPS;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.metrics.MaxSustainedDPS;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.Pair;
@@ -86,18 +85,20 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
    /**
     * Creates and displays the {@link DamageGraph}.
     * 
-    * @param aTitle
-    *           The title for the diagram.
     * @param aLoadout
     *           Which load out the diagram is for.
+    * @param anXbar
+    *           A {@link MessageXBar} to listen for changes to the loadout on.
+    * @param aMaxSustainedDpsMetric
+    *           A {@link MaxSustainedDPS} instance to use in calculation.
     */
-   public DamageGraph(Loadout aLoadout, MessageXBar anXbar){
+   public DamageGraph(Loadout aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric){
       super("Max Sustained DPS over range for " + aLoadout);
 
       anXbar.attach(this);
 
       loadout = aLoadout;
-      maxSustainedDPS = new MaxSustainedDPS(loadout, new HeatDissipation(loadout));
+      maxSustainedDPS = aMaxSustainedDpsMetric;
       chartPanel = new ChartPanel(makechart());
       setContentPane(chartPanel);
       chartPanel.getChart().getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
@@ -137,14 +138,15 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       for(double range : ranges){
          Set<Entry<Weapon, Double>> damageDistributio = maxSustainedDPS.getWeaponRatios(range).entrySet();
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
-            Weapon weapon = entry.getKey();
-            double ratio = entry.getValue();
-            double dps = weapon.getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies());
+            final Weapon weapon = entry.getKey();
+            final double ratio = entry.getValue();
+            final double dps = weapon.getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies());
+            final double rangeEff = weapon.getRangeEffectivity(range);
 
             if( !data.containsKey(weapon) ){
                data.put(weapon, new ArrayList<Pair<Double, Double>>());
             }
-            data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio));
+            data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio * rangeEff));
          }
       }
 

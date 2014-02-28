@@ -30,16 +30,16 @@ import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
@@ -311,6 +311,11 @@ public class WeaponSummaryTable extends JTable implements Reader{
       getColumnModel().getColumn(1).setMinWidth(30);
    }
 
+   @Override
+   public boolean getScrollableTracksViewportWidth(){
+      return true;
+   }
+   
    @Override
    public void receive(Message aMsg){
       if( aMsg.isForMe(loadout) ){

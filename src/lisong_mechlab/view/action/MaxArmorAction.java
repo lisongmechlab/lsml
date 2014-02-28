@@ -25,6 +25,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.SetMaxArmorOperation;
+import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 /**
@@ -37,6 +39,7 @@ public class MaxArmorAction extends AbstractAction{
    private final Loadout      loadout;
    private final double       ratio;
    private final LoadoutFrame loadoutFrame;
+   private final MessageXBar  xBar;
 
    /**
     * Creates a new {@link MaxArmorAction}. If <code>aRatio</code> is less than or equal to 0, the user is prompted for
@@ -48,19 +51,22 @@ public class MaxArmorAction extends AbstractAction{
     *           The {@link Loadout} to set armor for.
     * @param aRatio
     *           The ratio between back and front as: <code>front/back</code>
+    * @param anXBar
+    *           The {@link MessageXBar} to signal armor changes on.
     */
-   public MaxArmorAction(String aTitle, LoadoutFrame aLoadout, double aRatio){
+   public MaxArmorAction(String aTitle, LoadoutFrame aLoadout, double aRatio, MessageXBar anXBar){
       super(aTitle);
       loadoutFrame = aLoadout;
       loadout = aLoadout.getLoadout();
       ratio = aRatio;
+      xBar = anXBar;
    }
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
       try{
          if( ratio > 0 ){
-            loadout.setMaxArmor(ratio);
+            loadoutFrame.getOpStack().pushAndApply(new SetMaxArmorOperation(loadout, xBar, ratio));
          }
          else{
             String input = (String)JOptionPane.showInputDialog(loadoutFrame,
@@ -81,7 +87,7 @@ public class MaxArmorAction extends AbstractAction{
                   JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");
                   return;
                }
-               loadout.setMaxArmor(front / back);
+               loadoutFrame.getOpStack().pushAndApply(new SetMaxArmorOperation(loadout, xBar, front / back));
             }
             else
                JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");

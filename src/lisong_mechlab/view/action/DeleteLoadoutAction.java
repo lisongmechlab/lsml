@@ -27,31 +27,38 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import lisong_mechlab.model.garage.MechGarage;
+import lisong_mechlab.model.garage.RemoveFromGarageOperation;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.MessageXBar.Reader;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
-public class DeleteLoadoutAction extends AbstractAction{
-   private static final long  serialVersionUID = -4813215864397617783L;
-   private final Loadout      loadout;
-   private final MechGarage   garage;
-   private final LoadoutFrame loadoutFrame;
+public class DeleteLoadoutAction extends AbstractAction implements Reader{
+   private static final long   serialVersionUID = -4813215864397617783L;
+   private static final String SHORTCUT_STROKE  = "control D";
+   private final Loadout       loadout;
+   private final MechGarage    garage;
+   private final LoadoutFrame  loadoutFrame;
 
-   public DeleteLoadoutAction(MechGarage aGarage, LoadoutFrame aLoadoutFrame, KeyStroke key){
-      super("Delete loadout");
-      loadoutFrame = aLoadoutFrame;
-      loadout = aLoadoutFrame.getLoadout();
-      garage = aGarage;
-      putValue(Action.ACCELERATOR_KEY, key);
+   public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame){
+      this(anXBar, aGarage, aLoadoutFrame, aLoadoutFrame.getLoadout());
    }
 
-   public DeleteLoadoutAction(MechGarage aGarage, Loadout aLoadout, KeyStroke key){
+   public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, Loadout aLoadout){
+      this(anXBar, aGarage, null, aLoadout);
+   }
+
+   private DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame, Loadout aLoadout){
       super("Delete loadout");
-      loadoutFrame = null;
+      loadoutFrame = aLoadoutFrame;
       loadout = aLoadout;
       garage = aGarage;
-      putValue(Action.ACCELERATOR_KEY, key);
+      putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
+      setEnabled(garage.getMechs().contains(loadout));
+      anXBar.attach(this);
    }
 
    @Override
@@ -63,7 +70,7 @@ public class DeleteLoadoutAction extends AbstractAction{
                                                     "Confirm operation", JOptionPane.YES_NO_OPTION);
          if( JOptionPane.YES_OPTION == result ){
             try{
-               garage.remove(loadout, true);
+               ProgramInit.lsml().garageOperationStack.pushAndApply(new RemoveFromGarageOperation(garage, loadout));
             }
             catch( RuntimeException e ){
                JOptionPane.showMessageDialog(source,
@@ -71,6 +78,16 @@ public class DeleteLoadoutAction extends AbstractAction{
                                                    + "Please report an issue at https://github.com/lisongmechlab/lsml/issues and copy paste the following this message:\n"
                                                    + e.getMessage() + "\nStack trace:\n" + e.getStackTrace());
             }
+         }
+      }
+   }
+
+   @Override
+   public void receive(Message aMsg){
+      if( aMsg instanceof MechGarage.Message ){
+         MechGarage.Message msg = (MechGarage.Message)aMsg;
+         if( msg.isForMe(loadout) ){
+            setEnabled(garage.getMechs().contains(loadout));
          }
       }
    }

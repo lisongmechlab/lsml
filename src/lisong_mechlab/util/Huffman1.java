@@ -30,6 +30,7 @@ import java.util.TreeMap;
  * A Huffman source symbol coder/decoder.
  * 
  * @author Li Song
+ * @param <T> The type of the symbols that shall be encoded.
  */
 public class Huffman1<T> {
    private static class Leaf<TT> extends Node{

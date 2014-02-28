@@ -76,6 +76,12 @@ public class WeaponTest{
    }
 
    @Test
+   public void testGetHeat_chargeDps(){
+      Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
+      assertEquals(gauss.getCycleTime(null) + 0.75, gauss.getSecondsPerShot(null), 0.0);
+   }
+
+   @Test
    public void testGetSecondsPerShot_mg() throws Exception{
       Weapon mg = (Weapon)ItemDB.lookup("MACHINE GUN");
       assertTrue(mg.getSecondsPerShot(null) > 0.05);
@@ -109,8 +115,8 @@ public class WeaponTest{
    public void testGetRangeEffectivity_mg() throws Exception{
       BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("MACHINE GUN");
       assertEquals(1.0, mg.getRangeEffectivity(0), 0.0);
-      assertEquals(1.0, mg.getRangeEffectivity(mg.getRangeLong()), 0.0);
-      assertEquals(0.5, mg.getRangeEffectivity((mg.getRangeLong() + mg.getRangeMax()) / 2), 0.0);
+      assertEquals(1.0, mg.getRangeEffectivity(mg.getRangeLong()), 0.1); // High spread on MG
+      assertTrue(0.5 >= mg.getRangeEffectivity((mg.getRangeLong() + mg.getRangeMax()) / 2)); // Spread + falloff
       assertEquals(0.0, mg.getRangeEffectivity(mg.getRangeMax()), 0.0);
    }
 

@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -33,7 +34,6 @@ import javax.swing.tree.TreePath;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.ProgramInit;
@@ -47,8 +47,8 @@ public class GarageTree extends JTree{
    GarageTreeModel           model            = null;
    private final MessageXBar xBar;
 
-   public GarageTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar anXBar, final UndoStack anUndoStack){
-      model = new GarageTreeModel(anXBar);
+   public GarageTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar anXBar, JTextField aFilterBar){
+      model = new GarageTreeModel(anXBar, aFilterBar, this);
       xBar = anXBar;
 
       ToolTipManager.sharedInstance().registerComponent(this);
@@ -77,8 +77,8 @@ public class GarageTree extends JTree{
                   JMenuItem label = new JMenuItem(clickedLoadout.getName());
                   label.setEnabled(false);
                   menu.add(label);
-                  menu.add(new JMenuItem(new RenameLoadoutAction(clickedLoadout)));
-                  menu.add(new JMenuItem(new DeleteLoadoutAction(ProgramInit.lsml().getGarage(), clickedLoadout, KeyStroke.getKeyStroke("D"))));
+                  menu.add(new JMenuItem(new RenameLoadoutAction(clickedLoadout, xBar, null)));
+                  menu.add(new JMenuItem(new DeleteLoadoutAction(xBar, ProgramInit.lsml().getGarage(), clickedLoadout)));
                   menu.add(new JMenuItem(new CloneLoadoutAction("Clone", clickedLoadout, KeyStroke.getKeyStroke("C"))));
                   menu.show(GarageTree.this, e.getX(), e.getY());
                }
@@ -87,7 +87,7 @@ public class GarageTree extends JTree{
                Object clicked = getClickedObject(e);
                if( clicked instanceof Chassi ){
                   Chassi chassi = (Chassi)clicked;
-                  Loadout clickedLoadout = new Loadout(chassi, xBar, anUndoStack);
+                  Loadout clickedLoadout = new Loadout(chassi, xBar);
                   aLoadoutDesktop.openLoadout(clickedLoadout);
                }
                else if( clicked instanceof Loadout ){
@@ -116,7 +116,8 @@ public class GarageTree extends JTree{
             sb.append("<html>");
             sb.append("Max Tons: ").append(chassi.getMassMax()).append(" Engine: ").append(chassi.getEngineMin()).append(" - ")
               .append(chassi.getEngineMax()).append("<br>");
-            sb.append("Max Jump Jets: ").append(chassi.getMaxJumpJets()).append(" ECM: ").append(chassi.isEcmCapable() ? "Yes" : "No").append("<br>");
+            sb.append("Max Jump Jets: ").append(chassi.getMaxJumpJets()).append(" ECM: ")
+              .append(chassi.getHardpointsCount(HardpointType.ECM) > 0 ? "Yes" : "No").append("<br>");
             sb.append("Ballistics: ").append(chassi.getHardpointsCount(HardpointType.BALLISTIC)).append(" Energy: ")
               .append(chassi.getHardpointsCount(HardpointType.ENERGY)).append(" Missile: ").append(chassi.getHardpointsCount(HardpointType.MISSILE))
               .append(" AMS: ").append(chassi.getHardpointsCount(HardpointType.AMS)).append("<br>");

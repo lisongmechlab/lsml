@@ -20,6 +20,7 @@
 package lisong_mechlab.model.loadout.export;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -31,10 +32,13 @@ import java.util.regex.Pattern;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.UndoStack;
+import lisong_mechlab.model.loadout.RenameOperation;
 import lisong_mechlab.util.Base64;
+import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,15 +53,12 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class LoadoutCoderV2Test{
-   
+
    @Mock
    private MessageXBar    xBar;
-   @Mock
-   private UndoStack      undoStack;
    @InjectMocks
    private LoadoutCoderV2 cut;
 
-   
    /**
     * The coder shall be able to decode all stock mechs.
     * 
@@ -65,27 +66,27 @@ public class LoadoutCoderV2Test{
     */
    @Test
    public void testEncodeAllStock() throws Exception{
-         List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
-         chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-         chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-         chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
+      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
 
-         MessageXBar anXBar = new MessageXBar();
-         for(Chassi chassi : chassii){
-            Loadout loadout = new Loadout(chassi, anXBar, undoStack);
-            loadout.loadStock();
+      MessageXBar anXBar = new MessageXBar();
+      for(Chassi chassi : chassii){
+         Loadout loadout = new Loadout(chassi.getName(), anXBar);
 
-            byte[] result = cut.encode(loadout);
-            Loadout decoded = cut.decode(result);
+         byte[] result = cut.encode(loadout);
+         Loadout decoded = cut.decode(result);
 
-            // Name is not encoded
-            decoded.rename(loadout.getName());
+         // Name is not encoded
+         OperationStack stack = new OperationStack(0);
+         stack.pushAndApply(new RenameOperation(decoded, xBar, loadout.getName()));
 
-            // Verify
-            assertEquals(loadout, decoded);
-         }
+         // Verify
+         assertEquals(loadout, decoded);
       }
-   
+   }
+
    /**
     * The coder shall be able to decode all stock mechs.
     * 
@@ -106,16 +107,33 @@ public class LoadoutCoderV2Test{
          m.matches();
          Chassi chassi = ChassiDB.lookup(m.group(1));
          String lsml = m.group(2);
-         Loadout reference = new Loadout(chassi.getName(), xBar, undoStack);
+         Loadout reference = new Loadout(chassi.getName(), xBar);
          Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
          // Name is not encoded
-         decoded.rename(reference.getName());
+         OperationStack stack = new OperationStack(0);
+         stack.pushAndApply(new RenameOperation(decoded, xBar, reference.getName()));
 
          // Verify
          assertEquals(reference, decoded);
       }
 
       sc.close();
+   }
+
+   /**
+    * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
+    * sinks.
+    * 
+    * @throws DecodingException
+    */
+   @Test
+   public void testDecodeHeatsinksBeforeEngine() throws DecodingException{
+      Base64 base64 = new Base64();
+
+      Loadout l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
+
+      assertTrue(l.getFreeMass() < 0.005);
+      assertEquals(3, l.getPart(Part.CenterTorso).getNumEngineHeatsinks());
    }
 }

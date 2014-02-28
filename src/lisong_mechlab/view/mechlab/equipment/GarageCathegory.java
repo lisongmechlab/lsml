@@ -19,55 +19,58 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab.equipment;
 
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 
+import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.ChassiClass;
+import lisong_mechlab.model.garage.MechGarage;
+import lisong_mechlab.model.garage.MechGarage.Message.Type;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.MechGarage;
-import lisong_mechlab.model.loadout.MechGarage.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 
-class GarageCathegory extends AbstractTreeCathegory implements MessageXBar.Reader{
-   private MechGarage garage = null;
+class GarageCathegory extends FilterTreeCathegory<Loadout> implements MessageXBar.Reader{
+   private MechGarage        garage = null;
+   private final ChassiClass chassiClass;
 
-   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar){
-      super(aName, aParent, aModel);
+   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar, ChassiClass aChassiClass,
+                          JTextField aFilterBar, GarageTree aGarageTree){
+      super(aName, aParent, aModel, aFilterBar, aGarageTree);
+      chassiClass = aChassiClass;
       xbar.attach(this);
    }
 
    @Override
    public void receive(MessageXBar.Message aMsg){
+      assert (SwingUtilities.isEventDispatchThread());
       if( aMsg instanceof MechGarage.Message ){
          MechGarage.Message msg = (MechGarage.Message)aMsg;
          if( msg.type == Type.NewGarage ){
             garage = msg.garage;
          }
-         getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
+         garageChanged();
       }
       else if( aMsg instanceof Loadout.Message ){
-         // Loadout.Message message = (Message)aMsg;
-
-         getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
+         garageChanged();
       }
    }
 
    @Override
-   public int getChildCount(){
-      if( null == garage )
-         return 0;
-      return garage.getMechs().size();
+   protected boolean filter(Loadout aLoadout){
+      Chassi chassi = aLoadout.getChassi();
+      return aLoadout.getName().toLowerCase().contains(getFilterString()) || chassi.getName().toLowerCase().contains(getFilterString());
    }
 
-   @Override
-   public int getIndex(Object aChild){
-      if( null == garage )
-         return -1;
-      return garage.getMechs().indexOf(aChild);
-   }
-
-   @Override
-   public Object getChild(int aIndex){
-      if( null == garage )
-         return null;
-      return garage.getMechs().get(aIndex);
+   private void garageChanged(){
+      children.clear();
+      if( garage != null ){
+         for(Loadout loadout : garage.getMechs()){
+            if( loadout.getChassi().getChassiClass() == chassiClass )
+               children.add(loadout);
+         }
+      }
+      getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
+      garageTree.expandPath(getPath());
    }
 }

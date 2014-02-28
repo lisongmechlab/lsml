@@ -26,7 +26,7 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.loadout.MechGarage;
+import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
@@ -39,7 +39,7 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class UndoGarageAction extends AbstractAction implements Reader{
    private static final long   serialVersionUID = 665074705972425989L;
-   private static final String SHORTCUT_STROKE  = "control G";
+   private static final String SHORTCUT_STROKE  = "control shift Z";
 
    public UndoGarageAction(MessageXBar anXBar){
       putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
@@ -51,7 +51,7 @@ public class UndoGarageAction extends AbstractAction implements Reader{
    public Object getValue(String key){
       if( key == Action.NAME ){
          if( isEnabled() ){
-            return ProgramInit.lsml().undoStack.latestGarage().describe();
+            return "Undo " + ProgramInit.lsml().garageOperationStack.nextUndo().describe();
          }
          return "Undo Garage";
       }
@@ -60,25 +60,22 @@ public class UndoGarageAction extends AbstractAction implements Reader{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      ProgramInit.lsml().undoStack.undoAction(ProgramInit.lsml().undoStack.latestGarage());
+      ProgramInit.lsml().garageOperationStack.undo();
    }
 
    @Override
    public void receive(final Message aMsg){
       SwingUtilities.invokeLater(new Runnable(){
-
          @Override
          public void run(){
             if( aMsg instanceof MechGarage.Message ){
-               if( ProgramInit.lsml() == null || ProgramInit.lsml().undoStack == null )
+               if( ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null )
                   setEnabled(false);
                else
-                  setEnabled(null != ProgramInit.lsml().undoStack.latestGarage());
+                  setEnabled(null != ProgramInit.lsml().garageOperationStack.nextUndo());
                firePropertyChange(NAME, "", getValue(NAME));
             }
          }
       });
-
    }
-
 }

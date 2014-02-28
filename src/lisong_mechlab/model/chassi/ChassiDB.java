@@ -35,10 +35,10 @@ public class ChassiDB{
    static private final Map<Integer, Chassi>      id2chassi;
 
    /**
-    * Looks up a chassi by a short name such as "AS7-D-DC"
+    * Looks up a chassis by a short name such as "AS7-D-DC"
     * 
     * @param aShortName
-    * @return
+    * @return The chassis that matches the lookup string.
     */
    static public Chassi lookup(String aShortName){
       String keyShortName = canonize(aShortName);
@@ -56,10 +56,10 @@ public class ChassiDB{
    }
 
    /**
-    * Looks up all chassi of the given chassi class.
+    * Looks up all chassis of the given chassis class.
     * 
     * @param aChassiClass
-    * @return
+    * @return An {@link List} of all {@link Chassi} with the given {@link ChassiClass}.
     */
    static public List<Chassi> lookup(ChassiClass aChassiClass){
       List<Chassi> chassii = new ArrayList<>(4 * 4);

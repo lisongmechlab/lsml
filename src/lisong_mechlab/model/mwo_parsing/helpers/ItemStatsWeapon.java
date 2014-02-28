@@ -72,11 +72,28 @@ public class ItemStatsWeapon extends ItemStats{
       public double heatpenalty;
       @XStreamAsAttribute
       public int    heatPenaltyID;
+      @XStreamAsAttribute
+      public double rof;
+      @XStreamAsAttribute
+      public double spread;
+      @XStreamAsAttribute
+      public double JammingChance;
+      @XStreamAsAttribute
+      public double JammedTime;
+      @XStreamAsAttribute
+      public int    ShotsDuringCooldown;
    }
 
    public WeaponStatsTag WeaponStats;
-   
+
    // Special case handling of inherit from
    @XStreamAsAttribute
-   public int InheritFrom;
+   public int            InheritFrom;
+
+   public static class ArtemisTag{
+      @XStreamAsAttribute
+      public int RestrictedTo;
+   }
+
+   public ArtemisTag Artemis;
 }

@@ -35,16 +35,30 @@ import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.LoadStockOperation;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.UndoStack;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.upgrades.ArmorUpgrade;
+import lisong_mechlab.model.upgrades.GuidanceUpgrade;
+import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
+import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
+import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
+import lisong_mechlab.model.upgrades.SetGuidanceOperation;
+import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
+import lisong_mechlab.model.upgrades.StructureUpgrade;
+import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 /**
  * The first version of {@link LoadoutCoder} for LSML.
@@ -57,11 +71,9 @@ public class LoadoutCoderV1 implements LoadoutCoder{
    private final MessageXBar       xBar;
    private final Part[]            partOrder    = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso,
          Part.LeftTorso, Part.LeftLeg, Part.LeftArm};
-   private final UndoStack         undoStack;
 
-   public LoadoutCoderV1(MessageXBar anXBar, UndoStack anUndoStack){
+   public LoadoutCoderV1(MessageXBar anXBar){
       xBar = anXBar;
-      undoStack = anUndoStack;
       ObjectInputStream in = null;
       try{
          InputStream is = LoadoutCoderV1.class.getResourceAsStream("/resources/coderstats.bin");
@@ -86,20 +98,20 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @Override
    public byte[] encode(final Loadout aLoadout) throws EncodingException{
-      // FIXME
-      throw new EncodingException("Protocol version 1 encoding is no longer allowed. Please update to 1.3.3 when it is out");
+      throw new EncodingException("Protocol version 1 encoding is no longer allowed.");
       //@formatter:off
-      /*final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
+      /*
+      final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
 
       // Write header (32 bits)
       {
          buffer.write(HEADER_MAGIC); // 8 bits for version number
 
          int upeff = 0; // 8 bits for efficiencies
-         upeff = (upeff << 1) | (aLoadout.getUpgrades().hasArtemis() ? 1 : 0);
-         upeff = (upeff << 1) | (aLoadout.getUpgrades().hasDoubleHeatSinks() ? 1 : 0);
-         upeff = (upeff << 1) | (aLoadout.getUpgrades().hasFerroFibrous() ? 1 : 0);
-         upeff = (upeff << 1) | (aLoadout.getUpgrades().hasEndoSteel() ? 1 : 0);
+         upeff = (upeff << 1) | (aLoadout.getUpgrades().getGuidance() != UpgradeDB.STANDARD_GUIDANCE ? 1 : 0);
+         upeff = (upeff << 1) | (aLoadout.getUpgrades().getHeatSink() != UpgradeDB.STANDARD_HEATSINKS ? 1 : 0);
+         upeff = (upeff << 1) | (aLoadout.getUpgrades().getArmor() != UpgradeDB.STANDARD_ARMOR ? 1 : 0);
+         upeff = (upeff << 1) | (aLoadout.getUpgrades().getStructure() != UpgradeDB.STANDARD_STRUCTURE ? 1 : 0);
          upeff = (upeff << 1) | (aLoadout.getEfficiencies().hasCoolRun() ? 1 : 0);
          upeff = (upeff << 1) | (aLoadout.getEfficiencies().hasHeatContainment() ? 1 : 0);
          upeff = (upeff << 1) | (aLoadout.getEfficiencies().hasSpeedTweak() ? 1 : 0);
@@ -160,6 +172,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
    public Loadout decode(final byte[] aBitStream) throws DecodingException{
       final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
       final Loadout loadout;
+      final OperationStack stack = new OperationStack(0);
 
       // Read header
       {
@@ -173,12 +186,21 @@ public class LoadoutCoderV1 implements LoadoutCoder{
                                                                                            // 1700
 
          Chassi chassi = ChassiDB.lookup(chassiId);
-         loadout = new Loadout(chassi, xBar, undoStack);
+         loadout = new Loadout(chassi, xBar);
 
-         loadout.getUpgrades().setArtemis((upeff & (1 << 7)) != 0);
-         loadout.getUpgrades().setDoubleHeatSinks((upeff & (1 << 6)) != 0);
-         loadout.getUpgrades().setFerroFibrous((upeff & (1 << 5)) != 0);
-         loadout.getUpgrades().setEndoSteel((upeff & (1 << 4)) != 0);
+         boolean artemisIv = (upeff & (1 << 7)) != 0;
+         boolean endoSteel = (upeff & (1 << 4)) != 0;
+         boolean ferroFib = (upeff & (1 << 5)) != 0;
+         boolean dhs = (upeff & (1 << 6)) != 0;
+         GuidanceUpgrade guidance = artemisIv ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE;
+         StructureUpgrade structure = endoSteel ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE;
+         ArmorUpgrade armor = ferroFib ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
+         HeatsinkUpgrade heatSinks = dhs ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
+
+         stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, guidance));
+         stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, heatSinks));
+         stack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, structure));
+         stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, armor));
          loadout.getEfficiencies().setCoolRun((upeff & (1 << 3)) != 0);
          loadout.getEfficiencies().setHeatContainment((upeff & (1 << 2)) != 0);
          loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 1)) != 0);
@@ -189,11 +211,11 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       // 1 byte per armor value (2 for RT,CT,LT front first)
       for(Part part : partOrder){
          if( part.isTwoSided() ){
-            loadout.getPart(part).setArmor(ArmorSide.FRONT, buffer.read());
-            loadout.getPart(part).setArmor(ArmorSide.BACK, buffer.read());
+            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.FRONT, buffer.read()));
+            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.BACK, buffer.read()));
          }
          else{
-            loadout.getPart(part).setArmor(ArmorSide.ONLY, buffer.read());
+            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.ONLY, buffer.read()));
          }
       }
 
@@ -210,10 +232,18 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          List<Integer> ids = huff.decode(rest);
          for(Part part : partOrder){
             Integer v;
+            List<Item> later = new ArrayList<>();
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
                Item pItem = ItemDB.lookup(v);
-               Item item = CompatibilityHelper.fixArtemis(pItem, loadout.getUpgrades().hasArtemis());
-               loadout.getPart(part).addItem(item, false);
+               Item item = CompatibilityHelper.fixArtemis(pItem, loadout.getUpgrades().getGuidance());
+               if(item instanceof HeatSink){
+                  later.add(item); // Add heat sinks last after engine has been added
+                  continue;
+               }
+               stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), item));
+            }
+            for(Item i : later){
+               stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), i));
             }
          }
       }
@@ -228,6 +258,9 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    /**
     * Will process the stock builds and generate statistics and dump it to a file.
+    * 
+    * @param arg
+    * @throws Exception
     */
    public static void main(String[] arg) throws Exception{
       // generateAllLoadouts();
@@ -240,20 +273,21 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
-      MessageXBar anXBar = new MessageXBar();
-      UndoStack anUndoStack = new UndoStack(anXBar, 0);
+      MessageXBar xBar = new MessageXBar();
+      OperationStack stack = new OperationStack(0);
 
-      Base64LoadoutCoder coder = new Base64LoadoutCoder(anXBar, anUndoStack);
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
 
       for(Chassi chassi : chassii){
-         Loadout loadout = new Loadout(chassi, anXBar, anUndoStack);
-         loadout.loadStock();
+         Loadout loadout = new Loadout(chassi.getName(), xBar);
+         stack.pushAndApply(new LoadStockOperation(loadout, xBar));
 
          for(LoadoutPart part : loadout.getPartLoadOuts()){
             for(Item item : new ArrayList<>(part.getItems())){
                if( item.getName().toLowerCase().contains("artemis") ){
-                  part.removeItem(item, false);
-                  part.addItem(ItemDB.lookup(item.getName().substring(0, item.getName().indexOf(" + ARTEMIS"))), false);
+                  stack.pushAndApply(new RemoveItemOperation(xBar, part, item));
+                  stack.pushAndApply(new AddItemOperation(xBar, part,
+                                                          ItemDB.lookup(item.getName().substring(0, item.getName().indexOf(" + ARTEMIS")))));
                }
             }
          }
@@ -271,10 +305,8 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
       Map<Integer, Integer> freqs = new TreeMap<>();
       MessageXBar anXBar = new MessageXBar();
-      UndoStack anUndoStack = new UndoStack(anXBar, 0);
       for(Chassi chassi : chassii){
-         Loadout loadout = new Loadout(chassi, anXBar, anUndoStack);
-         loadout.loadStock();
+         Loadout loadout = new Loadout(chassi.getName(), anXBar);
 
          for(Item item : loadout.getAllItems()){
             if( item == null ){

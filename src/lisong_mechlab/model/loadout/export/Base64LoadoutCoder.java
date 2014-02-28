@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
@@ -43,9 +42,9 @@ public class Base64LoadoutCoder{
    private final transient LoadoutCoder   preferredEncoder;
    private final transient Base64         base64;
 
-   public Base64LoadoutCoder(MessageXBar anXBar, UndoStack anUndoStack){
-      coderV1 = new LoadoutCoderV1(anXBar, anUndoStack);
-      coderV2 = new LoadoutCoderV2(anXBar, anUndoStack);
+   public Base64LoadoutCoder(MessageXBar anXBar){
+      coderV1 = new LoadoutCoderV1(anXBar);
+      coderV2 = new LoadoutCoderV2(anXBar);
       preferredEncoder = coderV2;
       base64 = new Base64();
    }

@@ -35,7 +35,7 @@ import javax.swing.UIManager;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
  * This class can render any {@link Item} to an {@link Image}.

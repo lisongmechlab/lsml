@@ -84,13 +84,26 @@ public class GameDataFile{
       ProgramInit.setProcessText("Parsing game files...");
    }
 
-   public GameDataFile(File aGameRoot) throws FileNotFoundException{
-      if( isValidGameDirectory(aGameRoot.toPath()) ){
-         gamePath = aGameRoot.toPath();
+   /**
+    * Will list the files in the given path under the game root.
+    * <p>
+    * NOTE: This currently only works with paths that are not inside of archives
+    * </p>
+    * 
+    * @param aPath
+    *           The path to list in.
+    * @return An array of {@link File} objects or null if no files were found.
+    */
+   public File[] listGameDir(File aPath){
+      File target = gamePath.resolve(aPath.toPath()).toFile();
+
+      File files[] = target.listFiles();
+      if( files != null ){
+         for(int i = 0; i < files.length; ++i){
+            files[i] = gamePath.relativize(files[i].toPath()).toFile();
+         }
       }
-      else{
-         throw new FileNotFoundException("The given path doesn't contain the MWO client!");
-      }
+      return files;
    }
 
    /**
@@ -239,7 +252,7 @@ public class GameDataFile{
          @Override
          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
             if( dir.getFileName() != null ){
-               if( OS.isWindowsOrNewer(WindowsVersion.WinOld)){
+               if( OS.isWindowsOrNewer(WindowsVersion.WinOld) ){
                   // On windows we can skip some folders
                   Set<String> skipList = new HashSet<>();
                   skipList.add("windows");

@@ -20,6 +20,7 @@
 package lisong_mechlab.view;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
@@ -30,15 +31,17 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.RemoveItemOperation;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.mechlab.ItemLabel;
+import lisong_mechlab.view.mechlab.LoadoutFrame;
 import lisong_mechlab.view.mechlab.PartList;
 import lisong_mechlab.view.mechlab.equipment.GarageTree;
 import lisong_mechlab.view.render.ItemRenderer;
@@ -54,35 +57,29 @@ public class ItemTransferHandler extends TransferHandler{
 
    @Override
    protected Transferable createTransferable(JComponent aComponent){
+      assert (SwingUtilities.isEventDispatchThread());
       if( aComponent instanceof PartList ){
          PartList partList = (PartList)aComponent;
+
          List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
          sourcePart = partList.getPart();
 
          if( sourceItems.size() < 1 )
             return null;
 
+         Container f = aComponent;
+         while( !(f instanceof LoadoutFrame) ){
+            f = f.getParent();
+         }
+         LoadoutFrame frame = (LoadoutFrame)f;
+
          StringBuffer buff = new StringBuffer();
          for(Pair<Item, Integer> it : sourceItems){
             buff.append(it.first.getName()).append('\n');
+            frame.getOpStack().pushAndApply(new RemoveItemOperation(ProgramInit.lsml().xBar, sourcePart, it.first));
          }
-         for(Pair<Item, Integer> it : sourceItems){
-            sourcePart.removeItem(it.first, true);
-         }
-         Item item = sourceItems.get(0).first;
-         //int clickedSlot = sourceItems.get(0).second;
-         Upgrades upgrades = sourcePart.getLoadout().getUpgrades();
-         Image image = ItemRenderer.render(item, upgrades);
-         setDragImage(image);
-         // Apparently partList.getMousePosition() is slow to react and returns
-         // null for quick moves, do it this way instead.
-         /*Point mouse = MouseInfo.getPointerInfo().getLocation();
-         Point comploc = partList.getLocationOnScreen();
-         mouse.x -= comploc.x;
-         mouse.y -= comploc.y;
-         mouse.y -= partList.getFixedCellHeight() * clickedSlot;*/
-         Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
-         setDragImageOffset(mouse);
+
+         setPreview(sourceItems.get(0).first, sourcePart.getLoadout());
          return new StringSelection(buff.toString());
       }
       else if( aComponent instanceof GarageTree ){
@@ -104,22 +101,23 @@ public class ItemTransferHandler extends TransferHandler{
             return null;
          }
          Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
-         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
-         // Point mouse = equipmentPane.getMousePosition();
-         // mouse.y -= equipmentPane.getRowHeight() * equipmentPane.getSelectionRows()[0];
-         Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
-         setDragImageOffset(mouse);
+         setPreview(item, loadout);
          return new StringSelection(item.getName());
       }
       else if( aComponent instanceof ItemLabel ){
          Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
          Item item = ((ItemLabel)aComponent).getItem();
-         setDragImage(ItemRenderer.render(item, loadout != null ? loadout.getUpgrades() : null));
-         Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
-         setDragImageOffset(mouse);
+         setPreview(item, loadout);
          return new StringSelection(item.getName());
       }
       return null;
+   }
+
+   private void setPreview(Item anItem, Loadout aLoadout){
+      Image preview = ItemRenderer.render(anItem, aLoadout != null ? aLoadout.getUpgrades() : null);
+      setDragImage(preview);
+      Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
+      setDragImageOffset(mouse);
    }
 
    @Override

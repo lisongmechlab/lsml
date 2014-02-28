@@ -3,7 +3,7 @@
     <?define g_fname = "Li Song Mechlab"?>
     <?define g_sname = "LSML"?>
     <?define g_mfg = "Li-Soft"?>
-    <?define g_version = "1.3.3"?>
+    <?define g_version = "1.4.0"?>
     <!-- <?define g_64bit = "yes"?> -->
     
     <?if $(var.g_64bit) = yes ?>
@@ -14,7 +14,7 @@
         <?define g_progfiles = "ProgramFilesFolder" ?>
     <?endif ?>
 
-	<Product Id="EE06C132-67D3-48D5-970A-1E22C7BCF365" Name="$(var.g_fname) $(var.g_version)"
+	<Product Id="4BB985EF-2E5B-4608-9257-3EEB2E03CA40" Name="$(var.g_fname) $(var.g_version)"
 		Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)"
 		UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
 

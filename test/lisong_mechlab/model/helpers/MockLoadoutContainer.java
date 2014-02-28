@@ -25,16 +25,16 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Efficiencies;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
  * The purpose of this class is to provide a default mock structure of a {@link Loadout} which is easy to configure for
@@ -105,6 +105,15 @@ public class MockLoadoutContainer{
       when(ll.getInternalPart()).thenReturn(ill);
       when(la.getInternalPart()).thenReturn(ila);
 
+      when(ra.getLoadout()).thenReturn(loadout);
+      when(rt.getLoadout()).thenReturn(loadout);
+      when(rl.getLoadout()).thenReturn(loadout);
+      when(hd.getLoadout()).thenReturn(loadout);
+      when(ct.getLoadout()).thenReturn(loadout);
+      when(lt.getLoadout()).thenReturn(loadout);
+      when(ll.getLoadout()).thenReturn(loadout);
+      when(la.getLoadout()).thenReturn(loadout);
+      
       when(ra.toString()).thenReturn("RA");
       when(rt.toString()).thenReturn("RT");
       when(rl.toString()).thenReturn("RL");

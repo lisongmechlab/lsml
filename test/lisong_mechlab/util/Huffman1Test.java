@@ -39,6 +39,11 @@ public class Huffman1Test{
 
    /**
     * A simple test case that tests an input sequence that only generates a single encoded byte out.
+    * 
+    * @throws EncodingException
+    *            Should not be thrown.
+    * @throws DecodingException
+    *            Should not be thrown.
     */
    @Test
    public void testEncodeDecode_Simple() throws EncodingException, DecodingException{
@@ -63,6 +68,11 @@ public class Huffman1Test{
 
    /**
     * A simple test case that tests an input sequence that only generates a few encoded bytes out.
+    * 
+    * @throws EncodingException
+    *            Should not be thrown.
+    * @throws DecodingException
+    *            Should not be thrown.
     */
    @Test
    public void testEncodeDecode_SimpleMultiByte() throws DecodingException, EncodingException{

@@ -23,12 +23,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.Collection;
-
-import lisong_mechlab.model.loadout.Upgrades;
 
 import org.junit.Test;
 
@@ -77,15 +73,6 @@ public class ItemLookupTest{
 
       // Lookup by MWO name key (ducked up case)
       assertSame(expected, ItemDB.lookup("EnGine_stD_105"));
-   }
-
-   @Test
-   public void testArtemisLookup(){
-      MissileWeapon missileWeapon = (MissileWeapon)ItemDB.lookup("LRM 20");
-      Upgrades upgrades = mock(Upgrades.class);
-      when(upgrades.hasArtemis()).thenReturn(true);
-
-      assertSame(missileWeapon, ItemDB.lookup(missileWeapon.getName(upgrades)));
    }
 
    @Test(expected = IllegalArgumentException.class)

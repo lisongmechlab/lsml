@@ -38,16 +38,18 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
+import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.DynamicSlotDistributor;
-import lisong_mechlab.model.loadout.LoadoutPart;
-import lisong_mechlab.model.loadout.LoadoutPart.Message.Type;
-import lisong_mechlab.model.loadout.Upgrades;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.render.StyleManager;
@@ -56,6 +58,7 @@ public class PartList extends JList<Item>{
    private static final long            serialVersionUID = 5995694414450060827L;
    private final LoadoutPart            part;
    private final DynamicSlotDistributor slotDistributor;
+   private OperationStack               opStack;
 
    private enum ListEntryType{
       Empty, MultiSlot, Item, EngineHeatSink, LastSlot
@@ -90,8 +93,9 @@ public class PartList extends JList<Item>{
                break;
             }
             case Item:{
-               setText(part.getItemDisplayName(pair.second));
-               if( part.getItemCriticalSlots(pair.second) == 1 ){
+               Item item = pair.second;
+               setText(item.getName());
+               if( item.getNumCriticalSlots(null) == 1 ){
                   StyleManager.styleItem(this, pair.second);
                }
                else{
@@ -141,9 +145,11 @@ public class PartList extends JList<Item>{
       private static final String DYN_ARMOR        = "DYNAMIC ARMOR";
       private static final String DYN_STRUCT       = "DYNAMIC STRUCTURE";
       private static final long   serialVersionUID = 2438473891359444131L;
+      private final MessageXBar   xBar;
 
       Model(MessageXBar aXBar){
-         aXBar.attach(this);
+         xBar = aXBar;
+         xBar.attach(this);
       }
 
       boolean putElement(Item anItem, int anIndex, boolean aShouldReplace){
@@ -151,7 +157,7 @@ public class PartList extends JList<Item>{
          switch( target.first ){
             case EngineHeatSink:{
                if( anItem instanceof HeatSink && part.canAddItem(anItem) ){
-                  part.addItem(anItem, true);
+                  opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
                   return true;
                }
                return false;
@@ -161,13 +167,13 @@ public class PartList extends JList<Item>{
             case MultiSlot:{
                // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
                if( aShouldReplace && !(anItem instanceof HeatSink && target.second instanceof Engine) ){
-                  part.removeItem(target.second, true);
+                  opStack.pushAndApply(new RemoveItemOperation(xBar, part, target.second));
                }
                // Fall through
             }
             case Empty:{
                if( part.canAddItem(anItem) ){
-                  part.addItem(anItem, true);
+                  opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
                   return true;
                }
                return false;
@@ -201,25 +207,25 @@ public class PartList extends JList<Item>{
          Item item = items.get(itemsIdx);
          itemsIdx++;
 
-         int spaceLeft = part.getItemCriticalSlots(item);
+         int spaceLeft = item.getNumCriticalSlots(null);
          for(int slot = 0; slot < arg0; ++slot){
             spaceLeft--;
             if( spaceLeft == 0 ){
                if( itemsIdx < items.size() ){
                   item = items.get(itemsIdx);
                   itemsIdx++;
-                  spaceLeft = part.getItemCriticalSlots(item);
+                  spaceLeft = item.getNumCriticalSlots(null);
                }
                else
                   return new Pair<ListEntryType, Item>(ListEntryType.Empty, null);
             }
          }
-         if( spaceLeft == 1 && part.getItemCriticalSlots(item) > 1 ){
+         if( spaceLeft == 1 && item.getNumCriticalSlots(null) > 1 ){
             if( item instanceof Engine )
                return new Pair<ListEntryType, Item>(ListEntryType.EngineHeatSink, item);
             return new Pair<ListEntryType, Item>(ListEntryType.LastSlot, item);
          }
-         if( spaceLeft == part.getItemCriticalSlots(item) )
+         if( spaceLeft == item.getNumCriticalSlots(null) )
             return new Pair<ListEntryType, Item>(ListEntryType.Item, item);
          if( spaceLeft > 0 )
             return new Pair<ListEntryType, Item>(ListEntryType.MultiSlot, item);
@@ -255,9 +261,10 @@ public class PartList extends JList<Item>{
       }
    }
 
-   PartList(LoadoutPart aPartConf, MessageXBar anXBar, DynamicSlotDistributor aSlotDistributor){
+   PartList(OperationStack aStack, final LoadoutPart aLoadoutPart, final MessageXBar anXBar, DynamicSlotDistributor aSlotDistributor){
       slotDistributor = aSlotDistributor;
-      part = aPartConf;
+      opStack = aStack;
+      part = aLoadoutPart;
       setModel(new Model(anXBar));
       setDragEnabled(true);
       setDropMode(DropMode.ON);
@@ -277,7 +284,7 @@ public class PartList extends JList<Item>{
          public void keyPressed(KeyEvent aArg0){
             if( aArg0.getKeyCode() == KeyEvent.VK_DELETE ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  part.removeItem(itemPair.first, true);
+                  opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
                }
             }
          }
@@ -288,7 +295,7 @@ public class PartList extends JList<Item>{
          public void mouseClicked(MouseEvent e){
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  part.removeItem(itemPair.first, true);
+                  opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
                }
             }
          }
@@ -309,8 +316,8 @@ public class PartList extends JList<Item>{
                break;
             case EngineHeatSink:
                if( part.getNumEngineHeatsinks() > 0 ){
-                  items.add(new Pair<Item, Integer>(ItemDB.SHS, i));
-                  items.add(new Pair<Item, Integer>(ItemDB.DHS, i));
+                  Item heatSink = part.getLoadout().getUpgrades().getHeatSink().getHeatSinkType();
+                  items.add(new Pair<Item, Integer>(heatSink, i));
                }
                break;
             case Item:

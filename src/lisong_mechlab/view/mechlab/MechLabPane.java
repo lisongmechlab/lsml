@@ -19,14 +19,19 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
+import java.awt.BorderLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.UndoStack;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
@@ -41,28 +46,30 @@ import lisong_mechlab.view.mechlab.equipment.GarageTree;
 public class MechLabPane extends JSplitPane{
    private static final long    serialVersionUID = 1079910953509846928L;
    private final LoadoutDesktop desktop;
-   private final GarageTree     equipmentPane;
-   private final JScrollPane    jScrollPane;
    private final MessageXBar    xBar;
 
-   public MechLabPane(MessageXBar anXBar, UndoStack anUndoStack){
+   public MechLabPane(MessageXBar anXBar){
       super(JSplitPane.HORIZONTAL_SPLIT, true);
       xBar = anXBar;
-      desktop = new LoadoutDesktop(xBar, anUndoStack);
-      equipmentPane = new GarageTree(desktop, xBar, anUndoStack);
-      EquipmentPanel panel = new EquipmentPanel(desktop, xBar);
-      jScrollPane = new JScrollPane(equipmentPane);
+      desktop = new LoadoutDesktop(xBar);
+
+      JTextField filterBar = new JTextField();
+      JPanel filterPanel = new JPanel(new BorderLayout(5, 5));
+      filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      filterPanel.add(new JLabel("Filter:"), BorderLayout.LINE_START);
+      filterPanel.add(filterBar, BorderLayout.CENTER);
+
+      JPanel garagePanel = new JPanel(new BorderLayout());
+      garagePanel.add(filterPanel, BorderLayout.PAGE_START);
+      garagePanel.add(new JScrollPane(new GarageTree(desktop, xBar, filterBar)), BorderLayout.CENTER);
 
       JTabbedPane tabbedPane = new JTabbedPane();
-      tabbedPane.addTab("Equipment", panel);
-      tabbedPane.addTab("Garage", jScrollPane);
+      tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
+      tabbedPane.addTab("Garage", garagePanel);
 
       setLeftComponent(tabbedPane);
-
-      // setLeftComponent(jScrollPane);
       setRightComponent(desktop);
-
-      setDividerLocation(panel.getMinimumSize().width);
+      setDividerLocation(getLeftComponent().getMinimumSize().width);
    }
 
    /**
@@ -79,16 +86,23 @@ public class MechLabPane extends JSplitPane{
     * @return The currently selected loadout.
     */
    public Loadout getCurrentLoadout(){
-      if( null != desktop.getSelectedFrame() )
-         return ((LoadoutFrame)desktop.getSelectedFrame()).getLoadout();
+      if( null != getActiveLoadoutFrame() )
+         return getActiveLoadoutFrame().getLoadout();
       return null;
+   }
+
+   /**
+    * @return The currently selected {@link LoadoutFrame}.
+    */
+   public LoadoutFrame getActiveLoadoutFrame(){
+      return (LoadoutFrame)desktop.getSelectedFrame();
    }
 
    /**
     * Will open the given {@link Loadout} into the desktop pane by creating a new {@link LoadoutFrame}.
     * 
-    * @param aLoadout
-    *           The {@link Loadout} to create the frame for.
+    * @param aLSMLUrl
+    *           The LSML link to open.
     */
    public void openLoadout(String aLSMLUrl){
       assert (SwingUtilities.isEventDispatchThread());

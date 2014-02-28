@@ -19,16 +19,23 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.LoadoutPart;
+import lisong_mechlab.model.loadout.export.CompatibilityHelper;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -39,10 +46,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class LoadoutPartConverter implements Converter{
 
-   private final Loadout loadout;
+   private final Loadout     loadout;
+   private final MessageXBar xBar;
 
-   public LoadoutPartConverter(Loadout aLoadout){
+   public LoadoutPartConverter(MessageXBar anXBar, Loadout aLoadout){
       loadout = aLoadout;
+      xBar = anXBar;
    }
 
    @Override
@@ -82,6 +91,8 @@ public class LoadoutPartConverter implements Converter{
    @Override
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
 
+      OperationStack operationStack = new OperationStack(0);
+
       Part partType = Part.valueOf(aReader.getAttribute("part"));
       LoadoutPart loadoutPart = loadout.getPart(partType);
 
@@ -89,12 +100,12 @@ public class LoadoutPartConverter implements Converter{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");
             if( armors.length == 2 ){
-               loadoutPart.setArmor(ArmorSide.FRONT, Integer.parseInt(armors[0]));
-               loadoutPart.setArmor(ArmorSide.BACK, Integer.parseInt(armors[1]));
+               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0])));
+               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1])));
             }
          }
          else{
-            loadoutPart.setArmor(ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")));
+            operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor"))));
          }
       }
       catch( IllegalArgumentException exception ){
@@ -102,19 +113,20 @@ public class LoadoutPartConverter implements Converter{
                                                            + " is corrupt. Continuing to load as much as possible.");
       }
 
+      List<Item> later = new ArrayList<>();
+
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
          if( "item".equals(aReader.getNodeName()) ){
             try{
                Item item = (Item)aContext.convertAnother(null, Item.class);
-               // FIXME: Do this prettier, copied from LoadoutCoder
-               if( item instanceof MissileWeapon && loadout.getUpgrades().hasArtemis() && !item.getName().contains("ARTEMIS") ){
-                  MissileWeapon weapon = (MissileWeapon)item;
-                  if( weapon.isArtemisCapable() ){
-                     item = ItemDB.lookup(weapon.getName() + " + ARTEMIS");
-                  }
+               item = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().getGuidance());
+               if( item instanceof HeatSink ){
+                  later.add(item);
                }
-               loadoutPart.addItem(item, false);
+               else{
+                  operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, item));
+               }
             }
             catch( IllegalArgumentException exception ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
@@ -123,6 +135,17 @@ public class LoadoutPartConverter implements Converter{
          }
          aReader.moveUp();
       }
+
+      try{
+         for(Item item : later){
+            operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, item));
+         }
+      }
+      catch( IllegalArgumentException exception ){
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
+                                                           + " is corrupt. Continuing to load as much as possible.");
+      }
+
       return null; // We address directly into the given loadout, this is a trap.
    }
 
