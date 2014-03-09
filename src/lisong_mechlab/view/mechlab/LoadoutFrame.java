@@ -53,10 +53,11 @@ import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.AddToGarageAction;
 import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
+import lisong_mechlab.view.action.ExportToSmurfyAction;
 import lisong_mechlab.view.action.MaxArmorAction;
 import lisong_mechlab.view.action.RedoLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
-import lisong_mechlab.view.action.ShareLoadoutAction;
+import lisong_mechlab.view.action.ExportToLsmlAction;
 import lisong_mechlab.view.action.UndoLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 import lisong_mechlab.view.render.ItemRenderer;
@@ -247,7 +248,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
    private JMenu createMenuShare(){
       JMenu menu = new JMenu("Share!");
-      menu.add(new JMenuItem(new ShareLoadoutAction(this)));
+      menu.add(new JMenuItem(new ExportToLsmlAction(this)));
+      menu.add(new JMenuItem(new ExportToSmurfyAction(this)));
       return menu;
    }
 
