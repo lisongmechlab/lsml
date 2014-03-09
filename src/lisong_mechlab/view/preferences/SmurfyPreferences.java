@@ -20,11 +20,33 @@
 package lisong_mechlab.view.preferences;
 
 /**
- * This class is a container class for all the individual preferences classes.
+ * This class implements preferences for Smurfy interaction.
  * 
  * @author Emily Björk
  */
-public class Preferences{
-   public FontPreferences fontPreferences = new FontPreferences();
-   public SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
+public class SmurfyPreferences{
+   private static final String SMURFY_REMEMBER_KEY = "smurfyRememberKey";
+   private static final String SMURFY_KEY          = "smurfyKey";
+
+   public boolean shouldRememberAPIKey(){
+      return Boolean.parseBoolean(PreferenceStore.getString(SMURFY_REMEMBER_KEY, "false"));
+   }
+
+   public void remeberAPIKey(String aAPIKey){
+      if( null != aAPIKey ){
+         PreferenceStore.setString(SMURFY_REMEMBER_KEY, "true");
+         PreferenceStore.setString(SMURFY_KEY, aAPIKey);
+      }
+      else{
+         PreferenceStore.setString(SMURFY_REMEMBER_KEY, "false");
+         PreferenceStore.setString(SMURFY_KEY, "");
+      }
+   }
+
+   /**
+    * @return The stored API key for smurfy.
+    */
+   public String getApiKey(){
+      return PreferenceStore.getString(SMURFY_KEY);
+   }
 }
