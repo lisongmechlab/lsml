@@ -59,6 +59,7 @@ public class RenameOperation extends LoadoutOperation{
       if( oldName == newName )
          return;
       loadout.rename(newName);
-      xBar.post(new Message(loadout, Type.RENAME));
+      if( xBar != null )
+         xBar.post(new Message(loadout, Type.RENAME));
    }
 }

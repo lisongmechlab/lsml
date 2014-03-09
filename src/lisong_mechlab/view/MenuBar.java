@@ -27,7 +27,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
+import lisong_mechlab.view.action.ImportFromSmurfyAction;
 import lisong_mechlab.view.action.ImportMechAction;
 import lisong_mechlab.view.action.OpenHelp;
 import lisong_mechlab.view.action.OpenPreferences;
@@ -128,6 +130,8 @@ public class MenuBar extends JMenuBar{
 
             menu.add(item);
          }
+         
+         menu.add(new JMenuItem(new ImportFromSmurfyAction(SwingUtilities.getWindowAncestor(this), application.loadoutCoder)));
       }
 
       setEnabled(true);

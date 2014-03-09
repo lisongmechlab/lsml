@@ -55,8 +55,8 @@ import lisong_mechlab.view.preferences.Preferences;
  * @author Li Song
  */
 public class LSML extends JFrame{
-   public static final String      PROGRAM_FNAME          = "Li Song Mechlab";
-   private static final String     VERSION_STRING         = "(develop)";
+   public static final String      PROGRAM_FNAME          = "Li Song Mechlab ";
+   public static final String      VERSION_STRING         = "(develop)";
    private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
    private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter(){
                                                              @Override
