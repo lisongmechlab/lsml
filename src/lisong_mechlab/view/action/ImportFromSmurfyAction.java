@@ -54,6 +54,7 @@ import lisong_mechlab.model.loadout.export.SmurfyImportExport;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.SwingHelpers;
 import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.preferences.SmurfyPreferences;
 
 /**
  * This action opens a dialog to perform import from Smurfy.
@@ -103,14 +104,17 @@ public class ImportFromSmurfyAction extends AbstractAction{
    @Override
    public void actionPerformed(ActionEvent event){
       clearModel();
-      
+
+      final SmurfyPreferences preferences = ProgramInit.lsml().preferences.smurfyPreferences;
       final JPanel topPanel = new JPanel(new BorderLayout());
 
       final JLabel apiKeyLabel = new JLabel("API-Key:");
-      final JTextField textApiKey = new JTextField(EMPTY_API_KEY);
+      final JTextField textApiKey = new JTextField(preferences.shouldRememberAPIKey() ? preferences.getApiKey() : EMPTY_API_KEY);
       final JPanel apiPanel = new JPanel(new BorderLayout());
+      final JCheckBox rememberKey = new JCheckBox("Remember API key", preferences.shouldRememberAPIKey());
       apiPanel.add(apiKeyLabel, BorderLayout.WEST);
       apiPanel.add(textApiKey, BorderLayout.CENTER);
+      apiPanel.add(rememberKey, BorderLayout.EAST);
       topPanel.add(apiPanel, BorderLayout.NORTH);
 
       final JCheckBox checkAllBox = new JCheckBox("Select all");
@@ -154,7 +158,7 @@ public class ImportFromSmurfyAction extends AbstractAction{
             }
             else{
                if( SmurfyImportExport.isValidApiKey(textApiKey.getText()) ){
-                  textApiKey.setForeground(Color.GREEN);
+                  textApiKey.setForeground(Color.GREEN.darker());
                   if( textApiKey.getText().equals(lastKey) )
                      return;
                   lastKey = textApiKey.getText();
@@ -165,6 +169,11 @@ public class ImportFromSmurfyAction extends AbstractAction{
                         try{
                            action = new SmurfyImportExport(textApiKey.getText(), decoder);
                            List<Loadout> mechbay = action.listMechBay();
+
+                           if( rememberKey.isSelected() ){
+                              preferences.remeberAPIKey(textApiKey.getText());
+                           }
+
                            clearModel();
                            for(Loadout loadout : mechbay){
                               model.addRow(new Object[] {false, loadout});
@@ -174,10 +183,10 @@ public class ImportFromSmurfyAction extends AbstractAction{
                            dialog.setVisible(true);
                         }
                         catch( DecodingException e ){
-                           JOptionPane.showConfirmDialog(parent, "Unable to decode loadout from Smurfy's.\nError: " + e.getMessage());
+                           JOptionPane.showMessageDialog(parent, "Unable to decode loadout from Smurfy's.\nError: " + e.getMessage());
                         }
                         catch( IOException e ){
-                           JOptionPane.showConfirmDialog(parent, "Unable to retrieve mechbay from Smurfy's.\nError: " + e.getMessage());
+                           JOptionPane.showMessageDialog(parent, "Unable to retrieve mechbay from Smurfy's.\nError: " + e.getMessage());
                         }
                      }
                   });
@@ -188,6 +197,7 @@ public class ImportFromSmurfyAction extends AbstractAction{
             }
          }
       });
+      textApiKey.setCaretPosition(textApiKey.getText().length());
 
       model.addTableModelListener(new TableModelListener(){
          @Override
@@ -236,7 +246,27 @@ public class ImportFromSmurfyAction extends AbstractAction{
             dialog.dispose();
          }
       });
-      
+
+      rememberKey.addActionListener(new ActionListener(){
+         @Override
+         public void actionPerformed(ActionEvent aE){
+            if( rememberKey.isSelected() ){
+               int ans = JOptionPane.showConfirmDialog(parent, "Your API key will be stored in plain text on your computer.\n"
+                                                               + "Any one with access to your files can read it.\n\n" + "Do you wish to continue?",
+                                                       "Remember API Key?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+               if( ans != JOptionPane.YES_OPTION ){
+                  rememberKey.setSelected(false);
+               }
+               else{
+                  preferences.remeberAPIKey(textApiKey.getText());
+               }
+            }
+            else{
+               preferences.remeberAPIKey(null);
+            }
+         }
+      });
+
       SwingHelpers.hypertextLink(apiLink, SmurfyImportExport.CREATE_API_KEY_URL, "Click here to get your API key!");
       dialog.pack();
       dialog.setVisible(true);

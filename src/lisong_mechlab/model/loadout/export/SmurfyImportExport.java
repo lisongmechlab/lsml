@@ -75,9 +75,9 @@ public class SmurfyImportExport{
          userMechbayUrl = new URL("https://mwo.smurfy-net.de/api/data/user/mechbay.xml");
          loadoutUploadUrl = new URL("https://mwo.smurfy-net.de/api/data/mechs/ID/loadouts.lsml");
 
-         InputStream certStream = SmurfyImportExport.class.getResourceAsStream("/resources/smurfy.pem");
+         InputStream keyStoreStream = SmurfyImportExport.class.getResourceAsStream("/resources/lsml.jks");
          KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-         keyStore.load(certStream, null);
+         keyStore.load(keyStoreStream, "lsmllsml".toCharArray());
 
          TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
          tmf.init(keyStore);
