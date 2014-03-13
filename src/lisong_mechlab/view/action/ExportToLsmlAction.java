@@ -46,7 +46,7 @@ public class ExportToLsmlAction extends AbstractAction{
    private final LoadoutFrame loadoutFrame;
 
    public ExportToLsmlAction(LoadoutFrame aLoadoutFrame){
-      super("Share!");
+      super("Export to LSML link...");
       loadoutFrame = aLoadoutFrame;
    }
 

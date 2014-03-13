@@ -96,7 +96,7 @@ public class ImportFromSmurfyAction extends AbstractAction{
     *           The decoder to use to decode the incoming load outs.
     */
    public ImportFromSmurfyAction(Window aWindow, Base64LoadoutCoder aDecoder){
-      super("Import from Smurfy");
+      super("Import from Smurfy...");
       parent = aWindow;
       decoder = aDecoder;
    }
