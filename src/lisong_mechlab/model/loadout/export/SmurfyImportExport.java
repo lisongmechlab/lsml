@@ -23,9 +23,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,6 @@ public class SmurfyImportExport{
    private final static int               API_NUM_CHARS      = 40;
    private final transient OperationStack stack              = new OperationStack(0);
    private final SSLSocketFactory         sslSocketFactory;
-   private URL                            loadoutUploadUrl;
 
    /**
     * @param aApiKey
@@ -73,8 +73,6 @@ public class SmurfyImportExport{
 
       try{
          userMechbayUrl = new URL("https://mwo.smurfy-net.de/api/data/user/mechbay.xml");
-         loadoutUploadUrl = new URL("https://mwo.smurfy-net.de/api/data/mechs/ID/loadouts.lsml");
-
          InputStream keyStoreStream = SmurfyImportExport.class.getResourceAsStream("/resources/lsml.jks");
          KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
          keyStore.load(keyStoreStream, "lsmllsml".toCharArray());
@@ -154,27 +152,41 @@ public class SmurfyImportExport{
       return ans;
    }
 
+   @SuppressWarnings("resource")
+   // It is closed!
    public String sendLoadout(Loadout aLoadout) throws IOException{
-      HttpURLConnection connection = connect(loadoutUploadUrl);
+      int mechId = aLoadout.getChassi().getMwoId();
+      URL loadoutUploadUrlXml = new URL("https://mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts.xml");
+
+      String data = SmurfyXML.toXml(aLoadout);
+      byte[] rawData = data.getBytes(StandardCharsets.UTF_8);
+
+      HttpURLConnection connection = connect(loadoutUploadUrlXml);
       connection.setRequestMethod("POST");
       connection.setRequestProperty("User-Agent", "LSML/" + LSML.VERSION_STRING);
       connection.setRequestProperty("Accept-Charset", "UTF-8");
-      // connection.setRequestProperty("Authorization", "APIKEY " + apiKey);
+      connection.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
+      connection.setRequestProperty("Content-Length", String.valueOf(rawData.length));
 
       connection.setDoOutput(true);
 
-      try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream()) ){
-         // Write data
-         wr.flush();
+      try( OutputStream wr = connection.getOutputStream() ){
+         wr.write(rawData);
       }
 
       try( BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream())) ){
-         String line;
-         while( null != (line = rd.readLine()) ){
-            System.out.println(line);
+         Pattern pattern = Pattern.compile(".*mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts/([^.]{40})\\..*");
+         for(String line = rd.readLine(); line != null; line = rd.readLine()){
+            Matcher m = pattern.matcher(line);
+            if( m.matches() ){
+               String sha = m.group(1);
+               if( sha != null && sha.length() == 40 ){
+                  return "http://mwo.smurfy-net.de/mechlab#i=" + mechId + "&l=" + sha;
+               }
+            }
          }
       }
-      return "FAIL";
+      throw new IOException("Unable to determine uploaded URL... oops!");
    }
 
    private HttpURLConnection connect(URL aUrl) throws IOException{

@@ -64,9 +64,9 @@ abstract class ItemOperation extends Operation{
 
    @Override
    public boolean equals(Object obj){
-      if(!(obj instanceof ItemOperation))
+      if( !(obj instanceof ItemOperation) )
          return false;
-      
+
       ItemOperation other = (ItemOperation)obj;
       return loadoutPart == other.loadoutPart;
    }
@@ -97,7 +97,9 @@ abstract class ItemOperation extends Operation{
          }
       }
       loadoutPart.removeItem(anItem);
-      xBar.post(new Message(loadoutPart, Type.ItemRemoved));
+      if( xBar != null ){
+         xBar.post(new Message(loadoutPart, Type.ItemRemoved));
+      }
    }
 
    /**
@@ -123,6 +125,8 @@ abstract class ItemOperation extends Operation{
          }
       }
       loadoutPart.addItem(anItem);
-      xBar.post(new Message(loadoutPart, Type.ItemAdded));
+      if( xBar != null ){
+         xBar.post(new Message(loadoutPart, Type.ItemAdded));
+      }
    }
 }

@@ -43,7 +43,7 @@ public class MissileWeapon extends AmmoWeapon{
       else
          requiredGuidancetype = -1;
 
-      baseItemId = aBaseItemId == -1 ? (isArtemisCapable() ? getMwoIdx() : -1) : aBaseItemId;
+      baseItemId = aBaseItemId == -1 ? (isArtemisCapable() ? getMwoId() : -1) : aBaseItemId;
    }
 
    static private Ammunition getAmmoType(ItemStatsWeapon aStatsWeapon){

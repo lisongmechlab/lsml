@@ -108,7 +108,7 @@ public class ImportFromSmurfyAction extends AbstractAction{
       final SmurfyPreferences preferences = ProgramInit.lsml().preferences.smurfyPreferences;
       final JPanel topPanel = new JPanel(new BorderLayout());
 
-      final JLabel apiKeyLabel = new JLabel("API-Key:");
+      final JLabel apiKeyLabel = new JLabel("API-Key: ");
       final JTextField textApiKey = new JTextField(preferences.shouldRememberAPIKey() ? preferences.getApiKey() : EMPTY_API_KEY);
       final JPanel apiPanel = new JPanel(new BorderLayout());
       final JCheckBox rememberKey = new JCheckBox("Remember API key", preferences.shouldRememberAPIKey());
