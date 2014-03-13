@@ -20,25 +20,29 @@
 package lisong_mechlab.model.chassi;
 
 public enum Part{
-   Head("Head", "HD"),
-   LeftArm("Left Arm", "LA"),
-   LeftLeg("Left Leg", "LL"),
-   LeftTorso("Left Torso", "LT", true),
-   CenterTorso("Center Torso", "CT", true),
-   RightTorso("Right Torso", "RT", true),
-   RightLeg("Right Leg", "RL"),
-   RightArm("Right Arm", "RA");
+   Head("Head", "head", "HD"),
+   LeftArm("Left Arm", "left_arm", "LA"),
+   LeftLeg("Left Leg", "left_leg", "LL"),
+   LeftTorso("Left Torso", "left_torso", "LT", true),
+   CenterTorso("Center Torso", "centre_torso", "CT", true),
+   RightTorso("Right Torso", "right_torso", "RT", true),
+   RightLeg("Right Leg", "right_leg", "RL"),
+   RightArm("Right Arm", "right_arm", "RA");
 
-   Part(String aLongName, String aShortName){
-      this(aLongName, aShortName, false);
+   Part(String aLongName, String aMwoName, String aShortName){
+      this(aLongName, aMwoName, aShortName, false);
    }
 
-   Part(String aLongName, String aShortName, boolean aTwosided){
+   Part(String aLongName, String aMwoName, String aShortName, boolean aTwosided){
       longName = aLongName;
       shortName = aShortName;
       twosided = aTwosided;
+      mwoName = aMwoName;
+      mwoNameRear = mwoName + "_rear";
    }
 
+   private final String  mwoName;
+   private final String  mwoNameRear;
    private final String  shortName;
    private final String  longName;
    private final boolean twosided;
@@ -82,45 +86,23 @@ public enum Part{
    }
 
    public static Part fromMwoName(String componentName){
-      if( componentName.equals("head") ){
-         return Head;
+      for(Part part : Part.values()){
+         if( part.mwoName.equals(componentName) || part.mwoNameRear.equals(componentName) ){
+            return part;
+         }
       }
-      else if( componentName.equals("centre_torso") ){
-         return CenterTorso;
-      }
-      else if( componentName.equals("left_torso") ){
-         return LeftTorso;
-      }
-      else if( componentName.equals("right_torso") ){
-         return RightTorso;
-      }
-      else if( componentName.equals("left_arm") ){
-         return LeftArm;
-      }
-      else if( componentName.equals("right_arm") ){
-         return RightArm;
-      }
-      else if( componentName.equals("left_leg") ){
-         return LeftLeg;
-      }
-      else if( componentName.equals("right_leg") ){
-         return RightLeg;
-      }
-      else if( componentName.equals("centre_torso_rear") ){
-         return CenterTorso;
-      }
-      else if( componentName.equals("left_torso_rear") ){
-         return LeftTorso;
-      }
-      else if( componentName.equals("right_torso_rear") ){
-         return RightTorso;
-      }
-      else{
-         throw new RuntimeException("Unknown component in mech chassi! " + componentName);
-      }
+      throw new RuntimeException("Unknown component in mech chassi! " + componentName);
    }
 
    public static boolean isRear(String aName){
       return aName.endsWith("_rear");
+   }
+
+   public String toMwoName(){
+      return mwoName;
+   }
+   
+   public String toMwoRearName(){
+      return mwoNameRear;
    }
 }

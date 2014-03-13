@@ -154,7 +154,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
             List<Item> items = aLoadout.getPart(part).getItems();
             for(Item item : items){
                if( !(item instanceof Internal) ){
-                  ids.add(item.getMwoIdx());
+                  ids.add(item.getMwoId());
                }
             }
             ids.add(-1);
@@ -309,7 +309,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
       // Make sure all items are in the statistics even if they have a very low probability
       for(Item item : ItemDB.lookup(Item.class)){
-         int id = item.getMwoIdx();
+         int id = item.getMwoId();
          if( !freqs.containsKey(id) )
             freqs.put(id, 1);
       }

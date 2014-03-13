@@ -89,7 +89,7 @@ public class Item implements Comparable<Item>{
       return tons;
    }
 
-   public int getMwoIdx(){
+   public int getMwoId(){
       return mwoIdx;
    }
 

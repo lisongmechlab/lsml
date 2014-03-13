@@ -76,7 +76,7 @@ public class BallisticWeapon extends AmmoWeapon{
       if( canDoubleFire() ){
          return (1.0 - jammingChance) * getCycleTime(aEfficiencies) / (1 + shotsduringcooldown) + jammingChance * jammingTime;
       }
-      if( getMwoIdx() == 1021 ){ // Gauss rifle
+      if( getMwoId() == 1021 ){ // Gauss rifle
          return getCycleTime(aEfficiencies) + 0.75; // TODO: Fix this when they add the charge time to the itemstats.xml
       }
       return getCycleTime(aEfficiencies);
