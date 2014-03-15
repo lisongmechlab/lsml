@@ -151,7 +151,9 @@ public class Loadout{
          parts.put(part.getType(), confPart);
       }
 
-      anXBar.post(new Message(this, Type.CREATE));
+      if( anXBar != null ){
+         anXBar.post(new Message(this, Type.CREATE));
+      }
       efficiencies = new Efficiencies(anXBar);
    }
 

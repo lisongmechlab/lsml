@@ -17,14 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view.preferences;
+package lisong_mechlab.model.garage;
+
+import lisong_mechlab.model.loadout.Loadout;
 
 /**
- * This class is a container class for all the individual preferences classes.
+ * Thrown if the attempt to add a mech to the garage failed due to it already being in the garage.
  * 
  * @author Li Song
  */
-public class Preferences{
-   public FontPreferences fontPreferences = new FontPreferences();
-   public SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
+public class AlreadyInGarageException extends Exception{
+   /**
+    * @param aLoadout
+    *           The loadout that the error occurred for.
+    */
+   public AlreadyInGarageException(Loadout aLoadout){
+      super("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
+   }
+
+   private static final long serialVersionUID = 4597113571327421920L;
 }

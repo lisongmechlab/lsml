@@ -314,7 +314,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
             }
 
             if( !(item instanceof Internal) ){
-               int id = item.getMwoIdx();
+               int id = item.getMwoId();
                if( freqs.containsKey(id) ){
                   freqs.put(id, freqs.get(id) + 1);
                }
@@ -327,7 +327,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
       // Make sure all items are in the statistics even if they have a very low probability
       for(Item item : ItemDB.lookup(Item.class)){
-         int id = item.getMwoIdx();
+         int id = item.getMwoId();
          if( !freqs.containsKey(id) )
             freqs.put(id, 1);
       }
