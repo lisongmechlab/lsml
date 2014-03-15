@@ -86,7 +86,9 @@ public class SetArmorOperation extends Operation{
             throw new IllegalArgumentException("Not enough tonnage to add more armor!");
          }
          loadoutPart.setArmor(side, amount);
-         xBar.post(new Message(loadoutPart, Type.ArmorChanged));
+         if( xBar != null ){
+            xBar.post(new Message(loadoutPart, Type.ArmorChanged));
+         }
       }
    }
 
@@ -98,7 +100,9 @@ public class SetArmorOperation extends Operation{
 
       if( amount != oldAmount ){
          loadoutPart.setArmor(side, oldAmount);
-         xBar.post(new Message(loadoutPart, Type.ArmorChanged));
+         if( xBar != null ){
+            xBar.post(new Message(loadoutPart, Type.ArmorChanged));
+         }
       }
       oldAmount = -1;
    }

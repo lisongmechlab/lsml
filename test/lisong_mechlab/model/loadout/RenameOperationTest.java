@@ -59,5 +59,23 @@ public class RenameOperationTest{
       assertEquals("Test (HBK-4J)", loadout.toString());
       verify(xBar).post(new Loadout.Message(loadout, Loadout.Message.Type.RENAME));
    }
+   
+   /**
+    * A <code>null</code> xbar doesn't cause an error.
+    */
+   @Test
+   public void testApply_nullXbar(){
+      // Setup
+      Loadout loadout = new Loadout(ChassiDB.lookup("HBK-4J"), xBar);
+      assertEquals("HBK-4J", loadout.getName());
+
+      // Execute
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new RenameOperation(loadout, null, "Test"));
+
+      // Verify
+      assertEquals("Test", loadout.getName());
+      assertEquals("Test (HBK-4J)", loadout.toString());
+   }
 
 }

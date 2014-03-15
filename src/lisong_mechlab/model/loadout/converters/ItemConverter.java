@@ -38,7 +38,7 @@ public class ItemConverter implements Converter{
    @Override
    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
       Item item = (Item)anObject;
-      int mwoIdx = item.getMwoIdx();
+      int mwoIdx = item.getMwoId();
       aWriter.setValue(Integer.valueOf(mwoIdx).toString());
    }
 
