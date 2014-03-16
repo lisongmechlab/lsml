@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -32,12 +32,12 @@ public class ChassiConverter implements Converter{
 
    @Override
    public boolean canConvert(Class aClass){
-      return Chassi.class == aClass;
+      return Chassis.class == aClass;
    }
 
    @Override
    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      Chassi chassi = (Chassi)anObject;
+      Chassis chassi = (Chassis)anObject;
       aWriter.setValue(chassi.getNameShort());
    }
 

@@ -38,9 +38,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.ItemDB;
@@ -50,22 +50,22 @@ import lisong_mechlab.view.mechlab.PartPanel;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
- * Displays all available {@link Chassi} in a pane.
+ * Displays all available {@link Chassis} in a pane.
  * 
  * @author Emily Björk
  */
 public class ChassiSelectionPane extends JScrollPane{
    static public class ChassiTableModel extends AbstractTableModel{
       private static final long  serialVersionUID = -2726840937519789976L;
-      private final List<Chassi> lights           = new ArrayList<>();
-      private final List<Chassi> mediums          = new ArrayList<>();
-      private final List<Chassi> heavies          = new ArrayList<>();
-      private final List<Chassi> assaults         = new ArrayList<>();
+      private final List<Chassis> lights           = new ArrayList<>();
+      private final List<Chassis> mediums          = new ArrayList<>();
+      private final List<Chassis> heavies          = new ArrayList<>();
+      private final List<Chassis> assaults         = new ArrayList<>();
 
       public ChassiTableModel(){
-         Comparator<Chassi> cmp = new Comparator<Chassi>(){
+         Comparator<Chassis> cmp = new Comparator<Chassis>(){
             @Override
-            public int compare(Chassi aArg0, Chassi aArg1){
+            public int compare(Chassis aArg0, Chassis aArg1){
                if( aArg0.getMassMax() == aArg1.getMassMax() )
                   return aArg0.getMwoName().compareTo(aArg1.getMwoName());
                return Integer.compare(aArg0.getMassMax(), aArg1.getMassMax());
@@ -125,7 +125,7 @@ public class ChassiSelectionPane extends JScrollPane{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return ((Chassi)aSourceRowObject).getName();
+         return ((Chassis)aSourceRowObject).getName();
       }
    }
 
@@ -138,7 +138,7 @@ public class ChassiSelectionPane extends JScrollPane{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return Integer.toString(((Chassi)aSourceRowObject).getMassMax());
+         return Integer.toString(((Chassis)aSourceRowObject).getMassMax());
       }
    }
 
@@ -158,7 +158,7 @@ public class ChassiSelectionPane extends JScrollPane{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassi chassi = (Chassi)aValue;
+               Chassis chassi = (Chassis)aValue;
                panel.removeAll();
 
                int jjsa = chassi.getMaxJumpJets();
@@ -183,7 +183,7 @@ public class ChassiSelectionPane extends JScrollPane{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         Chassi chassi = (Chassi)aSourceRowObject;
+         Chassis chassi = (Chassis)aSourceRowObject;
          final double maxSpeed = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.0);
          final double maxSpeedTweak = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.1);
          return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
@@ -216,7 +216,7 @@ public class ChassiSelectionPane extends JScrollPane{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassi chassi = (Chassi)aValue;
+               Chassis chassi = (Chassis)aValue;
                int e = chassi.getInternalPart(part).getNumHardpoints(HardpointType.ENERGY);
                int b = chassi.getInternalPart(part).getNumHardpoints(HardpointType.BALLISTIC);
                int m = chassi.getInternalPart(part).getNumHardpoints(HardpointType.MISSILE);
@@ -263,8 +263,8 @@ public class ChassiSelectionPane extends JScrollPane{
                final int row = target.getSelectedRow();
                final int column = target.getSelectedColumn();
                final Object cell = target.getValueAt(row, column);
-               if( cell instanceof Chassi ){
-                  Chassi chassi = (Chassi)cell;
+               if( cell instanceof Chassis ){
+                  Chassis chassi = (Chassis)cell;
                   ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
                   ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
                }

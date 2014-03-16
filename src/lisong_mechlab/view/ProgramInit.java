@@ -34,8 +34,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.environment.EnvironmentDB;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
@@ -135,7 +135,7 @@ public class ProgramInit extends JFrame{
 
          @SuppressWarnings("unused")
          // Causes static initialization to be ran.
-         Chassi chassi = ChassiDB.lookup("JR7-D");
+         Chassis chassi = ChassiDB.lookup("JR7-D");
 
          ENVIRONMENT_DB.initialize();
       }

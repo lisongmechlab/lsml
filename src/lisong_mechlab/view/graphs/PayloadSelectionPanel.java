@@ -39,9 +39,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
 import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
@@ -188,26 +188,26 @@ public class PayloadSelectionPanel extends JPanel{
    }
 
    private Collection<PayloadGraphPanel.Entry> calculateUniqueSpeedChassis(){
-      Collection<Collection<Chassi>> temp = new ArrayList<>();
+      Collection<Collection<Chassis>> temp = new ArrayList<>();
 
-      List<Chassi> all = ChassiDB.lookup(ChassiClass.LIGHT);
+      List<Chassis> all = ChassiDB.lookup(ChassiClass.LIGHT);
       all.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       all.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       all.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
 
-      Collections.sort(all, new Comparator<Chassi>(){
+      Collections.sort(all, new Comparator<Chassis>(){
          @Override
-         public int compare(Chassi aO1, Chassi aO2){
+         public int compare(Chassis aO1, Chassis aO2){
             return Integer.compare(aO1.getMassMax(), aO2.getMassMax());
          }
       });
 
-      for(Chassi chassi : all){
+      for(Chassis chassi : all){
          if( chassi.isSpecialVariant() )
             continue;
          boolean skip = false;
-         for(Collection<Chassi> chassiGroup : temp){
-            Chassi aChassi = chassiGroup.iterator().next();
+         for(Collection<Chassis> chassiGroup : temp){
+            Chassis aChassi = chassiGroup.iterator().next();
             if( aChassi.getMassMax() == chassi.getMassMax() && aChassi.getEngineMin() == chassi.getEngineMin()
                 && aChassi.getEngineMax() == chassi.getEngineMax() && aChassi.getSpeedFactor() == chassi.getSpeedFactor()
                 && aChassi.isSameSeries(chassi) ){
@@ -217,12 +217,12 @@ public class PayloadSelectionPanel extends JPanel{
             }
          }
          if( !skip ){
-            temp.add(new ArrayList<Chassi>(Arrays.asList(chassi)));
+            temp.add(new ArrayList<Chassis>(Arrays.asList(chassi)));
          }
       }
 
       Collection<PayloadGraphPanel.Entry> ans = new ArrayList<>();
-      for(Collection<Chassi> chassiGroup : temp){
+      for(Collection<Chassis> chassiGroup : temp){
          ans.add(new PayloadGraphPanel.Entry(chassiGroup));
       }
 

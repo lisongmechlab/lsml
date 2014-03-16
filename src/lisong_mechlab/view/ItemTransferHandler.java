@@ -137,7 +137,7 @@ public class ItemTransferHandler extends TransferHandler{
 
          LoadoutPart part = ((PartList)component).getPart();
          for(Item item : items){
-            if( !part.canAddItem(item) )
+            if( part.getLoadout().canEquip(item) && !part.canEquip(item) )
                return false;
          }
          return true;

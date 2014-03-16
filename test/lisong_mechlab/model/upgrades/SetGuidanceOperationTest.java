@@ -97,8 +97,8 @@ public class SetGuidanceOperationTest{
       Mockito.when(newGuidance.upgrade(narc)).thenReturn(narc);
       Mockito.when(newGuidance.upgrade(lrmAmmo)).thenReturn(lrmAmmoArtemis);
       Mockito.when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
-      Mockito.when(mlc.rl.canAddItem(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(mlc.lt.canAddItem(Matchers.any(Item.class))).thenReturn(true);
+      Mockito.when(mlc.rl.canEquip(Matchers.any(Item.class))).thenReturn(true);
+      Mockito.when(mlc.lt.canEquip(Matchers.any(Item.class))).thenReturn(true);
       Mockito.when(mlc.rl.getItems()).thenReturn(rlItems);
       Mockito.when(mlc.lt.getItems()).thenReturn(ltItems);
 

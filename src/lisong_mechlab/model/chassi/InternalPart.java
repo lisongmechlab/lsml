@@ -24,8 +24,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.mwo_parsing.HardpointsXml;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
@@ -58,7 +61,7 @@ public class InternalPart{
     * @param aChassi
     *           The chassi that this internal part will be a part of.
     */
-   public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints, Chassi aChassi){
+   public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints, Chassis aChassi){
       criticalslots = aComponent.Slots;
       type = aPart;
       hitpoints = aComponent.HP;
@@ -192,5 +195,41 @@ public class InternalPart{
 
    public Collection<Hardpoint> getHardpoints(){
       return Collections.unmodifiableList(hardpoints);
+   }
+
+   /**
+    * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
+    * only useful if {@link Chassis#isAllowed(Item)} returns true.
+    * 
+    * @param aItem
+    *           The {@link Item} to check.
+    * @return <code>true</code> if the given {@link Item} is allowed on this {@link InternalPart}.
+    */
+   public boolean isAllowed(Item aItem){
+      if( aItem instanceof Internal ){
+         return false; // Can't add internals!
+      }
+      else if( aItem instanceof Engine ){
+         return getType() == Part.CenterTorso;
+      }
+      else if( aItem instanceof JumpJet ){
+         switch( type ){
+            case RightTorso:
+            case CenterTorso:
+            case LeftTorso:
+            case RightLeg:
+            case LeftLeg:
+               return true;
+            default:
+               return false;
+         }
+      }
+      else if( aItem == ItemDB.CASE ){
+         return (type == Part.LeftTorso || type == Part.RightTorso);
+      }
+      else if( aItem.getHardpointType() != HardpointType.NONE ){
+         return getNumHardpoints(aItem.getHardpointType()) > 0;
+      }
+      return true;
    }
 }

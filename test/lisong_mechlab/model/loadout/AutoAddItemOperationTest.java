@@ -22,10 +22,15 @@ package lisong_mechlab.model.loadout;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
@@ -49,6 +54,68 @@ public class AutoAddItemOperationTest{
    private MessageXBar    xBar;
 
    private OperationStack stack = new OperationStack(0);
+
+   /**
+    * {@link AutoAddItemOperation} shall throw an {@link IllegalArgumentException} if the item cannot be auto added on any permutation of the loadout.
+    */
+   @Test(expected=IllegalArgumentException.class)
+   public void testMoveItem_NotPossible(){
+      // Setup
+      Loadout loadout = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+
+      // 2 slots in either leg
+      // 2 slots left in CT
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.CenterTorso), ItemDB.lookup("XL ENGINE 200")));
+      
+      // 2 slots left on right arm, cannot contain DHS
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
+      
+      // 2 slots left on left arm, cannot contain DHS
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.DHS));
+
+      // 6 slots left in right torso (3 taken by engine)
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
+      
+      // 0 slots left in left torso (3 taken by engine)
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
+      
+      Item gaussRifle = ItemDB.lookup("GAUSS RIFLE");
+      
+      // Execute
+      stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, gaussRifle));
+   }
+   
+   /**
+    * {@link AutoAddItemOperation} shall try to move items in order to make room for the added item if there is no room
+    * in any component with a hard point but there are items that could be moved to make room.
+    */
+   @Test
+   public void testMoveItem(){
+      // Setup
+      Loadout loadout = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
+      Item gaussRifle = ItemDB.lookup("GAUSS RIFLE");
+      
+      // Execute
+      stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, gaussRifle));
+      
+      // Verify
+      List<Item> allItems = new ArrayList<>(loadout.getAllItems());
+      assertTrue(allItems.remove(ItemDB.DHS));
+      assertTrue(allItems.remove(ItemDB.DHS));
+      assertTrue(allItems.remove(gaussRifle));
+      
+      // Must be minimal change to allow the item in.
+      loadout.getPart(Part.RightTorso).getItems().contains(ItemDB.DHS);
+      loadout.getPart(Part.RightTorso).getItems().contains(gaussRifle);
+   }
 
    /**
     * {@link AutoAddItemOperation} shall add an item to the first applicable slot in this loadout. Order the items are

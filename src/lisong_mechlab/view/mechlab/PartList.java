@@ -215,7 +215,7 @@ public class PartList extends JList<Item>{
          Pair<ListEntryType, Item> target = getElementTypeAt(anIndex);
          switch( target.first ){
             case EngineHeatSink:{
-               if( anItem instanceof HeatSink && part.canAddItem(anItem) ){
+               if( anItem instanceof HeatSink && part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
                   opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
                   return true;
                }
@@ -231,7 +231,7 @@ public class PartList extends JList<Item>{
                // Fall through
             }
             case Empty:{
-               if( part.canAddItem(anItem) ){
+               if(part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
                   opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
                   return true;
                }

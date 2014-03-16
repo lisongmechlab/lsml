@@ -22,7 +22,6 @@ package lisong_mechlab.model.item;
 import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.Upgrade;
@@ -72,11 +71,11 @@ public class MissileWeapon extends AmmoWeapon{
    }
 
    @Override
-   public boolean isEquippableOn(Loadout aLoadout){
+   public boolean isCompatible(Upgrades aUpgrades){
       if( isArtemisCapable() ){
-         return aLoadout.getUpgrades().getGuidance().getMwoId() == requiredGuidancetype;
+         return aUpgrades.getGuidance().getMwoId() == requiredGuidancetype;
       }
-      return super.isEquippableOn(aLoadout);
+      return super.isCompatible(aUpgrades);
    }
 
    @Override
