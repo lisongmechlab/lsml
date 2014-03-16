@@ -309,40 +309,12 @@ public class Loadout{
       return result;
    }
 
-   /**
-    * Checks if an item can be directly equipped.
-    * 
-    * @param anItem
-    *           The {@link Item} to check for.
-    * @return <code>true</code> if the given item can be applied to the loadout without any changes.
-    */
    public boolean isEquippable(Item anItem){
       for(LoadoutPart part : parts.values()){
          if( part.canAddItem(anItem) )
             return true;
       }
       return false;
-   }
-   
-   /**
-    * Checks if an item can be equipped on a loadout in some way by moving other items around.
-    * @param anItem The {@link Item} to check for.
-    * @return <code>true</code> if the loadout can be permutated in some way that the item can be equipped.
-    */
-   public boolean hasEquippablePermutation(Item anItem){
-      if(anItem.getMass(upgrades) > getFreeMass())
-         return false;
-      if(anItem.getNumCriticalSlots(upgrades) > getNumCriticalSlotsFree())
-         return false;
-      
-      List<LoadoutPart> candidates = new ArrayList<>();
-      
-      
-      int slotsFree[] = new int[Part.values().length]; 
-      for(Part part : Part.values()){
-         slotsFree[part.ordinal()] = getPart(part).getNumCriticalSlotsFree();
-      }
-      return isEquippable(anItem);
    }
 
    @Override
