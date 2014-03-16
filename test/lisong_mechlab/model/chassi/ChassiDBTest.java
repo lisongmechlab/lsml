@@ -45,7 +45,6 @@ public class ChassiDBTest{
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-1X")));
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-2X")));
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-3D")));
-      assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-3D(C)")));
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-4X")));
       assertTrue(cataphracts.isEmpty());
    }
