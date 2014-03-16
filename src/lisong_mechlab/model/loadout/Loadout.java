@@ -22,18 +22,23 @@ package lisong_mechlab.model.loadout;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.Loadout.Message.Type;
@@ -130,7 +135,7 @@ public class Loadout{
    }
 
    private String                       name;
-   private final Chassi                 chassi;
+   private final Chassis                chassi;
    private final Map<Part, LoadoutPart> parts    = new TreeMap<Part, LoadoutPart>();
    private final Upgrades               upgrades = new Upgrades();
    private final Efficiencies           efficiencies;
@@ -143,7 +148,7 @@ public class Loadout{
     * @param anXBar
     *           The {@link MessageXBar} to signal changes to this loadout on.
     */
-   public Loadout(Chassi aChassi, MessageXBar anXBar){
+   public Loadout(Chassis aChassi, MessageXBar anXBar){
       name = aChassi.getNameShort();
       chassi = aChassi;
       for(InternalPart part : chassi.getInternalParts()){
@@ -207,7 +212,7 @@ public class Loadout{
       return ans;
    }
 
-   public Chassi getChassi(){
+   public Chassis getChassi(){
       return chassi;
    }
 
@@ -309,10 +314,179 @@ public class Loadout{
       return result;
    }
 
-   public boolean isEquippable(Item anItem){
-      for(LoadoutPart part : parts.values()){
-         if( part.canAddItem(anItem) )
+   /**
+    * Gets a {@link List} of {@link LoadoutPart}s that could possibly house the given item.
+    * <p>
+    * This method checks necessary but not sufficient constraints. In other words, the {@link LoadoutPart}s in the
+    * returned list may or may not be able to hold the {@link Item}. But the {@link LoadoutPart}s not in the list are
+    * unable to hold the {@link Item}.
+    * <p>
+    * This method is mainly useful for limiting search spaces for various optimization algorithms.
+    * 
+    * @param anItem
+    *           The {@link Item} to find candidate {@link LoadoutPart}s for.
+    * @return A {@link List} of {@link LoadoutPart}s that might be able to hold the {@link Item}.
+    */
+   public List<LoadoutPart> getCandidateLocationsForItem(Item anItem){
+      List<LoadoutPart> candidates = new ArrayList<>();
+      if( anItem.getHardpointType() != HardpointType.NONE ){
+         int freeHardpoints = 0;
+         HardpointType hp = anItem.getHardpointType();
+         for(LoadoutPart part : getPartLoadOuts()){
+            final int hpAvail = part.getInternalPart().getNumHardpoints(hp);
+            if( hpAvail > 0 ){
+               candidates.add(part);
+               freeHardpoints += hpAvail - part.getNumItemsOfHardpointType(hp);
+            }
+         }
+         if( freeHardpoints == 0 ){
+            candidates.clear();
+            return candidates;
+         }
+      }
+      else{
+         candidates = new ArrayList<>(getPartLoadOuts());
+      }
+      return candidates;
+   }
+
+   /**
+    * Checks global constraints that could prevent the item from being added to this {@link Loadout}.
+    * <p>
+    * This includes:
+    * <ul>
+    * <li>Only one engine.</li>
+    * <li>Max jump jet count not exceeded.</li>
+    * <li>Correct jump jet type.</li>
+    * <li>Enough free mass.</li>
+    * <li>Enough globally free critical slots.</li>
+    * <li>Enough globally free hard points of applicable type.</li>
+    * </ul>
+    * 
+    * @param anItem
+    *           The {@link Item} to check for.
+    * @return <code>true</code> if the given {@link Item} is globally feasible on this loadout.
+    */
+   public boolean canEquip(Item anItem){
+      if( !canEquipGlobal(anItem) ){
+         return false;
+      }
+
+      if( anItem instanceof Engine ){
+         Engine engine = (Engine)anItem;
+         if( engine.getType() == EngineType.XL ){
+            if( getPart(Part.LeftTorso).getNumCriticalSlotsFree() < 3 ){
+               return false;
+            }
+            if( getPart(Part.RightTorso).getNumCriticalSlotsFree() < 3 ){
+               return false;
+            }
+            if( getNumCriticalSlotsFree() < 3 * 2 + engine.getNumCriticalSlots(getUpgrades()) ){
+               // XL engines return same number of slots as standard engine, check enough slots to cover the
+               // side torsii.
+               return false;
+            }
+         }
+      }
+
+      for(LoadoutPart part : getPartLoadOuts()){
+         if( part.canEquip(anItem) )
             return true;
+      }
+      return false;
+   }
+
+   /**
+    * Checks only global constraints against the {@link Item}. These are necessary but not sufficient conditions. Local
+    * conditions are needed to be sufficient.
+    * 
+    * @param anItem
+    *           The {@link Item} to check.
+    * @return <code>true</code> if the necessary checks are passed.
+    */
+   private boolean canEquipGlobal(Item anItem){
+      if( anItem.getMass(upgrades) > getFreeMass() )
+         return false;
+      if( !getChassi().isAllowed(anItem) )
+         return false;
+      if( !anItem.isCompatible(getUpgrades()) )
+         return false;
+
+      // Allow engine slot heat sinks as long as there is enough free mass.
+      if( anItem instanceof HeatSink && getPart(Part.CenterTorso).getNumEngineHeatsinks() < getPart(Part.CenterTorso).getNumEngineHeatsinksMax() )
+         return true;
+
+      if( anItem.getNumCriticalSlots(upgrades) > getNumCriticalSlotsFree() )
+         return false;
+      if( anItem instanceof JumpJet && getChassi().getMaxJumpJets() - getJumpJetCount() < 1 )
+         return false;
+      if( anItem instanceof Engine && getEngine() != null )
+         return false;
+      return true;
+   }
+
+   /**
+    * Checks if an item can be equipped on a loadout in some way by moving other items around.
+    * 
+    * @param anItem
+    *           The {@link Item} to check for.
+    * @return <code>true</code> if the loadout can be permutated in some way that the item can be equipped.
+    */
+   public boolean hasEquippablePermutation(Item anItem){
+      if( !canEquipGlobal(anItem) )
+         return false;
+
+      List<LoadoutPart> candidates = getCandidateLocationsForItem(anItem);
+
+      for(LoadoutPart candidate : candidates){
+         if( candidate.canEquip(anItem) ){
+            return true;
+         }
+
+         int slotsFree[] = new int[Part.values().length];
+         for(Part part : Part.values()){
+            slotsFree[part.ordinal()] = getPart(part).getNumCriticalSlotsFree();
+         }
+
+         // Attempt to move items by taking the largest ones first and perform bin packing
+         // with First Fit Decreasing heuristic.
+         List<Item> itemsBySlots = new ArrayList<>(candidate.getItems());
+         Collections.sort(itemsBySlots, new Comparator<Item>(){
+            @Override
+            public int compare(Item aO1, Item aO2){
+               return Integer.compare(aO1.getNumCriticalSlots(getUpgrades()), aO2.getNumCriticalSlots(getUpgrades()));
+            }
+         });
+
+         // There are enough free hard points in the loadout to contain this item and there
+         // are enough globally free slots and free tonnage. Engine and jump jet constraints
+         // are already checked. It is enough if the candidate part has enough slots free.
+         int candidateSlotsFree = candidate.getNumCriticalSlotsFree();
+         while( candidateSlotsFree < anItem.getNumCriticalSlots(getUpgrades()) && !itemsBySlots.isEmpty() ){
+            Item toBeRemoved = itemsBySlots.remove(0);
+            if( toBeRemoved instanceof Internal )
+               continue;
+
+            // Find first bin where it can be put
+            for(LoadoutPart part : getPartLoadOuts()){
+               if( part == candidate )
+                  continue;
+               final int partOrdinal = part.getInternalPart().getType().ordinal();
+               final int numCrits = toBeRemoved.getNumCriticalSlots(getUpgrades());
+               if( slotsFree[partOrdinal] >= numCrits ){
+                  HardpointType needHp = toBeRemoved.getHardpointType();
+                  if( needHp != HardpointType.NONE && part.getInternalPart().getNumHardpoints(needHp) - part.getNumItemsOfHardpointType(needHp) < 1 ){
+                     continue;
+                  }
+                  slotsFree[partOrdinal] -= numCrits;
+                  candidateSlotsFree += numCrits;
+                  break;
+               }
+            }
+         }
+         if( candidateSlotsFree >= anItem.getNumCriticalSlots(getUpgrades()) ){
+            return true;
+         }
       }
       return false;
    }

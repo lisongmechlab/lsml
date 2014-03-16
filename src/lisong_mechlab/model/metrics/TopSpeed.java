@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -55,7 +55,7 @@ public class TopSpeed implements Metric{
     *           A modifier to use, 1.0 for normal and 1.1 for speed tweak.
     * @return The speed in [km/h].
     */
-   static public double calculate(final int aRating, final Chassi aChassi, final double aModifier){
+   static public double calculate(final int aRating, final Chassis aChassi, final double aModifier){
       return aChassi.getSpeedFactor() * aRating / aChassi.getMassMax() * aModifier;
    }
 }

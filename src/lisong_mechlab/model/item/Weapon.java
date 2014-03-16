@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -231,11 +230,6 @@ public class Weapon extends HeatSource{
 
    public boolean hasSpread(){
       return false;
-   }
-
-   @Override
-   public boolean isEquippableOn(Loadout aLoadout){
-      return aLoadout.getChassi().getHardpointsCount(getHardpointType()) > 0;
    }
 
    public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;

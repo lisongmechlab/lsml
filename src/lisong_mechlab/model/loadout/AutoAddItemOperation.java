@@ -34,8 +34,11 @@ import lisong_mechlab.util.MessageXBar;
 public class AutoAddItemOperation extends LoadoutOperation{
    public AutoAddItemOperation(Loadout aLoadout, MessageXBar anXBar, Item anItem){
       super(aLoadout, anXBar, "auto place item");
+
+      // FIXME redo this
+      
       LoadoutPart ct = loadout.getPart(Part.CenterTorso);
-      if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canAddItem(anItem) ){
+      if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canEquip(anItem) ){
          addOp(new AddItemOperation(xBar, ct, anItem));
          return;
       }
@@ -45,7 +48,7 @@ public class AutoAddItemOperation extends LoadoutOperation{
 
       for(Part part : partOrder){
          LoadoutPart loadoutPart = loadout.getPart(part);
-         if( loadoutPart.canAddItem(anItem) ){
+         if( loadoutPart.getLoadout().canEquip(anItem) && loadoutPart.canEquip(anItem) ){
             addOp(new AddItemOperation(xBar, loadoutPart, anItem));
             return;
          }

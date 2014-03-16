@@ -24,7 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.Chassis;
 
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class StructureUpgradeTest{
       final int ss_id = 3100;
       StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(ss_id);
 
-      Chassi chassi = mock(Chassi.class);
+      Chassis chassi = mock(Chassis.class);
       final int chassiMass = 35;
       when(chassi.getMassMax()).thenReturn(chassiMass);
 
@@ -62,7 +62,7 @@ public class StructureUpgradeTest{
       final int es_id = 3101;
       StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(es_id);
 
-      Chassi chassi = mock(Chassi.class);
+      Chassis chassi = mock(Chassis.class);
       final int chassiMass = 35;
       when(chassi.getMassMax()).thenReturn(chassiMass);
 
@@ -82,7 +82,7 @@ public class StructureUpgradeTest{
       final int es_id = 3101;
       StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(es_id);
 
-      Chassi chassi = mock(Chassi.class);
+      Chassis chassi = mock(Chassis.class);
       final int chassiMass = 35;
       when(chassi.getMassMax()).thenReturn(chassiMass);
       assertEquals(2.0, cut.getStructureMass(chassi), 0.0);

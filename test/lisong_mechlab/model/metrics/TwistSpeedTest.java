@@ -20,7 +20,7 @@
 package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
-import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -37,7 +37,7 @@ public class TwistSpeedTest{
    @Test
    public final void testCalculate_NoEngine() throws Exception{
       Loadout loadout = Mockito.mock(Loadout.class);
-      Chassi chassi = Mockito.mock(Chassi.class);
+      Chassis chassi = Mockito.mock(Chassis.class);
       Mockito.when(loadout.getChassi()).thenReturn(chassi);
       Mockito.when(loadout.getEngine()).thenReturn(null);
       double factor = 0.2;
@@ -52,7 +52,7 @@ public class TwistSpeedTest{
    @Test
    public final void testCalculate() throws Exception{
       Loadout loadout = Mockito.mock(Loadout.class);
-      Chassi chassi = Mockito.mock(Chassi.class);
+      Chassis chassi = Mockito.mock(Chassis.class);
       Engine engine = Mockito.mock(Engine.class);
       Mockito.when(loadout.getChassi()).thenReturn(chassi);
       Mockito.when(loadout.getEngine()).thenReturn(engine);

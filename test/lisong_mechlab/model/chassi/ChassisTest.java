@@ -25,51 +25,53 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Test suite for {@link Chassi}.
+ * Test suite for {@link Chassis}.
  * 
  * @author Li Song
  */
 @RunWith(JUnitParamsRunner.class)
-public class ChassiTest{
+public class ChassisTest{
 
    @Test(expected = UnsupportedOperationException.class)
    public void getParts_NoMod(){
-      Chassi cut = ChassiDB.lookup("Ilya Muromets");
+      Chassis cut = ChassiDB.lookup("Ilya Muromets");
       cut.getInternalParts().add(null);
    }
 
-   @Parameters({"HBK-4J, HBK-4P","CTF-3D, Ilya Muromets"})
+   @Parameters({"HBK-4J, HBK-4P", "CTF-3D, Ilya Muromets"})
    @Test
    public void testIsSameSeries(String aChassiA, String aChassiB){
       assertTrue(ChassiDB.lookup(aChassiA).isSameSeries(ChassiDB.lookup(aChassiB)));
    }
-   
-   @Parameters({"HBK-4J, CTF-3D","EMBER, Ilya Muromets"})
+
+   @Parameters({"HBK-4J, CTF-3D", "EMBER, Ilya Muromets"})
    @Test
    public void testIsNotSameSeries(String aChassiA, String aChassiB){
       assertFalse(ChassiDB.lookup(aChassiA).isSameSeries(ChassiDB.lookup(aChassiB)));
    }
-   
+
    @Parameters({"SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)"})
    @Test
    public void testIsSpecialVariant(String aChassiA){
       assertTrue(ChassiDB.lookup(aChassiA).isSpecialVariant());
    }
-   
+
    @Parameters({"SDR-5K", "JR7-D", "CDA-2A"})
    @Test
    public void testIsNotSpecialVariant(String aChassiA){
       assertFalse(ChassiDB.lookup(aChassiA).isSpecialVariant());
    }
-   
+
    @Test
    public void testLoadHeroMech(){
-      Chassi cut = ChassiDB.lookup("Ilya Muromets");
+      Chassis cut = ChassiDB.lookup("Ilya Muromets");
 
       assertEquals(140, cut.getEngineMin());
       assertEquals(340, cut.getEngineMax());
@@ -216,7 +218,7 @@ public class ChassiTest{
 
    @Test
    public void testLoadHasECM(){
-      Chassi cut = ChassiDB.lookup("AS7-D-DC");
+      Chassis cut = ChassiDB.lookup("AS7-D-DC");
 
       assertEquals(200, cut.getEngineMin());
       assertEquals(360, cut.getEngineMax());
@@ -252,7 +254,7 @@ public class ChassiTest{
 
    @Test
    public void testLoadHasJJ(){
-      Chassi cut = ChassiDB.lookup("Jenner JR7-F");
+      Chassis cut = ChassiDB.lookup("Jenner JR7-F");
 
       assertEquals(70, cut.getEngineMin()); // However no such engine exists :)
       assertEquals(300, cut.getEngineMax());
@@ -282,5 +284,45 @@ public class ChassiTest{
       assertEquals(3, cut.getInternalPart(Part.RightArm).getNumHardpoints(HardpointType.ENERGY));
       assertEquals(3, cut.getInternalPart(Part.LeftArm).getNumHardpoints(HardpointType.ENERGY));
       assertEquals(1, cut.getInternalPart(Part.LeftTorso).getNumHardpoints(HardpointType.AMS));
+   }
+
+   @Test
+   public void testIsAllowed_JJ(){
+      Chassis jj55tons = ChassiDB.lookup("WVR-6K");
+      Chassis jj70tons = ChassiDB.lookup("QKD-4G");
+
+      Item classIV = ItemDB.lookup("JUMP JETS - CLASS IV");
+      Item classIII = ItemDB.lookup("JUMP JETS - CLASS III");
+
+      assertTrue(jj55tons.isAllowed(classIV));
+      assertFalse(jj55tons.isAllowed(classIII));
+      assertFalse(jj70tons.isAllowed(classIV));
+      assertTrue(jj70tons.isAllowed(classIII));
+   }
+
+   @Test
+   public void testIsAllowed_Engine(){
+      Chassis cut = ChassiDB.lookup("ILYA MUROMETS");
+
+      Item tooSmall = ItemDB.lookup("STD ENGINE 135");
+      Item tooLarge = ItemDB.lookup("STD ENGINE 345");
+      Item smallest = ItemDB.lookup("STD ENGINE 140");
+      Item largest = ItemDB.lookup("STD ENGINE 340");
+
+      assertFalse(cut.isAllowed(tooSmall));
+      assertTrue(cut.isAllowed(smallest));
+      assertTrue(cut.isAllowed(largest));
+      assertFalse(cut.isAllowed(tooLarge));
+   }
+
+   @Test
+   public void testIsAllowed_Hardpoints(){
+      Chassis cut = ChassiDB.lookup("ILYA MUROMETS");
+
+      Item lrm20 = ItemDB.lookup("LRM 20");
+      Item ac20 = ItemDB.lookup("AC/20");
+
+      assertFalse(cut.isAllowed(lrm20));
+      assertTrue(cut.isAllowed(ac20));
    }
 }

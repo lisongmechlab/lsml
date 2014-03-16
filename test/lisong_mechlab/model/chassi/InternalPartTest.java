@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class InternalPartTest{
 
-   Chassi chassi = ChassiDB.lookup("TDR-5S");
+   Chassis chassi = ChassiDB.lookup("TDR-5S");
 
    @Test
    public void testGetType() throws Exception{

@@ -90,6 +90,11 @@ public class ItemLabel extends JLabel{
       builder.append(item.getShortName(anUpgrades));
       builder.append("<br/><span style=\"font-size:x-small;\">");
       builder.append("Tons: ").append(item.getMass(anUpgrades)).append("<br/>Slots: ").append(item.getNumCriticalSlots(anUpgrades));
+      
+      if(aLoadout != null && aLoadout.hasEquippablePermutation(item))
+         builder.append("<br/>Feasible");
+      
+      
       if( item instanceof Engine && aLoadout != null ){
          Engine engine = (Engine)item;
          double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getChassi(), aLoadout.getEfficiencies().getSpeedModifier());
@@ -108,12 +113,17 @@ public class ItemLabel extends JLabel{
    public void updateVisibility(Loadout aLoadout){
       if( aLoadout != null ){
          updateText(aLoadout);
-         if( !item.isEquippableOn(aLoadout) ){
+         if( !aLoadout.getChassi().isAllowed(item) || !item.isCompatible(aLoadout.getUpgrades()) ){
             setVisible(false);
          }
          else{
-            if( !aLoadout.isEquippable(item) ){
-               StyleManager.colourInvalid(this);
+            if( !aLoadout.canEquip(item) ){
+               if(aLoadout.hasEquippablePermutation(item)){
+                  StyleManager.styleItem(this, item); // TODO: Render it differently
+               }
+               else{
+                  StyleManager.colourInvalid(this);                  
+               }
             }
             else{
                StyleManager.styleItem(this, item);

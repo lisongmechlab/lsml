@@ -20,7 +20,6 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -63,10 +62,5 @@ public class Engine extends HeatSource{
       String name = getName(anUpgrades);
       name = name.replace("ENGINE ", "");
       return name;
-   }
-
-   @Override
-   public boolean isEquippableOn(Loadout aLoadout){
-      return aLoadout.getChassi().getEngineMax() >= rating && aLoadout.getChassi().getEngineMin() <= rating;
    }
 }

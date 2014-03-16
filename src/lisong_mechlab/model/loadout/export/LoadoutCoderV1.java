@@ -31,9 +31,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
@@ -185,7 +185,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          short chassiId = (short)(((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF)); // Big endian, respecting RFC
                                                                                            // 1700
 
-         Chassi chassi = ChassiDB.lookup(chassiId);
+         Chassis chassi = ChassiDB.lookup(chassiId);
          loadout = new Loadout(chassi, xBar);
 
          boolean artemisIv = (upeff & (1 << 7)) != 0;
@@ -269,7 +269,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateAllLoadouts() throws Exception{
-      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
@@ -278,7 +278,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
 
-      for(Chassi chassi : chassii){
+      for(Chassis chassi : chassii){
          Loadout loadout = new Loadout(chassi.getName(), xBar);
          stack.pushAndApply(new LoadStockOperation(loadout, xBar));
 
@@ -298,14 +298,14 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateStatsFromStock() throws Exception{
-      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
 
       Map<Integer, Integer> freqs = new TreeMap<>();
       MessageXBar anXBar = new MessageXBar();
-      for(Chassi chassi : chassii){
+      for(Chassis chassi : chassii){
          Loadout loadout = new Loadout(chassi.getName(), anXBar);
 
          for(Item item : loadout.getAllItems()){

@@ -96,7 +96,7 @@ public class AddItemOperationTest{
       AddItemOperation cut = null;
       try{
          Item item = ItemDB.lookup("LRM 20");
-         Mockito.when(loadoutPart.canAddItem(item)).thenReturn(false);
+         Mockito.when(loadoutPart.canEquip(item)).thenReturn(false);
          cut = new AddItemOperation(xBar, loadoutPart, item);
       }
       catch( Throwable t ){
