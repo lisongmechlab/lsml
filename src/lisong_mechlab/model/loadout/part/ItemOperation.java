@@ -116,8 +116,10 @@ abstract class ItemOperation extends Operation{
             LoadoutPart rt = loadoutPart.getLoadout().getPart(Part.RightTorso);
             lt.addItem(LoadoutPart.ENGINE_INTERNAL);
             rt.addItem(LoadoutPart.ENGINE_INTERNAL);
-            xBar.post(new Message(lt, Type.ItemAdded));
-            xBar.post(new Message(rt, Type.ItemAdded));
+            if( xBar != null ){
+               xBar.post(new Message(lt, Type.ItemAdded));
+               xBar.post(new Message(rt, Type.ItemAdded));
+            }
          }
          while( numEngineHS > 0 ){
             numEngineHS--;

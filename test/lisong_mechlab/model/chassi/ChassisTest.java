@@ -288,12 +288,15 @@ public class ChassisTest{
 
    @Test
    public void testIsAllowed_JJ(){
-      Chassis jj55tons = ChassiDB.lookup("WVR-6K");
+      Chassis jj55tons = ChassiDB.lookup("WVR-6R");
       Chassis jj70tons = ChassiDB.lookup("QKD-4G");
+      Chassis nojj55tons = ChassiDB.lookup("KTO-18");
 
       Item classIV = ItemDB.lookup("JUMP JETS - CLASS IV");
       Item classIII = ItemDB.lookup("JUMP JETS - CLASS III");
 
+      assertFalse(nojj55tons.isAllowed(classIV));
+      assertFalse(nojj55tons.isAllowed(classIII));
       assertTrue(jj55tons.isAllowed(classIV));
       assertFalse(jj55tons.isAllowed(classIII));
       assertFalse(jj70tons.isAllowed(classIV));

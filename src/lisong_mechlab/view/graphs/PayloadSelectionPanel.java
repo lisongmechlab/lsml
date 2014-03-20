@@ -44,7 +44,7 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
+import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.OperationStack;
@@ -145,7 +145,7 @@ public class PayloadSelectionPanel extends JPanel{
          endoSteel.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               stack.pushAndApply(new SetEndoSteelOperation(aUpgrades, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
+               stack.pushAndApply(new SetStructureTypeOperation(aUpgrades, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
                                                                                              : UpgradeDB.STANDARD_STRUCTURE));
                aGraphPanel.updateGraph();
             }

@@ -211,7 +211,7 @@ public class Chassis{
    public boolean isAllowed(Item aItem){
       if( aItem instanceof JumpJet ){
          JumpJet jj = (JumpJet)aItem;
-         return jj.getMinTons() <= getMassMax() &&  getMassMax() < jj.getMaxTons();
+         return getMaxJumpJets() > 0 && jj.getMinTons() <= getMassMax() &&  getMassMax() < jj.getMaxTons();
       }
       else if( aItem instanceof Engine ){
          Engine engine = (Engine)aItem;
