@@ -71,8 +71,8 @@ public class ItemTests{
 
       assertEquals(6, std175.getNumCriticalSlots(hm.getUpgrades()));
       assertEquals(6, std180.getNumCriticalSlots(hm.getUpgrades()));
-      assertEquals(6, xl330.getNumCriticalSlots(hm.getUpgrades()));
-      assertEquals(6, xl335.getNumCriticalSlots(hm.getUpgrades()));
+      assertEquals(12, xl330.getNumCriticalSlots(hm.getUpgrades()));
+      assertEquals(12, xl335.getNumCriticalSlots(hm.getUpgrades()));
 
       assertEquals(9.0, std175.getMass(hm.getUpgrades()), 0.0);
       assertEquals(9.0, std180.getMass(hm.getUpgrades()), 0.0);

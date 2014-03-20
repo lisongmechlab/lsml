@@ -49,7 +49,7 @@ import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
+import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -199,7 +199,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
          stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, guidance));
          stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, heatSinks));
-         stack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, structure));
+         stack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, structure));
          stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, armor));
          loadout.getEfficiencies().setCoolRun((upeff & (1 << 3)) != 0);
          loadout.getEfficiencies().setHeatContainment((upeff & (1 << 2)) != 0);

@@ -30,12 +30,12 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class SetEndoSteelOperation extends UpgradeOperation{
+public class SetStructureTypeOperation extends UpgradeOperation{
    final StructureUpgrade oldValue;
    final StructureUpgrade newValue;
 
    /**
-    * Creates a {@link SetEndoSteelOperation} that only affects a stand-alone {@link Upgrades} object This is useful
+    * Creates a {@link SetStructureTypeOperation} that only affects a stand-alone {@link Upgrades} object This is useful
     * only for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
     * 
     * @param anUpgrades
@@ -43,14 +43,14 @@ public class SetEndoSteelOperation extends UpgradeOperation{
     * @param aStructureUpgrade
     *           The new internal structure when this upgrades has been applied.
     */
-   public SetEndoSteelOperation(Upgrades anUpgrades, StructureUpgrade aStructureUpgrade){
+   public SetStructureTypeOperation(Upgrades anUpgrades, StructureUpgrade aStructureUpgrade){
       super(anUpgrades, aStructureUpgrade.getName());
       oldValue = upgrades.getStructure();
       newValue = aStructureUpgrade;
    }
 
    /**
-    * Creates a new {@link SetEndoSteelOperation} that will change the internal structure of a {@link Loadout}.
+    * Creates a new {@link SetStructureTypeOperation} that will change the internal structure of a {@link Loadout}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in internal structure on.
@@ -59,7 +59,7 @@ public class SetEndoSteelOperation extends UpgradeOperation{
     * @param aStructureUpgrade
     *           The new internal structure this upgrades is applied.
     */
-   public SetEndoSteelOperation(MessageXBar anXBar, Loadout aLoadout, StructureUpgrade aStructureUpgrade){
+   public SetStructureTypeOperation(MessageXBar anXBar, Loadout aLoadout, StructureUpgrade aStructureUpgrade){
       super(anXBar, aLoadout, aStructureUpgrade.getName());
       oldValue = upgrades.getStructure();
       newValue = aStructureUpgrade;

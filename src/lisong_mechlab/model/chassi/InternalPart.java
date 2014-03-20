@@ -49,6 +49,8 @@ public class InternalPart{
    private final List<Item>      internals  = new ArrayList<Item>();
    private final List<Hardpoint> hardpoints = new ArrayList<>();
 
+   private final int             internalSlots;
+
    /**
     * Constructs a new {@link InternalPart} from MWO datafiles that are parsed.
     * 
@@ -68,9 +70,16 @@ public class InternalPart{
       maxarmor = (type == Part.Head) ? 18 : (int)(hitpoints * 2);
 
       if( null != aComponent.internals ){
+         int internalsSize = 0;
          for(MdfInternal internal : aComponent.internals){
-            internals.add(new Internal(internal));
+            Internal i = new Internal(internal);
+            internals.add(i);
+            internalsSize += i.getNumCriticalSlots(null);
          }
+         internalSlots = internalsSize;
+      }
+      else{
+         internalSlots = 0;
       }
 
       if( null != aComponent.hardpoints ){
@@ -227,9 +236,9 @@ public class InternalPart{
       else if( aItem == ItemDB.CASE ){
          return (type == Part.LeftTorso || type == Part.RightTorso);
       }
-      else if( aItem.getHardpointType() != HardpointType.NONE ){
-         return getNumHardpoints(aItem.getHardpointType()) > 0;
+      else if( aItem.getHardpointType() != HardpointType.NONE && getNumHardpoints(aItem.getHardpointType()) <= 0 ){
+         return false;
       }
-      return true;
+      return aItem.getNumCriticalSlots(null) <= getNumCriticalslots() - internalSlots;
    }
 }
