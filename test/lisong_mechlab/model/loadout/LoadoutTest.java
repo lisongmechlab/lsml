@@ -228,7 +228,7 @@ public class LoadoutTest{
       // Execute + Verify
       assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
    }
-
+  
    @Test
    public void testCanEquip_XLEngineNoSpaceLeftTorso() throws Exception{
       // Setup

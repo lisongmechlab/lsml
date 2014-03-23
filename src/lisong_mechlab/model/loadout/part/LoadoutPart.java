@@ -104,15 +104,15 @@ public class LoadoutPart{
    }
 
    public boolean canEquip(Item anItem){
-      if( !internalPart.isAllowed(anItem) )
+      if( !getInternalPart().isAllowed(anItem) )
          return false;
-      
-      if(anItem instanceof HeatSink && getNumEngineHeatsinks() < getNumEngineHeatsinksMax()){
+
+      if( anItem instanceof HeatSink && getNumEngineHeatsinks() < getNumEngineHeatsinksMax() ){
          return true;
       }
 
       // Check enough free critical slots
-      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(loadout.getUpgrades()) ){
+      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(getLoadout().getUpgrades()) ){
          return false;
       }
 
@@ -158,12 +158,12 @@ public class LoadoutPart{
    public int getArmorMax(ArmorSide anArmorSide){
       switch( anArmorSide ){
          case BACK:
-            return internalPart.getArmorMax() - getArmor(ArmorSide.FRONT);
+            return getInternalPart().getArmorMax() - getArmor(ArmorSide.FRONT);
          case FRONT:
-            return internalPart.getArmorMax() - getArmor(ArmorSide.BACK);
+            return getInternalPart().getArmorMax() - getArmor(ArmorSide.BACK);
          default:
          case ONLY:
-            return internalPart.getArmorMax();
+            return getInternalPart().getArmorMax();
       }
    }
 
@@ -196,7 +196,7 @@ public class LoadoutPart{
    }
 
    public int getNumCriticalSlotsFree(){
-      return internalPart.getNumCriticalslots() - getNumCriticalSlotsUsed();
+      return getInternalPart().getNumCriticalslots() - getNumCriticalSlotsUsed();
    }
 
    public int getNumCriticalSlotsUsed(){
