@@ -30,7 +30,6 @@ import java.util.List;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
@@ -354,152 +353,28 @@ public class LoadoutPartTest{
    }
 
    /**
-    * Jump jets can not be added if there is not enough free tonnage
-    * 
-    * @param globalSlots
-    *           The number of globally available slots in the mech.
-    * @param localSlots
-    *           The number of locally available slots in the part.
-    * @param freeMass
-    *           The amount of free mass in the mech.
-    * @param jjCapacity
-    *           The total capacity of jump jets
-    * @param jjOccupacy
-    *           The total number of jump jets in the mech.
+    * Items that are not supported by the {@link InternalPart} are not addable.
     */
    @Test
-   @Parameters({"100, 100, 0.2, 5, 0", // Too heavy
-         "100, 0, 10.0, 5, 0", // No local slots
-         "0, 100, 10.0, 5, 0", // No global slots
-         "100, 100, 10.0, 0, 0", // No capacity at all
-         "100, 100, 10.0, 2, 2" // No capacity left
-   })
-   public void testCanEquip_jumpJets_Failures(int globalSlots, int localSlots, double freeMass, int jjCapacity, int jjOccupacy){
-      for(Part p : Part.values()){
-         // Setup
-         Item jumpjet = ItemDB.lookup("JUMP JETS - CLASS V");
-         Chassis chassi = Mockito.mock(Chassis.class);
-         Mockito.when(chassi.getMaxJumpJets()).thenReturn(jjCapacity);
-
-         Loadout loadout = Mockito.mock(Loadout.class);
-         Mockito.when(loadout.getJumpJetCount()).thenReturn(jjOccupacy);
-         Mockito.when(loadout.getChassi()).thenReturn(chassi);
-         Mockito.when(loadout.getFreeMass()).thenReturn(freeMass);
-         Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(globalSlots);
-
-         Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
-         Mockito.when(part.getType()).thenReturn(p);
-         Mockito.when(part.getNumCriticalslots()).thenReturn(localSlots);
-
-         LoadoutPart cut = new LoadoutPart(loadout, part);
-
-         // Execute & Verify
-         assertFalse(cut.canEquip(jumpjet));
-      }
-   }
-
-   @Test
-   @Parameters({"CenterTorso, 6, 6, 100.0, 300, 300", "LeftTorso, 6, 6, 100.0, 300, 300", "RightTorso, 6, 6, 100.0, 300, 300",})
-   public void testCanAddEngine(Part aPart, int ctFreeSlots, int globalSlots, double freeMass, int engineMin, int engineMax){
-      // Setup
-      Chassis chassi = Mockito.mock(Chassis.class);
-      Mockito.when(chassi.getEngineMax()).thenReturn(engineMax);
-      Mockito.when(chassi.getEngineMin()).thenReturn(engineMin);
+   public void testCanEquip_NoSupport(){
+      Item jumpjet = ItemDB.lookup("JUMP JETS - CLASS V");
 
       Loadout loadout = Mockito.mock(Loadout.class);
-      Mockito.when(loadout.getFreeMass()).thenReturn(freeMass);
-      Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(globalSlots);
-      Mockito.when(loadout.getChassi()).thenReturn(chassi);
-
-      Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(part.getType()).thenReturn(aPart);
-      Mockito.when(part.getNumCriticalslots()).thenReturn(ctFreeSlots);
+      Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(false);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(10);
+      Mockito.when(part.getType()).thenReturn(Part.Head);
 
       LoadoutPart cut = new LoadoutPart(loadout, part);
 
       // Execute & Verify
-      if( aPart == Part.CenterTorso ){
-         assertTrue(cut.canEquip(ItemDB.lookup("STD ENGINE 300")));
-      }
-      else{
-         assertFalse(cut.canEquip(ItemDB.lookup("STD ENGINE 300")));
-      }
-   }
-
-   @Test
-   @Parameters({"4, 4, 10,  8, 100.0, 200, 400", // Too few global slots
-         "2, 4, 10, 20, 100.0, 200, 400", // Too few LT slots
-         "4, 2, 10, 20, 100.0, 200, 400", // Too few RT slots
-         "4, 4,  5, 20, 100.0, 200, 400", // Too few CT slots
-         "4, 4, 10, 20,   0.1, 200, 400", // Too little free mass
-         "4, 4, 10, 20,   0.1, 350, 400", // Too small engine
-         "4, 4, 10, 20,   0.1, 200, 250", // Too big engine
-   })
-   public void testCanEquip_xlEngineFailures(int ltFreeSlots, int rtFreeSlots, int ctFreeSlots, int globalSlots, double freeMass, Integer engineMin,
-                                             Integer engineMax) throws Exception{
-      // Setup
-      LoadoutPart rt = Mockito.mock(LoadoutPart.class);
-      Mockito.when(rt.getNumCriticalSlotsFree()).thenReturn(rtFreeSlots);
-
-      LoadoutPart lt = Mockito.mock(LoadoutPart.class);
-      Mockito.when(lt.getNumCriticalSlotsFree()).thenReturn(ltFreeSlots);
-
-      Chassis chassi = Mockito.mock(Chassis.class);
-      Mockito.when(chassi.getEngineMax()).thenReturn(engineMax);
-      Mockito.when(chassi.getEngineMin()).thenReturn(engineMin);
-
-      Loadout loadout = Mockito.mock(Loadout.class);
-      Mockito.when(loadout.getFreeMass()).thenReturn(freeMass);
-      Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(globalSlots);
-      Mockito.when(loadout.getPart(Part.LeftTorso)).thenReturn(lt);
-      Mockito.when(loadout.getPart(Part.RightTorso)).thenReturn(rt);
-      Mockito.when(loadout.getChassi()).thenReturn(chassi);
-
-      Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
-      Mockito.when(part.getNumCriticalslots()).thenReturn(ctFreeSlots);
-
-      LoadoutPart cut = new LoadoutPart(loadout, part);
-
-      // Execute & Verify
-      assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 300")));
-   }
-
-   @Test
-   @Parameters({"10, 5, 100, 200, 400", // Too few global slots
-         "5, 20, 100, 200, 400", // Too few CT slots
-         "10, 20, 0.1, 200, 400", // Too little free mass
-         "10, 20, 0.1, 350, 400", // Too small engine
-         "10, 20, 0.1, 200, 250", // Too big engine
-   })
-   public void testCanEquip_stdEngineFailures(int ctFreeSlots, int globalSlots, double freeMass, Integer engineMin, Integer engineMax)
-                                                                                                                                      throws Exception{
-      // Setup
-      Chassis chassi = Mockito.mock(Chassis.class);
-      Mockito.when(chassi.getEngineMax()).thenReturn(engineMax);
-      Mockito.when(chassi.getEngineMin()).thenReturn(engineMin);
-
-      Loadout loadout = Mockito.mock(Loadout.class);
-      Mockito.when(loadout.getFreeMass()).thenReturn(freeMass);
-      Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(globalSlots);
-      Mockito.when(loadout.getChassi()).thenReturn(chassi);
-
-
-      Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
-      Mockito.when(part.getNumCriticalslots()).thenReturn(ctFreeSlots);
-
-      LoadoutPart cut = new LoadoutPart(loadout, part);
-
-      // Execute & Verify
-      assertFalse(cut.canEquip(ItemDB.lookup("STD ENGINE 300")));
+      assertFalse(cut.canEquip(jumpjet));
    }
 
    /**
     * It is not possible to add internals to a loadout part.
     */
    @Test
-   public void testCanEquip_internal(){
+   public void testCanEquip_Internal(){
       Internal internal = Mockito.mock(Internal.class);
       Mockito.when(internal.getHardpointType()).thenReturn(HardpointType.NONE);
       Mockito.when(internal.getMass(Matchers.any(Upgrades.class))).thenReturn(0.0);
@@ -511,8 +386,8 @@ public class LoadoutPartTest{
 
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(8);
-      Mockito.when(part.isAllowed(internal)).thenReturn(true);
-      
+      Mockito.when(part.isAllowed(internal)).thenReturn(false);
+
       LoadoutPart cut = new LoadoutPart(loadout, part);
       assertFalse(cut.canEquip(internal));
    }
@@ -524,11 +399,9 @@ public class LoadoutPartTest{
    public void testCanEquip_TooFewSlots(){
       // Setup
       Loadout loadout = Mockito.mock(Loadout.class);
-      Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(ItemDB.BAP.getNumCriticalSlots(null) - 1);
 
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
-      Mockito.when(part.getNumCriticalslots()).thenReturn(8);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(ItemDB.BAP.getNumCriticalSlots(null) - 1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
       LoadoutPart cut = new LoadoutPart(loadout, part);
@@ -542,42 +415,38 @@ public class LoadoutPartTest{
     */
    @Test
    public void testCanEquip_Artemis(){
-      Item srm6 = ItemDB.lookup("SRM 6");
+      Item srm6 = ItemDB.lookup("SRM 6 + ARTEMIS");
 
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
 
       Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(srm6.getNumCriticalSlots(null)); // Enough space
-                                                                                                  // without artemis
 
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
-      Mockito.when(part.getNumCriticalslots()).thenReturn(8);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(2);
       Mockito.when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
-      
+
       LoadoutPart cut = new LoadoutPart(loadout, part);
 
-      assertFalse(cut.canEquip(ItemDB.lookup("SRM 6")));
+      assertFalse(cut.canEquip(srm6));
    }
 
    /**
-    * Engine heat sinks of the correct type can be added if there is enough space in the engine, even though there is
-    * not enough space in the component.
-    * 
-    * @param aDHS
-    *           <code>true</code> if testing with DHS enabled.
-    * @param freeMass
-    *           The amount of free mass in the loadout.
+    * The {@link LoadoutPart} will allow items that don't require hard points if they are:
+    * <ul>
+    * <li>Supported by the {@link InternalPart}.</li>
+    * <li>There is enough space in the component locally.</li>
+    * </ul>
+    * @param aDHS <code>true</code> if DHS should be used.
     */
    @Test
-   @Parameters({"true, 10.0", "false, 10.0"})
-   public void testCanEquip_engineHs(boolean aDHS, double freeMass){
+   @Parameters({"true", "false"})
+   public void testCanEquip_EngineHs(boolean aDHS){
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getHeatSink()).thenReturn(aDHS ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS);
-      
+
       Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
 
@@ -592,16 +461,10 @@ public class LoadoutPartTest{
 
       // Only test heat sinks of correct type. Wrong types are handled by loadout
       if( aDHS ){
-         if( freeMass >= ItemDB.DHS.getMass(upgrades) )
-            assertTrue(cut.canEquip(ItemDB.DHS));
-         else
-            assertFalse(cut.canEquip(ItemDB.DHS));
+         assertTrue(cut.canEquip(ItemDB.DHS));
       }
       else{
-         if( freeMass >= ItemDB.SHS.getMass(upgrades) )
-            assertTrue(cut.canEquip(ItemDB.SHS));
-         else
-            assertFalse(cut.canEquip(ItemDB.SHS));
+         assertTrue(cut.canEquip(ItemDB.SHS));
       }
 
       cut.addItem(aDHS ? ItemDB.DHS : ItemDB.SHS);
@@ -616,43 +479,84 @@ public class LoadoutPartTest{
    }
 
    /**
+    * The {@link LoadoutPart} will allow items that don't require hard points if they are:
+    * <ul>
+    * <li>Supported by the {@link InternalPart}.</li>
+    * <li>There is enough space in the component locally.</li>
+    * </ul>
+    */
+   @Test
+   public void testCanEquip_Module(){
+      Loadout loadout = Mockito.mock(Loadout.class);
+      Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(10);
+      Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
+      Item module = Mockito.mock(Item.class);
+      Mockito.when(module.getHardpointType()).thenReturn(HardpointType.NONE);
+      LoadoutPart cut = new LoadoutPart(loadout, part);
+
+      assertTrue(cut.canEquip(module));
+   }
+
+   /**
+    * The {@link LoadoutPart} will allow items that require hard points if they are:
+    * <ul>
+    * <li>Supported by the {@link InternalPart}.</li>
+    * <li>There is enough space in the component locally.</li>
+    * <li>There are free hard points to use.</li>
+    * </ul>
+    */
+   @Test
+   public void testCanEquip_EnoughHardpoints(){
+      Loadout loadout = Mockito.mock(Loadout.class);
+      Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(10);
+      Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(1);
+      Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
+      Item ballistic = Mockito.mock(Item.class);
+      Mockito.when(ballistic.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
+      LoadoutPart cut = new LoadoutPart(loadout, part);
+
+      assertTrue(cut.canEquip(ballistic));
+   }
+
+   /**
     * Items that require hard points can not be added unless there is a free hard point.
     */
    @Test
-   public void testCanEquip_noHardpoints(){
+   public void testCanEquip_NoHardpoints(){
       Loadout loadout = Mockito.mock(Loadout.class);
-      Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(loadout.getNumCriticalSlotsFree()).thenReturn(0);
-
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
-      Mockito.when(part.getNumCriticalslots()).thenReturn(0);
-      Mockito.when(part.getNumHardpoints(HardpointType.ENERGY)).thenReturn(3);
-      Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(1);
-
-      Item item = Mockito.mock(Item.class);
-      //Mockito.when(item.isCompatible(loadout)).thenReturn(true);
-      Mockito.when(item.getHardpointType()).thenReturn(HardpointType.ENERGY);
-
-      Item otherItem = Mockito.mock(Item.class);
-      //Mockito.when(otherItem.isCompatible(loadout)).thenReturn(true);
-      Mockito.when(otherItem.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
-
+      Mockito.when(part.getNumCriticalslots()).thenReturn(10);
+      Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(0);
+      Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
+      Item ballistic = Mockito.mock(Item.class);
+      Mockito.when(ballistic.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
       LoadoutPart cut = new LoadoutPart(loadout, part);
 
-      cut.addItem(otherItem);
-      assertFalse(cut.canEquip(otherItem));
+      assertFalse(cut.canEquip(ballistic));
+   }
 
-      assertTrue(cut.canEquip(item));
-      cut.addItem(item);
-      assertTrue(cut.canEquip(item));
-      cut.addItem(item);
-      assertTrue(cut.canEquip(item));
-      cut.addItem(item);
-      assertFalse(cut.canEquip(item));
+   /**
+    * Items that require hard points can not be added unless there is a free hard point.
+    */
+   @Test
+   public void testCanEquip_NoFreeHardpoints(){
+      Loadout loadout = Mockito.mock(Loadout.class);
+      Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(10);
+      Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(1);
+      Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
+      Item ballistic = Mockito.mock(Item.class);
+      Mockito.when(ballistic.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
+      LoadoutPart cut = new LoadoutPart(loadout, part);
+      cut.addItem(ballistic);
+
+      assertFalse(cut.canEquip(ballistic));
    }
 
    @Test
-   public void testRemoveItem_nosuchitem() throws Exception{
+   public void testRemoveItem_NoSuchItem() throws Exception{
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
       LoadoutPart cut = new LoadoutPart(null, part);
       Item item = ItemDB.lookup("AC/20 AMMO");

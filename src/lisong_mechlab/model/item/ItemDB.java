@@ -72,7 +72,7 @@ public class ItemDB{
 
    public static Item lookup(int anMwoIndex){
       if( !mwoidx2item.containsKey(anMwoIndex) ){
-         throw new IllegalArgumentException("No item with that index! :" + anMwoIndex);
+         throw new IllegalArgumentException("No item with that index: " + anMwoIndex);
       }
       return mwoidx2item.get(anMwoIndex);
    }
@@ -120,7 +120,7 @@ public class ItemDB{
                break;
             case "CBAPStats":
             case "CCASEStats":
-            case "CDummyHeadStats":
+            case "CCommandConsoleStats":
                put(new Module(statsModule));
                break;
             default:
