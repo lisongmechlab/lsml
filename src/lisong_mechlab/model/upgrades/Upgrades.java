@@ -27,7 +27,7 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Emily Björk
  */
-public class Upgrades{
+public class Upgrades implements Cloneable{
    private ArmorUpgrade     armorType     = UpgradeDB.STANDARD_ARMOR;
    private StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
    private GuidanceUpgrade  guidanceType  = UpgradeDB.STANDARD_GUIDANCE;
@@ -73,6 +73,10 @@ public class Upgrades{
       guidanceType = aGuidance;
       heatSinkType = aHeatSinks;
    }
+   
+   public Upgrades(Upgrades aUpgrades){
+      this(aUpgrades.armorType, aUpgrades.structureType, aUpgrades.guidanceType, aUpgrades.heatSinkType);
+   }
 
    /**
     * 
@@ -100,6 +104,17 @@ public class Upgrades{
       return true;
    }
 
+   @Override 
+   public Upgrades clone(){
+      try{
+         Upgrades clone = (Upgrades)super.clone();
+         return clone;
+      }
+      catch( CloneNotSupportedException e ){
+         throw new RuntimeException(e);
+      }      
+   }
+   
    public GuidanceUpgrade getGuidance(){
       return guidanceType;
    }

@@ -50,7 +50,7 @@ import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
 import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceOperation;
+import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -197,7 +197,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          ArmorUpgrade armor = ferroFib ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
          HeatsinkUpgrade heatSinks = dhs ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
 
-         stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, guidance));
+         stack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, guidance));
          stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, heatSinks));
          stack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, structure));
          stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, armor));

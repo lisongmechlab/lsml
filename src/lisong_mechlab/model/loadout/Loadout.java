@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.TreeMap;
 
@@ -61,7 +60,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * 
  * @author Emily Björk
  */
-public class Loadout{
+public class Loadout implements Cloneable{
    public static class Message implements MessageXBar.Message{
       public enum Type{
          RENAME, CREATE, UPDATE
@@ -134,11 +133,11 @@ public class Loadout{
       return stream;
    }
 
-   private String                       name;
-   private final Chassis                chassi;
-   private final Map<Part, LoadoutPart> parts    = new TreeMap<Part, LoadoutPart>();
-   private final Upgrades               upgrades = new Upgrades();
-   private final Efficiencies           efficiencies;
+   private String                           name;
+   private final Chassis                    chassi;
+   private final TreeMap<Part, LoadoutPart> parts = new TreeMap<Part, LoadoutPart>();
+   private final Upgrades                   upgrades;
+   private final Efficiencies               efficiencies;
 
    /**
     * Will create a new, empty load out based on the given chassi. TODO: Is anXBar really needed?
@@ -151,6 +150,9 @@ public class Loadout{
    public Loadout(Chassis aChassi, MessageXBar anXBar){
       name = aChassi.getNameShort();
       chassi = aChassi;
+      upgrades = new Upgrades();
+      efficiencies = new Efficiencies(anXBar);
+
       for(InternalPart part : chassi.getInternalParts()){
          LoadoutPart confPart = new LoadoutPart(this, part);
          parts.put(part.getType(), confPart);
@@ -159,7 +161,6 @@ public class Loadout{
       if( anXBar != null ){
          anXBar.post(new Message(this, Type.CREATE));
       }
-      efficiencies = new Efficiencies(anXBar);
    }
 
    /**
@@ -174,6 +175,19 @@ public class Loadout{
       this(ChassiDB.lookup(aString), anXBar);
       OperationStack operationStack = new OperationStack(0);
       operationStack.pushAndApply(new LoadStockOperation(this, anXBar));
+   }
+
+   public Loadout(Loadout aLoadout, MessageXBar anXBar){
+      name = aLoadout.name;
+      chassi = aLoadout.chassi;
+      upgrades = new Upgrades(aLoadout.upgrades);
+      efficiencies = new Efficiencies(aLoadout.efficiencies);
+      for(LoadoutPart loadoutPart : aLoadout.parts.values()){
+         parts.put(loadoutPart.getInternalPart().getType(), new LoadoutPart(loadoutPart, this));
+      }
+      if( anXBar != null ){
+         anXBar.post(new Message(this, Type.CREATE));
+      }
    }
 
    @Override
@@ -329,24 +343,27 @@ public class Loadout{
     */
    public List<LoadoutPart> getCandidateLocationsForItem(Item anItem){
       List<LoadoutPart> candidates = new ArrayList<>();
-      if( anItem.getHardpointType() != HardpointType.NONE ){
-         int freeHardpoints = 0;
-         HardpointType hp = anItem.getHardpointType();
-         for(LoadoutPart part : getPartLoadOuts()){
-            final int hpAvail = part.getInternalPart().getNumHardpoints(hp);
-            if( hpAvail > 0 ){
-               candidates.add(part);
-               freeHardpoints += hpAvail - part.getNumItemsOfHardpointType(hp);
-            }
+      if( !canEquipGlobal(anItem) )
+         return candidates;
+
+      int globalFreeHardPoints = 0;
+      HardpointType hardpointType = anItem.getHardpointType();
+
+      for(LoadoutPart part : getPartLoadOuts()){
+         if( part.getInternalPart().isAllowed(anItem) ){
+            candidates.add(part);
          }
-         if( freeHardpoints == 0 ){
-            candidates.clear();
-            return candidates;
+
+         if( hardpointType != HardpointType.NONE ){
+            final int localFreeHardPoints = part.getInternalPart().getNumHardpoints(hardpointType) - part.getNumItemsOfHardpointType(hardpointType);
+            globalFreeHardPoints += localFreeHardPoints;
          }
       }
-      else{
-         candidates = new ArrayList<>(getPartLoadOuts());
+
+      if( hardpointType != HardpointType.NONE && globalFreeHardPoints <= 0 ){
+         candidates.clear();
       }
+
       return candidates;
    }
 

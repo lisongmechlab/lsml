@@ -36,13 +36,13 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class SetGuidanceOperation extends UpgradeOperation{
+public class SetGuidanceTypeOperation extends UpgradeOperation{
    private final GuidanceUpgrade oldValue;
    private final GuidanceUpgrade newValue;
    private boolean operationReady = false;
 
    /**
-    * Creates a {@link SetGuidanceOperation} that only affects a stand-alone {@link Upgrades} object This is useful only
+    * Creates a {@link SetGuidanceTypeOperation} that only affects a stand-alone {@link Upgrades} object This is useful only
     * for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
     * 
     * @param anUpgrades
@@ -50,14 +50,14 @@ public class SetGuidanceOperation extends UpgradeOperation{
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
-   public SetGuidanceOperation(Upgrades anUpgrades, GuidanceUpgrade aGuidanceUpgrade){
+   public SetGuidanceTypeOperation(Upgrades anUpgrades, GuidanceUpgrade aGuidanceUpgrade){
       super(anUpgrades, aGuidanceUpgrade.getName());
       oldValue = upgrades.getGuidance();
       newValue = aGuidanceUpgrade;
    }
 
    /**
-    * Creates a new {@link SetGuidanceOperation} that will change the guidance upgrade of a {@link Loadout}.
+    * Creates a new {@link SetGuidanceTypeOperation} that will change the guidance upgrade of a {@link Loadout}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in guidance status on.
@@ -66,7 +66,7 @@ public class SetGuidanceOperation extends UpgradeOperation{
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
-   public SetGuidanceOperation(MessageXBar anXBar, Loadout aLoadout, GuidanceUpgrade aGuidanceUpgrade){
+   public SetGuidanceTypeOperation(MessageXBar anXBar, Loadout aLoadout, GuidanceUpgrade aGuidanceUpgrade){
       super(anXBar, aLoadout, aGuidanceUpgrade.getName());
       oldValue = upgrades.getGuidance();
       newValue = aGuidanceUpgrade;

@@ -49,7 +49,7 @@ import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
 import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceOperation;
+import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -225,7 +225,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, (ArmorUpgrade)UpgradeDB.lookup(ids.get(0))));
          stack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, (StructureUpgrade)UpgradeDB.lookup(ids.get(1))));
          stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, (HeatsinkUpgrade)UpgradeDB.lookup(ids.get(2))));
-         stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.get(3))));
+         stack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.get(3))));
 
          if( -1 != ids.get(4) ){
             throw new DecodingException("Broken LSML link, expected separator got: " + ids.get(4));
