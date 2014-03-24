@@ -81,14 +81,14 @@ public class LoadoutPart{
       }
    }
 
-   public final static Internal          ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3, 15);
+   public final static Internal              ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3, 15);
 
-   private final transient Loadout       loadout;
-   private final InternalPart            internalPart;
-   private int                           engineHeatsinks = 0;
+   private final transient Loadout           loadout;
+   private final InternalPart                internalPart;
+   private int                               engineHeatsinks = 0;
 
-   private final Map<ArmorSide, Integer> armor           = new TreeMap<ArmorSide, Integer>();
-   private final List<Item>              items           = new ArrayList<Item>();
+   private final TreeMap<ArmorSide, Integer> armor           = new TreeMap<ArmorSide, Integer>();
+   private final List<Item>                  items           = new ArrayList<Item>();
 
    public LoadoutPart(Loadout aLoadout, InternalPart anInternalPart){
       internalPart = anInternalPart;
@@ -101,6 +101,46 @@ public class LoadoutPart{
       else{
          armor.put(ArmorSide.ONLY, 0);
       }
+   }
+
+   /**
+    * Copy constructor. Performs a deep copy of the argument with a new {@link Loadout} value.
+    * 
+    * @param aLoadoutPart
+    *           The {@link LoadoutPart} to copy.
+    * @param aLoadout
+    *           The new {@link Loadout} to associate.
+    */
+   public LoadoutPart(LoadoutPart aLoadoutPart, Loadout aLoadout){
+      loadout = aLoadout;
+      internalPart = aLoadoutPart.internalPart;
+      engineHeatsinks = aLoadoutPart.engineHeatsinks;
+
+      for(Map.Entry<ArmorSide, Integer> e : aLoadoutPart.armor.entrySet()){
+         armor.put(e.getKey(), new Integer(e.getValue()));
+      }
+
+      for(Item item : aLoadoutPart.items){
+         items.add(item);
+      }
+   }
+
+   @Override
+   public String toString(){
+      StringBuilder sb = new StringBuilder();
+      if( getInternalPart().getType().isTwoSided() ){
+         sb.append(getArmor(ArmorSide.FRONT)).append("/").append(getArmor(ArmorSide.BACK));
+      }
+      else{
+         sb.append(getArmor(ArmorSide.ONLY));
+      }
+      sb.append(" ");
+      for(Item item : items){
+         if( item instanceof Internal )
+            continue;
+         sb.append(item).append(",");
+      }
+      return sb.toString();
    }
 
    public boolean canEquip(Item anItem){

@@ -119,7 +119,7 @@ public class LoadoutPartTest{
       assertSame(part, cut.getInternalPart());
       assertSame(loadout, cut.getLoadout());
    }
-
+   
    @Test
    @Parameters({"LeftArm", "RightTorso"})
    public void testSetGetArmorAndTotalArmor(Part aPart){

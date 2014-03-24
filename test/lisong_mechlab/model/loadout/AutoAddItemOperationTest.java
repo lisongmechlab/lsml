@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -56,9 +56,10 @@ public class AutoAddItemOperationTest{
    private OperationStack stack = new OperationStack(0);
 
    /**
-    * {@link AutoAddItemOperation} shall throw an {@link IllegalArgumentException} if the item cannot be auto added on any permutation of the loadout.
+    * {@link AutoAddItemOperation} shall throw an {@link IllegalArgumentException} if the item cannot be auto added on
+    * any permutation of the loadout.
     */
-   @Test(expected=IllegalArgumentException.class)
+   @Test(expected = IllegalArgumentException.class)
    public void testMoveItem_NotPossible(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
@@ -67,29 +68,29 @@ public class AutoAddItemOperationTest{
       // 2 slots in either leg
       // 2 slots left in CT
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.CenterTorso), ItemDB.lookup("XL ENGINE 200")));
-      
+
       // 2 slots left on right arm, cannot contain DHS
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
-      
+
       // 2 slots left on left arm, cannot contain DHS
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.DHS));
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.DHS));
 
       // 6 slots left in right torso (3 taken by engine)
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
-      
+
       // 0 slots left in left torso (3 taken by engine)
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
-      
+
       Item gaussRifle = ItemDB.lookup("GAUSS RIFLE");
-      
+
       // Execute
       stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, gaussRifle));
    }
-   
+
    /**
     * {@link AutoAddItemOperation} shall try to move items in order to make room for the added item if there is no room
     * in any component with a hard point but there are items that could be moved to make room.
@@ -102,19 +103,42 @@ public class AutoAddItemOperationTest{
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
       Item gaussRifle = ItemDB.lookup("GAUSS RIFLE");
-      
+
       // Execute
       stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, gaussRifle));
-      
+
       // Verify
       List<Item> allItems = new ArrayList<>(loadout.getAllItems());
       assertTrue(allItems.remove(ItemDB.DHS));
       assertTrue(allItems.remove(ItemDB.DHS));
       assertTrue(allItems.remove(gaussRifle));
-      
+
       // Must be minimal change to allow the item in.
-      loadout.getPart(Part.RightTorso).getItems().contains(ItemDB.DHS);
-      loadout.getPart(Part.RightTorso).getItems().contains(gaussRifle);
+      assertTrue(loadout.getPart(Part.RightTorso).getItems().contains(ItemDB.DHS));
+      assertTrue(loadout.getPart(Part.RightTorso).getItems().contains(gaussRifle));
+   }
+
+   /**
+    * {@link AutoAddItemOperation} shall try to move items in order to make room for the added item if there is no room
+    * in any component with a hard point but there are items that could be moved to make room.
+    */
+   @Test
+   public void testMoveItem_(){
+      // Setup
+      Item ac20 = ItemDB.lookup("AC/20");
+      Item ac10 = ItemDB.lookup("AC/10");
+      Loadout loadout = new Loadout(ChassiDB.lookup("CTF-IM"), xBar);
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ac10));
+
+      // Execute
+      stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, ac20));
+
+      // Verify
+      List<Item> allItems = new ArrayList<>(loadout.getAllItems());
+      assertEquals(2, allItems.size());
+
+      assertTrue(loadout.getPart(Part.RightTorso).getItems().contains(ac20));
+      assertTrue(loadout.getPart(Part.RightArm).getItems().contains(ac10) || loadout.getPart(Part.LeftArm).getItems().contains(ac10));
    }
 
    /**
