@@ -36,8 +36,8 @@ public class ChassiDBTest{
 
    @Test
    public void testLookupByChassiSeries(){
-      List<Chassi> cataphracts = ChassiDB.lookupSeries("CATAphract");
-      List<Chassi> cataphracts1 = ChassiDB.lookupSeries("CTF");
+      List<Chassis> cataphracts = ChassiDB.lookupSeries("CATAphract");
+      List<Chassis> cataphracts1 = ChassiDB.lookupSeries("CTF");
 
       assertEquals(cataphracts, cataphracts1);
 
@@ -45,6 +45,7 @@ public class ChassiDBTest{
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-1X")));
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-2X")));
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-3D")));
+      assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-3D(C)")));
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-4X")));
       assertTrue(cataphracts.isEmpty());
    }
@@ -56,7 +57,7 @@ public class ChassiDBTest{
 
    @Test
    public void testLookupByChassiClass(){
-      List<Chassi> heavies = ChassiDB.lookup(ChassiClass.HEAVY);
+      List<Chassis> heavies = ChassiDB.lookup(ChassiClass.HEAVY);
 
       assertTrue(heavies.contains(ChassiDB.lookup("ILYA MUROMETS")));
       assertTrue(heavies.contains(ChassiDB.lookup("JM6-DD")));
@@ -64,7 +65,7 @@ public class ChassiDBTest{
       assertTrue(heavies.contains(ChassiDB.lookup("FLAME")));
       assertTrue(heavies.contains(ChassiDB.lookup("PROTECTOR")));
 
-      for(Chassi chassi : heavies){
+      for(Chassis chassi : heavies){
          assertEquals(ChassiClass.HEAVY, chassi.getChassiClass());
       }
    }
@@ -74,14 +75,14 @@ public class ChassiDBTest{
     */
    @Test
    public void testLookupByChassiClass_Assault(){
-      List<Chassi> heavies = ChassiDB.lookup(ChassiClass.ASSAULT);
+      List<Chassis> heavies = ChassiDB.lookup(ChassiClass.ASSAULT);
 
       assertTrue(heavies.contains(ChassiDB.lookup("PRETTY BABY")));
       assertTrue(heavies.contains(ChassiDB.lookup("DRAGON SLAYER")));
       assertTrue(heavies.contains(ChassiDB.lookup("MISERY")));
       assertTrue(heavies.contains(ChassiDB.lookup("AS7-D-DC")));
 
-      for(Chassi chassi : heavies){
+      for(Chassis chassi : heavies){
          assertEquals(ChassiClass.ASSAULT, chassi.getChassiClass());
       }
    }

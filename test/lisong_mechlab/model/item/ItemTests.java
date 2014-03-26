@@ -20,19 +20,14 @@
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
@@ -55,34 +50,14 @@ public class ItemTests{
    @Test
    public void testJumpJets(){
       JumpJet jj = (JumpJet)ItemDB.lookup(1503); // Class IV JJ
-      Chassi chassi_39t = mock(Chassi.class);
-      Chassi chassi_40t = mock(Chassi.class);
-      Chassi chassi_59t = mock(Chassi.class);
-      Chassi chassi_60t = mock(Chassi.class);
-      when(chassi_39t.getMassMax()).thenReturn(39);
-      when(chassi_40t.getMassMax()).thenReturn(40);
-      when(chassi_59t.getMassMax()).thenReturn(59);
-      when(chassi_60t.getMassMax()).thenReturn(60);
-      when(chassi_39t.getMaxJumpJets()).thenReturn(1);
-      when(chassi_40t.getMaxJumpJets()).thenReturn(1);
-      when(chassi_59t.getMaxJumpJets()).thenReturn(1);
-      when(chassi_60t.getMaxJumpJets()).thenReturn(1);
-      Loadout loadout_39t = mock(Loadout.class);
-      Loadout loadout_40t = mock(Loadout.class);
-      Loadout loadout_59t = mock(Loadout.class);
-      Loadout loadout_60t = mock(Loadout.class);
-      when(loadout_39t.getChassi()).thenReturn(chassi_39t);
-      when(loadout_40t.getChassi()).thenReturn(chassi_40t);
-      when(loadout_59t.getChassi()).thenReturn(chassi_59t);
-      when(loadout_60t.getChassi()).thenReturn(chassi_60t);
 
-      assertFalse(jj.isEquippableOn(loadout_39t)); // 39 tons
-      assertTrue(jj.isEquippableOn(loadout_40t)); // 40 tons
-      assertTrue(jj.isEquippableOn(loadout_59t)); // 59 tons
-      assertFalse(jj.isEquippableOn(loadout_60t)); // 60 tons
       assertEquals(3.75, jj.getDuration(), 0);
       assertEquals(0.1, jj.getJumpHeat(), 0);
       assertEquals(39.3, jj.getForce(), 0);
+      
+      assertTrue(jj.getMinTons() > 0);
+      assertTrue(jj.getMaxTons() > 0);
+      assertTrue(jj.getMaxTons() > jj.getMinTons());
    }
 
    @Test
@@ -96,19 +71,13 @@ public class ItemTests{
 
       assertEquals(6, std175.getNumCriticalSlots(hm.getUpgrades()));
       assertEquals(6, std180.getNumCriticalSlots(hm.getUpgrades()));
-      // assertEquals(12, xl330.getNumCriticalSlots());
-      // assertEquals(12, xl335.getNumCriticalSlots());
+      assertEquals(6, xl330.getNumCriticalSlots(hm.getUpgrades()));
+      assertEquals(6, xl335.getNumCriticalSlots(hm.getUpgrades()));
 
       assertEquals(9.0, std175.getMass(hm.getUpgrades()), 0.0);
       assertEquals(9.0, std180.getMass(hm.getUpgrades()), 0.0);
       assertEquals(19.5, xl330.getMass(hm.getUpgrades()), 0.0);
       assertEquals(20.0, xl335.getMass(hm.getUpgrades()), 0.0);
-
-      // Heavy Metal can equip 180-330 engines
-      assertFalse(std175.isEquippableOn(hm));
-      assertTrue(std180.isEquippableOn(hm));
-      assertTrue(xl330.isEquippableOn(hm));
-      assertFalse(xl335.isEquippableOn(hm));
 
       // Engines have a base heat of the dissipation equal to 2 standard heat sinks when using 100% throttle.
       assertEquals(0.2, std175.getHeat(), 0.0);
@@ -167,23 +136,7 @@ public class ItemTests{
       assertEquals(0.5, JJC4.getMass(null), 0.0);
       assertEquals(0.5, JJC5.getMass(null), 0.0);
 
-      assertTrue(ECM.isEquippableOn(new Loadout("AS7-D-DC", xBar)));
-      assertFalse(ECM.isEquippableOn(new Loadout("JR7-K", xBar)));
-
-      assertTrue(JJC5.isEquippableOn(new Loadout("JR7-F", xBar)));
-      assertFalse(JJC5.isEquippableOn(new Loadout("RVN-3L", xBar)));
-      assertFalse(JJC5.isEquippableOn(new Loadout("TBT-5J", xBar)));
-      assertFalse(JJC5.isEquippableOn(new Loadout("CTF-3D", xBar)));
-
-      assertFalse(JJC4.isEquippableOn(new Loadout("JR7-F", xBar)));
-      assertFalse(JJC4.isEquippableOn(new Loadout("hbk-4j", xBar)));
-      assertTrue(JJC4.isEquippableOn(new Loadout("TBT-5J", xBar)));
-      assertFalse(JJC4.isEquippableOn(new Loadout("CTF-3D", xBar)));
-
-      assertFalse(JJC3.isEquippableOn(new Loadout("JR7-F", xBar)));
-      assertFalse(JJC3.isEquippableOn(new Loadout("ILYA MUROMETS", xBar)));
-      assertFalse(JJC3.isEquippableOn(new Loadout("TBT-5J", xBar)));
-      assertTrue(JJC3.isEquippableOn(new Loadout("CTF-3D", xBar)));
+      assertEquals(HardpointType.ECM, ECM.getHardpointType());
    }
 
    /**

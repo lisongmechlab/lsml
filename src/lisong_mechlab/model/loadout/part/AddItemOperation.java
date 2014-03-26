@@ -77,7 +77,9 @@ public class AddItemOperation extends ItemOperation{
 
    @Override
    public void apply(){
-      if( !loadoutPart.canAddItem(item) )
+      if( !loadoutPart.getLoadout().canEquip(item) )
+         throw new IllegalArgumentException("Can't add " + item + "!");
+      if( !loadoutPart.canEquip(item) )
          throw new IllegalArgumentException("Can't add " + item + "!");
       addItem(item);
    }

@@ -31,7 +31,7 @@ import java.util.List;
 import junitparams.JUnitParamsRunner;
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
@@ -68,7 +68,7 @@ public class LoadoutSerializationTest{
 
    @SuppressWarnings("unused")
    private Object[] allChassis(){
-      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
@@ -80,7 +80,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testEmptyLoadout(){
-      Chassi chassi = ChassiDB.lookup("CPLT-K2");
+      Chassis chassi = ChassiDB.lookup("CPLT-K2");
       Loadout cut = new Loadout(chassi, xBar);
 
       assertEquals(0, cut.getArmor());
@@ -112,7 +112,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testStockLoadoutAS7D() throws Exception{
-      Chassi chassi = ChassiDB.lookup("AS7-D");
+      Chassis chassi = ChassiDB.lookup("AS7-D");
       Loadout cut = new Loadout("AS7-D", xBar);
 
       assertEquals(608, cut.getArmor());
@@ -259,7 +259,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testStockLoadoutSDR5V() throws Exception{
-      Chassi chassi = ChassiDB.lookup("SDR-5V");
+      Chassis chassi = ChassiDB.lookup("SDR-5V");
       Loadout cut = new Loadout("SDR-5V", xBar);
 
       assertEquals(112, cut.getArmor());

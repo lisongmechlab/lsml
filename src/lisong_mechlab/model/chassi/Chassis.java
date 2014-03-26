@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lisong_mechlab.converter.GameDataFile;
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.HardpointsXml;
 import lisong_mechlab.model.mwo_parsing.Localization;
@@ -35,12 +38,12 @@ import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfMech;
 
 /**
- * This class represents a bare mech chassi. The class is immutable as the chassii are fixed. To configure a 'mech use
+ * This class represents a bare mech chassis. The class is immutable as the chassis are fixed. To configure a 'mech use
  * {@link Loadout}.
  * 
  * @author Emily Björk
  */
-public class Chassi{
+public class Chassis{
    private final ChassiClass             chassiclass;
    private final String                  name;
    private final String                  shortName;
@@ -56,7 +59,7 @@ public class Chassi{
    private final double                  turnFactor;
    private final double                  twistFactor;
 
-   public Chassi(ItemStatsMech aStatsMech, GameDataFile aGameData){
+   public Chassis(ItemStatsMech aStatsMech, GameDataFile aGameData){
       MechDefinition mdf = null;
       HardpointsXml hardpoints = null;
       MdfMech mdfMech = null;
@@ -110,9 +113,9 @@ public class Chassi{
 
    @Override
    public boolean equals(Object obj){
-      if( !(obj instanceof Chassi) )
+      if( !(obj instanceof Chassis) )
          return false;
-      return (mwoId == ((Chassi)obj).mwoId);
+      return (mwoId == ((Chassis)obj).mwoId);
    }
 
    public int getEngineMax(){
@@ -179,8 +182,8 @@ public class Chassi{
       return mwoId;
    }
 
-   public boolean isSameSeries(Chassi aChassi){
-      return shortName.split("-")[0].equals(aChassi.shortName.split("-")[0]);
+   public boolean isSameSeries(Chassis aChassis){
+      return shortName.split("-")[0].equals(aChassis.shortName.split("-")[0]);
    }
 
    public boolean isSpecialVariant(){
@@ -188,10 +191,38 @@ public class Chassi{
    }
 
    public double getTurnFactor(){
-      return 360.0/31.4; // Matching smurfy for now, this should be somewhere in the data files. 
+      return 360.0 / 31.4; // Matching smurfy for now, this should be somewhere in the data files.
    }
 
    public double getTwistFactor(){
       return twistFactor;
+   }
+
+   /**
+    * This method checks static, global constraints on an {@link Item}.
+    * <p>
+    * If this method returns <code>false</code> for an {@link Item}, that item will never be possible to equip on any
+    * loadout based on this chassis.
+    * 
+    * @param aItem
+    *           The {@link Item} to check for.
+    * @return <code>true</code> if this chassis can equip the {@link Item}.
+    */
+   public boolean isAllowed(Item aItem){
+      if( aItem instanceof JumpJet ){
+         JumpJet jj = (JumpJet)aItem;
+         return getMaxJumpJets() > 0 && jj.getMinTons() <= getMassMax() &&  getMassMax() < jj.getMaxTons();
+      }
+      else if( aItem instanceof Engine ){
+         Engine engine = (Engine)aItem;
+         return engine.getRating() >= getEngineMin() && engine.getRating() <= getEngineMax();
+      }
+      else{
+         for(InternalPart part : parts.values()){
+            if( part.isAllowed(aItem) )
+               return true;
+         }
+      }
+      return false;
    }
 }

@@ -31,7 +31,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
@@ -85,8 +85,8 @@ public class GarageTree extends JTree{
             }
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                Object clicked = getClickedObject(e);
-               if( clicked instanceof Chassi ){
-                  Chassi chassi = (Chassi)clicked;
+               if( clicked instanceof Chassis ){
+                  Chassis chassi = (Chassis)clicked;
                   Loadout clickedLoadout = new Loadout(chassi, xBar);
                   aLoadoutDesktop.openLoadout(clickedLoadout);
                }
@@ -111,8 +111,8 @@ public class GarageTree extends JTree{
       if( mouseover != null ){
          StringBuilder sb = new StringBuilder(100);
          Object leaf = mouseover.getLastPathComponent();
-         if( leaf instanceof Chassi ){
-            Chassi chassi = (Chassi)leaf;
+         if( leaf instanceof Chassis ){
+            Chassis chassi = (Chassis)leaf;
             sb.append("<html>");
             sb.append("Max Tons: ").append(chassi.getMassMax()).append(" Engine: ").append(chassi.getEngineMin()).append(" - ")
               .append(chassi.getEngineMax()).append("<br>");

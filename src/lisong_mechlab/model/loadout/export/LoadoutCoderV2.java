@@ -33,9 +33,9 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
@@ -48,9 +48,9 @@ import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
+import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
+import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
-import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceOperation;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.DecodingException;
@@ -190,7 +190,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
          short chassiId = (short)(((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF));
 
-         Chassi chassi = ChassiDB.lookup(chassiId);
+         Chassis chassi = ChassiDB.lookup(chassiId);
          loadout = new Loadout(chassi, xBar);
          loadout.getEfficiencies().setCoolRun((upeff & (1 << 4)) != 0);
          loadout.getEfficiencies().setHeatContainment((upeff & (1 << 3)) != 0);
@@ -223,9 +223,9 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          }
          List<Integer> ids = huff.decode(rest);
          stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, (ArmorUpgrade)UpgradeDB.lookup(ids.get(0))));
-         stack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, (StructureUpgrade)UpgradeDB.lookup(ids.get(1))));
+         stack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, (StructureUpgrade)UpgradeDB.lookup(ids.get(1))));
          stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, (HeatsinkUpgrade)UpgradeDB.lookup(ids.get(2))));
-         stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.get(3))));
+         stack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.get(3))));
 
          if( -1 != ids.get(4) ){
             throw new DecodingException("Broken LSML link, expected separator got: " + ids.get(4));
@@ -277,14 +277,14 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateAllLoadouts() throws Exception{
-      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
       MessageXBar xBar = new MessageXBar();
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
 
-      for(Chassi chassi : chassii){
+      for(Chassis chassi : chassii){
          Loadout loadout = new Loadout(chassi.getName(), xBar);
          System.out.println("[" + chassi.getName() + "]=" + coder.encodeLSML(loadout));
       }

@@ -27,4 +27,5 @@ package lisong_mechlab.view.preferences;
 public class Preferences{
    public FontPreferences fontPreferences = new FontPreferences();
    public SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
+   public UiPreferences uiPreferences = new UiPreferences();
 }

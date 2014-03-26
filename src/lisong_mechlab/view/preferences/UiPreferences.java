@@ -17,32 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-
-package lisong_mechlab.model.metrics;
-
-import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.loadout.Loadout;
+package lisong_mechlab.view.preferences;
 
 /**
- * This {@link Metric} calculates how fast a mech will turn (degrees per second).
+ * This class contains preferences related to the UI behavior.
  * 
  * @author Emily Björk
  */
-public class TurningSpeed implements Metric{
+public class UiPreferences{
+   private static final String UI_USE_SMARTPLACE = "uiUseSmartPlace";
 
-   private final Loadout loadout;
-
-   public TurningSpeed(Loadout aLoadout){
-      loadout = aLoadout;
+   public void setUseSmartPlace(boolean value){
+      PreferenceStore.setString(UI_USE_SMARTPLACE, Boolean.toString(value));
    }
 
-   @Override
-   public double calculate(){
-      Chassis chassi = loadout.getChassi();
-      Engine engine = loadout.getEngine();
-      if( engine == null )
-         return 0.0;
-      return loadout.getEfficiencies().getTurnSpeedModifier() * chassi.getTurnFactor() * loadout.getEngine().getRating() / chassi.getMassMax();
+   /**
+    * @return <code>true</code> if the user has opted to use smart place.
+    */
+   public boolean getUseSmartPlace(){
+      return Boolean.parseBoolean(PreferenceStore.getString(UI_USE_SMARTPLACE, "false"));
    }
 }

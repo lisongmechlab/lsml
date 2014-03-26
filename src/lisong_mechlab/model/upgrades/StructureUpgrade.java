@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
 
 /**
@@ -52,7 +52,7 @@ public class StructureUpgrade extends Upgrade{
     *           The chassis to calculate the internal structure mass for.
     * @return The mass of the internal structure.
     */
-   public double getStructureMass(Chassi aChassis){
+   public double getStructureMass(Chassis aChassis){
       double ans = aChassis.getMassMax() * internalStructurePct;
       
       return Math.round(10*ans / 5) * 0.5;
