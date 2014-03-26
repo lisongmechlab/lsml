@@ -20,7 +20,6 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.Localization;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStats;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -102,15 +101,14 @@ public class Item implements Comparable<Item>{
    }
 
    /**
-    * Determines if the given {@link Loadout} is able to equip the given item. Will consider the chassi and upgrades
-    * only.
+    * This method checks if this {@link Item} can be equipped in combination with the given {@link Upgrades}.
     * 
-    * @param aLoadout
-    * @return True if the {@link Loadout} is able to carry the weapon with current upgrades.
+    * @param aUpgrades
+    *           The {@link Upgrades} to check against.
+    * @return <code>true</code> if this {@link Item} is compatible with the given upgrades.
     */
-   public boolean isEquippableOn(Loadout aLoadout){
-      if( aLoadout == null )
-         return true;
+   @SuppressWarnings("unused") // Interface
+   public boolean isCompatible(Upgrades aUpgrades){
       return true;
    }
 

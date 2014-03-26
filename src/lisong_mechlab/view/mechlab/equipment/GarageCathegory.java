@@ -23,8 +23,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
 import lisong_mechlab.model.loadout.Loadout;
@@ -58,7 +58,7 @@ class GarageCathegory extends FilterTreeCathegory<Loadout> implements MessageXBa
 
    @Override
    protected boolean filter(Loadout aLoadout){
-      Chassi chassi = aLoadout.getChassi();
+      Chassis chassi = aLoadout.getChassi();
       return aLoadout.getName().toLowerCase().contains(getFilterString()) || chassi.getName().toLowerCase().contains(getFilterString());
    }
 

@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 public class HeatSink extends Module{
    private final double dissapation;
@@ -45,7 +45,7 @@ public class HeatSink extends Module{
    }
 
    @Override
-   public boolean isEquippableOn(Loadout aLoadout){
-      return aLoadout.getUpgrades().getHeatSink().getHeatSinkType() == this;
+   public boolean isCompatible(Upgrades aUpgrades){
+      return aUpgrades.getHeatSink().getHeatSinkType() == this;
    }
 }

@@ -20,12 +20,21 @@
 package lisong_mechlab.view.preferences;
 
 /**
- * This class is a container class for all the individual preferences classes.
+ * This class contains preferences related to the UI behavior.
  * 
  * @author Li Song
  */
-public class Preferences{
-   public FontPreferences fontPreferences = new FontPreferences();
-   public SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
-   public UiPreferences uiPreferences = new UiPreferences();
+public class UiPreferences{
+   private static final String UI_USE_SMARTPLACE = "uiUseSmartPlace";
+
+   public void setUseSmartPlace(boolean value){
+      PreferenceStore.setString(UI_USE_SMARTPLACE, Boolean.toString(value));
+   }
+
+   /**
+    * @return <code>true</code> if the user has opted to use smart place.
+    */
+   public boolean getUseSmartPlace(){
+      return Boolean.parseBoolean(PreferenceStore.getString(UI_USE_SMARTPLACE, "false"));
+   }
 }

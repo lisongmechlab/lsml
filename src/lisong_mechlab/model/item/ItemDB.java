@@ -41,6 +41,7 @@ public class ItemDB{
    static public final HeatSink            DHS;
    static public final Item                ECM;
    static public final Item                BAP;
+   static public final Item                CASE;
 
    static private final Map<String, Item>  locname2item;
    static private final Map<String, Item>  mwoname2item;
@@ -71,14 +72,14 @@ public class ItemDB{
 
    public static Item lookup(int anMwoIndex){
       if( !mwoidx2item.containsKey(anMwoIndex) ){
-         throw new IllegalArgumentException("No item with that index! :" + anMwoIndex);
+         throw new IllegalArgumentException("No item with that index: " + anMwoIndex);
       }
       return mwoidx2item.get(anMwoIndex);
    }
 
    static private void put(Item anItem){
       assert anItem != null;
-      assert(!locname2item.containsKey(anItem));
+      assert (!locname2item.containsKey(anItem));
       mwoname2item.put(canonize(anItem.getKey()), anItem);
       locname2item.put(canonize(anItem.getName()), anItem);
       mwoidx2item.put(anItem.getMwoId(), anItem);
@@ -86,7 +87,7 @@ public class ItemDB{
 
    static private String canonize(String aString){
       String key = aString.toLowerCase();
-      if(key.equals("anti-missile system")){
+      if( key.equals("anti-missile system") ){
          return "ams"; // TODO: Update references
       }
       return key;
@@ -119,7 +120,7 @@ public class ItemDB{
                break;
             case "CBAPStats":
             case "CCASEStats":
-            case "CDummyHeadStats":
+            case "CCommandConsoleStats":
                put(new Module(statsModule));
                break;
             default:
@@ -136,7 +137,7 @@ public class ItemDB{
                try{
                   if( Integer.parseInt(w.id) == statsWeapon.InheritFrom ){
                      statsWeapon.WeaponStats = w.WeaponStats;
-                     if(statsWeapon.Loc.descTag == null){
+                     if( statsWeapon.Loc.descTag == null ){
                         statsWeapon.Loc.descTag = w.Loc.descTag;
                      }
                      break;
@@ -146,7 +147,7 @@ public class ItemDB{
                   continue;
                }
             }
-            if(statsWeapon.WeaponStats == null){
+            if( statsWeapon.WeaponStats == null ){
                throw new RuntimeException("Unable to find referenced item in \"inherit statement from clause\" for: " + statsWeapon.name);
             }
          }
@@ -175,5 +176,6 @@ public class ItemDB{
       DHS = (HeatSink)lookup("DOUBLE HEAT SINK");
       ECM = lookup("GUARDIAN ECM");
       BAP = lookup("BEAGLE ACTIVE PROBE");
+      CASE = lookup("C.A.S.E.");
    }
 }
