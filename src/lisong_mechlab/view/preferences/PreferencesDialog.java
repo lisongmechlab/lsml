@@ -20,8 +20,12 @@
 package lisong_mechlab.view.preferences;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,14 +47,37 @@ public class PreferencesDialog extends JDialog{
    public PreferencesDialog(){
       super(ProgramInit.lsml(), "Settings", ModalityType.APPLICATION_MODAL);
 
-      addAppearancePane();
-
+      JPanel root = new JPanel();
+      root.setLayout(new BoxLayout(root, BoxLayout.PAGE_AXIS));
+      addAppearancePane(root);
+      addUiPane(root);
+      
+      setContentPane(root);
       pack();
       setLocationRelativeTo(ProgramInit.lsml());
       setVisible(true);
    }
 
-   private void addAppearancePane(){
+   private void addUiPane(JPanel aRoot){
+      JPanel panel = new JPanel();
+      panel.setBorder(new TitledBorder("UI Behavior"));
+
+      final JCheckBox smartPlace = new JCheckBox("Use SmartPlace", ProgramInit.lsml().preferences.uiPreferences.getUseSmartPlace());
+      smartPlace.setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
+      smartPlace.addActionListener(new AbstractAction(){
+         private static final long serialVersionUID = -8136020916897237506L;
+
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            ProgramInit.lsml().preferences.uiPreferences.setUseSmartPlace(smartPlace.isSelected());
+         }
+      });
+      panel.add(smartPlace);
+
+      aRoot.add(panel);
+   }
+
+   private void addAppearancePane(JPanel aRoot){
       JPanel panel = new JPanel();
       panel.setBorder(new TitledBorder("Appearance"));
 
@@ -103,6 +130,6 @@ public class PreferencesDialog extends JDialog{
 
       panel.add(fontSizeLabel);
       panel.add(buttons);
-      add(panel);
+      aRoot.add(panel);
    }
 }

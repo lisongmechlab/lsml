@@ -20,13 +20,33 @@
 package lisong_mechlab.view.mechlab;
 
 import java.awt.Component;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.TransferHandler;
+import javax.swing.WindowConstants;
 
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
@@ -51,6 +71,69 @@ public class ItemLabel extends JLabel{
    private static final long serialVersionUID = 1237952620487557121L;
    private final Item        item;
 
+   private static class ProgressDialog extends JDialog{
+      private static final long serialVersionUID = -6084430266229568009L;
+      SwingWorker<Void, Void>   task;
+
+      public ProgressDialog(){
+         super(ProgramInit.lsml(), "SmartPlace in progress...", ModalityType.APPLICATION_MODAL);
+         setLocationRelativeTo(ProgramInit.lsml());
+
+         JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
+         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+         JProgressBar progressBar = new JProgressBar();
+         progressBar.setIndeterminate(true);
+         panel.add(new JLabel("That's a tricky proposition cap'n but I'll see what I can do..."));
+         panel.add(progressBar);
+         panel.add(new JButton(new AbstractAction("Abort"){
+            private static final long serialVersionUID = 2384981612883023314L;
+
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               if( task != null )
+                  task.cancel(true);
+            }
+         }));
+         setContentPane(panel);
+         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+         pack();
+      }
+
+      void setTask(SwingWorker<Void, Void> aTask){
+         task = aTask;
+      }
+   }
+
+   private static class AutoPlaceTask extends SwingWorker<Void, Void>{
+      private AutoAddItemOperation operation;
+      private JDialog              dialog;
+      private LoadoutFrame         loadoutFrame;
+      private MessageXBar          xBar;
+      private Item                 itemToPlace;
+
+      public AutoPlaceTask(JDialog aDialog, LoadoutFrame aLoadoutFrame, MessageXBar anXBar, Item aItem){
+         dialog = aDialog;
+         loadoutFrame = aLoadoutFrame;
+         xBar = anXBar;
+         itemToPlace = aItem;
+      }
+
+      @Override
+      public Void doInBackground(){
+         operation = new AutoAddItemOperation(loadoutFrame.getLoadout(), xBar, itemToPlace);
+         return null;
+      }
+
+      @Override
+      public void done(){
+         // In EDT
+         if( !isCancelled() ){
+            loadoutFrame.getOpStack().pushAndApply(operation);
+         }
+         dialog.dispose();
+      }
+   }
+
    public ItemLabel(Item anItem, final EquipmentPanel aEquipmentPanel, final ItemInfoPanel aInfoPanel, final MessageXBar anXBar){
       item = anItem;
 
@@ -61,8 +144,8 @@ public class ItemLabel extends JLabel{
       addMouseListener(new MouseAdapter(){
          @Override
          public void mousePressed(MouseEvent anEvent){
-            LoadoutFrame frame = ProgramInit.lsml().mechLabPane.getActiveLoadoutFrame();
-            Loadout loadout = aEquipmentPanel.getCurrentLoadout();
+            final LoadoutFrame frame = ProgramInit.lsml().mechLabPane.getActiveLoadoutFrame();
+            final Loadout loadout = aEquipmentPanel.getCurrentLoadout();
 
             Component component = anEvent.getComponent();
             if( component instanceof ItemLabel ){
@@ -74,8 +157,55 @@ public class ItemLabel extends JLabel{
             handle.exportAsDrag(button, anEvent, TransferHandler.COPY);
 
             if( SwingUtilities.isLeftMouseButton(anEvent) && anEvent.getClickCount() >= 2 ){
-               if( null != loadout )
-                  frame.getOpStack().pushAndApply(new AutoAddItemOperation(loadout, anXBar, item));
+               if( null != loadout ){
+                  if( smartPlace ){
+                     if( !ProgramInit.lsml().preferences.uiPreferences.getUseSmartPlace() ){
+                        Object[] choices = {"Use SmartPlace", "Disable SmartPlace"};
+                        Object defaultChoice = choices[0];
+                        int choice = JOptionPane.showOptionDialog(ProgramInit.lsml(),
+                                                                  "SmartPlace can re-arrange items on your loadout to make the item you're trying to equip fit.\n"
+                                                                        + "No items will be removed, only moved.\n"
+                                                                        + "It is not guaranteed that there exists an arrangement of items that allows the item to be added\n"
+                                                                        + "in which case SmartPlace will try all possible combinations which might take time.\n"
+                                                                        + "If smart place is taking too long you can safely abort it without changes to your loadout.\n\n"
+                                                                        + "You can see if SmartPlace will be used on the item in the equipment pane if it is semi grayed out.\n",
+                                                                  "Enable SmartPlace?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                                                                  null, choices, defaultChoice);
+                        if( choice == 0 ){
+                           ProgramInit.lsml().preferences.uiPreferences.setUseSmartPlace(true);
+                        }
+                        else{
+                           return;
+                        }
+                     }
+
+                     final ProgressDialog dialog = new ProgressDialog();
+                     final AutoPlaceTask task = new AutoPlaceTask(dialog, frame, anXBar, item);
+                     task.execute();
+                     dialog.setTask(task);
+                     dialog.addWindowListener(new WindowAdapter(){
+                        @Override
+                        public void windowClosed(WindowEvent e){
+                           task.cancel(true);
+                        }
+                     });
+
+                     try{
+                        task.get(500, TimeUnit.MILLISECONDS);
+                     }
+                     catch( InterruptedException e ){
+                        return; // Cancelled
+                     }
+                     catch( ExecutionException e ){
+                        throw new RuntimeException(e); // Corblimey
+                     }
+                     catch( TimeoutException e ){
+                        dialog.setVisible(true); // Show progress meter if it's taking time and resume EDT
+                     }
+                  }else{
+                     frame.getOpStack().pushAndApply(new AutoAddItemOperation(loadout, anXBar, item));
+                  }
+               }
             }
          }
       });
@@ -90,11 +220,7 @@ public class ItemLabel extends JLabel{
       builder.append(item.getShortName(anUpgrades));
       builder.append("<br/><span style=\"font-size:x-small;\">");
       builder.append("Tons: ").append(item.getMass(anUpgrades)).append("<br/>Slots: ").append(item.getNumCriticalSlots(anUpgrades));
-      
-      if(aLoadout != null && aLoadout.hasEquippablePermutation(item))
-         builder.append("<br/>Feasible");
-      
-      
+
       if( item instanceof Engine && aLoadout != null ){
          Engine engine = (Engine)item;
          double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getChassi(), aLoadout.getEfficiencies().getSpeedModifier());
@@ -110,7 +236,29 @@ public class ItemLabel extends JLabel{
       return item;
    }
 
+   private boolean smartPlace = false;
+
+   @Override
+   protected void paintComponent(Graphics grphcs){
+      if( !isOpaque() || !smartPlace ){
+         super.paintComponent(grphcs);
+         return;
+      }
+
+      Graphics2D g2d = (Graphics2D)grphcs;
+      g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      int offset = 60;
+      GradientPaint gp = new GradientPaint(offset, 0, getBackground(), offset + 1, 1, StyleManager.getBgColorInvalid());
+      g2d.setPaint(gp);
+      g2d.fillRect(0, 0, getWidth(), getHeight());
+      setOpaque(false);
+      super.paintComponent(grphcs);
+      setOpaque(true);
+   }
+
    public void updateVisibility(Loadout aLoadout){
+      boolean prevSmartPlace = smartPlace;
+      smartPlace = false;
       if( aLoadout != null ){
          updateText(aLoadout);
          if( !aLoadout.getChassi().isAllowed(item) || !item.isCompatible(aLoadout.getUpgrades()) ){
@@ -118,11 +266,12 @@ public class ItemLabel extends JLabel{
          }
          else{
             if( !aLoadout.canEquip(item) ){
-               if(aLoadout.hasEquippablePermutation(item)){
-                  StyleManager.styleItem(this, item); // TODO: Render it differently
+               if( !aLoadout.getCandidateLocationsForItem(item).isEmpty() ){
+                  StyleManager.styleItem(this, item);
+                  smartPlace = true;
                }
                else{
-                  StyleManager.colourInvalid(this);                  
+                  StyleManager.colourInvalid(this);
                }
             }
             else{
@@ -135,15 +284,16 @@ public class ItemLabel extends JLabel{
                   setVisible(false);
                }
                else{
+                  boolean isUsable = false;
                   for(Item it : aLoadout.getAllItems()){
                      if( it instanceof AmmoWeapon ){
                         if( ((AmmoWeapon)it).getAmmoType(aLoadout.getUpgrades()) == ammunition ){
-                           setVisible(true);
-                           return;
+                           isUsable = true;
+                           break;
                         }
                      }
                   }
-                  setVisible(false);
+                  setVisible(isUsable);
                }
             }
             else
@@ -155,5 +305,8 @@ public class ItemLabel extends JLabel{
          StyleManager.styleItem(this, item);
          setVisible(true);
       }
+
+      if( prevSmartPlace != smartPlace )
+         repaint();
    }
 }
