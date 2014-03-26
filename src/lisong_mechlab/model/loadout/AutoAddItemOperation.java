@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import lisong_mechlab.model.chassi.HardpointType;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
@@ -49,11 +50,14 @@ public class AutoAddItemOperation extends LoadoutOperation{
       final Node    parent;
       final int     score;
 
-      Node(Loadout aRoot){
+      final Item    targetItem;
+
+      Node(Loadout aRoot, Item aItem){
          parent = null;
-         item = null;
+         item = aItem;
          source = null;
          target = null;
+         targetItem = null;
          data = aRoot;
          score = score();
       }
@@ -63,9 +67,32 @@ public class AutoAddItemOperation extends LoadoutOperation{
          parent = aParent;
          source = aSource;
          target = aTarget;
+         targetItem = null;
          item = aItem;
          stack.pushAndApply(new RemoveItemOperation(null, data.getPart(source), item));
          stack.pushAndApply(new AddItemOperation(null, data.getPart(target), item));
+         score = score();
+      }
+
+      /**
+       * @param aParent
+       * @param aSourcePart
+       * @param aTargetPart
+       * @param aSourceItem
+       * @param aTargetItem
+       */
+      Node(Node aParent, Part aSourcePart, Part aTargetPart, Item aSourceItem, Item aTargetItem){
+         data = new Loadout(aParent.data, null);
+         parent = aParent;
+         source = aSourcePart;
+         target = aTargetPart;
+         targetItem = aTargetItem;
+         item = aSourceItem;
+
+         stack.pushAndApply(new RemoveItemOperation(null, data.getPart(target), aTargetItem));
+         stack.pushAndApply(new RemoveItemOperation(null, data.getPart(source), aSourceItem));
+         stack.pushAndApply(new AddItemOperation(null, data.getPart(target), aSourceItem));
+         stack.pushAndApply(new AddItemOperation(null, data.getPart(source), aTargetItem));
          score = score();
       }
 
@@ -84,7 +111,7 @@ public class AutoAddItemOperation extends LoadoutOperation{
       private int score(){
          int maxFree = 0;
          for(Part part : validParts){
-            maxFree = Math.max(maxFree, data.getPart(part).getNumCriticalSlotsFree());
+            maxFree = Math.max(maxFree, data.getPart(part).getNumCriticalSlotsFree() * (data.getPart(part).getInternalPart().isAllowed(item) ? 1 : 0));
          }
          return maxFree;
       }
@@ -114,7 +141,7 @@ public class AutoAddItemOperation extends LoadoutOperation{
       List<Node> open = new ArrayList<>();
 
       // Initial node
-      open.add(new Node(aLoadout));
+      open.add(new Node(aLoadout, anItem));
       while( !open.isEmpty() ){
          Node node = open.remove(0);
          closed.add(node);
@@ -140,14 +167,24 @@ public class AutoAddItemOperation extends LoadoutOperation{
          }
          Collections.sort(open); // Greedy search, I need *a* solution, not the best one.
       }
+
+      throw new IllegalArgumentException("Not possible");
    }
 
    private void applySolution(Node node){
       List<Operation> ops = new LinkedList<>();
       Node n = node;
       while( n.parent != null ){
-         ops.add(0, new RemoveItemOperation(xBar, loadout.getPart(n.source), n.item));
-         ops.add(0, new AddItemOperation(xBar, loadout.getPart(n.target), n.item));
+         if( n.targetItem != null ){
+            ops.add(0, new AddItemOperation(xBar, loadout.getPart(n.target), n.item));
+            ops.add(0, new AddItemOperation(xBar, loadout.getPart(n.source), n.targetItem));
+            ops.add(0, new RemoveItemOperation(xBar, loadout.getPart(n.target), n.targetItem));
+            ops.add(0, new RemoveItemOperation(xBar, loadout.getPart(n.source), n.item));
+         }
+         else{
+            ops.add(0, new AddItemOperation(xBar, loadout.getPart(n.target), n.item));
+            ops.add(0, new RemoveItemOperation(xBar, loadout.getPart(n.source), n.item));
+         }
          n = n.parent;
       }
       // Look at the solution node to find which part in the original loadout the item should
@@ -165,11 +202,40 @@ public class AutoAddItemOperation extends LoadoutOperation{
 
    private List<Node> getBranches(Node aParent, Part aSourcePart, Item aItem){
       List<Node> ans = new ArrayList<>();
+      LoadoutPart srcLoadoutPart = aParent.data.getPart(aSourcePart);
       for(Part targetPart : Part.values()){
          if( aSourcePart == targetPart )
             continue;
-         if( aParent.data.getPart(targetPart).canEquip(aItem) ){
+         LoadoutPart tgtLoadoutPart = aParent.data.getPart(targetPart);
+         if( tgtLoadoutPart.canEquip(aItem) ){
             ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
+         }
+         else if( tgtLoadoutPart.getInternalPart().isAllowed(aItem) ){
+            // The part couldn't take the item directly, see if we can swap with
+            // some item in the part.
+            final int minItemSize = aItem.getNumCriticalSlots(aParent.data.getUpgrades()) - tgtLoadoutPart.getNumCriticalSlotsFree();
+            final int maxItemSize = aItem.getNumCriticalSlots(aParent.data.getUpgrades()) + srcLoadoutPart.getNumCriticalSlotsFree();
+            HardpointType requiredType = aItem.getHardpointType();
+            if( requiredType != HardpointType.NONE
+                && tgtLoadoutPart.getNumItemsOfHardpointType(requiredType) < tgtLoadoutPart.getInternalPart().getNumHardpoints(requiredType) ){
+               requiredType = HardpointType.NONE; // There is at least one free hard point, we don't need to swap with a
+                                                  // item of the required type.
+            }
+            for(Item item : tgtLoadoutPart.getItems()){
+               if( item instanceof Internal )
+                  continue;
+               if( item.getNumCriticalSlots(aParent.data.getUpgrades()) < minItemSize )
+                  continue;
+               if( item.getNumCriticalSlots(aParent.data.getUpgrades()) > maxItemSize )
+                  continue;
+               if( requiredType != HardpointType.NONE && item.getHardpointType() != requiredType )
+                  continue;
+               if( !srcLoadoutPart.getInternalPart().isAllowed(item) )
+                  continue;
+               if(item == aItem)
+                  continue;
+               ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
+            }
          }
       }
       return ans;

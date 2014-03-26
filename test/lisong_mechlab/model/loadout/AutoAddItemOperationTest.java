@@ -24,10 +24,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
@@ -41,6 +43,7 @@ import lisong_mechlab.util.OperationStack;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -56,37 +59,83 @@ public class AutoAddItemOperationTest{
    private OperationStack stack = new OperationStack(0);
 
    /**
+    * {@link AutoAddItemOperation} shall be able to swap items in addition to just moving one at a time. Otherwise there
+    * we miss some solutions.
+    */
+   @Test
+   public void testMoveItem_SwapItems(){
+      // Setup
+      Loadout loadout = new Loadout(ChassiDB.lookup("JR7-O"), xBar);
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.CenterTorso), ItemDB.lookup("XL ENGINE 200")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.CenterTorso), ItemDB.lookup("LRM 10")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.lookup("LRM 10")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.lookup("LRM 5")));
+      Mockito.reset(xBar);
+      // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
+
+      // Execute
+      stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, ItemDB.lookup("LRM 5")));
+      
+      // Verify
+      List<Item> allItems = new ArrayList<>(loadout.getAllItems());
+      Iterator<Item> it = allItems.iterator();
+      while( it.hasNext() ){
+         if( it.next() instanceof Internal )
+            it.remove();
+      }
+      assertEquals(5, allItems.size());
+      assertTrue(allItems.remove(ItemDB.lookup("LRM 10")));
+      assertTrue(allItems.remove(ItemDB.lookup("LRM 10")));
+      assertTrue(allItems.remove(ItemDB.lookup("LRM 5")));
+      assertTrue(allItems.remove(ItemDB.lookup("LRM 5")));
+      assertTrue(allItems.remove(ItemDB.lookup("XL ENGINE 200")));
+      
+      // 1 + 1, move one lrm 5 here and add the wanted lrm 5
+      verify(xBar, times(2)).post(new LoadoutPart.Message(loadout.getPart(Part.CenterTorso), Type.ItemAdded));
+      verify(xBar, times(1)).post(new LoadoutPart.Message(loadout.getPart(Part.CenterTorso), Type.ItemRemoved));
+      verify(xBar, times(1)).post(new LoadoutPart.Message(loadout.getPart(Part.LeftArm), Type.ItemAdded));
+      verify(xBar, times(1)).post(new LoadoutPart.Message(loadout.getPart(Part.LeftArm), Type.ItemRemoved));
+   }
+
+   /**
     * {@link AutoAddItemOperation} shall throw an {@link IllegalArgumentException} if the item cannot be auto added on
     * any permutation of the loadout.
     */
    @Test(expected = IllegalArgumentException.class)
    public void testMoveItem_NotPossible(){
-      // Setup
-      Loadout loadout = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
-      stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+      Loadout loadout = null;
+      Item gaussRifle = null;
+      try{
+         // Setup
+         loadout = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+         stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
 
-      // 2 slots in either leg
-      // 2 slots left in CT
-      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.CenterTorso), ItemDB.lookup("XL ENGINE 200")));
+         // 2 slots in either leg
+         // 2 slots left in CT
+         stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.CenterTorso), ItemDB.lookup("XL ENGINE 200")));
 
-      // 2 slots left on right arm, cannot contain DHS
-      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
-      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
+         // 2 slots left on right arm, cannot contain DHS
+         stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
+         stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
 
-      // 2 slots left on left arm, cannot contain DHS
-      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.DHS));
-      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.DHS));
+         // 2 slots left on left arm, cannot contain DHS
+         stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.DHS));
+         stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.DHS));
 
-      // 6 slots left in right torso (3 taken by engine)
-      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
+         // 6 slots left in right torso (3 taken by engine)
+         stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
 
-      // 0 slots left in left torso (3 taken by engine)
-      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
-      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
-      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
+         // 0 slots left in left torso (3 taken by engine)
+         stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
+         stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
+         stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
 
-      Item gaussRifle = ItemDB.lookup("GAUSS RIFLE");
-
+         gaussRifle = ItemDB.lookup("GAUSS RIFLE");
+      }
+      catch( Throwable e ){
+         fail("Setup threw");
+         return;
+      }
       // Execute
       stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, gaussRifle));
    }
@@ -135,6 +184,11 @@ public class AutoAddItemOperationTest{
 
       // Verify
       List<Item> allItems = new ArrayList<>(loadout.getAllItems());
+      Iterator<Item> it = allItems.iterator();
+      while( it.hasNext() ){
+         if( it.next() instanceof Internal )
+            it.remove();
+      }
       assertEquals(2, allItems.size());
 
       assertTrue(loadout.getPart(Part.RightTorso).getItems().contains(ac20));
