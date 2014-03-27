@@ -19,10 +19,13 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.part;
 
+import lisong_mechlab.model.NotificationMessage;
+import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
@@ -125,6 +128,11 @@ abstract class ItemOperation extends Operation{
             numEngineHS--;
             loadoutPart.addItem(loadoutPart.getLoadout().getUpgrades().getHeatSink().getHeatSinkType());
          }
+      }
+      
+      Engine engine = loadoutPart.getLoadout().getEngine();
+      if(anItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL && xBar != null){
+         xBar.post(new NotificationMessage(Severity.WARNING, loadoutPart.getLoadout(), "C.A.S.E. together with XL engine has no effect."));
       }
       loadoutPart.addItem(anItem);
       if( xBar != null ){

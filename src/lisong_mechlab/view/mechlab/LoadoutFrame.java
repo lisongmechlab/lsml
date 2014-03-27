@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -105,14 +106,20 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
       openFrameCount++;
 
+      JPanel root = new JPanel(new BorderLayout());
+      
+      root.add(new StatusBar(this, anXBar), BorderLayout.SOUTH);
+      
       infoPanel = new LoadoutInfoPanel(this, anXBar);
       JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, createMechView(aLoadout, anXBar), infoPanel);
 
       sp.setDividerLocation(-1);
       sp.setDividerSize(0);
 
+      root.add(sp, BorderLayout.CENTER);
+      
       setFrameIcon(null);
-      setContentPane(sp);
+      setContentPane(root);
 
       pack();
       setVisible(true);
