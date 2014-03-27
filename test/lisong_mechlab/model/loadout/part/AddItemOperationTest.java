@@ -21,6 +21,9 @@ package lisong_mechlab.model.loadout.part;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import lisong_mechlab.model.NotificationMessage;
+import lisong_mechlab.model.NotificationMessage.Severity;
+import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
@@ -29,6 +32,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -96,6 +100,7 @@ public class AddItemOperationTest{
       AddItemOperation cut = null;
       try{
          Item item = ItemDB.lookup("LRM 20");
+         Mockito.when(loadout.canEquip(item)).thenReturn(true);
          Mockito.when(loadoutPart.canEquip(item)).thenReturn(false);
          cut = new AddItemOperation(xBar, loadoutPart, item);
       }
@@ -105,5 +110,35 @@ public class AddItemOperationTest{
       }
 
       cut.apply();
+   }
+
+   /**
+    * C.A.S.E. together with an XL engine should generate a warning notice
+    */
+   @Test
+   public void testAddItem_XLCaseLeft(){
+      Loadout testLoadout = new Loadout(ChassiDB.lookup("AS7-D-DC"), null);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new AddItemOperation(null, testLoadout.getPart(Part.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
+
+      AddItemOperation cut = new AddItemOperation(xBar, testLoadout.getPart(Part.LeftTorso), ItemDB.CASE);
+      cut.apply();
+      
+      Mockito.verify(xBar).post(new NotificationMessage(Severity.WARNING, testLoadout, "C.A.S.E. together with XL engine has no effect."));
+   }
+   
+   /**
+    * C.A.S.E. together with an XL engine should generate a warning notice
+    */
+   @Test
+   public void testAddItem_XLCaseRight(){
+      Loadout testLoadout = new Loadout(ChassiDB.lookup("AS7-D-DC"), null);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new AddItemOperation(null, testLoadout.getPart(Part.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
+
+      AddItemOperation cut = new AddItemOperation(xBar, testLoadout.getPart(Part.RightTorso), ItemDB.CASE);
+      cut.apply();
+      
+      Mockito.verify(xBar).post(new NotificationMessage(Severity.WARNING, testLoadout, "C.A.S.E. together with XL engine has no effect."));
    }
 }
