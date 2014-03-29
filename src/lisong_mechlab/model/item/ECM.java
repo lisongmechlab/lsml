@@ -19,12 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 
 public class ECM extends Module{
 
    public ECM(ItemStatsModule aModule){
-      super(aModule, HardpointType.ECM);
+      super(aModule, HardPointType.ECM);
    }
 }

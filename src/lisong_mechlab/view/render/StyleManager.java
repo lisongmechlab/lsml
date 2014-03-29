@@ -25,7 +25,7 @@ import java.awt.Insets;
 import javax.swing.JComponent;
 import javax.swing.border.Border;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
@@ -125,7 +125,7 @@ public class StyleManager{
       aComponent.setForeground(getFgColorFor(anItem));
    }
 
-   public static void styleThinItem(JComponent aComponent, HardpointType aType){
+   public static void styleThinItem(JComponent aComponent, HardPointType aType){
       aComponent.setOpaque(true);
       aComponent.setBorder(thinItemBorder);
       aComponent.setBackground(getBgColorFor(aType));
@@ -139,14 +139,14 @@ public class StyleManager{
       aComponent.setForeground(COLOR_FG_DYNAMIC);
    }
 
-   public static void styleItem(JComponent aComponent, HardpointType aType){
+   public static void styleItem(JComponent aComponent, HardPointType aType){
       aComponent.setOpaque(true);
       aComponent.setBorder(singleBorder);
       aComponent.setBackground(getBgColorFor(aType));
       aComponent.setForeground(getFgColorFor(aType));
    }
 
-   static public void colour(JComponent aComponent, HardpointType aType){
+   static public void colour(JComponent aComponent, HardPointType aType){
       aComponent.setBackground(getBgColorFor(aType));
       aComponent.setForeground(getFgColorFor(aType));
    }
@@ -161,7 +161,7 @@ public class StyleManager{
       aComponent.setForeground(getFgColorInvalid());
    }
 
-   static public Color getBgColorFor(HardpointType aType){
+   static public Color getBgColorFor(HardPointType aType){
       switch( aType ){
          case AMS:
             return COLOR_BG_AMS;
@@ -220,7 +220,7 @@ public class StyleManager{
       return Color.GRAY.brighter();
    }
 
-   static public Color getFgColorFor(HardpointType aType){
+   static public Color getFgColorFor(HardPointType aType){
       switch( aType ){
          case AMS:
             return COLOR_FG_AMS;

@@ -24,26 +24,28 @@ package lisong_mechlab.model.chassi;
  * 
  * @author Emily Björk
  */
-public class Hardpoint{
+public class HardPoint{
    final int           tubes;
-   final HardpointType type;
+   final HardPointType type;
+   final boolean hasBayDoor;
 
-   public Hardpoint(HardpointType aType){
-      this(aType, 0);
+   public HardPoint(HardPointType aType){
+      this(aType, 0, false);
    }
 
-   public Hardpoint(HardpointType aType, int aNumTubes){
-      if( aType == HardpointType.MISSILE && aNumTubes < 1 ){
+   public HardPoint(HardPointType aType, int aNumTubes, boolean aHasBayDoor){
+      if( aType == HardPointType.MISSILE && aNumTubes < 1 ){
          throw new IllegalArgumentException("Missile hard points must have a positive, non-zero number of tubes");
       }
       type = aType;
       tubes = aNumTubes;
+      hasBayDoor = aHasBayDoor;
    }
 
    /**
     * @return The type of this hardpoint.
     */
-   public HardpointType getType(){
+   public HardPointType getType(){
       return type;
    }
 
@@ -52,5 +54,12 @@ public class Hardpoint{
     */
    public int getNumMissileTubes(){
       return tubes;
+   }
+
+   /**
+    * @return <code>true</code> if this hard point has missile bay doors.
+    */
+   public boolean hasBayDoor(){
+      return hasBayDoor;
    }
 }

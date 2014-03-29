@@ -53,7 +53,6 @@ public class StatusBar extends JPanel implements Reader{
       aXBar.attach(this);
 
       setBorder(new BevelBorder(BevelBorder.LOWERED));
-      //setPreferredSize(new Dimension(frame.getWidth(), 16));
       setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
       statusLabel = new JLabel();
       statusLabel.setHorizontalAlignment(SwingConstants.LEFT);

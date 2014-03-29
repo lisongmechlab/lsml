@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.mwo_parsing.ItemStatsXml;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
@@ -152,9 +152,9 @@ public class ItemDB{
             }
          }
 
-         switch( HardpointType.fromMwoType(statsWeapon.WeaponStats.type) ){
+         switch( HardPointType.fromMwoType(statsWeapon.WeaponStats.type) ){
             case AMS:
-               put(new AmmoWeapon(statsWeapon, HardpointType.AMS));
+               put(new AmmoWeapon(statsWeapon, HardPointType.AMS));
                break;
             case BALLISTIC:
                put(new BallisticWeapon(statsWeapon));

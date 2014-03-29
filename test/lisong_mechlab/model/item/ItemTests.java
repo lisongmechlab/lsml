@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 
 import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
 
@@ -100,7 +100,7 @@ public class ItemTests{
       assertSame(ams, ItemDB.AMS);
       assertEquals(1, ams.getNumCriticalSlots(null));
       assertEquals(0.5, ams.getMass(null), 0.0);
-      assertEquals(HardpointType.AMS, ams.getHardpointType());
+      assertEquals(HardPointType.AMS, ams.getHardpointType());
    }
 
    /**
@@ -136,7 +136,7 @@ public class ItemTests{
       assertEquals(0.5, JJC4.getMass(null), 0.0);
       assertEquals(0.5, JJC5.getMass(null), 0.0);
 
-      assertEquals(HardpointType.ECM, ECM.getHardpointType());
+      assertEquals(HardPointType.ECM, ECM.getHardpointType());
    }
 
    /**

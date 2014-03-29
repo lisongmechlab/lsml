@@ -41,7 +41,7 @@ import javax.swing.table.TableColumn;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
@@ -203,11 +203,11 @@ public class ChassiSelectionPane extends JScrollPane{
       public PartColumn(Part aPart){
          super(0);
          setHeaderValue(aPart.longName());
-         StyleManager.styleThinItem(energy, HardpointType.ENERGY);
-         StyleManager.styleThinItem(ballistic, HardpointType.BALLISTIC);
-         StyleManager.styleThinItem(missile, HardpointType.MISSILE);
-         StyleManager.styleThinItem(ams, HardpointType.AMS);
-         StyleManager.styleThinItem(ecm, HardpointType.ECM);
+         StyleManager.styleThinItem(energy, HardPointType.ENERGY);
+         StyleManager.styleThinItem(ballistic, HardPointType.BALLISTIC);
+         StyleManager.styleThinItem(missile, HardPointType.MISSILE);
+         StyleManager.styleThinItem(ams, HardPointType.AMS);
+         StyleManager.styleThinItem(ecm, HardPointType.ECM);
          part = aPart;
       }
 
@@ -217,11 +217,11 @@ public class ChassiSelectionPane extends JScrollPane{
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
                Chassis chassi = (Chassis)aValue;
-               int e = chassi.getInternalPart(part).getNumHardpoints(HardpointType.ENERGY);
-               int b = chassi.getInternalPart(part).getNumHardpoints(HardpointType.BALLISTIC);
-               int m = chassi.getInternalPart(part).getNumHardpoints(HardpointType.MISSILE);
-               int a = chassi.getInternalPart(part).getNumHardpoints(HardpointType.AMS);
-               int c = chassi.getInternalPart(part).getNumHardpoints(HardpointType.ECM);
+               int e = chassi.getInternalPart(part).getNumHardpoints(HardPointType.ENERGY);
+               int b = chassi.getInternalPart(part).getNumHardpoints(HardPointType.BALLISTIC);
+               int m = chassi.getInternalPart(part).getNumHardpoints(HardPointType.MISSILE);
+               int a = chassi.getInternalPart(part).getNumHardpoints(HardPointType.AMS);
+               int c = chassi.getInternalPart(part).getNumHardpoints(HardPointType.ECM);
                panel.removeAll();
 
                if( e > 0 ){

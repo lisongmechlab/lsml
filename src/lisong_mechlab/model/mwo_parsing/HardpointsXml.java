@@ -34,6 +34,9 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 public class HardpointsXml{
+   @XStreamImplicit(itemFieldName = "WeaponDoorSet")
+   public List<WeaponDoorSet> weapondoors;
+   
    @XStreamImplicit(itemFieldName = "Hardpoint")
    public List<HardPointInfo> hardpoints;
 

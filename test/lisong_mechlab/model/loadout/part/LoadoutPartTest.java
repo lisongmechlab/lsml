@@ -30,7 +30,7 @@ import java.util.List;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
@@ -376,7 +376,7 @@ public class LoadoutPartTest{
    @Test
    public void testCanEquip_Internal(){
       Internal internal = Mockito.mock(Internal.class);
-      Mockito.when(internal.getHardpointType()).thenReturn(HardpointType.NONE);
+      Mockito.when(internal.getHardpointType()).thenReturn(HardPointType.NONE);
       Mockito.when(internal.getMass(Matchers.any(Upgrades.class))).thenReturn(0.0);
       Mockito.when(internal.getNumCriticalSlots(Matchers.any(Upgrades.class))).thenReturn(1);
 
@@ -425,7 +425,7 @@ public class LoadoutPartTest{
 
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(2);
-      Mockito.when(part.getNumHardpoints(HardpointType.MISSILE)).thenReturn(1);
+      Mockito.when(part.getNumHardpoints(HardPointType.MISSILE)).thenReturn(1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
       LoadoutPart cut = new LoadoutPart(loadout, part);
@@ -492,7 +492,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item module = Mockito.mock(Item.class);
-      Mockito.when(module.getHardpointType()).thenReturn(HardpointType.NONE);
+      Mockito.when(module.getHardpointType()).thenReturn(HardPointType.NONE);
       LoadoutPart cut = new LoadoutPart(loadout, part);
 
       assertTrue(cut.canEquip(module));
@@ -511,10 +511,10 @@ public class LoadoutPartTest{
       Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
-      Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(1);
+      Mockito.when(part.getNumHardpoints(HardPointType.BALLISTIC)).thenReturn(1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
-      Mockito.when(ballistic.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
+      Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
       LoadoutPart cut = new LoadoutPart(loadout, part);
 
       assertTrue(cut.canEquip(ballistic));
@@ -528,10 +528,10 @@ public class LoadoutPartTest{
       Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
-      Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(0);
+      Mockito.when(part.getNumHardpoints(HardPointType.BALLISTIC)).thenReturn(0);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
-      Mockito.when(ballistic.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
+      Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
       LoadoutPart cut = new LoadoutPart(loadout, part);
 
       assertFalse(cut.canEquip(ballistic));
@@ -545,10 +545,10 @@ public class LoadoutPartTest{
       Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
-      Mockito.when(part.getNumHardpoints(HardpointType.BALLISTIC)).thenReturn(1);
+      Mockito.when(part.getNumHardpoints(HardPointType.BALLISTIC)).thenReturn(1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
-      Mockito.when(ballistic.getHardpointType()).thenReturn(HardpointType.BALLISTIC);
+      Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
       LoadoutPart cut = new LoadoutPart(loadout, part);
       cut.addItem(ballistic);
 

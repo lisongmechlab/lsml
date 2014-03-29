@@ -29,7 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 
 /**
  * This class displays a list of all weapons and relevant stats about them.
@@ -52,7 +52,7 @@ public class WeaponsListView extends JPanel{
       missileLabel.setFont(missileLabel.getFont().deriveFont(missileLabel.getFont().getSize() * FONT_FACTOR));
       missileLabel.setAlignmentX(0.5f);
       inner.add(missileLabel);
-      JScrollPane missilePane = new JScrollPane(new WeaponStatsTable(HardpointType.MISSILE));
+      JScrollPane missilePane = new JScrollPane(new WeaponStatsTable(HardPointType.MISSILE));
       missilePane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
       inner.add(missilePane);
 
@@ -60,7 +60,7 @@ public class WeaponsListView extends JPanel{
       ballisticLabel.setFont(missileLabel.getFont().deriveFont(ballisticLabel.getFont().getSize() * FONT_FACTOR));
       ballisticLabel.setAlignmentX(0.5f);
       inner.add(ballisticLabel);
-      JScrollPane ballisticPane = new JScrollPane(new WeaponStatsTable(HardpointType.BALLISTIC));
+      JScrollPane ballisticPane = new JScrollPane(new WeaponStatsTable(HardPointType.BALLISTIC));
       ballisticPane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
       inner.add(ballisticPane);
 
@@ -68,7 +68,7 @@ public class WeaponsListView extends JPanel{
       energyLabel.setFont(missileLabel.getFont().deriveFont(energyLabel.getFont().getSize() * FONT_FACTOR));
       energyLabel.setAlignmentX(0.5f);
       inner.add(energyLabel);
-      JScrollPane energyPane = new JScrollPane(new WeaponStatsTable(HardpointType.ENERGY));
+      JScrollPane energyPane = new JScrollPane(new WeaponStatsTable(HardPointType.ENERGY));
       energyPane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
       inner.add(energyPane);
    }

@@ -21,7 +21,7 @@ package lisong_mechlab.model.item;
 
 import java.util.Comparator;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.Upgrade;
@@ -34,7 +34,7 @@ public class MissileWeapon extends AmmoWeapon{
    private final int      baseItemId;
 
    public MissileWeapon(ItemStatsWeapon aStatsWeapon, int aBaseItemId){
-      super(aStatsWeapon, HardpointType.MISSILE, getAmmoType(aStatsWeapon));
+      super(aStatsWeapon, HardPointType.MISSILE, getAmmoType(aStatsWeapon));
       flightSpeed = aStatsWeapon.WeaponStats.speed;
 
       if( null != aStatsWeapon.Artemis )

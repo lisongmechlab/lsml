@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
@@ -157,7 +157,7 @@ public class LoadoutPart{
       }
 
       // Check enough free hard points
-      if( anItem.getHardpointType() != HardpointType.NONE
+      if( anItem.getHardpointType() != HardPointType.NONE
           && getNumItemsOfHardpointType(anItem.getHardpointType()) >= getInternalPart().getNumHardpoints(anItem.getHardpointType()) ){
          return false; // Not enough hard points!
       }
@@ -270,7 +270,7 @@ public class LoadoutPart{
       return 0;
    }
 
-   public int getNumItemsOfHardpointType(HardpointType aHardpointType){
+   public int getNumItemsOfHardpointType(HardPointType aHardpointType){
       int hardpoints = 0;
       for(Item it : items){
          if( it.getHardpointType() == aHardpointType ){

@@ -19,10 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-public enum HardpointType{
+public enum HardPointType{
    ENERGY("E"), BALLISTIC("B"), MISSILE("M"), AMS("AMS"), ECM("ECM"), NONE("");
 
-   private HardpointType(String aShortName){
+   private HardPointType(String aShortName){
       shortName = aShortName;
    }
 
@@ -30,31 +30,31 @@ public enum HardpointType{
       return shortName;
    }
 
-   public static HardpointType fromMwoType(String type){
+   public static HardPointType fromMwoType(String type){
       switch( type ){
          case "Energy":
-            return HardpointType.ENERGY;
+            return HardPointType.ENERGY;
          case "AMS":
-            return HardpointType.AMS;
+            return HardPointType.AMS;
          case "Ballistic":
-            return HardpointType.BALLISTIC;
+            return HardPointType.BALLISTIC;
          case "Missile":
-            return HardpointType.MISSILE;
+            return HardPointType.MISSILE;
          default:
             throw new RuntimeException("Unknown hardpoint type!");
       }
    }
 
-   public static HardpointType fromMwoType(int type){
+   public static HardPointType fromMwoType(int type){
       switch( type ){
          case 1:
-            return HardpointType.ENERGY;
+            return HardPointType.ENERGY;
          case 4:
-            return HardpointType.AMS;
+            return HardPointType.AMS;
          case 0:
-            return HardpointType.BALLISTIC;
+            return HardPointType.BALLISTIC;
          case 2:
-            return HardpointType.MISSILE;
+            return HardPointType.MISSILE;
          default:
             throw new RuntimeException("Unknown hardpoint type!");
       }

@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
@@ -215,10 +215,10 @@ public class AutoAddItemOperation extends LoadoutOperation{
             // some item in the part.
             final int minItemSize = aItem.getNumCriticalSlots(aParent.data.getUpgrades()) - tgtLoadoutPart.getNumCriticalSlotsFree();
             final int maxItemSize = aItem.getNumCriticalSlots(aParent.data.getUpgrades()) + srcLoadoutPart.getNumCriticalSlotsFree();
-            HardpointType requiredType = aItem.getHardpointType();
-            if( requiredType != HardpointType.NONE
+            HardPointType requiredType = aItem.getHardpointType();
+            if( requiredType != HardPointType.NONE
                 && tgtLoadoutPart.getNumItemsOfHardpointType(requiredType) < tgtLoadoutPart.getInternalPart().getNumHardpoints(requiredType) ){
-               requiredType = HardpointType.NONE; // There is at least one free hard point, we don't need to swap with a
+               requiredType = HardPointType.NONE; // There is at least one free hard point, we don't need to swap with a
                                                   // item of the required type.
             }
             for(Item item : tgtLoadoutPart.getItems()){
@@ -228,7 +228,7 @@ public class AutoAddItemOperation extends LoadoutOperation{
                   continue;
                if( item.getNumCriticalSlots(aParent.data.getUpgrades()) > maxItemSize )
                   continue;
-               if( requiredType != HardpointType.NONE && item.getHardpointType() != requiredType )
+               if( requiredType != HardPointType.NONE && item.getHardpointType() != requiredType )
                   continue;
                if( !srcLoadoutPart.getInternalPart().isAllowed(item) )
                   continue;

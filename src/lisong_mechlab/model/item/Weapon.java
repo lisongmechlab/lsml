@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -46,7 +46,7 @@ public class Weapon extends HeatSource{
 
    private final double    projectileSpeed;
 
-   public Weapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
+   public Weapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType){
       super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat,
             aStatsWeapon.WeaponStats.Health);
       damagePerProjectile = aStatsWeapon.WeaponStats.damage;

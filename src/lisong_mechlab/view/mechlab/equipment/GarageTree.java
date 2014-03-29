@@ -32,7 +32,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.tree.TreePath;
 
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
@@ -117,10 +117,10 @@ public class GarageTree extends JTree{
             sb.append("Max Tons: ").append(chassi.getMassMax()).append(" Engine: ").append(chassi.getEngineMin()).append(" - ")
               .append(chassi.getEngineMax()).append("<br>");
             sb.append("Max Jump Jets: ").append(chassi.getMaxJumpJets()).append(" ECM: ")
-              .append(chassi.getHardpointsCount(HardpointType.ECM) > 0 ? "Yes" : "No").append("<br>");
-            sb.append("Ballistics: ").append(chassi.getHardpointsCount(HardpointType.BALLISTIC)).append(" Energy: ")
-              .append(chassi.getHardpointsCount(HardpointType.ENERGY)).append(" Missile: ").append(chassi.getHardpointsCount(HardpointType.MISSILE))
-              .append(" AMS: ").append(chassi.getHardpointsCount(HardpointType.AMS)).append("<br>");
+              .append(chassi.getHardpointsCount(HardPointType.ECM) > 0 ? "Yes" : "No").append("<br>");
+            sb.append("Ballistics: ").append(chassi.getHardpointsCount(HardPointType.BALLISTIC)).append(" Energy: ")
+              .append(chassi.getHardpointsCount(HardPointType.ENERGY)).append(" Missile: ").append(chassi.getHardpointsCount(HardPointType.MISSILE))
+              .append(" AMS: ").append(chassi.getHardpointsCount(HardPointType.AMS)).append("<br>");
             sb.append("</html>");
             return sb.toString();
          }

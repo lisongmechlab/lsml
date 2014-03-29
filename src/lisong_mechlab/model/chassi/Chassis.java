@@ -170,7 +170,7 @@ public class Chassis{
       return maxJumpJets;
    }
 
-   public int getHardpointsCount(HardpointType aHardpointType){
+   public int getHardpointsCount(HardPointType aHardpointType){
       int sum = 0;
       for(InternalPart part : parts.values()){
          sum += part.getNumHardpoints(aHardpointType);

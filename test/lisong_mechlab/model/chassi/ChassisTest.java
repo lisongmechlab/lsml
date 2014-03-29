@@ -90,7 +90,7 @@ public class ChassisTest{
 
       assertSame(ChassiClass.HEAVY, cut.getChassiClass());
       assertEquals(0, cut.getMaxJumpJets());
-      assertEquals(0, cut.getHardpointsCount(HardpointType.ECM));
+      assertEquals(0, cut.getHardpointsCount(HardPointType.ECM));
 
       // Do a through test only on the Ilyas components
       {
@@ -99,10 +99,10 @@ public class ChassisTest{
          assertEquals(18, pt.getArmorMax());
          assertEquals(15.0, pt.getHitpoints(), 0.0);
          assertEquals(6, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardpointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.MISSILE));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
          assertEquals(Part.Head, pt.getType());
          assertFalse(pt.getType().isTwoSided());
          assertEquals(pt.getType().toString(), pt.toString());
@@ -115,10 +115,10 @@ public class ChassisTest{
          assertEquals(44, pt.getArmorMax());
          assertEquals(22.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(1, pt.getNumHardpoints(HardpointType.ENERGY));
-         assertEquals(1, pt.getNumHardpoints(HardpointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.MISSILE));
+         assertEquals(1, pt.getNumHardpoints(HardPointType.ENERGY));
+         assertEquals(1, pt.getNumHardpoints(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
          assertEquals(Part.RightArm, pt.getType());
          assertFalse(pt.getType().isTwoSided());
          assertEquals(pt.getType().toString(), pt.toString());
@@ -130,10 +130,10 @@ public class ChassisTest{
          assertEquals(44, pt.getArmorMax());
          assertEquals(22.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardpointType.ENERGY));
-         assertEquals(1, pt.getNumHardpoints(HardpointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.MISSILE));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
+         assertEquals(1, pt.getNumHardpoints(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
          assertEquals(Part.LeftArm, pt.getType());
          assertFalse(pt.getType().isTwoSided());
          assertEquals(pt.getType().toString(), pt.toString());
@@ -145,10 +145,10 @@ public class ChassisTest{
          assertEquals(60, pt.getArmorMax());
          assertEquals(30.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(1, pt.getNumHardpoints(HardpointType.ENERGY));
-         assertEquals(1, pt.getNumHardpoints(HardpointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.MISSILE));
+         assertEquals(1, pt.getNumHardpoints(HardPointType.ENERGY));
+         assertEquals(1, pt.getNumHardpoints(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
          assertEquals(Part.RightTorso, pt.getType());
          assertTrue(pt.getType().isTwoSided());
          assertEquals(pt.getType().toString(), pt.toString());
@@ -160,10 +160,10 @@ public class ChassisTest{
          assertEquals(60, pt.getArmorMax());
          assertEquals(30.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(1, pt.getNumHardpoints(HardpointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.BALLISTIC));
-         assertEquals(1, pt.getNumHardpoints(HardpointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.MISSILE));
+         assertEquals(1, pt.getNumHardpoints(HardPointType.ENERGY));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
+         assertEquals(1, pt.getNumHardpoints(HardPointType.AMS));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
          assertEquals(Part.LeftTorso, pt.getType());
          assertTrue(pt.getType().isTwoSided());
          assertEquals(pt.getType().toString(), pt.toString());
@@ -175,10 +175,10 @@ public class ChassisTest{
          assertEquals(88, pt.getArmorMax());
          assertEquals(44.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardpointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.MISSILE));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
          assertEquals(Part.CenterTorso, pt.getType());
          assertTrue(pt.getType().isTwoSided());
          assertEquals(pt.getType().toString(), pt.toString());
@@ -190,10 +190,10 @@ public class ChassisTest{
          assertEquals(60, pt.getArmorMax());
          assertEquals(30.0, pt.getHitpoints(), 0.0);
          assertEquals(6, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardpointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.MISSILE));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
          assertEquals(Part.RightLeg, pt.getType());
          assertFalse(pt.getType().isTwoSided());
          assertEquals(pt.getType().toString(), pt.toString());
@@ -205,10 +205,10 @@ public class ChassisTest{
          assertEquals(60, pt.getArmorMax());
          assertEquals(30.0, pt.getHitpoints(), 0.0);
          assertEquals(6, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardpointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardpointType.MISSILE));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
+         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
          assertEquals(Part.LeftLeg, pt.getType());
          assertFalse(pt.getType().isTwoSided());
          assertEquals(pt.getType().toString(), pt.toString());
@@ -235,7 +235,7 @@ public class ChassisTest{
 
       assertSame(ChassiClass.ASSAULT, cut.getChassiClass());
       assertEquals(0, cut.getMaxJumpJets());
-      assertEquals(1, cut.getHardpointsCount(HardpointType.ECM));
+      assertEquals(1, cut.getHardpointsCount(HardPointType.ECM));
 
       assertEquals(3, cut.getInternalPart(Part.Head).getInternalItems().size());
 
@@ -245,11 +245,11 @@ public class ChassisTest{
       assertEquals(4, cut.getInternalPart(Part.RightLeg).getInternalItems().size());
       assertEquals(4, cut.getInternalPart(Part.LeftLeg).getInternalItems().size());
 
-      assertEquals(1, cut.getInternalPart(Part.RightArm).getNumHardpoints(HardpointType.ENERGY));
-      assertEquals(1, cut.getInternalPart(Part.LeftArm).getNumHardpoints(HardpointType.ENERGY));
-      assertEquals(1, cut.getInternalPart(Part.LeftArm).getNumHardpoints(HardpointType.AMS));
-      assertEquals(3, cut.getInternalPart(Part.LeftTorso).getNumHardpoints(HardpointType.MISSILE));
-      assertEquals(2, cut.getInternalPart(Part.RightTorso).getNumHardpoints(HardpointType.BALLISTIC));
+      assertEquals(1, cut.getInternalPart(Part.RightArm).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(1, cut.getInternalPart(Part.LeftArm).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(1, cut.getInternalPart(Part.LeftArm).getNumHardpoints(HardPointType.AMS));
+      assertEquals(3, cut.getInternalPart(Part.LeftTorso).getNumHardpoints(HardPointType.MISSILE));
+      assertEquals(2, cut.getInternalPart(Part.RightTorso).getNumHardpoints(HardPointType.BALLISTIC));
    }
 
    @Test
@@ -271,7 +271,7 @@ public class ChassisTest{
 
       assertSame(ChassiClass.LIGHT, cut.getChassiClass());
       assertEquals(5, cut.getMaxJumpJets());
-      assertEquals(0, cut.getHardpointsCount(HardpointType.ECM));
+      assertEquals(0, cut.getHardpointsCount(HardPointType.ECM));
 
       assertEquals(3, cut.getInternalPart(Part.Head).getInternalItems().size());
 
@@ -281,9 +281,9 @@ public class ChassisTest{
       assertEquals(4, cut.getInternalPart(Part.RightLeg).getInternalItems().size());
       assertEquals(4, cut.getInternalPart(Part.LeftLeg).getInternalItems().size());
 
-      assertEquals(3, cut.getInternalPart(Part.RightArm).getNumHardpoints(HardpointType.ENERGY));
-      assertEquals(3, cut.getInternalPart(Part.LeftArm).getNumHardpoints(HardpointType.ENERGY));
-      assertEquals(1, cut.getInternalPart(Part.LeftTorso).getNumHardpoints(HardpointType.AMS));
+      assertEquals(3, cut.getInternalPart(Part.RightArm).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(3, cut.getInternalPart(Part.LeftArm).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(1, cut.getInternalPart(Part.LeftTorso).getNumHardpoints(HardPointType.AMS));
    }
 
    @Test
