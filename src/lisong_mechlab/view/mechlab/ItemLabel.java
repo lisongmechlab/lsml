@@ -120,7 +120,11 @@ public class ItemLabel extends JLabel{
 
       @Override
       public Void doInBackground(){
+         try{
          operation = new AutoAddItemOperation(loadoutFrame.getLoadout(), xBar, itemToPlace);
+         }catch(Throwable e){ // Yeah anything thrown is a failure.
+            operation = null;
+         }
          return null;
       }
 
@@ -128,7 +132,12 @@ public class ItemLabel extends JLabel{
       public void done(){
          // In EDT
          if( !isCancelled() ){
+            if(operation == null){
+               JOptionPane.showMessageDialog(dialog, "No can do cap'n!", "Not possible", JOptionPane.OK_OPTION);
+            }
+            else{
             loadoutFrame.getOpStack().pushAndApply(operation);
+            }
          }
          dialog.dispose();
       }
@@ -202,7 +211,7 @@ public class ItemLabel extends JLabel{
                      catch( TimeoutException e ){
                         dialog.setVisible(true); // Show progress meter if it's taking time and resume EDT
                      }
-                  }else{
+                  }else if(loadout.canEquip(item)){
                      frame.getOpStack().pushAndApply(new AutoAddItemOperation(loadout, anXBar, item));
                   }
                }
