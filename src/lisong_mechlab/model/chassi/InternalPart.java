@@ -55,16 +55,16 @@ public class InternalPart{
    private final int             internalSlots;
 
    /**
-    * Constructs a new {@link InternalPart} from MWO datafiles that are parsed.
+    * Constructs a new {@link InternalPart} from MWO data files that are parsed.
     * 
     * @param aComponent
     *           The component as parsed from the MWO .mdf for the chassis.
     * @param aPart
     *           The {@link Part} (head,leg etc) this {@link InternalPart} is for.
     * @param aHardpoints
-    *           The hardpoints as parsed from the MWO .xml for hard points for the chassis.
+    *           The hard points as parsed from the MWO .xml for hard points for the chassis.
     * @param aChassi
-    *           The chassi that this internal part will be a part of.
+    *           The chassis that this internal part will be a part of.
     */
    public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints, Chassis aChassi){
       criticalslots = aComponent.Slots;
@@ -114,10 +114,6 @@ public class InternalPart{
             if( hardpointType == HardPointType.MISSILE ){
                List<Integer> tubes = aHardpoints.tubesForId(hardpoint.ID);
                for(Integer tube : tubes){
-                  // FIXME: Hardcoded case for hbk-4j which has 2 LRM10s as an LRM20 but the data files are missleading
-                  if( aChassi.getNameShort().equals("HBK-4J") && aPart == Part.RightTorso ){
-                     tube = 10;
-                  }
                   if( tube < 1 ){
                      hardpoints.add(HardPointCache.getHardpoint(hardpoint.ID, aChassi.getMwoName(), aPart));
                   }
@@ -132,7 +128,7 @@ public class InternalPart{
             }
          }
 
-         // For any mech with more than 2 missile hardpoints in CT, any launcher beyond the largest one can only
+         // For any mech with more than 2 missile hard points in CT, any launcher beyond the largest one can only
          // have 5 tubes (anything else is impossible to fit)
          if( type == Part.CenterTorso && getNumHardpoints(HardPointType.MISSILE) > 1 ){
             int maxTubes = 0;
@@ -154,7 +150,7 @@ public class InternalPart{
          }
       }
 
-      // Stupid PGI making hacks to put ECM on a hardpoint... now I have to change my code...
+      // Stupid PGI making hacks to put ECM on a hard point... now I have to change my code...
       if( aComponent.CanEquipECM == 1 )
          hardpoints.add(new HardPoint(HardPointType.ECM));
    }
