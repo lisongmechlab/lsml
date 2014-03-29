@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -32,25 +32,25 @@ public class Ammunition extends Item{
    protected final int           shotsPerTon;
    protected final double        internalDamage;
    protected final int           hp;
-   protected final HardpointType type;
+   protected final HardPointType type;
 
    public Ammunition(ItemStatsModule aStatsModule){
-      super(aStatsModule, HardpointType.NONE, 1, 1.0, aStatsModule.AmmoTypeStats.health);
+      super(aStatsModule, HardPointType.NONE, 1, 1.0, aStatsModule.AmmoTypeStats.health);
       hp = aStatsModule.AmmoTypeStats.health;
       internalDamage = aStatsModule.AmmoTypeStats.internalDamage;
       shotsPerTon = aStatsModule.AmmoTypeStats.shotsPerTon;
 
       if( getName().contains("AC") || getName().contains("GAUSS") || getName().contains("LB") ){
-         type = HardpointType.BALLISTIC;
+         type = HardPointType.BALLISTIC;
       }
       else if( getName().contains("RM") || getName().contains("NARC") ){
-         type = HardpointType.MISSILE;
+         type = HardPointType.MISSILE;
       }
       else if( getName().contains("AMS") ){
-         type = HardpointType.AMS;
+         type = HardPointType.AMS;
       }
       else{
-         type = HardpointType.ENERGY;
+         type = HardPointType.ENERGY;
       }
    }
 
@@ -59,10 +59,10 @@ public class Ammunition extends Item{
    }
 
    /**
-    * @return The {@link HardpointType} that the weapon that uses this ammo is using. Useful for color coding and
+    * @return The {@link HardPointType} that the weapon that uses this ammo is using. Useful for color coding and
     *         searching.
     */
-   public HardpointType getWeaponHardpointType(){
+   public HardPointType getWeaponHardpointType(){
       return type;
    }
 

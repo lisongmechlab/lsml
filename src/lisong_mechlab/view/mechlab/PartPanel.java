@@ -38,8 +38,8 @@ import javax.swing.text.DefaultFormatter;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Hardpoint;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPoint;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
@@ -94,11 +94,11 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       // /panel.setBackground(Color.PINK.darker());
       panel.add(Box.createVerticalStrut(ItemRenderer.ITEM_BASE_HEIGHT + ItemRenderer.ITEM_BASE_HEIGHT / 2));
 
-      for(HardpointType hp : HardpointType.values()){
+      for(HardPointType hp : HardPointType.values()){
          final int hardpoints = loadoutPart.getInternalPart().getNumHardpoints(hp);
          if( 1 == hardpoints ){
             JLabel label = new JLabel(hp.shortName());
-            if( hp == HardpointType.MISSILE ){
+            if( hp == HardPointType.MISSILE ){
                label.setText(formatMissileHardpointText(loadoutPart.getInternalPart()));
             }
             label.setBackground(StyleManager.getBgColorFor(hp));
@@ -109,7 +109,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          }
          else if( 1 < hardpoints ){
             JLabel label = new JLabel(hardpoints + " " + hp.shortName());
-            if( hp == HardpointType.MISSILE ){
+            if( hp == HardPointType.MISSILE ){
                label.setText(formatMissileHardpointText(loadoutPart.getInternalPart()));
             }
             label.setBackground(StyleManager.getBgColorFor(hp));
@@ -128,17 +128,22 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    public static String formatMissileHardpointText(InternalPart aPart){
       Map<Integer, Integer> tubecounts = new TreeMap<>();
 
-      for(Hardpoint hp : aPart.getHardpoints()){
-         if( hp.getType() == HardpointType.MISSILE ){
+      boolean baydoors = false;
+
+      for(HardPoint hp : aPart.getHardpoints()){
+         if( hp.getType() == HardPointType.MISSILE ){
             final int tubes = hp.getNumMissileTubes();
             if( tubecounts.containsKey(tubes) )
                tubecounts.put(tubes, tubecounts.get(tubes) + 1);
             else
                tubecounts.put(tubes, 1);
+
+            if( hp.hasBayDoor() )
+               baydoors = true;
          }
       }
 
-      String ans = aPart.getNumHardpoints(HardpointType.MISSILE) + " M (";
+      String ans = aPart.getNumHardpoints(HardPointType.MISSILE) + " M (";
       boolean first = true;
       for(Entry<Integer, Integer> it : tubecounts.entrySet()){
          if( !first )
@@ -154,7 +159,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          first = false;
       }
 
-      return ans + ")";
+      return ans + ")" + (baydoors ? "D" : "");
    }
 
    private JPanel makeArmorPanel(MessageXBar anXBar, JCheckBox aSymmetric, OperationStack aStack){

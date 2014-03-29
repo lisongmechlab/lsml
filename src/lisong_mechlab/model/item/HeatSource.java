@@ -19,13 +19,13 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStats;
 
 public class HeatSource extends Item{
    protected final double heat;
 
-   protected HeatSource(ItemStats anItemStats, HardpointType aHardpointType, int aSlots, double aTons, double aHeat, int aHealth){
+   protected HeatSource(ItemStats anItemStats, HardPointType aHardpointType, int aSlots, double aTons, double aHeat, int aHealth){
       super(anItemStats, aHardpointType, aSlots, aTons, aHealth);
       heat = aHeat;
    }

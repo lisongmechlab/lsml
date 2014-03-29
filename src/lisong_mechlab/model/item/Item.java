@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.mwo_parsing.Localization;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStats;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -32,10 +32,10 @@ public class Item implements Comparable<Item>{
 
    private final int           slots;
    private final double        tons;
-   private final HardpointType hardpointType;
+   private final HardPointType hardpointType;
    private final int           health;
 
-   public Item(ItemStats anItemStats, HardpointType aHardpointType, int aNumSlots, double aNumTons, int aHealth){
+   public Item(ItemStats anItemStats, HardPointType aHardpointType, int aNumSlots, double aNumTons, int aHealth){
       locName = Localization.key2string(anItemStats.Loc.nameTag);
       locDesc = Localization.key2string(anItemStats.Loc.descTag);
       mwoName = anItemStats.name;
@@ -56,7 +56,7 @@ public class Item implements Comparable<Item>{
 
       slots = aSlots;
       tons = 0;
-      hardpointType = HardpointType.NONE;
+      hardpointType = HardPointType.NONE;
    }
 
    public String getKey(){
@@ -78,7 +78,7 @@ public class Item implements Comparable<Item>{
       return slots;
    }
 
-   public HardpointType getHardpointType(){
+   public HardPointType getHardpointType(){
       return hardpointType;
    }
 
@@ -135,8 +135,8 @@ public class Item implements Comparable<Item>{
          return -1;
 
       // Count ammunition types together with their parent weapon type.
-      HardpointType lhsHp = this instanceof Ammunition ? ((Ammunition)this).getWeaponHardpointType() : this.getHardpointType();
-      HardpointType rhsHp = rhs instanceof Ammunition ? ((Ammunition)rhs).getWeaponHardpointType() : rhs.getHardpointType();
+      HardPointType lhsHp = this instanceof Ammunition ? ((Ammunition)this).getWeaponHardpointType() : this.getHardpointType();
+      HardPointType rhsHp = rhs instanceof Ammunition ? ((Ammunition)rhs).getWeaponHardpointType() : rhs.getHardpointType();
 
       // Sort by hard point type (order they appear in the enumeration declaration)
       // This gives the main order of items as given in the java doc.
@@ -155,10 +155,10 @@ public class Item implements Comparable<Item>{
          if( this instanceof EnergyWeapon && rhs instanceof EnergyWeapon ){
             return EnergyWeapon.DEFAULT_ORDERING.compare((EnergyWeapon)this, (EnergyWeapon)rhs);
          }
-         else if( lhsHp == HardpointType.BALLISTIC ){
+         else if( lhsHp == HardPointType.BALLISTIC ){
             return BallisticWeapon.DEFAULT_ORDERING.compare(this, rhs);
          }
-         else if( lhsHp == HardpointType.MISSILE ){
+         else if( lhsHp == HardPointType.MISSILE ){
             return MissileWeapon.DEFAULT_ORDERING.compare(this, rhs);
          }
 

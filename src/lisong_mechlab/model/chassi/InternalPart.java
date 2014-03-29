@@ -30,6 +30,9 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.mwo_parsing.HardpointsXml;
+import lisong_mechlab.model.mwo_parsing.WeaponDoorSet;
+import lisong_mechlab.model.mwo_parsing.WeaponDoorSet.WeaponDoor;
+import lisong_mechlab.model.mwo_parsing.helpers.HardPointInfo;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
 import lisong_mechlab.util.ArrayUtils;
@@ -47,7 +50,7 @@ public class InternalPart{
    private final int             maxarmor;
    private final double          hitpoints;
    private final List<Item>      internals  = new ArrayList<Item>();
-   private final List<Hardpoint> hardpoints = new ArrayList<>();
+   private final List<HardPoint> hardpoints = new ArrayList<>();
 
    private final int             internalSlots;
 
@@ -84,9 +87,31 @@ public class InternalPart{
 
       if( null != aComponent.hardpoints ){
          for(MdfComponent.Hardpoint hardpoint : aComponent.hardpoints){
-            final HardpointType hardpointType = HardpointType.fromMwoType(hardpoint.Type);
+            final HardPointType hardpointType = HardPointType.fromMwoType(hardpoint.Type);
 
-            if( hardpointType == HardpointType.MISSILE ){
+            HardPointInfo hardPointInto = null;
+            for(HardPointInfo hpi : aHardpoints.hardpoints){
+               if( hpi.id == hardpoint.ID ){
+                  hardPointInto = hpi;
+               }
+            }
+
+            if( hardPointInto == null ){
+               throw new NullPointerException("Found no matching hardpoint in the data files!");
+            }
+
+            boolean hasBayDoors = false;
+            if( hardPointInto.NoWeaponAName != null && aHardpoints.weapondoors != null ){
+               for(WeaponDoorSet doorSet : aHardpoints.weapondoors){
+                  for(WeaponDoor weaponDoor : doorSet.weaponDoors){
+                     if( hardPointInto.NoWeaponAName.equals(weaponDoor.AName) ){
+                        hasBayDoors = true;
+                     }
+                  }
+               }
+            }
+
+            if( hardpointType == HardPointType.MISSILE ){
                List<Integer> tubes = aHardpoints.tubesForId(hardpoint.ID);
                for(Integer tube : tubes){
                   // FIXME: Hardcoded case for hbk-4j which has 2 LRM10s as an LRM20 but the data files are missleading
@@ -94,34 +119,34 @@ public class InternalPart{
                      tube = 10;
                   }
                   if( tube < 1 ){
-                     hardpoints.add(HardpointCache.getHardpoint(hardpoint.ID, aChassi.getMwoName(), aPart));
+                     hardpoints.add(HardPointCache.getHardpoint(hardpoint.ID, aChassi.getMwoName(), aPart));
                   }
                   else{
-                     hardpoints.add(new Hardpoint(HardpointType.MISSILE, tube));
+                     hardpoints.add(new HardPoint(HardPointType.MISSILE, tube, hasBayDoors));
                   }
                }
             }
             else{
                for(int i = 0; i < aHardpoints.slotsForId(hardpoint.ID); ++i)
-                  hardpoints.add(new Hardpoint(hardpointType));
+                  hardpoints.add(new HardPoint(hardpointType));
             }
          }
 
          // For any mech with more than 2 missile hardpoints in CT, any launcher beyond the largest one can only
          // have 5 tubes (anything else is impossible to fit)
-         if( type == Part.CenterTorso && getNumHardpoints(HardpointType.MISSILE) > 1 ){
+         if( type == Part.CenterTorso && getNumHardpoints(HardPointType.MISSILE) > 1 ){
             int maxTubes = 0;
-            for(Hardpoint hardpoint : hardpoints){
+            for(HardPoint hardpoint : hardpoints){
                maxTubes = Math.max(hardpoint.getNumMissileTubes(), maxTubes);
             }
 
             boolean maxAdded = false;
             for(int i = 0; i < hardpoints.size(); ++i){
-               if( hardpoints.get(i).getType() != HardpointType.MISSILE )
+               if( hardpoints.get(i).getType() != HardPointType.MISSILE )
                   continue;
                int tubes = hardpoints.get(i).getNumMissileTubes();
                if( (tubes < maxTubes && tubes > 5) || (tubes == maxTubes && maxAdded == true && tubes > 5) ){
-                  hardpoints.set(i, new Hardpoint(HardpointType.MISSILE, 5));
+                  hardpoints.set(i, new HardPoint(HardPointType.MISSILE, 5, hardpoints.get(i).hasBayDoor()));
                }
                if( tubes == maxTubes )
                   maxAdded = true;
@@ -131,7 +156,7 @@ public class InternalPart{
 
       // Stupid PGI making hacks to put ECM on a hardpoint... now I have to change my code...
       if( aComponent.CanEquipECM == 1 )
-         hardpoints.add(new Hardpoint(HardpointType.ECM));
+         hardpoints.add(new HardPoint(HardPointType.ECM));
    }
 
    @Override
@@ -184,9 +209,9 @@ public class InternalPart{
       return criticalslots;
    }
 
-   public int getNumHardpoints(HardpointType aHardpointType){
+   public int getNumHardpoints(HardPointType aHardpointType){
       int ans = 0;
-      for(Hardpoint it : hardpoints){
+      for(HardPoint it : hardpoints){
          if( it.getType() == aHardpointType ){
             ans++;
          }
@@ -202,7 +227,7 @@ public class InternalPart{
       return hitpoints;
    }
 
-   public Collection<Hardpoint> getHardpoints(){
+   public Collection<HardPoint> getHardpoints(){
       return Collections.unmodifiableList(hardpoints);
    }
 
@@ -236,7 +261,7 @@ public class InternalPart{
       else if( aItem == ItemDB.CASE ){
          return (type == Part.LeftTorso || type == Part.RightTorso);
       }
-      else if( aItem.getHardpointType() != HardpointType.NONE && getNumHardpoints(aItem.getHardpointType()) <= 0 ){
+      else if( aItem.getHardpointType() != HardPointType.NONE && getNumHardpoints(aItem.getHardpointType()) <= 0 ){
          return false;
       }
       return aItem.getNumCriticalSlots(null) <= getNumCriticalslots() - internalSlots;

@@ -45,25 +45,25 @@ public class InternalPartTest{
    @Test(expected = UnsupportedOperationException.class)
    public void testGetHardpoints_Immutable() throws Exception{
       InternalPart cut = chassi.getInternalPart(Part.CenterTorso);
-      cut.getHardpoints().add(new Hardpoint(HardpointType.ENERGY));
+      cut.getHardpoints().add(new HardPoint(HardPointType.ENERGY));
    }
 
    @Test
    public void testGetHardpoints() throws Exception{
-      Collection<Hardpoint> hardpoints = chassi.getInternalPart(Part.RightTorso).getHardpoints();
+      Collection<HardPoint> hardpoints = chassi.getInternalPart(Part.RightTorso).getHardpoints();
       assertEquals(3, hardpoints.size());
 
-      List<Hardpoint> hps = new ArrayList<>(hardpoints);
+      List<HardPoint> hps = new ArrayList<>(hardpoints);
       boolean foundAms = false;
       boolean foundLrm10 = false;
       boolean foundLrm20 = false;
-      for(Hardpoint hardpoint : hps){
-         if( hardpoint.getType() == HardpointType.AMS ){
+      for(HardPoint hardpoint : hps){
+         if( hardpoint.getType() == HardPointType.AMS ){
             if( foundAms )
                fail("Two ams when only one expected!");
             foundAms = true;
          }
-         else if( hardpoint.getType() == HardpointType.MISSILE ){
+         else if( hardpoint.getType() == HardPointType.MISSILE ){
             if( hardpoint.getNumMissileTubes() == 20 ){
                if( foundLrm20 )
                   fail("Expected only one 20-tuber!");
@@ -126,11 +126,11 @@ public class InternalPartTest{
 
    @Test
    public void testGetNumHardpoints() throws Exception{
-      assertEquals(3, chassi.getInternalPart(Part.LeftTorso).getNumHardpoints(HardpointType.ENERGY));
-      assertEquals(0, chassi.getInternalPart(Part.LeftTorso).getNumHardpoints(HardpointType.BALLISTIC));
+      assertEquals(3, chassi.getInternalPart(Part.LeftTorso).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(0, chassi.getInternalPart(Part.LeftTorso).getNumHardpoints(HardPointType.BALLISTIC));
 
-      assertEquals(1, chassi.getInternalPart(Part.RightTorso).getNumHardpoints(HardpointType.AMS));
-      assertEquals(2, chassi.getInternalPart(Part.RightTorso).getNumHardpoints(HardpointType.MISSILE));
+      assertEquals(1, chassi.getInternalPart(Part.RightTorso).getNumHardpoints(HardPointType.AMS));
+      assertEquals(2, chassi.getInternalPart(Part.RightTorso).getNumHardpoints(HardPointType.MISSILE));
    }
 
    @Test

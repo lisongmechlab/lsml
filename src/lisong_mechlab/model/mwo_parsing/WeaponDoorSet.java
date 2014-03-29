@@ -17,40 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.chassi;
+package lisong_mechlab.model.mwo_parsing;
+
+import java.util.List;
+
+import lisong_mechlab.model.mwo_parsing.helpers.HardPointWeaponSlot.Attachment;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * Represents a hard point on a chassis.
+ * This class represents a WeaponDoorSet element in the data files.
  * 
  * @author Li Song
  */
-public class Hardpoint{
-   final int           tubes;
-   final HardpointType type;
+public class WeaponDoorSet{
+   @XStreamAsAttribute
+   public int id;
+     
+   public class WeaponDoor{
+      @XStreamAsAttribute
+      double closedDamageFactor;
 
-   public Hardpoint(HardpointType aType){
-      this(aType, 0);
+      @XStreamAsAttribute
+      public String AName;
+      
+      @XStreamAsAttribute
+      double firingdelay;
+
+      @XStreamImplicit(itemFieldName = "Attachment")
+      public List<Attachment> attachments;
    }
 
-   public Hardpoint(HardpointType aType, int aNumTubes){
-      if( aType == HardpointType.MISSILE && aNumTubes < 1 ){
-         throw new IllegalArgumentException("Missile hard points must have a positive, non-zero number of tubes");
-      }
-      type = aType;
-      tubes = aNumTubes;
-   }
-
-   /**
-    * @return The type of this hardpoint.
-    */
-   public HardpointType getType(){
-      return type;
-   }
-
-   /**
-    * @return The number of missile tubes this hardpoint has.
-    */
-   public int getNumMissileTubes(){
-      return tubes;
-   }
+   @XStreamImplicit(itemFieldName = "WeaponDoor")
+   public List<WeaponDoor> weaponDoors;
 }

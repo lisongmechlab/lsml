@@ -33,7 +33,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 
@@ -91,7 +91,7 @@ public class WeaponStatsTable extends JTable{
          }
       }
 
-      public Model(HardpointType aHardpointType){
+      public Model(HardPointType aHardpointType){
          List<Weapon> allweapons = ItemDB.lookup(Weapon.class);
 
          for(Weapon weapon : allweapons){
@@ -223,7 +223,7 @@ public class WeaponStatsTable extends JTable{
       }
    }
 
-   public WeaponStatsTable(HardpointType aHardpointType){
+   public WeaponStatsTable(HardPointType aHardpointType){
       super(new Model(aHardpointType));
       setAutoCreateRowSorter(true);
 

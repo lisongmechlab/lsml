@@ -31,7 +31,7 @@ import java.util.TreeMap;
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Engine;
@@ -347,20 +347,20 @@ public class Loadout implements Cloneable{
          return candidates;
 
       int globalFreeHardPoints = 0;
-      HardpointType hardpointType = anItem.getHardpointType();
+      HardPointType hardpointType = anItem.getHardpointType();
 
       for(LoadoutPart part : getPartLoadOuts()){
          if( part.getInternalPart().isAllowed(anItem) ){
             candidates.add(part);
          }
 
-         if( hardpointType != HardpointType.NONE ){
+         if( hardpointType != HardPointType.NONE ){
             final int localFreeHardPoints = part.getInternalPart().getNumHardpoints(hardpointType) - part.getNumItemsOfHardpointType(hardpointType);
             globalFreeHardPoints += localFreeHardPoints;
          }
       }
 
-      if( hardpointType != HardpointType.NONE && globalFreeHardPoints <= 0 ){
+      if( hardpointType != HardPointType.NONE && globalFreeHardPoints <= 0 ){
          candidates.clear();
       }
 
@@ -491,8 +491,8 @@ public class Loadout implements Cloneable{
                final int partOrdinal = part.getInternalPart().getType().ordinal();
                final int numCrits = toBeRemoved.getNumCriticalSlots(getUpgrades());
                if( slotsFree[partOrdinal] >= numCrits ){
-                  HardpointType needHp = toBeRemoved.getHardpointType();
-                  if( needHp != HardpointType.NONE && part.getInternalPart().getNumHardpoints(needHp) - part.getNumItemsOfHardpointType(needHp) < 1 ){
+                  HardPointType needHp = toBeRemoved.getHardpointType();
+                  if( needHp != HardPointType.NONE && part.getInternalPart().getNumHardpoints(needHp) - part.getNumItemsOfHardpointType(needHp) < 1 ){
                      continue;
                   }
                   slotsFree[partOrdinal] -= numCrits;

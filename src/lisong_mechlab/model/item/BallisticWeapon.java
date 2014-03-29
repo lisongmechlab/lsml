@@ -22,7 +22,7 @@ package lisong_mechlab.model.item;
 import java.util.Comparator;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.GaussianDistribution;
@@ -35,7 +35,7 @@ public class BallisticWeapon extends AmmoWeapon{
    protected final double jammingTime;
 
    public BallisticWeapon(ItemStatsWeapon aStatsWeapon){
-      super(aStatsWeapon, HardpointType.BALLISTIC);
+      super(aStatsWeapon, HardPointType.BALLISTIC);
       projectileSpeed = aStatsWeapon.WeaponStats.speed;
       if( aStatsWeapon.WeaponStats.spread > 0 )
          spread = aStatsWeapon.WeaponStats.spread;

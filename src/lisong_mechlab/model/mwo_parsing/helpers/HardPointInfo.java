@@ -28,6 +28,9 @@ public class HardPointInfo{
    @XStreamAsAttribute
    public int                       id;
 
+   @XStreamAsAttribute
+   public String                    NoWeaponAName;
+
    @XStreamImplicit(itemFieldName = "WeaponSlot")
    public List<HardPointWeaponSlot> weaponslots;
 }
