@@ -29,12 +29,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * A test suite for {@link TimeToOverHeat}.
+ * A test suite for {@link AsymptoticTimeToOverHeat}.
  * 
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TimeToOverHeatTest{
+public class AsymptoticTimeToOverHeatTest{
    @Mock
    private HeatCapacity    capacity;
    @Mock
@@ -43,7 +43,7 @@ public class TimeToOverHeatTest{
    private HeatGeneration  generation;
 
    @InjectMocks
-   private TimeToOverHeat  cut;
+   private AsymptoticTimeToOverHeat  cut;
 
    /**
     * 15 minutes and above is rounded up to infinity. Matches are only 15 minutes :)
@@ -60,6 +60,11 @@ public class TimeToOverHeatTest{
       assertEquals(Double.POSITIVE_INFINITY, cut.calculate(), 0);
    }
 
+   @Test
+   public void testGetTimeToOverHeat_LLAS(){
+      
+   }
+   
    /**
     * If a mech generates 10 heat per second and can dissipate 5, then the mech will over heat after the differential
     * has filled the heat capacity: capacity / (generation - dissipation)
