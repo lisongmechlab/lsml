@@ -46,7 +46,6 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.metrics.TopSpeed;
-import lisong_mechlab.view.mechlab.PartPanel;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
@@ -56,7 +55,7 @@ import lisong_mechlab.view.render.StyleManager;
  */
 public class ChassiSelectionPane extends JScrollPane{
    static public class ChassiTableModel extends AbstractTableModel{
-      private static final long  serialVersionUID = -2726840937519789976L;
+      private static final long   serialVersionUID = -2726840937519789976L;
       private final List<Chassis> lights           = new ArrayList<>();
       private final List<Chassis> mediums          = new ArrayList<>();
       private final List<Chassis> heavies          = new ArrayList<>();
@@ -208,6 +207,12 @@ public class ChassiSelectionPane extends JScrollPane{
          StyleManager.styleThinItem(missile, HardPointType.MISSILE);
          StyleManager.styleThinItem(ams, HardPointType.AMS);
          StyleManager.styleThinItem(ecm, HardPointType.ECM);
+
+         panel.add(energy);
+         panel.add(ballistic);
+         panel.add(missile);
+         panel.add(ams);
+         panel.add(ecm);
          part = aPart;
       }
 
@@ -217,33 +222,11 @@ public class ChassiSelectionPane extends JScrollPane{
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
                Chassis chassi = (Chassis)aValue;
-               int e = chassi.getInternalPart(part).getNumHardpoints(HardPointType.ENERGY);
-               int b = chassi.getInternalPart(part).getNumHardpoints(HardPointType.BALLISTIC);
-               int m = chassi.getInternalPart(part).getNumHardpoints(HardPointType.MISSILE);
-               int a = chassi.getInternalPart(part).getNumHardpoints(HardPointType.AMS);
-               int c = chassi.getInternalPart(part).getNumHardpoints(HardPointType.ECM);
-               panel.removeAll();
-
-               if( e > 0 ){
-                  energy.setText(e + " E");
-                  panel.add(energy);
-               }
-               if( b > 0 ){
-                  ballistic.setText(b + " B");
-                  panel.add(ballistic);
-               }
-               if( m > 0 ){
-                  missile.setText(PartPanel.formatMissileHardpointText(chassi.getInternalPart(part)));
-                  panel.add(missile);
-               }
-               if( a > 0 ){
-                  ams.setText("AMS");
-                  panel.add(ams);
-               }
-               if( c > 0 ){
-                  ecm.setText("ECM");
-                  panel.add(ecm);
-               }
+               StyleManager.styleHardpointLabel(energy, chassi.getInternalPart(part), HardPointType.ENERGY);
+               StyleManager.styleHardpointLabel(ballistic, chassi.getInternalPart(part), HardPointType.BALLISTIC);
+               StyleManager.styleHardpointLabel(missile, chassi.getInternalPart(part), HardPointType.MISSILE);
+               StyleManager.styleHardpointLabel(ams, chassi.getInternalPart(part), HardPointType.AMS);
+               StyleManager.styleHardpointLabel(ecm, chassi.getInternalPart(part), HardPointType.ECM);
                return panel;
             }
          };
