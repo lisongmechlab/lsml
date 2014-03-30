@@ -55,23 +55,24 @@ import javax.swing.border.TitledBorder;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.metrics.AlphaStrike;
+import lisong_mechlab.model.metrics.AlphaTimeToOverHeat;
 import lisong_mechlab.model.metrics.CoolingRatio;
 import lisong_mechlab.model.metrics.GhostHeat;
 import lisong_mechlab.model.metrics.HeatCapacity;
 import lisong_mechlab.model.metrics.HeatDissipation;
 import lisong_mechlab.model.metrics.HeatGeneration;
+import lisong_mechlab.model.metrics.HeatOverTime;
 import lisong_mechlab.model.metrics.JumpDistance;
 import lisong_mechlab.model.metrics.MaxDPS;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.metrics.RangeMetric;
-import lisong_mechlab.model.metrics.TimeToOverHeat;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.metrics.TurningSpeed;
 import lisong_mechlab.model.metrics.TwistSpeed;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
+import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -301,7 +302,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          effectiveHS.setAlignmentX(Component.CENTER_ALIGNMENT);
          heat.add(effectiveHS);
 
-         timeToOverheat = new MetricDisplay(new TimeToOverHeat(heatCapacity, heatDissipation, heatGeneration), "Seconds to Overheat: %.1f",
+         HeatOverTime heatOverTime = new HeatOverTime(loadout, xBar);
+         timeToOverheat = new MetricDisplay(new AlphaTimeToOverHeat(heatCapacity, heatOverTime, heatDissipation), "Seconds to Overheat: %.1f",
                                             "The amount of seconds you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.",
                                             anXBar, loadout);
          timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);

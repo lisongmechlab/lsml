@@ -20,16 +20,17 @@
 package lisong_mechlab.model.metrics;
 
 /**
- * This {@link Metric} calculates the number of seconds a mech can shoot all weapons before it over heats.
+ * This {@link Metric} calculates the number of seconds a mech can shoot all weapons before it over heats under the
+ * assumption of asymptotic heat generation.
  * 
  * @author Emily Björk
  */
-public class TimeToOverHeat implements Metric{
+public class AsymptoticTimeToOverHeat implements Metric{
    private final HeatCapacity    capacity;
    private final HeatDissipation dissipation;
    private final HeatGeneration  generation;
 
-   public TimeToOverHeat(final HeatCapacity aCapacity, final HeatDissipation aDissipation, final HeatGeneration aHeatGeneration){
+   public AsymptoticTimeToOverHeat(final HeatCapacity aCapacity, final HeatDissipation aDissipation, final HeatGeneration aHeatGeneration){
       capacity = aCapacity;
       dissipation = aDissipation;
       generation = aHeatGeneration;
