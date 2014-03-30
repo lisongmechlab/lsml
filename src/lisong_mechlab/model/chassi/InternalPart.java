@@ -262,4 +262,16 @@ public class InternalPart{
       }
       return aItem.getNumCriticalSlots(null) <= getNumCriticalslots() - internalSlots;
    }
+
+   /**
+    * @return <code>true</code> if this component has missile bay doors.
+    */
+   public boolean hasMissileBayDoors(){
+      for(HardPoint hardPoint : hardpoints){
+         if( hardPoint.hasBayDoor() ){
+            return true;
+         }
+      }
+      return false;
+   }
 }

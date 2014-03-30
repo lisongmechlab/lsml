@@ -21,11 +21,19 @@ package lisong_mechlab.view.render;
 
 import java.awt.Color;
 import java.awt.Insets;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.border.Border;
 
+import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
@@ -84,7 +92,70 @@ public class StyleManager{
 
    // Others
    private static final Color  COLOR_BG_MISC           = new Color(0x729fcf);
+   
+   private static final Icon MISSILE_BAY_DOOR_ICON = new ImageIcon(StyleManager.class.getResource("/resources/mbd.png"), "This hard point has missile bay doors. While closed the component receives 10% less damage");
 
+   public static void styleHardpointLabel(JLabel aLabel, InternalPart aInternalPart, HardPointType aHardPointType){
+      int hardPoints = aInternalPart.getNumHardpoints(aHardPointType);
+      if( hardPoints < 1 ){
+         aLabel.setVisible(false);
+         return;
+      }
+
+      aLabel.setVisible(true);
+      styleThinItem(aLabel, aHardPointType);
+
+      if(aHardPointType == HardPointType.MISSILE){
+         aLabel.setText(formatMissileHardpointText(aInternalPart));
+         
+         if(aInternalPart.hasMissileBayDoors()){
+            aLabel.setIcon(MISSILE_BAY_DOOR_ICON);
+            aLabel.setToolTipText("This component has missile bay doors. While the doors are close the component takes 10% less damage.");
+         }
+         else{
+            aLabel.setIcon(null);
+            aLabel.setToolTipText(null);
+         }
+      }
+      else if( hardPoints == 1 ){
+         aLabel.setText(aHardPointType.shortName());
+      }
+      else{
+         aLabel.setText(hardPoints + " " + aHardPointType.shortName());
+      }
+   }
+
+   public static String formatMissileHardpointText(InternalPart aPart){
+      Map<Integer, Integer> tubecounts = new TreeMap<>();
+      for(HardPoint hp : aPart.getHardpoints()){
+         if( hp.getType() == HardPointType.MISSILE ){
+            final int tubes = hp.getNumMissileTubes();
+            if( tubecounts.containsKey(tubes) )
+               tubecounts.put(tubes, tubecounts.get(tubes) + 1);
+            else
+               tubecounts.put(tubes, 1);
+         }
+      }
+
+      String ans = aPart.getNumHardpoints(HardPointType.MISSILE) + " M (";
+      boolean first = true;
+      for(Entry<Integer, Integer> it : tubecounts.entrySet()){
+         if( !first )
+            ans += ", ";
+
+         if( it.getValue() == 1 ){
+            ans += it.getKey();
+         }
+         else{
+            ans += it.getKey() + "x" + it.getValue();
+         }
+
+         first = false;
+      }
+
+      return ans + ")";
+   }
+   
    public static void styleItem(JComponent aComponent){
       Item item = null;
       styleItem(aComponent, item);

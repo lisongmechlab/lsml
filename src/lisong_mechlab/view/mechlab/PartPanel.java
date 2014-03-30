@@ -21,9 +21,6 @@ package lisong_mechlab.view.mechlab;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -38,15 +35,12 @@ import javax.swing.text.DefaultFormatter;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.render.ItemRenderer;
-import lisong_mechlab.view.render.RoundedBorders;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
@@ -95,71 +89,13 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       panel.add(Box.createVerticalStrut(ItemRenderer.ITEM_BASE_HEIGHT + ItemRenderer.ITEM_BASE_HEIGHT / 2));
 
       for(HardPointType hp : HardPointType.values()){
-         final int hardpoints = loadoutPart.getInternalPart().getNumHardpoints(hp);
-         if( 1 == hardpoints ){
-            JLabel label = new JLabel(hp.shortName());
-            if( hp == HardPointType.MISSILE ){
-               label.setText(formatMissileHardpointText(loadoutPart.getInternalPart()));
-            }
-            label.setBackground(StyleManager.getBgColorFor(hp));
-            label.setForeground(StyleManager.getFgColorFor(hp));
-            label.setBorder(new RoundedBorders(2, 3, ItemRenderer.RADII));
-            label.setOpaque(true);
-            panel.add(label);
-         }
-         else if( 1 < hardpoints ){
-            JLabel label = new JLabel(hardpoints + " " + hp.shortName());
-            if( hp == HardPointType.MISSILE ){
-               label.setText(formatMissileHardpointText(loadoutPart.getInternalPart()));
-            }
-            label.setBackground(StyleManager.getBgColorFor(hp));
-            label.setForeground(StyleManager.getFgColorFor(hp));
-            label.setBorder(new RoundedBorders(2, 3, ItemRenderer.RADII));
-            label.setOpaque(true);
-            panel.add(label);
-         }
+         JLabel label = new JLabel();
+         StyleManager.styleHardpointLabel(label, loadoutPart.getInternalPart(), hp);
+         panel.add(label);
       }
 
       panel.add(Box.createHorizontalGlue());
       return panel;
-   }
-
-   // FIXME: This should be moved somewhere else...
-   public static String formatMissileHardpointText(InternalPart aPart){
-      Map<Integer, Integer> tubecounts = new TreeMap<>();
-
-      boolean baydoors = false;
-
-      for(HardPoint hp : aPart.getHardpoints()){
-         if( hp.getType() == HardPointType.MISSILE ){
-            final int tubes = hp.getNumMissileTubes();
-            if( tubecounts.containsKey(tubes) )
-               tubecounts.put(tubes, tubecounts.get(tubes) + 1);
-            else
-               tubecounts.put(tubes, 1);
-
-            if( hp.hasBayDoor() )
-               baydoors = true;
-         }
-      }
-
-      String ans = aPart.getNumHardpoints(HardPointType.MISSILE) + " M (";
-      boolean first = true;
-      for(Entry<Integer, Integer> it : tubecounts.entrySet()){
-         if( !first )
-            ans += ", ";
-
-         if( it.getValue() == 1 ){
-            ans += it.getKey();
-         }
-         else{
-            ans += it.getKey() + "x" + it.getValue();
-         }
-
-         first = false;
-      }
-
-      return ans + ")" + (baydoors ? "D" : "");
    }
 
    private JPanel makeArmorPanel(MessageXBar anXBar, JCheckBox aSymmetric, OperationStack aStack){
