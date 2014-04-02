@@ -59,6 +59,47 @@ public class AutoAddItemOperationTest{
    private OperationStack stack = new OperationStack(0);
 
    /**
+    * This test is a regression test for a bug where auto-add an ER PPC would fail on lsml://rRoAkQAAAAAAAAAAAAAAuihsbMzMbDCRE22zG2DF 
+    * where a trivial solution is available.
+    */
+   @Test
+   public void testMoveItem_Bug1(){
+      // Setup
+      Loadout loadout = new Loadout(ChassiDB.lookup("BNC-3M"), xBar);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.lookup("MEDIUM LASER")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.lookup("MEDIUM LASER")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.lookup("MEDIUM LASER")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightTorso), ItemDB.lookup("MEDIUM LASER")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.Head), ItemDB.lookup("MEDIUM LASER")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.CenterTorso), ItemDB.lookup("STD ENGINE 200")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.lookup("MEDIUM LASER")));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.LeftArm), ItemDB.DHS));
+      Mockito.reset(xBar);
+      // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
+
+      // Execute
+      stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, ItemDB.lookup("ER PPC")));
+      
+      // Verify
+      List<Item> allItems = new ArrayList<>(loadout.getAllItems());
+      Iterator<Item> it = allItems.iterator();
+      while( it.hasNext() ){
+         if( it.next() instanceof Internal )
+            it.remove();
+      }
+      assertEquals(16, allItems.size());
+      assertTrue(allItems.remove(ItemDB.lookup("ER PPC")));
+   }
+   
+   /**
     * {@link AutoAddItemOperation} shall be able to swap items in addition to just moving one at a time. Otherwise there
     * we miss some solutions.
     */

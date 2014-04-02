@@ -88,8 +88,10 @@ abstract class ItemOperation extends Operation{
             LoadoutPart rt = loadoutPart.getLoadout().getPart(Part.RightTorso);
             lt.removeItem(LoadoutPart.ENGINE_INTERNAL);
             rt.removeItem(LoadoutPart.ENGINE_INTERNAL);
-            xBar.post(new Message(lt, Type.ItemRemoved));
-            xBar.post(new Message(rt, Type.ItemRemoved));
+            if( xBar != null ){
+               xBar.post(new Message(lt, Type.ItemRemoved));
+               xBar.post(new Message(rt, Type.ItemRemoved));
+            }
          }
 
          int engineHsLeft = loadoutPart.getNumEngineHeatsinks();
@@ -129,9 +131,9 @@ abstract class ItemOperation extends Operation{
             loadoutPart.addItem(loadoutPart.getLoadout().getUpgrades().getHeatSink().getHeatSinkType());
          }
       }
-      
+
       Engine engine = loadoutPart.getLoadout().getEngine();
-      if(anItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL && xBar != null){
+      if( anItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL && xBar != null ){
          xBar.post(new NotificationMessage(Severity.WARNING, loadoutPart.getLoadout(), "C.A.S.E. together with XL engine has no effect."));
       }
       loadoutPart.addItem(anItem);
