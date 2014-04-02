@@ -200,41 +200,58 @@ public class AutoAddItemOperation extends LoadoutOperation{
          addOp(ops.remove(0));
    }
 
+   /**
+    * Get all possible ways to move the given item out of the source part on the node.
+    * 
+    * @param aParent
+    *           The parent {@link Node} that we're branching from.
+    * @param aSourcePart
+    *           The source part that we shall remove the {@link Item} from.
+    * @param aItem
+    *           The {@link Item} to be removed.
+    * @return A {@link List} of {@link Node}s with all possible ways to move the item out of the given node.
+    */
    private List<Node> getBranches(Node aParent, Part aSourcePart, Item aItem){
       List<Node> ans = new ArrayList<>();
-      LoadoutPart srcLoadoutPart = aParent.data.getPart(aSourcePart);
+
+      // Create a temporary loadout where the item has been removed and find all
+      // ways it can be placed on another part.
+      Loadout tempLoadout = new Loadout(aParent.data, null);
+      stack.pushAndApply(new RemoveItemOperation(null, tempLoadout.getPart(aSourcePart), aItem));
+
+      LoadoutPart srcPart = tempLoadout.getPart(aSourcePart);
       for(Part targetPart : Part.values()){
          if( aSourcePart == targetPart )
             continue;
-         LoadoutPart tgtLoadoutPart = aParent.data.getPart(targetPart);
-         if( tgtLoadoutPart.canEquip(aItem) ){
+
+         LoadoutPart dstPart = tempLoadout.getPart(targetPart);
+         if( dstPart.canEquip(aItem) ){
+            // Don't consider swaps if the item can be directly moved. A swap will be generated in another point
+            // of the search tree anyway when we move an item from that component back to this.
             ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
          }
-         else if( tgtLoadoutPart.getInternalPart().isAllowed(aItem) ){
-            // The part couldn't take the item directly, see if we can swap with
-            // some item in the part.
-            final int minItemSize = aItem.getNumCriticalSlots(aParent.data.getUpgrades()) - tgtLoadoutPart.getNumCriticalSlotsFree();
-            final int maxItemSize = aItem.getNumCriticalSlots(aParent.data.getUpgrades()) + srcLoadoutPart.getNumCriticalSlotsFree();
+         else if( dstPart.getInternalPart().isAllowed(aItem) ){
+            // The part couldn't take the item directly, see if we can swap with some item in the part.
+            final int minItemSize = aItem.getNumCriticalSlots(tempLoadout.getUpgrades()) - dstPart.getNumCriticalSlotsFree();
             HardPointType requiredType = aItem.getHardpointType();
             if( requiredType != HardPointType.NONE
-                && tgtLoadoutPart.getNumItemsOfHardpointType(requiredType) < tgtLoadoutPart.getInternalPart().getNumHardpoints(requiredType) ){
+                && dstPart.getNumItemsOfHardpointType(requiredType) < dstPart.getInternalPart().getNumHardpoints(requiredType) ){
                requiredType = HardPointType.NONE; // There is at least one free hard point, we don't need to swap with a
                                                   // item of the required type.
             }
-            for(Item item : tgtLoadoutPart.getItems()){
-               if( item instanceof Internal )
+            for(Item item : dstPart.getItems()){
+               // The item has to clear enough room to make our item fit.
+               if( item.getNumCriticalSlots(tempLoadout.getUpgrades()) < minItemSize )
                   continue;
-               if( item.getNumCriticalSlots(aParent.data.getUpgrades()) < minItemSize )
-                  continue;
-               if( item.getNumCriticalSlots(aParent.data.getUpgrades()) > maxItemSize )
-                  continue;
+               // The item has to free a hard point of the required type if applicable.
                if( requiredType != HardPointType.NONE && item.getHardpointType() != requiredType )
                   continue;
-               if( !srcLoadoutPart.getInternalPart().isAllowed(item) )
+               // Skip NOPs
+               if( item == aItem )
                   continue;
-               if(item == aItem)
-                  continue;
-               ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
+
+               if( srcPart.canEquip(item) )
+                  ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
             }
          }
       }
