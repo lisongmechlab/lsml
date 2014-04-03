@@ -92,9 +92,12 @@ public class AlphaTimeToOverHeatTest{
             double time = (Double)aInvocation.getArguments()[0];
             int integerTime = (int)time;
             if(time <= 100){
-               return (integerTime/5)*5.0; // 5 heat pulse every 5 seconds.  
+               return (integerTime/5)*5.0; // 5 heat pulse every 5 seconds.
+               // The cooling capacity is 20 in the same period which would cool the mech to negative temperature
+               // acting as a cooling buffer which is not allowed. If this happens, the impulse after 100s will not
+               // be enough to cause an over heat as expected.
             }
-            return 100 + 61.0; // The above will have generated 100 heat in total, add an impulse of 61 to trigger overheat.
+            return 100 + 61.0; // The above will have generated 100 heat in total, add an impulse of 61 to trigger over heat.
          }});
       
       AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
