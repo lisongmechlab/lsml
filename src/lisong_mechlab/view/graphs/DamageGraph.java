@@ -35,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
@@ -94,7 +95,8 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
     */
    public DamageGraph(Loadout aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric){
       super("Max Sustained DPS over range for " + aLoadout);
-
+      setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+      
       anXbar.attach(this);
 
       loadout = aLoadout;
