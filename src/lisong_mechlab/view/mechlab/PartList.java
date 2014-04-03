@@ -66,7 +66,7 @@ public class PartList extends JList<Item>{
    private OperationStack                  opStack;
 
    private final DecimalFormat             df               = new DecimalFormat("###.#");
-   private final DecimalFormat             df2               = new DecimalFormat("###.##");
+   private final DecimalFormat             df2              = new DecimalFormat("###.##");
    private final ItemEffectiveHP           effectiveHP;
    private final CriticalItemDamage        criticalItemDamage;
    private final CriticalStrikeProbability criticalStrikeProbability;
@@ -231,7 +231,7 @@ public class PartList extends JList<Item>{
                // Fall through
             }
             case Empty:{
-               if(part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
+               if( part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
                   opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
                   return true;
                }
@@ -346,6 +346,8 @@ public class PartList extends JList<Item>{
          public void keyPressed(KeyEvent aArg0){
             if( aArg0.getKeyCode() == KeyEvent.VK_DELETE ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
+                  if( itemPair.first instanceof Internal )
+                     continue;
                   opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
                }
             }
@@ -357,6 +359,8 @@ public class PartList extends JList<Item>{
          public void mouseClicked(MouseEvent e){
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
+                  if( itemPair.first instanceof Internal )
+                     continue;
                   opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
                }
             }

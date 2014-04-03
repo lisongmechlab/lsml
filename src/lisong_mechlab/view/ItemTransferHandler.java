@@ -34,6 +34,7 @@ import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
@@ -75,6 +76,8 @@ public class ItemTransferHandler extends TransferHandler{
 
          StringBuffer buff = new StringBuffer();
          for(Pair<Item, Integer> it : sourceItems){
+            if( it.first instanceof Internal )
+               return null;
             buff.append(it.first.getName()).append('\n');
             frame.getOpStack().pushAndApply(new RemoveItemOperation(ProgramInit.lsml().xBar, sourcePart, it.first));
          }
