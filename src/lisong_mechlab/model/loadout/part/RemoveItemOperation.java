@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.part;
 
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -38,12 +39,14 @@ public class RemoveItemOperation extends ItemOperation{
     *           The {@link MessageXBar} to send messages on when items are removed.
     * @param aLoadoutPart
     *           The {@link LoadoutPart} to remove from.
-    * @param anItem
+    * @param aItem
     *           The {@link Item} to remove.
     */
-   public RemoveItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item anItem){
+   public RemoveItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item aItem){
       super(anXBar, aLoadoutPart);
-      item = anItem;
+      if(aItem instanceof Internal)
+         throw new IllegalArgumentException("Can't remove internals!");
+      item = aItem;
    }
 
    @Override
