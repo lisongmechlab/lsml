@@ -409,6 +409,26 @@ public class LoadoutPartTest{
       // Execute & Verify
       assertFalse(cut.canEquip(ItemDB.BAP));
    }
+   
+   /**
+    * {@link LoadoutPart#canEquip(Item)} shall return false if the LoadoutPart already has a C.A.S.E.
+    */
+   @Test
+   public void testCanEquip_HasCase(){
+      // Setup
+      Loadout loadout = Mockito.mock(Loadout.class);
+
+      Mockito.when(part.getType()).thenReturn(Part.RightTorso);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(4);
+      Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
+
+      LoadoutPart cut = new LoadoutPart(loadout, part);
+      cut.addItem(ItemDB.CASE);
+
+      // Execute & Verify
+      assertFalse(cut.canEquip(ItemDB.CASE));
+   }
+
 
    /**
     * Adding an Artemis enabled launcher to a space where it would fit without Artemis shall not work
