@@ -33,7 +33,7 @@ import lisong_mechlab.util.MessageXBar.Message;
 
 /**
  * This class calculates the accurate heat generation over time for a {@link Loadout} assuming all guns fire as often as
- * possible and at max speed without jump jets.
+ * possible with engine at max speed and without jump jets.
  * 
  * @author Emily Björk
  */

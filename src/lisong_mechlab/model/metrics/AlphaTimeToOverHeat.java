@@ -56,6 +56,7 @@ public class AlphaTimeToOverHeat implements Metric{
       double lastHeat = 0;
       final double dissipated = heatDissipation.calculate() * TIME_STEP;
 
+      final double capacity = heatCapacity.calculate();
       // First order linear ODE, using Euler's method.
       while( time < MAX_TIME ){
          final double currentHeat = heatOverTime.calculate(time);
@@ -64,7 +65,7 @@ public class AlphaTimeToOverHeat implements Metric{
          heat = Math.max(0, heat);
          time += TIME_STEP;
          lastHeat = currentHeat;
-         if( heat >= heatCapacity.calculate() ){
+         if( heat >= capacity ){
             return time;
          }
       }
