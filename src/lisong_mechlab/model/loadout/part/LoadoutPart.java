@@ -32,6 +32,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
@@ -155,6 +156,9 @@ public class LoadoutPart{
       if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(getLoadout().getUpgrades()) ){
          return false;
       }
+      
+      if(anItem == ItemDB.CASE && items.contains(ItemDB.CASE))
+         return false;
 
       // Check enough free hard points
       if( anItem.getHardpointType() != HardPointType.NONE
