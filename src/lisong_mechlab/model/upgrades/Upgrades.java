@@ -59,6 +59,12 @@ public class Upgrades implements Cloneable{
       public boolean isForMe(Loadout aLoadout){
          return aLoadout.getUpgrades() == source;
       }
+
+      @Override
+      public boolean affectsHeatOrDamage(){
+         return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
+                       // messages will trigger that already.
+      }
    }
 
    /**
@@ -73,7 +79,7 @@ public class Upgrades implements Cloneable{
       guidanceType = aGuidance;
       heatSinkType = aHeatSinks;
    }
-   
+
    public Upgrades(Upgrades aUpgrades){
       this(aUpgrades.armorType, aUpgrades.structureType, aUpgrades.guidanceType, aUpgrades.heatSinkType);
    }
@@ -81,8 +87,7 @@ public class Upgrades implements Cloneable{
    /**
     * 
     */
-   public Upgrades(){
-   }
+   public Upgrades(){}
 
    @Override
    public boolean equals(Object obj){
@@ -104,7 +109,7 @@ public class Upgrades implements Cloneable{
       return true;
    }
 
-   @Override 
+   @Override
    public Upgrades clone(){
       try{
          Upgrades clone = (Upgrades)super.clone();
@@ -112,9 +117,9 @@ public class Upgrades implements Cloneable{
       }
       catch( CloneNotSupportedException e ){
          throw new RuntimeException(e);
-      }      
+      }
    }
-   
+
    public GuidanceUpgrade getGuidance(){
       return guidanceType;
    }

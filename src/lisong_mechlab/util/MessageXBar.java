@@ -49,7 +49,19 @@ public class MessageXBar{
     * @author Emily Björk
     */
    public interface Message{
+      /**
+       * Checks if this message is related to a specific {@link Loadout}.
+       * 
+       * @param aLoadout
+       *           The {@link Loadout} to check.
+       * @return <code>true</code> if this message affects the given {@link Loadout}.
+       */
       public boolean isForMe(Loadout aLoadout);
+
+      /**
+       * @return <code>true</code> if this message can affect the damage or heat output of the related {@link Loadout}.
+       */
+      public boolean affectsHeatOrDamage();
    }
 
    /**

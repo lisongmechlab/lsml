@@ -82,4 +82,9 @@ public class NotificationMessage implements Message{
    public boolean isForMe(Loadout aLoadout){
       return loadout == aLoadout;
    }
+
+   @Override
+   public boolean affectsHeatOrDamage(){
+      return false;
+   }
 }

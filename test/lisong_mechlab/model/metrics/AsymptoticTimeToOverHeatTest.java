@@ -60,11 +60,6 @@ public class AsymptoticTimeToOverHeatTest{
       assertEquals(Double.POSITIVE_INFINITY, cut.calculate(), 0);
    }
 
-   @Test
-   public void testGetTimeToOverHeat_LLAS(){
-      
-   }
-   
    /**
     * If a mech generates 10 heat per second and can dissipate 5, then the mech will over heat after the differential
     * has filled the heat capacity: capacity / (generation - dissipation)

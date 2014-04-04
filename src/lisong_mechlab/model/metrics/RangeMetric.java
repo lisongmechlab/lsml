@@ -62,9 +62,9 @@ public abstract class RangeMetric implements Metric{
 
       double max = Double.NEGATIVE_INFINITY;
       for(Double r : WeaponRanges.getRanges(loadout)){
-         double dps = calculate(r);
-         if( dps >= max ){
-            max = dps;
+         double value = calculate(r);
+         if( value >= max ){
+            max = value;
             range = r;
          }
       }

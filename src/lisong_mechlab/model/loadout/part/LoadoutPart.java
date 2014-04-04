@@ -77,6 +77,11 @@ public class LoadoutPart{
       }
 
       @Override
+      public boolean affectsHeatOrDamage(){
+         return type != Type.ArmorChanged;
+      }
+      
+      @Override
       public String toString(){
          return type.toString() + " for " + part.getInternalPart().getType().toString() + " of " + part.getLoadout();
       }
