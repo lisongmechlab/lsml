@@ -66,13 +66,23 @@ public class PreferencesDialog extends JDialog{
       smartPlace.setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
       smartPlace.addActionListener(new AbstractAction(){
          private static final long serialVersionUID = -8136020916897237506L;
-
          @Override
          public void actionPerformed(ActionEvent aArg0){
             ProgramInit.lsml().preferences.uiPreferences.setUseSmartPlace(smartPlace.isSelected());
          }
       });
       panel.add(smartPlace);
+      
+      final JCheckBox compactMode = new JCheckBox("Use Compact UI", ProgramInit.lsml().preferences.uiPreferences.getCompactMode());
+      compactMode.setToolTipText("Tries to compact the UI to make it useful on smaller screens.");
+      compactMode.addActionListener(new AbstractAction(){
+         private static final long serialVersionUID = -8136020916897237506L;
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            ProgramInit.lsml().preferences.uiPreferences.setCompactMode(compactMode.isSelected());
+         }
+      });
+      panel.add(compactMode);
 
       aRoot.add(panel);
    }

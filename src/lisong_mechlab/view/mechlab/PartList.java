@@ -57,6 +57,7 @@ import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.ItemTransferHandler;
+import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
@@ -133,11 +134,11 @@ public class PartList extends JList<Item>{
          Item item = pair.second;
          switch( pair.first ){
             case Empty:{
-               if( isDynArmor(index) ){
+               if( isDynArmor(index + ((Model)getModel()).compactCompensationSlots) ){
                   StyleManager.styleDynamicEntry(this);
                   setText(Model.DYN_ARMOR);
                }
-               else if( isDynStructure(index) ){
+               else if( isDynStructure(index + ((Model)getModel()).compactCompensationSlots) ){
                   StyleManager.styleDynamicEntry(this);
                   setText(Model.DYN_STRUCT);
                }
@@ -150,7 +151,13 @@ public class PartList extends JList<Item>{
             }
             case Item:{
                setTooltipForItem(item);
-               setText(item.getName());
+               if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+                  setText(item.getShortName(null));
+               }
+               else{
+                  setText(item.getName(null));
+               }
+
                if( item.getNumCriticalSlots(null) == 1 ){
                   StyleManager.styleItem(this, item);
                }
@@ -173,7 +180,12 @@ public class PartList extends JList<Item>{
             }
             case EngineHeatSink:{
                setTooltipForItem(item);
-               setText(Model.HEATSINKS_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
+               if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+                  setText(Model.HEATSINKS_COMPACT_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
+               }
+               else{
+                  setText(Model.HEATSINKS_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
+               }
                StyleManager.styleItemBottom(this, item);
                break;
             }
@@ -198,7 +210,8 @@ public class PartList extends JList<Item>{
    }
 
    private class Model extends AbstractListModel<Item> implements MessageXBar.Reader{
-      private static final String HEATSINKS_STRING = "HEATSINKS: ";
+      private static final String HEATSINKS_STRING = "HEAT SINKS: ";
+      private static final String HEATSINKS_COMPACT_STRING = "HS: ";
       private static final String EMPTY            = "EMPTY";
       private static final String MULTISLOT        = "";
       private static final String DYN_ARMOR        = "DYNAMIC ARMOR";
@@ -206,9 +219,19 @@ public class PartList extends JList<Item>{
       private static final long   serialVersionUID = 2438473891359444131L;
       private final MessageXBar   xBar;
 
+      private final int compactCompensationSlots;
+
       Model(MessageXBar aXBar){
          xBar = aXBar;
          xBar.attach(this);
+         
+         int c = 0;
+         if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+            for(Item item : part.getInternalPart().getInternalItems()){
+               c += item.getNumCriticalSlots(null);
+            }
+         }
+         compactCompensationSlots = c;
       }
 
       boolean putElement(Item anItem, int anIndex, boolean aShouldReplace){
@@ -245,6 +268,9 @@ public class PartList extends JList<Item>{
 
       Pair<ListEntryType, Item> getElementTypeAt(int arg0){
          List<Item> items = new ArrayList<>(part.getItems());
+         if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+            items.removeAll(part.getInternalPart().getInternalItems());
+         }
          int numEngineHs = part.getNumEngineHeatsinks();
          boolean foundhs = true;
          while( numEngineHs > 0 && !items.isEmpty() && foundhs ){
@@ -301,7 +327,7 @@ public class PartList extends JList<Item>{
 
       @Override
       public int getSize(){
-         return part.getInternalPart().getNumCriticalslots();
+         return part.getInternalPart().getNumCriticalslots() - compactCompensationSlots;
       }
 
       @Override

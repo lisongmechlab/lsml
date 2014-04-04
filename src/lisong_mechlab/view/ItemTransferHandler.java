@@ -119,7 +119,7 @@ public class ItemTransferHandler extends TransferHandler{
    private void setPreview(Item anItem, Loadout aLoadout){
       Image preview = ItemRenderer.render(anItem, aLoadout != null ? aLoadout.getUpgrades() : null);
       setDragImage(preview);
-      Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
+      Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.getItemHeight() / 2);
       setDragImageOffset(mouse);
    }
 

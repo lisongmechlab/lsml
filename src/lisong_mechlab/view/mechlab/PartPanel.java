@@ -40,6 +40,7 @@ import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.render.ItemRenderer;
 import lisong_mechlab.view.render.StyleManager;
 
@@ -64,8 +65,9 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       canHaveHardpoints = aCanHaveHardpoints;
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-      setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(aLoadoutPart.getInternalPart().getType().longName()),
-                                                   BorderFactory.createEmptyBorder(0, 2, 2, 4)));
+      if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
+         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(aLoadoutPart.getInternalPart().getType().longName()),
+                                                      BorderFactory.createEmptyBorder(0, 2, 2, 4)));
       add(makeArmorPanel(anXBar, aSymmetric, aStack));
 
       if( canHaveHardpoints )
@@ -73,12 +75,11 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       // Critical slots
       PartList list = new PartList(aStack, aLoadoutPart, anXBar, aSlotDistributor);
-      list.setFixedCellHeight(ItemRenderer.ITEM_BASE_HEIGHT);
-      list.setFixedCellWidth(ItemRenderer.ITEM_BASE_WIDTH);
+      list.setFixedCellHeight(ItemRenderer.getItemHeight());
+      list.setFixedCellWidth(ItemRenderer.getItemWidth());
 
       setAlignmentX(LEFT_ALIGNMENT);
       add(list);
-      add(Box.createRigidArea(new Dimension(0, 1)));
    }
 
    private JPanel makeHardpointsPanel(){
@@ -86,7 +87,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       BoxLayout layoutManager = new BoxLayout(panel, BoxLayout.LINE_AXIS);
       panel.setLayout(layoutManager);
       // /panel.setBackground(Color.PINK.darker());
-      panel.add(Box.createVerticalStrut(ItemRenderer.ITEM_BASE_HEIGHT + ItemRenderer.ITEM_BASE_HEIGHT / 2));
+      panel.add(Box.createVerticalStrut(ItemRenderer.getItemHeight() + ItemRenderer.getItemHeight() / 2));
 
       for(HardPointType hp : HardPointType.values()){
          JLabel label = new JLabel();
@@ -100,7 +101,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private JPanel makeArmorPanel(MessageXBar anXBar, JCheckBox aSymmetric, OperationStack aStack){
       JPanel panel = new JPanel();
-      Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, ItemRenderer.ITEM_BASE_HEIGHT);
+      Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, ItemRenderer.getItemHeight());
       Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
 
       if( loadoutPart.getInternalPart().getType().isTwoSided() ){
@@ -122,14 +123,24 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
          JPanel frontPanel = new JPanel();
          frontPanel.setLayout(new BoxLayout(frontPanel, BoxLayout.LINE_AXIS));
-         frontPanel.add(new JLabel("Front:"));
+         if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+            frontPanel.add(new JLabel("F:"));
+         }
+         else{
+            frontPanel.add(new JLabel("Front:"));
+         }
          frontPanel.add(Box.createHorizontalGlue());
          frontPanel.add(frontSpinner);
          frontPanel.add(frontArmorLabel);
 
          JPanel backPanel = new JPanel();
          backPanel.setLayout(new BoxLayout(backPanel, BoxLayout.LINE_AXIS));
-         backPanel.add(new JLabel("Back:"));
+         if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+            backPanel.add(new JLabel("B:"));
+         }
+         else{
+            backPanel.add(new JLabel("Back:"));
+         }
          backPanel.add(Box.createHorizontalGlue());
          backPanel.add(backSpinner);
          backPanel.add(backArmorLabel);
@@ -148,7 +159,9 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
          ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
-         panel.add(new JLabel("Armor:"));
+         if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+            panel.add(new JLabel("Armor:"));
+         }
          panel.add(Box.createHorizontalGlue());
          panel.add(spinner);
          panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
