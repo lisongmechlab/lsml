@@ -103,6 +103,12 @@ public class Loadout implements Cloneable{
          result = prime * result + ((type == null) ? 0 : type.hashCode());
          return result;
       }
+      
+
+      @Override
+      public boolean affectsHeatOrDamage(){
+         return type == Type.UPDATE;
+      }
 
       @Override
       public boolean isForMe(Loadout aLoadout){

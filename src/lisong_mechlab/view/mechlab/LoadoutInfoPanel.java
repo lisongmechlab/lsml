@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -56,6 +57,7 @@ import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.metrics.AlphaStrike;
 import lisong_mechlab.model.metrics.AlphaTimeToOverHeat;
+import lisong_mechlab.model.metrics.BurstDamageOverTime;
 import lisong_mechlab.model.metrics.CoolingRatio;
 import lisong_mechlab.model.metrics.GhostHeat;
 import lisong_mechlab.model.metrics.HeatCapacity;
@@ -66,6 +68,7 @@ import lisong_mechlab.model.metrics.JumpDistance;
 import lisong_mechlab.model.metrics.MaxDPS;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.metrics.RangeMetric;
+import lisong_mechlab.model.metrics.RangeTimeMetric;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.metrics.TurningSpeed;
 import lisong_mechlab.model.metrics.TwistSpeed;
@@ -137,6 +140,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final MetricDisplay          alphaStrike;
    private final MetricDisplay          dpsMax;
    private final MetricDisplay          dpsSustained;
+   private final MetricDisplay          burstDamage;
    private final JCheckBox              fastFire         = new JCheckBox("Fast Fire");
    private final MetricDisplay          ghostHeat;
    private final JTable                 weaponTable;
@@ -228,28 +232,42 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // ----------------------------------------------------------------------
       {
          JPanel mobility = new JPanel();
-         mobility.setBorder(new TitledBorder(null, "Mobility"));
+         mobility.setBorder(new CompoundBorder(new TitledBorder(null, "Mobility"), innerBorder));
          mobility.setLayout(new BoxLayout(mobility, BoxLayout.PAGE_AXIS));
          mobility.add(Box.createHorizontalGlue());
          add(mobility);
+         
+         {
+            jumpJets.setAlignmentX(Component.CENTER_ALIGNMENT);
+            mobility.add(jumpJets);
 
-         jumpJets.setAlignmentX(Component.CENTER_ALIGNMENT);
-         mobility.add(jumpJets);
+            topSpeed = new MetricDisplay(new TopSpeed(loadout), "Top Speed: %.1f km/h", "The maximum speed the mech can move at.", anXBar, loadout);
+            topSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
+            mobility.add(topSpeed);
 
-         topSpeed = new MetricDisplay(new TopSpeed(loadout), "Top Speed: %.1f km/h", "The maximum speed the mech can move at.", anXBar, loadout);
-         topSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
-         mobility.add(topSpeed);
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(topSpeed, BorderLayout.WEST);
+            panel.add(jumpJets, BorderLayout.EAST);
+            mobility.add(panel);
+         }
+         
+         {
+            turnSpeed = new MetricDisplay(new TurningSpeed(loadout), "Turn Speed: %.1f °/s", "The rate at which your mech can turn its legs.", anXBar,
+                                          loadout);
+            turnSpeed.setAlignmentX(CENTER_ALIGNMENT);
+            mobility.add(turnSpeed);
 
-         turnSpeed = new MetricDisplay(new TurningSpeed(loadout), "Turn Speed: %.1f °/s", "The rate at which your mech can turn its legs.", anXBar,
-                                       loadout);
-         turnSpeed.setAlignmentX(CENTER_ALIGNMENT);
-         mobility.add(turnSpeed);
+            twistSpeed = new MetricDisplay(new TwistSpeed(loadout), "Twist Speed: %.1f °/s",
+                                           "The rate at which your mech can turn its tors in relation to the legs.", anXBar, loadout);
+            twistSpeed.setAlignmentX(CENTER_ALIGNMENT);
+            mobility.add(twistSpeed);
 
-         twistSpeed = new MetricDisplay(new TwistSpeed(loadout), "Twist Speed: %.1f °/s",
-                                        "The rate at which your mech can turn its tors in relation to the legs.", anXBar, loadout);
-         twistSpeed.setAlignmentX(CENTER_ALIGNMENT);
-         mobility.add(twistSpeed);
-
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(turnSpeed, BorderLayout.WEST);
+            panel.add(twistSpeed, BorderLayout.EAST);
+            mobility.add(panel);
+         }
+         
          JPanel eff = new JPanel(new GridLayout(1, 2));
          eff.setAlignmentY(Component.CENTER_ALIGNMENT);
 
@@ -284,7 +302,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             public void actionPerformed(ActionEvent aArg0){
                Environment environment = (Environment)environemnts.getSelectedItem();
                heatDissipation.changeEnvironment(environment);
-               updateDisplay();
                xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
             }
          });
@@ -294,43 +311,56 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          envPanel.add(environemnts);
          heat.add(envPanel);
 
-         heatsinks.setAlignmentX(Component.CENTER_ALIGNMENT);
-         heat.add(heatsinks);
-
-         effectiveHS = new MetricDisplay(heatCapacity, "Heat capacity: %.1f", "The amount of heat your mech can hold without overheating.", anXBar,
-                                         loadout);
-         effectiveHS.setAlignmentX(Component.CENTER_ALIGNMENT);
-         heat.add(effectiveHS);
-
-         HeatOverTime heatOverTime = new HeatOverTime(loadout, xBar);
-         timeToOverheat = new MetricDisplay(new AlphaTimeToOverHeat(heatCapacity, heatOverTime, heatDissipation), "Seconds to Overheat: %.1f",
-                                            "The amount of seconds you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.",
+         {
+            heatsinks.setAlignmentX(Component.CENTER_ALIGNMENT);
+            effectiveHS = new MetricDisplay(heatCapacity, "Heat capacity: %.1f", "The amount of heat your mech can hold without overheating.",
                                             anXBar, loadout);
-         timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);
-         heat.add(timeToOverheat);
+            effectiveHS.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-         ghostHeat = new MetricDisplay(new GhostHeat(loadout), "Ghost heat: %.1f",
-                                       "The amount of extra heat you receive on an alpha strike due to the ghost heat mechanic.", anXBar, loadout){
-            private static final long serialVersionUID = 1L;
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(heatsinks, BorderLayout.WEST);
+            panel.add(effectiveHS, BorderLayout.EAST);
+            heat.add(panel);
+         }
 
-            @Override
-            protected void updateText(){
-               if( metric.calculate() > 0 )
-                  setForeground(Color.RED);
-               else
-                  setForeground(effectiveHS.getForeground());
-               super.updateText();
-            }
-         };
+         {
+            coolingRatio = new MetricDisplay(new CoolingRatio(heatDissipation, heatGeneration), "Cooling ratio: %.0f %%",
+                                             "How much of your maximal heat generation that can be dissipated. "
+                                                   + "A value of 100% means that you will never overheat.", anXBar, loadout, true);
+            coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-         ghostHeat.setAlignmentX(Component.CENTER_ALIGNMENT);
-         heat.add(ghostHeat);
+            HeatOverTime heatOverTime = new HeatOverTime(loadout, xBar);
+            timeToOverheat = new MetricDisplay(new AlphaTimeToOverHeat(heatCapacity, heatOverTime, heatDissipation), "Seconds to Overheat: %.1f",
+                                               "The amount of seconds you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.",
+                                               anXBar, loadout);
+            timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-         coolingRatio = new MetricDisplay(new CoolingRatio(heatDissipation, heatGeneration), "Cooling ratio: %.0f %%",
-                                          "How much of your maximal heat generation that can be dissipated. "
-                                                + "A value of 100% means that you will never overheat.", anXBar, loadout, true);
-         coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
-         heat.add(coolingRatio);
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(coolingRatio, BorderLayout.WEST);
+            panel.add(timeToOverheat, BorderLayout.EAST);
+            heat.add(panel);
+         }
+
+         {
+            ghostHeat = new MetricDisplay(new GhostHeat(loadout), "Ghost heat: %.1f",
+                                          "The amount of extra heat you receive on an alpha strike due to the ghost heat mechanic.", anXBar, loadout){
+               private static final long serialVersionUID = 1L;
+
+               @Override
+               protected void updateText(){
+                  if( metric.calculate() > 0 )
+                     setForeground(Color.RED);
+                  else
+                     setForeground(effectiveHS.getForeground());
+                  super.updateText();
+               }
+            };
+
+            ghostHeat.setAlignmentX(Component.LEFT_ALIGNMENT);
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(ghostHeat, BorderLayout.WEST);
+            heat.add(panel);
+         }
 
          JPanel upgrades = new JPanel(new GridLayout(2, 2));
          upgrades.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -359,66 +389,123 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          offence.add(Box.createVerticalGlue());
          add(offence);
 
+         final RangeTimeMetric metricBurstDamage = new BurstDamageOverTime(loadout, anXBar);
          final RangeMetric metricAlphaStrike = new AlphaStrike(loadout);
          final RangeMetric metricMaxDPS = new MaxDPS(loadout);
          metricSustainedDps = new MaxSustainedDPS(loadout, heatDissipation);
 
-         JPanel panel = new JPanel();
-         panel.add(new JLabel("Range:"));
-         panel.setToolTipText("Select the range of engagement that alpha strike, max and sustained DPS will be calculated for. Set this to \"opt\" or \"optimal\" to automatically select your optimal ranges.");
+         {
+            JPanel panel = new JPanel();
+            panel.add(new JLabel("Range:"));
+            panel.setToolTipText("Select the range of engagement that alpha strike, max and sustained DPS will be calculated for. Set this to \"opt\" or \"optimal\" to automatically select your optimal ranges.");
 
-         String ranges[] = new String[] {"Optimal", "90", "180", "270", "300", "450", "675", "720", "810", "900", "1080", "1350", "1620", "1980",
-               "2160"};
-         range = new JComboBox<String>(ranges);
-         range.setEditable(true);
-         range.setToolTipText(panel.getToolTipText());
-         range.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent aArg0){
-               String value = (String)range.getSelectedItem();
-               final int r;
-               if( value.toLowerCase().contains("opt") ){
-                  r = -1;
-               }
-               else{
-                  try{
-                     r = Integer.parseInt(value);
+            String ranges[] = new String[] {"Optimal", "90", "180", "270", "300", "450", "675", "720", "810", "900", "1080", "1350", "1620", "1980",
+                  "2160"};
+            range = new JComboBox<String>(ranges);
+            range.setEditable(true);
+            range.setToolTipText(panel.getToolTipText());
+            Dimension rp = range.getPreferredSize();
+            rp.width = 70;
+            range.setPreferredSize(rp);
+            range.addActionListener(new ActionListener(){
+               @Override
+               public void actionPerformed(ActionEvent aArg0){
+                  String value = (String)range.getSelectedItem();
+                  final int r;
+                  if( value.toLowerCase().contains("opt") ){
+                     r = -1;
                   }
-                  catch( NumberFormatException e ){
-                     JOptionPane.showMessageDialog(LoadoutInfoPanel.this,
-                                                   "Please enter an integer range or \"optimal\" or \"opt\" to select the optimal range automatically.");
-                     range.setSelectedIndex(0);
-                     return;
+                  else{
+                     try{
+                        r = Integer.parseInt(value);
+                     }
+                     catch( NumberFormatException e ){
+                        JOptionPane.showMessageDialog(LoadoutInfoPanel.this,
+                                                      "Please enter an integer range or \"optimal\" or \"opt\" to select the optimal range automatically.");
+                        range.setSelectedIndex(0);
+                        return;
+                     }
                   }
+                  metricAlphaStrike.changeRange(r);
+                  metricMaxDPS.changeRange(r);
+                  metricSustainedDps.changeRange(r);
+                  metricBurstDamage.changeRange(r);
+                  SwingUtilities.invokeLater(new Runnable(){
+                     @Override
+                     public void run(){
+                        xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
+                     }
+                  });
                }
-               metricAlphaStrike.changeRange(r);
-               metricMaxDPS.changeRange(r);
-               metricSustainedDps.changeRange(r);
-               updateDisplay();
-               xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
+            });
+            panel.add(range);
+            {
+               JPanel pane = new JPanel();
+               pane.add(new JLabel("Time:"));
+
+               Double times[] = new Double[] {5.0, 10.0, 15.0, 20.0, 30.0, 45.0, 60.0};
+               final JComboBox<Double> timeOfEngagement = new JComboBox<Double>(times);
+               timeOfEngagement.setEditable(true);
+               timeOfEngagement.setToolTipText("The length of the encounter you're designing for.");
+               Dimension tp = timeOfEngagement.getPreferredSize();
+               tp.width = 50;
+               timeOfEngagement.setPreferredSize(tp);
+               timeOfEngagement.addActionListener(new ActionListener(){
+                  @Override
+                  public void actionPerformed(ActionEvent aArg0){
+                     double time = (Double)timeOfEngagement.getSelectedItem();
+                     metricBurstDamage.changeTime(time);
+                     SwingUtilities.invokeLater(new Runnable(){
+                        @Override
+                        public void run(){
+                           xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
+                        }
+                     });
+                  }
+               });
+               metricBurstDamage.changeTime(5.0);
+               pane.add(timeOfEngagement);
+               panel.add(pane);
             }
-         });
-         panel.add(range);
-         panel.add(fastFire);
-         fastFire.addItemListener(this);
-         fastFire.setAlignmentX(Component.CENTER_ALIGNMENT);
-         offence.add(panel);
+            
+            panel.add(fastFire);
+            fastFire.addItemListener(this);
+            fastFire.setAlignmentX(Component.CENTER_ALIGNMENT);
+            offence.add(panel);
+         }
 
-         alphaStrike = new MetricDisplay(metricAlphaStrike, "Alpha strike: %.1f @ %.0f m",
-                                         "The maximum damage you can deal at the displayed range in one volley.", anXBar, loadout);
-         alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
-         offence.add(alphaStrike);
+         {
+            alphaStrike = new MetricDisplay(metricAlphaStrike, "Alpha: %.1f @ %.0f m",
+                                            "The maximum damage you can deal at the displayed range in one volley.", anXBar, loadout);
+            alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
+            
+            burstDamage = new MetricDisplay(metricBurstDamage, "Burst  %.1f s: %.1f @ %.0f m",
+                                            "The maximum damage you can deal under the given time frame at the displayed range."
+                                                  + "This is taken under the assumption that you do not overheat, check time to overheat above.",
+                                            anXBar, loadout);
+            burstDamage.setAlignmentX(Component.CENTER_ALIGNMENT);
+                        
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(alphaStrike, BorderLayout.WEST);
+            panel.add(burstDamage, BorderLayout.EAST);
+            offence.add(panel);
+         }
+         
+         {
+            dpsMax = new MetricDisplay(metricMaxDPS, "DPS: %.1f @ %.0f m", "The maximum damage you can deal per second at the displayed range.",
+                                       anXBar, loadout);
+            dpsMax.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-         dpsMax = new MetricDisplay(metricMaxDPS, "Max DPS: %.1f @ %.0f m", "The maximum damage you can deal per second at the displayed range.",
-                                    anXBar, loadout);
-         dpsMax.setAlignmentX(Component.CENTER_ALIGNMENT);
-         offence.add(dpsMax);
+            dpsSustained = new MetricDisplay(metricSustainedDps, "Sust. DPS: %.1f @ %.0f m",
+                                             "The maximum damage you can deal per second at the displayed range, over a long period"
+                                                   + " of time. This depends on your heat dissipation and weapon heat generation.", anXBar, loadout);
+            dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-         dpsSustained = new MetricDisplay(metricSustainedDps, "Max Sustained DPS: %.1f @ %.0f m",
-                                          "The maximum damage you can deal per second at the displayed range, over a long period"
-                                                + " of time. This depends on your heat dissipation and weapon heat generation.", anXBar, loadout);
-         dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
-         offence.add(dpsSustained);
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(dpsMax, BorderLayout.WEST);
+            panel.add(dpsSustained, BorderLayout.EAST);
+            offence.add(panel);
+         }
 
          offence.add(Box.createVerticalStrut(5));
 
@@ -548,11 +635,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-            opStack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE));
+            opStack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV
+                                                                                                 : UpgradeDB.STANDARD_GUIDANCE));
          }
          else if( source == endoSteel ){
             opStack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
-                                                                                                : UpgradeDB.STANDARD_STRUCTURE));
+                                                                                                    : UpgradeDB.STANDARD_STRUCTURE));
          }
          else if( source == ferroFibros ){
             opStack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR

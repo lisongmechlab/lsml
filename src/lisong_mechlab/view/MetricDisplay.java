@@ -27,6 +27,7 @@ import javax.swing.SwingUtilities;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.metrics.Metric;
 import lisong_mechlab.model.metrics.RangeMetric;
+import lisong_mechlab.model.metrics.RangeTimeMetric;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
@@ -74,7 +75,10 @@ public class MetricDisplay extends JLabel implements Reader{
       double value = metric.calculate();
       if( percent )
          value *= 100.0;
-      if( metric instanceof RangeMetric ){
+      if( metric instanceof RangeTimeMetric ){
+         formatter.format(format, ((RangeTimeMetric)metric).getTime(), value, ((RangeTimeMetric)metric).getRange());
+      }
+      else if( metric instanceof RangeMetric ){
          formatter.format(format, value, ((RangeMetric)metric).getRange());
       }
       else{

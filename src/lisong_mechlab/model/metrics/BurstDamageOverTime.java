@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.model.item.EnergyWeapon;
-import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
@@ -34,63 +33,67 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 
 /**
- * This class calculates the accurate heat generation over time for a {@link Loadout} assuming all guns fire as often as
- * possible with engine at max speed and without jump jets.
+ * This metric calculates how much damage a loadout can dish out in a given time interval ignoring heat.
  * 
  * @author Li Song
  */
-public class HeatOverTime implements TimeMetric, MessageXBar.Reader{
-
-   private final Loadout                loadout;
-   private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
+public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.Reader{
+   private final List<IntegratedSignal> damageIntegrals = new ArrayList<>();
+   private double                       cachedRange     = -1;
 
    /**
     * Creates a new calculator object
     * 
     * @param aLoadout
+    *           The {@link Loadout} to calculate for.
     * @param aXBar
+    *           The {@link MessageXBar} to listen for changes to 'aLoadout' on.
     */
-   public HeatOverTime(Loadout aLoadout, MessageXBar aXBar){
-      loadout = aLoadout;
-      updateEvents();
+   public BurstDamageOverTime(Loadout aLoadout, MessageXBar aXBar){
+      super(aLoadout);
+      updateEvents(getRange());
       aXBar.attach(this);
-   }
-
-   @Override
-   public double calculate(double aTime){
-      double ans = 0;
-      for(IntegratedSignal event : heatIntegrals){
-         ans += event.integrateFromZeroTo(aTime);
-      }
-      return ans;
    }
 
    @Override
    public void receive(Message aMsg){
       if( aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage() ){
-         updateEvents();
+         updateEvents(getRange());
       }
    }
 
-   private void updateEvents(){
-      heatIntegrals.clear();
+   private void updateEvents(double aRange){
+      damageIntegrals.clear();
       for(Item item : loadout.getAllItems()){
          if( item instanceof Weapon ){
             Weapon weapon = (Weapon)item;
 
+            double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange);
+            double period = weapon.getSecondsPerShot(loadout.getEfficiencies());
+            double damage = factor * weapon.getDamagePerShot();
+
             if( weapon instanceof EnergyWeapon ){
                EnergyWeapon energyWeapon = (EnergyWeapon)weapon;
                if( energyWeapon.getDuration() > 0 ){
-                  heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(loadout.getEfficiencies()), energyWeapon.getDuration(),
-                                                             energyWeapon.getHeat() / energyWeapon.getDuration()));
+                  damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(), damage / energyWeapon.getDuration()));
                   continue;
                }
             }
-            heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies()), weapon.getHeat()));
-         }
-         if( item instanceof Engine ){
-            heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine)item).getHeat()));
+            damageIntegrals.add(new IntegratedImpulseTrain(period, damage));
          }
       }
+      cachedRange = getRange();
+   }
+
+   @Override
+   public double calculate(double aRange, double aTime){
+      if( aRange != cachedRange ){
+         updateEvents(aRange);
+      }
+      double ans = 0;
+      for(IntegratedSignal event : damageIntegrals){
+         ans += event.integrateFromZeroTo(aTime);
+      }
+      return ans;
    }
 }

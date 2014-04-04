@@ -17,10 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.metrics;
+package lisong_mechlab.model.metrics.helpers;
 
-import java.util.TreeMap;
-
-public abstract class TableMetric{
-   abstract public TreeMap<?, ?> calculate();
+/**
+ * This class models the integral from 0 to 't' of a 1D time dependent signal.
+ * 
+ * @author Li Song
+ */
+public interface IntegratedSignal{
+   /**
+    * Calculate the integral from zero to the given time.
+    * 
+    * @param aTime
+    *           The time to integrate to.
+    * @return The integral value.
+    */
+   public double integrateFromZeroTo(double aTime);
 }

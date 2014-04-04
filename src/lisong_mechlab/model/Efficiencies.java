@@ -56,6 +56,11 @@ public class Efficiencies{
       public boolean isForMe(Loadout aLoadout){
          return aLoadout.getEfficiencies() == efficiencies;
       }
+
+      @Override
+      public boolean affectsHeatOrDamage(){
+         return true;
+      }
    }
 
    // Elite
