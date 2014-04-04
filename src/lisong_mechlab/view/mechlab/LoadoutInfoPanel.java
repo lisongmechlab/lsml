@@ -30,6 +30,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -141,7 +143,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final MetricDisplay          dpsMax;
    private final MetricDisplay          dpsSustained;
    private final MetricDisplay          burstDamage;
-   private final JCheckBox              fastFire         = new JCheckBox("Fast Fire");
+   private final JCheckBox              fastFire         = new JCheckBox("F. Fire");
    private final MetricDisplay          ghostHeat;
    private final JTable                 weaponTable;
 
@@ -180,6 +182,21 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          JLabel armorTxt = new JLabel("Armor:");
          armorBar = new JProgressBar(0, loadout.getChassi().getArmorMax());
          armorBar.setUI(new ProgressBarRenderer());
+
+         // One property change listener is enough, if one gets it all get it.
+         critslotsTxt.addPropertyChangeListener("font", new PropertyChangeListener(){
+            @Override
+            public void propertyChange(PropertyChangeEvent aArg0){
+               SwingUtilities.invokeLater(new Runnable(){
+                  @Override
+                  public void run(){
+                     critslotsBar.setUI(new ProgressBarRenderer());
+                     massBar.setUI(new ProgressBarRenderer());
+                     armorBar.setUI(new ProgressBarRenderer());
+                  }
+               });
+            }
+         });
 
          Insets upgradeInsets = new Insets(0, 0, 0, 0);
          ferroFibros.addItemListener(this);
@@ -236,7 +253,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          mobility.setLayout(new BoxLayout(mobility, BoxLayout.PAGE_AXIS));
          mobility.add(Box.createHorizontalGlue());
          add(mobility);
-         
+
          {
             jumpJets.setAlignmentX(Component.CENTER_ALIGNMENT);
             mobility.add(jumpJets);
@@ -250,10 +267,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             panel.add(jumpJets, BorderLayout.EAST);
             mobility.add(panel);
          }
-         
+
          {
-            turnSpeed = new MetricDisplay(new TurningSpeed(loadout), "Turn Speed: %.1f °/s", "The rate at which your mech can turn its legs.", anXBar,
-                                          loadout);
+            turnSpeed = new MetricDisplay(new TurningSpeed(loadout), "Turn Speed: %.1f °/s", "The rate at which your mech can turn its legs.",
+                                          anXBar, loadout);
             turnSpeed.setAlignmentX(CENTER_ALIGNMENT);
             mobility.add(turnSpeed);
 
@@ -267,7 +284,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             panel.add(twistSpeed, BorderLayout.EAST);
             mobility.add(panel);
          }
-         
+
          JPanel eff = new JPanel(new GridLayout(1, 2));
          eff.setAlignmentY(Component.CENTER_ALIGNMENT);
 
@@ -405,7 +422,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             range.setEditable(true);
             range.setToolTipText(panel.getToolTipText());
             Dimension rp = range.getPreferredSize();
-            rp.width = 70;
+            rp.width = range.getFontMetrics(range.getFont()).stringWidth("Optimal") + 30;
             range.setPreferredSize(rp);
             range.addActionListener(new ActionListener(){
                @Override
@@ -442,13 +459,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             {
                JPanel pane = new JPanel();
                pane.add(new JLabel("Time:"));
-
+               pane.setToolTipText("The length of the engagement you're designing for. Will affect the \"Burst\" value.");
+               
                Double times[] = new Double[] {5.0, 10.0, 15.0, 20.0, 30.0, 45.0, 60.0};
                final JComboBox<Double> timeOfEngagement = new JComboBox<Double>(times);
                timeOfEngagement.setEditable(true);
-               timeOfEngagement.setToolTipText("The length of the encounter you're designing for.");
+               timeOfEngagement.setToolTipText(pane.getToolTipText());
                Dimension tp = timeOfEngagement.getPreferredSize();
-               tp.width = 50;
+               tp.width = timeOfEngagement.getFontMetrics(timeOfEngagement.getFont()).stringWidth("999") + 30;
                timeOfEngagement.setPreferredSize(tp);
                timeOfEngagement.addActionListener(new ActionListener(){
                   @Override
@@ -467,9 +485,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                pane.add(timeOfEngagement);
                panel.add(pane);
             }
-            
+
             panel.add(fastFire);
             fastFire.addItemListener(this);
+            fastFire.setToolTipText("The fast fire talent. Reduces weapon cooldown by 5%.");
             fastFire.setAlignmentX(Component.CENTER_ALIGNMENT);
             offence.add(panel);
          }
@@ -478,19 +497,19 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             alphaStrike = new MetricDisplay(metricAlphaStrike, "Alpha: %.1f @ %.0f m",
                                             "The maximum damage you can deal at the displayed range in one volley.", anXBar, loadout);
             alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
-            
+
             burstDamage = new MetricDisplay(metricBurstDamage, "Burst  %.1f s: %.1f @ %.0f m",
                                             "The maximum damage you can deal under the given time frame at the displayed range."
                                                   + "This is taken under the assumption that you do not overheat, check time to overheat above.",
                                             anXBar, loadout);
             burstDamage.setAlignmentX(Component.CENTER_ALIGNMENT);
-                        
+
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(alphaStrike, BorderLayout.WEST);
             panel.add(burstDamage, BorderLayout.EAST);
             offence.add(panel);
          }
-         
+
          {
             dpsMax = new MetricDisplay(metricMaxDPS, "DPS: %.1f @ %.0f m", "The maximum damage you can deal per second at the displayed range.",
                                        anXBar, loadout);
