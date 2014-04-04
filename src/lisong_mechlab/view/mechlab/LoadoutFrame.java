@@ -37,8 +37,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.Part;
@@ -105,19 +106,25 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       // Set the window's location.
       setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
       openFrameCount++;
+      infoPanel = new LoadoutInfoPanel(this, anXBar);
 
       JPanel root = new JPanel(new BorderLayout());
-      
+      JPanel mechview = createMechView(aLoadout, anXBar);
+      root.add(mechview, BorderLayout.WEST);
+      if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+         JScrollPane scrollpane = new JScrollPane(infoPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+         Dimension preferredSize = new Dimension();
+         preferredSize.height = (int)(mechview.getPreferredSize().getHeight() + 1);
+         preferredSize.width = (int)(infoPanel.getPreferredSize().getWidth() + scrollpane.getVerticalScrollBar().getPreferredSize().getWidth() + 1);
+         scrollpane.setPreferredSize(preferredSize);
+         root.add(scrollpane, BorderLayout.EAST);
+      }
+      else{
+         root.add(infoPanel, BorderLayout.EAST);
+      }
       root.add(new StatusBar(this, anXBar), BorderLayout.SOUTH);
-      
-      infoPanel = new LoadoutInfoPanel(this, anXBar);
-      JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, createMechView(aLoadout, anXBar), infoPanel);
 
-      sp.setDividerLocation(-1);
-      sp.setDividerSize(0);
-
-      root.add(sp, BorderLayout.CENTER);
-      
       setFrameIcon(null);
       setContentPane(root);
 
@@ -176,10 +183,16 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       DynamicSlotDistributor slotDistributor = new DynamicSlotDistributor(loadout);
 
-      JCheckBox symmetricArmor = new JCheckBox("Symmetric armor", false);
+      JCheckBox symmetricArmor;
+      if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+         symmetricArmor = new JCheckBox("Sym.armr", false);
+      }
+      else{
+         symmetricArmor = new JCheckBox("Symmetric armor", false);
+      }
       final int symmHeight = 20;
-      symmetricArmor.setMaximumSize(new Dimension(ItemRenderer.ITEM_BASE_WIDTH + 20, symmHeight));
-      symmetricArmor.setMinimumSize(new Dimension(ItemRenderer.ITEM_BASE_WIDTH + 20, symmHeight));
+      symmetricArmor.setMaximumSize(new Dimension(ItemRenderer.getItemWidth() + 20, symmHeight));
+      symmetricArmor.setMinimumSize(new Dimension(ItemRenderer.getItemWidth() + 20, symmHeight));
       // Right Arm
       {
          final JPanel subPanel = new JPanel();
@@ -192,7 +205,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          panel.add(subPanel);
       }
 
-      panel.add(Box.createRigidArea(padding));
+      if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
+         panel.add(Box.createRigidArea(padding));
 
       // Right Torso + Leg
       {
@@ -204,7 +218,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          panel.add(subPanel);
       }
 
-      panel.add(Box.createRigidArea(padding));
+      if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
+         panel.add(Box.createRigidArea(padding));
 
       // Center Torso + Head
       {
@@ -216,7 +231,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          panel.add(subPanel);
       }
 
-      panel.add(Box.createRigidArea(padding));
+      if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
+         panel.add(Box.createRigidArea(padding));
 
       // Left Torso + Leg
       {
@@ -228,7 +244,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          panel.add(subPanel);
       }
 
-      panel.add(Box.createRigidArea(padding));
+      if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
+         panel.add(Box.createRigidArea(padding));
 
       // Left Arm
       {

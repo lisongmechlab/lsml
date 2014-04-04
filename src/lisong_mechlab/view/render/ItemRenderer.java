@@ -36,6 +36,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.view.ProgramInit;
 
 /**
  * This class can render any {@link Item} to an {@link Image}.
@@ -43,15 +44,24 @@ import lisong_mechlab.model.upgrades.Upgrades;
  * @author Li Song
  */
 public class ItemRenderer{
-   public static final int                    ITEM_BASE_HEIGHT = 20;                                           // [px]
-   public static final int                    ITEM_BASE_WIDTH  = 100;                                          // [px]
-   public static final int                    ITEM_BASE_LINE   = 13;
+   private static final int                   ITEM_BASE_HEIGHT        = 20;                                           // [px]
+   private static final int                   ITEM_BASE_WIDTH         = 100;                                          // [px]
+   private static final int                   ITEM_BASE_COMPACT_WIDTH = 80;                                           // [px]
+   public static final int                    ITEM_BASE_LINE          = 13;
 
-   private static final GraphicsConfiguration configuration    = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-                                                                                    .getDefaultConfiguration();
+   private static final GraphicsConfiguration configuration           = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                                                                                           .getDefaultConfiguration();
    private static final RenderingHints        hints;
-   private static final int                   PADDING          = 3;
-   public static final int                    RADII            = 5;
+   private static final int                   PADDING                 = 3;
+   public static final int                    RADII                   = 5;
+
+   public static int getItemWidth(){
+      return (ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ? ITEM_BASE_COMPACT_WIDTH : ITEM_BASE_WIDTH);
+   }
+
+   public static int getItemHeight(){
+      return ITEM_BASE_HEIGHT;
+   }
 
    static{
       hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -84,7 +94,8 @@ public class ItemRenderer{
 
    public static Image render(Item item, Upgrades aUpgrades){
       final int slots = item.getNumCriticalSlots(aUpgrades);
-      final int item_w = ITEM_BASE_WIDTH - 2; // Compensate for padding added by JList in drawing the loadout
+      // Compensate for padding added by JList in drawing the loadout
+      final int item_w = getItemWidth() - 2;
       final int item_h = ITEM_BASE_HEIGHT * slots - 2; // Compensate for padding added by JList in drawing the loadout
 
       final int x_offs;

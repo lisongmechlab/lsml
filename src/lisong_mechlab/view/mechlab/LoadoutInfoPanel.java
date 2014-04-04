@@ -399,13 +399,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // Offense
       // ----------------------------------------------------------------------
       {
-         JPanel offence = new JPanel();
+         JPanel offence = new JPanel(new BorderLayout());
          offence.setBorder(new CompoundBorder(new TitledBorder(null, "Offense"), innerBorder));
-         offence.setLayout(new BoxLayout(offence, BoxLayout.PAGE_AXIS));
-         offence.add(Box.createHorizontalGlue());
-         offence.add(Box.createVerticalGlue());
-         add(offence);
-
+         
+         JPanel offenceTop = new JPanel();
+         offenceTop.setLayout(new BoxLayout(offenceTop, BoxLayout.PAGE_AXIS));
+         
          final RangeTimeMetric metricBurstDamage = new BurstDamageOverTime(loadout, anXBar);
          final RangeMetric metricAlphaStrike = new AlphaStrike(loadout);
          final RangeMetric metricMaxDPS = new MaxDPS(loadout);
@@ -490,7 +489,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             fastFire.addItemListener(this);
             fastFire.setToolTipText("The fast fire talent. Reduces weapon cooldown by 5%.");
             fastFire.setAlignmentX(Component.CENTER_ALIGNMENT);
-            offence.add(panel);
+            offenceTop.add(panel);
          }
 
          {
@@ -507,7 +506,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(alphaStrike, BorderLayout.WEST);
             panel.add(burstDamage, BorderLayout.EAST);
-            offence.add(panel);
+            offenceTop.add(panel);
          }
 
          {
@@ -523,17 +522,18 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(dpsMax, BorderLayout.WEST);
             panel.add(dpsSustained, BorderLayout.EAST);
-            offence.add(panel);
+            offenceTop.add(panel);
          }
 
-         offence.add(Box.createVerticalStrut(5));
-
+         offenceTop.add(Box.createVerticalStrut(5));
+         
          weaponTable = new WeaponSummaryTable(loadout, anXBar);
-         weaponTable.setFillsViewportHeight(true);
          JScrollPane weapons = new JScrollPane(weaponTable);
          weapons.setPreferredSize(new Dimension(260, 150));
-         offence.add(weapons);
-         offence.add(Box.createVerticalGlue());
+
+         offence.add(offenceTop, BorderLayout.NORTH);
+         offence.add(weapons, BorderLayout.CENTER);
+         add(offence);
       }
       updateDisplay();
    }

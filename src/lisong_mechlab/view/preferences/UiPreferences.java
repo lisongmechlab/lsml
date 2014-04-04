@@ -26,9 +26,14 @@ package lisong_mechlab.view.preferences;
  */
 public class UiPreferences{
    private static final String UI_USE_SMARTPLACE = "uiUseSmartPlace";
-
-   public void setUseSmartPlace(boolean value){
-      PreferenceStore.setString(UI_USE_SMARTPLACE, Boolean.toString(value));
+   private static final String UI_COMPACT_MODE = "uiCompactMode";
+   
+   public void setCompactMode(boolean aValue){
+      PreferenceStore.setString(UI_COMPACT_MODE, Boolean.toString(aValue));
+   }
+   
+   public void setUseSmartPlace(boolean aValue){
+      PreferenceStore.setString(UI_USE_SMARTPLACE, Boolean.toString(aValue));
    }
 
    /**
@@ -36,5 +41,9 @@ public class UiPreferences{
     */
    public boolean getUseSmartPlace(){
       return Boolean.parseBoolean(PreferenceStore.getString(UI_USE_SMARTPLACE, "false"));
+   }
+   
+   public boolean getCompactMode(){
+      return Boolean.parseBoolean(PreferenceStore.getString(UI_COMPACT_MODE, "false"));
    }
 }
