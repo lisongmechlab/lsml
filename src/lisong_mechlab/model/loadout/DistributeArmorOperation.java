@@ -20,10 +20,11 @@
 package lisong_mechlab.model.loadout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
@@ -41,11 +42,7 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
  * @author Emily Björk
  */
 public class DistributeArmorOperation extends CompositeOperation{
-   private final static List<Part>  CRITICAL_PARTS = Arrays.asList(Part.Head, Part.LeftLeg, Part.RightLeg, Part.CenterTorso);
-   private final static Part[]      PART_ORDER     = new Part[] {Part.Head, Part.LeftArm, Part.RightArm, Part.LeftTorso, Part.RightTorso,
-         Part.LeftLeg, Part.RightLeg, Part.CenterTorso};
-
-   private final Map<Part, Integer> armors         = new TreeMap<>();
+   private final Map<Part, Integer> armors = new TreeMap<>();
 
    /**
     * @param aLoadout
@@ -55,17 +52,82 @@ public class DistributeArmorOperation extends CompositeOperation{
     */
    public DistributeArmorOperation(Loadout aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
       super("distribute armor");
-      final double armorPerTon = aLoadout.getUpgrades().getArmor().getArmorPerTon();
+
+      int armorLeft = calculateArmorToDistribute(aLoadout, aPointsOfArmor);
+      if( armorLeft < 1 ){
+         return;
+      }
+      Map<Part, Integer> prioMap = prioritize(aLoadout);
+
+      distribute(aLoadout, armorLeft, prioMap);
+      applyArmors(aLoadout, aFrontRearRatio, aXBar);
+   }
+
+   private void distribute(final Loadout aLoadout, int aArmorAmount, final Map<Part, Integer> aPriorities){
+      int prioSum = 0;
+      for(double prio : aPriorities.values()){
+         prioSum += prio;
+      }
+
+      TreeMap<Part, Integer> byPriority = new TreeMap<>(new Comparator<Part>(){
+         @Override
+         public int compare(Part aO1, Part aO2){
+            int c = -aPriorities.get(aO1).compareTo(aPriorities.get(aO2));
+            if( c == 0 ){
+               int d = Integer.compare(aLoadout.getChassi().getInternalPart(aO1).getArmorMax(), aLoadout.getChassi().getInternalPart(aO2)
+                                                                                                        .getArmorMax());
+               if( d == 0 )
+                  return aO1.compareTo(aO2);
+               return d;
+            }
+            return c;
+         }
+      });
+      byPriority.putAll(aPriorities);
+
+      int armorLeft = aArmorAmount;
+      for(Entry<Part, Integer> entry : byPriority.entrySet()){
+         Part part = entry.getKey();
+         int prio = entry.getValue();
+         if( prio == 0 )
+            continue;
+
+         LoadoutPart loadoutPart = aLoadout.getPart(part);
+         int armor = Math.min(loadoutPart.getInternalPart().getArmorMax(), armorLeft * prio / prioSum);
+         setArmor(loadoutPart, armor);
+         armorLeft -= armor;
+         prioSum -= prio;
+      }
+
+      List<LoadoutPart> parts = new ArrayList<>(aLoadout.getPartLoadOuts());
+      while( armorLeft > 0 && !parts.isEmpty() ){
+         Iterator<LoadoutPart> it = parts.iterator();
+         while( it.hasNext() ){
+            LoadoutPart part = it.next();
+            if( !part.allowAutomaticArmor() || getArmor(part) == part.getInternalPart().getArmorMax() )
+               it.remove();
+         }
+
+         int partsLeft = parts.size();
+         for(LoadoutPart loadoutPart : parts){
+            int additionalArmor = Math.min(loadoutPart.getInternalPart().getArmorMax() - getArmor(loadoutPart), armorLeft / partsLeft);
+            setArmor(loadoutPart, getArmor(loadoutPart) + additionalArmor);
+            armorLeft -= additionalArmor;
+            partsLeft--;
+         }
+      }
+   }
+
+   private int calculateArmorToDistribute(Loadout aLoadout, int aPointsOfArmor){
+      final ArmorUpgrade armorUpgrade = aLoadout.getUpgrades().getArmor();
+      final double armorPerTon = armorUpgrade.getArmorPerTon();
       final double armorTons = aPointsOfArmor / armorPerTon;
       final int armorHalfTons = (int)(armorTons * 2.0);
       int armorLeft = (int)(armorPerTon * armorHalfTons / 2.0);
 
       // We can't apply more armor than we can carry
-      {
-         ArmorUpgrade armorUpgrade = aLoadout.getUpgrades().getArmor();
-         int maxArmorTonnage = (int)((aLoadout.getFreeMass() + armorUpgrade.getArmorMass(aLoadout.getArmor())) * armorPerTon);
-         armorLeft = Math.min(maxArmorTonnage, armorLeft);
-      }
+      int maxArmorTonnage = (int)((aLoadout.getFreeMass() + armorUpgrade.getArmorMass(aLoadout.getArmor())) * armorPerTon);
+      armorLeft = Math.min(maxArmorTonnage, armorLeft);
 
       int maxArmorPoints = 0;
 
@@ -80,80 +142,7 @@ public class DistributeArmorOperation extends CompositeOperation{
          }
       }
       armorLeft = Math.min(maxArmorPoints, armorLeft);
-
-      // First pass, make sure all parts with equipment and critical parts get maximum armor.
-      if( armorLeft > 0 )
-         armorLeft = distributeArmor(aLoadout, armorLeft);
-
-      // Second pass, spread out remaining armor on components that are not at max yet.
-      if( armorLeft > 0 )
-         armorLeft = distributeArmorLeftOvers(aLoadout, armorLeft);
-
-      applyArmors(aLoadout, aFrontRearRatio, aXBar);
-   }
-
-   private boolean isCritical(LoadoutPart aPart){
-      if( CRITICAL_PARTS.contains(aPart.getInternalPart().getType()) )
-         return true;
-      if( aPart.getItems().contains(LoadoutPart.ENGINE_INTERNAL) )
-         return true;
-      return false;
-   }
-
-   private List<Part> getInterestingParts(Loadout aLoadout){
-      List<Part> parts = new ArrayList<>(Arrays.asList(PART_ORDER));
-
-      Iterator<Part> iterator = parts.iterator();
-      while( iterator.hasNext() ){
-         Part next = iterator.next();
-         LoadoutPart loadoutPart = aLoadout.getPart(next);
-         if( !loadoutPart.allowAutomaticArmor() )
-            iterator.remove();
-      }
-      return parts;
-   }
-
-   private int distributeArmor(Loadout aLoadout, int aArmorLeft){
-      List<Part> parts = getInterestingParts(aLoadout);
-      int partsLeft = parts.size();
-      for(Part part : parts){
-         final LoadoutPart loadoutPart = aLoadout.getPart(part);
-         if( 0.0 == loadoutPart.getItemMass() && !isCritical(loadoutPart) ){
-            partsLeft -= 1;
-            continue;
-         }
-         final int armor = Math.min(loadoutPart.getInternalPart().getArmorMax(), aArmorLeft / partsLeft);
-         aArmorLeft -= armor;
-         partsLeft -= 1;
-         setArmor(loadoutPart, armor);
-      }
-      return aArmorLeft;
-   }
-
-   private int distributeArmorLeftOvers(Loadout aLoadout, int aArmorLeft){
-      List<Part> parts = getInterestingParts(aLoadout);
-      Iterator<Part> iterator = parts.iterator();
-      while( aArmorLeft > 0 && !parts.isEmpty() ){
-         while( iterator.hasNext() ){
-            Part next = iterator.next();
-            LoadoutPart loadoutPart = aLoadout.getPart(next);
-            if( loadoutPart.getInternalPart().getArmorMax() == getArmor(loadoutPart) )
-               iterator.remove();
-         }
-         int partsLeft = parts.size();
-         for(Part part : parts){
-            final LoadoutPart loadoutPart = aLoadout.getPart(part);
-            // TODO add test for when armor divided by parts is less than 1
-            final int additionalArmor = Math.min(loadoutPart.getInternalPart().getArmorMax() - getArmor(loadoutPart), (aArmorLeft + partsLeft - 1)
-                                                                                                                      / partsLeft);
-            if( additionalArmor <= 0 )
-               continue;
-            aArmorLeft -= additionalArmor;
-            partsLeft -= 1;
-            setArmor(loadoutPart, getArmor(loadoutPart) + additionalArmor);
-         }
-      }
-      return aArmorLeft;
+      return armorLeft;
    }
 
    private int getArmor(LoadoutPart aPart){
@@ -181,7 +170,7 @@ public class DistributeArmorOperation extends CompositeOperation{
             addOp(new SetArmorOperation(aXBar, loadoutPart, ArmorSide.ONLY, 0, false));
          }
       }
-      
+
       for(Part part : Part.values()){
          final LoadoutPart loadoutPart = aLoadout.getPart(part);
 
@@ -205,5 +194,49 @@ public class DistributeArmorOperation extends CompositeOperation{
             addOp(new SetArmorOperation(aXBar, loadoutPart, ArmorSide.ONLY, armor, false));
          }
       }
+   }
+
+   private Map<Part, Integer> prioritize(Loadout aLoadout){
+      Map<Part, Integer> ans = new TreeMap<>();
+
+      for(Part part : Part.values()){
+         LoadoutPart loadoutPart = aLoadout.getPart(part);
+         if( !loadoutPart.allowAutomaticArmor() )
+            continue;
+
+         // Protect engine at all costs
+         if( part == Part.CenterTorso ){
+            ans.put(part, 2000);
+         }
+         else if( loadoutPart.getItems().contains(LoadoutPart.ENGINE_INTERNAL) ){
+            ans.put(part, 1000);
+         }
+         // Legs and head are high priority too
+         else if( part == Part.LeftLeg || part == Part.RightLeg ){
+            ans.put(part, 10);
+         }
+         else if( part == Part.Head ){
+            ans.put(part, 7);
+         }
+         else if( loadoutPart.getItemMass() == 0.0 && !ans.containsKey(part) ){
+            ans.put(part, 0);
+         }
+         else{
+            if( part == Part.LeftArm ){
+               ans.put(Part.LeftArm, 10);
+               if( !ans.containsKey(Part.LeftTorso) || ans.get(Part.LeftTorso) < 10 )
+                  ans.put(Part.LeftTorso, 10);
+            }
+            else if( part == Part.RightArm ){
+               ans.put(Part.RightArm, 10);
+               if( !ans.containsKey(Part.RightTorso) || ans.get(Part.RightTorso) < 10 )
+                  ans.put(Part.RightTorso, 10);
+            }
+            else{
+               ans.put(part, 10);
+            }
+         }
+      }
+      return ans;
    }
 }
