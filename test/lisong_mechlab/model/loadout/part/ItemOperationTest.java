@@ -91,7 +91,9 @@ public class ItemOperationTest{
    @Test
    public final void testAddItem(){
       Item ecm = ItemDB.ECM;
-
+      Loadout loadout = Mockito.mock(Loadout.class);
+      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
+      
       cut.addItem(ecm);
 
       Mockito.verify(loadoutPart).addItem(ecm);
@@ -104,7 +106,9 @@ public class ItemOperationTest{
    @Test
    public final void testAddItem_StdEngine(){
       Item item = ItemDB.lookup("STD ENGINE 300");
-
+      Loadout loadout = Mockito.mock(Loadout.class);
+      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
+      
       cut.addItem(item);
 
       Mockito.verify(loadoutPart).addItem(item);

@@ -79,11 +79,11 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
 
       try{
          int armor = ((Integer)arg0).intValue();
-         opStack.pushAndApply(new SetArmorOperation(xBar, part, side, armor));
+         opStack.pushAndApply(new SetArmorOperation(xBar, part, side, armor, true));
 
          Part otherSide = part.getInternalPart().getType().oppositeSide();
          if( symmetric.isSelected() && otherSide != null ){
-            Operation op2 = new SetArmorOperation(xBar, part.getLoadout().getPart(otherSide), side, armor);
+            Operation op2 = new SetArmorOperation(xBar, part.getLoadout().getPart(otherSide), side, armor, true);
             opStack.pushAndApply(op2);
          }
          fireStateChanged();

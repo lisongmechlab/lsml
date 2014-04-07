@@ -191,7 +191,7 @@ public class MechGarageTest{
       cut.add(lo1);
       cut.saveas(testFile); // Create garage with one mech and save it.
       cut = MechGarage.open(testFile, xBar);
-      cut.add(lo2); // Add a mech and use the save() function. The same file should have been overwritten.
+      cut.add(lo2); // Add a mech and use the save() function. The same file should be overwritten.
       reset(xBar);
 
       // Execute

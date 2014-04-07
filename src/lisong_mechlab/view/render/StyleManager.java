@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -95,6 +96,12 @@ public class StyleManager{
    
    private static final Icon MISSILE_BAY_DOOR_ICON = new ImageIcon(StyleManager.class.getResource("/resources/mbd.png"), "This hard point has missile bay doors. While closed the component receives 10% less damage");
 
+
+   private static final Border INNER_BORDER = BorderFactory.createEmptyBorder(0, 4, 4, 4);
+   public static Border sectionBorder(String sectionTitle){
+      return BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(sectionTitle), INNER_BORDER);
+   }
+   
    public static void styleHardpointLabel(JLabel aLabel, InternalPart aInternalPart, HardPointType aHardPointType){
       int hardPoints = aInternalPart.getNumHardpoints(aHardPointType);
       if( hardPoints < 1 ){

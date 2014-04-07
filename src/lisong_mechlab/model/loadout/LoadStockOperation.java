@@ -34,9 +34,9 @@ import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
+import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
@@ -94,12 +94,12 @@ public class LoadStockOperation extends LoadoutOperation{
          LoadoutPart part = loadout.getPart(partType);
          if( partType.isTwoSided() ){
             if( Part.isRear(componentName) )
-               addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, componentArmor));
+               addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, componentArmor, true));
             else
-               addOp(new SetArmorOperation(xBar, part, ArmorSide.FRONT, componentArmor));
+               addOp(new SetArmorOperation(xBar, part, ArmorSide.FRONT, componentArmor, true));
          }
          else
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.ONLY, componentArmor));
+            addOp(new SetArmorOperation(xBar, part, ArmorSide.ONLY, componentArmor, true));
 
          Node child = component.getFirstChild();
          while( null != child ){

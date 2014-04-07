@@ -80,7 +80,7 @@ public class LoadoutPart{
       public boolean affectsHeatOrDamage(){
          return type != Type.ArmorChanged;
       }
-      
+
       @Override
       public String toString(){
          return type.toString() + " for " + part.getInternalPart().getType().toString() + " of " + part.getLoadout();
@@ -95,11 +95,13 @@ public class LoadoutPart{
 
    private final TreeMap<ArmorSide, Integer> armor           = new TreeMap<ArmorSide, Integer>();
    private final List<Item>                  items           = new ArrayList<Item>();
+   private boolean                           autoArmor       = false;
 
-   public LoadoutPart(Loadout aLoadout, InternalPart anInternalPart){
+   public LoadoutPart(Loadout aLoadout, InternalPart anInternalPart, boolean aAutoArmor){
       internalPart = anInternalPart;
       items.addAll(internalPart.getInternalItems());
       loadout = aLoadout;
+      autoArmor = aAutoArmor;
       if( internalPart.getType().isTwoSided() ){
          armor.put(ArmorSide.FRONT, 0);
          armor.put(ArmorSide.BACK, 0);
@@ -121,6 +123,7 @@ public class LoadoutPart{
       loadout = aLoadout;
       internalPart = aLoadoutPart.internalPart;
       engineHeatsinks = aLoadoutPart.engineHeatsinks;
+      autoArmor = aLoadoutPart.autoArmor;
 
       for(Map.Entry<ArmorSide, Integer> e : aLoadoutPart.armor.entrySet()){
          armor.put(e.getKey(), new Integer(e.getValue()));
@@ -161,8 +164,8 @@ public class LoadoutPart{
       if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(getLoadout().getUpgrades()) ){
          return false;
       }
-      
-      if(anItem == ItemDB.CASE && items.contains(ItemDB.CASE))
+
+      if( anItem == ItemDB.CASE && items.contains(ItemDB.CASE) )
          return false;
 
       // Check enough free hard points
@@ -188,6 +191,8 @@ public class LoadoutPart{
       if( !armor.equals(that.armor) )
          return false;
       if( engineHeatsinks != that.engineHeatsinks )
+         return false;
+      if( autoArmor != that.autoArmor )
          return false;
       return true;
    }
@@ -288,7 +293,11 @@ public class LoadoutPart{
       }
       return hardpoints;
    }
-
+   
+   public boolean allowAutomaticArmor(){
+      return autoArmor;
+   }
+   
    @Override
    public int hashCode(){
       final int prime = 31;
@@ -300,8 +309,9 @@ public class LoadoutPart{
       return result;
    }
 
-   void setArmor(ArmorSide anArmorSide, int anAmount){
+   void setArmor(ArmorSide anArmorSide, int anAmount, boolean aAllowAutomaticArmor){
       armor.put(anArmorSide, anAmount);
+      autoArmor = aAllowAutomaticArmor;
    }
 
    void addItem(Item anItem){

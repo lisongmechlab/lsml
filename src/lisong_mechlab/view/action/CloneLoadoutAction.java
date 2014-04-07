@@ -26,7 +26,6 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.view.ProgramInit;
 
 /**
@@ -46,12 +45,6 @@ public class CloneLoadoutAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      try{
-         // TODO: Create a proper clone function, encoding to a string and recoding is silly
-         ProgramInit.lsml().mechLabPane.openLoadout(ProgramInit.lsml().loadoutCoder.encodeLSML(loadout));
-      }
-      catch( EncodingException e ){
-         throw new RuntimeException(e);
-      }
+      ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(loadout, ProgramInit.lsml().xBar));
    }
 }

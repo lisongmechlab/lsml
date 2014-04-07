@@ -57,7 +57,7 @@ public class SetMaxArmorOperationTest{
       final int tolerance = 1;
 
       // Execute
-      stack.pushAndApply(new SetMaxArmorOperation(cut, xBar, front_back_ratio));
+      stack.pushAndApply(new SetMaxArmorOperation(cut, xBar, front_back_ratio, true));
 
       // Verify
       // All parts have max armor
@@ -88,11 +88,11 @@ public class SetMaxArmorOperationTest{
       Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
-      stack.pushAndApply(new SetMaxArmorOperation(cut, xBar, 1.0));
+      stack.pushAndApply(new SetMaxArmorOperation(cut, xBar, 1.0, true));
       reset(xBar);
       
       // Execute
-      stack.pushAndApply(new SetMaxArmorOperation(cut, xBar, front_back_ratio));
+      stack.pushAndApply(new SetMaxArmorOperation(cut, xBar, front_back_ratio, true));
 
       // Verify
       // All parts have max armor

@@ -50,10 +50,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.loadout.Loadout;
@@ -86,6 +82,7 @@ import lisong_mechlab.view.MetricDisplay;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.WeaponSummaryTable;
 import lisong_mechlab.view.render.ProgressBarRenderer;
+import lisong_mechlab.view.render.StyleManager;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader{
    private static final long            serialVersionUID = 4720126200474042446L;
@@ -163,12 +160,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       xBar = anXBar;
       xBar.attach(this);
 
-      Border innerBorder = new EmptyBorder(0, 4, 4, 4);
       // General
       // ----------------------------------------------------------------------
       {
          JPanel general = new JPanel();
-         general.setBorder(new CompoundBorder(new TitledBorder(null, "General"), innerBorder));
+         general.setBorder(StyleManager.sectionBorder("General"));
          add(general);
 
          JLabel critslotsTxt = new JLabel("Slots:");
@@ -244,15 +240,19 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          general.setLayout(gl_general);
       }
+      
+      add(new ArmorDistributionPanel(loadout, opStack, anXBar));
 
       // Mobility
       // ----------------------------------------------------------------------
       {
          JPanel mobility = new JPanel();
-         mobility.setBorder(new CompoundBorder(new TitledBorder(null, "Mobility"), innerBorder));
+         mobility.setBorder(StyleManager.sectionBorder("Mobility"));
          mobility.setLayout(new BoxLayout(mobility, BoxLayout.PAGE_AXIS));
          mobility.add(Box.createHorizontalGlue());
          add(mobility);
+         
+         
 
          {
             jumpJets.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -305,7 +305,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // ----------------------------------------------------------------------
       {
          JPanel heat = new JPanel();
-         heat.setBorder(new CompoundBorder(new TitledBorder(null, "Heat"), innerBorder));
+         heat.setBorder(StyleManager.sectionBorder("Heat"));
          heat.setLayout(new BoxLayout(heat, BoxLayout.PAGE_AXIS));
          heat.add(Box.createHorizontalGlue());
          add(heat);
@@ -400,7 +400,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       // ----------------------------------------------------------------------
       {
          JPanel offence = new JPanel(new BorderLayout());
-         offence.setBorder(new CompoundBorder(new TitledBorder(null, "Offense"), innerBorder));
+         offence.setBorder(StyleManager.sectionBorder("Offense"));
          
          JPanel offenceTop = new JPanel();
          offenceTop.setLayout(new BoxLayout(offenceTop, BoxLayout.PAGE_AXIS));
