@@ -30,11 +30,11 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.border.TitledBorder;
 
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.SetFontSizeAction;
 import lisong_mechlab.view.preferences.FontPreferences.FontSize;
+import lisong_mechlab.view.render.StyleManager;
 
 /**
  * This class contains the settings dialog for LSML.
@@ -60,7 +60,7 @@ public class PreferencesDialog extends JDialog{
 
    private void addUiPane(JPanel aRoot){
       JPanel panel = new JPanel();
-      panel.setBorder(new TitledBorder("UI Behavior"));
+      panel.setBorder(StyleManager.sectionBorder("UI Behavior"));
 
       final JCheckBox smartPlace = new JCheckBox("Use SmartPlace", ProgramInit.lsml().preferences.uiPreferences.getUseSmartPlace());
       smartPlace.setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
@@ -89,7 +89,7 @@ public class PreferencesDialog extends JDialog{
 
    private void addAppearancePane(JPanel aRoot){
       JPanel panel = new JPanel();
-      panel.setBorder(new TitledBorder("Appearance"));
+      panel.setBorder(StyleManager.sectionBorder("Appearance"));
 
       JRadioButton fontVerySmall = new JRadioButton();
       JRadioButton fontSmall = new JRadioButton();

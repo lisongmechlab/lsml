@@ -489,8 +489,8 @@ public class LoadoutTest{
       assertFalse(copy.getPart(Part.RightTorso).equals(cut.getPart(Part.RightTorso)));
       
       assertTrue(copy.getPart(Part.LeftTorso).equals(cut.getPart(Part.LeftTorso)));
-      stack.pushAndApply(new SetArmorOperation(xBar, copy.getPart(Part.LeftTorso), ArmorSide.FRONT, 3));
-      stack.pushAndApply(new SetArmorOperation(xBar, copy.getPart(Part.LeftTorso), ArmorSide.BACK, 3));
+      stack.pushAndApply(new SetArmorOperation(xBar, copy.getPart(Part.LeftTorso), ArmorSide.FRONT, 3, true));
+      stack.pushAndApply(new SetArmorOperation(xBar, copy.getPart(Part.LeftTorso), ArmorSide.BACK, 3, false));
       assertFalse(copy.getPart(Part.LeftTorso).equals(cut.getPart(Part.LeftTorso)));
       
       assertTrue(copy.getUpgrades().equals(cut.getUpgrades()));

@@ -95,6 +95,31 @@ public class BurstDamageOverTimeTest{
       // Verify
       assertEquals(0.0, burst, 0.0);
    }
+   
+   /**
+    * {@link BurstDamageOverTime#calculate(double, double)} shall not include AMS!!
+    * 
+    * @throws Exception
+    */
+   @Test
+   public final void testCalculate_NoAMS() throws Exception{
+      // Setup
+      List<Item> items = new ArrayList<>();
+      items.add(ItemDB.AMS);
+      Loadout aLoadout = Mockito.mock(Loadout.class);
+      Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
+      Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
+      Mockito.when(aLoadout.getAllItems()).thenReturn(items);
+      Mockito.when(aLoadout.getEfficiencies()).thenReturn(efficiencies);
+      MessageXBar aXBar = Mockito.mock(MessageXBar.class);
+
+      // Execute
+      BurstDamageOverTime cut = new BurstDamageOverTime(aLoadout, aXBar);
+      double burst = cut.calculate(0, 500);
+
+      // Verify
+      assertEquals(0.0, burst, 0.0);
+   }
 
    /**
     * The implementation caches partial results. So even if we change parameters, the result shall be calculated for the

@@ -32,11 +32,13 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -58,9 +60,30 @@ public class AutoAddItemOperationTest{
 
    private OperationStack stack = new OperationStack(0);
 
+   @Test
+   public void testMoveItem_Bug2() throws DecodingException{
+      // Setup
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+      Loadout loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
+      Mockito.reset(xBar);
+      // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
+
+      // Execute
+      stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, ItemDB.AMS));
+
+      // Verify
+      List<Item> allItems = new ArrayList<>(loadout.getAllItems());
+      Iterator<Item> it = allItems.iterator();
+      while( it.hasNext() ){
+         if( it.next() instanceof Internal )
+            it.remove();
+      }
+      assertTrue(allItems.remove(ItemDB.AMS));
+   }
+
    /**
-    * This test is a regression test for a bug where auto-add an ER PPC would fail on lsml://rRoAkQAAAAAAAAAAAAAAuihsbMzMbDCRE22zG2DF 
-    * where a trivial solution is available.
+    * This test is a regression test for a bug where auto-add an ER PPC would fail on
+    * lsml://rRoAkQAAAAAAAAAAAAAAuihsbMzMbDCRE22zG2DF where a trivial solution is available.
     */
    @Test
    public void testMoveItem_Bug1(){
@@ -87,7 +110,7 @@ public class AutoAddItemOperationTest{
 
       // Execute
       stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, ItemDB.lookup("ER PPC")));
-      
+
       // Verify
       List<Item> allItems = new ArrayList<>(loadout.getAllItems());
       Iterator<Item> it = allItems.iterator();
@@ -98,7 +121,7 @@ public class AutoAddItemOperationTest{
       assertEquals(16, allItems.size());
       assertTrue(allItems.remove(ItemDB.lookup("ER PPC")));
    }
-   
+
    /**
     * {@link AutoAddItemOperation} shall be able to swap items in addition to just moving one at a time. Otherwise there
     * we miss some solutions.
@@ -116,7 +139,7 @@ public class AutoAddItemOperationTest{
 
       // Execute
       stack.pushAndApply(new AutoAddItemOperation(loadout, xBar, ItemDB.lookup("LRM 5")));
-      
+
       // Verify
       List<Item> allItems = new ArrayList<>(loadout.getAllItems());
       Iterator<Item> it = allItems.iterator();
@@ -130,7 +153,7 @@ public class AutoAddItemOperationTest{
       assertTrue(allItems.remove(ItemDB.lookup("LRM 5")));
       assertTrue(allItems.remove(ItemDB.lookup("LRM 5")));
       assertTrue(allItems.remove(ItemDB.lookup("XL ENGINE 200")));
-      
+
       // 1 + 1, move one lrm 5 here and add the wanted lrm 5
       verify(xBar, times(2)).post(new LoadoutPart.Message(loadout.getPart(Part.CenterTorso), Type.ItemAdded));
       verify(xBar, times(1)).post(new LoadoutPart.Message(loadout.getPart(Part.CenterTorso), Type.ItemRemoved));

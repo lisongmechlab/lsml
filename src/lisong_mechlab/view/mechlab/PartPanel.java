@@ -21,14 +21,20 @@ package lisong_mechlab.view.mechlab;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultFormatter;
@@ -37,6 +43,8 @@ import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
@@ -45,17 +53,59 @@ import lisong_mechlab.view.render.ItemRenderer;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
-   private static final int  ARMOR_LABEL_WIDTH   = 30;
-   private static final int  ARMOR_SPINNER_WIDTH = 20;
+   class ArmorPopupAdapter extends MouseAdapter{
+      private final MessageXBar    xBar;
+      private final OperationStack stack;
 
-   private static final long serialVersionUID    = -4399442572295284661L;
+      public ArmorPopupAdapter(OperationStack aStack, MessageXBar aXBar){
+         stack = aStack;
+         xBar = aXBar;
+      }
 
-   private JLabel            frontArmorLabel;
-   private JLabel            backArmorLabel;
+      @Override
+      public void mousePressed(MouseEvent e){
+         if( e.isPopupTrigger() )
+            doPop(e);
+      }
 
-   private final LoadoutPart loadoutPart;
+      @Override
+      public void mouseReleased(MouseEvent e){
+         if( e.isPopupTrigger() )
+            doPop(e);
+      }
 
-   private boolean           canHaveHardpoints;
+      private void doPop(MouseEvent e){
+         JPopupMenu menu = new JPopupMenu("Armor Options");
+         menu.add(new JMenuItem(new AbstractAction("Allow automatic adjustment"){
+            private static final long serialVersionUID = 7539044187157207692L;
+
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+                  stack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
+               }
+               else{
+                  stack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmorTotal(), false));
+               }
+            }
+         }));
+         menu.show(e.getComponent(), e.getX(), e.getY());
+      }
+   }
+
+   private static final int        ARMOR_LABEL_WIDTH   = 30;
+   private static final int        ARMOR_SPINNER_WIDTH = 20;
+
+   private static final long       serialVersionUID    = -4399442572295284661L;
+
+   private final JLabel            frontArmorLabel;
+   private final JLabel            backArmorLabel;
+   private final JLabel            armorLabel;
+
+   private final LoadoutPart       loadoutPart;
+
+   private final boolean           canHaveHardpoints;
+   private final ArmorPopupAdapter armorPopupAdapter;
 
    PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
              OperationStack aStack){
@@ -63,6 +113,18 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       anXBar.attach(this);
       loadoutPart = aLoadoutPart;
       canHaveHardpoints = aCanHaveHardpoints;
+      armorPopupAdapter = new ArmorPopupAdapter(aStack, anXBar);
+
+      if( aLoadoutPart.getInternalPart().getType().isTwoSided() ){
+         frontArmorLabel = new JLabel();
+         backArmorLabel = new JLabel();
+         armorLabel = null;
+      }
+      else{
+         frontArmorLabel = null;
+         backArmorLabel = null;
+         armorLabel = new JLabel();
+      }
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
@@ -80,6 +142,8 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       setAlignmentX(LEFT_ALIGNMENT);
       add(list);
+      
+      updateArmorPanel();
    }
 
    private JPanel makeHardpointsPanel(){
@@ -96,6 +160,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       }
 
       panel.add(Box.createHorizontalGlue());
+      updateArmorPanel();
       return panel;
    }
 
@@ -105,21 +170,20 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
 
       if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-
-         frontArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
          frontArmorLabel.setPreferredSize(labelDimension);
-         backArmorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
          backArmorLabel.setPreferredSize(labelDimension);
 
          JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
          frontSpinner.setMaximumSize(labelDimension);
          frontSpinner.getEditor().setPreferredSize(spinnerDimension);
+         frontSpinner.addMouseListener(armorPopupAdapter);
          JFormattedTextField field = (JFormattedTextField)frontSpinner.getEditor().getComponent(0);
          ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
          JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric, aStack));
          backSpinner.setMaximumSize(labelDimension);
          backSpinner.getEditor().setPreferredSize(spinnerDimension);
+         backSpinner.addMouseListener(armorPopupAdapter);
 
          JPanel frontPanel = new JPanel();
          frontPanel.setLayout(new BoxLayout(frontPanel, BoxLayout.LINE_AXIS));
@@ -150,12 +214,12 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          panel.add(backPanel);
       }
       else{
-         JLabel armorLabel = new JLabel(" / " + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()));
          armorLabel.setPreferredSize(labelDimension);
 
          JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
          spinner.setMaximumSize(labelDimension);
          spinner.getEditor().setPreferredSize(spinnerDimension);
+         spinner.addMouseListener(armorPopupAdapter);
          JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
          ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
@@ -167,19 +231,38 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
          panel.add(armorLabel);
       }
+
+      panel.addMouseListener(armorPopupAdapter);
+
       return panel;
+   }
+
+   void updateArmorPanel(){
+      String automagic = "";
+      if( loadoutPart.allowAutomaticArmor() )
+         automagic += "*";
+
+      if( armorLabel != null ){
+         armorLabel.setText(" / " + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()) + automagic);
+      }
+      if( backArmorLabel != null && frontArmorLabel != null ){
+         frontArmorLabel.setText(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)) + automagic);
+         backArmorLabel.setText(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)) + automagic);
+      }
    }
 
    @Override
    public void receive(Message aMsg){
-      SwingUtilities.invokeLater(new Runnable(){
-         @Override
-         public void run(){
-            if( backArmorLabel != null && frontArmorLabel != null ){
-               frontArmorLabel.setText(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
-               backArmorLabel.setText(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
-            }
+      if( aMsg.isForMe(loadoutPart.getLoadout()) && aMsg instanceof LoadoutPart.Message ){
+         LoadoutPart.Message msg = (LoadoutPart.Message)aMsg;
+         if( msg.type == Type.ArmorChanged ){
+            SwingUtilities.invokeLater(new Runnable(){
+               @Override
+               public void run(){
+                  updateArmorPanel();
+               }
+            });
          }
-      });
+      }
    }
 }

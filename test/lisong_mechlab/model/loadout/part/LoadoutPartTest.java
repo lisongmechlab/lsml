@@ -103,7 +103,7 @@ public class LoadoutPartTest{
       Loadout loadout = Mockito.mock(Loadout.class);
 
       // Execute
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       // Verify
       assertEquals(internals, cut.getItems());
@@ -122,21 +122,42 @@ public class LoadoutPartTest{
    
    @Test
    @Parameters({"LeftArm", "RightTorso"})
+   public void testSetArmorAllowedAutomagic(Part aPart){
+      // Setup
+      List<Item> internals = new ArrayList<>();
+      Mockito.when(part.getInternalItems()).thenReturn(internals);
+      Mockito.when(part.getType()).thenReturn(aPart);
+      LoadoutPart cut = new LoadoutPart(null, part, false);
+      int anAmount = 10;
+
+      // Execute
+      if( aPart.isTwoSided() ){
+         cut.setArmor(ArmorSide.FRONT, anAmount, true);
+      }
+      else{
+         cut.setArmor(ArmorSide.ONLY, anAmount, true);
+      }
+
+      assertTrue(cut.allowAutomaticArmor());
+   }
+   
+   @Test
+   @Parameters({"LeftArm", "RightTorso"})
    public void testSetGetArmorAndTotalArmor(Part aPart){
       // Setup
       List<Item> internals = new ArrayList<>();
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getType()).thenReturn(aPart);
-      LoadoutPart cut = new LoadoutPart(null, part);
+      LoadoutPart cut = new LoadoutPart(null, part, false);
       int anAmount = 10;
 
       // Execute
       if( aPart.isTwoSided() ){
-         cut.setArmor(ArmorSide.FRONT, anAmount);
-         cut.setArmor(ArmorSide.BACK, 2 * anAmount);
+         cut.setArmor(ArmorSide.FRONT, anAmount, false);
+         cut.setArmor(ArmorSide.BACK, 2 * anAmount, false);
       }
       else{
-         cut.setArmor(ArmorSide.ONLY, anAmount);
+         cut.setArmor(ArmorSide.ONLY, anAmount, false);
       }
 
       // Execute & Verify
@@ -160,13 +181,13 @@ public class LoadoutPartTest{
       Mockito.when(part.getArmorMax()).thenReturn(maxArmor);
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getType()).thenReturn(aPart);
-      LoadoutPart cut = new LoadoutPart(null, part);
+      LoadoutPart cut = new LoadoutPart(null, part, false);
 
       if( aPart.isTwoSided() ){
          int front = 4;
          int back = 2;
-         cut.setArmor(ArmorSide.FRONT, front);
-         cut.setArmor(ArmorSide.BACK, back);
+         cut.setArmor(ArmorSide.FRONT, front, false);
+         cut.setArmor(ArmorSide.BACK, back, false);
 
          // Execute & Verify
          assertEquals(maxArmor - back, cut.getArmorMax(ArmorSide.FRONT));
@@ -187,7 +208,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getType()).thenReturn(Part.LeftTorso);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       Item item0 = Mockito.mock(Item.class);
       Item item1 = Mockito.mock(Item.class);
@@ -210,7 +231,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getType()).thenReturn(Part.LeftTorso);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       Item engine = ItemDB.lookup("STD ENGINE 400");
       cut.addItem(engine);
@@ -233,7 +254,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getType()).thenReturn(Part.LeftTorso);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       Item engine = ItemDB.lookup("STD ENGINE 400");
       cut.addItem(engine);
@@ -266,7 +287,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getType()).thenReturn(Part.LeftLeg);
       Mockito.when(part.getNumCriticalslots()).thenReturn(critSlots);
 
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
       cut.addItem(lrm_artemis);
       cut.addItem(srm);
 
@@ -290,7 +311,7 @@ public class LoadoutPartTest{
       Item engine = ItemDB.lookup("STD ENGINE 400");
       final int engineHs = ((Engine)engine).getNumHeatsinkSlots() + 1;
 
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
       cut.addItem(engine);
       for(int i = 0; i < engineHs; ++i)
          cut.addItem(ItemDB.SHS);
@@ -311,7 +332,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(critSlots);
 
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       assertEquals(0, cut.getNumEngineHeatsinks());
 
@@ -340,7 +361,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(critSlots);
 
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       // Execute & Verify (no engine)
       assertEquals(0, cut.getNumEngineHeatsinksMax());
@@ -364,7 +385,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
       Mockito.when(part.getType()).thenReturn(Part.Head);
 
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       // Execute & Verify
       assertFalse(cut.canEquip(jumpjet));
@@ -388,7 +409,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumCriticalslots()).thenReturn(8);
       Mockito.when(part.isAllowed(internal)).thenReturn(false);
 
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
       assertFalse(cut.canEquip(internal));
    }
 
@@ -404,7 +425,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumCriticalslots()).thenReturn(ItemDB.BAP.getNumCriticalSlots(null) - 1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       // Execute & Verify
       assertFalse(cut.canEquip(ItemDB.BAP));
@@ -422,7 +443,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumCriticalslots()).thenReturn(4);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
       cut.addItem(ItemDB.CASE);
 
       // Execute & Verify
@@ -448,7 +469,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumHardpoints(HardPointType.MISSILE)).thenReturn(1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       assertFalse(cut.canEquip(srm6));
    }
@@ -476,7 +497,7 @@ public class LoadoutPartTest{
 
       Engine engine = Mockito.mock(Engine.class);
       Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(2);
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
       cut.addItem(engine);
 
       // Only test heat sinks of correct type. Wrong types are handled by loadout
@@ -513,7 +534,7 @@ public class LoadoutPartTest{
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item module = Mockito.mock(Item.class);
       Mockito.when(module.getHardpointType()).thenReturn(HardPointType.NONE);
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       assertTrue(cut.canEquip(module));
    }
@@ -535,7 +556,7 @@ public class LoadoutPartTest{
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       assertTrue(cut.canEquip(ballistic));
    }
@@ -552,7 +573,7 @@ public class LoadoutPartTest{
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
 
       assertFalse(cut.canEquip(ballistic));
    }
@@ -569,7 +590,7 @@ public class LoadoutPartTest{
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
-      LoadoutPart cut = new LoadoutPart(loadout, part);
+      LoadoutPart cut = new LoadoutPart(loadout, part, false);
       cut.addItem(ballistic);
 
       assertFalse(cut.canEquip(ballistic));
@@ -578,9 +599,22 @@ public class LoadoutPartTest{
    @Test
    public void testRemoveItem_NoSuchItem() throws Exception{
       Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
-      LoadoutPart cut = new LoadoutPart(null, part);
+      LoadoutPart cut = new LoadoutPart(null, part, false);
       Item item = ItemDB.lookup("AC/20 AMMO");
 
       assertFalse(cut.removeItem(item));
+   }
+   
+   @Test
+   public void testEquals_ArmorStatus() throws Exception{
+      Mockito.when(part.getType()).thenReturn(Part.CenterTorso);
+      
+      LoadoutPart cut = new LoadoutPart(null, part, false);
+      cut.setArmor(ArmorSide.FRONT, 0, false);
+      
+      LoadoutPart cut1 = new LoadoutPart(cut, null);
+      cut1.setArmor(ArmorSide.FRONT, 0, true);
+
+      assertFalse(cut.equals(cut1));
    }
 }

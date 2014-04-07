@@ -24,6 +24,7 @@ import java.util.List;
 
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.metrics.helpers.IntegratedImpulseTrain;
@@ -65,7 +66,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.
    private void updateEvents(double aRange){
       damageIntegrals.clear();
       for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon ){
+         if( item instanceof Weapon && item != ItemDB.AMS ){
             Weapon weapon = (Weapon)item;
 
             double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange);

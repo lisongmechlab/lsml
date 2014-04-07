@@ -53,7 +53,7 @@ public class SetArmorOperationTest{
    @Test
    public final void testDescribe() throws Exception{
       int armor = 13;
-      SetArmorOperation cut = new SetArmorOperation(xBar, loadoutPart, armorSide, armor);
+      SetArmorOperation cut = new SetArmorOperation(xBar, loadoutPart, armorSide, armor, true);
 
       assertTrue(cut.describe().contains("armor"));
       assertTrue(cut.describe().contains("change"));
@@ -67,7 +67,7 @@ public class SetArmorOperationTest{
     */
    @Test(expected = IllegalArgumentException.class)
    public final void testCtorNegativeArmor() throws Exception{
-      new SetArmorOperation(xBar, loadoutPart, armorSide, -1);
+      new SetArmorOperation(xBar, loadoutPart, armorSide, -1, true);
    }
 
    /**
@@ -78,7 +78,7 @@ public class SetArmorOperationTest{
     */
    @Test(expected = IllegalArgumentException.class)
    public final void testCtorTooMuchArmor() throws Exception{
-      new SetArmorOperation(xBar, loadoutPart, armorSide, TEST_MAX_ARMOR + 1);
+      new SetArmorOperation(xBar, loadoutPart, armorSide, TEST_MAX_ARMOR + 1, true);
    }
 
    /**
@@ -101,7 +101,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       SetArmorOperation cut = null;
       try{
-         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -125,7 +125,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       SetArmorOperation cut = null;
       try{
-         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -136,7 +136,7 @@ public class SetArmorOperationTest{
       cut.apply();
 
       Mockito.verifyZeroInteractions(xBar);
-      Mockito.verify(loadoutPart, Mockito.never()).setArmor(Matchers.any(ArmorSide.class), Matchers.anyInt());
+      Mockito.verify(loadoutPart, Mockito.never()).setArmor(Matchers.any(ArmorSide.class), Matchers.anyInt(), Matchers.anyBoolean());
    }
 
    /**
@@ -156,7 +156,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       SetArmorOperation cut = null;
       try{
-         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -167,7 +167,7 @@ public class SetArmorOperationTest{
       cut.apply();
 
       // Verify
-      Mockito.verify(loadoutPart).setArmor(armorSide, newArmor);
+      Mockito.verify(loadoutPart).setArmor(armorSide, newArmor, false);
       Mockito.verify(xBar).post(new LoadoutPart.Message(loadoutPart, Type.ArmorChanged));
    }
 
@@ -184,7 +184,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(newArmor - 1);
       SetArmorOperation cut = null;
       try{
-         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -215,7 +215,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       SetArmorOperation cut = null;
       try{
-         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -226,7 +226,7 @@ public class SetArmorOperationTest{
       cut.apply();
 
       // Verify
-      Mockito.verify(loadoutPart).setArmor(armorSide, newArmor);
+      Mockito.verify(loadoutPart).setArmor(armorSide, newArmor, false);
       Mockito.verify(xBar).post(new LoadoutPart.Message(loadoutPart, Type.ArmorChanged));
    }
 
@@ -243,14 +243,14 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
 
-      SetArmorOperation cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+      SetArmorOperation cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor, true);
 
       // Execute
       cut.apply();
       cut.undo();
 
       Mockito.verifyZeroInteractions(xBar);
-      Mockito.verify(loadoutPart, Mockito.never()).setArmor(Matchers.any(ArmorSide.class), Matchers.anyInt());
+      Mockito.verify(loadoutPart, Mockito.never()).setArmor(Matchers.any(ArmorSide.class), Matchers.anyInt(), Matchers.anyBoolean());
 
    }
 
@@ -269,7 +269,7 @@ public class SetArmorOperationTest{
          Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
          Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
 
-         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor, true);
 
       }
       catch( Throwable t ){
@@ -295,7 +295,7 @@ public class SetArmorOperationTest{
          Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
          Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
 
-         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+         cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor, true);
 
       }
       catch( Throwable t ){
@@ -322,8 +322,10 @@ public class SetArmorOperationTest{
       Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(0);
-
-      SetArmorOperation cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor);
+      Mockito.when(loadoutPart.allowAutomaticArmor()).thenReturn(true);
+      
+      
+      SetArmorOperation cut = new SetArmorOperation(xBar, loadoutPart, armorSide, newArmor, true);
 
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
 
@@ -332,9 +334,9 @@ public class SetArmorOperationTest{
       cut.undo();
 
       InOrder inOrder = Mockito.inOrder(xBar, loadoutPart);
-      inOrder.verify(loadoutPart).setArmor(armorSide, newArmor);
+      inOrder.verify(loadoutPart).setArmor(armorSide, newArmor, false);
       inOrder.verify(xBar).post(new LoadoutPart.Message(loadoutPart, Type.ArmorChanged));
-      inOrder.verify(loadoutPart).setArmor(armorSide, oldArmor);
+      inOrder.verify(loadoutPart).setArmor(armorSide, oldArmor, true);
       inOrder.verify(xBar).post(new LoadoutPart.Message(loadoutPart, Type.ArmorChanged));
    }
 }

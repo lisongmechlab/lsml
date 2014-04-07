@@ -30,7 +30,7 @@ import lisong_mechlab.util.MessageXBar;
  * @author Li Song
  */
 public class SetMaxArmorOperation extends LoadoutOperation{
-   public SetMaxArmorOperation(Loadout aLoadout, MessageXBar anXBar, double aRatio){
+   public SetMaxArmorOperation(Loadout aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet){
       super(aLoadout, anXBar, "set max armor");
       for(LoadoutPart part : loadout.getPartLoadOuts()){
          final int max = part.getInternalPart().getArmorMax();
@@ -43,12 +43,12 @@ public class SetMaxArmorOperation extends LoadoutOperation{
             int back = (int)(max / (aRatio + 1));
             int front = max - back;
 
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, 0));
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.FRONT, front));
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, back));
+            addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, 0, aManualSet));
+            addOp(new SetArmorOperation(xBar, part, ArmorSide.FRONT, front, aManualSet));
+            addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, back, aManualSet));
          }
          else{
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.ONLY, max));
+            addOp(new SetArmorOperation(xBar, part, ArmorSide.ONLY, max, aManualSet));
          }
       }
    }

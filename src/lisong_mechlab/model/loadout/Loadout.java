@@ -160,7 +160,7 @@ public class Loadout implements Cloneable{
       efficiencies = new Efficiencies(anXBar);
 
       for(InternalPart part : chassi.getInternalParts()){
-         LoadoutPart confPart = new LoadoutPart(this, part);
+         LoadoutPart confPart = new LoadoutPart(this, part, true);
          parts.put(part.getType(), confPart);
       }
 

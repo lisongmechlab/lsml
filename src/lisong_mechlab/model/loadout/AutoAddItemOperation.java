@@ -241,8 +241,11 @@ public class AutoAddItemOperation extends LoadoutOperation{
             }
             for(Item item : dstPart.getItems()){
                // The item has to clear enough room to make our item fit.
+               if(item instanceof HeatSink && dstPart.getNumEngineHeatsinks() > 0)
+                  continue; // Engine HS will not clear slots... 
                if( item.getNumCriticalSlots(tempLoadout.getUpgrades()) < minItemSize )
                   continue;
+               
                // The item has to free a hard point of the required type if applicable.
                if( requiredType != HardPointType.NONE && item.getHardpointType() != requiredType )
                   continue;
