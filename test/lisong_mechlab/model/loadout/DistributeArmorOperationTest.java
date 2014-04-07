@@ -61,7 +61,7 @@ public class DistributeArmorOperationTest{
    /**
     * The operator shall succeed at placing the armor points somewhere on an empty loadout.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_Distribute(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
@@ -74,12 +74,48 @@ public class DistributeArmorOperationTest{
       assertEquals(9.0 + 10, loadout.getMass(), 0.0);
       assertEquals(320, loadout.getArmor());
    }
+   
+   /**
+    * The operator shall always max CT if possible.
+    */
+   @Test
+   public void testArmorDistributor_CT_Priority(){
+      // Setup
+      Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar);
+
+      // Execute
+      DistributeArmorOperation cut = new DistributeArmorOperation(loadout, 110, 1.0, xBar);
+      stack.pushAndApply(cut);
+
+      // Verify
+      assertTrue(loadout.getPart(Part.CenterTorso).getArmorTotal() > 90);
+   }
+   
+   /**
+    * The operator shall provide protection for components linking important components.
+    */
+   @Test
+   public void testArmorDistributor_Link_Priority(){
+      // Setup
+      Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar);
+      stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.lookup("AC/20")));
+      
+      // Execute
+      DistributeArmorOperation cut = new DistributeArmorOperation(loadout, 350, 1.0, xBar);
+      stack.pushAndApply(cut);
+
+      // Verify
+      int raArmor = loadout.getPart(Part.RightArm).getArmorTotal();
+      int rtArmor = loadout.getPart(Part.RightTorso).getArmorTotal();
+      assertTrue(raArmor > 40);
+      assertTrue(rtArmor > 40);
+   }
 
    /**
     * The operator shall not barf if there is not enough free tonnage to accommodate the request. It shall allocate as
     * much as possible to fill the loadout.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_NotEnoughTonnage(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("LCT-3M"), xBar);
@@ -101,7 +137,7 @@ public class DistributeArmorOperationTest{
     * 
     * @throws DecodingException
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_NotEnoughTonnage2() throws DecodingException{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
@@ -127,7 +163,7 @@ public class DistributeArmorOperationTest{
     * If the budget given is larger than can be assigned due to manually set parts, the operator shall assign max armor
     * to the remaining parts.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_RespectManual_TooBigBudget(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
@@ -135,7 +171,7 @@ public class DistributeArmorOperationTest{
       stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(Part.RightLeg), ArmorSide.ONLY, 64, true));
 
       // Execute
-      DistributeArmorOperation cut = new DistributeArmorOperation(loadout, 558, 1.0, xBar);
+      DistributeArmorOperation cut = new DistributeArmorOperation(loadout, 558, 1.0, xBar); // 558 is max
       stack.pushAndApply(cut);
 
       // Verify
@@ -145,7 +181,7 @@ public class DistributeArmorOperationTest{
    /**
     * The operator shall not barf if the manually set armors take up more than the available budget.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_RespectManual_NegativeBudget(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
@@ -164,7 +200,7 @@ public class DistributeArmorOperationTest{
    /**
     * The operator shall take already existing armor amounts into account when deciding on how much armor to distribute.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_RespectManual_CorrectTotal(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
@@ -186,7 +222,7 @@ public class DistributeArmorOperationTest{
    /**
     * The operator shall not add armor to manually assigned locations.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_RespectManual_DoNotAdd(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
@@ -208,7 +244,7 @@ public class DistributeArmorOperationTest{
    /**
     * The operator shall not remove armor from manually assigned locations.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_RespectManual_DoNotRemove(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
@@ -230,7 +266,7 @@ public class DistributeArmorOperationTest{
    /**
     * The operator shall respect the front-back ratio.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_FrontBackRatio(){
       // Setup
       final double frontBackRatio = 5.0;
@@ -255,7 +291,7 @@ public class DistributeArmorOperationTest{
    /**
     * Values that are even half tons shall not be rounded down.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_EvenHalfNoRoundDown(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
@@ -272,7 +308,7 @@ public class DistributeArmorOperationTest{
    /**
     * Values that are not even half tons shall be rounded down.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_RoundDown(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
@@ -288,9 +324,37 @@ public class DistributeArmorOperationTest{
    }
 
    /**
+    * The operator shall not barf if there is not enough free tonnage to accommodate the request. It shall allocate as
+    * much as possible to fill the loadout.
+    * 
+    * @throws DecodingException
+    */
+   @Test
+   public void testArmorDistributor_RoundDown2() throws DecodingException{
+      // Setup
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+      Loadout loadout = coder.parse("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
+      for(LoadoutPart part : loadout.getPartLoadOuts()){
+         if( part.getInternalPart().getType().isTwoSided() ){
+            stack.pushAndApply(new SetArmorOperation(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
+         }
+         else{
+            stack.pushAndApply(new SetArmorOperation(null, part, ArmorSide.ONLY, part.getArmorTotal(), false));
+         }
+      }
+
+      // Execute
+      DistributeArmorOperation cut = new DistributeArmorOperation(loadout, 558, 8.0, xBar);
+      stack.pushAndApply(cut);
+
+      // Verify
+      assertEquals(544, loadout.getArmor());
+   }
+   
+   /**
     * Old armor values on automatically managed parts should be cleared
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_ClearOld(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("CPLT-A1"), xBar); // 65 tons, 6.5 tons internals
@@ -309,7 +373,7 @@ public class DistributeArmorOperationTest{
    /**
     * Shield arms should get lower priority.
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_ShieldArm(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("BNC-3S"), xBar); // 95 tons, 9.5 tons internals
@@ -329,7 +393,7 @@ public class DistributeArmorOperationTest{
    /**
     * The operation shall succeed even if there is already max armor on the mech. (More on front parts than rear)
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_AlreadyMaxArmor_FrontRear(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
@@ -347,7 +411,7 @@ public class DistributeArmorOperationTest{
    /**
     * The operation shall succeed even if there is already max armor on the mech. (More on rear parts than front)
     */
-   @Test(timeout = 6000)
+   @Test
    public void testArmorDistributor_AlreadyMaxArmor_RearFront(){
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals

@@ -48,7 +48,7 @@ public class ArmorDistributionPanel extends JPanel{
       GroupLayout gl = new GroupLayout(this);
       setLayout(gl);
 
-      final JLabel armorLabel = new JLabel("Armor:");
+      final JLabel armorLabel = new JLabel("Amount:");
       final int maxArmor = aLoadout.getChassi().getArmorMax();
       final JSlider armorSlider = new JSlider(0, maxArmor, aLoadout.getArmor());
       armorSlider.setMajorTickSpacing(100);
@@ -81,8 +81,8 @@ public class ArmorDistributionPanel extends JPanel{
       //gl.setAutoCreateGaps(true);
 
       gl.setHorizontalGroup(gl.createSequentialGroup()
-                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(armorLabel).addComponent(ratioLabel))
-                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(armorSlider).addComponent(ratioSlider)));
+                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel).addComponent(ratioLabel))
+                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorSlider).addComponent(ratioSlider)));
       
       gl.setVerticalGroup(gl.createSequentialGroup()
                           .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel).addComponent(armorSlider))
