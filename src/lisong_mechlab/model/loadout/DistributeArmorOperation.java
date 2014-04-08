@@ -34,6 +34,7 @@ import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * This operation will distribute a number of points of armor (rounded down to the closest half ton) on a loadout,
@@ -43,6 +44,7 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
  */
 public class DistributeArmorOperation extends CompositeOperation{
    private final Map<Part, Integer> armors = new TreeMap<>();
+   private final Loadout            loadout;
 
    /**
     * @param aLoadout
@@ -52,6 +54,8 @@ public class DistributeArmorOperation extends CompositeOperation{
     */
    public DistributeArmorOperation(Loadout aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
       super("distribute armor");
+      
+      loadout = aLoadout;
 
       int armorLeft = calculateArmorToDistribute(aLoadout, aPointsOfArmor);
       if( armorLeft < 1 ){
@@ -61,6 +65,21 @@ public class DistributeArmorOperation extends CompositeOperation{
 
       distribute(aLoadout, armorLeft, prioMap);
       applyArmors(aLoadout, aFrontRearRatio, aXBar);
+   }
+
+   /**
+    * @see lisong_mechlab.util.OperationStack.Operation#canCoalescele(lisong_mechlab.util.OperationStack.Operation)
+    */
+   @Override
+   public boolean canCoalescele(Operation aOperation){
+      if(this == aOperation)
+         return false;
+      if(aOperation == null)
+         return false;
+      if(!(aOperation instanceof DistributeArmorOperation))
+         return false;
+      DistributeArmorOperation operation = (DistributeArmorOperation)aOperation;
+      return loadout == operation.loadout;
    }
 
    private void distribute(final Loadout aLoadout, int aArmorAmount, final Map<Part, Integer> aPriorities){

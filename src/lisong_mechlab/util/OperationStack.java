@@ -53,6 +53,21 @@ public class OperationStack{
        * Will undo this action.
        */
       protected abstract void undo();
+
+      /**
+       * Checks if two operations can be coalesceled into one. By definition an object can't coalescele with itself.
+       * <p>
+       * If this function returns true, then the previous operation may be quietly undone and this operation replace it.
+       * I.e. premises for the operation to succeed may have changed from construction time to the time point when apply
+       * is called.
+       * 
+       * @param aOperation
+       *           The {@link Operation} to check with.
+       * @return <code>true</code> if <code>this</code> can coalescele with aOperation.
+       */
+      public boolean canCoalescele(@SuppressWarnings("unused") Operation aOperation){
+         return false;
+      }
    }
 
    /**
@@ -145,6 +160,11 @@ public class OperationStack{
    }
 
    public void pushAndApply(Operation anOp){
+      // Perform automatic coalesceling
+      if(nextUndo() != null && nextUndo().canCoalescele(anOp)){
+         undo();
+      }
+      
       anOp.apply();
       while( currentOp < actions.size() - 1 ){
          // Previously undone actions in the list

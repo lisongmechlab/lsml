@@ -37,7 +37,7 @@ public class SetArmorOperation extends Operation{
    private final MessageXBar xBar;
    private final LoadoutPart loadoutPart;
    private final boolean     manual;
-   private final boolean oldManual;
+   private final boolean     oldManual;
 
    /**
     * Sets the armor for a given side of the component. Throws if the operation will fail.
@@ -71,6 +71,27 @@ public class SetArmorOperation extends Operation{
          throw new IllegalArgumentException("Armor must be less than components max armor!");
    }
 
+   /**
+    * @see lisong_mechlab.util.OperationStack.Operation#canCoalescele(lisong_mechlab.util.OperationStack.Operation)
+    */
+   @Override
+   public boolean canCoalescele(Operation aOperation){
+      if( this == aOperation )
+         return false;
+      if( aOperation == null )
+         return false;
+      if( !(aOperation instanceof SetArmorOperation) )
+         return false;
+      SetArmorOperation that = (SetArmorOperation)aOperation;
+      if( that.manual != manual )
+         return false;
+      if( that.loadoutPart != loadoutPart )
+         return false;
+      if( that.side != side )
+         return false;
+      return true;
+   }
+
    @Override
    public String describe(){
       return "change armor";
@@ -79,7 +100,7 @@ public class SetArmorOperation extends Operation{
    @Override
    protected void apply(){
       oldAmount = loadoutPart.getArmor(side);
-      if( amount != oldAmount || oldManual != manual){
+      if( amount != oldAmount || oldManual != manual ){
 
          if( amount > loadoutPart.getArmorMax(side) )
             throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + loadoutPart.getArmorMax(side) + " Was: " + amount);
