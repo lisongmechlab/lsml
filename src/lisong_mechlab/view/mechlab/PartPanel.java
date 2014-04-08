@@ -42,6 +42,7 @@ import javax.swing.text.DefaultFormatter;
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
@@ -127,9 +128,12 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       }
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-      if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
-         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(aLoadoutPart.getInternalPart().getType().longName()),
+      if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+         InternalPart internalPart = aLoadoutPart.getInternalPart();
+         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(internalPart.getType().longName() + " ("
+                                                                                       + (int)internalPart.getHitpoints() + " hp)"),
                                                       BorderFactory.createEmptyBorder(0, 2, 2, 4)));
+      }
       add(makeArmorPanel(anXBar, aSymmetric, aStack));
 
       if( canHaveHardpoints )
@@ -142,7 +146,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       setAlignmentX(LEFT_ALIGNMENT);
       add(list);
-      
+
       updateArmorPanel();
    }
 
@@ -176,14 +180,12 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
          frontSpinner.setMaximumSize(labelDimension);
          frontSpinner.getEditor().setPreferredSize(spinnerDimension);
-         frontSpinner.addMouseListener(armorPopupAdapter);
          JFormattedTextField field = (JFormattedTextField)frontSpinner.getEditor().getComponent(0);
          ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
          JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric, aStack));
          backSpinner.setMaximumSize(labelDimension);
          backSpinner.getEditor().setPreferredSize(spinnerDimension);
-         backSpinner.addMouseListener(armorPopupAdapter);
 
          JPanel frontPanel = new JPanel();
          frontPanel.setLayout(new BoxLayout(frontPanel, BoxLayout.LINE_AXIS));
@@ -219,7 +221,6 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
          spinner.setMaximumSize(labelDimension);
          spinner.getEditor().setPreferredSize(spinnerDimension);
-         spinner.addMouseListener(armorPopupAdapter);
          JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
          ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
