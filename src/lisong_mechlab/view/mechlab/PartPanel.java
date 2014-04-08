@@ -20,6 +20,7 @@
 package lisong_mechlab.view.mechlab;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -36,6 +37,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultFormatter;
 
@@ -107,6 +109,9 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private final boolean           canHaveHardpoints;
    private final ArmorPopupAdapter armorPopupAdapter;
+   private JSpinner                frontSpinner;
+   private JSpinner                backSpinner;
+   private JSpinner                spinner;
 
    PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
              OperationStack aStack){
@@ -177,13 +182,13 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          frontArmorLabel.setPreferredSize(labelDimension);
          backArmorLabel.setPreferredSize(labelDimension);
 
-         JSpinner frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
+         frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
          frontSpinner.setMaximumSize(labelDimension);
          frontSpinner.getEditor().setPreferredSize(spinnerDimension);
          JFormattedTextField field = (JFormattedTextField)frontSpinner.getEditor().getComponent(0);
          ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
-         JSpinner backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric, aStack));
+         backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric, aStack));
          backSpinner.setMaximumSize(labelDimension);
          backSpinner.getEditor().setPreferredSize(spinnerDimension);
 
@@ -218,7 +223,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       else{
          armorLabel.setPreferredSize(labelDimension);
 
-         JSpinner spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
+         spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
          spinner.setMaximumSize(labelDimension);
          spinner.getEditor().setPreferredSize(spinnerDimension);
          JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
@@ -239,16 +244,38 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    }
 
    void updateArmorPanel(){
-      String automagic = "";
-      if( loadoutPart.allowAutomaticArmor() )
-         automagic += "*";
-
       if( armorLabel != null ){
-         armorLabel.setText(" / " + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()) + automagic);
+         armorLabel.setText(" /" + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()));
+         JTextField tf = ((JSpinner.DefaultEditor)spinner.getEditor()).getTextField();
+         
+         if( loadoutPart.allowAutomaticArmor() ){
+            armorLabel.setForeground(Color.GRAY);
+            tf.setForeground(Color.GRAY);
+         }
+         else{
+            armorLabel.setForeground(Color.BLACK);
+            tf.setForeground(Color.BLACK);
+         }
       }
       if( backArmorLabel != null && frontArmorLabel != null ){
-         frontArmorLabel.setText(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)) + automagic);
-         backArmorLabel.setText(" / " + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)) + automagic);
+         frontArmorLabel.setText(" /" + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
+         backArmorLabel.setText(" /" + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
+         JTextField tff = ((JSpinner.DefaultEditor)frontSpinner.getEditor()).getTextField();
+         JTextField tfb = ((JSpinner.DefaultEditor)backSpinner.getEditor()).getTextField();
+
+         
+         if( loadoutPart.allowAutomaticArmor() ){
+            frontArmorLabel.setForeground(Color.GRAY);
+            backArmorLabel.setForeground(Color.GRAY);
+            tff.setForeground(Color.GRAY);
+            tfb.setForeground(Color.GRAY);
+         }
+         else{
+            frontArmorLabel.setForeground(Color.BLACK);
+            backArmorLabel.setForeground(Color.BLACK);
+            tff.setForeground(Color.BLACK);
+            tfb.setForeground(Color.BLACK);
+         }
       }
    }
 
