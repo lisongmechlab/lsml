@@ -23,6 +23,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -33,6 +34,7 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
@@ -40,17 +42,31 @@ import lisong_mechlab.view.render.StyleManager;
  * 
  * @author Emily Björk
  */
-public class ArmorDistributionPanel extends JPanel{
-   private static final long serialVersionUID = 6835003047682738947L;
+public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader, ChangeListener{
+   private static final long    serialVersionUID = 6835003047682738947L;
+
+   private final Loadout        loadout;
+   private final OperationStack stack;
+   private final MessageXBar    xBar;
+   private final JSlider        ratioSlider;
+   private final JSlider        armorSlider;
+
+   private boolean              inprogress       = false;
 
    public ArmorDistributionPanel(final Loadout aLoadout, final OperationStack aStack, final MessageXBar aXBar){
       setBorder(StyleManager.sectionBorder("Armor distribution"));
       GroupLayout gl = new GroupLayout(this);
       setLayout(gl);
 
+      stack = aStack;
+      xBar = aXBar;
+      loadout = aLoadout;
+
+      xBar.attach(this);
+
       final JLabel armorLabel = new JLabel("Amount:");
       final int maxArmor = aLoadout.getChassi().getArmorMax();
-      final JSlider armorSlider = new JSlider(0, maxArmor, aLoadout.getArmor());
+      armorSlider = new JSlider(0, maxArmor, aLoadout.getArmor());
       armorSlider.setMajorTickSpacing(100);
       armorSlider.setMinorTickSpacing(25);
       armorSlider.setLabelTable(armorSlider.createStandardLabels(100));
@@ -64,12 +80,12 @@ public class ArmorDistributionPanel extends JPanel{
       int backArmor = ct.getArmor(ArmorSide.BACK);
       int frontArmor = ct.getArmor(ArmorSide.FRONT);
       int initialFrontBack = 5;
-      if(backArmor != 0 && frontArmor != 0 ){
+      if( backArmor != 0 && frontArmor != 0 ){
          initialFrontBack = (int)Math.round((double)frontArmor / backArmor);
       }
-      
+
       final JLabel ratioLabel = new JLabel("Front/Back:");
-      final JSlider ratioSlider = new JSlider(1, 16, initialFrontBack);
+      ratioSlider = new JSlider(1, 16, initialFrontBack);
       ratioSlider.setMajorTickSpacing(5);
       ratioSlider.setMinorTickSpacing(1);
       ratioSlider.setPaintTicks(true);
@@ -77,28 +93,38 @@ public class ArmorDistributionPanel extends JPanel{
       ratioSlider.setLabelTable(ratioSlider.createStandardLabels(5));
       ratioSlider.setPaintLabels(true);
 
-      //gl.setAutoCreateContainerGaps(true);
-      //gl.setAutoCreateGaps(true);
+      gl.setHorizontalGroup(gl.createSequentialGroup().addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel)
+                                                                  .addComponent(ratioLabel))
+                              .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorSlider).addComponent(ratioSlider)));
 
-      gl.setHorizontalGroup(gl.createSequentialGroup()
-                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel).addComponent(ratioLabel))
-                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorSlider).addComponent(ratioSlider)));
-      
-      gl.setVerticalGroup(gl.createSequentialGroup()
-                          .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel).addComponent(armorSlider))
-                          .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(ratioLabel).addComponent(ratioSlider)));
+      gl.setVerticalGroup(gl.createSequentialGroup().addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel)
+                                                                .addComponent(armorSlider))
+                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(ratioLabel).addComponent(ratioSlider)));
 
-      armorSlider.addChangeListener(new ChangeListener(){
-         @Override
-         public void stateChanged(ChangeEvent aArg0){
-            aStack.pushAndApply(new DistributeArmorOperation(aLoadout, armorSlider.getValue(), ratioSlider.getValue(), aXBar));
-         }
-      });
-      ratioSlider.addChangeListener(new ChangeListener(){
-         @Override
-         public void stateChanged(ChangeEvent aArg0){
-            aStack.pushAndApply(new DistributeArmorOperation(aLoadout, armorSlider.getValue(), ratioSlider.getValue(), aXBar));
-         }
-      });
+      armorSlider.addChangeListener(this);
+      ratioSlider.addChangeListener(this);
+   }
+
+   @Override
+   public void stateChanged(ChangeEvent aEvent){
+      inprogress = true;
+      stack.pushAndApply(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+      inprogress = false;
+   }
+
+   /**
+    * @see lisong_mechlab.util.MessageXBar.Reader#receive(lisong_mechlab.util.MessageXBar.Message)
+    */
+   @Override
+   public void receive(Message aMsg){
+      if( aMsg.isForMe(loadout) && aMsg instanceof LoadoutPart.Message && !inprogress ){
+         inprogress = true;
+         SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+               stateChanged(null);
+            }
+         });
+      }
    }
 }

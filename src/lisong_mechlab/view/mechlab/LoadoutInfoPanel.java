@@ -67,6 +67,7 @@ import lisong_mechlab.model.metrics.MaxDPS;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.metrics.RangeMetric;
 import lisong_mechlab.model.metrics.RangeTimeMetric;
+import lisong_mechlab.model.metrics.TimeToCool;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.metrics.TurningSpeed;
 import lisong_mechlab.model.metrics.TwistSpeed;
@@ -128,6 +129,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final MetricDisplay          effectiveHS;
    private final MetricDisplay          timeToOverheat;
    private final MetricDisplay          coolingRatio;
+   private final MetricDisplay          timeToCool;
    private final JCheckBox              doubleHeatSinks  = new JCheckBox("Double Heatsinks");
    private final JCheckBox              coolRun          = new JCheckBox("Cool Run");
    private final JCheckBox              heatContainment  = new JCheckBox("Heat Containment");
@@ -240,7 +242,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          general.setLayout(gl_general);
       }
-      
+
       add(new ArmorDistributionPanel(loadout, opStack, anXBar));
 
       // Mobility
@@ -251,8 +253,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          mobility.setLayout(new BoxLayout(mobility, BoxLayout.PAGE_AXIS));
          mobility.add(Box.createHorizontalGlue());
          add(mobility);
-         
-         
 
          {
             jumpJets.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -329,10 +329,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          heat.add(envPanel);
 
          {
-            heatsinks.setAlignmentX(Component.CENTER_ALIGNMENT);
             effectiveHS = new MetricDisplay(heatCapacity, "Heat capacity: %.1f", "The amount of heat your mech can hold without overheating.",
                                             anXBar, loadout);
-            effectiveHS.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(heatsinks, BorderLayout.WEST);
@@ -344,13 +342,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             coolingRatio = new MetricDisplay(new CoolingRatio(heatDissipation, heatGeneration), "Cooling ratio: %.0f %%",
                                              "How much of your maximal heat generation that can be dissipated. "
                                                    + "A value of 100% means that you will never overheat.", anXBar, loadout, true);
-            coolingRatio.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             HeatOverTime heatOverTime = new HeatOverTime(loadout, xBar);
             timeToOverheat = new MetricDisplay(new AlphaTimeToOverHeat(heatCapacity, heatOverTime, heatDissipation), "Seconds to Overheat: %.1f",
                                                "The amount of seconds you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.",
                                                anXBar, loadout);
-            timeToOverheat.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(coolingRatio, BorderLayout.WEST);
@@ -359,6 +355,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          }
 
          {
+
+            timeToCool = new MetricDisplay(new TimeToCool(heatCapacity, heatDissipation), "Time to cool: %.1f",
+                                           "The time the loadout needs to cool from overheat to 0, while moving at full speed.", anXBar, loadout);
+
             ghostHeat = new MetricDisplay(new GhostHeat(loadout), "Ghost heat: %.1f",
                                           "The amount of extra heat you receive on an alpha strike due to the ghost heat mechanic.", anXBar, loadout){
                private static final long serialVersionUID = 1L;
@@ -373,9 +373,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                }
             };
 
-            ghostHeat.setAlignmentX(Component.LEFT_ALIGNMENT);
             JPanel panel = new JPanel(new BorderLayout());
-            panel.add(ghostHeat, BorderLayout.WEST);
+            panel.add(timeToCool, BorderLayout.WEST);
+            panel.add(ghostHeat, BorderLayout.EAST);
             heat.add(panel);
          }
 
@@ -401,10 +401,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       {
          JPanel offence = new JPanel(new BorderLayout());
          offence.setBorder(StyleManager.sectionBorder("Offense"));
-         
+
          JPanel offenceTop = new JPanel();
          offenceTop.setLayout(new BoxLayout(offenceTop, BoxLayout.PAGE_AXIS));
-         
+
          final RangeTimeMetric metricBurstDamage = new BurstDamageOverTime(loadout, anXBar);
          final RangeMetric metricAlphaStrike = new AlphaStrike(loadout);
          final RangeMetric metricMaxDPS = new MaxDPS(loadout);
@@ -459,7 +459,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                JPanel pane = new JPanel();
                pane.add(new JLabel("Time:"));
                pane.setToolTipText("The length of the engagement you're designing for. Will affect the \"Burst\" value.");
-               
+
                Double times[] = new Double[] {5.0, 10.0, 15.0, 20.0, 30.0, 45.0, 60.0};
                final JComboBox<Double> timeOfEngagement = new JComboBox<Double>(times);
                timeOfEngagement.setEditable(true);
@@ -526,7 +526,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          }
 
          offenceTop.add(Box.createVerticalStrut(5));
-         
+
          weaponTable = new WeaponSummaryTable(loadout, anXBar);
          JScrollPane weapons = new JScrollPane(weaponTable);
          weapons.setPreferredSize(new Dimension(260, 150));
