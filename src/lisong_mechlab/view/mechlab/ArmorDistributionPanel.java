@@ -35,6 +35,8 @@ import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.OperationStack.CompositeOperation;
+import lisong_mechlab.util.OperationStack.Operation;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
@@ -51,7 +53,50 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
    private final JSlider        ratioSlider;
    private final JSlider        armorSlider;
 
+   private int                  lastRatio        = 0;
+   private int                  lastAmount       = 0;
    private boolean              inprogress       = false;
+
+   class ArmorSliderOperation extends CompositeOperation{
+      private final JSlider slider;
+      private final int     newValue;
+      private final int     oldValue;
+
+      public ArmorSliderOperation(JSlider aSlider, int aOldValue){
+         super("armor adjustment");
+         slider = aSlider;
+         oldValue = aOldValue;
+         newValue = slider.getValue();
+         System.out.println("New slider op. Old = " + oldValue);
+
+         addOp(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+      }
+
+      @Override
+      public boolean canCoalescele(Operation aOperation){
+         if( aOperation != this && aOperation != null && aOperation instanceof ArmorSliderOperation ){
+            ArmorSliderOperation op = (ArmorSliderOperation)aOperation;
+            return slider == op.slider && oldValue == op.oldValue;
+         }
+         return false;
+      }
+
+      @Override
+      protected void undo(){
+         inprogress = true;
+         slider.setValue(oldValue);
+         super.undo();
+         inprogress = false;
+      }
+
+      @Override
+      protected void apply(){
+         inprogress = true;
+         slider.setValue(newValue);
+         super.apply();
+         inprogress = false;
+      }
+   }
 
    public ArmorDistributionPanel(final Loadout aLoadout, final OperationStack aStack, final MessageXBar aXBar){
       setBorder(StyleManager.sectionBorder("Armor distribution"));
@@ -101,15 +146,42 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
                                                                 .addComponent(armorSlider))
                             .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(ratioLabel).addComponent(ratioSlider)));
 
+      lastAmount = armorSlider.getValue();
+      lastRatio = ratioSlider.getValue();
+
       armorSlider.addChangeListener(this);
       ratioSlider.addChangeListener(this);
    }
 
+   OperationStack privateStack = new OperationStack(0);
+
    @Override
    public void stateChanged(ChangeEvent aEvent){
-      inprogress = true;
-      stack.pushAndApply(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
-      inprogress = false;
+      if( aEvent == null ){
+         // From MessageXBar. Update armor in response to loadout change. Don't generate an un-doable action.
+         // As the previous action is undone, it will trigger another action to redistribute armor.
+
+         inprogress = true;
+         privateStack.pushAndApply(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+         inprogress = false;
+      }
+      else{
+         if( !inprogress ){
+            inprogress = true;
+            // A "real" stateChanged()
+            if( aEvent.getSource() == ratioSlider )
+               stack.pushAndApply(new ArmorSliderOperation(ratioSlider, lastRatio));
+            else if( aEvent.getSource() == armorSlider )
+               stack.pushAndApply(new ArmorSliderOperation(armorSlider, lastAmount));
+            inprogress = false;
+         }
+
+         if( !armorSlider.getValueIsAdjusting() )
+            lastAmount = armorSlider.getValue();
+         if( !ratioSlider.getValueIsAdjusting() )
+            lastRatio = ratioSlider.getValue();
+
+      }
    }
 
    /**

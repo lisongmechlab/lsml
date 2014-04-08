@@ -161,7 +161,7 @@ public class OperationStack{
 
    public void pushAndApply(Operation anOp){
       // Perform automatic coalesceling
-      if(nextUndo() != null && nextUndo().canCoalescele(anOp)){
+      while(nextUndo() != null && nextUndo().canCoalescele(anOp)){
          undo();
       }
       
