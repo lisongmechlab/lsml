@@ -91,18 +91,12 @@ public class ArmorDistributionPanel extends JPanel{
       armorSlider.addChangeListener(new ChangeListener(){
          @Override
          public void stateChanged(ChangeEvent aArg0){
-            while( aStack.nextUndo() instanceof DistributeArmorOperation ){
-               aStack.undo();
-            }
             aStack.pushAndApply(new DistributeArmorOperation(aLoadout, armorSlider.getValue(), ratioSlider.getValue(), aXBar));
          }
       });
       ratioSlider.addChangeListener(new ChangeListener(){
          @Override
          public void stateChanged(ChangeEvent aArg0){
-            while( aStack.nextUndo() instanceof DistributeArmorOperation ){
-               aStack.undo();
-            }
             aStack.pushAndApply(new DistributeArmorOperation(aLoadout, armorSlider.getValue(), ratioSlider.getValue(), aXBar));
          }
       });
