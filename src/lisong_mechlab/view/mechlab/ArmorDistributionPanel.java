@@ -67,7 +67,6 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
          slider = aSlider;
          oldValue = aOldValue;
          newValue = slider.getValue();
-         System.out.println("New slider op. Old = " + oldValue);
 
          addOp(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
       }
