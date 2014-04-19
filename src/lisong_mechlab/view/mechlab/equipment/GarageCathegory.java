@@ -30,13 +30,13 @@ import lisong_mechlab.model.garage.MechGarage.Message.Type;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
 
-class GarageCathegory extends FilterTreeCathegory<Loadout> implements MessageXBar.Reader{
+class GarageCathegory extends FilterTreeCathegory<Loadout>{
    private MechGarage        garage = null;
    private final ChassiClass chassiClass;
 
    public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar, ChassiClass aChassiClass,
                           JTextField aFilterBar, GarageTree aGarageTree){
-      super(aName, aParent, aModel, aFilterBar, aGarageTree);
+      super(xbar, aName, aParent, aModel, aFilterBar, aGarageTree);
       chassiClass = aChassiClass;
       xbar.attach(this);
    }

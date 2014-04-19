@@ -34,4 +34,8 @@ public class MdfMech{
    public int    MinEngineRating;
    @XStreamAsAttribute
    public int    MaxEngineRating;
+   @XStreamAsAttribute
+   public String VariantType;
+   @XStreamAsAttribute
+   public int VariantParent;
 }

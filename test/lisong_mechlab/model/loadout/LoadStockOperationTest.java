@@ -70,12 +70,12 @@ public class LoadStockOperationTest{
       Chassis chassi = ChassiDB.lookup("JR7-F");
       Loadout loadout = new Loadout(chassi, xBar);
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
 
       assertTrue(loadout.getMass() > 34.9);
       
       // Execute
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
    }
 
    public Object[] allChassis(){
@@ -101,7 +101,7 @@ public class LoadStockOperationTest{
 
       // Execute
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(aChassi, loadout, xBar));
 
       // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full armor?!)
       assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
@@ -124,7 +124,7 @@ public class LoadStockOperationTest{
 
       // Execute
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(loadout.getChassi(), loadout, xBar));
 
       assertTrue(loadout.getPart(Part.LeftTorso).getItems().contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
    }
@@ -141,7 +141,7 @@ public class LoadStockOperationTest{
       Loadout reference = new Loadout(chassi, xBar);
       Loadout loadout = new Loadout(chassi, xBar);
       OperationStack opstack = new OperationStack(1);
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(loadout.getChassi(), loadout, xBar));
 
       // Execute
       opstack.undo();

@@ -35,13 +35,16 @@ import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.preferences.Preferences;
 
 public class GarageTreeModel implements TreeModel, InternalFrameListener{
    private final List<TreeModelListener>                     listeners = new ArrayList<TreeModelListener>();
    private final DefaultTreeCathegory<AbstractTreeCathegory> root;
+   private final Preferences                                 preferences;
 
-   public GarageTreeModel(MessageXBar xBar, JTextField aFilterBar, GarageTree aGarageTree){
+   public GarageTreeModel(MessageXBar xBar, JTextField aFilterBar, GarageTree aGarageTree, Preferences aPreferences){
       root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
+      preferences = aPreferences;
 
       DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
 
@@ -55,9 +58,11 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
 
       // Chassii
       for(final ChassiClass chassiClass : ChassiClass.values()){
-         DefaultTreeCathegory<Chassis> chassiiSub = new FilterTreeCathegory<Chassis>(chassiClass.toString(), chassii, this, aFilterBar, aGarageTree){
+         DefaultTreeCathegory<Chassis> chassiiSub = new FilterTreeCathegory<Chassis>(xBar, chassiClass.toString(), chassii, this, aFilterBar, aGarageTree){
             @Override
             protected boolean filter(Chassis c){
+               if(preferences.uiPreferences.getHideSpecialMechs() && c.getVariantType().isVariation())
+                  return false;
                return c.getName().toLowerCase().contains(getFilterString());
             }
          };

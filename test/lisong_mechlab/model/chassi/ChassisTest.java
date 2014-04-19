@@ -39,12 +39,27 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitParamsRunner.class)
 public class ChassisTest{
 
+   /**
+    * Internal parts list can not be modified.
+    */
    @Test(expected = UnsupportedOperationException.class)
    public void getParts_NoMod(){
+      // Setup
       Chassis cut = ChassiDB.lookup("Ilya Muromets");
+      
+      // Execute
       cut.getInternalParts().add(null);
    }
 
+   @Test
+   public void testIsHero(){
+      Chassis ilya = ChassiDB.lookup("Ilya Muromets");
+      assertEquals(ChassiVariant.HERO, ilya.getVariantType());
+      
+      Chassis ctf3d = ChassiDB.lookup("CTF-3D");
+      assertEquals(ChassiVariant.NORMAL, ctf3d.getVariantType());
+   }
+   
    @Parameters({"HBK-4J, HBK-4P", "CTF-3D, Ilya Muromets"})
    @Test
    public void testIsSameSeries(String aChassiA, String aChassiB){
@@ -60,13 +75,13 @@ public class ChassisTest{
    @Parameters({"SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)"})
    @Test
    public void testIsSpecialVariant(String aChassiA){
-      assertTrue(ChassiDB.lookup(aChassiA).isSpecialVariant());
+      assertTrue(ChassiDB.lookup(aChassiA).getVariantType().isVariation());
    }
 
    @Parameters({"SDR-5K", "JR7-D", "CDA-2A"})
    @Test
    public void testIsNotSpecialVariant(String aChassiA){
-      assertFalse(ChassiDB.lookup(aChassiA).isSpecialVariant());
+      assertFalse(ChassiDB.lookup(aChassiA).getVariantType().isVariation());
    }
 
    @Test

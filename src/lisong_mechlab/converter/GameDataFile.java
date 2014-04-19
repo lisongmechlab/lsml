@@ -61,6 +61,7 @@ import lisong_mechlab.view.preferences.PreferenceStore;
  */
 public class GameDataFile{
    public static final File      ITEM_STATS_XML = new File("Game/Libs/Items/ItemStats.xml");
+   public static final File      MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
    public static final File      MDF_ROOT       = new File("Game/Objects/mechs/");
 
    private final Map<File, File> entryCache     = new HashMap<File, File>();

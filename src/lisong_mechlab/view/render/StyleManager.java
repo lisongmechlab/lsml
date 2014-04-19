@@ -117,7 +117,7 @@ public class StyleManager{
          
          if(aInternalPart.hasMissileBayDoors()){
             aLabel.setIcon(MISSILE_BAY_DOOR_ICON);
-            aLabel.setToolTipText("This component has missile bay doors. While the doors are close the component takes 10% less damage.");
+            aLabel.setToolTipText("This component has missile bay doors. While the doors are closed the component takes 10% less damage.");
          }
          else{
             aLabel.setIcon(null);

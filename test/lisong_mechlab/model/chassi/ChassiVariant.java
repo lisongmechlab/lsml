@@ -17,27 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view.preferences;
-
-import lisong_mechlab.util.MessageXBar;
+package lisong_mechlab.model.chassi;
 
 /**
- * This class is a container class for all the individual preferences classes.
+ * Enumerates the different chassis types
  * 
  * @author Emily Björk
  */
-public class Preferences{
-   public final FontPreferences   fontPreferences   = new FontPreferences();
-   public final SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
-   public final UiPreferences     uiPreferences;
+public enum ChassiVariant{
+   HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX;
+
+   public static ChassiVariant fromString(String aString){
+      if( null == aString )
+         return NORMAL;
+      String s = aString.toLowerCase();
+      for(ChassiVariant variant : values()){
+         if( s.equals(variant.toString().toLowerCase()) )
+            return variant;
+      }
+      return NORMAL;
+   }
 
    /**
-    * Creates a new preferences object.
-    * 
-    * @param aXBar
-    *           The {@link MessageXBar} to send notifications of preference changes on.
+    * @return <code>true</code> if this is a special variant (not hero or normal mech).
     */
-   public Preferences(MessageXBar aXBar){
-      uiPreferences = new UiPreferences(aXBar);
+   public boolean isVariation(){
+      return !(this == HERO || this == NORMAL);
    }
 }

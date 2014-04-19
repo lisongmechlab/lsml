@@ -41,6 +41,7 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.LoadStockOperation;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
@@ -241,7 +242,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
             List<Item> later = new ArrayList<>();
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
                Item item = ItemDB.lookup(v);
-               if(item instanceof HeatSink){
+               if( item instanceof HeatSink ){
                   later.add(item); // Add heat sinks last after engine has been added
                   continue;
                }
@@ -250,7 +251,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
             for(Item i : later){
                stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), i));
             }
-            
+
          }
 
          // TODO: read pilot modules
@@ -283,10 +284,11 @@ public class LoadoutCoderV2 implements LoadoutCoder{
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
       MessageXBar xBar = new MessageXBar();
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
-
-      for(Chassis chassi : chassii){
-         Loadout loadout = new Loadout(chassi.getName(), xBar);
-         System.out.println("[" + chassi.getName() + "]=" + coder.encodeLSML(loadout));
+      OperationStack stack = new OperationStack(0);
+      for(Chassis chassis : chassii){
+         Loadout loadout = new Loadout(chassis, xBar);
+         stack.pushAndApply(new LoadStockOperation(chassis, loadout, xBar));
+         System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
       }
    }
 

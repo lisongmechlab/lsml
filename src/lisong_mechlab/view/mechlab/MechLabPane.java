@@ -37,6 +37,7 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.equipment.EquipmentPanel;
 import lisong_mechlab.view.mechlab.equipment.GarageTree;
+import lisong_mechlab.view.preferences.Preferences;
 
 /**
  * This class shows the 'mech lab pane in the main tabbed pane.
@@ -48,7 +49,7 @@ public class MechLabPane extends JSplitPane{
    private final LoadoutDesktop desktop;
    private final MessageXBar    xBar;
 
-   public MechLabPane(MessageXBar anXBar){
+   public MechLabPane(MessageXBar anXBar, Preferences aPreferences){
       super(JSplitPane.HORIZONTAL_SPLIT, true);
       xBar = anXBar;
       desktop = new LoadoutDesktop(xBar);
@@ -61,7 +62,7 @@ public class MechLabPane extends JSplitPane{
 
       JPanel garagePanel = new JPanel(new BorderLayout());
       garagePanel.add(filterPanel, BorderLayout.PAGE_START);
-      garagePanel.add(new JScrollPane(new GarageTree(desktop, xBar, filterBar)), BorderLayout.CENTER);
+      garagePanel.add(new JScrollPane(new GarageTree(desktop, xBar, filterBar, aPreferences)), BorderLayout.CENTER);
 
       JTabbedPane tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));

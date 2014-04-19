@@ -180,7 +180,7 @@ public class Loadout implements Cloneable{
    public Loadout(String aString, MessageXBar anXBar) throws Exception{
       this(ChassiDB.lookup(aString), anXBar);
       OperationStack operationStack = new OperationStack(0);
-      operationStack.pushAndApply(new LoadStockOperation(this, anXBar));
+      operationStack.pushAndApply(new LoadStockOperation(chassi, this, anXBar));
    }
 
    public Loadout(Loadout aLoadout, MessageXBar anXBar){

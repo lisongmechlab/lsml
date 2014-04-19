@@ -146,7 +146,7 @@ public class PayloadSelectionPanel extends JPanel{
             @Override
             public void actionPerformed(ActionEvent aE){
                stack.pushAndApply(new SetStructureTypeOperation(aUpgrades, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
-                                                                                             : UpgradeDB.STANDARD_STRUCTURE));
+                                                                                                 : UpgradeDB.STANDARD_STRUCTURE));
                aGraphPanel.updateGraph();
             }
          });
@@ -190,7 +190,7 @@ public class PayloadSelectionPanel extends JPanel{
    private Collection<PayloadGraphPanel.Entry> calculateUniqueSpeedChassis(){
       Collection<Collection<Chassis>> temp = new ArrayList<>();
 
-      List<Chassis> all = ChassiDB.lookup(ChassiClass.LIGHT);
+      List<Chassis> all = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       all.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       all.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       all.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
@@ -203,7 +203,7 @@ public class PayloadSelectionPanel extends JPanel{
       });
 
       for(Chassis chassi : all){
-         if( chassi.isSpecialVariant() )
+         if( chassi.getVariantType().isVariation() )
             continue;
          boolean skip = false;
          for(Collection<Chassis> chassiGroup : temp){
