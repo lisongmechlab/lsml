@@ -62,6 +62,8 @@ public class CriticalItemDamage implements ItemMetric{
       double ans = 0;
       for(int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i){
          final int numCritRolls = i + 1;
+         // The event of 'k' hits out of numCritRolls tries, with p_hit probability is
+         // binomially distributed.
          BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
 
          for(int numHits = 1; numHits <= numCritRolls; ++numHits){

@@ -105,12 +105,16 @@ public class CriticalStrikeProbabilityTest{
    }
 
    /**
-    * When two or more items are involved the calculations are a bit more complex. The chance that the item will be hit
-    * is the chance that any of the crit rolls hits at least once. This is binominal(n,p) where n is the number of rolls
-    * and p is the chance that any one roll will hit our item.
+    * When two or more items are involved it's a bit more difficult.
+    * <p>
+    * There are four disjunct cases that can happen: 0 hits, 1 hit, 2 hits, 3 hits with 58%, 25%, 14% and 3% probability
+    * respectively (sum 100%). The chance that the item is hit by at least one of those hits is the weighted sum of the
+    * above cases as they are disjunct. I.e.
+    * <p>
+    * P_atleastonce = 0.58*0 + 0.25*P_hit + 0.14*(1-(1-P_hit)^2) + 0.03*(1-(1-P_hit)^3)
     */
    @Test
-   public void testTwoItems(){
+   public void testTwoItems_R(){
       Item i0 = Mockito.mock(Item.class);
       Item i1 = Mockito.mock(Item.class);
       Mockito.when(i0.getNumCriticalSlots(upgrades)).thenReturn(5);
@@ -121,19 +125,21 @@ public class CriticalStrikeProbabilityTest{
       double p_hit0 = 5.0 / 20;
       double p_hit1 = 15.0 / 20;
       double ans0 = 0, ans1 = 0;
+
       // 1 crit hit: 25%
       ans0 = p_hit0 * 0.25;
       ans1 = p_hit1 * 0.25;
 
       // 2 crit hits: 14%
-      ans0 += 0.14 * (2 * p_hit0 * (1 - p_hit0) + p_hit0 * p_hit0);
-      ans1 += 0.14 * (2 * p_hit1 * (1 - p_hit1) + p_hit1 * p_hit1);
+      ans0 += 0.14 * (1 - Math.pow(1 - p_hit0, 2));
+      ans1 += 0.14 * (1 - Math.pow(1 - p_hit1, 2));
 
       // 3 crit hits: 3%
-      ans0 += 0.03 * (3 * p_hit0 * (1 - p_hit0) * (1 - p_hit0) + 3 * p_hit0 * p_hit0 * (1 - p_hit0) + p_hit0 * p_hit0 * p_hit0);
-      ans1 += 0.03 * (3 * p_hit1 * (1 - p_hit1) * (1 - p_hit1) + 3 * p_hit1 * p_hit1 * (1 - p_hit1) + p_hit1 * p_hit1 * p_hit1);
+      ans0 += 0.03 * (1 - Math.pow(1 - p_hit0, 3));
+      ans1 += 0.03 * (1 - Math.pow(1 - p_hit1, 3));
 
       assertEquals(ans0, cut.calculate(i0), 0.000001);
       assertEquals(ans1, cut.calculate(i1), 0.000001);
    }
+
 }
