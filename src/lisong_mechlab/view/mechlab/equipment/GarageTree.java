@@ -41,14 +41,15 @@ import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.mechlab.LoadoutDesktop;
+import lisong_mechlab.view.preferences.Preferences;
 
 public class GarageTree extends JTree{
    private static final long serialVersionUID = -8856874024057864775L;
    GarageTreeModel           model            = null;
    private final MessageXBar xBar;
 
-   public GarageTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar anXBar, JTextField aFilterBar){
-      model = new GarageTreeModel(anXBar, aFilterBar, this);
+   public GarageTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar anXBar, JTextField aFilterBar, Preferences aPreferences){
+      model = new GarageTreeModel(anXBar, aFilterBar, this, aPreferences);
       xBar = anXBar;
 
       ToolTipManager.sharedInstance().registerComponent(this);

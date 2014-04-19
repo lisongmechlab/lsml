@@ -8,13 +8,20 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.TreeModelEvent;
 
-public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T>{
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.view.preferences.UiPreferences;
+import lisong_mechlab.view.preferences.UiPreferences.Message;
+
+public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> implements Reader{
    protected final GarageTree garageTree;
    private String             nameFilter = "";
    private boolean            wasExpandedBeforeFilter;
 
-   public FilterTreeCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, final JTextField aFilterBar, GarageTree aGarageTree){
+   public FilterTreeCathegory(MessageXBar aXBar, String aName, TreeCathegory aParent, GarageTreeModel aModel, final JTextField aFilterBar,
+                              GarageTree aGarageTree){
       super(aName, aParent, aModel);
+      aXBar.attach(this);
       garageTree = aGarageTree;
       wasExpandedBeforeFilter = garageTree.isExpanded(getPath());
       if( aFilterBar != null ){
@@ -50,9 +57,6 @@ public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T>{
    }
 
    private List<T> filterList(){
-      if( nameFilter.isEmpty() )
-         return children;
-
       List<T> ans = new ArrayList<>();
       for(T t : children){
          if( filter(t) )
@@ -61,6 +65,10 @@ public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T>{
       return ans;
    }
 
+   /**
+    * @param t
+    * @return <code>true</code> if the argument should be visible.
+    */
    abstract protected boolean filter(T t);
 
    @Override
@@ -76,6 +84,16 @@ public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T>{
    @Override
    public Object getChild(int anIndex){
       return filterList().get(anIndex);
+   }
+
+   @Override
+   public void receive(MessageXBar.Message aMsg){
+      if( aMsg instanceof UiPreferences.Message ){
+         UiPreferences.Message msg = (Message)aMsg;
+         if( msg.attribute == UiPreferences.UI_HIDE_SPECIAL_MECHS ){
+            getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
+         }
+      }
    }
 
 }

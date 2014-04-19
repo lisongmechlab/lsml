@@ -279,8 +279,8 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
 
       for(Chassis chassi : chassii){
-         Loadout loadout = new Loadout(chassi.getName(), xBar);
-         stack.pushAndApply(new LoadStockOperation(loadout, xBar));
+         Loadout loadout = new Loadout(chassi, xBar);
+         stack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
 
          for(LoadoutPart part : loadout.getPartLoadOuts()){
             for(Item item : new ArrayList<>(part.getItems())){
@@ -304,9 +304,11 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
 
       Map<Integer, Integer> freqs = new TreeMap<>();
-      MessageXBar anXBar = new MessageXBar();
+      MessageXBar xBar = new MessageXBar();
+      OperationStack stack = new OperationStack(0);
       for(Chassis chassi : chassii){
-         Loadout loadout = new Loadout(chassi.getName(), anXBar);
+         Loadout loadout = new Loadout(chassi, xBar);
+         stack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
 
          for(Item item : loadout.getAllItems()){
             if( item == null ){

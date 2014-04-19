@@ -17,25 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.model.chassi;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+/**
+ * Enumerates the different chassis types
+ * 
+ * @author Li Song
+ */
+public enum ChassiVariant{
+   HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX;
 
-public class MdfMech{
-   @XStreamAsAttribute
-   public String Variant;
-   @XStreamAsAttribute
-   public int    MaxTons;
-   @XStreamAsAttribute
-   public double BaseTons;
-   @XStreamAsAttribute
-   public int    MaxJumpJets;
-   @XStreamAsAttribute
-   public int    MinEngineRating;
-   @XStreamAsAttribute
-   public int    MaxEngineRating;
-   @XStreamAsAttribute
-   public String VariantType;
-   @XStreamAsAttribute
-   public int VariantParent;
+   public static ChassiVariant fromString(String aString){
+      if( null == aString )
+         return NORMAL;
+      String s = aString.toLowerCase();
+      for(ChassiVariant variant : values()){
+         if( s.equals(variant.toString().toLowerCase()) )
+            return variant;
+      }
+      return NORMAL;
+   }
+
+   /**
+    * @return <code>true</code> if this is a special variant (not hero or normal mech).
+    */
+   public boolean isVariation(){
+      return !(this == HERO || this == NORMAL);
+   }
 }

@@ -43,7 +43,6 @@ import javax.swing.ScrollPaneConstants;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.loadout.LoadStockOperation;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.StripArmorOperation;
 import lisong_mechlab.model.loadout.StripOperation;
@@ -57,6 +56,7 @@ import lisong_mechlab.view.action.CloneLoadoutAction;
 import lisong_mechlab.view.action.DeleteLoadoutAction;
 import lisong_mechlab.view.action.ExportToLsmlAction;
 import lisong_mechlab.view.action.ExportToSmurfyAction;
+import lisong_mechlab.view.action.LoadStockAction;
 import lisong_mechlab.view.action.MaxArmorAction;
 import lisong_mechlab.view.action.RedoLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
@@ -284,19 +284,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(new JMenuItem(actionRedoLoadout));
       menu.add(new JMenuItem(actionRename));
       menu.add(new JMenuItem(new DeleteLoadoutAction(xbar, ProgramInit.lsml().getGarage(), this)));
-
-      menu.add(createMenuItem("Load stock", new ActionListener(){
-         @Override
-         public void actionPerformed(ActionEvent aArg0){
-            try{
-               loadoutOperationStack.pushAndApply(new LoadStockOperation(loadout, xbar));
-            }
-            catch( Exception e ){
-               JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't load stock loadout! Error: " + e.getMessage());
-            }
-         }
-      }));
-
+      menu.add(new JMenuItem(new LoadStockAction(loadout, loadoutOperationStack, xbar, this)));
       menu.add(createMenuItem("Strip mech", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){

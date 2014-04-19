@@ -19,13 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import lisong_mechlab.converter.GameDataFile;
+import junitparams.JUnitParamsRunner;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
@@ -37,12 +36,15 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsMech;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent;
 import lisong_mechlab.model.mwo_parsing.helpers.MdfMech;
 
+import org.junit.runner.RunWith;
+
 /**
  * This class represents a bare mech chassis. The class is immutable as the chassis are fixed. To configure a 'mech use
  * {@link Loadout}.
  * 
  * @author Li Song
  */
+@RunWith(JUnitParamsRunner.class)
 public class Chassis{
    private final ChassiClass             chassiclass;
    private final String                  name;
@@ -58,21 +60,10 @@ public class Chassis{
    @SuppressWarnings("unused")
    private final double                  turnFactor;
    private final double                  twistFactor;
+   private final ChassiVariant           variant;
 
-   public Chassis(ItemStatsMech aStatsMech, GameDataFile aGameData){
-      MechDefinition mdf = null;
-      HardpointsXml hardpoints = null;
-      MdfMech mdfMech = null;
-      try{
-         String mdfFile = aStatsMech.mdf.replace('\\', '/');
-         mdf = MechDefinition.fromXml(aGameData.openGameFile(new File(GameDataFile.MDF_ROOT, mdfFile)));
-         hardpoints = HardpointsXml.fromXml(aGameData.openGameFile(new File("Game", mdf.HardpointPath)));
-         mdfMech = mdf.Mech;
-      }
-      catch( Exception e ){
-         throw new RuntimeException("Unable to load chassi configuration!", e);
-      }
-
+   public Chassis(ItemStatsMech aStatsMech, MechDefinition aMdf, HardpointsXml aHardpoints){
+      MdfMech mdfMech = aMdf.Mech; 
       name = Localization.key2string(aStatsMech.Loc.nameTag);
       shortName = Localization.key2string(aStatsMech.Loc.shortNameTag);
       mwoName = aStatsMech.name;
@@ -81,18 +72,19 @@ public class Chassis{
       engineMax = mdfMech.MaxEngineRating;
       maxJumpJets = mdfMech.MaxJumpJets;
       maxTons = mdfMech.MaxTons;
-      engineFactor = mdf.MovementTuningConfiguration.MaxMovementSpeed;
+      engineFactor = aMdf.MovementTuningConfiguration.MaxMovementSpeed;
       chassiclass = ChassiClass.fromMaxTons(maxTons);
-      turnFactor = mdf.MovementTuningConfiguration.TorsoTurnSpeedPitch;
-      twistFactor = mdf.MovementTuningConfiguration.TorsoTurnSpeedYaw;
-
+      turnFactor = aMdf.MovementTuningConfiguration.TorsoTurnSpeedPitch;
+      twistFactor = aMdf.MovementTuningConfiguration.TorsoTurnSpeedYaw;
+      variant = ChassiVariant.fromString(aMdf.Mech.VariantType);
+      
       Map<Part, InternalPart> tempParts = new HashMap<Part, InternalPart>();
-      for(MdfComponent component : mdf.ComponentList){
+      for(MdfComponent component : aMdf.ComponentList){
          if( Part.isRear(component.Name) ){
             continue;
          }
          final Part part = Part.fromMwoName(component.Name);
-         tempParts.put(part, new InternalPart(component, part, hardpoints, this));
+         tempParts.put(part, new InternalPart(component, part, aHardpoints, this));
       }
       parts = Collections.unmodifiableMap(tempParts);
    }
@@ -186,6 +178,7 @@ public class Chassis{
       return shortName.split("-")[0].equals(aChassis.shortName.split("-")[0]);
    }
 
+   @Deprecated // Graduate to using getVariantType
    public boolean isSpecialVariant(){
       return shortName.contains("(");
    }
@@ -211,7 +204,7 @@ public class Chassis{
    public boolean isAllowed(Item aItem){
       if( aItem instanceof JumpJet ){
          JumpJet jj = (JumpJet)aItem;
-         return getMaxJumpJets() > 0 && jj.getMinTons() <= getMassMax() &&  getMassMax() < jj.getMaxTons();
+         return getMaxJumpJets() > 0 && jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
       }
       else if( aItem instanceof Engine ){
          Engine engine = (Engine)aItem;
@@ -224,5 +217,12 @@ public class Chassis{
          }
       }
       return false;
+   }
+
+   /**
+    * @return The chassis variant of this mech.
+    */
+   public ChassiVariant getVariantType(){
+      return variant;
    }
 }

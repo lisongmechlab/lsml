@@ -24,6 +24,7 @@ import java.util.List;
 
 import lisong_mechlab.converter.GameDataFile;
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
@@ -51,11 +52,11 @@ import org.w3c.dom.Node;
  * @author Li Song
  */
 public class LoadStockOperation extends LoadoutOperation{
-   public LoadStockOperation(Loadout aLoadout, MessageXBar anXBar) throws Exception{
+   public LoadStockOperation(Chassis aChassiVariation, Loadout aLoadout, MessageXBar anXBar) throws Exception{
       super(aLoadout, anXBar, "load stock");
       addOp(new StripOperation(loadout, xBar));
 
-      File loadoutXml = new File("Game/Libs/MechLoadout/" + loadout.getChassi().getMwoName().toLowerCase() + ".xml");
+      File loadoutXml = new File("Game/Libs/MechLoadout/" + aChassiVariation.getMwoName().toLowerCase() + ".xml");
       GameDataFile dataFile = new GameDataFile();
       XmlReader reader = new XmlReader(dataFile.openGameFile(loadoutXml));
 

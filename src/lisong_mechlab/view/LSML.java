@@ -73,17 +73,20 @@ public class LSML extends JFrame{
    private static final long       serialVersionUID       = -2463321343234141728L;
    private static final String     CMD_UNDO_GARAGE        = "undo garage action";
    private static final String     CMD_REDO_GARAGE        = "redo garage action";
-   public final MessageXBar        xBar                   = new MessageXBar();
-   public final OperationStack     garageOperationStack   = new OperationStack(256);
-   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
-   public final Preferences        preferences            = new Preferences();
-   public final MechLabPane        mechLabPane            = new MechLabPane(xBar);
-   public final JTabbedPane        tabbedPane             = new JTabbedPane();
-   private LsmlProtocolIPC         lsmlProtocolIPC;
-   private MechGarage              garage;
 
+   // Order of definition matters here !
+   public final MessageXBar        xBar                   = new MessageXBar();
+   public final Preferences        preferences            = new Preferences(xBar);
+   public final OperationStack     garageOperationStack   = new OperationStack(256);
+
+   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
+   public final MechLabPane        mechLabPane            = new MechLabPane(xBar, preferences);
+   public final JTabbedPane        tabbedPane             = new JTabbedPane();
    final Action                    undoGarageAction       = new UndoGarageAction(xBar);
    final Action                    redoGarageAction       = new RedoGarageAction(xBar);
+
+   private LsmlProtocolIPC         lsmlProtocolIPC;
+   private MechGarage              garage;
 
    public LSML(){
       super(PROGRAM_FNAME + VERSION_STRING);
@@ -96,7 +99,7 @@ public class LSML extends JFrame{
       setJMenuBar(new MenuBar(this));
 
       JTabbedPane mechTab = new JTabbedPane();
-      mechTab.add("By tonnage", new ChassiSelectionPane());
+      mechTab.add("By tonnage", new ChassiSelectionPane(preferences, xBar));
       mechTab.add("By payload", new PayloadSelectionPanel());
 
       tabbedPane.addTab("Mechlab", mechLabPane);
