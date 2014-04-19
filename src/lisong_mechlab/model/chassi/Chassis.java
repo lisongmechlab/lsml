@@ -178,11 +178,6 @@ public class Chassis{
       return shortName.split("-")[0].equals(aChassis.shortName.split("-")[0]);
    }
 
-   @Deprecated // Graduate to using getVariantType
-   public boolean isSpecialVariant(){
-      return shortName.contains("(");
-   }
-
    public double getTurnFactor(){
       return 360.0 / 31.4; // Matching smurfy for now, this should be somewhere in the data files.
    }
