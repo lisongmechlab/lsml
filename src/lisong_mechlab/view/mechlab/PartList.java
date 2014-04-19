@@ -51,6 +51,7 @@ import lisong_mechlab.model.loadout.part.RemoveItemOperation;
 import lisong_mechlab.model.metrics.CriticalItemDamage;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
 import lisong_mechlab.model.metrics.ItemEffectiveHP;
+import lisong_mechlab.model.metrics.helpers.ComponentDestructionSimulator;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -71,6 +72,8 @@ public class PartList extends JList<Item>{
    private final ItemEffectiveHP           effectiveHP;
    private final CriticalItemDamage        criticalItemDamage;
    private final CriticalStrikeProbability criticalStrikeProbability;
+   
+   private final ComponentDestructionSimulator cds;
 
    private enum ListEntryType{
       Empty, MultiSlot, Item, EngineHeatSink, LastSlot
@@ -97,6 +100,8 @@ public class PartList extends JList<Item>{
          sb.append("Critical victim probability: ").append(df.format(100 * criticalStrikeProbability.calculate(aItem))).append("%");
          sb.append("<br/>");
          sb.append("Critical victim multiplicity: ").append(df2.format(criticalItemDamage.calculate(aItem)));
+         sb.append("<br/>");
+         sb.append("Destruction probability: ").append(df2.format(100*cds.getProbabilityOfDestruction(aItem))).append("%");
          sb.append("</p>");
 
          sb.append("<p>");
@@ -351,6 +356,8 @@ public class PartList extends JList<Item>{
       opStack = aStack;
       part = aLoadoutPart;
       effectiveHP = new ItemEffectiveHP(part);
+      cds = new ComponentDestructionSimulator(part, anXBar);
+      cds.simulate();
       criticalItemDamage = new CriticalItemDamage(part);
       criticalStrikeProbability = new CriticalStrikeProbability(part);
       setModel(new Model(anXBar));

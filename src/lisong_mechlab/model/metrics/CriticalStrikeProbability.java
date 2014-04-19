@@ -23,17 +23,17 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.BinomialDistribution;
 
 /**
- * This {@link ItemMetric} calculates the probability that the given item will be critically hit by a shot.
+ * This {@link ItemMetric} calculates the probability that the given item will be critically hit at least once by a shot. 
  * <p>
- * This applies to high alpha weapons such as PPC, Gauss, AC/20,10,5.
+ * If hit by an high alpha weapons such as PPC, Gauss Rifle, AC/20,10 the item will likely be destroyed if it's hp is 10 or less.
  * 
  * @author Emily Björk
  */
 public class CriticalStrikeProbability implements ItemMetric{
-   public final static double CRIT_CHANCE[] = {0.25, 0.14, 0.03};
+   public final static double CRIT_CHANCE[] = {0.25, 0.14, 0.03}; // 25% risk of 1 hit, 15% risk of 2 hits, 3% risk of 3
+                                                                  // hits
    private final LoadoutPart  loadoutPart;
 
    public CriticalStrikeProbability(LoadoutPart aLoadoutPart){
@@ -50,17 +50,16 @@ public class CriticalStrikeProbability implements ItemMetric{
          }
          slots += it.getNumCriticalSlots(upgrades);
       }
-      
-      double p_hit = (double)aItem.getNumCriticalSlots(upgrades) / slots;
 
+      // The probability that this item will be hit at any one event
+      double p_hit = (double)aItem.getNumCriticalSlots(upgrades) / slots;
+      return calculate(p_hit);
+   }
+
+   public static double calculate(double aP_hit){
       double ans = 0;
       for(int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i){
-         final int numCritRolls = i + 1;
-         BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
-
-         for(int numHits = 1; numHits <= numCritRolls; ++numHits){
-            ans += bin.pdf(numHits) * CriticalStrikeProbability.CRIT_CHANCE[i];
-         }
+         ans += (1 - Math.pow(1 - aP_hit, i + 1)) * CriticalStrikeProbability.CRIT_CHANCE[i];
       }
       return ans;
    }
