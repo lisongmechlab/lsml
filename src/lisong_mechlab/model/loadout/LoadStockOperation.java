@@ -67,12 +67,7 @@ public class LoadStockOperation extends LoadoutOperation{
          int structureId = Integer.parseInt(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID"));
          int heatsinkId = reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double") ? 3002 : 3003;
          int guidanceId = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1") ? 3050 : 3051;
-
-         // FIXME: Revisit this fix! The game files are broken.
-         if( loadout.getChassi().getNameShort().equals("KTO-19") ){
-            armorId = UpgradeDB.FERRO_FIBROUS_ARMOR.getMwoId();
-         }
-         
+        
          addOp(new SetStructureTypeOperation(xBar, loadout, (StructureUpgrade)UpgradeDB.lookup(structureId)));
          addOp(new SetGuidanceTypeOperation(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(guidanceId)));
          addOp(new SetArmorTypeOperation(xBar, loadout, (ArmorUpgrade)UpgradeDB.lookup(armorId)));
