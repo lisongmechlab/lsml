@@ -57,16 +57,26 @@ public class LoadoutPart{
 
       public final Type        type;
 
+      /**
+       * True if this message was automatically in response to a change.
+       */
+      public final boolean     automatic;
+
       public Message(LoadoutPart aPart, Type aType){
+         this(aPart, aType, false);
+      }
+
+      public Message(LoadoutPart aPart, Type aType, boolean aAutomatic){
          part = aPart;
          type = aType;
+         automatic = aAutomatic;
       }
 
       @Override
       public boolean equals(Object obj){
          if( obj instanceof Message ){
             Message other = (Message)obj;
-            return part == other.part && type == other.type;
+            return part == other.part && type == other.type && automatic == other.automatic;
          }
          return false;
       }
@@ -293,11 +303,11 @@ public class LoadoutPart{
       }
       return hardpoints;
    }
-   
+
    public boolean allowAutomaticArmor(){
       return autoArmor;
    }
-   
+
    @Override
    public int hashCode(){
       final int prime = 31;

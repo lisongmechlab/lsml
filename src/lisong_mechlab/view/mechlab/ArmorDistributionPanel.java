@@ -23,7 +23,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -45,7 +44,7 @@ import lisong_mechlab.view.render.StyleManager;
  * @author Li Song
  */
 public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader, ChangeListener{
-   private static final long    serialVersionUID = 6835003047682738947L;
+   private static final long    serialVersionUID    = 6835003047682738947L;
 
    private final Loadout        loadout;
    private final OperationStack stack;
@@ -53,9 +52,10 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
    private final JSlider        ratioSlider;
    private final JSlider        armorSlider;
 
-   private int                  lastRatio        = 0;
-   private int                  lastAmount       = 0;
-   private boolean              inprogress       = false;
+   private int                  lastRatio           = 0;
+   private int                  lastAmount          = 0;
+
+   boolean                      disableSliderAction = false;
 
    class ArmorSliderOperation extends CompositeOperation{
       private final JSlider slider;
@@ -82,18 +82,18 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 
       @Override
       protected void undo(){
-         inprogress = true;
+         disableSliderAction = true;
          slider.setValue(oldValue);
-         super.undo();
-         inprogress = false;
+         // super.undo();
+         disableSliderAction = false;
       }
 
       @Override
       protected void apply(){
-         inprogress = true;
+         disableSliderAction = true;
          slider.setValue(newValue);
          super.apply();
-         inprogress = false;
+         disableSliderAction = false;
       }
    }
 
@@ -156,31 +156,17 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 
    @Override
    public void stateChanged(ChangeEvent aEvent){
-      if( aEvent == null ){
-         // From MessageXBar. Update armor in response to loadout change. Don't generate an un-doable action.
-         // As the previous action is undone, it will trigger another action to redistribute armor.
+      if( disableSliderAction )
+         return;
+      if( aEvent.getSource() == ratioSlider )
+         stack.pushAndApply(new ArmorSliderOperation(ratioSlider, lastRatio));
+      else if( aEvent.getSource() == armorSlider )
+         stack.pushAndApply(new ArmorSliderOperation(armorSlider, lastAmount));
 
-         inprogress = true;
-         privateStack.pushAndApply(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
-         inprogress = false;
-      }
-      else{
-         if( !inprogress ){
-            inprogress = true;
-            // A "real" stateChanged()
-            if( aEvent.getSource() == ratioSlider )
-               stack.pushAndApply(new ArmorSliderOperation(ratioSlider, lastRatio));
-            else if( aEvent.getSource() == armorSlider )
-               stack.pushAndApply(new ArmorSliderOperation(armorSlider, lastAmount));
-            inprogress = false;
-         }
-
-         if( !armorSlider.getValueIsAdjusting() )
-            lastAmount = armorSlider.getValue();
-         if( !ratioSlider.getValueIsAdjusting() )
-            lastRatio = ratioSlider.getValue();
-
-      }
+      if( !armorSlider.getValueIsAdjusting() )
+         lastAmount = armorSlider.getValue();
+      if( !ratioSlider.getValueIsAdjusting() )
+         lastRatio = ratioSlider.getValue();
    }
 
    /**
@@ -188,14 +174,11 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
     */
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadout) && aMsg instanceof LoadoutPart.Message && !inprogress ){
-         inprogress = true;
-         SwingUtilities.invokeLater(new Runnable(){
-            @Override
-            public void run(){
-               stateChanged(null);
-            }
-         });
+      if( aMsg.isForMe(loadout) && aMsg instanceof LoadoutPart.Message ){
+         LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
+         if( message.automatic )
+            return;
+         privateStack.pushAndApply(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
       }
    }
 }

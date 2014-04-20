@@ -59,13 +59,7 @@ public class DistributeArmorOperation extends CompositeOperation{
       loadout = aLoadout;
 
       int armorLeft = calculateArmorToDistribute(aLoadout, aPointsOfArmor);
-      if( armorLeft < 1 ){
-         for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
-            if( loadoutPart.allowAutomaticArmor() )
-               setArmor(loadoutPart, 0);
-         }
-      }
-      else{
+      if( armorLeft > 0 ){
          Map<Part, Integer> prioMap = prioritize(aLoadout);
          distribute(aLoadout, armorLeft, prioMap);
       }
