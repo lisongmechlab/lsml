@@ -21,6 +21,7 @@ package lisong_mechlab.model.loadout;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class DistributeArmorOperation extends CompositeOperation{
-   private final Map<Part, Integer> armors = new TreeMap<>();
+   private final Map<Part, Integer> armors = new HashMap<>(Part.values().length);
    private final Loadout            loadout;
 
    /**
@@ -54,16 +55,20 @@ public class DistributeArmorOperation extends CompositeOperation{
     */
    public DistributeArmorOperation(Loadout aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
       super("distribute armor");
-      
+
       loadout = aLoadout;
 
       int armorLeft = calculateArmorToDistribute(aLoadout, aPointsOfArmor);
       if( armorLeft < 1 ){
-         return;
+         for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
+            if( loadoutPart.allowAutomaticArmor() )
+               setArmor(loadoutPart, 0);
+         }
       }
-      Map<Part, Integer> prioMap = prioritize(aLoadout);
-
-      distribute(aLoadout, armorLeft, prioMap);
+      else{
+         Map<Part, Integer> prioMap = prioritize(aLoadout);
+         distribute(aLoadout, armorLeft, prioMap);
+      }
       applyArmors(aLoadout, aFrontRearRatio, aXBar);
    }
 
@@ -72,11 +77,11 @@ public class DistributeArmorOperation extends CompositeOperation{
     */
    @Override
    public boolean canCoalescele(Operation aOperation){
-      if(this == aOperation)
+      if( this == aOperation )
          return false;
-      if(aOperation == null)
+      if( aOperation == null )
          return false;
-      if(!(aOperation instanceof DistributeArmorOperation))
+      if( !(aOperation instanceof DistributeArmorOperation) )
          return false;
       DistributeArmorOperation operation = (DistributeArmorOperation)aOperation;
       return loadout == operation.loadout;
@@ -216,7 +221,7 @@ public class DistributeArmorOperation extends CompositeOperation{
    }
 
    private Map<Part, Integer> prioritize(Loadout aLoadout){
-      Map<Part, Integer> ans = new TreeMap<>();
+      Map<Part, Integer> ans = new HashMap<>(Part.values().length);
 
       for(Part part : Part.values()){
          LoadoutPart loadoutPart = aLoadout.getPart(part);
@@ -243,12 +248,12 @@ public class DistributeArmorOperation extends CompositeOperation{
          else{
             if( part == Part.LeftArm ){
                ans.put(Part.LeftArm, 10);
-               if( !ans.containsKey(Part.LeftTorso) || ans.get(Part.LeftTorso) < 10 )
+               if( aLoadout.getPart(Part.LeftTorso).allowAutomaticArmor() && (!ans.containsKey(Part.LeftTorso) || ans.get(Part.LeftTorso) < 10) )
                   ans.put(Part.LeftTorso, 10);
             }
             else if( part == Part.RightArm ){
                ans.put(Part.RightArm, 10);
-               if( !ans.containsKey(Part.RightTorso) || ans.get(Part.RightTorso) < 10 )
+               if( aLoadout.getPart(Part.RightTorso).allowAutomaticArmor() && (!ans.containsKey(Part.RightTorso) || ans.get(Part.RightTorso) < 10) )
                   ans.put(Part.RightTorso, 10);
             }
             else{

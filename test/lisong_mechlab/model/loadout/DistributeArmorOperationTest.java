@@ -74,7 +74,7 @@ public class DistributeArmorOperationTest{
       assertEquals(9.0 + 10, loadout.getMass(), 0.0);
       assertEquals(320, loadout.getArmor());
    }
-   
+
    /**
     * The operator shall always max CT if possible.
     */
@@ -90,7 +90,7 @@ public class DistributeArmorOperationTest{
       // Verify
       assertTrue(loadout.getPart(Part.CenterTorso).getArmorTotal() > 90);
    }
-   
+
    /**
     * The operator shall provide protection for components linking important components.
     */
@@ -99,7 +99,7 @@ public class DistributeArmorOperationTest{
       // Setup
       Loadout loadout = new Loadout(ChassiDB.lookup("HGN-733C"), xBar);
       stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(Part.RightArm), ItemDB.lookup("AC/20")));
-      
+
       // Execute
       DistributeArmorOperation cut = new DistributeArmorOperation(loadout, 350, 1.0, xBar);
       stack.pushAndApply(cut);
@@ -350,7 +350,69 @@ public class DistributeArmorOperationTest{
       // Verify
       assertEquals(544, loadout.getArmor());
    }
-   
+
+   /**
+    * The operator shall not touch a manually set torso even if the attached arm contains items.
+    * 
+    * @throws DecodingException
+    */
+   @Test
+   public void testArmorDistributor_LeaveManualTorsoAloneWhenAutomaticArm() throws DecodingException{
+      // Setup
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+      Loadout loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+      for(LoadoutPart part : loadout.getPartLoadOuts()){
+         if( part.getInternalPart().getType().isTwoSided() ){
+            stack.pushAndApply(new SetArmorOperation(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
+         }
+         else{
+            stack.pushAndApply(new SetArmorOperation(null, part, ArmorSide.ONLY, part.getArmorTotal(), false));
+         }
+      }
+      stack.pushAndApply(new SetArmorOperation(null, loadout.getPart(Part.Head), ArmorSide.ONLY, 12, true));
+      stack.pushAndApply(new SetArmorOperation(null, loadout.getPart(Part.RightArm), ArmorSide.ONLY, 0, true));
+      stack.pushAndApply(new SetArmorOperation(null, loadout.getPart(Part.LeftTorso), ArmorSide.FRONT, 56, true));
+      stack.pushAndApply(new SetArmorOperation(null, loadout.getPart(Part.LeftTorso), ArmorSide.BACK, 3, true));
+
+      // Execute
+      DistributeArmorOperation cut = new DistributeArmorOperation(loadout, 278, 8.0, xBar);
+      stack.pushAndApply(cut);
+
+      // Verify
+      assertEquals(272, loadout.getArmor()); // 278 rounded down to even half tons is 272
+   }
+
+   /**
+    * The operator shall do nothing if the requested amount of armor is less than manually set amount.
+    * 
+    * @throws DecodingException
+    */
+   @Test
+   public void testArmorDistributor_RequestSmallerThanManuallySet() throws DecodingException{
+      // Setup
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+      Loadout loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+      for(LoadoutPart part : loadout.getPartLoadOuts()){
+         if( part.getInternalPart().getType().isTwoSided() ){
+            stack.pushAndApply(new SetArmorOperation(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
+         }
+         else{
+            stack.pushAndApply(new SetArmorOperation(null, part, ArmorSide.ONLY, part.getArmorTotal(), false));
+         }
+      }
+      stack.pushAndApply(new SetArmorOperation(null, loadout.getPart(Part.Head), ArmorSide.ONLY, 12, true));
+      stack.pushAndApply(new SetArmorOperation(null, loadout.getPart(Part.RightArm), ArmorSide.ONLY, 0, true));
+      stack.pushAndApply(new SetArmorOperation(null, loadout.getPart(Part.LeftTorso), ArmorSide.FRONT, 56, true));
+      stack.pushAndApply(new SetArmorOperation(null, loadout.getPart(Part.LeftTorso), ArmorSide.BACK, 3, true));
+
+      // Execute
+      DistributeArmorOperation cut = new DistributeArmorOperation(loadout, 50, 8.0, xBar);
+      stack.pushAndApply(cut);
+
+      // Verify
+      assertEquals(71, loadout.getArmor()); // 71 points of manual armor set
+   }
+
    /**
     * Old armor values on automatically managed parts should be cleared
     */
