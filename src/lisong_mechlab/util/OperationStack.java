@@ -177,7 +177,6 @@ public class OperationStack{
          actions.remove(0);
          currentOp--;
       }
-
    }
 
    public void undo(){

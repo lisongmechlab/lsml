@@ -28,6 +28,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
@@ -37,6 +38,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -73,6 +75,7 @@ public class DistributeArmorOperationTest{
       // Verify
       assertEquals(9.0 + 10, loadout.getMass(), 0.0);
       assertEquals(320, loadout.getArmor());
+      Mockito.verify(xBar, Mockito.atLeastOnce()).post(new LoadoutPart.Message(loadout.getPart(Part.CenterTorso), Type.ArmorChanged, true));
    }
 
    /**

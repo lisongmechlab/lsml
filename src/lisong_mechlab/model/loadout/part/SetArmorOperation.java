@@ -112,7 +112,7 @@ public class SetArmorOperation extends Operation{
          }
          loadoutPart.setArmor(side, amount, !manual);
          if( xBar != null ){
-            xBar.post(new Message(loadoutPart, Type.ArmorChanged));
+            xBar.post(new Message(loadoutPart, Type.ArmorChanged, !manual));
          }
       }
    }
@@ -126,7 +126,7 @@ public class SetArmorOperation extends Operation{
       if( amount != oldAmount || oldManual != manual ){
          loadoutPart.setArmor(side, oldAmount, !oldManual);
          if( xBar != null ){
-            xBar.post(new Message(loadoutPart, Type.ArmorChanged));
+            xBar.post(new Message(loadoutPart, Type.ArmorChanged, !manual));
          }
       }
       oldAmount = -1;
