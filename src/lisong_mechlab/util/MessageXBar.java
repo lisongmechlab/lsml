@@ -21,7 +21,9 @@ package lisong_mechlab.util;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -32,7 +34,8 @@ import lisong_mechlab.model.loadout.Loadout;
  * @author Li Song
  */
 public class MessageXBar{
-   private transient final List<WeakReference<Reader>> readers = new ArrayList<WeakReference<MessageXBar.Reader>>();
+   private transient final Map<Class<? extends Reader>, Double> performance = new HashMap<>();
+   private transient final List<WeakReference<Reader>>          readers     = new ArrayList<WeakReference<MessageXBar.Reader>>();
 
    /**
     * Classes that need to be able to listen in on the {@link MessageXBar} should implement this interface.
@@ -75,8 +78,17 @@ public class MessageXBar{
       List<WeakReference<Reader>> toBeRemoved = new ArrayList<WeakReference<Reader>>();
       for(WeakReference<Reader> ref : readers){
          Reader reader = ref.get();
-         if( reader != null )
+         if( reader != null ){
+            long startNs = System.nanoTime();
             reader.receive(aMessage);
+            long endNs = System.nanoTime();
+            Double v = performance.get(reader.getClass());
+            if(v == null){
+               v = 0.0;
+            }
+            v += (endNs-startNs)/1E9;
+            performance.put(reader.getClass(), v);
+         }
          else
             toBeRemoved.add(ref);
       }

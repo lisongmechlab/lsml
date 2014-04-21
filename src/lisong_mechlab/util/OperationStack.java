@@ -161,11 +161,21 @@ public class OperationStack{
 
    public void pushAndApply(Operation anOp){
       // Perform automatic coalesceling
-      while(nextUndo() != null && nextUndo().canCoalescele(anOp)){
+      int opBeforeCoalescele = currentOp;
+      while( nextUndo() != null && nextUndo().canCoalescele(anOp) ){
          undo();
       }
       
-      anOp.apply();
+      try{
+         anOp.apply();
+      }
+      catch( Throwable throwable ){
+         // Undo the coalesceling if the new operation threw.
+         while( currentOp != opBeforeCoalescele && nextRedo() != null ){
+            redo();
+         }
+         throw throwable;
+      }
       while( currentOp < actions.size() - 1 ){
          // Previously undone actions in the list
          actions.remove(actions.size() - 1);
