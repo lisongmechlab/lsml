@@ -27,11 +27,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * A test suite for {@link OperationStack}
+ * 
+ * TODO: Test coalesceling
  * 
  * @author Li Song
  */
@@ -196,6 +199,7 @@ public class OperationStackTest{
       inOrder.verify(a2).apply();
       inOrder.verify(a2).undo();
       inOrder.verify(a1).undo();
+      Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Operation.class));
       Mockito.verifyNoMoreInteractions(a0); // Undo not called
    }
 
@@ -257,6 +261,9 @@ public class OperationStackTest{
       inOrder.verify(a4).undo();
       inOrder.verify(a2).undo();
 
+
+      Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Operation.class));
+      Mockito.verify(a1, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Operation.class));
       Mockito.verifyNoMoreInteractions(a0); // Fell off the undo stack
       Mockito.verifyNoMoreInteractions(a1);
    }
