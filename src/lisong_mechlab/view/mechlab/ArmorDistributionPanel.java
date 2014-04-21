@@ -19,7 +19,12 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -31,6 +36,7 @@ import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.loadout.DistributeArmorOperation;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
@@ -56,6 +62,38 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
    private int                  lastAmount          = 0;
 
    boolean                      disableSliderAction = false;
+
+   class ResetManualArmorOperation extends CompositeOperation{
+      public ResetManualArmorOperation(){
+         super("reset manual armor");
+         for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
+            if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+               addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
+               addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, loadoutPart.getArmor(ArmorSide.BACK), false));
+            }
+            else{
+               addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmor(ArmorSide.ONLY), false));
+            }
+         }
+      }
+      
+      @Override
+      protected void apply() {
+         super.apply();
+         updateArmorDistribution();
+      }
+      
+      @Override
+      protected void undo() {
+         super.undo();
+         updateArmorDistribution();
+      }
+
+      @Override
+      public boolean canCoalescele(Operation aOperation){
+         return (aOperation != this && aOperation != null && aOperation instanceof ResetManualArmorOperation);
+      }
+   }
 
    class ArmorSliderOperation extends CompositeOperation{
       private final JSlider slider;
@@ -98,15 +136,25 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
    }
 
    public ArmorDistributionPanel(final Loadout aLoadout, final OperationStack aStack, final MessageXBar aXBar){
-      setBorder(StyleManager.sectionBorder("Armor distribution"));
-      GroupLayout gl = new GroupLayout(this);
-      setLayout(gl);
+      setBorder(StyleManager.sectionBorder("Automatic Armor distribution"));
+      setLayout(new BorderLayout());
 
       stack = aStack;
       xBar = aXBar;
       loadout = aLoadout;
 
       xBar.attach(this);
+
+      final JButton resetAll = new JButton(new AbstractAction("Reset manually set armor"){
+         private static final long serialVersionUID = -2645636713484404605L;
+
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            stack.pushAndApply(new ResetManualArmorOperation());
+         }
+      });
+      resetAll.setToolTipText("You can right click on the armor text on individual components.");
+      add(resetAll, BorderLayout.SOUTH);
 
       final JLabel armorLabel = new JLabel("Amount:");
       final int maxArmor = aLoadout.getChassi().getArmorMax();
@@ -137,6 +185,9 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
       ratioSlider.setLabelTable(ratioSlider.createStandardLabels(5));
       ratioSlider.setPaintLabels(true);
 
+      JPanel sliderPanel = new JPanel();
+      GroupLayout gl = new GroupLayout(sliderPanel);
+      sliderPanel.setLayout(gl);
       gl.setHorizontalGroup(gl.createSequentialGroup().addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel)
                                                                   .addComponent(ratioLabel))
                               .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorSlider).addComponent(ratioSlider)));
@@ -150,6 +201,8 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 
       armorSlider.addChangeListener(this);
       ratioSlider.addChangeListener(this);
+
+      add(sliderPanel, BorderLayout.CENTER);
    }
 
    OperationStack privateStack = new OperationStack(0);
@@ -169,6 +222,10 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
          lastRatio = ratioSlider.getValue();
    }
 
+   public void updateArmorDistribution(){
+      privateStack.pushAndApply(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+   }
+
    /**
     * @see lisong_mechlab.util.MessageXBar.Reader#receive(lisong_mechlab.util.MessageXBar.Message)
     */
@@ -178,7 +235,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
          LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
          if( message.automatic )
             return;
-         privateStack.pushAndApply(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+         updateArmorDistribution();
       }
    }
 }

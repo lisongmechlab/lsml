@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.text.DecimalFormat;
 
@@ -47,7 +48,6 @@ public class ItemInfoPanel extends JPanel{
    private static final long serialVersionUID = -1180217243714551398L;
 
    // Basic common info
-   private final JLabel      name             = new JLabel();
    private final JLabel      slots            = new JLabel();
    private final JLabel      mass             = new JLabel();
    private final JLabel      health           = new JLabel();
@@ -68,15 +68,73 @@ public class ItemInfoPanel extends JPanel{
    private final JLabel      range            = new JLabel();
    private final JLabel      dps              = new JLabel();
    private final JLabel      dph              = new JLabel();
-   private final JLabel      duration         = new JLabel();
-
    // Ammo info
    private final JLabel      ammoperton       = new JLabel();
 
    public ItemInfoPanel(){
-      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-      setBorder(new TitledBorder("Description"));
-      add(Box.createHorizontalGlue());
+      // setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+      setLayout(new BorderLayout());
+      setBorder(new TitledBorder("Information"));
+
+      gh_MaxFreeAlpha.setToolTipText("The maximum number of weapons in this group that may be fired simultaneously without incurring ghost heat.");
+      secondsPerShot.setToolTipText("Shows how many seconds between shots. "
+                                    + "For weapons which can double fire, such as the UAC/5, this includes double fire with chance of jamming. "
+                                    + "For beam weapons this incudes the beam's burn time.");
+      cycleTime.setToolTipText("The time it takes for the weapon to cool down before the next shot.");
+      burntime.setToolTipText("The time the beam is active and needs to be kept on the target to deal full damage. After this the weapon starts to cool down.");
+     
+      {
+         JPanel stats = new JPanel();
+         add(stats, BorderLayout.NORTH);
+         stats.setLayout(new BoxLayout(stats, BoxLayout.Y_AXIS));
+         
+         JPanel basicInfo = new JPanel();
+         basicInfo.setLayout(new BoxLayout(basicInfo, BoxLayout.X_AXIS));
+         basicInfo.setAlignmentX(LEFT_ALIGNMENT);
+         basicInfo.add(slots);
+         basicInfo.add(Box.createHorizontalGlue());
+         basicInfo.add(mass);
+         basicInfo.add(Box.createHorizontalGlue());
+         basicInfo.add(health);
+         stats.add(basicInfo);
+
+         JPanel heatInfo = new JPanel();
+         heatInfo.setLayout(new BoxLayout(heatInfo, BoxLayout.X_AXIS));
+         heatInfo.setAlignmentX(LEFT_ALIGNMENT);
+         heatInfo.add(heat);
+         heatInfo.add(Box.createHorizontalGlue());
+         heatInfo.add(dph);
+         stats.add(heatInfo);
+
+         JPanel rangeInfo = new JPanel();
+         rangeInfo.setLayout(new BoxLayout(rangeInfo, BoxLayout.X_AXIS));
+         rangeInfo.setAlignmentX(LEFT_ALIGNMENT);
+         rangeInfo.add(range);
+         stats.add(rangeInfo);
+
+         JPanel damageInfo = new JPanel();
+         damageInfo.setLayout(new BoxLayout(damageInfo, BoxLayout.X_AXIS));
+         damageInfo.setAlignmentX(LEFT_ALIGNMENT);
+         damageInfo.add(damage);
+         damageInfo.add(Box.createHorizontalGlue());
+         damageInfo.add(burntime);
+         damageInfo.add(Box.createHorizontalGlue());
+         damageInfo.add(dps);
+         stats.add(damageInfo);
+         
+         JPanel damageInfo2 = new JPanel();
+         damageInfo2.setLayout(new BoxLayout(damageInfo2, BoxLayout.X_AXIS));
+         damageInfo2.setAlignmentX(LEFT_ALIGNMENT);
+         damageInfo2.add(cycleTime);
+         damageInfo2.add(Box.createHorizontalGlue());
+         damageInfo2.add(secondsPerShot);
+         stats.add(damageInfo2);
+
+         stats.add(gh_MaxFreeAlpha);
+         stats.add(ammoperton);
+         stats.add(engineHSSlots);
+         stats.add(engineInternalHS);
+      }
 
       description.setColumns(30);
       description.setRows(5);
@@ -88,79 +146,26 @@ public class ItemInfoPanel extends JPanel{
       description.setPreferredSize(new Dimension(400, 50));
       description.setMaximumSize(new Dimension(2000, 200));
       description.setAlignmentX(LEFT_ALIGNMENT);
-      description.setFont(name.getFont());
-      description.setBackground(name.getBackground());
+      description.setFont(slots.getFont());
+      description.setBackground(slots.getBackground());
 
-      gh_MaxFreeAlpha.setToolTipText("The maximum number of weapons in this group that may be fired simultaneously without incurring ghost heat.");
-      secondsPerShot.setToolTipText("Shows how many seconds between shots. "
-                                    + "For weapons which can double fire, such as the UAC/5, this includes double fire with chance of jamming. "
-                                    + "For beam weapons this incudes the beam's burn time.");
-      cycleTime.setToolTipText("The time it takes for the weapon to cool down before the next shot.");
-      burntime.setToolTipText("The time the beam is active and needs to be kept on the target to deal full damage. After this the weapon starts to cool down.");
-
-      JPanel basicInfo = new JPanel();
-      basicInfo.setLayout(new BoxLayout(basicInfo, BoxLayout.X_AXIS));
-      basicInfo.setAlignmentX(LEFT_ALIGNMENT);
-      basicInfo.add(name);
-      basicInfo.add(Box.createHorizontalGlue());
-      basicInfo.add(slots);
-      basicInfo.add(Box.createHorizontalGlue());
-      basicInfo.add(mass);
-      basicInfo.add(Box.createHorizontalGlue());
-      basicInfo.add(health);
-      add(basicInfo);
-
-      JPanel heatInfo = new JPanel();
-      heatInfo.setLayout(new BoxLayout(heatInfo, BoxLayout.X_AXIS));
-      heatInfo.setAlignmentX(LEFT_ALIGNMENT);
-      heatInfo.add(heat);
-      heatInfo.add(Box.createHorizontalGlue());
-      heatInfo.add(heatPerSecond);
-      heatInfo.add(Box.createHorizontalGlue());
-      heatInfo.add(dph);
-      add(heatInfo);
-
-      JPanel rangeInfo = new JPanel();
-      rangeInfo.setLayout(new BoxLayout(rangeInfo, BoxLayout.X_AXIS));
-      rangeInfo.setAlignmentX(LEFT_ALIGNMENT);
-      rangeInfo.add(range);
-      add(rangeInfo);
-
-      JPanel damageInfo = new JPanel();
-      damageInfo.setLayout(new BoxLayout(damageInfo, BoxLayout.X_AXIS));
-      damageInfo.setAlignmentX(LEFT_ALIGNMENT);
-      damageInfo.add(damage);
-      damageInfo.add(Box.createHorizontalGlue());
-      damageInfo.add(burntime);
-      damageInfo.add(Box.createHorizontalGlue());
-      damageInfo.add(cycleTime);
-      damageInfo.add(Box.createHorizontalGlue());
-      damageInfo.add(secondsPerShot);
-      damageInfo.add(Box.createHorizontalGlue());
-      damageInfo.add(duration);
-      damageInfo.add(Box.createHorizontalGlue());
-      damageInfo.add(dps);
-      add(damageInfo);
-
-      add(gh_MaxFreeAlpha);
-      add(ammoperton);
-      add(engineHSSlots);
-      add(engineInternalHS);
-      add(description);
+      add(description, BorderLayout.CENTER);
 
       showItem(null, null, null);
    }
 
    private void showBasicInfo(Item anItem){
       if( null != anItem ){
-         name.setText("Name: " + anItem.getName());
+         ((TitledBorder)getBorder()).setTitle(anItem.getName());
+         repaint();
          slots.setText("Slots: " + anItem.getNumCriticalSlots(null));
          mass.setText("Tons: " + anItem.getMass(null));
          description.setText("Description:\n" + anItem.getDescription());
          health.setText("HP: " + anItem.getHealth());
       }
       else{
-         name.setText("Name: N/A");
+         ((TitledBorder)getBorder()).setTitle("No item selected");
+         repaint();
          slots.setText("Slots: N/A");
          mass.setText("Tons: N/A");
          description.setText("Description:\nN/A");
@@ -196,10 +201,10 @@ public class ItemInfoPanel extends JPanel{
       cycleTime.setText("Cycle time: " + aWeapon.getCycleTime(aEfficiencies));
       if( aWeapon instanceof EnergyWeapon ){
          burntime.setVisible(true);
-         burntime.setText("Burn time: " + ((EnergyWeapon)aWeapon).getDuration());
+         burntime.setText("Burn time: " + df1.format(((EnergyWeapon)aWeapon).getDuration()));
       }
       secondsPerShot.setVisible(true);
-      secondsPerShot.setText("Avg. Seconds per shot: " + aWeapon.getSecondsPerShot(aEfficiencies));
+      secondsPerShot.setText("RoF: " + aWeapon.getSecondsPerShot(aEfficiencies) + " s/shot");
 
       heatPerSecond.setVisible(true);
       heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", anUpgrades, aEfficiencies)));
@@ -211,16 +216,8 @@ public class ItemInfoPanel extends JPanel{
       dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", anUpgrades, aEfficiencies)));
 
       range.setVisible(true);
-      range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (aWeapon.getRangeMin() + " / ") : "") + aWeapon.getRangeLong() + " / "
-                    + aWeapon.getRangeMax());
-
-      if( aWeapon instanceof EnergyWeapon ){
-         duration.setVisible(true);
-         duration.setText("Duration: " + df0.format(((EnergyWeapon)aWeapon).getDuration()));
-      }
-      else{
-         duration.setVisible(false);
-      }
+      range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "") + df0.format(aWeapon.getRangeLong()) + " / "
+                    + df0.format(aWeapon.getRangeMax()));
 
       if( aWeapon instanceof AmmoWeapon ){
          AmmoWeapon ammoWeapon = (AmmoWeapon)aWeapon;
@@ -245,7 +242,6 @@ public class ItemInfoPanel extends JPanel{
       range.setVisible(false);
       dps.setVisible(false);
       dph.setVisible(false);
-      duration.setVisible(false);
       secondsPerShot.setVisible(false);
 
       ammoperton.setVisible(false);

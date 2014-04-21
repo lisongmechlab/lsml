@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
@@ -117,7 +118,6 @@ public class LSML extends JFrame{
       });
 
       // Open the IPC socket first after everything else has succeeded.
-
       try{
          lsmlProtocolIPC = new LsmlProtocolIPC();
       }
@@ -128,6 +128,8 @@ public class LSML extends JFrame{
       setupKeybindings();
 
       openLastGarage();
+      
+      ToolTipManager.sharedInstance().setDismissDelay(60000);
    }
 
    private void setupKeybindings(){

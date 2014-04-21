@@ -50,7 +50,7 @@ import lisong_mechlab.util.OperationStack.Operation;
 public class LoadoutPart{
    public static class Message implements MessageXBar.Message{
       public enum Type{
-         ItemAdded, ItemRemoved, ArmorChanged, ItemsChanged
+         ItemAdded, ItemRemoved, ArmorChanged, ItemsChanged, ArmorDistributionUpdateRequest
       }
 
       public final LoadoutPart part;
