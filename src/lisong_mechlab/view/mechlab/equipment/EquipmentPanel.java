@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab.equipment;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +69,7 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
       aXBar.attach(this);
       aDesktop.addInternalFrameListener(this);
 
-      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+      setLayout(new BorderLayout());
       List<Item> items = ItemDB.lookup(Item.class);
       Collections.sort(items);
 
@@ -138,8 +139,8 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
       itemFlowScrollPanel.setAlignmentX(LEFT_ALIGNMENT);
 
       infoPanel.setAlignmentX(LEFT_ALIGNMENT);
-      add(itemFlowScrollPanel);
-      add(infoPanel);
+      add(itemFlowScrollPanel, BorderLayout.CENTER);
+      add(infoPanel, BorderLayout.SOUTH);
       changeLoadout(null);
    }
 

@@ -90,6 +90,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
                else{
                   stack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmorTotal(), false));
                }
+               xBar.post(new LoadoutPart.Message(loadoutPart, Type.ArmorDistributionUpdateRequest));
             }
          }));
          menu.show(e.getComponent(), e.getX(), e.getY());

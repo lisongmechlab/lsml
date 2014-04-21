@@ -62,17 +62,16 @@ import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
-   private static final long               serialVersionUID = 5995694414450060827L;
-   private final LoadoutPart               part;
-   private final DynamicSlotDistributor    slotDistributor;
-   private OperationStack                  opStack;
+   private static final long                   serialVersionUID = 5995694414450060827L;
+   private final LoadoutPart                   part;
+   private final DynamicSlotDistributor        slotDistributor;
+   private OperationStack                      opStack;
 
-   private final DecimalFormat             df               = new DecimalFormat("###.#");
-   private final DecimalFormat             df2              = new DecimalFormat("###.##");
-   private final ItemEffectiveHP           effectiveHP;
-   private final CriticalItemDamage        criticalItemDamage;
-   private final CriticalStrikeProbability criticalStrikeProbability;
-   
+   private final DecimalFormat                 df               = new DecimalFormat("###.#");
+   private final DecimalFormat                 df2              = new DecimalFormat("###.##");
+   private final ItemEffectiveHP               effectiveHP;
+   private final CriticalStrikeProbability     criticalStrikeProbability;
+
    private final ComponentDestructionSimulator cds;
 
    private enum ListEntryType{
@@ -91,36 +90,33 @@ public class PartList extends JList<Item>{
          StringBuilder sb = new StringBuilder();
 
          sb.append("<html>");
+         sb.append("<b>");
          sb.append(aItem.getName());
          if( !aItem.getName().equals(aItem.getShortName(null)) ){
             sb.append(" (").append(aItem.getShortName(null)).append(")");
          }
+         sb.append("</b>");
 
-         sb.append("<p>");
-         sb.append("Critical victim probability: ").append(df.format(100 * criticalStrikeProbability.calculate(aItem))).append("%");
+         sb.append("<table width=\"100%\" cellspacing=\"1\" border=\"0\" cellpadding=\"0\">");
+         sb.append("<tr><td width=\"30%\">Critical hit:</td><td> ").append(df.format(100 * criticalStrikeProbability.calculate(aItem))).append("%</td></tr>");
+         sb.append("<tr><td>Destroyed:</td><td> ").append(df2.format(100 * cds.getProbabilityOfDestruction(aItem))).append("%</td></tr>");
+         sb.append("<tr><td>HP:</td><td> ").append(aItem.getHealth()).append("</td></tr>");
+         sb.append("<tr><td>SIE-HP:</td><td> ").append(df.format(effectiveHP.calculate(aItem))).append("</td></tr>");
+         sb.append("</table>");
          sb.append("<br/>");
-         sb.append("Critical victim multiplicity: ").append(df2.format(criticalItemDamage.calculate(aItem)));
-         sb.append("<br/>");
-         sb.append("Destruction probability: ").append(df2.format(100*cds.getProbabilityOfDestruction(aItem))).append("%");
-         sb.append("</p>");
 
-         sb.append("<p>");
-         sb.append("HP: ").append(aItem.getHealth());
-         sb.append("<br/>");
-         sb.append("SI-EHP: ").append(df.format(effectiveHP.calculate(aItem)));
-         sb.append("</p>");
-
-         sb.append("<br/>");
          sb.append("<div style='width:300px'>")
            .append("<p>")
-           .append("<b>Critical victim probability</b> is the chance that any one hit on the component will critically hit this item dealing damage to it.")
-           .append("If the weapon shooting does equal to, or more damage than the HP of this item, the item will break.")
+           .append("<b>Critical hit</b> is the probability that a shot on this component's internal structure will deal damage to this item. "
+                         + "When other items break, the crit % increases as it's more likely this item will be hit. "
+                         + "If the weapon dealing damage does equal to or more damage than the HP of this item, it will break in one shot.")
            .append("</p><p>")
-           .append("<b>Critical victim multiplicity</b> is the amount of damage the item will take (statistically) for every one damage dealt to the component. ")
-           .append("This mainly applies to lasers and does not include increased chance to critically hit from MG and LB 10-X AC and Flamers.")
-           .append("</p><p>")
-           .append("<b>SI-EHP</b> is the Statistical, Infinitesmal Effective-HP of this component. Under the assumption that damage is ")
-           .append("applied in small chunks (lasers) this is how much damage the component can take before this item breaks (statistically).")
+           .append("<b>Destroyed</b> is the probability that this item will be destroyed before the component is destroyed. "
+                         + "A high value indicates that the item is poorly buffered and can be expected to be lost soon after the internal structure is exposed. "
+                         + "A low value means that the item is likely to survive until the component is completely destroyed.").append("</p><p>")
+           .append("<b>SIE-HP</b> is the Statistical, Infinitesmal Effective-HP of this component. Under the assumption that damage is ")
+           .append("applied in small chunks (lasers) this is how much damage the component can take before this item breaks on average. "
+                         + "For MG, LB 10-X AC and flamers this is lower as they have higher chance to crit and higher crit multiplier.")
            .append("</p>").append("</div>");
 
          sb.append("</html>");
@@ -215,21 +211,21 @@ public class PartList extends JList<Item>{
    }
 
    private class Model extends AbstractListModel<Item> implements MessageXBar.Reader{
-      private static final String HEATSINKS_STRING = "HEAT SINKS: ";
+      private static final String HEATSINKS_STRING         = "HEAT SINKS: ";
       private static final String HEATSINKS_COMPACT_STRING = "HS: ";
-      private static final String EMPTY            = "EMPTY";
-      private static final String MULTISLOT        = "";
-      private static final String DYN_ARMOR        = "DYNAMIC ARMOR";
-      private static final String DYN_STRUCT       = "DYNAMIC STRUCTURE";
-      private static final long   serialVersionUID = 2438473891359444131L;
+      private static final String EMPTY                    = "EMPTY";
+      private static final String MULTISLOT                = "";
+      private static final String DYN_ARMOR                = "DYNAMIC ARMOR";
+      private static final String DYN_STRUCT               = "DYNAMIC STRUCTURE";
+      private static final long   serialVersionUID         = 2438473891359444131L;
       private final MessageXBar   xBar;
 
-      private final int compactCompensationSlots;
+      private final int           compactCompensationSlots;
 
       Model(MessageXBar aXBar){
          xBar = aXBar;
          xBar.attach(this);
-         
+
          int c = 0;
          if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
             for(Item item : part.getInternalPart().getInternalItems()){
@@ -358,7 +354,7 @@ public class PartList extends JList<Item>{
       effectiveHP = new ItemEffectiveHP(part);
       cds = new ComponentDestructionSimulator(part, anXBar);
       cds.simulate();
-      criticalItemDamage = new CriticalItemDamage(part);
+      new CriticalItemDamage(part);
       criticalStrikeProbability = new CriticalStrikeProbability(part);
       setModel(new Model(anXBar));
       setDragEnabled(true);

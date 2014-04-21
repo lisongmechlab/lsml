@@ -19,9 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics.helpers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -46,7 +44,7 @@ import lisong_mechlab.util.MessageXBar.Message;
  * <li>Engine can be critically hit and destroyed. However a destroyed engine does not kill you, it's simply a free
  * buffer.</li>
  * <li>Heat sinks in the engine act as a crit buffer with their original slot counts for probability.</li>
- * <li>15% of critical damage is always transferred to the component IS.</li>
+ * <li>15% of critical damage is always transferred to the component IS. FIXME: NYI</li>
  * </ul>
  * 
  * @author Emily Björk

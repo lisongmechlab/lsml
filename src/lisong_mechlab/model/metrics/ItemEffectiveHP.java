@@ -24,6 +24,7 @@ import java.util.List;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -75,6 +76,8 @@ public class ItemEffectiveHP implements ItemMetric{
       cache.clear();
       for(Item item : loadoutPart.getItems()){
          if( item instanceof Internal && item != LoadoutPart.ENGINE_INTERNAL )
+            continue;
+         if( item == ItemDB.CASE )
             continue;
          cache.add(new ItemState(item));
       }

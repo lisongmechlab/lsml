@@ -104,7 +104,8 @@ public class ItemEffectiveHPTest{
    }
 
    /**
-    * We assume that C.A.S.E. works as an indestructible crit-buffer
+    * According to: http://mwomercs.com/forums/topic/81945-crits-and-you-a-brief-guide/
+    * C.A.S.E. can not be critically hit and should not be a part of the calculations.
     */
    @Test
    public void testCASE(){
@@ -115,7 +116,7 @@ public class ItemEffectiveHPTest{
       items.add(i);
       items.add(ammoCase);
 
-      assertEquals(2*10 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
+      assertEquals(10 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
    }
    
    /**
