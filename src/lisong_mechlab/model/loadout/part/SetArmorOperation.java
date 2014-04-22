@@ -108,7 +108,26 @@ public class SetArmorOperation extends Operation{
          int armorDiff = amount - oldAmount;
          double armorTons = loadoutPart.getLoadout().getUpgrades().getArmor().getArmorMass(armorDiff);
          if( armorTons > loadoutPart.getLoadout().getFreeMass() ){
-            throw new IllegalArgumentException("Not enough tonnage to add more armor!");
+            // See if the armor can be freed from a combination of automatic components. They will be redistributed
+            // afterwards. FIXME: Devise a proper solution, this is ugly.
+            int freed = 0;
+            while( freed < armorDiff ){
+               for(LoadoutPart otherPart : loadoutPart.getLoadout().getPartLoadOuts()){
+                  if( loadoutPart != otherPart && otherPart.allowAutomaticArmor() ){
+                     freed += otherPart.getArmorTotal();
+                     if( otherPart.getInternalPart().getType().isTwoSided() ){
+                        otherPart.setArmor(ArmorSide.FRONT, 0, true);
+                        otherPart.setArmor(ArmorSide.BACK, 0, true);
+                     }
+                     else{
+                        otherPart.setArmor(ArmorSide.ONLY, 0, true);
+                     }
+                  }
+               }
+            }
+            if(freed < armorDiff){
+               throw new IllegalArgumentException("Not enough tonnage to add more armor!");  
+            }
          }
          loadoutPart.setArmor(side, amount, !manual);
          if( xBar != null ){
