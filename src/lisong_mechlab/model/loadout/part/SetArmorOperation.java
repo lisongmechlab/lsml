@@ -34,10 +34,10 @@ public class SetArmorOperation extends Operation{
    private final ArmorSide   side;
    private final int         amount;
    private int               oldAmount = -1;
+   private boolean           oldManual;
    private final MessageXBar xBar;
    private final LoadoutPart loadoutPart;
    private final boolean     manual;
-   private final boolean     oldManual;
 
    /**
     * Sets the armor for a given side of the component. Throws if the operation will fail.
@@ -61,7 +61,6 @@ public class SetArmorOperation extends Operation{
       loadoutPart = aLoadoutPart;
       side = anArmorSide;
       amount = anArmorAmount;
-      oldManual = !aLoadoutPart.allowAutomaticArmor();
       manual = aManualSet;
 
       if( amount < 0 )
@@ -100,6 +99,7 @@ public class SetArmorOperation extends Operation{
    @Override
    protected void apply(){
       oldAmount = loadoutPart.getArmor(side);
+      oldManual = !loadoutPart.allowAutomaticArmor();
       if( amount != oldAmount || oldManual != manual ){
 
          if( amount > loadoutPart.getArmorMax(side) )

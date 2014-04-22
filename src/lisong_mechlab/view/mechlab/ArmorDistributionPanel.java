@@ -64,6 +64,8 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
    boolean                      disableSliderAction = false;
 
    class ResetManualArmorOperation extends CompositeOperation{
+      private final Loadout opLoadout = loadout;
+      
       public ResetManualArmorOperation(){
          super("reset manual armor");
          for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
@@ -91,7 +93,11 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 
       @Override
       public boolean canCoalescele(Operation aOperation){
-         return (aOperation != this && aOperation != null && aOperation instanceof ResetManualArmorOperation);
+         if(aOperation != this && aOperation != null && aOperation instanceof ResetManualArmorOperation){
+            ResetManualArmorOperation operation = (ResetManualArmorOperation)aOperation;
+            return operation.opLoadout == opLoadout;
+         }
+         return false;
       }
    }
 
