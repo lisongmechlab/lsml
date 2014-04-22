@@ -149,6 +149,15 @@ public class MessageXBar{
    public void attach(WeakReference<Reader> aWeakReference){
       if( dispatching )
          throw new IllegalStateException("Attach from call to post!");
+
+      if( debug ){
+         for(WeakReference<Reader> reader : readers){
+            if( reader.get() == aWeakReference.get() ){
+               throw new RuntimeException("Double registration of reader!");
+            }
+         }
+      }
+
       readers.add(aWeakReference);
    }
 

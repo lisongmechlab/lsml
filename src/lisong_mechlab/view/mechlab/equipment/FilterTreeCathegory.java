@@ -15,8 +15,10 @@ import lisong_mechlab.view.preferences.UiPreferences.Message;
 
 public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> implements Reader{
    protected final GarageTree garageTree;
-   private String             nameFilter = "";
+   private String             nameFilter       = "";
    private boolean            wasExpandedBeforeFilter;
+   private final List<T>      filteredChildren = new ArrayList<>();
+   private boolean            filterDirty = true;
 
    public FilterTreeCathegory(MessageXBar aXBar, String aName, TreeCathegory aParent, GarageTreeModel aModel, final JTextField aFilterBar,
                               GarageTree aGarageTree){
@@ -45,24 +47,33 @@ public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> imp
                   }
 
                   nameFilter = aFilterBar.getText().toLowerCase();
+                  filterDirty = true;
                   getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
                }
             }
          });
       }
+      filterDirty = true;
    }
 
+   public void setDirtyBit(){
+      filterDirty = true;
+   }
+   
    protected String getFilterString(){
       return nameFilter;
    }
 
    private List<T> filterList(){
-      List<T> ans = new ArrayList<>();
-      for(T t : children){
-         if( filter(t) )
-            ans.add(t);
+      if( filterDirty ){
+         filteredChildren.clear();
+         for(T t : children){
+            if( filter(t) )
+               filteredChildren.add(t);
+         }
+         filterDirty = false;
       }
-      return ans;
+      return filteredChildren;
    }
 
    /**
@@ -91,6 +102,7 @@ public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> imp
       if( aMsg instanceof UiPreferences.Message ){
          UiPreferences.Message msg = (Message)aMsg;
          if( msg.attribute == UiPreferences.UI_HIDE_SPECIAL_MECHS ){
+            filterDirty = true;
             getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
          }
       }
