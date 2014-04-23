@@ -28,6 +28,7 @@ import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.Loadout.Message;
 import lisong_mechlab.util.MessageXBar;
 
 class GarageCathegory extends FilterTreeCathegory<Loadout>{
@@ -38,7 +39,6 @@ class GarageCathegory extends FilterTreeCathegory<Loadout>{
                           JTextField aFilterBar, GarageTree aGarageTree){
       super(xbar, aName, aParent, aModel, aFilterBar, aGarageTree);
       chassiClass = aChassiClass;
-      xbar.attach(this);
    }
 
    @Override
@@ -52,8 +52,12 @@ class GarageCathegory extends FilterTreeCathegory<Loadout>{
          garageChanged();
       }
       else if( aMsg instanceof Loadout.Message ){
-         garageChanged();
+         Loadout.Message message = (Message)aMsg;
+         if( message.type == Loadout.Message.Type.CREATE || message.type == Loadout.Message.Type.RENAME ){
+            garageChanged();
+         }
       }
+      super.receive(aMsg);
    }
 
    @Override
@@ -70,6 +74,7 @@ class GarageCathegory extends FilterTreeCathegory<Loadout>{
                children.add(loadout);
          }
       }
+      setDirtyBit();
       getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
       garageTree.expandPath(getPath());
    }

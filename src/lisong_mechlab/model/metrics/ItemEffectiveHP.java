@@ -68,7 +68,8 @@ public class ItemEffectiveHP implements ItemMetric{
          if( itemState.item == aItem )
             return itemState.ehp;
       }
-      throw new RuntimeException("Item not found in EHP cache");
+      return Double.POSITIVE_INFINITY;
+      //throw new RuntimeException("Item not found in EHP cache");
    }
 
    private void updateCache(){
