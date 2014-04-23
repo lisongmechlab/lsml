@@ -107,7 +107,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
    public double getProbabilityOfDestruction(Item aItem){
       ItemState itemState = state.get(aItem);
       if( itemState == null )
-         throw new RuntimeException("The result vector doesnt contain the argument!");
+         return 0.0;
 
       return itemState.P_destroyed / itemState.multiplicity;
    }
