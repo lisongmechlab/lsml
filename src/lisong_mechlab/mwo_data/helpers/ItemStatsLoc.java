@@ -17,17 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ItemStatsMech{
+public class ItemStatsLoc{
    @XStreamAsAttribute
-   public String       mdf;
+   public String shortNameTag;
+   //@XStreamAsAttribute
+   //public int    iconTag;
    @XStreamAsAttribute
-   public String       name;
+   public String descTag;
    @XStreamAsAttribute
-   public int          id;
-
-   public ItemStatsLoc Loc;
+   public String nameTag;
 }

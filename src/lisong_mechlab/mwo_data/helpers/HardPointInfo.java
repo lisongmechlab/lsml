@@ -17,17 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
+
+import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class AmmoTypeStats{
+public class HardPointInfo{
    @XStreamAsAttribute
-   public String type;
+   public int                       id;
+
    @XStreamAsAttribute
-   public int    health;
-   @XStreamAsAttribute
-   public int    shotsPerTon;
-   @XStreamAsAttribute
-   public double internalDamage;
+   public String                    NoWeaponAName;
+
+   @XStreamImplicit(itemFieldName = "WeaponSlot")
+   public List<HardPointWeaponSlot> weaponslots;
 }

@@ -17,26 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing;
+package lisong_mechlab.mwo_data;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import lisong_mechlab.converter.GameDataFile;
-import lisong_mechlab.model.mwo_parsing.helpers.Workbook;
+import lisong_mechlab.model.DataCache;
+import lisong_mechlab.mwo_data.helpers.Workbook;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * This class will provide localization (and implicitly all naming) of items through the MWO data files.
+ * <p>
+ * Caution: This class will only be initialized if the {@link DataCache} performs a cache update.
  * 
  * @author Li Song
  */
 public class Localization{
-   private static final Map<String, String> key2string;
+   private static Map<String, String> key2string = null;
 
    public static String key2string(String aKey){
       String canon = canonize(aKey);
@@ -67,16 +68,9 @@ public class Localization{
       return aKey;
    }
 
-   static{
+   public static void initialize(GameVFS aGameVFS){
       key2string = new HashMap<String, String>();
 
-      GameDataFile dataFile;
-      try{
-         dataFile = new GameDataFile();
-      }
-      catch( IOException e1 ){
-         throw new RuntimeException("Couldn't load data files!", e1);
-      }
       File[] files = new File[] {new File("Game/Localized/Languages/TheRealLoc.xml")};
       /*
        * , new File("Game/Localized/Languages/ui_Mech_Loc.xml"), new File("Game/Localized/Languages/General.xml"), new
@@ -111,7 +105,7 @@ public class Localization{
       xstream.autodetectAnnotations(true);
       for(File file : files){
          try{
-            Workbook workbook = (Workbook)xstream.fromXML(dataFile.openGameFile(file));
+            Workbook workbook = (Workbook)xstream.fromXML(aGameVFS.openGameFile(file).stream);
             for(Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows){ // Skip past junk
                if( row.cells == null || row.cells.size() < 1 ){
                   // debugprintrow(row);

@@ -47,7 +47,7 @@ import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
-import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
+import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
@@ -225,7 +225,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          List<Integer> ids = huff.decode(rest);
          stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, (ArmorUpgrade)UpgradeDB.lookup(ids.get(0))));
          stack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, (StructureUpgrade)UpgradeDB.lookup(ids.get(1))));
-         stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, (HeatsinkUpgrade)UpgradeDB.lookup(ids.get(2))));
+         stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, (HeatSinkUpgrade)UpgradeDB.lookup(ids.get(2))));
          stack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.get(3))));
 
          if( -1 != ids.get(4) ){

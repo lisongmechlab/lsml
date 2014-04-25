@@ -17,23 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias("JumpJetStats")
-public class ItemStatsJumpJetStats{
-   @XStreamAlias("boost_z")
+public class MdfInternal{
    @XStreamAsAttribute
-   public double boost;
-
+   public int    Slots;
    @XStreamAsAttribute
-   public double duration;
+   public String Name;
    @XStreamAsAttribute
-   public double heat;
-   @XStreamAsAttribute
-   public int    minTons;
-   @XStreamAsAttribute
-   public int    maxTons;
+   public String Desc;
 }

@@ -20,7 +20,9 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStats;
+import lisong_mechlab.mwo_data.helpers.ItemStats;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This is a base class for all items that can generate heat.
@@ -31,6 +33,7 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStats;
  * @author Li Song
  */
 public class HeatSource extends Item{
+   @XStreamAsAttribute
    private final double heat;
 
    protected HeatSource(ItemStats anItemStats, HardPointType aHardpointType, int aSlots, double aTons, double aHeat, int aHealth){

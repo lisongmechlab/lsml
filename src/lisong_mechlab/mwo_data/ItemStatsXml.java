@@ -17,38 +17,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing;
+package lisong_mechlab.mwo_data;
 
-import java.io.InputStream;
 import java.util.List;
+
+import lisong_mechlab.mwo_data.GameVFS.GameFile;
+import lisong_mechlab.mwo_data.helpers.ItemStatsMech;
+import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
+import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
- * This class models the format of MechIdMap.xml from the game data files to facilitate easy parsing.
+ * This class models the format of ItemStats.xml from the game data files to facilitate easy parsing.
  * 
  * @author Li Song
  */
-@XStreamAlias("MechIdMap")
-public class MechIdMap{
-   public class Mech {
-      @XStreamAsAttribute
-      public int baseID;
-      @XStreamAsAttribute
-      public int variantID;
-   }
-   
-   @XStreamImplicit(itemFieldName = "Mech")
-   public List<Mech>        MechIdMap;
-   private MechIdMap(){}
-   
-   public static MechIdMap fromXml(InputStream is){
+@XStreamAlias("ItemStats")
+public class ItemStatsXml{
+   public List<ItemStatsMech>        MechList;
+   public List<ItemStatsWeapon>      WeaponList;
+   public List<ItemStatsModule>      ModuleList;
+   public List<ItemStatsUpgradeType> UpgradeTypeList;
+
+   public static ItemStatsXml fromXml(GameFile is){
       XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
          @Override
          protected MapperWrapper wrapMapper(MapperWrapper next){
@@ -64,7 +61,15 @@ public class MechIdMap{
          }
       };
       xstream.autodetectAnnotations(true);
-      xstream.alias("MechIdMap", MechIdMap.class);
-      return (MechIdMap)xstream.fromXML(is);
+      xstream.alias("ItemStats", ItemStatsXml.class);
+      xstream.alias("Mech", ItemStatsMech.class);
+      xstream.alias("Weapon", ItemStatsWeapon.class);
+      xstream.alias("Module", ItemStatsModule.class);
+      xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
+
+      // Fixes for broken XML from PGI
+      xstream.aliasAttribute("Ctype", "CType");
+
+      return (ItemStatsXml)xstream.fromXML(is.stream);
    }
 }

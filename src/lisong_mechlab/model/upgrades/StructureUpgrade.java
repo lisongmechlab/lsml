@@ -20,7 +20,7 @@
 package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
+import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 /**
  * Represents an upgrade to a 'mechs internal structure.

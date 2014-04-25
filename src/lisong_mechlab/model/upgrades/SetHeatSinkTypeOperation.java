@@ -36,8 +36,8 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class SetHeatSinkTypeOperation extends UpgradeOperation{
-   private final HeatsinkUpgrade oldValue;
-   private final HeatsinkUpgrade newValue;
+   private final HeatSinkUpgrade oldValue;
+   private final HeatSinkUpgrade newValue;
 
    private boolean               operationReady = false;
 
@@ -50,7 +50,7 @@ public class SetHeatSinkTypeOperation extends UpgradeOperation{
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public SetHeatSinkTypeOperation(Upgrades anUpgrades, HeatsinkUpgrade aHeatsinkUpgrade){
+   public SetHeatSinkTypeOperation(Upgrades anUpgrades, HeatSinkUpgrade aHeatsinkUpgrade){
       super(anUpgrades, aHeatsinkUpgrade.getName());
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
@@ -66,7 +66,7 @@ public class SetHeatSinkTypeOperation extends UpgradeOperation{
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public SetHeatSinkTypeOperation(MessageXBar anXBar, Loadout aLoadout, HeatsinkUpgrade aHeatsinkUpgrade){
+   public SetHeatSinkTypeOperation(MessageXBar anXBar, Loadout aLoadout, HeatSinkUpgrade aHeatsinkUpgrade){
       super(anXBar, aLoadout, aHeatsinkUpgrade.getName());
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
@@ -85,9 +85,9 @@ public class SetHeatSinkTypeOperation extends UpgradeOperation{
       set(oldValue);
    }
 
-   protected void set(HeatsinkUpgrade aValue){
+   protected void set(HeatSinkUpgrade aValue){
       if( aValue != upgrades.getHeatSink() ){
-         HeatsinkUpgrade old = upgrades.getHeatSink();
+         HeatSinkUpgrade old = upgrades.getHeatSink();
          upgrades.setHeatSink(aValue);
 
          try{

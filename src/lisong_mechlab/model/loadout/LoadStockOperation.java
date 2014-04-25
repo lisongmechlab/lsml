@@ -19,32 +19,19 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import java.io.File;
-import java.util.List;
-
-import lisong_mechlab.converter.GameDataFile;
+import lisong_mechlab.model.StockLoadout;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
-import lisong_mechlab.model.upgrades.ArmorUpgrade;
-import lisong_mechlab.model.upgrades.GuidanceUpgrade;
-import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
 import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
 import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
-import lisong_mechlab.model.upgrades.StructureUpgrade;
-import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.XmlReader;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * This operation loads a 'mechs stock {@link Loadout}.
@@ -52,58 +39,31 @@ import org.w3c.dom.Node;
  * @author Li Song
  */
 public class LoadStockOperation extends LoadoutOperation{
-   public LoadStockOperation(Chassis aChassiVariation, Loadout aLoadout, MessageXBar anXBar) throws Exception{
+   public LoadStockOperation(Chassis aChassiVariation, Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "load stock");
+
+      StockLoadout stockLoadout = StockLoadoutDB.lookup(aChassiVariation);
+
       addOp(new StripOperation(loadout, xBar));
+      addOp(new SetStructureTypeOperation(xBar, loadout, stockLoadout.getStructureType()));
+      addOp(new SetGuidanceTypeOperation(xBar, loadout, stockLoadout.getGuidanceType()));
+      addOp(new SetArmorTypeOperation(xBar, loadout, stockLoadout.getArmorType()));
+      addOp(new SetHeatSinkTypeOperation(xBar, loadout, stockLoadout.getHeatSinkType()));
 
-      File loadoutXml = new File("Game/Libs/MechLoadout/" + aChassiVariation.getMwoName().toLowerCase() + ".xml");
-      GameDataFile dataFile = new GameDataFile();
-      XmlReader reader = new XmlReader(dataFile.openGameFile(loadoutXml));
+      for(StockLoadout.StockComponent component : stockLoadout.getComponents()){
+         Part part = component.getPart();
+         LoadoutPart loadoutPart = aLoadout.getPart(part);
 
-      List<Element> maybeUpgrades = reader.getElementsByTagName("Upgrades");
-      if( maybeUpgrades.size() == 1 ){
-         Element stockUpgrades = maybeUpgrades.get(0);
-
-         int armorId = Integer.parseInt(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID"));
-         int structureId = Integer.parseInt(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID"));
-         int heatsinkId = reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double") ? 3002 : 3003;
-         int guidanceId = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1") ? 3050 : 3051;
-        
-         addOp(new SetStructureTypeOperation(xBar, loadout, (StructureUpgrade)UpgradeDB.lookup(structureId)));
-         addOp(new SetGuidanceTypeOperation(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(guidanceId)));
-         addOp(new SetArmorTypeOperation(xBar, loadout, (ArmorUpgrade)UpgradeDB.lookup(armorId)));
-         addOp(new SetHeatSinkTypeOperation(xBar, loadout, (HeatsinkUpgrade)UpgradeDB.lookup(heatsinkId)));
-      }
-      else{
-         addOp(new SetStructureTypeOperation(xBar, loadout, UpgradeDB.STANDARD_STRUCTURE));
-         addOp(new SetGuidanceTypeOperation(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
-         addOp(new SetArmorTypeOperation(xBar, loadout, UpgradeDB.STANDARD_ARMOR));
-         addOp(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.STANDARD_HEATSINKS));
-      }
-
-      for(Element component : reader.getElementsByTagName("component")){
-         String componentName = component.getAttribute("Name");
-         int componentArmor = Integer.parseInt(component.getAttribute("Armor"));
-
-         Part partType = Part.fromMwoName(componentName);
-
-         LoadoutPart part = loadout.getPart(partType);
-         if( partType.isTwoSided() ){
-            if( Part.isRear(componentName) )
-               addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, componentArmor, true));
-            else
-               addOp(new SetArmorOperation(xBar, part, ArmorSide.FRONT, componentArmor, true));
+         if( part.isTwoSided() ){
+            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, component.getArmorBack(), true));
+            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, component.getArmorFront(), true));
          }
-         else
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.ONLY, componentArmor, true));
+         else{
+            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, component.getArmorFront(), true));
+         }
 
-         Node child = component.getFirstChild();
-         while( null != child ){
-            if( child.getNodeType() == Node.ELEMENT_NODE ){
-               Item item = ItemDB.lookup(Integer.parseInt(((Element)child).getAttribute("ItemID")));
-               addOp(new AddItemOperation(xBar, part, item));
-            }
-            child = child.getNextSibling();
+         for(Integer item : component.getItems()){
+            addOp(new AddItemOperation(xBar, loadoutPart, ItemDB.lookup(item)));
          }
       }
    }

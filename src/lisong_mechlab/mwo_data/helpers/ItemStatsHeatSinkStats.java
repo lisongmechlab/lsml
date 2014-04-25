@@ -17,21 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ItemStatsUpgradeType extends ItemStats{
-   public static class UpgradeTypeStatsTag{
-      @XStreamAsAttribute
-      public int    type;
-      @XStreamAsAttribute
-      public int    slots;
-      @XStreamAsAttribute
-      public double pointMultiplier;
-      @XStreamAsAttribute
-      public int    associatedItem;
-   }
-
-   public UpgradeTypeStatsTag UpgradeTypeStats;
+public class ItemStatsHeatSinkStats{
+   @XStreamAsAttribute
+   public double cooling;
+   @XStreamAsAttribute
+   public double heatbase;
 }

@@ -17,38 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing;
-
-import java.util.List;
-
-import lisong_mechlab.model.mwo_parsing.helpers.HardPointWeaponSlot.Attachment;
+package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-/**
- * This class represents a WeaponDoorSet element in the data files.
- * 
- * @author Li Song
- */
-public class WeaponDoorSet{
+public class MdfMovementTuning{
    @XStreamAsAttribute
-   public int id;
-     
-   public class WeaponDoor{
-      @XStreamAsAttribute
-      double closedDamageFactor;
+   public String MovementArchetype = "Huge";
+   @XStreamAsAttribute
+   public double MaxMovementSpeed;
+   @XStreamAsAttribute
+   public double TorsoTurnSpeedYaw;
+   @XStreamAsAttribute
+   public double TorsoTurnSpeedPitch;
+   @XStreamAsAttribute
+   public double ArmTurnSpeedYaw;
+   @XStreamAsAttribute
+   public double ArmTurnSpeedPitch;
+   @XStreamAsAttribute
+   public double MaxTorsoAngleYaw;
+   @XStreamAsAttribute
+   public double MaxTorsoAnglePitch;
+   @XStreamAsAttribute
+   public double MaxArmRotationYaw;
+   @XStreamAsAttribute
+   public double MaxArmRotationPitch;
 
-      @XStreamAsAttribute
-      public String AName;
-      
-      @XStreamAsAttribute
-      double firingdelay;
-
-      @XStreamImplicit(itemFieldName = "Attachment")
-      public List<Attachment> attachments;
-   }
-
-   @XStreamImplicit(itemFieldName = "WeaponDoor")
-   public List<WeaponDoor> weaponDoors;
 }

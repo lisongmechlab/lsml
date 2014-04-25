@@ -17,22 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.model.upgrades;
 
-import java.util.List;
+import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+public class HeatSinkUpgrade extends Upgrade{
+   private HeatSink heatSinkType;
 
-public class HardPointWeaponSlot{
-   public static class Attachment{
-      @XStreamAsAttribute
-      public String AName;
-
-      @XStreamAsAttribute
-      public String search;
+   public HeatSinkUpgrade(ItemStatsUpgradeType aUpgradeType){
+      super(aUpgradeType);
    }
 
-   @XStreamImplicit(itemFieldName = "Attachment")
-   public List<Attachment> attachments;
+   /**
+    * @return The type of {@link HeatSink}s associated with this upgrade.
+    */
+   public HeatSink getHeatSinkType(){
+      if( heatSinkType == null )
+         heatSinkType = (HeatSink)ItemDB.lookup(getAssociateItemId());
+      return heatSinkType;
+   }
+
+   /**
+    * @return <code>true</code> if this heat sink is a double type.
+    */
+   public boolean isDouble(){
+      return heatSinkType.getNumCriticalSlots(null) > 1;
+   }
+
 }

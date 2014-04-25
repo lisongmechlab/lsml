@@ -17,20 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
-
-import java.util.List;
+package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class HardPointInfo{
+public class MdfMech{
    @XStreamAsAttribute
-   public int                       id;
-
+   public String Variant;
    @XStreamAsAttribute
-   public String                    NoWeaponAName;
-
-   @XStreamImplicit(itemFieldName = "WeaponSlot")
-   public List<HardPointWeaponSlot> weaponslots;
+   public int    MaxTons;
+   @XStreamAsAttribute
+   public double BaseTons;
+   @XStreamAsAttribute
+   public int    MaxJumpJets;
+   @XStreamAsAttribute
+   public int    MinEngineRating;
+   @XStreamAsAttribute
+   public int    MaxEngineRating;
+   @XStreamAsAttribute
+   public String VariantType;
+   @XStreamAsAttribute
+   public int VariantParent;
 }

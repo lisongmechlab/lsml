@@ -17,25 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class MdfMech{
+public class ItemStats{
    @XStreamAsAttribute
-   public String Variant;
+   public String       name;
    @XStreamAsAttribute
-   public int    MaxTons;
-   @XStreamAsAttribute
-   public double BaseTons;
-   @XStreamAsAttribute
-   public int    MaxJumpJets;
-   @XStreamAsAttribute
-   public int    MinEngineRating;
-   @XStreamAsAttribute
-   public int    MaxEngineRating;
-   @XStreamAsAttribute
-   public String VariantType;
-   @XStreamAsAttribute
-   public int VariantParent;
+   public String       id;
+   public ItemStatsLoc Loc;
 }

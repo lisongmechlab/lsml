@@ -17,35 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
-
-import java.util.List;
+package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class MdfComponent{
-   public static class Hardpoint{
-      @XStreamAsAttribute
-      public int ID;
-      @XStreamAsAttribute
-      public int Type;
-      @XStreamAsAttribute
-      public int Slots;
-   }
-
+public class ItemStatsEngineStats{
    @XStreamAsAttribute
-   public String            Name;
+   public int    slots;
    @XStreamAsAttribute
-   public int               Slots;
+   public int    rating;
    @XStreamAsAttribute
-   public double            HP;
+   public double weight;
    @XStreamAsAttribute
-   public int               CanEquipECM;
-
-   @XStreamImplicit(itemFieldName = "Internal")
-   public List<MdfInternal> internals;
-
-   @XStreamImplicit(itemFieldName = "Hardpoint")
-   public List<Hardpoint>   hardpoints;
+   public int    type;
+   @XStreamAsAttribute
+   public int    heatsinks;
+   @XStreamAsAttribute
+   public int    health;
 }

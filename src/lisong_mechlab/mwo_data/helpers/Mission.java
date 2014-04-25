@@ -17,14 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.upgrades;
+package lisong_mechlab.mwo_data.helpers;
 
+import java.util.List;
 
-/**
- * Test suite for {@link HeatsinkUpgrade}
- * 
- * @author Li Song
- */
-public class HeatsinkUpgradeTest{
-   // TODO:
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+public class Mission{
+   public class Entity{
+      public class EntityProperties{
+         @XStreamAsAttribute
+         public double temperature;
+      }
+
+      public EntityProperties Properties;
+      @XStreamAsAttribute
+      public String           EntityClass;
+   }
+
+   public List<Entity> Objects;
 }

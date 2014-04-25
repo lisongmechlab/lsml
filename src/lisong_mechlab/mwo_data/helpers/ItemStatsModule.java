@@ -17,14 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.item;
+package lisong_mechlab.mwo_data.helpers;
 
-import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ECM extends Module{
+public class ItemStatsModule extends ItemStats{
+   @XStreamAsAttribute
+   public String                 CType;
 
-   public ECM(ItemStatsModule aModule){
-      super(aModule, HardPointType.ECM);
-   }
+   public ItemStatsModuleStats   ModuleStats;
+   public ItemStatsJumpJetStats  JumpJetStats;
+   public ItemStatsHeatSinkStats HeatSinkStats;
+   public ItemStatsEngineStats   EngineStats;
+   public AmmoTypeStats          AmmoTypeStats;
 }

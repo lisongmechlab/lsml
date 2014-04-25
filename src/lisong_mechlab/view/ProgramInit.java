@@ -35,11 +35,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.environment.EnvironmentDB;
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.StockLoadoutDB;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
+import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.mwo_data.GameVFS;
 import lisong_mechlab.util.OS;
 
 import com.sun.jna.Native;
@@ -53,16 +54,14 @@ import com.sun.jna.WString;
  * @author Li Song
  */
 public class ProgramInit extends JFrame{
-   private static final long         serialVersionUID   = -2877785947094537320L;
-   private static final long         MIN_SPLASH_TIME_MS = 20;
-   private static ProgramInit        instance;
-   private static LSML               instanceL;
-   public static Image               programIcon;
+   private static final long  serialVersionUID   = -2877785947094537320L;
+   private static final long  MIN_SPLASH_TIME_MS = 20;
+   private static ProgramInit instance;
+   private static LSML        instanceL;
+   public static Image        programIcon;
 
-   private String                    progressSubText    = "";
-   private String                    progressText       = "";
-
-   public static final EnvironmentDB ENVIRONMENT_DB     = new EnvironmentDB();
+   private String             progressSubText    = "";
+   private String             progressText       = "";
 
    private class BackgroundImage extends JComponent{
       private static final long serialVersionUID = 2294812231919303690L;
@@ -129,35 +128,28 @@ public class ProgramInit extends JFrame{
       long startTimeMs = new Date().getTime();
 
       try{
-         @SuppressWarnings("unused")
+         GameVFS.checkGameFilesInstalled();
          // Causes static initialization to be ran.
-         Item bap = ItemDB.BAP;
-
-         @SuppressWarnings("unused")
-         // Causes static initialization to be ran.
-         Chassis chassi = ChassiDB.lookup("JR7-D");
-
-         ENVIRONMENT_DB.initialize();
+         ItemDB.lookup("C.A.S.E.");
+         StockLoadoutDB.lookup(ChassiDB.lookup("JR7-D"));
+         EnvironmentDB.lookupAll();
+         UpgradeDB.lookup(3003);
       }
       catch( Throwable e ){
-         JOptionPane.showMessageDialog(this, "Please make sure you have the latest version of LSML (http://li-soft.org) installed\n"
-                                             + "and make sure that your MWO install is up-to-date.\n"
-                                             + "If the problem persists, please consult the FAQ and User Manual on the website.",
-                                       "LSML is unable to parse your game files.", JOptionPane.ERROR_MESSAGE);
-         e.printStackTrace();
-         return false;
+         throw new RuntimeException(e);
       }
-
-      long endTimeMs = new Date().getTime();
-      long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
-      try{
-         Thread.sleep(sleepTimeMs);
+      finally{
+         long endTimeMs = new Date().getTime();
+         long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
+         try{
+            Thread.sleep(sleepTimeMs);
+         }
+         catch( Exception e ){
+            // No-Op
+         }
+         dispose();
+         instance = null;
       }
-      catch( Exception e ){
-         // No-Op
-      }
-      dispose();
-      instance = null;
       return true;
    }
 
