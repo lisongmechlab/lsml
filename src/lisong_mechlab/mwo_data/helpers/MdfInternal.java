@@ -17,25 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.item;
+package lisong_mechlab.mwo_data.helpers;
 
-import lisong_mechlab.mwo_data.helpers.MdfInternal;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-/**
- * Internals are special items that do not exist in the ItemDB. Instead they are created and owned by the chassii.
- * 
- * @author Emily
- */
-public class Internal extends Item{
-   public Internal(MdfInternal aInternal){
-      super(aInternal.Name, aInternal.Desc, aInternal.Slots, 0); // TODO: Check translation
-   }
-
-   public Internal(String aNameTag, String aDescTag, int aSlots){
-      super(aNameTag, aDescTag, aSlots, 0);
-   }
-   
-   public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth){
-      super(aNameTag, aDescTag, aSlots, aHealth);
-   }
+public class MdfInternal{
+   @XStreamAsAttribute
+   public int    Slots;
+   @XStreamAsAttribute
+   public String Name;
+   @XStreamAsAttribute
+   public String Desc;
 }

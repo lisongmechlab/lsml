@@ -23,10 +23,8 @@ package lisong_mechlab.model.environment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -36,19 +34,12 @@ import org.junit.Test;
  */
 public class EnvironmentDBTest{
 
-   static EnvironmentDB cut = new EnvironmentDB();
-
-   @BeforeClass
-   public static void setupOnce() throws IOException{
-      cut.initialize();
-   }
-
    /**
     * {@link EnvironmentDB#lookup(String)} shall return an {@link Environment} with matching name if found in the DB.
     */
    @Test
    public void testLookup(){
-      Environment caustic = cut.lookup("caustic valley");
+      Environment caustic = EnvironmentDB.lookup("caustic valley");
 
       assertEquals(0.3, caustic.getHeat(), 0.0);
       assertEquals("CAUSTIC VALLEY", caustic.getName());
@@ -59,7 +50,7 @@ public class EnvironmentDBTest{
     */
    @Test
    public void testLookupNull(){
-      assertNull(cut.lookup("Mumbo jumbo therma"));
+      assertNull(EnvironmentDB.lookup("Mumbo jumbo therma"));
    }
 
    /**
@@ -67,7 +58,7 @@ public class EnvironmentDBTest{
     */
    @Test
    public void testLookupAll(){
-      List<Environment> environments = cut.lookupAll();
+      List<Environment> environments = EnvironmentDB.lookupAll();
 
       assertEquals(13, environments.size()); // To date 13 known maps.
    }

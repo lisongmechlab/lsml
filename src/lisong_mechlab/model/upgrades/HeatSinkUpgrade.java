@@ -17,21 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.model.upgrades;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
-public class ItemStatsEngineStats{
-   @XStreamAsAttribute
-   public int    slots;
-   @XStreamAsAttribute
-   public int    rating;
-   @XStreamAsAttribute
-   public double weight;
-   @XStreamAsAttribute
-   public int    type;
-   @XStreamAsAttribute
-   public int    heatsinks;
-   @XStreamAsAttribute
-   public int    health;
+public class HeatSinkUpgrade extends Upgrade{
+   private HeatSink heatSinkType;
+
+   public HeatSinkUpgrade(ItemStatsUpgradeType aUpgradeType){
+      super(aUpgradeType);
+   }
+
+   /**
+    * @return The type of {@link HeatSink}s associated with this upgrade.
+    */
+   public HeatSink getHeatSinkType(){
+      if( heatSinkType == null )
+         heatSinkType = (HeatSink)ItemDB.lookup(getAssociateItemId());
+      return heatSinkType;
+   }
+
+   /**
+    * @return <code>true</code> if this heat sink is a double type.
+    */
+   public boolean isDouble(){
+      return heatSinkType.getNumCriticalSlots(null) > 1;
+   }
+
 }

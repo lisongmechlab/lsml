@@ -17,14 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.upgrades;
+package lisong_mechlab.mwo_data.helpers;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-/**
- * Test suite for {@link HeatsinkUpgrade}
- * 
- * @author Emily Björk
- */
-public class HeatsinkUpgradeTest{
-   // TODO:
+public class ItemStatsMech{
+   @XStreamAsAttribute
+   public String       mdf;
+   @XStreamAsAttribute
+   public String       name;
+   @XStreamAsAttribute
+   public int          id;
+
+   public ItemStatsLoc Loc;
 }

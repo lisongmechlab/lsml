@@ -17,32 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.upgrades;
+package lisong_mechlab.mwo_data.helpers;
 
-import lisong_mechlab.model.item.HeatSink;
-import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class HeatsinkUpgrade extends Upgrade{
-   private final HeatSink heatSinkType;
-
-   public HeatsinkUpgrade(ItemStatsUpgradeType aUpgradeType){
-      super(aUpgradeType);
-      heatSinkType = (HeatSink)ItemDB.lookup(aUpgradeType.UpgradeTypeStats.associatedItem);
-   }
-
-   /**
-    * @return The type of {@link HeatSink}s associated with this upgrade.
-    */
-   public HeatSink getHeatSinkType(){
-      return heatSinkType;
-   }
-
-   /**
-    * @return <code>true</code> if this heat sink is a double type.
-    */
-   public boolean isDouble(){
-      return heatSinkType.getNumCriticalSlots(null) > 1;
-   }
-
+public class ItemStatsHeatSinkStats{
+   @XStreamAsAttribute
+   public double cooling;
+   @XStreamAsAttribute
+   public double heatbase;
 }

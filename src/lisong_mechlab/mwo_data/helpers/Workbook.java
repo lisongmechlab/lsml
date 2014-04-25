@@ -17,22 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
 
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class HardPointWeaponSlot{
-   public static class Attachment{
-      @XStreamAsAttribute
-      public String AName;
+public class Workbook{
+   static public class Worksheet{
+      static public class Table{
+         static public class Row{
+            static public class Cell{
+               public String Data;
+            }
 
-      @XStreamAsAttribute
-      public String search;
+            @XStreamImplicit(itemFieldName = "Cell")
+            public List<Cell> cells;
+         }
+
+         @XStreamImplicit(itemFieldName = "Row")
+         public List<Row> rows;
+      }
+
+      public Table Table;
    }
 
-   @XStreamImplicit(itemFieldName = "Attachment")
-   public List<Attachment> attachments;
+   public Worksheet Worksheet;
 }

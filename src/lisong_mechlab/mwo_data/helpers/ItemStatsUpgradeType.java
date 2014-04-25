@@ -17,30 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
 
-import java.util.List;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-public class Workbook{
-   static public class Worksheet{
-      static public class Table{
-         static public class Row{
-            static public class Cell{
-               public String Data;
-            }
-
-            @XStreamImplicit(itemFieldName = "Cell")
-            public List<Cell> cells;
-         }
-
-         @XStreamImplicit(itemFieldName = "Row")
-         public List<Row> rows;
-      }
-
-      public Table Table;
+public class ItemStatsUpgradeType extends ItemStats{
+   public static class UpgradeTypeStatsTag{
+      @XStreamAsAttribute
+      public int    type;
+      @XStreamAsAttribute
+      public int    slots;
+      @XStreamAsAttribute
+      public double pointMultiplier;
+      @XStreamAsAttribute
+      public int    associatedItem;
    }
 
-   public Worksheet Worksheet;
+   public UpgradeTypeStatsTag UpgradeTypeStats;
 }

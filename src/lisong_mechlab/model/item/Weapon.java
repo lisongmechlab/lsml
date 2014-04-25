@@ -25,25 +25,37 @@ import java.util.regex.Pattern;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Weapon extends HeatSource{
    public static final int RANGE_ULP_FUZZ = 5;
 
+   @XStreamAsAttribute
    private final double    damagePerProjectile;
+   @XStreamAsAttribute
    private final double    cycleTime;
+   @XStreamAsAttribute
    private final double    rangeMin;
+   @XStreamAsAttribute
    private final double    rangeLong;
+   @XStreamAsAttribute
    private final double    rangeMax;
+   @XStreamAsAttribute
    private final int       ammoPerShot;
+   @XStreamAsAttribute
    private final int       projectilesPerShot;
+   @XStreamAsAttribute
    private final int       shotsPerFiring;
-
+   @XStreamAsAttribute
    private final int       ghostHeatGroupId;
+   @XStreamAsAttribute
    private final double    ghostHeatMultiplier;
+   @XStreamAsAttribute
    private final int       ghostHeatFreeAlpha;
-
+   @XStreamAsAttribute
    private final double    projectileSpeed;
 
    public Weapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType){

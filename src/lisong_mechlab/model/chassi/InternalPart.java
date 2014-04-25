@@ -29,13 +29,15 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.mwo_parsing.HardpointsXml;
-import lisong_mechlab.model.mwo_parsing.WeaponDoorSet;
-import lisong_mechlab.model.mwo_parsing.WeaponDoorSet.WeaponDoor;
-import lisong_mechlab.model.mwo_parsing.helpers.HardPointInfo;
-import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent;
-import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
+import lisong_mechlab.mwo_data.HardpointsXml;
+import lisong_mechlab.mwo_data.WeaponDoorSet;
+import lisong_mechlab.mwo_data.WeaponDoorSet.WeaponDoor;
+import lisong_mechlab.mwo_data.helpers.HardPointInfo;
+import lisong_mechlab.mwo_data.helpers.MdfComponent;
+import lisong_mechlab.mwo_data.helpers.MdfInternal;
 import lisong_mechlab.util.ArrayUtils;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class is a data structure representing an arbitrary internal part of the 'mech's structure.
@@ -45,14 +47,21 @@ import lisong_mechlab.util.ArrayUtils;
  * @author Emily Björk
  */
 public class InternalPart{
-   private final int             criticalslots;
+   @XStreamAsAttribute
    private final Part            type;
+   @XStreamAsAttribute
+   private final int             criticalslots;
+   @XStreamAsAttribute
    private final int             maxarmor;
+   @XStreamAsAttribute
    private final double          hitpoints;
+
+   @XStreamAsAttribute
+   // TODO: Make this computed
+   private final int             internalSlots;
+
    private final List<Item>      internals  = new ArrayList<Item>();
    private final List<HardPoint> hardpoints = new ArrayList<>();
-
-   private final int             internalSlots;
 
    /**
     * Constructs a new {@link InternalPart} from MWO data files that are parsed.

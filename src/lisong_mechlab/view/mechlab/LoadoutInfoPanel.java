@@ -52,6 +52,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.environment.Environment;
+import lisong_mechlab.model.environment.EnvironmentDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.metrics.AlphaStrike;
 import lisong_mechlab.model.metrics.AlphaTimeToOverHeat;
@@ -311,7 +312,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          add(heat);
 
          JPanel envPanel = new JPanel();
-         List<Environment> evs = new ArrayList<>(ProgramInit.ENVIRONMENT_DB.lookupAll());
+         List<Environment> evs = new ArrayList<>(EnvironmentDB.lookupAll());
          evs.add(0, new Environment("neutral", 0.0));
          environemnts = new JComboBox<>(evs.toArray(new Environment[evs.size()]));
          environemnts.addActionListener(new ActionListener(){

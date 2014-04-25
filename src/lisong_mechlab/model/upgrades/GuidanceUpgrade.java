@@ -26,7 +26,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
+import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 /**
  * This class models a guidance upgrade.

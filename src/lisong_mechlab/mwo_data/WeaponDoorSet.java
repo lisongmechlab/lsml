@@ -17,15 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data;
+
+import java.util.List;
+
+import lisong_mechlab.mwo_data.helpers.HardPointWeaponSlot.Attachment;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class MdfInternal{
+/**
+ * This class represents a WeaponDoorSet element in the data files.
+ * 
+ * @author Emily Björk
+ */
+public class WeaponDoorSet{
    @XStreamAsAttribute
-   public int    Slots;
-   @XStreamAsAttribute
-   public String Name;
-   @XStreamAsAttribute
-   public String Desc;
+   public int id;
+     
+   public class WeaponDoor{
+      @XStreamAsAttribute
+      double closedDamageFactor;
+
+      @XStreamAsAttribute
+      public String AName;
+      
+      @XStreamAsAttribute
+      double firingdelay;
+
+      @XStreamImplicit(itemFieldName = "Attachment")
+      public List<Attachment> attachments;
+   }
+
+   @XStreamImplicit(itemFieldName = "WeaponDoor")
+   public List<WeaponDoor> weaponDoors;
 }

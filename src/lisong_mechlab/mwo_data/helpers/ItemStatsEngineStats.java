@@ -17,15 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ItemStatsModuleStats{
+public class ItemStatsEngineStats{
    @XStreamAsAttribute
    public int    slots;
    @XStreamAsAttribute
-   public double tons;
+   public int    rating;
+   @XStreamAsAttribute
+   public double weight;
+   @XStreamAsAttribute
+   public int    type;
+   @XStreamAsAttribute
+   public int    heatsinks;
    @XStreamAsAttribute
    public int    health;
 }

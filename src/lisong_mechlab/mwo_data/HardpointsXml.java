@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing;
+package lisong_mechlab.mwo_data;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lisong_mechlab.model.mwo_parsing.helpers.HardPointInfo;
-import lisong_mechlab.model.mwo_parsing.helpers.HardPointWeaponSlot;
+import lisong_mechlab.mwo_data.helpers.HardPointInfo;
+import lisong_mechlab.mwo_data.helpers.HardPointWeaponSlot;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;

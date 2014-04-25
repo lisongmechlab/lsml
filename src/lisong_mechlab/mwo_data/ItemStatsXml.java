@@ -17,17 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing;
+package lisong_mechlab.mwo_data;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-import lisong_mechlab.converter.GameDataFile;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsMech;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.mwo_data.GameVFS.GameFile;
+import lisong_mechlab.mwo_data.helpers.ItemStatsMech;
+import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
+import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -47,11 +45,7 @@ public class ItemStatsXml{
    public List<ItemStatsModule>      ModuleList;
    public List<ItemStatsUpgradeType> UpgradeTypeList;
 
-   public final static ItemStatsXml  stats;
-
-   private ItemStatsXml(){}
-
-   private static ItemStatsXml fromXml(InputStream is){
+   public static ItemStatsXml fromXml(GameFile is){
       XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
          @Override
          protected MapperWrapper wrapMapper(MapperWrapper next){
@@ -76,15 +70,6 @@ public class ItemStatsXml{
       // Fixes for broken XML from PGI
       xstream.aliasAttribute("Ctype", "CType");
 
-      return (ItemStatsXml)xstream.fromXML(is);
-   }
-
-   static{
-      try{
-         stats = ItemStatsXml.fromXml(new GameDataFile().openGameFile(GameDataFile.ITEM_STATS_XML));
-      }
-      catch( IOException e ){
-         throw new RuntimeException(e);
-      }
+      return (ItemStatsXml)xstream.fromXML(is.stream);
    }
 }

@@ -17,39 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing;
+package lisong_mechlab.mwo_data;
 
 import java.io.InputStream;
 import java.util.List;
 
+import lisong_mechlab.mwo_data.helpers.MdfComponent;
+import lisong_mechlab.mwo_data.helpers.MdfInternal;
+import lisong_mechlab.mwo_data.helpers.MdfMech;
+import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
+
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
-/**
- * This class models the format of MechIdMap.xml from the game data files to facilitate easy parsing.
- * 
- * @author Emily
- */
-@XStreamAlias("MechIdMap")
-public class MechIdMap{
-   public class Mech {
-      @XStreamAsAttribute
-      public int baseID;
-      @XStreamAsAttribute
-      public int variantID;
-   }
-   
-   @XStreamImplicit(itemFieldName = "Mech")
-   public List<Mech>        MechIdMap;
-   private MechIdMap(){}
-   
-   public static MechIdMap fromXml(InputStream is){
-      XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
+public class MechDefinition{
+   @XStreamAsAttribute
+   public String             HardpointPath;
+   public MdfMech            Mech;
+   public List<MdfComponent> ComponentList;
+
+   public MdfMovementTuning  MovementTuningConfiguration;
+
+   public static MechDefinition fromXml(InputStream is){
+      XStream xstream = new XStream(new StaxDriver()){
          @Override
          protected MapperWrapper wrapMapper(MapperWrapper next){
             return new MapperWrapper(next){
@@ -64,7 +56,18 @@ public class MechIdMap{
          }
       };
       xstream.autodetectAnnotations(true);
-      xstream.alias("MechIdMap", MechIdMap.class);
-      return (MechIdMap)xstream.fromXML(is);
+      xstream.alias("MechDefinition", MechDefinition.class);
+      xstream.alias("Mech", MdfMech.class);
+      xstream.alias("Component", MdfComponent.class);
+      xstream.alias("Internal", MdfInternal.class);
+      xstream.alias("MovementTuningConfiguration", MdfMovementTuning.class);
+      return (MechDefinition)xstream.fromXML(is);
    }
+
+   // public static void main(String[] arg) throws IOException{
+   // GameDataFile dataFile = new GameDataFile();
+   // MechDefinition mechDef = MechDefinition.fromXml(dataFile.openGameFile(new File(GameDataFile.MDF_ROOT,
+   // "jenner/jr7-d.mdf")));
+   // System.out.println(mechDef);
+   // }
 }

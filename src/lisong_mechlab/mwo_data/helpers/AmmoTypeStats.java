@@ -17,17 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ItemStatsModule extends ItemStats{
+public class AmmoTypeStats{
    @XStreamAsAttribute
-   public String                 CType;
-
-   public ItemStatsModuleStats   ModuleStats;
-   public ItemStatsJumpJetStats  JumpJetStats;
-   public ItemStatsHeatSinkStats HeatSinkStats;
-   public ItemStatsEngineStats   EngineStats;
-   public AmmoTypeStats          AmmoTypeStats;
+   public String type;
+   @XStreamAsAttribute
+   public int    health;
+   @XStreamAsAttribute
+   public int    shotsPerTon;
+   @XStreamAsAttribute
+   public double internalDamage;
 }

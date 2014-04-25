@@ -20,19 +20,27 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.mwo_parsing.Localization;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStats;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.Localization;
+import lisong_mechlab.mwo_data.helpers.ItemStats;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Item implements Comparable<Item>{
    private final String        locName;
    private final String        locDesc;
+   @XStreamAsAttribute
    private final String        mwoName;
+   @XStreamAsAttribute
    private final int           mwoIdx;
 
+   @XStreamAsAttribute
    private final int           slots;
+   @XStreamAsAttribute
    private final double        tons;
+   @XStreamAsAttribute
    private final HardPointType hardpointType;
+   @XStreamAsAttribute
    private final int           health;
 
    public Item(ItemStats anItemStats, HardPointType aHardpointType, int aNumSlots, double aNumTons, int aHealth){

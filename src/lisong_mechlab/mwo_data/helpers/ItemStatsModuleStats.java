@@ -17,30 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.mwo_parsing.helpers;
+package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class MdfMovementTuning{
+public class ItemStatsModuleStats{
    @XStreamAsAttribute
-   public String MovementArchetype = "Huge";
+   public int    slots;
    @XStreamAsAttribute
-   public double MaxMovementSpeed;
+   public double tons;
    @XStreamAsAttribute
-   public double TorsoTurnSpeedYaw;
-   @XStreamAsAttribute
-   public double TorsoTurnSpeedPitch;
-   @XStreamAsAttribute
-   public double ArmTurnSpeedYaw;
-   @XStreamAsAttribute
-   public double ArmTurnSpeedPitch;
-   @XStreamAsAttribute
-   public double MaxTorsoAngleYaw;
-   @XStreamAsAttribute
-   public double MaxTorsoAnglePitch;
-   @XStreamAsAttribute
-   public double MaxArmRotationYaw;
-   @XStreamAsAttribute
-   public double MaxArmRotationPitch;
-
+   public int    health;
 }

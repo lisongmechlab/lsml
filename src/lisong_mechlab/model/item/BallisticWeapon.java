@@ -23,20 +23,24 @@ import java.util.Comparator;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import lisong_mechlab.util.GaussianDistribution;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 public class BallisticWeapon extends AmmoWeapon{
-   protected final double projectileSpeed;
+   @XStreamAsAttribute
    protected final double spread;
+   @XStreamAsAttribute
    protected final double jammingChance;
+   @XStreamAsAttribute
    protected final int    shotsduringcooldown;
+   @XStreamAsAttribute
    protected final double jammingTime;
 
    public BallisticWeapon(ItemStatsWeapon aStatsWeapon){
       super(aStatsWeapon, HardPointType.BALLISTIC);
-      projectileSpeed = aStatsWeapon.WeaponStats.speed;
       if( aStatsWeapon.WeaponStats.spread > 0 )
          spread = aStatsWeapon.WeaponStats.spread;
       else

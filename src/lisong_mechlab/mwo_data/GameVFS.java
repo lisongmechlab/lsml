@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.converter;
+package lisong_mechlab.mwo_data;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
@@ -51,7 +51,6 @@ import javax.swing.JOptionPane;
 
 import lisong_mechlab.util.OS;
 import lisong_mechlab.util.OS.WindowsVersion;
-import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.preferences.PreferenceStore;
 
 /**
@@ -59,30 +58,31 @@ import lisong_mechlab.view.preferences.PreferenceStore;
  * 
  * @author Emily Björk
  */
-public class GameDataFile{
-   public static final File      ITEM_STATS_XML = new File("Game/Libs/Items/ItemStats.xml");
+public class GameVFS{
+   public static final File      ITEM_STATS_XML  = new File("Game/Libs/Items/ItemStats.xml");
    public static final File      MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
-   public static final File      MDF_ROOT       = new File("Game/Objects/mechs/");
+   public static final File      MDF_ROOT        = new File("Game/Objects/mechs/");
 
-   private final Map<File, File> entryCache     = new HashMap<File, File>();
+   private final Map<File, File> entryCache      = new HashMap<File, File>();
    private static Path           gamePath;
 
-   public GameDataFile() throws IOException{
-      ProgramInit.setProcessText("Searching for game files:");
-      String gameDir = PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY);
+   public static class GameFile{
+      public final InputStream stream;
+      public final long        crc32;
+
+      GameFile(InputStream aStream, long aCrc32){
+         stream = aStream;
+         crc32 = aCrc32;
+      }
+   }
+
+   public GameVFS(String gameDir) throws IOException{
       if( isValidGameDirectory(new File(gameDir).toPath()) ){
          gamePath = new File(gameDir).toPath();
       }
       else{
-         Path p = findGameDirectory();
-         if( null != p ){
-            gamePath = p;
-         }
-         else
-            throw new FileNotFoundException("Couldn't find the game directory!");
+         throw new FileNotFoundException("Not a valid game directory!");
       }
-      PreferenceStore.setString(PreferenceStore.GAMEDIRECTORY_KEY, gamePath.toString());
-      ProgramInit.setProcessText("Parsing game files...");
    }
 
    /**
@@ -117,7 +117,7 @@ public class GameDataFile{
     * @throws IOException
     * @throws ZipException
     */
-   public InputStream openGameFile(File aPath) throws ZipException, IOException{
+   public GameFile openGameFile(File aPath) throws ZipException, IOException{
       // Cause of issue #118, we don't need this functionality atm so it is disabled until needed.
       // // Try finding a raw file
       // {
@@ -144,10 +144,9 @@ public class GameDataFile{
          }
       }
 
-      ZipFile zipFile = null;
       byte[] buffer = null;
-      try{
-         zipFile = new ZipFile(sourceArchive);
+      long crc32 = -1;
+      try( ZipFile zipFile = new ZipFile(sourceArchive) ){
 
          String archivePath = gamePath.relativize(sourceArchive.getParentFile().toPath()).relativize(aPath.toPath()).toString();
          // Fix windows...
@@ -163,6 +162,7 @@ public class GameDataFile{
          }
          int size = (int)entry.getSize();
          buffer = new byte[size];
+         crc32 = entry.getCrc();
          InputStream is = zipFile.getInputStream(entry);
          int bytesRead = 0;
          while( bytesRead < size ){
@@ -173,11 +173,7 @@ public class GameDataFile{
             bytesRead += res;
          }
       }
-      finally{
-         if( null != zipFile )
-            zipFile.close();
-      }
-      return new ByteArrayInputStream(buffer);
+      return new GameFile(new ByteArrayInputStream(buffer), crc32);
    }
 
    private void search(File aLocalPath, File aSearchRoot) throws IOException{
@@ -227,116 +223,155 @@ public class GameDataFile{
     *           The path to check.
     * @return <code>true</code> if <code>aPath</code> points to a valid game install, false otherwise.
     */
-   private boolean isValidGameDirectory(Path aPath){
+   private static boolean isValidGameDirectory(Path aPath){
       return (new File(aPath.toFile(), "Game/Objects.pak")).exists() && (new File(aPath.toFile(), "Bin32/MechWarriorOnline.exe")).exists();
    }
 
-   private Path findGameDirectory() throws IOException{
-      class GameFinder extends SimpleFileVisitor<Path>{
-         public Path gameRoot = null;
+   static private class GameFinder extends SimpleFileVisitor<Path>{
+      public Path gameRoot = null;
+      Set<String> skipList = new HashSet<>();
 
-         @Override
-         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs){
-            ProgramInit.setSubText(file.toString());
-            if( file.endsWith("Game/Objects.pak") ){
-               int answer = JOptionPane.showConfirmDialog(null, "Found the game files at: " + file.getParent().getParent().toString()
-                                                                + "\nIs this your primary game install?", "Confirm game directory",
-                                                          JOptionPane.YES_NO_OPTION);
+      GameFinder(){
+
+         if( OS.isWindowsOrNewer(WindowsVersion.WinOld) ){
+            skipList.add("windows");
+            skipList.add("users");
+            skipList.add("$recycle.bin");
+         }
+         else{
+            // Assuming unix based
+            skipList.add("/bin");
+            skipList.add("/boot");
+            skipList.add("/dev");
+            skipList.add("/etc");
+            skipList.add("/lib");
+            skipList.add("/lib64");
+            skipList.add("/proc");
+            skipList.add("/sys");
+            skipList.add("/run");
+            skipList.add("/sbin");
+            skipList.add("/tmp");
+         }
+      }
+
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs){
+         return SKIP_SUBTREE;
+      }
+
+      @Override
+      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
+         if( dir.getFileName() != null ){
+            if( OS.isWindowsOrNewer(WindowsVersion.WinOld) ){
+               // On windows we can skip some folders
+               if( skipList.contains(dir.getFileName().toString().toLowerCase()) )
+                  return SKIP_SUBTREE;
+            }
+            else{
+               if( skipList.contains(dir.toAbsolutePath().toString()) )
+                  return SKIP_SUBTREE;
+            }
+
+            if( isValidGameDirectory(dir) ){
+               int answer = JOptionPane.showConfirmDialog(null,
+                                                          "Found the game files at: " + dir.toString() + "\nIs this your primary game install?",
+                                                          "Confirm game directory", JOptionPane.YES_NO_OPTION);
                if( JOptionPane.YES_OPTION == answer ){
-                  gameRoot = file.getParent().getParent();
+                  gameRoot = dir;
                   return TERMINATE;
                }
             }
-            return CONTINUE;
          }
-
-         @Override
-         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
-            if( dir.getFileName() != null ){
-               if( OS.isWindowsOrNewer(WindowsVersion.WinOld) ){
-                  // On windows we can skip some folders
-                  Set<String> skipList = new HashSet<>();
-                  skipList.add("windows");
-                  skipList.add("users");
-                  if( skipList.contains(dir.getFileName().toString().toLowerCase()) )
-                     return SKIP_SUBTREE;
-               }
-               else{
-                  // Assume Unix, skip some folders
-                  Set<String> skipList = new HashSet<>();
-                  skipList.add("/bin");
-                  skipList.add("/boot");
-                  skipList.add("/dev");
-                  skipList.add("/etc");
-                  skipList.add("/lib");
-                  skipList.add("/lib64");
-                  skipList.add("/proc");
-                  skipList.add("/sys");
-                  skipList.add("/run");
-                  skipList.add("/sbin");
-                  skipList.add("/tmp");
-
-                  if( skipList.contains(dir.toAbsolutePath().toString()) )
-                     return SKIP_SUBTREE;
-               }
-            }
-            return CONTINUE;
-         }
-
-         @Override
-         public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException{
-            if( file.toFile().isDirectory() )
-               return SKIP_SUBTREE;
-            return CONTINUE;
-         }
+         return CONTINUE;
       }
+
+      @Override
+      public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException{
+         if( file.toFile().isDirectory() )
+            return SKIP_SUBTREE;
+         return CONTINUE;
+      }
+   }
+
+   // TODO: Move this out of the model package
+   public static void checkGameFilesInstalled(){
+      File storedGameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+      if( storedGameDir.isDirectory() && isValidGameDirectory(storedGameDir.toPath()) )
+         return;
 
       // Look for a quick exit in the default install directories.
       for(Path path : getDefaultGameFileLocations()){
          if( isValidGameDirectory(path) ){
-            return path;
+            PreferenceStore.setString(PreferenceStore.GAMEDIRECTORY_KEY, path.toAbsolutePath().toString());
+            return;
          }
       }
 
-      int answer = JOptionPane.showOptionDialog(null, "The game was not installed in any of the default locations.\nHow would you like to proceed?",
-                                                "Determining game install...", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                                                new String[] {"Automatic search", "Manual browse"}, null);
-      if( answer == 0 ){
-         // Walk all the file roots, or drives in windows
-         GameFinder finder = new GameFinder();
-         File[] roots = File.listRoots();
-         for(File root : roots){
-            // But only if they have enough space to hold the game install and enough space to be a usable disk (5 Mb)
-            if( root.getTotalSpace() > 1024 * 1024 * 1500 && root.getFreeSpace() > 1024 * 1024 * 5 ){
-               Files.walkFileTree(root.toPath(), finder);
-               if( null != finder.gameRoot ){
-                  return finder.gameRoot;
+      // Check bundled status only after looking for the easy locations.
+      if( true == Boolean.parseBoolean(PreferenceStore.getString(PreferenceStore.USEBUNDLED_DATA, "false")) ){
+         return;
+      }
+
+      while( true ){
+         int answer = JOptionPane.showOptionDialog(null, "The game was not installed in any of the default locations.\n"
+                                                         + "If you don't have a game install, LSML can use bundled data.\n"
+                                                         + "Be aware, the bundled data may be inaccurate if this is an old release.\n\n"
+                                                         + "How would you like to proceed?", "Determining game install...",
+                                                   JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[] {"Automatic search",
+                                                         "Manual browse", "I don't have a game install", "Close program"}, null);
+         if( answer == 0 ){
+            // Walk all the file roots, or drives in windows
+            GameFinder finder = new GameFinder();
+            File[] roots = File.listRoots();
+
+            for(File root : roots){
+               try{
+                  // But only if there's enough space for a game install and enough space to be a usable disk (5 Mb)
+                  if( root.getTotalSpace() > 1024 * 1024 * 1500 && root.getFreeSpace() > 1024 * 1024 * 5 ){
+                     Files.walkFileTree(root.toPath(), finder);
+                     if( null != finder.gameRoot ){
+                        PreferenceStore.setString(PreferenceStore.GAMEDIRECTORY_KEY, finder.gameRoot.toAbsolutePath().toString());
+                        return;
+                     }
+                  }
+               }
+               catch( IOException e ){
+                  // Ignore and continue search.
                }
             }
+            JOptionPane.showMessageDialog(null, "Automatic search failed to find a game install, please use manual browse.");
          }
-      }
-      else if( answer == 1 ){
-         JFileChooser fc = new JFileChooser();
-         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-         while( JFileChooser.APPROVE_OPTION == fc.showOpenDialog(null) ){
-            Path selectedPath = fc.getSelectedFile().toPath();
-            if( isValidGameDirectory(selectedPath) ){
-               return selectedPath;
+         else if( answer == 1 ){
+            JFileChooser fc = new JFileChooser();
+            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            while( JFileChooser.APPROVE_OPTION == fc.showOpenDialog(null) ){
+               Path selectedPath = fc.getSelectedFile().toPath();
+               if( isValidGameDirectory(selectedPath) ){
+                  PreferenceStore.setString(PreferenceStore.GAMEDIRECTORY_KEY, selectedPath.toAbsolutePath().toString());
+                  return;
+               }
+               int tryagain = JOptionPane.showConfirmDialog(null,
+                                                            "The selected folder doesn't contain a valid game install.\nWould you like to try again?",
+                                                            "Ooops!", JOptionPane.YES_NO_OPTION);
+               if( tryagain != JOptionPane.YES_OPTION )
+                  break;
             }
-            int tryagain = JOptionPane.showConfirmDialog(null,
-                                                         "The selected folder doesn't contain a valid game install.\nWould you like to try again?",
-                                                         "Ooops!", JOptionPane.YES_NO_OPTION);
-            if( tryagain != JOptionPane.YES_OPTION )
-               break;
+         }
+         else if( answer == 2 ){
+            PreferenceStore.setString(PreferenceStore.USEBUNDLED_DATA, Boolean.TRUE.toString());
+            return;
+         }
+         else{
+            System.exit(1);
+            return;
          }
       }
-      return null;
    }
 
    /**
     * @return A {@link List} of {@link Path}s that are likely to contain the game.
     */
-   private List<Path> getDefaultGameFileLocations(){
+   private static List<Path> getDefaultGameFileLocations(){
       List<Path> ans = new ArrayList<>();
       // Uses two variations one for x64 and one for x86
       ans.add(FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online"));
