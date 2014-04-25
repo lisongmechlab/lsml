@@ -51,13 +51,33 @@ public class PreferencesDialog extends JDialog{
       root.setLayout(new BoxLayout(root, BoxLayout.PAGE_AXIS));
       addAppearancePane(root);
       addUiPane(root);
-
+      addCorePane(root);
+      
       setContentPane(root);
       pack();
       setLocationRelativeTo(ProgramInit.lsml());
       setVisible(true);
    }
 
+   private void addCorePane(JPanel aRoot){
+      JPanel panel = new JPanel();
+      panel.setBorder(StyleManager.sectionBorder("LSML Core Settings"));
+
+      final JCheckBox useBundledData = new JCheckBox("Use bundled data", Boolean.parseBoolean(PreferenceStore.getString(PreferenceStore.USEBUNDLED_DATA, "false")));
+      useBundledData.setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
+      useBundledData.addActionListener(new AbstractAction(){
+         private static final long serialVersionUID = -8136020916897237506L;
+
+         @Override
+         public void actionPerformed(ActionEvent aArg0){
+            PreferenceStore.setString(PreferenceStore.USEBUNDLED_DATA, Boolean.toString(useBundledData.isSelected()));
+         }
+      });
+      panel.add(useBundledData);
+
+      aRoot.add(panel);
+   }
+   
    private void addUiPane(JPanel aRoot){
       JPanel panel = new JPanel();
       panel.setBorder(StyleManager.sectionBorder("UI Behavior"));
