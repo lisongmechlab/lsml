@@ -58,7 +58,7 @@ public class Item implements Comparable<Item>{
    public Item(String aNameTag, String aDesc, int aSlots, int aHealth){
       locName = Localization.key2string(aNameTag);
       locDesc = Localization.key2string(aDesc);
-      mwoName = "";
+      mwoName = aNameTag;
       mwoIdx = -1;
       health = aHealth;
 
