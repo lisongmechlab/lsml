@@ -78,6 +78,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
       try{
          InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/coderstats_v2.bin");
          in = new ObjectInputStream(is);
+         @SuppressWarnings("unchecked")
          Map<Integer, Integer> freqs = (Map<Integer, Integer>)in.readObject();
          huff = new Huffman1<Integer>(freqs, null);
 

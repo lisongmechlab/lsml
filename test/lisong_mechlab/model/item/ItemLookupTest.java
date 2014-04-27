@@ -25,17 +25,22 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 
 public class ItemLookupTest{
 
    /**
-    * The {@link ItemDB} should not contain internals!
+    * The {@link ItemDB} should only contain special internals
     */
    @Test
    public void testLookupInternals(){
-      assertEquals(0, ItemDB.lookup(Internal.class).size());
+      List<Internal> internals = ItemDB.lookup(Internal.class);
+
+      assertEquals(1, internals.size());
+      assertTrue(internals.remove(0).getKey().toLowerCase().equals("mdf_engine"));
+      assertTrue(internals.isEmpty());
    }
 
    @Test

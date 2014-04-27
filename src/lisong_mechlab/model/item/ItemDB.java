@@ -83,9 +83,11 @@ public class ItemDB{
    private static void put(Item anItem){
       assert anItem != null;
       assert (!locname2item.containsKey(anItem));
+      
       mwoname2item.put(canonize(anItem.getKey()), anItem);
       locname2item.put(canonize(anItem.getName()), anItem);
-      mwoidx2item.put(anItem.getMwoId(), anItem);
+      if( anItem.getMwoId() >= 0 )
+         mwoidx2item.put(anItem.getMwoId(), anItem);
    }
 
    private static String canonize(String aString){

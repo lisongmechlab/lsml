@@ -35,8 +35,11 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 
 public class InternalPartTest{
 
@@ -207,7 +210,10 @@ public class InternalPartTest{
 
    @Test
    public void testIsAllowed_Internals(){
-      Internal internal = new Internal("mdf_Engine", "mdf_EngineDesc", 1, 10);
+      Internal internal = Mockito.mock(Internal.class);
+      Mockito.when(internal.getNumCriticalSlots(Matchers.any(Upgrades.class))).thenReturn(1);
+      Mockito.when(internal.getMass(Matchers.any(Upgrades.class))).thenReturn(0.0);
+      Mockito.when(internal.getHardpointType()).thenReturn(HardPointType.NONE);
       for(Part part : Part.values()){
          InternalPart cut = chassi.getInternalPart(part);
          assertFalse(cut.isAllowed(internal));
