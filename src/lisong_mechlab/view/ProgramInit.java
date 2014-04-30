@@ -34,6 +34,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
+import com.sun.jna.WString;
+
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.environment.EnvironmentDB;
 import lisong_mechlab.model.item.ItemDB;
@@ -42,10 +46,6 @@ import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.mwo_data.GameVFS;
 import lisong_mechlab.util.OS;
-
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.WString;
 
 /**
  * This class handles the initial program startup. Things that need to be done before the {@link LSML} instance is

@@ -3,7 +3,7 @@ Li Song Mechlab
 Li Song Mechlab (LSML) is a tool for building mech configurations for PGI's MechWarrior: Online. 
 
 Download & Install
---------
+------------------
 Download a release installer from:
     
     http://li-soft.org
@@ -17,7 +17,7 @@ But be aware that without running the installer, the required registry keys for 
 Requirements
 ------------
 * Java 7 or later (http://java.com/en/download/index.jsp)
-* MW:O must be installed on your computer
+(Note: An up-to-date game install will be used to update program data if found)
 
 Support, Bugs, Improvements
 ------------------

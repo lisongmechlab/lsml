@@ -25,6 +25,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import javax.swing.Action;
 import javax.swing.JFileChooser;
@@ -57,7 +61,6 @@ import lisong_mechlab.view.preferences.Preferences;
  */
 public class LSML extends JFrame{
    public static final String      PROGRAM_FNAME          = "Li Song Mechlab ";
-   public static final String      VERSION_STRING         = "1.5.0";
    private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
    private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter(){
                                                              @Override
@@ -89,8 +92,28 @@ public class LSML extends JFrame{
    private LsmlProtocolIPC         lsmlProtocolIPC;
    private MechGarage              garage;
 
+   public static String getVersion(){
+      Class<?> clazz = LSML.class;
+      String className = clazz.getSimpleName() + ".class";
+      String classPath = clazz.getResource(className).toString();
+      if( !classPath.startsWith("jar") ){
+         // Class not from JAR
+         return "(develop)";
+      }
+      String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+      try( InputStream stream = new URL(manifestPath).openStream() ){
+         Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+         Attributes attr = manifest.getMainAttributes();
+         String value = attr.getValue("Implementation-Version");
+         return value;
+      }
+      catch( IOException e ){
+          return "(develop)";
+      }
+   }
+
    public LSML(){
-      super(PROGRAM_FNAME + VERSION_STRING);
+      super(PROGRAM_FNAME + getVersion());
       final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
       setIconImage(ProgramInit.programIcon);
       setSize((int)(screenSize.width * 0.9), (int)(screenSize.height * 0.9));
@@ -128,7 +151,7 @@ public class LSML extends JFrame{
       setupKeybindings();
 
       openLastGarage();
-      
+
       ToolTipManager.sharedInstance().setDismissDelay(60000);
    }
 
