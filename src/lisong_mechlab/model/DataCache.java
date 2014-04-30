@@ -158,7 +158,7 @@ public class DataCache{
             // We have a local cache file, lets see if it's usable.
             try{
                cached = (DataCache)stream.fromXML(dataCacheFile);
-               if( !cached.lsmlVersion.equals(LSML.VERSION_STRING) ){
+               if( !cached.lsmlVersion.equals(LSML.getVersion()) ){
                   // It's from a different LSML version, it's not safe to use it.
                   dataCacheFile.delete(); // No use in keeping it around
                   cached = null;
@@ -211,7 +211,7 @@ public class DataCache{
             }
             InputStream is = DataCache.class.getResourceAsStream("/resources/bundleDataCache.xml");
             cached = (DataCache)stream.fromXML(is); // Let this throw as this is fatal.
-            if( !cached.lsmlVersion.equals(LSML.VERSION_STRING) ){
+            if( !cached.lsmlVersion.equals(LSML.getVersion()) ){
                // It's from a different LSML version, it's not safe to use it.
                throw new RuntimeException("Bundled data cache not udpated!");
             }
@@ -296,7 +296,7 @@ public class DataCache{
       ItemStatsXml itemStatsXml = ItemStatsXml.fromXml(aItemStatsXmlFile);
 
       DataCache dataCache = new DataCache();
-      dataCache.lsmlVersion = LSML.VERSION_STRING;
+      dataCache.lsmlVersion = LSML.getVersion();
       dataCache.itemStatsCrc = aItemStatsXmlFile.crc32;
       dataCache.items = Collections.unmodifiableList(parseItems(itemStatsXml));
       dataCache.chassis = Collections.unmodifiableList(parseChassis(aGameVfs, itemStatsXml));

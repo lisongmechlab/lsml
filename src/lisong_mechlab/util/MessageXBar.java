@@ -49,7 +49,7 @@ public class MessageXBar{
     * 
     * @author Emily Björk
     */
-   public interface Reader{
+   public static interface Reader{
       void receive(Message aMsg);
    }
 
@@ -58,7 +58,7 @@ public class MessageXBar{
     * 
     * @author Emily Björk
     */
-   public interface Message{
+   public static interface Message{
       /**
        * Checks if this message is related to a specific {@link Loadout}.
        * 
