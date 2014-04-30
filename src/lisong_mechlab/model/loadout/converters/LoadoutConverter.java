@@ -20,15 +20,15 @@
 package lisong_mechlab.model.loadout.converters;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.RenameOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
+import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
-import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceOperation;
+import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -78,7 +78,7 @@ public class LoadoutConverter implements Converter{
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
       String chassiVariation = aReader.getAttribute("chassi");
       String name = aReader.getAttribute("name");
-      Chassi chassi = ChassiDB.lookup(chassiVariation);
+      Chassis chassi = ChassiDB.lookup(chassiVariation);
 
       OperationStack stack = new OperationStack(0);
 
@@ -89,9 +89,9 @@ public class LoadoutConverter implements Converter{
          aReader.moveDown();
          if( "upgrades".equals(aReader.getNodeName()) ){
             Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
-            stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, upgrades.getGuidance()));
+            stack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, upgrades.getGuidance()));
             stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, upgrades.getHeatSink()));
-            stack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, upgrades.getStructure()));
+            stack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, upgrades.getStructure()));
             stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, upgrades.getArmor()));
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){

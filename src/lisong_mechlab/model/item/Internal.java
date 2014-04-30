@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
+import lisong_mechlab.mwo_data.helpers.MdfInternal;
 
 /**
  * Internals are special items that do not exist in the ItemDB. Instead they are created and owned by the chassii.
@@ -33,5 +33,9 @@ public class Internal extends Item{
 
    public Internal(String aNameTag, String aDescTag, int aSlots){
       super(aNameTag, aDescTag, aSlots, 0);
+   }
+   
+   public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth){
+      super(aNameTag, aDescTag, aSlots, aHealth);
    }
 }

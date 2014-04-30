@@ -24,16 +24,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 public class EnergyWeapon extends Weapon{
    protected final double burnTime;
    protected final double zeroRange;
 
    public EnergyWeapon(ItemStatsWeapon aStatsWeapon){
-      super(aStatsWeapon, HardpointType.ENERGY);
+      super(aStatsWeapon, HardPointType.ENERGY);
       if( aStatsWeapon.WeaponStats.duration < 0 )
          burnTime = Double.POSITIVE_INFINITY;
       else

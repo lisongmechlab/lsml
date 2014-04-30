@@ -19,14 +19,14 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
+import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 /**
  * This class models a guidance upgrade.
@@ -149,7 +149,7 @@ public class GuidanceUpgrade extends Upgrade{
     * @return An {@link Ammunition} object of the appropriate type for this guidance.
     */
    public Ammunition upgrade(Ammunition aOldAmmo){
-      if( aOldAmmo.getWeaponHardpointType() != HardpointType.MISSILE ){
+      if( aOldAmmo.getWeaponHardpointType() != HardPointType.MISSILE ){
          return aOldAmmo;
       }
 

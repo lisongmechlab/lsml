@@ -19,11 +19,25 @@
 //@formatter:on
 package lisong_mechlab.view.preferences;
 
+import lisong_mechlab.util.MessageXBar;
+
 /**
  * This class is a container class for all the individual preferences classes.
  * 
  * @author Li Song
  */
 public class Preferences{
-   public FontPreferences fontPreferences = new FontPreferences();
+   public final FontPreferences   fontPreferences   = new FontPreferences();
+   public final SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
+   public final UiPreferences     uiPreferences;
+
+   /**
+    * Creates a new preferences object.
+    * 
+    * @param aXBar
+    *           The {@link MessageXBar} to send notifications of preference changes on.
+    */
+   public Preferences(MessageXBar aXBar){
+      uiPreferences = new UiPreferences(aXBar);
+   }
 }

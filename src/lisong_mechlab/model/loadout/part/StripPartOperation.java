@@ -28,7 +28,7 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} will remove all items and armor of this component.
+ * This {@link Operation} will remove all items and armor on this component.
  * 
  * @author Li Song
  */
@@ -55,11 +55,11 @@ public class StripPartOperation extends CompositeOperation{
          }
       }
       if( aLoadoutPart.getInternalPart().getType().isTwoSided() ){
-         addOp(new SetArmorOperation(anXBar, aLoadoutPart, ArmorSide.FRONT, 0));
-         addOp(new SetArmorOperation(anXBar, aLoadoutPart, ArmorSide.BACK, 0));
+         addOp(new SetArmorOperation(anXBar, aLoadoutPart, ArmorSide.FRONT, 0, false));
+         addOp(new SetArmorOperation(anXBar, aLoadoutPart, ArmorSide.BACK, 0, false));
       }
       else{
-         addOp(new SetArmorOperation(anXBar, aLoadoutPart, ArmorSide.ONLY, 0));
+         addOp(new SetArmorOperation(anXBar, aLoadoutPart, ArmorSide.ONLY, 0, false));
       }
    }
 }

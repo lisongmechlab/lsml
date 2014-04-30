@@ -27,7 +27,7 @@ import java.util.List;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
@@ -67,19 +67,19 @@ public class LoadStockOperationTest{
    @Test
    public void testNotEmpty() throws Exception{
       // Setup
-      Chassi chassi = ChassiDB.lookup("JR7-F");
+      Chassis chassi = ChassiDB.lookup("JR7-F");
       Loadout loadout = new Loadout(chassi, xBar);
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
 
       assertTrue(loadout.getMass() > 34.9);
       
       // Execute
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
    }
 
    public Object[] allChassis(){
-      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
@@ -95,13 +95,13 @@ public class LoadStockOperationTest{
     */
    @Test
    @Parameters(method = "allChassis")
-   public void testApply(Chassi aChassi) throws Exception{
+   public void testApply(Chassis aChassi) throws Exception{
       // Setup
       Loadout loadout = new Loadout(aChassi, xBar);
 
       // Execute
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(aChassi, loadout, xBar));
 
       // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full armor?!)
       assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
@@ -124,7 +124,7 @@ public class LoadStockOperationTest{
 
       // Execute
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(loadout.getChassi(), loadout, xBar));
 
       assertTrue(loadout.getPart(Part.LeftTorso).getItems().contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
    }
@@ -137,11 +137,11 @@ public class LoadStockOperationTest{
    @Test
    public void testUndo() throws Exception{
       // Setup
-      Chassi chassi = ChassiDB.lookup("JR7-F");
+      Chassis chassi = ChassiDB.lookup("JR7-F");
       Loadout reference = new Loadout(chassi, xBar);
       Loadout loadout = new Loadout(chassi, xBar);
       OperationStack opstack = new OperationStack(1);
-      opstack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      opstack.pushAndApply(new LoadStockOperation(loadout.getChassi(), loadout, xBar));
 
       // Execute
       opstack.undo();

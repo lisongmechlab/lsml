@@ -19,24 +19,30 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class AmmoWeapon extends Weapon{
-   private final Ammunition ammoType;
+   @XStreamAsAttribute
+   private final String         ammoTypeId;
+   private transient Ammunition ammoType;
 
-   public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType){
-      super(aStatsWeapon, aHardpointType);
-      ammoType = (Ammunition)ItemDB.lookup(aStatsWeapon.WeaponStats.ammoType); // MWO Name
+   public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType){
+      this(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.ammoType);
    }
    
-   public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardpointType aHardpointType, Ammunition anAmmoType){
+   public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType, String aAmmoType){
       super(aStatsWeapon, aHardpointType);
-      ammoType = anAmmoType;
+      ammoTypeId = aAmmoType;
    }
-   
+
    public Ammunition getAmmoType(Upgrades aUpgrades){
+      if( ammoType == null ){
+         ammoType = (Ammunition)ItemDB.lookup(ammoTypeId);
+      }
       if( aUpgrades == null )
          return ammoType;
       return ammoType;

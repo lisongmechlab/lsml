@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
+import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 /**
  * Represents an upgrade to a 'mechs armor.
@@ -34,7 +34,7 @@ public class ArmorUpgrade extends Upgrade{
       super(aUpgradeType);
       slots = aUpgradeType.UpgradeTypeStats.slots;
       armorPerTon = aUpgradeType.UpgradeTypeStats.pointMultiplier * 16;
-      //(LoadoutPart.ARMOR_PER_TON * (loadoutPart.getLoadout().getUpgrades().hasFerroFibrous() ? 1.12 : 1));
+      // (LoadoutPart.ARMOR_PER_TON * (loadoutPart.getLoadout().getUpgrades().hasFerroFibrous() ? 1.12 : 1));
    }
 
    /**

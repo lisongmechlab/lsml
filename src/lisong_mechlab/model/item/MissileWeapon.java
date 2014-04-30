@@ -21,13 +21,12 @@ package lisong_mechlab.model.item;
 
 import java.util.Comparator;
 
-import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 public class MissileWeapon extends AmmoWeapon{
    protected final double flightSpeed;
@@ -35,7 +34,7 @@ public class MissileWeapon extends AmmoWeapon{
    private final int      baseItemId;
 
    public MissileWeapon(ItemStatsWeapon aStatsWeapon, int aBaseItemId){
-      super(aStatsWeapon, HardpointType.MISSILE, getAmmoType(aStatsWeapon));
+      super(aStatsWeapon, HardPointType.MISSILE, getAmmoType(aStatsWeapon));
       flightSpeed = aStatsWeapon.WeaponStats.speed;
 
       if( null != aStatsWeapon.Artemis )
@@ -43,11 +42,11 @@ public class MissileWeapon extends AmmoWeapon{
       else
          requiredGuidancetype = -1;
 
-      baseItemId = aBaseItemId == -1 ? (isArtemisCapable() ? getMwoIdx() : -1) : aBaseItemId;
+      baseItemId = aBaseItemId == -1 ? (isArtemisCapable() ? getMwoId() : -1) : aBaseItemId;
    }
 
-   static private Ammunition getAmmoType(ItemStatsWeapon aStatsWeapon){
-      Ammunition regularAmmo = (Ammunition)ItemDB.lookup(aStatsWeapon.WeaponStats.ammoType);
+   static private String getAmmoType(ItemStatsWeapon aStatsWeapon){
+      String regularAmmo = aStatsWeapon.WeaponStats.ammoType;
       if( aStatsWeapon.WeaponStats.artemisAmmoType == null )
          return regularAmmo;
 
@@ -56,7 +55,7 @@ public class MissileWeapon extends AmmoWeapon{
 
       if( aStatsWeapon.Artemis.RestrictedTo == 3051 ) // No artemis
          return regularAmmo;
-      return (Ammunition)ItemDB.lookup(aStatsWeapon.WeaponStats.artemisAmmoType);
+      return aStatsWeapon.WeaponStats.artemisAmmoType;
    }
 
    @Override
@@ -72,11 +71,11 @@ public class MissileWeapon extends AmmoWeapon{
    }
 
    @Override
-   public boolean isEquippableOn(Loadout aLoadout){
+   public boolean isCompatible(Upgrades aUpgrades){
       if( isArtemisCapable() ){
-         return aLoadout.getUpgrades().getGuidance().getMwoId() == requiredGuidancetype;
+         return aUpgrades.getGuidance().getMwoId() == requiredGuidancetype;
       }
-      return super.isEquippableOn(aLoadout);
+      return super.isCompatible(aUpgrades);
    }
 
    @Override

@@ -31,17 +31,20 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.preferences.Preferences;
 
 public class GarageTreeModel implements TreeModel, InternalFrameListener{
    private final List<TreeModelListener>                     listeners = new ArrayList<TreeModelListener>();
    private final DefaultTreeCathegory<AbstractTreeCathegory> root;
+   private final Preferences                                 preferences;
 
-   public GarageTreeModel(MessageXBar xBar, JTextField aFilterBar, GarageTree aGarageTree){
+   public GarageTreeModel(MessageXBar xBar, JTextField aFilterBar, GarageTree aGarageTree, Preferences aPreferences){
       root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
+      preferences = aPreferences;
 
       DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
 
@@ -55,19 +58,21 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
 
       // Chassii
       for(final ChassiClass chassiClass : ChassiClass.values()){
-         DefaultTreeCathegory<Chassi> chassiiSub = new FilterTreeCathegory<Chassi>(chassiClass.toString(), chassii, this, aFilterBar, aGarageTree){
+         DefaultTreeCathegory<Chassis> chassiiSub = new FilterTreeCathegory<Chassis>(xBar, chassiClass.toString(), chassii, this, aFilterBar, aGarageTree){
             @Override
-            protected boolean filter(Chassi c){
+            protected boolean filter(Chassis c){
+               if(preferences.uiPreferences.getHideSpecialMechs() && c.getVariantType().isVariation())
+                  return false;
                return c.getName().toLowerCase().contains(getFilterString());
             }
          };
 
-         for(Chassi chassi : ChassiDB.lookup(chassiClass)){
+         for(Chassis chassi : ChassiDB.lookup(chassiClass)){
             chassiiSub.addChild(chassi);
          }
-         chassiiSub.sort(new Comparator<Chassi>(){
+         chassiiSub.sort(new Comparator<Chassis>(){
             @Override
-            public int compare(Chassi aO1, Chassi aO2){
+            public int compare(Chassis aO1, Chassis aO2){
                return aO1.getNameShort().compareTo(aO2.getNameShort());
             }
          });

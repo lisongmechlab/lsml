@@ -34,11 +34,11 @@ public class StripArmorOperation extends LoadoutOperation{
       super(aLoadout, anXBar, "strip armor");
       for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
          if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, 0));
-            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, 0));
+            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, 0, true));
+            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, 0, true));
          }
          else{
-            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, 0));
+            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, 0, true));
          }
       }
    }

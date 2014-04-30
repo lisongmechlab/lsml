@@ -89,6 +89,11 @@ public class MechGarage{
       public boolean isForMe(Loadout aLoadout){
          return aLoadout == loadout;
       }
+
+      @Override
+      public boolean affectsHeatOrDamage(){
+         return false;
+      }
    }
 
    private final List<Loadout>   mechs = new ArrayList<Loadout>();

@@ -19,20 +19,21 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import lisong_mechlab.converter.GameDataFile;
-import lisong_mechlab.model.mwo_parsing.ItemStatsXml;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsMech;
+import lisong_mechlab.model.DataCache;
 
 public class ChassiDB{
-   static private final Map<String, Chassi>       variation2chassi;
-   static private final Map<String, List<Chassi>> series2chassi;
-   static private final Map<Integer, Chassi>      id2chassi;
+   static private final Map<String, Chassis>        name2chassi;
+   static private final Map<String, List<Chassis>>  series2chassi;
+   static private final Map<Integer, Chassis>       id2chassi;
+   static private final Map<Integer, List<Chassis>> chassis2variant;
 
    /**
     * Looks up a chassis by a short name such as "AS7-D-DC"
@@ -40,38 +41,47 @@ public class ChassiDB{
     * @param aShortName
     * @return The chassis that matches the lookup string.
     */
-   static public Chassi lookup(String aShortName){
+   public static Chassis lookup(String aShortName){
       String keyShortName = canonize(aShortName);
-      if( !variation2chassi.containsKey(keyShortName) ){
+      if( !name2chassi.containsKey(keyShortName) ){
          if( keyShortName.contains("muro") ){
             return lookup("CTF-IM");
          }
          throw new IllegalArgumentException("No chassi variation named: " + aShortName + " !");
       }
-      return variation2chassi.get(keyShortName);
+      return name2chassi.get(keyShortName);
    }
 
-   public static Chassi lookup(int aChassiId){
+   public static Chassis lookup(int aChassiId){
       return id2chassi.get(aChassiId);
+   }
+
+   /**
+    * @param aChassis
+    *           A {@link Chassis} to get variations for.
+    * @return A {@link List} of all variants of this chassis (normal, champion, phoenix etc)
+    */
+   public static Collection<Chassis> lookupVariations(Chassis aChassis){
+      return chassis2variant.get(aChassis.getMwoId());
    }
 
    /**
     * Looks up all chassis of the given chassis class.
     * 
     * @param aChassiClass
-    * @return An {@link List} of all {@link Chassi} with the given {@link ChassiClass}.
+    * @return An {@link List} of all {@link Chassis} with the given {@link ChassiClass}.
     */
-   static public List<Chassi> lookup(ChassiClass aChassiClass){
-      List<Chassi> chassii = new ArrayList<>(4 * 4);
-      for(Chassi variation : variation2chassi.values()){
-         if( variation.getChassiClass() == aChassiClass && !chassii.contains(variation) ){
-            chassii.add(variation);
+   public static Collection<Chassis> lookup(ChassiClass aChassiClass){
+      List<Chassis> chassii = new ArrayList<>(4 * 4);
+      for(Chassis chassis : name2chassi.values()){
+         if( chassis.getChassiClass() == aChassiClass && !chassii.contains(chassis) ){
+            chassii.add(chassis);
          }
       }
       return chassii;
    }
 
-   public static List<Chassi> lookupSeries(String aSeries){
+   public static Collection<Chassis> lookupSeries(String aSeries){
       String keyShortName = canonize(aSeries);
       if( !series2chassi.containsKey(keyShortName) ){
          throw new IllegalArgumentException("No chassi variation by that name!");
@@ -79,43 +89,60 @@ public class ChassiDB{
       return series2chassi.get(keyShortName);
    }
 
+   private static void addToVariationDb(int aBaseID, Chassis aChassis){
+      if( aBaseID < 0 ){
+         aBaseID = aChassis.getMwoId();
+      }
+
+      List<Chassis> list = chassis2variant.get(aBaseID);
+      if( null == list ){
+         list = new ArrayList<>();
+         chassis2variant.put(aBaseID, list);
+      }
+      if( aBaseID != aChassis.getMwoId() ){
+         chassis2variant.put(aChassis.getMwoId(), list);
+      }
+
+      list.add(aChassis);
+   }
+
    static private String canonize(String aName){
       return aName.toLowerCase().trim();
    }
 
+   /**
+    * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
+    * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
+    */
    static{
-      GameDataFile gameData;
+      DataCache dataCache;
       try{
-         gameData = new GameDataFile();
+         dataCache = DataCache.getInstance();
       }
-      catch( Exception e ){
-         throw new RuntimeException("Unable to parse game data files!");
+      catch( IOException e ){
+         throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
       }
 
-      variation2chassi = new HashMap<>();
+      name2chassi = new HashMap<>();
       series2chassi = new HashMap<>();
       id2chassi = new TreeMap<>();
+      chassis2variant = new HashMap<>();
 
-      ItemStatsXml statsXml = ItemStatsXml.stats;
-      for(ItemStatsMech mech : statsXml.MechList){
-         final Chassi chassi = new Chassi(mech, gameData);
-         final String model = canonize(chassi.getName());
-         final String modelShort = canonize(chassi.getNameShort());
+      for(Chassis chassis : dataCache.getChassis()){
+         final String model = canonize(chassis.getName());
+         final String modelShort = canonize(chassis.getNameShort());
 
-         variation2chassi.put(modelShort, chassi);
-         variation2chassi.put(model, chassi);
-         id2chassi.put(chassi.getMwoId(), chassi);
+         addToVariationDb(chassis.getBaseVariantId(), chassis);
+         name2chassi.put(modelShort, chassis);
+         name2chassi.put(model, chassis);
+         id2chassi.put(chassis.getMwoId(), chassis);
 
-         // Figure out the name of the series and add to series list
-         String[] mdfsplit = mech.mdf.split("\\\\");
-         String series = mdfsplit[1];
-         String seriesShort = mech.name.split("-")[0];
-         if( !series2chassi.containsKey(series) ){
-            List<Chassi> chassilist = new ArrayList<>();
-            series2chassi.put(series, chassilist);
-            series2chassi.put(seriesShort, chassilist);
+         if( !series2chassi.containsKey(chassis.getSeriesName()) ){
+            List<Chassis> chassilist = new ArrayList<>();
+            series2chassi.put(chassis.getSeriesName(), chassilist);
+            series2chassi.put(chassis.getSeriesNameShort(), chassilist);
          }
-         series2chassi.get(seriesShort).add(chassi);
+         series2chassi.get(chassis.getSeriesNameShort()).add(chassis);
       }
    }
 }

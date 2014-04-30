@@ -22,21 +22,25 @@ package lisong_mechlab.model.item;
 import java.util.Comparator;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import lisong_mechlab.util.GaussianDistribution;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 public class BallisticWeapon extends AmmoWeapon{
-   protected final double projectileSpeed;
+   @XStreamAsAttribute
    protected final double spread;
+   @XStreamAsAttribute
    protected final double jammingChance;
+   @XStreamAsAttribute
    protected final int    shotsduringcooldown;
+   @XStreamAsAttribute
    protected final double jammingTime;
 
    public BallisticWeapon(ItemStatsWeapon aStatsWeapon){
-      super(aStatsWeapon, HardpointType.BALLISTIC);
-      projectileSpeed = aStatsWeapon.WeaponStats.speed;
+      super(aStatsWeapon, HardPointType.BALLISTIC);
       if( aStatsWeapon.WeaponStats.spread > 0 )
          spread = aStatsWeapon.WeaponStats.spread;
       else
@@ -76,7 +80,7 @@ public class BallisticWeapon extends AmmoWeapon{
       if( canDoubleFire() ){
          return (1.0 - jammingChance) * getCycleTime(aEfficiencies) / (1 + shotsduringcooldown) + jammingChance * jammingTime;
       }
-      if( getMwoIdx() == 1021 ){ // Gauss rifle
+      if( getMwoId() == 1021 ){ // Gauss rifle
          return getCycleTime(aEfficiencies) + 0.75; // TODO: Fix this when they add the charge time to the itemstats.xml
       }
       return getCycleTime(aEfficiencies);

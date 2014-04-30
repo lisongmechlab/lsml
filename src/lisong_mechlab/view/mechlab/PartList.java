@@ -26,6 +26,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,24 +42,37 @@ import javax.swing.SwingUtilities;
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
 import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.metrics.CriticalItemDamage;
+import lisong_mechlab.model.metrics.CriticalStrikeProbability;
+import lisong_mechlab.model.metrics.ItemEffectiveHP;
+import lisong_mechlab.model.metrics.helpers.ComponentDestructionSimulator;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.ItemTransferHandler;
+import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
-   private static final long            serialVersionUID = 5995694414450060827L;
-   private final LoadoutPart            part;
-   private final DynamicSlotDistributor slotDistributor;
-   private OperationStack               opStack;
+   private static final long                   serialVersionUID = 5995694414450060827L;
+   private final LoadoutPart                   part;
+   private final DynamicSlotDistributor        slotDistributor;
+   private OperationStack                      opStack;
+
+   private final DecimalFormat                 df               = new DecimalFormat("###.#");
+   private final DecimalFormat                 df2              = new DecimalFormat("###.##");
+   private final ItemEffectiveHP               effectiveHP;
+   private final CriticalStrikeProbability     criticalStrikeProbability;
+
+   private final ComponentDestructionSimulator cds;
 
    private enum ListEntryType{
       Empty, MultiSlot, Item, EngineHeatSink, LastSlot
@@ -66,6 +80,48 @@ public class PartList extends JList<Item>{
 
    private class Renderer extends JLabel implements ListCellRenderer<Object>{
       private static final long serialVersionUID = -8157859670319431469L;
+
+      void setTooltipForItem(Item aItem){
+         if( aItem instanceof Internal ){
+            setToolTipText("");
+            return;
+         }
+
+         StringBuilder sb = new StringBuilder();
+
+         sb.append("<html>");
+         sb.append("<b>");
+         sb.append(aItem.getName());
+         if( !aItem.getName().equals(aItem.getShortName(null)) ){
+            sb.append(" (").append(aItem.getShortName(null)).append(")");
+         }
+         sb.append("</b>");
+
+         sb.append("<table width=\"100%\" cellspacing=\"1\" border=\"0\" cellpadding=\"0\">");
+         sb.append("<tr><td width=\"30%\">Critical hit:</td><td> ").append(df.format(100 * criticalStrikeProbability.calculate(aItem))).append("%</td></tr>");
+         sb.append("<tr><td>Destroyed:</td><td> ").append(df2.format(100 * cds.getProbabilityOfDestruction(aItem))).append("%</td></tr>");
+         sb.append("<tr><td>HP:</td><td> ").append(aItem.getHealth()).append("</td></tr>");
+         sb.append("<tr><td>SIE-HP:</td><td> ").append(df.format(effectiveHP.calculate(aItem))).append("</td></tr>");
+         sb.append("</table>");
+         sb.append("<br/>");
+
+         sb.append("<div style='width:300px'>")
+           .append("<p>")
+           .append("<b>Critical hit</b> is the probability that a shot on this component's internal structure will deal damage to this item. "
+                         + "When other items break, the crit % increases as it's more likely this item will be hit. "
+                         + "If the weapon dealing damage does equal to or more damage than the HP of this item, it will break in one shot.")
+           .append("</p><p>")
+           .append("<b>Destroyed</b> is the probability that this item will be destroyed before the component is destroyed. "
+                         + "A high value indicates that the item is poorly buffered and can be expected to be lost soon after the internal structure is exposed. "
+                         + "A low value means that the item is likely to survive until the component is completely destroyed.").append("</p><p>")
+           .append("<b>SIE-HP</b> is the Statistical, Infinitesmal Effective-HP of this component. Under the assumption that damage is ")
+           .append("applied in small chunks (lasers) this is how much damage the component can take before this item breaks on average. "
+                         + "For MG, LB 10-X AC and flamers this is lower as they have higher chance to crit and higher crit multiplier.")
+           .append("</p>").append("</div>");
+
+         sb.append("</html>");
+         setToolTipText(sb.toString());
+      }
 
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus){
@@ -76,13 +132,14 @@ public class PartList extends JList<Item>{
 
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(index);
          setBorder(BorderFactory.createEmptyBorder());
+         Item item = pair.second;
          switch( pair.first ){
             case Empty:{
-               if( isDynArmor(index) ){
+               if( isDynArmor(index + ((Model)getModel()).compactCompensationSlots) ){
                   StyleManager.styleDynamicEntry(this);
                   setText(Model.DYN_ARMOR);
                }
-               else if( isDynStructure(index) ){
+               else if( isDynStructure(index + ((Model)getModel()).compactCompensationSlots) ){
                   StyleManager.styleDynamicEntry(this);
                   setText(Model.DYN_STRUCT);
                }
@@ -90,32 +147,47 @@ public class PartList extends JList<Item>{
                   StyleManager.styleItem(this);
                   setText(Model.EMPTY);
                }
+               setToolTipText("");
                break;
             }
             case Item:{
-               Item item = pair.second;
-               setText(item.getName());
-               if( item.getNumCriticalSlots(null) == 1 ){
-                  StyleManager.styleItem(this, pair.second);
+               setTooltipForItem(item);
+               if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+                  setText(item.getShortName(null));
                }
                else{
-                  StyleManager.styleItemTop(this, pair.second);
+                  setText(item.getName(null));
+               }
+
+               if( item.getNumCriticalSlots(null) == 1 ){
+                  StyleManager.styleItem(this, item);
+               }
+               else{
+                  StyleManager.styleItemTop(this, item);
                }
                break;
             }
             case LastSlot:{
                setText(Model.MULTISLOT);
-               StyleManager.styleItemBottom(this, pair.second);
+               setTooltipForItem(item);
+               StyleManager.styleItemBottom(this, item);
                break;
             }
             case MultiSlot:{
                setText(Model.MULTISLOT);
-               StyleManager.styleItemMiddle(this, pair.second);
+               setTooltipForItem(item);
+               StyleManager.styleItemMiddle(this, item);
                break;
             }
             case EngineHeatSink:{
-               setText(Model.HEATSINKS_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
-               StyleManager.styleItemBottom(this, pair.second);
+               setTooltipForItem(item);
+               if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+                  setText(Model.HEATSINKS_COMPACT_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
+               }
+               else{
+                  setText(Model.HEATSINKS_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
+               }
+               StyleManager.styleItemBottom(this, item);
                break;
             }
          }
@@ -139,24 +211,35 @@ public class PartList extends JList<Item>{
    }
 
    private class Model extends AbstractListModel<Item> implements MessageXBar.Reader{
-      private static final String HEATSINKS_STRING = "HEATSINKS: ";
-      private static final String EMPTY            = "EMPTY";
-      private static final String MULTISLOT        = "";
-      private static final String DYN_ARMOR        = "DYNAMIC ARMOR";
-      private static final String DYN_STRUCT       = "DYNAMIC STRUCTURE";
-      private static final long   serialVersionUID = 2438473891359444131L;
+      private static final String HEATSINKS_STRING         = "HEAT SINKS: ";
+      private static final String HEATSINKS_COMPACT_STRING = "HS: ";
+      private static final String EMPTY                    = "EMPTY";
+      private static final String MULTISLOT                = "";
+      private static final String DYN_ARMOR                = "DYNAMIC ARMOR";
+      private static final String DYN_STRUCT               = "DYNAMIC STRUCTURE";
+      private static final long   serialVersionUID         = 2438473891359444131L;
       private final MessageXBar   xBar;
+
+      private final int           compactCompensationSlots;
 
       Model(MessageXBar aXBar){
          xBar = aXBar;
          xBar.attach(this);
+
+         int c = 0;
+         if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+            for(Item item : part.getInternalPart().getInternalItems()){
+               c += item.getNumCriticalSlots(null);
+            }
+         }
+         compactCompensationSlots = c;
       }
 
       boolean putElement(Item anItem, int anIndex, boolean aShouldReplace){
          Pair<ListEntryType, Item> target = getElementTypeAt(anIndex);
          switch( target.first ){
             case EngineHeatSink:{
-               if( anItem instanceof HeatSink && part.canAddItem(anItem) ){
+               if( anItem instanceof HeatSink && part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
                   opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
                   return true;
                }
@@ -172,7 +255,7 @@ public class PartList extends JList<Item>{
                // Fall through
             }
             case Empty:{
-               if( part.canAddItem(anItem) ){
+               if( part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
                   opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
                   return true;
                }
@@ -186,6 +269,9 @@ public class PartList extends JList<Item>{
 
       Pair<ListEntryType, Item> getElementTypeAt(int arg0){
          List<Item> items = new ArrayList<>(part.getItems());
+         if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+            items.removeAll(part.getInternalPart().getInternalItems());
+         }
          int numEngineHs = part.getNumEngineHeatsinks();
          boolean foundhs = true;
          while( numEngineHs > 0 && !items.isEmpty() && foundhs ){
@@ -242,7 +328,7 @@ public class PartList extends JList<Item>{
 
       @Override
       public int getSize(){
-         return part.getInternalPart().getNumCriticalslots();
+         return part.getInternalPart().getNumCriticalslots() - compactCompensationSlots;
       }
 
       @Override
@@ -265,6 +351,11 @@ public class PartList extends JList<Item>{
       slotDistributor = aSlotDistributor;
       opStack = aStack;
       part = aLoadoutPart;
+      effectiveHP = new ItemEffectiveHP(part);
+      cds = new ComponentDestructionSimulator(part, anXBar);
+      cds.simulate();
+      new CriticalItemDamage(part);
+      criticalStrikeProbability = new CriticalStrikeProbability(part);
       setModel(new Model(anXBar));
       setDragEnabled(true);
       setDropMode(DropMode.ON);
@@ -284,6 +375,8 @@ public class PartList extends JList<Item>{
          public void keyPressed(KeyEvent aArg0){
             if( aArg0.getKeyCode() == KeyEvent.VK_DELETE ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
+                  if( itemPair.first instanceof Internal )
+                     continue;
                   opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
                }
             }
@@ -295,6 +388,8 @@ public class PartList extends JList<Item>{
          public void mouseClicked(MouseEvent e){
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
+                  if( itemPair.first instanceof Internal )
+                     continue;
                   opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
                }
             }

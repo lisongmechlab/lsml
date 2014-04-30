@@ -27,11 +27,11 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Li Song
  */
-public class Upgrades{
+public class Upgrades implements Cloneable{
    private ArmorUpgrade     armorType     = UpgradeDB.STANDARD_ARMOR;
    private StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
    private GuidanceUpgrade  guidanceType  = UpgradeDB.STANDARD_GUIDANCE;
-   private HeatsinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
+   private HeatSinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
 
    public static class Message implements MessageXBar.Message{
       public final ChangeMsg msg;
@@ -59,6 +59,12 @@ public class Upgrades{
       public boolean isForMe(Loadout aLoadout){
          return aLoadout.getUpgrades() == source;
       }
+
+      @Override
+      public boolean affectsHeatOrDamage(){
+         return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
+                       // messages will trigger that already.
+      }
    }
 
    /**
@@ -67,18 +73,21 @@ public class Upgrades{
     * @param aGuidance
     * @param aHeatSinks
     */
-   public Upgrades(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance, HeatsinkUpgrade aHeatSinks){
+   public Upgrades(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance, HeatSinkUpgrade aHeatSinks){
       armorType = aArmor;
       structureType = aStructure;
       guidanceType = aGuidance;
       heatSinkType = aHeatSinks;
    }
 
+   public Upgrades(Upgrades aUpgrades){
+      this(aUpgrades.armorType, aUpgrades.structureType, aUpgrades.guidanceType, aUpgrades.heatSinkType);
+   }
+
    /**
     * 
     */
-   public Upgrades(){
-   }
+   public Upgrades(){}
 
    @Override
    public boolean equals(Object obj){
@@ -100,11 +109,22 @@ public class Upgrades{
       return true;
    }
 
+   @Override
+   public Upgrades clone(){
+      try{
+         Upgrades clone = (Upgrades)super.clone();
+         return clone;
+      }
+      catch( CloneNotSupportedException e ){
+         throw new RuntimeException(e);
+      }
+   }
+
    public GuidanceUpgrade getGuidance(){
       return guidanceType;
    }
 
-   public HeatsinkUpgrade getHeatSink(){
+   public HeatSinkUpgrade getHeatSink(){
       return heatSinkType;
    }
 
@@ -120,7 +140,7 @@ public class Upgrades{
       guidanceType = aGuidanceUpgrade;
    }
 
-   void setHeatSink(HeatsinkUpgrade aHeatsinkUpgrade){
+   void setHeatSink(HeatSinkUpgrade aHeatsinkUpgrade){
       heatSinkType = aHeatsinkUpgrade;
    }
 

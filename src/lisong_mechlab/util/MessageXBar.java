@@ -20,8 +20,13 @@
 package lisong_mechlab.util;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -32,7 +37,12 @@ import lisong_mechlab.model.loadout.Loadout;
  * @author Li Song
  */
 public class MessageXBar{
-   private transient final List<WeakReference<Reader>> readers = new ArrayList<WeakReference<MessageXBar.Reader>>();
+   private static final boolean                                  debug         = false;
+   private transient final Map<Class<? extends Reader>, Double>  perf_walltime = debug ? new HashMap<Class<? extends Reader>, Double>() : null;
+   private transient final Map<Class<? extends Reader>, Integer> perf_calls    = debug ? new HashMap<Class<? extends Reader>, Integer>() : null;
+   private transient final List<WeakReference<Reader>>           readers       = new ArrayList<WeakReference<MessageXBar.Reader>>();
+   private boolean                                               dispatching   = false;
+   private transient final Queue<Message>                        messages      = new ArrayDeque<>();
 
    /**
     * Classes that need to be able to listen in on the {@link MessageXBar} should implement this interface.
@@ -49,7 +59,19 @@ public class MessageXBar{
     * @author Li Song
     */
    public interface Message{
+      /**
+       * Checks if this message is related to a specific {@link Loadout}.
+       * 
+       * @param aLoadout
+       *           The {@link Loadout} to check.
+       * @return <code>true</code> if this message affects the given {@link Loadout}.
+       */
       public boolean isForMe(Loadout aLoadout);
+
+      /**
+       * @return <code>true</code> if this message can affect the damage or heat output of the related {@link Loadout}.
+       */
+      public boolean affectsHeatOrDamage();
    }
 
    /**
@@ -60,15 +82,49 @@ public class MessageXBar{
     *           The message to send.
     */
    public void post(Message aMessage){
-      List<WeakReference<Reader>> toBeRemoved = new ArrayList<WeakReference<Reader>>();
-      for(WeakReference<Reader> ref : readers){
-         Reader reader = ref.get();
-         if( reader != null )
-            reader.receive(aMessage);
-         else
-            toBeRemoved.add(ref);
+      if( dispatching ){
+         messages.add(aMessage);
       }
-      readers.removeAll(toBeRemoved);
+      else{
+         dispatchMessage(aMessage);
+         while( !messages.isEmpty() ){
+            dispatchMessage(messages.remove());
+         }
+      }
+   }
+
+   private void dispatchMessage(Message aMessage){
+      if( dispatching )
+         throw new IllegalStateException("Recursive dispatch!");
+      dispatching = true;
+      Iterator<WeakReference<Reader>> it = readers.iterator();
+      while( it.hasNext() ){
+         WeakReference<Reader> ref = it.next();
+         Reader reader = ref.get();
+         if( reader == null ){
+            it.remove();
+            continue;
+         }
+         if( debug ){
+            long startNs = System.nanoTime();
+            reader.receive(aMessage);
+            long endNs = System.nanoTime();
+            Double v = perf_walltime.get(reader.getClass());
+            Integer u = perf_calls.get(reader.getClass());
+            if( v == null ){
+               v = 0.0;
+               u = 0;
+            }
+            v += (endNs - startNs) / 1E9;
+            u += 1;
+            perf_walltime.put(reader.getClass(), v);
+            perf_calls.put(reader.getClass(), u);
+         }
+         else{
+            reader.receive(aMessage);
+         }
+      }
+      dispatching = false;
    }
 
    /**
@@ -91,6 +147,17 @@ public class MessageXBar{
     *           The object that shall receive messages.
     */
    public void attach(WeakReference<Reader> aWeakReference){
+      if( dispatching )
+         throw new IllegalStateException("Attach from call to post!");
+
+      if( debug ){
+         for(WeakReference<Reader> reader : readers){
+            if( reader.get() == aWeakReference.get() ){
+               throw new RuntimeException("Double registration of reader!");
+            }
+         }
+      }
+
       readers.add(aWeakReference);
    }
 
@@ -101,12 +168,16 @@ public class MessageXBar{
     *           The object that shall be removed messages.
     */
    public void detach(Reader aReader){
-      List<WeakReference<Reader>> toBeRemoved = new ArrayList<WeakReference<Reader>>();
-      for(WeakReference<Reader> ref : readers){
+      if( dispatching )
+         throw new IllegalStateException("Detach from call to post!");
+      dispatching = true;
+      Iterator<WeakReference<Reader>> it = readers.iterator();
+      while( it.hasNext() ){
+         WeakReference<Reader> ref = it.next();
          if( ref.get() == aReader ){
-            toBeRemoved.add(ref);
+            it.remove();
          }
       }
-      readers.removeAll(toBeRemoved);
+      dispatching = false;
    }
 }

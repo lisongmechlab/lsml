@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
+import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class HeatDissipationTest{
     */
    @Test
    public void testCalculate(){
-      HeatsinkUpgrade hs = UpgradeDB.DOUBLE_HEATSINKS;
+      HeatSinkUpgrade hs = UpgradeDB.DOUBLE_HEATSINKS;
       final double dissipationFactor = 1.3;
       final int externalHs = 5;
       final int internalHs = 9;

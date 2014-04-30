@@ -34,8 +34,10 @@ public class SetArmorOperation extends Operation{
    private final ArmorSide   side;
    private final int         amount;
    private int               oldAmount = -1;
+   private boolean           oldManual;
    private final MessageXBar xBar;
    private final LoadoutPart loadoutPart;
+   private final boolean     manual;
 
    /**
     * Sets the armor for a given side of the component. Throws if the operation will fail.
@@ -48,21 +50,45 @@ public class SetArmorOperation extends Operation{
     *           The side to set the armor for.
     * @param anArmorAmount
     *           The amount to set the armor to.
+    * @param aManualSet
+    *           True if this set operation is done manually. Will disable automatic armor assignments.
     * @throws IllegalArgumentException
     *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
     *            support the armor.
     */
-   public SetArmorOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount){
+   public SetArmorOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount, boolean aManualSet){
       xBar = anXBar;
       loadoutPart = aLoadoutPart;
       side = anArmorSide;
       amount = anArmorAmount;
+      manual = aManualSet;
 
       if( amount < 0 )
          throw new IllegalArgumentException("Armor must be positive!");
 
       if( amount > loadoutPart.getInternalPart().getArmorMax() )
          throw new IllegalArgumentException("Armor must be less than components max armor!");
+   }
+
+   /**
+    * @see lisong_mechlab.util.OperationStack.Operation#canCoalescele(lisong_mechlab.util.OperationStack.Operation)
+    */
+   @Override
+   public boolean canCoalescele(Operation aOperation){
+      if( this == aOperation )
+         return false;
+      if( aOperation == null )
+         return false;
+      if( !(aOperation instanceof SetArmorOperation) )
+         return false;
+      SetArmorOperation that = (SetArmorOperation)aOperation;
+      if( that.manual != manual )
+         return false;
+      if( that.loadoutPart != loadoutPart )
+         return false;
+      if( that.side != side )
+         return false;
+      return true;
    }
 
    @Override
@@ -73,20 +99,40 @@ public class SetArmorOperation extends Operation{
    @Override
    protected void apply(){
       oldAmount = loadoutPart.getArmor(side);
-      if( amount != oldAmount ){
+      oldManual = !loadoutPart.allowAutomaticArmor();
+      if( amount != oldAmount || oldManual != manual ){
 
          if( amount > loadoutPart.getArmorMax(side) )
             throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + loadoutPart.getArmorMax(side) + " Was: " + amount);
 
          int armorDiff = amount - oldAmount;
-
-         // TODO: Replace with armor handling later
          double armorTons = loadoutPart.getLoadout().getUpgrades().getArmor().getArmorMass(armorDiff);
          if( armorTons > loadoutPart.getLoadout().getFreeMass() ){
-            throw new IllegalArgumentException("Not enough tonnage to add more armor!");
+            // See if the armor can be freed from a combination of automatic components. They will be redistributed
+            // afterwards. FIXME: Devise a proper solution, this is ugly.
+            int freed = 0;
+            if( manual == true && freed < armorDiff ){
+               for(LoadoutPart otherPart : loadoutPart.getLoadout().getPartLoadOuts()){
+                  if( loadoutPart != otherPart && otherPart.allowAutomaticArmor() ){
+                     freed += otherPart.getArmorTotal();
+                     if( otherPart.getInternalPart().getType().isTwoSided() ){
+                        otherPart.setArmor(ArmorSide.FRONT, 0, true);
+                        otherPart.setArmor(ArmorSide.BACK, 0, true);
+                     }
+                     else{
+                        otherPart.setArmor(ArmorSide.ONLY, 0, true);
+                     }
+                  }
+               }
+            }
+            if( freed < armorDiff ){
+               throw new IllegalArgumentException("Not enough tonnage to add more armor!");
+            }
          }
-         loadoutPart.setArmor(side, amount);
-         xBar.post(new Message(loadoutPart, Type.ArmorChanged));
+         loadoutPart.setArmor(side, amount, !manual);
+         if( xBar != null ){
+            xBar.post(new Message(loadoutPart, Type.ArmorChanged, !manual));
+         }
       }
    }
 
@@ -96,9 +142,11 @@ public class SetArmorOperation extends Operation{
          throw new RuntimeException("Apply was not called before undo!");
       }
 
-      if( amount != oldAmount ){
-         loadoutPart.setArmor(side, oldAmount);
-         xBar.post(new Message(loadoutPart, Type.ArmorChanged));
+      if( amount != oldAmount || oldManual != manual ){
+         loadoutPart.setArmor(side, oldAmount, !oldManual);
+         if( xBar != null ){
+            xBar.post(new Message(loadoutPart, Type.ArmorChanged, !manual));
+         }
       }
       oldAmount = -1;
    }

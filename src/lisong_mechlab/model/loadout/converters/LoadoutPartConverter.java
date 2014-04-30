@@ -64,6 +64,8 @@ public class LoadoutPartConverter implements Converter{
       LoadoutPart part = (LoadoutPart)anObject;
 
       aWriter.addAttribute("part", part.getInternalPart().getType().toString());
+      
+      aWriter.addAttribute("autoarmor", Boolean.toString(part.allowAutomaticArmor()));
 
       if( part.getInternalPart().getType().isTwoSided() ){
          aWriter.addAttribute("armor", part.getArmor(ArmorSide.FRONT) + "/" + part.getArmor(ArmorSide.BACK));
@@ -96,16 +98,22 @@ public class LoadoutPartConverter implements Converter{
       Part partType = Part.valueOf(aReader.getAttribute("part"));
       LoadoutPart loadoutPart = loadout.getPart(partType);
 
+      String autoArmorString = aReader.getAttribute("autoarmor");
+      boolean autoArmor = false;
+      if(autoArmorString != null){
+         autoArmor = Boolean.parseBoolean(autoArmorString);
+      }
+      
       try{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");
             if( armors.length == 2 ){
-               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0])));
-               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1])));
+               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0]), !autoArmor));
+               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1]), !autoArmor));
             }
          }
          else{
-            operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor"))));
+            operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
          }
       }
       catch( IllegalArgumentException exception ){

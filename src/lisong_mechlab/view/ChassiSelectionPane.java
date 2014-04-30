@@ -19,7 +19,9 @@
 //@formatter:on
 package lisong_mechlab.view;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
@@ -27,8 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,51 +43,66 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.metrics.TopSpeed;
-import lisong_mechlab.view.mechlab.PartPanel;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.view.preferences.Preferences;
+import lisong_mechlab.view.preferences.UiPreferences;
+import lisong_mechlab.view.preferences.UiPreferences.Message;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
- * Displays all available {@link Chassi} in a pane.
+ * Displays all available {@link Chassis} in a pane.
  * 
  * @author Li Song
  */
-public class ChassiSelectionPane extends JScrollPane{
+public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
    static public class ChassiTableModel extends AbstractTableModel{
-      private static final long  serialVersionUID = -2726840937519789976L;
-      private final List<Chassi> lights           = new ArrayList<>();
-      private final List<Chassi> mediums          = new ArrayList<>();
-      private final List<Chassi> heavies          = new ArrayList<>();
-      private final List<Chassi> assaults         = new ArrayList<>();
+      private static final long         serialVersionUID = -2726840937519789976L;
+      private final List<Chassis>       lights           = new ArrayList<>();
+      private final List<Chassis>       mediums          = new ArrayList<>();
+      private final List<Chassis>       heavies          = new ArrayList<>();
+      private final List<Chassis>       assaults         = new ArrayList<>();
+      private final Comparator<Chassis> cmp              = new Comparator<Chassis>(){
+                                                            @Override
+                                                            public int compare(Chassis aArg0, Chassis aArg1){
+                                                               if( aArg0.getMassMax() == aArg1.getMassMax() )
+                                                                  return aArg0.getMwoName().compareTo(aArg1.getMwoName());
+                                                               return Integer.compare(aArg0.getMassMax(), aArg1.getMassMax());
+                                                            }
+                                                         };
 
-      public ChassiTableModel(){
-         Comparator<Chassi> cmp = new Comparator<Chassi>(){
-            @Override
-            public int compare(Chassi aArg0, Chassi aArg1){
-               if( aArg0.getMassMax() == aArg1.getMassMax() )
-                  return aArg0.getMwoName().compareTo(aArg1.getMwoName());
-               return Integer.compare(aArg0.getMassMax(), aArg1.getMassMax());
+      public ChassiTableModel(boolean aFilterSpecials){
+         recreate(aFilterSpecials);
+      }
+
+      public void recreate(boolean filterSpecials){
+         doit(lights, filterSpecials, ChassiClass.LIGHT);
+         doit(mediums, filterSpecials, ChassiClass.MEDIUM);
+         doit(heavies, filterSpecials, ChassiClass.HEAVY);
+         doit(assaults, filterSpecials, ChassiClass.ASSAULT);
+         fireTableDataChanged();
+      }
+
+      private void doit(List<Chassis> aList, boolean aFilterSpecials, ChassiClass aChassiClass){
+         aList.clear();
+         aList.addAll(ChassiDB.lookup(aChassiClass));
+         if( aFilterSpecials ){
+            Iterator<Chassis> it = aList.iterator();
+            while( it.hasNext() ){
+               Chassis c = it.next();
+               if( c.getVariantType().isVariation() ){
+                  it.remove();
+               }
             }
-         };
-
-         lights.addAll(ChassiDB.lookup(ChassiClass.LIGHT));
-         Collections.sort(lights, cmp);
-
-         mediums.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-         Collections.sort(mediums, cmp);
-
-         heavies.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-         Collections.sort(heavies, cmp);
-
-         assaults.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
-         Collections.sort(assaults, cmp);
+         }
+         Collections.sort(aList, cmp);
       }
 
       @Override
@@ -125,7 +145,7 @@ public class ChassiSelectionPane extends JScrollPane{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return ((Chassi)aSourceRowObject).getName();
+         return ((Chassis)aSourceRowObject).getName();
       }
    }
 
@@ -138,7 +158,7 @@ public class ChassiSelectionPane extends JScrollPane{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return Integer.toString(((Chassi)aSourceRowObject).getMassMax());
+         return Integer.toString(((Chassis)aSourceRowObject).getMassMax());
       }
    }
 
@@ -158,7 +178,7 @@ public class ChassiSelectionPane extends JScrollPane{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassi chassi = (Chassi)aValue;
+               Chassis chassi = (Chassis)aValue;
                panel.removeAll();
 
                int jjsa = chassi.getMaxJumpJets();
@@ -183,7 +203,7 @@ public class ChassiSelectionPane extends JScrollPane{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         Chassi chassi = (Chassi)aSourceRowObject;
+         Chassis chassi = (Chassis)aSourceRowObject;
          final double maxSpeed = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.0);
          final double maxSpeedTweak = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.1);
          return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
@@ -203,11 +223,17 @@ public class ChassiSelectionPane extends JScrollPane{
       public PartColumn(Part aPart){
          super(0);
          setHeaderValue(aPart.longName());
-         StyleManager.styleThinItem(energy, HardpointType.ENERGY);
-         StyleManager.styleThinItem(ballistic, HardpointType.BALLISTIC);
-         StyleManager.styleThinItem(missile, HardpointType.MISSILE);
-         StyleManager.styleThinItem(ams, HardpointType.AMS);
-         StyleManager.styleThinItem(ecm, HardpointType.ECM);
+         StyleManager.styleThinItem(energy, HardPointType.ENERGY);
+         StyleManager.styleThinItem(ballistic, HardPointType.BALLISTIC);
+         StyleManager.styleThinItem(missile, HardPointType.MISSILE);
+         StyleManager.styleThinItem(ams, HardPointType.AMS);
+         StyleManager.styleThinItem(ecm, HardPointType.ECM);
+
+         panel.add(energy);
+         panel.add(ballistic);
+         panel.add(missile);
+         panel.add(ams);
+         panel.add(ecm);
          part = aPart;
       }
 
@@ -216,34 +242,12 @@ public class ChassiSelectionPane extends JScrollPane{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassi chassi = (Chassi)aValue;
-               int e = chassi.getInternalPart(part).getNumHardpoints(HardpointType.ENERGY);
-               int b = chassi.getInternalPart(part).getNumHardpoints(HardpointType.BALLISTIC);
-               int m = chassi.getInternalPart(part).getNumHardpoints(HardpointType.MISSILE);
-               int a = chassi.getInternalPart(part).getNumHardpoints(HardpointType.AMS);
-               int c = chassi.getInternalPart(part).getNumHardpoints(HardpointType.ECM);
-               panel.removeAll();
-
-               if( e > 0 ){
-                  energy.setText(e + " E");
-                  panel.add(energy);
-               }
-               if( b > 0 ){
-                  ballistic.setText(b + " B");
-                  panel.add(ballistic);
-               }
-               if( m > 0 ){
-                  missile.setText(PartPanel.formatMissileHardpointText(chassi.getInternalPart(part)));
-                  panel.add(missile);
-               }
-               if( a > 0 ){
-                  ams.setText("AMS");
-                  panel.add(ams);
-               }
-               if( c > 0 ){
-                  ecm.setText("ECM");
-                  panel.add(ecm);
-               }
+               Chassis chassi = (Chassis)aValue;
+               StyleManager.styleHardpointLabel(energy, chassi.getInternalPart(part), HardPointType.ENERGY);
+               StyleManager.styleHardpointLabel(ballistic, chassi.getInternalPart(part), HardPointType.BALLISTIC);
+               StyleManager.styleHardpointLabel(missile, chassi.getInternalPart(part), HardPointType.MISSILE);
+               StyleManager.styleHardpointLabel(ams, chassi.getInternalPart(part), HardPointType.AMS);
+               StyleManager.styleHardpointLabel(ecm, chassi.getInternalPart(part), HardPointType.ECM);
                return panel;
             }
          };
@@ -251,37 +255,70 @@ public class ChassiSelectionPane extends JScrollPane{
    }
 
    private static final long serialVersionUID = -4134588793726908789L;
+   private final JTable      table;
+   private final JCheckBox   hideSpecials;
+   private final Preferences preferences;
 
-   public ChassiSelectionPane(){
-      final JTable table = new JTable(new ChassiTableModel());
-      table.setRowHeight(30);
-      table.addMouseListener(new MouseAdapter(){
-         @Override
-         public void mouseClicked(MouseEvent e){
-            if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
-               final JTable target = (JTable)e.getSource();
-               final int row = target.getSelectedRow();
-               final int column = target.getSelectedColumn();
-               final Object cell = target.getValueAt(row, column);
-               if( cell instanceof Chassi ){
-                  Chassi chassi = (Chassi)cell;
-                  ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                  ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
+   public ChassiSelectionPane(final Preferences aPreferences, MessageXBar aXBar){
+      super(new BorderLayout());
+      aXBar.attach(this);
+
+      preferences = aPreferences;
+      {
+         hideSpecials = new JCheckBox("Hide mech variations", preferences.uiPreferences.getHideSpecialMechs());
+         hideSpecials.setToolTipText("<html>Will hide mech variations (champion, founders, phoenix, sarah, etc) from chassis lists.<br/>"
+                                     + "Stock loadouts are still available on the \"Load stock\" menu action on relevant loadouts</html>");
+         hideSpecials.addActionListener(new AbstractAction(){
+            private static final long serialVersionUID = -8136020916897237506L;
+
+            @Override
+            public void actionPerformed(ActionEvent aArg0){
+               aPreferences.uiPreferences.setHideSpecialMechs(hideSpecials.isSelected());
+            }
+         });
+         add(hideSpecials, BorderLayout.NORTH);
+      }
+      {
+         table = new JTable(new ChassiTableModel(aPreferences.uiPreferences.getHideSpecialMechs()));
+         table.setRowHeight(30);
+         table.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+               if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
+                  final JTable target = (JTable)e.getSource();
+                  final int row = target.getSelectedRow();
+                  final int column = target.getSelectedColumn();
+                  final Object cell = target.getValueAt(row, column);
+                  if( cell instanceof Chassis ){
+                     Chassis chassi = (Chassis)cell;
+                     ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
+                     ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
+                  }
                }
             }
+         });
+
+         table.removeColumn(table.getColumnModel().getColumn(0)); // Remove auto-generated column
+         table.addColumn(new NameColumn());
+         table.addColumn(new SpeedColumn());
+         table.addColumn(new TonsColumn());
+         for(Part part : Arrays.asList(Part.RightArm, Part.RightTorso, Part.CenterTorso, Part.LeftTorso, Part.LeftArm, Part.Head)){
+            table.addColumn(new PartColumn(part));
          }
-      });
-
-      table.removeColumn(table.getColumnModel().getColumn(0)); // Remove auto-generated column
-      table.addColumn(new NameColumn());
-      table.addColumn(new SpeedColumn());
-      table.addColumn(new TonsColumn());
-      for(Part part : Arrays.asList(Part.RightArm, Part.RightTorso, Part.CenterTorso, Part.LeftTorso, Part.LeftArm, Part.Head)){
-         table.addColumn(new PartColumn(part));
+         table.addColumn(new JumpJetsColumn());
+         add(new JScrollPane(table), BorderLayout.CENTER);
       }
-      table.addColumn(new JumpJetsColumn());
+   }
 
-      setViewportView(table);
+   @Override
+   public void receive(MessageXBar.Message aMsg){
+      if( aMsg instanceof UiPreferences.Message ){
+         UiPreferences.Message msg = (Message)aMsg;
+         if( msg.attribute == UiPreferences.UI_HIDE_SPECIAL_MECHS ){
+            hideSpecials.setSelected(preferences.uiPreferences.getHideSpecialMechs());
+            ((ChassiTableModel)table.getModel()).recreate(hideSpecials.isSelected());
+         }
+      }
    }
 
 }

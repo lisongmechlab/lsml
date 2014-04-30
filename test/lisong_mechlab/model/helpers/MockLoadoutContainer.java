@@ -26,8 +26,8 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassi;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Internal;
@@ -43,7 +43,7 @@ import lisong_mechlab.model.upgrades.Upgrades;
  * @author Li Song
  */
 public class MockLoadoutContainer{
-   final public Chassi       chassi;
+   final public Chassis       chassi;
    final public Loadout      loadout;
    final public Upgrades     upgrades;
    final public Efficiencies efficiencies;
@@ -65,7 +65,7 @@ public class MockLoadoutContainer{
    final public LoadoutPart  la;
 
    public MockLoadoutContainer(){
-      chassi = mock(Chassi.class);
+      chassi = mock(Chassis.class);
       loadout = mock(Loadout.class);
       upgrades = mock(Upgrades.class);
       efficiencies = mock(Efficiencies.class);
@@ -150,7 +150,7 @@ public class MockLoadoutContainer{
       when(internalItem.getNumCriticalSlots(any(Upgrades.class))).thenReturn(aNumSlots);
       when(internalItem.getMass(any(Upgrades.class))).thenReturn(aTons);
       when(internalItem.compareTo(any(Item.class))).thenCallRealMethod();
-      when(internalItem.getHardpointType()).thenReturn(HardpointType.NONE);
+      when(internalItem.getHardpointType()).thenReturn(HardPointType.NONE);
       return internalItem;
    }
 }

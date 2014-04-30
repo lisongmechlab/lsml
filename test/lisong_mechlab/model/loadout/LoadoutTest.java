@@ -20,12 +20,28 @@
 package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+
+import java.util.List;
+
+import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.part.AddItemOperation;
+import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
+import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
+import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
+import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
+import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -49,11 +65,6 @@ public class LoadoutTest{
       MockitoAnnotations.initMocks(this);
    }
 
-   // -------------------------------------------------------------------------
-   //
-   // Jump jet related tests
-   //
-   // -------------------------------------------------------------------------
    @Test
    public void testGetJumpJetCount_noJJCapability() throws Exception{
       Loadout cut = new Loadout("HBK-4J", xBar);
@@ -90,21 +101,349 @@ public class LoadoutTest{
       assertSame(ItemDB.lookup("JUMP JETS - CLASS V"), cut.getJumpJetType());
    }
 
+   /**
+    * Even if DHS are serialized before the Engine, they should be added as engine heat sinks.
+    */
    @Test
    public void testUnMarshalDhsBeforeEngine(){
       String xml = "<?xml version=\"1.0\" ?><loadout name=\"AS7-BH\" chassi=\"AS7-BH\"><upgrades version=\"2\"><armor>2810</armor><structure>3100</structure><guidance>3051</guidance><heatsinks>3002</heatsinks></upgrades><efficiencies><speedTweak>false</speedTweak><coolRun>false</coolRun><heatContainment>false</heatContainment><anchorTurn>false</anchorTurn><doubleBasics>false</doubleBasics><fastfire>false</fastfire></efficiencies><component part=\"Head\" armor=\"0\" /><component part=\"LeftArm\" armor=\"0\" /><component part=\"LeftLeg\" armor=\"0\" /><component part=\"LeftTorso\" armor=\"0/0\" /><component part=\"CenterTorso\" armor=\"0/0\"><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3278</item></component><component part=\"RightTorso\" armor=\"0/0\" /><component part=\"RightLeg\" armor=\"0\" /><component part=\"RightArm\" armor=\"0\" /></loadout>";
-      
+
       XStream stream = Loadout.loadoutXstream(xBar);
       Loadout loadout = (Loadout)stream.fromXML(xml);
-      
+
       assertEquals(6, loadout.getPart(Part.CenterTorso).getNumEngineHeatsinks());
    }
 
-   // -------------------------------------------------------------------------
-   //
-   // Unsorted tests
-   //
-   // -------------------------------------------------------------------------
+   @Test
+   public void testCanEquip_NoInternals() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("LCT-3M"), xBar);
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(LoadoutPart.ENGINE_INTERNAL));
+   }
+
+   @Test
+   public void testCanEquip_TooHeavy() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("LCT-3M"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.CenterTorso), ItemDB.lookup("STD ENGINE 190")));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightArm), ItemDB.lookup("PPC")));
+      assertTrue(cut.getFreeMass() < 2.0); // Should be 1.5 tons free
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.lookup("PPC")));
+   }
+
+   @Test
+   public void testCanEquip_NotSupportedByChassi() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("LCT-3M"), xBar);
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.ECM));
+   }
+
+   @Test
+   public void testCanEquip_CompatibleUpgrades() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("LCT-3M"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+
+      // Execute + Verify
+      assertTrue(cut.canEquip(ItemDB.DHS));
+   }
+
+   @Test
+   public void testCanEquip_NotCompatibleUpgrades() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("LCT-3M"), xBar);
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.DHS));
+   }
+
+   @Test
+   public void testCanEquip_TooFewSlots() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("LCT-3M"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new SetArmorTypeOperation(null, cut, UpgradeDB.FERRO_FIBROUS_ARMOR));
+      stack.pushAndApply(new SetStructureTypeOperation(null, cut, UpgradeDB.ENDO_STEEL_STRUCTURE));
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.CenterTorso), ItemDB.lookup("XL ENGINE 100")));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftArm), ItemDB.DHS));
+      assertTrue(cut.getFreeMass() > 1.5); // Should be 13.5 tons free
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.DHS));
+   }
+
+   @Test
+   public void testCanEquip_JJ() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      Item jj = ItemDB.lookup("JUMP JETS - CLASS V");
+
+      // Execute + Verify
+      assertTrue(cut.canEquip(jj));
+   }
+
+   @Test
+   public void testCanEquip_TooManyJJ() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      OperationStack stack = new OperationStack(0);
+      Item jj = ItemDB.lookup("JUMP JETS - CLASS V");
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), jj));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), jj));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), jj));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), jj));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), jj));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), jj));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), jj));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), jj));
+      // Make sure test won't fail on wrong condition
+      assertTrue(cut.getFreeMass() > 1.5);
+      assertTrue(cut.getNumCriticalSlotsFree() > 1);
+      assertEquals(cut.getChassi().getMaxJumpJets(), cut.getJumpJetCount());
+      assertTrue(cut.getChassi().isAllowed(jj));
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(jj));
+   }
+
+   @Test
+   public void testCanEquip_TooManyEngine() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.CenterTorso), ItemDB.lookup("XL ENGINE 100")));
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+   }
+
+   @Test
+   public void testCanEquip_XLEngineNoSpaceLeftTorso() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.DHS));
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+   }
+
+   @Test
+   public void testCanEquip_XLEngineNoSpaceRightTorso() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.DHS));
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+   }
+
+   @Test
+   public void testCanEquip_XLEngineNoSpaceCentreTorso() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.CenterTorso), ItemDB.DHS));
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+   }
+
+   @Test
+   public void testCanEquip_XLEngine12SlotsFree() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new SetStructureTypeOperation(null, cut, UpgradeDB.ENDO_STEEL_STRUCTURE));
+      stack.pushAndApply(new SetArmorTypeOperation(null, cut, UpgradeDB.FERRO_FIBROUS_ARMOR));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.CASE));
+      assertEquals(12, cut.getNumCriticalSlotsFree());
+
+      // Execute + Verify
+      assertTrue(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+   }
+
+   @Test
+   public void testCanEquip_XLEngine11SlotsFree() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new SetStructureTypeOperation(null, cut, UpgradeDB.ENDO_STEEL_STRUCTURE));
+      stack.pushAndApply(new SetArmorTypeOperation(null, cut, UpgradeDB.FERRO_FIBROUS_ARMOR));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightArm), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.ECM));
+      assertEquals(11, cut.getNumCriticalSlotsFree());
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+   }
+
+   @Test
+   public void testCanEquip_NoHardpoints() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5V"), xBar);
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.ECM));
+   }
+
+   @Test
+   public void testCanEquip_NotEnoughHardpoints() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("SDR-5D"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.ECM));
+
+      // Execute + Verify
+      assertFalse(cut.canEquip(ItemDB.ECM));
+   }
+
+   @Test
+   public void testGetCandidateLocationsForItem_AlreadyHasEngine() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.CenterTorso), ItemDB.lookup("STD ENGINE 300")));
+      assertTrue(cut.getNumCriticalSlotsFree() > 10);
+      assertTrue(cut.getFreeMass() > 40.0);
+
+      // Execute + Verify
+      assertTrue(cut.getCandidateLocationsForItem(ItemDB.lookup("STD ENGINE 300")).isEmpty());
+   }
+
+   /**
+    * When the only hard point that can legally house the item is occupied by another item that can be moved to another
+    * hard point, the candidate shall be that only component.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testGetCandidateLocationsForItem_MoveHardpoint() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("CTF-IM"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.lookup("AC/10")));
+      assertTrue(cut.getNumCriticalSlotsFree() > 20);
+      assertTrue(cut.getFreeMass() > 20.0);
+
+      // Execute + Verify
+      List<LoadoutPart> candidates = cut.getCandidateLocationsForItem(ItemDB.lookup("AC/20"));
+      assertEquals(1, candidates.size());
+      assertEquals(Part.RightTorso, candidates.get(0).getInternalPart().getType());
+   }
+
+   /**
+    * Shall only return parts that could possibly contain the item's size
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testGetCandidateLocationsForItem_SizeLimit() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("CTF-IM"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+      assertTrue(cut.getNumCriticalSlotsFree() > 20);
+      assertTrue(cut.getFreeMass() > 20.0);
+
+      // Execute + Verify
+      List<LoadoutPart> candidates = cut.getCandidateLocationsForItem(ItemDB.DHS);
+      assertEquals(5, candidates.size()); // 2x arms + 3x torso
+      assertTrue(candidates.remove(cut.getPart(Part.LeftArm)));
+      assertTrue(candidates.remove(cut.getPart(Part.RightArm)));
+      assertTrue(candidates.remove(cut.getPart(Part.RightTorso)));
+      assertTrue(candidates.remove(cut.getPart(Part.LeftTorso)));
+      assertTrue(candidates.remove(cut.getPart(Part.CenterTorso)));
+   }
+
+   /**
+    * Empty list shall be returned if there are no free hardpoints
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testGetCandidateLocationsForItem_NoFreeHardpoints() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("CTF-IM"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.lookup("AC/2")));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightArm), ItemDB.lookup("AC/2")));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftArm), ItemDB.lookup("AC/2")));
+      assertTrue(cut.getNumCriticalSlotsFree() > 20);
+      assertTrue(cut.getFreeMass() > 20.0);
+
+      // Execute + Verify
+      List<LoadoutPart> candidates = cut.getCandidateLocationsForItem(ItemDB.lookup("AC/2"));
+      assertTrue(candidates.isEmpty());
+   }
+
+   @Test
+   public void testGetCandidateLocationsForItem_NotGloballyFeasible_TooHeavy() throws Exception{
+      // Setup
+      Loadout cut = new Loadout("CTF-IM", xBar);
+      assertTrue(cut.getNumCriticalSlotsFree() > 0);
+      assertTrue(cut.getFreeMass() < 0.1);
+
+      // Execute + Verify
+      assertTrue(cut.getCandidateLocationsForItem(ItemDB.CASE).isEmpty());
+   }
+
+   @Test
+   public void testGetCandidateLocationsForItem_NotGloballyFeasible_TooFewSlots() throws Exception{
+      // Setup
+      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new SetHeatSinkTypeOperation(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new SetStructureTypeOperation(null, cut, UpgradeDB.ENDO_STEEL_STRUCTURE));
+      stack.pushAndApply(new SetArmorTypeOperation(null, cut, UpgradeDB.FERRO_FIBROUS_ARMOR));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.LeftTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.DHS));
+      stack.pushAndApply(new AddItemOperation(null, cut.getPart(Part.RightTorso), ItemDB.DHS));
+
+      assertTrue(cut.getNumCriticalSlotsFree() < 3);
+      assertTrue(cut.getFreeMass() > 2.0);
+
+      // Execute + Verify
+      assertTrue(cut.getCandidateLocationsForItem(ItemDB.DHS).isEmpty());
+   }
 
    /**
     * Will create a new, empty loadout
@@ -124,201 +463,50 @@ public class LoadoutTest{
       verify(xBar).post(new Loadout.Message(cut, Loadout.Message.Type.CREATE));
    }
 
-//@formatter:off
-//   /**
-//    * Enabling DHS when it was disabled shall remove all heat sinks. TODO: Make it convert all heat sinks but not now.
-//    */
-//   @Test
-//   public void testDHSToggleOn(){
-//      // Setup
-//      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
-//      cut.getPart(Part.RightTorso).addItem(ItemDB.SHS, false);
-//
-//      // Execute
-//      cut.getUpgrades().setDoubleHeatSinks(true);
-//
-//      // Verify
-//      assertTrue(cut.getUpgrades().hasDoubleHeatSinks());
-//      verify(xBar).post(new Upgrades.Message(Upgrades.Message.ChangeMsg.HEATSINKS, cut.getUpgrades()));
-//      assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.SHS));
-//
-//   }
-//
-//   /**
-//    * Disabling DHS when it was enabled shall remove all heat sinks. TODO: Make it convert all heat sinks but not now.
-//    */
-//   @Test
-//   public void testDHSToggleOff(){
-//      // Setup
-//      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
-//      cut.getUpgrades().setDoubleHeatSinks(true);
-//      cut.getPart(Part.RightTorso).addItem(ItemDB.DHS, false);
-//      reset(xBar);
-//
-//      // Execute
-//      cut.getUpgrades().setDoubleHeatSinks(false);
-//
-//      // Verify
-//      assertFalse(cut.getUpgrades().hasDoubleHeatSinks());
-//      verify(xBar).post(new Upgrades.Message(Upgrades.Message.ChangeMsg.HEATSINKS, cut.getUpgrades()));
-//      assertFalse(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.DHS));
-//   }
-//
-//   /**
-//    * Setting the DHS status to the previous value shall not affect the heat sink status.
-//    */
-//   @Test
-//   public void testDHSNoChange_enable_enabled(){
-//      // Setup
-//      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
-//      cut.getUpgrades().setDoubleHeatSinks(true);
-//      cut.getPart(Part.RightTorso).addItem(ItemDB.DHS, false);
-//
-//      // Execute
-//      cut.getUpgrades().setDoubleHeatSinks(true);
-//
-//      // Verify
-//      assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.DHS));
-//   }
-//
-//   /**
-//    * Setting the DHS status to the previous value shall not affect the heat sink status.
-//    */
-//   @Test
-//   public void testDHSNoChange_disable_disabled(){
-//      // Setup
-//      Loadout cut = new Loadout(ChassiDB.lookup("as7-d"), xBar);
-//      cut.getUpgrades().setDoubleHeatSinks(false);
-//      cut.getPart(Part.RightTorso).addItem(ItemDB.SHS, false);
-//
-//      // Execute
-//      cut.getUpgrades().setDoubleHeatSinks(false);
-//
-//      // Verify
-//      assertTrue(cut.getPart(Part.RightTorso).getItems().contains(ItemDB.SHS));
-//   }
-//
-//   @Test
-//   public void testFFEnableDisable() throws Exception{
-//      Loadout cut = new Loadout("as7-d", xBar);
-//      cut.getPart(Part.RightArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
-//      cut.getPart(Part.LeftArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
-//
-//      double armorTons = cut.getArmor() / 32.0;
-//      double mass = cut.getMass();
-//      int freeslots = cut.getNumCriticalSlotsFree();
-//
-//      cut.getUpgrades().setFerroFibrous(true);
-//      assertEquals(freeslots - 14, cut.getNumCriticalSlotsFree());
-//      assertEquals(mass - armorTons * (1 - 1 / 1.12), cut.getMass(), 0.0);
-//
-//      cut.getUpgrades().setFerroFibrous(false);
-//      assertEquals(freeslots, cut.getNumCriticalSlotsFree());
-//      assertEquals(mass, cut.getMass(), 0.0);
-//   }
-//
-//   @Test
-//   public void testFFEnableNotEnoughSlots() throws Exception{
-//      Loadout cut = new Loadout("as7-d", xBar);
-//
-//      // Execute (13 free slots, failure)
-//      assertEquals(13, cut.getNumCriticalSlotsFree());
-//      try{
-//         cut.getUpgrades().setFerroFibrous(true);
-//         fail("Expected exception!");
-//      }
-//      catch( IllegalArgumentException e ){
-//         // Success!
-//      }
-//      assertFalse(cut.getUpgrades().hasFerroFibrous());
-//
-//      // Execute (14 free slots, success)
-//      cut.getPart(Part.RightArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
-//      assertEquals(14, cut.getNumCriticalSlotsFree());
-//      cut.getUpgrades().setFerroFibrous(true);
-//      assertTrue(cut.getUpgrades().hasFerroFibrous());
-//   }
-//
-//   @Test
-//   public void testESEnableDisable() throws Exception{
-//      Loadout cut = new Loadout("as7-d", xBar);
-//      cut.getPart(Part.RightArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
-//      cut.getPart(Part.LeftArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
-//
-//      double intMass = cut.getChassi().getInternalMass();
-//      double mass = cut.getMass();
-//      int freeslots = cut.getNumCriticalSlotsFree();
-//
-//      cut.getUpgrades().setEndoSteel(true);
-//      assertEquals(freeslots - 14, cut.getNumCriticalSlotsFree());
-//      assertEquals(mass - intMass * (0.5), cut.getMass(), 0.0);
-//
-//      cut.getUpgrades().setEndoSteel(false);
-//      assertEquals(freeslots, cut.getNumCriticalSlotsFree());
-//      assertEquals(mass - intMass * (0.0), cut.getMass(), 0.0);
-//   }
-//
-//   /**
-//    * Endo-Steel weight savings is rounded up to the closest half ton. This only applies for mechs with weights
-//    * divisible by 5 tons. Such as the JR7-F
-//    * 
-//    * @throws Exception
-//    */
-//   @Test
-//   public void testES_oddtonnage() throws Exception{
-//      Loadout cut = new Loadout(ChassiDB.lookup("JR7-F"), xBar);
-//      cut.getUpgrades().setEndoSteel(true);
-//      assertEquals(2.0, cut.getMass(), 0.0);
-//   }
-//
-//   @Test
-//   public void testESEnableNotEnoughSlots() throws Exception{
-//      Loadout cut = new Loadout("as7-d", xBar);
-//
-//      // Execute (13 free slots, failure)
-//      assertEquals(13, cut.getNumCriticalSlotsFree());
-//      try{
-//         cut.getUpgrades().setEndoSteel(true);
-//         fail("Expected exception!");
-//      }
-//      catch( IllegalArgumentException e ){
-//         // Success!
-//      }
-//      assertFalse(cut.getUpgrades().hasEndoSteel());
-//
-//      // Execute (14 free slots, success)
-//      cut.getPart(Part.RightArm).removeItem(ItemDB.lookup("MEDIUM LASER"), false);
-//      assertEquals(14, cut.getNumCriticalSlotsFree());
-//      cut.getUpgrades().setEndoSteel(true);
-//      assertTrue(cut.getUpgrades().hasEndoSteel());
-//   }
-//
-//   @Test
-//   public void testArtemisEnable(){
-//      // Setup
-//      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
-//
-//      cut.getPart(Part.RightTorso).addItem("LRM AMMO", false);
-//      cut.getPart(Part.RightTorso).addItem("SRM AMMO", false);
-//      cut.getPart(Part.LeftTorso).addItem("SRM 6", false);
-//      cut.getPart(Part.LeftTorso).addItem("SRM 2", false);
-//      cut.getPart(Part.LeftTorso).addItem("LRM 20", false);
-//
-//      double tons = cut.getMass();
-//      int slots = cut.getNumCriticalSlotsFree();
-//
-//      // Execute
-//      cut.getUpgrades().setArtemis(true);
-//
-//      // Verify
-//      assertEquals(tons + 3, cut.getMass(), 0.0);
-//      assertEquals(slots - 3, cut.getNumCriticalSlotsFree());
-//
-//      List<Item> itemsRt = new ArrayList<>(cut.getPart(Part.RightTorso).getItems());
-//      assertTrue(itemsRt.remove(ItemDB.lookup("LRM AMMO + ARTEMIS IV")));
-//      assertTrue(itemsRt.remove(ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
-//   }
-//@formatter:on
+   /**
+    * Will create a deep copy of the argument.
+    * <p>
+    * Note: This is an integration test.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testLoadout_CopyCtor() throws Exception{
+      OperationStack stack = new OperationStack(0);
+      Loadout cut = new Loadout("HBK-4J", xBar);
+      Loadout copy = new Loadout(cut, xBar);
+      
+      // A copy must be equal :)
+      assertEquals(cut, copy);
+
+      // Must be deep
+      copy.rename("foo");
+      assertFalse(copy.getName().equals(cut.getName()));
+      
+      assertTrue(copy.getPart(Part.RightTorso).equals(cut.getPart(Part.RightTorso)));
+      stack.pushAndApply(new RemoveItemOperation(xBar, copy.getPart(Part.RightTorso), ItemDB.lookup("LRM 10")));
+      stack.pushAndApply(new RemoveItemOperation(xBar, copy.getPart(Part.RightTorso), ItemDB.lookup("LRM 10")));
+      assertFalse(copy.getPart(Part.RightTorso).equals(cut.getPart(Part.RightTorso)));
+      
+      assertTrue(copy.getPart(Part.LeftTorso).equals(cut.getPart(Part.LeftTorso)));
+      stack.pushAndApply(new SetArmorOperation(xBar, copy.getPart(Part.LeftTorso), ArmorSide.FRONT, 3, true));
+      stack.pushAndApply(new SetArmorOperation(xBar, copy.getPart(Part.LeftTorso), ArmorSide.BACK, 3, false));
+      assertFalse(copy.getPart(Part.LeftTorso).equals(cut.getPart(Part.LeftTorso)));
+      
+      assertTrue(copy.getUpgrades().equals(cut.getUpgrades()));
+      stack.pushAndApply(new SetArmorTypeOperation(xBar, copy, UpgradeDB.FERRO_FIBROUS_ARMOR));
+      stack.pushAndApply(new SetStructureTypeOperation(xBar, copy, UpgradeDB.ENDO_STEEL_STRUCTURE));
+      stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, copy, UpgradeDB.DOUBLE_HEATSINKS));
+      stack.pushAndApply(new SetGuidanceTypeOperation(xBar, copy, UpgradeDB.ARTEMIS_IV));
+      assertFalse(copy.getUpgrades().getArmor() == cut.getUpgrades().getArmor());
+      assertFalse(copy.getUpgrades().getStructure() == cut.getUpgrades().getStructure());
+      assertFalse(copy.getUpgrades().getGuidance() == cut.getUpgrades().getGuidance());
+      assertFalse(copy.getUpgrades().getHeatSink() == cut.getUpgrades().getHeatSink());
+      assertFalse(copy.getUpgrades().equals(cut.getUpgrades()));
+
+      verify(xBar).post(new Loadout.Message(cut, Loadout.Message.Type.CREATE));
+      verify(xBar).post(new Loadout.Message(copy, Loadout.Message.Type.CREATE));
+   }
 
    @Test
    public void testFreeMass(){
@@ -328,35 +516,4 @@ public class LoadoutTest{
       // Verify
       assertEquals(90, cut.getFreeMass(), 0.0);
    }
-
-   // @Ignore
-   // // This test has been superseded
-   // @Test
-   // public void testCheckArtemisAdditionLegal(){
-   // // Setup
-   // Loadout cut = new Loadout(ChassiDB.lookup("COM-2D"), xBar);
-   // Loadout anotherCut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
-   // anotherCut.getPart(Part.LeftTorso).addItem("SRM 6", false);
-   // try{
-   // cut.loadStock();
-   // }
-   // catch( Exception e ){
-   // fail("Unexpected exception when loading stock loadout!");
-   // }
-   // // Verify
-   // try{
-   // // cut.checkArtemisAdditionLegal();
-   // cut.getUpgrades().setArtemis(true);
-   // fail("Exception expected!");
-   // }
-   // catch( Exception e ){
-   // // Success!
-   // }
-   // try{
-   // anotherCut.getUpgrades().setArtemis(true);
-   // }
-   // catch( Exception e ){
-   // fail("Should not throw exception!");
-   // }
-   // }
 }

@@ -31,9 +31,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Chassi;
 import lisong_mechlab.model.chassi.ChassiClass;
 import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
@@ -47,11 +47,11 @@ import lisong_mechlab.model.loadout.part.RemoveItemOperation;
 import lisong_mechlab.model.loadout.part.SetArmorOperation;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
-import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
+import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetEndoSteelOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceOperation;
+import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
 import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
+import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.DecodingException;
@@ -78,6 +78,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       try{
          InputStream is = LoadoutCoderV1.class.getResourceAsStream("/resources/coderstats.bin");
          in = new ObjectInputStream(is);
+         @SuppressWarnings("unchecked")
          Map<Integer, Integer> freqs = (Map<Integer, Integer>)in.readObject();
          huff = new Huffman1<Integer>(freqs, null);
       }
@@ -185,7 +186,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          short chassiId = (short)(((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF)); // Big endian, respecting RFC
                                                                                            // 1700
 
-         Chassi chassi = ChassiDB.lookup(chassiId);
+         Chassis chassi = ChassiDB.lookup(chassiId);
          loadout = new Loadout(chassi, xBar);
 
          boolean artemisIv = (upeff & (1 << 7)) != 0;
@@ -195,11 +196,11 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          GuidanceUpgrade guidance = artemisIv ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE;
          StructureUpgrade structure = endoSteel ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE;
          ArmorUpgrade armor = ferroFib ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
-         HeatsinkUpgrade heatSinks = dhs ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
+         HeatSinkUpgrade heatSinks = dhs ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
 
-         stack.pushAndApply(new SetGuidanceOperation(xBar, loadout, guidance));
+         stack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, guidance));
          stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, heatSinks));
-         stack.pushAndApply(new SetEndoSteelOperation(xBar, loadout, structure));
+         stack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, structure));
          stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, armor));
          loadout.getEfficiencies().setCoolRun((upeff & (1 << 3)) != 0);
          loadout.getEfficiencies().setHeatContainment((upeff & (1 << 2)) != 0);
@@ -211,11 +212,11 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       // 1 byte per armor value (2 for RT,CT,LT front first)
       for(Part part : partOrder){
          if( part.isTwoSided() ){
-            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.FRONT, buffer.read()));
-            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.BACK, buffer.read()));
+            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.FRONT, buffer.read(), true));
+            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.BACK, buffer.read(), true));
          }
          else{
-            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.ONLY, buffer.read()));
+            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.ONLY, buffer.read(), true));
          }
       }
 
@@ -269,7 +270,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateAllLoadouts() throws Exception{
-      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
@@ -278,9 +279,9 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
 
-      for(Chassi chassi : chassii){
-         Loadout loadout = new Loadout(chassi.getName(), xBar);
-         stack.pushAndApply(new LoadStockOperation(loadout, xBar));
+      for(Chassis chassi : chassii){
+         Loadout loadout = new Loadout(chassi, xBar);
+         stack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
 
          for(LoadoutPart part : loadout.getPartLoadOuts()){
             for(Item item : new ArrayList<>(part.getItems())){
@@ -298,15 +299,17 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateStatsFromStock() throws Exception{
-      List<Chassi> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
+      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
       chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
       chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
       chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
 
       Map<Integer, Integer> freqs = new TreeMap<>();
-      MessageXBar anXBar = new MessageXBar();
-      for(Chassi chassi : chassii){
-         Loadout loadout = new Loadout(chassi.getName(), anXBar);
+      MessageXBar xBar = new MessageXBar();
+      OperationStack stack = new OperationStack(0);
+      for(Chassis chassi : chassii){
+         Loadout loadout = new Loadout(chassi, xBar);
+         stack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
 
          for(Item item : loadout.getAllItems()){
             if( item == null ){
@@ -314,7 +317,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
             }
 
             if( !(item instanceof Internal) ){
-               int id = item.getMwoIdx();
+               int id = item.getMwoId();
                if( freqs.containsKey(id) ){
                   freqs.put(id, freqs.get(id) + 1);
                }
@@ -327,7 +330,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
       // Make sure all items are in the statistics even if they have a very low probability
       for(Item item : ItemDB.lookup(Item.class)){
-         int id = item.getMwoIdx();
+         int id = item.getMwoId();
          if( !freqs.containsKey(id) )
             freqs.put(id, 1);
       }

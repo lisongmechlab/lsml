@@ -22,10 +22,15 @@ package lisong_mechlab.model.chassi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.util.Collection;
+
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class ChassiDBTest{
 
    @Test(expected = IllegalArgumentException.class)
@@ -36,8 +41,8 @@ public class ChassiDBTest{
 
    @Test
    public void testLookupByChassiSeries(){
-      List<Chassi> cataphracts = ChassiDB.lookupSeries("CATAphract");
-      List<Chassi> cataphracts1 = ChassiDB.lookupSeries("CTF");
+      Collection<Chassis> cataphracts = ChassiDB.lookupSeries("CATAphract");
+      Collection<Chassis> cataphracts1 = ChassiDB.lookupSeries("CTF");
 
       assertEquals(cataphracts, cataphracts1);
 
@@ -45,6 +50,7 @@ public class ChassiDBTest{
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-1X")));
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-2X")));
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-3D")));
+      assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-3D(C)")));
       assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-4X")));
       assertTrue(cataphracts.isEmpty());
    }
@@ -56,7 +62,7 @@ public class ChassiDBTest{
 
    @Test
    public void testLookupByChassiClass(){
-      List<Chassi> heavies = ChassiDB.lookup(ChassiClass.HEAVY);
+      Collection<Chassis> heavies = ChassiDB.lookup(ChassiClass.HEAVY);
 
       assertTrue(heavies.contains(ChassiDB.lookup("ILYA MUROMETS")));
       assertTrue(heavies.contains(ChassiDB.lookup("JM6-DD")));
@@ -64,7 +70,7 @@ public class ChassiDBTest{
       assertTrue(heavies.contains(ChassiDB.lookup("FLAME")));
       assertTrue(heavies.contains(ChassiDB.lookup("PROTECTOR")));
 
-      for(Chassi chassi : heavies){
+      for(Chassis chassi : heavies){
          assertEquals(ChassiClass.HEAVY, chassi.getChassiClass());
       }
    }
@@ -74,16 +80,34 @@ public class ChassiDBTest{
     */
    @Test
    public void testLookupByChassiClass_Assault(){
-      List<Chassi> heavies = ChassiDB.lookup(ChassiClass.ASSAULT);
+      Collection<Chassis> heavies = ChassiDB.lookup(ChassiClass.ASSAULT);
 
       assertTrue(heavies.contains(ChassiDB.lookup("PRETTY BABY")));
       assertTrue(heavies.contains(ChassiDB.lookup("DRAGON SLAYER")));
       assertTrue(heavies.contains(ChassiDB.lookup("MISERY")));
       assertTrue(heavies.contains(ChassiDB.lookup("AS7-D-DC")));
 
-      for(Chassi chassi : heavies){
+      for(Chassis chassi : heavies){
          assertEquals(ChassiClass.ASSAULT, chassi.getChassiClass());
       }
+   }
+
+   /**
+    * {@link ChassiDB#lookupVariations(Chassis)} shall return a list of all chassis variations for the given chassis
+    * (including the chassis given as argument).
+    * 
+    * @param aLookup
+    *           The chassis name to use as a lookup.
+    * @param aExpected
+    *           The expected chassis in addition to the lookup.
+    */
+   @Parameters({"SDR-5K, SDR-5K(C)", "SDR-5K(C), SDR-5K", "HBK-4P, HBK-4P(C)", "HBK-4P(C), HBK-4P", "CTF-3D, CTF-3D(C)", "CTF-3D(C), CTF-3D(C)", "TDR-5S(P), TDR-5S", "TDR-5S, TDR-5S(P)"})
+   @Test
+   public void testLookupVariations_LookupFromNormal(String aLookup, String aExpected){
+      Collection<Chassis> ans = ChassiDB.lookupVariations(ChassiDB.lookup(aLookup));
+      assertTrue(ans.contains(ChassiDB.lookup(aLookup)));
+      assertTrue(ans.contains(ChassiDB.lookup(aExpected)));
+      assertEquals(2, ans.size());
    }
 
 }

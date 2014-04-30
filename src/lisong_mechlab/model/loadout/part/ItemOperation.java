@@ -19,10 +19,13 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.part;
 
+import lisong_mechlab.model.NotificationMessage;
+import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message;
 import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
@@ -64,9 +67,9 @@ abstract class ItemOperation extends Operation{
 
    @Override
    public boolean equals(Object obj){
-      if(!(obj instanceof ItemOperation))
+      if( !(obj instanceof ItemOperation) )
          return false;
-      
+
       ItemOperation other = (ItemOperation)obj;
       return loadoutPart == other.loadoutPart;
    }
@@ -85,8 +88,10 @@ abstract class ItemOperation extends Operation{
             LoadoutPart rt = loadoutPart.getLoadout().getPart(Part.RightTorso);
             lt.removeItem(LoadoutPart.ENGINE_INTERNAL);
             rt.removeItem(LoadoutPart.ENGINE_INTERNAL);
-            xBar.post(new Message(lt, Type.ItemRemoved));
-            xBar.post(new Message(rt, Type.ItemRemoved));
+            if( xBar != null ){
+               xBar.post(new Message(lt, Type.ItemRemoved));
+               xBar.post(new Message(rt, Type.ItemRemoved));
+            }
          }
 
          int engineHsLeft = loadoutPart.getNumEngineHeatsinks();
@@ -97,7 +102,9 @@ abstract class ItemOperation extends Operation{
          }
       }
       loadoutPart.removeItem(anItem);
-      xBar.post(new Message(loadoutPart, Type.ItemRemoved));
+      if( xBar != null ){
+         xBar.post(new Message(loadoutPart, Type.ItemRemoved));
+      }
    }
 
    /**
@@ -114,15 +121,24 @@ abstract class ItemOperation extends Operation{
             LoadoutPart rt = loadoutPart.getLoadout().getPart(Part.RightTorso);
             lt.addItem(LoadoutPart.ENGINE_INTERNAL);
             rt.addItem(LoadoutPart.ENGINE_INTERNAL);
-            xBar.post(new Message(lt, Type.ItemAdded));
-            xBar.post(new Message(rt, Type.ItemAdded));
+            if( xBar != null ){
+               xBar.post(new Message(lt, Type.ItemAdded));
+               xBar.post(new Message(rt, Type.ItemAdded));
+            }
          }
          while( numEngineHS > 0 ){
             numEngineHS--;
             loadoutPart.addItem(loadoutPart.getLoadout().getUpgrades().getHeatSink().getHeatSinkType());
          }
       }
+
+      Engine engine = loadoutPart.getLoadout().getEngine();
+      if( anItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL && xBar != null ){
+         xBar.post(new NotificationMessage(Severity.WARNING, loadoutPart.getLoadout(), "C.A.S.E. together with XL engine has no effect."));
+      }
       loadoutPart.addItem(anItem);
-      xBar.post(new Message(loadoutPart, Type.ItemAdded));
+      if( xBar != null ){
+         xBar.post(new Message(loadoutPart, Type.ItemAdded));
+      }
    }
 }

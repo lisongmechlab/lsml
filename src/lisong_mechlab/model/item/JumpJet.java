@@ -19,9 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class JumpJet extends Module{
    private final double minTons;
@@ -38,12 +37,7 @@ public class JumpJet extends Module{
       duration = aModule.JumpJetStats.duration;
       heat = aModule.JumpJetStats.heat;
    }
-
-   @Override
-   public boolean isEquippableOn(Loadout aLoadout){
-      return aLoadout.getChassi().getMaxJumpJets() > 0 && aLoadout.getChassi().getMassMax() < maxTons && aLoadout.getChassi().getMassMax() >= minTons;
-   }
-
+   
    public double getForce(){
       return boost_z;
    }
@@ -62,5 +56,13 @@ public class JumpJet extends Module{
       name = name.replace("JUMP JETS", "JJ");
       name = name.replace("CLASS ", "");
       return name;
+   }
+
+   public double getMaxTons(){
+      return maxTons;
+   }
+
+   public double getMinTons(){
+      return minTons;
    }
 }

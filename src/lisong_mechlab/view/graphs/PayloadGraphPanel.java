@@ -27,9 +27,10 @@ import java.util.Iterator;
 import javax.swing.JCheckBox;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassi;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.metrics.TopSpeed;
+import lisong_mechlab.util.MessageXBar;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -49,14 +50,14 @@ import org.jfree.data.xy.XYSeries;
 public class PayloadGraphPanel extends ChartPanel{
    public static class Entry{
       private final String name;
-      private final Chassi representant;
+      private final Chassis representant;
 
-      public Entry(Collection<Chassi> aCollection){
-         Iterator<Chassi> iterator = aCollection.iterator();
+      public Entry(Collection<Chassis> aCollection){
+         Iterator<Chassis> iterator = aCollection.iterator();
          String series = iterator.next().getNameShort();
          while( iterator.hasNext() ){
             series += ",";
-            Chassi chassi = iterator.next();
+            Chassis chassi = iterator.next();
             series += chassi.getNameShort().split("-")[1];
          }
          name = series;
@@ -71,7 +72,7 @@ public class PayloadGraphPanel extends ChartPanel{
 
    private static final long       serialVersionUID = -5907483118809173045L;
    private final PayloadStatistics payloadStatistics;
-   private final Efficiencies      efficiencies     = new Efficiencies(null);
+   private final Efficiencies      efficiencies     = new Efficiencies((MessageXBar)null);
    private Collection<Entry>       chassis;
 
    public PayloadGraphPanel(PayloadStatistics aPayloadStatistics, final JCheckBox aSpeedTweak){

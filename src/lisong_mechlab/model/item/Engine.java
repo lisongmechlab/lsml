@@ -19,22 +19,27 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Engine extends HeatSource{
    public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
    public final static double ENGINE_HEAT_66_THROTTLE   = 0.1;
 
+   @XStreamAsAttribute
    protected final int        rating;
+   @XStreamAsAttribute
    protected final EngineType type;
+   @XStreamAsAttribute
    final private int          internalHs;
+   @XStreamAsAttribute
    final private int          heatsinkslots;
 
    public Engine(ItemStatsModule aStatsModule){
-      super(aStatsModule, HardpointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE, aStatsModule.EngineStats.health);
+      super(aStatsModule, HardPointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE, aStatsModule.EngineStats.health);
       int hs = aStatsModule.EngineStats.heatsinks;
       internalHs = Math.min(10, hs);
       heatsinkslots = hs - internalHs;
@@ -63,10 +68,5 @@ public class Engine extends HeatSource{
       String name = getName(anUpgrades);
       name = name.replace("ENGINE ", "");
       return name;
-   }
-
-   @Override
-   public boolean isEquippableOn(Loadout aLoadout){
-      return aLoadout.getChassi().getEngineMax() >= rating && aLoadout.getChassi().getEngineMin() <= rating;
    }
 }

@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab.equipment;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.EnergyWeapon;
@@ -58,23 +60,22 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
    private static final long     serialVersionUID = -8126726006921797207L;
    private final ItemInfoPanel   infoPanel        = new ItemInfoPanel();
    private final List<ItemLabel> itemLabels       = new ArrayList<>();
+   private final JPanel          energyItems      = new JPanel(new ModifiedFlowLayout());
+   private final JPanel          ballisticItems   = new JPanel(new ModifiedFlowLayout());
+   private final JPanel          missileItems     = new JPanel(new ModifiedFlowLayout());
    private Loadout               currentLoadout;
 
    public EquipmentPanel(LoadoutDesktop aDesktop, MessageXBar aXBar){
       aXBar.attach(this);
       aDesktop.addInternalFrameListener(this);
 
-      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
+      setLayout(new BorderLayout());
       List<Item> items = ItemDB.lookup(Item.class);
       Collections.sort(items);
 
       JPanel itemFlowPanel = new ScrollablePanel();
-      JPanel energyItems = new JPanel(new ModifiedFlowLayout());
       energyItems.setBorder(BorderFactory.createTitledBorder("Energy"));
-      JPanel ballisticItems = new JPanel(new ModifiedFlowLayout());
       ballisticItems.setBorder(BorderFactory.createTitledBorder("Ballistic"));
-      JPanel missileItems = new JPanel(new ModifiedFlowLayout());
       missileItems.setBorder(BorderFactory.createTitledBorder("Missile"));
       JPanel miscItems = new JPanel(new ModifiedFlowLayout());
       miscItems.setBorder(BorderFactory.createTitledBorder("Misc"));
@@ -138,8 +139,8 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
       itemFlowScrollPanel.setAlignmentX(LEFT_ALIGNMENT);
 
       infoPanel.setAlignmentX(LEFT_ALIGNMENT);
-      add(itemFlowScrollPanel);
-      add(infoPanel);
+      add(itemFlowScrollPanel, BorderLayout.CENTER);
+      add(infoPanel, BorderLayout.SOUTH);
       changeLoadout(null);
    }
 
@@ -169,6 +170,16 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
       currentLoadout = aLoadout;
       for(ItemLabel itemLabel : itemLabels){
          itemLabel.updateVisibility(aLoadout);
+      }
+      if( aLoadout != null ){
+         energyItems.setVisible(aLoadout.getChassi().getHardpointsCount(HardPointType.ENERGY) > 0);
+         missileItems.setVisible(aLoadout.getChassi().getHardpointsCount(HardPointType.MISSILE) > 0);
+         ballisticItems.setVisible(aLoadout.getChassi().getHardpointsCount(HardPointType.BALLISTIC) > 0);
+      }
+      else{
+         energyItems.setVisible(true);
+         missileItems.setVisible(true);
+         ballisticItems.setVisible(true);
       }
    }
 

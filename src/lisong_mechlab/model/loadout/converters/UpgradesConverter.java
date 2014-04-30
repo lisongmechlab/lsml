@@ -21,7 +21,7 @@ package lisong_mechlab.model.loadout.converters;
 
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
-import lisong_mechlab.model.upgrades.HeatsinkUpgrade;
+import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -79,7 +79,7 @@ public class UpgradesConverter implements Converter{
       GuidanceUpgrade guidance = UpgradeDB.STANDARD_GUIDANCE;
       ArmorUpgrade armor = UpgradeDB.STANDARD_ARMOR;
       StructureUpgrade structure = UpgradeDB.STANDARD_STRUCTURE;
-      HeatsinkUpgrade heatSinks = UpgradeDB.STANDARD_HEATSINKS;
+      HeatSinkUpgrade heatSinks = UpgradeDB.STANDARD_HEATSINKS;
 
       if( version == 1 ){
          // <artemis>bool</artemis><ferroFibrous>bool</ferroFibrous><endoSteel>bool</endoSteel><dhs>bool</dhs>
@@ -128,7 +128,7 @@ public class UpgradesConverter implements Converter{
                   structure = (StructureUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
                   break;
                case "heatsinks":
-                  heatSinks = (HeatsinkUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+                  heatSinks = (HeatSinkUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
                   break;
                default:
                   throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());

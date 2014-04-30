@@ -50,7 +50,7 @@ public class SetArmorTypeOperation extends UpgradeOperation{
    }
 
    /**
-    * Creates a new {@link SetEndoSteelOperation} that will change the armor type of a {@link Loadout}.
+    * Creates a new {@link SetStructureTypeOperation} that will change the armor type of a {@link Loadout}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in internal structure on.

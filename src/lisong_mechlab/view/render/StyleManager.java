@@ -21,11 +21,20 @@ package lisong_mechlab.view.render;
 
 import java.awt.Color;
 import java.awt.Insets;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.border.Border;
 
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPoint;
+import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
@@ -84,7 +93,76 @@ public class StyleManager{
 
    // Others
    private static final Color  COLOR_BG_MISC           = new Color(0x729fcf);
+   
+   private static final Icon MISSILE_BAY_DOOR_ICON = new ImageIcon(StyleManager.class.getResource("/resources/mbd.png"), "This hard point has missile bay doors. While closed the component receives 10% less damage");
 
+
+   private static final Border INNER_BORDER = BorderFactory.createEmptyBorder(0, 4, 4, 4);
+   public static Border sectionBorder(String sectionTitle){
+      return BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(sectionTitle), INNER_BORDER);
+   }
+   
+   public static void styleHardpointLabel(JLabel aLabel, InternalPart aInternalPart, HardPointType aHardPointType){
+      int hardPoints = aInternalPart.getNumHardpoints(aHardPointType);
+      if( hardPoints < 1 ){
+         aLabel.setVisible(false);
+         return;
+      }
+
+      aLabel.setVisible(true);
+      styleThinItem(aLabel, aHardPointType);
+
+      if(aHardPointType == HardPointType.MISSILE){
+         aLabel.setText(formatMissileHardpointText(aInternalPart));
+         
+         if(aInternalPart.hasMissileBayDoors()){
+            aLabel.setIcon(MISSILE_BAY_DOOR_ICON);
+            aLabel.setToolTipText("This component has missile bay doors. While the doors are closed the component takes 10% less damage.");
+         }
+         else{
+            aLabel.setIcon(null);
+            aLabel.setToolTipText(null);
+         }
+      }
+      else if( hardPoints == 1 ){
+         aLabel.setText(aHardPointType.shortName());
+      }
+      else{
+         aLabel.setText(hardPoints + " " + aHardPointType.shortName());
+      }
+   }
+
+   public static String formatMissileHardpointText(InternalPart aPart){
+      Map<Integer, Integer> tubecounts = new TreeMap<>();
+      for(HardPoint hp : aPart.getHardpoints()){
+         if( hp.getType() == HardPointType.MISSILE ){
+            final int tubes = hp.getNumMissileTubes();
+            if( tubecounts.containsKey(tubes) )
+               tubecounts.put(tubes, tubecounts.get(tubes) + 1);
+            else
+               tubecounts.put(tubes, 1);
+         }
+      }
+
+      String ans = aPart.getNumHardpoints(HardPointType.MISSILE) + " M (";
+      boolean first = true;
+      for(Entry<Integer, Integer> it : tubecounts.entrySet()){
+         if( !first )
+            ans += ", ";
+
+         if( it.getValue() == 1 ){
+            ans += it.getKey();
+         }
+         else{
+            ans += it.getKey() + "x" + it.getValue();
+         }
+
+         first = false;
+      }
+
+      return ans + ")";
+   }
+   
    public static void styleItem(JComponent aComponent){
       Item item = null;
       styleItem(aComponent, item);
@@ -125,7 +203,7 @@ public class StyleManager{
       aComponent.setForeground(getFgColorFor(anItem));
    }
 
-   public static void styleThinItem(JComponent aComponent, HardpointType aType){
+   public static void styleThinItem(JComponent aComponent, HardPointType aType){
       aComponent.setOpaque(true);
       aComponent.setBorder(thinItemBorder);
       aComponent.setBackground(getBgColorFor(aType));
@@ -139,14 +217,14 @@ public class StyleManager{
       aComponent.setForeground(COLOR_FG_DYNAMIC);
    }
 
-   public static void styleItem(JComponent aComponent, HardpointType aType){
+   public static void styleItem(JComponent aComponent, HardPointType aType){
       aComponent.setOpaque(true);
       aComponent.setBorder(singleBorder);
       aComponent.setBackground(getBgColorFor(aType));
       aComponent.setForeground(getFgColorFor(aType));
    }
 
-   static public void colour(JComponent aComponent, HardpointType aType){
+   static public void colour(JComponent aComponent, HardPointType aType){
       aComponent.setBackground(getBgColorFor(aType));
       aComponent.setForeground(getFgColorFor(aType));
    }
@@ -161,7 +239,7 @@ public class StyleManager{
       aComponent.setForeground(getFgColorInvalid());
    }
 
-   static public Color getBgColorFor(HardpointType aType){
+   static public Color getBgColorFor(HardPointType aType){
       switch( aType ){
          case AMS:
             return COLOR_BG_AMS;
@@ -220,7 +298,7 @@ public class StyleManager{
       return Color.GRAY.brighter();
    }
 
-   static public Color getFgColorFor(HardpointType aType){
+   static public Color getFgColorFor(HardPointType aType){
       switch( aType ){
          case AMS:
             return COLOR_FG_AMS;

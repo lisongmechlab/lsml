@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.chassi.HardpointType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
+import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 /**
  * A refinement of {@link Item} for modules.
@@ -29,10 +29,10 @@ import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
  */
 public class Module extends Item{
    public Module(ItemStatsModule aModule){
-      super(aModule, HardpointType.NONE, aModule.ModuleStats.slots, aModule.ModuleStats.tons, aModule.ModuleStats.health);
+      super(aModule, HardPointType.NONE, aModule.ModuleStats.slots, aModule.ModuleStats.tons, aModule.ModuleStats.health);
    }
 
-   public Module(ItemStatsModule aModule, HardpointType hardpoint){
+   public Module(ItemStatsModule aModule, HardPointType hardpoint){
       super(aModule, hardpoint, aModule.ModuleStats.slots, aModule.ModuleStats.tons, aModule.ModuleStats.health);
    }
 }

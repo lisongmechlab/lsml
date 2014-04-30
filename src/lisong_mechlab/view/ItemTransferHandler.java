@@ -34,6 +34,7 @@ import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
@@ -75,6 +76,8 @@ public class ItemTransferHandler extends TransferHandler{
 
          StringBuffer buff = new StringBuffer();
          for(Pair<Item, Integer> it : sourceItems){
+            if( it.first instanceof Internal )
+               return null;
             buff.append(it.first.getName()).append('\n');
             frame.getOpStack().pushAndApply(new RemoveItemOperation(ProgramInit.lsml().xBar, sourcePart, it.first));
          }
@@ -116,7 +119,7 @@ public class ItemTransferHandler extends TransferHandler{
    private void setPreview(Item anItem, Loadout aLoadout){
       Image preview = ItemRenderer.render(anItem, aLoadout != null ? aLoadout.getUpgrades() : null);
       setDragImage(preview);
-      Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.ITEM_BASE_HEIGHT / 2);
+      Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.getItemHeight() / 2);
       setDragImageOffset(mouse);
    }
 
@@ -137,7 +140,7 @@ public class ItemTransferHandler extends TransferHandler{
 
          LoadoutPart part = ((PartList)component).getPart();
          for(Item item : items){
-            if( !part.canAddItem(item) )
+            if( part.getLoadout().canEquip(item) && !part.canEquip(item) )
                return false;
          }
          return true;

@@ -26,16 +26,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.HardpointType;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalPart;
-import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
@@ -53,23 +50,33 @@ import lisong_mechlab.util.OperationStack.Operation;
 public class LoadoutPart{
    public static class Message implements MessageXBar.Message{
       public enum Type{
-         ItemAdded, ItemRemoved, ArmorChanged, ItemsChanged
+         ItemAdded, ItemRemoved, ArmorChanged, ItemsChanged, ArmorDistributionUpdateRequest
       }
 
       public final LoadoutPart part;
 
       public final Type        type;
 
+      /**
+       * True if this message was automatically in response to a change.
+       */
+      public final boolean     automatic;
+
       public Message(LoadoutPart aPart, Type aType){
+         this(aPart, aType, false);
+      }
+
+      public Message(LoadoutPart aPart, Type aType, boolean aAutomatic){
          part = aPart;
          type = aType;
+         automatic = aAutomatic;
       }
 
       @Override
       public boolean equals(Object obj){
          if( obj instanceof Message ){
             Message other = (Message)obj;
-            return part == other.part && type == other.type;
+            return part == other.part && type == other.type && automatic == other.automatic;
          }
          return false;
       }
@@ -80,24 +87,31 @@ public class LoadoutPart{
       }
 
       @Override
+      public boolean affectsHeatOrDamage(){
+         return type != Type.ArmorChanged;
+      }
+
+      @Override
       public String toString(){
          return type.toString() + " for " + part.getInternalPart().getType().toString() + " of " + part.getLoadout();
       }
    }
 
-   public final static Internal          ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3);
+   public final static Internal              ENGINE_INTERNAL = (Internal)ItemDB.lookup("mdf_Engine");
 
-   private final transient Loadout       loadout;
-   private final InternalPart            internalPart;
-   private int                           engineHeatsinks = 0;
+   private final transient Loadout           loadout;
+   private final InternalPart                internalPart;
+   private int                               engineHeatsinks = 0;
 
-   private final Map<ArmorSide, Integer> armor           = new TreeMap<ArmorSide, Integer>();
-   private final List<Item>              items           = new ArrayList<Item>();
+   private final TreeMap<ArmorSide, Integer> armor           = new TreeMap<ArmorSide, Integer>();
+   private final List<Item>                  items           = new ArrayList<Item>();
+   private boolean                           autoArmor       = false;
 
-   public LoadoutPart(Loadout aLoadout, InternalPart anInternalPart){
+   public LoadoutPart(Loadout aLoadout, InternalPart anInternalPart, boolean aAutoArmor){
       internalPart = anInternalPart;
       items.addAll(internalPart.getInternalItems());
       loadout = aLoadout;
+      autoArmor = aAutoArmor;
       if( internalPart.getType().isTwoSided() ){
          armor.put(ArmorSide.FRONT, 0);
          armor.put(ArmorSide.BACK, 0);
@@ -107,107 +121,69 @@ public class LoadoutPart{
       }
    }
 
-   public boolean canAddItem(Item anItem){
-      if( anItem instanceof Internal ){
-         return false; // Can't add internals!
+   /**
+    * Copy constructor. Performs a deep copy of the argument with a new {@link Loadout} value.
+    * 
+    * @param aLoadoutPart
+    *           The {@link LoadoutPart} to copy.
+    * @param aLoadout
+    *           The new {@link Loadout} to associate.
+    */
+   public LoadoutPart(LoadoutPart aLoadoutPart, Loadout aLoadout){
+      loadout = aLoadout;
+      internalPart = aLoadoutPart.internalPart;
+      engineHeatsinks = aLoadoutPart.engineHeatsinks;
+      autoArmor = aLoadoutPart.autoArmor;
+
+      for(Map.Entry<ArmorSide, Integer> e : aLoadoutPart.armor.entrySet()){
+         armor.put(e.getKey(), new Integer(e.getValue()));
       }
-      else if( anItem instanceof HeatSink ){
-         return checkHeatsinkRules((HeatSink)anItem);
-      }
-      else if( anItem instanceof Engine ){
-         return checkEngineRules((Engine)anItem);
-      }
-      else if( anItem instanceof JumpJet ){
-         return checkJumpJetRules((JumpJet)anItem);
-      }
-      else{
-         // Case can only be put in side torsii
-         if( anItem == ItemDB.lookup("C.A.S.E.") ){
-            if( internalPart.getType() != Part.LeftTorso && internalPart.getType() != Part.RightTorso ){
-               return false;
-            }
-         }
-         return checkCommonRules(anItem);
+
+      for(Item item : aLoadoutPart.items){
+         items.add(item);
       }
    }
 
-   private boolean checkCommonRules(Item anItem){
-      // Check enough free mass
-      if( anItem.getMass(loadout.getUpgrades()) > loadout.getFreeMass() ){
+   @Override
+   public String toString(){
+      StringBuilder sb = new StringBuilder();
+      if( getInternalPart().getType().isTwoSided() ){
+         sb.append(getArmor(ArmorSide.FRONT)).append("/").append(getArmor(ArmorSide.BACK));
+      }
+      else{
+         sb.append(getArmor(ArmorSide.ONLY));
+      }
+      sb.append(" ");
+      for(Item item : items){
+         if( item instanceof Internal )
+            continue;
+         sb.append(item).append(",");
+      }
+      return sb.toString();
+   }
+
+   public boolean canEquip(Item anItem){
+      if( !getInternalPart().isAllowed(anItem) )
          return false;
+
+      if( anItem instanceof HeatSink && getNumEngineHeatsinks() < getNumEngineHeatsinksMax() ){
+         return true;
       }
 
       // Check enough free critical slots
-      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(loadout.getUpgrades()) ){
+      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(getLoadout().getUpgrades()) ){
          return false;
       }
 
-      if( loadout.getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(loadout.getUpgrades()) ){
-         return false;
-      }
-
-      if( !anItem.isEquippableOn(loadout) )
+      if( anItem == ItemDB.CASE && items.contains(ItemDB.CASE) )
          return false;
 
       // Check enough free hard points
-      if( anItem.getHardpointType() != HardpointType.NONE
+      if( anItem.getHardpointType() != HardPointType.NONE
           && getNumItemsOfHardpointType(anItem.getHardpointType()) >= getInternalPart().getNumHardpoints(anItem.getHardpointType()) ){
          return false; // Not enough hard points!
       }
       return true;
-   }
-
-   private boolean checkEngineRules(Engine engine){
-      if( getInternalPart().getType() != Part.CenterTorso ){
-         return false; // Engines only in CT!
-      }
-
-      // XL engines need 3 additional slots in RT/LT
-      if( engine.getType() == EngineType.XL ){
-         if( loadout.getPart(Part.LeftTorso).getNumCriticalSlotsFree() < 3 ){
-            return false;
-         }
-         if( loadout.getPart(Part.RightTorso).getNumCriticalSlotsFree() < 3 ){
-            return false;
-         }
-         if( loadout.getNumCriticalSlotsFree() < 3 * 2 + engine.getNumCriticalSlots(loadout.getUpgrades()) ){
-            // XL engines return same number of slots as standard engine, check enough slots to cover the
-            // side torsi.
-            return false;
-         }
-      }
-
-      if( engine.getRating() > loadout.getChassi().getEngineMax() || engine.getRating() < loadout.getChassi().getEngineMin() ){
-         return false; // Too low/high engine rating!
-      }
-      return checkCommonRules(engine);
-   }
-
-   private boolean checkHeatsinkRules(HeatSink anItem){
-      // Don't allow standard heat sinks when double heat sinks are upgraded etc.
-      if( loadout.getUpgrades().getHeatSink().getHeatSinkType() != anItem ){
-         return false;
-      }
-
-      // Allow engine slot heat sinks even if there are no critical slots
-      if( getNumEngineHeatsinks() < getNumEngineHeatsinksMax() && anItem.getMass(loadout.getUpgrades()) <= loadout.getFreeMass() ){
-         return true;
-      }
-      return checkCommonRules(anItem);
-   }
-
-   private boolean checkJumpJetRules(JumpJet aItem){
-      Part type = getInternalPart().getType();
-      switch( type ){
-         case RightTorso:
-         case CenterTorso:
-         case LeftTorso:
-         case RightLeg:
-         case LeftLeg:
-            return loadout.getJumpJetCount() + 1 <= loadout.getChassi().getMaxJumpJets() && checkCommonRules(aItem);
-         default:
-            return false;
-      }
    }
 
    @Override
@@ -225,6 +201,8 @@ public class LoadoutPart{
       if( !armor.equals(that.armor) )
          return false;
       if( engineHeatsinks != that.engineHeatsinks )
+         return false;
+      if( autoArmor != that.autoArmor )
          return false;
       return true;
    }
@@ -244,12 +222,12 @@ public class LoadoutPart{
    public int getArmorMax(ArmorSide anArmorSide){
       switch( anArmorSide ){
          case BACK:
-            return internalPart.getArmorMax() - getArmor(ArmorSide.FRONT);
+            return getInternalPart().getArmorMax() - getArmor(ArmorSide.FRONT);
          case FRONT:
-            return internalPart.getArmorMax() - getArmor(ArmorSide.BACK);
+            return getInternalPart().getArmorMax() - getArmor(ArmorSide.BACK);
          default:
          case ONLY:
-            return internalPart.getArmorMax();
+            return getInternalPart().getArmorMax();
       }
    }
 
@@ -282,7 +260,7 @@ public class LoadoutPart{
    }
 
    public int getNumCriticalSlotsFree(){
-      return internalPart.getNumCriticalslots() - getNumCriticalSlotsUsed();
+      return getInternalPart().getNumCriticalslots() - getNumCriticalSlotsUsed();
    }
 
    public int getNumCriticalSlotsUsed(){
@@ -316,7 +294,7 @@ public class LoadoutPart{
       return 0;
    }
 
-   public int getNumItemsOfHardpointType(HardpointType aHardpointType){
+   public int getNumItemsOfHardpointType(HardPointType aHardpointType){
       int hardpoints = 0;
       for(Item it : items){
          if( it.getHardpointType() == aHardpointType ){
@@ -324,6 +302,10 @@ public class LoadoutPart{
          }
       }
       return hardpoints;
+   }
+
+   public boolean allowAutomaticArmor(){
+      return autoArmor;
    }
 
    @Override
@@ -337,8 +319,9 @@ public class LoadoutPart{
       return result;
    }
 
-   void setArmor(ArmorSide anArmorSide, int anAmount){
+   void setArmor(ArmorSide anArmorSide, int anAmount, boolean aAllowAutomaticArmor){
       armor.put(anArmorSide, anAmount);
+      autoArmor = aAllowAutomaticArmor;
    }
 
    void addItem(Item anItem){

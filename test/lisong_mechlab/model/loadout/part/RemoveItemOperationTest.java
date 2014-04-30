@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
@@ -71,7 +72,7 @@ public class RemoveItemOperationTest{
     * If an item can't be removed, an exception shall be thrown when the operation is applied.
     */
    @Test(expected = IllegalArgumentException.class)
-   public void testCantAddItem(){
+   public void testCantRemoveItem(){
       RemoveItemOperation cut = null;
       try{
          Item item = ItemDB.lookup("LRM 20");
@@ -84,5 +85,14 @@ public class RemoveItemOperationTest{
       }
 
       cut.apply();
+   }
+
+   /**
+    * Internal items can't be removed. Shall throw directly on creation.
+    */
+   @Test(expected = IllegalArgumentException.class)
+   public void testCantRemoveInternal(){
+      Internal item = Mockito.mock(Internal.class);
+      new RemoveItemOperation(xBar, loadoutPart, item);
    }
 }

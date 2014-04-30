@@ -56,6 +56,11 @@ public class Efficiencies{
       public boolean isForMe(Loadout aLoadout){
          return aLoadout.getEfficiencies() == efficiencies;
       }
+
+      @Override
+      public boolean affectsHeatOrDamage(){
+         return true;
+      }
    }
 
    // Elite
@@ -82,7 +87,17 @@ public class Efficiencies{
    public Efficiencies(MessageXBar aXBar){
       xBar = aXBar;
    }
-
+   
+   public Efficiencies(Efficiencies aEfficiencies){
+      speedTweak = aEfficiencies.speedTweak;
+      coolRun = aEfficiencies.coolRun;
+      heatContainment = aEfficiencies.coolRun;
+      anchorTurn = aEfficiencies.anchorTurn;
+      doubleBasics = aEfficiencies.doubleBasics;
+      xBar = aEfficiencies.xBar;
+      fastfire = aEfficiencies.fastfire;
+   }
+   
    /**
     * @return <code>true</code> if speed tweak is enabled (10% faster movement speed).
     */
