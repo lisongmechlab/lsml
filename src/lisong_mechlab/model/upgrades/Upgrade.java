@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.mwo_parsing.Localization;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsUpgradeType;
+import lisong_mechlab.mwo_data.Localization;
+import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 /**
  * Base class for all upgrades for 'mechs.
@@ -31,11 +31,13 @@ public class Upgrade{
    private final String name;
    private final int    mwoId;
    private final String description;
+   private final int    associatedItem;
 
    public Upgrade(ItemStatsUpgradeType aUpgradeType){
       name = Localization.key2string(aUpgradeType.Loc.nameTag);
       description = Localization.key2string(aUpgradeType.Loc.descTag);
       mwoId = Integer.parseInt(aUpgradeType.id);
+      associatedItem = aUpgradeType.UpgradeTypeStats.associatedItem;
    }
 
    /**
@@ -57,5 +59,9 @@ public class Upgrade{
     */
    public String getDescription(){
       return description;
+   }
+
+   public int getAssociateItemId(){
+      return associatedItem;
    }
 }

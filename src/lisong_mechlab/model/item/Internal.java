@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.mwo_parsing.helpers.MdfInternal;
+import lisong_mechlab.mwo_data.helpers.MdfInternal;
 
 /**
  * Internals are special items that do not exist in the ItemDB. Instead they are created and owned by the chassii.

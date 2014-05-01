@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model;
 
-import lisong_mechlab.model.Efficiencies.Message.Type;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
 
@@ -175,7 +174,7 @@ public class Efficiencies{
       if( aSpeedTweak != speedTweak ){
          speedTweak = aSpeedTweak;
          if( xBar != null )
-            xBar.post(new Message(this, Type.Changed));
+            xBar.post(new Message(this, Message.Type.Changed));
       }
    }
 
@@ -189,7 +188,7 @@ public class Efficiencies{
       if( aAnchorTurn != anchorTurn ){
          anchorTurn = aAnchorTurn;
          if( xBar != null )
-            xBar.post(new Message(this, Type.Changed));
+            xBar.post(new Message(this, Message.Type.Changed));
       }
    }
 
@@ -203,7 +202,7 @@ public class Efficiencies{
       if( aCoolRun != coolRun ){
          coolRun = aCoolRun;
          if( xBar != null )
-            xBar.post(new Message(this, Type.Changed));
+            xBar.post(new Message(this, Message.Type.Changed));
       }
    }
 
@@ -217,7 +216,7 @@ public class Efficiencies{
       if( aHeatContainment != heatContainment ){
          heatContainment = aHeatContainment;
          if( xBar != null )
-            xBar.post(new Message(this, Type.Changed));
+            xBar.post(new Message(this, Message.Type.Changed));
       }
    }
 
@@ -231,7 +230,7 @@ public class Efficiencies{
       if( aDoubleBasics != doubleBasics ){
          doubleBasics = aDoubleBasics;
          if( xBar != null )
-            xBar.post(new Message(this, Type.Changed));
+            xBar.post(new Message(this, Message.Type.Changed));
       }
    }
 
@@ -307,7 +306,7 @@ public class Efficiencies{
       if( aFastFire != fastfire ){
          fastfire = aFastFire;
          if( xBar != null )
-            xBar.post(new Message(this, Type.Changed));
+            xBar.post(new Message(this, Message.Type.Changed));
       }
    }
 }

@@ -24,19 +24,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import junitparams.JUnitParamsRunner;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.mwo_parsing.HardpointsXml;
-import lisong_mechlab.model.mwo_parsing.Localization;
-import lisong_mechlab.model.mwo_parsing.MechDefinition;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsMech;
-import lisong_mechlab.model.mwo_parsing.helpers.MdfComponent;
-import lisong_mechlab.model.mwo_parsing.helpers.MdfMech;
+import lisong_mechlab.mwo_data.HardpointsXml;
+import lisong_mechlab.mwo_data.Localization;
+import lisong_mechlab.mwo_data.MechDefinition;
+import lisong_mechlab.mwo_data.helpers.ItemStatsMech;
+import lisong_mechlab.mwo_data.helpers.MdfComponent;
+import lisong_mechlab.mwo_data.helpers.MdfMech;
 
-import org.junit.runner.RunWith;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class represents a bare mech chassis. The class is immutable as the chassis are fixed. To configure a 'mech use
@@ -44,26 +43,43 @@ import org.junit.runner.RunWith;
  * 
  * @author Emily Björk
  */
-@RunWith(JUnitParamsRunner.class)
 public class Chassis{
+   @XStreamAsAttribute
    private final ChassiClass             chassiclass;
+   @XStreamAsAttribute
    private final String                  name;
+   @XStreamAsAttribute
    private final String                  shortName;
+   @XStreamAsAttribute
    private final String                  mwoName;
+   @XStreamAsAttribute
    private final int                     maxTons;
    private final Map<Part, InternalPart> parts;
+   @XStreamAsAttribute
    private final int                     maxJumpJets;
+   @XStreamAsAttribute
    private final int                     engineMin;
+   @XStreamAsAttribute
    private final int                     engineMax;
+   @XStreamAsAttribute
    private final double                  engineFactor;
+   @XStreamAsAttribute
    private final int                     mwoId;
-   @SuppressWarnings("unused")
+   @XStreamAsAttribute
    private final double                  turnFactor;
+   @XStreamAsAttribute
    private final double                  twistFactor;
+   @XStreamAsAttribute
    private final ChassiVariant           variant;
+   @XStreamAsAttribute
+   private final int                     baseVariant;
+   @XStreamAsAttribute
+   private final String                  series;
+   @XStreamAsAttribute
+   private final String                  seriesShort;
 
-   public Chassis(ItemStatsMech aStatsMech, MechDefinition aMdf, HardpointsXml aHardpoints){
-      MdfMech mdfMech = aMdf.Mech; 
+   public Chassis(ItemStatsMech aStatsMech, MechDefinition aMdf, HardpointsXml aHardpoints, int aBaseVariant, String aSeries, String aSeriesShort){
+      MdfMech mdfMech = aMdf.Mech;
       name = Localization.key2string(aStatsMech.Loc.nameTag);
       shortName = Localization.key2string(aStatsMech.Loc.shortNameTag);
       mwoName = aStatsMech.name;
@@ -77,7 +93,8 @@ public class Chassis{
       turnFactor = aMdf.MovementTuningConfiguration.TorsoTurnSpeedPitch;
       twistFactor = aMdf.MovementTuningConfiguration.TorsoTurnSpeedYaw;
       variant = ChassiVariant.fromString(aMdf.Mech.VariantType);
-      
+      baseVariant = aBaseVariant;
+
       Map<Part, InternalPart> tempParts = new HashMap<Part, InternalPart>();
       for(MdfComponent component : aMdf.ComponentList){
          if( Part.isRear(component.Name) ){
@@ -87,8 +104,25 @@ public class Chassis{
          tempParts.put(part, new InternalPart(component, part, aHardpoints, this));
       }
       parts = Collections.unmodifiableMap(tempParts);
+
+      series = aSeries;
+      seriesShort = aSeriesShort;
    }
 
+   /**
+    * @return The name of the series this {@link Chassis} belongs to, e.g. "CATAPHRACT", "ATLAS" etc.
+    */
+   public String getSeriesName(){
+      return series;
+   }
+   
+   /**
+    * @return The short name of the series this {@link Chassis} belongs to, e.g. "CTF", "AS7" etc.
+    */
+   public String getSeriesNameShort(){
+      return seriesShort;
+   }
+   
    public double getSpeedFactor(){
       return engineFactor;
    }
@@ -140,6 +174,13 @@ public class Chassis{
 
    public double getInternalMass(){
       return getMassMax() * 0.10;
+   }
+
+   /**
+    * @return The ID of the base variant of this chassis, or <code>-1</code> if this is not a derived chassis type.
+    */
+   public int getBaseVariantId(){
+      return baseVariant;
    }
 
    public int getMassMax(){

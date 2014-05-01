@@ -163,7 +163,7 @@ public class SmurfyImportExport{
 
       HttpURLConnection connection = connect(loadoutUploadUrlXml);
       connection.setRequestMethod("POST");
-      connection.setRequestProperty("User-Agent", "LSML/" + LSML.VERSION_STRING);
+      connection.setRequestProperty("User-Agent", "LSML/" + LSML.getVersion());
       connection.setRequestProperty("Accept-Charset", "UTF-8");
       connection.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
       connection.setRequestProperty("Content-Length", String.valueOf(rawData.length));

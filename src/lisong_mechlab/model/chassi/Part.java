@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+
 public enum Part{
    Head("Head", "head", "HD"),
    LeftArm("Left Arm", "left_arm", "LA"),
