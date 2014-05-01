@@ -4,8 +4,9 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
 	<classpathentry sourcepath="C:/Users/Emily/.gradle/caches/modules-2/files-2.1/com.thoughtworks.xstream/xstream/1.4.7/5db922f39e8bd8af65d4c4a9471fd94771e273d7/xstream-1.4.7-sources.jar" kind="lib" path="C:/Users/Emily/.gradle/caches/modules-2/files-2.1/com.thoughtworks.xstream/xstream/1.4.7/bce3282142b63068260f021fcbe48b72e8d71a1a/xstream-1.4.7.jar" exported="true"/>
 	<classpathentry sourcepath="C:/Users/Emily/.gradle/caches/modules-2/files-2.1/org.jfree/jfreechart/1.0.17/af16c316e063cd611f21d05e01b91fbfeca3c165/jfreechart-1.0.17-sources.jar" kind="lib" path="C:/Users/Emily/.gradle/caches/modules-2/files-2.1/org.jfree/jfreechart/1.0.17/5766f5838947395cd2503911d5fd0ffa4d6e257d/jfreechart-1.0.17.jar" exported="true"/>
 	<classpathentry sourcepath="C:/Users/Emily/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna/4.0.0/19f0d2edee4c0220d73d5902b03ab5a95fb12628/jna-4.0.0-sources.jar" kind="lib" path="C:/Users/Emily/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna/4.0.0/9b3a11c613ec3fd3440af4103b12c3de82d38b6e/jna-4.0.0.jar" exported="true"/>
