@@ -111,7 +111,7 @@ public class SetArmorOperation extends Operation{
             // See if the armor can be freed from a combination of automatic components. They will be redistributed
             // afterwards. FIXME: Devise a proper solution, this is ugly.
             int freed = 0;
-            while( freed < armorDiff ){
+            if( manual == true && freed < armorDiff ){
                for(LoadoutPart otherPart : loadoutPart.getLoadout().getPartLoadOuts()){
                   if( loadoutPart != otherPart && otherPart.allowAutomaticArmor() ){
                      freed += otherPart.getArmorTotal();
@@ -125,8 +125,8 @@ public class SetArmorOperation extends Operation{
                   }
                }
             }
-            if(freed < armorDiff){
-               throw new IllegalArgumentException("Not enough tonnage to add more armor!");  
+            if( freed < armorDiff ){
+               throw new IllegalArgumentException("Not enough tonnage to add more armor!");
             }
          }
          loadoutPart.setArmor(side, amount, !manual);

@@ -19,17 +19,20 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
-import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.mwo_parsing.ItemStatsXml;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.DataCache;
 
+/**
+ * This class is a database of all {@link Item}s. One can lookup by MWO id, textual name and MWO string name of the
+ * item.
+ * 
+ * @author Li Song
+ */
 public class ItemDB{
    // Special global "item constants" useful when checking special cases.
    // Feel free to populate if you find yourself consistently using
@@ -47,7 +50,7 @@ public class ItemDB{
    static private final Map<String, Item>  mwoname2item;
    static private final Map<Integer, Item> mwoidx2item;
 
-   static public Item lookup(final String anItemName){
+   public static Item lookup(final String anItemName){
       String key = canonize(anItemName);
       if( !locname2item.containsKey(key) ){
          if( !mwoname2item.containsKey(key) ){
@@ -60,7 +63,7 @@ public class ItemDB{
 
    @SuppressWarnings("unchecked")
    // It is checked...
-   static public <T extends Item> List<T> lookup(Class<T> type){
+   public static <T extends Item> List<T> lookup(Class<T> type){
       List<T> ans = new ArrayList<T>();
       for(Item it : locname2item.values()){
          if( type.isInstance(it) ){
@@ -77,15 +80,17 @@ public class ItemDB{
       return mwoidx2item.get(anMwoIndex);
    }
 
-   static private void put(Item anItem){
+   private static void put(Item anItem){
       assert anItem != null;
       assert (!locname2item.containsKey(anItem));
+      
       mwoname2item.put(canonize(anItem.getKey()), anItem);
       locname2item.put(canonize(anItem.getName()), anItem);
-      mwoidx2item.put(anItem.getMwoId(), anItem);
+      if( anItem.getMwoId() >= 0 )
+         mwoidx2item.put(anItem.getMwoId(), anItem);
    }
 
-   static private String canonize(String aString){
+   private static String canonize(String aString){
       String key = aString.toLowerCase();
       if( key.equals("anti-missile system") ){
          return "ams"; // TODO: Update references
@@ -93,81 +98,25 @@ public class ItemDB{
       return key;
    }
 
+   /**
+    * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
+    * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
+    */
    static{
-      mwoname2item = new HashMap<String, Item>();
-      locname2item = new HashMap<String, Item>();
-      mwoidx2item = new TreeMap<Integer, Item>();
-
-      ItemStatsXml stats = ItemStatsXml.stats;
-
-      // Modules (they contain ammo now, and weapons need to find their ammo types when parsed)
-      for(ItemStatsModule statsModule : stats.ModuleList){
-         switch( statsModule.CType ){
-            case "CAmmoTypeStats":
-               put(new Ammunition(statsModule));
-               break;
-            case "CEngineStats":
-               put(new Engine(statsModule));
-               break;
-            case "CHeatSinkStats":
-               put(new HeatSink(statsModule));
-               break;
-            case "CJumpJetStats":
-               put(new JumpJet(statsModule));
-               break;
-            case "CGECMStats":
-               put(new ECM(statsModule));
-               break;
-            case "CBAPStats":
-            case "CCASEStats":
-            case "CCommandConsoleStats":
-               put(new Module(statsModule));
-               break;
-            default:
-               break; // Other modules not yet supported
-         }
+      DataCache dataCache;
+      try{
+         dataCache = DataCache.getInstance();
+      }
+      catch( IOException e ){
+         throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
       }
 
-      // Weapons next.
-      for(ItemStatsWeapon statsWeapon : stats.WeaponList){
-         int baseType = -1;
-         if( statsWeapon.InheritFrom > 0 ){
-            baseType = statsWeapon.InheritFrom;
-            for(ItemStatsWeapon w : stats.WeaponList){
-               try{
-                  if( Integer.parseInt(w.id) == statsWeapon.InheritFrom ){
-                     statsWeapon.WeaponStats = w.WeaponStats;
-                     if( statsWeapon.Loc.descTag == null ){
-                        statsWeapon.Loc.descTag = w.Loc.descTag;
-                     }
-                     break;
-                  }
-               }
-               catch( NumberFormatException e ){
-                  continue;
-               }
-            }
-            if( statsWeapon.WeaponStats == null ){
-               throw new RuntimeException("Unable to find referenced item in \"inherit statement from clause\" for: " + statsWeapon.name);
-            }
-         }
+      mwoname2item = new HashMap<String, Item>();
+      locname2item = new HashMap<String, Item>();
+      mwoidx2item = new HashMap<Integer, Item>();
 
-         switch( HardPointType.fromMwoType(statsWeapon.WeaponStats.type) ){
-            case AMS:
-               put(new AmmoWeapon(statsWeapon, HardPointType.AMS));
-               break;
-            case BALLISTIC:
-               put(new BallisticWeapon(statsWeapon));
-               break;
-            case ENERGY:
-               put(new EnergyWeapon(statsWeapon));
-               break;
-            case MISSILE:
-               put(new MissileWeapon(statsWeapon, baseType));
-               break;
-            default:
-               throw new RuntimeException("Unknown value for type field in ItemStatsXML. Please update the program!");
-         }
+      for(Item item : dataCache.getItems()){
+         put(item);
       }
 
       // Initialize special items

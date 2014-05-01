@@ -25,15 +25,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import lisong_mechlab.mwo_data.GameVFS;
+import lisong_mechlab.view.preferences.PreferenceStore;
+
 import org.junit.Test;
 
 public class GameDataFileTest{
 
    @Test
    public void test() throws IOException{
-      GameDataFile dataFile = new GameDataFile();
+      GameVFS dataFile = new GameVFS(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
 
-      InputStream inputStream = dataFile.openGameFile(new File("Game/Objects/mechs/spider/sdr-5k.mdf"));
+      InputStream inputStream = dataFile.openGameFile(new File("Game/Objects/mechs/spider/sdr-5k.mdf")).stream;
 
       assertTrue(inputStream.available() > 6000);
    }

@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.environment;
 
+
 /**
  * This class represents the model of an environment for mechs. The environment can affect a mech's behavior.
  * 

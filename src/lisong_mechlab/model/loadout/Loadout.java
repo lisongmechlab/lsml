@@ -40,7 +40,6 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.loadout.Loadout.Message.Type;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutConverter;
@@ -146,10 +145,10 @@ public class Loadout implements Cloneable{
    private final Efficiencies               efficiencies;
 
    /**
-    * Will create a new, empty load out based on the given chassi. TODO: Is anXBar really needed?
+    * Will create a new, empty load out based on the given chassis. TODO: Is anXBar really needed?
     * 
     * @param aChassi
-    *           The chassi to base the load out on.
+    *           The chassis to base the load out on.
     * @param anXBar
     *           The {@link MessageXBar} to signal changes to this loadout on.
     */
@@ -165,7 +164,7 @@ public class Loadout implements Cloneable{
       }
 
       if( anXBar != null ){
-         anXBar.post(new Message(this, Type.CREATE));
+         anXBar.post(new Message(this, Message.Type.CREATE));
       }
    }
 
@@ -192,7 +191,7 @@ public class Loadout implements Cloneable{
          parts.put(loadoutPart.getInternalPart().getType(), new LoadoutPart(loadoutPart, this));
       }
       if( anXBar != null ){
-         anXBar.post(new Message(this, Type.CREATE));
+         anXBar.post(new Message(this, Message.Type.CREATE));
       }
    }
 

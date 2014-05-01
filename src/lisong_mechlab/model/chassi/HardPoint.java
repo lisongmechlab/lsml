@@ -19,15 +19,20 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
  * Represents a hard point on a chassis.
  * 
  * @author Li Song
  */
 public class HardPoint{
+   @XStreamAsAttribute
    final int           tubes;
+   @XStreamAsAttribute
    final HardPointType type;
-   final boolean hasBayDoor;
+   @XStreamAsAttribute
+   final boolean       hasBayDoor;
 
    public HardPoint(HardPointType aType){
       this(aType, 0, false);

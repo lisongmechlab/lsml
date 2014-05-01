@@ -3,6 +3,10 @@ package lisong_mechlab.model.loadout.part;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.InternalPart;
 import lisong_mechlab.model.chassi.Part;
@@ -137,8 +141,11 @@ public class SetArmorOperationTest{
       final int oldArmor = 20;
       final int newArmor = oldArmor + (int)(freeTons * 32) + 1;
 
+      
+      List<LoadoutPart> parts = new ArrayList<>();
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
       Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);
+      Mockito.when(loadout.getPartLoadOuts()).thenReturn(parts);
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       SetArmorOperation cut = null;

@@ -31,7 +31,7 @@ public class Upgrades implements Cloneable{
    private ArmorUpgrade     armorType     = UpgradeDB.STANDARD_ARMOR;
    private StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
    private GuidanceUpgrade  guidanceType  = UpgradeDB.STANDARD_GUIDANCE;
-   private HeatsinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
+   private HeatSinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
 
    public static class Message implements MessageXBar.Message{
       public final ChangeMsg msg;
@@ -73,7 +73,7 @@ public class Upgrades implements Cloneable{
     * @param aGuidance
     * @param aHeatSinks
     */
-   public Upgrades(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance, HeatsinkUpgrade aHeatSinks){
+   public Upgrades(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance, HeatSinkUpgrade aHeatSinks){
       armorType = aArmor;
       structureType = aStructure;
       guidanceType = aGuidance;
@@ -124,7 +124,7 @@ public class Upgrades implements Cloneable{
       return guidanceType;
    }
 
-   public HeatsinkUpgrade getHeatSink(){
+   public HeatSinkUpgrade getHeatSink(){
       return heatSinkType;
    }
 
@@ -140,7 +140,7 @@ public class Upgrades implements Cloneable{
       guidanceType = aGuidanceUpgrade;
    }
 
-   void setHeatSink(HeatsinkUpgrade aHeatsinkUpgrade){
+   void setHeatSink(HeatSinkUpgrade aHeatsinkUpgrade){
       heatSinkType = aHeatsinkUpgrade;
    }
 

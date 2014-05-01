@@ -97,7 +97,7 @@ public class LoadoutPart{
       }
    }
 
-   public final static Internal              ENGINE_INTERNAL = new Internal("mdf_Engine", "mdf_EngineDesc", 3, 15);
+   public final static Internal              ENGINE_INTERNAL = (Internal)ItemDB.lookup("mdf_Engine");
 
    private final transient Loadout           loadout;
    private final InternalPart                internalPart;

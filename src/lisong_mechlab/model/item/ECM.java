@@ -20,7 +20,7 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
+import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class ECM extends Module{
 

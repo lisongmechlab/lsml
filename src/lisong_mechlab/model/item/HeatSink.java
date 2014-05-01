@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.mwo_parsing.helpers.ItemStatsModule;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class HeatSink extends Module{
    private final double dissapation;
