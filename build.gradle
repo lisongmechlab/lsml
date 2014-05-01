@@ -1,143 +1,115 @@
-
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'application'
 apply plugin: 'launch4j'
-apply plugin: 'ecj'
+apply plugin: 'eclipse'
 
-sourceCompatibility = 1.7
-def version = '1.1'
-project.buildDir = 'buildTemp'
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'LSML', 'Implementation-Version': 1.1
-    }
-}
-
-repositories {
-    mavenCentral()
-    flatDir {
-       name "installer"
-       dirs "buildTemp/installer"
-   }
-}
-
-dependencies {
-    compile 'com.thoughtworks.xstream:xstream:1.4.4', 'jfreechart:jfreechart:1.0.0'
-    testCompile 'junit:junit:4.+', 'org.mockito:mockito-core:1.9.5'
-}
-
-test {
-    systemProperties 'property': 'value'
-}
-
-
-uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-       add project.repositories.installer
-       flatDir {
-          dirs 'C:/users/home/git'
-      }
-    }
-}
-
-jar {
-    mainClassName = 'lisong_mechlab.view.ProgramInit'
-   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    manifest {
-        attributes("Main-Class": "lisong_mechlab.view.ProgramInit")
-    }
-}
-
-task buildCandle(dependsOn: 'build:buildCandle') {
-   println 'build candle'
-}
-
-task buildLight(dependsOn: 'build:buildLight') {
-   println 'build light'
-}
-
-
-launch4j {
-    mainClassName = "lisong_mechlab.view.ProgramInit"
-   def jarName = "lsml-" + version + ".jar"
-   jar = jarName
-   dontWrapJar = true
-   icon = project.rootDir.toString() + "//build//icon.ico"
-   manifest = "lsml.manifest"
-
-
-}
-
-task copyLaunch4j () << {
-   copy{
-      from 'buildTemp/libs'
-      into 'buildTemp/launch4j'
-      //rename { String fileName -> fileName.replace('-1.1', '')}
-   
+gradle.taskGraph.whenReady { taskGraph ->
+  if (!taskGraph.hasTask(release)) {
+    version = '(develop)'
   }
 }
 
-task copyInstaller (dependsOn: copyLaunch4j) << {
-   copy{
-      from 'buildTemp/launch4j'
-      into 'build'
-      exclude { details -> details.isDirectory() || details.file.name.endsWith('.xml')}
-   }
+applicationName = 'Li Song Mechlab'
+archivesBaseName = 'lsml'
+libsDirName = project.rootDir.toString() + '/lib'
+mainClassName = 'lisong_mechlab.view.ProgramInit'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
+buildDir = 'build/gradle'
+
+sourceSets {
+  main {
+    java {
+      srcDir 'src'
+    }
+    resources {
+      srcDir 'resources'
+    }
+  }
+  test{
+    java {
+      srcDir 'test'
+    }
+  }
 }
 
-task createInstaller (dependsOn: [jar, copyInstaller, buildLight, buildCandle]) << {
-   println ('BuildingInstaller...')
+repositories {
+  mavenCentral()
 }
 
+dependencies {
+  compile 'com.thoughtworks.xstream:xstream:1.4.7+', 'org.jfree:jfreechart:1.+', 'net.java.dev.jna:jna:4.0.0+'
+  testCompile 'junit:junit:4+', 'org.mockito:mockito-all:1.9.5+', 'pl.pragmatists:JUnitParams:1.0.2+'
+}
 
+jar {
+  destinationDir = file('build')
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+  archiveName="lsml.jar"
+  manifest {
+    attributes('Main-Class': mainClassName, 
+               'Implementation-Title': 'Li Song Mechlab', 
+               'Implementation-Version' : version)
+  }
+}
 
-buildLight.mustRunAfter buildCandle
-
-
-
+launch4j {
+  mainClassName = project.mainClassName
+  dontWrapJar = true
+  outputDir = '../'
+  icon = project.jar.destinationDir.toString() + '/icon.ico'
+  jar = project.jar.archiveName
+  manifest = project.jar.destinationDir.toString() + '/lsml.manifest'
+}
 
 buildscript {
-    repositories {
-        ivy {
-            artifactPattern project.rootDir.toString() + '/build/launch4jplugin/[module]-[revision].[ext]'
-        }
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'edu.sc.seis.gradle:launch4j:1.0.6+'
+  }
+}
+
+tasks.withType(Compile) {
+  options.encoding = 'UTF-8'
+  options.compilerArgs << '-Xlint:unchecked'
+}
+
+task wixCandle64(type: Exec) {
+  workingDir 'build'
+  executable 'candle'
+  args '-dg_64bit="yes"', '-dg_version=' + version, '"*.wxs"'
+}
+
+task wixLight64(type: Exec) {
+  workingDir 'build'
+  executable 'light'
+  args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_64bit.msi'
+}
+
+wixLight64.dependsOn(wixCandle64);
+
+task wixCandle32(type: Exec) {
+  workingDir 'build'
+  executable 'candle'
+  args '-dg_64bit="no"', '-dg_version=' + version, '"*.wxs"'
+}
+
+task wixLight32(type: Exec) {
+  workingDir 'build'
+  executable 'light'
+  args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_32bit.msi'
+}
+
+wixLight32.dependsOn(wixCandle32);
     
-       add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-           name = 'GitHub'
-           addArtifactPattern 'http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]'
-       }
-
-       mavenCentral()
-    }
-    dependencies {
-        classpath 'edu.sc.seis:gradle-launch4j:1.0.5'
-        classpath 'xinthink:gradle-ecj:1.0-Beta'
-    }
+task release() {
+  println "Building release: " + version
 }
 
-
-mainClassName = 'lisong_mechlab.view.ProgramInit'
-sourceSets {
-    main {
-        java {
-            srcDir '/src'
-        }
-        resources {
-            srcDir 'resources'
-        }
-
-
-    }
-   test {
-      java {
-            srcDir '/test'
-        }
-        
-
-   }
-}
+release.dependsOn(jar)
+release.dependsOn('launch4j')
+release.dependsOn(wixLight32)
+release.dependsOn(wixLight64)
