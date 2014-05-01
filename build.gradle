@@ -3,6 +3,12 @@ apply plugin: 'application'
 apply plugin: 'launch4j'
 apply plugin: 'eclipse'
 
+gradle.taskGraph.whenReady { taskGraph ->
+  if (!taskGraph.hasTask(release)) {
+    version = '(develop)'
+  }
+}
+
 applicationName = 'Li Song Mechlab'
 archivesBaseName = 'lsml'
 libsDirName = project.rootDir.toString() + '/lib'
