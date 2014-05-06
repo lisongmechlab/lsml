@@ -24,7 +24,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class ItemStatsUpgradeType extends ItemStats{
    public static class UpgradeTypeStatsTag{
       @XStreamAsAttribute
-      public int    type;
+      public String type;
       @XStreamAsAttribute
       public int    slots;
       @XStreamAsAttribute

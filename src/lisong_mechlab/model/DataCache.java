@@ -164,7 +164,7 @@ public class DataCache{
          }
          catch( IOException exception ){
             if( null != aLog ){
-               aLog.append("No game files are available...");
+               aLog.append("No game files are available...").append(System.lineSeparator());
                exception.printStackTrace(new PrintWriter(aLog));
             }
          }
@@ -185,14 +185,14 @@ public class DataCache{
                   status = ParseStatus.NotInitialized;
                   shouldUpdateCache = true;
                   if( null != aLog ){
-                     aLog.append("Found a data cache for another version of LSML, it's not safe to load.");
+                     aLog.append("Found a data cache for another version of LSML, it's not safe to load.").append(System.lineSeparator());
                   }
                }
                else if( itemStatsXml != null && cached.itemStatsCrc != itemStatsXml.crc32 ){
                   // Correct LSML version but they don't match the game files.
                   shouldUpdateCache = true;
                   if( null != aLog ){
-                     aLog.append("Found a data cache, it doesn't match game files.");
+                     aLog.append("Found a data cache, it doesn't match game files.").append(System.lineSeparator());
                   }
                }
                else{
@@ -203,7 +203,7 @@ public class DataCache{
             catch( Throwable t ){
                shouldUpdateCache = true;
                if( null != aLog ){
-                  aLog.append("Loading cached data failed.");
+                  aLog.append("Loading cached data failed.").append(System.lineSeparator());
                   t.printStackTrace(new PrintWriter(aLog));
                }
             }
@@ -211,7 +211,7 @@ public class DataCache{
          else{
             shouldUpdateCache = true;
             if( null != aLog ){
-               aLog.append("No cache found.");
+               aLog.append("No cache found.").append(System.lineSeparator());
             }
          }
 
@@ -224,10 +224,10 @@ public class DataCache{
                status = ParseStatus.ParseFailed;
 
                if( null != aLog ){
-                  aLog.append("Updating the cache failed: " + t.getMessage());
+                  aLog.append("Updating the cache failed: " + t.getMessage()).append(System.lineSeparator());
                   t.printStackTrace(new PrintWriter(aLog));
                   if( cached != null ){
-                     aLog.append("Proceeding by using old cache.");
+                     aLog.append("Proceeding by using old cache.").append(System.lineSeparator());
                   }
                }
             }
@@ -235,7 +235,7 @@ public class DataCache{
 
          if( cached == null ){
             if( null != aLog ){
-               aLog.append("Falling back on bundled data cache.");
+               aLog.append("Falling back on bundled data cache.").append(System.lineSeparator());
             }
             InputStream is = DataCache.class.getResourceAsStream("/resources/bundleDataCache.xml");
             cached = (DataCache)stream.fromXML(is); // Let this throw as this is fatal.
@@ -481,7 +481,7 @@ public class DataCache{
          MechDefinition mdf = null;
          HardpointsXml hardpoints = null;
          try{
-            String mdfFile = mech.mdf.replace('\\', '/');
+            String mdfFile = mech.chassis + "/" + mech.name + ".mdf";
             mdf = MechDefinition.fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, mdfFile)).stream);
             hardpoints = HardpointsXml.fromXml(aGameVfs.openGameFile(new File("Game", mdf.HardpointPath)).stream);
          }
@@ -498,8 +498,7 @@ public class DataCache{
          }
 
          // TODO: Find a better way of parsing this
-         String[] mdfsplit = mech.mdf.split("\\\\");
-         String series = mdfsplit[1];
+         String series = mech.chassis;
          String seriesShort = mech.name.split("-")[0];
 
          final Chassis chassi = new Chassis(mech, mdf, hardpoints, basevariant, series, seriesShort);
@@ -580,10 +579,10 @@ public class DataCache{
             case ARMOR:
                ans.add(new ArmorUpgrade(upgradeType));
                break;
-            case GUIDANCE:
+            case ARTEMIS:
                ans.add(new GuidanceUpgrade(upgradeType));
                break;
-            case HEATSINKS:
+            case HEATSINK:
                ans.add(new HeatSinkUpgrade(upgradeType));
                break;
             case STRUCTURE:
@@ -657,7 +656,7 @@ public class DataCache{
             Element stockUpgrades = maybeUpgrades.get(0);
             armorId = Integer.parseInt(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID"));
             structureId = Integer.parseInt(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID"));
-            heatsinkId = reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double") ? 3002 : 3003;
+            heatsinkId = Integer.parseInt(reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("ItemID"));
             guidanceId = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1") ? 3050 : 3051;
          }
 
