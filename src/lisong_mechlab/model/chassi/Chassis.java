@@ -80,8 +80,8 @@ public class Chassis{
 
    public Chassis(ItemStatsMech aStatsMech, MechDefinition aMdf, HardpointsXml aHardpoints, int aBaseVariant, String aSeries, String aSeriesShort){
       MdfMech mdfMech = aMdf.Mech;
-      name = Localization.key2string(aStatsMech.Loc.nameTag);
-      shortName = Localization.key2string(aStatsMech.Loc.shortNameTag);
+      name = Localization.key2string("@" + aStatsMech.name);
+      shortName = Localization.key2string("@" + aStatsMech.name + "_short");
       mwoName = aStatsMech.name;
       mwoId = aStatsMech.id;
       engineMin = mdfMech.MinEngineRating;
@@ -115,14 +115,14 @@ public class Chassis{
    public String getSeriesName(){
       return series;
    }
-   
+
    /**
     * @return The short name of the series this {@link Chassis} belongs to, e.g. "CTF", "AS7" etc.
     */
    public String getSeriesNameShort(){
       return seriesShort;
    }
-   
+
    public double getSpeedFactor(){
       return engineFactor;
    }
