@@ -25,6 +25,7 @@ import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.PrintWriter;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
@@ -38,6 +39,7 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.WString;
 
+import lisong_mechlab.model.DataCache;
 import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.environment.EnvironmentDB;
 import lisong_mechlab.model.item.ItemDB;
@@ -129,6 +131,22 @@ public class ProgramInit extends JFrame{
 
       try{
          GameVFS.checkGameFilesInstalled();
+
+         DataCache.getInstance(new PrintWriter(System.out));
+
+         switch( DataCache.getStatus() ){
+            case Builtin:
+               break;
+            case ParseFailed:
+               JOptionPane.showMessageDialog(null, "Reading the game files failed. This is most likely due to changes in the last patch.\n\n"+"LSML will still function with data from the last successfull parse.\n"
+                                                   + "Please update LSML to the latest version to be sure you have the latest game data.",
+                                             "Game file parse failed", JOptionPane.INFORMATION_MESSAGE);
+               break;
+            default:
+               break;
+
+         }
+
          // Causes static initialization to be ran.
          ItemDB.lookup("C.A.S.E.");
          StockLoadoutDB.lookup(ChassiDB.lookup("JR7-D"));

@@ -96,18 +96,30 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * @author Emily Björk
  */
 public class DataCache{
-   private static transient DataCache instance;
-   private static transient Boolean   loading = false;
+   public static enum ParseStatus{
+      /** The cache has not yet been initialized. */
+      NotInitialized,
+      /** A game install was detected and successfully parsed. */
+      Parsed,
+      /** A game install was detected but parsing failed. */
+      ParseFailed,
+      /** No game install was detected and the built-in or cached data was loaded. */
+      Builtin
+   }
+
+   private static transient DataCache   instance;
+   private static transient Boolean     loading = false;
+   private static transient ParseStatus status  = ParseStatus.NotInitialized;
 
    @XStreamAsAttribute
-   private String                     lsmlVersion;
+   private String                       lsmlVersion;
    @XStreamAsAttribute
-   private long                       itemStatsCrc;
-   private List<Item>                 items;
-   private List<Chassis>              chassis;
-   private List<StockLoadout>         stockLoadouts;
-   private List<Upgrade>              upgrades;
-   private List<Environment>          environments;
+   private long                         itemStatsCrc;
+   private List<Item>                   items;
+   private List<Chassis>                chassis;
+   private List<StockLoadout>           stockLoadouts;
+   private List<Upgrade>                upgrades;
+   private List<Environment>            environments;
 
    /**
     * @see DataCache#getInstance(Writer)
@@ -115,6 +127,13 @@ public class DataCache{
    @SuppressWarnings("javadoc")
    public static DataCache getInstance() throws IOException{
       return getInstance(null);
+   }
+
+   /**
+    * @return The {@link ParseStatus} describing how the game content was loaded.
+    */
+   public static ParseStatus getStatus(){
+      return status;
    }
 
    /**
@@ -158,10 +177,12 @@ public class DataCache{
             // We have a local cache file, lets see if it's usable.
             try{
                cached = (DataCache)stream.fromXML(dataCacheFile);
+               status = ParseStatus.Builtin;
                if( !cached.lsmlVersion.equals(LSML.getVersion()) ){
                   // It's from a different LSML version, it's not safe to use it.
                   dataCacheFile.delete(); // No use in keeping it around
                   cached = null;
+                  status = ParseStatus.NotInitialized;
                   shouldUpdateCache = true;
                   if( null != aLog ){
                      aLog.append("Found a data cache for another version of LSML, it's not safe to load.");
@@ -174,6 +195,10 @@ public class DataCache{
                      aLog.append("Found a data cache, it doesn't match game files.");
                   }
                }
+               else{
+                  // Correct, version and ma
+               }
+
             }
             catch( Throwable t ){
                shouldUpdateCache = true;
@@ -193,8 +218,11 @@ public class DataCache{
          if( shouldUpdateCache && gameVfs != null ){
             try{
                cached = updateCache(gameVfs, itemStatsXml);
+               status = ParseStatus.Parsed;
             }
             catch( Throwable t ){
+               status = ParseStatus.ParseFailed;
+
                if( null != aLog ){
                   aLog.append("Updating the cache failed: " + t.getMessage());
                   t.printStackTrace(new PrintWriter(aLog));
@@ -211,6 +239,8 @@ public class DataCache{
             }
             InputStream is = DataCache.class.getResourceAsStream("/resources/bundleDataCache.xml");
             cached = (DataCache)stream.fromXML(is); // Let this throw as this is fatal.
+            if( status == ParseStatus.NotInitialized )
+               status = ParseStatus.Builtin;
             if( !cached.lsmlVersion.equals(LSML.getVersion()) ){
                // It's from a different LSML version, it's not safe to use it.
                throw new RuntimeException("Bundled data cache not udpated!");
@@ -353,7 +383,7 @@ public class DataCache{
 
       // Special items
       ans.add(new Internal("mdf_Engine", "mdf_EngineDesc", 3, 15));
-      
+
       // Modules (they contain ammo now, and weapons need to find their ammo types when parsed)
       for(ItemStatsModule statsModule : aItemStatsXml.ModuleList){
          switch( statsModule.CType ){
