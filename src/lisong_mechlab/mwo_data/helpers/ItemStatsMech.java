@@ -23,11 +23,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsMech{
    @XStreamAsAttribute
-   public String       mdf;
+   public String       chassis;
    @XStreamAsAttribute
    public String       name;
    @XStreamAsAttribute
    public int          id;
-
-   public ItemStatsLoc Loc;
 }

@@ -70,6 +70,8 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsMech;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+import lisong_mechlab.mwo_data.helpers.LoadoutXML;
+import lisong_mechlab.mwo_data.helpers.LoadoutXML.Upgrades.Artemis;
 import lisong_mechlab.mwo_data.helpers.Mission;
 import lisong_mechlab.util.OS;
 import lisong_mechlab.util.OS.WindowsVersion;
@@ -96,18 +98,30 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * @author Li Song
  */
 public class DataCache{
-   private static transient DataCache instance;
-   private static transient Boolean   loading = false;
+   public static enum ParseStatus{
+      /** The cache has not yet been initialized. */
+      NotInitialized,
+      /** A game install was detected and successfully parsed. */
+      Parsed,
+      /** A game install was detected but parsing failed. */
+      ParseFailed,
+      /** No game install was detected and the built-in or cached data was loaded. */
+      Builtin
+   }
+
+   private static transient DataCache   instance;
+   private static transient Boolean     loading = false;
+   private static transient ParseStatus status  = ParseStatus.NotInitialized;
 
    @XStreamAsAttribute
-   private String                     lsmlVersion;
+   private String                       lsmlVersion;
    @XStreamAsAttribute
-   private long                       itemStatsCrc;
-   private List<Item>                 items;
-   private List<Chassis>              chassis;
-   private List<StockLoadout>         stockLoadouts;
-   private List<Upgrade>              upgrades;
-   private List<Environment>          environments;
+   private long                         itemStatsCrc;
+   private List<Item>                   items;
+   private List<Chassis>                chassis;
+   private List<StockLoadout>           stockLoadouts;
+   private List<Upgrade>                upgrades;
+   private List<Environment>            environments;
 
    /**
     * @see DataCache#getInstance(Writer)
@@ -115,6 +129,13 @@ public class DataCache{
    @SuppressWarnings("javadoc")
    public static DataCache getInstance() throws IOException{
       return getInstance(null);
+   }
+
+   /**
+    * @return The {@link ParseStatus} describing how the game content was loaded.
+    */
+   public static ParseStatus getStatus(){
+      return status;
    }
 
    /**
@@ -145,7 +166,7 @@ public class DataCache{
          }
          catch( IOException exception ){
             if( null != aLog ){
-               aLog.append("No game files are available...");
+               aLog.append("No game files are available...").append(System.lineSeparator());
                exception.printStackTrace(new PrintWriter(aLog));
             }
          }
@@ -158,27 +179,33 @@ public class DataCache{
             // We have a local cache file, lets see if it's usable.
             try{
                cached = (DataCache)stream.fromXML(dataCacheFile);
+               status = ParseStatus.Builtin;
                if( !cached.lsmlVersion.equals(LSML.getVersion()) ){
                   // It's from a different LSML version, it's not safe to use it.
                   dataCacheFile.delete(); // No use in keeping it around
                   cached = null;
+                  status = ParseStatus.NotInitialized;
                   shouldUpdateCache = true;
                   if( null != aLog ){
-                     aLog.append("Found a data cache for another version of LSML, it's not safe to load.");
+                     aLog.append("Found a data cache for another version of LSML, it's not safe to load.").append(System.lineSeparator());
                   }
                }
                else if( itemStatsXml != null && cached.itemStatsCrc != itemStatsXml.crc32 ){
                   // Correct LSML version but they don't match the game files.
                   shouldUpdateCache = true;
                   if( null != aLog ){
-                     aLog.append("Found a data cache, it doesn't match game files.");
+                     aLog.append("Found a data cache, it doesn't match game files.").append(System.lineSeparator());
                   }
                }
+               else{
+                  // Correct, version and ma
+               }
+
             }
             catch( Throwable t ){
                shouldUpdateCache = true;
                if( null != aLog ){
-                  aLog.append("Loading cached data failed.");
+                  aLog.append("Loading cached data failed.").append(System.lineSeparator());
                   t.printStackTrace(new PrintWriter(aLog));
                }
             }
@@ -186,20 +213,23 @@ public class DataCache{
          else{
             shouldUpdateCache = true;
             if( null != aLog ){
-               aLog.append("No cache found.");
+               aLog.append("No cache found.").append(System.lineSeparator());
             }
          }
 
          if( shouldUpdateCache && gameVfs != null ){
             try{
                cached = updateCache(gameVfs, itemStatsXml);
+               status = ParseStatus.Parsed;
             }
             catch( Throwable t ){
+               status = ParseStatus.ParseFailed;
+
                if( null != aLog ){
-                  aLog.append("Updating the cache failed: " + t.getMessage());
+                  aLog.append("Updating the cache failed: " + t.getMessage()).append(System.lineSeparator());
                   t.printStackTrace(new PrintWriter(aLog));
                   if( cached != null ){
-                     aLog.append("Proceeding by using old cache.");
+                     aLog.append("Proceeding by using old cache.").append(System.lineSeparator());
                   }
                }
             }
@@ -207,10 +237,12 @@ public class DataCache{
 
          if( cached == null ){
             if( null != aLog ){
-               aLog.append("Falling back on bundled data cache.");
+               aLog.append("Falling back on bundled data cache.").append(System.lineSeparator());
             }
             InputStream is = DataCache.class.getResourceAsStream("/resources/bundleDataCache.xml");
             cached = (DataCache)stream.fromXML(is); // Let this throw as this is fatal.
+            if( status == ParseStatus.NotInitialized )
+               status = ParseStatus.Builtin;
             if( !cached.lsmlVersion.equals(LSML.getVersion()) ){
                // It's from a different LSML version, it's not safe to use it.
                throw new RuntimeException("Bundled data cache not udpated!");
@@ -353,7 +385,7 @@ public class DataCache{
 
       // Special items
       ans.add(new Internal("mdf_Engine", "mdf_EngineDesc", 3, 15));
-      
+
       // Modules (they contain ammo now, and weapons need to find their ammo types when parsed)
       for(ItemStatsModule statsModule : aItemStatsXml.ModuleList){
          switch( statsModule.CType ){
@@ -451,7 +483,7 @@ public class DataCache{
          MechDefinition mdf = null;
          HardpointsXml hardpoints = null;
          try{
-            String mdfFile = mech.mdf.replace('\\', '/');
+            String mdfFile = mech.chassis + "/" + mech.name + ".mdf";
             mdf = MechDefinition.fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, mdfFile)).stream);
             hardpoints = HardpointsXml.fromXml(aGameVfs.openGameFile(new File("Game", mdf.HardpointPath)).stream);
          }
@@ -468,8 +500,7 @@ public class DataCache{
          }
 
          // TODO: Find a better way of parsing this
-         String[] mdfsplit = mech.mdf.split("\\\\");
-         String series = mdfsplit[1];
+         String series = mech.chassis;
          String seriesShort = mech.name.split("-")[0];
 
          final Chassis chassi = new Chassis(mech, mdf, hardpoints, basevariant, series, seriesShort);
@@ -550,10 +581,10 @@ public class DataCache{
             case ARMOR:
                ans.add(new ArmorUpgrade(upgradeType));
                break;
-            case GUIDANCE:
+            case ARTEMIS:
                ans.add(new GuidanceUpgrade(upgradeType));
                break;
-            case HEATSINKS:
+            case HEATSINK:
                ans.add(new HeatSinkUpgrade(upgradeType));
                break;
             case STRUCTURE:
@@ -572,35 +603,54 @@ public class DataCache{
    private static List<StockLoadout> parseStockLoadouts(GameVFS aGameVfs, List<Chassis> aChassis) throws IOException{
       List<StockLoadout> ans = new ArrayList<>();
 
+      XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
+         @Override
+         protected MapperWrapper wrapMapper(MapperWrapper next){
+            return new MapperWrapper(next){
+               @Override
+               public boolean shouldSerializeMember(Class definedIn, String fieldName){
+                  if( definedIn == Object.class ){
+                     return false;
+                  }
+                  return super.shouldSerializeMember(definedIn, fieldName);
+               }
+            };
+         }
+      };
+      xstream.autodetectAnnotations(true);
+      xstream.alias("Loadout", LoadoutXML.class);
+
       for(Chassis chassis : aChassis){
          File loadoutXml = new File("Game/Libs/MechLoadout/" + chassis.getMwoName().toLowerCase() + ".xml");
-         XmlReader reader;
-         try{
-            reader = new XmlReader(aGameVfs.openGameFile(loadoutXml).stream);
-         }
-         catch( ParserConfigurationException e ){
-            throw new IOException(e);
-         }
-         catch( SAXException e ){
-            throw new IOException(e);
-         }
+         LoadoutXML stockXML = (LoadoutXML)xstream.fromXML(aGameVfs.openGameFile(loadoutXml).stream);
 
          List<StockLoadout.StockComponent> components = new ArrayList<>();
-         for(Element component : reader.getElementsByTagName("component")){
+         for(LoadoutXML.Component xmlComponent : stockXML.ComponentList){
             List<Integer> items = new ArrayList<>();
 
-            String name = component.getAttribute("Name");
-            Part partType = Part.fromMwoName(name);
-            boolean isRear = Part.isRear(name);
-            int armorFront = isRear ? 0 : Integer.parseInt(component.getAttribute("Armor"));
-            int armorBack = isRear ? Integer.parseInt(component.getAttribute("Armor")) : 0;
-
-            for(Node child = component.getFirstChild(); child != null; child = child.getNextSibling()){
-               if( child.getNodeType() == Node.ELEMENT_NODE ){
-                  items.add(Integer.parseInt(((Element)child).getAttribute("ItemID")));
+            if( xmlComponent.Ammo != null ){
+               for(LoadoutXML.Component.Item item : xmlComponent.Ammo){
+                  items.add(item.ItemID);
                }
             }
 
+            if( xmlComponent.Module != null ){
+               for(LoadoutXML.Component.Item item : xmlComponent.Module){
+                  items.add(item.ItemID);
+               }
+            }
+
+            if( xmlComponent.Weapon != null ){
+               for(LoadoutXML.Component.Weapon item : xmlComponent.Weapon){
+                  items.add(item.ItemID);
+               }
+            }
+
+            Part partType = Part.fromMwoName(xmlComponent.Name);
+            boolean isRear = Part.isRear(xmlComponent.Name);
+            int armorFront = isRear ? 0 : xmlComponent.Armor;
+            int armorBack = isRear ? xmlComponent.Armor : 0;
+            
             // Merge front and back sides
             Iterator<StockComponent> it = components.iterator();
             while( it.hasNext() ){
@@ -613,7 +663,7 @@ public class DataCache{
                   break;
                }
             }
-
+            
             StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(partType, armorFront, armorBack, items);
             components.add(stockComponent);
          }
@@ -622,17 +672,76 @@ public class DataCache{
          int structureId = 3100; // Standard Structure
          int heatsinkId = 3003; // Standard heat sinks
          int guidanceId = 3051; // No Artemis
-         List<Element> maybeUpgrades = reader.getElementsByTagName("Upgrades");
-         if( maybeUpgrades.size() == 1 ){
-            Element stockUpgrades = maybeUpgrades.get(0);
-            armorId = Integer.parseInt(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID"));
-            structureId = Integer.parseInt(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID"));
-            heatsinkId = reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("Type").equals("Double") ? 3002 : 3003;
-            guidanceId = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1") ? 3050 : 3051;
-         }
 
+         if( stockXML.upgrades != null ){
+            armorId = stockXML.upgrades.armor.ItemID;
+            structureId = stockXML.upgrades.structure.ItemID;
+            heatsinkId = stockXML.upgrades.heatsinks.ItemID;
+            guidanceId = stockXML.upgrades.artemis.Equipped != 0  ? 3050 : 3051;
+         }
          StockLoadout loadout = new StockLoadout(chassis.getMwoId(), components, armorId, structureId, heatsinkId, guidanceId);
          ans.add(loadout);
+
+//         {
+//
+//            File loadoutXml1 = new File("Game/Libs/MechLoadout/" + chassis.getMwoName().toLowerCase() + ".xml");
+//            XmlReader reader;
+//            try{
+//               reader = new XmlReader(aGameVfs.openGameFile(loadoutXml1).stream);
+//            }
+//            catch( ParserConfigurationException e ){
+//               throw new IOException(e);
+//            }
+//            catch( SAXException e ){
+//               throw new IOException(e);
+//            }
+//            try{
+//               List<StockLoadout.StockComponent> components1 = new ArrayList<>();
+//               for(Element component : reader.getElementsByTagName("component")){
+//                  List<Integer> items = new ArrayList<>();
+//                  String name = component.getAttribute("Name");
+//                  Part partType = Part.fromMwoName(name);
+//                  boolean isRear = Part.isRear(name);
+//                  int armorFront = isRear ? 0 : Integer.parseInt(component.getAttribute("Armor"));
+//                  int armorBack = isRear ? Integer.parseInt(component.getAttribute("Armor")) : 0;
+//                  for(Node child = component.getFirstChild(); child != null; child = child.getNextSibling()){
+//                     if( child.getNodeType() == Node.ELEMENT_NODE ){
+//                        items.add(Integer.parseInt(((Element)child).getAttribute("ItemID")));
+//                     }
+//                  } // Merge front and back sides
+//                  Iterator<StockComponent> it = components1.iterator();
+//                  while( it.hasNext() ){
+//                     StockComponent stockComponent = it.next();
+//                     if( stockComponent.getPart() == partType ){
+//                        items.addAll(stockComponent.getItems());
+//                        armorFront = isRear ? stockComponent.getArmorFront() : armorFront;
+//                        armorBack = isRear ? armorBack : stockComponent.getArmorBack();
+//                        it.remove();
+//                        break;
+//                     }
+//                  }
+//                  StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(partType, armorFront, armorBack, items);
+//                  components1.add(stockComponent);
+//               }
+//               int armorId1 = 2810; // Standard armor
+//               int structureId1 = 3100; // Standard Structure
+//               int heatsinkId1 = 3003; // Standard heat sinks
+//               int guidanceId1 = 3051; // No Artemis
+//               List<Element> maybeUpgrades = reader.getElementsByTagName("Upgrades");
+//               if( maybeUpgrades.size() == 1 ){
+//                  Element stockUpgrades = maybeUpgrades.get(0);
+//                  armorId1 = Integer.parseInt(reader.getElementByTagName("Armor", stockUpgrades).getAttribute("ItemID"));
+//                  structureId1 = Integer.parseInt(reader.getElementByTagName("Structure", stockUpgrades).getAttribute("ItemID"));
+//                  heatsinkId1 = Integer.parseInt(reader.getElementByTagName("HeatSinks", stockUpgrades).getAttribute("ItemID"));
+//                  guidanceId1 = reader.getElementByTagName("Artemis", stockUpgrades).getAttribute("Equipped").equals("1") ? 3050 : 3051;
+//               }
+//               StockLoadout loadout1 = new StockLoadout(chassis.getMwoId(), components1, armorId1, structureId1, heatsinkId1, guidanceId1);
+//               ans.add(loadout1);
+//            }
+//            catch( Exception e ){
+//               throw new IOException("Error reading file: " + loadoutXml1, e);
+//            }
+//         }
       }
       return ans;
    }
