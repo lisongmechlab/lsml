@@ -23,9 +23,9 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.AddItemOperation;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.loadout.part.OpAddItem;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpRemoveItem;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
@@ -36,13 +36,13 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-public class SetGuidanceTypeOperation extends UpgradeOperation{
+public class OpSetGuidanceType extends OpUpgradeBase{
    private final GuidanceUpgrade oldValue;
    private final GuidanceUpgrade newValue;
    private boolean operationReady = false;
 
    /**
-    * Creates a {@link SetGuidanceTypeOperation} that only affects a stand-alone {@link Upgrades} object This is useful only
+    * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link Upgrades} object This is useful only
     * for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
     * 
     * @param anUpgrades
@@ -50,14 +50,14 @@ public class SetGuidanceTypeOperation extends UpgradeOperation{
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
-   public SetGuidanceTypeOperation(Upgrades anUpgrades, GuidanceUpgrade aGuidanceUpgrade){
+   public OpSetGuidanceType(Upgrades anUpgrades, GuidanceUpgrade aGuidanceUpgrade){
       super(anUpgrades, aGuidanceUpgrade.getName());
       oldValue = upgrades.getGuidance();
       newValue = aGuidanceUpgrade;
    }
 
    /**
-    * Creates a new {@link SetGuidanceTypeOperation} that will change the guidance upgrade of a {@link Loadout}.
+    * Creates a new {@link OpSetGuidanceType} that will change the guidance upgrade of a {@link Loadout}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in guidance status on.
@@ -66,7 +66,7 @@ public class SetGuidanceTypeOperation extends UpgradeOperation{
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
-   public SetGuidanceTypeOperation(MessageXBar anXBar, Loadout aLoadout, GuidanceUpgrade aGuidanceUpgrade){
+   public OpSetGuidanceType(MessageXBar anXBar, Loadout aLoadout, GuidanceUpgrade aGuidanceUpgrade){
       super(anXBar, aLoadout, aGuidanceUpgrade.getName());
       oldValue = upgrades.getGuidance();
       newValue = aGuidanceUpgrade;
@@ -102,31 +102,31 @@ public class SetGuidanceTypeOperation extends UpgradeOperation{
          if( newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree() )
             throw new IllegalArgumentException("Too few critical slots available in loadout!");
 
-         for(LoadoutPart part : loadout.getPartLoadOuts()){
+         for(ConfiguredComponent part : loadout.getPartLoadOuts()){
             if( newValue.getExtraSlots(part) > part.getNumCriticalSlotsFree() )
-               throw new IllegalArgumentException("Too few critical slots available in " + part.getInternalPart().getType() + "!");
+               throw new IllegalArgumentException("Too few critical slots available in " + part.getInternalPart().getLocation() + "!");
          }
 
          if( newValue.getExtraTons(loadout) > loadout.getFreeMass() ){
             throw new IllegalArgumentException("Too heavy to add artmemis!");
          }
 
-         for(LoadoutPart part : loadout.getPartLoadOuts()){
+         for(ConfiguredComponent part : loadout.getPartLoadOuts()){
             for(Item item : part.getItems()){
                if( item instanceof MissileWeapon ){
                   MissileWeapon oldWeapon = (MissileWeapon)item;
                   MissileWeapon newWeapon = newValue.upgrade(oldWeapon);
                   if( oldWeapon != newWeapon ){
-                     addOp(new RemoveItemOperation(xBar, part, oldWeapon));
-                     addOp(new AddItemOperation(xBar, part, newWeapon));
+                     addOp(new OpRemoveItem(xBar, part, oldWeapon));
+                     addOp(new OpAddItem(xBar, part, newWeapon));
                   }
                }
                else if( item instanceof Ammunition ){
                   Ammunition oldAmmo = (Ammunition)item;
                   Ammunition newAmmo = newValue.upgrade(oldAmmo);
                   if( oldAmmo != newAmmo ){
-                     addOp(new RemoveItemOperation(xBar, part, oldAmmo));
-                     addOp(new AddItemOperation(xBar, part, newAmmo));
+                     addOp(new OpRemoveItem(xBar, part, oldAmmo));
+                     addOp(new OpAddItem(xBar, part, newAmmo));
                   }
                }
             }

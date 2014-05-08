@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.RenameOperation;
+import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
@@ -68,6 +68,6 @@ public class RenameLoadoutAction extends AbstractAction{
          JOptionPane.showMessageDialog(loadoutFrame, "No name given!");
          return;
       }
-      stack.pushAndApply(new RenameOperation(loadout, xBar, name));
+      stack.pushAndApply(new OpRename(loadout, xBar, name));
    }
 }

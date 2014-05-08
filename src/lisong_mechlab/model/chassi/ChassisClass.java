@@ -20,35 +20,35 @@
 package lisong_mechlab.model.chassi;
 
 /**
- * This enum represents the weight class of a chassi: Light, Medium, Heavy or Assault. It provides a way to determine
+ * This enumeration represents the weight class of a chassis: Light, Medium, Heavy or Assault. It provides a way to determine
  * weight class from tonnage.
  * 
  * @author Li Song
  */
-public enum ChassiClass{
+public enum ChassisClass{
    LIGHT, MEDIUM, HEAVY, ASSAULT;
 
    private final static double TONNAGE_EPSILON = Math.ulp(100) * 5.0;
 
    /**
-    * Determines the {@link ChassiClass} from a tonnage amount.
+    * Determines the {@link ChassisClass} from a tonnage amount.
     * 
     * @param tons
     *           The tonnage to calculate from.
-    * @return The {@link ChassiClass} matching the argument.
+    * @return The {@link ChassisClass} matching the argument.
     */
-   public static ChassiClass fromMaxTons(double tons){
+   public static ChassisClass fromMaxTons(double tons){
       if( tons < 40 - TONNAGE_EPSILON ){
-         return ChassiClass.LIGHT;
+         return ChassisClass.LIGHT;
       }
       else if( tons < 60 - TONNAGE_EPSILON ){
-         return ChassiClass.MEDIUM;
+         return ChassisClass.MEDIUM;
       }
       else if( tons < 80 - TONNAGE_EPSILON ){
-         return ChassiClass.HEAVY;
+         return ChassisClass.HEAVY;
       }
       else{
-         return ChassiClass.ASSAULT;
+         return ChassisClass.ASSAULT;
       }
    }
 }

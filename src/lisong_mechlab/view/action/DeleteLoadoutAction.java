@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.garage.MechGarage;
-import lisong_mechlab.model.garage.RemoveFromGarageOperation;
+import lisong_mechlab.model.garage.OpRemoveFromGarage;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -70,7 +70,7 @@ public class DeleteLoadoutAction extends AbstractAction implements Reader{
                                                     "Confirm operation", JOptionPane.YES_NO_OPTION);
          if( JOptionPane.YES_OPTION == result ){
             try{
-               ProgramInit.lsml().garageOperationStack.pushAndApply(new RemoveFromGarageOperation(garage, loadout));
+               ProgramInit.lsml().garageOperationStack.pushAndApply(new OpRemoveFromGarage(garage, loadout));
             }
             catch( RuntimeException e ){
                JOptionPane.showMessageDialog(source,

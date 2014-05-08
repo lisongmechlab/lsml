@@ -17,13 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.chassi;
+package lisong_mechlab.model.loadout;
+
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.CompositeOperation;
 
 /**
- * This enumeration names the sides of an {@link InternalComponent} for use with armor.
+ * Base class for operations operating on a {@link Loadout}.
  * 
  * @author Li Song
  */
-public enum ArmorSide{
-   ONLY, FRONT, BACK
+public abstract class OpLoadoutBase extends CompositeOperation{
+
+   protected final MessageXBar xBar;
+   protected final Loadout     loadout;
+
+   /**
+    * @param aLoadout
+    *           The {@link Loadout} to operate on.
+    * @param anXBar
+    *           The {@link MessageXBar} to announce changes on the loadout to.
+    * @param aDescription
+    *           A human readable description of the operation.
+    */
+   public OpLoadoutBase(Loadout aLoadout, MessageXBar anXBar, String aDescription){
+      super(aDescription);
+      loadout = aLoadout;
+      xBar = anXBar;
+   }
 }

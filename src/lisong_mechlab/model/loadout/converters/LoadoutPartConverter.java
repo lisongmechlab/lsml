@@ -25,15 +25,15 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.export.CompatibilityHelper;
-import lisong_mechlab.model.loadout.part.AddItemOperation;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.loadout.part.OpAddItem;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;
@@ -56,18 +56,18 @@ public class LoadoutPartConverter implements Converter{
 
    @Override
    public boolean canConvert(Class aClass){
-      return LoadoutPart.class.isAssignableFrom(aClass);
+      return ConfiguredComponent.class.isAssignableFrom(aClass);
    }
 
    @Override
    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      LoadoutPart part = (LoadoutPart)anObject;
+      ConfiguredComponent part = (ConfiguredComponent)anObject;
 
-      aWriter.addAttribute("part", part.getInternalPart().getType().toString());
+      aWriter.addAttribute("part", part.getInternalPart().getLocation().toString());
       
       aWriter.addAttribute("autoarmor", Boolean.toString(part.allowAutomaticArmor()));
 
-      if( part.getInternalPart().getType().isTwoSided() ){
+      if( part.getInternalPart().getLocation().isTwoSided() ){
          aWriter.addAttribute("armor", part.getArmor(ArmorSide.FRONT) + "/" + part.getArmor(ArmorSide.BACK));
       }
       else{
@@ -95,8 +95,8 @@ public class LoadoutPartConverter implements Converter{
 
       OperationStack operationStack = new OperationStack(0);
 
-      Part partType = Part.valueOf(aReader.getAttribute("part"));
-      LoadoutPart loadoutPart = loadout.getPart(partType);
+      Location partType = Location.valueOf(aReader.getAttribute("part"));
+      ConfiguredComponent loadoutPart = loadout.getPart(partType);
 
       String autoArmorString = aReader.getAttribute("autoarmor");
       boolean autoArmor = false;
@@ -108,12 +108,12 @@ public class LoadoutPartConverter implements Converter{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");
             if( armors.length == 2 ){
-               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0]), !autoArmor));
-               operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1]), !autoArmor));
+               operationStack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0]), !autoArmor));
+               operationStack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1]), !autoArmor));
             }
          }
          else{
-            operationStack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
+            operationStack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
          }
       }
       catch( IllegalArgumentException exception ){
@@ -133,7 +133,7 @@ public class LoadoutPartConverter implements Converter{
                   later.add(item);
                }
                else{
-                  operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, item));
+                  operationStack.pushAndApply(new OpAddItem(xBar, loadoutPart, item));
                }
             }
             catch( IllegalArgumentException exception ){
@@ -146,7 +146,7 @@ public class LoadoutPartConverter implements Converter{
 
       try{
          for(Item item : later){
-            operationStack.pushAndApply(new AddItemOperation(xBar, loadoutPart, item));
+            operationStack.pushAndApply(new OpAddItem(xBar, loadoutPart, item));
          }
       }
       catch( IllegalArgumentException exception ){

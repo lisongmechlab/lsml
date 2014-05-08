@@ -40,7 +40,7 @@ import javax.swing.WindowConstants;
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -168,9 +168,9 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       if( !aMsg.isForMe(loadout) )
          return;
 
-      if( aMsg instanceof LoadoutPart.Message ){
-         LoadoutPart.Message msg = (LoadoutPart.Message)aMsg;
-         if( msg.type == LoadoutPart.Message.Type.ArmorChanged )
+      if( aMsg instanceof ConfiguredComponent.Message ){
+         ConfiguredComponent.Message msg = (ConfiguredComponent.Message)aMsg;
+         if( msg.type == ConfiguredComponent.Message.Type.ArmorChanged )
             return;
       }
       else if( aMsg instanceof Upgrades.Message ){

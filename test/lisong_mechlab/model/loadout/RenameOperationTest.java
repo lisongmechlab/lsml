@@ -21,7 +21,7 @@ package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test suite for {@link RenameOperation}.
+ * Test suite for {@link OpRename}.
  * 
  * @author Li Song
  */
@@ -47,12 +47,12 @@ public class RenameOperationTest{
    @Test
    public void testApply(){
       // Setup
-      Loadout loadout = new Loadout(ChassiDB.lookup("HBK-4J"), xBar);
+      Loadout loadout = new Loadout(ChassisDB.lookup("HBK-4J"), xBar);
       assertEquals("HBK-4J", loadout.getName());
 
       // Execute
       OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new RenameOperation(loadout, xBar, "Test"));
+      stack.pushAndApply(new OpRename(loadout, xBar, "Test"));
 
       // Verify
       assertEquals("Test", loadout.getName());
@@ -66,12 +66,12 @@ public class RenameOperationTest{
    @Test
    public void testApply_nullXbar(){
       // Setup
-      Loadout loadout = new Loadout(ChassiDB.lookup("HBK-4J"), xBar);
+      Loadout loadout = new Loadout(ChassisDB.lookup("HBK-4J"), xBar);
       assertEquals("HBK-4J", loadout.getName());
 
       // Execute
       OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new RenameOperation(loadout, null, "Test"));
+      stack.pushAndApply(new OpRename(loadout, null, "Test"));
 
       // Verify
       assertEquals("Test", loadout.getName());

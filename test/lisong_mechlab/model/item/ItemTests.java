@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
@@ -62,7 +62,7 @@ public class ItemTests{
 
    @Test
    public void testEngines() throws Exception{
-      Loadout hm = new Loadout(ChassiDB.lookup("Heavy Metal"), xBar);
+      Loadout hm = new Loadout(ChassisDB.lookup("Heavy Metal"), xBar);
 
       Engine std175 = (Engine)ItemDB.lookup("STD ENGINE 175");
       Engine std180 = (Engine)ItemDB.lookup("STD ENGINE 180");

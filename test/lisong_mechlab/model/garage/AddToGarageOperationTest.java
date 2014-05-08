@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test suite for {@link AddToGarageOperation}.
+ * Test suite for {@link OpAddToGarage}.
  * 
  * @author Li Song
  */
@@ -55,6 +55,6 @@ public class AddToGarageOperationTest{
       List<Loadout> loadouts = Arrays.asList(loadout);
       Mockito.when(garage.getMechs()).thenReturn(loadouts);
       
-      opStack.pushAndApply(new AddToGarageOperation(garage, loadout));
+      opStack.pushAndApply(new OpAddToGarage(garage, loadout));
    }
 }

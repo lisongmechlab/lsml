@@ -11,7 +11,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class BurstDamageOverTimeTest{
       items.add(ac20);
       items.add(erllas);
       items.add(erppc);
-      items.add(LoadoutPart.ENGINE_INTERNAL); // Shouldn't barf on internals or other items
+      items.add(ConfiguredComponent.ENGINE_INTERNAL); // Shouldn't barf on internals or other items
       items.add(ItemDB.BAP);
       Loadout aLoadout = Mockito.mock(Loadout.class);
       Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
@@ -79,7 +79,7 @@ public class BurstDamageOverTimeTest{
    public final void testCalculate_OtherItems() throws Exception{
       // Setup
       List<Item> items = new ArrayList<>();
-      items.add(LoadoutPart.ENGINE_INTERNAL); // Shouldn't barf on internals or other items
+      items.add(ConfiguredComponent.ENGINE_INTERNAL); // Shouldn't barf on internals or other items
       items.add(ItemDB.BAP);
       Loadout aLoadout = Mockito.mock(Loadout.class);
       Efficiencies efficiencies = Mockito.mock(Efficiencies.class);

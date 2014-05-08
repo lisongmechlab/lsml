@@ -37,8 +37,8 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -319,8 +319,8 @@ public class WeaponSummaryTable extends JTable implements Reader{
    @Override
    public void receive(Message aMsg){
       if( aMsg.isForMe(loadout) ){
-         if( aMsg instanceof LoadoutPart.Message ){
-            LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
+         if( aMsg instanceof ConfiguredComponent.Message ){
+            ConfiguredComponent.Message message = (ConfiguredComponent.Message)aMsg;
             if( message.type == Type.ItemAdded || message.type == Type.ItemRemoved || message.type == Type.ItemsChanged ){
                ((WeaponModel)getModel()).update(loadout);
             }

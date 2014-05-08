@@ -32,14 +32,14 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-public class StripPartOperation extends CompositeOperation{
+public class OpStripComponent extends CompositeOperation{
    /**
     * @param aLoadoutPart
-    *           The {@link LoadoutPart} to strip.
+    *           The {@link ConfiguredComponent} to strip.
     * @param anXBar
     *           Where to announce changes from this operation.
     */
-   public StripPartOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart){
+   public OpStripComponent(MessageXBar anXBar, ConfiguredComponent aLoadoutPart){
       super("strip part");
       // Engine heat sinks are removed together with the engine.
       int hsSkipp = aLoadoutPart.getNumEngineHeatsinks();
@@ -51,15 +51,15 @@ public class StripPartOperation extends CompositeOperation{
                   continue;
                }
             }
-            addOp(new RemoveItemOperation(anXBar, aLoadoutPart, item));
+            addOp(new OpRemoveItem(anXBar, aLoadoutPart, item));
          }
       }
-      if( aLoadoutPart.getInternalPart().getType().isTwoSided() ){
-         addOp(new SetArmorOperation(anXBar, aLoadoutPart, ArmorSide.FRONT, 0, false));
-         addOp(new SetArmorOperation(anXBar, aLoadoutPart, ArmorSide.BACK, 0, false));
+      if( aLoadoutPart.getInternalPart().getLocation().isTwoSided() ){
+         addOp(new OpSetArmor(anXBar, aLoadoutPart, ArmorSide.FRONT, 0, false));
+         addOp(new OpSetArmor(anXBar, aLoadoutPart, ArmorSide.BACK, 0, false));
       }
       else{
-         addOp(new SetArmorOperation(anXBar, aLoadoutPart, ArmorSide.ONLY, 0, false));
+         addOp(new OpSetArmor(anXBar, aLoadoutPart, ArmorSide.ONLY, 0, false));
       }
    }
 }

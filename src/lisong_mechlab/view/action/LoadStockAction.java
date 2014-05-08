@@ -27,9 +27,9 @@ import javax.swing.AbstractAction;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.loadout.LoadStockOperation;
+import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -70,17 +70,17 @@ public class LoadStockAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      final Collection<Chassis> variations = ChassiDB.lookupVariations(loadout.getChassi());
+      final Collection<Chassis> variations = ChassisDB.lookupVariations(loadout.getChassi());
 
       try{
          if( variations.size() == 1 ){
-            stack.pushAndApply(new LoadStockOperation(loadout.getChassi(), loadout, xBar));
+            stack.pushAndApply(new OpLoadStock(loadout.getChassi(), loadout, xBar));
          }
          else{
             JList<Chassis> list = new JList<>(variations.toArray(new Chassis[variations.size()]));
             JOptionPane.showConfirmDialog(component, list, "Which stock loadout?", JOptionPane.OK_CANCEL_OPTION);
             if( list.getSelectedValue() != null ){
-               stack.pushAndApply(new LoadStockOperation(list.getSelectedValue(), loadout, xBar));
+               stack.pushAndApply(new OpLoadStock(list.getSelectedValue(), loadout, xBar));
             }
          }
       }
@@ -90,7 +90,7 @@ public class LoadStockAction extends AbstractAction{
    }
 
    private static String getActionName(Chassis aChassis){
-      if( ChassiDB.lookupVariations(aChassis).size() > 1 ){
+      if( ChassisDB.lookupVariations(aChassis).size() > 1 ){
          return "Load stock...";
       }
       return "Load stock";

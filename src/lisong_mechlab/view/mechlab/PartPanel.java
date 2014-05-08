@@ -44,10 +44,10 @@ import javax.swing.text.DefaultFormatter;
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
-import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.part.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
@@ -84,13 +84,13 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
             @Override
             public void actionPerformed(ActionEvent aE){
-               if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-                  stack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
+               if( loadoutPart.getInternalPart().getLocation().isTwoSided() ){
+                  stack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
                }
                else{
-                  stack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmorTotal(), false));
+                  stack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmorTotal(), false));
                }
-               xBar.post(new LoadoutPart.Message(loadoutPart, Type.ArmorDistributionUpdateRequest));
+               xBar.post(new ConfiguredComponent.Message(loadoutPart, Type.ArmorDistributionUpdateRequest));
             }
          }));
          menu.show(e.getComponent(), e.getX(), e.getY());
@@ -106,7 +106,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    private final JLabel            backArmorLabel;
    private final JLabel            armorLabel;
 
-   private final LoadoutPart       loadoutPart;
+   private final ConfiguredComponent       loadoutPart;
 
    private final boolean           canHaveHardpoints;
    private final ArmorPopupAdapter armorPopupAdapter;
@@ -114,7 +114,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    private JSpinner                backSpinner;
    private JSpinner                spinner;
 
-   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
+   PartPanel(ConfiguredComponent aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
              OperationStack aStack){
       super(new BorderLayout());
       anXBar.attach(this);
@@ -122,7 +122,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       canHaveHardpoints = aCanHaveHardpoints;
       armorPopupAdapter = new ArmorPopupAdapter(aStack, anXBar);
 
-      if( aLoadoutPart.getInternalPart().getType().isTwoSided() ){
+      if( aLoadoutPart.getInternalPart().getLocation().isTwoSided() ){
          frontArmorLabel = new JLabel();
          backArmorLabel = new JLabel();
          armorLabel = null;
@@ -135,8 +135,8 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-         InternalPart internalPart = aLoadoutPart.getInternalPart();
-         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(internalPart.getType().longName() + " ("
+         InternalComponent internalPart = aLoadoutPart.getInternalPart();
+         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(internalPart.getLocation().longName() + " ("
                                                                                        + (int)internalPart.getHitpoints() + " hp)"),
                                                       BorderFactory.createEmptyBorder(0, 2, 2, 4)));
       }
@@ -179,7 +179,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, ItemRenderer.getItemHeight());
       Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
 
-      if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+      if( loadoutPart.getInternalPart().getLocation().isTwoSided() ){
          frontArmorLabel.setPreferredSize(labelDimension);
          backArmorLabel.setPreferredSize(labelDimension);
 
@@ -282,8 +282,8 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadoutPart.getLoadout()) && aMsg instanceof LoadoutPart.Message ){
-         LoadoutPart.Message msg = (LoadoutPart.Message)aMsg;
+      if( aMsg.isForMe(loadoutPart.getLoadout()) && aMsg instanceof ConfiguredComponent.Message ){
+         ConfiguredComponent.Message msg = (ConfiguredComponent.Message)aMsg;
          if( msg.type == Type.ArmorChanged ){
             SwingUtilities.invokeLater(new Runnable(){
                @Override

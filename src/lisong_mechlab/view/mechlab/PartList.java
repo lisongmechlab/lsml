@@ -44,10 +44,10 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.part.AddItemOperation;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
-import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.loadout.part.OpAddItem;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.part.OpRemoveItem;
 import lisong_mechlab.model.metrics.CriticalItemDamage;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
 import lisong_mechlab.model.metrics.ItemEffectiveHP;
@@ -63,7 +63,7 @@ import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
    private static final long                   serialVersionUID = 5995694414450060827L;
-   private final LoadoutPart                   part;
+   private final ConfiguredComponent                   part;
    private final DynamicSlotDistributor        slotDistributor;
    private OperationStack                      opStack;
 
@@ -240,7 +240,7 @@ public class PartList extends JList<Item>{
          switch( target.first ){
             case EngineHeatSink:{
                if( anItem instanceof HeatSink && part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
-                  opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
+                  opStack.pushAndApply(new OpAddItem(xBar, part, anItem));
                   return true;
                }
                return false;
@@ -250,13 +250,13 @@ public class PartList extends JList<Item>{
             case MultiSlot:{
                // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
                if( aShouldReplace && !(anItem instanceof HeatSink && target.second instanceof Engine) ){
-                  opStack.pushAndApply(new RemoveItemOperation(xBar, part, target.second));
+                  opStack.pushAndApply(new OpRemoveItem(xBar, part, target.second));
                }
                // Fall through
             }
             case Empty:{
                if( part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
-                  opStack.pushAndApply(new AddItemOperation(xBar, part, anItem));
+                  opStack.pushAndApply(new OpAddItem(xBar, part, anItem));
                   return true;
                }
                return false;
@@ -338,8 +338,8 @@ public class PartList extends JList<Item>{
          }
 
          // Only update on item changes or upgrades
-         if( aMsg instanceof LoadoutPart.Message || aMsg instanceof Upgrades.Message ){
-            if( aMsg instanceof LoadoutPart.Message && ((LoadoutPart.Message)aMsg).type == Type.ArmorChanged ){
+         if( aMsg instanceof ConfiguredComponent.Message || aMsg instanceof Upgrades.Message ){
+            if( aMsg instanceof ConfiguredComponent.Message && ((ConfiguredComponent.Message)aMsg).type == Type.ArmorChanged ){
                return; // Don't react to armor changes
             }
             fireContentsChanged(this, 0, part.getInternalPart().getNumCriticalslots());
@@ -347,7 +347,7 @@ public class PartList extends JList<Item>{
       }
    }
 
-   PartList(OperationStack aStack, final LoadoutPart aLoadoutPart, final MessageXBar anXBar, DynamicSlotDistributor aSlotDistributor){
+   PartList(OperationStack aStack, final ConfiguredComponent aLoadoutPart, final MessageXBar anXBar, DynamicSlotDistributor aSlotDistributor){
       slotDistributor = aSlotDistributor;
       opStack = aStack;
       part = aLoadoutPart;
@@ -377,7 +377,7 @@ public class PartList extends JList<Item>{
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
                   if( itemPair.first instanceof Internal )
                      continue;
-                  opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
+                  opStack.pushAndApply(new OpRemoveItem(anXBar, aLoadoutPart, itemPair.first));
                }
             }
          }
@@ -390,7 +390,7 @@ public class PartList extends JList<Item>{
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
                   if( itemPair.first instanceof Internal )
                      continue;
-                  opStack.pushAndApply(new RemoveItemOperation(anXBar, aLoadoutPart, itemPair.first));
+                  opStack.pushAndApply(new OpRemoveItem(anXBar, aLoadoutPart, itemPair.first));
                }
             }
          }
@@ -428,7 +428,7 @@ public class PartList extends JList<Item>{
       return items;
    }
 
-   public LoadoutPart getPart(){
+   public ConfiguredComponent getPart(){
       return part;
    }
 

@@ -52,7 +52,7 @@ import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.AutoAddItemOperation;
+import lisong_mechlab.model.loadout.OpAutoAddItem;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -105,7 +105,7 @@ public class ItemLabel extends JLabel{
    }
 
    private static class AutoPlaceTask extends SwingWorker<Void, Void>{
-      private AutoAddItemOperation operation;
+      private OpAutoAddItem operation;
       private JDialog              dialog;
       private LoadoutFrame         loadoutFrame;
       private MessageXBar          xBar;
@@ -121,7 +121,7 @@ public class ItemLabel extends JLabel{
       @Override
       public Void doInBackground(){
          try{
-         operation = new AutoAddItemOperation(loadoutFrame.getLoadout(), xBar, itemToPlace);
+         operation = new OpAutoAddItem(loadoutFrame.getLoadout(), xBar, itemToPlace);
          }catch(Throwable e){ // Yeah anything thrown is a failure.
             operation = null;
          }
@@ -212,7 +212,7 @@ public class ItemLabel extends JLabel{
                         dialog.setVisible(true); // Show progress meter if it's taking time and resume EDT
                      }
                   }else if(loadout.canEquip(item)){
-                     frame.getOpStack().pushAndApply(new AutoAddItemOperation(loadout, anXBar, item));
+                     frame.getOpStack().pushAndApply(new OpAutoAddItem(loadout, anXBar, item));
                   }
                }
             }

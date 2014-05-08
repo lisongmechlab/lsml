@@ -26,43 +26,43 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Upgrades} can change the armor type of a {@link Loadout}.
+ * This {@link Operation} can alter the internal structure of a {@link Loadout}.
  * 
  * @author Li Song
  */
-public class SetArmorTypeOperation extends UpgradeOperation{
-   final ArmorUpgrade oldValue;
-   final ArmorUpgrade newValue;
+public class OpSetStructureType extends OpUpgradeBase{
+   final StructureUpgrade oldValue;
+   final StructureUpgrade newValue;
 
    /**
-    * Creates a {@link SetArmorTypeOperation} that only affects a stand-alone {@link Upgrades} object This is useful
+    * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link Upgrades} object This is useful
     * only for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
     * 
     * @param anUpgrades
     *           The {@link Upgrades} object to alter with this {@link Operation}.
-    * @param anArmorUpgrade
-    *           The new armor type when this upgrades has been applied.
+    * @param aStructureUpgrade
+    *           The new internal structure when this upgrades has been applied.
     */
-   public SetArmorTypeOperation(Upgrades anUpgrades, ArmorUpgrade anArmorUpgrade){
-      super(anUpgrades, anArmorUpgrade.getName());
-      oldValue = upgrades.getArmor();
-      newValue = anArmorUpgrade;
+   public OpSetStructureType(Upgrades anUpgrades, StructureUpgrade aStructureUpgrade){
+      super(anUpgrades, aStructureUpgrade.getName());
+      oldValue = upgrades.getStructure();
+      newValue = aStructureUpgrade;
    }
 
    /**
-    * Creates a new {@link SetStructureTypeOperation} that will change the armor type of a {@link Loadout}.
+    * Creates a new {@link OpSetStructureType} that will change the internal structure of a {@link Loadout}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in internal structure on.
     * @param aLoadout
     *           The {@link Loadout} to alter.
-    * @param anArmorUpgrade
-    *           The new armor type this upgrades is applied.
+    * @param aStructureUpgrade
+    *           The new internal structure this upgrades is applied.
     */
-   public SetArmorTypeOperation(MessageXBar anXBar, Loadout aLoadout, ArmorUpgrade anArmorUpgrade){
-      super(anXBar, aLoadout, anArmorUpgrade.getName());
-      oldValue = upgrades.getArmor();
-      newValue = anArmorUpgrade;
+   public OpSetStructureType(MessageXBar anXBar, Loadout aLoadout, StructureUpgrade aStructureUpgrade){
+      super(anXBar, aLoadout, aStructureUpgrade.getName());
+      oldValue = upgrades.getStructure();
+      newValue = aStructureUpgrade;
    }
 
    @Override
@@ -75,21 +75,21 @@ public class SetArmorTypeOperation extends UpgradeOperation{
       set(oldValue);
    }
 
-   protected void set(ArmorUpgrade aValue){
-      if( aValue != upgrades.getArmor() ){
-         ArmorUpgrade old = upgrades.getArmor();
-         upgrades.setArmor(aValue);
+   protected void set(StructureUpgrade aValue){
+      if( aValue != upgrades.getStructure() ){
+         StructureUpgrade old = upgrades.getStructure();
+         upgrades.setStructure(aValue);
 
          try{
             verifyLoadoutInvariant();
          }
          catch( Exception e ){
-            upgrades.setArmor(old);
-            throw new IllegalArgumentException("Couldn't change armour type: ", e);
+            upgrades.setStructure(old);
+            throw new IllegalArgumentException("Couldn't change internal structure: ", e);
          }
 
          if( xBar != null )
-            xBar.post(new Message(ChangeMsg.ARMOR, upgrades));
+            xBar.post(new Message(ChangeMsg.STRUCTURE, upgrades));
       }
    }
 }

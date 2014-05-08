@@ -36,42 +36,42 @@ public class ChassiDBTest{
    @Test(expected = IllegalArgumentException.class)
    public void testLookupFailed(){
       // Successful lookup is tested by ChassiTest.java
-      ChassiDB.lookup("Nonexistent mech");
+      ChassisDB.lookup("Nonexistent mech");
    }
 
    @Test
    public void testLookupByChassiSeries(){
-      Collection<Chassis> cataphracts = ChassiDB.lookupSeries("CATAphract");
-      Collection<Chassis> cataphracts1 = ChassiDB.lookupSeries("CTF");
+      Collection<Chassis> cataphracts = ChassisDB.lookupSeries("CATAphract");
+      Collection<Chassis> cataphracts1 = ChassisDB.lookupSeries("CTF");
 
       assertEquals(cataphracts, cataphracts1);
 
-      assertTrue(cataphracts.remove(ChassiDB.lookup("ILYA MUROMETS")));
-      assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-1X")));
-      assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-2X")));
-      assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-3D")));
-      assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-3D(C)")));
-      assertTrue(cataphracts.remove(ChassiDB.lookup("CTF-4X")));
+      assertTrue(cataphracts.remove(ChassisDB.lookup("ILYA MUROMETS")));
+      assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-1X")));
+      assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-2X")));
+      assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-3D")));
+      assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-3D(C)")));
+      assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-4X")));
       assertTrue(cataphracts.isEmpty());
    }
 
    @Test(expected = IllegalArgumentException.class)
    public void testLookupByChassiSeriesFail(){
-      ChassiDB.lookupSeries("No such series");
+      ChassisDB.lookupSeries("No such series");
    }
 
    @Test
    public void testLookupByChassiClass(){
-      Collection<Chassis> heavies = ChassiDB.lookup(ChassiClass.HEAVY);
+      Collection<Chassis> heavies = ChassisDB.lookup(ChassisClass.HEAVY);
 
-      assertTrue(heavies.contains(ChassiDB.lookup("ILYA MUROMETS")));
-      assertTrue(heavies.contains(ChassiDB.lookup("JM6-DD")));
-      assertTrue(heavies.contains(ChassiDB.lookup("CPLT-C4")));
-      assertTrue(heavies.contains(ChassiDB.lookup("FLAME")));
-      assertTrue(heavies.contains(ChassiDB.lookup("PROTECTOR")));
+      assertTrue(heavies.contains(ChassisDB.lookup("ILYA MUROMETS")));
+      assertTrue(heavies.contains(ChassisDB.lookup("JM6-DD")));
+      assertTrue(heavies.contains(ChassisDB.lookup("CPLT-C4")));
+      assertTrue(heavies.contains(ChassisDB.lookup("FLAME")));
+      assertTrue(heavies.contains(ChassisDB.lookup("PROTECTOR")));
 
       for(Chassis chassi : heavies){
-         assertEquals(ChassiClass.HEAVY, chassi.getChassiClass());
+         assertEquals(ChassisClass.HEAVY, chassi.getChassiClass());
       }
    }
 
@@ -80,20 +80,20 @@ public class ChassiDBTest{
     */
    @Test
    public void testLookupByChassiClass_Assault(){
-      Collection<Chassis> heavies = ChassiDB.lookup(ChassiClass.ASSAULT);
+      Collection<Chassis> heavies = ChassisDB.lookup(ChassisClass.ASSAULT);
 
-      assertTrue(heavies.contains(ChassiDB.lookup("PRETTY BABY")));
-      assertTrue(heavies.contains(ChassiDB.lookup("DRAGON SLAYER")));
-      assertTrue(heavies.contains(ChassiDB.lookup("MISERY")));
-      assertTrue(heavies.contains(ChassiDB.lookup("AS7-D-DC")));
+      assertTrue(heavies.contains(ChassisDB.lookup("PRETTY BABY")));
+      assertTrue(heavies.contains(ChassisDB.lookup("DRAGON SLAYER")));
+      assertTrue(heavies.contains(ChassisDB.lookup("MISERY")));
+      assertTrue(heavies.contains(ChassisDB.lookup("AS7-D-DC")));
 
       for(Chassis chassi : heavies){
-         assertEquals(ChassiClass.ASSAULT, chassi.getChassiClass());
+         assertEquals(ChassisClass.ASSAULT, chassi.getChassiClass());
       }
    }
 
    /**
-    * {@link ChassiDB#lookupVariations(Chassis)} shall return a list of all chassis variations for the given chassis
+    * {@link ChassisDB#lookupVariations(Chassis)} shall return a list of all chassis variations for the given chassis
     * (including the chassis given as argument).
     * 
     * @param aLookup
@@ -104,9 +104,9 @@ public class ChassiDBTest{
    @Parameters({"SDR-5K, SDR-5K(C)", "SDR-5K(C), SDR-5K", "HBK-4P, HBK-4P(C)", "HBK-4P(C), HBK-4P", "CTF-3D, CTF-3D(C)", "CTF-3D(C), CTF-3D(C)", "TDR-5S(P), TDR-5S", "TDR-5S, TDR-5S(P)"})
    @Test
    public void testLookupVariations_LookupFromNormal(String aLookup, String aExpected){
-      Collection<Chassis> ans = ChassiDB.lookupVariations(ChassiDB.lookup(aLookup));
-      assertTrue(ans.contains(ChassiDB.lookup(aLookup)));
-      assertTrue(ans.contains(ChassiDB.lookup(aExpected)));
+      Collection<Chassis> ans = ChassisDB.lookupVariations(ChassisDB.lookup(aLookup));
+      assertTrue(ans.contains(ChassisDB.lookup(aLookup)));
+      assertTrue(ans.contains(ChassisDB.lookup(aExpected)));
       assertEquals(2, ans.size());
    }
 

@@ -33,25 +33,25 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.LoadStockOperation;
+import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.AddItemOperation;
-import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.loadout.part.OpAddItem;
+import lisong_mechlab.model.loadout.part.OpSetArmor;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
-import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
-import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
-import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
+import lisong_mechlab.model.upgrades.OpSetArmorType;
+import lisong_mechlab.model.upgrades.OpSetGuidanceType;
+import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
+import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.DecodingException;
@@ -69,8 +69,8 @@ public class LoadoutCoderV2 implements LoadoutCoder{
    private static final int        HEADER_MAGIC = 0xAC + 1;
    private final Huffman1<Integer> huff;
    private final MessageXBar       xBar;
-   private final Part[]            partOrder    = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso,
-         Part.LeftTorso, Part.LeftLeg, Part.LeftArm};
+   private final Location[]            partOrder    = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head, Location.CenterTorso,
+         Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
 
    public LoadoutCoderV2(MessageXBar anXBar){
       xBar = anXBar;
@@ -128,7 +128,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
       // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA
       // 1 byte per armor value (2 for RT,CT,LT front first)
-      for(Part part : partOrder){
+      for(Location part : partOrder){
          if( part.isTwoSided() ){
             buffer.write((byte)aLoadout.getPart(part).getArmor(ArmorSide.FRONT));
             buffer.write((byte)aLoadout.getPart(part).getArmor(ArmorSide.BACK));
@@ -152,7 +152,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
          ids.add(-1);
 
-         for(Part part : partOrder){
+         for(Location part : partOrder){
             List<Item> items = aLoadout.getPart(part).getItems();
             for(Item item : items){
                if( !(item instanceof Internal) ){
@@ -192,7 +192,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
          short chassiId = (short)(((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF));
 
-         Chassis chassi = ChassiDB.lookup(chassiId);
+         Chassis chassi = ChassisDB.lookup(chassiId);
          loadout = new Loadout(chassi, xBar);
          loadout.getEfficiencies().setCoolRun((upeff & (1 << 4)) != 0);
          loadout.getEfficiencies().setHeatContainment((upeff & (1 << 3)) != 0);
@@ -203,13 +203,13 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
       // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA
       // 1 byte per armor value (2 for RT,CT,LT front first)
-      for(Part part : partOrder){
+      for(Location part : partOrder){
          if( part.isTwoSided() ){
-            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.FRONT, buffer.read(), true));
-            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.BACK, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(part), ArmorSide.FRONT, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(part), ArmorSide.BACK, buffer.read(), true));
          }
          else{
-            stack.pushAndApply(new SetArmorOperation(xBar, loadout.getPart(part), ArmorSide.ONLY, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(part), ArmorSide.ONLY, buffer.read(), true));
          }
       }
 
@@ -224,10 +224,10 @@ public class LoadoutCoderV2 implements LoadoutCoder{
             throw new DecodingException(e);
          }
          List<Integer> ids = huff.decode(rest);
-         stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, (ArmorUpgrade)UpgradeDB.lookup(ids.get(0))));
-         stack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, (StructureUpgrade)UpgradeDB.lookup(ids.get(1))));
-         stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, (HeatSinkUpgrade)UpgradeDB.lookup(ids.get(2))));
-         stack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.get(3))));
+         stack.pushAndApply(new OpSetArmorType(xBar, loadout, (ArmorUpgrade)UpgradeDB.lookup(ids.get(0))));
+         stack.pushAndApply(new OpSetStructureType(xBar, loadout, (StructureUpgrade)UpgradeDB.lookup(ids.get(1))));
+         stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, (HeatSinkUpgrade)UpgradeDB.lookup(ids.get(2))));
+         stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.get(3))));
 
          if( -1 != ids.get(4) ){
             throw new DecodingException("Broken LSML link, expected separator got: " + ids.get(4));
@@ -238,7 +238,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          ids.remove(1);
          ids.remove(0);
 
-         for(Part part : partOrder){
+         for(Location part : partOrder){
             Integer v;
             List<Item> later = new ArrayList<>();
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
@@ -247,10 +247,10 @@ public class LoadoutCoderV2 implements LoadoutCoder{
                   later.add(item); // Add heat sinks last after engine has been added
                   continue;
                }
-               stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), ItemDB.lookup(v)));
+               stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(part), ItemDB.lookup(v)));
             }
             for(Item i : later){
-               stack.pushAndApply(new AddItemOperation(xBar, loadout.getPart(part), i));
+               stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(part), i));
             }
 
          }
@@ -279,16 +279,16 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateAllLoadouts() throws Exception{
-      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+      List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+      chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+      chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
       MessageXBar xBar = new MessageXBar();
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
       OperationStack stack = new OperationStack(0);
       for(Chassis chassis : chassii){
          Loadout loadout = new Loadout(chassis, xBar);
-         stack.pushAndApply(new LoadStockOperation(chassis, loadout, xBar));
+         stack.pushAndApply(new OpLoadStock(chassis, loadout, xBar));
          System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
       }
    }

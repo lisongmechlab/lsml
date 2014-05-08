@@ -17,14 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.chassi;
+package lisong_mechlab.mwo_data;
 
 import java.util.Map;
 import java.util.TreeMap;
 
+import lisong_mechlab.model.chassi.HardPoint;
+import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.Location;
+
 /**
  * This class provides a way to manually specify missile tube counts for hard points on certain chassis until PGI
- * provides a way to parse it reliably for all chassii.
+ * provides a way to parse it reliably for all chassis.
  * 
  * @author Li Song
  */
@@ -106,7 +110,7 @@ public class HardPointCache{
       }
    }
 
-   public static HardPoint getHardpoint(int anHardpointId, String aChassi, Part aPart){
+   public static HardPoint getHardpoint(int anHardpointId, String aChassi, Location aPart){
       if( !map.containsKey(aChassi) ){
          throw new IllegalArgumentException("No mappings for chassis: " + aChassi);
       }

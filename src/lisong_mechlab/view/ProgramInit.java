@@ -40,7 +40,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.WString;
 
 import lisong_mechlab.model.DataCache;
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.environment.EnvironmentDB;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.StockLoadoutDB;
@@ -152,7 +152,7 @@ public class ProgramInit extends JFrame{
 
          // Causes static initialization to be ran.
          ItemDB.lookup("C.A.S.E.");
-         StockLoadoutDB.lookup(ChassiDB.lookup("JR7-D"));
+         StockLoadoutDB.lookup(ChassisDB.lookup("JR7-D"));
          EnvironmentDB.lookupAll();
          UpgradeDB.lookup(3003);
       }

@@ -29,6 +29,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.mwo_data.HardPointCache;
 import lisong_mechlab.mwo_data.HardpointsXml;
 import lisong_mechlab.mwo_data.WeaponDoorSet;
 import lisong_mechlab.mwo_data.WeaponDoorSet.WeaponDoor;
@@ -46,9 +47,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Li Song
  */
-public class InternalPart{
+public class InternalComponent{
    @XStreamAsAttribute
-   private final Part            type;
+   private final Location        location;
    @XStreamAsAttribute
    private final int             criticalslots;
    @XStreamAsAttribute
@@ -64,22 +65,22 @@ public class InternalPart{
    private final List<HardPoint> hardpoints = new ArrayList<>();
 
    /**
-    * Constructs a new {@link InternalPart} from MWO data files that are parsed.
+    * Constructs a new {@link InternalComponent} from MWO data files that are parsed.
     * 
     * @param aComponent
     *           The component as parsed from the MWO .mdf for the chassis.
-    * @param aPart
-    *           The {@link Part} (head,leg etc) this {@link InternalPart} is for.
+    * @param aLocation
+    *           The {@link Location} (head,leg etc) this {@link InternalComponent} is for.
     * @param aHardpoints
     *           The hard points as parsed from the MWO .xml for hard points for the chassis.
     * @param aChassi
     *           The chassis that this internal part will be a part of.
     */
-   public InternalPart(MdfComponent aComponent, Part aPart, HardpointsXml aHardpoints, Chassis aChassi){
+   public InternalComponent(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, Chassis aChassi){
       criticalslots = aComponent.Slots;
-      type = aPart;
+      location = aLocation;
       hitpoints = aComponent.HP;
-      maxarmor = (type == Part.Head) ? 18 : (int)(hitpoints * 2);
+      maxarmor = (location == Location.Head) ? 18 : (int)(hitpoints * 2);
 
       if( null != aComponent.internals ){
          int internalsSize = 0;
@@ -124,7 +125,7 @@ public class InternalPart{
                List<Integer> tubes = aHardpoints.tubesForId(hardpoint.ID);
                for(Integer tube : tubes){
                   if( tube < 1 ){
-                     hardpoints.add(HardPointCache.getHardpoint(hardpoint.ID, aChassi.getMwoName(), aPart));
+                     hardpoints.add(HardPointCache.getHardpoint(hardpoint.ID, aChassi.getMwoName(), aLocation));
                   }
                   else{
                      hardpoints.add(new HardPoint(HardPointType.MISSILE, tube, hasBayDoors));
@@ -139,7 +140,7 @@ public class InternalPart{
 
          // For any mech with more than 2 missile hard points in CT, any launcher beyond the largest one can only
          // have 5 tubes (anything else is impossible to fit)
-         if( type == Part.CenterTorso && getNumHardpoints(HardPointType.MISSILE) > 1 ){
+         if( location == Location.CenterTorso && getNumHardpoints(HardPointType.MISSILE) > 1 ){
             int maxTubes = 0;
             for(HardPoint hardpoint : hardpoints){
                maxTubes = Math.max(hardpoint.getNumMissileTubes(), maxTubes);
@@ -166,7 +167,7 @@ public class InternalPart{
 
    @Override
    public String toString(){
-      return getType().toString();
+      return getLocation().toString();
    }
 
    @Override
@@ -180,7 +181,7 @@ public class InternalPart{
       result = prime * result + (int)(temp ^ (temp >>> 32));
       result = prime * result + internals.hashCode();
       result = prime * result + maxarmor;
-      result = prime * result + type.hashCode();
+      result = prime * result + location.hashCode();
       return result;
    }
 
@@ -188,13 +189,13 @@ public class InternalPart{
    public boolean equals(Object obj){
       if( this == obj )
          return true;
-      if( !(obj instanceof InternalPart) )
+      if( !(obj instanceof InternalComponent) )
          return false;
-      InternalPart other = (InternalPart)obj;
+      InternalComponent other = (InternalComponent)obj;
 
       //@formatter:off
       return criticalslots == other.criticalslots && 
-             type == other.type && 
+             location == other.location && 
              maxarmor == other.maxarmor && 
              hitpoints == other.hitpoints && 
              ArrayUtils.equalsUnordered(internals, other.internals) && 
@@ -202,8 +203,8 @@ public class InternalPart{
       //@formatter:on
    }
 
-   public Part getType(){
-      return type;
+   public Location getLocation(){
+      return location;
    }
 
    public int getArmorMax(){
@@ -242,17 +243,17 @@ public class InternalPart{
     * 
     * @param aItem
     *           The {@link Item} to check.
-    * @return <code>true</code> if the given {@link Item} is allowed on this {@link InternalPart}.
+    * @return <code>true</code> if the given {@link Item} is allowed on this {@link InternalComponent}.
     */
    public boolean isAllowed(Item aItem){
       if( aItem instanceof Internal ){
          return false; // Can't add internals!
       }
       else if( aItem instanceof Engine ){
-         return getType() == Part.CenterTorso;
+         return getLocation() == Location.CenterTorso;
       }
       else if( aItem instanceof JumpJet ){
-         switch( type ){
+         switch( location ){
             case RightTorso:
             case CenterTorso:
             case LeftTorso:
@@ -264,7 +265,7 @@ public class InternalPart{
          }
       }
       else if( aItem == ItemDB.CASE ){
-         return (type == Part.LeftTorso || type == Part.RightTorso);
+         return (location == Location.LeftTorso || location == Location.RightTorso);
       }
       else if( aItem.getHardpointType() != HardPointType.NONE && getNumHardpoints(aItem.getHardpointType()) <= 0 ){
          return false;

@@ -31,8 +31,8 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.preferences.Preferences;
@@ -49,7 +49,7 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
       DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
 
       DefaultTreeCathegory<GarageCathegory> garage = new DefaultTreeCathegory<>("Garage", root, this);
-      for(ChassiClass chassiClass : ChassiClass.values()){
+      for(ChassisClass chassiClass : ChassisClass.values()){
          GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garage, this, xBar, chassiClass, aFilterBar, aGarageTree);
          garage.addChild(clazz);
       }
@@ -57,7 +57,7 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
       root.addChild(garage);
 
       // Chassii
-      for(final ChassiClass chassiClass : ChassiClass.values()){
+      for(final ChassisClass chassiClass : ChassisClass.values()){
          DefaultTreeCathegory<Chassis> chassiiSub = new FilterTreeCathegory<Chassis>(xBar, chassiClass.toString(), chassii, this, aFilterBar, aGarageTree){
             @Override
             protected boolean filter(Chassis c){
@@ -67,7 +67,7 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
             }
          };
 
-         for(Chassis chassi : ChassiDB.lookup(chassiClass)){
+         for(Chassis chassi : ChassisDB.lookup(chassiClass)){
             chassiiSub.addChild(chassi);
          }
          chassiiSub.sort(new Comparator<Chassis>(){

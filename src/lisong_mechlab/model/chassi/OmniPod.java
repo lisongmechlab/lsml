@@ -19,29 +19,23 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import lisong_mechlab.mwo_data.HardpointsXml;
+import lisong_mechlab.mwo_data.helpers.MdfComponent;
+
 /**
- * Enumerates the different chassis types
+ * This class represents an omnipod of an omnimech configuration.
  * 
  * @author Li Song
  */
-public enum ChassiVariant{
-   HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX;
-
-   public static ChassiVariant fromString(String aString){
-      if( null == aString )
-         return NORMAL;
-      String s = aString.toLowerCase();
-      for(ChassiVariant variant : values()){
-         if( s.equals(variant.toString().toLowerCase()) )
-            return variant;
-      }
-      return NORMAL;
-   }
+public class OmniPod extends InternalComponent{
 
    /**
-    * @return <code>true</code> if this is a special variant (not hero or normal mech).
+    * @param aComponent
+    * @param aLocation
+    * @param aHardpoints
+    * @param aChassi
     */
-   public boolean isVariation(){
-      return !(this == HERO || this == NORMAL);
+   public OmniPod(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, Chassis aChassi){
+      super(aComponent, aLocation, aHardpoints, aChassi);
    }
 }

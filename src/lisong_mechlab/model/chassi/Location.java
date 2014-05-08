@@ -20,7 +20,7 @@
 package lisong_mechlab.model.chassi;
 
 
-public enum Part{
+public enum Location{
    Head("Head", "head", "HD"),
    LeftArm("Left Arm", "left_arm", "LA"),
    LeftLeg("Left Leg", "left_leg", "LL"),
@@ -30,11 +30,11 @@ public enum Part{
    RightLeg("Right Leg", "right_leg", "RL"),
    RightArm("Right Arm", "right_arm", "RA");
 
-   Part(String aLongName, String aMwoName, String aShortName){
+   Location(String aLongName, String aMwoName, String aShortName){
       this(aLongName, aMwoName, aShortName, false);
    }
 
-   Part(String aLongName, String aMwoName, String aShortName, boolean aTwosided){
+   Location(String aLongName, String aMwoName, String aShortName, boolean aTwosided){
       longName = aLongName;
       shortName = aShortName;
       twosided = aTwosided;
@@ -60,14 +60,14 @@ public enum Part{
       return twosided;
    }
 
-   private final static Part[] left2right = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso, Part.LeftTorso,
-         Part.LeftLeg, Part.LeftArm       };
+   private final static Location[] left2right = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head, Location.CenterTorso, Location.LeftTorso,
+         Location.LeftLeg, Location.LeftArm       };
 
-   public static Part[] leftToRight(){
+   public static Location[] leftToRight(){
       return left2right;
    }
 
-   public Part oppositeSide(){
+   public Location oppositeSide(){
       switch( this ){
          case LeftArm:
             return RightArm;
@@ -86,8 +86,8 @@ public enum Part{
       }
    }
 
-   public static Part fromMwoName(String componentName){
-      for(Part part : Part.values()){
+   public static Location fromMwoName(String componentName){
+      for(Location part : Location.values()){
          if( part.mwoName.equals(componentName) || part.mwoNameRear.equals(componentName) ){
             return part;
          }

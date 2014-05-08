@@ -25,11 +25,11 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} removes an {@link Item} from a {@link LoadoutPart}.
+ * This {@link Operation} removes an {@link Item} from a {@link ConfiguredComponent}.
  * 
  * @author Li Song
  */
-public class RemoveItemOperation extends ItemOperation{
+public class OpRemoveItem extends OpItemBase{
    private final Item item;
 
    /**
@@ -38,11 +38,11 @@ public class RemoveItemOperation extends ItemOperation{
     * @param anXBar
     *           The {@link MessageXBar} to send messages on when items are removed.
     * @param aLoadoutPart
-    *           The {@link LoadoutPart} to remove from.
+    *           The {@link ConfiguredComponent} to remove from.
     * @param aItem
     *           The {@link Item} to remove.
     */
-   public RemoveItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item aItem){
+   public OpRemoveItem(MessageXBar anXBar, ConfiguredComponent aLoadoutPart, Item aItem){
       super(anXBar, aLoadoutPart);
       if(aItem instanceof Internal)
          throw new IllegalArgumentException("Can't remove internals!");
@@ -59,15 +59,15 @@ public class RemoveItemOperation extends ItemOperation{
 
    @Override
    public boolean equals(Object obj){
-      if( !(obj instanceof RemoveItemOperation) )
+      if( !(obj instanceof OpRemoveItem) )
          return false;
-      RemoveItemOperation other = (RemoveItemOperation)obj;
+      OpRemoveItem other = (OpRemoveItem)obj;
       return item == other.item && super.equals(other);
    }
 
    @Override
    public String describe(){
-      return "remove " + item.getName(loadoutPart.getLoadout().getUpgrades()) + " from " + loadoutPart.getInternalPart().getType();
+      return "remove " + item.getName(loadoutPart.getLoadout().getUpgrades()) + " from " + loadoutPart.getInternalPart().getLocation();
    }
 
    @Override

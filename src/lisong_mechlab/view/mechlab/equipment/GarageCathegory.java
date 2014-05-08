@@ -23,7 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 
-import lisong_mechlab.model.chassi.ChassiClass;
+import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
@@ -33,9 +33,9 @@ import lisong_mechlab.util.MessageXBar;
 
 class GarageCathegory extends FilterTreeCathegory<Loadout>{
    private MechGarage        garage = null;
-   private final ChassiClass chassiClass;
+   private final ChassisClass chassiClass;
 
-   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar, ChassiClass aChassiClass,
+   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar, ChassisClass aChassiClass,
                           JTextField aFilterBar, GarageTree aGarageTree){
       super(xbar, aName, aParent, aModel, aFilterBar, aGarageTree);
       chassiClass = aChassiClass;

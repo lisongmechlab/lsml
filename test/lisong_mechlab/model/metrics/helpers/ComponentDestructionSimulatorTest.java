@@ -24,11 +24,11 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.InternalPart;
+import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
 import lisong_mechlab.model.metrics.helpers.ComponentDestructionSimulator;
 import lisong_mechlab.util.MessageXBar;
@@ -51,10 +51,10 @@ public class ComponentDestructionSimulatorTest{
 
       Loadout loadout = Mockito.mock(Loadout.class);
 
-      InternalPart internalPart = Mockito.mock(InternalPart.class);
+      InternalComponent internalPart = Mockito.mock(InternalComponent.class);
       Mockito.when(internalPart.getHitpoints()).thenReturn(partHp);
 
-      LoadoutPart part = Mockito.mock(LoadoutPart.class);
+      ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
       Mockito.when(part.getItems()).thenReturn(partItems);
       Mockito.when(part.getInternalPart()).thenReturn(internalPart);
       Mockito.when(part.getLoadout()).thenReturn(loadout);
@@ -87,10 +87,10 @@ public class ComponentDestructionSimulatorTest{
 
       Loadout loadout = Mockito.mock(Loadout.class);
 
-      InternalPart internalPart = Mockito.mock(InternalPart.class);
+      InternalComponent internalPart = Mockito.mock(InternalComponent.class);
       Mockito.when(internalPart.getHitpoints()).thenReturn(partHp);
 
-      LoadoutPart part = Mockito.mock(LoadoutPart.class);
+      ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
       Mockito.when(part.getItems()).thenReturn(partItems);
       Mockito.when(part.getInternalPart()).thenReturn(internalPart);
       Mockito.when(part.getLoadout()).thenReturn(loadout);
@@ -119,10 +119,10 @@ public class ComponentDestructionSimulatorTest{
 
       Loadout loadout = Mockito.mock(Loadout.class);
 
-      InternalPart internalPart = Mockito.mock(InternalPart.class);
+      InternalComponent internalPart = Mockito.mock(InternalComponent.class);
       Mockito.when(internalPart.getHitpoints()).thenReturn(partHp);
 
-      LoadoutPart part = Mockito.mock(LoadoutPart.class);
+      ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
       Mockito.when(part.getItems()).thenReturn(partItems);
       Mockito.when(part.getInternalPart()).thenReturn(internalPart);
       Mockito.when(part.getLoadout()).thenReturn(loadout);

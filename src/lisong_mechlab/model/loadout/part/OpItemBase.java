@@ -21,37 +21,37 @@ package lisong_mechlab.model.loadout.part;
 
 import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * A helper class for implementing {@link Operation}s that affect items on a {@link LoadoutPart}.
+ * A helper class for implementing {@link Operation}s that affect items on a {@link ConfiguredComponent}.
  * 
  * @author Li Song
  */
-abstract class ItemOperation extends Operation{
+abstract class OpItemBase extends Operation{
    private int                   numEngineHS = 0;
-   protected final LoadoutPart   loadoutPart;
+   protected final ConfiguredComponent   loadoutPart;
    private transient MessageXBar xBar;
 
    /**
-    * Creates a new {@link ItemOperation}. The deriving classes shall throw if the the operation with the given item
-    * would violate the {@link Loadout} or {@link LoadoutPart} invariant.
+    * Creates a new {@link OpItemBase}. The deriving classes shall throw if the the operation with the given item
+    * would violate the {@link Loadout} or {@link ConfiguredComponent} invariant.
     * 
     * @param anXBar
     *           The {@link MessageXBar} to send messages to when changes occur.
     * @param aLoadoutPart
-    *           The {@link LoadoutPart} that this operation will affect.
+    *           The {@link ConfiguredComponent} that this operation will affect.
     */
-   ItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart){
+   OpItemBase(MessageXBar anXBar, ConfiguredComponent aLoadoutPart){
       loadoutPart = aLoadoutPart;
       xBar = anXBar;
    }
@@ -67,10 +67,10 @@ abstract class ItemOperation extends Operation{
 
    @Override
    public boolean equals(Object obj){
-      if( !(obj instanceof ItemOperation) )
+      if( !(obj instanceof OpItemBase) )
          return false;
 
-      ItemOperation other = (ItemOperation)obj;
+      OpItemBase other = (OpItemBase)obj;
       return loadoutPart == other.loadoutPart;
    }
 
@@ -84,10 +84,10 @@ abstract class ItemOperation extends Operation{
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
-            LoadoutPart lt = loadoutPart.getLoadout().getPart(Part.LeftTorso);
-            LoadoutPart rt = loadoutPart.getLoadout().getPart(Part.RightTorso);
-            lt.removeItem(LoadoutPart.ENGINE_INTERNAL);
-            rt.removeItem(LoadoutPart.ENGINE_INTERNAL);
+            ConfiguredComponent lt = loadoutPart.getLoadout().getPart(Location.LeftTorso);
+            ConfiguredComponent rt = loadoutPart.getLoadout().getPart(Location.RightTorso);
+            lt.removeItem(ConfiguredComponent.ENGINE_INTERNAL);
+            rt.removeItem(ConfiguredComponent.ENGINE_INTERNAL);
             if( xBar != null ){
                xBar.post(new Message(lt, Type.ItemRemoved));
                xBar.post(new Message(rt, Type.ItemRemoved));
@@ -117,10 +117,10 @@ abstract class ItemOperation extends Operation{
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
-            LoadoutPart lt = loadoutPart.getLoadout().getPart(Part.LeftTorso);
-            LoadoutPart rt = loadoutPart.getLoadout().getPart(Part.RightTorso);
-            lt.addItem(LoadoutPart.ENGINE_INTERNAL);
-            rt.addItem(LoadoutPart.ENGINE_INTERNAL);
+            ConfiguredComponent lt = loadoutPart.getLoadout().getPart(Location.LeftTorso);
+            ConfiguredComponent rt = loadoutPart.getLoadout().getPart(Location.RightTorso);
+            lt.addItem(ConfiguredComponent.ENGINE_INTERNAL);
+            rt.addItem(ConfiguredComponent.ENGINE_INTERNAL);
             if( xBar != null ){
                xBar.post(new Message(lt, Type.ItemAdded));
                xBar.post(new Message(rt, Type.ItemAdded));

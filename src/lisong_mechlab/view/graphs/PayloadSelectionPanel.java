@@ -39,12 +39,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.metrics.PayloadStatistics;
-import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
+import lisong_mechlab.model.upgrades.OpSetArmorType;
+import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.OperationStack;
@@ -145,7 +145,7 @@ public class PayloadSelectionPanel extends JPanel{
          endoSteel.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               stack.pushAndApply(new SetStructureTypeOperation(aUpgrades, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
+               stack.pushAndApply(new OpSetStructureType(aUpgrades, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
                                                                                                  : UpgradeDB.STANDARD_STRUCTURE));
                aGraphPanel.updateGraph();
             }
@@ -153,7 +153,7 @@ public class PayloadSelectionPanel extends JPanel{
          ferroFibrous.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               stack.pushAndApply(new SetArmorTypeOperation(aUpgrades, ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR
+               stack.pushAndApply(new OpSetArmorType(aUpgrades, ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR
                                                                                                 : UpgradeDB.STANDARD_ARMOR));
                aGraphPanel.updateGraph();
             }
@@ -190,10 +190,10 @@ public class PayloadSelectionPanel extends JPanel{
    private Collection<PayloadGraphPanel.Entry> calculateUniqueSpeedChassis(){
       Collection<Collection<Chassis>> temp = new ArrayList<>();
 
-      List<Chassis> all = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
-      all.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-      all.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-      all.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+      List<Chassis> all = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      all.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+      all.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+      all.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
       Collections.sort(all, new Comparator<Chassis>(){
          @Override

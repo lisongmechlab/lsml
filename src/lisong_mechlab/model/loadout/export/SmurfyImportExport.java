@@ -39,7 +39,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.RenameOperation;
+import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.LSML;
@@ -143,7 +143,7 @@ public class SmurfyImportExport{
                   throw new IOException("Found lsml without name!");
                String lsml = lsmlMatcher.group(1);
                Loadout loadout = coder.parse(lsml);
-               stack.pushAndApply(new RenameOperation(loadout, null, name));
+               stack.pushAndApply(new OpRename(loadout, null, name));
                ans.add(loadout);
                name = null;
             }

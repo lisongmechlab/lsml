@@ -28,10 +28,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.RenameOperation;
+import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
@@ -69,7 +69,7 @@ public class LoadoutCoderV1Test{
       Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
       Matcher m = pat.matcher(line);
       m.matches();
-      Chassis chassi = ChassiDB.lookup(m.group(1));
+      Chassis chassi = ChassisDB.lookup(m.group(1));
       String lsml = m.group(2);
       Loadout reference = new Loadout(chassi.getName(), xBar);
       
@@ -78,7 +78,7 @@ public class LoadoutCoderV1Test{
 
       // Name is not encoded
       OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new RenameOperation(decoded, xBar, reference.getName()));
+      stack.pushAndApply(new OpRename(decoded, xBar, reference.getName()));
 
       // Verify
       assertEquals(reference, decoded);
@@ -102,14 +102,14 @@ public class LoadoutCoderV1Test{
          Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
          Matcher m = pat.matcher(line);
          m.matches();
-         Chassis chassi = ChassiDB.lookup(m.group(1));
+         Chassis chassi = ChassisDB.lookup(m.group(1));
          String lsml = m.group(2);
          Loadout reference = new Loadout(chassi.getName(), xBar);
          Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
          // Name is not encoded
          OperationStack stack = new OperationStack(0);
-         stack.pushAndApply(new RenameOperation(decoded, xBar, reference.getName()));
+         stack.pushAndApply(new OpRename(decoded, xBar, reference.getName()));
 
          // Verify
          assertEquals(reference, decoded);
@@ -131,6 +131,6 @@ public class LoadoutCoderV1Test{
       Loadout l = cut.decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY=".toCharArray()));
 
       assertTrue(l.getFreeMass() < 0.005);
-      assertEquals(3, l.getPart(Part.CenterTorso).getNumEngineHeatsinks());
+      assertEquals(3, l.getPart(Location.CenterTorso).getNumEngineHeatsinks());
    }
 }

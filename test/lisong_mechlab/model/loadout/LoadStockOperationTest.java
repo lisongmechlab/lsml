@@ -28,12 +28,12 @@ import java.util.List;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
@@ -46,7 +46,7 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**
- * Test suite for {@link LoadStockOperation}.
+ * Test suite for {@link OpLoadStock}.
  * 
  * @author Li Song
  */
@@ -67,22 +67,22 @@ public class LoadStockOperationTest{
    @Test
    public void testNotEmpty() throws Exception{
       // Setup
-      Chassis chassi = ChassiDB.lookup("JR7-F");
+      Chassis chassi = ChassisDB.lookup("JR7-F");
       Loadout loadout = new Loadout(chassi, xBar);
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
+      opstack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
 
       assertTrue(loadout.getMass() > 34.9);
       
       // Execute
-      opstack.pushAndApply(new LoadStockOperation(chassi, loadout, xBar));
+      opstack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
    }
 
    public Object[] allChassis(){
-      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+      List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+      chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+      chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
       return chassii.toArray();
    }
 
@@ -101,14 +101,14 @@ public class LoadStockOperationTest{
 
       // Execute
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new LoadStockOperation(aChassi, loadout, xBar));
+      opstack.pushAndApply(new OpLoadStock(aChassi, loadout, xBar));
 
       // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full armor?!)
       assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
-      for(LoadoutPart part : loadout.getPartLoadOuts()){
-         Mockito.verify(xBar, Mockito.atLeast(1)).post(new LoadoutPart.Message(part, Type.ArmorChanged));
+      for(ConfiguredComponent part : loadout.getPartLoadOuts()){
+         Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponent.Message(part, Type.ArmorChanged));
       }
-      Mockito.verify(xBar, Mockito.atLeast(1)).post(new LoadoutPart.Message(Matchers.any(LoadoutPart.class), Type.ItemAdded));
+      Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponent.Message(Matchers.any(ConfiguredComponent.class), Type.ItemAdded));
       Mockito.verify(xBar, Mockito.atLeast(1)).post(new Upgrades.Message(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
    }
 
@@ -120,13 +120,13 @@ public class LoadStockOperationTest{
    @Test
    public void testApply_artemisFeb4() throws Exception{
       // Setup
-      Loadout loadout = new Loadout(ChassiDB.lookup("CN9-D"), xBar);
+      Loadout loadout = new Loadout(ChassisDB.lookup("CN9-D"), xBar);
 
       // Execute
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new LoadStockOperation(loadout.getChassi(), loadout, xBar));
+      opstack.pushAndApply(new OpLoadStock(loadout.getChassi(), loadout, xBar));
 
-      assertTrue(loadout.getPart(Part.LeftTorso).getItems().contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
+      assertTrue(loadout.getPart(Location.LeftTorso).getItems().contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
    }
 
    /**
@@ -137,11 +137,11 @@ public class LoadStockOperationTest{
    @Test
    public void testUndo() throws Exception{
       // Setup
-      Chassis chassi = ChassiDB.lookup("JR7-F");
+      Chassis chassi = ChassisDB.lookup("JR7-F");
       Loadout reference = new Loadout(chassi, xBar);
       Loadout loadout = new Loadout(chassi, xBar);
       OperationStack opstack = new OperationStack(1);
-      opstack.pushAndApply(new LoadStockOperation(loadout.getChassi(), loadout, xBar));
+      opstack.pushAndApply(new OpLoadStock(loadout.getChassi(), loadout, xBar));
 
       // Execute
       opstack.undo();

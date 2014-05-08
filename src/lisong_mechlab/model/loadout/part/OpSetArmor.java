@@ -20,23 +20,23 @@
 package lisong_mechlab.model.loadout.part;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} will change the armor of a {@link LoadoutPart}.
+ * This {@link Operation} will change the armor of a {@link ConfiguredComponent}.
  * 
  * @author Li Song
  */
-public class SetArmorOperation extends Operation{
+public class OpSetArmor extends Operation{
    private final ArmorSide   side;
    private final int         amount;
    private int               oldAmount = -1;
    private boolean           oldManual;
    private final MessageXBar xBar;
-   private final LoadoutPart loadoutPart;
+   private final ConfiguredComponent loadoutPart;
    private final boolean     manual;
 
    /**
@@ -45,7 +45,7 @@ public class SetArmorOperation extends Operation{
     * @param anXBar
     *           The {@link MessageXBar} to announce changes to.
     * @param aLoadoutPart
-    *           The {@link LoadoutPart} to change.
+    *           The {@link ConfiguredComponent} to change.
     * @param anArmorSide
     *           The side to set the armor for.
     * @param anArmorAmount
@@ -56,7 +56,7 @@ public class SetArmorOperation extends Operation{
     *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
     *            support the armor.
     */
-   public SetArmorOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount, boolean aManualSet){
+   public OpSetArmor(MessageXBar anXBar, ConfiguredComponent aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount, boolean aManualSet){
       xBar = anXBar;
       loadoutPart = aLoadoutPart;
       side = anArmorSide;
@@ -79,9 +79,9 @@ public class SetArmorOperation extends Operation{
          return false;
       if( aOperation == null )
          return false;
-      if( !(aOperation instanceof SetArmorOperation) )
+      if( !(aOperation instanceof OpSetArmor) )
          return false;
-      SetArmorOperation that = (SetArmorOperation)aOperation;
+      OpSetArmor that = (OpSetArmor)aOperation;
       if( that.manual != manual )
          return false;
       if( that.loadoutPart != loadoutPart )
@@ -112,10 +112,10 @@ public class SetArmorOperation extends Operation{
             // afterwards. FIXME: Devise a proper solution, this is ugly.
             int freed = 0;
             if( manual == true && freed < armorDiff ){
-               for(LoadoutPart otherPart : loadoutPart.getLoadout().getPartLoadOuts()){
+               for(ConfiguredComponent otherPart : loadoutPart.getLoadout().getPartLoadOuts()){
                   if( loadoutPart != otherPart && otherPart.allowAutomaticArmor() ){
                      freed += otherPart.getArmorTotal();
-                     if( otherPart.getInternalPart().getType().isTwoSided() ){
+                     if( otherPart.getInternalPart().getLocation().isTwoSided() ){
                         otherPart.setArmor(ArmorSide.FRONT, 0, true);
                         otherPart.setArmor(ArmorSide.BACK, 0, true);
                      }

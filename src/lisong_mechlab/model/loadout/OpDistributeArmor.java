@@ -29,9 +29,9 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpSetArmor;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
@@ -43,8 +43,8 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-public class DistributeArmorOperation extends CompositeOperation{
-   private final Map<Part, Integer> armors = new HashMap<>(Part.values().length);
+public class OpDistributeArmor extends CompositeOperation{
+   private final Map<Location, Integer> armors = new HashMap<>(Location.values().length);
    private final Loadout            loadout;
 
    /**
@@ -53,14 +53,14 @@ public class DistributeArmorOperation extends CompositeOperation{
     * @param aFrontRearRatio
     * @param aXBar
     */
-   public DistributeArmorOperation(Loadout aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
+   public OpDistributeArmor(Loadout aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
       super("distribute armor");
 
       loadout = aLoadout;
 
       int armorLeft = calculateArmorToDistribute(aLoadout, aPointsOfArmor);
       if( armorLeft > 0 ){
-         Map<Part, Integer> prioMap = prioritize(aLoadout);
+         Map<Location, Integer> prioMap = prioritize(aLoadout);
          distribute(aLoadout, armorLeft, prioMap);
       }
       applyArmors(aLoadout, aFrontRearRatio, aXBar);
@@ -75,21 +75,21 @@ public class DistributeArmorOperation extends CompositeOperation{
          return false;
       if( aOperation == null )
          return false;
-      if( !(aOperation instanceof DistributeArmorOperation) )
+      if( !(aOperation instanceof OpDistributeArmor) )
          return false;
-      DistributeArmorOperation operation = (DistributeArmorOperation)aOperation;
+      OpDistributeArmor operation = (OpDistributeArmor)aOperation;
       return loadout == operation.loadout;
    }
 
-   private void distribute(final Loadout aLoadout, int aArmorAmount, final Map<Part, Integer> aPriorities){
+   private void distribute(final Loadout aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities){
       int prioSum = 0;
       for(double prio : aPriorities.values()){
          prioSum += prio;
       }
 
-      TreeMap<Part, Integer> byPriority = new TreeMap<>(new Comparator<Part>(){
+      TreeMap<Location, Integer> byPriority = new TreeMap<>(new Comparator<Location>(){
          @Override
-         public int compare(Part aO1, Part aO2){
+         public int compare(Location aO1, Location aO2){
             int c = -aPriorities.get(aO1).compareTo(aPriorities.get(aO2));
             if( c == 0 ){
                int d = Integer.compare(aLoadout.getChassi().getInternalPart(aO1).getArmorMax(), aLoadout.getChassi().getInternalPart(aO2)
@@ -104,30 +104,30 @@ public class DistributeArmorOperation extends CompositeOperation{
       byPriority.putAll(aPriorities);
 
       int armorLeft = aArmorAmount;
-      for(Entry<Part, Integer> entry : byPriority.entrySet()){
-         Part part = entry.getKey();
+      for(Entry<Location, Integer> entry : byPriority.entrySet()){
+         Location part = entry.getKey();
          int prio = entry.getValue();
          if( prio == 0 )
             continue;
 
-         LoadoutPart loadoutPart = aLoadout.getPart(part);
+         ConfiguredComponent loadoutPart = aLoadout.getPart(part);
          int armor = Math.min(loadoutPart.getInternalPart().getArmorMax(), armorLeft * prio / prioSum);
          setArmor(loadoutPart, armor);
          armorLeft -= armor;
          prioSum -= prio;
       }
 
-      List<LoadoutPart> parts = new ArrayList<>(aLoadout.getPartLoadOuts());
+      List<ConfiguredComponent> parts = new ArrayList<>(aLoadout.getPartLoadOuts());
       while( armorLeft > 0 && !parts.isEmpty() ){
-         Iterator<LoadoutPart> it = parts.iterator();
+         Iterator<ConfiguredComponent> it = parts.iterator();
          while( it.hasNext() ){
-            LoadoutPart part = it.next();
+            ConfiguredComponent part = it.next();
             if( !part.allowAutomaticArmor() || getArmor(part) == part.getInternalPart().getArmorMax() )
                it.remove();
          }
 
          int partsLeft = parts.size();
-         for(LoadoutPart loadoutPart : parts){
+         for(ConfiguredComponent loadoutPart : parts){
             int additionalArmor = Math.min(loadoutPart.getInternalPart().getArmorMax() - getArmor(loadoutPart), armorLeft / partsLeft);
             setArmor(loadoutPart, getArmor(loadoutPart) + additionalArmor);
             armorLeft -= additionalArmor;
@@ -150,8 +150,8 @@ public class DistributeArmorOperation extends CompositeOperation{
       int maxArmorPoints = 0;
 
       // Discount armor that is manually fixed.
-      for(Part part : Part.values()){
-         final LoadoutPart loadoutPart = aLoadout.getPart(part);
+      for(Location part : Location.values()){
+         final ConfiguredComponent loadoutPart = aLoadout.getPart(part);
          if( !loadoutPart.allowAutomaticArmor() ){
             armorLeft -= loadoutPart.getArmorTotal();
          }
@@ -163,40 +163,40 @@ public class DistributeArmorOperation extends CompositeOperation{
       return armorLeft;
    }
 
-   private int getArmor(LoadoutPart aPart){
-      Integer stored = armors.get(aPart.getInternalPart().getType());
+   private int getArmor(ConfiguredComponent aPart){
+      Integer stored = armors.get(aPart.getInternalPart().getLocation());
       if( stored != null )
          return stored;
       return 0;
    }
 
-   private void setArmor(LoadoutPart aPart, int armor){
-      armors.put(aPart.getInternalPart().getType(), armor);
+   private void setArmor(ConfiguredComponent aPart, int armor){
+      armors.put(aPart.getInternalPart().getLocation(), armor);
    }
 
    private void applyArmors(Loadout aLoadout, double aFrontRearRatio, MessageXBar aXBar){
-      for(Part part : Part.values()){
-         final LoadoutPart loadoutPart = aLoadout.getPart(part);
+      for(Location part : Location.values()){
+         final ConfiguredComponent loadoutPart = aLoadout.getPart(part);
 
          if( !loadoutPart.allowAutomaticArmor() )
             continue;
-         if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-            addOp(new SetArmorOperation(aXBar, loadoutPart, ArmorSide.BACK, 0, false));
-            addOp(new SetArmorOperation(aXBar, loadoutPart, ArmorSide.FRONT, 0, false));
+         if( loadoutPart.getInternalPart().getLocation().isTwoSided() ){
+            addOp(new OpSetArmor(aXBar, loadoutPart, ArmorSide.BACK, 0, false));
+            addOp(new OpSetArmor(aXBar, loadoutPart, ArmorSide.FRONT, 0, false));
          }
          else{
-            addOp(new SetArmorOperation(aXBar, loadoutPart, ArmorSide.ONLY, 0, false));
+            addOp(new OpSetArmor(aXBar, loadoutPart, ArmorSide.ONLY, 0, false));
          }
       }
 
-      for(Part part : Part.values()){
-         final LoadoutPart loadoutPart = aLoadout.getPart(part);
+      for(Location part : Location.values()){
+         final ConfiguredComponent loadoutPart = aLoadout.getPart(part);
 
          if( !loadoutPart.allowAutomaticArmor() )
             continue;
 
          int armor = getArmor(loadoutPart);
-         if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+         if( loadoutPart.getInternalPart().getLocation().isTwoSided() ){
             // 1) front + back = max
             // 2) front / back = ratio
             // front = back * ratio
@@ -205,50 +205,50 @@ public class DistributeArmorOperation extends CompositeOperation{
             int back = (int)(armor / (aFrontRearRatio + 1));
             int front = armor - back;
 
-            addOp(new SetArmorOperation(aXBar, loadoutPart, ArmorSide.FRONT, front, false));
-            addOp(new SetArmorOperation(aXBar, loadoutPart, ArmorSide.BACK, back, false));
+            addOp(new OpSetArmor(aXBar, loadoutPart, ArmorSide.FRONT, front, false));
+            addOp(new OpSetArmor(aXBar, loadoutPart, ArmorSide.BACK, back, false));
          }
          else{
-            addOp(new SetArmorOperation(aXBar, loadoutPart, ArmorSide.ONLY, armor, false));
+            addOp(new OpSetArmor(aXBar, loadoutPart, ArmorSide.ONLY, armor, false));
          }
       }
    }
 
-   private Map<Part, Integer> prioritize(Loadout aLoadout){
-      Map<Part, Integer> ans = new HashMap<>(Part.values().length);
+   private Map<Location, Integer> prioritize(Loadout aLoadout){
+      Map<Location, Integer> ans = new HashMap<>(Location.values().length);
 
-      for(Part part : Part.values()){
-         LoadoutPart loadoutPart = aLoadout.getPart(part);
+      for(Location part : Location.values()){
+         ConfiguredComponent loadoutPart = aLoadout.getPart(part);
          if( !loadoutPart.allowAutomaticArmor() )
             continue;
 
          // Protect engine at all costs
-         if( part == Part.CenterTorso ){
+         if( part == Location.CenterTorso ){
             ans.put(part, 2000);
          }
-         else if( loadoutPart.getItems().contains(LoadoutPart.ENGINE_INTERNAL) ){
+         else if( loadoutPart.getItems().contains(ConfiguredComponent.ENGINE_INTERNAL) ){
             ans.put(part, 1000);
          }
          // Legs and head are high priority too
-         else if( part == Part.LeftLeg || part == Part.RightLeg ){
+         else if( part == Location.LeftLeg || part == Location.RightLeg ){
             ans.put(part, 10);
          }
-         else if( part == Part.Head ){
+         else if( part == Location.Head ){
             ans.put(part, 7);
          }
          else if( loadoutPart.getItemMass() == 0.0 && !ans.containsKey(part) ){
             ans.put(part, 0);
          }
          else{
-            if( part == Part.LeftArm ){
-               ans.put(Part.LeftArm, 10);
-               if( aLoadout.getPart(Part.LeftTorso).allowAutomaticArmor() && (!ans.containsKey(Part.LeftTorso) || ans.get(Part.LeftTorso) < 10) )
-                  ans.put(Part.LeftTorso, 10);
+            if( part == Location.LeftArm ){
+               ans.put(Location.LeftArm, 10);
+               if( aLoadout.getPart(Location.LeftTorso).allowAutomaticArmor() && (!ans.containsKey(Location.LeftTorso) || ans.get(Location.LeftTorso) < 10) )
+                  ans.put(Location.LeftTorso, 10);
             }
-            else if( part == Part.RightArm ){
-               ans.put(Part.RightArm, 10);
-               if( aLoadout.getPart(Part.RightTorso).allowAutomaticArmor() && (!ans.containsKey(Part.RightTorso) || ans.get(Part.RightTorso) < 10) )
-                  ans.put(Part.RightTorso, 10);
+            else if( part == Location.RightArm ){
+               ans.put(Location.RightArm, 10);
+               if( aLoadout.getPart(Location.RightTorso).allowAutomaticArmor() && (!ans.containsKey(Location.RightTorso) || ans.get(Location.RightTorso) < 10) )
+                  ans.put(Location.RightTorso, 10);
             }
             else{
                ans.put(part, 10);

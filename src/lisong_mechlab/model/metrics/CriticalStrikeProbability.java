@@ -21,7 +21,7 @@ package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
@@ -34,9 +34,9 @@ import lisong_mechlab.model.upgrades.Upgrades;
 public class CriticalStrikeProbability implements ItemMetric{
    public final static double CRIT_CHANCE[] = {0.25, 0.14, 0.03}; // 25% risk of 1 hit, 15% risk of 2 hits, 3% risk of 3
                                                                   // hits
-   private final LoadoutPart  loadoutPart;
+   private final ConfiguredComponent  loadoutPart;
 
-   public CriticalStrikeProbability(LoadoutPart aLoadoutPart){
+   public CriticalStrikeProbability(ConfiguredComponent aLoadoutPart){
       loadoutPart = aLoadoutPart;
    }
 
@@ -45,7 +45,7 @@ public class CriticalStrikeProbability implements ItemMetric{
       int slots = 0;
       Upgrades upgrades = loadoutPart.getLoadout().getUpgrades();
       for(Item it : loadoutPart.getItems()){
-         if( it instanceof Internal && it != LoadoutPart.ENGINE_INTERNAL ){
+         if( it instanceof Internal && it != ConfiguredComponent.ENGINE_INTERNAL ){
             continue;
          }
          slots += it.getNumCriticalSlots(upgrades);

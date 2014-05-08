@@ -27,11 +27,11 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-public class RemoveFromGarageOperation extends Operation{
+public class OpRemoveFromGarage extends Operation{
    private final MechGarage garage;
    private final Loadout    loadout;
 
-   public RemoveFromGarageOperation(MechGarage aGarage, Loadout aLoadout){
+   public OpRemoveFromGarage(MechGarage aGarage, Loadout aLoadout){
       garage = aGarage;
       loadout = aLoadout;
    }

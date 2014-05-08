@@ -17,32 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout;
-
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.OperationStack.CompositeOperation;
+package lisong_mechlab.model.chassi;
 
 /**
- * Base class for operations operating on a {@link Loadout}.
+ * Enumerates the different chassis types
  * 
  * @author Li Song
  */
-public abstract class LoadoutOperation extends CompositeOperation{
+public enum ChassisVariant{
+   HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX;
 
-   protected final MessageXBar xBar;
-   protected final Loadout     loadout;
+   public static ChassisVariant fromString(String aString){
+      if( null == aString )
+         return NORMAL;
+      String s = aString.toLowerCase();
+      for(ChassisVariant variant : values()){
+         if( s.equals(variant.toString().toLowerCase()) )
+            return variant;
+      }
+      return NORMAL;
+   }
 
    /**
-    * @param aLoadout
-    *           The {@link Loadout} to operate on.
-    * @param anXBar
-    *           The {@link MessageXBar} to announce changes on the loadout to.
-    * @param aDescription
-    *           A human readable description of the operation.
+    * @return <code>true</code> if this is a special variant (not hero or normal mech).
     */
-   public LoadoutOperation(Loadout aLoadout, MessageXBar anXBar, String aDescription){
-      super(aDescription);
-      loadout = aLoadout;
-      xBar = anXBar;
+   public boolean isVariation(){
+      return !(this == HERO || this == NORMAL);
    }
 }

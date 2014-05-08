@@ -72,10 +72,10 @@ import lisong_mechlab.model.metrics.TimeToCool;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.metrics.TurningSpeed;
 import lisong_mechlab.model.metrics.TwistSpeed;
-import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
-import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
-import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
+import lisong_mechlab.model.upgrades.OpSetArmorType;
+import lisong_mechlab.model.upgrades.OpSetGuidanceType;
+import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
+import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -655,15 +655,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-            opStack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV
+            opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV
                                                                                                  : UpgradeDB.STANDARD_GUIDANCE));
          }
          else if( source == endoSteel ){
-            opStack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
+            opStack.pushAndApply(new OpSetStructureType(xBar, loadout, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
                                                                                                     : UpgradeDB.STANDARD_STRUCTURE));
          }
          else if( source == ferroFibros ){
-            opStack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR
+            opStack.pushAndApply(new OpSetArmorType(xBar, loadout, ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR
                                                                                                   : UpgradeDB.STANDARD_ARMOR));
          }
          else if( source == speedTweak ){
@@ -673,7 +673,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             loadout.getEfficiencies().setAnchorTurn(anEvent.getStateChange() == ItemEvent.SELECTED);
          }
          else if( source == doubleHeatSinks ){
-            opStack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS
+            opStack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS
                                                                                                          : UpgradeDB.STANDARD_HEATSINKS));
          }
          else if( source == coolRun ){

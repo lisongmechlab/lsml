@@ -25,11 +25,11 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} adds an {@link Item} to a {@link LoadoutPart}.
+ * This {@link Operation} adds an {@link Item} to a {@link ConfiguredComponent}.
  * 
  * @author Li Song
  */
-public class AddItemOperation extends ItemOperation{
+public class OpAddItem extends OpItemBase{
    private Item item;
 
    /**
@@ -38,11 +38,11 @@ public class AddItemOperation extends ItemOperation{
     * @param anXBar
     *           The {@link MessageXBar} to send messages on when items are added.
     * @param aLoadoutPart
-    *           The {@link LoadoutPart} to add to.
+    *           The {@link ConfiguredComponent} to add to.
     * @param anItem
     *           The {@link Item} to add.
     */
-   public AddItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item anItem){
+   public OpAddItem(MessageXBar anXBar, ConfiguredComponent aLoadoutPart, Item anItem){
       super(anXBar, aLoadoutPart);
       item = anItem;
       if( item instanceof Internal )
@@ -59,15 +59,15 @@ public class AddItemOperation extends ItemOperation{
 
    @Override
    public boolean equals(Object obj){
-      if( !(obj instanceof RemoveItemOperation) )
+      if( !(obj instanceof OpRemoveItem) )
          return false;
-      AddItemOperation other = (AddItemOperation)obj;
+      OpAddItem other = (OpAddItem)obj;
       return item == other.item && super.equals(other);
    }
 
    @Override
    public String describe(){
-      return "add " + item.getName(loadoutPart.getLoadout().getUpgrades()) + " to " + loadoutPart.getInternalPart().getType();
+      return "add " + item.getName(loadoutPart.getLoadout().getUpgrades()) + " to " + loadoutPart.getInternalPart().getLocation();
    }
 
    @Override
