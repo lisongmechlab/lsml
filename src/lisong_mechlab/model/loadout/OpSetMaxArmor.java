@@ -20,8 +20,8 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 
 /**
@@ -29,12 +29,12 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Emily Björk
  */
-public class SetMaxArmorOperation extends LoadoutOperation{
-   public SetMaxArmorOperation(Loadout aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet){
+public class OpSetMaxArmor extends OpLoadoutBase{
+   public OpSetMaxArmor(Loadout aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet){
       super(aLoadout, anXBar, "set max armor");
-      for(LoadoutPart part : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : loadout.getPartLoadOuts()){
          final int max = part.getInternalPart().getArmorMax();
-         if( part.getInternalPart().getType().isTwoSided() ){
+         if( part.getInternalPart().getLocation().isTwoSided() ){
             // 1) front + back = max
             // 2) front / back = ratio
             // front = back * ratio
@@ -43,12 +43,12 @@ public class SetMaxArmorOperation extends LoadoutOperation{
             int back = (int)(max / (aRatio + 1));
             int front = max - back;
 
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, 0, aManualSet));
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.FRONT, front, aManualSet));
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.BACK, back, aManualSet));
+            addOp(new OpSetArmor(xBar, part, ArmorSide.BACK, 0, aManualSet));
+            addOp(new OpSetArmor(xBar, part, ArmorSide.FRONT, front, aManualSet));
+            addOp(new OpSetArmor(xBar, part, ArmorSide.BACK, back, aManualSet));
          }
          else{
-            addOp(new SetArmorOperation(xBar, part, ArmorSide.ONLY, max, aManualSet));
+            addOp(new OpSetArmor(xBar, part, ArmorSide.ONLY, max, aManualSet));
          }
       }
    }

@@ -21,7 +21,7 @@ package lisong_mechlab.model.upgrades;
 
 import static org.junit.Assert.*;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.StripOperation;
+import lisong_mechlab.model.loadout.OpStripLoadout;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
@@ -40,7 +40,7 @@ public class SetHeatSinkTypeOperationTest{
       Loadout loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
       OperationStack stack = new OperationStack(1);
 
-      stack.pushAndApply(new StripOperation(loadout, xBar));
+      stack.pushAndApply(new OpStripLoadout(loadout, xBar));
 
       assertEquals(loadout.getMass(), loadout.getChassi().getInternalMass(), 0.0);
       assertSame(UpgradeDB.STANDARD_ARMOR, loadout.getUpgrades().getArmor());

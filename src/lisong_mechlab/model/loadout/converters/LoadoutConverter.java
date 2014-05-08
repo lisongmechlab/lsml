@@ -20,15 +20,15 @@
 package lisong_mechlab.model.loadout.converters;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.RenameOperation;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
-import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
-import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
+import lisong_mechlab.model.loadout.OpRename;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.upgrades.OpSetArmorType;
+import lisong_mechlab.model.upgrades.OpSetGuidanceType;
+import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
+import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -67,7 +67,7 @@ public class LoadoutConverter implements Converter{
       aContext.convertAnother(loadout.getEfficiencies());
       aWriter.endNode();
 
-      for(LoadoutPart part : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : loadout.getPartLoadOuts()){
          aWriter.startNode("component");
          aContext.convertAnother(part);
          aWriter.endNode();
@@ -78,21 +78,21 @@ public class LoadoutConverter implements Converter{
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
       String chassiVariation = aReader.getAttribute("chassi");
       String name = aReader.getAttribute("name");
-      Chassis chassi = ChassiDB.lookup(chassiVariation);
+      Chassis chassi = ChassisDB.lookup(chassiVariation);
 
       OperationStack stack = new OperationStack(0);
 
       Loadout loadout = new Loadout(chassi, xBar);
-      stack.pushAndApply(new RenameOperation(loadout, xBar, name));
+      stack.pushAndApply(new OpRename(loadout, xBar, name));
 
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
          if( "upgrades".equals(aReader.getNodeName()) ){
             Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
-            stack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, upgrades.getGuidance()));
-            stack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, upgrades.getHeatSink()));
-            stack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, upgrades.getStructure()));
-            stack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, upgrades.getArmor()));
+            stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, upgrades.getGuidance()));
+            stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, upgrades.getHeatSink()));
+            stack.pushAndApply(new OpSetStructureType(xBar, loadout, upgrades.getStructure()));
+            stack.pushAndApply(new OpSetArmorType(xBar, loadout, upgrades.getArmor()));
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadout, Efficiencies.class);
@@ -102,7 +102,7 @@ public class LoadoutConverter implements Converter{
             loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak());
          }
          else if( "component".equals(aReader.getNodeName()) ){
-            aContext.convertAnother(loadout, LoadoutPart.class, new LoadoutPartConverter(xBar, loadout));
+            aContext.convertAnother(loadout, ConfiguredComponent.class, new LoadoutPartConverter(xBar, loadout));
          }
          aReader.moveUp();
       }

@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 
 import org.junit.Before;
@@ -37,7 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicSlotDistributorTest{
    MockLoadoutContainer   mlc = new MockLoadoutContainer();
-   List<LoadoutPart>      priorityOrder;
+   List<ConfiguredComponent>      priorityOrder;
    DynamicSlotDistributor cut;
 
    @Before
@@ -88,7 +88,7 @@ public class DynamicSlotDistributorTest{
     * @param aPart
     * @return
     */
-   private int cumSlotsFree(LoadoutPart aPart){
+   private int cumSlotsFree(ConfiguredComponent aPart){
       int i = priorityOrder.indexOf(aPart);
       int sum = 0;
       while( i > 0 ){
@@ -106,14 +106,14 @@ public class DynamicSlotDistributorTest{
     * @param slotsTotal
     * @return
     */
-   private int slotsOccupied(LoadoutPart aPart, int slotsTotal){
+   private int slotsOccupied(ConfiguredComponent aPart, int slotsTotal){
       return Math.min(aPart.getNumCriticalSlotsFree(), Math.max(0, slotsTotal - cumSlotsFree(aPart)));
    }
 
    private String expectedStructure(int slotsTotal){
       StringBuilder sb = new StringBuilder();
       sb.append("{");
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          sb.append(part).append(" = ");
          sb.append(slotsOccupied(part, slotsTotal));
          sb.append(", ");
@@ -136,47 +136,47 @@ public class DynamicSlotDistributorTest{
       when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(12);
       when(mlc.la.getNumCriticalSlotsFree()).thenReturn(12);
 
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
       when(mlc.ra.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
       when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
       when(mlc.rl.getNumCriticalSlotsFree()).thenReturn(2);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
       when(mlc.hd.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
       when(mlc.ct.getNumCriticalSlotsFree()).thenReturn(3);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
       when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
       when(mlc.ll.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
       when(mlc.la.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
       // Slot overflow, fail graciously, no exceptions thrown
@@ -196,47 +196,47 @@ public class DynamicSlotDistributorTest{
       when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(12);
       when(mlc.la.getNumCriticalSlotsFree()).thenReturn(12);
 
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
       when(mlc.ra.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
       when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
       when(mlc.rl.getNumCriticalSlotsFree()).thenReturn(2);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
       when(mlc.hd.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
       when(mlc.ct.getNumCriticalSlotsFree()).thenReturn(3);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
       when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
       when(mlc.ll.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
       when(mlc.la.getNumCriticalSlotsFree()).thenReturn(1);
-      for(LoadoutPart part : priorityOrder){
+      for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
       // Slot overflow, fail graciously, no exceptions thrown

@@ -23,37 +23,37 @@ import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This operation adds a new {@link Loadout} to a {@link MechGarage}.
+ * Removes a {@link Loadout} from a {@link MechGarage}.
  * 
  * @author Emily Björk
  */
-public class AddToGarageOperation extends Operation{
+public class OpRemoveFromGarage extends Operation{
    private final MechGarage garage;
    private final Loadout    loadout;
 
-   public AddToGarageOperation(MechGarage aGarage, Loadout aLoadout){
+   public OpRemoveFromGarage(MechGarage aGarage, Loadout aLoadout){
       garage = aGarage;
       loadout = aLoadout;
    }
 
    @Override
    public String describe(){
-      return "add "+loadout.getName()+" to garage";
+      return "remove mech from garage";
    }
 
    @Override
    protected void apply(){
-      if( garage.getMechs().contains(loadout) ){
-         throw new IllegalArgumentException("The loadout \"" + loadout.getName() + "\" is already saved to the garage!");
-      }
-      garage.add(loadout);
-   }
-
-   @Override
-   protected void undo(){
       if( !garage.getMechs().contains(loadout) ){
          throw new IllegalArgumentException("The loadout \"" + loadout.getName() + "\" is not in the garage!");
       }
       garage.remove(loadout);
+   }
+
+   @Override
+   protected void undo(){
+      if( garage.getMechs().contains(loadout) ){
+         throw new IllegalArgumentException("The loadout \"" + loadout.getName() + "\" is already saved to the garage!");
+      }
+      garage.add(loadout);
    }
 }

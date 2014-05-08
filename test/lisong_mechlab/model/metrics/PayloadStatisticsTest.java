@@ -21,7 +21,7 @@ package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -32,7 +32,7 @@ public class PayloadStatisticsTest{
 
    @Test
    public final void testChangeUseXLEngine() throws Exception{
-      Chassis jm6_a = ChassiDB.lookup("JM6-A");
+      Chassis jm6_a = ChassisDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
@@ -45,7 +45,7 @@ public class PayloadStatisticsTest{
 
    @Test
    public final void testChangeUseMaxArmor() throws Exception{
-      Chassis jm6_a = ChassiDB.lookup("JM6-A");
+      Chassis jm6_a = ChassisDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
@@ -58,7 +58,7 @@ public class PayloadStatisticsTest{
 
    @Test
    public final void testChangeUpgrades() throws Exception{
-      Chassis jm6_a = ChassiDB.lookup("JM6-A");
+      Chassis jm6_a = ChassisDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
       Upgrades upgradesNew = Mockito.mock(Upgrades.class);
@@ -73,7 +73,7 @@ public class PayloadStatisticsTest{
 
    @Test
    public final void testCalculate_smallEngine() throws Exception{
-      Chassis jm6_a = ChassiDB.lookup("JM6-A");
+      Chassis jm6_a = ChassisDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
@@ -86,7 +86,7 @@ public class PayloadStatisticsTest{
 
    @Test
    public final void testCalculate() throws Exception{
-      Chassis jm6_a = ChassiDB.lookup("JM6-A");
+      Chassis jm6_a = ChassisDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
@@ -98,7 +98,7 @@ public class PayloadStatisticsTest{
 
    @Test
    public final void testCalculate_xl() throws Exception{
-      Chassis jm6_a = ChassiDB.lookup("JM6-A");
+      Chassis jm6_a = ChassisDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
@@ -110,7 +110,7 @@ public class PayloadStatisticsTest{
 
    @Test
    public final void testCalculate_maxArmor() throws Exception{
-      Chassis jm6_a = ChassiDB.lookup("JM6-A");
+      Chassis jm6_a = ChassisDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
@@ -122,7 +122,7 @@ public class PayloadStatisticsTest{
 
    @Test
    public final void testCalculate_ferroMaxArmor() throws Exception{
-      Chassis jm6_a = ChassiDB.lookup("JM6-A");
+      Chassis jm6_a = ChassisDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.FERRO_FIBROUS_ARMOR);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
@@ -134,7 +134,7 @@ public class PayloadStatisticsTest{
 
    @Test
    public final void testCalculate_endo() throws Exception{
-      Chassis jm6_a = ChassiDB.lookup("JM6-A");
+      Chassis jm6_a = ChassisDB.lookup("JM6-A");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.ENDO_STEEL_STRUCTURE);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);

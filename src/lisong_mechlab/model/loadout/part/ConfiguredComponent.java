@@ -27,7 +27,7 @@ import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalPart;
+import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
@@ -40,33 +40,33 @@ import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This class represents a configured {@link InternalPart}.
+ * This class represents a configured {@link InternalComponent}.
  * <p>
  * This class is immutable. The only way to alter it is by creating instances of the relevant {@link Operation}s and
  * adding them to an {@link OperationStack}.
  * 
  * @author Emily Björk
  */
-public class LoadoutPart{
+public class ConfiguredComponent{
    public static class Message implements MessageXBar.Message{
       public enum Type{
          ItemAdded, ItemRemoved, ArmorChanged, ItemsChanged, ArmorDistributionUpdateRequest
       }
 
-      public final LoadoutPart part;
+      public final ConfiguredComponent part;
 
-      public final Type        type;
+      public final Type                   type;
 
       /**
        * True if this message was automatically in response to a change.
        */
-      public final boolean     automatic;
+      public final boolean                automatic;
 
-      public Message(LoadoutPart aPart, Type aType){
+      public Message(ConfiguredComponent aPart, Type aType){
          this(aPart, aType, false);
       }
 
-      public Message(LoadoutPart aPart, Type aType, boolean aAutomatic){
+      public Message(ConfiguredComponent aPart, Type aType, boolean aAutomatic){
          part = aPart;
          type = aType;
          automatic = aAutomatic;
@@ -93,26 +93,26 @@ public class LoadoutPart{
 
       @Override
       public String toString(){
-         return type.toString() + " for " + part.getInternalPart().getType().toString() + " of " + part.getLoadout();
+         return type.toString() + " for " + part.getInternalPart().getLocation().toString() + " of " + part.getLoadout();
       }
    }
 
    public final static Internal              ENGINE_INTERNAL = (Internal)ItemDB.lookup("mdf_Engine");
 
    private final transient Loadout           loadout;
-   private final InternalPart                internalPart;
+   private final InternalComponent           internalComponent;
    private int                               engineHeatsinks = 0;
 
    private final TreeMap<ArmorSide, Integer> armor           = new TreeMap<ArmorSide, Integer>();
    private final List<Item>                  items           = new ArrayList<Item>();
    private boolean                           autoArmor       = false;
 
-   public LoadoutPart(Loadout aLoadout, InternalPart anInternalPart, boolean aAutoArmor){
-      internalPart = anInternalPart;
-      items.addAll(internalPart.getInternalItems());
+   public ConfiguredComponent(Loadout aLoadout, InternalComponent anInternalPart, boolean aAutoArmor){
+      internalComponent = anInternalPart;
+      items.addAll(internalComponent.getInternalItems());
       loadout = aLoadout;
       autoArmor = aAutoArmor;
-      if( internalPart.getType().isTwoSided() ){
+      if( internalComponent.getLocation().isTwoSided() ){
          armor.put(ArmorSide.FRONT, 0);
          armor.put(ArmorSide.BACK, 0);
       }
@@ -125,13 +125,13 @@ public class LoadoutPart{
     * Copy constructor. Performs a deep copy of the argument with a new {@link Loadout} value.
     * 
     * @param aLoadoutPart
-    *           The {@link LoadoutPart} to copy.
+    *           The {@link ConfiguredComponent} to copy.
     * @param aLoadout
     *           The new {@link Loadout} to associate.
     */
-   public LoadoutPart(LoadoutPart aLoadoutPart, Loadout aLoadout){
+   public ConfiguredComponent(ConfiguredComponent aLoadoutPart, Loadout aLoadout){
       loadout = aLoadout;
-      internalPart = aLoadoutPart.internalPart;
+      internalComponent = aLoadoutPart.internalComponent;
       engineHeatsinks = aLoadoutPart.engineHeatsinks;
       autoArmor = aLoadoutPart.autoArmor;
 
@@ -147,7 +147,7 @@ public class LoadoutPart{
    @Override
    public String toString(){
       StringBuilder sb = new StringBuilder();
-      if( getInternalPart().getType().isTwoSided() ){
+      if( getInternalPart().getLocation().isTwoSided() ){
          sb.append(getArmor(ArmorSide.FRONT)).append("/").append(getArmor(ArmorSide.BACK));
       }
       else{
@@ -190,11 +190,11 @@ public class LoadoutPart{
    public boolean equals(Object obj){
       if( this == obj )
          return true;
-      if( !(obj instanceof LoadoutPart) )
+      if( !(obj instanceof ConfiguredComponent) )
          return false;
-      LoadoutPart that = (LoadoutPart)obj;
+      ConfiguredComponent that = (ConfiguredComponent)obj;
 
-      if( !internalPart.equals(that.internalPart) )
+      if( !internalComponent.equals(that.internalComponent) )
          return false;
       if( !ArrayUtils.equalsUnordered(items, that.items) )
          return false;
@@ -239,8 +239,8 @@ public class LoadoutPart{
       return sum;
    }
 
-   public InternalPart getInternalPart(){
-      return internalPart;
+   public InternalComponent getInternalPart(){
+      return internalComponent;
    }
 
    public double getItemMass(){
@@ -314,7 +314,7 @@ public class LoadoutPart{
       int result = 1;
       result = prime * result + ((armor == null) ? 0 : armor.hashCode());
       result = prime * result + engineHeatsinks;
-      result = prime * result + ((internalPart == null) ? 0 : internalPart.hashCode());
+      result = prime * result + ((internalComponent == null) ? 0 : internalComponent.hashCode());
       result = prime * result + ((items == null) ? 0 : items.hashCode());
       return result;
    }

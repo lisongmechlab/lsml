@@ -42,10 +42,10 @@ import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.StripArmorOperation;
-import lisong_mechlab.model.loadout.StripOperation;
+import lisong_mechlab.model.loadout.OpStripArmor;
+import lisong_mechlab.model.loadout.OpStripLoadout;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
@@ -200,7 +200,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          subPanel.add(symmetricArmor);
          symmetricArmor.setAlignmentX(LEFT_ALIGNMENT);
          subPanel.add(Box.createVerticalStrut(50 - symmHeight - 3));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightArm), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Location.RightArm), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -212,8 +212,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightTorso), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.RightLeg), anXBar, false, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Location.RightTorso), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Location.RightLeg), anXBar, false, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -225,8 +225,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.Head), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.CenterTorso), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Location.Head), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Location.CenterTorso), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -238,8 +238,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftTorso), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftLeg), anXBar, false, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Location.LeftTorso), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Location.LeftLeg), anXBar, false, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -252,7 +252,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          final JPanel subPanel = new JPanel();
          subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
          subPanel.add(Box.createVerticalStrut(50));
-         subPanel.add(new PartPanel(aConfiguration.getPart(Part.LeftArm), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
+         subPanel.add(new PartPanel(aConfiguration.getPart(Location.LeftArm), anXBar, true, slotDistributor, symmetricArmor, loadoutOperationStack));
          subPanel.add(Box.createVerticalGlue());
          panel.add(subPanel);
       }
@@ -288,7 +288,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(createMenuItem("Strip mech", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
-            loadoutOperationStack.pushAndApply(new StripOperation(loadout, xbar));
+            loadoutOperationStack.pushAndApply(new OpStripLoadout(loadout, xbar));
          }
       }));
 
@@ -302,7 +302,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       menu.add(createMenuItem("Strip Armor", new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
-            loadoutOperationStack.pushAndApply(new StripArmorOperation(loadout, xbar));
+            loadoutOperationStack.pushAndApply(new OpStripArmor(loadout, xbar));
          }
       }));
 

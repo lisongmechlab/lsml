@@ -22,9 +22,9 @@ package lisong_mechlab.model;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
@@ -45,7 +45,7 @@ public class StockLoadout{
     * @author Emily Björk
     */
    public static class StockComponent{
-      private final Part          part;
+      private final Location          part;
       private final Integer       armorFront;
       private final Integer       armorBack;
       private final List<Integer> items;
@@ -54,7 +54,7 @@ public class StockLoadout{
        * Creates a new {@link StockComponent}.
        * 
        * @param aPart
-       *           The {@link Part} that this {@link StockComponent} is for.
+       *           The {@link Location} that this {@link StockComponent} is for.
        * @param aFront
        *           The front armor (or total armor if one sided).
        * @param aBack
@@ -62,7 +62,7 @@ public class StockLoadout{
        * @param aItems
        *           A {@link List} of items in the component.
        */
-      public StockComponent(Part aPart, int aFront, int aBack, List<Integer> aItems){
+      public StockComponent(Location aPart, int aFront, int aBack, List<Integer> aItems){
          part = aPart;
          armorFront = aFront;
          if( part.isTwoSided() ){
@@ -75,9 +75,9 @@ public class StockLoadout{
       }
 
       /**
-       * @return The {@link Part} that defines this {@link StockComponent}.
+       * @return The {@link Location} that defines this {@link StockComponent}.
        */
-      public Part getPart(){
+      public Location getPart(){
          return part;
       }
 
@@ -140,7 +140,7 @@ public class StockLoadout{
     * @return The {@link Chassis} for this {@link StockLoadout}.
     */
    public Chassis getChassis(){
-      return ChassiDB.lookup(chassisId);
+      return ChassisDB.lookup(chassisId);
    }
 
    /**

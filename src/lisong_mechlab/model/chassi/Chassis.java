@@ -45,7 +45,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Chassis{
    @XStreamAsAttribute
-   private final ChassiClass             chassiclass;
+   private final ChassisClass             chassiclass;
    @XStreamAsAttribute
    private final String                  name;
    @XStreamAsAttribute
@@ -54,7 +54,7 @@ public class Chassis{
    private final String                  mwoName;
    @XStreamAsAttribute
    private final int                     maxTons;
-   private final Map<Part, InternalPart> parts;
+   private final Map<Location, InternalComponent> parts;
    @XStreamAsAttribute
    private final int                     maxJumpJets;
    @XStreamAsAttribute
@@ -70,7 +70,7 @@ public class Chassis{
    @XStreamAsAttribute
    private final double                  twistFactor;
    @XStreamAsAttribute
-   private final ChassiVariant           variant;
+   private final ChassisVariant           variant;
    @XStreamAsAttribute
    private final int                     baseVariant;
    @XStreamAsAttribute
@@ -89,19 +89,19 @@ public class Chassis{
       maxJumpJets = mdfMech.MaxJumpJets;
       maxTons = mdfMech.MaxTons;
       engineFactor = aMdf.MovementTuningConfiguration.MaxMovementSpeed;
-      chassiclass = ChassiClass.fromMaxTons(maxTons);
+      chassiclass = ChassisClass.fromMaxTons(maxTons);
       turnFactor = aMdf.MovementTuningConfiguration.TorsoTurnSpeedPitch;
       twistFactor = aMdf.MovementTuningConfiguration.TorsoTurnSpeedYaw;
-      variant = ChassiVariant.fromString(aMdf.Mech.VariantType);
+      variant = ChassisVariant.fromString(aMdf.Mech.VariantType);
       baseVariant = aBaseVariant;
 
-      Map<Part, InternalPart> tempParts = new HashMap<Part, InternalPart>();
+      Map<Location, InternalComponent> tempParts = new HashMap<Location, InternalComponent>();
       for(MdfComponent component : aMdf.ComponentList){
-         if( Part.isRear(component.Name) ){
+         if( Location.isRear(component.Name) ){
             continue;
          }
-         final Part part = Part.fromMwoName(component.Name);
-         tempParts.put(part, new InternalPart(component, part, aHardpoints, this));
+         final Location part = Location.fromMwoName(component.Name);
+         tempParts.put(part, new InternalComponent(component, part, aHardpoints, this));
       }
       parts = Collections.unmodifiableMap(tempParts);
 
@@ -164,11 +164,11 @@ public class Chassis{
       return mwoName;
    }
 
-   public InternalPart getInternalPart(Part aPartType){
+   public InternalComponent getInternalPart(Location aPartType){
       return parts.get(aPartType);
    }
 
-   public Collection<InternalPart> getInternalParts(){
+   public Collection<InternalComponent> getInternalParts(){
       return parts.values();
    }
 
@@ -189,13 +189,13 @@ public class Chassis{
 
    public int getArmorMax(){
       int ans = 0;
-      for(InternalPart internalPart : parts.values()){
+      for(InternalComponent internalPart : parts.values()){
          ans += internalPart.getArmorMax();
       }
       return ans;
    }
 
-   public ChassiClass getChassiClass(){
+   public ChassisClass getChassiClass(){
       return chassiclass;
    }
 
@@ -205,7 +205,7 @@ public class Chassis{
 
    public int getHardpointsCount(HardPointType aHardpointType){
       int sum = 0;
-      for(InternalPart part : parts.values()){
+      for(InternalComponent part : parts.values()){
          sum += part.getNumHardpoints(aHardpointType);
       }
       return sum;
@@ -247,7 +247,7 @@ public class Chassis{
          return engine.getRating() >= getEngineMin() && engine.getRating() <= getEngineMax();
       }
       else{
-         for(InternalPart part : parts.values()){
+         for(InternalComponent part : parts.values()){
             if( part.isAllowed(aItem) )
                return true;
          }
@@ -258,7 +258,7 @@ public class Chassis{
    /**
     * @return The chassis variant of this mech.
     */
-   public ChassiVariant getVariantType(){
+   public ChassisVariant getVariantType(){
       return variant;
    }
 }

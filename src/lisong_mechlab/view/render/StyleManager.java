@@ -34,7 +34,7 @@ import javax.swing.border.Border;
 
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalPart;
+import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
@@ -102,7 +102,7 @@ public class StyleManager{
       return BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(sectionTitle), INNER_BORDER);
    }
    
-   public static void styleHardpointLabel(JLabel aLabel, InternalPart aInternalPart, HardPointType aHardPointType){
+   public static void styleHardpointLabel(JLabel aLabel, InternalComponent aInternalPart, HardPointType aHardPointType){
       int hardPoints = aInternalPart.getNumHardpoints(aHardPointType);
       if( hardPoints < 1 ){
          aLabel.setVisible(false);
@@ -132,7 +132,7 @@ public class StyleManager{
       }
    }
 
-   public static String formatMissileHardpointText(InternalPart aPart){
+   public static String formatMissileHardpointText(InternalComponent aPart){
       Map<Integer, Integer> tubecounts = new TreeMap<>();
       for(HardPoint hp : aPart.getHardpoints()){
          if( hp.getType() == HardPointType.MISSILE ){

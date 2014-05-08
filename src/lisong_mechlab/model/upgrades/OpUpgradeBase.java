@@ -20,7 +20,7 @@
 package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -30,12 +30,12 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-abstract class UpgradeOperation extends CompositeOperation{
+abstract class OpUpgradeBase extends CompositeOperation{
    protected final Loadout               loadout;
    protected final Upgrades              upgrades;
    protected final transient MessageXBar xBar;
 
-   public UpgradeOperation(MessageXBar anXBar, Loadout aLoadout, String aDescription){
+   public OpUpgradeBase(MessageXBar anXBar, Loadout aLoadout, String aDescription){
       super(aDescription);
       loadout = aLoadout;
       upgrades = aLoadout.getUpgrades();
@@ -43,7 +43,7 @@ abstract class UpgradeOperation extends CompositeOperation{
    }
 
    /**
-    * This creates an {@link UpgradeOperation} without an associated loadout. This is useful in cases when the
+    * This creates an {@link OpUpgradeBase} without an associated loadout. This is useful in cases when the
     * {@link Upgrades} is only used as a container for upgrades without an actual loadout.
     * 
     * @param aUpgrades
@@ -51,7 +51,7 @@ abstract class UpgradeOperation extends CompositeOperation{
     * @param aDescription
     *           The name of this operation.
     */
-   public UpgradeOperation(Upgrades aUpgrades, String aDescription){
+   public OpUpgradeBase(Upgrades aUpgrades, String aDescription){
       super(aDescription);
       loadout = null;
       upgrades = aUpgrades;
@@ -67,7 +67,7 @@ abstract class UpgradeOperation extends CompositeOperation{
       if( loadout.getNumCriticalSlotsFree() < 0 ){
          throw new IllegalArgumentException("Not enough free slots!");
       }
-      for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
          if( loadoutPart.getNumCriticalSlotsFree() < 0 ){
             throw new IllegalArgumentException("Not enough free slots!");
          }

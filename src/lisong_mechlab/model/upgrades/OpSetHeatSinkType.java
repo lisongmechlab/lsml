@@ -22,9 +22,9 @@ package lisong_mechlab.model.upgrades;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.AddItemOperation;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.loadout.part.OpAddItem;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpRemoveItem;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
@@ -35,14 +35,14 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class SetHeatSinkTypeOperation extends UpgradeOperation{
+public class OpSetHeatSinkType extends OpUpgradeBase{
    private final HeatSinkUpgrade oldValue;
    private final HeatSinkUpgrade newValue;
 
    private boolean               operationReady = false;
 
    /**
-    * Creates a {@link SetHeatSinkTypeOperation} that only affects a stand-alone {@link Upgrades} object This is useful
+    * Creates a {@link OpSetHeatSinkType} that only affects a stand-alone {@link Upgrades} object This is useful
     * only for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
     * 
     * @param anUpgrades
@@ -50,14 +50,14 @@ public class SetHeatSinkTypeOperation extends UpgradeOperation{
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public SetHeatSinkTypeOperation(Upgrades anUpgrades, HeatSinkUpgrade aHeatsinkUpgrade){
+   public OpSetHeatSinkType(Upgrades anUpgrades, HeatSinkUpgrade aHeatsinkUpgrade){
       super(anUpgrades, aHeatsinkUpgrade.getName());
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
    }
 
    /**
-    * Creates a new {@link SetHeatSinkTypeOperation} that will change the heat sink type of a {@link Loadout}.
+    * Creates a new {@link OpSetHeatSinkType} that will change the heat sink type of a {@link Loadout}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in DHS status on.
@@ -66,7 +66,7 @@ public class SetHeatSinkTypeOperation extends UpgradeOperation{
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public SetHeatSinkTypeOperation(MessageXBar anXBar, Loadout aLoadout, HeatSinkUpgrade aHeatsinkUpgrade){
+   public OpSetHeatSinkType(MessageXBar anXBar, Loadout aLoadout, HeatSinkUpgrade aHeatsinkUpgrade){
       super(anXBar, aLoadout, aHeatsinkUpgrade.getName());
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
@@ -109,11 +109,11 @@ public class SetHeatSinkTypeOperation extends UpgradeOperation{
       operationReady = true;
 
       if( oldValue != newValue ){
-         for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
+         for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
             int hsRemoved = 0;
             for(Item item : loadoutPart.getItems()){
                if( item instanceof HeatSink ){
-                  addOp(new RemoveItemOperation(xBar, loadoutPart, item));
+                  addOp(new OpRemoveItem(xBar, loadoutPart, item));
                   hsRemoved++;
                }
             }
@@ -124,7 +124,7 @@ public class SetHeatSinkTypeOperation extends UpgradeOperation{
             int hsToAdd = Math.min(hsRemoved, slotsFree / newHsType.getNumCriticalSlots(upgrades));
             while( hsToAdd > 0 ){
                hsToAdd--;
-               addOp(new AddItemOperation(xBar, loadoutPart, newHsType));
+               addOp(new OpAddItem(xBar, loadoutPart, newHsType));
             }
          }
       }

@@ -20,35 +20,28 @@
 package lisong_mechlab.model.chassi;
 
 /**
- * This enum represents the weight class of a chassi: Light, Medium, Heavy or Assault. It provides a way to determine
- * weight class from tonnage.
+ * Enumerates the different chassis types
  * 
  * @author Emily Björk
  */
-public enum ChassiClass{
-   LIGHT, MEDIUM, HEAVY, ASSAULT;
+public enum ChassisVariant{
+   HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX;
 
-   private final static double TONNAGE_EPSILON = Math.ulp(100) * 5.0;
+   public static ChassisVariant fromString(String aString){
+      if( null == aString )
+         return NORMAL;
+      String s = aString.toLowerCase();
+      for(ChassisVariant variant : values()){
+         if( s.equals(variant.toString().toLowerCase()) )
+            return variant;
+      }
+      return NORMAL;
+   }
 
    /**
-    * Determines the {@link ChassiClass} from a tonnage amount.
-    * 
-    * @param tons
-    *           The tonnage to calculate from.
-    * @return The {@link ChassiClass} matching the argument.
+    * @return <code>true</code> if this is a special variant (not hero or normal mech).
     */
-   public static ChassiClass fromMaxTons(double tons){
-      if( tons < 40 - TONNAGE_EPSILON ){
-         return ChassiClass.LIGHT;
-      }
-      else if( tons < 60 - TONNAGE_EPSILON ){
-         return ChassiClass.MEDIUM;
-      }
-      else if( tons < 80 - TONNAGE_EPSILON ){
-         return ChassiClass.HEAVY;
-      }
-      else{
-         return ChassiClass.ASSAULT;
-      }
+   public boolean isVariation(){
+      return !(this == HERO || this == NORMAL);
    }
 }

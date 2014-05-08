@@ -20,8 +20,8 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 
 /**
@@ -29,16 +29,16 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Emily Björk
  */
-public class StripArmorOperation extends LoadoutOperation{
-   public StripArmorOperation(Loadout aLoadout, MessageXBar anXBar){
+public class OpStripArmor extends OpLoadoutBase{
+   public OpStripArmor(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "strip armor");
-      for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
-         if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, 0, true));
-            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, 0, true));
+      for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
+         if( loadoutPart.getInternalPart().getLocation().isTwoSided() ){
+            addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.FRONT, 0, true));
+            addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.BACK, 0, true));
          }
          else{
-            addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, 0, true));
+            addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.ONLY, 0, true));
          }
       }
    }

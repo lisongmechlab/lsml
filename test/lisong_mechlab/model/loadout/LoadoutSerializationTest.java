@@ -32,13 +32,13 @@ import junitparams.JUnitParamsRunner;
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -68,10 +68,10 @@ public class LoadoutSerializationTest{
 
    @SuppressWarnings("unused")
    private Object[] allChassis(){
-      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+      List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+      chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+      chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
       return chassii.toArray();
    }
 
@@ -80,7 +80,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testEmptyLoadout(){
-      Chassis chassi = ChassiDB.lookup("CPLT-K2");
+      Chassis chassi = ChassisDB.lookup("CPLT-K2");
       Loadout cut = new Loadout(chassi, xBar);
 
       assertEquals(0, cut.getArmor());
@@ -112,7 +112,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testStockLoadoutAS7D() throws Exception{
-      Chassis chassi = ChassiDB.lookup("AS7-D");
+      Chassis chassi = ChassisDB.lookup("AS7-D");
       Loadout cut = new Loadout("AS7-D", xBar);
 
       assertEquals(608, cut.getArmor());
@@ -132,7 +132,7 @@ public class LoadoutSerializationTest{
 
       // Right leg:
       {
-         LoadoutPart part = cut.getPart(Part.RightLeg);
+         ConfiguredComponent part = cut.getPart(Location.RightLeg);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -145,7 +145,7 @@ public class LoadoutSerializationTest{
 
       // Left leg:
       {
-         LoadoutPart part = cut.getPart(Part.LeftLeg);
+         ConfiguredComponent part = cut.getPart(Location.LeftLeg);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -157,7 +157,7 @@ public class LoadoutSerializationTest{
       }
       // Right arm:
       {
-         LoadoutPart part = cut.getPart(Part.RightArm);
+         ConfiguredComponent part = cut.getPart(Location.RightArm);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -170,7 +170,7 @@ public class LoadoutSerializationTest{
 
       // Left arm:
       {
-         LoadoutPart part = cut.getPart(Part.LeftArm);
+         ConfiguredComponent part = cut.getPart(Location.LeftArm);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -183,7 +183,7 @@ public class LoadoutSerializationTest{
 
       // Right torso:
       {
-         LoadoutPart part = cut.getPart(Part.RightTorso);
+         ConfiguredComponent part = cut.getPart(Location.RightTorso);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.lookup("AC/20")));
@@ -198,7 +198,7 @@ public class LoadoutSerializationTest{
 
       // Left torso:
       {
-         LoadoutPart part = cut.getPart(Part.LeftTorso);
+         ConfiguredComponent part = cut.getPart(Location.LeftTorso);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.lookup("LRM 20")));
@@ -216,7 +216,7 @@ public class LoadoutSerializationTest{
 
       // Center torso:
       {
-         LoadoutPart part = cut.getPart(Part.CenterTorso);
+         ConfiguredComponent part = cut.getPart(Location.CenterTorso);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.lookup("STD ENGINE 300")));
@@ -235,7 +235,7 @@ public class LoadoutSerializationTest{
 
       // Head:
       {
-         LoadoutPart part = cut.getPart(Part.Head);
+         ConfiguredComponent part = cut.getPart(Location.Head);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -259,7 +259,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testStockLoadoutSDR5V() throws Exception{
-      Chassis chassi = ChassiDB.lookup("SDR-5V");
+      Chassis chassi = ChassisDB.lookup("SDR-5V");
       Loadout cut = new Loadout("SDR-5V", xBar);
 
       assertEquals(112, cut.getArmor());
@@ -279,7 +279,7 @@ public class LoadoutSerializationTest{
 
       // Right leg:
       {
-         LoadoutPart part = cut.getPart(Part.RightLeg);
+         ConfiguredComponent part = cut.getPart(Location.RightLeg);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertEquals(12, part.getArmor(ArmorSide.ONLY));
@@ -290,7 +290,7 @@ public class LoadoutSerializationTest{
 
       // Left leg:
       {
-         LoadoutPart part = cut.getPart(Part.LeftLeg);
+         ConfiguredComponent part = cut.getPart(Location.LeftLeg);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertEquals(12, part.getArmor(ArmorSide.ONLY));
@@ -301,7 +301,7 @@ public class LoadoutSerializationTest{
 
       // Right arm:
       {
-         LoadoutPart part = cut.getPart(Part.RightArm);
+         ConfiguredComponent part = cut.getPart(Location.RightArm);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertEquals(10, part.getArmor(ArmorSide.ONLY));
@@ -312,7 +312,7 @@ public class LoadoutSerializationTest{
 
       // Left arm:
       {
-         LoadoutPart part = cut.getPart(Part.LeftArm);
+         ConfiguredComponent part = cut.getPart(Location.LeftArm);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertEquals(10, part.getArmor(ArmorSide.ONLY));
@@ -323,7 +323,7 @@ public class LoadoutSerializationTest{
 
       // Right torso:
       {
-         LoadoutPart part = cut.getPart(Part.RightTorso);
+         ConfiguredComponent part = cut.getPart(Location.RightTorso);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
@@ -339,7 +339,7 @@ public class LoadoutSerializationTest{
 
       // Left torso:
       {
-         LoadoutPart part = cut.getPart(Part.LeftTorso);
+         ConfiguredComponent part = cut.getPart(Location.LeftTorso);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
@@ -355,7 +355,7 @@ public class LoadoutSerializationTest{
 
       // Center torso:
       {
-         LoadoutPart part = cut.getPart(Part.CenterTorso);
+         ConfiguredComponent part = cut.getPart(Location.CenterTorso);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.lookup("STD ENGINE 240")));
@@ -372,7 +372,7 @@ public class LoadoutSerializationTest{
 
       // Head:
       {
-         LoadoutPart part = cut.getPart(Part.Head);
+         ConfiguredComponent part = cut.getPart(Location.Head);
          List<Item> items = new ArrayList<Item>(part.getItems());
 
          assertTrue(items.remove(ItemDB.SHS));

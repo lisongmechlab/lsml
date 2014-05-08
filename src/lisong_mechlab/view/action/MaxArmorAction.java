@@ -25,7 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.SetMaxArmorOperation;
+import lisong_mechlab.model.loadout.OpSetMaxArmor;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
@@ -66,7 +66,7 @@ public class MaxArmorAction extends AbstractAction{
    public void actionPerformed(ActionEvent aArg0){
       try{
          if( ratio > 0 ){
-            loadoutFrame.getOpStack().pushAndApply(new SetMaxArmorOperation(loadout, xBar, ratio, true));
+            loadoutFrame.getOpStack().pushAndApply(new OpSetMaxArmor(loadout, xBar, ratio, true));
          }
          else{
             String input = (String)JOptionPane.showInputDialog(loadoutFrame,
@@ -87,7 +87,7 @@ public class MaxArmorAction extends AbstractAction{
                   JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");
                   return;
                }
-               loadoutFrame.getOpStack().pushAndApply(new SetMaxArmorOperation(loadout, xBar, front / back, true));
+               loadoutFrame.getOpStack().pushAndApply(new OpSetMaxArmor(loadout, xBar, front / back, true));
             }
             else
                JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");

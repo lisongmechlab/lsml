@@ -25,9 +25,9 @@ import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.InternalPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -37,7 +37,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test suite for {@link SetMaxArmorOperation}.
+ * Test suite for {@link OpSetMaxArmor}.
  * 
  * @author Emily Björk
  */
@@ -52,22 +52,22 @@ public class SetMaxArmorOperationTest{
    @Test
    public void testApply(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+      Loadout cut = new Loadout(ChassisDB.lookup("AS7-D-DC"), xBar);
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
 
       // Execute
-      stack.pushAndApply(new SetMaxArmorOperation(cut, xBar, front_back_ratio, true));
+      stack.pushAndApply(new OpSetMaxArmor(cut, xBar, front_back_ratio, true));
 
       // Verify
       // All parts have max armor
-      for(InternalPart part : cut.getChassi().getInternalParts()){
-         assertEquals(part.getArmorMax(), cut.getPart(part.getType()).getArmorTotal());
+      for(InternalComponent part : cut.getChassi().getInternalParts()){
+         assertEquals(part.getArmorMax(), cut.getPart(part.getLocation()).getArmorTotal());
 
          // Double sided parts have a ratio of 3 : 2 armor between front and back.
-         if( part.getType().isTwoSided() ){
-            int front = cut.getPart(part.getType()).getArmor(ArmorSide.FRONT);
-            int back = cut.getPart(part.getType()).getArmor(ArmorSide.BACK);
+         if( part.getLocation().isTwoSided() ){
+            int front = cut.getPart(part.getLocation()).getArmor(ArmorSide.FRONT);
+            int back = cut.getPart(part.getLocation()).getArmor(ArmorSide.BACK);
 
             double lb = (double)(front - tolerance) / (back + tolerance);
             double ub = (double)(front + tolerance) / (back - tolerance);
@@ -75,34 +75,34 @@ public class SetMaxArmorOperationTest{
             assertTrue(lb < front_back_ratio);
             assertTrue(ub > front_back_ratio);
 
-            verify(xBar, atLeast(2)).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
+            verify(xBar, atLeast(2)).post(new ConfiguredComponent.Message(cut.getPart(part.getLocation()), ConfiguredComponent.Message.Type.ArmorChanged));
          }
          else
-            verify(xBar).post(new LoadoutPart.Message(cut.getPart(part.getType()), LoadoutPart.Message.Type.ArmorChanged));
+            verify(xBar).post(new ConfiguredComponent.Message(cut.getPart(part.getLocation()), ConfiguredComponent.Message.Type.ArmorChanged));
       }
    }
 
    @Test
    public void testApply_alreadyMaxArmor(){
       // Setup
-      Loadout cut = new Loadout(ChassiDB.lookup("AS7-D-DC"), xBar);
+      Loadout cut = new Loadout(ChassisDB.lookup("AS7-D-DC"), xBar);
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
-      stack.pushAndApply(new SetMaxArmorOperation(cut, xBar, 1.0, true));
+      stack.pushAndApply(new OpSetMaxArmor(cut, xBar, 1.0, true));
       reset(xBar);
       
       // Execute
-      stack.pushAndApply(new SetMaxArmorOperation(cut, xBar, front_back_ratio, true));
+      stack.pushAndApply(new OpSetMaxArmor(cut, xBar, front_back_ratio, true));
 
       // Verify
       // All parts have max armor
-      for(InternalPart part : cut.getChassi().getInternalParts()){
-         assertEquals(part.getArmorMax(), cut.getPart(part.getType()).getArmorTotal());
+      for(InternalComponent part : cut.getChassi().getInternalParts()){
+         assertEquals(part.getArmorMax(), cut.getPart(part.getLocation()).getArmorTotal());
 
          // Double sided parts have a ratio of 3 : 2 armor between front and back.
-         if( part.getType().isTwoSided() ){
-            int front = cut.getPart(part.getType()).getArmor(ArmorSide.FRONT);
-            int back = cut.getPart(part.getType()).getArmor(ArmorSide.BACK);
+         if( part.getLocation().isTwoSided() ){
+            int front = cut.getPart(part.getLocation()).getArmor(ArmorSide.FRONT);
+            int back = cut.getPart(part.getLocation()).getArmor(ArmorSide.BACK);
 
             double lb = (double)(front - tolerance) / (back + tolerance);
             double ub = (double)(front + tolerance) / (back - tolerance);

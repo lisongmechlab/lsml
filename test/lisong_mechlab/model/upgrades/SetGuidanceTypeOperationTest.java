@@ -42,7 +42,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test suite for {@link SetGuidanceTypeOperation}.
+ * Test suite for {@link OpSetGuidanceType}.
  * 
  * @author Emily Björk
  */
@@ -68,7 +68,7 @@ public class SetGuidanceTypeOperationTest{
       Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
       Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
 
-      stack.pushAndApply(new SetGuidanceTypeOperation(xBar, mlc.loadout, newGuidance));
+      stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
       Mockito.verify(mlc.upgrades).setGuidance(newGuidance);
    }
@@ -103,7 +103,7 @@ public class SetGuidanceTypeOperationTest{
       Mockito.when(mlc.rl.getItems()).thenReturn(rlItems);
       Mockito.when(mlc.lt.getItems()).thenReturn(ltItems);
 
-      stack.pushAndApply(new SetGuidanceTypeOperation(xBar, mlc.loadout, newGuidance));
+      stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
       // FIXME: Verify... I can't gain access to verify this in any way...
       // assertEquals(2, rlItems.size());
@@ -123,7 +123,7 @@ public class SetGuidanceTypeOperationTest{
       Loadout loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
       OperationStack stack = new OperationStack(1);
 
-      stack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
+      stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
       stack.undo();
 
       assertEquals(loadoutOriginal, loadout);

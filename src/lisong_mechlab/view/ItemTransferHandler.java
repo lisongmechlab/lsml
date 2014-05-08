@@ -38,8 +38,8 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpRemoveItem;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.mechlab.ItemLabel;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
@@ -49,7 +49,7 @@ import lisong_mechlab.view.render.ItemRenderer;
 
 public class ItemTransferHandler extends TransferHandler{
    private static final long  serialVersionUID = -8109855943478269304L;
-   private static LoadoutPart sourcePart       = null;
+   private static ConfiguredComponent sourcePart       = null;
 
    @Override
    public int getSourceActions(JComponent aComponent){
@@ -79,7 +79,7 @@ public class ItemTransferHandler extends TransferHandler{
             if( it.first instanceof Internal )
                return null;
             buff.append(it.first.getName()).append('\n');
-            frame.getOpStack().pushAndApply(new RemoveItemOperation(ProgramInit.lsml().xBar, sourcePart, it.first));
+            frame.getOpStack().pushAndApply(new OpRemoveItem(ProgramInit.lsml().xBar, sourcePart, it.first));
          }
 
          setPreview(sourceItems.get(0).first, sourcePart.getLoadout());
@@ -138,7 +138,7 @@ public class ItemTransferHandler extends TransferHandler{
          if( null == items )
             return false;
 
-         LoadoutPart part = ((PartList)component).getPart();
+         ConfiguredComponent part = ((PartList)component).getPart();
          for(Item item : items){
             if( part.getLoadout().canEquip(item) && !part.canEquip(item) )
                return false;

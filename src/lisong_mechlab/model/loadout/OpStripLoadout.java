@@ -19,12 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.StripPartOperation;
-import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
-import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
-import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpStripComponent;
+import lisong_mechlab.model.upgrades.OpSetArmorType;
+import lisong_mechlab.model.upgrades.OpSetGuidanceType;
+import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
+import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 
@@ -33,16 +33,16 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Emily Björk
  */
-public class StripOperation extends LoadoutOperation{
-   public StripOperation(Loadout aLoadout, MessageXBar anXBar){
+public class OpStripLoadout extends OpLoadoutBase{
+   public OpStripLoadout(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "strip mech");
       
-      for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
-         addOp(new StripPartOperation(xBar, loadoutPart));
+      for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
+         addOp(new OpStripComponent(xBar, loadoutPart));
       }
-      addOp(new SetStructureTypeOperation(xBar, loadout, UpgradeDB.STANDARD_STRUCTURE));
-      addOp(new SetGuidanceTypeOperation(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
-      addOp(new SetArmorTypeOperation(xBar, loadout, UpgradeDB.STANDARD_ARMOR));
-      addOp(new SetHeatSinkTypeOperation(xBar, loadout, UpgradeDB.STANDARD_HEATSINKS));
+      addOp(new OpSetStructureType(xBar, loadout, UpgradeDB.STANDARD_STRUCTURE));
+      addOp(new OpSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
+      addOp(new OpSetArmorType(xBar, loadout, UpgradeDB.STANDARD_ARMOR));
+      addOp(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.STANDARD_HEATSINKS));
    }
 }

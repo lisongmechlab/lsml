@@ -29,11 +29,11 @@ import java.util.Observable;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalPart;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
@@ -46,7 +46,7 @@ import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutPartConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -132,15 +132,15 @@ public class Loadout implements Cloneable{
       stream.omitField(Observable.class, "changed");
       stream.omitField(Observable.class, "obs");
       stream.addImmutableType(Item.class);
-      stream.alias("component", LoadoutPart.class);
+      stream.alias("component", ConfiguredComponent.class);
       stream.alias("loadout", Loadout.class);
-      stream.addImplicitMap(Loadout.class, "parts", LoadoutPart.class, "internalpart");
+      stream.addImplicitMap(Loadout.class, "parts", ConfiguredComponent.class, "internalpart");
       return stream;
    }
 
    private String                           name;
    private final Chassis                    chassi;
-   private final TreeMap<Part, LoadoutPart> parts = new TreeMap<Part, LoadoutPart>();
+   private final TreeMap<Location, ConfiguredComponent> parts = new TreeMap<Location, ConfiguredComponent>();
    private final Upgrades                   upgrades;
    private final Efficiencies               efficiencies;
 
@@ -158,9 +158,9 @@ public class Loadout implements Cloneable{
       upgrades = new Upgrades();
       efficiencies = new Efficiencies(anXBar);
 
-      for(InternalPart part : chassi.getInternalParts()){
-         LoadoutPart confPart = new LoadoutPart(this, part, true);
-         parts.put(part.getType(), confPart);
+      for(InternalComponent part : chassi.getInternalParts()){
+         ConfiguredComponent confPart = new ConfiguredComponent(this, part, true);
+         parts.put(part.getLocation(), confPart);
       }
 
       if( anXBar != null ){
@@ -177,9 +177,9 @@ public class Loadout implements Cloneable{
     * @throws Exception
     */
    public Loadout(String aString, MessageXBar anXBar) throws Exception{
-      this(ChassiDB.lookup(aString), anXBar);
+      this(ChassisDB.lookup(aString), anXBar);
       OperationStack operationStack = new OperationStack(0);
-      operationStack.pushAndApply(new LoadStockOperation(chassi, this, anXBar));
+      operationStack.pushAndApply(new OpLoadStock(chassi, this, anXBar));
    }
 
    public Loadout(Loadout aLoadout, MessageXBar anXBar){
@@ -187,8 +187,8 @@ public class Loadout implements Cloneable{
       chassi = aLoadout.chassi;
       upgrades = new Upgrades(aLoadout.upgrades);
       efficiencies = new Efficiencies(aLoadout.efficiencies);
-      for(LoadoutPart loadoutPart : aLoadout.parts.values()){
-         parts.put(loadoutPart.getInternalPart().getType(), new LoadoutPart(loadoutPart, this));
+      for(ConfiguredComponent loadoutPart : aLoadout.parts.values()){
+         parts.put(loadoutPart.getInternalPart().getLocation(), new ConfiguredComponent(loadoutPart, this));
       }
       if( anXBar != null ){
          anXBar.post(new Message(this, Message.Type.CREATE));
@@ -217,7 +217,7 @@ public class Loadout implements Cloneable{
 
    public Collection<Item> getAllItems(){
       List<Item> items = new ArrayList<>();
-      for(LoadoutPart part : parts.values()){
+      for(ConfiguredComponent part : parts.values()){
          items.addAll(part.getItems());
       }
       return items;
@@ -225,7 +225,7 @@ public class Loadout implements Cloneable{
 
    public int getArmor(){
       int ans = 0;
-      for(LoadoutPart partConf : parts.values()){
+      for(ConfiguredComponent partConf : parts.values()){
          ans += partConf.getArmorTotal();
       }
       return ans;
@@ -240,7 +240,7 @@ public class Loadout implements Cloneable{
    }
 
    public Engine getEngine(){
-      for(Item item : getPart(Part.CenterTorso).getItems()){
+      for(Item item : getPart(Location.CenterTorso).getItems()){
          if( item instanceof Engine ){
             return (Engine)item;
          }
@@ -286,7 +286,7 @@ public class Loadout implements Cloneable{
 
    public double getMass(){
       double ans = upgrades.getStructure().getStructureMass(chassi);
-      for(LoadoutPart partConf : parts.values()){
+      for(ConfiguredComponent partConf : parts.values()){
          ans += partConf.getItemMass();
       }
       ans += upgrades.getArmor().getArmorMass(getArmor());
@@ -303,17 +303,17 @@ public class Loadout implements Cloneable{
 
    public int getNumCriticalSlotsUsed(){
       int ans = upgrades.getStructure().getExtraSlots() + upgrades.getArmor().getExtraSlots();
-      for(LoadoutPart partConf : parts.values()){
+      for(ConfiguredComponent partConf : parts.values()){
          ans += partConf.getNumCriticalSlotsUsed();
       }
       return ans;
    }
 
-   public LoadoutPart getPart(Part aPartType){
+   public ConfiguredComponent getPart(Location aPartType){
       return parts.get(aPartType);
    }
 
-   public Collection<LoadoutPart> getPartLoadOuts(){
+   public Collection<ConfiguredComponent> getPartLoadOuts(){
       return parts.values();
    }
 
@@ -334,27 +334,27 @@ public class Loadout implements Cloneable{
    }
 
    /**
-    * Gets a {@link List} of {@link LoadoutPart}s that could possibly house the given item.
+    * Gets a {@link List} of {@link ConfiguredComponent}s that could possibly house the given item.
     * <p>
-    * This method checks necessary but not sufficient constraints. In other words, the {@link LoadoutPart}s in the
-    * returned list may or may not be able to hold the {@link Item}. But the {@link LoadoutPart}s not in the list are
+    * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponent}s in the
+    * returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponent}s not in the list are
     * unable to hold the {@link Item}.
     * <p>
     * This method is mainly useful for limiting search spaces for various optimization algorithms.
     * 
     * @param anItem
-    *           The {@link Item} to find candidate {@link LoadoutPart}s for.
-    * @return A {@link List} of {@link LoadoutPart}s that might be able to hold the {@link Item}.
+    *           The {@link Item} to find candidate {@link ConfiguredComponent}s for.
+    * @return A {@link List} of {@link ConfiguredComponent}s that might be able to hold the {@link Item}.
     */
-   public List<LoadoutPart> getCandidateLocationsForItem(Item anItem){
-      List<LoadoutPart> candidates = new ArrayList<>();
+   public List<ConfiguredComponent> getCandidateLocationsForItem(Item anItem){
+      List<ConfiguredComponent> candidates = new ArrayList<>();
       if( !canEquipGlobal(anItem) )
          return candidates;
 
       int globalFreeHardPoints = 0;
       HardPointType hardpointType = anItem.getHardpointType();
 
-      for(LoadoutPart part : getPartLoadOuts()){
+      for(ConfiguredComponent part : getPartLoadOuts()){
          if( part.getInternalPart().isAllowed(anItem) ){
             candidates.add(part);
          }
@@ -397,10 +397,10 @@ public class Loadout implements Cloneable{
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
-            if( getPart(Part.LeftTorso).getNumCriticalSlotsFree() < 3 ){
+            if( getPart(Location.LeftTorso).getNumCriticalSlotsFree() < 3 ){
                return false;
             }
-            if( getPart(Part.RightTorso).getNumCriticalSlotsFree() < 3 ){
+            if( getPart(Location.RightTorso).getNumCriticalSlotsFree() < 3 ){
                return false;
             }
             if( getNumCriticalSlotsFree() < 3 * 2 + engine.getNumCriticalSlots(getUpgrades()) ){
@@ -411,7 +411,7 @@ public class Loadout implements Cloneable{
          }
       }
 
-      for(LoadoutPart part : getPartLoadOuts()){
+      for(ConfiguredComponent part : getPartLoadOuts()){
          if( part.canEquip(anItem) )
             return true;
       }
@@ -435,7 +435,7 @@ public class Loadout implements Cloneable{
          return false;
 
       // Allow engine slot heat sinks as long as there is enough free mass.
-      if( anItem instanceof HeatSink && getPart(Part.CenterTorso).getNumEngineHeatsinks() < getPart(Part.CenterTorso).getNumEngineHeatsinksMax() )
+      if( anItem instanceof HeatSink && getPart(Location.CenterTorso).getNumEngineHeatsinks() < getPart(Location.CenterTorso).getNumEngineHeatsinksMax() )
          return true;
 
       if( anItem.getNumCriticalSlots(upgrades) > getNumCriticalSlotsFree() )
@@ -458,15 +458,15 @@ public class Loadout implements Cloneable{
       if( !canEquipGlobal(anItem) )
          return false;
 
-      List<LoadoutPart> candidates = getCandidateLocationsForItem(anItem);
+      List<ConfiguredComponent> candidates = getCandidateLocationsForItem(anItem);
 
-      for(LoadoutPart candidate : candidates){
+      for(ConfiguredComponent candidate : candidates){
          if( candidate.canEquip(anItem) ){
             return true;
          }
 
-         int slotsFree[] = new int[Part.values().length];
-         for(Part part : Part.values()){
+         int slotsFree[] = new int[Location.values().length];
+         for(Location part : Location.values()){
             slotsFree[part.ordinal()] = getPart(part).getNumCriticalSlotsFree();
          }
 
@@ -490,10 +490,10 @@ public class Loadout implements Cloneable{
                continue;
 
             // Find first bin where it can be put
-            for(LoadoutPart part : getPartLoadOuts()){
+            for(ConfiguredComponent part : getPartLoadOuts()){
                if( part == candidate )
                   continue;
-               final int partOrdinal = part.getInternalPart().getType().ordinal();
+               final int partOrdinal = part.getInternalPart().getLocation().ordinal();
                final int numCrits = toBeRemoved.getNumCriticalSlots(getUpgrades());
                if( slotsFree[partOrdinal] >= numCrits ){
                   HardPointType needHp = toBeRemoved.getHardpointType();
@@ -521,7 +521,7 @@ public class Loadout implements Cloneable{
    }
 
    /**
-    * Package internal function. Use {@link RenameOperation} to change the name.
+    * Package internal function. Use {@link OpRename} to change the name.
     * 
     * @param aNewName
     *           The new name of the loadout.

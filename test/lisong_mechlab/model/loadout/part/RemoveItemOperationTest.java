@@ -5,8 +5,8 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
-import lisong_mechlab.model.chassi.InternalPart;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
@@ -25,7 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveItemOperationTest{
    @Mock
-   private LoadoutPart  loadoutPart;
+   private ConfiguredComponent  loadoutPart;
    @Mock
    private Loadout      loadout;
    @Mock
@@ -33,25 +33,25 @@ public class RemoveItemOperationTest{
    @Mock
    private MessageXBar  xBar;
    @Mock
-   private InternalPart internalPart;
+   private InternalComponent internalPart;
 
    @Before
    public void setup(){
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getInternalPart()).thenReturn(internalPart);
-      Mockito.when(internalPart.getType()).thenReturn(Part.CenterTorso);
+      Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
    }
 
    @Test
    public void testDescription(){
       Item item = ItemDB.ECM;
 
-      RemoveItemOperation cut = new RemoveItemOperation(xBar, loadoutPart, item);
+      OpRemoveItem cut = new OpRemoveItem(xBar, loadoutPart, item);
 
       assertTrue(cut.describe().contains("remove"));
       assertTrue(cut.describe().contains("from"));
-      assertTrue(cut.describe().contains(loadoutPart.getInternalPart().getType().toString()));
+      assertTrue(cut.describe().contains(loadoutPart.getInternalPart().getLocation().toString()));
       assertTrue(cut.describe().contains(item.getName()));
    }
 
@@ -60,11 +60,11 @@ public class RemoveItemOperationTest{
       Item item = ItemDB.lookup("LRM 20");
       Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
 
-      RemoveItemOperation cut = new RemoveItemOperation(xBar, loadoutPart, item);
+      OpRemoveItem cut = new OpRemoveItem(xBar, loadoutPart, item);
 
       assertTrue(cut.describe().contains("remove"));
       assertTrue(cut.describe().contains("from"));
-      assertTrue(cut.describe().contains(loadoutPart.getInternalPart().getType().toString()));
+      assertTrue(cut.describe().contains(loadoutPart.getInternalPart().getLocation().toString()));
       assertTrue(cut.describe().contains(item.getName(upgrades)));
    }
 
@@ -73,11 +73,11 @@ public class RemoveItemOperationTest{
     */
    @Test(expected = IllegalArgumentException.class)
    public void testCantRemoveItem(){
-      RemoveItemOperation cut = null;
+      OpRemoveItem cut = null;
       try{
          Item item = ItemDB.lookup("LRM 20");
          Mockito.when(loadoutPart.getItems()).thenReturn(new ArrayList<Item>());
-         cut = new RemoveItemOperation(xBar, loadoutPart, item);
+         cut = new OpRemoveItem(xBar, loadoutPart, item);
       }
       catch( Throwable t ){
          fail("Setup failed");
@@ -93,6 +93,6 @@ public class RemoveItemOperationTest{
    @Test(expected = IllegalArgumentException.class)
    public void testCantRemoveInternal(){
       Internal item = Mockito.mock(Internal.class);
-      new RemoveItemOperation(xBar, loadoutPart, item);
+      new OpRemoveItem(xBar, loadoutPart, item);
    }
 }

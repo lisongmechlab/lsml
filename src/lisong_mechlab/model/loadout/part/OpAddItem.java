@@ -25,28 +25,28 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} removes an {@link Item} from a {@link LoadoutPart}.
+ * This {@link Operation} adds an {@link Item} to a {@link ConfiguredComponent}.
  * 
  * @author Emily Björk
  */
-public class RemoveItemOperation extends ItemOperation{
-   private final Item item;
+public class OpAddItem extends OpItemBase{
+   private Item item;
 
    /**
     * Creates a new operation.
     * 
     * @param anXBar
-    *           The {@link MessageXBar} to send messages on when items are removed.
+    *           The {@link MessageXBar} to send messages on when items are added.
     * @param aLoadoutPart
-    *           The {@link LoadoutPart} to remove from.
-    * @param aItem
-    *           The {@link Item} to remove.
+    *           The {@link ConfiguredComponent} to add to.
+    * @param anItem
+    *           The {@link Item} to add.
     */
-   public RemoveItemOperation(MessageXBar anXBar, LoadoutPart aLoadoutPart, Item aItem){
+   public OpAddItem(MessageXBar anXBar, ConfiguredComponent aLoadoutPart, Item anItem){
       super(anXBar, aLoadoutPart);
-      if(aItem instanceof Internal)
-         throw new IllegalArgumentException("Can't remove internals!");
-      item = aItem;
+      item = anItem;
+      if( item instanceof Internal )
+         throw new IllegalArgumentException("Can't add internals to a loadout!");
    }
 
    @Override
@@ -59,26 +59,28 @@ public class RemoveItemOperation extends ItemOperation{
 
    @Override
    public boolean equals(Object obj){
-      if( !(obj instanceof RemoveItemOperation) )
+      if( !(obj instanceof OpRemoveItem) )
          return false;
-      RemoveItemOperation other = (RemoveItemOperation)obj;
+      OpAddItem other = (OpAddItem)obj;
       return item == other.item && super.equals(other);
    }
 
    @Override
    public String describe(){
-      return "remove " + item.getName(loadoutPart.getLoadout().getUpgrades()) + " from " + loadoutPart.getInternalPart().getType();
+      return "add " + item.getName(loadoutPart.getLoadout().getUpgrades()) + " to " + loadoutPart.getInternalPart().getLocation();
    }
 
    @Override
    public void undo(){
-      addItem(item);
+      removeItem(item);
    }
 
    @Override
    public void apply(){
-      if( !loadoutPart.getItems().contains(item) )
-         throw new IllegalArgumentException("Can't remove " + item + "!");
-      removeItem(item);
+      if( !loadoutPart.getLoadout().canEquip(item) )
+         throw new IllegalArgumentException("Can't add " + item + "!");
+      if( !loadoutPart.canEquip(item) )
+         throw new IllegalArgumentException("Can't add " + item + "!");
+      addItem(item);
    }
 }

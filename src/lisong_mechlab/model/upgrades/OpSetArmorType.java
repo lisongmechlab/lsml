@@ -30,12 +30,12 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily
  */
-public class SetArmorTypeOperation extends UpgradeOperation{
+public class OpSetArmorType extends OpUpgradeBase{
    final ArmorUpgrade oldValue;
    final ArmorUpgrade newValue;
 
    /**
-    * Creates a {@link SetArmorTypeOperation} that only affects a stand-alone {@link Upgrades} object This is useful
+    * Creates a {@link OpSetArmorType} that only affects a stand-alone {@link Upgrades} object This is useful
     * only for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
     * 
     * @param anUpgrades
@@ -43,14 +43,14 @@ public class SetArmorTypeOperation extends UpgradeOperation{
     * @param anArmorUpgrade
     *           The new armor type when this upgrades has been applied.
     */
-   public SetArmorTypeOperation(Upgrades anUpgrades, ArmorUpgrade anArmorUpgrade){
+   public OpSetArmorType(Upgrades anUpgrades, ArmorUpgrade anArmorUpgrade){
       super(anUpgrades, anArmorUpgrade.getName());
       oldValue = upgrades.getArmor();
       newValue = anArmorUpgrade;
    }
 
    /**
-    * Creates a new {@link SetStructureTypeOperation} that will change the armor type of a {@link Loadout}.
+    * Creates a new {@link OpSetStructureType} that will change the armor type of a {@link Loadout}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in internal structure on.
@@ -59,7 +59,7 @@ public class SetArmorTypeOperation extends UpgradeOperation{
     * @param anArmorUpgrade
     *           The new armor type this upgrades is applied.
     */
-   public SetArmorTypeOperation(MessageXBar anXBar, Loadout aLoadout, ArmorUpgrade anArmorUpgrade){
+   public OpSetArmorType(MessageXBar anXBar, Loadout aLoadout, ArmorUpgrade anArmorUpgrade){
       super(anXBar, aLoadout, anArmorUpgrade.getName());
       oldValue = upgrades.getArmor();
       newValue = anArmorUpgrade;

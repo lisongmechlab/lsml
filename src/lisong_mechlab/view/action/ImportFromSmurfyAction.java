@@ -47,7 +47,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
-import lisong_mechlab.model.garage.AddToGarageOperation;
+import lisong_mechlab.model.garage.OpAddToGarage;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.SmurfyImportExport;
@@ -239,7 +239,7 @@ public class ImportFromSmurfyAction extends AbstractAction{
          public void actionPerformed(ActionEvent aArg0){
             for(int i = 0; i < model.getRowCount(); ++i){
                if( (boolean)model.getValueAt(i, 0) ){
-                  ProgramInit.lsml().garageOperationStack.pushAndApply(new AddToGarageOperation(ProgramInit.lsml().getGarage(),
+                  ProgramInit.lsml().garageOperationStack.pushAndApply(new OpAddToGarage(ProgramInit.lsml().getGarage(),
                                                                                                 (Loadout)model.getValueAt(i, 1)));
                }
             }

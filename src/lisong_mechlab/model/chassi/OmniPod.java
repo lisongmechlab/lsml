@@ -19,11 +19,23 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import lisong_mechlab.mwo_data.HardpointsXml;
+import lisong_mechlab.mwo_data.helpers.MdfComponent;
+
 /**
- * This enumeration names the sides of an {@link InternalComponent} for use with armor.
+ * This class represents an omnipod of an omnimech configuration.
  * 
  * @author Emily Björk
  */
-public enum ArmorSide{
-   ONLY, FRONT, BACK
+public class OmniPod extends InternalComponent{
+
+   /**
+    * @param aComponent
+    * @param aLocation
+    * @param aHardpoints
+    * @param aChassi
+    */
+   public OmniPod(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, Chassis aChassi){
+      super(aComponent, aLocation, aHardpoints, aChassi);
+   }
 }

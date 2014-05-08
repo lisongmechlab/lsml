@@ -27,7 +27,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -50,7 +50,7 @@ import lisong_mechlab.util.MessageXBar.Message;
  * @author Emily Björk
  */
 public class ComponentDestructionSimulator implements MessageXBar.Reader{
-   private final LoadoutPart loadoutPart;
+   private final ConfiguredComponent loadoutPart;
    private final double      P_miss;
    private final double      weaponAlpha;
    private final int         numShots;
@@ -89,7 +89,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
     * @param aLoadoutPart
     * @param aXBar
     */
-   public ComponentDestructionSimulator(LoadoutPart aLoadoutPart, MessageXBar aXBar){
+   public ComponentDestructionSimulator(ConfiguredComponent aLoadoutPart, MessageXBar aXBar){
       loadoutPart = aLoadoutPart;
       aXBar.attach(this);
 
@@ -116,7 +116,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
       state = new HashMap<>();
       int slots = 0;
       for(Item item : loadoutPart.getItems()){
-         if( item instanceof Internal && item != LoadoutPart.ENGINE_INTERNAL ){
+         if( item instanceof Internal && item != ConfiguredComponent.ENGINE_INTERNAL ){
             continue;
          }
          if( item == ItemDB.CASE )
@@ -202,8 +202,8 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg instanceof LoadoutPart.Message ){
-         LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
+      if( aMsg instanceof ConfiguredComponent.Message ){
+         ConfiguredComponent.Message message = (ConfiguredComponent.Message)aMsg;
          if( message.part == loadoutPart && message.affectsHeatOrDamage() ){
             simulate();
          }

@@ -17,13 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.chassi;
+package lisong_mechlab.model.loadout.part;
+
+import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.loadout.OmniMechConfiguration;
 
 /**
- * This enumeration names the sides of an {@link InternalComponent} for use with armor.
+ * This class models a configured {@link OmniPod} on an {@link OmniMechConfiguration}.
  * 
  * @author Emily Björk
  */
-public enum ArmorSide{
-   ONLY, FRONT, BACK
+public class ConfiguredOmniPod{
+
+   private OmniPod basePod;
+
+   public OmniPod getBasePod(){
+      return basePod;
+   }
+
 }

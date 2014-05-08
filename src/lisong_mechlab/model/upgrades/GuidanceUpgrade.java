@@ -25,7 +25,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 /**
@@ -60,20 +60,20 @@ public class GuidanceUpgrade extends Upgrade{
     */
    public int getExtraSlots(Loadout aLoadout){
       int ans = 0;
-      for(LoadoutPart part : aLoadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : aLoadout.getPartLoadOuts()){
          ans += getExtraSlots(part);
       }
       return ans;
    }
 
    /**
-    * Calculates how many extra slots are needed for the given {@link LoadoutPart} for the given upgrade.
+    * Calculates how many extra slots are needed for the given {@link ConfiguredComponent} for the given upgrade.
     * 
     * @param aLoadoutPart
-    *           The {@link LoadoutPart} to calculate for.
+    *           The {@link ConfiguredComponent} to calculate for.
     * @return A number of slots needed.
     */
-   public int getExtraSlots(LoadoutPart aLoadoutPart){
+   public int getExtraSlots(ConfiguredComponent aLoadoutPart){
       int ans = 0;
       for(Item item : aLoadoutPart.getItems()){
          if( item instanceof MissileWeapon ){
@@ -95,20 +95,20 @@ public class GuidanceUpgrade extends Upgrade{
     */
    public double getExtraTons(Loadout aLoadout){
       double ans = 0;
-      for(LoadoutPart part : aLoadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : aLoadout.getPartLoadOuts()){
          ans += getExtraTons(part);
       }
       return ans;
    }
 
    /**
-    * Calculates how many extra tons are needed for the given {@link LoadoutPart} for the given upgrade.
+    * Calculates how many extra tons are needed for the given {@link ConfiguredComponent} for the given upgrade.
     * 
     * @param aLoadoutPart
-    *           The {@link LoadoutPart} to calculate for.
+    *           The {@link ConfiguredComponent} to calculate for.
     * @return A number of tons needed.
     */
-   public double getExtraTons(LoadoutPart aLoadoutPart){
+   public double getExtraTons(ConfiguredComponent aLoadoutPart){
       double ans = 0;
       for(Item item : aLoadoutPart.getItems()){
          if( item instanceof MissileWeapon ){

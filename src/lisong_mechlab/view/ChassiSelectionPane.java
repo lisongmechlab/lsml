@@ -43,11 +43,11 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.metrics.TopSpeed;
@@ -83,16 +83,16 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
       }
 
       public void recreate(boolean filterSpecials){
-         doit(lights, filterSpecials, ChassiClass.LIGHT);
-         doit(mediums, filterSpecials, ChassiClass.MEDIUM);
-         doit(heavies, filterSpecials, ChassiClass.HEAVY);
-         doit(assaults, filterSpecials, ChassiClass.ASSAULT);
+         doit(lights, filterSpecials, ChassisClass.LIGHT);
+         doit(mediums, filterSpecials, ChassisClass.MEDIUM);
+         doit(heavies, filterSpecials, ChassisClass.HEAVY);
+         doit(assaults, filterSpecials, ChassisClass.ASSAULT);
          fireTableDataChanged();
       }
 
-      private void doit(List<Chassis> aList, boolean aFilterSpecials, ChassiClass aChassiClass){
+      private void doit(List<Chassis> aList, boolean aFilterSpecials, ChassisClass aChassiClass){
          aList.clear();
-         aList.addAll(ChassiDB.lookup(aChassiClass));
+         aList.addAll(ChassisDB.lookup(aChassiClass));
          if( aFilterSpecials ){
             Iterator<Chassis> it = aList.iterator();
             while( it.hasNext() ){
@@ -218,9 +218,9 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
       private final JLabel      missile          = new JLabel();
       private final JLabel      ams              = new JLabel();
       private final JLabel      ecm              = new JLabel();
-      private final Part        part;
+      private final Location        part;
 
-      public PartColumn(Part aPart){
+      public PartColumn(Location aPart){
          super(0);
          setHeaderValue(aPart.longName());
          StyleManager.styleThinItem(energy, HardPointType.ENERGY);
@@ -302,7 +302,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          table.addColumn(new NameColumn());
          table.addColumn(new SpeedColumn());
          table.addColumn(new TonsColumn());
-         for(Part part : Arrays.asList(Part.RightArm, Part.RightTorso, Part.CenterTorso, Part.LeftTorso, Part.LeftArm, Part.Head)){
+         for(Location part : Arrays.asList(Location.RightArm, Location.RightTorso, Location.CenterTorso, Location.LeftTorso, Location.LeftArm, Location.Head)){
             table.addColumn(new PartColumn(part));
          }
          table.addColumn(new JumpJetsColumn());

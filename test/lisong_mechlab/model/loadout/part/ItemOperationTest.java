@@ -19,12 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.part;
 
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -37,19 +37,19 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test suite for the abstract {@link ItemOperation} class.
+ * Test suite for the abstract {@link OpItemBase} class.
  * 
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ItemOperationTest{
 
-   class CutClass extends ItemOperation{
+   class CutClass extends OpItemBase{
       /**
        * @param anXBar
        * @param aLoadoutPart
        */
-      public CutClass(MessageXBar anXBar, LoadoutPart aLoadoutPart){
+      public CutClass(MessageXBar anXBar, ConfiguredComponent aLoadoutPart){
          super(anXBar, aLoadoutPart);
       }
 
@@ -61,7 +61,7 @@ public class ItemOperationTest{
    }
 
    @Mock
-   private LoadoutPart loadoutPart;
+   private ConfiguredComponent loadoutPart;
    @Mock
    private MessageXBar xBar;
 
@@ -122,17 +122,17 @@ public class ItemOperationTest{
    public final void testRemoveItem_XLEngine(){
       Item item = ItemDB.lookup("XL ENGINE 300");
       Loadout loadout = Mockito.mock(Loadout.class);
-      LoadoutPart lt = Mockito.mock(LoadoutPart.class);
-      LoadoutPart rt = Mockito.mock(LoadoutPart.class);
-      Mockito.when(loadout.getPart(Part.LeftTorso)).thenReturn(lt);
-      Mockito.when(loadout.getPart(Part.RightTorso)).thenReturn(rt);
+      ConfiguredComponent lt = Mockito.mock(ConfiguredComponent.class);
+      ConfiguredComponent rt = Mockito.mock(ConfiguredComponent.class);
+      Mockito.when(loadout.getPart(Location.LeftTorso)).thenReturn(lt);
+      Mockito.when(loadout.getPart(Location.RightTorso)).thenReturn(rt);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
 
       cut.removeItem(item);
 
       Mockito.verify(loadoutPart).removeItem(item);
-      Mockito.verify(lt).removeItem(LoadoutPart.ENGINE_INTERNAL);
-      Mockito.verify(rt).removeItem(LoadoutPart.ENGINE_INTERNAL);
+      Mockito.verify(lt).removeItem(ConfiguredComponent.ENGINE_INTERNAL);
+      Mockito.verify(rt).removeItem(ConfiguredComponent.ENGINE_INTERNAL);
       Mockito.verify(xBar).post(new Message(loadoutPart, Type.ItemRemoved));
       Mockito.verify(xBar).post(new Message(lt, Type.ItemRemoved));
       Mockito.verify(xBar).post(new Message(rt, Type.ItemRemoved));
@@ -186,18 +186,18 @@ public class ItemOperationTest{
    @Test
    public final void testAddItem_XLEngine(){
       Loadout loadout = Mockito.mock(Loadout.class);
-      LoadoutPart lt = Mockito.mock(LoadoutPart.class);
-      LoadoutPart rt = Mockito.mock(LoadoutPart.class);
-      Mockito.when(loadout.getPart(Part.LeftTorso)).thenReturn(lt);
-      Mockito.when(loadout.getPart(Part.RightTorso)).thenReturn(rt);
+      ConfiguredComponent lt = Mockito.mock(ConfiguredComponent.class);
+      ConfiguredComponent rt = Mockito.mock(ConfiguredComponent.class);
+      Mockito.when(loadout.getPart(Location.LeftTorso)).thenReturn(lt);
+      Mockito.when(loadout.getPart(Location.RightTorso)).thenReturn(rt);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Item item = ItemDB.lookup("XL ENGINE 300");
 
       cut.addItem(item);
 
       Mockito.verify(loadoutPart).addItem(item);
-      Mockito.verify(lt).addItem(LoadoutPart.ENGINE_INTERNAL);
-      Mockito.verify(rt).addItem(LoadoutPart.ENGINE_INTERNAL);
+      Mockito.verify(lt).addItem(ConfiguredComponent.ENGINE_INTERNAL);
+      Mockito.verify(rt).addItem(ConfiguredComponent.ENGINE_INTERNAL);
       Mockito.verify(xBar).post(new Message(loadoutPart, Type.ItemAdded));
       Mockito.verify(xBar).post(new Message(lt, Type.ItemAdded));
       Mockito.verify(xBar).post(new Message(rt, Type.ItemAdded));

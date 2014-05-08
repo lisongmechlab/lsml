@@ -25,13 +25,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.part.AddItemOperation;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.RemoveItemOperation;
+import lisong_mechlab.model.loadout.part.OpAddItem;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpRemoveItem;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -41,11 +41,11 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class AutoAddItemOperation extends LoadoutOperation{
+public class OpAutoAddItem extends OpLoadoutBase{
    private class Node implements Comparable<Node>{
       final Loadout data;
-      final Part    source;
-      final Part    target;
+      final Location    source;
+      final Location    target;
       final Item    item;
       final Node    parent;
       final int     score;
@@ -62,15 +62,15 @@ public class AutoAddItemOperation extends LoadoutOperation{
          score = score();
       }
 
-      Node(Node aParent, Part aSource, Part aTarget, Item aItem){
+      Node(Node aParent, Location aSource, Location aTarget, Item aItem){
          data = new Loadout(aParent.data, null);
          parent = aParent;
          source = aSource;
          target = aTarget;
          targetItem = null;
          item = aItem;
-         stack.pushAndApply(new RemoveItemOperation(null, data.getPart(source), item));
-         stack.pushAndApply(new AddItemOperation(null, data.getPart(target), item));
+         stack.pushAndApply(new OpRemoveItem(null, data.getPart(source), item));
+         stack.pushAndApply(new OpAddItem(null, data.getPart(target), item));
          score = score();
       }
 
@@ -81,7 +81,7 @@ public class AutoAddItemOperation extends LoadoutOperation{
        * @param aSourceItem
        * @param aTargetItem
        */
-      Node(Node aParent, Part aSourcePart, Part aTargetPart, Item aSourceItem, Item aTargetItem){
+      Node(Node aParent, Location aSourcePart, Location aTargetPart, Item aSourceItem, Item aTargetItem){
          data = new Loadout(aParent.data, null);
          parent = aParent;
          source = aSourcePart;
@@ -89,10 +89,10 @@ public class AutoAddItemOperation extends LoadoutOperation{
          targetItem = aTargetItem;
          item = aSourceItem;
 
-         stack.pushAndApply(new RemoveItemOperation(null, data.getPart(target), aTargetItem));
-         stack.pushAndApply(new RemoveItemOperation(null, data.getPart(source), aSourceItem));
-         stack.pushAndApply(new AddItemOperation(null, data.getPart(target), aSourceItem));
-         stack.pushAndApply(new AddItemOperation(null, data.getPart(source), aTargetItem));
+         stack.pushAndApply(new OpRemoveItem(null, data.getPart(target), aTargetItem));
+         stack.pushAndApply(new OpRemoveItem(null, data.getPart(source), aSourceItem));
+         stack.pushAndApply(new OpAddItem(null, data.getPart(target), aSourceItem));
+         stack.pushAndApply(new OpAddItem(null, data.getPart(source), aTargetItem));
          score = score();
       }
 
@@ -110,7 +110,7 @@ public class AutoAddItemOperation extends LoadoutOperation{
 
       private int score(){
          int maxFree = 0;
-         for(Part part : validParts){
+         for(Location part : validParts){
             maxFree = Math.max(maxFree, data.getPart(part).getNumCriticalSlotsFree() * (data.getPart(part).getInternalPart().isAllowed(item) ? 1 : 0));
          }
          return maxFree;
@@ -118,22 +118,22 @@ public class AutoAddItemOperation extends LoadoutOperation{
    }
 
    private final Item           itemToPlace;
-   private final List<Part>     validParts = new ArrayList<>();
-   private final List<Part>     partTraversalOrder;
+   private final List<Location>     validParts = new ArrayList<>();
+   private final List<Location>     partTraversalOrder;
    private final OperationStack stack      = new OperationStack(0);
 
-   public AutoAddItemOperation(Loadout aLoadout, MessageXBar anXBar, Item anItem){
+   public OpAutoAddItem(Loadout aLoadout, MessageXBar anXBar, Item anItem){
       super(aLoadout, anXBar, "auto place item");
       itemToPlace = anItem;
-      for(LoadoutPart part : aLoadout.getCandidateLocationsForItem(itemToPlace)){
-         validParts.add(part.getInternalPart().getType());
+      for(ConfiguredComponent part : aLoadout.getCandidateLocationsForItem(itemToPlace)){
+         validParts.add(part.getInternalPart().getLocation());
       }
       partTraversalOrder = getPartTraversalOrder();
 
       // If it can go into the engine, put it there.
-      LoadoutPart ct = loadout.getPart(Part.CenterTorso);
+      ConfiguredComponent ct = loadout.getPart(Location.CenterTorso);
       if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canEquip(anItem) ){
-         addOp(new AddItemOperation(xBar, ct, anItem));
+         addOp(new OpAddItem(xBar, ct, anItem));
          return;
       }
 
@@ -153,8 +153,8 @@ public class AutoAddItemOperation extends LoadoutOperation{
          }
 
          // Not yet sweetie
-         for(Part part : partTraversalOrder){
-            LoadoutPart loadoutPart = node.data.getPart(part);
+         for(Location part : partTraversalOrder){
+            ConfiguredComponent loadoutPart = node.data.getPart(part);
             for(Item i : loadoutPart.getItems()){
                if( i instanceof Internal )
                   continue;
@@ -176,23 +176,23 @@ public class AutoAddItemOperation extends LoadoutOperation{
       Node n = node;
       while( n.parent != null ){
          if( n.targetItem != null ){
-            ops.add(0, new AddItemOperation(xBar, loadout.getPart(n.target), n.item));
-            ops.add(0, new AddItemOperation(xBar, loadout.getPart(n.source), n.targetItem));
-            ops.add(0, new RemoveItemOperation(xBar, loadout.getPart(n.target), n.targetItem));
-            ops.add(0, new RemoveItemOperation(xBar, loadout.getPart(n.source), n.item));
+            ops.add(0, new OpAddItem(xBar, loadout.getPart(n.target), n.item));
+            ops.add(0, new OpAddItem(xBar, loadout.getPart(n.source), n.targetItem));
+            ops.add(0, new OpRemoveItem(xBar, loadout.getPart(n.target), n.targetItem));
+            ops.add(0, new OpRemoveItem(xBar, loadout.getPart(n.source), n.item));
          }
          else{
-            ops.add(0, new AddItemOperation(xBar, loadout.getPart(n.target), n.item));
-            ops.add(0, new RemoveItemOperation(xBar, loadout.getPart(n.source), n.item));
+            ops.add(0, new OpAddItem(xBar, loadout.getPart(n.target), n.item));
+            ops.add(0, new OpRemoveItem(xBar, loadout.getPart(n.source), n.item));
          }
          n = n.parent;
       }
       // Look at the solution node to find which part in the original loadout the item should
       // be added to.
-      for(Part part : partTraversalOrder){
-         LoadoutPart loadoutPart = node.data.getPart(part);
+      for(Location part : partTraversalOrder){
+         ConfiguredComponent loadoutPart = node.data.getPart(part);
          if( loadoutPart.canEquip(itemToPlace) ){
-            ops.add(new AddItemOperation(xBar, loadout.getPart(part), itemToPlace));
+            ops.add(new OpAddItem(xBar, loadout.getPart(part), itemToPlace));
             break;
          }
       }
@@ -211,20 +211,20 @@ public class AutoAddItemOperation extends LoadoutOperation{
     *           The {@link Item} to be removed.
     * @return A {@link List} of {@link Node}s with all possible ways to move the item out of the given node.
     */
-   private List<Node> getBranches(Node aParent, Part aSourcePart, Item aItem){
+   private List<Node> getBranches(Node aParent, Location aSourcePart, Item aItem){
       List<Node> ans = new ArrayList<>();
 
       // Create a temporary loadout where the item has been removed and find all
       // ways it can be placed on another part.
       Loadout tempLoadout = new Loadout(aParent.data, null);
-      stack.pushAndApply(new RemoveItemOperation(null, tempLoadout.getPart(aSourcePart), aItem));
+      stack.pushAndApply(new OpRemoveItem(null, tempLoadout.getPart(aSourcePart), aItem));
 
-      LoadoutPart srcPart = tempLoadout.getPart(aSourcePart);
-      for(Part targetPart : Part.values()){
+      ConfiguredComponent srcPart = tempLoadout.getPart(aSourcePart);
+      for(Location targetPart : Location.values()){
          if( aSourcePart == targetPart )
             continue;
 
-         LoadoutPart dstPart = tempLoadout.getPart(targetPart);
+         ConfiguredComponent dstPart = tempLoadout.getPart(targetPart);
          if( dstPart.canEquip(aItem) ){
             // Don't consider swaps if the item can be directly moved. A swap will be generated in another point
             // of the search tree anyway when we move an item from that component back to this.
@@ -261,16 +261,16 @@ public class AutoAddItemOperation extends LoadoutOperation{
       return ans;
    }
 
-   private List<Part> getPartTraversalOrder(){
-      Part[] partOrder = new Part[] {Part.RightArm, Part.RightTorso, Part.RightLeg, Part.Head, Part.CenterTorso, Part.LeftTorso, Part.LeftLeg,
-            Part.LeftArm};
+   private List<Location> getPartTraversalOrder(){
+      Location[] partOrder = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head, Location.CenterTorso, Location.LeftTorso, Location.LeftLeg,
+            Location.LeftArm};
 
-      List<Part> order = new ArrayList<>();
-      for(Part part : partOrder){
+      List<Location> order = new ArrayList<>();
+      for(Location part : partOrder){
          if( validParts.contains(part) )
             order.add(part);
       }
-      for(Part part : partOrder){
+      for(Location part : partOrder){
          if( !order.contains(part) )
             order.add(part);
       }

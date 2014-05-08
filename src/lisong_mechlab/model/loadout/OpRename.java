@@ -28,7 +28,7 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Emily Björk
  */
-public class RenameOperation extends LoadoutOperation{
+public class OpRename extends OpLoadoutBase{
    private String       oldName;
    private final String newName;
 
@@ -40,7 +40,7 @@ public class RenameOperation extends LoadoutOperation{
     * @param aName
     *           The new name of the loadout.
     */
-   public RenameOperation(Loadout aLoadout, MessageXBar anXBar, String aName){
+   public OpRename(Loadout aLoadout, MessageXBar anXBar, String aName){
       super(aLoadout, anXBar, "rename loadout");
       newName = aName;
    }

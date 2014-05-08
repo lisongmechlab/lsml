@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
-import lisong_mechlab.model.chassi.ChassiDB;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -44,7 +44,7 @@ public class ChassiConverter implements Converter{
    @Override
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
       String variation = aReader.getValue();
-      return ChassiDB.lookup(variation);
+      return ChassisDB.lookup(variation);
    }
 
 }

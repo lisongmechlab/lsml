@@ -32,11 +32,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.loadout.DistributeArmorOperation;
+import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.loadout.OpDistributeArmor;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.part.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
@@ -68,13 +68,13 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
       
       public ResetManualArmorOperation(){
          super("reset manual armor");
-         for(LoadoutPart loadoutPart : loadout.getPartLoadOuts()){
-            if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-               addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
-               addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.BACK, loadoutPart.getArmor(ArmorSide.BACK), false));
+         for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
+            if( loadoutPart.getInternalPart().getLocation().isTwoSided() ){
+               addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
+               addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.BACK, loadoutPart.getArmor(ArmorSide.BACK), false));
             }
             else{
-               addOp(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmor(ArmorSide.ONLY), false));
+               addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmor(ArmorSide.ONLY), false));
             }
          }
       }
@@ -112,7 +112,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
          oldValue = aOldValue;
          newValue = slider.getValue();
 
-         addOp(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+         addOp(new OpDistributeArmor(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
       }
 
       @Override
@@ -174,7 +174,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
                                  + "Armor will be placed automatically among components without manually set armor values.<br/>"
                                  + "You can right click on the component's armor value to reset a manually set value.</html>");
 
-      LoadoutPart ct = aLoadout.getPart(Part.CenterTorso);
+      ConfiguredComponent ct = aLoadout.getPart(Location.CenterTorso);
       int backArmor = ct.getArmor(ArmorSide.BACK);
       int frontArmor = ct.getArmor(ArmorSide.FRONT);
       int initialFrontBack = 5;
@@ -229,7 +229,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
    }
 
    public void updateArmorDistribution(){
-      privateStack.pushAndApply(new DistributeArmorOperation(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+      privateStack.pushAndApply(new OpDistributeArmor(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
    }
 
    /**
@@ -237,8 +237,8 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
     */
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadout) && aMsg instanceof LoadoutPart.Message ){
-         LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
+      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponent.Message ){
+         ConfiguredComponent.Message message = (ConfiguredComponent.Message)aMsg;
          if( message.automatic )
             return;
          updateArmorDistribution();

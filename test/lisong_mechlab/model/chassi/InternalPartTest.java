@@ -34,7 +34,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Test;
@@ -43,17 +43,17 @@ import org.mockito.Mockito;
 
 public class InternalPartTest{
 
-   Chassis chassi = ChassiDB.lookup("TDR-5S");
+   Chassis chassi = ChassisDB.lookup("TDR-5S");
 
    @Test(expected = UnsupportedOperationException.class)
    public void testGetHardpoints_Immutable() throws Exception{
-      InternalPart cut = chassi.getInternalPart(Part.CenterTorso);
+      InternalComponent cut = chassi.getInternalPart(Location.CenterTorso);
       cut.getHardpoints().add(new HardPoint(HardPointType.ENERGY));
    }
 
    @Test
    public void testGetHardpoints() throws Exception{
-      Collection<HardPoint> hardpoints = chassi.getInternalPart(Part.RightTorso).getHardpoints();
+      Collection<HardPoint> hardpoints = chassi.getInternalPart(Location.RightTorso).getHardpoints();
       assertEquals(3, hardpoints.size());
 
       List<HardPoint> hps = new ArrayList<>(hardpoints);
@@ -92,19 +92,19 @@ public class InternalPartTest{
 
    @Test
    public void testGetType() throws Exception{
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
 
-         assertSame(part, cut.getType());
+         assertSame(part, cut.getLocation());
       }
    }
 
    @Test
    public void testGetArmorMax() throws Exception{
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
 
-         if( part == Part.Head ){
+         if( part == Location.Head ){
             assertEquals(18, cut.getArmorMax());
          }
          else{
@@ -115,10 +115,10 @@ public class InternalPartTest{
 
    @Test
    public void testGetNumCriticalslots() throws Exception{
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
 
-         if( part == Part.Head || part == Part.RightLeg || part == Part.LeftLeg ){
+         if( part == Location.Head || part == Location.RightLeg || part == Location.LeftLeg ){
             assertEquals(6, cut.getNumCriticalslots());
          }
          else{
@@ -129,17 +129,17 @@ public class InternalPartTest{
 
    @Test
    public void testGetNumHardpoints() throws Exception{
-      assertEquals(3, chassi.getInternalPart(Part.LeftTorso).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(0, chassi.getInternalPart(Part.LeftTorso).getNumHardpoints(HardPointType.BALLISTIC));
+      assertEquals(3, chassi.getInternalPart(Location.LeftTorso).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(0, chassi.getInternalPart(Location.LeftTorso).getNumHardpoints(HardPointType.BALLISTIC));
 
-      assertEquals(1, chassi.getInternalPart(Part.RightTorso).getNumHardpoints(HardPointType.AMS));
-      assertEquals(2, chassi.getInternalPart(Part.RightTorso).getNumHardpoints(HardPointType.MISSILE));
+      assertEquals(1, chassi.getInternalPart(Location.RightTorso).getNumHardpoints(HardPointType.AMS));
+      assertEquals(2, chassi.getInternalPart(Location.RightTorso).getNumHardpoints(HardPointType.MISSILE));
    }
 
    @Test
    public void testGetInternalItems() throws Exception{
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
 
          switch( part ){
             case Head:
@@ -168,14 +168,14 @@ public class InternalPartTest{
 
    @Test(expected = UnsupportedOperationException.class)
    public void testGetInternalItems_Immutable() throws Exception{
-      InternalPart cut = chassi.getInternalPart(Part.LeftLeg);
-      cut.getInternalItems().add(LoadoutPart.ENGINE_INTERNAL);
+      InternalComponent cut = chassi.getInternalPart(Location.LeftLeg);
+      cut.getInternalItems().add(ConfiguredComponent.ENGINE_INTERNAL);
    }
 
    @Test
    public void testGetHitpoints() throws Exception{
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
 
          switch( part ){
             case RightArm:
@@ -214,8 +214,8 @@ public class InternalPartTest{
       Mockito.when(internal.getNumCriticalSlots(Matchers.any(Upgrades.class))).thenReturn(1);
       Mockito.when(internal.getMass(Matchers.any(Upgrades.class))).thenReturn(0.0);
       Mockito.when(internal.getHardpointType()).thenReturn(HardPointType.NONE);
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
          assertFalse(cut.isAllowed(internal));
       }
    }
@@ -223,9 +223,9 @@ public class InternalPartTest{
    @Test
    public void testIsAllowed_Engine(){
       Engine engine = (Engine)ItemDB.lookup("STD ENGINE 200");
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
-         if( part == Part.CenterTorso ){
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
+         if( part == Location.CenterTorso ){
             assertTrue(cut.isAllowed(engine));
          }
          else{
@@ -237,9 +237,9 @@ public class InternalPartTest{
    @Test
    public void testIsAllowed_Jumpjets(){
       JumpJet jj = (JumpJet)ItemDB.lookup("JUMP JETS - CLASS III");
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
-         if( part == Part.CenterTorso || part == Part.RightTorso || part == Part.LeftTorso || part == Part.LeftLeg || part == Part.RightLeg ){
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
+         if( part == Location.CenterTorso || part == Location.RightTorso || part == Location.LeftTorso || part == Location.LeftLeg || part == Location.RightLeg ){
             assertTrue(cut.isAllowed(jj));
          }
          else{
@@ -251,9 +251,9 @@ public class InternalPartTest{
    @Test
    public void testIsAllowed_Case(){
       Item case_module = ItemDB.CASE;
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
-         if( part == Part.RightTorso || part == Part.LeftTorso ){
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
+         if( part == Location.RightTorso || part == Location.LeftTorso ){
             assertTrue(cut.isAllowed(case_module));
          }
          else{
@@ -264,25 +264,25 @@ public class InternalPartTest{
 
    @Test
    public void testIsAllowed_Hardpoints(){
-      assertFalse(chassi.getInternalPart(Part.LeftArm).isAllowed(ItemDB.lookup("PPC")));
-      assertFalse(chassi.getInternalPart(Part.LeftArm).isAllowed(ItemDB.lookup("LRM 20")));
-      assertFalse(chassi.getInternalPart(Part.LeftArm).isAllowed(ItemDB.lookup("AMS")));
-      assertFalse(chassi.getInternalPart(Part.LeftArm).isAllowed(ItemDB.lookup("GUARDIAN ECM")));
-      assertTrue(chassi.getInternalPart(Part.LeftArm).isAllowed(ItemDB.lookup("AC/2")));
+      assertFalse(chassi.getInternalPart(Location.LeftArm).isAllowed(ItemDB.lookup("PPC")));
+      assertFalse(chassi.getInternalPart(Location.LeftArm).isAllowed(ItemDB.lookup("LRM 20")));
+      assertFalse(chassi.getInternalPart(Location.LeftArm).isAllowed(ItemDB.lookup("AMS")));
+      assertFalse(chassi.getInternalPart(Location.LeftArm).isAllowed(ItemDB.lookup("GUARDIAN ECM")));
+      assertTrue(chassi.getInternalPart(Location.LeftArm).isAllowed(ItemDB.lookup("AC/2")));
    }
 
    @Test
    public void testIsAllowed_Size(){
-      assertFalse(chassi.getInternalPart(Part.LeftArm).isAllowed(ItemDB.lookup("AC/20")));
+      assertFalse(chassi.getInternalPart(Location.LeftArm).isAllowed(ItemDB.lookup("AC/20")));
       
-      assertFalse(chassi.getInternalPart(Part.LeftLeg).isAllowed(ItemDB.DHS));
-      assertFalse(chassi.getInternalPart(Part.Head).isAllowed(ItemDB.DHS));
+      assertFalse(chassi.getInternalPart(Location.LeftLeg).isAllowed(ItemDB.DHS));
+      assertFalse(chassi.getInternalPart(Location.Head).isAllowed(ItemDB.DHS));
    }
    
    @Test
    public void testIsAllowed_Modules(){
-      for(Part part : Part.values()){
-         InternalPart cut = chassi.getInternalPart(part);
+      for(Location part : Location.values()){
+         InternalComponent cut = chassi.getInternalPart(part);
          assertTrue(cut.isAllowed(ItemDB.SHS));
       }
    }
