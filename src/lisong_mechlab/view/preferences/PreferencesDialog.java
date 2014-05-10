@@ -52,7 +52,7 @@ public class PreferencesDialog extends JDialog{
       addAppearancePane(root);
       addUiPane(root);
       addCorePane(root);
-      
+
       setContentPane(root);
       pack();
       setLocationRelativeTo(ProgramInit.lsml());
@@ -63,8 +63,10 @@ public class PreferencesDialog extends JDialog{
       JPanel panel = new JPanel();
       panel.setBorder(StyleManager.sectionBorder("LSML Core Settings"));
 
-      final JCheckBox useBundledData = new JCheckBox("Use bundled data", Boolean.parseBoolean(PreferenceStore.getString(PreferenceStore.USEBUNDLED_DATA, "false")));
-      useBundledData.setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
+      final JCheckBox useBundledData = new JCheckBox("Use bundled data",
+                                                     Boolean.parseBoolean(PreferenceStore.getString(PreferenceStore.USEBUNDLED_DATA, "false")));
+      useBundledData.setToolTipText("<html>If checked, LSML will quietly fallback to bundled data files if no game install is available.<br/>"
+                                    + "Otherwise it will prompt you to locate the game install on next startup.</html>");
       useBundledData.addActionListener(new AbstractAction(){
          private static final long serialVersionUID = -8136020916897237506L;
 
@@ -77,7 +79,7 @@ public class PreferencesDialog extends JDialog{
 
       aRoot.add(panel);
    }
-   
+
    private void addUiPane(JPanel aRoot){
       JPanel panel = new JPanel();
       panel.setBorder(StyleManager.sectionBorder("UI Behavior"));
