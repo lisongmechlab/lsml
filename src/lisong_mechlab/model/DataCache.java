@@ -32,8 +32,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import lisong_mechlab.model.StockLoadout.StockComponent;
 import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.HardPoint;
@@ -71,17 +69,11 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import lisong_mechlab.mwo_data.helpers.LoadoutXML;
-import lisong_mechlab.mwo_data.helpers.LoadoutXML.Upgrades.Artemis;
 import lisong_mechlab.mwo_data.helpers.Mission;
 import lisong_mechlab.util.OS;
 import lisong_mechlab.util.OS.WindowsVersion;
-import lisong_mechlab.util.XmlReader;
 import lisong_mechlab.view.LSML;
 import lisong_mechlab.view.preferences.PreferenceStore;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -646,8 +638,8 @@ public class DataCache{
                }
             }
 
-            Part partType = Part.fromMwoName(xmlComponent.Name);
-            boolean isRear = Part.isRear(xmlComponent.Name);
+            Part partType = Part.fromMwoName(xmlComponent.componentName);
+            boolean isRear = Part.isRear(xmlComponent.componentName);
             int armorFront = isRear ? 0 : xmlComponent.Armor;
             int armorBack = isRear ? xmlComponent.Armor : 0;
             
