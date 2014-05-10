@@ -93,15 +93,16 @@ public class StyleManager{
 
    // Others
    private static final Color  COLOR_BG_MISC           = new Color(0x729fcf);
-   
-   private static final Icon MISSILE_BAY_DOOR_ICON = new ImageIcon(StyleManager.class.getResource("/resources/mbd.png"), "This hard point has missile bay doors. While closed the component receives 10% less damage");
 
+   private static final Icon   MISSILE_BAY_DOOR_ICON   = new ImageIcon(StyleManager.class.getResource("/resources/mbd.png"),
+                                                                       "This hard point has missile bay doors. While closed the component receives 10% less damage");
 
-   private static final Border INNER_BORDER = BorderFactory.createEmptyBorder(0, 4, 4, 4);
+   private static final Border INNER_BORDER            = BorderFactory.createEmptyBorder(0, 4, 4, 4);
+
    public static Border sectionBorder(String sectionTitle){
       return BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(sectionTitle), INNER_BORDER);
    }
-   
+
    public static void styleHardpointLabel(JLabel aLabel, InternalComponent aInternalPart, HardPointType aHardPointType){
       int hardPoints = aInternalPart.getNumHardpoints(aHardPointType);
       if( hardPoints < 1 ){
@@ -112,10 +113,10 @@ public class StyleManager{
       aLabel.setVisible(true);
       styleThinItem(aLabel, aHardPointType);
 
-      if(aHardPointType == HardPointType.MISSILE){
+      if( aHardPointType == HardPointType.MISSILE ){
          aLabel.setText(formatMissileHardpointText(aInternalPart));
-         
-         if(aInternalPart.hasMissileBayDoors()){
+
+         if( aInternalPart.hasMissileBayDoors() ){
             aLabel.setIcon(MISSILE_BAY_DOOR_ICON);
             aLabel.setToolTipText("This component has missile bay doors. While the doors are closed the component takes 10% less damage.");
          }
@@ -162,7 +163,7 @@ public class StyleManager{
 
       return ans + ")";
    }
-   
+
    public static void styleItem(JComponent aComponent){
       Item item = null;
       styleItem(aComponent, item);

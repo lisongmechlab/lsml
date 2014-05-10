@@ -52,8 +52,8 @@ import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.OpAutoAddItem;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.OpAutoAddItem;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -106,10 +106,10 @@ public class ItemLabel extends JLabel{
 
    private static class AutoPlaceTask extends SwingWorker<Void, Void>{
       private OpAutoAddItem operation;
-      private JDialog              dialog;
-      private LoadoutFrame         loadoutFrame;
-      private MessageXBar          xBar;
-      private Item                 itemToPlace;
+      private JDialog       dialog;
+      private LoadoutFrame  loadoutFrame;
+      private MessageXBar   xBar;
+      private Item          itemToPlace;
 
       public AutoPlaceTask(JDialog aDialog, LoadoutFrame aLoadoutFrame, MessageXBar anXBar, Item aItem){
          dialog = aDialog;
@@ -121,8 +121,9 @@ public class ItemLabel extends JLabel{
       @Override
       public Void doInBackground(){
          try{
-         operation = new OpAutoAddItem(loadoutFrame.getLoadout(), xBar, itemToPlace);
-         }catch(Throwable e){ // Yeah anything thrown is a failure.
+            operation = new OpAutoAddItem(loadoutFrame.getLoadout(), xBar, itemToPlace);
+         }
+         catch( Throwable e ){ // Yeah anything thrown is a failure.
             operation = null;
          }
          return null;
@@ -132,11 +133,11 @@ public class ItemLabel extends JLabel{
       public void done(){
          // In EDT
          if( !isCancelled() ){
-            if(operation == null){
+            if( operation == null ){
                JOptionPane.showMessageDialog(dialog, "No can do cap'n!", "Not possible", JOptionPane.OK_OPTION);
             }
             else{
-            loadoutFrame.getOpStack().pushAndApply(operation);
+               loadoutFrame.getOpStack().pushAndApply(operation);
             }
          }
          dialog.dispose();
@@ -211,7 +212,8 @@ public class ItemLabel extends JLabel{
                      catch( TimeoutException e ){
                         dialog.setVisible(true); // Show progress meter if it's taking time and resume EDT
                      }
-                  }else if(loadout.canEquip(item)){
+                  }
+                  else if( loadout.canEquip(item) ){
                      frame.getOpStack().pushAndApply(new OpAutoAddItem(loadout, anXBar, item));
                   }
                }

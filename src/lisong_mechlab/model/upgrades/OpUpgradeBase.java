@@ -20,7 +20,7 @@
 package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -72,5 +72,5 @@ abstract class OpUpgradeBase extends CompositeOperation{
             throw new IllegalArgumentException("Not enough free slots!");
          }
       }
-   }   
+   }
 }

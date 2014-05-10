@@ -89,15 +89,16 @@ public class RangeTimeMetricTest{
 
       assertEquals(450.0, cut.getRange(), 0.0);
    }
-   
+
    /**
-    * {@link RangeTimeMetric#getTime()} shall return the value of the last call to {@link RangeTimeMetric#changeTime(double)}.
+    * {@link RangeTimeMetric#getTime()} shall return the value of the last call to
+    * {@link RangeTimeMetric#changeTime(double)}.
     */
    @Test
    public final void testGetTime(){
       cut.changeTime(13.13);
       assertEquals(13.13, cut.getTime(), 0.0);
-      
+
       cut.changeTime(-13.13);
       assertEquals(-13.13, cut.getTime(), 0.0);
    }
@@ -147,12 +148,12 @@ public class RangeTimeMetricTest{
    @Test
    public final void testCalculate_changeRange(){
       double range = 20.0;
-     
+
       Mockito.when(cut.calculate(Matchers.anyDouble(), Matchers.anyDouble())).thenReturn(0.0);
       Mockito.when(cut.calculate(range, 10.0)).thenReturn(1.0);
       cut.changeTime(10.0); // Perform test for time 10.0
       cut.changeRange(range);
-      
+
       assertEquals(1.0, cut.calculate(), 0.0);
    }
 }

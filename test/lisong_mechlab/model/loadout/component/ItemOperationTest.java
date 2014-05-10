@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -63,9 +63,9 @@ public class ItemOperationTest{
    @Mock
    private ConfiguredComponent loadoutPart;
    @Mock
-   private MessageXBar xBar;
+   private MessageXBar         xBar;
 
-   private CutClass    cut;
+   private CutClass            cut;
 
    @Before
    public void setup(){
@@ -93,7 +93,7 @@ public class ItemOperationTest{
       Item ecm = ItemDB.ECM;
       Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
-      
+
       cut.addItem(ecm);
 
       Mockito.verify(loadoutPart).addItem(ecm);
@@ -108,7 +108,7 @@ public class ItemOperationTest{
       Item item = ItemDB.lookup("STD ENGINE 300");
       Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
-      
+
       cut.addItem(item);
 
       Mockito.verify(loadoutPart).addItem(item);

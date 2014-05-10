@@ -37,17 +37,18 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  */
 @XStreamAlias("MechIdMap")
 public class MechIdMap{
-   public class Mech {
+   public class Mech{
       @XStreamAsAttribute
       public int baseID;
       @XStreamAsAttribute
       public int variantID;
    }
-   
+
    @XStreamImplicit(itemFieldName = "Mech")
-   public List<Mech>        MechIdMap;
+   public List<Mech> MechIdMap;
+
    private MechIdMap(){}
-   
+
    public static MechIdMap fromXml(InputStream is){
       XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
          @Override

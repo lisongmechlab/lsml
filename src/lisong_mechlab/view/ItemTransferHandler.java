@@ -38,8 +38,8 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.OpRemoveItem;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.mechlab.ItemLabel;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
@@ -48,7 +48,7 @@ import lisong_mechlab.view.mechlab.equipment.GarageTree;
 import lisong_mechlab.view.render.ItemRenderer;
 
 public class ItemTransferHandler extends TransferHandler{
-   private static final long  serialVersionUID = -8109855943478269304L;
+   private static final long          serialVersionUID = -8109855943478269304L;
    private static ConfiguredComponent sourcePart       = null;
 
    @Override

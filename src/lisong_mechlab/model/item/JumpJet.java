@@ -37,7 +37,7 @@ public class JumpJet extends Module{
       duration = aModule.JumpJetStats.duration;
       heat = aModule.JumpJetStats.heat;
    }
-   
+
    public double getForce(){
       return boost_z;
    }

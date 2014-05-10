@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
-import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisDB;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

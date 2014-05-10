@@ -26,21 +26,21 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
-import lisong_mechlab.model.loadout.part.OpSetArmor;
-import lisong_mechlab.model.loadout.part.OpSetArmorSymmetric;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.OpSetArmor;
+import lisong_mechlab.model.loadout.component.OpSetArmorSymmetric;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 
 public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Reader{
-   private static final long    serialVersionUID = 2130487332299251881L;
-   private final ConfiguredComponent    part;
-   private final ArmorSide      side;
-   private final JCheckBox      symmetric;
-   private final OperationStack opStack;
-   private final MessageXBar    xBar;
+   private static final long         serialVersionUID = 2130487332299251881L;
+   private final ConfiguredComponent part;
+   private final ArmorSide           side;
+   private final JCheckBox           symmetric;
+   private final OperationStack      opStack;
+   private final MessageXBar         xBar;
 
    public ArmorSpinner(ConfiguredComponent aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
       part = aPart;
@@ -77,7 +77,7 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
          return;
 
       try{
-         final boolean setSymmetric = symmetric.isSelected() && part.getInternalPart().getLocation().oppositeSide() != null;
+         final boolean setSymmetric = symmetric.isSelected() && part.getInternalComponent().getLocation().oppositeSide() != null;
          final int armor = ((Integer)arg0).intValue();
 
          if( setSymmetric ){
@@ -98,7 +98,7 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
    public void receive(Message aMsg){
       if( aMsg.isForMe(part.getLoadout()) && aMsg instanceof ConfiguredComponent.Message ){
          ConfiguredComponent.Message message = (ConfiguredComponent.Message)aMsg;
-         if( message.part != part )
+         if( message.component != part )
             return;
          if( message.type == Type.ArmorChanged ){
             SwingUtilities.invokeLater(new Runnable(){

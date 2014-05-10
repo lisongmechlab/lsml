@@ -1,4 +1,4 @@
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -11,7 +11,7 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -28,24 +28,24 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SetArmorOperationTest{
-   private static final int TEST_MAX_ARMOR = 30;
-   private ArmorSide        armorSide      = ArmorSide.ONLY;
+   private static final int    TEST_MAX_ARMOR = 30;
+   private ArmorSide           armorSide      = ArmorSide.ONLY;
    @Mock
-   private Loadout          loadout;
+   private Loadout             loadout;
    @Mock
-   private Upgrades         upgrades;
+   private Upgrades            upgrades;
    @Mock
-   private ConfiguredComponent      loadoutPart;
+   private ConfiguredComponent loadoutPart;
    @Mock
-   private MessageXBar      xBar;
+   private MessageXBar         xBar;
    @Mock
-   private InternalComponent     internalPart;
+   private InternalComponent   internalPart;
 
    @Before
    public void setup(){
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
-      Mockito.when(loadoutPart.getInternalPart()).thenReturn(internalPart);
+      Mockito.when(loadoutPart.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(internalPart.getArmorMax()).thenReturn(TEST_MAX_ARMOR);
@@ -66,8 +66,8 @@ public class SetArmorOperationTest{
    }
 
    /**
-    * Any attempt to create an {@link OpSetArmor} with negative armor shall throw an
-    * {@link IllegalArgumentException} on creation.
+    * Any attempt to create an {@link OpSetArmor} with negative armor shall throw an {@link IllegalArgumentException} on
+    * creation.
     * 
     * @throws Exception
     */
@@ -77,8 +77,8 @@ public class SetArmorOperationTest{
    }
 
    /**
-    * Any attempt to create a {@link OpSetArmor} with more armor than the internal component can hold (100%
-    * failure regardless of current armor value) shall throw an {@link IllegalArgumentException} on construction.
+    * Any attempt to create a {@link OpSetArmor} with more armor than the internal component can hold (100% failure
+    * regardless of current armor value) shall throw an {@link IllegalArgumentException} on construction.
     * 
     * @throws Exception
     */
@@ -101,11 +101,11 @@ public class SetArmorOperationTest{
 
       // Part 1 & 2 are identical but not the same.
       Mockito.when(part1.getLoadout()).thenReturn(loadout);
-      Mockito.when(part1.getInternalPart()).thenReturn(internalPart);
+      Mockito.when(part1.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(part1.getArmor(ArmorSide.BACK)).thenReturn(armor);
       Mockito.when(part1.getArmor(ArmorSide.FRONT)).thenReturn(armor);
       Mockito.when(part2.getLoadout()).thenReturn(loadout);
-      Mockito.when(part2.getInternalPart()).thenReturn(internalPart);
+      Mockito.when(part2.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(part2.getArmor(ArmorSide.BACK)).thenReturn(armor);
       Mockito.when(part2.getArmor(ArmorSide.FRONT)).thenReturn(armor);
       Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
@@ -141,7 +141,6 @@ public class SetArmorOperationTest{
       final int oldArmor = 20;
       final int newArmor = oldArmor + (int)(freeTons * 32) + 1;
 
-      
       List<ConfiguredComponent> parts = new ArrayList<>();
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
       Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);

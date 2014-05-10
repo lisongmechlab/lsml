@@ -40,7 +40,7 @@ import javax.swing.WindowConstants;
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -96,7 +96,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
    public DamageGraph(Loadout aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric){
       super("Max Sustained DPS over range for " + aLoadout);
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-      
+
       anXbar.attach(this);
 
       loadout = aLoadout;

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.InternalComponent;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -45,8 +45,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class SetMaxArmorOperationTest{
 
    @Mock
-   private MessageXBar xBar;
-   
+   private MessageXBar          xBar;
+
    private final OperationStack stack = new OperationStack(0);
 
    @Test
@@ -75,7 +75,8 @@ public class SetMaxArmorOperationTest{
             assertTrue(lb < front_back_ratio);
             assertTrue(ub > front_back_ratio);
 
-            verify(xBar, atLeast(2)).post(new ConfiguredComponent.Message(cut.getPart(part.getLocation()), ConfiguredComponent.Message.Type.ArmorChanged));
+            verify(xBar, atLeast(2)).post(new ConfiguredComponent.Message(cut.getPart(part.getLocation()),
+                                                                          ConfiguredComponent.Message.Type.ArmorChanged));
          }
          else
             verify(xBar).post(new ConfiguredComponent.Message(cut.getPart(part.getLocation()), ConfiguredComponent.Message.Type.ArmorChanged));
@@ -90,7 +91,7 @@ public class SetMaxArmorOperationTest{
       final int tolerance = 1;
       stack.pushAndApply(new OpSetMaxArmor(cut, xBar, 1.0, true));
       reset(xBar);
-      
+
       // Execute
       stack.pushAndApply(new OpSetMaxArmor(cut, xBar, front_back_ratio, true));
 

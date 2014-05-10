@@ -33,10 +33,10 @@ import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.OpRemoveItem;
-import lisong_mechlab.model.loadout.part.OpSetArmor;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.OpAddItem;
+import lisong_mechlab.model.loadout.component.OpRemoveItem;
+import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
@@ -362,7 +362,7 @@ public class LoadoutTest{
       // Execute + Verify
       List<ConfiguredComponent> candidates = cut.getCandidateLocationsForItem(ItemDB.lookup("AC/20"));
       assertEquals(1, candidates.size());
-      assertEquals(Location.RightTorso, candidates.get(0).getInternalPart().getLocation());
+      assertEquals(Location.RightTorso, candidates.get(0).getInternalComponent().getLocation());
    }
 
    /**
@@ -475,24 +475,24 @@ public class LoadoutTest{
       OperationStack stack = new OperationStack(0);
       Loadout cut = new Loadout("HBK-4J", xBar);
       Loadout copy = new Loadout(cut, xBar);
-      
+
       // A copy must be equal :)
       assertEquals(cut, copy);
 
       // Must be deep
       copy.rename("foo");
       assertFalse(copy.getName().equals(cut.getName()));
-      
+
       assertTrue(copy.getPart(Location.RightTorso).equals(cut.getPart(Location.RightTorso)));
       stack.pushAndApply(new OpRemoveItem(xBar, copy.getPart(Location.RightTorso), ItemDB.lookup("LRM 10")));
       stack.pushAndApply(new OpRemoveItem(xBar, copy.getPart(Location.RightTorso), ItemDB.lookup("LRM 10")));
       assertFalse(copy.getPart(Location.RightTorso).equals(cut.getPart(Location.RightTorso)));
-      
+
       assertTrue(copy.getPart(Location.LeftTorso).equals(cut.getPart(Location.LeftTorso)));
       stack.pushAndApply(new OpSetArmor(xBar, copy.getPart(Location.LeftTorso), ArmorSide.FRONT, 3, true));
       stack.pushAndApply(new OpSetArmor(xBar, copy.getPart(Location.LeftTorso), ArmorSide.BACK, 3, false));
       assertFalse(copy.getPart(Location.LeftTorso).equals(cut.getPart(Location.LeftTorso)));
-      
+
       assertTrue(copy.getUpgrades().equals(cut.getUpgrades()));
       stack.pushAndApply(new OpSetArmorType(xBar, copy, UpgradeDB.FERRO_FIBROUS_ARMOR));
       stack.pushAndApply(new OpSetStructureType(xBar, copy, UpgradeDB.ENDO_STEEL_STRUCTURE));

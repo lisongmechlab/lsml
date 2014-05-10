@@ -48,13 +48,13 @@ public class AddToGarageOperationTest{
     * @throws Exception
     *            Shouldn't be thrown.
     */
-   @Test(expected=IllegalArgumentException.class)
+   @Test(expected = IllegalArgumentException.class)
    public void testAddLoadoutTwice() throws Exception{
       // Setup
       Loadout loadout = Mockito.mock(Loadout.class);
       List<Loadout> loadouts = Arrays.asList(loadout);
       Mockito.when(garage.getMechs()).thenReturn(loadouts);
-      
+
       opStack.pushAndApply(new OpAddToGarage(garage, loadout));
    }
 }

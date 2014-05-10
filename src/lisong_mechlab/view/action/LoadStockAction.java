@@ -27,10 +27,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.loadout.OpLoadStock;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;

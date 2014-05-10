@@ -56,7 +56,7 @@ public class StatusBar extends JPanel implements Reader{
       setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
       statusLabel = new JLabel();
       statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
-      
+
       add(statusLabel);
       add(Box.createHorizontalGlue());
       add(new JButton(new AbstractAction("Clear"){
@@ -69,7 +69,7 @@ public class StatusBar extends JPanel implements Reader{
       }));
       clear();
    }
-   
+
    public void clear(){
       statusLabel.setText("No warnings.");
       statusLabel.setForeground(Color.BLACK);
@@ -80,7 +80,7 @@ public class StatusBar extends JPanel implements Reader{
       if( aMsg instanceof NotificationMessage && aMsg.isForMe(frame.getLoadout()) ){
          NotificationMessage notice = (NotificationMessage)aMsg;
          statusLabel.setText(notice.severity.toString() + ": " + notice.message);
-         switch(notice.severity){
+         switch( notice.severity ){
             case ERROR:
                statusLabel.setForeground(Color.RED);
                break;
@@ -91,7 +91,7 @@ public class StatusBar extends JPanel implements Reader{
                statusLabel.setForeground(Color.ORANGE.darker());
                break;
             default:
-               break;            
+               break;
          }
          Toolkit.getDefaultToolkit().beep();
       }

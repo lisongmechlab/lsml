@@ -28,7 +28,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
@@ -46,15 +46,15 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ItemEffectiveHPTest{
-   List<Item>      items = new ArrayList<>();
+   List<Item>          items = new ArrayList<>();
    @Mock
-   ConfiguredComponent     loadoutPart;
+   ConfiguredComponent loadoutPart;
    @Mock
-   Loadout         loadout;
+   Loadout             loadout;
    @Mock
-   Upgrades        upgrades;
+   Upgrades            upgrades;
    @InjectMocks
-   ItemEffectiveHP cut;
+   ItemEffectiveHP     cut;
 
    @Before
    public void setup(){
@@ -104,8 +104,8 @@ public class ItemEffectiveHPTest{
    }
 
    /**
-    * According to: http://mwomercs.com/forums/topic/81945-crits-and-you-a-brief-guide/
-    * C.A.S.E. can not be critically hit and should not be a part of the calculations.
+    * According to: http://mwomercs.com/forums/topic/81945-crits-and-you-a-brief-guide/ C.A.S.E. can not be critically
+    * hit and should not be a part of the calculations.
     */
    @Test
    public void testCASE(){
@@ -118,7 +118,7 @@ public class ItemEffectiveHPTest{
 
       assertEquals(10 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
    }
-   
+
    /**
     * XL engine sides do affect the critical hit rolls.
     */
@@ -158,10 +158,10 @@ public class ItemEffectiveHPTest{
       double ehpDealt = Math.min(i0_ehp, i1_ehp); // Deal enough effective damage to break the weakest component.
       i0_hpLeft -= ehpDealt * CriticalItemDamage.calculate(5, 20); // Figure out new actual HP
       i1_hpLeft -= ehpDealt * CriticalItemDamage.calculate(15, 20);
-      
-      assert(i1_hpLeft == 0.0); // Weakest component destroyed
 
-      i0_ehp = (15-i0_hpLeft)  / CriticalItemDamage.calculate(5, 20); // The effective HP accumulated from first round 
+      assert (i1_hpLeft == 0.0); // Weakest component destroyed
+
+      i0_ehp = (15 - i0_hpLeft) / CriticalItemDamage.calculate(5, 20); // The effective HP accumulated from first round
       i0_ehp += i0_hpLeft / CriticalItemDamage.calculate(5, 5); // Critical slot count adjusted as i1 was destroyed
 
       assertEquals(i0_ehp, cut.calculate(i0), 0.00001);

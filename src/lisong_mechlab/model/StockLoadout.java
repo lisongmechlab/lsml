@@ -22,8 +22,8 @@ package lisong_mechlab.model;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
@@ -45,7 +45,7 @@ public class StockLoadout{
     * @author Li Song
     */
    public static class StockComponent{
-      private final Location          part;
+      private final Location      part;
       private final Integer       armorFront;
       private final Integer       armorBack;
       private final List<Integer> items;

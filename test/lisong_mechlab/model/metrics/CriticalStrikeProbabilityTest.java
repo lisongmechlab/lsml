@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
@@ -47,7 +47,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class CriticalStrikeProbabilityTest{
    List<Item>                items = new ArrayList<>();
    @Mock
-   ConfiguredComponent               loadoutPart;
+   ConfiguredComponent       loadoutPart;
    @Mock
    Loadout                   loadout;
    @Mock

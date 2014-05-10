@@ -32,9 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * A test suite for {@link OperationStack}
- * 
- * TODO: Test coalesceling
+ * A test suite for {@link OperationStack} TODO: Test coalesceling
  * 
  * @author Li Song
  */
@@ -49,8 +47,8 @@ public class OperationStackTest{
    }
 
    /**
-    * {@link OperationStack#pushAndApply(Operation)} shall push an {@link Operation} and call it's {@link Operation#apply()}
-    * function.
+    * {@link OperationStack#pushAndApply(Operation)} shall push an {@link Operation} and call it's
+    * {@link Operation#apply()} function.
     */
    @Test
    public final void testPushAndApply(){
@@ -260,7 +258,6 @@ public class OperationStackTest{
       inOrder.verify(a4).apply();
       inOrder.verify(a4).undo();
       inOrder.verify(a2).undo();
-
 
       Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Operation.class));
       Mockito.verify(a1, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Operation.class));

@@ -64,7 +64,7 @@ public class MetricDisplay extends JLabel implements Reader{
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()){
+      if( aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage() ){
          updateText();
       }
    }

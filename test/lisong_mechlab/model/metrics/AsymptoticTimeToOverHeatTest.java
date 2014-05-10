@@ -36,14 +36,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class AsymptoticTimeToOverHeatTest{
    @Mock
-   private HeatCapacity    capacity;
+   private HeatCapacity             capacity;
    @Mock
-   private HeatDissipation dissipation;
+   private HeatDissipation          dissipation;
    @Mock
-   private HeatGeneration  generation;
+   private HeatGeneration           generation;
 
    @InjectMocks
-   private AsymptoticTimeToOverHeat  cut;
+   private AsymptoticTimeToOverHeat cut;
 
    /**
     * 15 minutes and above is rounded up to infinity. Matches are only 15 minutes :)

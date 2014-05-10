@@ -17,15 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.mwo_data.helpers;
+package lisong_mechlab.model.loadout.component;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 
-public class ItemStatsMech{
-   @XStreamAsAttribute
-   public String chassis;
-   @XStreamAsAttribute
-   public String name;
-   @XStreamAsAttribute
-   public int    id;
+/**
+ * This class models a configured {@link OmniPod} on an {@link LoadoutOmniMech}.
+ * 
+ * @author Li Song
+ */
+public class ConfiguredOmniPod extends ConfiguredComponent{
+
+   /**
+    * @param aConfiguredOmnipod
+    * @param aLoadout
+    */
+   public ConfiguredOmniPod(ConfiguredOmniPod aConfiguredOmnipod, Loadout aLoadout){
+      super(aConfiguredOmnipod, aLoadout);
+      // TODO Auto-generated constructor stub
+   }
+
+   public OmniPod getInternalOmniPod(){
+      return (OmniPod)getInternalComponent();
+   }
+
 }

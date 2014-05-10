@@ -34,7 +34,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Test;
@@ -239,7 +239,8 @@ public class InternalPartTest{
       JumpJet jj = (JumpJet)ItemDB.lookup("JUMP JETS - CLASS III");
       for(Location part : Location.values()){
          InternalComponent cut = chassi.getInternalPart(part);
-         if( part == Location.CenterTorso || part == Location.RightTorso || part == Location.LeftTorso || part == Location.LeftLeg || part == Location.RightLeg ){
+         if( part == Location.CenterTorso || part == Location.RightTorso || part == Location.LeftTorso || part == Location.LeftLeg
+             || part == Location.RightLeg ){
             assertTrue(cut.isAllowed(jj));
          }
          else{
@@ -274,11 +275,11 @@ public class InternalPartTest{
    @Test
    public void testIsAllowed_Size(){
       assertFalse(chassi.getInternalPart(Location.LeftArm).isAllowed(ItemDB.lookup("AC/20")));
-      
+
       assertFalse(chassi.getInternalPart(Location.LeftLeg).isAllowed(ItemDB.DHS));
       assertFalse(chassi.getInternalPart(Location.Head).isAllowed(ItemDB.DHS));
    }
-   
+
    @Test
    public void testIsAllowed_Modules(){
       for(Location part : Location.values()){

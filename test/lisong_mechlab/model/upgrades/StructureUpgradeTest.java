@@ -73,7 +73,7 @@ public class StructureUpgradeTest{
       assertEquals(14, cut.getExtraSlots());
       assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
    }
-   
+
    /**
     * Test the rounding of endo-steel structure (all tonnage amounts are rounded up to the closest half ton)
     */

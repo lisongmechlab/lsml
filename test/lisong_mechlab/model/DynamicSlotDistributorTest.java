@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 
 import org.junit.Before;
@@ -36,9 +36,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicSlotDistributorTest{
-   MockLoadoutContainer   mlc = new MockLoadoutContainer();
-   List<ConfiguredComponent>      priorityOrder;
-   DynamicSlotDistributor cut;
+   MockLoadoutContainer      mlc = new MockLoadoutContainer();
+   List<ConfiguredComponent> priorityOrder;
+   DynamicSlotDistributor    cut;
 
    @Before
    public void setup(){

@@ -32,8 +32,8 @@ import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
@@ -73,7 +73,7 @@ public class LoadStockOperationTest{
       opstack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
 
       assertTrue(loadout.getMass() > 34.9);
-      
+
       // Execute
       opstack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
    }

@@ -101,7 +101,8 @@ public class ChassiDBTest{
     * @param aExpected
     *           The expected chassis in addition to the lookup.
     */
-   @Parameters({"SDR-5K, SDR-5K(C)", "SDR-5K(C), SDR-5K", "HBK-4P, HBK-4P(C)", "HBK-4P(C), HBK-4P", "CTF-3D, CTF-3D(C)", "CTF-3D(C), CTF-3D(C)", "TDR-5S(P), TDR-5S", "TDR-5S, TDR-5S(P)"})
+   @Parameters({"SDR-5K, SDR-5K(C)", "SDR-5K(C), SDR-5K", "HBK-4P, HBK-4P(C)", "HBK-4P(C), HBK-4P", "CTF-3D, CTF-3D(C)", "CTF-3D(C), CTF-3D(C)",
+         "TDR-5S(P), TDR-5S", "TDR-5S, TDR-5S(P)"})
    @Test
    public void testLookupVariations_LookupFromNormal(String aLookup, String aExpected){
       Collection<Chassis> ans = ChassisDB.lookupVariations(ChassisDB.lookup(aLookup));

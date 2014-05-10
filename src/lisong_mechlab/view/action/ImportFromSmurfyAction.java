@@ -239,8 +239,8 @@ public class ImportFromSmurfyAction extends AbstractAction{
          public void actionPerformed(ActionEvent aArg0){
             for(int i = 0; i < model.getRowCount(); ++i){
                if( (boolean)model.getValueAt(i, 0) ){
-                  ProgramInit.lsml().garageOperationStack.pushAndApply(new OpAddToGarage(ProgramInit.lsml().getGarage(),
-                                                                                                (Loadout)model.getValueAt(i, 1)));
+                  ProgramInit.lsml().garageOperationStack.pushAndApply(new OpAddToGarage(ProgramInit.lsml().getGarage(), (Loadout)model.getValueAt(i,
+                                                                                                                                                   1)));
                }
             }
             dialog.dispose();

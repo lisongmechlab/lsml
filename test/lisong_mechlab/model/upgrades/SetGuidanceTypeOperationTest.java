@@ -83,7 +83,7 @@ public class SetGuidanceTypeOperationTest{
       Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
       Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
       Mockito.when(mlc.loadout.canEquip(Matchers.any(Item.class))).thenReturn(true);
-      
+
       MissileWeapon lrm5 = Mockito.mock(MissileWeapon.class);
       MissileWeapon lrm5Artemis = Mockito.mock(MissileWeapon.class);
       MissileWeapon narc = Mockito.mock(MissileWeapon.class);

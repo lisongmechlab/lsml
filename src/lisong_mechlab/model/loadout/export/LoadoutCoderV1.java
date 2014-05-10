@@ -31,20 +31,20 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.OpRemoveItem;
-import lisong_mechlab.model.loadout.part.OpSetArmor;
+import lisong_mechlab.model.loadout.OpLoadStock;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.OpAddItem;
+import lisong_mechlab.model.loadout.component.OpRemoveItem;
+import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
@@ -69,8 +69,8 @@ public class LoadoutCoderV1 implements LoadoutCoder{
    private static final int        HEADER_MAGIC = 0xAC;
    private final Huffman1<Integer> huff;
    private final MessageXBar       xBar;
-   private final Location[]            partOrder    = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head, Location.CenterTorso,
-         Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
+   private final Location[]        partOrder    = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head,
+         Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
 
    public LoadoutCoderV1(MessageXBar anXBar){
       xBar = anXBar;
@@ -237,7 +237,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
                Item pItem = ItemDB.lookup(v);
                Item item = CompatibilityHelper.fixArtemis(pItem, loadout.getUpgrades().getGuidance());
-               if(item instanceof HeatSink){
+               if( item instanceof HeatSink ){
                   later.add(item); // Add heat sinks last after engine has been added
                   continue;
                }
@@ -287,8 +287,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
             for(Item item : new ArrayList<>(part.getItems())){
                if( item.getName().toLowerCase().contains("artemis") ){
                   stack.pushAndApply(new OpRemoveItem(xBar, part, item));
-                  stack.pushAndApply(new OpAddItem(xBar, part,
-                                                          ItemDB.lookup(item.getName().substring(0, item.getName().indexOf(" + ARTEMIS")))));
+                  stack.pushAndApply(new OpAddItem(xBar, part, ItemDB.lookup(item.getName().substring(0, item.getName().indexOf(" + ARTEMIS")))));
                }
             }
          }

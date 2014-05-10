@@ -165,7 +165,7 @@ public class OperationStack{
       while( nextUndo() != null && nextUndo().canCoalescele(anOp) ){
          undo();
       }
-      
+
       try{
          anOp.apply();
       }

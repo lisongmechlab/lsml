@@ -1,6 +1,6 @@
 package lisong_mechlab.model.metrics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
@@ -95,7 +95,7 @@ public class BurstDamageOverTimeTest{
       // Verify
       assertEquals(0.0, burst, 0.0);
    }
-   
+
    /**
     * {@link BurstDamageOverTime#calculate(double, double)} shall not include AMS!!
     * 

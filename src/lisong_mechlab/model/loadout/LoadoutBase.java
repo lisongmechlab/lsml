@@ -17,22 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
-
-import lisong_mechlab.model.chassi.OmniPod;
-import lisong_mechlab.model.loadout.OmniMechConfiguration;
+package lisong_mechlab.model.loadout;
 
 /**
- * This class models a configured {@link OmniPod} on an {@link OmniMechConfiguration}.
+ * This base class right 'ere models contains the common functionality needed for both clan and inner sphere mechs.
  * 
  * @author Li Song
  */
-public class ConfiguredOmniPod{
-
-   private OmniPod basePod;
-
-   public OmniPod getBasePod(){
-      return basePod;
-   }
+public class LoadoutBase{
 
 }

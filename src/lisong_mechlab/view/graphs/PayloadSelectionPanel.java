@@ -39,9 +39,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
@@ -146,15 +146,14 @@ public class PayloadSelectionPanel extends JPanel{
             @Override
             public void actionPerformed(ActionEvent aE){
                stack.pushAndApply(new OpSetStructureType(aUpgrades, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
-                                                                                                 : UpgradeDB.STANDARD_STRUCTURE));
+                                                                                          : UpgradeDB.STANDARD_STRUCTURE));
                aGraphPanel.updateGraph();
             }
          });
          ferroFibrous.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               stack.pushAndApply(new OpSetArmorType(aUpgrades, ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR
-                                                                                                : UpgradeDB.STANDARD_ARMOR));
+               stack.pushAndApply(new OpSetArmorType(aUpgrades, ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR));
                aGraphPanel.updateGraph();
             }
          });

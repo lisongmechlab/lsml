@@ -38,7 +38,7 @@ public class OpAddToGarage extends Operation{
 
    @Override
    public String describe(){
-      return "add "+loadout.getName()+" to garage";
+      return "add " + loadout.getName() + " to garage";
    }
 
    @Override

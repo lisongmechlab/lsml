@@ -35,10 +35,10 @@ public class SmurfyXMLTest{
                fail("Unexpected end of file!");
                return; // Make eclipse understand that this is the end of this function.
             }
-            
+
             String lineTrim = line.replaceAll("^\\s*", "").replaceAll("\\s*$", "");
             String expectedTrim = expected.replaceAll("^\\s*", "").replaceAll("\\s*$", "");
-            
+
             assertEquals(expectedTrim, lineTrim);
          }
       }

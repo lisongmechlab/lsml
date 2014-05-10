@@ -35,10 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.WString;
-
 import lisong_mechlab.model.DataCache;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.environment.EnvironmentDB;
@@ -48,6 +44,10 @@ import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.mwo_data.GameVFS;
 import lisong_mechlab.util.OS;
+
+import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
+import com.sun.jna.WString;
 
 /**
  * This class handles the initial program startup. Things that need to be done before the {@link LSML} instance is
@@ -141,7 +141,8 @@ public class ProgramInit extends JFrame{
             case Builtin:
                break;
             case ParseFailed:
-               JOptionPane.showMessageDialog(null, "Reading the game files failed. This is most likely due to changes in the last patch.\n\n"+"LSML will still function with data from the last successfull parse.\n"
+               JOptionPane.showMessageDialog(null, "Reading the game files failed. This is most likely due to changes in the last patch.\n\n"
+                                                   + "LSML will still function with data from the last successfull parse.\n"
                                                    + "Please update LSML to the latest version to be sure you have the latest game data.",
                                              "Game file parse failed", JOptionPane.INFORMATION_MESSAGE);
                break;

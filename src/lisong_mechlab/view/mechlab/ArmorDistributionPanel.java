@@ -33,10 +33,10 @@ import javax.swing.event.ChangeListener;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.loadout.OpDistributeArmor;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.OpSetArmor;
+import lisong_mechlab.model.loadout.OpDistributeArmor;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
@@ -65,11 +65,11 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 
    class ResetManualArmorOperation extends CompositeOperation{
       private final Loadout opLoadout = loadout;
-      
+
       public ResetManualArmorOperation(){
          super("reset manual armor");
          for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
-            if( loadoutPart.getInternalPart().getLocation().isTwoSided() ){
+            if( loadoutPart.getInternalComponent().getLocation().isTwoSided() ){
                addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
                addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.BACK, loadoutPart.getArmor(ArmorSide.BACK), false));
             }
@@ -78,22 +78,22 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
             }
          }
       }
-      
+
       @Override
-      protected void apply() {
+      protected void apply(){
          super.apply();
          updateArmorDistribution();
       }
-      
+
       @Override
-      protected void undo() {
+      protected void undo(){
          super.undo();
          updateArmorDistribution();
       }
 
       @Override
       public boolean canCoalescele(Operation aOperation){
-         if(aOperation != this && aOperation != null && aOperation instanceof ResetManualArmorOperation){
+         if( aOperation != this && aOperation != null && aOperation instanceof ResetManualArmorOperation ){
             ResetManualArmorOperation operation = (ResetManualArmorOperation)aOperation;
             return operation.opLoadout == opLoadout;
          }

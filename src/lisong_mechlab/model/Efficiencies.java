@@ -86,7 +86,7 @@ public class Efficiencies{
    public Efficiencies(MessageXBar aXBar){
       xBar = aXBar;
    }
-   
+
    public Efficiencies(Efficiencies aEfficiencies){
       speedTweak = aEfficiencies.speedTweak;
       coolRun = aEfficiencies.coolRun;
@@ -96,7 +96,7 @@ public class Efficiencies{
       xBar = aEfficiencies.xBar;
       fastfire = aEfficiencies.fastfire;
    }
-   
+
    /**
     * @return <code>true</code> if speed tweak is enabled (10% faster movement speed).
     */

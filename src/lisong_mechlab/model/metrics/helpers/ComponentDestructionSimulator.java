@@ -27,7 +27,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -51,10 +51,10 @@ import lisong_mechlab.util.MessageXBar.Message;
  */
 public class ComponentDestructionSimulator implements MessageXBar.Reader{
    private final ConfiguredComponent loadoutPart;
-   private final double      P_miss;
-   private final double      weaponAlpha;
-   private final int         numShots;
-   private final double      partHp;
+   private final double              P_miss;
+   private final double              weaponAlpha;
+   private final int                 numShots;
+   private final double              partHp;
 
    class ItemState{
       int    multiplicity;
@@ -99,7 +99,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
       }
       P_miss = p_miss;
 
-      partHp = loadoutPart.getInternalPart().getHitpoints();
+      partHp = loadoutPart.getInternalComponent().getHitpoints();
       weaponAlpha = ItemDB.lookup("AC/20 AMMO").getHealth();
       numShots = (int)Math.ceil(partHp / weaponAlpha);
    }
@@ -204,7 +204,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
    public void receive(Message aMsg){
       if( aMsg instanceof ConfiguredComponent.Message ){
          ConfiguredComponent.Message message = (ConfiguredComponent.Message)aMsg;
-         if( message.part == loadoutPart && message.affectsHeatOrDamage() ){
+         if( message.component == loadoutPart && message.affectsHeatOrDamage() ){
             simulate();
          }
       }

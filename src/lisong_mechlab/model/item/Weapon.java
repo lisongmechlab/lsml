@@ -87,7 +87,7 @@ public class Weapon extends HeatSource{
       ammoPerShot = aStatsWeapon.WeaponStats.ammoPerShot;
 
       projectileSpeed = aStatsWeapon.WeaponStats.speed;
-      
+
       if( aStatsWeapon.WeaponStats.minheatpenaltylevel != 0 ){
          ghostHeatGroupId = aStatsWeapon.WeaponStats.heatPenaltyID;
          ghostHeatMultiplier = aStatsWeapon.WeaponStats.heatpenalty;

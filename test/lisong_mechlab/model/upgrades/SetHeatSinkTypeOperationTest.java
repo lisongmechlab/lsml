@@ -19,7 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.OpStripLoadout;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;

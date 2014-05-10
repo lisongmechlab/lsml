@@ -25,11 +25,11 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.OpAddItem;
+import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
-import lisong_mechlab.model.loadout.part.OpSetArmor;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -75,7 +75,8 @@ public class DistributeArmorOperationTest{
       // Verify
       assertEquals(9.0 + 10, loadout.getMass(), 0.0);
       assertEquals(320, loadout.getArmor());
-      Mockito.verify(xBar, Mockito.atLeastOnce()).post(new ConfiguredComponent.Message(loadout.getPart(Location.CenterTorso), Type.ArmorChanged, true));
+      Mockito.verify(xBar, Mockito.atLeastOnce())
+             .post(new ConfiguredComponent.Message(loadout.getPart(Location.CenterTorso), Type.ArmorChanged, true));
    }
 
    /**
@@ -146,7 +147,7 @@ public class DistributeArmorOperationTest{
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       Loadout loadout = coder.parse("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
       for(ConfiguredComponent part : loadout.getPartLoadOuts()){
-         if( part.getInternalPart().getLocation().isTwoSided() ){
+         if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
          else{
@@ -338,7 +339,7 @@ public class DistributeArmorOperationTest{
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       Loadout loadout = coder.parse("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
       for(ConfiguredComponent part : loadout.getPartLoadOuts()){
-         if( part.getInternalPart().getLocation().isTwoSided() ){
+         if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
          else{
@@ -365,7 +366,7 @@ public class DistributeArmorOperationTest{
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       Loadout loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
       for(ConfiguredComponent part : loadout.getPartLoadOuts()){
-         if( part.getInternalPart().getLocation().isTwoSided() ){
+         if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
          else{
@@ -396,7 +397,7 @@ public class DistributeArmorOperationTest{
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       Loadout loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
       for(ConfiguredComponent part : loadout.getPartLoadOuts()){
-         if( part.getInternalPart().getLocation().isTwoSided() ){
+         if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
          else{

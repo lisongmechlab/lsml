@@ -49,7 +49,7 @@ import org.jfree.data.xy.XYSeries;
  */
 public class PayloadGraphPanel extends ChartPanel{
    public static class Entry{
-      private final String name;
+      private final String  name;
       private final Chassis representant;
 
       public Entry(Collection<Chassis> aCollection){

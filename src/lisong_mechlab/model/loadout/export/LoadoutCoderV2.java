@@ -33,18 +33,18 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.OpSetArmor;
+import lisong_mechlab.model.loadout.OpLoadStock;
+import lisong_mechlab.model.loadout.component.OpAddItem;
+import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
@@ -69,8 +69,8 @@ public class LoadoutCoderV2 implements LoadoutCoder{
    private static final int        HEADER_MAGIC = 0xAC + 1;
    private final Huffman1<Integer> huff;
    private final MessageXBar       xBar;
-   private final Location[]            partOrder    = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head, Location.CenterTorso,
-         Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
+   private final Location[]        partOrder    = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head,
+         Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
 
    public LoadoutCoderV2(MessageXBar anXBar){
       xBar = anXBar;

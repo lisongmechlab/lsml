@@ -192,8 +192,8 @@ public class WeaponStatsTable extends JTable{
 
    class ZebraRenderer extends DefaultTableCellRenderer{
       private static final long serialVersionUID = 291815378407610527L;
-      private final Color fg = new Color(0xf4f6f9);
-      private final Color fg_darker = new Color(0xe3ebf4);
+      private final Color       fg               = new Color(0xf4f6f9);
+      private final Color       fg_darker        = new Color(0xe3ebf4);
 
       @Override
       public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
@@ -230,7 +230,7 @@ public class WeaponStatsTable extends JTable{
       TableColumnModel tcm = getColumnModel();
       NumberFormat format = NumberFormat.getInstance();
       format.setMaximumFractionDigits(1);
-      
+
       tcm.getColumn(0).setCellRenderer(new ZebraRenderer());
       DecimalFormatRenderer dfr = new DecimalFormatRenderer(format);
       for(int i = 1; i < tcm.getColumnCount(); ++i){

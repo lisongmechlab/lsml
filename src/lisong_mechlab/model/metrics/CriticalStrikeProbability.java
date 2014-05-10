@@ -21,20 +21,23 @@ package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
- * This {@link ItemMetric} calculates the probability that the given item will be critically hit at least once by a shot. 
+ * This {@link ItemMetric} calculates the probability that the given item will be critically hit at least once by a
+ * shot.
  * <p>
- * If hit by an high alpha weapons such as PPC, Gauss Rifle, AC/20,10 the item will likely be destroyed if it's hp is 10 or less.
+ * If hit by an high alpha weapons such as PPC, Gauss Rifle, AC/20,10 the item will likely be destroyed if it's hp is 10
+ * or less.
  * 
  * @author Li Song
  */
 public class CriticalStrikeProbability implements ItemMetric{
-   public final static double CRIT_CHANCE[] = {0.25, 0.14, 0.03}; // 25% risk of 1 hit, 15% risk of 2 hits, 3% risk of 3
-                                                                  // hits
-   private final ConfiguredComponent  loadoutPart;
+   public final static double        CRIT_CHANCE[] = {0.25, 0.14, 0.03}; // 25% risk of 1 hit, 15% risk of 2 hits, 3%
+                                                                         // risk of 3
+                                                                         // hits
+   private final ConfiguredComponent loadoutPart;
 
    public CriticalStrikeProbability(ConfiguredComponent aLoadoutPart){
       loadoutPart = aLoadoutPart;
