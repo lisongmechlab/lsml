@@ -33,7 +33,7 @@ public class AmmoWeapon extends Weapon{
    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType){
       this(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.ammoType);
    }
-   
+
    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType, String aAmmoType){
       super(aStatsWeapon, aHardpointType);
       ammoTypeId = aAmmoType;

@@ -59,7 +59,7 @@ public class RenameOperationTest{
       assertEquals("Test (HBK-4J)", loadout.toString());
       verify(xBar).post(new Loadout.Message(loadout, Loadout.Message.Type.RENAME));
    }
-   
+
    /**
     * A <code>null</code> xbar doesn't cause an error.
     */

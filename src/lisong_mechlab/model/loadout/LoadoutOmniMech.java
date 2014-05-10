@@ -19,14 +19,14 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * @author Emily Björk
  */
-public class OmniMechConfiguration{
+public class LoadoutOmniMech{
    private final OmniPod omnipods[] = new OmniPod[Location.values().length];
 
    /**
@@ -45,7 +45,8 @@ public class OmniMechConfiguration{
     * This setter method is only intended to be used from package local {@link Operation}s. It's a raw, unchecked
     * accessor.
     * 
-    * @param aOmniPod The omnipod to set, it's put in it's dedicated slot.
+    * @param aOmniPod
+    *           The omnipod to set, it's put in it's dedicated slot.
     */
    void setOmniPod(OmniPod aOmniPod){
       omnipods[aOmniPod.getLocation().ordinal()] = aOmniPod;

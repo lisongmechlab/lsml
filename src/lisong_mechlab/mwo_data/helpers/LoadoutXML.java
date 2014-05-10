@@ -42,7 +42,8 @@ public class LoadoutXML{
       }
 
       public class HeatSinks{
-         @XStreamAlias("ItemId") // Typo in VTR-9SC
+         @XStreamAlias("ItemId")
+         // Typo in VTR-9SC
          @XStreamAsAttribute
          public int ItemID;
       }

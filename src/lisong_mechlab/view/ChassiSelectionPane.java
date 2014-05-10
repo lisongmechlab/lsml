@@ -43,9 +43,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
@@ -218,7 +218,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
       private final JLabel      missile          = new JLabel();
       private final JLabel      ams              = new JLabel();
       private final JLabel      ecm              = new JLabel();
-      private final Location        part;
+      private final Location    part;
 
       public PartColumn(Location aPart){
          super(0);
@@ -302,7 +302,8 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          table.addColumn(new NameColumn());
          table.addColumn(new SpeedColumn());
          table.addColumn(new TonsColumn());
-         for(Location part : Arrays.asList(Location.RightArm, Location.RightTorso, Location.CenterTorso, Location.LeftTorso, Location.LeftArm, Location.Head)){
+         for(Location part : Arrays.asList(Location.RightArm, Location.RightTorso, Location.CenterTorso, Location.LeftTorso, Location.LeftArm,
+                                           Location.Head)){
             table.addColumn(new PartColumn(part));
          }
          table.addColumn(new JumpJetsColumn());

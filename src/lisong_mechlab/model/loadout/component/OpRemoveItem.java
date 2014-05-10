@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
@@ -44,7 +44,7 @@ public class OpRemoveItem extends OpItemBase{
     */
    public OpRemoveItem(MessageXBar anXBar, ConfiguredComponent aLoadoutPart, Item aItem){
       super(anXBar, aLoadoutPart);
-      if(aItem instanceof Internal)
+      if( aItem instanceof Internal )
          throw new IllegalArgumentException("Can't remove internals!");
       item = aItem;
    }
@@ -67,7 +67,7 @@ public class OpRemoveItem extends OpItemBase{
 
    @Override
    public String describe(){
-      return "remove " + item.getName(loadoutPart.getLoadout().getUpgrades()) + " from " + loadoutPart.getInternalPart().getLocation();
+      return "remove " + item.getName(component.getLoadout().getUpgrades()) + " from " + component.getInternalComponent().getLocation();
    }
 
    @Override
@@ -77,7 +77,7 @@ public class OpRemoveItem extends OpItemBase{
 
    @Override
    public void apply(){
-      if( !loadoutPart.getItems().contains(item) )
+      if( !component.getItems().contains(item) )
          throw new IllegalArgumentException("Can't remove " + item + "!");
       removeItem(item);
    }

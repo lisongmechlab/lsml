@@ -33,7 +33,7 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
@@ -43,26 +43,26 @@ import lisong_mechlab.model.upgrades.Upgrades;
  * @author Emily Bjoerk
  */
 public class MockLoadoutContainer{
-   final public Chassis       chassi;
-   final public Loadout      loadout;
-   final public Upgrades     upgrades;
-   final public Efficiencies efficiencies;
-   final public InternalComponent ira;
-   final public InternalComponent irt;
-   final public InternalComponent irl;
-   final public InternalComponent ihd;
-   final public InternalComponent ict;
-   final public InternalComponent ilt;
-   final public InternalComponent ill;
-   final public InternalComponent ila;
-   final public ConfiguredComponent  ra;
-   final public ConfiguredComponent  rt;
-   final public ConfiguredComponent  rl;
-   final public ConfiguredComponent  hd;
-   final public ConfiguredComponent  ct;
-   final public ConfiguredComponent  lt;
-   final public ConfiguredComponent  ll;
-   final public ConfiguredComponent  la;
+   final public Chassis             chassi;
+   final public Loadout             loadout;
+   final public Upgrades            upgrades;
+   final public Efficiencies        efficiencies;
+   final public InternalComponent   ira;
+   final public InternalComponent   irt;
+   final public InternalComponent   irl;
+   final public InternalComponent   ihd;
+   final public InternalComponent   ict;
+   final public InternalComponent   ilt;
+   final public InternalComponent   ill;
+   final public InternalComponent   ila;
+   final public ConfiguredComponent ra;
+   final public ConfiguredComponent rt;
+   final public ConfiguredComponent rl;
+   final public ConfiguredComponent hd;
+   final public ConfiguredComponent ct;
+   final public ConfiguredComponent lt;
+   final public ConfiguredComponent ll;
+   final public ConfiguredComponent la;
 
    public MockLoadoutContainer(){
       chassi = mock(Chassis.class);
@@ -96,14 +96,14 @@ public class MockLoadoutContainer{
       when(ill.getLocation()).thenReturn(Location.LeftLeg);
       when(ila.getLocation()).thenReturn(Location.LeftArm);
 
-      when(ra.getInternalPart()).thenReturn(ira);
-      when(rt.getInternalPart()).thenReturn(irt);
-      when(rl.getInternalPart()).thenReturn(irl);
-      when(hd.getInternalPart()).thenReturn(ihd);
-      when(ct.getInternalPart()).thenReturn(ict);
-      when(lt.getInternalPart()).thenReturn(ilt);
-      when(ll.getInternalPart()).thenReturn(ill);
-      when(la.getInternalPart()).thenReturn(ila);
+      when(ra.getInternalComponent()).thenReturn(ira);
+      when(rt.getInternalComponent()).thenReturn(irt);
+      when(rl.getInternalComponent()).thenReturn(irl);
+      when(hd.getInternalComponent()).thenReturn(ihd);
+      when(ct.getInternalComponent()).thenReturn(ict);
+      when(lt.getInternalComponent()).thenReturn(ilt);
+      when(ll.getInternalComponent()).thenReturn(ill);
+      when(la.getInternalComponent()).thenReturn(ila);
 
       when(ra.getLoadout()).thenReturn(loadout);
       when(rt.getLoadout()).thenReturn(loadout);
@@ -113,7 +113,7 @@ public class MockLoadoutContainer{
       when(lt.getLoadout()).thenReturn(loadout);
       when(ll.getLoadout()).thenReturn(loadout);
       when(la.getLoadout()).thenReturn(loadout);
-      
+
       when(ra.toString()).thenReturn("RA");
       when(rt.toString()).thenReturn("RT");
       when(rl.toString()).thenReturn("RL");

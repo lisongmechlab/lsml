@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -49,21 +49,21 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class AddItemOperationTest{
    @Mock
-   private ConfiguredComponent  loadoutPart;
+   private ConfiguredComponent loadoutPart;
    @Mock
-   private Loadout      loadout;
+   private Loadout             loadout;
    @Mock
-   private Upgrades     upgrades;
+   private Upgrades            upgrades;
    @Mock
-   private MessageXBar  xBar;
+   private MessageXBar         xBar;
    @Mock
-   private InternalComponent internalPart;
+   private InternalComponent   internalPart;
 
    @Before
    public void setup(){
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
-      Mockito.when(loadoutPart.getInternalPart()).thenReturn(internalPart);
+      Mockito.when(loadoutPart.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
    }
 
@@ -75,7 +75,7 @@ public class AddItemOperationTest{
 
       assertTrue(cut.describe().contains("add"));
       assertTrue(cut.describe().contains("to"));
-      assertTrue(cut.describe().contains(loadoutPart.getInternalPart().getLocation().toString()));
+      assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
       assertTrue(cut.describe().contains(item.getName()));
    }
 
@@ -88,7 +88,7 @@ public class AddItemOperationTest{
 
       assertTrue(cut.describe().contains("add"));
       assertTrue(cut.describe().contains("to"));
-      assertTrue(cut.describe().contains(loadoutPart.getInternalPart().getLocation().toString()));
+      assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
       assertTrue(cut.describe().contains(item.getName(upgrades)));
    }
 
@@ -123,10 +123,10 @@ public class AddItemOperationTest{
 
       OpAddItem cut = new OpAddItem(xBar, testLoadout.getPart(Location.LeftTorso), ItemDB.CASE);
       cut.apply();
-      
+
       Mockito.verify(xBar).post(new NotificationMessage(Severity.WARNING, testLoadout, "C.A.S.E. together with XL engine has no effect."));
    }
-   
+
    /**
     * C.A.S.E. together with an XL engine should generate a warning notice
     */
@@ -138,7 +138,7 @@ public class AddItemOperationTest{
 
       OpAddItem cut = new OpAddItem(xBar, testLoadout.getPart(Location.RightTorso), ItemDB.CASE);
       cut.apply();
-      
+
       Mockito.verify(xBar).post(new NotificationMessage(Severity.WARNING, testLoadout, "C.A.S.E. together with XL engine has no effect."));
    }
 }

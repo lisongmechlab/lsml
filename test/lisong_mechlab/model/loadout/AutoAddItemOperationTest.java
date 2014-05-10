@@ -19,7 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -32,10 +34,10 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.DecodingException;
@@ -123,8 +125,8 @@ public class AutoAddItemOperationTest{
    }
 
    /**
-    * {@link OpAutoAddItem} shall be able to swap items in addition to just moving one at a time. Otherwise there
-    * we miss some solutions.
+    * {@link OpAutoAddItem} shall be able to swap items in addition to just moving one at a time. Otherwise there we
+    * miss some solutions.
     */
    @Test
    public void testMoveItem_SwapItems(){
@@ -162,8 +164,8 @@ public class AutoAddItemOperationTest{
    }
 
    /**
-    * {@link OpAutoAddItem} shall throw an {@link IllegalArgumentException} if the item cannot be auto added on
-    * any permutation of the loadout.
+    * {@link OpAutoAddItem} shall throw an {@link IllegalArgumentException} if the item cannot be auto added on any
+    * permutation of the loadout.
     */
    @Test(expected = IllegalArgumentException.class)
    public void testMoveItem_NotPossible(){
@@ -205,8 +207,8 @@ public class AutoAddItemOperationTest{
    }
 
    /**
-    * {@link OpAutoAddItem} shall try to move items in order to make room for the added item if there is no room
-    * in any component with a hard point but there are items that could be moved to make room.
+    * {@link OpAutoAddItem} shall try to move items in order to make room for the added item if there is no room in any
+    * component with a hard point but there are items that could be moved to make room.
     */
    @Test
    public void testMoveItem(){
@@ -232,8 +234,8 @@ public class AutoAddItemOperationTest{
    }
 
    /**
-    * {@link OpAutoAddItem} shall try to move items in order to make room for the added item if there is no room
-    * in any component with a hard point but there are items that could be moved to make room.
+    * {@link OpAutoAddItem} shall try to move items in order to make room for the added item if there is no room in any
+    * component with a hard point but there are items that could be moved to make room.
     */
    @Test
    public void testMoveItem_(){
@@ -260,8 +262,8 @@ public class AutoAddItemOperationTest{
    }
 
    /**
-    * {@link OpAutoAddItem} shall add an item to the first applicable slot in this loadout. Order the items are
-    * added is: RA, RT, RL, HD, CT, LT, LL, LA
+    * {@link OpAutoAddItem} shall add an item to the first applicable slot in this loadout. Order the items are added
+    * is: RA, RT, RL, HD, CT, LT, LL, LA
     */
    @Test
    public void testAddItem(){

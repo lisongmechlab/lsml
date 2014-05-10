@@ -1,4 +1,4 @@
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -25,21 +25,21 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveItemOperationTest{
    @Mock
-   private ConfiguredComponent  loadoutPart;
+   private ConfiguredComponent loadoutPart;
    @Mock
-   private Loadout      loadout;
+   private Loadout             loadout;
    @Mock
-   private Upgrades     upgrades;
+   private Upgrades            upgrades;
    @Mock
-   private MessageXBar  xBar;
+   private MessageXBar         xBar;
    @Mock
-   private InternalComponent internalPart;
+   private InternalComponent   internalPart;
 
    @Before
    public void setup(){
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
       Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
-      Mockito.when(loadoutPart.getInternalPart()).thenReturn(internalPart);
+      Mockito.when(loadoutPart.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
    }
 
@@ -51,7 +51,7 @@ public class RemoveItemOperationTest{
 
       assertTrue(cut.describe().contains("remove"));
       assertTrue(cut.describe().contains("from"));
-      assertTrue(cut.describe().contains(loadoutPart.getInternalPart().getLocation().toString()));
+      assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
       assertTrue(cut.describe().contains(item.getName()));
    }
 
@@ -64,7 +64,7 @@ public class RemoveItemOperationTest{
 
       assertTrue(cut.describe().contains("remove"));
       assertTrue(cut.describe().contains("from"));
-      assertTrue(cut.describe().contains(loadoutPart.getInternalPart().getLocation().toString()));
+      assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
       assertTrue(cut.describe().contains(item.getName(upgrades)));
    }
 

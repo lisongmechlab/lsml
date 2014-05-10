@@ -29,8 +29,8 @@ import java.util.Observable;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
@@ -40,13 +40,13 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutPartConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -102,7 +102,6 @@ public class Loadout implements Cloneable{
          result = prime * result + ((type == null) ? 0 : type.hashCode());
          return result;
       }
-      
 
       @Override
       public boolean affectsHeatOrDamage(){
@@ -138,11 +137,11 @@ public class Loadout implements Cloneable{
       return stream;
    }
 
-   private String                           name;
-   private final Chassis                    chassi;
+   private String                                       name;
+   private final Chassis                                chassi;
    private final TreeMap<Location, ConfiguredComponent> parts = new TreeMap<Location, ConfiguredComponent>();
-   private final Upgrades                   upgrades;
-   private final Efficiencies               efficiencies;
+   private final Upgrades                               upgrades;
+   private final Efficiencies                           efficiencies;
 
    /**
     * Will create a new, empty load out based on the given chassis. TODO: Is anXBar really needed?
@@ -188,7 +187,7 @@ public class Loadout implements Cloneable{
       upgrades = new Upgrades(aLoadout.upgrades);
       efficiencies = new Efficiencies(aLoadout.efficiencies);
       for(ConfiguredComponent loadoutPart : aLoadout.parts.values()){
-         parts.put(loadoutPart.getInternalPart().getLocation(), new ConfiguredComponent(loadoutPart, this));
+         parts.put(loadoutPart.getInternalComponent().getLocation(), new ConfiguredComponent(loadoutPart, this));
       }
       if( anXBar != null ){
          anXBar.post(new Message(this, Message.Type.CREATE));
@@ -336,9 +335,9 @@ public class Loadout implements Cloneable{
    /**
     * Gets a {@link List} of {@link ConfiguredComponent}s that could possibly house the given item.
     * <p>
-    * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponent}s in the
-    * returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponent}s not in the list are
-    * unable to hold the {@link Item}.
+    * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponent}s in
+    * the returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponent}s not in the
+    * list are unable to hold the {@link Item}.
     * <p>
     * This method is mainly useful for limiting search spaces for various optimization algorithms.
     * 
@@ -355,12 +354,13 @@ public class Loadout implements Cloneable{
       HardPointType hardpointType = anItem.getHardpointType();
 
       for(ConfiguredComponent part : getPartLoadOuts()){
-         if( part.getInternalPart().isAllowed(anItem) ){
+         if( part.getInternalComponent().isAllowed(anItem) ){
             candidates.add(part);
          }
 
          if( hardpointType != HardPointType.NONE ){
-            final int localFreeHardPoints = part.getInternalPart().getNumHardpoints(hardpointType) - part.getNumItemsOfHardpointType(hardpointType);
+            final int localFreeHardPoints = part.getInternalComponent().getNumHardpoints(hardpointType)
+                                            - part.getNumItemsOfHardpointType(hardpointType);
             globalFreeHardPoints += localFreeHardPoints;
          }
       }
@@ -435,7 +435,8 @@ public class Loadout implements Cloneable{
          return false;
 
       // Allow engine slot heat sinks as long as there is enough free mass.
-      if( anItem instanceof HeatSink && getPart(Location.CenterTorso).getNumEngineHeatsinks() < getPart(Location.CenterTorso).getNumEngineHeatsinksMax() )
+      if( anItem instanceof HeatSink
+          && getPart(Location.CenterTorso).getNumEngineHeatsinks() < getPart(Location.CenterTorso).getNumEngineHeatsinksMax() )
          return true;
 
       if( anItem.getNumCriticalSlots(upgrades) > getNumCriticalSlotsFree() )
@@ -493,11 +494,12 @@ public class Loadout implements Cloneable{
             for(ConfiguredComponent part : getPartLoadOuts()){
                if( part == candidate )
                   continue;
-               final int partOrdinal = part.getInternalPart().getLocation().ordinal();
+               final int partOrdinal = part.getInternalComponent().getLocation().ordinal();
                final int numCrits = toBeRemoved.getNumCriticalSlots(getUpgrades());
                if( slotsFree[partOrdinal] >= numCrits ){
                   HardPointType needHp = toBeRemoved.getHardpointType();
-                  if( needHp != HardPointType.NONE && part.getInternalPart().getNumHardpoints(needHp) - part.getNumItemsOfHardpointType(needHp) < 1 ){
+                  if( needHp != HardPointType.NONE
+                      && part.getInternalComponent().getNumHardpoints(needHp) - part.getNumItemsOfHardpointType(needHp) < 1 ){
                      continue;
                   }
                   slotsFree[partOrdinal] -= numCrits;

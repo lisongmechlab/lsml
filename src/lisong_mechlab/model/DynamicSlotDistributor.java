@@ -21,7 +21,7 @@ package lisong_mechlab.model;
 
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 
 /**
  * This class handles distribution of dynamic slots from Ferro Fibrous armor and Endo Steel internal structure.
@@ -57,7 +57,7 @@ public class DynamicSlotDistributor{
       if( structSlots < 1 )
          return 0;
 
-      final int filled = getCumulativeFreeSlots(aPart.getInternalPart().getLocation());
+      final int filled = getCumulativeFreeSlots(aPart.getInternalComponent().getLocation());
       final int freeSlotsInPart = Math.min(aPart.getNumCriticalSlotsFree(), Math.max(0, aPart.getNumCriticalSlotsFree() + filled - armorSlots));
       final int numSlotsToFill = structSlots + armorSlots;
       return Math.min(freeSlotsInPart, Math.max(numSlotsToFill - filled, 0));
@@ -75,7 +75,7 @@ public class DynamicSlotDistributor{
       if( armorSlots < 1 )
          return 0;
 
-      int filled = getCumulativeFreeSlots(aPart.getInternalPart().getLocation());
+      int filled = getCumulativeFreeSlots(aPart.getInternalComponent().getLocation());
       return Math.min(aPart.getNumCriticalSlotsFree(), Math.max(armorSlots - filled, 0));
    }
 

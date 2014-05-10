@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-
 public enum Location{
    Head("Head", "head", "HD"),
    LeftArm("Left Arm", "left_arm", "LA"),
@@ -60,8 +59,8 @@ public enum Location{
       return twosided;
    }
 
-   private final static Location[] left2right = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head, Location.CenterTorso, Location.LeftTorso,
-         Location.LeftLeg, Location.LeftArm       };
+   private final static Location[] left2right = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head,
+         Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
 
    public static Location[] leftToRight(){
       return left2right;
@@ -102,7 +101,7 @@ public enum Location{
    public String toMwoName(){
       return mwoName;
    }
-   
+
    public String toMwoRearName(){
       return mwoNameRear;
    }

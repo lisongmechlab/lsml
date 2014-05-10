@@ -69,7 +69,7 @@ public class TurningSpeedTest{
       Mockito.when(engine.getRating()).thenReturn(rating);
 
       TurningSpeed cut = new TurningSpeed(loadout);
-      assertEquals(modifier*factor * rating / mass, cut.calculate(), 0.0);
+      assertEquals(modifier * factor * rating / mass, cut.calculate(), 0.0);
    }
 
 }

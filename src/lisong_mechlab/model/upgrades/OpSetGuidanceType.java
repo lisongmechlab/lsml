@@ -23,9 +23,9 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.OpRemoveItem;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.OpAddItem;
+import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
@@ -39,7 +39,7 @@ import lisong_mechlab.util.OperationStack.Operation;
 public class OpSetGuidanceType extends OpUpgradeBase{
    private final GuidanceUpgrade oldValue;
    private final GuidanceUpgrade newValue;
-   private boolean operationReady = false;
+   private boolean               operationReady = false;
 
    /**
     * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link Upgrades} object This is useful only
@@ -92,19 +92,19 @@ public class OpSetGuidanceType extends OpUpgradeBase{
             xBar.post(new Message(ChangeMsg.GUIDANCE, upgrades));
       }
    }
-   
+
    private void prepareOperation(){
       if( operationReady )
          return;
       operationReady = true;
-      
+
       if( loadout != null ){
          if( newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree() )
             throw new IllegalArgumentException("Too few critical slots available in loadout!");
 
          for(ConfiguredComponent part : loadout.getPartLoadOuts()){
             if( newValue.getExtraSlots(part) > part.getNumCriticalSlotsFree() )
-               throw new IllegalArgumentException("Too few critical slots available in " + part.getInternalPart().getLocation() + "!");
+               throw new IllegalArgumentException("Too few critical slots available in " + part.getInternalComponent().getLocation() + "!");
          }
 
          if( newValue.getExtraTons(loadout) > loadout.getFreeMass() ){

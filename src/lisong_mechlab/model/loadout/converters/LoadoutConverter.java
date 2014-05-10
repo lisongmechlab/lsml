@@ -20,11 +20,11 @@
 package lisong_mechlab.model.loadout.converters;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.OpRename;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;

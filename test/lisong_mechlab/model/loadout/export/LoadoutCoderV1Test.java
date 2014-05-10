@@ -72,7 +72,7 @@ public class LoadoutCoderV1Test{
       Chassis chassi = ChassisDB.lookup(m.group(1));
       String lsml = m.group(2);
       Loadout reference = new Loadout(chassi.getName(), xBar);
-      
+
       // Execute
       Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
@@ -117,13 +117,13 @@ public class LoadoutCoderV1Test{
 
       sc.close();
    }
-   
+
    /**
     * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
     * sinks.
     * 
     * @throws DecodingException
-    * @throws EncodingException 
+    * @throws EncodingException
     */
    @Test
    public void testDecodeHeatsinksBeforeEngine() throws DecodingException, EncodingException{

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.item.HeatSink;
@@ -54,7 +54,7 @@ public class OpStripComponent extends CompositeOperation{
             addOp(new OpRemoveItem(anXBar, aLoadoutPart, item));
          }
       }
-      if( aLoadoutPart.getInternalPart().getLocation().isTwoSided() ){
+      if( aLoadoutPart.getInternalComponent().getLocation().isTwoSided() ){
          addOp(new OpSetArmor(anXBar, aLoadoutPart, ArmorSide.FRONT, 0, false));
          addOp(new OpSetArmor(anXBar, aLoadoutPart, ArmorSide.BACK, 0, false));
       }

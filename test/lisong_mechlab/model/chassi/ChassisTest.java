@@ -46,7 +46,7 @@ public class ChassisTest{
    public void getParts_NoMod(){
       // Setup
       Chassis cut = ChassisDB.lookup("Ilya Muromets");
-      
+
       // Execute
       cut.getInternalParts().add(null);
    }
@@ -55,11 +55,11 @@ public class ChassisTest{
    public void testIsHero(){
       Chassis ilya = ChassisDB.lookup("Ilya Muromets");
       assertEquals(ChassisVariant.HERO, ilya.getVariantType());
-      
+
       Chassis ctf3d = ChassisDB.lookup("CTF-3D");
       assertEquals(ChassisVariant.NORMAL, ctf3d.getVariantType());
    }
-   
+
    @Parameters({"HBK-4J, HBK-4P", "CTF-3D, Ilya Muromets"})
    @Test
    public void testIsSameSeries(String aChassiA, String aChassiB){

@@ -29,9 +29,9 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.OpRemoveItem;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.OpAddItem;
+import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -43,14 +43,14 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpAutoAddItem extends OpLoadoutBase{
    private class Node implements Comparable<Node>{
-      final Loadout data;
-      final Location    source;
-      final Location    target;
-      final Item    item;
-      final Node    parent;
-      final int     score;
+      final Loadout  data;
+      final Location source;
+      final Location target;
+      final Item     item;
+      final Node     parent;
+      final int      score;
 
-      final Item    targetItem;
+      final Item     targetItem;
 
       Node(Loadout aRoot, Item aItem){
          parent = null;
@@ -111,22 +111,23 @@ public class OpAutoAddItem extends OpLoadoutBase{
       private int score(){
          int maxFree = 0;
          for(Location part : validParts){
-            maxFree = Math.max(maxFree, data.getPart(part).getNumCriticalSlotsFree() * (data.getPart(part).getInternalPart().isAllowed(item) ? 1 : 0));
+            maxFree = Math.max(maxFree, data.getPart(part).getNumCriticalSlotsFree()
+                                        * (data.getPart(part).getInternalComponent().isAllowed(item) ? 1 : 0));
          }
          return maxFree;
       }
    }
 
    private final Item           itemToPlace;
-   private final List<Location>     validParts = new ArrayList<>();
-   private final List<Location>     partTraversalOrder;
+   private final List<Location> validParts = new ArrayList<>();
+   private final List<Location> partTraversalOrder;
    private final OperationStack stack      = new OperationStack(0);
 
    public OpAutoAddItem(Loadout aLoadout, MessageXBar anXBar, Item anItem){
       super(aLoadout, anXBar, "auto place item");
       itemToPlace = anItem;
       for(ConfiguredComponent part : aLoadout.getCandidateLocationsForItem(itemToPlace)){
-         validParts.add(part.getInternalPart().getLocation());
+         validParts.add(part.getInternalComponent().getLocation());
       }
       partTraversalOrder = getPartTraversalOrder();
 
@@ -230,22 +231,22 @@ public class OpAutoAddItem extends OpLoadoutBase{
             // of the search tree anyway when we move an item from that component back to this.
             ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
          }
-         else if( dstPart.getInternalPart().isAllowed(aItem) ){
+         else if( dstPart.getInternalComponent().isAllowed(aItem) ){
             // The part couldn't take the item directly, see if we can swap with some item in the part.
             final int minItemSize = aItem.getNumCriticalSlots(tempLoadout.getUpgrades()) - dstPart.getNumCriticalSlotsFree();
             HardPointType requiredType = aItem.getHardpointType();
             if( requiredType != HardPointType.NONE
-                && dstPart.getNumItemsOfHardpointType(requiredType) < dstPart.getInternalPart().getNumHardpoints(requiredType) ){
+                && dstPart.getNumItemsOfHardpointType(requiredType) < dstPart.getInternalComponent().getNumHardpoints(requiredType) ){
                requiredType = HardPointType.NONE; // There is at least one free hard point, we don't need to swap with a
                                                   // item of the required type.
             }
             for(Item item : dstPart.getItems()){
                // The item has to clear enough room to make our item fit.
-               if(item instanceof HeatSink && dstPart.getNumEngineHeatsinks() > 0)
-                  continue; // Engine HS will not clear slots... 
+               if( item instanceof HeatSink && dstPart.getNumEngineHeatsinks() > 0 )
+                  continue; // Engine HS will not clear slots...
                if( item.getNumCriticalSlots(tempLoadout.getUpgrades()) < minItemSize )
                   continue;
-               
+
                // The item has to free a hard point of the required type if applicable.
                if( requiredType != HardPointType.NONE && item.getHardpointType() != requiredType )
                   continue;
@@ -262,8 +263,8 @@ public class OpAutoAddItem extends OpLoadoutBase{
    }
 
    private List<Location> getPartTraversalOrder(){
-      Location[] partOrder = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head, Location.CenterTorso, Location.LeftTorso, Location.LeftLeg,
-            Location.LeftArm};
+      Location[] partOrder = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head, Location.CenterTorso,
+            Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
 
       List<Location> order = new ArrayList<>();
       for(Location part : partOrder){

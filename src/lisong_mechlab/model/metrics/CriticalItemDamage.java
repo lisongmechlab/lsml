@@ -21,7 +21,7 @@ package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.util.BinomialDistribution;
 
 /**
@@ -34,7 +34,7 @@ import lisong_mechlab.util.BinomialDistribution;
  * @author Emily Björk
  */
 public class CriticalItemDamage implements ItemMetric{
-   private final ConfiguredComponent   loadoutPart;
+   private final ConfiguredComponent loadoutPart;
 
    public CriticalItemDamage(ConfiguredComponent aLoadoutPart){
       loadoutPart = aLoadoutPart;

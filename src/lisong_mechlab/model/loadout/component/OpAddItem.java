@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
@@ -67,7 +67,7 @@ public class OpAddItem extends OpItemBase{
 
    @Override
    public String describe(){
-      return "add " + item.getName(loadoutPart.getLoadout().getUpgrades()) + " to " + loadoutPart.getInternalPart().getLocation();
+      return "add " + item.getName(component.getLoadout().getUpgrades()) + " to " + component.getInternalComponent().getLocation();
    }
 
    @Override
@@ -77,9 +77,9 @@ public class OpAddItem extends OpItemBase{
 
    @Override
    public void apply(){
-      if( !loadoutPart.getLoadout().canEquip(item) )
+      if( !component.getLoadout().canEquip(item) )
          throw new IllegalArgumentException("Can't add " + item + "!");
-      if( !loadoutPart.canEquip(item) )
+      if( !component.canEquip(item) )
          throw new IllegalArgumentException("Can't add " + item + "!");
       addItem(item);
    }

@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.item.Engine;
 
 import org.junit.Test;

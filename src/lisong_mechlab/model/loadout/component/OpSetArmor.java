@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
@@ -31,13 +31,13 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class OpSetArmor extends Operation{
-   private final ArmorSide   side;
-   private final int         amount;
-   private int               oldAmount = -1;
-   private boolean           oldManual;
-   private final MessageXBar xBar;
+   private final ArmorSide           side;
+   private final int                 amount;
+   private int                       oldAmount = -1;
+   private boolean                   oldManual;
+   private final MessageXBar         xBar;
    private final ConfiguredComponent loadoutPart;
-   private final boolean     manual;
+   private final boolean             manual;
 
    /**
     * Sets the armor for a given side of the component. Throws if the operation will fail.
@@ -66,7 +66,7 @@ public class OpSetArmor extends Operation{
       if( amount < 0 )
          throw new IllegalArgumentException("Armor must be positive!");
 
-      if( amount > loadoutPart.getInternalPart().getArmorMax() )
+      if( amount > loadoutPart.getInternalComponent().getArmorMax() )
          throw new IllegalArgumentException("Armor must be less than components max armor!");
    }
 
@@ -115,7 +115,7 @@ public class OpSetArmor extends Operation{
                for(ConfiguredComponent otherPart : loadoutPart.getLoadout().getPartLoadOuts()){
                   if( loadoutPart != otherPart && otherPart.allowAutomaticArmor() ){
                      freed += otherPart.getArmorTotal();
-                     if( otherPart.getInternalPart().getLocation().isTwoSided() ){
+                     if( otherPart.getInternalComponent().getLocation().isTwoSided() ){
                         otherPart.setArmor(ArmorSide.FRONT, 0, true);
                         otherPart.setArmor(ArmorSide.BACK, 0, true);
                      }

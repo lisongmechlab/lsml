@@ -44,10 +44,10 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent.Message.Type;
-import lisong_mechlab.model.loadout.part.OpRemoveItem;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.OpAddItem;
+import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.metrics.CriticalItemDamage;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
 import lisong_mechlab.model.metrics.ItemEffectiveHP;
@@ -63,7 +63,7 @@ import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
    private static final long                   serialVersionUID = 5995694414450060827L;
-   private final ConfiguredComponent                   part;
+   private final ConfiguredComponent           part;
    private final DynamicSlotDistributor        slotDistributor;
    private OperationStack                      opStack;
 
@@ -98,7 +98,8 @@ public class PartList extends JList<Item>{
          sb.append("</b>");
 
          sb.append("<table width=\"100%\" cellspacing=\"1\" border=\"0\" cellpadding=\"0\">");
-         sb.append("<tr><td width=\"30%\">Critical hit:</td><td> ").append(df.format(100 * criticalStrikeProbability.calculate(aItem))).append("%</td></tr>");
+         sb.append("<tr><td width=\"30%\">Critical hit:</td><td> ").append(df.format(100 * criticalStrikeProbability.calculate(aItem)))
+           .append("%</td></tr>");
          sb.append("<tr><td>Destroyed:</td><td> ").append(df2.format(100 * cds.getProbabilityOfDestruction(aItem))).append("%</td></tr>");
          sb.append("<tr><td>HP:</td><td> ").append(aItem.getHealth()).append("</td></tr>");
          sb.append("<tr><td>SIE-HP:</td><td> ").append(df.format(effectiveHP.calculate(aItem))).append("</td></tr>");
@@ -228,7 +229,7 @@ public class PartList extends JList<Item>{
 
          int c = 0;
          if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            for(Item item : part.getInternalPart().getInternalItems()){
+            for(Item item : part.getInternalComponent().getInternalItems()){
                c += item.getNumCriticalSlots(null);
             }
          }
@@ -270,7 +271,7 @@ public class PartList extends JList<Item>{
       Pair<ListEntryType, Item> getElementTypeAt(int arg0){
          List<Item> items = new ArrayList<>(part.getItems());
          if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            items.removeAll(part.getInternalPart().getInternalItems());
+            items.removeAll(part.getInternalComponent().getInternalItems());
          }
          int numEngineHs = part.getNumEngineHeatsinks();
          boolean foundhs = true;
@@ -328,7 +329,7 @@ public class PartList extends JList<Item>{
 
       @Override
       public int getSize(){
-         return part.getInternalPart().getNumCriticalslots() - compactCompensationSlots;
+         return part.getInternalComponent().getNumCriticalslots() - compactCompensationSlots;
       }
 
       @Override
@@ -342,7 +343,7 @@ public class PartList extends JList<Item>{
             if( aMsg instanceof ConfiguredComponent.Message && ((ConfiguredComponent.Message)aMsg).type == Type.ArmorChanged ){
                return; // Don't react to armor changes
             }
-            fireContentsChanged(this, 0, part.getInternalPart().getNumCriticalslots());
+            fireContentsChanged(this, 0, part.getInternalComponent().getNumCriticalslots());
          }
       }
    }

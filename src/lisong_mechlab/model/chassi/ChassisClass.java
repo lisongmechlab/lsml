@@ -20,8 +20,8 @@
 package lisong_mechlab.model.chassi;
 
 /**
- * This enumeration represents the weight class of a chassis: Light, Medium, Heavy or Assault. It provides a way to determine
- * weight class from tonnage.
+ * This enumeration represents the weight class of a chassis: Light, Medium, Heavy or Assault. It provides a way to
+ * determine weight class from tonnage.
  * 
  * @author Emily Björk
  */

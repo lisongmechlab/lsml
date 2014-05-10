@@ -82,12 +82,12 @@ public class ItemInfoPanel extends JPanel{
                                     + "For beam weapons this incudes the beam's burn time.");
       cycleTime.setToolTipText("The time it takes for the weapon to cool down before the next shot.");
       burntime.setToolTipText("The time the beam is active and needs to be kept on the target to deal full damage. After this the weapon starts to cool down.");
-     
+
       {
          JPanel stats = new JPanel();
          add(stats, BorderLayout.NORTH);
          stats.setLayout(new BoxLayout(stats, BoxLayout.Y_AXIS));
-         
+
          JPanel basicInfo = new JPanel();
          basicInfo.setLayout(new BoxLayout(basicInfo, BoxLayout.X_AXIS));
          basicInfo.setAlignmentX(LEFT_ALIGNMENT);
@@ -121,7 +121,7 @@ public class ItemInfoPanel extends JPanel{
          damageInfo.add(Box.createHorizontalGlue());
          damageInfo.add(dps);
          stats.add(damageInfo);
-         
+
          JPanel damageInfo2 = new JPanel();
          damageInfo2.setLayout(new BoxLayout(damageInfo2, BoxLayout.X_AXIS));
          damageInfo2.setAlignmentX(LEFT_ALIGNMENT);
@@ -216,8 +216,8 @@ public class ItemInfoPanel extends JPanel{
       dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", anUpgrades, aEfficiencies)));
 
       range.setVisible(true);
-      range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "") + df0.format(aWeapon.getRangeLong()) + " / "
-                    + df0.format(aWeapon.getRangeMax()));
+      range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "")
+                    + df0.format(aWeapon.getRangeLong()) + " / " + df0.format(aWeapon.getRangeMax()));
 
       if( aWeapon instanceof AmmoWeapon ){
          AmmoWeapon ammoWeapon = (AmmoWeapon)aWeapon;

@@ -27,7 +27,7 @@ import java.util.List;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
@@ -45,15 +45,15 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CriticalItemDamageTest{
-   List<Item>         items = new ArrayList<>();
+   List<Item>          items = new ArrayList<>();
    @Mock
-   ConfiguredComponent        loadoutPart;
+   ConfiguredComponent loadoutPart;
    @Mock
-   Loadout            loadout;
+   Loadout             loadout;
    @Mock
-   Upgrades           upgrades;
+   Upgrades            upgrades;
    @InjectMocks
-   CriticalItemDamage cut;
+   CriticalItemDamage  cut;
 
    @Before
    public void setup(){

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,21 +53,21 @@ public class ConfiguredComponent{
          ItemAdded, ItemRemoved, ArmorChanged, ItemsChanged, ArmorDistributionUpdateRequest
       }
 
-      public final ConfiguredComponent part;
+      public final ConfiguredComponent component;
 
-      public final Type                   type;
+      public final Type                type;
 
       /**
        * True if this message was automatically in response to a change.
        */
-      public final boolean                automatic;
+      public final boolean             automatic;
 
       public Message(ConfiguredComponent aPart, Type aType){
          this(aPart, aType, false);
       }
 
       public Message(ConfiguredComponent aPart, Type aType, boolean aAutomatic){
-         part = aPart;
+         component = aPart;
          type = aType;
          automatic = aAutomatic;
       }
@@ -76,14 +76,14 @@ public class ConfiguredComponent{
       public boolean equals(Object obj){
          if( obj instanceof Message ){
             Message other = (Message)obj;
-            return part == other.part && type == other.type && automatic == other.automatic;
+            return component == other.component && type == other.type && automatic == other.automatic;
          }
          return false;
       }
 
       @Override
       public boolean isForMe(Loadout aLoadout){
-         return aLoadout.getPartLoadOuts().contains(part);
+         return aLoadout.getPartLoadOuts().contains(component);
       }
 
       @Override
@@ -93,7 +93,7 @@ public class ConfiguredComponent{
 
       @Override
       public String toString(){
-         return type.toString() + " for " + part.getInternalPart().getLocation().toString() + " of " + part.getLoadout();
+         return type.toString() + " for " + component.getInternalComponent().getLocation().toString() + " of " + component.getLoadout();
       }
    }
 
@@ -147,7 +147,7 @@ public class ConfiguredComponent{
    @Override
    public String toString(){
       StringBuilder sb = new StringBuilder();
-      if( getInternalPart().getLocation().isTwoSided() ){
+      if( getInternalComponent().getLocation().isTwoSided() ){
          sb.append(getArmor(ArmorSide.FRONT)).append("/").append(getArmor(ArmorSide.BACK));
       }
       else{
@@ -163,7 +163,7 @@ public class ConfiguredComponent{
    }
 
    public boolean canEquip(Item anItem){
-      if( !getInternalPart().isAllowed(anItem) )
+      if( !getInternalComponent().isAllowed(anItem) )
          return false;
 
       if( anItem instanceof HeatSink && getNumEngineHeatsinks() < getNumEngineHeatsinksMax() ){
@@ -180,7 +180,7 @@ public class ConfiguredComponent{
 
       // Check enough free hard points
       if( anItem.getHardpointType() != HardPointType.NONE
-          && getNumItemsOfHardpointType(anItem.getHardpointType()) >= getInternalPart().getNumHardpoints(anItem.getHardpointType()) ){
+          && getNumItemsOfHardpointType(anItem.getHardpointType()) >= getInternalComponent().getNumHardpoints(anItem.getHardpointType()) ){
          return false; // Not enough hard points!
       }
       return true;
@@ -222,12 +222,12 @@ public class ConfiguredComponent{
    public int getArmorMax(ArmorSide anArmorSide){
       switch( anArmorSide ){
          case BACK:
-            return getInternalPart().getArmorMax() - getArmor(ArmorSide.FRONT);
+            return getInternalComponent().getArmorMax() - getArmor(ArmorSide.FRONT);
          case FRONT:
-            return getInternalPart().getArmorMax() - getArmor(ArmorSide.BACK);
+            return getInternalComponent().getArmorMax() - getArmor(ArmorSide.BACK);
          default:
          case ONLY:
-            return getInternalPart().getArmorMax();
+            return getInternalComponent().getArmorMax();
       }
    }
 
@@ -239,7 +239,7 @@ public class ConfiguredComponent{
       return sum;
    }
 
-   public InternalComponent getInternalPart(){
+   public InternalComponent getInternalComponent(){
       return internalComponent;
    }
 
@@ -255,12 +255,13 @@ public class ConfiguredComponent{
       return Collections.unmodifiableList(items);
    }
 
+   @Deprecated
    public Loadout getLoadout(){
       return loadout;
    }
 
    public int getNumCriticalSlotsFree(){
-      return getInternalPart().getNumCriticalslots() - getNumCriticalSlotsUsed();
+      return getInternalComponent().getNumCriticalslots() - getNumCriticalSlotsUsed();
    }
 
    public int getNumCriticalSlotsUsed(){

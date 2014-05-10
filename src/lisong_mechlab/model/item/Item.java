@@ -115,7 +115,8 @@ public class Item implements Comparable<Item>{
     *           The {@link Upgrades} to check against.
     * @return <code>true</code> if this {@link Item} is compatible with the given upgrades.
     */
-   @SuppressWarnings("unused") // Interface
+   @SuppressWarnings("unused")
+   // Interface
    public boolean isCompatible(Upgrades aUpgrades){
       return true;
    }

@@ -17,38 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.mwo_data;
+package lisong_mechlab.model.loadout.component;
 
-import java.util.List;
-
-import lisong_mechlab.mwo_data.helpers.HardPointWeaponSlot.Attachment;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 
 /**
- * This class represents a WeaponDoorSet element in the data files.
+ * This class models a configured {@link OmniPod} on an {@link LoadoutOmniMech}.
  * 
  * @author Emily Björk
  */
-public class WeaponDoorSet{
-   @XStreamAsAttribute
-   public int id;
+public class ConfiguredOmniPod extends ConfiguredComponent{
 
-   public class WeaponDoor{
-      @XStreamAsAttribute
-      double                  closedDamageFactor;
-
-      @XStreamAsAttribute
-      public String           AName;
-
-      @XStreamAsAttribute
-      double                  firingdelay;
-
-      @XStreamImplicit(itemFieldName = "Attachment")
-      public List<Attachment> attachments;
+   /**
+    * @param aConfiguredOmnipod
+    * @param aLoadout
+    */
+   public ConfiguredOmniPod(ConfiguredOmniPod aConfiguredOmnipod, Loadout aLoadout){
+      super(aConfiguredOmnipod, aLoadout);
+      // TODO Auto-generated constructor stub
    }
 
-   @XStreamImplicit(itemFieldName = "WeaponDoor")
-   public List<WeaponDoor> weaponDoors;
+   public OmniPod getInternalOmniPod(){
+      return (OmniPod)getInternalComponent();
+   }
+
 }

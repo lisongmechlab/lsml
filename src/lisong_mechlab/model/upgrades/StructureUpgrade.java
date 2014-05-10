@@ -54,7 +54,7 @@ public class StructureUpgrade extends Upgrade{
     */
    public double getStructureMass(Chassis aChassis){
       double ans = aChassis.getMassMax() * internalStructurePct;
-      
-      return Math.round(10*ans / 5) * 0.5;
+
+      return Math.round(10 * ans / 5) * 0.5;
    }
 }

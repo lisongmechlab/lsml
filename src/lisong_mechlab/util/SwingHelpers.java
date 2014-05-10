@@ -52,9 +52,9 @@ public class SwingHelpers{
       aComponent.getInputMap(JComponent.WHEN_FOCUSED).put(aKeyStroke, aCommand);
       aComponent.getActionMap().put(aCommand, anAction);
    }
-   
+
    public static void hypertextLink(final JLabel aLabel, final String aUrl, String aText){
-      aLabel.setText("<html><a href=\"" + aUrl + "\">"+aText+"</a></html>");
+      aLabel.setText("<html><a href=\"" + aUrl + "\">" + aText + "</a></html>");
       aLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
       aLabel.addMouseListener(new MouseAdapter(){
          @Override

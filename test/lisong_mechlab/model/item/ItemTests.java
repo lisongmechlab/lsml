@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -54,7 +55,7 @@ public class ItemTests{
       assertEquals(3.75, jj.getDuration(), 0);
       assertEquals(0.1, jj.getJumpHeat(), 0);
       assertEquals(39.3, jj.getForce(), 0);
-      
+
       assertTrue(jj.getMinTons() > 0);
       assertTrue(jj.getMaxTons() > 0);
       assertTrue(jj.getMaxTons() > jj.getMinTons());
@@ -84,7 +85,7 @@ public class ItemTests{
       assertEquals(0.2, std180.getHeat(), 0.0);
       assertEquals(0.2, xl330.getHeat(), 0.0);
       assertEquals(0.2, xl335.getHeat(), 0.0);
-      
+
       assertEquals(EngineType.STD, std175.getType());
       assertEquals(EngineType.STD, std180.getType());
       assertEquals(EngineType.XL, xl330.getType());

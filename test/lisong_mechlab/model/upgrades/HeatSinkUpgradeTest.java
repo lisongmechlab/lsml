@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-
 /**
  * Test suite for {@link HeatSinkUpgrade}
  * 

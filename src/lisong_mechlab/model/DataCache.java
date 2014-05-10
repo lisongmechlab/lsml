@@ -642,7 +642,7 @@ public class DataCache{
             boolean isRear = Location.isRear(xmlComponent.ComponentName);
             int armorFront = isRear ? 0 : xmlComponent.Armor;
             int armorBack = isRear ? xmlComponent.Armor : 0;
-            
+
             // Merge front and back sides
             Iterator<StockComponent> it = components.iterator();
             while( it.hasNext() ){
@@ -655,7 +655,7 @@ public class DataCache{
                   break;
                }
             }
-            
+
             StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(partType, armorFront, armorBack, items);
             components.add(stockComponent);
          }
@@ -669,7 +669,7 @@ public class DataCache{
             armorId = stockXML.upgrades.armor.ItemID;
             structureId = stockXML.upgrades.structure.ItemID;
             heatsinkId = stockXML.upgrades.heatsinks.ItemID;
-            guidanceId = stockXML.upgrades.artemis.Equipped != 0  ? 3050 : 3051;
+            guidanceId = stockXML.upgrades.artemis.Equipped != 0 ? 3050 : 3051;
          }
          StockLoadout loadout = new StockLoadout(chassis.getMwoId(), components, armorId, structureId, heatsinkId, guidanceId);
          ans.add(loadout);

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
@@ -33,8 +33,8 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpSetArmorSymmetric extends CompositeOperation{
    private final ConfiguredComponent part;
-   private final ArmorSide   side;
-   private final boolean     manual;
+   private final ArmorSide           side;
+   private final boolean             manual;
 
    /**
     * Creates a new {@link OpSetArmorSymmetric}.
@@ -42,7 +42,8 @@ public class OpSetArmorSymmetric extends CompositeOperation{
     * @param anXBar
     *           The {@link MessageXBar} to announce changes to.
     * @param aLoadoutPart
-    *           The primary side {@link ConfiguredComponent} to change (the opposite side will be changed automatically).
+    *           The primary side {@link ConfiguredComponent} to change (the opposite side will be changed
+    *           automatically).
     * @param anArmorSide
     *           The side to set the armor for.
     * @param anArmorAmount
@@ -60,7 +61,7 @@ public class OpSetArmorSymmetric extends CompositeOperation{
       side = anArmorSide;
       manual = aManualSet;
 
-      Location otherSide = aLoadoutPart.getInternalPart().getLocation().oppositeSide();
+      Location otherSide = aLoadoutPart.getInternalComponent().getLocation().oppositeSide();
       if( otherSide == null )
          throw new IllegalArgumentException("Symmetric armor operation is only usable with comoponents that have an opposing side.");
 
@@ -82,7 +83,7 @@ public class OpSetArmorSymmetric extends CompositeOperation{
       OpSetArmorSymmetric that = (OpSetArmorSymmetric)aOperation;
       if( that.manual != manual )
          return false;
-      if( that.part != part  && that.part != part.getLoadout().getPart(part.getInternalPart().getLocation().oppositeSide()))
+      if( that.part != part && that.part != part.getLoadout().getPart(part.getInternalComponent().getLocation().oppositeSide()) )
          return false;
       if( that.side != side )
          return false;

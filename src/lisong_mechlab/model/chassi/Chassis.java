@@ -45,38 +45,38 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Chassis{
    @XStreamAsAttribute
-   private final ChassisClass             chassiclass;
+   private final ChassisClass                     chassiclass;
    @XStreamAsAttribute
-   private final String                  name;
+   private final String                           name;
    @XStreamAsAttribute
-   private final String                  shortName;
+   private final String                           shortName;
    @XStreamAsAttribute
-   private final String                  mwoName;
+   private final String                           mwoName;
    @XStreamAsAttribute
-   private final int                     maxTons;
+   private final int                              maxTons;
    private final Map<Location, InternalComponent> parts;
    @XStreamAsAttribute
-   private final int                     maxJumpJets;
+   private final int                              maxJumpJets;
    @XStreamAsAttribute
-   private final int                     engineMin;
+   private final int                              engineMin;
    @XStreamAsAttribute
-   private final int                     engineMax;
+   private final int                              engineMax;
    @XStreamAsAttribute
-   private final double                  engineFactor;
+   private final double                           engineFactor;
    @XStreamAsAttribute
-   private final int                     mwoId;
+   private final int                              mwoId;
    @XStreamAsAttribute
-   private final double                  turnFactor;
+   private final double                           turnFactor;
    @XStreamAsAttribute
-   private final double                  twistFactor;
+   private final double                           twistFactor;
    @XStreamAsAttribute
-   private final ChassisVariant           variant;
+   private final ChassisVariant                   variant;
    @XStreamAsAttribute
-   private final int                     baseVariant;
+   private final int                              baseVariant;
    @XStreamAsAttribute
-   private final String                  series;
+   private final String                           series;
    @XStreamAsAttribute
-   private final String                  seriesShort;
+   private final String                           seriesShort;
 
    public Chassis(ItemStatsMech aStatsMech, MechDefinition aMdf, HardpointsXml aHardpoints, int aBaseVariant, String aSeries, String aSeriesShort){
       MdfMech mdfMech = aMdf.Mech;

@@ -26,7 +26,7 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;

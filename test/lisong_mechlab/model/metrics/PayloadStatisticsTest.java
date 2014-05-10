@@ -62,7 +62,7 @@ public class PayloadStatisticsTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
       Upgrades upgradesNew = Mockito.mock(Upgrades.class);
-      
+
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
       Mockito.when(upgradesNew.getStructure()).thenReturn(UpgradeDB.ENDO_STEEL_STRUCTURE);
 
@@ -114,7 +114,7 @@ public class PayloadStatisticsTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
-      
+
       PayloadStatistics cut = new PayloadStatistics(false, true, upgrades);
       assertEquals(26.81, cut.calculate(jm6_a, 250), 0.01);
       assertEquals(20.31, cut.calculate(jm6_a, 300), 0.01);
@@ -126,7 +126,7 @@ public class PayloadStatisticsTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.FERRO_FIBROUS_ARMOR);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
-      
+
       PayloadStatistics cut = new PayloadStatistics(false, true, upgrades);
       assertEquals(28.23, cut.calculate(jm6_a, 250), 0.01);
       assertEquals(21.73, cut.calculate(jm6_a, 300), 0.01);
@@ -138,7 +138,7 @@ public class PayloadStatisticsTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.ENDO_STEEL_STRUCTURE);
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
-      
+
       PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
       assertEquals(43.0, cut.calculate(jm6_a, 250), 0.0);
       assertEquals(36.5, cut.calculate(jm6_a, 300), 0.0);

@@ -25,12 +25,12 @@ import java.util.List;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
- * This class calculates the statistical effective HP of an {@link Item} when it is equipped on a {@link ConfiguredComponent}
- * under the assumption that damage is dealt in infinitesimal chunks.
+ * This class calculates the statistical effective HP of an {@link Item} when it is equipped on a
+ * {@link ConfiguredComponent} under the assumption that damage is dealt in infinitesimal chunks.
  * <p>
  * This applies mostly to for lasers. MG and LB 10-X AC have higher critical hit probabilities and different
  * multipliers.
@@ -69,7 +69,7 @@ public class ItemEffectiveHP implements ItemMetric{
             return itemState.ehp;
       }
       return Double.POSITIVE_INFINITY;
-      //throw new RuntimeException("Item not found in EHP cache");
+      // throw new RuntimeException("Item not found in EHP cache");
    }
 
    private void updateCache(){

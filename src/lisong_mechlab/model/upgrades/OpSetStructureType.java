@@ -35,8 +35,8 @@ public class OpSetStructureType extends OpUpgradeBase{
    final StructureUpgrade newValue;
 
    /**
-    * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link Upgrades} object This is useful
-    * only for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
+    * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link Upgrades} object This is useful only
+    * for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
     * 
     * @param anUpgrades
     *           The {@link Upgrades} object to alter with this {@link Operation}.

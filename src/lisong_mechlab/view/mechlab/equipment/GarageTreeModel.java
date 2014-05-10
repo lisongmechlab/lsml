@@ -31,9 +31,9 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.Chassis;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.preferences.Preferences;
 
@@ -58,10 +58,11 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
 
       // Chassii
       for(final ChassisClass chassiClass : ChassisClass.values()){
-         DefaultTreeCathegory<Chassis> chassiiSub = new FilterTreeCathegory<Chassis>(xBar, chassiClass.toString(), chassii, this, aFilterBar, aGarageTree){
+         DefaultTreeCathegory<Chassis> chassiiSub = new FilterTreeCathegory<Chassis>(xBar, chassiClass.toString(), chassii, this, aFilterBar,
+                                                                                     aGarageTree){
             @Override
             protected boolean filter(Chassis c){
-               if(preferences.uiPreferences.getHideSpecialMechs() && c.getVariantType().isVariation())
+               if( preferences.uiPreferences.getHideSpecialMechs() && c.getVariantType().isVariation() )
                   return false;
                return c.getName().toLowerCase().contains(getFilterString());
             }

@@ -30,10 +30,10 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.OpAddItem;
+import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.loadout.export.CompatibilityHelper;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;
@@ -63,11 +63,11 @@ public class LoadoutPartConverter implements Converter{
    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
       ConfiguredComponent part = (ConfiguredComponent)anObject;
 
-      aWriter.addAttribute("part", part.getInternalPart().getLocation().toString());
-      
+      aWriter.addAttribute("part", part.getInternalComponent().getLocation().toString());
+
       aWriter.addAttribute("autoarmor", Boolean.toString(part.allowAutomaticArmor()));
 
-      if( part.getInternalPart().getLocation().isTwoSided() ){
+      if( part.getInternalComponent().getLocation().isTwoSided() ){
          aWriter.addAttribute("armor", part.getArmor(ArmorSide.FRONT) + "/" + part.getArmor(ArmorSide.BACK));
       }
       else{
@@ -100,10 +100,10 @@ public class LoadoutPartConverter implements Converter{
 
       String autoArmorString = aReader.getAttribute("autoarmor");
       boolean autoArmor = false;
-      if(autoArmorString != null){
+      if( autoArmorString != null ){
          autoArmor = Boolean.parseBoolean(autoArmorString);
       }
-      
+
       try{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");

@@ -28,9 +28,8 @@ import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
-import lisong_mechlab.model.metrics.helpers.ComponentDestructionSimulator;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
@@ -56,7 +55,7 @@ public class ComponentDestructionSimulatorTest{
 
       ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
       Mockito.when(part.getItems()).thenReturn(partItems);
-      Mockito.when(part.getInternalPart()).thenReturn(internalPart);
+      Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(part.getLoadout()).thenReturn(loadout);
 
       MessageXBar xBar = Mockito.mock(MessageXBar.class);
@@ -92,7 +91,7 @@ public class ComponentDestructionSimulatorTest{
 
       ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
       Mockito.when(part.getItems()).thenReturn(partItems);
-      Mockito.when(part.getInternalPart()).thenReturn(internalPart);
+      Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(part.getLoadout()).thenReturn(loadout);
 
       MessageXBar xBar = Mockito.mock(MessageXBar.class);
@@ -124,7 +123,7 @@ public class ComponentDestructionSimulatorTest{
 
       ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
       Mockito.when(part.getItems()).thenReturn(partItems);
-      Mockito.when(part.getInternalPart()).thenReturn(internalPart);
+      Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(part.getLoadout()).thenReturn(loadout);
 
       MessageXBar xBar = Mockito.mock(MessageXBar.class);

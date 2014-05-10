@@ -130,7 +130,7 @@ public class MenuBar extends JMenuBar{
 
             menu.add(item);
          }
-         
+
          menu.add(new JMenuItem(new ImportFromSmurfyAction(SwingUtilities.getWindowAncestor(this), application.loadoutCoder)));
       }
 

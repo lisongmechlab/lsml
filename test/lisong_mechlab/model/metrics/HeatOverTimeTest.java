@@ -1,6 +1,7 @@
 package lisong_mechlab.model.metrics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +13,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class HeatOverTimeTest{
       assertEquals(0, cut.calculate(0), 0.0);
       assertEquals(0, cut.calculate(100), 0.0);
    }
-   
+
    @Test
    public void testCalculate_ERLLAS(){
       EnergyWeapon erllas = (EnergyWeapon)ItemDB.lookup("ER LARGE LASER");

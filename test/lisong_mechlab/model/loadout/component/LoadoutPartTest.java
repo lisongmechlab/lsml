@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.loadout.part;
+package lisong_mechlab.model.loadout.component;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -68,7 +68,7 @@ public class LoadoutPartTest{
    MockLoadoutContainer mlc = new MockLoadoutContainer();
 
    @Mock
-   InternalComponent         part;
+   InternalComponent    part;
 
    @Before
    public void setup(){
@@ -86,7 +86,8 @@ public class LoadoutPartTest{
    }
 
    /**
-    * Constructing a new {@link ConfiguredComponent} shall initialize the internal components and set armor to 0 on all sides.
+    * Constructing a new {@link ConfiguredComponent} shall initialize the internal components and set armor to 0 on all
+    * sides.
     * 
     * @param aPart
     *           The part to test for
@@ -116,10 +117,10 @@ public class LoadoutPartTest{
          assertEquals(0, cut.getArmor(ArmorSide.ONLY));
       }
       assertEquals(0, cut.getArmorTotal());
-      assertSame(part, cut.getInternalPart());
+      assertSame(part, cut.getInternalComponent());
       assertSame(loadout, cut.getLoadout());
    }
-   
+
    @Test
    @Parameters({"LeftArm", "RightTorso"})
    public void testSetArmorAllowedAutomagic(Location aPart){
@@ -140,7 +141,7 @@ public class LoadoutPartTest{
 
       assertTrue(cut.allowAutomaticArmor());
    }
-   
+
    @Test
    @Parameters({"LeftArm", "RightTorso"})
    public void testSetGetArmorAndTotalArmor(Location aPart){
@@ -414,7 +415,8 @@ public class LoadoutPartTest{
    }
 
    /**
-    * {@link ConfiguredComponent#canEquip(Item)} shall return false if the {@link Loadout} doesn't have enough free slots.
+    * {@link ConfiguredComponent#canEquip(Item)} shall return false if the {@link Loadout} doesn't have enough free
+    * slots.
     */
    @Test
    public void testCanEquip_TooFewSlots(){
@@ -430,7 +432,7 @@ public class LoadoutPartTest{
       // Execute & Verify
       assertFalse(cut.canEquip(ItemDB.BAP));
    }
-   
+
    /**
     * {@link ConfiguredComponent#canEquip(Item)} shall return false if the LoadoutPart already has a C.A.S.E.
     */
@@ -449,7 +451,6 @@ public class LoadoutPartTest{
       // Execute & Verify
       assertFalse(cut.canEquip(ItemDB.CASE));
    }
-
 
    /**
     * Adding an Artemis enabled launcher to a space where it would fit without Artemis shall not work
@@ -480,7 +481,9 @@ public class LoadoutPartTest{
     * <li>Supported by the {@link InternalComponent}.</li>
     * <li>There is enough space in the component locally.</li>
     * </ul>
-    * @param aDHS <code>true</code> if DHS should be used.
+    * 
+    * @param aDHS
+    *           <code>true</code> if DHS should be used.
     */
    @Test
    @Parameters({"true", "false"})
@@ -604,14 +607,14 @@ public class LoadoutPartTest{
 
       assertFalse(cut.removeItem(item));
    }
-   
+
    @Test
    public void testEquals_ArmorStatus() throws Exception{
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
-      
+
       ConfiguredComponent cut = new ConfiguredComponent(null, part, false);
       cut.setArmor(ArmorSide.FRONT, 0, false);
-      
+
       ConfiguredComponent cut1 = new ConfiguredComponent(cut, null);
       cut1.setArmor(ArmorSide.FRONT, 0, true);
 

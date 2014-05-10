@@ -655,16 +655,15 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == artemis ){
-            opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV
-                                                                                                 : UpgradeDB.STANDARD_GUIDANCE));
+            opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE));
          }
          else if( source == endoSteel ){
             opStack.pushAndApply(new OpSetStructureType(xBar, loadout, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
-                                                                                                    : UpgradeDB.STANDARD_STRUCTURE));
+                                                                                             : UpgradeDB.STANDARD_STRUCTURE));
          }
          else if( source == ferroFibros ){
             opStack.pushAndApply(new OpSetArmorType(xBar, loadout, ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR
-                                                                                                  : UpgradeDB.STANDARD_ARMOR));
+                                                                                           : UpgradeDB.STANDARD_ARMOR));
          }
          else if( source == speedTweak ){
             loadout.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED);
@@ -674,7 +673,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          }
          else if( source == doubleHeatSinks ){
             opStack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS
-                                                                                                         : UpgradeDB.STANDARD_HEATSINKS));
+                                                                                                  : UpgradeDB.STANDARD_HEATSINKS));
          }
          else if( source == coolRun ){
             loadout.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED);

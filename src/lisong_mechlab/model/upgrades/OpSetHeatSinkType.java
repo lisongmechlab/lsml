@@ -22,9 +22,9 @@ package lisong_mechlab.model.upgrades;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.OpAddItem;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.OpRemoveItem;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.OpAddItem;
+import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
@@ -42,8 +42,8 @@ public class OpSetHeatSinkType extends OpUpgradeBase{
    private boolean               operationReady = false;
 
    /**
-    * Creates a {@link OpSetHeatSinkType} that only affects a stand-alone {@link Upgrades} object This is useful
-    * only for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
+    * Creates a {@link OpSetHeatSinkType} that only affects a stand-alone {@link Upgrades} object This is useful only
+    * for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
     * 
     * @param anUpgrades
     *           The {@link Upgrades} object to alter with this {@link Operation}.

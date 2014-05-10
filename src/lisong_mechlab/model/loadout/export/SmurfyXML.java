@@ -28,7 +28,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -62,7 +62,7 @@ public class SmurfyXML{
       stream().marshal(aLoadout, new PrettyPrintWriter(sw, new NoNameCoder()){
          @Override
          protected void writeText(QuickWriter writer, String text){
-               writer.write(text);
+            writer.write(text);
          }
       });
       return sw.toString();
@@ -98,13 +98,13 @@ public class SmurfyXML{
 
             writer.startNode("configuration");
             {
-               for(Location type : new Location[] {Location.Head, Location.LeftTorso, Location.CenterTorso, Location.RightTorso, Location.LeftLeg, Location.RightLeg, Location.RightArm,
-                     Location.LeftArm}){
+               for(Location type : new Location[] {Location.Head, Location.LeftTorso, Location.CenterTorso, Location.RightTorso, Location.LeftLeg,
+                     Location.RightLeg, Location.RightArm, Location.LeftArm}){
                   ConfiguredComponent part = loadout.getPart(type);
                   writer.startNode("component");
 
-                  writeValue(writer, "name", part.getInternalPart().getLocation().toMwoName());
-                  if( part.getInternalPart().getLocation().isTwoSided() ){
+                  writeValue(writer, "name", part.getInternalComponent().getLocation().toMwoName());
+                  if( part.getInternalComponent().getLocation().isTwoSided() ){
                      writeValue(writer, "armor", part.getArmor(ArmorSide.FRONT));
                   }
                   else{
@@ -130,7 +130,7 @@ public class SmurfyXML{
                for(Location type : new Location[] {Location.LeftTorso, Location.CenterTorso, Location.RightTorso}){
                   ConfiguredComponent part = loadout.getPart(type);
                   writer.startNode("component");
-                  writeValue(writer, "name", part.getInternalPart().getLocation().toMwoRearName());
+                  writeValue(writer, "name", part.getInternalComponent().getLocation().toMwoRearName());
                   writeValue(writer, "armor", part.getArmor(ArmorSide.BACK));
                   writer.endNode();
                }

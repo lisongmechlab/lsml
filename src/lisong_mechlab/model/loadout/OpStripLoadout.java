@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.loadout.part.ConfiguredComponent;
-import lisong_mechlab.model.loadout.part.OpStripComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.OpStripComponent;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
@@ -36,7 +36,7 @@ import lisong_mechlab.util.MessageXBar;
 public class OpStripLoadout extends OpLoadoutBase{
    public OpStripLoadout(Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "strip mech");
-      
+
       for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
          addOp(new OpStripComponent(xBar, loadoutPart));
       }

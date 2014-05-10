@@ -32,7 +32,7 @@ public class NotificationMessage implements Message{
       NOTICE, WARNING, ERROR
    }
 
-   private final Loadout  loadout;
+   private final Loadout loadout;
    public final String   message;
    public final Severity severity;
 
