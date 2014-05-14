@@ -92,7 +92,6 @@ public class BallisticWeapon extends AmmoWeapon{
       if( canDoubleFire() ){
          final double cd = getRawSecondsPerShot(aEfficiencies);
          return (jammingTime * jammingChance + cd) / ((1 - jammingChance) * (1 + shotsduringcooldown) + jammingChance);
-         // return (1.0 - jammingChance) * cd / (1 + shotsduringcooldown) + jammingChance * (jammingTime + cd);
       }
       return getRawSecondsPerShot(aEfficiencies);
    }
