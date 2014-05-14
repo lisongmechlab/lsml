@@ -33,6 +33,7 @@ import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.Part;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.part.AddItemOperation;
 import lisong_mechlab.model.loadout.part.LoadoutPart;
 import lisong_mechlab.model.loadout.part.RemoveItemOperation;
@@ -344,6 +345,16 @@ public class LoadoutTest{
       assertTrue(cut.getCandidateLocationsForItem(ItemDB.lookup("STD ENGINE 300")).isEmpty());
    }
 
+   @Test
+   public void testGetCandidateLocationsForItem_NotEnoughForXL() throws Exception{
+      // Setup
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+      Loadout cut = coder.parse("lsml://rRsALCwoCDASSg4oBy8svqmbFH8JkyZMmTJkyZMmTCZMJhMmAUfw");
+
+      // Execute + Verify
+      assertTrue(cut.getCandidateLocationsForItem(ItemDB.lookup("XL ENGINE 140")).isEmpty());
+   }
+
    /**
     * When the only hard point that can legally house the item is occupied by another item that can be moved to another
     * hard point, the candidate shall be that only component.
@@ -475,24 +486,24 @@ public class LoadoutTest{
       OperationStack stack = new OperationStack(0);
       Loadout cut = new Loadout("HBK-4J", xBar);
       Loadout copy = new Loadout(cut, xBar);
-      
+
       // A copy must be equal :)
       assertEquals(cut, copy);
 
       // Must be deep
       copy.rename("foo");
       assertFalse(copy.getName().equals(cut.getName()));
-      
+
       assertTrue(copy.getPart(Part.RightTorso).equals(cut.getPart(Part.RightTorso)));
       stack.pushAndApply(new RemoveItemOperation(xBar, copy.getPart(Part.RightTorso), ItemDB.lookup("LRM 10")));
       stack.pushAndApply(new RemoveItemOperation(xBar, copy.getPart(Part.RightTorso), ItemDB.lookup("LRM 10")));
       assertFalse(copy.getPart(Part.RightTorso).equals(cut.getPart(Part.RightTorso)));
-      
+
       assertTrue(copy.getPart(Part.LeftTorso).equals(cut.getPart(Part.LeftTorso)));
       stack.pushAndApply(new SetArmorOperation(xBar, copy.getPart(Part.LeftTorso), ArmorSide.FRONT, 3, true));
       stack.pushAndApply(new SetArmorOperation(xBar, copy.getPart(Part.LeftTorso), ArmorSide.BACK, 3, false));
       assertFalse(copy.getPart(Part.LeftTorso).equals(cut.getPart(Part.LeftTorso)));
-      
+
       assertTrue(copy.getUpgrades().equals(cut.getUpgrades()));
       stack.pushAndApply(new SetArmorTypeOperation(xBar, copy, UpgradeDB.FERRO_FIBROUS_ARMOR));
       stack.pushAndApply(new SetStructureTypeOperation(xBar, copy, UpgradeDB.ENDO_STEEL_STRUCTURE));
