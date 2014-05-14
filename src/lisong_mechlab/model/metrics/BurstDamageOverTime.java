@@ -22,11 +22,13 @@ package lisong_mechlab.model.metrics;
 import java.util.ArrayList;
 import java.util.List;
 
+import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.metrics.helpers.DoubleFireBurstSignal;
 import lisong_mechlab.model.metrics.helpers.IntegratedImpulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedPulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedSignal;
@@ -77,6 +79,13 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.
                EnergyWeapon energyWeapon = (EnergyWeapon)weapon;
                if( energyWeapon.getDuration() > 0 ){
                   damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(), damage / energyWeapon.getDuration()));
+                  continue;
+               }
+            }
+            else if(weapon instanceof BallisticWeapon){
+               BallisticWeapon ballisticWeapon = (BallisticWeapon)weapon;
+               if(ballisticWeapon.canDoubleFire()){
+                  damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, loadout.getEfficiencies(), aRange));
                   continue;
                }
             }
