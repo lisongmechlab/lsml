@@ -172,9 +172,9 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
          itemLabel.updateVisibility(aLoadout);
       }
       if( aLoadout != null ){
-         energyItems.setVisible(aLoadout.getChassi().getHardpointsCount(HardPointType.ENERGY) > 0);
-         missileItems.setVisible(aLoadout.getChassi().getHardpointsCount(HardPointType.MISSILE) > 0);
-         ballisticItems.setVisible(aLoadout.getChassi().getHardpointsCount(HardPointType.BALLISTIC) > 0);
+         energyItems.setVisible(aLoadout.getChassis().getHardpointsCount(HardPointType.ENERGY) > 0);
+         missileItems.setVisible(aLoadout.getChassis().getHardpointsCount(HardPointType.MISSILE) > 0);
+         ballisticItems.setVisible(aLoadout.getChassis().getHardpointsCount(HardPointType.BALLISTIC) > 0);
       }
       else{
          energyItems.setVisible(true);

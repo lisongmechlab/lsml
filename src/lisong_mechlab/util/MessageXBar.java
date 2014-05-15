@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Queue;
 
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * Implements a message passing framework for an UI where the components don't have to know about each other, only about
@@ -66,7 +67,7 @@ public class MessageXBar{
        *           The {@link Loadout} to check.
        * @return <code>true</code> if this message affects the given {@link Loadout}.
        */
-      public boolean isForMe(Loadout aLoadout);
+      public boolean isForMe(LoadoutBase aLoadout);
 
       /**
        * @return <code>true</code> if this message can affect the damage or heat output of the related {@link Loadout}.

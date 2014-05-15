@@ -54,6 +54,7 @@ import javax.swing.SwingUtilities;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.environment.EnvironmentDB;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.metrics.AlphaStrike;
 import lisong_mechlab.model.metrics.AlphaTimeToOverHeat;
 import lisong_mechlab.model.metrics.BurstDamageOverTime;
@@ -175,11 +176,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          critslotsTxt.setAlignmentY(CENTER_ALIGNMENT);
 
          JLabel massTxt = new JLabel("Tons:");
-         massBar = new JProgressBar(0, loadout.getChassi().getMassMax());
+         massBar = new JProgressBar(0, loadout.getChassis().getMassMax());
          massBar.setUI(new ProgressBarRenderer());
 
          JLabel armorTxt = new JLabel("Armor:");
-         armorBar = new JProgressBar(0, loadout.getChassi().getArmorMax());
+         armorBar = new JProgressBar(0, loadout.getChassis().getArmorMax());
          armorBar.setUI(new ProgressBarRenderer());
 
          // One property change listener is enough, if one gets it all get it.
@@ -320,7 +321,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             public void actionPerformed(ActionEvent aArg0){
                Environment environment = (Environment)environemnts.getSelectedItem();
                heatDissipation.changeEnvironment(environment);
-               xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
+               xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.UPDATE));
             }
          });
          environemnts.setSelectedIndex(0);
@@ -450,7 +451,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                   SwingUtilities.invokeLater(new Runnable(){
                      @Override
                      public void run(){
-                        xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
+                        xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.UPDATE));
                      }
                   });
                }
@@ -476,7 +477,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                      SwingUtilities.invokeLater(new Runnable(){
                         @Override
                         public void run(){
-                           xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
+                           xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.UPDATE));
                         }
                      });
                   }
@@ -551,12 +552,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                // ----------------------------------------------------------------------
                double mass = loadout.getMass();
                massBar.setValue((int)Math.ceil(mass));
-               massValue.setText(df2_floor.format(loadout.getChassi().getMassMax() - mass) + " free");
-               massBar.setString(df1_floor.format(mass) + " / " + df0.format(loadout.getChassi().getMassMax()));
+               massValue.setText(df2_floor.format(loadout.getChassis().getMassMax() - mass) + " free");
+               massBar.setString(df1_floor.format(mass) + " / " + df0.format(loadout.getChassis().getMassMax()));
 
                armorBar.setValue(loadout.getArmor());
-               armorBar.setString(loadout.getArmor() + " / " + loadout.getChassi().getArmorMax());
-               armorValue.setText((loadout.getChassi().getArmorMax() - loadout.getArmor()) + " free");
+               armorBar.setString(loadout.getArmor() + " / " + loadout.getChassis().getArmorMax());
+               armorValue.setText((loadout.getChassis().getArmorMax() - loadout.getArmor()) + " free");
 
                critslotsBar.setValue(loadout.getNumCriticalSlotsUsed());
                critslotsBar.setString(loadout.getNumCriticalSlotsUsed() + " / " + (12 * 5 + 3 * 6));
@@ -567,7 +568,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                ferroFibros.setSelected(loadout.getUpgrades().getArmor() == UpgradeDB.FERRO_FIBROUS_ARMOR);
 
                {
-                  final String esSavedMass = df2.format(UpgradeDB.ENDO_STEEL_STRUCTURE.getStructureMass(loadout.getChassi()));
+                  final String esSavedMass = df2.format(UpgradeDB.ENDO_STEEL_STRUCTURE.getStructureMass(loadout.getChassis()));
                   if( (loadout.getUpgrades().getStructure() == UpgradeDB.ENDO_STEEL_STRUCTURE) ){
                      endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: green;\">-" + esSavedMass + "t</span>, "
                                        + "<span style=\"color: red;\">+14s</span>)" + "</html>");
@@ -606,7 +607,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // Mobility
                // ----------------------------------------------------------------------
-               jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassi().getMaxJumpJets() + " ("
+               jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassis().getJumpJetsMax() + " ("
                                 + df2.format(metricJumpDistance.calculate()) + " m)");
                speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
                anchorTurn.setSelected(loadout.getEfficiencies().hasAnchorTurn());

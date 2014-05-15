@@ -35,7 +35,6 @@ import javax.swing.UIManager;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.view.ProgramInit;
 
 /**
@@ -92,8 +91,8 @@ public class ItemRenderer{
       g.drawImage(image, x - x0, y - y0, null);
    }
 
-   public static Image render(Item item, Upgrades aUpgrades){
-      final int slots = item.getNumCriticalSlots(aUpgrades);
+   public static Image render(Item item){
+      final int slots = item.getNumCriticalSlots();
       // Compensate for padding added by JList in drawing the loadout
       final int item_w = getItemWidth() - 2;
       final int item_h = ITEM_BASE_HEIGHT * slots - 2; // Compensate for padding added by JList in drawing the loadout
@@ -131,7 +130,7 @@ public class ItemRenderer{
 
       g.setFont(UIManager.getDefaults().getFont("Label.font"));
       g.setColor(StyleManager.getFgColorFor(item));
-      drawString(item.getName(aUpgrades), x_offs + RADII, ITEM_BASE_LINE, g, StyleManager.getBgColorFor(item));
+      drawString(item.getName(), x_offs + RADII, ITEM_BASE_LINE, g, StyleManager.getBgColorFor(item));
       if( x_slots > 1 ){
          drawString("ENGINE", RADII, ITEM_BASE_LINE, g, StyleManager.getBgColorFor(item));
          drawString("ENGINE", 2 * x_offs + RADII, ITEM_BASE_LINE, g, StyleManager.getBgColorFor(item));

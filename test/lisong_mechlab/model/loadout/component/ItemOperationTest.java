@@ -19,10 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
+import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -45,12 +46,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class ItemOperationTest{
 
    class CutClass extends OpItemBase{
-      /**
-       * @param anXBar
-       * @param aLoadoutPart
-       */
-      public CutClass(MessageXBar anXBar, ConfiguredComponent aLoadoutPart){
-         super(anXBar, aLoadoutPart);
+      public CutClass(MessageXBar anXBar, LoadoutBase<ConfiguredComponent, InternalComponent> aLoadout, ConfiguredComponent aLoadoutPart){
+         super(anXBar, aLoadout, aLoadoutPart);
       }
 
       // @formatter:off
@@ -61,15 +58,17 @@ public class ItemOperationTest{
    }
 
    @Mock
-   private ConfiguredComponent loadoutPart;
+   private LoadoutBase<ConfiguredComponent, InternalComponent> loadout;
    @Mock
-   private MessageXBar         xBar;
+   private ConfiguredComponent                                 loadoutPart;
+   @Mock
+   private MessageXBar                                         xBar;
 
-   private CutClass            cut;
+   private CutClass                                            cut;
 
    @Before
    public void setup(){
-      cut = new CutClass(xBar, loadoutPart);
+      cut = new CutClass(xBar, loadout, loadoutPart);
    }
 
    /**
@@ -91,8 +90,6 @@ public class ItemOperationTest{
    @Test
    public final void testAddItem(){
       Item ecm = ItemDB.ECM;
-      Loadout loadout = Mockito.mock(Loadout.class);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
 
       cut.addItem(ecm);
 
@@ -106,8 +103,6 @@ public class ItemOperationTest{
    @Test
    public final void testAddItem_StdEngine(){
       Item item = ItemDB.lookup("STD ENGINE 300");
-      Loadout loadout = Mockito.mock(Loadout.class);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
 
       cut.addItem(item);
 
@@ -121,12 +116,10 @@ public class ItemOperationTest{
    @Test
    public final void testRemoveItem_XLEngine(){
       Item item = ItemDB.lookup("XL ENGINE 300");
-      Loadout loadout = Mockito.mock(Loadout.class);
       ConfiguredComponent lt = Mockito.mock(ConfiguredComponent.class);
       ConfiguredComponent rt = Mockito.mock(ConfiguredComponent.class);
-      Mockito.when(loadout.getPart(Location.LeftTorso)).thenReturn(lt);
-      Mockito.when(loadout.getPart(Location.RightTorso)).thenReturn(rt);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
+      Mockito.when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
+      Mockito.when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
 
       cut.removeItem(item);
 
@@ -146,10 +139,8 @@ public class ItemOperationTest{
       int numEngineHs = 2;
       Item item = ItemDB.lookup("STD ENGINE 300");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
-      Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
 
       cut.removeItem(item);
@@ -167,10 +158,8 @@ public class ItemOperationTest{
       int numEngineHs = 2;
       Item item = ItemDB.lookup("STD ENGINE 300");
       Upgrades upgrades = Mockito.mock(Upgrades.class);
-      Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.STANDARD_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
 
       cut.removeItem(item);
@@ -185,12 +174,10 @@ public class ItemOperationTest{
     */
    @Test
    public final void testAddItem_XLEngine(){
-      Loadout loadout = Mockito.mock(Loadout.class);
       ConfiguredComponent lt = Mockito.mock(ConfiguredComponent.class);
       ConfiguredComponent rt = Mockito.mock(ConfiguredComponent.class);
-      Mockito.when(loadout.getPart(Location.LeftTorso)).thenReturn(lt);
-      Mockito.when(loadout.getPart(Location.RightTorso)).thenReturn(rt);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
+      Mockito.when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
+      Mockito.when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
       Item item = ItemDB.lookup("XL ENGINE 300");
 
       cut.addItem(item);
@@ -210,11 +197,9 @@ public class ItemOperationTest{
    @Test
    public final void testAddItem_addEngineAfterRemoveSHS(){
       final int numEngineHs = 2;
-      Loadout loadout = Mockito.mock(Loadout.class);
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
       Item item = ItemDB.lookup("STD ENGINE 300");
 
@@ -231,11 +216,9 @@ public class ItemOperationTest{
    @Test
    public final void testAddItem_addEngineAfterRemoveDHS(){
       final int numEngineHs = 2;
-      Loadout loadout = Mockito.mock(Loadout.class);
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
       Item item = ItemDB.lookup("STD ENGINE 300");
 

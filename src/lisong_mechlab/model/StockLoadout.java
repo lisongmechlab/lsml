@@ -22,7 +22,7 @@ package lisong_mechlab.model;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
@@ -137,9 +137,9 @@ public class StockLoadout{
    }
 
    /**
-    * @return The {@link Chassis} for this {@link StockLoadout}.
+    * @return The {@link ChassisIS} for this {@link StockLoadout}.
     */
-   public Chassis getChassis(){
+   public ChassisIS getChassis(){
       return ChassisDB.lookup(chassisId);
    }
 

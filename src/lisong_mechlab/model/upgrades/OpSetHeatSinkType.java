@@ -109,22 +109,22 @@ public class OpSetHeatSinkType extends OpUpgradeBase{
       operationReady = true;
 
       if( oldValue != newValue ){
-         for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
+         for(ConfiguredComponent loadoutPart : loadout.getComponents()){
             int hsRemoved = 0;
             for(Item item : loadoutPart.getItems()){
                if( item instanceof HeatSink ){
-                  addOp(new OpRemoveItem(xBar, loadoutPart, item));
+                  addOp(new OpRemoveItem(xBar, loadout, loadoutPart, item));
                   hsRemoved++;
                }
             }
 
             HeatSink oldHsType = oldValue.getHeatSinkType();
             HeatSink newHsType = newValue.getHeatSinkType();
-            int slotsFree = oldHsType.getNumCriticalSlots(upgrades) * hsRemoved + loadoutPart.getNumCriticalSlotsFree();
-            int hsToAdd = Math.min(hsRemoved, slotsFree / newHsType.getNumCriticalSlots(upgrades));
+            int slotsFree = oldHsType.getNumCriticalSlots() * hsRemoved + loadoutPart.getNumCriticalSlotsFree();
+            int hsToAdd = Math.min(hsRemoved, slotsFree / newHsType.getNumCriticalSlots());
             while( hsToAdd > 0 ){
                hsToAdd--;
-               addOp(new OpAddItem(xBar, loadoutPart, newHsType));
+               addOp(new OpAddItem(xBar, loadout, loadoutPart, newHsType));
             }
          }
       }

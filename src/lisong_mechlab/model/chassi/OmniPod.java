@@ -35,7 +35,7 @@ public class OmniPod extends InternalComponent{
     * @param aHardpoints
     * @param aChassi
     */
-   public OmniPod(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, Chassis aChassi){
+   public OmniPod(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, ChassisIS aChassi){
       super(aComponent, aLocation, aHardpoints, aChassi);
    }
 }

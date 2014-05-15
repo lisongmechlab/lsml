@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -37,11 +37,10 @@ public class TwistSpeed implements Metric{
 
    @Override
    public double calculate(){
-      Chassis chassi = loadout.getChassi();
+      ChassisBase<?> chassi = loadout.getChassis();
       Engine engine = loadout.getEngine();
       if( engine == null )
          return 0.0;
-      return chassi.getTwistFactor() * loadout.getEngine().getRating() / chassi.getMassMax();
+      return chassi.getMovementProfile().getTorsoYawSpeed() * loadout.getEngine().getRating() / chassi.getMassMax();
    }
-
 }

@@ -23,6 +23,7 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -39,7 +40,7 @@ public class OpStripComponent extends CompositeOperation{
     * @param anXBar
     *           Where to announce changes from this operation.
     */
-   public OpStripComponent(MessageXBar anXBar, ConfiguredComponent aLoadoutPart){
+   public OpStripComponent(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart){
       super("strip part");
       // Engine heat sinks are removed together with the engine.
       int hsSkipp = aLoadoutPart.getNumEngineHeatsinks();
@@ -51,15 +52,15 @@ public class OpStripComponent extends CompositeOperation{
                   continue;
                }
             }
-            addOp(new OpRemoveItem(anXBar, aLoadoutPart, item));
+            addOp(new OpRemoveItem(anXBar, aLoadout, aLoadoutPart, item));
          }
       }
       if( aLoadoutPart.getInternalComponent().getLocation().isTwoSided() ){
-         addOp(new OpSetArmor(anXBar, aLoadoutPart, ArmorSide.FRONT, 0, false));
-         addOp(new OpSetArmor(anXBar, aLoadoutPart, ArmorSide.BACK, 0, false));
+         addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.FRONT, 0, false));
+         addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.BACK, 0, false));
       }
       else{
-         addOp(new OpSetArmor(anXBar, aLoadoutPart, ArmorSide.ONLY, 0, false));
+         addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.ONLY, 0, false));
       }
    }
 }

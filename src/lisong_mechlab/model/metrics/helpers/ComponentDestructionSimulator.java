@@ -122,7 +122,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
          if( item == ItemDB.CASE )
             continue;
 
-         slots += item.getNumCriticalSlots(loadoutPart.getLoadout().getUpgrades());
+         slots += item.getNumCriticalSlots();
 
          ItemState pair = state.get(item);
          if( pair == null )
@@ -164,7 +164,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
          // For every item that can be hit...
          for(Entry<Item, ItemState> entry : aState.entrySet()){
             Item item = entry.getKey();
-            int itemSlots = item.getNumCriticalSlots(loadoutPart.getLoadout().getUpgrades());
+            int itemSlots = item.getNumCriticalSlots();
             int multi = entry.getValue().multiplicity;
 
             // Determine the probability that it'll be hit

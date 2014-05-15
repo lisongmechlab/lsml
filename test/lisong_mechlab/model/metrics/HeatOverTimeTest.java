@@ -147,7 +147,7 @@ public class HeatOverTimeTest{
       items.remove(ac20);
       Collection<ConfiguredComponent> partLoadouts = Mockito.mock(Collection.class);
       Mockito.when(partLoadouts.contains(null)).thenReturn(true);
-      Mockito.when(loadout.getPartLoadOuts()).thenReturn(partLoadouts);
+      Mockito.when(loadout.getComponents()).thenReturn(partLoadouts);
       cut.receive(new ConfiguredComponent.Message(null, ConfiguredComponent.Message.Type.ItemAdded));
 
       assertTrue(old != cut.calculate(20));

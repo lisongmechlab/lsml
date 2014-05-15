@@ -102,7 +102,7 @@ public class OpSetGuidanceType extends OpUpgradeBase{
          if( newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree() )
             throw new IllegalArgumentException("Too few critical slots available in loadout!");
 
-         for(ConfiguredComponent part : loadout.getPartLoadOuts()){
+         for(ConfiguredComponent part : loadout.getComponents()){
             if( newValue.getExtraSlots(part) > part.getNumCriticalSlotsFree() )
                throw new IllegalArgumentException("Too few critical slots available in " + part.getInternalComponent().getLocation() + "!");
          }
@@ -111,22 +111,22 @@ public class OpSetGuidanceType extends OpUpgradeBase{
             throw new IllegalArgumentException("Too heavy to add artmemis!");
          }
 
-         for(ConfiguredComponent part : loadout.getPartLoadOuts()){
-            for(Item item : part.getItems()){
+         for(ConfiguredComponent component : loadout.getComponents()){
+            for(Item item : component.getItems()){
                if( item instanceof MissileWeapon ){
                   MissileWeapon oldWeapon = (MissileWeapon)item;
                   MissileWeapon newWeapon = newValue.upgrade(oldWeapon);
                   if( oldWeapon != newWeapon ){
-                     addOp(new OpRemoveItem(xBar, part, oldWeapon));
-                     addOp(new OpAddItem(xBar, part, newWeapon));
+                     addOp(new OpRemoveItem(xBar, loadout, component, oldWeapon));
+                     addOp(new OpAddItem(xBar, loadout, component, newWeapon));
                   }
                }
                else if( item instanceof Ammunition ){
                   Ammunition oldAmmo = (Ammunition)item;
                   Ammunition newAmmo = newValue.upgrade(oldAmmo);
                   if( oldAmmo != newAmmo ){
-                     addOp(new OpRemoveItem(xBar, part, oldAmmo));
-                     addOp(new OpAddItem(xBar, part, newAmmo));
+                     addOp(new OpRemoveItem(xBar, loadout, component, oldAmmo));
+                     addOp(new OpAddItem(xBar, loadout, component, newAmmo));
                   }
                }
             }

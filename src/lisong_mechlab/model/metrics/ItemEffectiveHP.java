@@ -26,7 +26,6 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
-import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
  * This class calculates the statistical effective HP of an {@link Item} when it is equipped on a
@@ -73,7 +72,6 @@ public class ItemEffectiveHP implements ItemMetric{
    }
 
    private void updateCache(){
-      Upgrades upgrades = loadoutPart.getLoadout().getUpgrades();
       cache.clear();
       for(Item item : loadoutPart.getItems()){
          if( item instanceof Internal && item != ConfiguredComponent.ENGINE_INTERNAL )
@@ -88,7 +86,7 @@ public class ItemEffectiveHP implements ItemMetric{
          int slotsLeft = 0;
          for(ItemState state : cache){
             if( state.hpLeft > 10 * Math.ulp(1) ){
-               slotsLeft += state.item.getNumCriticalSlots(upgrades);
+               slotsLeft += state.item.getNumCriticalSlots();
             }
          }
          double minEHpLeft = Double.POSITIVE_INFINITY;
@@ -96,12 +94,12 @@ public class ItemEffectiveHP implements ItemMetric{
             if( state.hpLeft < 10 * Math.ulp(1) ){
                continue;
             }
-            minEHpLeft = Math.min(minEHpLeft, state.hpLeft / CriticalItemDamage.calculate(state.item.getNumCriticalSlots(upgrades), slotsLeft));
+            minEHpLeft = Math.min(minEHpLeft, state.hpLeft / CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft));
          }
 
          changed = false;
          for(ItemState state : cache){
-            double multiplier = CriticalItemDamage.calculate(state.item.getNumCriticalSlots(upgrades), slotsLeft);
+            double multiplier = CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft);
             double actualDmg = minEHpLeft * multiplier;
             if( state.hpLeft > 0 ){
                state.hpLeft -= actualDmg;

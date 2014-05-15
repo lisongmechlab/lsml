@@ -20,7 +20,7 @@
 
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -39,10 +39,10 @@ public class TurningSpeed implements Metric{
 
    @Override
    public double calculate(){
-      Chassis chassi = loadout.getChassi();
+      ChassisBase<?> chassi = loadout.getChassis();
       Engine engine = loadout.getEngine();
       if( engine == null )
          return 0.0;
-      return loadout.getEfficiencies().getTurnSpeedModifier() * chassi.getTurnFactor() * loadout.getEngine().getRating() / chassi.getMassMax();
+      return loadout.getEfficiencies().getTurnSpeedModifier() * 360.0 / 31.4 * loadout.getEngine().getRating() / chassi.getMassMax();
    }
 }

@@ -39,6 +39,6 @@ public class JumpDistance implements Metric{
       JumpJet jj = loadout.getJumpJetType();
       if( jj == null )
          return 0;
-      return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() / (2 * loadout.getChassi().getMassMax());
+      return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() / (2 * loadout.getChassis().getMassMax());
    }
 }

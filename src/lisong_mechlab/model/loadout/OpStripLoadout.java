@@ -34,11 +34,11 @@ import lisong_mechlab.util.MessageXBar;
  * @author Li Song
  */
 public class OpStripLoadout extends OpLoadoutBase{
-   public OpStripLoadout(Loadout aLoadout, MessageXBar anXBar){
-      super(aLoadout, anXBar, "strip mech");
+   public OpStripLoadout(Loadout aLoadout, MessageXBar aXBar){
+      super(aLoadout, aXBar, "strip mech");
 
-      for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
-         addOp(new OpStripComponent(xBar, loadoutPart));
+      for(ConfiguredComponent component : loadout.getComponents()){
+         addOp(new OpStripComponent(xBar, loadout, component));
       }
       addOp(new OpSetStructureType(xBar, loadout, UpgradeDB.STANDARD_STRUCTURE));
       addOp(new OpSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));

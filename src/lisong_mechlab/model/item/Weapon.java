@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -176,14 +175,12 @@ public class Weapon extends HeatSource{
     * @param aWeaponStat
     *           A string specifying the statistic to be calculated. Must match the regexp pattern
     *           "[dsthc]+(/[dsthc]+)?".
-    * @param anUpgrades
-    *           Any {@link Upgrades} that can affect the stats, can be <code>null</code> to assume no {@link Upgrades}.
     * @param aEfficiencies
     *           Any {@link Efficiencies} that can affect the stats, can be <code>null</code> to assume no
     *           {@link Efficiencies}.
     * @return The calculated statistic.
     */
-   public double getStat(String aWeaponStat, Upgrades anUpgrades, Efficiencies aEfficiencies){
+   public double getStat(String aWeaponStat, Efficiencies aEfficiencies){
       double nominator = 1;
       int index = 0;
       while( index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/' ){
@@ -195,13 +192,13 @@ public class Weapon extends HeatSource{
                nominator *= getSecondsPerShot(aEfficiencies);
                break;
             case 't':
-               nominator *= getMass(anUpgrades);
+               nominator *= getMass();
                break;
             case 'h':
                nominator *= getHeat();
                break;
             case 'c':
-               nominator *= getNumCriticalSlots(anUpgrades);
+               nominator *= getNumCriticalSlots();
                break;
             default:
                throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
@@ -220,13 +217,13 @@ public class Weapon extends HeatSource{
                denominator *= getSecondsPerShot(aEfficiencies);
                break;
             case 't':
-               denominator *= getMass(anUpgrades);
+               denominator *= getMass();
                break;
             case 'h':
                denominator *= getHeat();
                break;
             case 'c':
-               denominator *= getNumCriticalSlots(anUpgrades);
+               denominator *= getNumCriticalSlots();
                break;
             default:
                throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));

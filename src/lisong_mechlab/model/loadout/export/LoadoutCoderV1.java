@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
@@ -186,7 +186,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          short chassiId = (short)(((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF)); // Big endian, respecting RFC
                                                                                            // 1700
 
-         Chassis chassi = ChassisDB.lookup(chassiId);
+         ChassisIS chassi = ChassisDB.lookup(chassiId);
          loadout = new Loadout(chassi, xBar);
 
          boolean artemisIv = (upeff & (1 << 7)) != 0;
@@ -212,11 +212,11 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       // 1 byte per armor value (2 for RT,CT,LT front first)
       for(Location part : partOrder){
          if( part.isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(part), ArmorSide.FRONT, buffer.read(), true));
-            stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(part), ArmorSide.BACK, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(part), ArmorSide.FRONT, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(part), ArmorSide.BACK, buffer.read(), true));
          }
          else{
-            stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(part), ArmorSide.ONLY, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(part), ArmorSide.ONLY, buffer.read(), true));
          }
       }
 
@@ -241,10 +241,10 @@ public class LoadoutCoderV1 implements LoadoutCoder{
                   later.add(item); // Add heat sinks last after engine has been added
                   continue;
                }
-               stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(part), item));
+               stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(part), item));
             }
             for(Item i : later){
-               stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(part), i));
+               stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(part), i));
             }
          }
       }
@@ -270,7 +270,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateAllLoadouts() throws Exception{
-      List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisIS> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
@@ -279,15 +279,17 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
 
-      for(Chassis chassi : chassii){
+      for(ChassisIS chassi : chassii){
          Loadout loadout = new Loadout(chassi, xBar);
          stack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
 
-         for(ConfiguredComponent part : loadout.getPartLoadOuts()){
-            for(Item item : new ArrayList<>(part.getItems())){
+         for(ConfiguredComponent component : loadout.getComponents()){
+            for(Item item : new ArrayList<>(component.getItems())){
                if( item.getName().toLowerCase().contains("artemis") ){
-                  stack.pushAndApply(new OpRemoveItem(xBar, part, item));
-                  stack.pushAndApply(new OpAddItem(xBar, part, ItemDB.lookup(item.getName().substring(0, item.getName().indexOf(" + ARTEMIS")))));
+                  stack.pushAndApply(new OpRemoveItem(xBar, loadout, component, item));
+                  stack.pushAndApply(new OpAddItem(xBar, loadout, component, ItemDB.lookup(item.getName().substring(0,
+                                                                                                                    item.getName()
+                                                                                                                        .indexOf(" + ARTEMIS")))));
                }
             }
          }
@@ -298,7 +300,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateStatsFromStock() throws Exception{
-      List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisIS> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
@@ -306,7 +308,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       Map<Integer, Integer> freqs = new TreeMap<>();
       MessageXBar xBar = new MessageXBar();
       OperationStack stack = new OperationStack(0);
-      for(Chassis chassi : chassii){
+      for(ChassisIS chassi : chassii){
          Loadout loadout = new Loadout(chassi, xBar);
          stack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
 

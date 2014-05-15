@@ -45,6 +45,7 @@ import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -85,10 +86,10 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
             @Override
             public void actionPerformed(ActionEvent aE){
                if( loadoutPart.getInternalComponent().getLocation().isTwoSided() ){
-                  stack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
+                  stack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
                }
                else{
-                  stack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmorTotal(), false));
+                  stack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmorTotal(), false));
                }
                xBar.post(new ConfiguredComponent.Message(loadoutPart, Type.ArmorDistributionUpdateRequest));
             }
@@ -106,6 +107,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    private final JLabel              backArmorLabel;
    private final JLabel              armorLabel;
 
+   private final LoadoutBase<?, ?>   loadout;
    private final ConfiguredComponent loadoutPart;
 
    private final boolean             canHaveHardpoints;
@@ -114,10 +116,11 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    private JSpinner                  backSpinner;
    private JSpinner                  spinner;
 
-   PartPanel(ConfiguredComponent aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor,
-             JCheckBox aSymmetric, OperationStack aStack){
+   PartPanel(LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints,
+             DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric, OperationStack aStack){
       super(new BorderLayout());
       anXBar.attach(this);
+      loadout = aLoadout;
       loadoutPart = aLoadoutPart;
       canHaveHardpoints = aCanHaveHardpoints;
       armorPopupAdapter = new ArmorPopupAdapter(aStack, anXBar);
@@ -146,7 +149,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          add(makeHardpointsPanel());
 
       // Critical slots
-      PartList list = new PartList(aStack, aLoadoutPart, anXBar, aSlotDistributor);
+      PartList list = new PartList(aStack, aLoadout, aLoadoutPart, anXBar, aSlotDistributor);
       list.setFixedCellHeight(ItemRenderer.getItemHeight());
       list.setFixedCellWidth(ItemRenderer.getItemWidth());
 
@@ -183,13 +186,13 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          frontArmorLabel.setPreferredSize(labelDimension);
          backArmorLabel.setPreferredSize(labelDimension);
 
-         frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
+         frontSpinner = new JSpinner(new ArmorSpinner(loadout, loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
          frontSpinner.setMaximumSize(labelDimension);
          frontSpinner.getEditor().setPreferredSize(spinnerDimension);
          JFormattedTextField field = (JFormattedTextField)frontSpinner.getEditor().getComponent(0);
          ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
-         backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric, aStack));
+         backSpinner = new JSpinner(new ArmorSpinner(loadout, loadoutPart, ArmorSide.BACK, anXBar, aSymmetric, aStack));
          backSpinner.setMaximumSize(labelDimension);
          backSpinner.getEditor().setPreferredSize(spinnerDimension);
 
@@ -224,7 +227,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       else{
          armorLabel.setPreferredSize(labelDimension);
 
-         spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
+         spinner = new JSpinner(new ArmorSpinner(loadout, loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
          spinner.setMaximumSize(labelDimension);
          spinner.getEditor().setPreferredSize(spinnerDimension);
          JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
@@ -281,7 +284,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadoutPart.getLoadout()) && aMsg instanceof ConfiguredComponent.Message ){
+      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponent.Message ){
          ConfiguredComponent.Message msg = (ConfiguredComponent.Message)aMsg;
          if( msg.type == Type.ArmorChanged ){
             SwingUtilities.invokeLater(new Runnable(){

@@ -21,7 +21,7 @@ package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -38,8 +38,8 @@ public class TurningSpeedTest{
    @Test
    public final void testCalculate_NoEngine() throws Exception{
       Loadout loadout = Mockito.mock(Loadout.class);
-      Chassis chassi = Mockito.mock(Chassis.class);
-      Mockito.when(loadout.getChassi()).thenReturn(chassi);
+      ChassisIS chassi = Mockito.mock(ChassisIS.class);
+      Mockito.when(loadout.getChassis()).thenReturn(chassi);
       Mockito.when(loadout.getEngine()).thenReturn(null);
       double factor = 0.2;
       int mass = 50;
@@ -53,13 +53,13 @@ public class TurningSpeedTest{
    @Test
    public final void testCalculate() throws Exception{
       Loadout loadout = Mockito.mock(Loadout.class);
-      Chassis chassi = Mockito.mock(Chassis.class);
+      ChassisIS chassi = Mockito.mock(ChassisIS.class);
       Engine engine = Mockito.mock(Engine.class);
       Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
       double modifier = 1.1;
       Mockito.when(efficiencies.getTurnSpeedModifier()).thenReturn(modifier);
       Mockito.when(loadout.getEfficiencies()).thenReturn(efficiencies);
-      Mockito.when(loadout.getChassi()).thenReturn(chassi);
+      Mockito.when(loadout.getChassis()).thenReturn(chassi);
       Mockito.when(loadout.getEngine()).thenReturn(engine);
       double factor = 0.2;
       int rating = 300;

@@ -62,7 +62,6 @@ public class AddItemOperationTest{
    @Before
    public void setup(){
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
    }
@@ -71,7 +70,7 @@ public class AddItemOperationTest{
    public void testDescription(){
       Item item = ItemDB.ECM;
 
-      OpAddItem cut = new OpAddItem(xBar, loadoutPart, item);
+      OpAddItem cut = new OpAddItem(xBar, loadout, loadoutPart, item);
 
       assertTrue(cut.describe().contains("add"));
       assertTrue(cut.describe().contains("to"));
@@ -84,12 +83,12 @@ public class AddItemOperationTest{
       Item item = ItemDB.lookup("LRM 20");
       Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
 
-      OpAddItem cut = new OpAddItem(xBar, loadoutPart, item);
+      OpAddItem cut = new OpAddItem(xBar, loadout, loadoutPart, item);
 
       assertTrue(cut.describe().contains("add"));
       assertTrue(cut.describe().contains("to"));
       assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
-      assertTrue(cut.describe().contains(item.getName(upgrades)));
+      assertTrue(cut.describe().contains(item.getName()));
    }
 
    /**
@@ -102,7 +101,7 @@ public class AddItemOperationTest{
          Item item = ItemDB.lookup("LRM 20");
          Mockito.when(loadout.canEquip(item)).thenReturn(true);
          Mockito.when(loadoutPart.canEquip(item)).thenReturn(false);
-         cut = new OpAddItem(xBar, loadoutPart, item);
+         cut = new OpAddItem(xBar, loadout, loadoutPart, item);
       }
       catch( Throwable t ){
          fail("Setup failed");
@@ -119,9 +118,9 @@ public class AddItemOperationTest{
    public void testAddItem_XLCaseLeft(){
       Loadout testLoadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), null);
       OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new OpAddItem(null, testLoadout.getPart(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
+      stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
 
-      OpAddItem cut = new OpAddItem(xBar, testLoadout.getPart(Location.LeftTorso), ItemDB.CASE);
+      OpAddItem cut = new OpAddItem(xBar, testLoadout, testLoadout.getComponent(Location.LeftTorso), ItemDB.CASE);
       cut.apply();
 
       Mockito.verify(xBar).post(new NotificationMessage(Severity.WARNING, testLoadout, "C.A.S.E. together with XL engine has no effect."));
@@ -134,9 +133,9 @@ public class AddItemOperationTest{
    public void testAddItem_XLCaseRight(){
       Loadout testLoadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), null);
       OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new OpAddItem(null, testLoadout.getPart(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
+      stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
 
-      OpAddItem cut = new OpAddItem(xBar, testLoadout.getPart(Location.RightTorso), ItemDB.CASE);
+      OpAddItem cut = new OpAddItem(xBar, testLoadout, testLoadout.getComponent(Location.RightTorso), ItemDB.CASE);
       cut.apply();
 
       Mockito.verify(xBar).post(new NotificationMessage(Severity.WARNING, testLoadout, "C.A.S.E. together with XL engine has no effect."));

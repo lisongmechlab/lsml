@@ -42,5 +42,7 @@ public class MdfMovementTuning{
    public double MaxArmRotationYaw;
    @XStreamAsAttribute
    public double MaxArmRotationPitch;
+   @XStreamAsAttribute
+   public double ReverseSpeedMultiplier;
 
 }

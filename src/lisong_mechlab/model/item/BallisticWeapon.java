@@ -23,7 +23,6 @@ import java.util.Comparator;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import lisong_mechlab.util.GaussianDistribution;
 
@@ -59,8 +58,8 @@ public class BallisticWeapon extends AmmoWeapon{
    }
 
    @Override
-   public String getShortName(Upgrades anUpgrades){
-      String name = getName(anUpgrades);
+   public String getShortName(){
+      String name = getName();
       name = name.replace("ULTRA ", "U");
       name = name.replace("MACHINE GUN", "MG");
       return name;

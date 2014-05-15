@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -59,12 +59,12 @@ public class PayloadStatistics{
     * @param anEngineRating
     * @return the calculated value
     */
-   public double calculate(Chassis aChassi, int anEngineRating){
+   public double calculate(ChassisIS aChassi, int anEngineRating){
       double internalMass = upgrades.getStructure().getStructureMass(aChassi);
       double maxPayload = aChassi.getMassMax() - internalMass;
 
       Engine engine = (Engine)ItemDB.lookup((xlEngine ? "XL" : "STD") + " ENGINE " + anEngineRating);
-      maxPayload -= engine.getMass(null);
+      maxPayload -= engine.getMass();
       maxPayload -= 10 - engine.getNumInternalHeatsinks();
 
       if( maxArmor ){

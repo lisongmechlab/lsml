@@ -21,6 +21,7 @@ package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
@@ -35,16 +36,16 @@ public class OpAddItem extends OpItemBase{
    /**
     * Creates a new operation.
     * 
-    * @param anXBar
+    * @param aXBar
     *           The {@link MessageXBar} to send messages on when items are added.
     * @param aLoadoutPart
     *           The {@link ConfiguredComponent} to add to.
-    * @param anItem
+    * @param aItem
     *           The {@link Item} to add.
     */
-   public OpAddItem(MessageXBar anXBar, ConfiguredComponent aLoadoutPart, Item anItem){
-      super(anXBar, aLoadoutPart);
-      item = anItem;
+   public OpAddItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, Item aItem){
+      super(aXBar, aLoadout, aLoadoutPart);
+      item = aItem;
       if( item instanceof Internal )
          throw new IllegalArgumentException("Can't add internals to a loadout!");
    }
@@ -67,7 +68,7 @@ public class OpAddItem extends OpItemBase{
 
    @Override
    public String describe(){
-      return "add " + item.getName(component.getLoadout().getUpgrades()) + " to " + component.getInternalComponent().getLocation();
+      return "add " + item.getName() + " to " + component.getInternalComponent().getLocation();
    }
 
    @Override
@@ -77,7 +78,7 @@ public class OpAddItem extends OpItemBase{
 
    @Override
    public void apply(){
-      if( !component.getLoadout().canEquip(item) )
+      if( !loadout.canEquip(item) )
          throw new IllegalArgumentException("Can't add " + item + "!");
       if( !component.canEquip(item) )
          throw new IllegalArgumentException("Can't add " + item + "!");

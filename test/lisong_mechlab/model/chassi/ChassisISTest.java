@@ -32,12 +32,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Test suite for {@link Chassis}.
+ * Test suite for {@link ChassisIS}.
  * 
  * @author Li Song
  */
 @RunWith(JUnitParamsRunner.class)
-public class ChassisTest{
+public class ChassisISTest{
 
    /**
     * Internal parts list can not be modified.
@@ -45,18 +45,18 @@ public class ChassisTest{
    @Test(expected = UnsupportedOperationException.class)
    public void getParts_NoMod(){
       // Setup
-      Chassis cut = ChassisDB.lookup("Ilya Muromets");
+      ChassisIS cut = ChassisDB.lookup("Ilya Muromets");
 
       // Execute
-      cut.getInternalParts().add(null);
+      cut.getComponents().add(null);
    }
 
    @Test
    public void testIsHero(){
-      Chassis ilya = ChassisDB.lookup("Ilya Muromets");
+      ChassisIS ilya = ChassisDB.lookup("Ilya Muromets");
       assertEquals(ChassisVariant.HERO, ilya.getVariantType());
 
-      Chassis ctf3d = ChassisDB.lookup("CTF-3D");
+      ChassisIS ctf3d = ChassisDB.lookup("CTF-3D");
       assertEquals(ChassisVariant.NORMAL, ctf3d.getVariantType());
    }
 
@@ -86,7 +86,7 @@ public class ChassisTest{
 
    @Test
    public void testLoadHeroMech(){
-      Chassis cut = ChassisDB.lookup("Ilya Muromets");
+      ChassisIS cut = ChassisDB.lookup("Ilya Muromets");
 
       assertEquals(140, cut.getEngineMin());
       assertEquals(340, cut.getEngineMax());
@@ -96,20 +96,19 @@ public class ChassisTest{
       assertEquals(cut.getNameShort(), cut.toString());
       assertEquals("ctf-im", cut.getMwoName());
 
-      assertEquals(7.0, cut.getInternalMass(), 0.0);
       assertEquals(70.0, cut.getMassMax(), 0.0);
 
       assertEquals(434, cut.getArmorMax());
 
-      assertEquals(16.2, cut.getSpeedFactor(), 0.0);
+      assertEquals(16.2, cut.getMovementProfile().getMaxMovementSpeed(), 0.0);
 
       assertSame(ChassisClass.HEAVY, cut.getChassiClass());
-      assertEquals(0, cut.getMaxJumpJets());
+      assertEquals(0, cut.getJumpJetsMax());
       assertEquals(0, cut.getHardpointsCount(HardPointType.ECM));
 
       // Do a through test only on the Ilyas components
       {
-         InternalComponent pt = cut.getInternalPart(Location.Head);
+         InternalComponent pt = cut.getComponent(Location.Head);
 
          assertEquals(18, pt.getArmorMax());
          assertEquals(15.0, pt.getHitpoints(), 0.0);
@@ -126,7 +125,7 @@ public class ChassisTest{
       }
 
       {
-         InternalComponent pt = cut.getInternalPart(Location.RightArm);
+         InternalComponent pt = cut.getComponent(Location.RightArm);
          assertEquals(44, pt.getArmorMax());
          assertEquals(22.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
@@ -141,7 +140,7 @@ public class ChassisTest{
       }
 
       {
-         InternalComponent pt = cut.getInternalPart(Location.LeftArm);
+         InternalComponent pt = cut.getComponent(Location.LeftArm);
          assertEquals(44, pt.getArmorMax());
          assertEquals(22.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
@@ -156,7 +155,7 @@ public class ChassisTest{
       }
 
       {
-         InternalComponent pt = cut.getInternalPart(Location.RightTorso);
+         InternalComponent pt = cut.getComponent(Location.RightTorso);
          assertEquals(60, pt.getArmorMax());
          assertEquals(30.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
@@ -171,7 +170,7 @@ public class ChassisTest{
       }
 
       {
-         InternalComponent pt = cut.getInternalPart(Location.LeftTorso);
+         InternalComponent pt = cut.getComponent(Location.LeftTorso);
          assertEquals(60, pt.getArmorMax());
          assertEquals(30.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
@@ -186,7 +185,7 @@ public class ChassisTest{
       }
 
       {
-         InternalComponent pt = cut.getInternalPart(Location.CenterTorso);
+         InternalComponent pt = cut.getComponent(Location.CenterTorso);
          assertEquals(88, pt.getArmorMax());
          assertEquals(44.0, pt.getHitpoints(), 0.0);
          assertEquals(12, pt.getNumCriticalslots());
@@ -201,7 +200,7 @@ public class ChassisTest{
       }
 
       {
-         InternalComponent pt = cut.getInternalPart(Location.RightLeg);
+         InternalComponent pt = cut.getComponent(Location.RightLeg);
          assertEquals(60, pt.getArmorMax());
          assertEquals(30.0, pt.getHitpoints(), 0.0);
          assertEquals(6, pt.getNumCriticalslots());
@@ -216,7 +215,7 @@ public class ChassisTest{
       }
 
       {
-         InternalComponent pt = cut.getInternalPart(Location.LeftLeg);
+         InternalComponent pt = cut.getComponent(Location.LeftLeg);
          assertEquals(60, pt.getArmorMax());
          assertEquals(30.0, pt.getHitpoints(), 0.0);
          assertEquals(6, pt.getNumCriticalslots());
@@ -233,7 +232,7 @@ public class ChassisTest{
 
    @Test
    public void testLoadHasECM(){
-      Chassis cut = ChassisDB.lookup("AS7-D-DC");
+      ChassisIS cut = ChassisDB.lookup("AS7-D-DC");
 
       assertEquals(200, cut.getEngineMin());
       assertEquals(360, cut.getEngineMax());
@@ -243,33 +242,32 @@ public class ChassisTest{
       assertEquals(cut.getNameShort(), cut.toString());
       assertEquals("as7-d-dc", cut.getMwoName());
 
-      assertEquals(10.0, cut.getInternalMass(), 0.0);
       assertEquals(100.0, cut.getMassMax(), 0.0);
 
       assertEquals(614, cut.getArmorMax());
 
       assertSame(ChassisClass.ASSAULT, cut.getChassiClass());
-      assertEquals(0, cut.getMaxJumpJets());
+      assertEquals(0, cut.getJumpJetsMax());
       assertEquals(1, cut.getHardpointsCount(HardPointType.ECM));
 
-      assertEquals(3, cut.getInternalPart(Location.Head).getInternalItems().size());
+      assertEquals(3, cut.getComponent(Location.Head).getInternalItems().size());
 
-      assertEquals(4, cut.getInternalPart(Location.RightArm).getInternalItems().size());
-      assertEquals(4, cut.getInternalPart(Location.LeftArm).getInternalItems().size());
+      assertEquals(4, cut.getComponent(Location.RightArm).getInternalItems().size());
+      assertEquals(4, cut.getComponent(Location.LeftArm).getInternalItems().size());
 
-      assertEquals(4, cut.getInternalPart(Location.RightLeg).getInternalItems().size());
-      assertEquals(4, cut.getInternalPart(Location.LeftLeg).getInternalItems().size());
+      assertEquals(4, cut.getComponent(Location.RightLeg).getInternalItems().size());
+      assertEquals(4, cut.getComponent(Location.LeftLeg).getInternalItems().size());
 
-      assertEquals(1, cut.getInternalPart(Location.RightArm).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(1, cut.getInternalPart(Location.LeftArm).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(1, cut.getInternalPart(Location.LeftArm).getNumHardpoints(HardPointType.AMS));
-      assertEquals(3, cut.getInternalPart(Location.LeftTorso).getNumHardpoints(HardPointType.MISSILE));
-      assertEquals(2, cut.getInternalPart(Location.RightTorso).getNumHardpoints(HardPointType.BALLISTIC));
+      assertEquals(1, cut.getComponent(Location.RightArm).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(1, cut.getComponent(Location.LeftArm).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(1, cut.getComponent(Location.LeftArm).getNumHardpoints(HardPointType.AMS));
+      assertEquals(3, cut.getComponent(Location.LeftTorso).getNumHardpoints(HardPointType.MISSILE));
+      assertEquals(2, cut.getComponent(Location.RightTorso).getNumHardpoints(HardPointType.BALLISTIC));
    }
 
    @Test
    public void testLoadHasJJ(){
-      Chassis cut = ChassisDB.lookup("Jenner JR7-F");
+      ChassisIS cut = ChassisDB.lookup("Jenner JR7-F");
 
       assertEquals(70, cut.getEngineMin()); // However no such engine exists :)
       assertEquals(300, cut.getEngineMax());
@@ -279,33 +277,32 @@ public class ChassisTest{
       assertEquals(cut.getNameShort(), cut.toString());
       assertEquals("jr7-f", cut.getMwoName());
 
-      assertEquals(3.5, cut.getInternalMass(), 0.0);
       assertEquals(35.0, cut.getMassMax(), 0.0);
 
       assertEquals(238, cut.getArmorMax());
 
       assertSame(ChassisClass.LIGHT, cut.getChassiClass());
-      assertEquals(5, cut.getMaxJumpJets());
+      assertEquals(5, cut.getJumpJetsMax());
       assertEquals(0, cut.getHardpointsCount(HardPointType.ECM));
 
-      assertEquals(3, cut.getInternalPart(Location.Head).getInternalItems().size());
+      assertEquals(3, cut.getComponent(Location.Head).getInternalItems().size());
 
-      assertEquals(2, cut.getInternalPart(Location.RightArm).getInternalItems().size());
-      assertEquals(2, cut.getInternalPart(Location.LeftArm).getInternalItems().size());
+      assertEquals(2, cut.getComponent(Location.RightArm).getInternalItems().size());
+      assertEquals(2, cut.getComponent(Location.LeftArm).getInternalItems().size());
 
-      assertEquals(4, cut.getInternalPart(Location.RightLeg).getInternalItems().size());
-      assertEquals(4, cut.getInternalPart(Location.LeftLeg).getInternalItems().size());
+      assertEquals(4, cut.getComponent(Location.RightLeg).getInternalItems().size());
+      assertEquals(4, cut.getComponent(Location.LeftLeg).getInternalItems().size());
 
-      assertEquals(3, cut.getInternalPart(Location.RightArm).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(3, cut.getInternalPart(Location.LeftArm).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(1, cut.getInternalPart(Location.LeftTorso).getNumHardpoints(HardPointType.AMS));
+      assertEquals(3, cut.getComponent(Location.RightArm).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(3, cut.getComponent(Location.LeftArm).getNumHardpoints(HardPointType.ENERGY));
+      assertEquals(1, cut.getComponent(Location.LeftTorso).getNumHardpoints(HardPointType.AMS));
    }
 
    @Test
    public void testIsAllowed_JJ(){
-      Chassis jj55tons = ChassisDB.lookup("WVR-6R");
-      Chassis jj70tons = ChassisDB.lookup("QKD-4G");
-      Chassis nojj55tons = ChassisDB.lookup("KTO-18");
+      ChassisIS jj55tons = ChassisDB.lookup("WVR-6R");
+      ChassisIS jj70tons = ChassisDB.lookup("QKD-4G");
+      ChassisIS nojj55tons = ChassisDB.lookup("KTO-18");
 
       Item classIV = ItemDB.lookup("JUMP JETS - CLASS IV");
       Item classIII = ItemDB.lookup("JUMP JETS - CLASS III");
@@ -320,7 +317,7 @@ public class ChassisTest{
 
    @Test
    public void testIsAllowed_Engine(){
-      Chassis cut = ChassisDB.lookup("ILYA MUROMETS");
+      ChassisIS cut = ChassisDB.lookup("ILYA MUROMETS");
 
       Item tooSmall = ItemDB.lookup("STD ENGINE 135");
       Item tooLarge = ItemDB.lookup("STD ENGINE 345");
@@ -335,7 +332,7 @@ public class ChassisTest{
 
    @Test
    public void testIsAllowed_Hardpoints(){
-      Chassis cut = ChassisDB.lookup("ILYA MUROMETS");
+      ChassisIS cut = ChassisDB.lookup("ILYA MUROMETS");
 
       Item lrm20 = ItemDB.lookup("LRM 20");
       Item ac20 = ItemDB.lookup("AC/20");

@@ -27,7 +27,7 @@ import java.util.List;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
@@ -67,7 +67,7 @@ public class LoadStockOperationTest{
    @Test
    public void testNotEmpty() throws Exception{
       // Setup
-      Chassis chassi = ChassisDB.lookup("JR7-F");
+      ChassisIS chassi = ChassisDB.lookup("JR7-F");
       Loadout loadout = new Loadout(chassi, xBar);
       OperationStack opstack = new OperationStack(0);
       opstack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
@@ -79,7 +79,7 @@ public class LoadStockOperationTest{
    }
 
    public Object[] allChassis(){
-      List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisIS> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
@@ -95,7 +95,7 @@ public class LoadStockOperationTest{
     */
    @Test
    @Parameters(method = "allChassis")
-   public void testApply(Chassis aChassi) throws Exception{
+   public void testApply(ChassisIS aChassi) throws Exception{
       // Setup
       Loadout loadout = new Loadout(aChassi, xBar);
 
@@ -105,7 +105,7 @@ public class LoadStockOperationTest{
 
       // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full armor?!)
       assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
-      for(ConfiguredComponent part : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : loadout.getComponents()){
          Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponent.Message(part, Type.ArmorChanged));
       }
       Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponent.Message(Matchers.any(ConfiguredComponent.class), Type.ItemAdded));
@@ -124,9 +124,9 @@ public class LoadStockOperationTest{
 
       // Execute
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new OpLoadStock(loadout.getChassi(), loadout, xBar));
+      opstack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
 
-      assertTrue(loadout.getPart(Location.LeftTorso).getItems().contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
+      assertTrue(loadout.getComponent(Location.LeftTorso).getItems().contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
    }
 
    /**
@@ -137,11 +137,11 @@ public class LoadStockOperationTest{
    @Test
    public void testUndo() throws Exception{
       // Setup
-      Chassis chassi = ChassisDB.lookup("JR7-F");
+      ChassisIS chassi = ChassisDB.lookup("JR7-F");
       Loadout reference = new Loadout(chassi, xBar);
       Loadout loadout = new Loadout(chassi, xBar);
       OperationStack opstack = new OperationStack(1);
-      opstack.pushAndApply(new OpLoadStock(loadout.getChassi(), loadout, xBar));
+      opstack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
 
       // Execute
       opstack.undo();

@@ -58,7 +58,6 @@ public class CriticalItemDamageTest{
    @Before
    public void setup(){
       Mockito.when(loadoutPart.getItems()).thenReturn(items);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
    }
 
@@ -69,7 +68,7 @@ public class CriticalItemDamageTest{
    @Test
    public void testOneItem(){
       Item i = Mockito.mock(Item.class);
-      Mockito.when(i.getNumCriticalSlots(upgrades)).thenReturn(5);
+      Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
       items.add(i);
 
       assertEquals(0.25 * 1 + 0.14 * 2 + 0.03 * 3, cut.calculate(i), 0.0);
@@ -82,8 +81,8 @@ public class CriticalItemDamageTest{
    public void testNoInternals(){
       Item i = Mockito.mock(Item.class);
       Item internal = Mockito.mock(Internal.class);
-      Mockito.when(i.getNumCriticalSlots(upgrades)).thenReturn(5);
-      Mockito.when(internal.getNumCriticalSlots(upgrades)).thenReturn(5);
+      Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);
       items.add(i);
       items.add(internal);
 
@@ -97,7 +96,7 @@ public class CriticalItemDamageTest{
    public void testEngineInternals(){
       Item i = ConfiguredComponent.ENGINE_INTERNAL;
       Item internal = Mockito.mock(Internal.class);
-      Mockito.when(internal.getNumCriticalSlots(upgrades)).thenReturn(5);
+      Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);
       items.add(i);
       items.add(internal);
 
@@ -115,8 +114,8 @@ public class CriticalItemDamageTest{
    public void testTwoItems(){
       Item i0 = Mockito.mock(Item.class);
       Item i1 = Mockito.mock(Item.class);
-      Mockito.when(i0.getNumCriticalSlots(upgrades)).thenReturn(5);
-      Mockito.when(i1.getNumCriticalSlots(upgrades)).thenReturn(15);
+      Mockito.when(i0.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(i1.getNumCriticalSlots()).thenReturn(15);
       items.add(i0);
       items.add(i1);
 

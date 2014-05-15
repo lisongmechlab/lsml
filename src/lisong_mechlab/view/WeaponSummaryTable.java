@@ -250,7 +250,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
          if( entry.getAmmoType() == null ){
             // Ammo type will only be null if the entry was constructed with a Weapon that is not
             // AmmoWeapon, thus the weapons list will contain at least one entry. This is safe.
-            String weaponName = entry.getWeapons().get(0).getShortName(loadout.getUpgrades());
+            String weaponName = entry.getWeapons().get(0).getShortName();
             if( entry.getWeapons().size() > 1 ){
                return entry.getWeapons().size() + " x " + weaponName;
             }
@@ -258,11 +258,11 @@ public class WeaponSummaryTable extends JTable implements Reader{
          }
          // Ammo without matching weapon
          if( entry.getWeapons().isEmpty() ){
-            return entry.getAmmoType().getShortName(loadout.getUpgrades());
+            return entry.getAmmoType().getShortName();
          }
          // 1 >= AmmoWeapon with 0 or more tons of ammo.
          Weapon protoWeapon = entry.getWeapons().get(0);
-         String weaponName = protoWeapon.getShortName(loadout.getUpgrades());
+         String weaponName = protoWeapon.getShortName();
          if( protoWeapon.getName().toLowerCase().contains("srm") || protoWeapon.getName().toLowerCase().contains("lrm") ){
             Pattern pattern = Pattern.compile("(\\D+)(\\d+).*");
             String prefix = null;

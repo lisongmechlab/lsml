@@ -21,6 +21,7 @@ package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
@@ -35,15 +36,15 @@ public class OpRemoveItem extends OpItemBase{
    /**
     * Creates a new operation.
     * 
-    * @param anXBar
+    * @param aXBar
     *           The {@link MessageXBar} to send messages on when items are removed.
     * @param aLoadoutPart
     *           The {@link ConfiguredComponent} to remove from.
     * @param aItem
     *           The {@link Item} to remove.
     */
-   public OpRemoveItem(MessageXBar anXBar, ConfiguredComponent aLoadoutPart, Item aItem){
-      super(anXBar, aLoadoutPart);
+   public OpRemoveItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, Item aItem){
+      super(aXBar, aLoadout, aLoadoutPart);
       if( aItem instanceof Internal )
          throw new IllegalArgumentException("Can't remove internals!");
       item = aItem;
@@ -67,7 +68,7 @@ public class OpRemoveItem extends OpItemBase{
 
    @Override
    public String describe(){
-      return "remove " + item.getName(component.getLoadout().getUpgrades()) + " from " + component.getInternalComponent().getLocation();
+      return "remove " + item.getName() + " from " + component.getInternalComponent().getLocation();
    }
 
    @Override

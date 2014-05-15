@@ -43,7 +43,7 @@ public class SetHeatSinkTypeOperationTest{
 
       stack.pushAndApply(new OpStripLoadout(loadout, xBar));
 
-      assertEquals(loadout.getMass(), loadout.getChassi().getInternalMass(), 0.0);
+      assertEquals(loadout.getMass(), loadout.getChassis().getMassMax() * 0.1, 0.0);
       assertSame(UpgradeDB.STANDARD_ARMOR, loadout.getUpgrades().getArmor());
       assertSame(UpgradeDB.STANDARD_STRUCTURE, loadout.getUpgrades().getStructure());
       assertSame(UpgradeDB.STANDARD_GUIDANCE, loadout.getUpgrades().getGuidance());

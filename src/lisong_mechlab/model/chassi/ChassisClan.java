@@ -17,33 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.upgrades;
+package lisong_mechlab.model.chassi;
 
-import lisong_mechlab.model.item.HeatSink;
-import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
-
-public class HeatSinkUpgrade extends Upgrade{
-   private HeatSink heatSinkType;
-
-   public HeatSinkUpgrade(ItemStatsUpgradeType aUpgradeType){
-      super(aUpgradeType);
-   }
+/**
+ * @author Li Song
+ *
+ */
+public class ChassisClan extends ChassisBase{
 
    /**
-    * @return The type of {@link HeatSink}s associated with this upgrade.
+    * @param aMwoID
+    * @param aMwoName
+    * @param aSeries
+    * @param aName
+    * @param aShortName
+    * @param aParts
+    * @param aMaxJumpJets
+    * @param aMaxTons
+    * @param aVariant
+    * @param aBaseVariant
+    * @param aMovementProfile
     */
-   public HeatSink getHeatSinkType(){
-      if( heatSinkType == null )
-         heatSinkType = (HeatSink)ItemDB.lookup(getAssociateItemId());
-      return heatSinkType;
-   }
-
-   /**
-    * @return <code>true</code> if this heat sink is a double type.
-    */
-   public boolean isDouble(){
-      return getHeatSinkType().getNumCriticalSlots() > 1;
+   public ChassisClan(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, InternalComponent[] aParts, int aMaxJumpJets,
+                          int aMaxTons, ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile){
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aParts, aMaxJumpJets, aMaxTons, aVariant, aBaseVariant, aMovementProfile);
+      // TODO Auto-generated constructor stub
    }
 
 }

@@ -158,8 +158,8 @@ public class ItemInfoPanel extends JPanel{
       if( null != anItem ){
          ((TitledBorder)getBorder()).setTitle(anItem.getName());
          repaint();
-         slots.setText("Slots: " + anItem.getNumCriticalSlots(null));
-         mass.setText("Tons: " + anItem.getMass(null));
+         slots.setText("Slots: " + anItem.getNumCriticalSlots());
+         mass.setText("Tons: " + anItem.getMass());
          description.setText("Description:\n" + anItem.getDescription());
          health.setText("HP: " + anItem.getHealth());
       }
@@ -207,13 +207,13 @@ public class ItemInfoPanel extends JPanel{
       secondsPerShot.setText("RoF: " + aWeapon.getSecondsPerShot(aEfficiencies) + " s/shot");
 
       heatPerSecond.setVisible(true);
-      heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", anUpgrades, aEfficiencies)));
+      heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", aEfficiencies)));
 
       dps.setVisible(true);
-      dps.setText("DPS: " + df1.format(aWeapon.getStat("d/s", anUpgrades, aEfficiencies)));
+      dps.setText("DPS: " + df1.format(aWeapon.getStat("d/s", aEfficiencies)));
 
       dph.setVisible(true);
-      dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", anUpgrades, aEfficiencies)));
+      dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", aEfficiencies)));
 
       range.setVisible(true);
       range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "")

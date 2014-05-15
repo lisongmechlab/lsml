@@ -96,7 +96,7 @@ public class LoadoutPartConverter implements Converter{
       OperationStack operationStack = new OperationStack(0);
 
       Location partType = Location.valueOf(aReader.getAttribute("part"));
-      ConfiguredComponent loadoutPart = loadout.getPart(partType);
+      ConfiguredComponent loadoutPart = loadout.getComponent(partType);
 
       String autoArmorString = aReader.getAttribute("autoarmor");
       boolean autoArmor = false;
@@ -108,12 +108,12 @@ public class LoadoutPartConverter implements Converter{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");
             if( armors.length == 2 ){
-               operationStack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0]), !autoArmor));
-               operationStack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1]), !autoArmor));
+               operationStack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0]), !autoArmor));
+               operationStack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1]), !autoArmor));
             }
          }
          else{
-            operationStack.pushAndApply(new OpSetArmor(xBar, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
+            operationStack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
          }
       }
       catch( IllegalArgumentException exception ){
@@ -133,7 +133,7 @@ public class LoadoutPartConverter implements Converter{
                   later.add(item);
                }
                else{
-                  operationStack.pushAndApply(new OpAddItem(xBar, loadoutPart, item));
+                  operationStack.pushAndApply(new OpAddItem(xBar, loadout, loadoutPart, item));
                }
             }
             catch( IllegalArgumentException exception ){
@@ -146,7 +146,7 @@ public class LoadoutPartConverter implements Converter{
 
       try{
          for(Item item : later){
-            operationStack.pushAndApply(new OpAddItem(xBar, loadoutPart, item));
+            operationStack.pushAndApply(new OpAddItem(xBar, loadout, loadoutPart, item));
          }
       }
       catch( IllegalArgumentException exception ){

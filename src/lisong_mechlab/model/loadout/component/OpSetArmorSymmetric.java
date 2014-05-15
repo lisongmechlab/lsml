@@ -22,6 +22,7 @@ package lisong_mechlab.model.loadout.component;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -32,21 +33,22 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class OpSetArmorSymmetric extends CompositeOperation{
-   private final ConfiguredComponent part;
+   private final ConfiguredComponent component;
    private final ArmorSide           side;
    private final boolean             manual;
+   private final LoadoutBase<?, ?>   loadout;
 
    /**
     * Creates a new {@link OpSetArmorSymmetric}.
     * 
-    * @param anXBar
+    * @param aXBar
     *           The {@link MessageXBar} to announce changes to.
     * @param aLoadoutPart
     *           The primary side {@link ConfiguredComponent} to change (the opposite side will be changed
     *           automatically).
-    * @param anArmorSide
+    * @param aArmorSide
     *           The side to set the armor for.
-    * @param anArmorAmount
+    * @param aArmorAmount
     *           The amount to set the armor to.
     * @param aManualSet
     *           True if this set operation is done manually. Will disable automatic armor assignments.
@@ -54,19 +56,20 @@ public class OpSetArmorSymmetric extends CompositeOperation{
     *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
     *            support the armor.
     */
-   public OpSetArmorSymmetric(MessageXBar anXBar, ConfiguredComponent aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount, boolean aManualSet){
+   public OpSetArmorSymmetric(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, ArmorSide aArmorSide,
+                              int aArmorAmount, boolean aManualSet){
       super("change armor");
-
-      part = aLoadoutPart;
-      side = anArmorSide;
+      loadout = aLoadout;
+      component = aLoadoutPart;
+      side = aArmorSide;
       manual = aManualSet;
 
       Location otherSide = aLoadoutPart.getInternalComponent().getLocation().oppositeSide();
       if( otherSide == null )
          throw new IllegalArgumentException("Symmetric armor operation is only usable with comoponents that have an opposing side.");
 
-      addOp(new OpSetArmor(anXBar, aLoadoutPart, anArmorSide, anArmorAmount, aManualSet));
-      addOp(new OpSetArmor(anXBar, aLoadoutPart.getLoadout().getPart(otherSide), anArmorSide, anArmorAmount, aManualSet));
+      addOp(new OpSetArmor(aXBar, aLoadout, aLoadoutPart, aArmorSide, aArmorAmount, aManualSet));
+      addOp(new OpSetArmor(aXBar, aLoadout, aLoadout.getComponent(otherSide), aArmorSide, aArmorAmount, aManualSet));
    }
 
    /**
@@ -83,7 +86,7 @@ public class OpSetArmorSymmetric extends CompositeOperation{
       OpSetArmorSymmetric that = (OpSetArmorSymmetric)aOperation;
       if( that.manual != manual )
          return false;
-      if( that.part != part && that.part != part.getLoadout().getPart(part.getInternalComponent().getLocation().oppositeSide()) )
+      if( that.component != component && that.component != loadout.getComponent(component.getInternalComponent().getLocation().oppositeSide()) )
          return false;
       if( that.side != side )
          return false;

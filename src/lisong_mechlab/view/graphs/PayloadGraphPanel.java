@@ -27,7 +27,7 @@ import java.util.Iterator;
 import javax.swing.JCheckBox;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.util.MessageXBar;
@@ -50,14 +50,14 @@ import org.jfree.data.xy.XYSeries;
 public class PayloadGraphPanel extends ChartPanel{
    public static class Entry{
       private final String  name;
-      private final Chassis representant;
+      private final ChassisIS representant;
 
-      public Entry(Collection<Chassis> aCollection){
-         Iterator<Chassis> iterator = aCollection.iterator();
+      public Entry(Collection<ChassisIS> aCollection){
+         Iterator<ChassisIS> iterator = aCollection.iterator();
          String series = iterator.next().getNameShort();
          while( iterator.hasNext() ){
             series += ",";
-            Chassis chassi = iterator.next();
+            ChassisIS chassi = iterator.next();
             series += chassi.getNameShort().split("-")[1];
          }
          name = series;

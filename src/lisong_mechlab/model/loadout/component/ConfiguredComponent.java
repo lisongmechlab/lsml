@@ -34,6 +34,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -82,8 +83,8 @@ public class ConfiguredComponent{
       }
 
       @Override
-      public boolean isForMe(Loadout aLoadout){
-         return aLoadout.getPartLoadOuts().contains(component);
+      public boolean isForMe(LoadoutBase aLoadout){
+         return aLoadout.getComponents().contains(component);
       }
 
       @Override
@@ -93,13 +94,11 @@ public class ConfiguredComponent{
 
       @Override
       public String toString(){
-         return type.toString() + " for " + component.getInternalComponent().getLocation().toString() + " of " + component.getLoadout();
+         return type.toString() + " for " + component.getInternalComponent().getLocation().toString();
       }
    }
 
    public final static Internal              ENGINE_INTERNAL = (Internal)ItemDB.lookup("mdf_Engine");
-
-   private final transient Loadout           loadout;
    private final InternalComponent           internalComponent;
    private int                               engineHeatsinks = 0;
 
@@ -107,10 +106,9 @@ public class ConfiguredComponent{
    private final List<Item>                  items           = new ArrayList<Item>();
    private boolean                           autoArmor       = false;
 
-   public ConfiguredComponent(Loadout aLoadout, InternalComponent anInternalPart, boolean aAutoArmor){
+   public ConfiguredComponent(InternalComponent anInternalPart, boolean aAutoArmor){
       internalComponent = anInternalPart;
       items.addAll(internalComponent.getInternalItems());
-      loadout = aLoadout;
       autoArmor = aAutoArmor;
       if( internalComponent.getLocation().isTwoSided() ){
          armor.put(ArmorSide.FRONT, 0);
@@ -126,11 +124,8 @@ public class ConfiguredComponent{
     * 
     * @param aLoadoutPart
     *           The {@link ConfiguredComponent} to copy.
-    * @param aLoadout
-    *           The new {@link Loadout} to associate.
     */
-   public ConfiguredComponent(ConfiguredComponent aLoadoutPart, Loadout aLoadout){
-      loadout = aLoadout;
+   public ConfiguredComponent(ConfiguredComponent aLoadoutPart){
       internalComponent = aLoadoutPart.internalComponent;
       engineHeatsinks = aLoadoutPart.engineHeatsinks;
       autoArmor = aLoadoutPart.autoArmor;
@@ -171,7 +166,7 @@ public class ConfiguredComponent{
       }
 
       // Check enough free critical slots
-      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots(getLoadout().getUpgrades()) ){
+      if( getNumCriticalSlotsFree() < anItem.getNumCriticalSlots() ){
          return false;
       }
 
@@ -246,18 +241,13 @@ public class ConfiguredComponent{
    public double getItemMass(){
       double ans = engineHeatsinks * 1.0;
       for(Item item : items){
-         ans += item.getMass(loadout.getUpgrades());
+         ans += item.getMass();
       }
       return ans;
    }
 
    public List<Item> getItems(){
       return Collections.unmodifiableList(items);
-   }
-
-   @Deprecated
-   public Loadout getLoadout(){
-      return loadout;
    }
 
    public int getNumCriticalSlotsFree(){
@@ -272,7 +262,7 @@ public class ConfiguredComponent{
             engineHsLeft--;
             continue;
          }
-         crits += item.getNumCriticalSlots(loadout.getUpgrades());
+         crits += item.getNumCriticalSlots();
       }
       return crits;
    }

@@ -43,7 +43,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.HardPointType;
@@ -58,20 +58,20 @@ import lisong_mechlab.view.preferences.UiPreferences.Message;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
- * Displays all available {@link Chassis} in a pane.
+ * Displays all available {@link ChassisIS} in a pane.
  * 
  * @author Li Song
  */
 public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
    static public class ChassiTableModel extends AbstractTableModel{
       private static final long         serialVersionUID = -2726840937519789976L;
-      private final List<Chassis>       lights           = new ArrayList<>();
-      private final List<Chassis>       mediums          = new ArrayList<>();
-      private final List<Chassis>       heavies          = new ArrayList<>();
-      private final List<Chassis>       assaults         = new ArrayList<>();
-      private final Comparator<Chassis> cmp              = new Comparator<Chassis>(){
+      private final List<ChassisIS>       lights           = new ArrayList<>();
+      private final List<ChassisIS>       mediums          = new ArrayList<>();
+      private final List<ChassisIS>       heavies          = new ArrayList<>();
+      private final List<ChassisIS>       assaults         = new ArrayList<>();
+      private final Comparator<ChassisIS> cmp              = new Comparator<ChassisIS>(){
                                                             @Override
-                                                            public int compare(Chassis aArg0, Chassis aArg1){
+                                                            public int compare(ChassisIS aArg0, ChassisIS aArg1){
                                                                if( aArg0.getMassMax() == aArg1.getMassMax() )
                                                                   return aArg0.getMwoName().compareTo(aArg1.getMwoName());
                                                                return Integer.compare(aArg0.getMassMax(), aArg1.getMassMax());
@@ -90,13 +90,13 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          fireTableDataChanged();
       }
 
-      private void doit(List<Chassis> aList, boolean aFilterSpecials, ChassisClass aChassiClass){
+      private void doit(List<ChassisIS> aList, boolean aFilterSpecials, ChassisClass aChassiClass){
          aList.clear();
          aList.addAll(ChassisDB.lookup(aChassiClass));
          if( aFilterSpecials ){
-            Iterator<Chassis> it = aList.iterator();
+            Iterator<ChassisIS> it = aList.iterator();
             while( it.hasNext() ){
-               Chassis c = it.next();
+               ChassisIS c = it.next();
                if( c.getVariantType().isVariation() ){
                   it.remove();
                }
@@ -145,7 +145,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return ((Chassis)aSourceRowObject).getName();
+         return ((ChassisIS)aSourceRowObject).getName();
       }
    }
 
@@ -158,7 +158,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return Integer.toString(((Chassis)aSourceRowObject).getMassMax());
+         return Integer.toString(((ChassisIS)aSourceRowObject).getMassMax());
       }
    }
 
@@ -178,10 +178,10 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassis chassi = (Chassis)aValue;
+               ChassisIS chassi = (ChassisIS)aValue;
                panel.removeAll();
 
-               int jjsa = chassi.getMaxJumpJets();
+               int jjsa = chassi.getJumpJetsMax();
 
                if( jjsa > 0 ){
                   jjs.setText(jjsa + " JJ");
@@ -203,7 +203,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         Chassis chassi = (Chassis)aSourceRowObject;
+         ChassisIS chassi = (ChassisIS)aSourceRowObject;
          final double maxSpeed = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.0);
          final double maxSpeedTweak = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.1);
          return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
@@ -242,12 +242,12 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassis chassi = (Chassis)aValue;
-               StyleManager.styleHardpointLabel(energy, chassi.getInternalPart(part), HardPointType.ENERGY);
-               StyleManager.styleHardpointLabel(ballistic, chassi.getInternalPart(part), HardPointType.BALLISTIC);
-               StyleManager.styleHardpointLabel(missile, chassi.getInternalPart(part), HardPointType.MISSILE);
-               StyleManager.styleHardpointLabel(ams, chassi.getInternalPart(part), HardPointType.AMS);
-               StyleManager.styleHardpointLabel(ecm, chassi.getInternalPart(part), HardPointType.ECM);
+               ChassisIS chassi = (ChassisIS)aValue;
+               StyleManager.styleHardpointLabel(energy, chassi.getComponent(part), HardPointType.ENERGY);
+               StyleManager.styleHardpointLabel(ballistic, chassi.getComponent(part), HardPointType.BALLISTIC);
+               StyleManager.styleHardpointLabel(missile, chassi.getComponent(part), HardPointType.MISSILE);
+               StyleManager.styleHardpointLabel(ams, chassi.getComponent(part), HardPointType.AMS);
+               StyleManager.styleHardpointLabel(ecm, chassi.getComponent(part), HardPointType.ECM);
                return panel;
             }
          };
@@ -289,8 +289,8 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
                   final int row = target.getSelectedRow();
                   final int column = target.getSelectedColumn();
                   final Object cell = target.getValueAt(row, column);
-                  if( cell instanceof Chassis ){
-                     Chassis chassi = (Chassis)cell;
+                  if( cell instanceof ChassisIS ){
+                     ChassisIS chassi = (ChassisIS)cell;
                      ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
                      ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
                   }

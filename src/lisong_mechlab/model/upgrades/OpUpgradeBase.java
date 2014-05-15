@@ -67,7 +67,7 @@ abstract class OpUpgradeBase extends CompositeOperation{
       if( loadout.getNumCriticalSlotsFree() < 0 ){
          throw new IllegalArgumentException("Not enough free slots!");
       }
-      for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent loadoutPart : loadout.getComponents()){
          if( loadoutPart.getNumCriticalSlotsFree() < 0 ){
             throw new IllegalArgumentException("Not enough free slots!");
          }

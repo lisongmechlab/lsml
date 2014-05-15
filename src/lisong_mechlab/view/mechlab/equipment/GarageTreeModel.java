@@ -31,7 +31,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.util.MessageXBar;
@@ -58,22 +58,22 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
 
       // Chassii
       for(final ChassisClass chassiClass : ChassisClass.values()){
-         DefaultTreeCathegory<Chassis> chassiiSub = new FilterTreeCathegory<Chassis>(xBar, chassiClass.toString(), chassii, this, aFilterBar,
+         DefaultTreeCathegory<ChassisIS> chassiiSub = new FilterTreeCathegory<ChassisIS>(xBar, chassiClass.toString(), chassii, this, aFilterBar,
                                                                                      aGarageTree){
             @Override
-            protected boolean filter(Chassis c){
+            protected boolean filter(ChassisIS c){
                if( preferences.uiPreferences.getHideSpecialMechs() && c.getVariantType().isVariation() )
                   return false;
                return c.getName().toLowerCase().contains(getFilterString());
             }
          };
 
-         for(Chassis chassi : ChassisDB.lookup(chassiClass)){
+         for(ChassisIS chassi : ChassisDB.lookup(chassiClass)){
             chassiiSub.addChild(chassi);
          }
-         chassiiSub.sort(new Comparator<Chassis>(){
+         chassiiSub.sort(new Comparator<ChassisIS>(){
             @Override
-            public int compare(Chassis aO1, Chassis aO2){
+            public int compare(ChassisIS aO1, ChassisIS aO2){
                return aO1.getNameShort().compareTo(aO2.getNameShort());
             }
          });
