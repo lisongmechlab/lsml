@@ -86,9 +86,9 @@ public class MaxDPSTest{
       items.add(lrm20);
       items.add(slas);
 
-      double dps_ac5 = ac5.getStat("d/s", null, null);
-      double dps_lrm20 = lrm20.getStat("d/s", null, null);
-      double dps_slas = slas.getStat("d/s", null, null);
+      double dps_ac5 = ac5.getStat("d/s", null);
+      double dps_lrm20 = lrm20.getStat("d/s", null);
+      double dps_slas = slas.getStat("d/s", null);
 
       assertEquals(dps_ac5 + dps_slas, cut.calculate(0), 0.0);
       assertEquals(dps_ac5 + dps_slas, cut.calculate(90), 0.0);

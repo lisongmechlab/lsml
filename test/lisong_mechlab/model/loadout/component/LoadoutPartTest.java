@@ -101,10 +101,9 @@ public class LoadoutPartTest{
       internals.add(mlc.makeInternal(1));
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(aPart);
-      Loadout loadout = Mockito.mock(Loadout.class);
 
       // Execute
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       // Verify
       assertEquals(internals, cut.getItems());
@@ -118,7 +117,6 @@ public class LoadoutPartTest{
       }
       assertEquals(0, cut.getArmorTotal());
       assertSame(part, cut.getInternalComponent());
-      assertSame(loadout, cut.getLoadout());
    }
 
    @Test
@@ -128,7 +126,7 @@ public class LoadoutPartTest{
       List<Item> internals = new ArrayList<>();
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(aPart);
-      ConfiguredComponent cut = new ConfiguredComponent(null, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
       int anAmount = 10;
 
       // Execute
@@ -149,7 +147,7 @@ public class LoadoutPartTest{
       List<Item> internals = new ArrayList<>();
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(aPart);
-      ConfiguredComponent cut = new ConfiguredComponent(null, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
       int anAmount = 10;
 
       // Execute
@@ -182,7 +180,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getArmorMax()).thenReturn(maxArmor);
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(aPart);
-      ConfiguredComponent cut = new ConfiguredComponent(null, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       if( aPart.isTwoSided() ){
          int front = 4;
@@ -209,12 +207,12 @@ public class LoadoutPartTest{
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(Location.LeftTorso);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       Item item0 = Mockito.mock(Item.class);
       Item item1 = Mockito.mock(Item.class);
-      Mockito.when(item0.getMass(upgrades)).thenReturn(4.0);
-      Mockito.when(item1.getMass(upgrades)).thenReturn(1.5);
+      Mockito.when(item0.getMass()).thenReturn(4.0);
+      Mockito.when(item1.getMass()).thenReturn(1.5);
       cut.addItem(item0);
       cut.addItem(item1);
 
@@ -232,7 +230,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(Location.LeftTorso);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       Item engine = ItemDB.lookup("STD ENGINE 400");
       cut.addItem(engine);
@@ -240,7 +238,7 @@ public class LoadoutPartTest{
          cut.addItem(ItemDB.SHS);
 
       // Execute & Verify
-      assertEquals(engineHs * ItemDB.SHS.getMass(upgrades) + engine.getMass(upgrades), cut.getItemMass(), 0.0);
+      assertEquals(engineHs * ItemDB.SHS.getMass() + engine.getMass(), cut.getItemMass(), 0.0);
    }
 
    @Test
@@ -255,7 +253,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(Location.LeftTorso);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       Item engine = ItemDB.lookup("STD ENGINE 400");
       cut.addItem(engine);
@@ -288,7 +286,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getLocation()).thenReturn(Location.LeftLeg);
       Mockito.when(part.getNumCriticalslots()).thenReturn(critSlots);
 
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
       cut.addItem(lrm_artemis);
       cut.addItem(srm);
 
@@ -312,14 +310,14 @@ public class LoadoutPartTest{
       Item engine = ItemDB.lookup("STD ENGINE 400");
       final int engineHs = ((Engine)engine).getNumHeatsinkSlots() + 1;
 
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
       cut.addItem(engine);
       for(int i = 0; i < engineHs; ++i)
          cut.addItem(ItemDB.SHS);
 
       // Execute & verify
-      assertEquals(engine.getNumCriticalSlots(upgrades) + 1, cut.getNumCriticalSlotsUsed());
-      assertEquals(critSlots - engine.getNumCriticalSlots(upgrades) - 1, cut.getNumCriticalSlotsFree());
+      assertEquals(engine.getNumCriticalSlots() + 1, cut.getNumCriticalSlotsUsed());
+      assertEquals(critSlots - engine.getNumCriticalSlots() - 1, cut.getNumCriticalSlotsFree());
    }
 
    @Test
@@ -333,7 +331,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(critSlots);
 
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       assertEquals(0, cut.getNumEngineHeatsinks());
 
@@ -362,7 +360,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(critSlots);
 
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       // Execute & Verify (no engine)
       assertEquals(0, cut.getNumEngineHeatsinksMax());
@@ -380,13 +378,11 @@ public class LoadoutPartTest{
    @Test
    public void testCanEquip_NoSupport(){
       Item jumpjet = ItemDB.lookup("JUMP JETS - CLASS V");
-
-      Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(false);
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
       Mockito.when(part.getLocation()).thenReturn(Location.Head);
 
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       // Execute & Verify
       assertFalse(cut.canEquip(jumpjet));
@@ -399,8 +395,8 @@ public class LoadoutPartTest{
    public void testCanEquip_Internal(){
       Internal internal = Mockito.mock(Internal.class);
       Mockito.when(internal.getHardpointType()).thenReturn(HardPointType.NONE);
-      Mockito.when(internal.getMass(Matchers.any(Upgrades.class))).thenReturn(0.0);
-      Mockito.when(internal.getNumCriticalSlots(Matchers.any(Upgrades.class))).thenReturn(1);
+      Mockito.when(internal.getMass()).thenReturn(0.0);
+      Mockito.when(internal.getNumCriticalSlots()).thenReturn(1);
 
       Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
@@ -410,7 +406,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumCriticalslots()).thenReturn(8);
       Mockito.when(part.isAllowed(internal)).thenReturn(false);
 
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
       assertFalse(cut.canEquip(internal));
    }
 
@@ -421,13 +417,11 @@ public class LoadoutPartTest{
    @Test
    public void testCanEquip_TooFewSlots(){
       // Setup
-      Loadout loadout = Mockito.mock(Loadout.class);
-
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
-      Mockito.when(part.getNumCriticalslots()).thenReturn(ItemDB.BAP.getNumCriticalSlots(null) - 1);
+      Mockito.when(part.getNumCriticalslots()).thenReturn(ItemDB.BAP.getNumCriticalSlots() - 1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       // Execute & Verify
       assertFalse(cut.canEquip(ItemDB.BAP));
@@ -439,13 +433,11 @@ public class LoadoutPartTest{
    @Test
    public void testCanEquip_HasCase(){
       // Setup
-      Loadout loadout = Mockito.mock(Loadout.class);
-
       Mockito.when(part.getLocation()).thenReturn(Location.RightTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(4);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
       cut.addItem(ItemDB.CASE);
 
       // Execute & Verify
@@ -470,7 +462,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getNumHardpoints(HardPointType.MISSILE)).thenReturn(1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       assertFalse(cut.canEquip(srm6));
    }
@@ -500,7 +492,7 @@ public class LoadoutPartTest{
 
       Engine engine = Mockito.mock(Engine.class);
       Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(2);
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
       cut.addItem(engine);
 
       // Only test heat sinks of correct type. Wrong types are handled by loadout
@@ -531,13 +523,12 @@ public class LoadoutPartTest{
     */
    @Test
    public void testCanEquip_Module(){
-      Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item module = Mockito.mock(Item.class);
       Mockito.when(module.getHardpointType()).thenReturn(HardPointType.NONE);
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       assertTrue(cut.canEquip(module));
    }
@@ -552,14 +543,13 @@ public class LoadoutPartTest{
     */
    @Test
    public void testCanEquip_EnoughHardpoints(){
-      Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
       Mockito.when(part.getNumHardpoints(HardPointType.BALLISTIC)).thenReturn(1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       assertTrue(cut.canEquip(ballistic));
    }
@@ -569,14 +559,13 @@ public class LoadoutPartTest{
     */
    @Test
    public void testCanEquip_NoHardpoints(){
-      Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
       Mockito.when(part.getNumHardpoints(HardPointType.BALLISTIC)).thenReturn(0);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
 
       assertFalse(cut.canEquip(ballistic));
    }
@@ -586,14 +575,13 @@ public class LoadoutPartTest{
     */
    @Test
    public void testCanEquip_NoFreeHardpoints(){
-      Loadout loadout = Mockito.mock(Loadout.class);
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(part.getNumCriticalslots()).thenReturn(10);
       Mockito.when(part.getNumHardpoints(HardPointType.BALLISTIC)).thenReturn(1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
-      ConfiguredComponent cut = new ConfiguredComponent(loadout, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
       cut.addItem(ballistic);
 
       assertFalse(cut.canEquip(ballistic));
@@ -602,7 +590,7 @@ public class LoadoutPartTest{
    @Test
    public void testRemoveItem_NoSuchItem() throws Exception{
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
-      ConfiguredComponent cut = new ConfiguredComponent(null, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent( part, false);
       Item item = ItemDB.lookup("AC/20 AMMO");
 
       assertFalse(cut.removeItem(item));
@@ -612,10 +600,10 @@ public class LoadoutPartTest{
    public void testEquals_ArmorStatus() throws Exception{
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
 
-      ConfiguredComponent cut = new ConfiguredComponent(null, part, false);
+      ConfiguredComponent cut = new ConfiguredComponent(part, false);
       cut.setArmor(ArmorSide.FRONT, 0, false);
 
-      ConfiguredComponent cut1 = new ConfiguredComponent(cut, null);
+      ConfiguredComponent cut1 = new ConfiguredComponent(cut);
       cut1.setArmor(ArmorSide.FRONT, 0, true);
 
       assertFalse(cut.equals(cut1));

@@ -73,10 +73,10 @@ public class InternalComponent{
     *           The {@link Location} (head,leg etc) this {@link InternalComponent} is for.
     * @param aHardpoints
     *           The hard points as parsed from the MWO .xml for hard points for the chassis.
-    * @param aChassi
-    *           The chassis that this internal part will be a part of.
+    * @param aChassiMwoName
+    *           The MWO name of the chassis that this internal part will be a part of (used for hard point lookup).
     */
-   public InternalComponent(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, Chassis aChassi){
+   public InternalComponent(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, String aChassiMwoName){
       criticalslots = aComponent.Slots;
       location = aLocation;
       hitpoints = aComponent.HP;
@@ -87,7 +87,7 @@ public class InternalComponent{
          for(MdfInternal internal : aComponent.internals){
             Internal i = new Internal(internal);
             internals.add(i);
-            internalsSize += i.getNumCriticalSlots(null);
+            internalsSize += i.getNumCriticalSlots();
          }
          internalSlots = internalsSize;
       }
@@ -125,7 +125,7 @@ public class InternalComponent{
                List<Integer> tubes = aHardpoints.tubesForId(hardpoint.ID);
                for(Integer tube : tubes){
                   if( tube < 1 ){
-                     hardpoints.add(HardPointCache.getHardpoint(hardpoint.ID, aChassi.getMwoName(), aLocation));
+                     hardpoints.add(HardPointCache.getHardpoint(hardpoint.ID, aChassiMwoName, aLocation));
                   }
                   else{
                      hardpoints.add(new HardPoint(HardPointType.MISSILE, tube, hasBayDoors));
@@ -239,7 +239,7 @@ public class InternalComponent{
 
    /**
     * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
-    * only useful if {@link Chassis#isAllowed(Item)} returns true.
+    * only useful if {@link ChassisIS#isAllowed(Item)} returns true.
     * 
     * @param aItem
     *           The {@link Item} to check.
@@ -270,7 +270,7 @@ public class InternalComponent{
       else if( aItem.getHardpointType() != HardPointType.NONE && getNumHardpoints(aItem.getHardpointType()) <= 0 ){
          return false;
       }
-      return aItem.getNumCriticalSlots(null) <= getNumCriticalslots() - internalSlots;
+      return aItem.getNumCriticalSlots() <= getNumCriticalslots() - internalSlots;
    }
 
    /**

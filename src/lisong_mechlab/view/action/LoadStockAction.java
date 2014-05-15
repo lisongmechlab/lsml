@@ -27,7 +27,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.OpLoadStock;
@@ -61,7 +62,7 @@ public class LoadStockAction extends AbstractAction{
     *           The {@link Component} on which any dialogs will be centered.
     */
    public LoadStockAction(Loadout aLoadout, OperationStack aStack, MessageXBar aXBar, Component aComponent){
-      super(getActionName(aLoadout.getChassi()));
+      super(getActionName(aLoadout.getChassis()));
       loadout = aLoadout;
       stack = aStack;
       xBar = aXBar;
@@ -70,14 +71,14 @@ public class LoadStockAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      final Collection<Chassis> variations = ChassisDB.lookupVariations(loadout.getChassi());
+      final Collection<ChassisIS> variations = ChassisDB.lookupVariations(loadout.getChassis());
 
       try{
          if( variations.size() == 1 ){
-            stack.pushAndApply(new OpLoadStock(loadout.getChassi(), loadout, xBar));
+            stack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
          }
          else{
-            JList<Chassis> list = new JList<>(variations.toArray(new Chassis[variations.size()]));
+            JList<ChassisIS> list = new JList<>(variations.toArray(new ChassisIS[variations.size()]));
             JOptionPane.showConfirmDialog(component, list, "Which stock loadout?", JOptionPane.OK_CANCEL_OPTION);
             if( list.getSelectedValue() != null ){
                stack.pushAndApply(new OpLoadStock(list.getSelectedValue(), loadout, xBar));
@@ -89,7 +90,7 @@ public class LoadStockAction extends AbstractAction{
       }
    }
 
-   private static String getActionName(Chassis aChassis){
+   private static String getActionName(ChassisBase<?> aChassis){
       if( ChassisDB.lookupVariations(aChassis).size() > 1 ){
          return "Load stock...";
       }

@@ -33,7 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import lisong_mechlab.model.StockLoadout.StockComponent;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisClan;
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalComponent;
@@ -110,7 +111,8 @@ public class DataCache{
    @XStreamAsAttribute
    private long                         itemStatsCrc;
    private List<Item>                   items;
-   private List<Chassis>                chassis;
+   private List<ChassisIS>                chassisIS;
+   private List<ChassisClan>        chassisClan;
    private List<StockLoadout>           stockLoadouts;
    private List<Upgrade>                upgrades;
    private List<Environment>            environments;
@@ -254,10 +256,17 @@ public class DataCache{
    }
 
    /**
-    * @return An unmodifiable {@link List} of all {@link Chassis}s.
+    * @return An unmodifiable {@link List} of all inner sphere {@link ChassisIS}s.
     */
-   public List<Chassis> getChassis(){
-      return Collections.unmodifiableList(chassis);
+   public List<ChassisIS> getChassisIS(){
+      return Collections.unmodifiableList(chassisIS);
+   }
+
+   /**
+    * @return An unmodifiable {@link List} of all clan {@link ChassisClan}s.
+    */
+   public List<ChassisClan> getChassisClan(){
+      return Collections.unmodifiableList(chassisClan);
    }
 
    /**
@@ -287,7 +296,7 @@ public class DataCache{
       stream.alias("datacache", DataCache.class);
       stream.alias("jumpjet", JumpJet.class);
       stream.alias("ammunition", Ammunition.class);
-      stream.alias("chassis", Chassis.class);
+      stream.alias("chassis", ChassisIS.class);
       stream.alias("hardpoint", HardPoint.class);
       stream.alias("internalpart", InternalComponent.class);
       stream.alias("env", Environment.class);
@@ -323,10 +332,11 @@ public class DataCache{
       dataCache.lsmlVersion = LSML.getVersion();
       dataCache.itemStatsCrc = aItemStatsXmlFile.crc32;
       dataCache.items = Collections.unmodifiableList(parseItems(itemStatsXml));
-      dataCache.chassis = Collections.unmodifiableList(parseChassis(aGameVfs, itemStatsXml));
+      dataCache.chassisIS = Collections.unmodifiableList(parseChassisIS(aGameVfs, itemStatsXml));
+      dataCache.chassisClan = Collections.unmodifiableList(parseChassisClan(aGameVfs, itemStatsXml));
       dataCache.environments = Collections.unmodifiableList(parseEnvironments(aGameVfs));
       dataCache.upgrades = Collections.unmodifiableList(parseUpgrades(itemStatsXml));
-      dataCache.stockLoadouts = Collections.unmodifiableList(parseStockLoadouts(aGameVfs, dataCache.chassis));
+      dataCache.stockLoadouts = Collections.unmodifiableList(parseStockLoadouts(aGameVfs, dataCache.chassisIS));
 
       XStream stream = stream();
       try( OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(cacheLocation), "UTF-8"); StringWriter sw = new StringWriter() ){
@@ -451,17 +461,17 @@ public class DataCache{
    }
 
    /**
-    * Parses all {@link Chassis} from the ItemStats.xml file and related files.
+    * Parses all inner sphere {@link ChassisIS} from the ItemStats.xml file and related files.
     * 
     * @param aGameVfs
     *           A {@link GameVFS} used to open other game files.
     * @param aItemStatsXml
     *           A {@link GameFile} containing the ItemStats.xml file to parse.
-    * @return A List of all {@link Chassis} found in aItemStatsXml.
+    * @return A List of all {@link ChassisIS} found in aItemStatsXml.
     */
-   private static List<Chassis> parseChassis(GameVFS aGameVfs, ItemStatsXml aItemStatsXml) throws IOException{
+   private static List<ChassisIS> parseChassisIS(GameVFS aGameVfs, ItemStatsXml aItemStatsXml) throws IOException{
       MechIdMap mechIdMap = MechIdMap.fromXml(aGameVfs.openGameFile(GameVFS.MECH_ID_MAP_XML).stream);
-      List<Chassis> ans = new ArrayList<>();
+      List<ChassisIS> ans = new ArrayList<>();
 
       for(ItemStatsMech mech : aItemStatsXml.MechList){
          int basevariant = -1;
@@ -490,23 +500,35 @@ public class DataCache{
             }
             basevariant = mdf.Mech.VariantParent;
          }
-
-         // TODO: Find a better way of parsing this
-         String series = mech.chassis;
-         String seriesShort = mech.name.split("-")[0];
-
-         final Chassis chassi = new Chassis(mech, mdf, hardpoints, basevariant, series, seriesShort);
+         final ChassisIS chassi = new ChassisIS(mech, mdf, hardpoints, basevariant, mech.chassis);
          ans.add(chassi);
       }
       return ans;
    }
 
    /**
-    * Parses all {@link Chassis} from the ItemStats.xml file and related files.
+    * Parses all clan {@link ChassisClan} from the ItemStats.xml file and related files.
     * 
+    * @param aGameVfs
+    *           A {@link GameVFS} used to open other game files.
     * @param aItemStatsXml
     *           A {@link GameFile} containing the ItemStats.xml file to parse.
-    * @return A List of all {@link Chassis} found in aItemStatsXml.
+    * @return A List of all {@link ChassisIS} found in aItemStatsXml.
+    */
+   private static List<ChassisClan> parseChassisClan(GameVFS aGameVfs, ItemStatsXml aItemStatsXml) throws IOException{
+      MechIdMap mechIdMap = MechIdMap.fromXml(aGameVfs.openGameFile(GameVFS.MECH_ID_MAP_XML).stream);
+      List<ChassisClan> ans = new ArrayList<>();
+
+
+      return ans;
+   }
+
+   /**
+    * Parses all {@link Environment} from the game files.
+    * 
+    * @param aGameVfs
+    *           A {@link GameVFS} to parse data from.
+    * @return A List of all {@link Environment} found in the game files.
     */
    private static List<Environment> parseEnvironments(GameVFS aGameVfs) throws IOException{
       List<Environment> ans = new ArrayList<>();
@@ -592,7 +614,7 @@ public class DataCache{
     * @param aChassis
     * @return
     */
-   private static List<StockLoadout> parseStockLoadouts(GameVFS aGameVfs, List<Chassis> aChassis) throws IOException{
+   private static List<StockLoadout> parseStockLoadouts(GameVFS aGameVfs, List<ChassisIS> aChassis) throws IOException{
       List<StockLoadout> ans = new ArrayList<>();
 
       XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
@@ -612,7 +634,7 @@ public class DataCache{
       xstream.autodetectAnnotations(true);
       xstream.alias("Loadout", LoadoutXML.class);
 
-      for(Chassis chassis : aChassis){
+      for(ChassisIS chassis : aChassis){
          File loadoutXml = new File("Game/Libs/MechLoadout/" + chassis.getMwoName().toLowerCase() + ".xml");
          LoadoutXML stockXML = (LoadoutXML)xstream.fromXML(aGameVfs.openGameFile(loadoutXml).stream);
 

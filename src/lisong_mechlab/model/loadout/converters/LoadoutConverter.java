@@ -20,7 +20,7 @@
 package lisong_mechlab.model.loadout.converters;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.OpRename;
@@ -57,7 +57,7 @@ public class LoadoutConverter implements Converter{
       Loadout loadout = (Loadout)anObject;
 
       aWriter.addAttribute("name", loadout.getName());
-      aWriter.addAttribute("chassi", loadout.getChassi().getNameShort());
+      aWriter.addAttribute("chassi", loadout.getChassis().getNameShort());
 
       aWriter.startNode("upgrades");
       aContext.convertAnother(loadout.getUpgrades());
@@ -67,7 +67,7 @@ public class LoadoutConverter implements Converter{
       aContext.convertAnother(loadout.getEfficiencies());
       aWriter.endNode();
 
-      for(ConfiguredComponent part : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : loadout.getComponents()){
          aWriter.startNode("component");
          aContext.convertAnother(part);
          aWriter.endNode();
@@ -78,7 +78,7 @@ public class LoadoutConverter implements Converter{
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
       String chassiVariation = aReader.getAttribute("chassi");
       String name = aReader.getAttribute("name");
-      Chassis chassi = ChassisDB.lookup(chassiVariation);
+      ChassisIS chassi = ChassisDB.lookup(chassiVariation);
 
       OperationStack stack = new OperationStack(0);
 

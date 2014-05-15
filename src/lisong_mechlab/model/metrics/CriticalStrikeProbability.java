@@ -22,7 +22,6 @@ package lisong_mechlab.model.metrics;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
-import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
  * This {@link ItemMetric} calculates the probability that the given item will be critically hit at least once by a
@@ -46,16 +45,15 @@ public class CriticalStrikeProbability implements ItemMetric{
    @Override
    public double calculate(Item aItem){
       int slots = 0;
-      Upgrades upgrades = loadoutPart.getLoadout().getUpgrades();
       for(Item it : loadoutPart.getItems()){
          if( it instanceof Internal && it != ConfiguredComponent.ENGINE_INTERNAL ){
             continue;
          }
-         slots += it.getNumCriticalSlots(upgrades);
+         slots += it.getNumCriticalSlots();
       }
 
       // The probability that this item will be hit at any one event
-      double p_hit = (double)aItem.getNumCriticalSlots(upgrades) / slots;
+      double p_hit = (double)aItem.getNumCriticalSlots() / slots;
       return calculate(p_hit);
    }
 

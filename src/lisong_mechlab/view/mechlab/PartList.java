@@ -44,6 +44,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.loadout.component.OpAddItem;
@@ -63,7 +64,7 @@ import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
    private static final long                   serialVersionUID = 5995694414450060827L;
-   private final ConfiguredComponent           part;
+   private final ConfiguredComponent           component;
    private final DynamicSlotDistributor        slotDistributor;
    private OperationStack                      opStack;
 
@@ -71,6 +72,7 @@ public class PartList extends JList<Item>{
    private final DecimalFormat                 df2              = new DecimalFormat("###.##");
    private final ItemEffectiveHP               effectiveHP;
    private final CriticalStrikeProbability     criticalStrikeProbability;
+   private final LoadoutBase<?, ?>             loadout;
 
    private final ComponentDestructionSimulator cds;
 
@@ -92,8 +94,8 @@ public class PartList extends JList<Item>{
          sb.append("<html>");
          sb.append("<b>");
          sb.append(aItem.getName());
-         if( !aItem.getName().equals(aItem.getShortName(null)) ){
-            sb.append(" (").append(aItem.getShortName(null)).append(")");
+         if( !aItem.getName().equals(aItem.getShortName()) ){
+            sb.append(" (").append(aItem.getShortName()).append(")");
          }
          sb.append("</b>");
 
@@ -154,13 +156,13 @@ public class PartList extends JList<Item>{
             case Item:{
                setTooltipForItem(item);
                if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-                  setText(item.getShortName(null));
+                  setText(item.getShortName());
                }
                else{
-                  setText(item.getName(null));
+                  setText(item.getName());
                }
 
-               if( item.getNumCriticalSlots(null) == 1 ){
+               if( item.getNumCriticalSlots() == 1 ){
                   StyleManager.styleItem(this, item);
                }
                else{
@@ -183,10 +185,10 @@ public class PartList extends JList<Item>{
             case EngineHeatSink:{
                setTooltipForItem(item);
                if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-                  setText(Model.HEATSINKS_COMPACT_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
+                  setText(Model.HEATSINKS_COMPACT_STRING + component.getNumEngineHeatsinks() + "/" + component.getNumEngineHeatsinksMax());
                }
                else{
-                  setText(Model.HEATSINKS_STRING + part.getNumEngineHeatsinks() + "/" + part.getNumEngineHeatsinksMax());
+                  setText(Model.HEATSINKS_STRING + component.getNumEngineHeatsinks() + "/" + component.getNumEngineHeatsinksMax());
                }
                StyleManager.styleItemBottom(this, item);
                break;
@@ -199,14 +201,14 @@ public class PartList extends JList<Item>{
       }
 
       private boolean isDynStructure(int aIndex){
-         int freeSlotOrdinal = aIndex - part.getNumCriticalSlotsUsed() - slotDistributor.getDynamicArmorSlots(part);
-         int dynStructNum = slotDistributor.getDynamicStructureSlots(part);
+         int freeSlotOrdinal = aIndex - component.getNumCriticalSlotsUsed() - slotDistributor.getDynamicArmorSlots(component);
+         int dynStructNum = slotDistributor.getDynamicStructureSlots(component);
          return freeSlotOrdinal >= 0 && freeSlotOrdinal < dynStructNum;
       }
 
       private boolean isDynArmor(int aIndex){
-         int freeSlotOrdinal = aIndex - part.getNumCriticalSlotsUsed();
-         int dynArmorNum = slotDistributor.getDynamicArmorSlots(part);
+         int freeSlotOrdinal = aIndex - component.getNumCriticalSlotsUsed();
+         int dynArmorNum = slotDistributor.getDynamicArmorSlots(component);
          return freeSlotOrdinal < dynArmorNum;
       }
    }
@@ -229,8 +231,8 @@ public class PartList extends JList<Item>{
 
          int c = 0;
          if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            for(Item item : part.getInternalComponent().getInternalItems()){
-               c += item.getNumCriticalSlots(null);
+            for(Item item : component.getInternalComponent().getInternalItems()){
+               c += item.getNumCriticalSlots();
             }
          }
          compactCompensationSlots = c;
@@ -240,8 +242,8 @@ public class PartList extends JList<Item>{
          Pair<ListEntryType, Item> target = getElementTypeAt(anIndex);
          switch( target.first ){
             case EngineHeatSink:{
-               if( anItem instanceof HeatSink && part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
-                  opStack.pushAndApply(new OpAddItem(xBar, part, anItem));
+               if( anItem instanceof HeatSink && loadout.canEquip(anItem) && component.canEquip(anItem) ){
+                  opStack.pushAndApply(new OpAddItem(xBar, loadout, component, anItem));
                   return true;
                }
                return false;
@@ -251,13 +253,13 @@ public class PartList extends JList<Item>{
             case MultiSlot:{
                // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
                if( aShouldReplace && !(anItem instanceof HeatSink && target.second instanceof Engine) ){
-                  opStack.pushAndApply(new OpRemoveItem(xBar, part, target.second));
+                  opStack.pushAndApply(new OpRemoveItem(xBar, loadout, component, target.second));
                }
                // Fall through
             }
             case Empty:{
-               if( part.getLoadout().canEquip(anItem) && part.canEquip(anItem) ){
-                  opStack.pushAndApply(new OpAddItem(xBar, part, anItem));
+               if( loadout.canEquip(anItem) && component.canEquip(anItem) ){
+                  opStack.pushAndApply(new OpAddItem(xBar, loadout, component, anItem));
                   return true;
                }
                return false;
@@ -269,11 +271,11 @@ public class PartList extends JList<Item>{
       }
 
       Pair<ListEntryType, Item> getElementTypeAt(int arg0){
-         List<Item> items = new ArrayList<>(part.getItems());
+         List<Item> items = new ArrayList<>(component.getItems());
          if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            items.removeAll(part.getInternalComponent().getInternalItems());
+            items.removeAll(component.getInternalComponent().getInternalItems());
          }
-         int numEngineHs = part.getNumEngineHeatsinks();
+         int numEngineHs = component.getNumEngineHeatsinks();
          boolean foundhs = true;
          while( numEngineHs > 0 && !items.isEmpty() && foundhs ){
             foundhs = false;
@@ -294,25 +296,25 @@ public class PartList extends JList<Item>{
          Item item = items.get(itemsIdx);
          itemsIdx++;
 
-         int spaceLeft = item.getNumCriticalSlots(null);
+         int spaceLeft = item.getNumCriticalSlots();
          for(int slot = 0; slot < arg0; ++slot){
             spaceLeft--;
             if( spaceLeft == 0 ){
                if( itemsIdx < items.size() ){
                   item = items.get(itemsIdx);
                   itemsIdx++;
-                  spaceLeft = item.getNumCriticalSlots(null);
+                  spaceLeft = item.getNumCriticalSlots();
                }
                else
                   return new Pair<ListEntryType, Item>(ListEntryType.Empty, null);
             }
          }
-         if( spaceLeft == 1 && item.getNumCriticalSlots(null) > 1 ){
+         if( spaceLeft == 1 && item.getNumCriticalSlots() > 1 ){
             if( item instanceof Engine )
                return new Pair<ListEntryType, Item>(ListEntryType.EngineHeatSink, item);
             return new Pair<ListEntryType, Item>(ListEntryType.LastSlot, item);
          }
-         if( spaceLeft == item.getNumCriticalSlots(null) )
+         if( spaceLeft == item.getNumCriticalSlots() )
             return new Pair<ListEntryType, Item>(ListEntryType.Item, item);
          if( spaceLeft > 0 )
             return new Pair<ListEntryType, Item>(ListEntryType.MultiSlot, item);
@@ -329,12 +331,12 @@ public class PartList extends JList<Item>{
 
       @Override
       public int getSize(){
-         return part.getInternalComponent().getNumCriticalslots() - compactCompensationSlots;
+         return component.getInternalComponent().getNumCriticalslots() - compactCompensationSlots;
       }
 
       @Override
       public void receive(Message aMsg){
-         if( !aMsg.isForMe(PartList.this.part.getLoadout()) ){
+         if( !aMsg.isForMe(loadout) ){
             return;
          }
 
@@ -343,21 +345,22 @@ public class PartList extends JList<Item>{
             if( aMsg instanceof ConfiguredComponent.Message && ((ConfiguredComponent.Message)aMsg).type == Type.ArmorChanged ){
                return; // Don't react to armor changes
             }
-            fireContentsChanged(this, 0, part.getInternalComponent().getNumCriticalslots());
+            fireContentsChanged(this, 0, component.getInternalComponent().getNumCriticalslots());
          }
       }
    }
 
-   PartList(OperationStack aStack, final ConfiguredComponent aLoadoutPart, final MessageXBar anXBar, DynamicSlotDistributor aSlotDistributor){
+   PartList(OperationStack aStack, final LoadoutBase<?, ?> aLoadout, final ConfiguredComponent aComponent, final MessageXBar aXBar, DynamicSlotDistributor aSlotDistributor){
       slotDistributor = aSlotDistributor;
       opStack = aStack;
-      part = aLoadoutPart;
-      effectiveHP = new ItemEffectiveHP(part);
-      cds = new ComponentDestructionSimulator(part, anXBar);
+      component = aComponent;
+      loadout = aLoadout;
+      effectiveHP = new ItemEffectiveHP(component);
+      cds = new ComponentDestructionSimulator(component, aXBar);
       cds.simulate();
-      new CriticalItemDamage(part);
-      criticalStrikeProbability = new CriticalStrikeProbability(part);
-      setModel(new Model(anXBar));
+      new CriticalItemDamage(component);
+      criticalStrikeProbability = new CriticalStrikeProbability(component);
+      setModel(new Model(aXBar));
       setDragEnabled(true);
       setDropMode(DropMode.ON);
       setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -378,7 +381,7 @@ public class PartList extends JList<Item>{
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
                   if( itemPair.first instanceof Internal )
                      continue;
-                  opStack.pushAndApply(new OpRemoveItem(anXBar, aLoadoutPart, itemPair.first));
+                  opStack.pushAndApply(new OpRemoveItem(aXBar, aLoadout, aComponent, itemPair.first));
                }
             }
          }
@@ -391,7 +394,7 @@ public class PartList extends JList<Item>{
                for(Pair<Item, Integer> itemPair : getSelectedItems()){
                   if( itemPair.first instanceof Internal )
                      continue;
-                  opStack.pushAndApply(new OpRemoveItem(anXBar, aLoadoutPart, itemPair.first));
+                  opStack.pushAndApply(new OpRemoveItem(aXBar, aLoadout, aComponent, itemPair.first));
                }
             }
          }
@@ -411,8 +414,8 @@ public class PartList extends JList<Item>{
             case Empty:
                break;
             case EngineHeatSink:
-               if( part.getNumEngineHeatsinks() > 0 ){
-                  Item heatSink = part.getLoadout().getUpgrades().getHeatSink().getHeatSinkType();
+               if( component.getNumEngineHeatsinks() > 0 ){
+                  Item heatSink = loadout.getUpgrades().getHeatSink().getHeatSinkType();
                   items.add(new Pair<Item, Integer>(heatSink, i));
                }
                break;
@@ -430,7 +433,11 @@ public class PartList extends JList<Item>{
    }
 
    public ConfiguredComponent getPart(){
-      return part;
+      return component;
+   }
+   
+   public LoadoutBase<?, ?> getLoadout(){
+      return loadout;
    }
 
    public void putElement(Item aItem, int aDropIndex, boolean aFirst){

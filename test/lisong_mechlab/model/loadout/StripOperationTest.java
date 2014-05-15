@@ -61,7 +61,7 @@ public class StripOperationTest{
       opStack.pushAndApply(new OpStripLoadout(cut, xBar));
 
       // Verify
-      for(ConfiguredComponent loadoutPart : cut.getPartLoadOuts()){
+      for(ConfiguredComponent loadoutPart : cut.getComponents()){
          assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
          assertEquals(0, loadoutPart.getArmorTotal());
       }

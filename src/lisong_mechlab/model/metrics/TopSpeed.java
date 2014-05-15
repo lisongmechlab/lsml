@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.Loadout;
 
@@ -40,7 +40,7 @@ public class TopSpeed implements Metric{
       Engine engine = loadout.getEngine();
       if( null == engine )
          return 0;
-      return calculate(engine.getRating(), loadout.getChassi(), loadout.getEfficiencies().getSpeedModifier());
+      return calculate(engine.getRating(), loadout.getChassis(), loadout.getEfficiencies().getSpeedModifier());
    }
 
    /**
@@ -55,7 +55,7 @@ public class TopSpeed implements Metric{
     *           A modifier to use, 1.0 for normal and 1.1 for speed tweak.
     * @return The speed in [km/h].
     */
-   static public double calculate(final int aRating, final Chassis aChassi, final double aModifier){
-      return aChassi.getSpeedFactor() * aRating / aChassi.getMassMax() * aModifier;
+   static public double calculate(final int aRating, final ChassisBase<?> aChassi, final double aModifier){
+      return aChassi.getMovementProfile().getMaxMovementSpeed() * aRating / aChassi.getMassMax() * aModifier;
    }
 }

@@ -68,13 +68,13 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 
       public ResetManualArmorOperation(){
          super("reset manual armor");
-         for(ConfiguredComponent loadoutPart : loadout.getPartLoadOuts()){
+         for(ConfiguredComponent loadoutPart : loadout.getComponents()){
             if( loadoutPart.getInternalComponent().getLocation().isTwoSided() ){
-               addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
-               addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.BACK, loadoutPart.getArmor(ArmorSide.BACK), false));
+               addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
+               addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.BACK, loadoutPart.getArmor(ArmorSide.BACK), false));
             }
             else{
-               addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmor(ArmorSide.ONLY), false));
+               addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmor(ArmorSide.ONLY), false));
             }
          }
       }
@@ -163,7 +163,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
       add(resetAll, BorderLayout.SOUTH);
 
       final JLabel armorLabel = new JLabel("Amount:");
-      final int maxArmor = aLoadout.getChassi().getArmorMax();
+      final int maxArmor = aLoadout.getChassis().getArmorMax();
       armorSlider = new JSlider(0, maxArmor, aLoadout.getArmor());
       armorSlider.setMajorTickSpacing(100);
       armorSlider.setMinorTickSpacing(25);
@@ -174,7 +174,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
                                  + "Armor will be placed automatically among components without manually set armor values.<br/>"
                                  + "You can right click on the component's armor value to reset a manually set value.</html>");
 
-      ConfiguredComponent ct = aLoadout.getPart(Location.CenterTorso);
+      ConfiguredComponent ct = aLoadout.getComponent(Location.CenterTorso);
       int backArmor = ct.getArmor(ArmorSide.BACK);
       int frontArmor = ct.getArmor(ArmorSide.FRONT);
       int initialFrontBack = 5;

@@ -26,6 +26,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -41,9 +42,11 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
    private final JCheckBox           symmetric;
    private final OperationStack      opStack;
    private final MessageXBar         xBar;
+   private final LoadoutBase<?, ?>   loadout;
 
-   public ArmorSpinner(ConfiguredComponent aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
+   public ArmorSpinner(LoadoutBase<?, ?> aLoadout, ConfiguredComponent aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
       part = aPart;
+      loadout = aLoadout;
       side = anArmorSide;
       symmetric = aSymmetric;
       xBar = anXBar;
@@ -81,10 +84,10 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
          final int armor = ((Integer)arg0).intValue();
 
          if( setSymmetric ){
-            opStack.pushAndApply(new OpSetArmorSymmetric(xBar, part, side, armor, true));
+            opStack.pushAndApply(new OpSetArmorSymmetric(xBar, loadout, part, side, armor, true));
          }
          else{
-            opStack.pushAndApply(new OpSetArmor(xBar, part, side, armor, true));
+            opStack.pushAndApply(new OpSetArmor(xBar, loadout, part, side, armor, true));
          }
          fireStateChanged();
       }
@@ -96,7 +99,7 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(part.getLoadout()) && aMsg instanceof ConfiguredComponent.Message ){
+      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponent.Message ){
          ConfiguredComponent.Message message = (ConfiguredComponent.Message)aMsg;
          if( message.component != part )
             return;

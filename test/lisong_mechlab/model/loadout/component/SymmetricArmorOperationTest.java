@@ -56,17 +56,17 @@ public class SymmetricArmorOperationTest{
    @Test
    public void testCanCoalescele(){
       Loadout loadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), null);
-      ConfiguredComponent left = loadout.getPart(Location.LeftTorso);
-      ConfiguredComponent right = loadout.getPart(Location.RightTorso);
-      ConfiguredComponent arm = loadout.getPart(Location.LeftArm);
+      ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
+      ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
+      ConfiguredComponent arm = loadout.getComponent(Location.LeftArm);
       int amount = 40;
 
-      OpSetArmorSymmetric cut1 = new OpSetArmorSymmetric(xBar, left, ArmorSide.BACK, amount, true);
-      OpSetArmorSymmetric cut2 = new OpSetArmorSymmetric(xBar, left, ArmorSide.BACK, amount, false);
-      OpSetArmorSymmetric cut3 = new OpSetArmorSymmetric(xBar, left, ArmorSide.BACK, amount - 1, true);
-      OpSetArmorSymmetric cut4 = new OpSetArmorSymmetric(xBar, left, ArmorSide.FRONT, amount, true);
-      OpSetArmorSymmetric cut5 = new OpSetArmorSymmetric(xBar, right, ArmorSide.BACK, amount, true);
-      OpSetArmorSymmetric cut6 = new OpSetArmorSymmetric(xBar, arm, ArmorSide.BACK, amount, true);
+      OpSetArmorSymmetric cut1 = new OpSetArmorSymmetric(xBar, loadout, left, ArmorSide.BACK, amount, true);
+      OpSetArmorSymmetric cut2 = new OpSetArmorSymmetric(xBar, loadout, left, ArmorSide.BACK, amount, false);
+      OpSetArmorSymmetric cut3 = new OpSetArmorSymmetric(xBar, loadout, left, ArmorSide.BACK, amount - 1, true);
+      OpSetArmorSymmetric cut4 = new OpSetArmorSymmetric(xBar, loadout, left, ArmorSide.FRONT, amount, true);
+      OpSetArmorSymmetric cut5 = new OpSetArmorSymmetric(xBar, loadout, right, ArmorSide.BACK, amount, true);
+      OpSetArmorSymmetric cut6 = new OpSetArmorSymmetric(xBar, loadout, arm, ArmorSide.BACK, amount, true);
       Operation operation = Mockito.mock(Operation.class);
 
       assertFalse(cut1.canCoalescele(operation)); // Wrong class
@@ -82,12 +82,12 @@ public class SymmetricArmorOperationTest{
    @Test
    public void testApply(){
       Loadout loadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), null);
-      ConfiguredComponent left = loadout.getPart(Location.LeftTorso);
-      ConfiguredComponent right = loadout.getPart(Location.RightTorso);
+      ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
+      ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
       ArmorSide side = ArmorSide.BACK;
       int amount = 40;
       boolean manual = true;
-      OpSetArmorSymmetric cut = new OpSetArmorSymmetric(xBar, left, side, amount, manual);
+      OpSetArmorSymmetric cut = new OpSetArmorSymmetric(xBar, loadout, left, side, amount, manual);
       Mockito.reset(xBar);
 
       stack.pushAndApply(cut);
@@ -104,13 +104,13 @@ public class SymmetricArmorOperationTest{
    public void testApply_OnlyOneSideChanges(){
       for(Location setSide : new Location[] {Location.LeftTorso, Location.RightTorso}){
          Loadout loadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), null);
-         ConfiguredComponent left = loadout.getPart(Location.LeftTorso);
-         ConfiguredComponent right = loadout.getPart(Location.RightTorso);
+         ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
+         ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
          ArmorSide side = ArmorSide.BACK;
          int amount = 40;
          boolean manual = true;
-         stack.pushAndApply(new OpSetArmor(null, loadout.getPart(setSide), side, amount, false));
-         OpSetArmorSymmetric cut = new OpSetArmorSymmetric(xBar, left, side, amount, manual);
+         stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(setSide), side, amount, false));
+         OpSetArmorSymmetric cut = new OpSetArmorSymmetric(xBar, loadout, left, side, amount, manual);
          Mockito.reset(xBar);
 
          stack.pushAndApply(cut);
@@ -127,11 +127,11 @@ public class SymmetricArmorOperationTest{
    @Test(expected = IllegalArgumentException.class)
    public void testApply_NotSymmetric(){
       Loadout loadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), null);
-      ConfiguredComponent left = loadout.getPart(Location.Head);
+      ConfiguredComponent left = loadout.getComponent(Location.Head);
       ArmorSide side = ArmorSide.BACK;
       int amount = 40;
       boolean manual = true;
-      OpSetArmorSymmetric cut = new OpSetArmorSymmetric(xBar, left, side, amount, manual);
+      OpSetArmorSymmetric cut = new OpSetArmorSymmetric(xBar, loadout, left, side, amount, manual);
 
       stack.pushAndApply(cut);
    }

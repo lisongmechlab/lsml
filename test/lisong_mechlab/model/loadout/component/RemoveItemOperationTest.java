@@ -38,7 +38,6 @@ public class RemoveItemOperationTest{
    @Before
    public void setup(){
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
    }
@@ -47,7 +46,7 @@ public class RemoveItemOperationTest{
    public void testDescription(){
       Item item = ItemDB.ECM;
 
-      OpRemoveItem cut = new OpRemoveItem(xBar, loadoutPart, item);
+      OpRemoveItem cut = new OpRemoveItem(xBar, loadout, loadoutPart, item);
 
       assertTrue(cut.describe().contains("remove"));
       assertTrue(cut.describe().contains("from"));
@@ -60,12 +59,12 @@ public class RemoveItemOperationTest{
       Item item = ItemDB.lookup("LRM 20");
       Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
 
-      OpRemoveItem cut = new OpRemoveItem(xBar, loadoutPart, item);
+      OpRemoveItem cut = new OpRemoveItem(xBar, loadout, loadoutPart, item);
 
       assertTrue(cut.describe().contains("remove"));
       assertTrue(cut.describe().contains("from"));
       assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
-      assertTrue(cut.describe().contains(item.getName(upgrades)));
+      assertTrue(cut.describe().contains(item.getName()));
    }
 
    /**
@@ -77,7 +76,7 @@ public class RemoveItemOperationTest{
       try{
          Item item = ItemDB.lookup("LRM 20");
          Mockito.when(loadoutPart.getItems()).thenReturn(new ArrayList<Item>());
-         cut = new OpRemoveItem(xBar, loadoutPart, item);
+         cut = new OpRemoveItem(xBar, loadout, loadoutPart, item);
       }
       catch( Throwable t ){
          fail("Setup failed");
@@ -93,6 +92,6 @@ public class RemoveItemOperationTest{
    @Test(expected = IllegalArgumentException.class)
    public void testCantRemoveInternal(){
       Internal item = Mockito.mock(Internal.class);
-      new OpRemoveItem(xBar, loadoutPart, item);
+      new OpRemoveItem(xBar, loadout, loadoutPart, item);
    }
 }

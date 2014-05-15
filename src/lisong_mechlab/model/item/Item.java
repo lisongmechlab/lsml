@@ -80,9 +80,7 @@ public class Item implements Comparable<Item>{
       return locName;
    }
 
-   public int getNumCriticalSlots(Upgrades aUpgrades){
-      if( aUpgrades == null )
-         return slots;
+   public int getNumCriticalSlots(){
       return slots;
    }
 
@@ -90,9 +88,7 @@ public class Item implements Comparable<Item>{
       return hardpointType;
    }
 
-   public double getMass(Upgrades aUpgrades){
-      if( aUpgrades == null )
-         return tons;
+   public double getMass(){
       return tons;
    }
 
@@ -100,8 +96,8 @@ public class Item implements Comparable<Item>{
       return mwoIdx;
    }
 
-   public String getShortName(Upgrades aUpgrades){
-      return getName(aUpgrades);
+   public String getShortName(){
+      return getName();
    }
 
    public String getDescription(){
@@ -182,12 +178,6 @@ public class Item implements Comparable<Item>{
          return classCompare;
       }
       return hp;
-   }
-
-   public String getName(Upgrades aUpgrades){
-      if( aUpgrades == null )
-         return getName();
-      return getName();
    }
 
    public int getHealth(){

@@ -27,6 +27,7 @@ import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.util.MessageXBar;
@@ -40,6 +41,7 @@ import lisong_mechlab.util.OperationStack.Operation;
 abstract class OpItemBase extends Operation{
    private int                         numEngineHS = 0;
    protected final ConfiguredComponent component;
+   protected final LoadoutBase<?, ?>   loadout;
    private transient MessageXBar       xBar;
 
    /**
@@ -51,7 +53,8 @@ abstract class OpItemBase extends Operation{
     * @param aLoadoutPart
     *           The {@link ConfiguredComponent} that this operation will affect.
     */
-   OpItemBase(MessageXBar anXBar, ConfiguredComponent aLoadoutPart){
+   OpItemBase(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart){
+      loadout = aLoadout;
       component = aLoadoutPart;
       xBar = anXBar;
    }
@@ -84,8 +87,8 @@ abstract class OpItemBase extends Operation{
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
-            ConfiguredComponent lt = component.getLoadout().getPart(Location.LeftTorso);
-            ConfiguredComponent rt = component.getLoadout().getPart(Location.RightTorso);
+            ConfiguredComponent lt = loadout.getComponent(Location.LeftTorso);
+            ConfiguredComponent rt = loadout.getComponent(Location.RightTorso);
             lt.removeItem(ConfiguredComponent.ENGINE_INTERNAL);
             rt.removeItem(ConfiguredComponent.ENGINE_INTERNAL);
             if( xBar != null ){
@@ -98,7 +101,7 @@ abstract class OpItemBase extends Operation{
          while( engineHsLeft > 0 ){
             engineHsLeft--;
             numEngineHS++;
-            component.removeItem(component.getLoadout().getUpgrades().getHeatSink().getHeatSinkType());
+            component.removeItem(loadout.getUpgrades().getHeatSink().getHeatSinkType());
          }
       }
       component.removeItem(anItem);
@@ -117,8 +120,8 @@ abstract class OpItemBase extends Operation{
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
-            ConfiguredComponent lt = component.getLoadout().getPart(Location.LeftTorso);
-            ConfiguredComponent rt = component.getLoadout().getPart(Location.RightTorso);
+            ConfiguredComponent lt = loadout.getComponent(Location.LeftTorso);
+            ConfiguredComponent rt = loadout.getComponent(Location.RightTorso);
             lt.addItem(ConfiguredComponent.ENGINE_INTERNAL);
             rt.addItem(ConfiguredComponent.ENGINE_INTERNAL);
             if( xBar != null ){
@@ -128,13 +131,13 @@ abstract class OpItemBase extends Operation{
          }
          while( numEngineHS > 0 ){
             numEngineHS--;
-            component.addItem(component.getLoadout().getUpgrades().getHeatSink().getHeatSinkType());
+            component.addItem(loadout.getUpgrades().getHeatSink().getHeatSinkType());
          }
       }
 
-      Engine engine = component.getLoadout().getEngine();
+      Engine engine = loadout.getEngine();
       if( anItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL && xBar != null ){
-         xBar.post(new NotificationMessage(Severity.WARNING, component.getLoadout(), "C.A.S.E. together with XL engine has no effect."));
+         xBar.post(new NotificationMessage(Severity.WARNING, loadout, "C.A.S.E. together with XL engine has no effect."));
       }
       component.addItem(anItem);
       if( xBar != null ){

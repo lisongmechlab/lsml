@@ -37,7 +37,7 @@ import javax.swing.TransferHandler;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.util.Pair;
@@ -73,16 +73,17 @@ public class ItemTransferHandler extends TransferHandler{
             f = f.getParent();
          }
          LoadoutFrame frame = (LoadoutFrame)f;
+         LoadoutBase<?, ?> loadoutBase = frame.getLoadout();
 
          StringBuffer buff = new StringBuffer();
          for(Pair<Item, Integer> it : sourceItems){
             if( it.first instanceof Internal )
                return null;
             buff.append(it.first.getName()).append('\n');
-            frame.getOpStack().pushAndApply(new OpRemoveItem(ProgramInit.lsml().xBar, sourcePart, it.first));
+            frame.getOpStack().pushAndApply(new OpRemoveItem(ProgramInit.lsml().xBar, loadoutBase, sourcePart, it.first));
          }
 
-         setPreview(sourceItems.get(0).first, sourcePart.getLoadout());
+         setPreview(sourceItems.get(0).first);
          return new StringSelection(buff.toString());
       }
       else if( aComponent instanceof GarageTree ){
@@ -103,21 +104,19 @@ public class ItemTransferHandler extends TransferHandler{
          else{
             return null;
          }
-         Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
-         setPreview(item, loadout);
+         setPreview(item);
          return new StringSelection(item.getName());
       }
       else if( aComponent instanceof ItemLabel ){
-         Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
          Item item = ((ItemLabel)aComponent).getItem();
-         setPreview(item, loadout);
+         setPreview(item);
          return new StringSelection(item.getName());
       }
       return null;
    }
 
-   private void setPreview(Item anItem, Loadout aLoadout){
-      Image preview = ItemRenderer.render(anItem, aLoadout != null ? aLoadout.getUpgrades() : null);
+   private void setPreview(Item anItem){
+      Image preview = ItemRenderer.render(anItem);
       setDragImage(preview);
       Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.getItemHeight() / 2);
       setDragImageOffset(mouse);
@@ -132,15 +131,16 @@ public class ItemTransferHandler extends TransferHandler{
 
    @Override
    public boolean canImport(TransferHandler.TransferSupport aInfo){
-      Component component = aInfo.getComponent();
-      if( component instanceof PartList ){
+      Component uiComponent = aInfo.getComponent();
+      if( uiComponent instanceof PartList ){
          List<Item> items = parseItems(aInfo);
          if( null == items )
             return false;
 
-         ConfiguredComponent part = ((PartList)component).getPart();
+         LoadoutBase<?, ?> loadout = ((PartList)uiComponent).getLoadout();
+         ConfiguredComponent component = ((PartList)uiComponent).getPart();
          for(Item item : items){
-            if( part.getLoadout().canEquip(item) && !part.canEquip(item) )
+            if( loadout.canEquip(item) && !component.canEquip(item) )
                return false;
          }
          return true;

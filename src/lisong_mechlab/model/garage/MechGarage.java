@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -86,7 +87,7 @@ public class MechGarage{
       }
 
       @Override
-      public boolean isForMe(Loadout aLoadout){
+      public boolean isForMe(LoadoutBase aLoadout){
          return aLoadout == loadout;
       }
 

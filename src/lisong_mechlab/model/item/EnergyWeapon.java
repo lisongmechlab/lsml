@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 public class EnergyWeapon extends Weapon{
@@ -60,8 +59,8 @@ public class EnergyWeapon extends Weapon{
    }
 
    @Override
-   public String getShortName(Upgrades anUpgrades){
-      String name = getName(anUpgrades);
+   public String getShortName(){
+      String name = getName();
       name = name.replace("LASER", "LAS");
       name = name.replace("LARGE ", "L");
       name = name.replace("LRG ", "L");

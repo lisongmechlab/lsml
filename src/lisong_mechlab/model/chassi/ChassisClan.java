@@ -17,28 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model.metrics;
-
-import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.loadout.Loadout;
+package lisong_mechlab.model.chassi;
 
 /**
- * A metric that calculates how high the mech can jump.
- * 
- * @author Emily Björk
+ * @author Emily
+ *
  */
-public class JumpDistance implements Metric{
-   private final Loadout loadout;
+public class ChassisClan extends ChassisBase{
 
-   public JumpDistance(final Loadout aLoadout){
-      loadout = aLoadout;
+   /**
+    * @param aMwoID
+    * @param aMwoName
+    * @param aSeries
+    * @param aName
+    * @param aShortName
+    * @param aParts
+    * @param aMaxJumpJets
+    * @param aMaxTons
+    * @param aVariant
+    * @param aBaseVariant
+    * @param aMovementProfile
+    */
+   public ChassisClan(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, InternalComponent[] aParts, int aMaxJumpJets,
+                          int aMaxTons, ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile){
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aParts, aMaxJumpJets, aMaxTons, aVariant, aBaseVariant, aMovementProfile);
+      // TODO Auto-generated constructor stub
    }
 
-   @Override
-   public double calculate(){
-      JumpJet jj = loadout.getJumpJetType();
-      if( jj == null )
-         return 0;
-      return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() / (2 * loadout.getChassis().getMassMax());
-   }
 }

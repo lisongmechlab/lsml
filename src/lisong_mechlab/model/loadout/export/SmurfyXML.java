@@ -94,13 +94,13 @@ public class SmurfyXML{
 
             Loadout loadout = (Loadout)aObject;
             writeValue(writer, "id", loadout.getName());
-            writeValue(writer, "mech_id", loadout.getChassi().getMwoId());
+            writeValue(writer, "mech_id", loadout.getChassis().getMwoId());
 
             writer.startNode("configuration");
             {
                for(Location type : new Location[] {Location.Head, Location.LeftTorso, Location.CenterTorso, Location.RightTorso, Location.LeftLeg,
                      Location.RightLeg, Location.RightArm, Location.LeftArm}){
-                  ConfiguredComponent part = loadout.getPart(type);
+                  ConfiguredComponent part = loadout.getComponent(type);
                   writer.startNode("component");
 
                   writeValue(writer, "name", part.getInternalComponent().getLocation().toMwoName());
@@ -128,7 +128,7 @@ public class SmurfyXML{
 
                }
                for(Location type : new Location[] {Location.LeftTorso, Location.CenterTorso, Location.RightTorso}){
-                  ConfiguredComponent part = loadout.getPart(type);
+                  ConfiguredComponent part = loadout.getComponent(type);
                   writer.startNode("component");
                   writeValue(writer, "name", part.getInternalComponent().getLocation().toMwoRearName());
                   writeValue(writer, "armor", part.getArmor(ArmorSide.BACK));

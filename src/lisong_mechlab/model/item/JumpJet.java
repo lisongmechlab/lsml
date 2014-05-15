@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class JumpJet extends Module{
@@ -51,8 +50,8 @@ public class JumpJet extends Module{
    }
 
    @Override
-   public String getShortName(Upgrades anUpgrades){
-      String name = getName(anUpgrades);
+   public String getShortName(){
+      String name = getName();
       name = name.replace("JUMP JETS", "JJ");
       name = name.replace("CLASS ", "");
       return name;

@@ -60,7 +60,7 @@ public class GuidanceUpgrade extends Upgrade{
     */
    public int getExtraSlots(Loadout aLoadout){
       int ans = 0;
-      for(ConfiguredComponent part : aLoadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : aLoadout.getComponents()){
          ans += getExtraSlots(part);
       }
       return ans;
@@ -95,7 +95,7 @@ public class GuidanceUpgrade extends Upgrade{
     */
    public double getExtraTons(Loadout aLoadout){
       double ans = 0;
-      for(ConfiguredComponent part : aLoadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : aLoadout.getComponents()){
          ans += getExtraTons(part);
       }
       return ans;

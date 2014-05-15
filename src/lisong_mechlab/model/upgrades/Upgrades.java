@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 
 /**
@@ -56,7 +56,7 @@ public class Upgrades implements Cloneable{
       }
 
       @Override
-      public boolean isForMe(Loadout aLoadout){
+      public boolean isForMe(LoadoutBase aLoadout){
          return aLoadout.getUpgrades() == source;
       }
 

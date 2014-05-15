@@ -75,8 +75,8 @@ public class DistributeArmorOperationTest{
       // Verify
       assertEquals(9.0 + 10, loadout.getMass(), 0.0);
       assertEquals(320, loadout.getArmor());
-      Mockito.verify(xBar, Mockito.atLeastOnce())
-             .post(new ConfiguredComponent.Message(loadout.getPart(Location.CenterTorso), Type.ArmorChanged, true));
+      Mockito.verify(xBar, Mockito.atLeastOnce()).post(new ConfiguredComponent.Message(loadout.getComponent(Location.CenterTorso), Type.ArmorChanged,
+                                                                                       true));
    }
 
    /**
@@ -92,7 +92,7 @@ public class DistributeArmorOperationTest{
       stack.pushAndApply(cut);
 
       // Verify
-      assertTrue(loadout.getPart(Location.CenterTorso).getArmorTotal() > 90);
+      assertTrue(loadout.getComponent(Location.CenterTorso).getArmorTotal() > 90);
    }
 
    /**
@@ -102,15 +102,15 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_Link_Priority(){
       // Setup
       Loadout loadout = new Loadout(ChassisDB.lookup("HGN-733C"), xBar);
-      stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(Location.RightArm), ItemDB.lookup("AC/20")));
+      stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("AC/20")));
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 350, 1.0, xBar);
       stack.pushAndApply(cut);
 
       // Verify
-      int raArmor = loadout.getPart(Location.RightArm).getArmorTotal();
-      int rtArmor = loadout.getPart(Location.RightTorso).getArmorTotal();
+      int raArmor = loadout.getComponent(Location.RightArm).getArmorTotal();
+      int rtArmor = loadout.getComponent(Location.RightTorso).getArmorTotal();
       assertTrue(raArmor > 40);
       assertTrue(rtArmor > 40);
    }
@@ -123,8 +123,8 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_NotEnoughTonnage(){
       // Setup
       Loadout loadout = new Loadout(ChassisDB.lookup("LCT-3M"), xBar);
-      stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(Location.RightArm), ItemDB.lookup("ER PPC")));
-      stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(Location.CenterTorso), ItemDB.lookup("STD ENGINE 190")));
+      stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("ER PPC")));
+      stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso), ItemDB.lookup("STD ENGINE 190")));
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 138, 1.0, xBar);
@@ -146,12 +146,12 @@ public class DistributeArmorOperationTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       Loadout loadout = coder.parse("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
-      for(ConfiguredComponent part : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
          else{
-            stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.ONLY, part.getArmorTotal(), false));
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.ONLY, part.getArmorTotal(), false));
          }
       }
 
@@ -171,8 +171,8 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_RespectManual_TooBigBudget(){
       // Setup
       Loadout loadout = new Loadout(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.LeftLeg), ArmorSide.ONLY, 64, true));
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.RightLeg), ArmorSide.ONLY, 64, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 64, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 64, true));
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 558, 1.0, xBar); // 558 is max
@@ -189,8 +189,8 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_RespectManual_NegativeBudget(){
       // Setup
       Loadout loadout = new Loadout(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.LeftLeg), ArmorSide.ONLY, 64, true));
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.RightLeg), ArmorSide.ONLY, 64, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 64, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 64, true));
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 32, 1.0, xBar);
@@ -208,8 +208,8 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_RespectManual_CorrectTotal(){
       // Setup
       Loadout loadout = new Loadout(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.LeftLeg), ArmorSide.ONLY, 70, true));
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.RightLeg), ArmorSide.ONLY, 70, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 70, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 70, true));
 
       // Execute (15 tons of armor, would be 76 on each leg if they weren't manual)
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 480, 1.0, xBar);
@@ -219,8 +219,8 @@ public class DistributeArmorOperationTest{
       assertEquals(9.0 + 15, loadout.getMass(), 0.0);
       assertEquals(480, loadout.getArmor());
 
-      assertEquals(70, loadout.getPart(Location.LeftLeg).getArmorTotal());
-      assertEquals(70, loadout.getPart(Location.RightLeg).getArmorTotal());
+      assertEquals(70, loadout.getComponent(Location.LeftLeg).getArmorTotal());
+      assertEquals(70, loadout.getComponent(Location.RightLeg).getArmorTotal());
    }
 
    /**
@@ -230,8 +230,8 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_RespectManual_DoNotAdd(){
       // Setup
       Loadout loadout = new Loadout(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.LeftLeg), ArmorSide.ONLY, 70, true));
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.RightLeg), ArmorSide.ONLY, 70, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 70, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 70, true));
 
       // Execute (15 tons of armor, would be 76 on each leg if they weren't manual)
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 480, 1.0, xBar);
@@ -241,8 +241,8 @@ public class DistributeArmorOperationTest{
       assertEquals(9.0 + 15, loadout.getMass(), 0.0);
       assertEquals(480, loadout.getArmor());
 
-      assertEquals(70, loadout.getPart(Location.LeftLeg).getArmorTotal());
-      assertEquals(70, loadout.getPart(Location.RightLeg).getArmorTotal());
+      assertEquals(70, loadout.getComponent(Location.LeftLeg).getArmorTotal());
+      assertEquals(70, loadout.getComponent(Location.RightLeg).getArmorTotal());
    }
 
    /**
@@ -252,8 +252,8 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_RespectManual_DoNotRemove(){
       // Setup
       Loadout loadout = new Loadout(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.LeftLeg), ArmorSide.ONLY, 70, true));
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.RightLeg), ArmorSide.ONLY, 70, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 70, true));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 70, true));
 
       // Execute (5 tons of armor, would be 47 on each leg if they weren't manual)
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 160, 1.0, xBar);
@@ -263,8 +263,8 @@ public class DistributeArmorOperationTest{
       assertEquals(9.0 + 5, loadout.getMass(), 0.0);
       assertEquals(160, loadout.getArmor());
 
-      assertEquals(70, loadout.getPart(Location.LeftLeg).getArmorTotal());
-      assertEquals(70, loadout.getPart(Location.RightLeg).getArmorTotal());
+      assertEquals(70, loadout.getComponent(Location.LeftLeg).getArmorTotal());
+      assertEquals(70, loadout.getComponent(Location.RightLeg).getArmorTotal());
    }
 
    /**
@@ -281,8 +281,8 @@ public class DistributeArmorOperationTest{
       stack.pushAndApply(cut);
 
       // Verify
-      int front = loadout.getPart(Location.CenterTorso).getArmor(ArmorSide.FRONT);
-      int back = loadout.getPart(Location.CenterTorso).getArmor(ArmorSide.BACK);
+      int front = loadout.getComponent(Location.CenterTorso).getArmor(ArmorSide.FRONT);
+      int back = loadout.getComponent(Location.CenterTorso).getArmor(ArmorSide.BACK);
 
       int tolerance = 1;
       double lb = (double)(front - tolerance) / (back + tolerance);
@@ -338,12 +338,12 @@ public class DistributeArmorOperationTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       Loadout loadout = coder.parse("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
-      for(ConfiguredComponent part : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
          else{
-            stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.ONLY, part.getArmorTotal(), false));
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.ONLY, part.getArmorTotal(), false));
          }
       }
 
@@ -365,18 +365,18 @@ public class DistributeArmorOperationTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       Loadout loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
-      for(ConfiguredComponent part : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
          else{
-            stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.ONLY, part.getArmorTotal(), false));
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.ONLY, part.getArmorTotal(), false));
          }
       }
-      stack.pushAndApply(new OpSetArmor(null, loadout.getPart(Location.Head), ArmorSide.ONLY, 12, true));
-      stack.pushAndApply(new OpSetArmor(null, loadout.getPart(Location.RightArm), ArmorSide.ONLY, 0, true));
-      stack.pushAndApply(new OpSetArmor(null, loadout.getPart(Location.LeftTorso), ArmorSide.FRONT, 56, true));
-      stack.pushAndApply(new OpSetArmor(null, loadout.getPart(Location.LeftTorso), ArmorSide.BACK, 3, true));
+      stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.Head), ArmorSide.ONLY, 12, true));
+      stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.RightArm), ArmorSide.ONLY, 0, true));
+      stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.LeftTorso), ArmorSide.FRONT, 56, true));
+      stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.LeftTorso), ArmorSide.BACK, 3, true));
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 278, 8.0, xBar);
@@ -396,18 +396,18 @@ public class DistributeArmorOperationTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       Loadout loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
-      for(ConfiguredComponent part : loadout.getPartLoadOuts()){
+      for(ConfiguredComponent part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
          else{
-            stack.pushAndApply(new OpSetArmor(null, part, ArmorSide.ONLY, part.getArmorTotal(), false));
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.ONLY, part.getArmorTotal(), false));
          }
       }
-      stack.pushAndApply(new OpSetArmor(null, loadout.getPart(Location.Head), ArmorSide.ONLY, 12, true));
-      stack.pushAndApply(new OpSetArmor(null, loadout.getPart(Location.RightArm), ArmorSide.ONLY, 0, true));
-      stack.pushAndApply(new OpSetArmor(null, loadout.getPart(Location.LeftTorso), ArmorSide.FRONT, 56, true));
-      stack.pushAndApply(new OpSetArmor(null, loadout.getPart(Location.LeftTorso), ArmorSide.BACK, 3, true));
+      stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.Head), ArmorSide.ONLY, 12, true));
+      stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.RightArm), ArmorSide.ONLY, 0, true));
+      stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.LeftTorso), ArmorSide.FRONT, 56, true));
+      stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.LeftTorso), ArmorSide.BACK, 3, true));
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 50, 8.0, xBar);
@@ -424,8 +424,8 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_ClearOld(){
       // Setup
       Loadout loadout = new Loadout(ChassisDB.lookup("CPLT-A1"), xBar); // 65 tons, 6.5 tons internals
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.LeftArm), ArmorSide.ONLY, 2, false));
-      stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(Location.RightArm), ArmorSide.ONLY, 2, false));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftArm), ArmorSide.ONLY, 2, false));
+      stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightArm), ArmorSide.ONLY, 2, false));
 
       // Execute (6.5 tons of armor)
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 208, 1.0, xBar);
@@ -443,15 +443,15 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_ShieldArm(){
       // Setup
       Loadout loadout = new Loadout(ChassisDB.lookup("BNC-3S"), xBar); // 95 tons, 9.5 tons internals
-      stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(Location.LeftArm), ItemDB.lookup("PPC")));
+      stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.LeftArm), ItemDB.lookup("PPC")));
 
       // Execute (10.0 tons of armor)
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 32 * 10, 1.0, xBar);
       stack.pushAndApply(cut);
 
       // Verify
-      ConfiguredComponent shieldArm = loadout.getPart(Location.RightArm);
-      ConfiguredComponent weaponArm = loadout.getPart(Location.LeftArm);
+      ConfiguredComponent shieldArm = loadout.getComponent(Location.RightArm);
+      ConfiguredComponent weaponArm = loadout.getComponent(Location.LeftArm);
 
       assertTrue(shieldArm.getArmorTotal() < weaponArm.getArmorTotal() / 2);
    }

@@ -20,6 +20,7 @@
 package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.util.MessageXBar;
@@ -36,6 +37,7 @@ public class OpSetArmor extends Operation{
    private int                       oldAmount = -1;
    private boolean                   oldManual;
    private final MessageXBar         xBar;
+   private final LoadoutBase<?, ?>   loadout;
    private final ConfiguredComponent loadoutPart;
    private final boolean             manual;
 
@@ -56,8 +58,9 @@ public class OpSetArmor extends Operation{
     *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
     *            support the armor.
     */
-   public OpSetArmor(MessageXBar anXBar, ConfiguredComponent aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount, boolean aManualSet){
+   public OpSetArmor(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount, boolean aManualSet){
       xBar = anXBar;
+      loadout  = aLoadout;
       loadoutPart = aLoadoutPart;
       side = anArmorSide;
       amount = anArmorAmount;
@@ -106,13 +109,13 @@ public class OpSetArmor extends Operation{
             throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + loadoutPart.getArmorMax(side) + " Was: " + amount);
 
          int armorDiff = amount - oldAmount;
-         double armorTons = loadoutPart.getLoadout().getUpgrades().getArmor().getArmorMass(armorDiff);
-         if( armorTons > loadoutPart.getLoadout().getFreeMass() ){
+         double armorTons = loadout.getUpgrades().getArmor().getArmorMass(armorDiff);
+         if( armorTons > loadout.getFreeMass() ){
             // See if the armor can be freed from a combination of automatic components. They will be redistributed
             // afterwards. FIXME: Devise a proper solution, this is ugly.
             int freed = 0;
             if( manual == true && freed < armorDiff ){
-               for(ConfiguredComponent otherPart : loadoutPart.getLoadout().getPartLoadOuts()){
+               for(ConfiguredComponent otherPart : loadout.getComponents()){
                   if( loadoutPart != otherPart && otherPart.allowAutomaticArmor() ){
                      freed += otherPart.getArmorTotal();
                      if( otherPart.getInternalComponent().getLocation().isTwoSided() ){

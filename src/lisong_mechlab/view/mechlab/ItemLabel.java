@@ -55,7 +55,6 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.OpAutoAddItem;
 import lisong_mechlab.model.metrics.TopSpeed;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.ProgramInit;
@@ -225,16 +224,15 @@ public class ItemLabel extends JLabel{
    }
 
    private void updateText(Loadout aLoadout){
-      Upgrades anUpgrades = aLoadout == null ? null : aLoadout.getUpgrades();
       StringBuilder builder = new StringBuilder();
       builder.append("<html>");
-      builder.append(item.getShortName(anUpgrades));
+      builder.append(item.getShortName());
       builder.append("<br/><span style=\"font-size:x-small;\">");
-      builder.append("Tons: ").append(item.getMass(anUpgrades)).append("<br/>Slots: ").append(item.getNumCriticalSlots(anUpgrades));
+      builder.append("Tons: ").append(item.getMass()).append("<br/>Slots: ").append(item.getNumCriticalSlots());
 
       if( item instanceof Engine && aLoadout != null ){
          Engine engine = (Engine)item;
-         double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getChassi(), aLoadout.getEfficiencies().getSpeedModifier());
+         double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getChassis(), aLoadout.getEfficiencies().getSpeedModifier());
          DecimalFormat decimalFormat = new DecimalFormat("###");
          builder.append("<br/>" + decimalFormat.format(speed) + "kph");
       }
@@ -272,7 +270,7 @@ public class ItemLabel extends JLabel{
       smartPlace = false;
       if( aLoadout != null ){
          updateText(aLoadout);
-         if( !aLoadout.getChassi().isAllowed(item) || !item.isCompatible(aLoadout.getUpgrades()) ){
+         if( !aLoadout.getChassis().isAllowed(item) || !item.isCompatible(aLoadout.getUpgrades()) ){
             setVisible(false);
          }
          else{
@@ -291,7 +289,7 @@ public class ItemLabel extends JLabel{
 
             if( item instanceof Ammunition ){
                Ammunition ammunition = (Ammunition)item;
-               if( aLoadout.getChassi().getHardpointsCount(ammunition.getWeaponHardpointType()) < 1 ){
+               if( aLoadout.getChassis().getHardpointsCount(ammunition.getWeaponHardpointType()) < 1 ){
                   setVisible(false);
                }
                else{

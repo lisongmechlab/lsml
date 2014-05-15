@@ -39,7 +39,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.metrics.PayloadStatistics;
@@ -187,28 +187,29 @@ public class PayloadSelectionPanel extends JPanel{
    }
 
    private Collection<PayloadGraphPanel.Entry> calculateUniqueSpeedChassis(){
-      Collection<Collection<Chassis>> temp = new ArrayList<>();
+      Collection<Collection<ChassisIS>> temp = new ArrayList<>();
 
-      List<Chassis> all = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisIS> all = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       all.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       all.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       all.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
-      Collections.sort(all, new Comparator<Chassis>(){
+      Collections.sort(all, new Comparator<ChassisIS>(){
          @Override
-         public int compare(Chassis aO1, Chassis aO2){
+         public int compare(ChassisIS aO1, ChassisIS aO2){
             return Integer.compare(aO1.getMassMax(), aO2.getMassMax());
          }
       });
 
-      for(Chassis chassi : all){
+      for(ChassisIS chassi : all){
          if( chassi.getVariantType().isVariation() )
             continue;
          boolean skip = false;
-         for(Collection<Chassis> chassiGroup : temp){
-            Chassis aChassi = chassiGroup.iterator().next();
+         for(Collection<ChassisIS> chassiGroup : temp){
+            ChassisIS aChassi = chassiGroup.iterator().next();
             if( aChassi.getMassMax() == chassi.getMassMax() && aChassi.getEngineMin() == chassi.getEngineMin()
-                && aChassi.getEngineMax() == chassi.getEngineMax() && aChassi.getSpeedFactor() == chassi.getSpeedFactor()
+                && aChassi.getEngineMax() == chassi.getEngineMax()
+                && aChassi.getMovementProfile().getMaxMovementSpeed() == chassi.getMovementProfile().getMaxMovementSpeed()
                 && aChassi.isSameSeries(chassi) ){
                chassiGroup.add(chassi);
                skip = true;
@@ -216,12 +217,12 @@ public class PayloadSelectionPanel extends JPanel{
             }
          }
          if( !skip ){
-            temp.add(new ArrayList<Chassis>(Arrays.asList(chassi)));
+            temp.add(new ArrayList<ChassisIS>(Arrays.asList(chassi)));
          }
       }
 
       Collection<PayloadGraphPanel.Entry> ans = new ArrayList<>();
-      for(Collection<Chassis> chassiGroup : temp){
+      for(Collection<ChassisIS> chassiGroup : temp){
          ans.add(new PayloadGraphPanel.Entry(chassiGroup));
       }
 

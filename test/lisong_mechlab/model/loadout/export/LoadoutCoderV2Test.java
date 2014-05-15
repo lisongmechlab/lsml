@@ -29,7 +29,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
@@ -66,13 +66,13 @@ public class LoadoutCoderV2Test{
     */
    @Test
    public void testEncodeAllStock() throws Exception{
-      List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisIS> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
       MessageXBar anXBar = new MessageXBar();
-      for(Chassis chassi : chassii){
+      for(ChassisIS chassi : chassii){
          Loadout loadout = new Loadout(chassi.getName(), anXBar);
 
          byte[] result = cut.encode(loadout);
@@ -105,7 +105,7 @@ public class LoadoutCoderV2Test{
          Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
          Matcher m = pat.matcher(line);
          m.matches();
-         Chassis chassi = ChassisDB.lookup(m.group(1));
+         ChassisIS chassi = ChassisDB.lookup(m.group(1));
          String lsml = m.group(2);
          Loadout reference = new Loadout(chassi.getName(), xBar);
          Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
@@ -134,6 +134,6 @@ public class LoadoutCoderV2Test{
       Loadout l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
 
       assertTrue(l.getFreeMass() < 0.005);
-      assertEquals(3, l.getPart(Location.CenterTorso).getNumEngineHeatsinks());
+      assertEquals(3, l.getComponent(Location.CenterTorso).getNumEngineHeatsinks());
    }
 }

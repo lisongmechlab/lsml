@@ -31,7 +31,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.util.MessageXBar;
@@ -86,8 +86,8 @@ public class GarageTree extends JTree{
             }
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                Object clicked = getClickedObject(e);
-               if( clicked instanceof Chassis ){
-                  Chassis chassi = (Chassis)clicked;
+               if( clicked instanceof ChassisIS ){
+                  ChassisIS chassi = (ChassisIS)clicked;
                   Loadout clickedLoadout = new Loadout(chassi, xBar);
                   aLoadoutDesktop.openLoadout(clickedLoadout);
                }
@@ -112,12 +112,12 @@ public class GarageTree extends JTree{
       if( mouseover != null ){
          StringBuilder sb = new StringBuilder(100);
          Object leaf = mouseover.getLastPathComponent();
-         if( leaf instanceof Chassis ){
-            Chassis chassi = (Chassis)leaf;
+         if( leaf instanceof ChassisIS ){
+            ChassisIS chassi = (ChassisIS)leaf;
             sb.append("<html>");
             sb.append("Max Tons: ").append(chassi.getMassMax()).append(" Engine: ").append(chassi.getEngineMin()).append(" - ")
               .append(chassi.getEngineMax()).append("<br>");
-            sb.append("Max Jump Jets: ").append(chassi.getMaxJumpJets()).append(" ECM: ")
+            sb.append("Max Jump Jets: ").append(chassi.getJumpJetsMax()).append(" ECM: ")
               .append(chassi.getHardpointsCount(HardPointType.ECM) > 0 ? "Yes" : "No").append("<br>");
             sb.append("Ballistics: ").append(chassi.getHardpointsCount(HardPointType.BALLISTIC)).append(" Energy: ")
               .append(chassi.getHardpointsCount(HardPointType.ENERGY)).append(" Missile: ").append(chassi.getHardpointsCount(HardPointType.MISSILE))

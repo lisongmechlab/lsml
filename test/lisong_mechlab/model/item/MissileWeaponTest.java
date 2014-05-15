@@ -41,7 +41,7 @@ public class MissileWeaponTest{
       MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
       MissileWeapon srm6artemis = (MissileWeapon)ItemDB.lookup("SRM 6 + ARTEMIS");
 
-      assertEquals(srm6artemis.getNumCriticalSlots(null), srm6.getNumCriticalSlots(null) + 1);
+      assertEquals(srm6artemis.getNumCriticalSlots(), srm6.getNumCriticalSlots() + 1);
    }
 
    /**
@@ -52,7 +52,7 @@ public class MissileWeaponTest{
       MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
       MissileWeapon srm6artemis = (MissileWeapon)ItemDB.lookup("SRM 6 + ARTEMIS");
 
-      assertEquals(srm6.getMass(null) + 1.0, srm6artemis.getMass(null), 0.0);
+      assertEquals(srm6.getMass() + 1.0, srm6artemis.getMass(), 0.0);
    }
 
    /**

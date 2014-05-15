@@ -91,7 +91,7 @@ public class DynamicSlotDistributor{
       for(Location part : Location.leftToRight()){
          if( part == aPart )
             break;
-         ans += loadout.getPart(part).getNumCriticalSlotsFree();
+         ans += loadout.getComponent(part).getNumCriticalSlotsFree();
       }
       return ans;
    }

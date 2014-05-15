@@ -26,8 +26,13 @@ package lisong_mechlab.model.chassi;
  * @author Emily Björk
  */
 public interface MovementProfile{
-   double MAX_REVERSE_SPEED = 40.0; // Km/h
+   double MAX_REVERSE_SPEED_KPH = 40.0;
 
+   /**
+    * The movement archetype determines how a mech behaves when going up a slope.
+    * 
+    * @return The movement archetype.
+    */
    MovementArchetype getMovementArchetype();
 
    /**
@@ -45,7 +50,7 @@ public interface MovementProfile{
    /**
     * This value is used to calculate the top reverse speed of a mech as follows:
     * <p>
-    * <code>topReverseSpeed = PSM * Math.Min(MovementProfile.MAX_REVERSE_SPEED, topSpeed * R)</code>
+    * <code>topReverseSpeed = PSM * Math.Min(MovementProfile.MAX_REVERSE_SPEED_KPH, topSpeed * R)</code>
     * </p>
     * <p>
     * Where R = {@link #getReverseSpeedMultiplier()}, PSM = Pilot Skill Modifiers and topSpeed is calculated as

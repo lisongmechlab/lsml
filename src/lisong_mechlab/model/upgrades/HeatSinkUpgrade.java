@@ -43,7 +43,7 @@ public class HeatSinkUpgrade extends Upgrade{
     * @return <code>true</code> if this heat sink is a double type.
     */
    public boolean isDouble(){
-      return getHeatSinkType().getNumCriticalSlots(null) > 1;
+      return getHeatSinkType().getNumCriticalSlots() > 1;
    }
 
 }

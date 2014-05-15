@@ -44,7 +44,6 @@ public class SetArmorOperationTest{
    @Before
    public void setup(){
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
       Mockito.when(loadoutPart.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
@@ -59,7 +58,7 @@ public class SetArmorOperationTest{
    @Test
    public final void testDescribe() throws Exception{
       int armor = 13;
-      OpSetArmor cut = new OpSetArmor(xBar, loadoutPart, armorSide, armor, true);
+      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, armor, true);
 
       assertTrue(cut.describe().contains("armor"));
       assertTrue(cut.describe().contains("change"));
@@ -73,7 +72,7 @@ public class SetArmorOperationTest{
     */
    @Test(expected = IllegalArgumentException.class)
    public final void testCtorNegativeArmor() throws Exception{
-      new OpSetArmor(xBar, loadoutPart, armorSide, -1, true);
+      new OpSetArmor(xBar, loadout, loadoutPart, armorSide, -1, true);
    }
 
    /**
@@ -84,7 +83,7 @@ public class SetArmorOperationTest{
     */
    @Test(expected = IllegalArgumentException.class)
    public final void testCtorTooMuchArmor() throws Exception{
-      new OpSetArmor(xBar, loadoutPart, armorSide, TEST_MAX_ARMOR + 1, true);
+      new OpSetArmor(xBar, loadout, loadoutPart, armorSide, TEST_MAX_ARMOR + 1, true);
    }
 
    /**
@@ -100,22 +99,20 @@ public class SetArmorOperationTest{
       ConfiguredComponent part2 = Mockito.mock(ConfiguredComponent.class);
 
       // Part 1 & 2 are identical but not the same.
-      Mockito.when(part1.getLoadout()).thenReturn(loadout);
       Mockito.when(part1.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(part1.getArmor(ArmorSide.BACK)).thenReturn(armor);
       Mockito.when(part1.getArmor(ArmorSide.FRONT)).thenReturn(armor);
-      Mockito.when(part2.getLoadout()).thenReturn(loadout);
       Mockito.when(part2.getInternalComponent()).thenReturn(internalPart);
       Mockito.when(part2.getArmor(ArmorSide.BACK)).thenReturn(armor);
       Mockito.when(part2.getArmor(ArmorSide.FRONT)).thenReturn(armor);
       Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(internalPart.getArmorMax()).thenReturn(TEST_MAX_ARMOR);
 
-      OpSetArmor cut1 = new OpSetArmor(xBar, part1, ArmorSide.FRONT, armor, true);
-      OpSetArmor cut2 = new OpSetArmor(xBar, part1, ArmorSide.FRONT, armor, false);
-      OpSetArmor cut3 = new OpSetArmor(xBar, part1, ArmorSide.BACK, armor, true);
-      OpSetArmor cut4 = new OpSetArmor(xBar, part2, ArmorSide.FRONT, armor, true);
-      OpSetArmor cut5 = new OpSetArmor(xBar, part1, ArmorSide.FRONT, armor - 1, true);
+      OpSetArmor cut1 = new OpSetArmor(xBar, loadout, part1, ArmorSide.FRONT, armor, true);
+      OpSetArmor cut2 = new OpSetArmor(xBar, loadout, part1, ArmorSide.FRONT, armor, false);
+      OpSetArmor cut3 = new OpSetArmor(xBar, loadout, part1, ArmorSide.BACK, armor, true);
+      OpSetArmor cut4 = new OpSetArmor(xBar, loadout, part2, ArmorSide.FRONT, armor, true);
+      OpSetArmor cut5 = new OpSetArmor(xBar, loadout, part1, ArmorSide.FRONT, armor - 1, true);
       Operation operation = Mockito.mock(Operation.class);
 
       assertFalse(cut1.canCoalescele(operation));
@@ -144,12 +141,12 @@ public class SetArmorOperationTest{
       List<ConfiguredComponent> parts = new ArrayList<>();
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
       Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);
-      Mockito.when(loadout.getPartLoadOuts()).thenReturn(parts);
+      Mockito.when(loadout.getComponents()).thenReturn(parts);
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       OpSetArmor cut = null;
       try{
-         cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -174,7 +171,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
-      OpSetArmor cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
 
       // Execute
       cut.apply();
@@ -195,7 +192,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
-      OpSetArmor cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
 
       // Execute
       cut.apply();
@@ -221,7 +218,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       OpSetArmor cut = null;
       try{
-         cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -249,7 +246,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(newArmor - 1);
       OpSetArmor cut = null;
       try{
-         cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -280,7 +277,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       OpSetArmor cut = null;
       try{
-         cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -308,7 +305,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
 
-      OpSetArmor cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
 
       // Execute
       cut.apply();
@@ -334,7 +331,7 @@ public class SetArmorOperationTest{
          Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
          Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
 
-         cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
 
       }
       catch( Throwable t ){
@@ -360,7 +357,7 @@ public class SetArmorOperationTest{
          Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
          Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
 
-         cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
 
       }
       catch( Throwable t ){
@@ -389,7 +386,7 @@ public class SetArmorOperationTest{
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(0);
       Mockito.when(loadoutPart.allowAutomaticArmor()).thenReturn(true);
 
-      OpSetArmor cut = new OpSetArmor(xBar, loadoutPart, armorSide, newArmor, true);
+      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
 
       Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
 

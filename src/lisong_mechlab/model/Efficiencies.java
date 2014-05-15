@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 
 /**
@@ -52,7 +52,7 @@ public class Efficiencies{
       public final Type          type;
 
       @Override
-      public boolean isForMe(Loadout aLoadout){
+      public boolean isForMe(LoadoutBase aLoadout){
          return aLoadout.getEfficiencies() == efficiencies;
       }
 

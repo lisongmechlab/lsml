@@ -57,7 +57,7 @@ public class RenameOperationTest{
       // Verify
       assertEquals("Test", loadout.getName());
       assertEquals("Test (HBK-4J)", loadout.toString());
-      verify(xBar).post(new Loadout.Message(loadout, Loadout.Message.Type.RENAME));
+      verify(xBar).post(new LoadoutMessage(loadout, LoadoutMessage.Type.RENAME));
    }
 
    /**

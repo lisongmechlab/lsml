@@ -35,7 +35,7 @@ public class ConfiguredOmniPod extends ConfiguredComponent{
     * @param aLoadout
     */
    public ConfiguredOmniPod(ConfiguredOmniPod aConfiguredOmnipod, Loadout aLoadout){
-      super(aConfiguredOmnipod, aLoadout);
+      super(aConfiguredOmnipod);
       // TODO Auto-generated constructor stub
    }
 

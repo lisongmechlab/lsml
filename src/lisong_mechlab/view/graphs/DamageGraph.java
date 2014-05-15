@@ -142,7 +142,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
             final Weapon weapon = entry.getKey();
             final double ratio = entry.getValue();
-            final double dps = weapon.getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies());
+            final double dps = weapon.getStat("d/s",  loadout.getEfficiencies());
             final double rangeEff = weapon.getRangeEffectivity(range);
 
             if( !data.containsKey(weapon) ){
@@ -154,7 +154,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
 
       DefaultTableXYDataset dataset = new DefaultTableXYDataset();
       for(Map.Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()){
-         XYSeries series = new XYSeries(entry.getKey().getName(loadout.getUpgrades()), true, false);
+         XYSeries series = new XYSeries(entry.getKey().getName(), true, false);
          for(Pair<Double, Double> pair : entry.getValue()){
             series.add(pair.first, pair.second);
          }

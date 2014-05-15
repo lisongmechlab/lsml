@@ -51,9 +51,9 @@ public class CriticalItemDamage implements ItemMetric{
          if( it instanceof Internal && it != ConfiguredComponent.ENGINE_INTERNAL ){
             continue; // Internals (apart from engine side torsos) cannot be crit.
          }
-         slots += it.getNumCriticalSlots(aLoadoutPart.getLoadout().getUpgrades());
+         slots += it.getNumCriticalSlots();
       }
-      return calculate(anItem.getNumCriticalSlots(aLoadoutPart.getLoadout().getUpgrades()), slots);
+      return calculate(anItem.getNumCriticalSlots(), slots);
    }
 
    public static double calculate(int aItemCrits, int aTotalCrits){

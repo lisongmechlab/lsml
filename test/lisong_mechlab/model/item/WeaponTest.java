@@ -135,7 +135,7 @@ public class WeaponTest{
    @Test
    public void testGetStat_gauss() throws Exception{
       BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      assertEquals(gauss.getDamagePerShot() / gauss.getHeat(), gauss.getStat("d/h", null, null), 0.0);
+      assertEquals(gauss.getDamagePerShot() / gauss.getHeat(), gauss.getStat("d/h", null), 0.0);
    }
 
 }

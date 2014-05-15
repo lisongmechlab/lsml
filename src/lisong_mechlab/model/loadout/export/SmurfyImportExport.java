@@ -155,7 +155,7 @@ public class SmurfyImportExport{
    @SuppressWarnings("resource")
    // It is closed!
    public String sendLoadout(Loadout aLoadout) throws IOException{
-      int mechId = aLoadout.getChassi().getMwoId();
+      int mechId = aLoadout.getChassis().getMwoId();
       URL loadoutUploadUrlXml = new URL("https://mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts.xml");
 
       String data = SmurfyXML.toXml(aLoadout);

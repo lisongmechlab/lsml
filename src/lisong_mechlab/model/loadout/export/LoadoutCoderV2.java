@@ -33,7 +33,7 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
@@ -118,8 +118,8 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          buffer.write(upeff);
 
          // 16 bits contain chassis ID.
-         short chassiId = (short)aLoadout.getChassi().getMwoId();
-         if( chassiId != aLoadout.getChassi().getMwoId() )
+         short chassiId = (short)aLoadout.getChassis().getMwoId();
+         if( chassiId != aLoadout.getChassis().getMwoId() )
             throw new RuntimeException("Chassi ID was larger than 16 bits!");
 
          buffer.write((chassiId & 0xFF00) >> 8); // Big endian, respecting RFC 1700
@@ -130,11 +130,11 @@ public class LoadoutCoderV2 implements LoadoutCoder{
       // 1 byte per armor value (2 for RT,CT,LT front first)
       for(Location part : partOrder){
          if( part.isTwoSided() ){
-            buffer.write((byte)aLoadout.getPart(part).getArmor(ArmorSide.FRONT));
-            buffer.write((byte)aLoadout.getPart(part).getArmor(ArmorSide.BACK));
+            buffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.FRONT));
+            buffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.BACK));
          }
          else{
-            buffer.write((byte)aLoadout.getPart(part).getArmor(ArmorSide.ONLY));
+            buffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.ONLY));
          }
       }
 
@@ -153,7 +153,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          ids.add(-1);
 
          for(Location part : partOrder){
-            List<Item> items = aLoadout.getPart(part).getItems();
+            List<Item> items = aLoadout.getComponent(part).getItems();
             for(Item item : items){
                if( !(item instanceof Internal) ){
                   ids.add(item.getMwoId());
@@ -192,7 +192,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
          short chassiId = (short)(((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF));
 
-         Chassis chassi = ChassisDB.lookup(chassiId);
+         ChassisIS chassi = ChassisDB.lookup(chassiId);
          loadout = new Loadout(chassi, xBar);
          loadout.getEfficiencies().setCoolRun((upeff & (1 << 4)) != 0);
          loadout.getEfficiencies().setHeatContainment((upeff & (1 << 3)) != 0);
@@ -205,11 +205,11 @@ public class LoadoutCoderV2 implements LoadoutCoder{
       // 1 byte per armor value (2 for RT,CT,LT front first)
       for(Location part : partOrder){
          if( part.isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(part), ArmorSide.FRONT, buffer.read(), true));
-            stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(part), ArmorSide.BACK, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(part), ArmorSide.FRONT, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(part), ArmorSide.BACK, buffer.read(), true));
          }
          else{
-            stack.pushAndApply(new OpSetArmor(xBar, loadout.getPart(part), ArmorSide.ONLY, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(part), ArmorSide.ONLY, buffer.read(), true));
          }
       }
 
@@ -247,10 +247,10 @@ public class LoadoutCoderV2 implements LoadoutCoder{
                   later.add(item); // Add heat sinks last after engine has been added
                   continue;
                }
-               stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(part), ItemDB.lookup(v)));
+               stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(part), ItemDB.lookup(v)));
             }
             for(Item i : later){
-               stack.pushAndApply(new OpAddItem(xBar, loadout.getPart(part), i));
+               stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(part), i));
             }
 
          }
@@ -279,14 +279,14 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateAllLoadouts() throws Exception{
-      List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisIS> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
       MessageXBar xBar = new MessageXBar();
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
       OperationStack stack = new OperationStack(0);
-      for(Chassis chassis : chassii){
+      for(ChassisIS chassis : chassii){
          Loadout loadout = new Loadout(chassis, xBar);
          stack.pushAndApply(new OpLoadStock(chassis, loadout, xBar));
          System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));

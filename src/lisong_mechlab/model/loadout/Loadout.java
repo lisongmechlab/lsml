@@ -20,26 +20,12 @@
 package lisong_mechlab.model.loadout;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Observable;
-import java.util.TreeMap;
 
-import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalComponent;
-import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.EngineType;
-import lisong_mechlab.model.item.HeatSink;
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
@@ -47,7 +33,6 @@ import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutPartConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -59,111 +44,41 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * 
  * @author Emily Björk
  */
-public class Loadout implements Cloneable{
-   public static class Message implements MessageXBar.Message{
-      public enum Type{
-         RENAME, CREATE, UPDATE
-      }
+public class Loadout extends LoadoutBase<ConfiguredComponent, InternalComponent>{
 
-      private final Loadout loadout;
-
-      public final Type     type;
-
-      public Message(Loadout aLoadout, Type aType){
-         loadout = aLoadout;
-         type = aType;
-      }
-
-      @Override
-      public boolean equals(Object obj){
-         if( this == obj )
-            return true;
-         if( obj == null )
-            return false;
-         if( getClass() != obj.getClass() )
-            return false;
-         Message other = (Message)obj;
-         if( loadout == null ){
-            if( other.loadout != null )
-               return false;
-         }
-         else if( !loadout.equals(other.loadout) )
-            return false;
-         if( type != other.type )
-            return false;
-         return true;
-      }
-
-      @Override
-      public int hashCode(){
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((loadout == null) ? 0 : loadout.hashCode());
-         result = prime * result + ((type == null) ? 0 : type.hashCode());
-         return result;
-      }
-
-      @Override
-      public boolean affectsHeatOrDamage(){
-         return type == Type.UPDATE;
-      }
-
-      @Override
-      public boolean isForMe(Loadout aLoadout){
-         return loadout == aLoadout;
-      }
-   }
-
-   public static Loadout load(File aFile, MessageXBar anXBar){
-      XStream stream = loadoutXstream(anXBar);
+   public static Loadout load(File aFile, MessageXBar aXBar){
+      XStream stream = loadoutXstream(aXBar);
       return (Loadout)stream.fromXML(aFile);
    }
 
-   public static XStream loadoutXstream(MessageXBar anXBar){
+   public static XStream loadoutXstream(MessageXBar aXBar){
       XStream stream = new XStream(new StaxDriver());
+      stream.autodetectAnnotations(true);
       stream.setMode(XStream.NO_REFERENCES);
       stream.registerConverter(new ChassiConverter());
       stream.registerConverter(new ItemConverter());
-      stream.registerConverter(new LoadoutPartConverter(anXBar, null));
-      stream.registerConverter(new LoadoutConverter(anXBar));
+      stream.registerConverter(new LoadoutPartConverter(aXBar, null));
+      stream.registerConverter(new LoadoutConverter(aXBar));
       stream.registerConverter(new UpgradeConverter());
       stream.registerConverter(new UpgradesConverter());
-      stream.omitField(Observable.class, "changed");
-      stream.omitField(Observable.class, "obs");
       stream.addImmutableType(Item.class);
       stream.alias("component", ConfiguredComponent.class);
       stream.alias("loadout", Loadout.class);
-      stream.addImplicitMap(Loadout.class, "parts", ConfiguredComponent.class, "internalpart");
       return stream;
    }
-
-   private String                                       name;
-   private final Chassis                                chassi;
-   private final TreeMap<Location, ConfiguredComponent> parts = new TreeMap<Location, ConfiguredComponent>();
-   private final Upgrades                               upgrades;
-   private final Efficiencies                           efficiencies;
 
    /**
     * Will create a new, empty load out based on the given chassis. TODO: Is anXBar really needed?
     * 
     * @param aChassi
     *           The chassis to base the load out on.
-    * @param anXBar
+    * @param aXBar
     *           The {@link MessageXBar} to signal changes to this loadout on.
     */
-   public Loadout(Chassis aChassi, MessageXBar anXBar){
-      name = aChassi.getNameShort();
-      chassi = aChassi;
-      upgrades = new Upgrades();
-      efficiencies = new Efficiencies(anXBar);
-
-      for(InternalComponent part : chassi.getInternalParts()){
-         ConfiguredComponent confPart = new ConfiguredComponent(this, part, true);
-         parts.put(part.getLocation(), confPart);
-      }
-
-      if( anXBar != null ){
-         anXBar.post(new Message(this, Message.Type.CREATE));
+   public Loadout(ChassisIS aChassi, MessageXBar aXBar){
+      super(ComponentBuilder.getISComponentFactory(), aChassi, aXBar);
+      if( aXBar != null ){
+         aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
       }
    }
 
@@ -172,363 +87,27 @@ public class Loadout implements Cloneable{
     * 
     * @param aString
     *           The name of the stock variation to load.
-    * @param anXBar
+    * @param aXBar
     * @throws Exception
     */
-   public Loadout(String aString, MessageXBar anXBar) throws Exception{
-      this(ChassisDB.lookup(aString), anXBar);
+   public Loadout(String aString, MessageXBar aXBar) throws Exception{
+      this(ChassisDB.lookup(aString), aXBar);
       OperationStack operationStack = new OperationStack(0);
-      operationStack.pushAndApply(new OpLoadStock(chassi, this, anXBar));
+      operationStack.pushAndApply(new OpLoadStock(getChassis(), this, aXBar));
    }
 
-   public Loadout(Loadout aLoadout, MessageXBar anXBar){
-      name = aLoadout.name;
-      chassi = aLoadout.chassi;
-      upgrades = new Upgrades(aLoadout.upgrades);
-      efficiencies = new Efficiencies(aLoadout.efficiencies);
-      for(ConfiguredComponent loadoutPart : aLoadout.parts.values()){
-         parts.put(loadoutPart.getInternalComponent().getLocation(), new ConfiguredComponent(loadoutPart, this));
+   public Loadout(Loadout aLoadout, MessageXBar aXBar){
+      super(ComponentBuilder.getISComponentFactory(), aLoadout);
+      if( aXBar != null ){
+         aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
       }
-      if( anXBar != null ){
-         anXBar.post(new Message(this, Message.Type.CREATE));
-      }
-   }
-
-   @Override
-   public boolean equals(Object obj){
-      if( this == obj )
-         return true;
-      if( !(obj instanceof Loadout) )
-         return false;
-      Loadout that = (Loadout)obj;
-      if( !chassi.equals(that.chassi) )
-         return false;
-      if( !efficiencies.equals(that.efficiencies) )
-         return false;
-      if( !name.equals(that.name) )
-         return false;
-      if( !parts.equals(that.parts) )
-         return false;
-      if( !upgrades.equals(that.upgrades) )
-         return false;
-      return true;
-   }
-
-   public Collection<Item> getAllItems(){
-      List<Item> items = new ArrayList<>();
-      for(ConfiguredComponent part : parts.values()){
-         items.addAll(part.getItems());
-      }
-      return items;
-   }
-
-   public int getArmor(){
-      int ans = 0;
-      for(ConfiguredComponent partConf : parts.values()){
-         ans += partConf.getArmorTotal();
-      }
-      return ans;
-   }
-
-   public Chassis getChassi(){
-      return chassi;
-   }
-
-   public Efficiencies getEfficiencies(){
-      return efficiencies;
-   }
-
-   public Engine getEngine(){
-      for(Item item : getPart(Location.CenterTorso).getItems()){
-         if( item instanceof Engine ){
-            return (Engine)item;
-         }
-      }
-      return null;
-   }
-
-   public double getFreeMass(){
-      double freeMass = chassi.getMassMax() - getMass();
-      return freeMass;
-   }
-
-   public int getHeatsinksCount(){
-      int ans = 0;
-      for(Item item : getAllItems()){
-         if( item instanceof HeatSink ){
-            ans++;
-         }
-         else if( item instanceof Engine ){
-            ans += ((Engine)item).getNumInternalHeatsinks();
-         }
-      }
-      return ans;
-   }
-
-   public int getJumpJetCount(){
-      int ans = 0;
-      for(Item item : getAllItems()){
-         if( item instanceof JumpJet )
-            ans++;
-      }
-      return ans;
-   }
-
-   public JumpJet getJumpJetType(){
-      for(Item item : getAllItems()){
-         if( item instanceof JumpJet ){
-            return (JumpJet)item;
-         }
-      }
-      return null;
-   }
-
-   public double getMass(){
-      double ans = upgrades.getStructure().getStructureMass(chassi);
-      for(ConfiguredComponent partConf : parts.values()){
-         ans += partConf.getItemMass();
-      }
-      ans += upgrades.getArmor().getArmorMass(getArmor());
-      return ans;
-   }
-
-   public String getName(){
-      return name;
-   }
-
-   public int getNumCriticalSlotsFree(){
-      return 12 * 5 + 6 * 3 - getNumCriticalSlotsUsed();
-   }
-
-   public int getNumCriticalSlotsUsed(){
-      int ans = upgrades.getStructure().getExtraSlots() + upgrades.getArmor().getExtraSlots();
-      for(ConfiguredComponent partConf : parts.values()){
-         ans += partConf.getNumCriticalSlotsUsed();
-      }
-      return ans;
-   }
-
-   public ConfiguredComponent getPart(Location aPartType){
-      return parts.get(aPartType);
-   }
-
-   public Collection<ConfiguredComponent> getPartLoadOuts(){
-      return parts.values();
-   }
-
-   public Upgrades getUpgrades(){
-      return upgrades;
-   }
-
-   @Override
-   public int hashCode(){
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((chassi == null) ? 0 : chassi.hashCode());
-      result = prime * result + ((efficiencies == null) ? 0 : efficiencies.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((parts == null) ? 0 : parts.hashCode());
-      result = prime * result + ((upgrades == null) ? 0 : upgrades.hashCode());
-      return result;
-   }
-
-   /**
-    * Gets a {@link List} of {@link ConfiguredComponent}s that could possibly house the given item.
-    * <p>
-    * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponent}s in
-    * the returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponent}s not in the
-    * list are unable to hold the {@link Item}.
-    * <p>
-    * This method is mainly useful for limiting search spaces for various optimization algorithms.
-    * 
-    * @param anItem
-    *           The {@link Item} to find candidate {@link ConfiguredComponent}s for.
-    * @return A {@link List} of {@link ConfiguredComponent}s that might be able to hold the {@link Item}.
-    */
-   public List<ConfiguredComponent> getCandidateLocationsForItem(Item anItem){
-      List<ConfiguredComponent> candidates = new ArrayList<>();
-      if( !canEquipGlobal(anItem) )
-         return candidates;
-
-      int globalFreeHardPoints = 0;
-      HardPointType hardpointType = anItem.getHardpointType();
-
-      for(ConfiguredComponent part : getPartLoadOuts()){
-         if( part.getInternalComponent().isAllowed(anItem) ){
-            candidates.add(part);
-         }
-
-         if( hardpointType != HardPointType.NONE ){
-            final int localFreeHardPoints = part.getInternalComponent().getNumHardpoints(hardpointType)
-                                            - part.getNumItemsOfHardpointType(hardpointType);
-            globalFreeHardPoints += localFreeHardPoints;
-         }
-      }
-
-      if( hardpointType != HardPointType.NONE && globalFreeHardPoints <= 0 ){
-         candidates.clear();
-      }
-
-      return candidates;
-   }
-
-   /**
-    * Checks global constraints that could prevent the item from being added to this {@link Loadout}.
-    * <p>
-    * This includes:
-    * <ul>
-    * <li>Only one engine.</li>
-    * <li>Max jump jet count not exceeded.</li>
-    * <li>Correct jump jet type.</li>
-    * <li>Enough free mass.</li>
-    * <li>Enough globally free critical slots.</li>
-    * <li>Enough globally free hard points of applicable type.</li>
-    * </ul>
-    * 
-    * @param anItem
-    *           The {@link Item} to check for.
-    * @return <code>true</code> if the given {@link Item} is globally feasible on this loadout.
-    */
-   public boolean canEquip(Item anItem){
-      if( !canEquipGlobal(anItem) ){
-         return false;
-      }
-
-      if( anItem instanceof Engine ){
-         Engine engine = (Engine)anItem;
-         if( engine.getType() == EngineType.XL ){
-            if( getPart(Location.LeftTorso).getNumCriticalSlotsFree() < 3 ){
-               return false;
-            }
-            if( getPart(Location.RightTorso).getNumCriticalSlotsFree() < 3 ){
-               return false;
-            }
-            if( getNumCriticalSlotsFree() < 3 * 2 + engine.getNumCriticalSlots(getUpgrades()) ){
-               // XL engines return same number of slots as standard engine, check enough slots to cover the
-               // side torsii.
-               return false;
-            }
-         }
-      }
-
-      for(ConfiguredComponent part : getPartLoadOuts()){
-         if( part.canEquip(anItem) )
-            return true;
-      }
-      return false;
-   }
-
-   /**
-    * Checks only global constraints against the {@link Item}. These are necessary but not sufficient conditions. Local
-    * conditions are needed to be sufficient.
-    * 
-    * @param anItem
-    *           The {@link Item} to check.
-    * @return <code>true</code> if the necessary checks are passed.
-    */
-   private boolean canEquipGlobal(Item anItem){
-      if( anItem.getMass(upgrades) > getFreeMass() )
-         return false;
-      if( !getChassi().isAllowed(anItem) )
-         return false;
-      if( !anItem.isCompatible(getUpgrades()) )
-         return false;
-
-      // Allow engine slot heat sinks as long as there is enough free mass.
-      if( anItem instanceof HeatSink
-          && getPart(Location.CenterTorso).getNumEngineHeatsinks() < getPart(Location.CenterTorso).getNumEngineHeatsinksMax() )
-         return true;
-
-      if( anItem.getNumCriticalSlots(upgrades) > getNumCriticalSlotsFree() )
-         return false;
-      if( anItem instanceof JumpJet && getChassi().getMaxJumpJets() - getJumpJetCount() < 1 )
-         return false;
-      if( anItem instanceof Engine && getEngine() != null )
-         return false;
-      return true;
-   }
-
-   /**
-    * Checks if an item can be equipped on a loadout in some way by moving other items around.
-    * 
-    * @param anItem
-    *           The {@link Item} to check for.
-    * @return <code>true</code> if the loadout can be permutated in some way that the item can be equipped.
-    */
-   public boolean hasEquippablePermutation(Item anItem){
-      if( !canEquipGlobal(anItem) )
-         return false;
-
-      List<ConfiguredComponent> candidates = getCandidateLocationsForItem(anItem);
-
-      for(ConfiguredComponent candidate : candidates){
-         if( candidate.canEquip(anItem) ){
-            return true;
-         }
-
-         int slotsFree[] = new int[Location.values().length];
-         for(Location part : Location.values()){
-            slotsFree[part.ordinal()] = getPart(part).getNumCriticalSlotsFree();
-         }
-
-         // Attempt to move items by taking the largest ones first and perform bin packing
-         // with First Fit Decreasing heuristic.
-         List<Item> itemsBySlots = new ArrayList<>(candidate.getItems());
-         Collections.sort(itemsBySlots, new Comparator<Item>(){
-            @Override
-            public int compare(Item aO1, Item aO2){
-               return Integer.compare(aO1.getNumCriticalSlots(getUpgrades()), aO2.getNumCriticalSlots(getUpgrades()));
-            }
-         });
-
-         // There are enough free hard points in the loadout to contain this item and there
-         // are enough globally free slots and free tonnage. Engine and jump jet constraints
-         // are already checked. It is enough if the candidate part has enough slots free.
-         int candidateSlotsFree = candidate.getNumCriticalSlotsFree();
-         while( candidateSlotsFree < anItem.getNumCriticalSlots(getUpgrades()) && !itemsBySlots.isEmpty() ){
-            Item toBeRemoved = itemsBySlots.remove(0);
-            if( toBeRemoved instanceof Internal )
-               continue;
-
-            // Find first bin where it can be put
-            for(ConfiguredComponent part : getPartLoadOuts()){
-               if( part == candidate )
-                  continue;
-               final int partOrdinal = part.getInternalComponent().getLocation().ordinal();
-               final int numCrits = toBeRemoved.getNumCriticalSlots(getUpgrades());
-               if( slotsFree[partOrdinal] >= numCrits ){
-                  HardPointType needHp = toBeRemoved.getHardpointType();
-                  if( needHp != HardPointType.NONE
-                      && part.getInternalComponent().getNumHardpoints(needHp) - part.getNumItemsOfHardpointType(needHp) < 1 ){
-                     continue;
-                  }
-                  slotsFree[partOrdinal] -= numCrits;
-                  candidateSlotsFree += numCrits;
-                  break;
-               }
-            }
-         }
-         if( candidateSlotsFree >= anItem.getNumCriticalSlots(getUpgrades()) ){
-            return true;
-         }
-      }
-      return false;
    }
 
    @Override
    public String toString(){
-      if( getName().contains(chassi.getNameShort()) )
+      if( getName().contains(getChassis().getNameShort()) )
          return getName();
-      return getName() + " (" + chassi.getNameShort() + ")";
+      return getName() + " (" + getChassis().getNameShort() + ")";
    }
 
-   /**
-    * Package internal function. Use {@link OpRename} to change the name.
-    * 
-    * @param aNewName
-    *           The new name of the loadout.
-    */
-   void rename(String aNewName){
-      name = aNewName;
-   }
 }

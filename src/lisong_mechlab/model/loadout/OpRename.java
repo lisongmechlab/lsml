@@ -19,8 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.loadout.Loadout.Message;
-import lisong_mechlab.model.loadout.Loadout.Message.Type;
+import lisong_mechlab.model.loadout.LoadoutMessage.Type;
 import lisong_mechlab.util.MessageXBar;
 
 /**
@@ -50,7 +49,7 @@ public class OpRename extends OpLoadoutBase{
       if( oldName == loadout.getName() )
          return;
       loadout.rename(oldName);
-      xBar.post(new Message(loadout, Type.RENAME));
+      xBar.post(new LoadoutMessage(loadout, Type.RENAME));
    }
 
    @Override
@@ -60,6 +59,6 @@ public class OpRename extends OpLoadoutBase{
          return;
       loadout.rename(newName);
       if( xBar != null )
-         xBar.post(new Message(loadout, Type.RENAME));
+         xBar.post(new LoadoutMessage(loadout, Type.RENAME));
    }
 }

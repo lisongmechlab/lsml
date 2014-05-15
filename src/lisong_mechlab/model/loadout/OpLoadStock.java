@@ -21,7 +21,7 @@ package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.StockLoadout;
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
@@ -39,7 +39,7 @@ import lisong_mechlab.util.MessageXBar;
  * @author Emily Björk
  */
 public class OpLoadStock extends OpLoadoutBase{
-   public OpLoadStock(Chassis aChassiVariation, Loadout aLoadout, MessageXBar anXBar){
+   public OpLoadStock(ChassisBase<?> aChassiVariation, Loadout aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "load stock");
 
       StockLoadout stockLoadout = StockLoadoutDB.lookup(aChassiVariation);
@@ -50,20 +50,20 @@ public class OpLoadStock extends OpLoadoutBase{
       addOp(new OpSetArmorType(xBar, loadout, stockLoadout.getArmorType()));
       addOp(new OpSetHeatSinkType(xBar, loadout, stockLoadout.getHeatSinkType()));
 
-      for(StockLoadout.StockComponent component : stockLoadout.getComponents()){
-         Location part = component.getPart();
-         ConfiguredComponent loadoutPart = aLoadout.getPart(part);
+      for(StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()){
+         Location location = stockComponent.getPart();
+         ConfiguredComponent configured = aLoadout.getComponent(location);
 
-         if( part.isTwoSided() ){
-            addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.BACK, component.getArmorBack(), true));
-            addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.FRONT, component.getArmorFront(), true));
+         if( location.isTwoSided() ){
+            addOp(new OpSetArmor(xBar, aLoadout, configured, ArmorSide.BACK, stockComponent.getArmorBack(), true));
+            addOp(new OpSetArmor(xBar, aLoadout, configured, ArmorSide.FRONT, stockComponent.getArmorFront(), true));
          }
          else{
-            addOp(new OpSetArmor(xBar, loadoutPart, ArmorSide.ONLY, component.getArmorFront(), true));
+            addOp(new OpSetArmor(xBar, aLoadout, configured, ArmorSide.ONLY, stockComponent.getArmorFront(), true));
          }
 
-         for(Integer item : component.getItems()){
-            addOp(new OpAddItem(xBar, loadoutPart, ItemDB.lookup(item)));
+         for(Integer item : stockComponent.getItems()){
+            addOp(new OpAddItem(xBar, aLoadout, configured, ItemDB.lookup(item)));
          }
       }
    }

@@ -20,7 +20,6 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -64,8 +63,8 @@ public class Engine extends HeatSource{
    }
 
    @Override
-   public String getShortName(Upgrades anUpgrades){
-      String name = getName(anUpgrades);
+   public String getShortName(){
+      String name = getName();
       name = name.replace("ENGINE ", "");
       return name;
    }

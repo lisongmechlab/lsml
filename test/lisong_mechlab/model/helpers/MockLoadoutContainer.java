@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
@@ -43,7 +43,7 @@ import lisong_mechlab.model.upgrades.Upgrades;
  * @author Emily Bjoerk
  */
 public class MockLoadoutContainer{
-   final public Chassis             chassi;
+   final public ChassisIS             chassi;
    final public Loadout             loadout;
    final public Upgrades            upgrades;
    final public Efficiencies        efficiencies;
@@ -65,7 +65,7 @@ public class MockLoadoutContainer{
    final public ConfiguredComponent la;
 
    public MockLoadoutContainer(){
-      chassi = mock(Chassis.class);
+      chassi = mock(ChassisIS.class);
       loadout = mock(Loadout.class);
       upgrades = mock(Upgrades.class);
       efficiencies = mock(Efficiencies.class);
@@ -105,15 +105,6 @@ public class MockLoadoutContainer{
       when(ll.getInternalComponent()).thenReturn(ill);
       when(la.getInternalComponent()).thenReturn(ila);
 
-      when(ra.getLoadout()).thenReturn(loadout);
-      when(rt.getLoadout()).thenReturn(loadout);
-      when(rl.getLoadout()).thenReturn(loadout);
-      when(hd.getLoadout()).thenReturn(loadout);
-      when(ct.getLoadout()).thenReturn(loadout);
-      when(lt.getLoadout()).thenReturn(loadout);
-      when(ll.getLoadout()).thenReturn(loadout);
-      when(la.getLoadout()).thenReturn(loadout);
-
       when(ra.toString()).thenReturn("RA");
       when(rt.toString()).thenReturn("RT");
       when(rl.toString()).thenReturn("RL");
@@ -122,18 +113,18 @@ public class MockLoadoutContainer{
       when(lt.toString()).thenReturn("LT");
       when(ll.toString()).thenReturn("LL");
       when(la.toString()).thenReturn("LA");
-      when(loadout.getPart(Location.RightArm)).thenReturn(ra);
-      when(loadout.getPart(Location.RightTorso)).thenReturn(rt);
-      when(loadout.getPart(Location.RightLeg)).thenReturn(rl);
-      when(loadout.getPart(Location.Head)).thenReturn(hd);
-      when(loadout.getPart(Location.CenterTorso)).thenReturn(ct);
-      when(loadout.getPart(Location.LeftTorso)).thenReturn(lt);
-      when(loadout.getPart(Location.LeftLeg)).thenReturn(ll);
-      when(loadout.getPart(Location.LeftArm)).thenReturn(la);
-      when(loadout.getPartLoadOuts()).thenReturn(Arrays.asList(ra, rt, rl, hd, ct, lt, ll, la));
+      when(loadout.getComponent(Location.RightArm)).thenReturn(ra);
+      when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
+      when(loadout.getComponent(Location.RightLeg)).thenReturn(rl);
+      when(loadout.getComponent(Location.Head)).thenReturn(hd);
+      when(loadout.getComponent(Location.CenterTorso)).thenReturn(ct);
+      when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
+      when(loadout.getComponent(Location.LeftLeg)).thenReturn(ll);
+      when(loadout.getComponent(Location.LeftArm)).thenReturn(la);
+      when(loadout.getComponents()).thenReturn(Arrays.asList(ra, rt, rl, hd, ct, lt, ll, la));
       when(loadout.getUpgrades()).thenReturn(upgrades);
       when(loadout.getEfficiencies()).thenReturn(efficiencies);
-      when(loadout.getChassi()).thenReturn(chassi);
+      when(loadout.getChassis()).thenReturn(chassi);
    }
 
    public Internal makeInternal(String aName, int aNumSlots){
@@ -147,8 +138,8 @@ public class MockLoadoutContainer{
    public Internal makeInternal(String aName, int aNumSlots, double aTons){
       Internal internalItem = mock(Internal.class);
       when(internalItem.toString()).thenReturn(aName);
-      when(internalItem.getNumCriticalSlots(any(Upgrades.class))).thenReturn(aNumSlots);
-      when(internalItem.getMass(any(Upgrades.class))).thenReturn(aTons);
+      when(internalItem.getNumCriticalSlots()).thenReturn(aNumSlots);
+      when(internalItem.getMass()).thenReturn(aTons);
       when(internalItem.compareTo(any(Item.class))).thenCallRealMethod();
       when(internalItem.getHardpointType()).thenReturn(HardPointType.NONE);
       return internalItem;
