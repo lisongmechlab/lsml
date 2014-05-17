@@ -19,12 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.JumpJet;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -32,17 +27,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * This class serves as a generic base for all chassis types (IS/Clan)
  * 
  * @author Emily Björk
- * @param <Component>
- *           The type of the components in this chassis.
  */
-public class ChassisBase<Component extends InternalComponent> {
+public abstract class ChassisBase{
    @XStreamAsAttribute
    private final int             baseVariant;
    @XStreamAsAttribute
    private final ChassisClass    chassiclass;
-   private final Component[]     components;
-   @XStreamAsAttribute
-   private final int             maxJumpJets;
    @XStreamAsAttribute
    private final int             maxTons;
    private final MovementProfile movementProfile;
@@ -55,34 +45,27 @@ public class ChassisBase<Component extends InternalComponent> {
    @XStreamAsAttribute
    private final String          series;
    @XStreamAsAttribute
-   private final String          seriesShort;
-   @XStreamAsAttribute
    private final String          shortName;
    @XStreamAsAttribute
    private final ChassisVariant  variant;
+   @XStreamAsAttribute
+   private final boolean         clan;
 
-   public ChassisBase(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, Component[] aParts, int aMaxJumpJets,
-                      int aMaxTons, ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile){
-      if( aParts.length != Location.values().length ){
-         throw new IllegalArgumentException("Parts array must contain all parts!");
-      }
-
+   public ChassisBase(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
+                      int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan){
       mwoId = aMwoID;
       mwoName = aMwoName;
       series = aSeries;
-      seriesShort = aSeries;
       name = aName;
       shortName = aShortName;
-      components = aParts;
-      maxJumpJets = aMaxJumpJets;
       maxTons = aMaxTons;
       chassiclass = ChassisClass.fromMaxTons(maxTons);
       variant = aVariant;
       baseVariant = aBaseVariant;
       movementProfile = aMovementProfile;
+      clan = aIsClan;
    }
 
-   @SuppressWarnings("rawtypes")
    @Override
    public boolean equals(Object obj){
       if( !this.getClass().isAssignableFrom(obj.getClass()) )
@@ -93,13 +76,7 @@ public class ChassisBase<Component extends InternalComponent> {
    /**
     * @return The maximal, total amount of armor the chassis can support.
     */
-   public int getArmorMax(){
-      int ans = 0;
-      for(InternalComponent internalPart : components){
-         ans += internalPart.getArmorMax();
-      }
-      return ans;
-   }
+   public abstract int getArmorMax();
 
    /**
     * @return The ID of the base variant of this chassis, or <code>-1</code> if this is not a derived chassis type.
@@ -116,46 +93,10 @@ public class ChassisBase<Component extends InternalComponent> {
    }
 
    /**
-    * @param aLocation
-    *           The location of the internal component we're interested in.
-    * @return The internal component in the given location.
-    */
-   public Component getComponent(Location aLocation){
-      return components[aLocation.ordinal()];
-   }
-
-   /**
-    * @return A {@link Collection} of all the internal components.
-    */
-   public Collection<Component> getComponents(){
-      return Collections.unmodifiableList(Arrays.asList(components));
-   }
-
-   /**
     * @return The total number of critical slots on this chassis.
     */
    public int getCriticalSlotsTotal(){
       return 12 * 5 + 6 * 3;
-   }
-
-   /**
-    * @param aHardpointType
-    *           The type of hard points to count.
-    * @return The number of hard points of the given type.
-    */
-   public int getHardpointsCount(HardPointType aHardpointType){
-      int sum = 0;
-      for(InternalComponent part : components){
-         sum += part.getNumHardpoints(aHardpointType);
-      }
-      return sum;
-   }
-
-   /**
-    * @return The maximal number of jump jets the chassis can support.
-    */
-   public int getJumpJetsMax(){
-      return maxJumpJets;
    }
 
    /**
@@ -201,7 +142,7 @@ public class ChassisBase<Component extends InternalComponent> {
    }
 
    /**
-    * @return The name of the series this {@link ChassisIS} belongs to, e.g. "CATAPHRACT", "ATLAS" etc.
+    * @return The name of the series this {@link ChassisStandard} belongs to, e.g. "CATAPHRACT", "ATLAS" etc.
     */
    public String getSeriesName(){
       return series;
@@ -230,13 +171,8 @@ public class ChassisBase<Component extends InternalComponent> {
     * @return <code>true</code> if this chassis can equip the {@link Item}.
     */
    public boolean isAllowed(Item aItem){
-      if( aItem instanceof JumpJet ){
-         JumpJet jj = (JumpJet)aItem;
-         return getJumpJetsMax() > 0 && jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
-      }
-      for(InternalComponent part : components){
-         if( part.isAllowed(aItem) )
-            return true;
+      if( aItem.isClan() != clan ){
+         return false;
       }
       return false;
    }
@@ -246,8 +182,15 @@ public class ChassisBase<Component extends InternalComponent> {
     *           The {@link ChassisBase} to compare to.
     * @return <code>true</code> if this and that chassis are of the same series (i.e. both are Hunchbacks etc).
     */
-   public boolean isSameSeries(ChassisBase<Component> aChassis){
+   public boolean isSameSeries(ChassisBase aChassis){
       return series.equals(aChassis.series);
+   }
+
+   /**
+    * @return <code>true</code> if this chassis is a clan chassis.
+    */
+   public boolean isClan(){
+      return clan;
    }
 
    @Override

@@ -22,7 +22,8 @@ package lisong_mechlab.model.upgrades;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
@@ -32,7 +33,7 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} changes the guidance status of a {@link Loadout}.
+ * This {@link Operation} changes the guidance status of a {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
@@ -43,7 +44,7 @@ public class OpSetGuidanceType extends OpUpgradeBase{
 
    /**
     * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link Upgrades} object This is useful only
-    * for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
+    * for altering {@link Upgrades} objects which are not attached to a {@link LoadoutStandard} in any way.
     * 
     * @param anUpgrades
     *           The {@link Upgrades} object to alter with this {@link Operation}.
@@ -57,16 +58,16 @@ public class OpSetGuidanceType extends OpUpgradeBase{
    }
 
    /**
-    * Creates a new {@link OpSetGuidanceType} that will change the guidance upgrade of a {@link Loadout}.
+    * Creates a new {@link OpSetGuidanceType} that will change the guidance upgrade of a {@link LoadoutStandard}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in guidance status on.
     * @param aLoadout
-    *           The {@link Loadout} to alter.
+    *           The {@link LoadoutStandard} to alter.
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
-   public OpSetGuidanceType(MessageXBar anXBar, Loadout aLoadout, GuidanceUpgrade aGuidanceUpgrade){
+   public OpSetGuidanceType(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, GuidanceUpgrade aGuidanceUpgrade){
       super(anXBar, aLoadout, aGuidanceUpgrade.getName());
       oldValue = upgrades.getGuidance();
       newValue = aGuidanceUpgrade;
@@ -103,7 +104,7 @@ public class OpSetGuidanceType extends OpUpgradeBase{
             throw new IllegalArgumentException("Too few critical slots available in loadout!");
 
          for(ConfiguredComponent part : loadout.getComponents()){
-            if( newValue.getExtraSlots(part) > part.getNumCriticalSlotsFree() )
+            if( newValue.getExtraSlots(part) > part.getSlotsFree() )
                throw new IllegalArgumentException("Too few critical slots available in " + part.getInternalComponent().getLocation() + "!");
          }
 
@@ -112,7 +113,7 @@ public class OpSetGuidanceType extends OpUpgradeBase{
          }
 
          for(ConfiguredComponent component : loadout.getComponents()){
-            for(Item item : component.getItems()){
+            for(Item item : component.getItemsAll()){
                if( item instanceof MissileWeapon ){
                   MissileWeapon oldWeapon = (MissileWeapon)item;
                   MissileWeapon newWeapon = newValue.upgrade(oldWeapon);

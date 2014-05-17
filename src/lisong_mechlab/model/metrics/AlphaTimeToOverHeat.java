@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
  * This class calculates the time a mech can keep firing all weapons before it over heats.
@@ -37,11 +37,11 @@ public class AlphaTimeToOverHeat implements Metric{
     * Creates a new {@link Metric}.
     * 
     * @param aHeatCapacity
-    *           The {@link HeatCapacity} for the {@link Loadout}.
+    *           The {@link HeatCapacity} for the {@link LoadoutStandard}.
     * @param aHeatOverTime
-    *           The {@link HeatOverTime} for the {@link Loadout}.
+    *           The {@link HeatOverTime} for the {@link LoadoutStandard}.
     * @param aHeatDissipation
-    *           The {@link HeatDissipation} for the {@link Loadout}.
+    *           The {@link HeatDissipation} for the {@link LoadoutStandard}.
     */
    public AlphaTimeToOverHeat(HeatCapacity aHeatCapacity, HeatOverTime aHeatOverTime, HeatDissipation aHeatDissipation){
       heatOverTime = aHeatOverTime;

@@ -66,7 +66,7 @@ public class AutoAddItemOperationTest{
    public void testMoveItem_Bug2() throws DecodingException{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-      Loadout loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
+      LoadoutStandard loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
       Mockito.reset(xBar);
       // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
@@ -90,7 +90,7 @@ public class AutoAddItemOperationTest{
    @Test
    public void testMoveItem_Bug1(){
       // Setup
-      Loadout loadout = new Loadout(ChassisDB.lookup("BNC-3M"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("BNC-3M"), xBar);
       stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
@@ -131,7 +131,7 @@ public class AutoAddItemOperationTest{
    @Test
    public void testMoveItem_SwapItems(){
       // Setup
-      Loadout loadout = new Loadout(ChassisDB.lookup("JR7-O"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("JR7-O"), xBar);
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 200")));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso), ItemDB.lookup("LRM 10")));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("LRM 10")));
@@ -169,11 +169,11 @@ public class AutoAddItemOperationTest{
     */
    @Test(expected = IllegalArgumentException.class)
    public void testMoveItem_NotPossible(){
-      Loadout loadout = null;
+      LoadoutStandard loadout = null;
       Item gaussRifle = null;
       try{
          // Setup
-         loadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), xBar);
+         loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
          stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
 
          // 2 slots in either leg
@@ -213,7 +213,7 @@ public class AutoAddItemOperationTest{
    @Test
    public void testMoveItem(){
       // Setup
-      Loadout loadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
       stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
@@ -229,8 +229,8 @@ public class AutoAddItemOperationTest{
       assertTrue(allItems.remove(gaussRifle));
 
       // Must be minimal change to allow the item in.
-      assertTrue(loadout.getComponent(Location.RightTorso).getItems().contains(ItemDB.DHS));
-      assertTrue(loadout.getComponent(Location.RightTorso).getItems().contains(gaussRifle));
+      assertTrue(loadout.getComponent(Location.RightTorso).getItemsAll().contains(ItemDB.DHS));
+      assertTrue(loadout.getComponent(Location.RightTorso).getItemsAll().contains(gaussRifle));
    }
 
    /**
@@ -242,7 +242,7 @@ public class AutoAddItemOperationTest{
       // Setup
       Item ac20 = ItemDB.lookup("AC/20");
       Item ac10 = ItemDB.lookup("AC/10");
-      Loadout loadout = new Loadout(ChassisDB.lookup("CTF-IM"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("CTF-IM"), xBar);
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ac10));
 
       // Execute
@@ -257,9 +257,9 @@ public class AutoAddItemOperationTest{
       }
       assertEquals(2, allItems.size());
 
-      assertTrue(loadout.getComponent(Location.RightTorso).getItems().contains(ac20));
-      assertTrue(loadout.getComponent(Location.RightArm).getItems().contains(ac10)
-                 || loadout.getComponent(Location.LeftArm).getItems().contains(ac10));
+      assertTrue(loadout.getComponent(Location.RightTorso).getItemsAll().contains(ac20));
+      assertTrue(loadout.getComponent(Location.RightArm).getItemsAll().contains(ac10)
+                 || loadout.getComponent(Location.LeftArm).getItemsAll().contains(ac10));
    }
 
    /**
@@ -268,7 +268,7 @@ public class AutoAddItemOperationTest{
     */
    @Test
    public void testAddItem(){
-      Loadout loadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
       stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
 
       Item mlas = ItemDB.lookup("MEDIUM LASER");
@@ -278,36 +278,36 @@ public class AutoAddItemOperationTest{
       Item std250 = ItemDB.lookup("STD ENGINE 250");
 
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, mlas));
-      assertTrue(loadout.getComponent(Location.RightArm).getItems().contains(mlas));
+      assertTrue(loadout.getComponent(Location.RightArm).getItemsAll().contains(mlas));
 
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, mlas));
-      assertTrue(loadout.getComponent(Location.LeftArm).getItems().contains(mlas));
+      assertTrue(loadout.getComponent(Location.LeftArm).getItemsAll().contains(mlas));
 
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ac20));
-      assertTrue(loadout.getComponent(Location.RightTorso).getItems().contains(ac20));
+      assertTrue(loadout.getComponent(Location.RightTorso).getItemsAll().contains(ac20));
 
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, lrm5));
-      assertTrue(loadout.getComponent(Location.LeftTorso).getItems().contains(lrm5));
+      assertTrue(loadout.getComponent(Location.LeftTorso).getItemsAll().contains(lrm5));
 
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, lrm15));
-      assertTrue(loadout.getComponent(Location.LeftTorso).getItems().contains(lrm15));
+      assertTrue(loadout.getComponent(Location.LeftTorso).getItemsAll().contains(lrm15));
 
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, std250));
-      assertTrue(loadout.getComponent(Location.CenterTorso).getItems().contains(std250));
+      assertTrue(loadout.getComponent(Location.CenterTorso).getItemsAll().contains(std250));
 
       // Fill right arm
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.DHS));
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.DHS));
-      assertTrue(loadout.getComponent(Location.RightArm).getItems().contains(ItemDB.DHS));
+      assertTrue(loadout.getComponent(Location.RightArm).getItemsAll().contains(ItemDB.DHS));
       verify(xBar, times(1 + 2)).post(new ConfiguredComponent.Message(loadout.getComponent(Location.RightArm), Type.ItemAdded));
 
       // Skips RA, RT, RL, HD, CT (too few slots) and places the item in LT
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.DHS));
-      assertTrue(loadout.getComponent(Location.LeftTorso).getItems().contains(ItemDB.DHS));
+      assertTrue(loadout.getComponent(Location.LeftTorso).getItemsAll().contains(ItemDB.DHS));
 
       // Skips RA (too few slots) and places the item in RT
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.BAP));
-      assertTrue(loadout.getComponent(Location.RightTorso).getItems().contains(ItemDB.BAP));
+      assertTrue(loadout.getComponent(Location.RightTorso).getItemsAll().contains(ItemDB.BAP));
    }
 
    /**
@@ -315,18 +315,18 @@ public class AutoAddItemOperationTest{
     */
    @Test
    public void testAddItem_engineHS(){
-      Loadout loadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
 
       Item std300 = ItemDB.lookup("STD ENGINE 300");
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, std300));
-      assertTrue(loadout.getComponent(Location.CenterTorso).getItems().contains(ItemDB.lookup("STD ENGINE 300")));
+      assertTrue(loadout.getComponent(Location.CenterTorso).getItemsAll().contains(ItemDB.lookup("STD ENGINE 300")));
 
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.SHS)); // Engine HS slot 1
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.SHS)); // Engine HS slot 2
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.SHS)); // Right arm
 
       verify(xBar, times(1 + 2)).post(new ConfiguredComponent.Message(loadout.getComponent(Location.CenterTorso), Type.ItemAdded));
-      assertTrue(loadout.getComponent(Location.CenterTorso).getItems().contains(ItemDB.SHS)); // 1 remaining
-      assertTrue(loadout.getComponent(Location.RightArm).getItems().contains(ItemDB.SHS));
+      assertTrue(loadout.getComponent(Location.CenterTorso).getItemsAll().contains(ItemDB.SHS)); // 1 remaining
+      assertTrue(loadout.getComponent(Location.RightArm).getItemsAll().contains(ItemDB.SHS));
    }
 }

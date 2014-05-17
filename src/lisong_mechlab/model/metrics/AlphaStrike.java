@@ -22,16 +22,17 @@ package lisong_mechlab.model.metrics;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
- * This metric calculates the alpha strike for a given {@link Loadout}.
+ * This metric calculates the alpha strike for a given {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
 public class AlphaStrike extends RangeMetric{
 
-   public AlphaStrike(final Loadout aLoadout){
+   public AlphaStrike(final LoadoutBase<?, ?> aLoadout){
       super(aLoadout);
    }
 

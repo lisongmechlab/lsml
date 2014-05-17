@@ -20,7 +20,7 @@
 package lisong_mechlab.model;
 
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 
 /**
@@ -28,19 +28,21 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponent;
  * <p>
  * It only tells you how many slots of each type should be visualized for a given part. It doesn't actually add any
  * thing to those parts.
+ * <p>
+ * This class will transparently handle the fact that some slots are fixed per location on omni mechs.
  * 
  * @author Emily Björk
  */
 public class DynamicSlotDistributor{
-   private final Loadout loadout;
+   private final LoadoutBase<?, ?> loadout;
 
    /**
-    * Creates a new {@link DynamicSlotDistributor} for the given {@link Loadout}.
+    * Creates a new {@link DynamicSlotDistributor} for the given {@link LoadoutBase}.
     * 
     * @param aLoadout
-    *           The {@link Loadout} to distribute dynamic slots for.
+    *           The {@link LoadoutBase} to distribute dynamic slots for.
     */
-   public DynamicSlotDistributor(Loadout aLoadout){
+   public DynamicSlotDistributor(LoadoutBase<?, ?> aLoadout){
       loadout = aLoadout;
    }
 
@@ -58,7 +60,7 @@ public class DynamicSlotDistributor{
          return 0;
 
       final int filled = getCumulativeFreeSlots(aPart.getInternalComponent().getLocation());
-      final int freeSlotsInPart = Math.min(aPart.getNumCriticalSlotsFree(), Math.max(0, aPart.getNumCriticalSlotsFree() + filled - armorSlots));
+      final int freeSlotsInPart = Math.min(aPart.getSlotsFree(), Math.max(0, aPart.getSlotsFree() + filled - armorSlots));
       final int numSlotsToFill = structSlots + armorSlots;
       return Math.min(freeSlotsInPart, Math.max(numSlotsToFill - filled, 0));
    }
@@ -71,12 +73,13 @@ public class DynamicSlotDistributor{
     * @return A number of slots to display, can be 0.
     */
    public int getDynamicArmorSlots(ConfiguredComponent aPart){
+      // TODO : Handle fixed positions of omni mechs.
       final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();
       if( armorSlots < 1 )
          return 0;
 
       int filled = getCumulativeFreeSlots(aPart.getInternalComponent().getLocation());
-      return Math.min(aPart.getNumCriticalSlotsFree(), Math.max(armorSlots - filled, 0));
+      return Math.min(aPart.getSlotsFree(), Math.max(armorSlots - filled, 0));
    }
 
    /**
@@ -91,7 +94,7 @@ public class DynamicSlotDistributor{
       for(Location part : Location.leftToRight()){
          if( part == aPart )
             break;
-         ans += loadout.getComponent(part).getNumCriticalSlotsFree();
+         ans += loadout.getComponent(part).getSlotsFree();
       }
       return ans;
    }

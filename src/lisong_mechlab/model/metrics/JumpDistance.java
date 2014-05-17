@@ -20,7 +20,7 @@
 package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * A metric that calculates how high the mech can jump.
@@ -28,9 +28,9 @@ import lisong_mechlab.model.loadout.Loadout;
  * @author Emily Björk
  */
 public class JumpDistance implements Metric{
-   private final Loadout loadout;
+   private final LoadoutBase<?, ?> loadout;
 
-   public JumpDistance(final Loadout aLoadout){
+   public JumpDistance(final LoadoutBase<?, ?> aLoadout){
       loadout = aLoadout;
    }
 

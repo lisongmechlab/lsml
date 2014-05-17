@@ -24,7 +24,7 @@ import java.util.Formatter;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.metrics.Metric;
 import lisong_mechlab.model.metrics.RangeMetric;
 import lisong_mechlab.model.metrics.RangeTimeMetric;
@@ -38,19 +38,19 @@ import lisong_mechlab.util.MessageXBar.Reader;
  * @author Emily Björk
  */
 public class MetricDisplay extends JLabel implements Reader{
-   private static final long   serialVersionUID = 4947119462839900984L;
-   private final Loadout       loadout;
-   private final Formatter     formatter;
-   private final StringBuilder sb               = new StringBuilder();
-   private final String        format;
-   private final boolean       percent;
-   protected final Metric      metric;
+   private static final long       serialVersionUID = 4947119462839900984L;
+   private final LoadoutBase<?, ?> loadout;
+   private final Formatter         formatter;
+   private final StringBuilder     sb               = new StringBuilder();
+   private final String            format;
+   private final boolean           percent;
+   protected final Metric          metric;
 
-   public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, Loadout aLoadout){
+   public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?, ?> aLoadout){
       this(aMetric, aFormat, aTooltip, anXBar, aLoadout, false);
    }
 
-   public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, Loadout aLoadout, boolean aPercent){
+   public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, boolean aPercent){
       loadout = aLoadout;
       anXBar.attach(this);
       setToolTipText(aTooltip);

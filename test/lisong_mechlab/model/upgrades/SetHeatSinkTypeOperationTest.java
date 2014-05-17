@@ -21,7 +21,7 @@ package lisong_mechlab.model.upgrades;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpStripLoadout;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.util.DecodingException;
@@ -37,8 +37,8 @@ public class SetHeatSinkTypeOperationTest{
    public void testStripMech() throws DecodingException{
       MessageXBar xBar = Mockito.mock(MessageXBar.class);
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
-      Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-      Loadout loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+      LoadoutStandard loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+      LoadoutStandard loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
       OperationStack stack = new OperationStack(1);
 
       stack.pushAndApply(new OpStripLoadout(loadout, xBar));

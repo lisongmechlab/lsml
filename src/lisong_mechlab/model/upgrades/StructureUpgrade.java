@@ -19,6 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
@@ -27,10 +30,19 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
  * 
  * @author Emily Björk
  */
+@XStreamAlias("StructureUpgrade")
 public class StructureUpgrade extends Upgrade{
+   @XStreamAsAttribute
    private final double internalStructurePct;
+   @XStreamAsAttribute
    private final int    extraSlots;
 
+   public StructureUpgrade(String aName, String aDescription, int aMwoId, int aAssociatedItem, int aExtraSlots, double aStructurePct){
+      super(aName, aDescription, aMwoId, aAssociatedItem);
+      extraSlots = aExtraSlots;
+      internalStructurePct = aStructurePct;
+   }
+   
    public StructureUpgrade(ItemStatsUpgradeType aUpgradeType){
       super(aUpgradeType);
 
@@ -52,7 +64,7 @@ public class StructureUpgrade extends Upgrade{
     *           The chassis to calculate the internal structure mass for.
     * @return The mass of the internal structure.
     */
-   public double getStructureMass(ChassisBase<?> aChassis){
+   public double getStructureMass(ChassisBase aChassis){
       double ans = aChassis.getMassMax() * internalStructurePct;
 
       return Math.round(10 * ans / 5) * 0.5;

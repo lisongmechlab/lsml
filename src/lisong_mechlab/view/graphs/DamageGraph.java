@@ -39,7 +39,7 @@ import javax.swing.WindowConstants;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -73,10 +73,10 @@ import org.jfree.ui.VerticalAlignment;
  * @author Emily Björk
  */
 public class DamageGraph extends JFrame implements MessageXBar.Reader{
-   private static final long     serialVersionUID = -8812749194029184861L;
-   private final Loadout         loadout;
-   private final MaxSustainedDPS maxSustainedDPS;
-   private final ChartPanel      chartPanel;
+   private static final long       serialVersionUID = -8812749194029184861L;
+   private final LoadoutBase<?, ?> loadout;
+   private final MaxSustainedDPS   maxSustainedDPS;
+   private final ChartPanel        chartPanel;
 
    JFreeChart makechart(){
       return ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout, "range [m]", "damage / second", getSeries(),
@@ -93,7 +93,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
     * @param aMaxSustainedDpsMetric
     *           A {@link MaxSustainedDPS} instance to use in calculation.
     */
-   public DamageGraph(Loadout aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric){
+   public DamageGraph(LoadoutBase<?, ?> aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric){
       super("Max Sustained DPS over range for " + aLoadout);
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -142,7 +142,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
             final Weapon weapon = entry.getKey();
             final double ratio = entry.getValue();
-            final double dps = weapon.getStat("d/s",  loadout.getEfficiencies());
+            final double dps = weapon.getStat("d/s", loadout.getEfficiencies());
             final double rangeEff = weapon.getRangeEffectivity(range);
 
             if( !data.containsKey(weapon) ){

@@ -53,7 +53,7 @@ import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.environment.EnvironmentDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.metrics.AlphaStrike;
 import lisong_mechlab.model.metrics.AlphaTimeToOverHeat;
@@ -105,7 +105,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       df1.setMinimumFractionDigits(1);
    }
 
-   private final Loadout                loadout;
+   private final LoadoutBase<?, ?>      loadout;
 
    // General pane
    private final JProgressBar           massBar;
@@ -607,7 +607,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
                // Mobility
                // ----------------------------------------------------------------------
-               jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassis().getJumpJetsMax() + " ("
+               jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getJumpJetsMax() + " ("
                                 + df2.format(metricJumpDistance.calculate()) + " m)");
                speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
                anchorTurn.setSelected(loadout.getEfficiencies().hasAnchorTurn());

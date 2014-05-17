@@ -28,7 +28,7 @@ import java.util.TreeSet;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * This class will calculate the set of ranges at which weapons change damage. In essence, it calculates the ordered
@@ -65,7 +65,7 @@ public class WeaponRanges{
       return ans.toArray(new Double[ans.size()]);
    }
 
-   static public Double[] getRanges(Loadout aLoadout){
+   static public Double[] getRanges(LoadoutBase<?,?> aLoadout){
       List<Weapon> weapons = new ArrayList<>();
       for(Item item : aLoadout.getAllItems()){
          if( item instanceof Weapon ){

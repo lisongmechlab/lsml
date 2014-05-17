@@ -9,7 +9,7 @@ import java.util.List;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class GhostHeatTest{
    @Mock
-   private Loadout   loadout;
+   private LoadoutStandard   loadout;
    @InjectMocks
    private GhostHeat cut;
 

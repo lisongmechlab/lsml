@@ -28,7 +28,7 @@ import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
@@ -58,7 +58,7 @@ public class SetGuidanceTypeOperationTest{
    MessageXBar          xBar;
 
    /**
-    * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link Loadout} given as
+    * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link LoadoutStandard} given as
     * argument.
     */
    @Test
@@ -98,10 +98,10 @@ public class SetGuidanceTypeOperationTest{
       Mockito.when(newGuidance.upgrade(narc)).thenReturn(narc);
       Mockito.when(newGuidance.upgrade(lrmAmmo)).thenReturn(lrmAmmoArtemis);
       Mockito.when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
-      Mockito.when(mlc.rl.canEquip(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(mlc.lt.canEquip(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(mlc.rl.getItems()).thenReturn(rlItems);
-      Mockito.when(mlc.lt.getItems()).thenReturn(ltItems);
+      Mockito.when(mlc.rl.canAddItem(Matchers.any(Item.class))).thenReturn(true);
+      Mockito.when(mlc.lt.canAddItem(Matchers.any(Item.class))).thenReturn(true);
+      Mockito.when(mlc.rl.getItemsAll()).thenReturn(rlItems);
+      Mockito.when(mlc.lt.getItemsAll()).thenReturn(ltItems);
 
       stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
@@ -119,8 +119,8 @@ public class SetGuidanceTypeOperationTest{
    @Test
    public void testUndo() throws DecodingException{
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
-      Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-      Loadout loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+      LoadoutStandard loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+      LoadoutStandard loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
       OperationStack stack = new OperationStack(1);
 
       stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));

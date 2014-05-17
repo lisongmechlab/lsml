@@ -10,7 +10,7 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -27,7 +27,7 @@ public class RemoveItemOperationTest{
    @Mock
    private ConfiguredComponent loadoutPart;
    @Mock
-   private Loadout             loadout;
+   private LoadoutStandard             loadout;
    @Mock
    private Upgrades            upgrades;
    @Mock
@@ -75,7 +75,7 @@ public class RemoveItemOperationTest{
       OpRemoveItem cut = null;
       try{
          Item item = ItemDB.lookup("LRM 20");
-         Mockito.when(loadoutPart.getItems()).thenReturn(new ArrayList<Item>());
+         Mockito.when(loadoutPart.getItemsAll()).thenReturn(new ArrayList<Item>());
          cut = new OpRemoveItem(xBar, loadout, loadoutPart, item);
       }
       catch( Throwable t ){

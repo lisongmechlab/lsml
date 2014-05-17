@@ -25,12 +25,15 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -45,7 +48,10 @@ import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.chassi.OmniPodDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -116,9 +122,11 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    private JSpinner                  backSpinner;
    private JSpinner                  spinner;
 
+   private final JComboBox<OmniPod>  omnipodSelection;
+
    PartPanel(LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints,
              DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric, OperationStack aStack){
-      super(new BorderLayout());
+      setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       anXBar.attach(this);
       loadout = aLoadout;
       loadoutPart = aLoadoutPart;
@@ -140,9 +148,24 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
          InternalComponent internalPart = aLoadoutPart.getInternalComponent();
          setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(internalPart.getLocation().longName() + " ("
-                                                                                       + (int)internalPart.getHitpoints() + " hp)"),
+                                                                                       + (int)internalPart.getHitPoints() + " hp)"),
                                                       BorderFactory.createEmptyBorder(0, 2, 2, 4)));
       }
+
+      if( LoadoutOmniMech.class.isAssignableFrom(aLoadout.getClass()) ){
+         LoadoutOmniMech omniMech = (LoadoutOmniMech)aLoadout;
+         // Omnimech
+         Collection<OmniPod> compatiblePods = OmniPodDB.lookup(omniMech.getChassis(), aLoadoutPart.getInternalComponent().getLocation());
+         omnipodSelection = new JComboBox<>(new Vector<>(compatiblePods));
+         Dimension max = omnipodSelection.getMaximumSize();
+         max.height = ItemRenderer.getItemHeight();
+         omnipodSelection.setMaximumSize(max);
+         add(omnipodSelection);
+      }
+      else{
+         omnipodSelection = null;
+      }
+
       add(makeArmorPanel(anXBar, aSymmetric, aStack));
 
       if( canHaveHardpoints )

@@ -52,7 +52,8 @@ import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpAutoAddItem;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.util.MessageXBar;
@@ -154,7 +155,7 @@ public class ItemLabel extends JLabel{
          @Override
          public void mousePressed(MouseEvent anEvent){
             final LoadoutFrame frame = ProgramInit.lsml().mechLabPane.getActiveLoadoutFrame();
-            final Loadout loadout = aEquipmentPanel.getCurrentLoadout();
+            final LoadoutBase<?,?> loadout = aEquipmentPanel.getCurrentLoadout();
 
             Component component = anEvent.getComponent();
             if( component instanceof ItemLabel ){
@@ -223,7 +224,7 @@ public class ItemLabel extends JLabel{
       updateVisibility(null);
    }
 
-   private void updateText(Loadout aLoadout){
+   private void updateText(LoadoutBase<?,?> aLoadout){
       StringBuilder builder = new StringBuilder();
       builder.append("<html>");
       builder.append(item.getShortName());
@@ -265,7 +266,7 @@ public class ItemLabel extends JLabel{
       setOpaque(true);
    }
 
-   public void updateVisibility(Loadout aLoadout){
+   public void updateVisibility(LoadoutBase<?,?> aLoadout){
       boolean prevSmartPlace = smartPlace;
       smartPlace = false;
       if( aLoadout != null ){
@@ -289,7 +290,7 @@ public class ItemLabel extends JLabel{
 
             if( item instanceof Ammunition ){
                Ammunition ammunition = (Ammunition)item;
-               if( aLoadout.getChassis().getHardpointsCount(ammunition.getWeaponHardpointType()) < 1 ){
+               if( aLoadout.getHardpointsCount(ammunition.getWeaponHardpointType()) < 1 ){
                   setVisible(false);
                }
                else{

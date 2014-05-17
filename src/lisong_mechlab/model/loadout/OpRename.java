@@ -33,13 +33,13 @@ public class OpRename extends OpLoadoutBase{
 
    /**
     * @param aLoadout
-    *           The {@link Loadout} to rename.
+    *           The {@link LoadoutStandard} to rename.
     * @param anXBar
     *           A {@link MessageXBar} to announce the change on.
     * @param aName
     *           The new name of the loadout.
     */
-   public OpRename(Loadout aLoadout, MessageXBar anXBar, String aName){
+   public OpRename(LoadoutBase<?, ?> aLoadout, MessageXBar anXBar, String aName){
       super(aLoadout, anXBar, "rename loadout");
       newName = aName;
    }

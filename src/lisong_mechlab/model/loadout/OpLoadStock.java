@@ -34,12 +34,12 @@ import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.util.MessageXBar;
 
 /**
- * This operation loads a 'mechs stock {@link Loadout}.
+ * This operation loads a 'mechs stock {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
 public class OpLoadStock extends OpLoadoutBase{
-   public OpLoadStock(ChassisBase<?> aChassiVariation, Loadout aLoadout, MessageXBar anXBar){
+   public OpLoadStock(ChassisBase aChassiVariation, LoadoutBase<?, ?> aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "load stock");
 
       StockLoadout stockLoadout = StockLoadoutDB.lookup(aChassiVariation);

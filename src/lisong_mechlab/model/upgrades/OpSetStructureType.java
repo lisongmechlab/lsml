@@ -19,14 +19,15 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} can alter the internal structure of a {@link Loadout}.
+ * This {@link Operation} can alter the internal structure of a {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
@@ -36,7 +37,7 @@ public class OpSetStructureType extends OpUpgradeBase{
 
    /**
     * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link Upgrades} object This is useful only
-    * for altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
+    * for altering {@link Upgrades} objects which are not attached to a {@link LoadoutStandard} in any way.
     * 
     * @param anUpgrades
     *           The {@link Upgrades} object to alter with this {@link Operation}.
@@ -50,16 +51,16 @@ public class OpSetStructureType extends OpUpgradeBase{
    }
 
    /**
-    * Creates a new {@link OpSetStructureType} that will change the internal structure of a {@link Loadout}.
+    * Creates a new {@link OpSetStructureType} that will change the internal structure of a {@link LoadoutStandard}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in internal structure on.
     * @param aLoadout
-    *           The {@link Loadout} to alter.
+    *           The {@link LoadoutStandard} to alter.
     * @param aStructureUpgrade
     *           The new internal structure this upgrades is applied.
     */
-   public OpSetStructureType(MessageXBar anXBar, Loadout aLoadout, StructureUpgrade aStructureUpgrade){
+   public OpSetStructureType(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, StructureUpgrade aStructureUpgrade){
       super(anXBar, aLoadout, aStructureUpgrade.getName());
       oldValue = upgrades.getStructure();
       newValue = aStructureUpgrade;

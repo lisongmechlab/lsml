@@ -26,25 +26,25 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
- * The purpose of this class is to provide a default mock structure of a {@link Loadout} which is easy to configure for
+ * The purpose of this class is to provide a default mock structure of a {@link LoadoutStandard} which is easy to configure for
  * a particular test.
  * 
  * @author Emily Bjoerk
  */
 public class MockLoadoutContainer{
-   final public ChassisIS             chassi;
-   final public Loadout             loadout;
+   final public ChassisStandard             chassi;
+   final public LoadoutStandard             loadout;
    final public Upgrades            upgrades;
    final public Efficiencies        efficiencies;
    final public InternalComponent   ira;
@@ -65,8 +65,8 @@ public class MockLoadoutContainer{
    final public ConfiguredComponent la;
 
    public MockLoadoutContainer(){
-      chassi = mock(ChassisIS.class);
-      loadout = mock(Loadout.class);
+      chassi = mock(ChassisStandard.class);
+      loadout = mock(LoadoutStandard.class);
       upgrades = mock(Upgrades.class);
       efficiencies = mock(Efficiencies.class);
 

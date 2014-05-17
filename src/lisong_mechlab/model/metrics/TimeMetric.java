@@ -19,11 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
  * A base class for all metrics that are time dependent. A metric is a derived quantity that is calculated from a
- * {@link Loadout}.
+ * {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */

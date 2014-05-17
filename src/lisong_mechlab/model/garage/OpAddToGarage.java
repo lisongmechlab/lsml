@@ -19,19 +19,20 @@
 //@formatter:on
 package lisong_mechlab.model.garage;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This operation adds a new {@link Loadout} to a {@link MechGarage}.
+ * This operation adds a new {@link LoadoutStandard} to a {@link MechGarage}.
  * 
  * @author Emily Björk
  */
 public class OpAddToGarage extends Operation{
-   private final MechGarage garage;
-   private final Loadout    loadout;
+   private final MechGarage        garage;
+   private final LoadoutBase<?, ?> loadout;
 
-   public OpAddToGarage(MechGarage aGarage, Loadout aLoadout){
+   public OpAddToGarage(MechGarage aGarage, LoadoutBase<?, ?> aLoadout){
       garage = aGarage;
       loadout = aLoadout;
    }

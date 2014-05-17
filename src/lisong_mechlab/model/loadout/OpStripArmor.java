@@ -25,12 +25,12 @@ import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 
 /**
- * This operation removes all armor from a {@link Loadout}.
+ * This operation removes all armor from a {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
 public class OpStripArmor extends OpLoadoutBase{
-   public OpStripArmor(Loadout aLoadout, MessageXBar anXBar){
+   public OpStripArmor(LoadoutBase<?, ?> aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "strip armor");
       for(ConfiguredComponent component : loadout.getComponents()){
          if( component.getInternalComponent().getLocation().isTwoSided() ){

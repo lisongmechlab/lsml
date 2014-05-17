@@ -27,7 +27,8 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.garage.OpAddToGarage;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.view.LSML;
 import lisong_mechlab.view.ProgramInit;
 
@@ -37,11 +38,11 @@ import lisong_mechlab.view.ProgramInit;
  * @author Emily Björk
  */
 public class AddToGarageAction extends AbstractAction{
-   private static final long   serialVersionUID = -1720149730950545006L;
-   private static final String SHORTCUT_STROKE  = "control S";
-   private final Loadout       loadout;
+   private static final long       serialVersionUID = -1720149730950545006L;
+   private static final String     SHORTCUT_STROKE  = "control S";
+   private final LoadoutBase<?, ?> loadout;
 
-   public AddToGarageAction(Loadout aLoadout){
+   public AddToGarageAction(LoadoutBase<?, ?> aLoadout){
       super("Add to garage");
       loadout = aLoadout;
       setEnabled(!ProgramInit.lsml().getGarage().getMechs().contains(aLoadout));

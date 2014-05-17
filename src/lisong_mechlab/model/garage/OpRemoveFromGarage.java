@@ -19,19 +19,20 @@
 //@formatter:on
 package lisong_mechlab.model.garage;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * Removes a {@link Loadout} from a {@link MechGarage}.
+ * Removes a {@link LoadoutStandard} from a {@link MechGarage}.
  * 
  * @author Emily Björk
  */
 public class OpRemoveFromGarage extends Operation{
-   private final MechGarage garage;
-   private final Loadout    loadout;
+   private final MechGarage        garage;
+   private final LoadoutBase<?, ?> loadout;
 
-   public OpRemoveFromGarage(MechGarage aGarage, Loadout aLoadout){
+   public OpRemoveFromGarage(MechGarage aGarage, LoadoutBase<?, ?> aLoadout){
       garage = aGarage;
       loadout = aLoadout;
    }

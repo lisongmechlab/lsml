@@ -51,7 +51,7 @@ public class StripOperationTest{
    @Test
    public void testStrip() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("AS7-BH").getName(), xBar); // Has Endo-Steel standard and lots of
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-BH").getName(), xBar); // Has Endo-Steel standard and lots of
                                                                              // stuff
 
       assertTrue(cut.getMass() > 99.0);

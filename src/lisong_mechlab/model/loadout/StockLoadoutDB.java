@@ -25,8 +25,8 @@ import java.util.Map;
 
 import lisong_mechlab.model.DataCache;
 import lisong_mechlab.model.StockLoadout;
-import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisStandard;
 
 /**
  * A database class that holds descriptions of all stock loadouts.
@@ -34,16 +34,16 @@ import lisong_mechlab.model.chassi.ChassisBase;
  * @author Emily Björk
  */
 public class StockLoadoutDB{
-   private static final Map<ChassisIS, StockLoadout> stockloadouts;
+   private static final Map<ChassisStandard, StockLoadout> stockloadouts;
 
    /**
-    * Will find the stock loadout matching the given {@link ChassisIS}.
+    * Will find the stock loadout matching the given {@link ChassisStandard}.
     * 
     * @param aChassis
-    *           The {@link ChassisIS} to get the stock loadout for.
+    *           The {@link ChassisStandard} to get the stock loadout for.
     * @return A {@link StockLoadout} description of the stock loadout.
     */
-   public static StockLoadout lookup(ChassisBase<?> aChassis){
+   public static StockLoadout lookup(ChassisBase aChassis){
       StockLoadout ans = stockloadouts.get(aChassis);
       if( null == ans ){
          throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);

@@ -28,11 +28,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class HardPoint{
    @XStreamAsAttribute
-   final int           tubes;
+   private final int           tubes;
    @XStreamAsAttribute
-   final HardPointType type;
+   private final HardPointType type;
    @XStreamAsAttribute
-   final boolean       hasBayDoor;
+   private final boolean       hasBayDoor;
 
    public HardPoint(HardPointType aType){
       this(aType, 0, false);
@@ -48,14 +48,14 @@ public class HardPoint{
    }
 
    /**
-    * @return The type of this hardpoint.
+    * @return The type of this hard point.
     */
    public HardPointType getType(){
       return type;
    }
 
    /**
-    * @return The number of missile tubes this hardpoint has.
+    * @return The number of missile tubes this hard point has.
     */
    public int getNumMissileTubes(){
       return tubes;

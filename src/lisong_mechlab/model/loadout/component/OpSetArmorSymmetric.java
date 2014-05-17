@@ -21,14 +21,14 @@ package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} sets armor symmetrically on both sides of a {@link Loadout}.
+ * This {@link Operation} sets armor symmetrically on both sides of a {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */

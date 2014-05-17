@@ -12,7 +12,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 
@@ -33,7 +33,7 @@ public class HeatOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(erllas);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
@@ -48,7 +48,7 @@ public class HeatOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(erllas);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
@@ -65,7 +65,7 @@ public class HeatOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(erppc);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
@@ -82,7 +82,7 @@ public class HeatOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(ac20);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
@@ -99,7 +99,7 @@ public class HeatOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(engine);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
@@ -119,7 +119,7 @@ public class HeatOverTimeTest{
       items.add(erllas);
       items.add(ac20);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
@@ -137,7 +137,7 @@ public class HeatOverTimeTest{
       items.add(erllas);
       items.add(ac20);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);

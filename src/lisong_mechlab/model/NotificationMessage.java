@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar.Message;
 
@@ -69,7 +69,7 @@ public class NotificationMessage implements Message{
     * @param aSeverity
     *           The {@link Severity} of the message.
     * @param aLoadout
-    *           The {@link Loadout} the message is for.
+    *           The {@link LoadoutStandard} the message is for.
     * @param aMessage
     *           The human readable message.
     */

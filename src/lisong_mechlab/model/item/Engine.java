@@ -35,13 +35,22 @@ public class Engine extends HeatSource{
    @XStreamAsAttribute
    final private int          internalHs;
    @XStreamAsAttribute
-   final private int          heatsinkslots;
+   final private int          heatSinkSlots;
 
+   public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardPointType, int aHP,
+                        boolean aIsClan, int aRating, EngineType aType, int aInternalHS, int aHSSlots){
+      super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aIsClan, ENGINE_HEAT_FULL_THROTTLE);
+      rating = aRating;
+      type = aType;
+      internalHs = aInternalHS;
+      heatSinkSlots = aHSSlots;
+   }
+   
    public Engine(ItemStatsModule aStatsModule){
       super(aStatsModule, HardPointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE, aStatsModule.EngineStats.health);
       int hs = aStatsModule.EngineStats.heatsinks;
       internalHs = Math.min(10, hs);
-      heatsinkslots = hs - internalHs;
+      heatSinkSlots = hs - internalHs;
       type = (getName().toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
       rating = aStatsModule.EngineStats.rating;
    }
@@ -59,7 +68,7 @@ public class Engine extends HeatSource{
    }
 
    public int getNumHeatsinkSlots(){
-      return heatsinkslots;
+      return heatSinkSlots;
    }
 
    @Override

@@ -104,7 +104,7 @@ public class StyleManager{
    }
 
    public static void styleHardpointLabel(JLabel aLabel, InternalComponent aInternalPart, HardPointType aHardPointType){
-      int hardPoints = aInternalPart.getNumHardpoints(aHardPointType);
+      int hardPoints = aInternalPart.getHardPointCount(aHardPointType);
       if( hardPoints < 1 ){
          aLabel.setVisible(false);
          return;
@@ -135,7 +135,7 @@ public class StyleManager{
 
    public static String formatMissileHardpointText(InternalComponent aPart){
       Map<Integer, Integer> tubecounts = new TreeMap<>();
-      for(HardPoint hp : aPart.getHardpoints()){
+      for(HardPoint hp : aPart.getHardPoints()){
          if( hp.getType() == HardPointType.MISSILE ){
             final int tubes = hp.getNumMissileTubes();
             if( tubecounts.containsKey(tubes) )
@@ -145,7 +145,7 @@ public class StyleManager{
          }
       }
 
-      String ans = aPart.getNumHardpoints(HardPointType.MISSILE) + " M (";
+      String ans = aPart.getHardPointCount(HardPointType.MISSILE) + " M (";
       boolean first = true;
       for(Entry<Integer, Integer> it : tubecounts.entrySet()){
          if( !first )

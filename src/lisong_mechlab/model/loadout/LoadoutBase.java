@@ -31,6 +31,7 @@ import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
@@ -51,24 +52,21 @@ import lisong_mechlab.util.MessageXBar;
  * @param <U>
  *           The type of {@link InternalComponent} in T.
  */
-public class LoadoutBase<T extends ConfiguredComponent, U extends InternalComponent> {
+public abstract class LoadoutBase<T extends ConfiguredComponent, U extends InternalComponent> {
 
-   private String               name;
-   private final T[]            components;
-   private final Upgrades       upgrades;
-   private final ChassisBase<U> chassisBase;
-   private final Efficiencies   efficiencies;
+   private String             name;
+   private final T[]          components;
+   private final Upgrades     upgrades;
+   private final ChassisBase  chassisBase;
+   private final Efficiencies efficiencies;
 
-   LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, ChassisBase<U> aChassisBase, MessageXBar aXBar){
+   LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, ChassisBase aChassisBase, MessageXBar aXBar){
       name = aChassisBase.getNameShort();
       chassisBase = aChassisBase;
       upgrades = new Upgrades();
       efficiencies = new Efficiencies(aXBar);
 
-      components = aFactory.createArray(Location.values().length);
-      for(U part : chassisBase.getComponents()){
-         components[part.getLocation().ordinal()] = aFactory.create(part, true);
-      }
+      components = aFactory.defaultComponents(chassisBase);
    }
 
    LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, LoadoutBase<T, U> aLoadoutBase){
@@ -77,10 +75,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
       upgrades = new Upgrades(aLoadoutBase.upgrades);
       efficiencies = new Efficiencies(aLoadoutBase.efficiencies);
 
-      components = aFactory.createArray(Location.values().length);
-      for(T component : aLoadoutBase.components){
-         components[component.getInternalComponent().getLocation().ordinal()] = aFactory.clone(component);
-      }
+      components = aFactory.cloneComponents(aLoadoutBase);
    }
 
    @Override
@@ -106,6 +101,13 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
    }
 
    @Override
+   public String toString(){
+      if( getName().contains(getChassis().getNameShort()) )
+         return getName();
+      return getName() + " (" + getChassis().getNameShort() + ")";
+   }
+
+   @Override
    public int hashCode(){
       final int prime = 31;
       int result = 1;
@@ -123,7 +125,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
    public Collection<Item> getAllItems(){
       List<Item> items = new ArrayList<>();
       for(T component : components){
-         items.addAll(component.getItems());
+         items.addAll(component.getItemsAll());
       }
       return items;
    }
@@ -152,7 +154,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
     * @return The {@link Engine} equipped on this loadout, or <code>null</code> if no engine is equipped.
     */
    public Engine getEngine(){
-      for(Item item : components[Location.CenterTorso.ordinal()].getItems()){
+      for(Item item : components[Location.CenterTorso.ordinal()].getItemsAll()){
          if( item instanceof Engine ){
             return (Engine)item;
          }
@@ -183,7 +185,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
    /**
     * @return The base chassis of this loadout.
     */
-   public ChassisBase<U> getChassis(){
+   public ChassisBase getChassis(){
       return chassisBase;
    }
 
@@ -207,7 +209,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
    public int getNumCriticalSlotsUsed(){
       int ans = upgrades.getStructure().getExtraSlots() + upgrades.getArmor().getExtraSlots();
       for(T component : components){
-         ans += component.getNumCriticalSlotsUsed();
+         ans += component.getSlotsUsed();
       }
       return ans;
    }
@@ -219,6 +221,16 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
     */
    public T getComponent(Location aLocation){
       return components[aLocation.ordinal()];
+   }
+
+   /**
+    * Assigns the internal component vector. Mostly useful for omnimechs.
+    * 
+    * @param aComponent
+    *           The component to set, location is figured out from the component's internal component.
+    */
+   protected void setComponent(T aComponent){
+      components[aComponent.getInternalComponent().getLocation().ordinal()] = aComponent;
    }
 
    /**
@@ -234,6 +246,26 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
    public Upgrades getUpgrades(){
       return upgrades;
    }
+
+   /**
+    * @param aHardpointType
+    *           The type of hard points to count.
+    * @return The number of hard points of the given type.
+    */
+   public int getHardpointsCount(HardPointType aHardpointType){
+      // Note: This has been moved from chassis base because for omnimechs, the hard point count depends on which
+      // omnipods are equipped.
+      int sum = 0;
+      for(T component : components){
+         sum += component.getInternalComponent().getHardPointCount(aHardpointType);
+      }
+      return sum;
+   }
+
+   /**
+    * @return The maximal number of jump jets the loadout can support.
+    */
+   abstract public int getJumpJetsMax();
 
    /**
     * @return The total number of heat sinks equipped.
@@ -303,8 +335,8 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
          }
 
          if( hardpointType != HardPointType.NONE ){
-            final int localFreeHardPoints = part.getInternalComponent().getNumHardpoints(hardpointType)
-                                            - part.getNumItemsOfHardpointType(hardpointType);
+            final int localFreeHardPoints = part.getInternalComponent().getHardPointCount(hardpointType)
+                                            - part.getItemsOfHardpointType(hardpointType);
             globalFreeHardPoints += localFreeHardPoints;
          }
       }
@@ -327,7 +359,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
    }
 
    /**
-    * Checks global constraints that could prevent the item from being added to this {@link Loadout}.
+    * Checks global constraints that could prevent the item from being added to this {@link LoadoutStandard}.
     * <p>
     * This includes:
     * <ul>
@@ -351,10 +383,10 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;
          if( engine.getType() == EngineType.XL ){
-            if( getComponent(Location.LeftTorso).getNumCriticalSlotsFree() < 3 ){
+            if( getComponent(Location.LeftTorso).getSlotsFree() < 3 ){
                return false;
             }
-            if( getComponent(Location.RightTorso).getNumCriticalSlotsFree() < 3 ){
+            if( getComponent(Location.RightTorso).getSlotsFree() < 3 ){
                return false;
             }
             if( getNumCriticalSlotsFree() < 3 * 2 + engine.getNumCriticalSlots() ){
@@ -366,7 +398,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
       }
 
       for(ConfiguredComponent part : getComponents()){
-         if( part.canEquip(anItem) )
+         if( part.canAddItem(anItem) )
             return true;
       }
       return false;
@@ -380,7 +412,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
     *           The {@link Item} to check.
     * @return <code>true</code> if the necessary checks are passed.
     */
-   private boolean canEquipGlobal(Item anItem){
+   protected boolean canEquipGlobal(Item anItem){
       if( anItem.getMass() > getFreeMass() )
          return false;
       if( !getChassis().isAllowed(anItem) )
@@ -390,12 +422,10 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
 
       // Allow engine slot heat sinks as long as there is enough free mass.
       if( anItem instanceof HeatSink
-          && getComponent(Location.CenterTorso).getNumEngineHeatsinks() < getComponent(Location.CenterTorso).getNumEngineHeatsinksMax() )
+          && getComponent(Location.CenterTorso).getEngineHeatsinks() < getComponent(Location.CenterTorso).getEngineHeatsinksMax() )
          return true;
 
       if( anItem.getNumCriticalSlots() > getNumCriticalSlotsFree() )
-         return false;
-      if( anItem instanceof JumpJet && getChassis().getJumpJetsMax() - getJumpJetCount() < 1 )
          return false;
       if( anItem instanceof Engine && getEngine() != null )
          return false;
@@ -416,18 +446,18 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
       List<ConfiguredComponent> candidates = getCandidateLocationsForItem(anItem);
 
       for(ConfiguredComponent candidate : candidates){
-         if( candidate.canEquip(anItem) ){
+         if( candidate.canAddItem(anItem) ){
             return true;
          }
 
          int slotsFree[] = new int[Location.values().length];
          for(Location part : Location.values()){
-            slotsFree[part.ordinal()] = getComponent(part).getNumCriticalSlotsFree();
+            slotsFree[part.ordinal()] = getComponent(part).getSlotsFree();
          }
 
          // Attempt to move items by taking the largest ones first and perform bin packing
          // with First Fit Decreasing heuristic.
-         List<Item> itemsBySlots = new ArrayList<>(candidate.getItems());
+         List<Item> itemsBySlots = new ArrayList<>(candidate.getItemsAll());
          Collections.sort(itemsBySlots, new Comparator<Item>(){
             @Override
             public int compare(Item aO1, Item aO2){
@@ -438,7 +468,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
          // There are enough free hard points in the loadout to contain this item and there
          // are enough globally free slots and free tonnage. Engine and jump jet constraints
          // are already checked. It is enough if the candidate part has enough slots free.
-         int candidateSlotsFree = candidate.getNumCriticalSlotsFree();
+         int candidateSlotsFree = candidate.getSlotsFree();
          while( candidateSlotsFree < anItem.getNumCriticalSlots() && !itemsBySlots.isEmpty() ){
             Item toBeRemoved = itemsBySlots.remove(0);
             if( toBeRemoved instanceof Internal )
@@ -453,7 +483,7 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
                if( slotsFree[partOrdinal] >= numCrits ){
                   HardPointType needHp = toBeRemoved.getHardpointType();
                   if( needHp != HardPointType.NONE
-                      && part.getInternalComponent().getNumHardpoints(needHp) - part.getNumItemsOfHardpointType(needHp) < 1 ){
+                      && part.getInternalComponent().getHardPointCount(needHp) - part.getItemsOfHardpointType(needHp) < 1 ){
                      continue;
                   }
                   slotsFree[partOrdinal] -= numCrits;
@@ -468,4 +498,13 @@ public class LoadoutBase<T extends ConfiguredComponent, U extends InternalCompon
       }
       return false;
    }
+
+   public abstract MovementProfile getMovementProfile();
+
+   /**
+    * @param aXBar
+    *           A {@link MessageXBar} to send messages on.
+    * @return A deep copy of <code>this</code>.
+    */
+   public abstract LoadoutBase<?, ?> clone(MessageXBar aXBar);
 }

@@ -28,7 +28,7 @@ import java.util.List;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class AlphaStrikeTest{
    @Mock
-   Loadout             loadout;
+   LoadoutStandard             loadout;
    @InjectMocks
    private AlphaStrike cut;
    private List<Item>  items = new ArrayList<>();

@@ -19,6 +19,14 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+/**
+ * Enumerates all possible hard point types.
+ * 
+ * @author Emily Björk
+ */
+@XStreamAlias("Type")
 public enum HardPointType{
    ENERGY("E"), BALLISTIC("B"), MISSILE("M"), AMS("AMS"), ECM("ECM"), NONE("");
 

@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import lisong_mechlab.mwo_data.MechDefinition;
 import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
 
 /**
@@ -28,14 +27,14 @@ import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
  * @author Emily Björk
  */
 public class BaseMovementProfile implements MovementProfile{
-   private final MdfMovementTuning mdf;
+   private final MdfMovementTuning mdf; // TODO: Do not use the parsing classes, even though this is essentially a wrapper.
    private final MovementArchetype archetype;
 
    /**
     * @param aMdf
     */
-   public BaseMovementProfile(MechDefinition aMdf){
-      mdf = aMdf.MovementTuningConfiguration;
+   public BaseMovementProfile(MdfMovementTuning aMdf){
+      mdf =  aMdf;
       archetype = MovementArchetype.valueOf(mdf.MovementArchetype);
    }
 

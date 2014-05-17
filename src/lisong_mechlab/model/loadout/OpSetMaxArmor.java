@@ -30,7 +30,7 @@ import lisong_mechlab.util.MessageXBar;
  * @author Emily Björk
  */
 public class OpSetMaxArmor extends OpLoadoutBase{
-   public OpSetMaxArmor(Loadout aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet){
+   public OpSetMaxArmor(LoadoutBase<?,?> aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet){
       super(aLoadout, anXBar, "set max armor");
       for(ConfiguredComponent component : loadout.getComponents()){
          final int max = component.getInternalComponent().getArmorMax();

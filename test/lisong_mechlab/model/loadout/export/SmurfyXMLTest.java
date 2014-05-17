@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.OperationStack;
 
@@ -19,7 +19,7 @@ public class SmurfyXMLTest{
    public final void testToXml() throws Exception{
       String lsml = "lsml://rQAAEURAFFISXhxAFFJEuipmxNhITziZMSPxcTJkwsqfyJMJkwmw";
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-      Loadout loadout = coder.parse(lsml);
+      LoadoutStandard loadout = coder.parse(lsml);
       (new OperationStack(0)).pushAndApply(new OpRename(loadout, null, "stock"));
 
       String xml = SmurfyXML.toXml(loadout);

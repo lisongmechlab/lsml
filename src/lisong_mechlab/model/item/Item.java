@@ -42,29 +42,29 @@ public class Item implements Comparable<Item>{
    private final HardPointType hardpointType;
    @XStreamAsAttribute
    private final int           health;
+   @XStreamAsAttribute
+   private final boolean       clan;
+
+   public Item(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardpointType, int aHP,
+               boolean aIsClan){
+      locName = aName;
+      locDesc = aDesc;
+      mwoName = aMwoName;
+      mwoIdx = aMwoId;
+      slots = aSlots;
+      tons = aTons;
+      hardpointType = aHardpointType;
+      health = aHP;
+      clan = aIsClan;
+   }
 
    public Item(ItemStats anItemStats, HardPointType aHardpointType, int aNumSlots, double aNumTons, int aHealth){
-      locName = Localization.key2string(anItemStats.Loc.nameTag);
-      locDesc = Localization.key2string(anItemStats.Loc.descTag);
-      mwoName = anItemStats.name;
-      mwoIdx = Integer.parseInt(anItemStats.id);
-      health = aHealth;
-
-      slots = aNumSlots;
-      tons = aNumTons;
-      hardpointType = aHardpointType;
+      this(Localization.key2string(anItemStats.Loc.nameTag), Localization.key2string(anItemStats.Loc.descTag), anItemStats.name,
+           Integer.parseInt(anItemStats.id), aNumSlots, aNumTons, aHardpointType, aHealth, false);
    }
 
    public Item(String aNameTag, String aDesc, int aSlots, int aHealth){
-      locName = Localization.key2string(aNameTag);
-      locDesc = Localization.key2string(aDesc);
-      mwoName = aNameTag;
-      mwoIdx = -1;
-      health = aHealth;
-
-      slots = aSlots;
-      tons = 0;
-      hardpointType = HardPointType.NONE;
+      this(Localization.key2string(aNameTag), Localization.key2string(aDesc), aNameTag, -1, aSlots, 0.0, HardPointType.NONE, aHealth, false);
    }
 
    public String getKey(){
@@ -182,5 +182,12 @@ public class Item implements Comparable<Item>{
 
    public int getHealth(){
       return health;
+   }
+
+   /**
+    * @return <code>true</code> if this {@link Item} is a clan item.
+    */
+   public boolean isClan(){
+      return clan;
    }
 }

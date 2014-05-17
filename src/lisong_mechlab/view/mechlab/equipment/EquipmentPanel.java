@@ -40,7 +40,8 @@ import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
@@ -63,7 +64,7 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
    private final JPanel          energyItems      = new JPanel(new ModifiedFlowLayout());
    private final JPanel          ballisticItems   = new JPanel(new ModifiedFlowLayout());
    private final JPanel          missileItems     = new JPanel(new ModifiedFlowLayout());
-   private Loadout               currentLoadout;
+   private LoadoutBase<?, ?>     currentLoadout;
 
    public EquipmentPanel(LoadoutDesktop aDesktop, MessageXBar aXBar){
       aXBar.attach(this);
@@ -166,15 +167,15 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
       changeLoadout(frame.getLoadout());
    }
 
-   private void changeLoadout(Loadout aLoadout){
+   private void changeLoadout(LoadoutBase<?, ?> aLoadout){
       currentLoadout = aLoadout;
       for(ItemLabel itemLabel : itemLabels){
          itemLabel.updateVisibility(aLoadout);
       }
       if( aLoadout != null ){
-         energyItems.setVisible(aLoadout.getChassis().getHardpointsCount(HardPointType.ENERGY) > 0);
-         missileItems.setVisible(aLoadout.getChassis().getHardpointsCount(HardPointType.MISSILE) > 0);
-         ballisticItems.setVisible(aLoadout.getChassis().getHardpointsCount(HardPointType.BALLISTIC) > 0);
+         energyItems.setVisible(aLoadout.getHardpointsCount(HardPointType.ENERGY) > 0);
+         missileItems.setVisible(aLoadout.getHardpointsCount(HardPointType.MISSILE) > 0);
+         ballisticItems.setVisible(aLoadout.getHardpointsCount(HardPointType.BALLISTIC) > 0);
       }
       else{
          energyItems.setVisible(true);
@@ -199,7 +200,7 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
    @Override
    public void internalFrameOpened(InternalFrameEvent aArg0){/* NO-OP */}
 
-   public Loadout getCurrentLoadout(){
+   public LoadoutBase<?,?> getCurrentLoadout(){
       return currentLoadout;
    }
 }

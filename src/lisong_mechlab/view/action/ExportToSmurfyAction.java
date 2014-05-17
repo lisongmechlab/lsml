@@ -28,7 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.export.SmurfyImportExport;
 import lisong_mechlab.util.SwingHelpers;
 import lisong_mechlab.view.ProgramInit;
@@ -50,7 +50,7 @@ public class ExportToSmurfyAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      Loadout loadout = loadoutFrame.getLoadout();
+      LoadoutBase<?,?> loadout = loadoutFrame.getLoadout();
 
       SmurfyImportExport export = new SmurfyImportExport(null, ProgramInit.lsml().loadoutCoder);
 

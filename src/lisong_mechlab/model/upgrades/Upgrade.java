@@ -19,6 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import lisong_mechlab.mwo_data.Localization;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
@@ -28,16 +30,24 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
  * @author Emily Björk
  */
 public class Upgrade{
+   @XStreamAsAttribute
    private final String name;
+   @XStreamAsAttribute
    private final int    mwoId;
    private final String description;
+   @XStreamAsAttribute
    private final int    associatedItem;
 
-   public Upgrade(ItemStatsUpgradeType aUpgradeType){
-      name = Localization.key2string(aUpgradeType.Loc.nameTag);
-      description = Localization.key2string(aUpgradeType.Loc.descTag);
-      mwoId = Integer.parseInt(aUpgradeType.id);
-      associatedItem = aUpgradeType.UpgradeTypeStats.associatedItem;
+   protected Upgrade(String aName, String aDescription, int aMwoId, int aAssociatedItem){
+      name = aName;
+      mwoId = aMwoId;
+      description = aDescription;
+      associatedItem = aAssociatedItem;
+   }
+
+   protected Upgrade(ItemStatsUpgradeType aUpgradeType){
+      this(Localization.key2string(aUpgradeType.Loc.nameTag), Localization.key2string(aUpgradeType.Loc.descTag), Integer.parseInt(aUpgradeType.id),
+           aUpgradeType.UpgradeTypeStats.associatedItem);
    }
 
    /**

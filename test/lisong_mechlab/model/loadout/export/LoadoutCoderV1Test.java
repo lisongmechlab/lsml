@@ -27,10 +27,10 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
@@ -69,12 +69,12 @@ public class LoadoutCoderV1Test{
       Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
       Matcher m = pat.matcher(line);
       m.matches();
-      ChassisIS chassi = ChassisDB.lookup(m.group(1));
+      ChassisStandard chassi = ChassisDB.lookup(m.group(1));
       String lsml = m.group(2);
-      Loadout reference = new Loadout(chassi.getName(), xBar);
+      LoadoutStandard reference = new LoadoutStandard(chassi.getName(), xBar);
 
       // Execute
-      Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
+      LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
       // Name is not encoded
       OperationStack stack = new OperationStack(0);
@@ -102,10 +102,10 @@ public class LoadoutCoderV1Test{
          Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
          Matcher m = pat.matcher(line);
          m.matches();
-         ChassisIS chassi = ChassisDB.lookup(m.group(1));
+         ChassisStandard chassi = ChassisDB.lookup(m.group(1));
          String lsml = m.group(2);
-         Loadout reference = new Loadout(chassi.getName(), xBar);
-         Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
+         LoadoutStandard reference = new LoadoutStandard(chassi.getName(), xBar);
+         LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
          // Name is not encoded
          OperationStack stack = new OperationStack(0);
@@ -128,9 +128,9 @@ public class LoadoutCoderV1Test{
    @Test
    public void testDecodeHeatsinksBeforeEngine() throws DecodingException, EncodingException{
       Base64 base64 = new Base64();
-      Loadout l = cut.decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY=".toCharArray()));
+      LoadoutStandard l = cut.decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY=".toCharArray()));
 
       assertTrue(l.getFreeMass() < 0.005);
-      assertEquals(3, l.getComponent(Location.CenterTorso).getNumEngineHeatsinks());
+      assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
    }
 }

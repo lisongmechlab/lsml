@@ -26,7 +26,8 @@ import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.helpers.IntegratedImpulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedPulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedSignal;
@@ -34,14 +35,14 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 
 /**
- * This class calculates the accurate heat generation over time for a {@link Loadout} assuming all guns fire as often as
- * possible with engine at max speed and without jump jets.
+ * This class calculates the accurate heat generation over time for a {@link LoadoutStandard} assuming all guns fire as
+ * often as possible with engine at max speed and without jump jets.
  * 
  * @author Emily Björk
  */
 public class HeatOverTime implements TimeMetric, MessageXBar.Reader{
 
-   private final Loadout                loadout;
+   private final LoadoutBase<?, ?>      loadout;
    private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
 
    /**
@@ -50,7 +51,7 @@ public class HeatOverTime implements TimeMetric, MessageXBar.Reader{
     * @param aLoadout
     * @param aXBar
     */
-   public HeatOverTime(Loadout aLoadout, MessageXBar aXBar){
+   public HeatOverTime(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
       loadout = aLoadout;
       updateEvents();
       aXBar.attach(this);

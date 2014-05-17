@@ -27,7 +27,10 @@ import java.util.Iterator;
 import javax.swing.JCheckBox;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisStandard;
+import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.util.MessageXBar;
@@ -49,15 +52,15 @@ import org.jfree.data.xy.XYSeries;
  */
 public class PayloadGraphPanel extends ChartPanel{
    public static class Entry{
-      private final String  name;
-      private final ChassisIS representant;
+      private final String      name;
+      private final ChassisBase representant;
 
-      public Entry(Collection<ChassisIS> aCollection){
-         Iterator<ChassisIS> iterator = aCollection.iterator();
+      public Entry(Collection<ChassisBase> aCollection){
+         Iterator<ChassisBase> iterator = aCollection.iterator();
          String series = iterator.next().getNameShort();
          while( iterator.hasNext() ){
             series += ",";
-            ChassisIS chassi = iterator.next();
+            ChassisBase chassi = iterator.next();
             series += chassi.getNameShort().split("-")[1];
          }
          name = series;
@@ -95,12 +98,22 @@ public class PayloadGraphPanel extends ChartPanel{
       DefaultTableXYDataset dataset = new DefaultTableXYDataset();
       for(Entry entry : chassis){
          XYSeries series = new XYSeries(entry.name, false, false);
-         for(int rating = entry.representant.getEngineMin(); rating <= entry.representant.getEngineMax(); rating += 5){
-            if( rating < 100 ){
-               continue; // TODO: Remove this when they remove the engine limit.
+         if( entry.representant instanceof ChassisStandard ){
+            ChassisStandard chassisStandard = (ChassisStandard)entry.representant;
+            for(int rating = chassisStandard.getEngineMin(); rating <= chassisStandard.getEngineMax(); rating += 5){
+               if( rating < 100 ){
+                  continue; // TODO: Remove this when they remove the engine limit.
+               }
+               double speed = TopSpeed.calculate(rating, entry.representant, efficiencies.getSpeedModifier());
+               series.add(speed, payloadStatistics.calculate(chassisStandard, rating));
             }
-            double speed = TopSpeed.calculate(rating, entry.representant, efficiencies.getSpeedModifier());
-            series.add(speed, payloadStatistics.calculate(entry.representant, rating));
+         }
+         else{
+            // Omni mech
+            ChassisOmniMech chassisOmniMech = (ChassisOmniMech)entry.representant;
+            Engine engine = chassisOmniMech.getEngine();
+            double speed = TopSpeed.calculate(engine.getRating(), chassisOmniMech, efficiencies.getSpeedModifier());
+            series.add(speed, payloadStatistics.calculate(chassisOmniMech, engine.getRating()));
          }
          dataset.addSeries(series);
       }

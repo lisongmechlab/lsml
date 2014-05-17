@@ -31,7 +31,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
@@ -74,19 +75,19 @@ public class MechLabPane extends JSplitPane{
    }
 
    /**
-    * Will open the given {@link Loadout} into the desktop pane by creating a new {@link LoadoutFrame}.
+    * Will open the given {@link LoadoutBase} into the desktop pane by creating a new {@link LoadoutFrame}.
     * 
     * @param aLoadout
-    *           The {@link Loadout} to create the frame for.
+    *           The {@link LoadoutBase} to create the frame for.
     */
-   public void openLoadout(Loadout aLoadout){
+   public void openLoadout(LoadoutBase<?, ?> aLoadout){
       desktop.openLoadout(aLoadout);
    }
 
    /**
     * @return The currently selected loadout.
     */
-   public Loadout getCurrentLoadout(){
+   public LoadoutBase<?, ?> getCurrentLoadout(){
       if( null != getActiveLoadoutFrame() )
          return getActiveLoadoutFrame().getLoadout();
       return null;
@@ -100,7 +101,7 @@ public class MechLabPane extends JSplitPane{
    }
 
    /**
-    * Will open the given {@link Loadout} into the desktop pane by creating a new {@link LoadoutFrame}.
+    * Will open the given {@link LoadoutStandard} into the desktop pane by creating a new {@link LoadoutFrame}.
     * 
     * @param aLSMLUrl
     *           The LSML link to open.

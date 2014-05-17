@@ -21,9 +21,9 @@ package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -37,8 +37,8 @@ public class TurningSpeedTest{
 
    @Test
    public final void testCalculate_NoEngine() throws Exception{
-      Loadout loadout = Mockito.mock(Loadout.class);
-      ChassisIS chassi = Mockito.mock(ChassisIS.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
+      ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
       Mockito.when(loadout.getChassis()).thenReturn(chassi);
       Mockito.when(loadout.getEngine()).thenReturn(null);
       double factor = 0.2;
@@ -52,8 +52,8 @@ public class TurningSpeedTest{
 
    @Test
    public final void testCalculate() throws Exception{
-      Loadout loadout = Mockito.mock(Loadout.class);
-      ChassisIS chassi = Mockito.mock(ChassisIS.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
+      ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
       Engine engine = Mockito.mock(Engine.class);
       Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
       double modifier = 1.1;

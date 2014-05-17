@@ -33,7 +33,7 @@ import java.io.IOException;
 
 import lisong_mechlab.model.garage.MechGarage.Message;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.After;
@@ -157,8 +157,8 @@ public class MechGarageTest{
    @Test
    public void testSaveAsOpen() throws Exception{
       // Setup
-      Loadout lo1 = new Loadout("as7-d-dc", xBar);
-      Loadout lo2 = new Loadout("as7-k", xBar);
+      LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc", xBar);
+      LoadoutStandard lo2 = new LoadoutStandard("as7-k", xBar);
       MechGarage cut = new MechGarage(xBar);
       cut.add(lo1);
       cut.add(lo2);
@@ -185,8 +185,8 @@ public class MechGarageTest{
    @Test
    public void testSave() throws Exception{
       // Setup
-      Loadout lo1 = new Loadout("as7-d-dc", xBar);
-      Loadout lo2 = new Loadout("as7-k", xBar);
+      LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc", xBar);
+      LoadoutStandard lo2 = new LoadoutStandard("as7-k", xBar);
       MechGarage cut = new MechGarage(xBar);
       cut.add(lo1);
       cut.saveas(testFile); // Create garage with one mech and save it.
@@ -216,7 +216,7 @@ public class MechGarageTest{
    @Test
    public void testAddRemoveLoadout() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      LoadoutStandard loadout = new LoadoutStandard("as7-d-dc", xBar);
       MechGarage cut = new MechGarage(xBar);
 
       // Execute
@@ -244,7 +244,7 @@ public class MechGarageTest{
    @Test
    public void testRemoveLoadoutNonexistent() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      LoadoutStandard loadout = new LoadoutStandard("as7-d-dc", xBar);
       MechGarage cut = new MechGarage(xBar);
       reset(xBar);
       cut.remove(loadout);

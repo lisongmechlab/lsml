@@ -10,7 +10,7 @@ import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 
@@ -22,7 +22,7 @@ public class BurstDamageOverTimeTest{
    @Test
    public void testBurstDamageOverTime(){
       // Setup
-      Loadout aLoadout = Mockito.mock(Loadout.class);
+      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
       MessageXBar aXBar = Mockito.mock(MessageXBar.class);
 
       // Execute
@@ -51,7 +51,7 @@ public class BurstDamageOverTimeTest{
       items.add(erppc);
       items.add(ConfiguredComponent.ENGINE_INTERNAL); // Shouldn't barf on internals or other items
       items.add(ItemDB.BAP);
-      Loadout aLoadout = Mockito.mock(Loadout.class);
+      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
       Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
       Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
       Mockito.when(aLoadout.getAllItems()).thenReturn(items);
@@ -81,7 +81,7 @@ public class BurstDamageOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(ConfiguredComponent.ENGINE_INTERNAL); // Shouldn't barf on internals or other items
       items.add(ItemDB.BAP);
-      Loadout aLoadout = Mockito.mock(Loadout.class);
+      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
       Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
       Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
       Mockito.when(aLoadout.getAllItems()).thenReturn(items);
@@ -106,7 +106,7 @@ public class BurstDamageOverTimeTest{
       // Setup
       List<Item> items = new ArrayList<>();
       items.add(ItemDB.AMS);
-      Loadout aLoadout = Mockito.mock(Loadout.class);
+      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
       Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
       Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
       Mockito.when(aLoadout.getAllItems()).thenReturn(items);
@@ -133,7 +133,7 @@ public class BurstDamageOverTimeTest{
       EnergyWeapon erllas = (EnergyWeapon)ItemDB.lookup("ER LARGE LASER");
       List<Item> items = new ArrayList<>();
       items.add(erllas);
-      Loadout aLoadout = Mockito.mock(Loadout.class);
+      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
       Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
       Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
       Mockito.when(aLoadout.getAllItems()).thenReturn(items);

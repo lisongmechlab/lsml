@@ -28,7 +28,7 @@ import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -51,7 +51,7 @@ public class AddItemOperationTest{
    @Mock
    private ConfiguredComponent loadoutPart;
    @Mock
-   private Loadout             loadout;
+   private LoadoutStandard             loadout;
    @Mock
    private Upgrades            upgrades;
    @Mock
@@ -100,7 +100,7 @@ public class AddItemOperationTest{
       try{
          Item item = ItemDB.lookup("LRM 20");
          Mockito.when(loadout.canEquip(item)).thenReturn(true);
-         Mockito.when(loadoutPart.canEquip(item)).thenReturn(false);
+         Mockito.when(loadoutPart.canAddItem(item)).thenReturn(false);
          cut = new OpAddItem(xBar, loadout, loadoutPart, item);
       }
       catch( Throwable t ){
@@ -116,7 +116,7 @@ public class AddItemOperationTest{
     */
    @Test
    public void testAddItem_XLCaseLeft(){
-      Loadout testLoadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard testLoadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
 
@@ -131,7 +131,7 @@ public class AddItemOperationTest{
     */
    @Test
    public void testAddItem_XLCaseRight(){
-      Loadout testLoadout = new Loadout(ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard testLoadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
 

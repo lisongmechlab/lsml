@@ -10,7 +10,7 @@ import java.util.List;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -31,7 +31,7 @@ public class SetArmorOperationTest{
    private static final int    TEST_MAX_ARMOR = 30;
    private ArmorSide           armorSide      = ArmorSide.ONLY;
    @Mock
-   private Loadout             loadout;
+   private LoadoutStandard             loadout;
    @Mock
    private Upgrades            upgrades;
    @Mock

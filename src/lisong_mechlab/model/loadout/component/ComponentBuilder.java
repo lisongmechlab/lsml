@@ -19,8 +19,14 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.chassi.OmniPodDB;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * This factory object can construct configured components.
@@ -29,47 +35,55 @@ import lisong_mechlab.model.chassi.OmniPod;
  */
 public class ComponentBuilder{
    public interface Factory<T extends ConfiguredComponent, U extends InternalComponent> {
-      T create(U aInternalComponent, boolean aAutoArmor);
-      T clone(T aConfiguredComponent);
-      T[] createArray(int aSize);
+      T[] cloneComponents(LoadoutBase<T, U> aLoadout);
+
+      T[] defaultComponents(ChassisBase aChassis);
    }
 
-   private static class InnerSphereFactory implements Factory<ConfiguredComponent, InternalComponent>{
+   private static class StandardFactory implements Factory<ConfiguredComponent, InternalComponent>{
       @Override
-      public ConfiguredComponent create(InternalComponent aInternalComponent, boolean aAutoArmor){
-         return new ConfiguredComponent(aInternalComponent, aAutoArmor);
+      public ConfiguredComponent[] cloneComponents(LoadoutBase<ConfiguredComponent, InternalComponent> aLoadout){
+         ConfiguredComponent[] ans = new ConfiguredComponent[Location.values().length];
+         for(ConfiguredComponent component : aLoadout.getComponents()){
+            ans[component.getInternalComponent().getLocation().ordinal()] = new ConfiguredComponent(component);
+         }
+         return ans;
       }
 
       @Override
-      public ConfiguredComponent[] createArray(int aSize){
-         return new ConfiguredComponent[aSize];
-      }
-
-      @Override
-      public ConfiguredComponent clone(ConfiguredComponent aConfiguredComponent){
-         return new ConfiguredComponent(aConfiguredComponent);
-      }
-   }
-
-   private static class ClanFactory implements Factory<ConfiguredOmniPod, OmniPod>{
-      @Override
-      public ConfiguredOmniPod create(OmniPod aInternalComponent, boolean aAutoArmor){
-         return null; // FIXME TODO
-      }
-      @Override
-      public ConfiguredOmniPod[] createArray(int aSize){
-         return new ConfiguredOmniPod[aSize];
-      }
-
-      @Override
-      public ConfiguredOmniPod clone(ConfiguredOmniPod aConfiguredComponent){
-         // TODO Auto-generated method stub
-         return null;
+      public ConfiguredComponent[] defaultComponents(ChassisBase aChassis){
+         ChassisStandard chassis = (ChassisStandard)aChassis;
+         ConfiguredComponent[] ans = new ConfiguredComponent[Location.values().length];
+         for(InternalComponent component : chassis.getComponents()){
+            ans[component.getLocation().ordinal()] = new ConfiguredComponent(component, true);
+         }
+         return ans;
       }
    }
 
-   private static Factory<ConfiguredComponent, InternalComponent> is   = new InnerSphereFactory();
-   private static Factory<ConfiguredOmniPod, OmniPod>             omni = new ClanFactory();
+   private static class OmniMechFactory implements Factory<ConfiguredOmniPod, OmniPod>{
+      @Override
+      public ConfiguredOmniPod[] cloneComponents(LoadoutBase<ConfiguredOmniPod, OmniPod> aLoadout){
+         ConfiguredOmniPod[] ans = new ConfiguredOmniPod[Location.values().length];
+         for(Location location : Location.values()){
+            ans[location.ordinal()] = new ConfiguredOmniPod(aLoadout.getComponent(location));
+         }
+         return ans;
+      }
+
+      @Override
+      public ConfiguredOmniPod[] defaultComponents(ChassisBase aChassis){
+         ChassisOmniMech omniMech = (ChassisOmniMech)aChassis;
+         ConfiguredOmniPod[] ans = new ConfiguredOmniPod[Location.values().length];
+         for(Location location : Location.values()){
+            ans[location.ordinal()] = new ConfiguredOmniPod(OmniPodDB.lookupOriginal(omniMech, location));
+         }
+         return ans;
+      }
+   }
+
+   private static Factory<ConfiguredComponent, InternalComponent> is   = new StandardFactory();
+   private static Factory<ConfiguredOmniPod, OmniPod>             omni = new OmniMechFactory();
 
    static public Factory<ConfiguredComponent, InternalComponent> getISComponentFactory(){
       return is;

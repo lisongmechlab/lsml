@@ -19,12 +19,16 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
@@ -33,8 +37,11 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
  * 
  * @author Emily Björk
  */
+@XStreamAlias("GuidanceUpgrade")
 public class GuidanceUpgrade extends Upgrade{
+   @XStreamAsAttribute
    final private int    slots;
+   @XStreamAsAttribute
    final private double tons;
 
    public GuidanceUpgrade(ItemStatsUpgradeType aUpgradeType){
@@ -58,7 +65,7 @@ public class GuidanceUpgrade extends Upgrade{
     *           The loadout to calculate for.
     * @return A number of slots needed.
     */
-   public int getExtraSlots(Loadout aLoadout){
+   public int getExtraSlots(LoadoutBase<?, ?> aLoadout){
       int ans = 0;
       for(ConfiguredComponent part : aLoadout.getComponents()){
          ans += getExtraSlots(part);
@@ -75,7 +82,7 @@ public class GuidanceUpgrade extends Upgrade{
     */
    public int getExtraSlots(ConfiguredComponent aLoadoutPart){
       int ans = 0;
-      for(Item item : aLoadoutPart.getItems()){
+      for(Item item : aLoadoutPart.getItemsAll()){
          if( item instanceof MissileWeapon ){
             MissileWeapon weapon = (MissileWeapon)item;
             if( weapon.isArtemisCapable() ){
@@ -90,10 +97,10 @@ public class GuidanceUpgrade extends Upgrade{
     * Calculates how many extra tons are needed in total for the given upgrade.
     * 
     * @param aLoadout
-    *           The {@link Loadout} to calculate for.
+    *           The {@link LoadoutStandard} to calculate for.
     * @return A number of tons needed.
     */
-   public double getExtraTons(Loadout aLoadout){
+   public double getExtraTons(LoadoutBase<?, ?> aLoadout){
       double ans = 0;
       for(ConfiguredComponent part : aLoadout.getComponents()){
          ans += getExtraTons(part);
@@ -110,7 +117,7 @@ public class GuidanceUpgrade extends Upgrade{
     */
    public double getExtraTons(ConfiguredComponent aLoadoutPart){
       double ans = 0;
-      for(Item item : aLoadoutPart.getItems()){
+      for(Item item : aLoadoutPart.getItemsAll()){
          if( item instanceof MissileWeapon ){
             MissileWeapon weapon = (MissileWeapon)item;
             if( weapon.isArtemisCapable() ){

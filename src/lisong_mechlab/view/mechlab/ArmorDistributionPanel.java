@@ -33,7 +33,8 @@ import javax.swing.event.ChangeListener;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpDistributeArmor;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -50,21 +51,21 @@ import lisong_mechlab.view.render.StyleManager;
  * @author Emily Björk
  */
 public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader, ChangeListener{
-   private static final long    serialVersionUID    = 6835003047682738947L;
+   private static final long       serialVersionUID    = 6835003047682738947L;
 
-   private final Loadout        loadout;
-   private final OperationStack stack;
-   private final MessageXBar    xBar;
-   private final JSlider        ratioSlider;
-   private final JSlider        armorSlider;
+   private final LoadoutBase<?, ?> loadout;
+   private final OperationStack    stack;
+   private final MessageXBar       xBar;
+   private final JSlider           ratioSlider;
+   private final JSlider           armorSlider;
 
-   private int                  lastRatio           = 0;
-   private int                  lastAmount          = 0;
+   private int                     lastRatio           = 0;
+   private int                     lastAmount          = 0;
 
-   boolean                      disableSliderAction = false;
+   boolean                         disableSliderAction = false;
 
    class ResetManualArmorOperation extends CompositeOperation{
-      private final Loadout opLoadout = loadout;
+      private final LoadoutBase<?, ?> opLoadout = loadout;
 
       public ResetManualArmorOperation(){
          super("reset manual armor");
@@ -141,7 +142,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
       }
    }
 
-   public ArmorDistributionPanel(final Loadout aLoadout, final OperationStack aStack, final MessageXBar aXBar){
+   public ArmorDistributionPanel(final LoadoutBase<?, ?> aLoadout, final OperationStack aStack, final MessageXBar aXBar){
       setBorder(StyleManager.sectionBorder("Automatic Armor distribution"));
       setLayout(new BorderLayout());
 

@@ -140,7 +140,7 @@ public class ItemTransferHandler extends TransferHandler{
          LoadoutBase<?, ?> loadout = ((PartList)uiComponent).getLoadout();
          ConfiguredComponent component = ((PartList)uiComponent).getPart();
          for(Item item : items){
-            if( loadout.canEquip(item) && !component.canEquip(item) )
+            if( loadout.canEquip(item) && !component.canAddItem(item) )
                return false;
          }
          return true;

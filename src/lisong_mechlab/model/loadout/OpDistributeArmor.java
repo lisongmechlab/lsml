@@ -45,7 +45,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpDistributeArmor extends CompositeOperation{
    private final Map<Location, Integer> armors = new HashMap<>(Location.values().length);
-   private final Loadout                loadout;
+   private final LoadoutBase<?, ?>      loadout;
 
    /**
     * @param aLoadout
@@ -53,7 +53,7 @@ public class OpDistributeArmor extends CompositeOperation{
     * @param aFrontRearRatio
     * @param aXBar
     */
-   public OpDistributeArmor(Loadout aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
+   public OpDistributeArmor(LoadoutBase<?, ?> aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
       super("distribute armor");
 
       loadout = aLoadout;
@@ -81,7 +81,7 @@ public class OpDistributeArmor extends CompositeOperation{
       return loadout == operation.loadout;
    }
 
-   private void distribute(final Loadout aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities){
+   private void distribute(final LoadoutBase<?, ?> aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities){
       int prioSum = 0;
       for(double prio : aPriorities.values()){
          prioSum += prio;
@@ -92,7 +92,8 @@ public class OpDistributeArmor extends CompositeOperation{
          public int compare(Location aO1, Location aO2){
             int c = -aPriorities.get(aO1).compareTo(aPriorities.get(aO2));
             if( c == 0 ){
-               int d = Integer.compare(aLoadout.getChassis().getComponent(aO1).getArmorMax(), aLoadout.getChassis().getComponent(aO2).getArmorMax());
+               int d = Integer.compare(aLoadout.getComponent(aO1).getInternalComponent().getArmorMax(), aLoadout.getComponent(aO2)
+                                                                                                                .getInternalComponent().getArmorMax());
                if( d == 0 )
                   return aO1.compareTo(aO2);
                return d;
@@ -135,7 +136,7 @@ public class OpDistributeArmor extends CompositeOperation{
       }
    }
 
-   private int calculateArmorToDistribute(Loadout aLoadout, int aPointsOfArmor){
+   private int calculateArmorToDistribute(LoadoutBase<?, ?> aLoadout, int aPointsOfArmor){
       final ArmorUpgrade armorUpgrade = aLoadout.getUpgrades().getArmor();
       final double armorPerTon = armorUpgrade.getArmorPerTon();
       final double armorTons = aPointsOfArmor / armorPerTon;
@@ -173,7 +174,7 @@ public class OpDistributeArmor extends CompositeOperation{
       armors.put(aPart.getInternalComponent().getLocation(), armor);
    }
 
-   private void applyArmors(Loadout aLoadout, double aFrontRearRatio, MessageXBar aXBar){
+   private void applyArmors(LoadoutBase<?, ?> aLoadout, double aFrontRearRatio, MessageXBar aXBar){
       for(Location part : Location.values()){
          final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
 
@@ -213,7 +214,7 @@ public class OpDistributeArmor extends CompositeOperation{
       }
    }
 
-   private Map<Location, Integer> prioritize(Loadout aLoadout){
+   private Map<Location, Integer> prioritize(LoadoutBase<?, ?> aLoadout){
       Map<Location, Integer> ans = new HashMap<>(Location.values().length);
 
       for(Location part : Location.values()){
@@ -225,7 +226,7 @@ public class OpDistributeArmor extends CompositeOperation{
          if( part == Location.CenterTorso ){
             ans.put(part, 2000);
          }
-         else if( loadoutPart.getItems().contains(ConfiguredComponent.ENGINE_INTERNAL) ){
+         else if( loadoutPart.getItemsAll().contains(ConfiguredComponent.ENGINE_INTERNAL) ){
             ans.put(part, 1000);
          }
          // Legs and head are high priority too

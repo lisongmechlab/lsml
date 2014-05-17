@@ -26,7 +26,7 @@ import java.util.List;
 
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.WeaponRanges;
 
 import org.junit.Before;
@@ -45,7 +45,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class RangeTimeMetricTest{
    class ConcreteAbstractCut extends RangeTimeMetric{
-      public ConcreteAbstractCut(Loadout aLoadout){
+      public ConcreteAbstractCut(LoadoutStandard aLoadout){
          super(aLoadout);
       }
 
@@ -56,7 +56,7 @@ public class RangeTimeMetricTest{
    }
 
    @Mock
-   private Loadout             loadout;
+   private LoadoutStandard             loadout;
    private ConcreteAbstractCut cut;
    private List<Item>          items = new ArrayList<>();
 
@@ -106,7 +106,7 @@ public class RangeTimeMetricTest{
    /**
     * If {@link RangeTimeMetric#changeRange(double)} has not been called; a call to {@link RangeTimeMetric#calculate()}
     * should return the maximum value of {@link RangeTimeMetric#calculate(double, double)} for all the ranges returned
-    * by {@link WeaponRanges#getRanges(Loadout)}.
+    * by {@link WeaponRanges#getRanges(LoadoutStandard)}.
     */
    @Test
    public final void testCalculate_noChangeRange(){
@@ -129,7 +129,7 @@ public class RangeTimeMetricTest{
     * If {@link RangeTimeMetric#changeRange(double)} was last called with a negative or zero argument; a call to
     * {@link RangeTimeMetric#calculate()} should return the maximum value of
     * {@link RangeTimeMetric#calculate(double, double)} for all the ranges returned by
-    * {@link WeaponRanges#getRanges(Loadout)}.
+    * {@link WeaponRanges#getRanges(LoadoutStandard)}.
     */
    @Test
    public final void testCalculate_negativeChangeRange(){

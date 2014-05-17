@@ -27,7 +27,7 @@ import java.util.List;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -50,7 +50,7 @@ public class ItemEffectiveHPTest{
    @Mock
    ConfiguredComponent loadoutPart;
    @Mock
-   Loadout             loadout;
+   LoadoutStandard             loadout;
    @Mock
    Upgrades            upgrades;
    @InjectMocks
@@ -58,7 +58,7 @@ public class ItemEffectiveHPTest{
 
    @Before
    public void setup(){
-      Mockito.when(loadoutPart.getItems()).thenReturn(items);
+      Mockito.when(loadoutPart.getItemsAll()).thenReturn(items);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
    }
 

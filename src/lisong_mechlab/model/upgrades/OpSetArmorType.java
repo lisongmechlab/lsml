@@ -19,14 +19,15 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Upgrades} can change the armor type of a {@link Loadout}.
+ * This {@link Upgrades} can change the armor type of a {@link LoadoutStandard}.
  * 
  * @author Emily
  */
@@ -36,7 +37,7 @@ public class OpSetArmorType extends OpUpgradeBase{
 
    /**
     * Creates a {@link OpSetArmorType} that only affects a stand-alone {@link Upgrades} object This is useful only for
-    * altering {@link Upgrades} objects which are not attached to a {@link Loadout} in any way.
+    * altering {@link Upgrades} objects which are not attached to a {@link LoadoutStandard} in any way.
     * 
     * @param anUpgrades
     *           The {@link Upgrades} object to alter with this {@link Operation}.
@@ -50,16 +51,16 @@ public class OpSetArmorType extends OpUpgradeBase{
    }
 
    /**
-    * Creates a new {@link OpSetStructureType} that will change the armor type of a {@link Loadout}.
+    * Creates a new {@link OpSetStructureType} that will change the armor type of a {@link LoadoutStandard}.
     * 
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in internal structure on.
     * @param aLoadout
-    *           The {@link Loadout} to alter.
+    *           The {@link LoadoutStandard} to alter.
     * @param anArmorUpgrade
     *           The new armor type this upgrades is applied.
     */
-   public OpSetArmorType(MessageXBar anXBar, Loadout aLoadout, ArmorUpgrade anArmorUpgrade){
+   public OpSetArmorType(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ArmorUpgrade anArmorUpgrade){
       super(anXBar, aLoadout, anArmorUpgrade.getName());
       oldValue = upgrades.getArmor();
       newValue = anArmorUpgrade;
