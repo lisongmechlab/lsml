@@ -19,18 +19,19 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
- * This {@link Metric} calculates the total heat capacity of a {@link Loadout}.
+ * This {@link Metric} calculates the total heat capacity of a {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
 public class HeatCapacity implements Metric{
-   private final Loadout       loadout;
-   private static final double MECH_BASE_HEAT_CAPACITY = 30;
+   private final LoadoutBase<?, ?> loadout;
+   private static final double     MECH_BASE_HEAT_CAPACITY = 30;
 
-   public HeatCapacity(final Loadout aLoadout){
+   public HeatCapacity(final LoadoutBase<?, ?> aLoadout){
       loadout = aLoadout;
    }
 

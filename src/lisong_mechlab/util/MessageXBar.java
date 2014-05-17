@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
@@ -61,16 +61,17 @@ public class MessageXBar{
     */
    public static interface Message{
       /**
-       * Checks if this message is related to a specific {@link Loadout}.
+       * Checks if this message is related to a specific {@link LoadoutStandard}.
        * 
        * @param aLoadout
-       *           The {@link Loadout} to check.
-       * @return <code>true</code> if this message affects the given {@link Loadout}.
+       *           The {@link LoadoutStandard} to check.
+       * @return <code>true</code> if this message affects the given {@link LoadoutStandard}.
        */
-      public boolean isForMe(LoadoutBase aLoadout);
+      public boolean isForMe(LoadoutBase<?, ?> aLoadout);
 
       /**
-       * @return <code>true</code> if this message can affect the damage or heat output of the related {@link Loadout}.
+       * @return <code>true</code> if this message can affect the damage or heat output of the related
+       *         {@link LoadoutStandard}.
        */
       public boolean affectsHeatOrDamage();
    }

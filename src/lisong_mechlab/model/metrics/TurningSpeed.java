@@ -22,7 +22,7 @@ package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * This {@link Metric} calculates how fast a mech will turn (degrees per second).
@@ -31,15 +31,15 @@ import lisong_mechlab.model.loadout.Loadout;
  */
 public class TurningSpeed implements Metric{
 
-   private final Loadout loadout;
+   private final LoadoutBase<?, ?> loadout;
 
-   public TurningSpeed(Loadout aLoadout){
+   public TurningSpeed(LoadoutBase<?, ?> aLoadout){
       loadout = aLoadout;
    }
 
    @Override
    public double calculate(){
-      ChassisBase<?> chassi = loadout.getChassis();
+      ChassisBase chassi = loadout.getChassis();
       Engine engine = loadout.getEngine();
       if( engine == null )
          return 0.0;

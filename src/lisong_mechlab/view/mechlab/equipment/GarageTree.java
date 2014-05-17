@@ -31,9 +31,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.ProgramInit;
@@ -70,10 +75,10 @@ public class GarageTree extends JTree{
          public void mousePressed(MouseEvent e){
             if( SwingUtilities.isRightMouseButton(e) ){
                Object clicked = getClickedObject(e);
-               if( clicked instanceof Loadout ){
+               if( clicked instanceof LoadoutStandard ){
                   GarageTree.this.setSelectionPath(getClosestPathForLocation(e.getX(), e.getY()));
 
-                  Loadout clickedLoadout = (Loadout)clicked;
+                  LoadoutStandard clickedLoadout = (LoadoutStandard)clicked;
                   JPopupMenu menu = new JPopupMenu();
                   JMenuItem label = new JMenuItem(clickedLoadout.getName());
                   label.setEnabled(false);
@@ -86,13 +91,24 @@ public class GarageTree extends JTree{
             }
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                Object clicked = getClickedObject(e);
-               if( clicked instanceof ChassisIS ){
-                  ChassisIS chassi = (ChassisIS)clicked;
-                  Loadout clickedLoadout = new Loadout(chassi, xBar);
-                  aLoadoutDesktop.openLoadout(clickedLoadout);
+               if( clicked instanceof ChassisBase ){
+                  LoadoutBase<?, ?> loadout = null;
+                  if( clicked instanceof ChassisStandard ){
+                     ChassisStandard chassi = (ChassisStandard)clicked;
+                     loadout = new LoadoutStandard(chassi, xBar);
+
+                  }
+                  else if( clicked instanceof ChassisOmniMech ){
+                     ChassisOmniMech chassi = (ChassisOmniMech)clicked;
+                     loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi, xBar);
+                  }
+                  else{
+                     throw new RuntimeException("Unknown chassis type!");
+                  }
+                  aLoadoutDesktop.openLoadout(loadout);
                }
-               else if( clicked instanceof Loadout ){
-                  aLoadoutDesktop.openLoadout((Loadout)clicked);
+               else if( clicked instanceof LoadoutStandard ){
+                  aLoadoutDesktop.openLoadout((LoadoutStandard)clicked);
                }
             }
          }
@@ -112,8 +128,8 @@ public class GarageTree extends JTree{
       if( mouseover != null ){
          StringBuilder sb = new StringBuilder(100);
          Object leaf = mouseover.getLastPathComponent();
-         if( leaf instanceof ChassisIS ){
-            ChassisIS chassi = (ChassisIS)leaf;
+         if( leaf instanceof ChassisStandard ){
+            ChassisStandard chassi = (ChassisStandard)leaf;
             sb.append("<html>");
             sb.append("Max Tons: ").append(chassi.getMassMax()).append(" Engine: ").append(chassi.getEngineMin()).append(" - ")
               .append(chassi.getEngineMax()).append("<br>");

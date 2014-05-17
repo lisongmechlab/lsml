@@ -27,7 +27,8 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -44,19 +45,19 @@ import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
- * This class provides converters between {@link Loadout}s and Smurfy's XML.
+ * This class provides converters between {@link LoadoutStandard}s and Smurfy's XML.
  * 
  * @author Li Song
  */
 public class SmurfyXML{
    /**
-    * Will convert the given {@link Loadout} to Smurfy-compatible XML.
+    * Will convert the given {@link LoadoutStandard} to Smurfy-compatible XML.
     * 
     * @param aLoadout
-    *           The {@link Loadout} to convert.
+    *           The {@link LoadoutStandard} to convert.
     * @return A {@link String} with the XML (including embedded new lines).
     */
-   static public String toXml(final Loadout aLoadout){
+   static public String toXml(final LoadoutBase<?, ?> aLoadout){
       StringWriter sw = new StringWriter();
       sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
       stream().marshal(aLoadout, new PrettyPrintWriter(sw, new NoNameCoder()){
@@ -71,11 +72,11 @@ public class SmurfyXML{
    static private XStream stream(){
       XStream stream = new XStream(new StaxDriver(new NoNameCoder()));
       stream.setMode(XStream.NO_REFERENCES);
-      stream.alias("loadout", Loadout.class);
+      stream.alias("loadout", LoadoutStandard.class);
       stream.registerConverter(new Converter(){
          @Override
          public boolean canConvert(Class aArg0){
-            return Loadout.class.isAssignableFrom(aArg0);
+            return LoadoutStandard.class.isAssignableFrom(aArg0);
          }
 
          @Override
@@ -92,7 +93,7 @@ public class SmurfyXML{
          @Override
          public void marshal(Object aObject, HierarchicalStreamWriter writer, MarshallingContext context){
 
-            Loadout loadout = (Loadout)aObject;
+            LoadoutStandard loadout = (LoadoutStandard)aObject;
             writeValue(writer, "id", loadout.getName());
             writeValue(writer, "mech_id", loadout.getChassis().getMwoId());
 
@@ -112,7 +113,7 @@ public class SmurfyXML{
                   }
 
                   writer.startNode("items");
-                  for(Item item : part.getItems()){
+                  for(Item item : part.getItemsAll()){
                      if( item instanceof Internal )
                         continue;
                      writer.startNode("item");

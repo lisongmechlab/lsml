@@ -22,11 +22,15 @@ package lisong_mechlab.model;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.ChassisIS;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
@@ -34,20 +38,26 @@ import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 
 /**
- * This immutable class defines a stock loadout pattern that can be used for loading stock on a {@link Loadout}.
+ * This immutable class defines a stock loadout pattern that can be used for loading stock on a {@link LoadoutBase}.
  * 
  * @author Li Song
  */
+@XStreamAlias("StockLoadout")
 public class StockLoadout{
    /**
     * This immutable class defines a component in a stock loadout.
     * 
     * @author Li Song
     */
+   @XStreamAlias("Component")
    public static class StockComponent{
+      @XStreamAsAttribute
       private final Location      part;
+      @XStreamAsAttribute
       private final Integer       armorFront;
+      @XStreamAsAttribute
       private final Integer       armorBack;
+      @XStreamImplicit
       private final List<Integer> items;
 
       /**
@@ -103,12 +113,18 @@ public class StockLoadout{
       }
    }
 
+   @XStreamImplicit
    private final List<StockComponent> components;
 
+   @XStreamAsAttribute
    private final Integer              armorId;
+   @XStreamAsAttribute
    private final Integer              structureId;
+   @XStreamAsAttribute
    private final Integer              heatsinkId;
+   @XStreamAsAttribute
    private final Integer              guidanceId;
+   @XStreamAsAttribute
    private final Integer              chassisId;
 
    /**
@@ -137,10 +153,10 @@ public class StockLoadout{
    }
 
    /**
-    * @return The {@link ChassisIS} for this {@link StockLoadout}.
+    * @return The {@link ChassisStandard} for this {@link StockLoadout}.
     */
-   public ChassisIS getChassis(){
-      return ChassisDB.lookup(chassisId);
+   public ChassisStandard getChassis(){
+      return (ChassisStandard)ChassisDB.lookup(chassisId);
    }
 
    /**

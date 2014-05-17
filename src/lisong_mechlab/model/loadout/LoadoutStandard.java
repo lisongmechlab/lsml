@@ -21,10 +21,12 @@ package lisong_mechlab.model.loadout;
 
 import java.io.File;
 
-import lisong_mechlab.model.chassi.ChassisIS;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
@@ -44,11 +46,11 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * 
  * @author Li Song
  */
-public class Loadout extends LoadoutBase<ConfiguredComponent, InternalComponent>{
+public class LoadoutStandard extends LoadoutBase<ConfiguredComponent, InternalComponent>{
 
-   public static Loadout load(File aFile, MessageXBar aXBar){
+   public static LoadoutStandard load(File aFile, MessageXBar aXBar){
       XStream stream = loadoutXstream(aXBar);
-      return (Loadout)stream.fromXML(aFile);
+      return (LoadoutStandard)stream.fromXML(aFile);
    }
 
    public static XStream loadoutXstream(MessageXBar aXBar){
@@ -63,7 +65,7 @@ public class Loadout extends LoadoutBase<ConfiguredComponent, InternalComponent>
       stream.registerConverter(new UpgradesConverter());
       stream.addImmutableType(Item.class);
       stream.alias("component", ConfiguredComponent.class);
-      stream.alias("loadout", Loadout.class);
+      stream.alias("loadout", LoadoutStandard.class);
       return stream;
    }
 
@@ -75,7 +77,7 @@ public class Loadout extends LoadoutBase<ConfiguredComponent, InternalComponent>
     * @param aXBar
     *           The {@link MessageXBar} to signal changes to this loadout on.
     */
-   public Loadout(ChassisIS aChassi, MessageXBar aXBar){
+   public LoadoutStandard(ChassisStandard aChassi, MessageXBar aXBar){
       super(ComponentBuilder.getISComponentFactory(), aChassi, aXBar);
       if( aXBar != null ){
          aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
@@ -90,13 +92,13 @@ public class Loadout extends LoadoutBase<ConfiguredComponent, InternalComponent>
     * @param aXBar
     * @throws Exception
     */
-   public Loadout(String aString, MessageXBar aXBar) throws Exception{
-      this(ChassisDB.lookup(aString), aXBar);
+   public LoadoutStandard(String aString, MessageXBar aXBar) throws Exception{
+      this((ChassisStandard)ChassisDB.lookup(aString), aXBar);
       OperationStack operationStack = new OperationStack(0);
       operationStack.pushAndApply(new OpLoadStock(getChassis(), this, aXBar));
    }
 
-   public Loadout(Loadout aLoadout, MessageXBar aXBar){
+   public LoadoutStandard(LoadoutStandard aLoadout, MessageXBar aXBar){
       super(ComponentBuilder.getISComponentFactory(), aLoadout);
       if( aXBar != null ){
          aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
@@ -104,10 +106,38 @@ public class Loadout extends LoadoutBase<ConfiguredComponent, InternalComponent>
    }
 
    @Override
-   public String toString(){
-      if( getName().contains(getChassis().getNameShort()) )
-         return getName();
-      return getName() + " (" + getChassis().getNameShort() + ")";
+   public ChassisStandard getChassis(){
+      return (ChassisStandard)super.getChassis();
+   }
+
+   /**
+    * Checks only global constraints against the {@link Item}. These are necessary but not sufficient conditions. Local
+    * conditions are needed to be sufficient.
+    * 
+    * @param anItem
+    *           The {@link Item} to check.
+    * @return <code>true</code> if the necessary checks are passed.
+    */
+   @Override
+   protected boolean canEquipGlobal(Item anItem){
+      if( anItem instanceof JumpJet && getChassis().getJumpJetsMax() - getJumpJetCount() < 1 )
+         return false;
+      return canEquipGlobal(anItem);
+   }
+
+   @Override
+   public MovementProfile getMovementProfile(){
+      return getChassis().getMovementProfile();
+   }
+
+   @Override
+   public LoadoutStandard clone(MessageXBar aXBar){
+      return new LoadoutStandard(this, aXBar);
+   }
+
+   @Override
+   public int getJumpJetsMax(){
+      return getChassis().getJumpJetsMax();
    }
 
 }

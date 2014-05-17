@@ -31,15 +31,17 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.OpAddItem;
@@ -98,7 +100,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
    }
 
    @Override
-   public byte[] encode(final Loadout aLoadout) throws EncodingException{
+   public byte[] encode(final LoadoutBase<?,?> aLoadout) throws EncodingException{
       throw new EncodingException("Protocol version 1 encoding is no longer allowed.");
       //@formatter:off
       /*
@@ -170,9 +172,9 @@ public class LoadoutCoderV1 implements LoadoutCoder{
    }
 
    @Override
-   public Loadout decode(final byte[] aBitStream) throws DecodingException{
+   public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException{
       final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
-      final Loadout loadout;
+      final LoadoutStandard loadout;
       final OperationStack stack = new OperationStack(0);
 
       // Read header
@@ -186,8 +188,8 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          short chassiId = (short)(((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF)); // Big endian, respecting RFC
                                                                                            // 1700
 
-         ChassisIS chassi = ChassisDB.lookup(chassiId);
-         loadout = new Loadout(chassi, xBar);
+         ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup(chassiId);
+         loadout = new LoadoutStandard(chassi, xBar);
 
          boolean artemisIv = (upeff & (1 << 7)) != 0;
          boolean endoSteel = (upeff & (1 << 4)) != 0;
@@ -270,7 +272,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateAllLoadouts() throws Exception{
-      List<ChassisIS> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
@@ -279,12 +281,15 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
 
-      for(ChassisIS chassi : chassii){
-         Loadout loadout = new Loadout(chassi, xBar);
+      for(ChassisBase chassi : chassii){
+         if( !(chassi instanceof ChassisStandard) )
+            continue;
+
+         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi, xBar);
          stack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
 
          for(ConfiguredComponent component : loadout.getComponents()){
-            for(Item item : new ArrayList<>(component.getItems())){
+            for(Item item : new ArrayList<>(component.getItemsAll())){
                if( item.getName().toLowerCase().contains("artemis") ){
                   stack.pushAndApply(new OpRemoveItem(xBar, loadout, component, item));
                   stack.pushAndApply(new OpAddItem(xBar, loadout, component, ItemDB.lookup(item.getName().substring(0,
@@ -300,7 +305,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateStatsFromStock() throws Exception{
-      List<ChassisIS> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
@@ -308,8 +313,10 @@ public class LoadoutCoderV1 implements LoadoutCoder{
       Map<Integer, Integer> freqs = new TreeMap<>();
       MessageXBar xBar = new MessageXBar();
       OperationStack stack = new OperationStack(0);
-      for(ChassisIS chassi : chassii){
-         Loadout loadout = new Loadout(chassi, xBar);
+      for(ChassisBase chassi : chassii){
+         if( !(chassi instanceof ChassisStandard) )
+            continue;
+         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi, xBar);
          stack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
 
          for(Item item : loadout.getAllItems()){

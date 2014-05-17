@@ -53,14 +53,14 @@ public class DynamicSlotDistributorTest{
       when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
       when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
 
-      when(mlc.ra.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.rl.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.hd.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.ct.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.ll.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.la.getNumCriticalSlotsFree()).thenReturn(12);
+      when(mlc.ra.getSlotsFree()).thenReturn(12);
+      when(mlc.rt.getSlotsFree()).thenReturn(12);
+      when(mlc.rl.getSlotsFree()).thenReturn(12);
+      when(mlc.hd.getSlotsFree()).thenReturn(12);
+      when(mlc.ct.getSlotsFree()).thenReturn(12);
+      when(mlc.ll.getSlotsFree()).thenReturn(12);
+      when(mlc.lt.getSlotsFree()).thenReturn(12);
+      when(mlc.la.getSlotsFree()).thenReturn(12);
 
       assertEquals(0, cut.getDynamicStructureSlots(mlc.ra));
       assertEquals(0, cut.getDynamicStructureSlots(mlc.rt));
@@ -93,7 +93,7 @@ public class DynamicSlotDistributorTest{
       int sum = 0;
       while( i > 0 ){
          i--;
-         sum += priorityOrder.get(i).getNumCriticalSlotsFree();
+         sum += priorityOrder.get(i).getSlotsFree();
       }
       return sum;
    }
@@ -107,7 +107,7 @@ public class DynamicSlotDistributorTest{
     * @return
     */
    private int slotsOccupied(ConfiguredComponent aPart, int slotsTotal){
-      return Math.min(aPart.getNumCriticalSlotsFree(), Math.max(0, slotsTotal - cumSlotsFree(aPart)));
+      return Math.min(aPart.getSlotsFree(), Math.max(0, slotsTotal - cumSlotsFree(aPart)));
    }
 
    private String expectedStructure(int slotsTotal){
@@ -127,55 +127,55 @@ public class DynamicSlotDistributorTest{
       when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.ENDO_STEEL_STRUCTURE);
       when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
 
-      when(mlc.ra.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.rl.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.hd.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.ct.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.ll.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.la.getNumCriticalSlotsFree()).thenReturn(12);
+      when(mlc.ra.getSlotsFree()).thenReturn(12);
+      when(mlc.rt.getSlotsFree()).thenReturn(12);
+      when(mlc.rl.getSlotsFree()).thenReturn(12);
+      when(mlc.hd.getSlotsFree()).thenReturn(12);
+      when(mlc.ct.getSlotsFree()).thenReturn(12);
+      when(mlc.ll.getSlotsFree()).thenReturn(12);
+      when(mlc.lt.getSlotsFree()).thenReturn(12);
+      when(mlc.la.getSlotsFree()).thenReturn(12);
 
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
-      when(mlc.ra.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.ra.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
-      when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.rt.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
-      when(mlc.rl.getNumCriticalSlotsFree()).thenReturn(2);
+      when(mlc.rl.getSlotsFree()).thenReturn(2);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
-      when(mlc.hd.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.hd.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
-      when(mlc.ct.getNumCriticalSlotsFree()).thenReturn(3);
+      when(mlc.ct.getSlotsFree()).thenReturn(3);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
-      when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.lt.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
-      when(mlc.ll.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.ll.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
 
-      when(mlc.la.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.la.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
       }
@@ -187,55 +187,55 @@ public class DynamicSlotDistributorTest{
       when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
       when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.FERRO_FIBROUS_ARMOR);
 
-      when(mlc.ra.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.rl.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.hd.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.ct.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.ll.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(12);
-      when(mlc.la.getNumCriticalSlotsFree()).thenReturn(12);
+      when(mlc.ra.getSlotsFree()).thenReturn(12);
+      when(mlc.rt.getSlotsFree()).thenReturn(12);
+      when(mlc.rl.getSlotsFree()).thenReturn(12);
+      when(mlc.hd.getSlotsFree()).thenReturn(12);
+      when(mlc.ct.getSlotsFree()).thenReturn(12);
+      when(mlc.ll.getSlotsFree()).thenReturn(12);
+      when(mlc.lt.getSlotsFree()).thenReturn(12);
+      when(mlc.la.getSlotsFree()).thenReturn(12);
 
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
-      when(mlc.ra.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.ra.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
-      when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.rt.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
-      when(mlc.rl.getNumCriticalSlotsFree()).thenReturn(2);
+      when(mlc.rl.getSlotsFree()).thenReturn(2);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
-      when(mlc.hd.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.hd.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
-      when(mlc.ct.getNumCriticalSlotsFree()).thenReturn(3);
+      when(mlc.ct.getSlotsFree()).thenReturn(3);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
-      when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.lt.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
-      when(mlc.ll.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.ll.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
 
-      when(mlc.la.getNumCriticalSlotsFree()).thenReturn(1);
+      when(mlc.la.getSlotsFree()).thenReturn(1);
       for(ConfiguredComponent part : priorityOrder){
          assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
       }
@@ -250,14 +250,14 @@ public class DynamicSlotDistributorTest{
       when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.ENDO_STEEL_STRUCTURE);
       when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.FERRO_FIBROUS_ARMOR);
 
-      when(mlc.ra.getNumCriticalSlotsFree()).thenReturn(4); // 4 armor
-      when(mlc.rt.getNumCriticalSlotsFree()).thenReturn(4);
-      when(mlc.rl.getNumCriticalSlotsFree()).thenReturn(4);
-      when(mlc.hd.getNumCriticalSlotsFree()).thenReturn(4); // 2 armor 2 structure
-      when(mlc.ct.getNumCriticalSlotsFree()).thenReturn(2);
-      when(mlc.lt.getNumCriticalSlotsFree()).thenReturn(4);
-      when(mlc.ll.getNumCriticalSlotsFree()).thenReturn(7); // 6 structure
-      when(mlc.la.getNumCriticalSlotsFree()).thenReturn(1); // 0 structure
+      when(mlc.ra.getSlotsFree()).thenReturn(4); // 4 armor
+      when(mlc.rt.getSlotsFree()).thenReturn(4);
+      when(mlc.rl.getSlotsFree()).thenReturn(4);
+      when(mlc.hd.getSlotsFree()).thenReturn(4); // 2 armor 2 structure
+      when(mlc.ct.getSlotsFree()).thenReturn(2);
+      when(mlc.lt.getSlotsFree()).thenReturn(4);
+      when(mlc.ll.getSlotsFree()).thenReturn(7); // 6 structure
+      when(mlc.la.getSlotsFree()).thenReturn(1); // 0 structure
 
       assertEquals(0, cut.getDynamicStructureSlots(mlc.ra));
       assertEquals(4, cut.getDynamicArmorSlots(mlc.ra));

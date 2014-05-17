@@ -27,7 +27,7 @@ import java.util.Map;
 
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * This {@link Metric} calculates the total ghost heat penalty for an alpha strike from a loadout.
@@ -35,10 +35,10 @@ import lisong_mechlab.model.loadout.Loadout;
  * @author Li Song
  */
 public class GhostHeat implements Metric{
-   private static final double HEAT_SCALE[] = {0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00, 3.00, 5.00};
-   private final Loadout       loadout;
+   private static final double     HEAT_SCALE[] = {0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00, 3.00, 5.00};
+   private final LoadoutBase<?, ?> loadout;
 
-   public GhostHeat(Loadout aLoadout){
+   public GhostHeat(LoadoutBase<?, ?> aLoadout){
       loadout = aLoadout;
    }
 

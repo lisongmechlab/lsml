@@ -73,7 +73,7 @@ public class ItemEffectiveHP implements ItemMetric{
 
    private void updateCache(){
       cache.clear();
-      for(Item item : loadoutPart.getItems()){
+      for(Item item : loadoutPart.getItemsAll()){
          if( item instanceof Internal && item != ConfiguredComponent.ENGINE_INTERNAL )
             continue;
          if( item == ItemDB.CASE )

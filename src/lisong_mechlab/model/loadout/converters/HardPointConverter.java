@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
-import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.chassi.HardPoint;
+import lisong_mechlab.model.chassi.HardPointType;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -28,35 +28,40 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class ItemConverter implements Converter{
+public class HardPointConverter implements Converter{
 
    @Override
    public boolean canConvert(Class aClass){
-      return Item.class.isAssignableFrom(aClass);
+      return HardPoint.class.isAssignableFrom(aClass);
    }
 
    @Override
    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      Item item = (Item)anObject;
-      int mwoIdx = item.getMwoId();
-      if( mwoIdx > 0 ){
-         aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
+      HardPoint hp = (HardPoint)anObject;
+
+      aWriter.addAttribute("type", hp.getType().toString());
+      if( hp.getNumMissileTubes() > 0 ){
+         aWriter.addAttribute("tubes", Integer.toString(hp.getNumMissileTubes()));
       }
-      else{
-         aWriter.addAttribute("key", item.getKey());
+      if( hp.hasBayDoor() != false ){
+         aWriter.addAttribute("bayDoor", Boolean.toString(hp.hasBayDoor()));
       }
    }
 
    @Override
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
-      String id = aReader.getAttribute("id");
-      if( id != null && !id.isEmpty() ){
-         int mwoidx = Integer.parseInt(id);
-         return ItemDB.lookup(mwoidx);
-      }
-      else{
-         return ItemDB.lookup(aReader.getAttribute("key"));
-      }
+      HardPointType type = HardPointType.valueOf(aReader.getAttribute("type"));
+      int numTubes = 0;
+      boolean hasDoors = false;
+
+      String tubes = aReader.getAttribute("tubes");
+      String doors = aReader.getAttribute("bayDoor");
+
+      if( null != tubes && !tubes.isEmpty() )
+         numTubes = Integer.parseInt(tubes);
+      if( null != doors && !doors.isEmpty() )
+         hasDoors = Boolean.parseBoolean(doors);
+      return new HardPoint(type, numTubes, hasDoors);
    }
 
 }

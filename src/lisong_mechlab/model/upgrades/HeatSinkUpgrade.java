@@ -19,13 +19,22 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
+@XStreamAlias("HeatSinkUpgrade")
 public class HeatSinkUpgrade extends Upgrade{
+   @XStreamAsAttribute
    private HeatSink heatSinkType;
-
+   
+   public HeatSinkUpgrade(String aName, String aDescription, int aMwoId, int aAssociatedItem){
+      super(aName, aDescription, aMwoId, aAssociatedItem);
+   }
+   
    public HeatSinkUpgrade(ItemStatsUpgradeType aUpgradeType){
       super(aUpgradeType);
    }

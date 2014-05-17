@@ -20,18 +20,19 @@
 package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.environment.Environment;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
- * This {@link Metric} calculates the heat dissipation for a {@link Loadout}.
+ * This {@link Metric} calculates the heat dissipation for a {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
 public class HeatDissipation implements Metric{
-   private final Loadout loadout;
-   private Environment   environment;
+   private final LoadoutBase<?, ?> loadout;
+   private Environment             environment;
 
-   public HeatDissipation(final Loadout aLoadout, final Environment anEnvironment){
+   public HeatDissipation(final LoadoutBase<?, ?> aLoadout, final Environment anEnvironment){
       loadout = aLoadout;
       environment = anEnvironment;
    }

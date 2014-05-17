@@ -99,7 +99,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
       }
       P_miss = p_miss;
 
-      partHp = loadoutPart.getInternalComponent().getHitpoints();
+      partHp = loadoutPart.getInternalComponent().getHitPoints();
       weaponAlpha = ItemDB.lookup("AC/20 AMMO").getHealth();
       numShots = (int)Math.ceil(partHp / weaponAlpha);
    }
@@ -115,7 +115,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
    public void simulate(){
       state = new HashMap<>();
       int slots = 0;
-      for(Item item : loadoutPart.getItems()){
+      for(Item item : loadoutPart.getItemsAll()){
          if( item instanceof Internal && item != ConfiguredComponent.ENGINE_INTERNAL ){
             continue;
          }

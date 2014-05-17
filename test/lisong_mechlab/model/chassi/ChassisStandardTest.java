@@ -32,12 +32,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Test suite for {@link ChassisIS}.
+ * Test suite for {@link ChassisStandard}.
  * 
  * @author Li Song
  */
 @RunWith(JUnitParamsRunner.class)
-public class ChassisISTest{
+public class ChassisStandardTest{
 
    /**
     * Internal parts list can not be modified.
@@ -45,7 +45,7 @@ public class ChassisISTest{
    @Test(expected = UnsupportedOperationException.class)
    public void getParts_NoMod(){
       // Setup
-      ChassisIS cut = ChassisDB.lookup("Ilya Muromets");
+      ChassisStandard cut = ChassisDB.lookup("Ilya Muromets");
 
       // Execute
       cut.getComponents().add(null);
@@ -53,10 +53,10 @@ public class ChassisISTest{
 
    @Test
    public void testIsHero(){
-      ChassisIS ilya = ChassisDB.lookup("Ilya Muromets");
+      ChassisStandard ilya = ChassisDB.lookup("Ilya Muromets");
       assertEquals(ChassisVariant.HERO, ilya.getVariantType());
 
-      ChassisIS ctf3d = ChassisDB.lookup("CTF-3D");
+      ChassisStandard ctf3d = ChassisDB.lookup("CTF-3D");
       assertEquals(ChassisVariant.NORMAL, ctf3d.getVariantType());
    }
 
@@ -86,7 +86,7 @@ public class ChassisISTest{
 
    @Test
    public void testLoadHeroMech(){
-      ChassisIS cut = ChassisDB.lookup("Ilya Muromets");
+      ChassisStandard cut = ChassisDB.lookup("Ilya Muromets");
 
       assertEquals(140, cut.getEngineMin());
       assertEquals(340, cut.getEngineMax());
@@ -111,12 +111,12 @@ public class ChassisISTest{
          InternalComponent pt = cut.getComponent(Location.Head);
 
          assertEquals(18, pt.getArmorMax());
-         assertEquals(15.0, pt.getHitpoints(), 0.0);
-         assertEquals(6, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
+         assertEquals(15.0, pt.getHitPoints(), 0.0);
+         assertEquals(6, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
          assertEquals(Location.Head, pt.getLocation());
          assertFalse(pt.getLocation().isTwoSided());
          assertEquals(pt.getLocation().toString(), pt.toString());
@@ -127,12 +127,12 @@ public class ChassisISTest{
       {
          InternalComponent pt = cut.getComponent(Location.RightArm);
          assertEquals(44, pt.getArmorMax());
-         assertEquals(22.0, pt.getHitpoints(), 0.0);
-         assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(1, pt.getNumHardpoints(HardPointType.ENERGY));
-         assertEquals(1, pt.getNumHardpoints(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
+         assertEquals(22.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
          assertEquals(Location.RightArm, pt.getLocation());
          assertFalse(pt.getLocation().isTwoSided());
          assertEquals(pt.getLocation().toString(), pt.toString());
@@ -142,12 +142,12 @@ public class ChassisISTest{
       {
          InternalComponent pt = cut.getComponent(Location.LeftArm);
          assertEquals(44, pt.getArmorMax());
-         assertEquals(22.0, pt.getHitpoints(), 0.0);
-         assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
-         assertEquals(1, pt.getNumHardpoints(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
+         assertEquals(22.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
          assertEquals(Location.LeftArm, pt.getLocation());
          assertFalse(pt.getLocation().isTwoSided());
          assertEquals(pt.getLocation().toString(), pt.toString());
@@ -157,12 +157,12 @@ public class ChassisISTest{
       {
          InternalComponent pt = cut.getComponent(Location.RightTorso);
          assertEquals(60, pt.getArmorMax());
-         assertEquals(30.0, pt.getHitpoints(), 0.0);
-         assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(1, pt.getNumHardpoints(HardPointType.ENERGY));
-         assertEquals(1, pt.getNumHardpoints(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
+         assertEquals(30.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
          assertEquals(Location.RightTorso, pt.getLocation());
          assertTrue(pt.getLocation().isTwoSided());
          assertEquals(pt.getLocation().toString(), pt.toString());
@@ -172,12 +172,12 @@ public class ChassisISTest{
       {
          InternalComponent pt = cut.getComponent(Location.LeftTorso);
          assertEquals(60, pt.getArmorMax());
-         assertEquals(30.0, pt.getHitpoints(), 0.0);
-         assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(1, pt.getNumHardpoints(HardPointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
-         assertEquals(1, pt.getNumHardpoints(HardPointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
+         assertEquals(30.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(1, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
          assertEquals(Location.LeftTorso, pt.getLocation());
          assertTrue(pt.getLocation().isTwoSided());
          assertEquals(pt.getLocation().toString(), pt.toString());
@@ -187,12 +187,12 @@ public class ChassisISTest{
       {
          InternalComponent pt = cut.getComponent(Location.CenterTorso);
          assertEquals(88, pt.getArmorMax());
-         assertEquals(44.0, pt.getHitpoints(), 0.0);
-         assertEquals(12, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
+         assertEquals(44.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
          assertEquals(Location.CenterTorso, pt.getLocation());
          assertTrue(pt.getLocation().isTwoSided());
          assertEquals(pt.getLocation().toString(), pt.toString());
@@ -202,12 +202,12 @@ public class ChassisISTest{
       {
          InternalComponent pt = cut.getComponent(Location.RightLeg);
          assertEquals(60, pt.getArmorMax());
-         assertEquals(30.0, pt.getHitpoints(), 0.0);
-         assertEquals(6, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
+         assertEquals(30.0, pt.getHitPoints(), 0.0);
+         assertEquals(6, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
          assertEquals(Location.RightLeg, pt.getLocation());
          assertFalse(pt.getLocation().isTwoSided());
          assertEquals(pt.getLocation().toString(), pt.toString());
@@ -217,12 +217,12 @@ public class ChassisISTest{
       {
          InternalComponent pt = cut.getComponent(Location.LeftLeg);
          assertEquals(60, pt.getArmorMax());
-         assertEquals(30.0, pt.getHitpoints(), 0.0);
-         assertEquals(6, pt.getNumCriticalslots());
-         assertEquals(0, pt.getNumHardpoints(HardPointType.ENERGY));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.AMS));
-         assertEquals(0, pt.getNumHardpoints(HardPointType.MISSILE));
+         assertEquals(30.0, pt.getHitPoints(), 0.0);
+         assertEquals(6, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
          assertEquals(Location.LeftLeg, pt.getLocation());
          assertFalse(pt.getLocation().isTwoSided());
          assertEquals(pt.getLocation().toString(), pt.toString());
@@ -232,7 +232,7 @@ public class ChassisISTest{
 
    @Test
    public void testLoadHasECM(){
-      ChassisIS cut = ChassisDB.lookup("AS7-D-DC");
+      ChassisStandard cut = ChassisDB.lookup("AS7-D-DC");
 
       assertEquals(200, cut.getEngineMin());
       assertEquals(360, cut.getEngineMax());
@@ -258,16 +258,16 @@ public class ChassisISTest{
       assertEquals(4, cut.getComponent(Location.RightLeg).getInternalItems().size());
       assertEquals(4, cut.getComponent(Location.LeftLeg).getInternalItems().size());
 
-      assertEquals(1, cut.getComponent(Location.RightArm).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(1, cut.getComponent(Location.LeftArm).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(1, cut.getComponent(Location.LeftArm).getNumHardpoints(HardPointType.AMS));
-      assertEquals(3, cut.getComponent(Location.LeftTorso).getNumHardpoints(HardPointType.MISSILE));
-      assertEquals(2, cut.getComponent(Location.RightTorso).getNumHardpoints(HardPointType.BALLISTIC));
+      assertEquals(1, cut.getComponent(Location.RightArm).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(1, cut.getComponent(Location.LeftArm).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(1, cut.getComponent(Location.LeftArm).getHardPointCount(HardPointType.AMS));
+      assertEquals(3, cut.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.MISSILE));
+      assertEquals(2, cut.getComponent(Location.RightTorso).getHardPointCount(HardPointType.BALLISTIC));
    }
 
    @Test
    public void testLoadHasJJ(){
-      ChassisIS cut = ChassisDB.lookup("Jenner JR7-F");
+      ChassisStandard cut = ChassisDB.lookup("Jenner JR7-F");
 
       assertEquals(70, cut.getEngineMin()); // However no such engine exists :)
       assertEquals(300, cut.getEngineMax());
@@ -293,16 +293,16 @@ public class ChassisISTest{
       assertEquals(4, cut.getComponent(Location.RightLeg).getInternalItems().size());
       assertEquals(4, cut.getComponent(Location.LeftLeg).getInternalItems().size());
 
-      assertEquals(3, cut.getComponent(Location.RightArm).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(3, cut.getComponent(Location.LeftArm).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(1, cut.getComponent(Location.LeftTorso).getNumHardpoints(HardPointType.AMS));
+      assertEquals(3, cut.getComponent(Location.RightArm).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(3, cut.getComponent(Location.LeftArm).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(1, cut.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.AMS));
    }
 
    @Test
    public void testIsAllowed_JJ(){
-      ChassisIS jj55tons = ChassisDB.lookup("WVR-6R");
-      ChassisIS jj70tons = ChassisDB.lookup("QKD-4G");
-      ChassisIS nojj55tons = ChassisDB.lookup("KTO-18");
+      ChassisStandard jj55tons = ChassisDB.lookup("WVR-6R");
+      ChassisStandard jj70tons = ChassisDB.lookup("QKD-4G");
+      ChassisStandard nojj55tons = ChassisDB.lookup("KTO-18");
 
       Item classIV = ItemDB.lookup("JUMP JETS - CLASS IV");
       Item classIII = ItemDB.lookup("JUMP JETS - CLASS III");
@@ -317,7 +317,7 @@ public class ChassisISTest{
 
    @Test
    public void testIsAllowed_Engine(){
-      ChassisIS cut = ChassisDB.lookup("ILYA MUROMETS");
+      ChassisStandard cut = ChassisDB.lookup("ILYA MUROMETS");
 
       Item tooSmall = ItemDB.lookup("STD ENGINE 135");
       Item tooLarge = ItemDB.lookup("STD ENGINE 345");
@@ -332,7 +332,7 @@ public class ChassisISTest{
 
    @Test
    public void testIsAllowed_Hardpoints(){
-      ChassisIS cut = ChassisDB.lookup("ILYA MUROMETS");
+      ChassisStandard cut = ChassisDB.lookup("ILYA MUROMETS");
 
       Item lrm20 = ItemDB.lookup("LRM 20");
       Item ac20 = ItemDB.lookup("AC/20");

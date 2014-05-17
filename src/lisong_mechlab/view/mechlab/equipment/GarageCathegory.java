@@ -27,11 +27,12 @@ import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.util.MessageXBar;
 
-class GarageCathegory extends FilterTreeCathegory<Loadout>{
+class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?, ?>>{
    private MechGarage         garage = null;
    private final ChassisClass chassiClass;
 
@@ -61,15 +62,15 @@ class GarageCathegory extends FilterTreeCathegory<Loadout>{
    }
 
    @Override
-   protected boolean filter(Loadout aLoadout){
-      ChassisBase<?> chassi = aLoadout.getChassis();
+   protected boolean filter(LoadoutBase<?, ?> aLoadout){
+      ChassisBase chassi = aLoadout.getChassis();
       return aLoadout.getName().toLowerCase().contains(getFilterString()) || chassi.getName().toLowerCase().contains(getFilterString());
    }
 
    private void garageChanged(){
       children.clear();
       if( garage != null ){
-         for(Loadout loadout : garage.getMechs()){
+         for(LoadoutBase<?, ?> loadout : garage.getMechs()){
             if( loadout.getChassis().getChassiClass() == chassiClass )
                children.add(loadout);
          }

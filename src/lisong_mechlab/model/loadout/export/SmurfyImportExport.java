@@ -38,7 +38,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.OperationStack;
@@ -63,7 +64,7 @@ public class SmurfyImportExport{
     * @param aApiKey
     *           The API key to import or export for.
     * @param aCoder
-    *           A {@link Base64LoadoutCoder} to use for encoding and decoding {@link Loadout}s.
+    *           A {@link Base64LoadoutCoder} to use for encoding and decoding {@link LoadoutStandard}s.
     */
    public SmurfyImportExport(String aApiKey, Base64LoadoutCoder aCoder){
       if( aApiKey != null )
@@ -115,8 +116,8 @@ public class SmurfyImportExport{
 
    @SuppressWarnings("resource")
    // The resource is auto-closed with new try-resource statement
-   public List<Loadout> listMechBay() throws DecodingException, IOException{
-      List<Loadout> ans = new ArrayList<>();
+   public List<LoadoutStandard> listMechBay() throws DecodingException, IOException{
+      List<LoadoutStandard> ans = new ArrayList<>();
 
       HttpURLConnection connection = connect(userMechbayUrl);
       connection.setRequestMethod("GET");
@@ -142,7 +143,7 @@ public class SmurfyImportExport{
                if( name == null )
                   throw new IOException("Found lsml without name!");
                String lsml = lsmlMatcher.group(1);
-               Loadout loadout = coder.parse(lsml);
+               LoadoutStandard loadout = coder.parse(lsml);
                stack.pushAndApply(new OpRename(loadout, null, name));
                ans.add(loadout);
                name = null;
@@ -154,7 +155,7 @@ public class SmurfyImportExport{
 
    @SuppressWarnings("resource")
    // It is closed!
-   public String sendLoadout(Loadout aLoadout) throws IOException{
+   public String sendLoadout(LoadoutBase<?, ?> aLoadout) throws IOException{
       int mechId = aLoadout.getChassis().getMwoId();
       URL loadoutUploadUrlXml = new URL("https://mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts.xml");
 

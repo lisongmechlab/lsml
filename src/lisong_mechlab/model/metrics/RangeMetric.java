@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.WeaponRanges;
 
 /**
@@ -28,11 +28,11 @@ import lisong_mechlab.util.WeaponRanges;
  * @author Li Song
  */
 public abstract class RangeMetric implements Metric{
-   protected double        range      = -1;
-   protected boolean       fixedRange = false;
-   protected final Loadout loadout;
+   protected double                  range      = -1;
+   protected boolean                 fixedRange = false;
+   protected final LoadoutBase<?, ?> loadout;
 
-   public RangeMetric(Loadout aLoadout){
+   public RangeMetric(LoadoutBase<?, ?> aLoadout){
       loadout = aLoadout;
    }
 

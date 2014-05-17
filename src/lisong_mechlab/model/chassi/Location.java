@@ -19,6 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+/**
+ * Enumerates all possible locations for components.
+ * 
+ * @author Li Song
+ */
 public enum Location{
    Head("Head", "head", "HD"),
    LeftArm("Left Arm", "left_arm", "LA"),

@@ -19,10 +19,14 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
+import java.io.IOException;
+
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.chassi.ChassisStandard;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
@@ -39,22 +43,27 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+/**
+ * This {@link Converter} is used to load {@link LoadoutStandard}s from xml. It is not used for {@link LoadoutOmniMech}s.
+ * 
+ * @author Li Song
+ */
 public class LoadoutConverter implements Converter{
 
    private final MessageXBar xBar;
 
-   public LoadoutConverter(MessageXBar anXBar){
-      xBar = anXBar;
+   public LoadoutConverter(MessageXBar aXBar){
+      xBar = aXBar;
    }
 
    @Override
    public boolean canConvert(Class aClass){
-      return Loadout.class.isAssignableFrom(aClass);
+      return LoadoutStandard.class.isAssignableFrom(aClass);
    }
 
    @Override
    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      Loadout loadout = (Loadout)anObject;
+      LoadoutStandard loadout = (LoadoutStandard)anObject;
 
       aWriter.addAttribute("name", loadout.getName());
       aWriter.addAttribute("chassi", loadout.getChassis().getNameShort());
@@ -78,11 +87,13 @@ public class LoadoutConverter implements Converter{
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
       String chassiVariation = aReader.getAttribute("chassi");
       String name = aReader.getAttribute("name");
-      ChassisIS chassi = ChassisDB.lookup(chassiVariation);
+      ChassisBase chassi = ChassisDB.lookup(chassiVariation);
+      if( !(chassi instanceof ChassisStandard) )
+         throw new RuntimeException("Error parsing loadout: " + name + " expected standard mech but found an omni mech chassis.");
 
       OperationStack stack = new OperationStack(0);
 
-      Loadout loadout = new Loadout(chassi, xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi, xBar);
       stack.pushAndApply(new OpRename(loadout, xBar, name));
 
       while( aReader.hasMoreChildren() ){

@@ -22,15 +22,16 @@ package lisong_mechlab.model.metrics;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
- * This {@link Metric} calculates the maximal DPS a {@link Loadout} can output.
+ * This {@link Metric} calculates the maximal DPS a {@link LoadoutStandard} can output.
  * 
  * @author Li Song
  */
 public class MaxDPS extends RangeMetric{
-   public MaxDPS(Loadout aLoadout){
+   public MaxDPS(LoadoutBase<?, ?> aLoadout){
       super(aLoadout);
    }
 

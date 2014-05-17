@@ -19,6 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 /**
@@ -26,9 +29,18 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
  * 
  * @author Li Song
  */
+@XStreamAlias("ArmorUpgrade")
 public class ArmorUpgrade extends Upgrade{
+   @XStreamAsAttribute
    private final int    slots;
+   @XStreamAsAttribute
    private final double armorPerTon;
+   
+   public ArmorUpgrade(String aName, String aDescription, int aMwoId, int aAssociatedItem, int aExtraSlots, double aArmorPerTon){
+      super(aName, aDescription, aMwoId, aAssociatedItem);
+      slots = aExtraSlots;
+      armorPerTon = aArmorPerTon;
+   }
 
    public ArmorUpgrade(ItemStatsUpgradeType aUpgradeType){
       super(aUpgradeType);

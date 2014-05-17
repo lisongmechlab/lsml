@@ -30,17 +30,18 @@ import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
- * This {@link Metric} calculates the maximal DPS that a {@link Loadout} can sustain indefinitely.
+ * This {@link Metric} calculates the maximal DPS that a {@link LoadoutStandard} can sustain indefinitely.
  * 
  * @author Li Song
  */
 public class MaxSustainedDPS extends RangeMetric{
    private final HeatDissipation dissipation;
 
-   public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation){
+   public MaxSustainedDPS(final LoadoutBase<?, ?> aLoadout, final HeatDissipation aHeatDissipation){
       super(aLoadout);
       dissipation = aHeatDissipation;
    }

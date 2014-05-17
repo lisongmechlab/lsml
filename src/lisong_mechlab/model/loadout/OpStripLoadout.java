@@ -29,12 +29,12 @@ import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 
 /**
- * This operation removes all armor, upgrades and items from a {@link Loadout}.
+ * This operation removes all armor, upgrades and items from a {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
 public class OpStripLoadout extends OpLoadoutBase{
-   public OpStripLoadout(Loadout aLoadout, MessageXBar aXBar){
+   public OpStripLoadout(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
       super(aLoadout, aXBar, "strip mech");
 
       for(ConfiguredComponent component : loadout.getComponents()){

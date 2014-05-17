@@ -43,17 +43,17 @@ import org.mockito.Mockito;
 
 public class InternalPartTest{
 
-   ChassisIS chassi = ChassisDB.lookup("TDR-5S");
+   ChassisStandard chassi = ChassisDB.lookup("TDR-5S");
 
    @Test(expected = UnsupportedOperationException.class)
    public void testGetHardpoints_Immutable() throws Exception{
       InternalComponent cut = chassi.getComponent(Location.CenterTorso);
-      cut.getHardpoints().add(new HardPoint(HardPointType.ENERGY));
+      cut.getHardPoints().add(new HardPoint(HardPointType.ENERGY));
    }
 
    @Test
    public void testGetHardpoints() throws Exception{
-      Collection<HardPoint> hardpoints = chassi.getComponent(Location.RightTorso).getHardpoints();
+      Collection<HardPoint> hardpoints = chassi.getComponent(Location.RightTorso).getHardPoints();
       assertEquals(3, hardpoints.size());
 
       List<HardPoint> hps = new ArrayList<>(hardpoints);
@@ -108,7 +108,7 @@ public class InternalPartTest{
             assertEquals(18, cut.getArmorMax());
          }
          else{
-            assertEquals((int)cut.getHitpoints() * 2, cut.getArmorMax());
+            assertEquals((int)cut.getHitPoints() * 2, cut.getArmorMax());
          }
       }
    }
@@ -119,21 +119,21 @@ public class InternalPartTest{
          InternalComponent cut = chassi.getComponent(part);
 
          if( part == Location.Head || part == Location.RightLeg || part == Location.LeftLeg ){
-            assertEquals(6, cut.getNumCriticalslots());
+            assertEquals(6, cut.getSlots());
          }
          else{
-            assertEquals(12, cut.getNumCriticalslots());
+            assertEquals(12, cut.getSlots());
          }
       }
    }
 
    @Test
    public void testGetNumHardpoints() throws Exception{
-      assertEquals(3, chassi.getComponent(Location.LeftTorso).getNumHardpoints(HardPointType.ENERGY));
-      assertEquals(0, chassi.getComponent(Location.LeftTorso).getNumHardpoints(HardPointType.BALLISTIC));
+      assertEquals(3, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(0, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.BALLISTIC));
 
-      assertEquals(1, chassi.getComponent(Location.RightTorso).getNumHardpoints(HardPointType.AMS));
-      assertEquals(2, chassi.getComponent(Location.RightTorso).getNumHardpoints(HardPointType.MISSILE));
+      assertEquals(1, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.AMS));
+      assertEquals(2, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.MISSILE));
    }
 
    @Test
@@ -179,28 +179,28 @@ public class InternalPartTest{
 
          switch( part ){
             case RightArm:
-               assertEquals(20, cut.getHitpoints(), 0.0);
+               assertEquals(20, cut.getHitPoints(), 0.0);
                break;
             case RightTorso:
-               assertEquals(30, cut.getHitpoints(), 0.0);
+               assertEquals(30, cut.getHitPoints(), 0.0);
                break;
             case RightLeg:
-               assertEquals(30, cut.getHitpoints(), 0.0);
+               assertEquals(30, cut.getHitPoints(), 0.0);
                break;
             case Head:
-               assertEquals(15, cut.getHitpoints(), 0.0);
+               assertEquals(15, cut.getHitPoints(), 0.0);
                break;
             case CenterTorso:
-               assertEquals(42, cut.getHitpoints(), 0.0);
+               assertEquals(42, cut.getHitPoints(), 0.0);
                break;
             case LeftTorso:
-               assertEquals(30, cut.getHitpoints(), 0.0);
+               assertEquals(30, cut.getHitPoints(), 0.0);
                break;
             case LeftLeg:
-               assertEquals(30, cut.getHitpoints(), 0.0);
+               assertEquals(30, cut.getHitPoints(), 0.0);
                break;
             case LeftArm:
-               assertEquals(20, cut.getHitpoints(), 0.0);
+               assertEquals(20, cut.getHitPoints(), 0.0);
                break;
             default:
                break;

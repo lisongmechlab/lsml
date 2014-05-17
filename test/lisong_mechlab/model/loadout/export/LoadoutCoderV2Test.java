@@ -29,11 +29,11 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
@@ -66,17 +66,17 @@ public class LoadoutCoderV2Test{
     */
    @Test
    public void testEncodeAllStock() throws Exception{
-      List<ChassisIS> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisStandard> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
       MessageXBar anXBar = new MessageXBar();
-      for(ChassisIS chassi : chassii){
-         Loadout loadout = new Loadout(chassi.getName(), anXBar);
+      for(ChassisStandard chassi : chassii){
+         LoadoutStandard loadout = new LoadoutStandard(chassi.getName(), anXBar);
 
          byte[] result = cut.encode(loadout);
-         Loadout decoded = cut.decode(result);
+         LoadoutStandard decoded = cut.decode(result);
 
          // Name is not encoded
          OperationStack stack = new OperationStack(0);
@@ -105,10 +105,10 @@ public class LoadoutCoderV2Test{
          Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
          Matcher m = pat.matcher(line);
          m.matches();
-         ChassisIS chassi = ChassisDB.lookup(m.group(1));
+         ChassisStandard chassi = ChassisDB.lookup(m.group(1));
          String lsml = m.group(2);
-         Loadout reference = new Loadout(chassi.getName(), xBar);
-         Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
+         LoadoutStandard reference = new LoadoutStandard(chassi.getName(), xBar);
+         LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
          // Name is not encoded
          OperationStack stack = new OperationStack(0);
@@ -131,9 +131,9 @@ public class LoadoutCoderV2Test{
    public void testDecodeHeatsinksBeforeEngine() throws DecodingException{
       Base64 base64 = new Base64();
 
-      Loadout l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
+      LoadoutStandard l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
 
       assertTrue(l.getFreeMass() < 0.005);
-      assertEquals(3, l.getComponent(Location.CenterTorso).getNumEngineHeatsinks());
+      assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
    }
 }

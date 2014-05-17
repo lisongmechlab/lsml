@@ -20,7 +20,6 @@
 package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.OmniPod;
-import lisong_mechlab.model.loadout.Loadout;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 
 /**
@@ -31,16 +30,24 @@ import lisong_mechlab.model.loadout.LoadoutOmniMech;
 public class ConfiguredOmniPod extends ConfiguredComponent{
 
    /**
-    * @param aConfiguredOmnipod
-    * @param aLoadout
+    * @param aOmniPod
+    *           The internal omnipod for this component.
     */
-   public ConfiguredOmniPod(ConfiguredOmniPod aConfiguredOmnipod, Loadout aLoadout){
+   public ConfiguredOmniPod(OmniPod aOmniPod){
+      super(aOmniPod, true);
+   }
+
+   /**
+    * @param aConfiguredOmnipod
+    */
+   public ConfiguredOmniPod(ConfiguredOmniPod aConfiguredOmnipod){
       super(aConfiguredOmnipod);
       // TODO Auto-generated constructor stub
    }
 
-   public OmniPod getInternalOmniPod(){
-      return (OmniPod)getInternalComponent();
+   @Override
+   public OmniPod getInternalComponent(){
+      return (OmniPod)super.getInternalComponent();
    }
 
 }

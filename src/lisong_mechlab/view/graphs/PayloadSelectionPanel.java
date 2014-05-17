@@ -39,9 +39,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
@@ -187,42 +189,57 @@ public class PayloadSelectionPanel extends JPanel{
    }
 
    private Collection<PayloadGraphPanel.Entry> calculateUniqueSpeedChassis(){
-      Collection<Collection<ChassisIS>> temp = new ArrayList<>();
+      Collection<Collection<ChassisBase>> temp = new ArrayList<>();
 
-      List<ChassisIS> all = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisBase> all = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       all.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       all.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       all.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
-      Collections.sort(all, new Comparator<ChassisIS>(){
+      Collections.sort(all, new Comparator<ChassisBase>(){
          @Override
-         public int compare(ChassisIS aO1, ChassisIS aO2){
+         public int compare(ChassisBase aO1, ChassisBase aO2){
             return Integer.compare(aO1.getMassMax(), aO2.getMassMax());
          }
       });
 
-      for(ChassisIS chassi : all){
-         if( chassi.getVariantType().isVariation() )
+      for(ChassisBase currentChassis : all){
+         if( currentChassis.getVariantType().isVariation() )
             continue;
          boolean skip = false;
-         for(Collection<ChassisIS> chassiGroup : temp){
-            ChassisIS aChassi = chassiGroup.iterator().next();
-            if( aChassi.getMassMax() == chassi.getMassMax() && aChassi.getEngineMin() == chassi.getEngineMin()
-                && aChassi.getEngineMax() == chassi.getEngineMax()
-                && aChassi.getMovementProfile().getMaxMovementSpeed() == chassi.getMovementProfile().getMaxMovementSpeed()
-                && aChassi.isSameSeries(chassi) ){
-               chassiGroup.add(chassi);
-               skip = true;
-               break;
+         for(Collection<ChassisBase> chassiGroup : temp){
+            ChassisBase aChassi = chassiGroup.iterator().next();
+            if( currentChassis instanceof ChassisStandard && aChassi instanceof ChassisStandard ){
+               ChassisStandard currentStdChassis = (ChassisStandard)currentChassis;
+               ChassisStandard stdChassis = (ChassisStandard)aChassi;
+               if( stdChassis.getMassMax() == currentStdChassis.getMassMax() && stdChassis.getEngineMin() == currentStdChassis.getEngineMin()
+                   && stdChassis.getEngineMax() == currentStdChassis.getEngineMax()
+                   && stdChassis.getMovementProfile().getMaxMovementSpeed() == currentStdChassis.getMovementProfile().getMaxMovementSpeed()
+                   && stdChassis.isSameSeries(currentStdChassis) ){
+                  chassiGroup.add(currentStdChassis);
+                  skip = true;
+                  break;
+               }
+            }
+            else if( currentChassis instanceof ChassisOmniMech && aChassi instanceof ChassisOmniMech ){
+               ChassisOmniMech currentOmniChassis = (ChassisOmniMech)currentChassis;
+               ChassisOmniMech omniChassis = (ChassisOmniMech)aChassi;
+               if( omniChassis.getMassMax() == currentOmniChassis.getMassMax() && omniChassis.getEngine() == currentOmniChassis.getEngine()
+                   && omniChassis.getMovementProfile().getMaxMovementSpeed() == currentOmniChassis.getMovementProfile().getMaxMovementSpeed()
+                   && omniChassis.isSameSeries(currentOmniChassis) ){
+                  chassiGroup.add(currentOmniChassis);
+                  skip = true;
+                  break;
+               }
             }
          }
          if( !skip ){
-            temp.add(new ArrayList<ChassisIS>(Arrays.asList(chassi)));
+            temp.add(new ArrayList<ChassisBase>(Arrays.asList(currentChassis)));
          }
       }
 
       Collection<PayloadGraphPanel.Entry> ans = new ArrayList<>();
-      for(Collection<ChassisIS> chassiGroup : temp){
+      for(Collection<ChassisBase> chassiGroup : temp){
          ans.add(new PayloadGraphPanel.Entry(chassiGroup));
       }
 

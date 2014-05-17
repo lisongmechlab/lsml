@@ -53,7 +53,7 @@ import org.mockito.Spy;
 
 import com.thoughtworks.xstream.XStream;
 
-public class LoadoutTest{
+public class LoadoutStandardTest{
    @Spy
    MessageXBar    xBar;
 
@@ -67,37 +67,37 @@ public class LoadoutTest{
 
    @Test
    public void testGetJumpJetCount_noJJCapability() throws Exception{
-      Loadout cut = new Loadout("HBK-4J", xBar);
+      LoadoutStandard cut = new LoadoutStandard("HBK-4J", xBar);
       assertEquals(0, cut.getJumpJetCount());
    }
 
    @Test
    public void testGetJumpJetCount_noJJEquipped() throws Exception{
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       assertEquals(0, cut.getJumpJetCount());
    }
 
    @Test
    public void testGetJumpJetCount() throws Exception{
-      Loadout cut = new Loadout("SDR-5D", xBar);
+      LoadoutStandard cut = new LoadoutStandard("SDR-5D", xBar);
       assertEquals(8, cut.getJumpJetCount()); // 8 stock
    }
 
    @Test
    public void testGetJumpJetType_noJJCapability() throws Exception{
-      Loadout cut = new Loadout("HBK-4J", xBar);
+      LoadoutStandard cut = new LoadoutStandard("HBK-4J", xBar);
       assertNull(cut.getJumpJetType());
    }
 
    @Test
    public void testGetJumpJetType_noJJEquipped() throws Exception{
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       assertNull(cut.getJumpJetType());
    }
 
    @Test
    public void testGetJumpJetType() throws Exception{
-      Loadout cut = new Loadout("SDR-5D", xBar);
+      LoadoutStandard cut = new LoadoutStandard("SDR-5D", xBar);
       assertSame(ItemDB.lookup("JUMP JETS - CLASS V"), cut.getJumpJetType());
    }
 
@@ -108,16 +108,16 @@ public class LoadoutTest{
    public void testUnMarshalDhsBeforeEngine(){
       String xml = "<?xml version=\"1.0\" ?><loadout name=\"AS7-BH\" chassi=\"AS7-BH\"><upgrades version=\"2\"><armor>2810</armor><structure>3100</structure><guidance>3051</guidance><heatsinks>3002</heatsinks></upgrades><efficiencies><speedTweak>false</speedTweak><coolRun>false</coolRun><heatContainment>false</heatContainment><anchorTurn>false</anchorTurn><doubleBasics>false</doubleBasics><fastfire>false</fastfire></efficiencies><component part=\"Head\" armor=\"0\" /><component part=\"LeftArm\" armor=\"0\" /><component part=\"LeftLeg\" armor=\"0\" /><component part=\"LeftTorso\" armor=\"0/0\" /><component part=\"CenterTorso\" armor=\"0/0\"><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3278</item></component><component part=\"RightTorso\" armor=\"0/0\" /><component part=\"RightLeg\" armor=\"0\" /><component part=\"RightArm\" armor=\"0\" /></loadout>";
 
-      XStream stream = Loadout.loadoutXstream(xBar);
-      Loadout loadout = (Loadout)stream.fromXML(xml);
+      XStream stream = LoadoutStandard.loadoutXstream(xBar);
+      LoadoutStandard loadout = (LoadoutStandard)stream.fromXML(xml);
 
-      assertEquals(6, loadout.getComponent(Location.CenterTorso).getNumEngineHeatsinks());
+      assertEquals(6, loadout.getComponent(Location.CenterTorso).getEngineHeatsinks());
    }
 
    @Test
    public void testCanEquip_NoInternals() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("LCT-3M"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("LCT-3M"), xBar);
 
       // Execute + Verify
       assertFalse(cut.canEquip(ConfiguredComponent.ENGINE_INTERNAL));
@@ -126,7 +126,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_TooHeavy() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("LCT-3M"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("LCT-3M"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.CenterTorso), ItemDB.lookup("STD ENGINE 190")));
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.RightArm), ItemDB.lookup("PPC")));
@@ -139,7 +139,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_NotSupportedByChassi() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("LCT-3M"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("LCT-3M"), xBar);
 
       // Execute + Verify
       assertFalse(cut.canEquip(ItemDB.ECM));
@@ -148,7 +148,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_CompatibleUpgrades() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("LCT-3M"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("LCT-3M"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
 
@@ -159,7 +159,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_NotCompatibleUpgrades() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("LCT-3M"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("LCT-3M"), xBar);
 
       // Execute + Verify
       assertFalse(cut.canEquip(ItemDB.DHS));
@@ -168,7 +168,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_TooFewSlots() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("LCT-3M"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("LCT-3M"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpSetArmorType(null, cut, UpgradeDB.FERRO_FIBROUS_ARMOR));
@@ -189,7 +189,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_JJ() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       Item jj = ItemDB.lookup("JUMP JETS - CLASS V");
 
       // Execute + Verify
@@ -199,7 +199,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_TooManyJJ() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       OperationStack stack = new OperationStack(0);
       Item jj = ItemDB.lookup("JUMP JETS - CLASS V");
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.RightTorso), jj));
@@ -223,7 +223,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_TooManyEngine() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 100")));
 
@@ -234,7 +234,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_XLEngineNoSpaceLeftTorso() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.LeftTorso), ItemDB.DHS));
@@ -249,7 +249,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_XLEngineNoSpaceRightTorso() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.RightTorso), ItemDB.DHS));
@@ -264,7 +264,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_XLEngineNoSpaceCentreTorso() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.CenterTorso), ItemDB.DHS));
@@ -276,7 +276,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_XLEngine12SlotsFree() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpSetStructureType(null, cut, UpgradeDB.ENDO_STEEL_STRUCTURE));
@@ -295,7 +295,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_XLEngine11SlotsFree() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpSetStructureType(null, cut, UpgradeDB.ENDO_STEEL_STRUCTURE));
@@ -314,7 +314,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_NoHardpoints() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5V"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5V"), xBar);
 
       // Execute + Verify
       assertFalse(cut.canEquip(ItemDB.ECM));
@@ -323,7 +323,7 @@ public class LoadoutTest{
    @Test
    public void testCanEquip_NotEnoughHardpoints() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("SDR-5D"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("SDR-5D"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.LeftTorso), ItemDB.ECM));
 
@@ -334,7 +334,7 @@ public class LoadoutTest{
    @Test
    public void testGetCandidateLocationsForItem_AlreadyHasEngine() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.CenterTorso), ItemDB.lookup("STD ENGINE 300")));
       assertTrue(cut.getNumCriticalSlotsFree() > 10);
@@ -353,7 +353,7 @@ public class LoadoutTest{
    @Test
    public void testGetCandidateLocationsForItem_MoveHardpoint() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("CTF-IM"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("CTF-IM"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.RightTorso), ItemDB.lookup("AC/10")));
       assertTrue(cut.getNumCriticalSlotsFree() > 20);
@@ -373,7 +373,7 @@ public class LoadoutTest{
    @Test
    public void testGetCandidateLocationsForItem_SizeLimit() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("CTF-IM"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("CTF-IM"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
       assertTrue(cut.getNumCriticalSlotsFree() > 20);
@@ -397,7 +397,7 @@ public class LoadoutTest{
    @Test
    public void testGetCandidateLocationsForItem_NoFreeHardpoints() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("CTF-IM"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("CTF-IM"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.RightTorso), ItemDB.lookup("AC/2")));
       stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.RightArm), ItemDB.lookup("AC/2")));
@@ -413,7 +413,7 @@ public class LoadoutTest{
    @Test
    public void testGetCandidateLocationsForItem_NotGloballyFeasible_TooHeavy() throws Exception{
       // Setup
-      Loadout cut = new Loadout("CTF-IM", xBar);
+      LoadoutStandard cut = new LoadoutStandard("CTF-IM", xBar);
       assertTrue(cut.getNumCriticalSlotsFree() > 0);
       assertTrue(cut.getFreeMass() < 0.1);
 
@@ -424,7 +424,7 @@ public class LoadoutTest{
    @Test
    public void testGetCandidateLocationsForItem_NotGloballyFeasible_TooFewSlots() throws Exception{
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpSetStructureType(null, cut, UpgradeDB.ENDO_STEEL_STRUCTURE));
@@ -452,7 +452,7 @@ public class LoadoutTest{
     */
    @Test
    public void testLoadout_empty() throws Exception{
-      Loadout cut = new Loadout(ChassisDB.lookup("HBK-4J"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("HBK-4J"), xBar);
 
       assertEquals(0, cut.getArmor());
       assertEquals(ChassisDB.lookup("hbk-4j"), cut.getChassis());
@@ -473,8 +473,8 @@ public class LoadoutTest{
    @Test
    public void testLoadout_CopyCtor() throws Exception{
       OperationStack stack = new OperationStack(0);
-      Loadout cut = new Loadout("HBK-4J", xBar);
-      Loadout copy = new Loadout(cut, xBar);
+      LoadoutStandard cut = new LoadoutStandard("HBK-4J", xBar);
+      LoadoutStandard copy = new LoadoutStandard(cut, xBar);
 
       // A copy must be equal :)
       assertEquals(cut, copy);
@@ -511,7 +511,7 @@ public class LoadoutTest{
    @Test
    public void testFreeMass(){
       // Setup
-      Loadout cut = new Loadout(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
 
       // Verify
       assertEquals(90, cut.getFreeMass(), 0.0);

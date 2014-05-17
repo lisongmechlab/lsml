@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
@@ -31,23 +30,20 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class OpAddItem extends OpItemBase{
-   private Item item;
-
    /**
     * Creates a new operation.
     * 
     * @param aXBar
     *           The {@link MessageXBar} to send messages on when items are added.
-    * @param aLoadoutPart
+    * @param aLoadout
+    *           The {@link LoadoutBase} to remove the item from.
+    * @param aComponent
     *           The {@link ConfiguredComponent} to add to.
     * @param aItem
     *           The {@link Item} to add.
     */
-   public OpAddItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, Item aItem){
-      super(aXBar, aLoadout, aLoadoutPart);
-      item = aItem;
-      if( item instanceof Internal )
-         throw new IllegalArgumentException("Can't add internals to a loadout!");
+   public OpAddItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aComponent, Item aItem){
+      super(aXBar, aLoadout, aComponent, aItem);
    }
 
    @Override
@@ -80,7 +76,7 @@ public class OpAddItem extends OpItemBase{
    public void apply(){
       if( !loadout.canEquip(item) )
          throw new IllegalArgumentException("Can't add " + item + "!");
-      if( !component.canEquip(item) )
+      if( !component.canAddItem(item) )
          throw new IllegalArgumentException("Can't add " + item + "!");
       addItem(item);
    }

@@ -37,22 +37,22 @@ import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This operation automatically places an item at a suitable location on the {@link Loadout}.
+ * This operation automatically places an item at a suitable location on the {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
 public class OpAutoAddItem extends OpLoadoutBase{
    private class Node implements Comparable<Node>{
-      final Loadout  data;
-      final Location source;
-      final Location target;
-      final Item     item;
-      final Node     parent;
-      final int      score;
+      final LoadoutBase<?, ?> data;
+      final Location          source;
+      final Location          target;
+      final Item              item;
+      final Node              parent;
+      final int               score;
 
-      final Item     targetItem;
+      final Item              targetItem;
 
-      Node(Loadout aRoot, Item aItem){
+      Node(LoadoutBase<?, ?> aRoot, Item aItem){
          parent = null;
          item = aItem;
          source = null;
@@ -63,7 +63,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
       }
 
       Node(Node aParent, Location aSource, Location aTarget, Item aItem){
-         data = new Loadout(aParent.data, null);
+         data = aParent.data.clone(null);
          parent = aParent;
          source = aSource;
          target = aTarget;
@@ -82,7 +82,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
        * @param aTargetItem
        */
       Node(Node aParent, Location aSourcePart, Location aTargetPart, Item aSourceItem, Item aTargetItem){
-         data = new Loadout(aParent.data, null);
+         data = aParent.data.clone(null);
          parent = aParent;
          source = aSourcePart;
          target = aTargetPart;
@@ -111,7 +111,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
       private int score(){
          int maxFree = 0;
          for(Location part : validParts){
-            maxFree = Math.max(maxFree, data.getComponent(part).getNumCriticalSlotsFree()
+            maxFree = Math.max(maxFree, data.getComponent(part).getSlotsFree()
                                         * (data.getComponent(part).getInternalComponent().isAllowed(item) ? 1 : 0));
          }
          return maxFree;
@@ -123,7 +123,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
    private final List<Location> partTraversalOrder;
    private final OperationStack stack      = new OperationStack(0);
 
-   public OpAutoAddItem(Loadout aLoadout, MessageXBar anXBar, Item anItem){
+   public OpAutoAddItem(LoadoutBase<?, ?> aLoadout, MessageXBar anXBar, Item anItem){
       super(aLoadout, anXBar, "auto place item");
       itemToPlace = anItem;
       for(ConfiguredComponent part : aLoadout.getCandidateLocationsForItem(itemToPlace)){
@@ -133,7 +133,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
 
       // If it can go into the engine, put it there.
       ConfiguredComponent ct = loadout.getComponent(Location.CenterTorso);
-      if( anItem instanceof HeatSink && ct.getNumEngineHeatsinks() < ct.getNumEngineHeatsinksMax() && ct.canEquip(anItem) ){
+      if( anItem instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax() && ct.canAddItem(anItem) ){
          addOp(new OpAddItem(xBar, loadout, ct, anItem));
          return;
       }
@@ -156,7 +156,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
          // Not yet sweetie
          for(Location part : partTraversalOrder){
             ConfiguredComponent loadoutPart = node.data.getComponent(part);
-            for(Item i : loadoutPart.getItems()){
+            for(Item i : loadoutPart.getItemsAll()){
                if( i instanceof Internal )
                   continue;
                List<Node> branches = getBranches(node, part, i);
@@ -192,7 +192,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
       // be added to.
       for(Location part : partTraversalOrder){
          ConfiguredComponent loadoutPart = node.data.getComponent(part);
-         if( loadoutPart.canEquip(itemToPlace) ){
+         if( loadoutPart.canAddItem(itemToPlace) ){
             ops.add(new OpAddItem(xBar, loadout, loadout.getComponent(part), itemToPlace));
             break;
          }
@@ -217,7 +217,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
 
       // Create a temporary loadout where the item has been removed and find all
       // ways it can be placed on another part.
-      Loadout tempLoadout = new Loadout(aParent.data, null);
+      LoadoutBase<?, ?> tempLoadout = aParent.data.clone(null);
       stack.pushAndApply(new OpRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
 
       ConfiguredComponent srcPart = tempLoadout.getComponent(aSourcePart);
@@ -226,23 +226,23 @@ public class OpAutoAddItem extends OpLoadoutBase{
             continue;
 
          ConfiguredComponent dstPart = tempLoadout.getComponent(targetPart);
-         if( dstPart.canEquip(aItem) ){
+         if( dstPart.canAddItem(aItem) ){
             // Don't consider swaps if the item can be directly moved. A swap will be generated in another point
             // of the search tree anyway when we move an item from that component back to this.
             ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
          }
          else if( dstPart.getInternalComponent().isAllowed(aItem) ){
             // The part couldn't take the item directly, see if we can swap with some item in the part.
-            final int minItemSize = aItem.getNumCriticalSlots() - dstPart.getNumCriticalSlotsFree();
+            final int minItemSize = aItem.getNumCriticalSlots() - dstPart.getSlotsFree();
             HardPointType requiredType = aItem.getHardpointType();
             if( requiredType != HardPointType.NONE
-                && dstPart.getNumItemsOfHardpointType(requiredType) < dstPart.getInternalComponent().getNumHardpoints(requiredType) ){
+                && dstPart.getItemsOfHardpointType(requiredType) < dstPart.getInternalComponent().getHardPointCount(requiredType) ){
                requiredType = HardPointType.NONE; // There is at least one free hard point, we don't need to swap with a
                                                   // item of the required type.
             }
-            for(Item item : dstPart.getItems()){
+            for(Item item : dstPart.getItemsAll()){
                // The item has to clear enough room to make our item fit.
-               if( item instanceof HeatSink && dstPart.getNumEngineHeatsinks() > 0 )
+               if( item instanceof HeatSink && dstPart.getEngineHeatsinks() > 0 )
                   continue; // Engine HS will not clear slots...
                if( item.getNumCriticalSlots() < minItemSize )
                   continue;
@@ -254,7 +254,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
                if( item == aItem )
                   continue;
 
-               if( srcPart.canEquip(item) )
+               if( srcPart.canAddItem(item) )
                   ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
             }
          }

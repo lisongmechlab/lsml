@@ -42,12 +42,12 @@ public class RenameOperationTest{
    private MessageXBar xBar;
 
    /**
-    * We can rename {@link Loadout}s.
+    * We can rename {@link LoadoutStandard}s.
     */
    @Test
    public void testApply(){
       // Setup
-      Loadout loadout = new Loadout(ChassisDB.lookup("HBK-4J"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HBK-4J"), xBar);
       assertEquals("HBK-4J", loadout.getName());
 
       // Execute
@@ -66,7 +66,7 @@ public class RenameOperationTest{
    @Test
    public void testApply_nullXbar(){
       // Setup
-      Loadout loadout = new Loadout(ChassisDB.lookup("HBK-4J"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HBK-4J"), xBar);
       assertEquals("HBK-4J", loadout.getName());
 
       // Execute

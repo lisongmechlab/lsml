@@ -22,7 +22,7 @@ package lisong_mechlab.model.garage;
 import java.util.Arrays;
 import java.util.List;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.OperationStack;
 
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class AddToGarageOperationTest{
    private OperationStack opStack = new OperationStack(0);
 
    /**
-    * Adding the same {@link Loadout} twice is an error and shall throw an {@link IllegalArgumentException}.
+    * Adding the same {@link LoadoutStandard} twice is an error and shall throw an {@link IllegalArgumentException}.
     * 
     * @throws Exception
     *            Shouldn't be thrown.
@@ -51,8 +51,8 @@ public class AddToGarageOperationTest{
    @Test(expected = IllegalArgumentException.class)
    public void testAddLoadoutTwice() throws Exception{
       // Setup
-      Loadout loadout = Mockito.mock(Loadout.class);
-      List<Loadout> loadouts = Arrays.asList(loadout);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
+      List<LoadoutStandard> loadouts = Arrays.asList(loadout);
       Mockito.when(garage.getMechs()).thenReturn(loadouts);
 
       opStack.pushAndApply(new OpAddToGarage(garage, loadout));

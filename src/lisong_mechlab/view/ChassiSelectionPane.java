@@ -27,6 +27,7 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -43,13 +44,14 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.preferences.Preferences;
@@ -58,20 +60,20 @@ import lisong_mechlab.view.preferences.UiPreferences.Message;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
- * Displays all available {@link ChassisIS} in a pane.
+ * Displays all available {@link ChassisStandard} in a pane.
  * 
  * @author Li Song
  */
 public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
    static public class ChassiTableModel extends AbstractTableModel{
       private static final long         serialVersionUID = -2726840937519789976L;
-      private final List<ChassisIS>       lights           = new ArrayList<>();
-      private final List<ChassisIS>       mediums          = new ArrayList<>();
-      private final List<ChassisIS>       heavies          = new ArrayList<>();
-      private final List<ChassisIS>       assaults         = new ArrayList<>();
-      private final Comparator<ChassisIS> cmp              = new Comparator<ChassisIS>(){
+      private final List<ChassisStandard>       lights           = new ArrayList<>();
+      private final List<ChassisStandard>       mediums          = new ArrayList<>();
+      private final List<ChassisStandard>       heavies          = new ArrayList<>();
+      private final List<ChassisStandard>       assaults         = new ArrayList<>();
+      private final Comparator<ChassisStandard> cmp              = new Comparator<ChassisStandard>(){
                                                             @Override
-                                                            public int compare(ChassisIS aArg0, ChassisIS aArg1){
+                                                            public int compare(ChassisStandard aArg0, ChassisStandard aArg1){
                                                                if( aArg0.getMassMax() == aArg1.getMassMax() )
                                                                   return aArg0.getMwoName().compareTo(aArg1.getMwoName());
                                                                return Integer.compare(aArg0.getMassMax(), aArg1.getMassMax());
@@ -82,21 +84,27 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          recreate(aFilterSpecials);
       }
 
-      public void recreate(boolean filterSpecials){
-         doit(lights, filterSpecials, ChassisClass.LIGHT);
-         doit(mediums, filterSpecials, ChassisClass.MEDIUM);
-         doit(heavies, filterSpecials, ChassisClass.HEAVY);
-         doit(assaults, filterSpecials, ChassisClass.ASSAULT);
+      public void recreate(boolean aFilterSpecials){
+         doit(lights, aFilterSpecials, ChassisClass.LIGHT);
+         doit(mediums, aFilterSpecials, ChassisClass.MEDIUM);
+         doit(heavies, aFilterSpecials, ChassisClass.HEAVY);
+         doit(assaults, aFilterSpecials, ChassisClass.ASSAULT);
          fireTableDataChanged();
       }
 
-      private void doit(List<ChassisIS> aList, boolean aFilterSpecials, ChassisClass aChassiClass){
+      private void doit(List<ChassisStandard> aList, boolean aFilterSpecials, ChassisClass aChassiClass){
+         Collection<ChassisBase> all = ChassisDB.lookup(aChassiClass);
+         
          aList.clear();
-         aList.addAll(ChassisDB.lookup(aChassiClass));
+         for(ChassisBase base : all){
+            if(base instanceof ChassisStandard)
+               aList.add((ChassisStandard)base);
+         }
+         
          if( aFilterSpecials ){
-            Iterator<ChassisIS> it = aList.iterator();
+            Iterator<ChassisStandard> it = aList.iterator();
             while( it.hasNext() ){
-               ChassisIS c = it.next();
+               ChassisStandard c = it.next();
                if( c.getVariantType().isVariation() ){
                   it.remove();
                }
@@ -145,7 +153,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return ((ChassisIS)aSourceRowObject).getName();
+         return ((ChassisStandard)aSourceRowObject).getName();
       }
    }
 
@@ -158,7 +166,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return Integer.toString(((ChassisIS)aSourceRowObject).getMassMax());
+         return Integer.toString(((ChassisStandard)aSourceRowObject).getMassMax());
       }
    }
 
@@ -178,7 +186,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               ChassisIS chassi = (ChassisIS)aValue;
+               ChassisStandard chassi = (ChassisStandard)aValue;
                panel.removeAll();
 
                int jjsa = chassi.getJumpJetsMax();
@@ -203,7 +211,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         ChassisIS chassi = (ChassisIS)aSourceRowObject;
+         ChassisStandard chassi = (ChassisStandard)aSourceRowObject;
          final double maxSpeed = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.0);
          final double maxSpeedTweak = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.1);
          return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
@@ -242,7 +250,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               ChassisIS chassi = (ChassisIS)aValue;
+               ChassisStandard chassi = (ChassisStandard)aValue;
                StyleManager.styleHardpointLabel(energy, chassi.getComponent(part), HardPointType.ENERGY);
                StyleManager.styleHardpointLabel(ballistic, chassi.getComponent(part), HardPointType.BALLISTIC);
                StyleManager.styleHardpointLabel(missile, chassi.getComponent(part), HardPointType.MISSILE);
@@ -289,10 +297,10 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
                   final int row = target.getSelectedRow();
                   final int column = target.getSelectedColumn();
                   final Object cell = target.getValueAt(row, column);
-                  if( cell instanceof ChassisIS ){
-                     ChassisIS chassi = (ChassisIS)cell;
+                  if( cell instanceof ChassisStandard ){
+                     ChassisStandard chassi = (ChassisStandard)cell;
                      ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                     ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
+                     ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(chassi, ProgramInit.lsml().xBar));
                   }
                }
             }

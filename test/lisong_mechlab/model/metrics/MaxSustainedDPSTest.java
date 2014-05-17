@@ -33,7 +33,7 @@ import java.util.Random;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +52,7 @@ public class MaxSustainedDPSTest{
    private HeatDissipation heatDissipation;
 
    @Mock
-   private Loadout         loadout;
+   private LoadoutStandard         loadout;
    @InjectMocks
    private MaxSustainedDPS cut;
 

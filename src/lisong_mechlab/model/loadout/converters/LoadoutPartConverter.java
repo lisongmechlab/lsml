@@ -29,7 +29,7 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -46,10 +46,10 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class LoadoutPartConverter implements Converter{
 
-   private final Loadout     loadout;
+   private final LoadoutStandard     loadout;
    private final MessageXBar xBar;
 
-   public LoadoutPartConverter(MessageXBar anXBar, Loadout aLoadout){
+   public LoadoutPartConverter(MessageXBar anXBar, LoadoutStandard aLoadout){
       loadout = aLoadout;
       xBar = anXBar;
    }
@@ -79,7 +79,7 @@ public class LoadoutPartConverter implements Converter{
        * Integer.toString(part.getNumEngineHeatsinks())); }
        */
 
-      for(Item item : part.getItems()){
+      for(Item item : part.getItemsAll()){
          if( item instanceof Internal ){
             continue;
          }

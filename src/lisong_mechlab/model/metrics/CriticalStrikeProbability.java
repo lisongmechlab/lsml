@@ -45,7 +45,7 @@ public class CriticalStrikeProbability implements ItemMetric{
    @Override
    public double calculate(Item aItem){
       int slots = 0;
-      for(Item it : loadoutPart.getItems()){
+      for(Item it : loadoutPart.getItemsAll()){
          if( it instanceof Internal && it != ConfiguredComponent.ENGINE_INTERNAL ){
             continue;
          }

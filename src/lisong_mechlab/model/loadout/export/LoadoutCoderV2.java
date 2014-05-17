@@ -33,15 +33,17 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -101,7 +103,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
    }
 
    @Override
-   public byte[] encode(final Loadout aLoadout) throws EncodingException{
+   public byte[] encode(final LoadoutBase<?,?> aLoadout) throws EncodingException{
 
       final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
 
@@ -153,7 +155,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          ids.add(-1);
 
          for(Location part : partOrder){
-            List<Item> items = aLoadout.getComponent(part).getItems();
+            List<Item> items = aLoadout.getComponent(part).getItemsAll();
             for(Item item : items){
                if( !(item instanceof Internal) ){
                   ids.add(item.getMwoId());
@@ -177,9 +179,9 @@ public class LoadoutCoderV2 implements LoadoutCoder{
    }
 
    @Override
-   public Loadout decode(final byte[] aBitStream) throws DecodingException{
+   public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException{
       final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
-      final Loadout loadout;
+      final LoadoutStandard loadout;
       final OperationStack stack = new OperationStack(0);
 
       // Read header
@@ -192,8 +194,11 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
          short chassiId = (short)(((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF));
 
-         ChassisIS chassi = ChassisDB.lookup(chassiId);
-         loadout = new Loadout(chassi, xBar);
+         ChassisBase chassi = ChassisDB.lookup(chassiId);
+         if( !(chassi instanceof ChassisStandard) ){
+            throw new DecodingException("LSML link format v2 does not support omni mechs.");
+         }
+         loadout = new LoadoutStandard((ChassisStandard)chassi, xBar);
          loadout.getEfficiencies().setCoolRun((upeff & (1 << 4)) != 0);
          loadout.getEfficiencies().setHeatContainment((upeff & (1 << 3)) != 0);
          loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 2)) != 0);
@@ -279,15 +284,17 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
    @SuppressWarnings("unused")
    private static void generateAllLoadouts() throws Exception{
-      List<ChassisIS> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
       MessageXBar xBar = new MessageXBar();
       Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
       OperationStack stack = new OperationStack(0);
-      for(ChassisIS chassis : chassii){
-         Loadout loadout = new Loadout(chassis, xBar);
+      for(ChassisBase chassis : chassii){
+         if( !(chassis instanceof ChassisStandard) )
+            continue;
+         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassis, xBar);
          stack.pushAndApply(new OpLoadStock(chassis, loadout, xBar));
          System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
       }

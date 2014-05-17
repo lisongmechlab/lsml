@@ -36,6 +36,12 @@ public class HeatSource extends Item{
    @XStreamAsAttribute
    private final double heat;
 
+   protected HeatSource(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardPointType, int aHP,
+                        boolean aIsClan, double aHeat){
+      super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aIsClan);
+      heat = aHeat;
+   }
+
    protected HeatSource(ItemStats anItemStats, HardPointType aHardpointType, int aSlots, double aTons, double aHeat, int aHealth){
       super(anItemStats, aHardpointType, aSlots, aTons, aHealth);
       heat = aHeat;

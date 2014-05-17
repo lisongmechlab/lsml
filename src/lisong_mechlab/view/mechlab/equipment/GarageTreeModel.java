@@ -31,9 +31,11 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.chassi.ChassisIS;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.preferences.Preferences;
 
@@ -42,43 +44,67 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
    private final DefaultTreeCathegory<AbstractTreeCathegory> root;
    private final Preferences                                 preferences;
 
-   public GarageTreeModel(MessageXBar xBar, JTextField aFilterBar, GarageTree aGarageTree, Preferences aPreferences){
+   public GarageTreeModel(MessageXBar aXBar, JTextField aFilterBar, GarageTree aGarageTree, Preferences aPreferences){
       root = new DefaultTreeCathegory<AbstractTreeCathegory>("MechLab", this);
       preferences = aPreferences;
 
-      DefaultTreeCathegory<AbstractTreeCathegory> chassii = new DefaultTreeCathegory<AbstractTreeCathegory>("Chassii", root, this);
-
-      DefaultTreeCathegory<GarageCathegory> garage = new DefaultTreeCathegory<>("Garage", root, this);
-      for(ChassisClass chassiClass : ChassisClass.values()){
-         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garage, this, xBar, chassiClass, aFilterBar, aGarageTree);
-         garage.addChild(clazz);
-      }
-      root.addChild(chassii);
-      root.addChild(garage);
-
-      // Chassii
+      DefaultTreeCathegory<AbstractTreeCathegory> chassisStandard = new DefaultTreeCathegory<AbstractTreeCathegory>("BattleMechs", root, this);
+      DefaultTreeCathegory<AbstractTreeCathegory> chassisOmniMech = new DefaultTreeCathegory<AbstractTreeCathegory>("OmniMechs", root, this);
       for(final ChassisClass chassiClass : ChassisClass.values()){
-         DefaultTreeCathegory<ChassisIS> chassiiSub = new FilterTreeCathegory<ChassisIS>(xBar, chassiClass.toString(), chassii, this, aFilterBar,
-                                                                                     aGarageTree){
+         DefaultTreeCathegory<ChassisStandard> classStandard = new FilterTreeCathegory<ChassisStandard>(aXBar, chassiClass.toString(),
+                                                                                                        chassisStandard, this, aFilterBar,
+                                                                                                        aGarageTree){
             @Override
-            protected boolean filter(ChassisIS c){
+            protected boolean filter(ChassisStandard c){
+               if( preferences.uiPreferences.getHideSpecialMechs() && c.getVariantType().isVariation() )
+                  return false;
+               return c.getName().toLowerCase().contains(getFilterString());
+            }
+         };
+         DefaultTreeCathegory<ChassisOmniMech> classOmniMech = new FilterTreeCathegory<ChassisOmniMech>(aXBar, chassiClass.toString(),
+                                                                                                        chassisOmniMech, this, aFilterBar,
+                                                                                                        aGarageTree){
+            @Override
+            protected boolean filter(ChassisOmniMech c){
                if( preferences.uiPreferences.getHideSpecialMechs() && c.getVariantType().isVariation() )
                   return false;
                return c.getName().toLowerCase().contains(getFilterString());
             }
          };
 
-         for(ChassisIS chassi : ChassisDB.lookup(chassiClass)){
-            chassiiSub.addChild(chassi);
+         for(ChassisBase chassi : ChassisDB.lookup(chassiClass)){
+            if( chassi instanceof ChassisStandard )
+               classStandard.addChild((ChassisStandard)chassi);
+            else if( chassi instanceof ChassisOmniMech )
+               classOmniMech.addChild((ChassisOmniMech)chassi);
+            else
+               throw new RuntimeException("Unexpected chassis type when generating garage tree.");
          }
-         chassiiSub.sort(new Comparator<ChassisIS>(){
+         classStandard.sort(new Comparator<ChassisStandard>(){
             @Override
-            public int compare(ChassisIS aO1, ChassisIS aO2){
+            public int compare(ChassisStandard aO1, ChassisStandard aO2){
                return aO1.getNameShort().compareTo(aO2.getNameShort());
             }
          });
-         chassii.addChild(chassiiSub);
+         classOmniMech.sort(new Comparator<ChassisOmniMech>(){
+            @Override
+            public int compare(ChassisOmniMech aO1, ChassisOmniMech aO2){
+               return aO1.getNameShort().compareTo(aO2.getNameShort());
+            }
+         });
+         chassisStandard.addChild(classStandard);
+         chassisOmniMech.addChild(classOmniMech);
       }
+      root.addChild(chassisStandard);
+      root.addChild(chassisOmniMech);
+
+      DefaultTreeCathegory<GarageCathegory> garage = new DefaultTreeCathegory<>("Garage", root, this);
+      for(ChassisClass chassiClass : ChassisClass.values()){
+         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garage, this, aXBar, chassiClass, aFilterBar, aGarageTree);
+         garage.addChild(clazz);
+      }
+
+      root.addChild(garage);
    }
 
    public void notifyTreeChange(TreeModelEvent e){

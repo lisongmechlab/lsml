@@ -24,22 +24,23 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpSetMaxArmor;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 /**
- * This action sets the armor to max on the given {@link Loadout}.
+ * This action sets the armor to max on the given {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
 public class MaxArmorAction extends AbstractAction{
-   private static final long  serialVersionUID = -5939335331941199195L;
-   private final Loadout      loadout;
-   private final double       ratio;
-   private final LoadoutFrame loadoutFrame;
-   private final MessageXBar  xBar;
+   private static final long       serialVersionUID = -5939335331941199195L;
+   private final LoadoutBase<?, ?> loadout;
+   private final double            ratio;
+   private final LoadoutFrame      loadoutFrame;
+   private final MessageXBar       xBar;
 
    /**
     * Creates a new {@link MaxArmorAction}. If <code>aRatio</code> is less than or equal to 0, the user is prompted for
@@ -48,7 +49,7 @@ public class MaxArmorAction extends AbstractAction{
     * @param aTitle
     *           The title to give to the action.
     * @param aLoadout
-    *           The {@link Loadout} to set armor for.
+    *           The {@link LoadoutStandard} to set armor for.
     * @param aRatio
     *           The ratio between back and front as: <code>front/back</code>
     * @param anXBar

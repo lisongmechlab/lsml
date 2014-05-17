@@ -26,7 +26,8 @@ import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.helpers.IntegratedImpulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedPulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedSignal;
@@ -46,11 +47,11 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.
     * Creates a new calculator object
     * 
     * @param aLoadout
-    *           The {@link Loadout} to calculate for.
+    *           The {@link LoadoutStandard} to calculate for.
     * @param aXBar
     *           The {@link MessageXBar} to listen for changes to 'aLoadout' on.
     */
-   public BurstDamageOverTime(Loadout aLoadout, MessageXBar aXBar){
+   public BurstDamageOverTime(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
       super(aLoadout);
       updateEvents(getRange());
       aXBar.attach(this);

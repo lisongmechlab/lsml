@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
@@ -31,11 +31,11 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 abstract class OpUpgradeBase extends CompositeOperation{
-   protected final Loadout               loadout;
+   protected final LoadoutBase<?, ?>     loadout;
    protected final Upgrades              upgrades;
    protected final transient MessageXBar xBar;
 
-   public OpUpgradeBase(MessageXBar anXBar, Loadout aLoadout, String aDescription){
+   public OpUpgradeBase(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, String aDescription){
       super(aDescription);
       loadout = aLoadout;
       upgrades = aLoadout.getUpgrades();
@@ -68,7 +68,7 @@ abstract class OpUpgradeBase extends CompositeOperation{
          throw new IllegalArgumentException("Not enough free slots!");
       }
       for(ConfiguredComponent loadoutPart : loadout.getComponents()){
-         if( loadoutPart.getNumCriticalSlotsFree() < 0 ){
+         if( loadoutPart.getSlotsFree() < 0 ){
             throw new IllegalArgumentException("Not enough free slots!");
          }
       }

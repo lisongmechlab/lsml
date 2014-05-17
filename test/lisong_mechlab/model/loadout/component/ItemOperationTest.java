@@ -141,7 +141,7 @@ public class ItemOperationTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
+      Mockito.when(loadoutPart.getEngineHeatsinks()).thenReturn(numEngineHs);
 
       cut.removeItem(item);
 
@@ -160,7 +160,7 @@ public class ItemOperationTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.STANDARD_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
+      Mockito.when(loadoutPart.getEngineHeatsinks()).thenReturn(numEngineHs);
 
       cut.removeItem(item);
 
@@ -200,7 +200,7 @@ public class ItemOperationTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
+      Mockito.when(loadoutPart.getEngineHeatsinks()).thenReturn(numEngineHs);
       Item item = ItemDB.lookup("STD ENGINE 300");
 
       cut.removeItem(item);
@@ -219,7 +219,7 @@ public class ItemOperationTest{
       Upgrades upgrades = Mockito.mock(Upgrades.class);
       Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getNumEngineHeatsinks()).thenReturn(numEngineHs);
+      Mockito.when(loadoutPart.getEngineHeatsinks()).thenReturn(numEngineHs);
       Item item = ItemDB.lookup("STD ENGINE 300");
 
       cut.removeItem(item);

@@ -21,7 +21,8 @@ package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
  * This {@link Metric} calculates the maximal speed the loadout can have, taking speed tweak into account.
@@ -29,9 +30,9 @@ import lisong_mechlab.model.loadout.Loadout;
  * @author Li Song
  */
 public class TopSpeed implements Metric{
-   private final Loadout loadout;
+   private final LoadoutBase<?, ?> loadout;
 
-   public TopSpeed(final Loadout aLoadout){
+   public TopSpeed(final LoadoutBase<?, ?> aLoadout){
       loadout = aLoadout;
    }
 
@@ -45,7 +46,7 @@ public class TopSpeed implements Metric{
 
    /**
     * Performs the actual calculation. This has been extracted because there are situations where the maximal speed is
-    * needed without having a {@link Loadout} at hand.
+    * needed without having a {@link LoadoutStandard} at hand.
     * 
     * @param aRating
     *           The engine rating.
@@ -55,7 +56,7 @@ public class TopSpeed implements Metric{
     *           A modifier to use, 1.0 for normal and 1.1 for speed tweak.
     * @return The speed in [km/h].
     */
-   static public double calculate(final int aRating, final ChassisBase<?> aChassi, final double aModifier){
+   static public double calculate(final int aRating, final ChassisBase aChassi, final double aModifier){
       return aChassi.getMovementProfile().getMaxMovementSpeed() * aRating / aChassi.getMassMax() * aModifier;
    }
 }

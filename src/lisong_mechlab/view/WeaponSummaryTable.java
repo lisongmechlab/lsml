@@ -36,7 +36,7 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -50,9 +50,9 @@ import lisong_mechlab.util.MessageXBar.Reader;
  * @author Li Song
  */
 public class WeaponSummaryTable extends JTable implements Reader{
-   private static final long   serialVersionUID = 868861599143353045L;
-   private final Loadout       loadout;
-   private final DecimalFormat decimalFormat    = new DecimalFormat("####");
+   private static final long       serialVersionUID = 868861599143353045L;
+   private final LoadoutBase<?, ?> loadout;
+   private final DecimalFormat     decimalFormat    = new DecimalFormat("####");
 
    private static class WeaponModel extends AbstractTableModel{
       private static final long serialVersionUID = 1257566726770316140L;
@@ -62,7 +62,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
          private int                ammoTons;
          private final List<Weapon> weapons = new ArrayList<Weapon>();
 
-         Entry(Loadout aLoadout, Item anItem){
+         Entry(LoadoutBase<?, ?> aLoadout, Item anItem){
             if( anItem instanceof Ammunition ){
                ammoType = (Ammunition)anItem;
                ammoTons = 1;
@@ -80,7 +80,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
                throw new IllegalArgumentException("Item must be ammuniton or weapon!");
          }
 
-         boolean consume(Loadout aLoadout, Item anItem){
+         boolean consume(LoadoutBase<?, ?> aLoadout, Item anItem){
             if( ammoType != null && ammoType == anItem ){
                ammoTons++;
                return true;
@@ -119,7 +119,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
 
       List<Entry> entries = new ArrayList<>();
 
-      public void update(Loadout aLoadout){
+      public void update(LoadoutBase<?, ?> aLoadout){
          entries.clear();
          for(Item item : aLoadout.getAllItems()){
             boolean found = false;
@@ -291,7 +291,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
       }
    }
 
-   public WeaponSummaryTable(Loadout aLoadout, MessageXBar aXBar){
+   public WeaponSummaryTable(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
       super(new WeaponModel());
       loadout = aLoadout;
       decimalFormat.setGroupingUsed(true);

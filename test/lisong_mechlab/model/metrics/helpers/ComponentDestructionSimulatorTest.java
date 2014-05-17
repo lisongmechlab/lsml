@@ -48,10 +48,10 @@ public class ComponentDestructionSimulatorTest{
       partItems.add(ItemDB.BAP);
 
       InternalComponent internalPart = Mockito.mock(InternalComponent.class);
-      Mockito.when(internalPart.getHitpoints()).thenReturn(partHp);
+      Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
 
       ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
-      Mockito.when(part.getItems()).thenReturn(partItems);
+      Mockito.when(part.getItemsAll()).thenReturn(partItems);
       Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
       MessageXBar xBar = Mockito.mock(MessageXBar.class);
@@ -81,10 +81,10 @@ public class ComponentDestructionSimulatorTest{
       partItems.add(ItemDB.lookup("AC/20"));
 
       InternalComponent internalPart = Mockito.mock(InternalComponent.class);
-      Mockito.when(internalPart.getHitpoints()).thenReturn(partHp);
+      Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
 
       ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
-      Mockito.when(part.getItems()).thenReturn(partItems);
+      Mockito.when(part.getItemsAll()).thenReturn(partItems);
       Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
       MessageXBar xBar = Mockito.mock(MessageXBar.class);
@@ -110,10 +110,10 @@ public class ComponentDestructionSimulatorTest{
       partItems.add(ItemDB.lookup("AC/20"));
 
       InternalComponent internalPart = Mockito.mock(InternalComponent.class);
-      Mockito.when(internalPart.getHitpoints()).thenReturn(partHp);
+      Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
 
       ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
-      Mockito.when(part.getItems()).thenReturn(partItems);
+      Mockito.when(part.getItemsAll()).thenReturn(partItems);
       Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
       MessageXBar xBar = Mockito.mock(MessageXBar.class);
