@@ -45,10 +45,14 @@ public class OpLoadStock extends OpLoadoutBase{
       StockLoadout stockLoadout = StockLoadoutDB.lookup(aChassiVariation);
 
       addOp(new OpStripLoadout(loadout, xBar));
-      addOp(new OpSetStructureType(xBar, loadout, stockLoadout.getStructureType()));
-      addOp(new OpSetGuidanceType(xBar, loadout, stockLoadout.getGuidanceType()));
-      addOp(new OpSetArmorType(xBar, loadout, stockLoadout.getArmorType()));
-      addOp(new OpSetHeatSinkType(xBar, loadout, stockLoadout.getHeatSinkType()));
+
+      if( aLoadout instanceof LoadoutStandard ){
+         LoadoutStandard loadoutStandard = (LoadoutStandard)aLoadout;
+         addOp(new OpSetStructureType(xBar, loadoutStandard, stockLoadout.getStructureType()));
+         addOp(new OpSetGuidanceType(xBar, loadoutStandard, stockLoadout.getGuidanceType()));
+         addOp(new OpSetArmorType(xBar, loadoutStandard, stockLoadout.getArmorType()));
+         addOp(new OpSetHeatSinkType(xBar, loadoutStandard, stockLoadout.getHeatSinkType()));
+      }
 
       for(StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()){
          Location location = stockComponent.getPart();

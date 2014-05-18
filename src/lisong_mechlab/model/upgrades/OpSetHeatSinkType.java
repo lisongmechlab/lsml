@@ -21,7 +21,6 @@ package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.OpAddItem;
@@ -39,20 +38,24 @@ import lisong_mechlab.util.OperationStack.Operation;
 public class OpSetHeatSinkType extends OpUpgradeBase{
    private final HeatSinkUpgrade oldValue;
    private final HeatSinkUpgrade newValue;
+   private final UpgradesMutable upgrades;
+   private final LoadoutStandard loadout;
 
    private boolean               operationReady = false;
 
    /**
-    * Creates a {@link OpSetHeatSinkType} that only affects a stand-alone {@link Upgrades} object This is useful only
-    * for altering {@link Upgrades} objects which are not attached to a {@link LoadoutStandard} in any way.
+    * Creates a {@link OpSetHeatSinkType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
+    * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
     * 
     * @param anUpgrades
-    *           The {@link Upgrades} object to alter with this {@link Operation}.
+    *           The {@link UpgradesMutable} object to alter with this {@link Operation}.
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public OpSetHeatSinkType(Upgrades anUpgrades, HeatSinkUpgrade aHeatsinkUpgrade){
-      super(anUpgrades, aHeatsinkUpgrade.getName());
+   public OpSetHeatSinkType(UpgradesMutable anUpgrades, HeatSinkUpgrade aHeatsinkUpgrade){
+      super(null, aHeatsinkUpgrade.getName());
+      upgrades = anUpgrades;
+      loadout = null;
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
    }
@@ -67,8 +70,10 @@ public class OpSetHeatSinkType extends OpUpgradeBase{
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public OpSetHeatSinkType(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, HeatSinkUpgrade aHeatsinkUpgrade){
-      super(anXBar, aLoadout, aHeatsinkUpgrade.getName());
+   public OpSetHeatSinkType(MessageXBar anXBar, LoadoutStandard aLoadout, HeatSinkUpgrade aHeatsinkUpgrade){
+      super(anXBar, aHeatsinkUpgrade.getName());
+      upgrades = aLoadout.getUpgrades();
+      loadout = aLoadout;
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
    }
@@ -92,7 +97,7 @@ public class OpSetHeatSinkType extends OpUpgradeBase{
          upgrades.setHeatSink(aValue);
 
          try{
-            verifyLoadoutInvariant();
+            verifyLoadoutInvariant(loadout);
          }
          catch( Exception e ){
             upgrades.setHeatSink(old);

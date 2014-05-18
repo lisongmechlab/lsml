@@ -38,21 +38,25 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class OpSetGuidanceType extends OpUpgradeBase{
-   private final GuidanceUpgrade oldValue;
-   private final GuidanceUpgrade newValue;
-   private boolean               operationReady = false;
+   private final GuidanceUpgrade   oldValue;
+   private final GuidanceUpgrade   newValue;
+   private boolean                 operationReady = false;
+   private final Upgrades          upgrades;
+   private final LoadoutBase<?, ?> loadout;
 
    /**
-    * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link Upgrades} object This is useful only
-    * for altering {@link Upgrades} objects which are not attached to a {@link LoadoutStandard} in any way.
+    * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
+    * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutBase} in any way.
     * 
     * @param anUpgrades
-    *           The {@link Upgrades} object to alter with this {@link Operation}.
+    *           The {@link UpgradesMutable} object to alter with this {@link Operation}.
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
    public OpSetGuidanceType(Upgrades anUpgrades, GuidanceUpgrade aGuidanceUpgrade){
-      super(anUpgrades, aGuidanceUpgrade.getName());
+      super(null, aGuidanceUpgrade.getName());
+      upgrades = anUpgrades;
+      loadout = null;
       oldValue = upgrades.getGuidance();
       newValue = aGuidanceUpgrade;
    }
@@ -63,12 +67,14 @@ public class OpSetGuidanceType extends OpUpgradeBase{
     * @param anXBar
     *           A {@link MessageXBar} to signal changes in guidance status on.
     * @param aLoadout
-    *           The {@link LoadoutStandard} to alter.
+    *           The {@link LoadoutBase} to alter.
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
    public OpSetGuidanceType(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, GuidanceUpgrade aGuidanceUpgrade){
-      super(anXBar, aLoadout, aGuidanceUpgrade.getName());
+      super(anXBar, aGuidanceUpgrade.getName());
+      upgrades = aLoadout.getUpgrades();
+      loadout = aLoadout;
       oldValue = upgrades.getGuidance();
       newValue = aGuidanceUpgrade;
    }

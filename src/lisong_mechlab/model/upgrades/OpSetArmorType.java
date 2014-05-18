@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
@@ -27,25 +26,29 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Upgrades} can change the armor type of a {@link LoadoutStandard}.
+ * This {@link Operation} can change the armor type of a {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
 public class OpSetArmorType extends OpUpgradeBase{
-   final ArmorUpgrade oldValue;
-   final ArmorUpgrade newValue;
+   private final ArmorUpgrade    oldValue;
+   private final ArmorUpgrade    newValue;
+   private final UpgradesMutable upgrades;
+   private final LoadoutStandard loadout;
 
    /**
-    * Creates a {@link OpSetArmorType} that only affects a stand-alone {@link Upgrades} object This is useful only for
-    * altering {@link Upgrades} objects which are not attached to a {@link LoadoutStandard} in any way.
+    * Creates a {@link OpSetArmorType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
+    * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
     * 
     * @param anUpgrades
-    *           The {@link Upgrades} object to alter with this {@link Operation}.
+    *           The {@link UpgradesMutable} object to alter with this {@link Operation}.
     * @param anArmorUpgrade
     *           The new armor type when this upgrades has been applied.
     */
-   public OpSetArmorType(Upgrades anUpgrades, ArmorUpgrade anArmorUpgrade){
-      super(anUpgrades, anArmorUpgrade.getName());
+   public OpSetArmorType(UpgradesMutable anUpgrades, ArmorUpgrade anArmorUpgrade){
+      super(null, anArmorUpgrade.getName());
+      upgrades = anUpgrades;
+      loadout = null;
       oldValue = upgrades.getArmor();
       newValue = anArmorUpgrade;
    }
@@ -60,8 +63,10 @@ public class OpSetArmorType extends OpUpgradeBase{
     * @param anArmorUpgrade
     *           The new armor type this upgrades is applied.
     */
-   public OpSetArmorType(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ArmorUpgrade anArmorUpgrade){
-      super(anXBar, aLoadout, anArmorUpgrade.getName());
+   public OpSetArmorType(MessageXBar anXBar, LoadoutStandard aLoadout, ArmorUpgrade anArmorUpgrade){
+      super(anXBar, anArmorUpgrade.getName());
+      upgrades = aLoadout.getUpgrades();
+      loadout = aLoadout;
       oldValue = upgrades.getArmor();
       newValue = anArmorUpgrade;
    }
@@ -82,7 +87,7 @@ public class OpSetArmorType extends OpUpgradeBase{
          upgrades.setArmor(aValue);
 
          try{
-            verifyLoadoutInvariant();
+            verifyLoadoutInvariant(loadout);
          }
          catch( Exception e ){
             upgrades.setArmor(old);

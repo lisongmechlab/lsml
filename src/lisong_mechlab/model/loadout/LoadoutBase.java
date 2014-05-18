@@ -55,14 +55,12 @@ import lisong_mechlab.util.MessageXBar;
 public abstract class LoadoutBase<T extends ConfiguredComponent, U extends InternalComponent> {
    private String             name;
    private final T[]          components;
-   private final Upgrades     upgrades;
    private final ChassisBase  chassisBase;
    private final Efficiencies efficiencies;
 
    protected LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, ChassisBase aChassisBase, MessageXBar aXBar){
       name = aChassisBase.getNameShort();
       chassisBase = aChassisBase;
-      upgrades = new Upgrades();
       efficiencies = new Efficiencies(aXBar);
       components = aFactory.defaultComponents(chassisBase);
    }
@@ -70,7 +68,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
    protected LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, LoadoutBase<T, U> aLoadoutBase){
       name = aLoadoutBase.name;
       chassisBase = aLoadoutBase.chassisBase;
-      upgrades = new Upgrades(aLoadoutBase.upgrades);
       efficiencies = new Efficiencies(aLoadoutBase.efficiencies);
       components = aFactory.cloneComponents(aLoadoutBase);
    }
@@ -92,8 +89,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
          return false;
       if( !components.equals(that.components) )
          return false;
-      if( !upgrades.equals(that.upgrades) )
-         return false;
       return true;
    }
 
@@ -112,7 +107,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
       result = prime * result + ((efficiencies == null) ? 0 : efficiencies.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((components == null) ? 0 : components.hashCode());
-      result = prime * result + ((upgrades == null) ? 0 : upgrades.hashCode());
       return result;
    }
 
@@ -156,11 +150,11 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
     * @return The current mass of the loadout.
     */
    public double getMass(){
-      double ans = upgrades.getStructure().getStructureMass(chassisBase);
+      double ans = getUpgrades().getStructure().getStructureMass(chassisBase);
       for(T component : components){
          ans += component.getItemMass();
       }
-      ans += upgrades.getArmor().getArmorMass(getArmor());
+      ans += getUpgrades().getArmor().getArmorMass(getArmor());
       return ans;
    }
 
@@ -197,7 +191,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
     * @return The number of globally used critical slots.
     */
    public int getNumCriticalSlotsUsed(){
-      int ans = upgrades.getStructure().getExtraSlots() + upgrades.getArmor().getExtraSlots();
+      int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmor().getExtraSlots();
       for(T component : components){
          ans += component.getSlotsUsed();
       }
@@ -233,9 +227,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
    /**
     * @return The {@link Upgrades} that are equipped on this loadout.
     */
-   public Upgrades getUpgrades(){
-      return upgrades;
-   }
+   public abstract Upgrades getUpgrades();
 
    /**
     * @param aHardpointType

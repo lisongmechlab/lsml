@@ -20,7 +20,6 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.chassi.ChassisOmniMech;
-import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.MovementProfileSum;
 import lisong_mechlab.model.chassi.OmniPod;
@@ -29,6 +28,8 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredOmniPod;
+import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
@@ -37,6 +38,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredOmniPod, OmniPod>{
    transient private final MovementProfileSum movementProfile;
+   transient private final Upgrades           upgrades;
 
    /**
     * @param aFactory
@@ -45,7 +47,8 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredOmniPod, OmniPod>{
     */
    public LoadoutOmniMech(Factory<ConfiguredOmniPod, OmniPod> aFactory, ChassisOmniMech aChassis, MessageXBar aXBar){
       super(aFactory, aChassis, aXBar);
-      movementProfile = new MovementProfileSum(aChassis.getMovementProfile());     
+      movementProfile = new MovementProfileSum(aChassis.getMovementProfile());
+      upgrades = new Upgrades(aChassis.getArmorType(), aChassis.getStructureType(), UpgradeDB.STANDARD_GUIDANCE, aChassis.getHeatSinkType());
    }
 
    /**
@@ -58,6 +61,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredOmniPod, OmniPod>{
       for(ConfiguredOmniPod omniPod : getComponents()){
          movementProfile.addMovementProfile(omniPod.getInternalComponent().getQuirks());
       }
+      upgrades = new Upgrades(aLoadoutOmniMech.getUpgrades());
    }
 
    /**
@@ -107,5 +111,10 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredOmniPod, OmniPod>{
    @Override
    public Engine getEngine(){
       return getChassis().getEngine();
+   }
+
+   @Override
+   public Upgrades getUpgrades(){
+      return upgrades;
    }
 }

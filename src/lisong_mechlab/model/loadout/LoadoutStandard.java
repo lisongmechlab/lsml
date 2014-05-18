@@ -37,6 +37,8 @@ import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutStandardConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
+import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -49,6 +51,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * @author Li Song
  */
 public class LoadoutStandard extends LoadoutBase<ConfiguredComponent, InternalComponent>{
+   private final UpgradesMutable upgrades;
 
    public static LoadoutStandard load(File aFile, MessageXBar aXBar){
       XStream stream = loadoutXstream(aXBar);
@@ -81,6 +84,9 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponent, InternalCo
     */
    public LoadoutStandard(ChassisStandard aChassi, MessageXBar aXBar){
       super(ComponentBuilder.getISComponentFactory(), aChassi, aXBar);
+
+      upgrades = new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE, UpgradeDB.STANDARD_GUIDANCE, UpgradeDB.STANDARD_HEATSINKS);
+
       if( aXBar != null ){
          aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
       }
@@ -102,6 +108,7 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponent, InternalCo
 
    public LoadoutStandard(LoadoutStandard aLoadout, MessageXBar aXBar){
       super(ComponentBuilder.getISComponentFactory(), aLoadout);
+      upgrades = new UpgradesMutable(aLoadout.upgrades);
       if( aXBar != null ){
          aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
       }
@@ -137,7 +144,7 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponent, InternalCo
    protected boolean canEquipGlobal(Item anItem){
       if( anItem instanceof JumpJet && getChassis().getJumpJetsMax() - getJumpJetCount() < 1 )
          return false;
-      return canEquipGlobal(anItem);
+      return super.canEquipGlobal(anItem);
    }
 
    @Override
@@ -155,4 +162,8 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponent, InternalCo
       return getChassis().getJumpJetsMax();
    }
 
+   @Override
+   public UpgradesMutable getUpgrades(){
+      return upgrades;
+   }
 }

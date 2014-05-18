@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
@@ -32,21 +31,25 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class OpSetStructureType extends OpUpgradeBase{
-   final StructureUpgrade oldValue;
-   final StructureUpgrade newValue;
+   private final StructureUpgrade oldValue;
+   private final StructureUpgrade newValue;
+   private final UpgradesMutable  upgrades;
+   private final LoadoutStandard  loadout;
 
    /**
-    * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link Upgrades} object This is useful only
-    * for altering {@link Upgrades} objects which are not attached to a {@link LoadoutStandard} in any way.
+    * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
+    * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
     * 
     * @param anUpgrades
-    *           The {@link Upgrades} object to alter with this {@link Operation}.
+    *           The {@link UpgradesMutable} object to alter with this {@link Operation}.
     * @param aStructureUpgrade
     *           The new internal structure when this upgrades has been applied.
     */
-   public OpSetStructureType(Upgrades anUpgrades, StructureUpgrade aStructureUpgrade){
-      super(anUpgrades, aStructureUpgrade.getName());
-      oldValue = upgrades.getStructure();
+   public OpSetStructureType(UpgradesMutable anUpgrades, StructureUpgrade aStructureUpgrade){
+      super(null, aStructureUpgrade.getName());
+      upgrades = anUpgrades;
+      loadout = null;
+      oldValue = anUpgrades.getStructure();
       newValue = aStructureUpgrade;
    }
 
@@ -60,8 +63,10 @@ public class OpSetStructureType extends OpUpgradeBase{
     * @param aStructureUpgrade
     *           The new internal structure this upgrades is applied.
     */
-   public OpSetStructureType(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, StructureUpgrade aStructureUpgrade){
-      super(anXBar, aLoadout, aStructureUpgrade.getName());
+   public OpSetStructureType(MessageXBar anXBar, LoadoutStandard aLoadout, StructureUpgrade aStructureUpgrade){
+      super(anXBar, aStructureUpgrade.getName());
+      upgrades = aLoadout.getUpgrades();
+      loadout = aLoadout;
       oldValue = upgrades.getStructure();
       newValue = aStructureUpgrade;
    }
@@ -82,7 +87,7 @@ public class OpSetStructureType extends OpUpgradeBase{
          upgrades.setStructure(aValue);
 
          try{
-            verifyLoadoutInvariant();
+            verifyLoadoutInvariant(loadout);
          }
          catch( Exception e ){
             upgrades.setStructure(old);

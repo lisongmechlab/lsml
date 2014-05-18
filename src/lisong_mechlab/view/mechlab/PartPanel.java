@@ -47,6 +47,7 @@ import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.OmniPodDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
@@ -151,7 +152,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
                                                       BorderFactory.createEmptyBorder(0, 2, 2, 4)));
       }
 
-      if( LoadoutOmniMech.class.isAssignableFrom(aLoadout.getClass()) ){
+      if( LoadoutOmniMech.class.isAssignableFrom(aLoadout.getClass()) && aLoadoutPart.getInternalComponent().getLocation() != Location.CenterTorso ){
          LoadoutOmniMech omniMech = (LoadoutOmniMech)aLoadout;
          // Omnimech
          Collection<OmniPod> compatiblePods = OmniPodDB.lookup(omniMech.getChassis(), aLoadoutPart.getInternalComponent().getLocation());
