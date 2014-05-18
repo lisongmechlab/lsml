@@ -21,8 +21,8 @@ package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;

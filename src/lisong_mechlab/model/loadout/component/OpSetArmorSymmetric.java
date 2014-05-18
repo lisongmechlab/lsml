@@ -21,8 +21,8 @@ package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -43,6 +43,8 @@ public class OpSetArmorSymmetric extends CompositeOperation{
     * 
     * @param aXBar
     *           The {@link MessageXBar} to announce changes to.
+    * @param aLoadout
+    *           The {@link LoadoutBase} to operate on.
     * @param aLoadoutPart
     *           The primary side {@link ConfiguredComponent} to change (the opposite side will be changed
     *           automatically).

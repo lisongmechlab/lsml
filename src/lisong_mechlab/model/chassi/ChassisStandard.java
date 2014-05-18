@@ -22,19 +22,11 @@ package lisong_mechlab.model.chassi;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.mwo_data.HardpointsXml;
-import lisong_mechlab.mwo_data.Localization;
-import lisong_mechlab.mwo_data.MechDefinition;
-import lisong_mechlab.mwo_data.helpers.ItemStatsMech;
-import lisong_mechlab.mwo_data.helpers.MdfComponent;
-import lisong_mechlab.mwo_data.helpers.MdfMech;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -54,36 +46,61 @@ public class ChassisStandard extends ChassisBase{
    private final int                 maxJumpJets;
    private final InternalComponent[] components;
 
-   public ChassisStandard(ItemStatsMech aStatsMech, MechDefinition aMdf, HardpointsXml aHardpoints, int aBaseVariant, String aSeries, List<Internal> aInternalsList){
-      // @formatter:off
-      super(aStatsMech.id, aStatsMech.name, aSeries, 
-            Localization.key2string("@" + aStatsMech.name), 
-            Localization.key2string("@" + aStatsMech.name + "_short"),
-            aMdf.Mech.MaxTons,
-            ChassisVariant.fromString(aMdf.Mech.VariantType),
-            aBaseVariant,
-            new BaseMovementProfile(aMdf.MovementTuningConfiguration),
-            false);
-      // @formatter:on
-      MdfMech mdfMech = aMdf.Mech;
-      engineMin = mdfMech.MinEngineRating;
-      engineMax = mdfMech.MaxEngineRating;
+   /**
+    * Creates a new {@link ChassisStandard}.
+    * 
+    * @param aMwoID
+    *           The MWO ID of the chassis as found in the XML.
+    * @param aMwoName
+    *           The MWO name of the chassis as found in the XML.
+    * @param aSeries
+    *           The name of the series for example "ORION" or "JENNER".
+    * @param aName
+    *           The long name of the mech, for example "JENNER JR7-F".
+    * @param aShortName
+    *           The short name of the mech, for example "JR7-F".
+    * @param aMaxTons
+    *           The maximum tonnage of the mech.
+    * @param aVariant
+    *           The variant type of the mech, like hero, champion etc.
+    * @param aBaseVariant
+    *           The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
+    * @param aMovementProfile
+    *           The {@link MovementProfile} of this chassis.
+    * @param aIsClan
+    *           True if this is a clan chassis.
+    * @param aEngineMin
+    *           The smallest engine rating that can be equipped.
+    * @param aEngineMax
+    *           The largest engine rating that can be equipped.
+    * @param aMaxJumpJets
+    *           The maximal number of jump jets that can be equipped.
+    * @param aComponents
+    *           An array of {@link InternalComponent} that defines the internal components of the chassis.
+    */
+   public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
+                          int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan, int aEngineMin, int aEngineMax, int aMaxJumpJets,
+                          InternalComponent[] aComponents){
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aIsClan);
+      engineMin = aEngineMin;
+      engineMax = aEngineMax;
+      maxJumpJets = aMaxJumpJets;
+      components = aComponents;
 
-      maxJumpJets = aMdf.Mech.MaxJumpJets;
-      components = new InternalComponent[Location.values().length];
-      for(MdfComponent component : aMdf.ComponentList){
-         if( Location.isRear(component.Name) ){
-            continue;
-         }
-         final Location part = Location.fromMwoName(component.Name);
-         components[part.ordinal()] = new InternalComponent(component, part, aHardpoints, getMwoName(), aInternalsList);
-      }
+      if( components.length != Location.values().length )
+         throw new IllegalArgumentException("Components array must contain all components!");
    }
 
+   /**
+    * @return The largest engine rating that this chassis can support.
+    */
    public int getEngineMax(){
       return engineMax;
    }
 
+   /**
+    * @return The smallest engine rating required to move this chassis.
+    */
    public int getEngineMin(){
       return engineMin;
    }
@@ -99,7 +116,7 @@ public class ChassisStandard extends ChassisBase{
       }
       return ans;
    }
-   
+
    /**
     * @param aHardpointType
     *           The type of hard points to count.
@@ -138,7 +155,10 @@ public class ChassisStandard extends ChassisBase{
 
    @Override
    public boolean isAllowed(Item aItem){
-      if( aItem instanceof Engine ){
+      if( !super.isAllowed(aItem) ){
+         return false;
+      }
+      else if( aItem instanceof Engine ){
          Engine engine = (Engine)aItem;
          return engine.getRating() >= getEngineMin() && engine.getRating() <= getEngineMax();
       }
@@ -150,6 +170,6 @@ public class ChassisStandard extends ChassisBase{
          if( part.isAllowed(aItem) )
             return true;
       }
-      return super.isAllowed(aItem);
+      return false;
    }
 }

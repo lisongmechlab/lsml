@@ -72,7 +72,7 @@ public class LoadStockAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      final Collection<ChassisBase> variations = ChassisDB.lookupVariations(loadout.getChassis());
+      final Collection<? extends ChassisBase> variations = ChassisDB.lookupVariations(loadout.getChassis());
 
       try{
          if( variations.size() == 1 ){

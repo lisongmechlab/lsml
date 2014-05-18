@@ -26,6 +26,7 @@ import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.OmniPodDB;
+import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
@@ -77,6 +78,12 @@ public class ComponentBuilder{
          ConfiguredOmniPod[] ans = new ConfiguredOmniPod[Location.values().length];
          for(Location location : Location.values()){
             ans[location.ordinal()] = new ConfiguredOmniPod(OmniPodDB.lookupOriginal(omniMech, location));
+            if( location == Location.CenterTorso ){
+               ans[location.ordinal()].addItem(omniMech.getEngine());
+            }
+            else if(location == Location.LeftTorso || location == Location.RightTorso && omniMech.getEngine().getType() == EngineType.XL){
+               ans[location.ordinal()].addItem(ConfiguredOmniPod.ENGINE_INTERNAL_CLAN);
+            }
          }
          return ans;
       }

@@ -20,6 +20,7 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.MovementProfileSum;
 import lisong_mechlab.model.chassi.OmniPod;
@@ -44,7 +45,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredOmniPod, OmniPod>{
     */
    public LoadoutOmniMech(Factory<ConfiguredOmniPod, OmniPod> aFactory, ChassisOmniMech aChassis, MessageXBar aXBar){
       super(aFactory, aChassis, aXBar);
-      movementProfile = new MovementProfileSum(aChassis.getMovementProfile());
+      movementProfile = new MovementProfileSum(aChassis.getMovementProfile());     
    }
 
    /**
@@ -101,5 +102,10 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredOmniPod, OmniPod>{
    @Override
    public LoadoutOmniMech clone(MessageXBar aXBar){
       return new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), this);
+   }
+
+   @Override
+   public Engine getEngine(){
+      return getChassis().getEngine();
    }
 }

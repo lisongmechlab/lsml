@@ -41,7 +41,6 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;

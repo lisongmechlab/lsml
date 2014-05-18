@@ -46,6 +46,8 @@ public class OpSetArmor extends Operation{
     * 
     * @param anXBar
     *           The {@link MessageXBar} to announce changes to.
+    * @param aLoadout
+    *           The {@link LoadoutBase} to change.
     * @param aLoadoutPart
     *           The {@link ConfiguredComponent} to change.
     * @param anArmorSide
@@ -58,9 +60,10 @@ public class OpSetArmor extends Operation{
     *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
     *            support the armor.
     */
-   public OpSetArmor(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount, boolean aManualSet){
+   public OpSetArmor(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount,
+                     boolean aManualSet){
       xBar = anXBar;
-      loadout  = aLoadout;
+      loadout = aLoadout;
       loadoutPart = aLoadoutPart;
       side = anArmorSide;
       amount = anArmorAmount;

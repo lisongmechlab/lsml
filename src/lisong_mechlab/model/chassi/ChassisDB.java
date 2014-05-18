@@ -69,7 +69,7 @@ public class ChassisDB{
     *           A {@link ChassisStandard} to get variations for.
     * @return A {@link List} of all variants of this chassis (normal, champion, phoenix etc)
     */
-   public static Collection<ChassisBase> lookupVariations(ChassisBase aChassis){
+   public static Collection<? extends ChassisBase> lookupVariations(ChassisBase aChassis){
       return chassis2variant.get(aChassis.getMwoId());
    }
 
@@ -79,7 +79,7 @@ public class ChassisDB{
     * @param aChassiClass
     * @return An {@link List} of all {@link ChassisStandard} with the given {@link ChassisClass}.
     */
-   public static Collection<ChassisBase> lookup(ChassisClass aChassiClass){
+   public static Collection<? extends ChassisBase> lookup(ChassisClass aChassiClass){
       List<ChassisBase> chassii = new ArrayList<>(4 * 4);
       for(ChassisBase chassis : name2chassis.values()){
          if( chassis.getChassiClass() == aChassiClass && !chassii.contains(chassis) ){
@@ -96,7 +96,7 @@ public class ChassisDB{
     *           The name of the series to find.
     * @return A {@link List} of all chassis that are part of that series.
     */
-   public static Collection<ChassisBase> lookupSeries(String aSeries){
+   public static Collection<? extends ChassisBase> lookupSeries(String aSeries){
       String keyShortName = canonize(aSeries);
       if( !series2chassis.containsKey(keyShortName) ){
          throw new IllegalArgumentException("No chassi variation by that name!");

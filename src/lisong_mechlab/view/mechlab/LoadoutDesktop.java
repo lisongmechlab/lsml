@@ -32,7 +32,6 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;

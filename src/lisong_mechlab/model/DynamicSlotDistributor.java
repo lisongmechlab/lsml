@@ -21,6 +21,7 @@ package lisong_mechlab.model;
 
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 
 /**
@@ -29,7 +30,7 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponent;
  * It only tells you how many slots of each type should be visualized for a given part. It doesn't actually add any
  * thing to those parts.
  * <p>
- * This class will transparently handle the fact that some slots are fixed per location on omni mechs.
+ * This class will transparently handle the fact that some slots are fixed per location on omnimechs.
  * 
  * @author Li Song
  */
@@ -49,18 +50,23 @@ public class DynamicSlotDistributor{
    /**
     * Returns the number of dynamic structure slots that should be visualized for the given {@link ConfiguredComponent}.
     * 
-    * @param aPart
+    * @param aComponent
     *           The {@link ConfiguredComponent} to get results for.
     * @return A number of slots to display, can be 0.
     */
-   public int getDynamicStructureSlots(ConfiguredComponent aPart){
+   public int getDynamicStructureSlots(ConfiguredComponent aComponent){
+      if( loadout instanceof LoadoutOmniMech ){
+         LoadoutOmniMech omniMech = (LoadoutOmniMech)loadout;
+         return omniMech.getChassis().getDynamicStructureSlots(aComponent.getInternalComponent().getLocation());
+      }
+      
       final int structSlots = loadout.getUpgrades().getStructure().getExtraSlots();
       final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();
       if( structSlots < 1 )
          return 0;
 
-      final int filled = getCumulativeFreeSlots(aPart.getInternalComponent().getLocation());
-      final int freeSlotsInPart = Math.min(aPart.getSlotsFree(), Math.max(0, aPart.getSlotsFree() + filled - armorSlots));
+      final int filled = getCumulativeFreeSlots(aComponent.getInternalComponent().getLocation());
+      final int freeSlotsInPart = Math.min(aComponent.getSlotsFree(), Math.max(0, aComponent.getSlotsFree() + filled - armorSlots));
       final int numSlotsToFill = structSlots + armorSlots;
       return Math.min(freeSlotsInPart, Math.max(numSlotsToFill - filled, 0));
    }
@@ -68,31 +74,35 @@ public class DynamicSlotDistributor{
    /**
     * Returns the number of dynamic armor slots that should be visualized for the given {@link ConfiguredComponent}.
     * 
-    * @param aPart
+    * @param aComponent
     *           The {@link ConfiguredComponent} to get results for.
     * @return A number of slots to display, can be 0.
     */
-   public int getDynamicArmorSlots(ConfiguredComponent aPart){
-      // TODO : Handle fixed positions of omni mechs.
+   public int getDynamicArmorSlots(ConfiguredComponent aComponent){
+      if( loadout instanceof LoadoutOmniMech ){
+         LoadoutOmniMech omniMech = (LoadoutOmniMech)loadout;
+         return omniMech.getChassis().getDynamicArmorSlots(aComponent.getInternalComponent().getLocation());
+      }
+      
       final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();
       if( armorSlots < 1 )
          return 0;
 
-      int filled = getCumulativeFreeSlots(aPart.getInternalComponent().getLocation());
-      return Math.min(aPart.getSlotsFree(), Math.max(armorSlots - filled, 0));
+      int filled = getCumulativeFreeSlots(aComponent.getInternalComponent().getLocation());
+      return Math.min(aComponent.getSlotsFree(), Math.max(armorSlots - filled, 0));
    }
 
    /**
     * Gets the number of cumulative free slots up until the argument. Taking priority order into account.
     * 
-    * @param aPart
-    *           The part to sum up until.
+    * @param aLocation
+    *           The {@link Location} to sum up until.
     * @return A cumulative sum of the number of free slots.
     */
-   private int getCumulativeFreeSlots(Location aPart){
+   private int getCumulativeFreeSlots(Location aLocation){
       int ans = 0;
       for(Location part : Location.leftToRight()){
-         if( part == aPart )
+         if( part == aLocation )
             break;
          ans += loadout.getComponent(part).getSlotsFree();
       }

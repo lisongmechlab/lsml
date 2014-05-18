@@ -34,7 +34,6 @@ import javax.swing.event.ChangeListener;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpDistributeArmor;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.component.OpSetArmor;

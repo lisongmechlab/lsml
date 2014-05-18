@@ -39,6 +39,8 @@ public class OpStripComponent extends CompositeOperation{
     *           The {@link ConfiguredComponent} to strip.
     * @param anXBar
     *           Where to announce changes from this operation.
+    * @param aLoadout
+    *           The {@link LoadoutBase} to operate on.
     */
    public OpStripComponent(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart){
       super("strip part");

@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
@@ -116,7 +117,7 @@ public class AddItemOperationTest{
     */
    @Test
    public void testAddItem_XLCaseLeft(){
-      LoadoutStandard testLoadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
 
@@ -131,7 +132,7 @@ public class AddItemOperationTest{
     */
    @Test
    public void testAddItem_XLCaseRight(){
-      LoadoutStandard testLoadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
 

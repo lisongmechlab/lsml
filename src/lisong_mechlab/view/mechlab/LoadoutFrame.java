@@ -44,7 +44,6 @@ import javax.swing.ScrollPaneConstants;
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.OpStripArmor;
 import lisong_mechlab.model.loadout.OpStripLoadout;

@@ -35,15 +35,13 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
-import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 public class InternalPartTest{
 
-   ChassisStandard chassi = ChassisDB.lookup("TDR-5S");
+   ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("TDR-5S");
 
    @Test(expected = UnsupportedOperationException.class)
    public void testGetHardpoints_Immutable() throws Exception{

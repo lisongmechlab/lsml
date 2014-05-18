@@ -28,7 +28,6 @@ import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.util.MessageXBar;
 
