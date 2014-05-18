@@ -20,7 +20,6 @@
 package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.WeaponRanges;
 
 /**
@@ -77,7 +76,7 @@ public abstract class RangeTimeMetric implements Metric{
 
    /**
     * Will handle calculation of the metric with the current values for range and time. If range is set to below 0, the
-    * metric will be evaluated in all range points returned by {@link WeaponRanges#getRanges(LoadoutStandard)} and the
+    * metric will be evaluated in all range points returned by {@link WeaponRanges#getRanges(LoadoutBase)} and the
     * maximum value (with ties breaking to larger ranges) be returned.
     * 
     * @see lisong_mechlab.model.metrics.Metric#calculate()

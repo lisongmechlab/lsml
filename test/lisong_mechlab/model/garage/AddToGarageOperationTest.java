@@ -19,9 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.garage;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.OperationStack;
 
@@ -52,7 +53,8 @@ public class AddToGarageOperationTest{
    public void testAddLoadoutTwice() throws Exception{
       // Setup
       LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-      List<LoadoutStandard> loadouts = Arrays.asList(loadout);
+      List<LoadoutBase<?, ?>> loadouts = new ArrayList<>();
+      loadouts.add(loadout);
       Mockito.when(garage.getMechs()).thenReturn(loadouts);
 
       opStack.pushAndApply(new OpAddToGarage(garage, loadout));

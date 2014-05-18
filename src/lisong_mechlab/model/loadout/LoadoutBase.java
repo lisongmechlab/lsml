@@ -53,28 +53,25 @@ import lisong_mechlab.util.MessageXBar;
  *           The type of {@link InternalComponent} in T.
  */
 public abstract class LoadoutBase<T extends ConfiguredComponent, U extends InternalComponent> {
-
    private String             name;
    private final T[]          components;
    private final Upgrades     upgrades;
    private final ChassisBase  chassisBase;
    private final Efficiencies efficiencies;
 
-   LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, ChassisBase aChassisBase, MessageXBar aXBar){
+   protected LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, ChassisBase aChassisBase, MessageXBar aXBar){
       name = aChassisBase.getNameShort();
       chassisBase = aChassisBase;
       upgrades = new Upgrades();
       efficiencies = new Efficiencies(aXBar);
-
       components = aFactory.defaultComponents(chassisBase);
    }
 
-   LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, LoadoutBase<T, U> aLoadoutBase){
+   protected LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, LoadoutBase<T, U> aLoadoutBase){
       name = aLoadoutBase.name;
       chassisBase = aLoadoutBase.chassisBase;
       upgrades = new Upgrades(aLoadoutBase.upgrades);
       efficiencies = new Efficiencies(aLoadoutBase.efficiencies);
-
       components = aFactory.cloneComponents(aLoadoutBase);
    }
 
@@ -153,14 +150,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
    /**
     * @return The {@link Engine} equipped on this loadout, or <code>null</code> if no engine is equipped.
     */
-   public Engine getEngine(){
-      for(Item item : components[Location.CenterTorso.ordinal()].getItemsAll()){
-         if( item instanceof Engine ){
-            return (Engine)item;
-         }
-      }
-      return null;
-   }
+   public abstract Engine getEngine();
 
    /**
     * @return The current mass of the loadout.

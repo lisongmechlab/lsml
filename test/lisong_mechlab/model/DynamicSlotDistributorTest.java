@@ -25,13 +25,26 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisVariant;
+import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
+import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredOmniPod;
+import lisong_mechlab.model.upgrades.ArmorUpgrade;
+import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -102,20 +115,20 @@ public class DynamicSlotDistributorTest{
     * Calculates the number of cumulative slots that are occupied by dynamic slots given the maximum number of dynamic
     * slots that can be distributed.
     * 
-    * @param aPart
-    * @param slotsTotal
+    * @param aComponent
+    * @param aSlotsTotal
     * @return
     */
-   private int slotsOccupied(ConfiguredComponent aPart, int slotsTotal){
-      return Math.min(aPart.getSlotsFree(), Math.max(0, slotsTotal - cumSlotsFree(aPart)));
+   private int slotsOccupied(ConfiguredComponent aComponent, int aSlotsTotal){
+      return Math.min(aComponent.getSlotsFree(), Math.max(0, aSlotsTotal - cumSlotsFree(aComponent)));
    }
 
-   private String expectedStructure(int slotsTotal){
+   private String expectedStructure(int aSlotsTotal){
       StringBuilder sb = new StringBuilder();
       sb.append("{");
       for(ConfiguredComponent part : priorityOrder){
          sb.append(part).append(" = ");
-         sb.append(slotsOccupied(part, slotsTotal));
+         sb.append(slotsOccupied(part, aSlotsTotal));
          sb.append(", ");
       }
       sb.append("}");
@@ -282,5 +295,51 @@ public class DynamicSlotDistributorTest{
 
       assertEquals(0, cut.getDynamicStructureSlots(mlc.la));
       assertEquals(0, cut.getDynamicArmorSlots(mlc.la));
+   }
+
+   @Test
+   public void testOmniMech(){
+      // Prepare armor/structure 
+      StructureUpgrade aStructureType = Mockito.mock(StructureUpgrade.class);
+      ArmorUpgrade armorType = Mockito.mock(ArmorUpgrade.class);
+      int armorSlotsCount = 0;
+      int structSlotsCount = 0;
+      int[] structureSlots = new int[Location.values().length];
+      int[] armorSlots = new int[Location.values().length];
+
+      armorSlots[Location.LeftArm.ordinal()] = 2;
+      armorSlots[Location.LeftLeg.ordinal()] = 2;
+      armorSlotsCount = 4;
+
+      structureSlots[Location.RightArm.ordinal()] = 2;
+      structureSlots[Location.RightLeg.ordinal()] = 2;
+      structSlotsCount = 4;
+      Mockito.when(aStructureType.getExtraSlots()).thenReturn(structSlotsCount);
+      Mockito.when(armorType.getExtraSlots()).thenReturn(armorSlotsCount);
+      
+      // Create chassis
+      ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null, false, null, aStructureType,
+                                                            armorType, null, null, structureSlots, armorSlots);
+
+      // Setup factory
+      Factory<ConfiguredOmniPod, OmniPod> aFactory = Mockito.mock(Factory.class);
+            ConfiguredOmniPod[] omniPods = new ConfiguredOmniPod[Location.values().length];
+      for(Location location : Location.values()){
+         OmniPod omniPod = Mockito.mock(OmniPod.class);
+         Mockito.when(omniPod.getLocation()).thenReturn(location);
+         omniPods[location.ordinal()] = Mockito.mock(ConfiguredOmniPod.class);
+         Mockito.when(omniPods[location.ordinal()].getInternalComponent()).thenReturn(omniPod);
+      }
+      Mockito.when(aFactory.defaultComponents(Matchers.any(ChassisBase.class))).thenReturn(omniPods);
+
+      // Create loadout
+      LoadoutOmniMech loadoutOmniMech = new LoadoutOmniMech(aFactory, chassisOmniMech, null);
+      
+      // Execute + Verify
+      cut = new DynamicSlotDistributor(loadoutOmniMech);
+      for(Location location : Location.values()){
+         assertEquals(armorSlots[location.ordinal()], cut.getDynamicArmorSlots(loadoutOmniMech.getComponent(location)));
+         assertEquals(structureSlots[location.ordinal()], cut.getDynamicStructureSlots(loadoutOmniMech.getComponent(location)));
+      }
    }
 }

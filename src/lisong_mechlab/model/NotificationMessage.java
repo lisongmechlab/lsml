@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model;
 
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar.Message;
 
 /**
@@ -80,7 +80,7 @@ public class NotificationMessage implements Message{
    }
 
    @Override
-   public boolean isForMe(LoadoutBase aLoadout){
+   public boolean isForMe(LoadoutBase<?,?> aLoadout){
       return loadout == aLoadout;
    }
 

@@ -22,10 +22,6 @@ package lisong_mechlab.model;
 import java.util.Collections;
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
@@ -36,6 +32,10 @@ import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This immutable class defines a stock loadout pattern that can be used for loading stock on a {@link LoadoutBase}.

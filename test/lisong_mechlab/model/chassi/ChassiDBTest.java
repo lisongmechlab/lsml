@@ -30,6 +30,11 @@ import junitparams.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * This is a test suite for {@link ChassisDB}. The test verifies that the data is loaded properly from the data files.
+ * 
+ * @author Emily Björk
+ */
 @RunWith(JUnitParamsRunner.class)
 public class ChassiDBTest{
 
@@ -41,8 +46,8 @@ public class ChassiDBTest{
 
    @Test
    public void testLookupByChassiSeries(){
-      Collection<ChassisStandard> cataphracts = ChassisDB.lookupSeries("CATAphract");
-      Collection<ChassisStandard> cataphracts1 = ChassisDB.lookupSeries("CTF");
+      Collection<? extends ChassisBase> cataphracts = ChassisDB.lookupSeries("CATAphract");
+      Collection<? extends ChassisBase> cataphracts1 = ChassisDB.lookupSeries("CTF");
 
       assertEquals(cataphracts, cataphracts1);
 
@@ -62,7 +67,7 @@ public class ChassiDBTest{
 
    @Test
    public void testLookupByChassiClass(){
-      Collection<ChassisStandard> heavies = ChassisDB.lookup(ChassisClass.HEAVY);
+      Collection<? extends ChassisBase> heavies = ChassisDB.lookup(ChassisClass.HEAVY);
 
       assertTrue(heavies.contains(ChassisDB.lookup("ILYA MUROMETS")));
       assertTrue(heavies.contains(ChassisDB.lookup("JM6-DD")));
@@ -70,7 +75,7 @@ public class ChassiDBTest{
       assertTrue(heavies.contains(ChassisDB.lookup("FLAME")));
       assertTrue(heavies.contains(ChassisDB.lookup("PROTECTOR")));
 
-      for(ChassisStandard chassi : heavies){
+      for(ChassisBase chassi : heavies){
          assertEquals(ChassisClass.HEAVY, chassi.getChassiClass());
       }
    }
@@ -80,21 +85,21 @@ public class ChassiDBTest{
     */
    @Test
    public void testLookupByChassiClass_Assault(){
-      Collection<ChassisStandard> heavies = ChassisDB.lookup(ChassisClass.ASSAULT);
+      Collection<? extends ChassisBase> heavies = ChassisDB.lookup(ChassisClass.ASSAULT);
 
       assertTrue(heavies.contains(ChassisDB.lookup("PRETTY BABY")));
       assertTrue(heavies.contains(ChassisDB.lookup("DRAGON SLAYER")));
       assertTrue(heavies.contains(ChassisDB.lookup("MISERY")));
       assertTrue(heavies.contains(ChassisDB.lookup("AS7-D-DC")));
 
-      for(ChassisStandard chassi : heavies){
+      for(ChassisBase chassi : heavies){
          assertEquals(ChassisClass.ASSAULT, chassi.getChassiClass());
       }
    }
 
    /**
-    * {@link ChassisDB#lookupVariations(ChassisStandard)} shall return a list of all chassis variations for the given chassis
-    * (including the chassis given as argument).
+    * {@link ChassisDB#lookupVariations(ChassisBase)} shall return a list of all chassis variations for the given
+    * chassis (including the chassis given as argument).
     * 
     * @param aLookup
     *           The chassis name to use as a lookup.
@@ -105,7 +110,7 @@ public class ChassiDBTest{
          "TDR-5S(P), TDR-5S", "TDR-5S, TDR-5S(P)"})
    @Test
    public void testLookupVariations_LookupFromNormal(String aLookup, String aExpected){
-      Collection<ChassisStandard> ans = ChassisDB.lookupVariations(ChassisDB.lookup(aLookup));
+      Collection<? extends ChassisBase> ans = ChassisDB.lookupVariations(ChassisDB.lookup(aLookup));
       assertTrue(ans.contains(ChassisDB.lookup(aLookup)));
       assertTrue(ans.contains(ChassisDB.lookup(aExpected)));
       assertEquals(2, ans.size());

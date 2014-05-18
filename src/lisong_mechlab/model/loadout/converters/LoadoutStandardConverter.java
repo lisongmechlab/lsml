@@ -19,14 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
-import java.io.IOException;
-
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
@@ -48,11 +46,11 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * 
  * @author Emily Björk
  */
-public class LoadoutConverter implements Converter{
+public class LoadoutStandardConverter implements Converter{
 
    private final MessageXBar xBar;
 
-   public LoadoutConverter(MessageXBar aXBar){
+   public LoadoutStandardConverter(MessageXBar aXBar){
       xBar = aXBar;
    }
 
@@ -113,7 +111,7 @@ public class LoadoutConverter implements Converter{
             loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak());
          }
          else if( "component".equals(aReader.getNodeName()) ){
-            aContext.convertAnother(loadout, ConfiguredComponent.class, new LoadoutPartConverter(xBar, loadout));
+            aContext.convertAnother(loadout, ConfiguredComponent.class, new ConfiguredComponentConverter(xBar, loadout));
          }
          aReader.moveUp();
       }

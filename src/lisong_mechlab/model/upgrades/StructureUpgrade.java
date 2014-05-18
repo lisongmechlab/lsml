@@ -19,11 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Represents an upgrade to a 'mechs internal structure.

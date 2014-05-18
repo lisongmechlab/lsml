@@ -56,7 +56,7 @@ public class Upgrades implements Cloneable{
       }
 
       @Override
-      public boolean isForMe(LoadoutBase aLoadout){
+      public boolean isForMe(LoadoutBase<?,?> aLoadout){
          return aLoadout.getUpgrades() == source;
       }
 

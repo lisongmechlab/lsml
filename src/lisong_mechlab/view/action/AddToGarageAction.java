@@ -28,7 +28,6 @@ import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.garage.OpAddToGarage;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.view.LSML;
 import lisong_mechlab.view.ProgramInit;
 

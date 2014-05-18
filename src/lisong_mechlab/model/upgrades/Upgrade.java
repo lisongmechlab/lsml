@@ -19,10 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 import lisong_mechlab.mwo_data.Localization;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Base class for all upgrades for 'mechs.

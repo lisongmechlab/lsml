@@ -19,8 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -60,9 +58,9 @@ public class InternalComponent{
    @XStreamAsAttribute
    private final Location        location;
    @XStreamAsAttribute
-   private transient int         internalSlots;
+   private final int             internalSlots;
    @XStreamAsAttribute
-   private transient int         maxarmor;
+   private final int             maxarmor;
 
    /**
     * Creates a new {@link InternalComponent} with the given properties.
@@ -352,11 +350,5 @@ public class InternalComponent{
          ans.add(new HardPoint(HardPointType.ECM));
 
       return ans;
-   }
-
-   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-      in.defaultReadObject();
-      maxarmor = calculateMaxArmor(location, hitpoints);
-      internalSlots = calculateInternalSlots(internals);
    }
 }

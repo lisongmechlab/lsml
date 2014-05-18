@@ -30,7 +30,6 @@ import javax.swing.KeyStroke;
 import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.garage.OpRemoveFromGarage;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;

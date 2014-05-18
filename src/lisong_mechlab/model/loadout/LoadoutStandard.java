@@ -24,15 +24,17 @@ import java.io.File;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
+import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
+import lisong_mechlab.model.loadout.converters.ConfiguredComponentConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
-import lisong_mechlab.model.loadout.converters.LoadoutConverter;
-import lisong_mechlab.model.loadout.converters.LoadoutPartConverter;
+import lisong_mechlab.model.loadout.converters.LoadoutStandardConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.util.MessageXBar;
@@ -59,8 +61,8 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponent, InternalCo
       stream.setMode(XStream.NO_REFERENCES);
       stream.registerConverter(new ChassiConverter());
       stream.registerConverter(new ItemConverter());
-      stream.registerConverter(new LoadoutPartConverter(aXBar, null));
-      stream.registerConverter(new LoadoutConverter(aXBar));
+      stream.registerConverter(new ConfiguredComponentConverter(aXBar, null));
+      stream.registerConverter(new LoadoutStandardConverter(aXBar));
       stream.registerConverter(new UpgradeConverter());
       stream.registerConverter(new UpgradesConverter());
       stream.addImmutableType(Item.class);
@@ -108,6 +110,19 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponent, InternalCo
    @Override
    public ChassisStandard getChassis(){
       return (ChassisStandard)super.getChassis();
+   }
+
+   /**
+    * @return The {@link Engine} equipped on this loadout, or <code>null</code> if no engine is equipped.
+    */
+   @Override
+   public Engine getEngine(){
+      for(Item item : getComponent(Location.CenterTorso).getItemsAll()){
+         if( item instanceof Engine ){
+            return (Engine)item;
+         }
+      }
+      return null;
    }
 
    /**

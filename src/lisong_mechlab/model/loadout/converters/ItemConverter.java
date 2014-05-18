@@ -28,6 +28,11 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+/**
+ * This converter serializes an item as a reference instead of as a full item.
+ * 
+ * @author Emily Björk
+ */
 public class ItemConverter implements Converter{
 
    @Override
@@ -54,9 +59,6 @@ public class ItemConverter implements Converter{
          int mwoidx = Integer.parseInt(id);
          return ItemDB.lookup(mwoidx);
       }
-      else{
-         return ItemDB.lookup(aReader.getAttribute("key"));
-      }
+      return ItemDB.lookup(aReader.getAttribute("key"));
    }
-
 }

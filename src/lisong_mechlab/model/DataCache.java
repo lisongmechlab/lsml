@@ -59,7 +59,6 @@ import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Module;
 import lisong_mechlab.model.loadout.converters.HardPointConverter;
-import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
@@ -78,6 +77,7 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import lisong_mechlab.mwo_data.helpers.LoadoutXML;
+import lisong_mechlab.mwo_data.helpers.MdfComponent;
 import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
 import lisong_mechlab.mwo_data.helpers.Mission;
 import lisong_mechlab.util.OS;
@@ -330,9 +330,9 @@ public class DataCache{
       stream.alias("part", Location.class);
       stream.alias("GuidanceUpgrade", GuidanceUpgrade.class);
 
-      //stream.addImmutableType(Internal.class);
+      // stream.addImmutableType(Internal.class);
       stream.registerConverter(new HardPointConverter());
-      //stream.registerLocalConverter(InternalComponent.class, "internal", new ItemConverter());
+      // stream.registerLocalConverter(InternalComponent.class, "internal", new ItemConverter());
       return stream;
    }
 
@@ -533,7 +533,21 @@ public class DataCache{
             }
             basevariant = mdf.Mech.VariantParent;
          }
-         final ChassisStandard chassi = new ChassisStandard(mech, mdf, hardpoints, basevariant, mech.chassis, aInternalsList);
+
+         InternalComponent[] components = new InternalComponent[Location.values().length];
+         for(MdfComponent component : mdf.ComponentList){
+            if( Location.isRear(component.Name) ){
+               continue;
+            }
+            final Location part = Location.fromMwoName(component.Name);
+            components[part.ordinal()] = new InternalComponent(component, part, hardpoints, mech.name, aInternalsList);
+         }
+
+         final ChassisStandard chassi = new ChassisStandard(mech.id, mech.name, mech.chassis, Localization.key2string("@" + mech.name),
+                                                            Localization.key2string("@" + mech.name + "_short"), mdf.Mech.MaxTons,
+                                                            ChassisVariant.fromString(mdf.Mech.VariantType), basevariant,
+                                                            new BaseMovementProfile(mdf.MovementTuningConfiguration), false,
+                                                            mdf.Mech.MinEngineRating, mdf.Mech.MaxEngineRating, mdf.Mech.MaxJumpJets, components);
          ans.add(chassi);
       }
       return ans;
@@ -618,8 +632,23 @@ public class DataCache{
       aMdfMovement.MaxArmRotationYaw = 20;
       aMdfMovement.MaxArmRotationPitch = 30;
 
+      int[] dynStructure = new int[Location.values().length];
+      int[] dynArmor = new int[Location.values().length];
+      
+      dynStructure[Location.LeftArm.ordinal()] = 2;
+      dynStructure[Location.RightArm.ordinal()] = 2;
+      dynStructure[Location.LeftTorso.ordinal()] = 1;
+      dynStructure[Location.RightTorso.ordinal()] = 1;
+      dynStructure[Location.CenterTorso.ordinal()] = 1;
+
+      dynArmor[Location.LeftArm.ordinal()] = 1;
+      dynArmor[Location.RightArm.ordinal()] = 1;
+      dynArmor[Location.LeftTorso.ordinal()] = 2;
+      dynArmor[Location.RightTorso.ordinal()] = 2;
+      dynArmor[Location.Head.ordinal()] = 1;
+      
       ans.add(new ChassisOmniMech(40000, "TBW-PRIME", "TIMBERWOLF", "TIMBERWOLF PRIME", "TBW-PRIME", 75, ChassisVariant.NORMAL, -1,
-                                  new BaseMovementProfile(aMdfMovement), true, xl375, clanes, clanff, clandhs, ct));
+                                  new BaseMovementProfile(aMdfMovement), true, xl375, clanes, clanff, clandhs, ct, dynStructure, dynArmor));
 
       return ans;
    }

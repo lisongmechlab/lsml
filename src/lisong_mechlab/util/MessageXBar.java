@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
  * Implements a message passing framework for an UI where the components don't have to know about each other, only about

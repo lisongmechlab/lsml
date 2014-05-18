@@ -24,12 +24,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 
 /**
  * Test suite for {@link ChassisStandard}.
@@ -37,7 +39,21 @@ import org.junit.runner.RunWith;
  * @author Emily Björk
  */
 @RunWith(JUnitParamsRunner.class)
-public class ChassisStandardTest{
+public class ChassisStandardTest extends ChassisBaseTest{
+
+   private int                 engineMin;
+   private int                 engineMax;
+   private int                 maxJumpJets;
+   private InternalComponent[] components;
+
+   @Before
+   public void init(){
+      components = new InternalComponent[Location.values().length];
+      for(Location location : Location.values()){
+         components[location.ordinal()] = Mockito.mock(InternalComponent.class);
+         Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class))).thenReturn(true);
+      }
+   }
 
    /**
     * Internal parts list can not be modified.
@@ -45,48 +61,15 @@ public class ChassisStandardTest{
    @Test(expected = UnsupportedOperationException.class)
    public void getParts_NoMod(){
       // Setup
-      ChassisStandard cut = ChassisDB.lookup("Ilya Muromets");
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("Ilya Muromets");
 
       // Execute
       cut.getComponents().add(null);
    }
 
    @Test
-   public void testIsHero(){
-      ChassisStandard ilya = ChassisDB.lookup("Ilya Muromets");
-      assertEquals(ChassisVariant.HERO, ilya.getVariantType());
-
-      ChassisStandard ctf3d = ChassisDB.lookup("CTF-3D");
-      assertEquals(ChassisVariant.NORMAL, ctf3d.getVariantType());
-   }
-
-   @Parameters({"HBK-4J, HBK-4P", "CTF-3D, Ilya Muromets"})
-   @Test
-   public void testIsSameSeries(String aChassiA, String aChassiB){
-      assertTrue(ChassisDB.lookup(aChassiA).isSameSeries(ChassisDB.lookup(aChassiB)));
-   }
-
-   @Parameters({"HBK-4J, CTF-3D", "EMBER, Ilya Muromets"})
-   @Test
-   public void testIsNotSameSeries(String aChassiA, String aChassiB){
-      assertFalse(ChassisDB.lookup(aChassiA).isSameSeries(ChassisDB.lookup(aChassiB)));
-   }
-
-   @Parameters({"SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)"})
-   @Test
-   public void testIsSpecialVariant(String aChassiA){
-      assertTrue(ChassisDB.lookup(aChassiA).getVariantType().isVariation());
-   }
-
-   @Parameters({"SDR-5K", "JR7-D", "CDA-2A"})
-   @Test
-   public void testIsNotSpecialVariant(String aChassiA){
-      assertFalse(ChassisDB.lookup(aChassiA).getVariantType().isVariation());
-   }
-
-   @Test
    public void testLoadHeroMech(){
-      ChassisStandard cut = ChassisDB.lookup("Ilya Muromets");
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("Ilya Muromets");
 
       assertEquals(140, cut.getEngineMin());
       assertEquals(340, cut.getEngineMax());
@@ -232,7 +215,7 @@ public class ChassisStandardTest{
 
    @Test
    public void testLoadHasECM(){
-      ChassisStandard cut = ChassisDB.lookup("AS7-D-DC");
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("AS7-D-DC");
 
       assertEquals(200, cut.getEngineMin());
       assertEquals(360, cut.getEngineMax());
@@ -267,7 +250,7 @@ public class ChassisStandardTest{
 
    @Test
    public void testLoadHasJJ(){
-      ChassisStandard cut = ChassisDB.lookup("Jenner JR7-F");
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("Jenner JR7-F");
 
       assertEquals(70, cut.getEngineMin()); // However no such engine exists :)
       assertEquals(300, cut.getEngineMax());
@@ -300,9 +283,9 @@ public class ChassisStandardTest{
 
    @Test
    public void testIsAllowed_JJ(){
-      ChassisStandard jj55tons = ChassisDB.lookup("WVR-6R");
-      ChassisStandard jj70tons = ChassisDB.lookup("QKD-4G");
-      ChassisStandard nojj55tons = ChassisDB.lookup("KTO-18");
+      ChassisStandard jj55tons = (ChassisStandard)ChassisDB.lookup("WVR-6R");
+      ChassisStandard jj70tons = (ChassisStandard)ChassisDB.lookup("QKD-4G");
+      ChassisStandard nojj55tons = (ChassisStandard)ChassisDB.lookup("KTO-18");
 
       Item classIV = ItemDB.lookup("JUMP JETS - CLASS IV");
       Item classIII = ItemDB.lookup("JUMP JETS - CLASS III");
@@ -317,7 +300,7 @@ public class ChassisStandardTest{
 
    @Test
    public void testIsAllowed_Engine(){
-      ChassisStandard cut = ChassisDB.lookup("ILYA MUROMETS");
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("ILYA MUROMETS");
 
       Item tooSmall = ItemDB.lookup("STD ENGINE 135");
       Item tooLarge = ItemDB.lookup("STD ENGINE 345");
@@ -332,12 +315,18 @@ public class ChassisStandardTest{
 
    @Test
    public void testIsAllowed_Hardpoints(){
-      ChassisStandard cut = ChassisDB.lookup("ILYA MUROMETS");
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("ILYA MUROMETS");
 
       Item lrm20 = ItemDB.lookup("LRM 20");
       Item ac20 = ItemDB.lookup("AC/20");
 
       assertFalse(cut.isAllowed(lrm20));
       assertTrue(cut.isAllowed(ac20));
+   }
+
+   @Override
+   protected ChassisBase makeDefaultCUT(){
+      return new ChassisStandard(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, engineMin,
+                                 engineMax, maxJumpJets, components);
    }
 }

@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;

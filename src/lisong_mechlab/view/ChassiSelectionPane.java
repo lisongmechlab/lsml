@@ -93,7 +93,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
       }
 
       private void doit(List<ChassisStandard> aList, boolean aFilterSpecials, ChassisClass aChassiClass){
-         Collection<ChassisBase> all = ChassisDB.lookup(aChassiClass);
+         Collection<? extends ChassisBase> all = ChassisDB.lookup(aChassiClass);
          
          aList.clear();
          for(ChassisBase base : all){

@@ -44,12 +44,12 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class LoadoutPartConverter implements Converter{
+public class ConfiguredComponentConverter implements Converter{
 
    private final LoadoutStandard     loadout;
    private final MessageXBar xBar;
 
-   public LoadoutPartConverter(MessageXBar anXBar, LoadoutStandard aLoadout){
+   public ConfiguredComponentConverter(MessageXBar anXBar, LoadoutStandard aLoadout){
       loadout = aLoadout;
       xBar = anXBar;
    }

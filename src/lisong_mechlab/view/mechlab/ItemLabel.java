@@ -53,7 +53,6 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpAutoAddItem;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.util.MessageXBar;

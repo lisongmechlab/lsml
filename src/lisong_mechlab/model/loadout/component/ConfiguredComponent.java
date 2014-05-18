@@ -33,8 +33,8 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
 
@@ -89,7 +89,7 @@ public class ConfiguredComponent{
       }
 
       @Override
-      public boolean isForMe(LoadoutBase aLoadout){
+      public boolean isForMe(LoadoutBase<?, ?> aLoadout){
          return aLoadout.getComponents().contains(component);
       }
 
@@ -100,7 +100,7 @@ public class ConfiguredComponent{
    }
 
    public final static Internal              ENGINE_INTERNAL      = (Internal)ItemDB.lookup("mdf_Engine");
-   public final static Internal              ENGINE_INTERNAL_CLAN = (Internal)ItemDB.lookup("mdf_Engine");
+   public final static Internal              ENGINE_INTERNAL_CLAN = new Internal("CLAN XL ENGINE", "", "", -1, 2, 9, HardPointType.NONE, 15, true);
    private final TreeMap<ArmorSide, Integer> armor                = new TreeMap<ArmorSide, Integer>();
    private boolean                           autoArmor            = false;
 

@@ -19,18 +19,18 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponent;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class models a guidance upgrade.

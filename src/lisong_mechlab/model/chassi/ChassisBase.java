@@ -67,10 +67,10 @@ public abstract class ChassisBase{
    }
 
    @Override
-   public boolean equals(Object obj){
-      if( !this.getClass().isAssignableFrom(obj.getClass()) )
+   public boolean equals(Object aObject){
+      if( !(aObject instanceof ChassisBase) )
          return false;
-      return (mwoId == ((ChassisBase)obj).mwoId);
+      return (mwoId == ((ChassisBase)aObject).mwoId);
    }
 
    /**
@@ -174,7 +174,7 @@ public abstract class ChassisBase{
       if( aItem.isClan() != clan ){
          return false;
       }
-      return false;
+      return true;
    }
 
    /**
