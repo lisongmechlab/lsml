@@ -48,7 +48,7 @@ import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
-import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.graphs.PayloadGraphPanel.Entry;
 
@@ -105,7 +105,7 @@ public class PayloadSelectionPanel extends JPanel{
          graphEntries.addSelectionInterval(0, graphEntries.getModel().getSize() - 1);
       }
 
-      void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel, final Upgrades aUpgrades){
+      void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel, final UpgradesMutable aUpgrades){
          final OperationStack stack = new OperationStack(0);
 
          graphEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
@@ -165,7 +165,7 @@ public class PayloadSelectionPanel extends JPanel{
 
    private static final long                   serialVersionUID = 1L;
 
-   private final Upgrades                      upgrades;
+   private final UpgradesMutable               upgrades;
    private final PayloadGraphPanel             graphPanel;
    private final PayloadStatistics             payloadStatistics;
    private Collection<PayloadGraphPanel.Entry> chassis;
@@ -176,7 +176,7 @@ public class PayloadSelectionPanel extends JPanel{
       chassis = calculateUniqueSpeedChassis();
       PayloadSettingsPanel settingsPanel = new PayloadSettingsPanel(chassis);
 
-      upgrades = new Upgrades();
+      upgrades = new UpgradesMutable(UpgradeDB.FERRO_FIBROUS_ARMOR, UpgradeDB.ENDO_STEEL_STRUCTURE, UpgradeDB.ARTEMIS_IV, UpgradeDB.DOUBLE_HEATSINKS);
       payloadStatistics = new PayloadStatistics(false, true, upgrades);
       graphPanel = new PayloadGraphPanel(payloadStatistics, settingsPanel.speedTweak);
       graphPanel.selectChassis(chassis);

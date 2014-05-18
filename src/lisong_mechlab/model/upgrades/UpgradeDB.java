@@ -39,6 +39,9 @@ public class UpgradeDB{
    public static final HeatSinkUpgrade        DOUBLE_HEATSINKS;
    public static final ArmorUpgrade           FERRO_FIBROUS_ARMOR;
    public static final StructureUpgrade       ENDO_STEEL_STRUCTURE;
+   public static final HeatSinkUpgrade        CLAN_DOUBLE_HEATSINKS;
+   public static final ArmorUpgrade           CLAN_FERRO_FIBROUS_ARMOR;
+   public static final StructureUpgrade       CLAN_ENDO_STEEL_STRUCTURE;
    private static final Map<Integer, Upgrade> id2upgrade;
 
    /**
@@ -80,12 +83,15 @@ public class UpgradeDB{
 
       STANDARD_ARMOR = (ArmorUpgrade)lookup(2810);
       FERRO_FIBROUS_ARMOR = (ArmorUpgrade)lookup(2811);
+      CLAN_FERRO_FIBROUS_ARMOR = (ArmorUpgrade)lookup(30000); // TODO: Wrong number
 
       STANDARD_STRUCTURE = (StructureUpgrade)lookup(3100);
       ENDO_STEEL_STRUCTURE = (StructureUpgrade)lookup(3101);
-
+      CLAN_ENDO_STEEL_STRUCTURE = (StructureUpgrade)lookup(30001); // TODO: Wrong number
+      
       STANDARD_HEATSINKS = (HeatSinkUpgrade)lookup(3003);
       DOUBLE_HEATSINKS = (HeatSinkUpgrade)lookup(3002);
+      CLAN_DOUBLE_HEATSINKS = (HeatSinkUpgrade)lookup(30002); // TODO: Wrong number
 
       STANDARD_GUIDANCE = (GuidanceUpgrade)lookup(3051);
       ARTEMIS_IV = (GuidanceUpgrade)lookup(3050);

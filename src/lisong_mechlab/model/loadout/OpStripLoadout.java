@@ -40,9 +40,13 @@ public class OpStripLoadout extends OpLoadoutBase{
       for(ConfiguredComponent component : loadout.getComponents()){
          addOp(new OpStripComponent(xBar, loadout, component));
       }
-      addOp(new OpSetStructureType(xBar, loadout, UpgradeDB.STANDARD_STRUCTURE));
-      addOp(new OpSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
-      addOp(new OpSetArmorType(xBar, loadout, UpgradeDB.STANDARD_ARMOR));
-      addOp(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.STANDARD_HEATSINKS));
+
+      if( aLoadout instanceof LoadoutStandard ){
+         LoadoutStandard loadoutStandard = (LoadoutStandard)aLoadout;
+         addOp(new OpSetStructureType(xBar, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
+         addOp(new OpSetGuidanceType(xBar, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
+         addOp(new OpSetArmorType(xBar, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
+         addOp(new OpSetHeatSinkType(xBar, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
+      }
    }
 }

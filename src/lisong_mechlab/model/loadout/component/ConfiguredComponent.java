@@ -37,6 +37,8 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.ArrayUtils;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * This class represents a configured {@link InternalComponent}.
@@ -45,9 +47,6 @@ import lisong_mechlab.util.MessageXBar;
  * adding them to an {@link OperationStack}.
  * 
  * @author Emily Björk
- */
-/**
- * @author Emily
  */
 public class ConfiguredComponent{
    public static class Message implements MessageXBar.Message{
@@ -100,7 +99,7 @@ public class ConfiguredComponent{
    }
 
    public final static Internal              ENGINE_INTERNAL      = (Internal)ItemDB.lookup("mdf_Engine");
-   public final static Internal              ENGINE_INTERNAL_CLAN = new Internal("CLAN XL ENGINE", "", "", -1, 2, 9, HardPointType.NONE, 15, true);
+   public final static Internal              ENGINE_INTERNAL_CLAN = new Internal("CLAN XL ENGINE", "", "", -1, 2, 0, HardPointType.NONE, 15, true);
    private final TreeMap<ArmorSide, Integer> armor                = new TreeMap<ArmorSide, Integer>();
    private boolean                           autoArmor            = false;
 
