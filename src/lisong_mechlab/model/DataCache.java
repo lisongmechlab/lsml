@@ -152,18 +152,19 @@ public class DataCache{
          XStream stream = stream();
          GameVFS gameVfs = null;
          File dataCacheFile = new File(PreferenceStore.getString(PreferenceStore.GAME_DATA_CACHE));
-
+         GameVFS.GameFile itemStatsXml = null;
          try{
             gameVfs = new GameVFS(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+            itemStatsXml = gameVfs.openGameFile(GameVFS.ITEM_STATS_XML);
          }
          catch( IOException exception ){
             if( null != aLog ){
                aLog.append("No game files are available...").append(System.lineSeparator());
                exception.printStackTrace(new PrintWriter(aLog));
             }
+            
+            gameVfs = null;
          }
-
-         GameVFS.GameFile itemStatsXml = gameVfs != null ? gameVfs.openGameFile(GameVFS.ITEM_STATS_XML) : null;
 
          DataCache cached = null;
          boolean shouldUpdateCache = false;

@@ -139,7 +139,7 @@ public class GameVFS{
             // Try again
             sourceArchive = entryCache.get(aPath);
             if( sourceArchive == null ){
-               throw new RuntimeException("Failed to find sought for file (" + aPath + ") in the game files, this is most likely a bug!");
+               throw new IOException("Failed to find sought for file (" + aPath + ") in the game files, this is most likely a bug!");
             }
          }
       }
@@ -158,7 +158,7 @@ public class GameVFS{
             while( entries.hasMoreElements() ){
                System.err.println(entries.nextElement());
             }
-            throw new RuntimeException("Failed to find sought for file (" + aPath + ") in the game files, this is most likely a bug!");
+            throw new IOException("Failed to find sought for file (" + aPath + ") in the game files, this is most likely a bug!");
          }
          int size = (int)entry.getSize();
          buffer = new byte[size];
