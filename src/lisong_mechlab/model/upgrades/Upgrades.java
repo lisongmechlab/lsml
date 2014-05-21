@@ -62,6 +62,8 @@ public class Upgrades implements Cloneable{
 
       @Override
       public boolean affectsHeatOrDamage(){
+         if( msg == ChangeMsg.HEATSINKS )
+            return true;
          return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
                        // messages will trigger that already.
       }
