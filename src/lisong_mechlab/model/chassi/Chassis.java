@@ -78,6 +78,19 @@ public class Chassis{
    @XStreamAsAttribute
    private final String                  seriesShort;
 
+   @XStreamAsAttribute
+   public final double                   turnLerpLowSpeed;
+   @XStreamAsAttribute
+   public final double                   turnLerpMidSpeed;
+   @XStreamAsAttribute
+   public final double                   turnLerpHighSpeed;
+   @XStreamAsAttribute
+   public final double                   turnLerpLowRate;
+   @XStreamAsAttribute
+   public final double                   turnLerpMidRate;
+   @XStreamAsAttribute
+   public final double                   turnLerpHighRate;
+
    public Chassis(ItemStatsMech aStatsMech, MechDefinition aMdf, HardpointsXml aHardpoints, int aBaseVariant, String aSeries, String aSeriesShort){
       MdfMech mdfMech = aMdf.Mech;
       name = Localization.key2string("@" + aStatsMech.name);
@@ -94,6 +107,13 @@ public class Chassis{
       twistFactor = aMdf.MovementTuningConfiguration.TorsoTurnSpeedYaw;
       variant = ChassiVariant.fromString(aMdf.Mech.VariantType);
       baseVariant = aBaseVariant;
+
+      turnLerpHighRate = aMdf.MovementTuningConfiguration.TurnLerpHighRate;
+      turnLerpMidRate = aMdf.MovementTuningConfiguration.TurnLerpMidRate;
+      turnLerpLowRate = aMdf.MovementTuningConfiguration.TurnLerpLowRate;
+      turnLerpHighSpeed = aMdf.MovementTuningConfiguration.TurnLerpHighSpeed;
+      turnLerpMidSpeed = aMdf.MovementTuningConfiguration.TurnLerpMidSpeed;
+      turnLerpLowSpeed = aMdf.MovementTuningConfiguration.TurnLerpLowSpeed;
 
       Map<Part, InternalPart> tempParts = new HashMap<Part, InternalPart>();
       for(MdfComponent component : aMdf.ComponentList){
@@ -260,5 +280,24 @@ public class Chassis{
     */
    public ChassiVariant getVariantType(){
       return variant;
+   }
+
+   public double getTurnRateAtThrottle(double aThrottle, int aEngineRating){
+      final double k = (double)aEngineRating / getMassMax() * 180.0 / Math.PI;
+
+      if( aThrottle <= turnLerpLowSpeed ){
+         return k * turnLerpLowRate;
+      }
+      else if( aThrottle <= turnLerpMidSpeed ){
+         final double f = (aThrottle - turnLerpLowSpeed) / (turnLerpMidSpeed - turnLerpLowSpeed);
+         return k * (turnLerpLowRate + (turnLerpMidRate - turnLerpLowRate) * f);
+      }
+      else if( aThrottle < turnLerpHighSpeed ){
+         final double f = (aThrottle - turnLerpMidSpeed) / (turnLerpHighSpeed - turnLerpMidSpeed);
+         return k * (turnLerpMidRate + (turnLerpHighRate - turnLerpMidRate) * f);
+      }
+      else{
+         return k * turnLerpHighRate;
+      }
    }
 }

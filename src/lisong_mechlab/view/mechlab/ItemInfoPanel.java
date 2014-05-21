@@ -188,6 +188,7 @@ public class ItemInfoPanel extends JPanel{
    private void showWeaponInfo(Weapon aWeapon, Upgrades anUpgrades, Efficiencies aEfficiencies){
       DecimalFormat df0 = new DecimalFormat("###");
       DecimalFormat df1 = new DecimalFormat("###.#");
+      DecimalFormat df2 = new DecimalFormat("###.##");
 
       damage.setVisible(true);
       damage.setText("Damage: " + aWeapon.getDamagePerShot());
@@ -198,13 +199,13 @@ public class ItemInfoPanel extends JPanel{
                               + df0.format((aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha() : Double.POSITIVE_INFINITY));
 
       cycleTime.setVisible(true);
-      cycleTime.setText("Cycle time: " + aWeapon.getCycleTime(aEfficiencies));
+      cycleTime.setText("Cycle time: " + df2.format(aWeapon.getCycleTime(aEfficiencies)));
       if( aWeapon instanceof EnergyWeapon ){
          burntime.setVisible(true);
          burntime.setText("Burn time: " + df1.format(((EnergyWeapon)aWeapon).getDuration()));
       }
       secondsPerShot.setVisible(true);
-      secondsPerShot.setText("RoF: " + aWeapon.getSecondsPerShot(aEfficiencies) + " s/shot");
+      secondsPerShot.setText("RoF: " + df2.format(aWeapon.getSecondsPerShot(aEfficiencies)) + " s/shot");
 
       heatPerSecond.setVisible(true);
       heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", anUpgrades, aEfficiencies)));
