@@ -102,7 +102,6 @@ public class Loadout implements Cloneable{
          result = prime * result + ((type == null) ? 0 : type.hashCode());
          return result;
       }
-      
 
       @Override
       public boolean affectsHeatOrDamage(){
@@ -442,8 +441,13 @@ public class Loadout implements Cloneable{
          return false;
       if( anItem instanceof JumpJet && getChassi().getMaxJumpJets() - getJumpJetCount() < 1 )
          return false;
-      if( anItem instanceof Engine && getEngine() != null )
-         return false;
+      if( anItem instanceof Engine ){
+         if( getEngine() != null )
+            return false;
+         else if( ((Engine)anItem).getType() == EngineType.XL && anItem.getNumCriticalSlots(upgrades) + 6 > getNumCriticalSlotsFree() )
+            return false;
+      }
+
       return true;
    }
 

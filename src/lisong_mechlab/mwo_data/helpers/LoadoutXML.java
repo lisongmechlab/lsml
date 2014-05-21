@@ -67,8 +67,9 @@ public class LoadoutXML{
 
    @XStreamAlias("component")
    public class Component{
+      @XStreamAlias("Name")
       @XStreamAsAttribute
-      public String Name;
+      public String componentName;
       @XStreamAsAttribute
       public int    Armor;
 

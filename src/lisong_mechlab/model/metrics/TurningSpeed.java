@@ -43,6 +43,6 @@ public class TurningSpeed implements Metric{
       Engine engine = loadout.getEngine();
       if( engine == null )
          return 0.0;
-      return loadout.getEfficiencies().getTurnSpeedModifier() * chassi.getTurnFactor() * loadout.getEngine().getRating() / chassi.getMassMax();
+      return chassi.getTurnRateAtThrottle(0.0, engine.getRating()) * loadout.getEfficiencies().getTurnSpeedModifier();
    }
 }

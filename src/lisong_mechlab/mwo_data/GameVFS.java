@@ -69,16 +69,18 @@ public class GameVFS{
    public static class GameFile{
       public final InputStream stream;
       public final long        crc32;
+      public final String      path;
 
-      GameFile(InputStream aStream, long aCrc32){
+      GameFile(InputStream aStream, long aCrc32, String aPath){
          stream = aStream;
          crc32 = aCrc32;
+         path = aPath;
       }
    }
 
-   public GameVFS(String gameDir) throws IOException{
-      if( isValidGameDirectory(new File(gameDir).toPath()) ){
-         gamePath = new File(gameDir).toPath();
+   public GameVFS(File gameDir) throws IOException{
+      if( isValidGameDirectory(gameDir.toPath()) ){
+         gamePath = gameDir.toPath();
       }
       else{
          throw new FileNotFoundException("Not a valid game directory!");
@@ -139,7 +141,7 @@ public class GameVFS{
             // Try again
             sourceArchive = entryCache.get(aPath);
             if( sourceArchive == null ){
-               throw new RuntimeException("Failed to find sought for file (" + aPath + ") in the game files, this is most likely a bug!");
+               throw new IOException("Failed to find sought for file (" + aPath + ") in the game files, this is most likely a bug!");
             }
          }
       }
@@ -158,7 +160,7 @@ public class GameVFS{
             while( entries.hasMoreElements() ){
                System.err.println(entries.nextElement());
             }
-            throw new RuntimeException("Failed to find sought for file (" + aPath + ") in the game files, this is most likely a bug!");
+            throw new IOException("Failed to find sought for file (" + aPath + ") in the game files, this is most likely a bug!");
          }
          int size = (int)entry.getSize();
          buffer = new byte[size];
@@ -173,7 +175,7 @@ public class GameVFS{
             bytesRead += res;
          }
       }
-      return new GameFile(new ByteArrayInputStream(buffer), crc32);
+      return new GameFile(new ByteArrayInputStream(buffer), crc32, aPath.toString());
    }
 
    private void search(File aLocalPath, File aSearchRoot) throws IOException{

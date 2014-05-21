@@ -43,4 +43,16 @@ public class MdfMovementTuning{
    @XStreamAsAttribute
    public double MaxArmRotationPitch;
 
+   @XStreamAsAttribute
+   public double TurnLerpLowSpeed;
+   @XStreamAsAttribute
+   public double TurnLerpMidSpeed;
+   @XStreamAsAttribute
+   public double TurnLerpHighSpeed;
+   @XStreamAsAttribute
+   public double TurnLerpLowRate;
+   @XStreamAsAttribute
+   public double TurnLerpMidRate;
+   @XStreamAsAttribute
+   public double TurnLerpHighRate;
 }
