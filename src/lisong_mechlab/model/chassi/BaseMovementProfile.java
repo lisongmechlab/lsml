@@ -91,4 +91,34 @@ public class BaseMovementProfile implements MovementProfile{
    public double getArmPitchSpeed(){
       return mdf.ArmTurnSpeedPitch;
    }
+
+   @Override
+   public double getTurnLerpLowSpeed(){
+      return mdf.TurnLerpLowSpeed;
+   }
+
+   @Override
+   public double getTurnLerpMidSpeed(){
+      return mdf.TurnLerpMidSpeed;
+   }
+
+   @Override
+   public double getTurnLerpHighSpeed(){
+      return mdf.TurnLerpHighSpeed;
+   }
+
+   @Override
+   public double getTurnLerpLowRate(){
+      return mdf.TurnLerpLowRate;
+   }
+
+   @Override
+   public double getTurnLerpMidRate(){
+      return mdf.TurnLerpMidRate;
+   }
+
+   @Override
+   public double getTurnLerpHighRate(){
+      return mdf.TurnLerpHighRate;
+   }
 }

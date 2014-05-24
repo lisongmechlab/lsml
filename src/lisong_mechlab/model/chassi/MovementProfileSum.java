@@ -141,4 +141,57 @@ public class MovementProfileSum implements MovementProfile{
       return ans;
    }
 
+   @Override
+   public double getTurnLerpLowSpeed(){
+      double ans = 0;
+      for(MovementProfile profile : terms){
+         ans += profile.getTurnLerpLowSpeed();
+      }
+      return ans;
+   }
+
+   @Override
+   public double getTurnLerpMidSpeed(){
+      double ans = 0;
+      for(MovementProfile profile : terms){
+         ans += profile.getTurnLerpMidSpeed();
+      }
+      return ans;
+   }
+
+   @Override
+   public double getTurnLerpHighSpeed(){
+      double ans = 0;
+      for(MovementProfile profile : terms){
+         ans += profile.getTurnLerpHighSpeed();
+      }
+      return ans;
+   }
+
+   @Override
+   public double getTurnLerpLowRate(){
+      double ans = 0;
+      for(MovementProfile profile : terms){
+         ans += profile.getTurnLerpLowRate();
+      }
+      return ans;
+   }
+
+   @Override
+   public double getTurnLerpMidRate(){
+      double ans = 0;
+      for(MovementProfile profile : terms){
+         ans += profile.getTurnLerpMidRate();
+      }
+      return ans;
+   }
+
+   @Override
+   public double getTurnLerpHighRate(){
+      double ans = 0;
+      for(MovementProfile profile : terms){
+         ans += profile.getTurnLerpHighRate();
+      }
+      return ans;
+   }
 }

@@ -62,9 +62,10 @@ public class Upgrades{
 
       @Override
       public boolean affectsHeatOrDamage(){
-         // Changes to the items that are a side effect of change to upgrades can affect but the item messages will
-         // trigger that already.
-         return false;
+         if( msg == ChangeMsg.HEATSINKS )
+            return true;
+         return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
+                       // messages will trigger that already.
       }
    }
 
