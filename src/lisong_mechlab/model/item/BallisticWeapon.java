@@ -74,11 +74,28 @@ public class BallisticWeapon extends AmmoWeapon{
       return jammingChance > 0.0;
    }
 
+   public double getJamProbability(){
+      return jammingChance;
+   }
+
+   public double getJamTime(){
+      return jammingTime;
+   }
+
+   public double getShotsDuringCooldown(){
+      return shotsduringcooldown;
+   }
+
    @Override
    public double getSecondsPerShot(Efficiencies aEfficiencies){
       if( canDoubleFire() ){
-         return (1.0 - jammingChance) * getCycleTime(aEfficiencies) / (1 + shotsduringcooldown) + jammingChance * jammingTime;
+         final double cd = getRawSecondsPerShot(aEfficiencies);
+         return (jammingTime * jammingChance + cd) / ((1 - jammingChance) * (1 + shotsduringcooldown) + jammingChance);
       }
+      return getRawSecondsPerShot(aEfficiencies);
+   }
+
+   public double getRawSecondsPerShot(Efficiencies aEfficiencies){
       if( getMwoId() == 1021 ){ // Gauss rifle
          return getCycleTime(aEfficiencies) + 0.75; // TODO: Fix this when they add the charge time to the itemstats.xml
       }

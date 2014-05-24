@@ -31,8 +31,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import lisong_mechlab.model.StockLoadout.StockComponent;
 import lisong_mechlab.model.chassi.BaseMovementProfile;
@@ -86,6 +88,7 @@ import lisong_mechlab.view.LSML;
 import lisong_mechlab.view.preferences.PreferenceStore;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
@@ -108,17 +111,18 @@ public class DataCache{
       /** A game install was detected but parsing failed. */
       ParseFailed,
       /** No game install was detected and the built-in or cached data was loaded. */
-      Builtin
+      Builtin,
+      /** A previously created cache was loaded. */
+      Loaded
    }
 
    private static transient DataCache   instance;
-   private static transient Boolean     loading = false;
-   private static transient ParseStatus status  = ParseStatus.NotInitialized;
+   private static transient Boolean     loading   = false;
+   private static transient ParseStatus status    = ParseStatus.NotInitialized;
 
    @XStreamAsAttribute
    private String                       lsmlVersion;
-   @XStreamAsAttribute
-   private long                         itemStatsCrc;
+   private Map<String, Long>            checksums = new HashMap<>();           // Filename - CRC
    private List<Item>                   items;
    private List<ChassisStandard>        chassisIS;
    private List<ChassisOmniMech>        chassisClan;
@@ -156,104 +160,69 @@ public class DataCache{
          if( loading ){
             throw new RuntimeException("Recursion while loading data cache!");
          }
-
          loading = true;
-         if( instance != null )
-            return instance;
 
-         XStream stream = stream();
-         GameVFS gameVfs = null;
          File dataCacheFile = new File(PreferenceStore.getString(PreferenceStore.GAME_DATA_CACHE));
-
-         try{
-            gameVfs = new GameVFS(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
-         }
-         catch( IOException exception ){
-            if( null != aLog ){
-               aLog.append("No game files are available...").append(System.lineSeparator());
-               exception.printStackTrace(new PrintWriter(aLog));
-            }
-         }
-
-         GameVFS.GameFile itemStatsXml = gameVfs != null ? gameVfs.openGameFile(GameVFS.ITEM_STATS_XML) : null;
-
-         DataCache cached = null;
-         boolean shouldUpdateCache = false;
+         DataCache dataCache = null;
          if( dataCacheFile.isFile() ){
-            // We have a local cache file, lets see if it's usable.
             try{
-               cached = (DataCache)stream.fromXML(dataCacheFile);
-               status = ParseStatus.Builtin;
-               if( !cached.lsmlVersion.equals(LSML.getVersion()) ){
-                  // It's from a different LSML version, it's not safe to use it.
-                  dataCacheFile.delete(); // No use in keeping it around
-                  cached = null;
-                  status = ParseStatus.NotInitialized;
-                  shouldUpdateCache = true;
-                  if( null != aLog ){
-                     aLog.append("Found a data cache for another version of LSML, it's not safe to load.").append(System.lineSeparator());
-                  }
-               }
-               else if( itemStatsXml != null && cached.itemStatsCrc != itemStatsXml.crc32 ){
-                  // Correct LSML version but they don't match the game files.
-                  shouldUpdateCache = true;
-                  if( null != aLog ){
-                     aLog.append("Found a data cache, it doesn't match game files.").append(System.lineSeparator());
-                  }
-               }
-               else{
-                  // Correct, version and ma
-               }
-
+               dataCache = (DataCache)stream().fromXML(dataCacheFile);
+               status = ParseStatus.Loaded;
             }
-            catch( Throwable t ){
-               shouldUpdateCache = true;
+            catch( XStreamException exception ){
+               dataCache = null; // This is expected to happen when format changes and should be handled silently.
+            }
+
+            if( dataCache == null || dataCache.mustUpdate() ){
                if( null != aLog ){
-                  aLog.append("Loading cached data failed.").append(System.lineSeparator());
-                  t.printStackTrace(new PrintWriter(aLog));
-               }
-            }
-         }
-         else{
-            shouldUpdateCache = true;
-            if( null != aLog ){
-               aLog.append("No cache found.").append(System.lineSeparator());
-            }
-         }
-
-         if( shouldUpdateCache && gameVfs != null ){
-            try{
-               cached = updateCache(gameVfs, itemStatsXml);
-               status = ParseStatus.Parsed;
-            }
-            catch( Throwable t ){
-               status = ParseStatus.ParseFailed;
-
-               if( null != aLog ){
-                  aLog.append("Updating the cache failed: " + t.getMessage()).append(System.lineSeparator());
-                  t.printStackTrace(new PrintWriter(aLog));
-                  if( cached != null ){
-                     aLog.append("Proceeding by using old cache.").append(System.lineSeparator());
-                  }
+                  aLog.append("Found a data cache, but it's from an older LSML version, discarding...").append(System.lineSeparator());
                   aLog.flush();
                }
+               dataCacheFile.delete();
+               dataCache = null;
             }
          }
 
-         if( cached == null ){
+         File gameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+         if( gameDir.isDirectory() ){
+            try{
+               GameVFS gameVfs = new GameVFS(gameDir);
+               Collection<GameFile> filesToParse = filesToParse(gameVfs);
+
+               if( null == dataCache || dataCache.shouldUpdate(filesToParse) ){
+                  dataCache = updateCache(gameVfs, filesToParse); // If this throws, the old cache is un-touched.
+                  if( null != aLog ){
+                     aLog.append("Cache updated...").append(System.lineSeparator());
+                     aLog.flush();
+                  }
+                  status = ParseStatus.Parsed;
+               }
+            }
+            catch( IOException exception ){
+               if( null != aLog ){
+                  aLog.append("Parsing of game data failed...").append(System.lineSeparator());
+                  exception.printStackTrace(new PrintWriter(aLog));
+                  aLog.flush();
+               }
+               status = ParseStatus.ParseFailed;
+            }
+         }
+
+         if( dataCache == null ){
             if( null != aLog ){
                aLog.append("Falling back on bundled data cache.").append(System.lineSeparator());
+               aLog.flush();
             }
             InputStream is = DataCache.class.getResourceAsStream("/resources/bundleDataCache.xml");
-            cached = (DataCache)stream.fromXML(is); // Let this throw as this is fatal.
+            dataCache = (DataCache)stream().fromXML(is); // Let this throw as this is fatal.
             if( status == ParseStatus.NotInitialized )
                status = ParseStatus.Builtin;
-            if( !cached.lsmlVersion.equals(LSML.getVersion()) ){
+            if( !dataCache.lsmlVersion.equals(LSML.getVersion()) ){
                // It's from a different LSML version, it's not safe to use it.
                throw new RuntimeException("Bundled data cache not udpated!");
             }
          }
-         instance = cached;
+         instance = dataCache;
          loading = false;
       }
       return instance;
@@ -336,6 +305,39 @@ public class DataCache{
       return stream;
    }
 
+   private static Collection<GameFile> filesToParse(GameVFS aGameVfs) throws IOException{
+      List<GameFile> ans = new ArrayList<>();
+      ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Weapons/Weapons.xml")));
+      ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/UpgradeTypes/UpgradeTypes.xml")));
+      ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Ammo.xml")));
+      ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Engines.xml")));
+      ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Equipment.xml")));
+      ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/JumpJets.xml")));
+      ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Mechs/Mechs.xml")));
+      return ans;
+   }
+
+   private boolean mustUpdate(){
+      if( !lsmlVersion.equals(LSML.getVersion()) )
+         return true;
+      return false;
+   }
+
+   private boolean shouldUpdate(Collection<GameFile> aGameFiles){
+      if( null == aGameFiles ){
+         return false;
+      }
+
+      Map<String, Long> crc = new HashMap<>(checksums);
+      for(GameFile gameFile : aGameFiles){
+         Long fileCrc = crc.remove(gameFile.path);
+         if( null == fileCrc || fileCrc != gameFile.crc32 ){
+            return true;
+         }
+      }
+      return !crc.isEmpty();
+   }
+
    /**
     * Reads the latest data from the game files and creates a new cache.
     * 
@@ -343,18 +345,20 @@ public class DataCache{
     * @param aItemStatsXmlFile
     * @throws IOException
     */
-   private static DataCache updateCache(GameVFS aGameVfs, GameFile aItemStatsXmlFile) throws IOException{
+   private static DataCache updateCache(GameVFS aGameVfs, Collection<GameFile> aGameFiles) throws IOException{
       File cacheLocation = getNewCacheLocation();
 
       Localization.initialize(aGameVfs);
-
-      ItemStatsXml itemStatsXml = ItemStatsXml.fromXml(aItemStatsXmlFile);
-
       List<Internal> internalsList = new ArrayList<>();
-
       DataCache dataCache = new DataCache();
+
+      ItemStatsXml itemStatsXml = new ItemStatsXml();
+      for(GameFile gameFile : aGameFiles){
+         itemStatsXml.append(gameFile);
+         dataCache.checksums.put(gameFile.path, gameFile.crc32);
+      }
+
       dataCache.lsmlVersion = LSML.getVersion();
-      dataCache.itemStatsCrc = aItemStatsXmlFile.crc32;
       dataCache.items = parseItems(itemStatsXml);
       dataCache.items.addAll(parseClanItems());
       dataCache.upgrades = Collections.unmodifiableList(parseUpgrades(itemStatsXml));

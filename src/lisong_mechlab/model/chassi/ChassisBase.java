@@ -50,7 +50,7 @@ public abstract class ChassisBase{
    private final ChassisVariant  variant;
    @XStreamAsAttribute
    private final boolean         clan;
-
+   
    public ChassisBase(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
                       int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan){
       mwoId = aMwoID;
@@ -72,7 +72,7 @@ public abstract class ChassisBase{
          return false;
       return (mwoId == ((ChassisBase)aObject).mwoId);
    }
-
+   
    /**
     * @return The maximal, total amount of armor the chassis can support.
     */

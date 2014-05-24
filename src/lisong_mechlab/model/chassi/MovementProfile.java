@@ -129,4 +129,34 @@ public interface MovementProfile{
     */
    double getArmPitchSpeed();
 
+   /**
+    * @return The speed at which the low turn rate comes into effect.
+    */
+   double getTurnLerpLowSpeed();
+
+   /**
+    * @return The speed at which the middle turn rate comes into effect.
+    */
+   double getTurnLerpMidSpeed();
+
+   /**
+    * @return The speed at which the high turn rate comes into effect.
+    */
+   double getTurnLerpHighSpeed();
+
+   /**
+    * @return The rate at which the mech turns when it's moving at a low speed.
+    */
+   double getTurnLerpLowRate();
+
+   /**
+    * @return The rate at which the mech turns when it's moving at a middle speed.
+    */
+   double getTurnLerpMidRate();
+
+   /**
+    * @return The rate at which the mech turns when it's moving at a high speed.
+    */
+   double getTurnLerpHighRate();
+
 }

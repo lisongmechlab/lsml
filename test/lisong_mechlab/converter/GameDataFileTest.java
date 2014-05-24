@@ -34,7 +34,8 @@ public class GameDataFileTest{
 
    @Test
    public void test() throws IOException{
-      GameVFS dataFile = new GameVFS(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+      File gameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+      GameVFS dataFile = new GameVFS(gameDir);
 
       InputStream inputStream = dataFile.openGameFile(new File("Game/Objects/mechs/spider/sdr-5k.mdf")).stream;
 

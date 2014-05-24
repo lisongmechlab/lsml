@@ -20,7 +20,7 @@
 
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.LoadoutBase;
 
@@ -39,10 +39,30 @@ public class TurningSpeed implements Metric{
 
    @Override
    public double calculate(){
-      ChassisBase chassi = loadout.getChassis();
       Engine engine = loadout.getEngine();
       if( engine == null )
          return 0.0;
-      return loadout.getEfficiencies().getTurnSpeedModifier() * 360.0 / 31.4 * loadout.getEngine().getRating() / chassi.getMassMax();
+      return getTurnRateAtThrottle(0.0, engine.getRating()) * loadout.getEfficiencies().getTurnSpeedModifier();
+   }
+   
+   public double getTurnRateAtThrottle(double aThrottle, int aEngineRating){
+      final double k = (double)aEngineRating / loadout.getChassis().getMassMax() * 180.0 / Math.PI;
+      
+      MovementProfile mp = loadout.getMovementProfile();
+      
+      if( aThrottle <= mp.getTurnLerpLowSpeed() ){
+         return k * mp.getTurnLerpLowRate();
+      }
+      else if( aThrottle <= mp.getTurnLerpMidSpeed() ){
+         final double f = (aThrottle - mp.getTurnLerpLowSpeed()) / (mp.getTurnLerpMidSpeed() - mp.getTurnLerpLowSpeed());
+         return k * (mp.getTurnLerpLowRate() + (mp.getTurnLerpMidRate() - mp.getTurnLerpLowRate()) * f);
+      }
+      else if( aThrottle < mp.getTurnLerpHighSpeed() ){
+         final double f = (aThrottle - mp.getTurnLerpMidSpeed()) / (mp.getTurnLerpHighSpeed() - mp.getTurnLerpMidSpeed());
+         return k * (mp.getTurnLerpMidRate() + (mp.getTurnLerpHighRate() - mp.getTurnLerpMidRate()) * f);
+      }
+      else{
+         return k * mp.getTurnLerpHighRate();
+      }
    }
 }

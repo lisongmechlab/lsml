@@ -65,7 +65,8 @@ public class PreferencesDialog extends JDialog{
 
       final JCheckBox useBundledData = new JCheckBox("Use bundled data",
                                                      Boolean.parseBoolean(PreferenceStore.getString(PreferenceStore.USEBUNDLED_DATA, "false")));
-      useBundledData.setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
+      useBundledData.setToolTipText("<html>If checked, LSML will quietly fallback to bundled data files if no game install is available.<br/>"
+                                    + "Otherwise it will prompt you to locate the game install on next startup.</html>");
       useBundledData.addActionListener(new AbstractAction(){
          private static final long serialVersionUID = -8136020916897237506L;
 
