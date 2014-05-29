@@ -47,13 +47,19 @@ import javax.swing.table.TableColumn;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpLoadStock;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.preferences.Preferences;
 import lisong_mechlab.view.preferences.UiPreferences;
 import lisong_mechlab.view.preferences.UiPreferences.Message;
@@ -250,12 +256,26 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               ChassisStandard chassi = (ChassisStandard)aValue;
-               StyleManager.styleHardpointLabel(energy, chassi.getComponent(part), HardPointType.ENERGY);
-               StyleManager.styleHardpointLabel(ballistic, chassi.getComponent(part), HardPointType.BALLISTIC);
-               StyleManager.styleHardpointLabel(missile, chassi.getComponent(part), HardPointType.MISSILE);
-               StyleManager.styleHardpointLabel(ams, chassi.getComponent(part), HardPointType.AMS);
-               StyleManager.styleHardpointLabel(ecm, chassi.getComponent(part), HardPointType.ECM);
+               ChassisBase chassi = (ChassisBase)aValue;
+               LoadoutBase<?, ?> stock;
+               if(aValue instanceof ChassisStandard){
+                  stock = new LoadoutStandard((ChassisStandard)chassi, null);
+                  OperationStack stack = new OperationStack(0);
+                  stack.pushAndApply(new OpLoadStock(chassi, stock, null));
+               }
+               else if(aValue instanceof ChassisOmniMech){
+                  stock = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi, null);
+                  OperationStack stack = new OperationStack(0);
+                  stack.pushAndApply(new OpLoadStock(chassi, stock, null));
+               }
+               else{
+                  throw new IllegalArgumentException("Expected a chassis type as value!");
+               }
+               StyleManager.styleHardpointLabel(energy, stock.getComponent(part), HardPointType.ENERGY);
+               StyleManager.styleHardpointLabel(ballistic, stock.getComponent(part), HardPointType.BALLISTIC);
+               StyleManager.styleHardpointLabel(missile, stock.getComponent(part), HardPointType.MISSILE);
+               StyleManager.styleHardpointLabel(ams, stock.getComponent(part), HardPointType.AMS);
+               StyleManager.styleHardpointLabel(ecm, stock.getComponent(part), HardPointType.ECM);
                return panel;
             }
          };

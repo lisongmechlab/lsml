@@ -20,14 +20,16 @@
 package lisong_mechlab.model.loadout.component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.chassi.ComponentBase;
+import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
@@ -41,14 +43,14 @@ import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This class represents a configured {@link InternalComponent}.
+ * This class represents a configured {@link ComponentBase}.
  * <p>
  * This class is immutable. The only way to alter it is by creating instances of the relevant {@link Operation}s and
  * adding them to an {@link OperationStack}.
  * 
  * @author Li Song
  */
-public class ConfiguredComponent{
+public abstract class ConfiguredComponentBase{
    public static class Message implements MessageXBar.Message{
       public enum Type{
          ArmorChanged, ArmorDistributionUpdateRequest, ItemAdded, ItemRemoved, ItemsChanged
@@ -57,17 +59,15 @@ public class ConfiguredComponent{
       /**
        * True if this message was automatically in response to a change.
        */
-      public final boolean             automatic;
+      public final boolean                 automatic;
+      public final ConfiguredComponentBase component;
+      public final Type                    type;
 
-      public final ConfiguredComponent component;
-
-      public final Type                type;
-
-      public Message(ConfiguredComponent aComponent, Type aType){
+      public Message(ConfiguredComponentBase aComponent, Type aType){
          this(aComponent, aType, false);
       }
 
-      public Message(ConfiguredComponent aComponent, Type aType, boolean aAutomatic){
+      public Message(ConfiguredComponentBase aComponent, Type aType, boolean aAutomatic){
          component = aComponent;
          type = aType;
          automatic = aAutomatic;
@@ -101,21 +101,18 @@ public class ConfiguredComponent{
    public final static Internal              ENGINE_INTERNAL      = (Internal)ItemDB.lookup("mdf_Engine");
    public final static Internal              ENGINE_INTERNAL_CLAN = new Internal("CLAN XL ENGINE", "", "", -1, 2, 0, HardPointType.NONE, 15, true);
    private final TreeMap<ArmorSide, Integer> armor                = new TreeMap<ArmorSide, Integer>();
-   private boolean                           autoArmor            = false;
-
-   private int                               engineHeatsinks      = 0;
-   private final InternalComponent           internalComponent;
+   private final ComponentBase               internalComponent;
    private final List<Item>                  items                = new ArrayList<Item>();
+   private boolean                           autoArmor            = false;
 
    /**
     * Copy constructor. Performs a deep copy of the argument with a new {@link LoadoutStandard} value.
     * 
     * @param aLoadoutPart
-    *           The {@link ConfiguredComponent} to copy.
+    *           The {@link ConfiguredComponentBase} to copy.
     */
-   public ConfiguredComponent(ConfiguredComponent aLoadoutPart){
+   public ConfiguredComponentBase(ConfiguredComponentBase aLoadoutPart){
       internalComponent = aLoadoutPart.internalComponent;
-      engineHeatsinks = aLoadoutPart.engineHeatsinks;
       autoArmor = aLoadoutPart.autoArmor;
 
       for(Map.Entry<ArmorSide, Integer> e : aLoadoutPart.armor.entrySet()){
@@ -127,9 +124,8 @@ public class ConfiguredComponent{
       }
    }
 
-   public ConfiguredComponent(InternalComponent aInternalPart, boolean aAutoArmor){
+   public ConfiguredComponentBase(ComponentBase aInternalPart, boolean aAutoArmor){
       internalComponent = aInternalPart;
-      items.addAll(internalComponent.getInternalItems());
       autoArmor = aAutoArmor;
       if( internalComponent.getLocation().isTwoSided() ){
          armor.put(ArmorSide.FRONT, 0);
@@ -168,10 +164,6 @@ public class ConfiguredComponent{
       if( !getInternalComponent().isAllowed(aItem) )
          return false;
 
-      if( aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax() ){
-         return true;
-      }
-
       // Check enough free critical slots
       if( getSlotsFree() < aItem.getNumCriticalSlots() ){
          return false;
@@ -182,52 +174,44 @@ public class ConfiguredComponent{
 
       // Check enough free hard points
       if( aItem.getHardpointType() != HardPointType.NONE
-          && getItemsOfHardpointType(aItem.getHardpointType()) >= getInternalComponent().getHardPointCount(aItem.getHardpointType()) ){
+          && getItemsOfHardpointType(aItem.getHardpointType()) >= getHardPointCount(aItem.getHardpointType()) ){
          return false; // Not enough hard points!
       }
       return true;
    }
 
    /**
-    * Checks if the {@link Item} denoted by the given index can be removed by the user from this component. The index is
-    * into the list returned by the last call to {@link #getItemsAll()}.
-    * <p>
-    * Please note that internal items and other items that are fixed are at the head of the list returned by
-    * {@link #getItemsAll()}, when locating the index of an item you want to remove, please use
-    * {@link List#lastIndexOf(Object)}.
+    * @param aHardpointType
+    *           The type of {@link HardPoint}s to count.
+    * @return The number of {@link HardPoint}s of the given type on this configured component.
+    */
+   public abstract int getHardPointCount(HardPointType aHardpointType);
+
+   /**
+    * @return A {@link Collection} of all the {@link HardPoint}s on this configured component.
+    */
+   public abstract Collection<HardPoint> getHardPoints();
+
+   /**
+    * Checks if the {@link Item} can be removed by the user from this component.
     * 
-    * @param aItemIndex
-    *           The index of the item to check if it can removed.
+    * @param aItem
+    *           The item to check if it can removed.
     * @return <code>true</code> if the item can be removed, <code>false</code> otherwise.
     */
-   public boolean canRemoveItem(int aItemIndex){
-      if( aItemIndex < internalComponent.getInternalItems().size() ){
-         return false;
-      }
-      else if( aItemIndex >= items.size() ){
-         return false;
-      }
-      else if( items.get(aItemIndex) == ENGINE_INTERNAL ){
-         return false;
-      }
-      return true;
+   public boolean canRemoveItem(Item aItem){
+      return items.contains(aItem);
    }
 
    /**
-    * Removes an item from this component. This method is unchecked and can put the component into an illegal state. It
-    * is the caller's responsibility to make sure local and global conditions are met before removing an item.
-    * <p>
     * This is package visibility as it's intended use is only from {@link OpAddItem}, {@link OpRemoveItem} and
     * relatives.
-    * <p>
-    * Please note that {@link #canRemoveItem(int)} must return true for the removed index prior to a call to
-    * {@link #removeItem(int)}.
     * 
-    * @param aItemIndex
-    *           The index of the item to remove.
+    * @param aItem
+    *           The item to remove.
     */
-   void removeItem(int aItemIndex){
-      items.remove(aItemIndex);
+   void removeItem(Item aItem){
+      items.remove(aItem);
    }
 
    /**
@@ -241,17 +225,15 @@ public class ConfiguredComponent{
    public boolean equals(Object aObject){
       if( this == aObject )
          return true;
-      if( !(aObject instanceof ConfiguredComponent) )
+      if( !(aObject instanceof ConfiguredComponentBase) )
          return false;
-      ConfiguredComponent that = (ConfiguredComponent)aObject;
+      ConfiguredComponentBase that = (ConfiguredComponentBase)aObject;
 
       if( !internalComponent.equals(that.internalComponent) )
          return false;
       if( !ArrayUtils.equalsUnordered(items, that.items) )
          return false;
       if( !armor.equals(that.armor) )
-         return false;
-      if( engineHeatsinks != that.engineHeatsinks )
          return false;
       if( autoArmor != that.autoArmor )
          return false;
@@ -301,6 +283,7 @@ public class ConfiguredComponent{
    /**
     * @return The number of heat sinks inside the engine (if any) equipped on this component.
     */
+   @Deprecated
    public int getEngineHeatsinks(){
       int ans = 0;
       for(Item i : items){
@@ -313,6 +296,7 @@ public class ConfiguredComponent{
    /**
     * @return The maximal number of heat sinks that the engine (if any) equipped on this component can sustain.
     */
+   @Deprecated
    public int getEngineHeatsinksMax(){
       for(Item item : items){
          if( item instanceof Engine ){
@@ -325,7 +309,7 @@ public class ConfiguredComponent{
    /**
     * @return The internal component that is backing this component.
     */
-   public InternalComponent getInternalComponent(){
+   public ComponentBase getInternalComponent(){
       return internalComponent;
    }
 
@@ -333,7 +317,7 @@ public class ConfiguredComponent{
     * @return The sum of the mass of all items on this component.
     */
    public double getItemMass(){
-      double ans = engineHeatsinks * 1.0;
+      double ans = 0;
       for(Item item : items){
          ans += item.getMass();
       }
@@ -341,11 +325,27 @@ public class ConfiguredComponent{
    }
 
    /**
-    * @return An unmodifiable {@link List} of all items on this component, including internals.
+    * @return An unmodifiable {@link List} of all items on this component, including {@link Internal}s and fixed items.
     */
+   @Deprecated
+   // FIXME: Temporarily to catch all places where it is wrongly used.
    public List<Item> getItemsAll(){
+      List<Item> ans = new ArrayList<>(getItemsFixed());
+      ans.addAll(getItemsEquipped());
+      return ans;
+   }
+
+   /**
+    * @return A {@link List} of the user equipped items which can also be removed.
+    */
+   public List<Item> getItemsEquipped(){
       return Collections.unmodifiableList(items);
    }
+
+   /**
+    * @return A {@link List} of items that are fixed on this component.
+    */
+   public abstract Collection<Item> getItemsFixed();
 
    /**
     * @param aHardpointType
@@ -393,7 +393,6 @@ public class ConfiguredComponent{
       final int prime = 31;
       int result = 1;
       result = prime * result + ((armor == null) ? 0 : armor.hashCode());
-      result = prime * result + engineHeatsinks;
       result = prime * result + ((internalComponent == null) ? 0 : internalComponent.hashCode());
       result = prime * result + ((items == null) ? 0 : items.hashCode());
       return result;
@@ -421,4 +420,9 @@ public class ConfiguredComponent{
       }
       return sb.toString();
    }
+
+   /**
+    * @return <code>true</code> if this component has missile bay doors, <code>false</code> otherwise.
+    */
+   public abstract boolean hasMissileBayDoors();
 }

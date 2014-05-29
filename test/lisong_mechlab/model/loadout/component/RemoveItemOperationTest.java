@@ -5,7 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
-import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
@@ -25,7 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveItemOperationTest{
    @Mock
-   private ConfiguredComponent loadoutPart;
+   private ConfiguredComponentBase loadoutPart;
    @Mock
    private LoadoutStandard             loadout;
    @Mock
@@ -33,7 +33,7 @@ public class RemoveItemOperationTest{
    @Mock
    private MessageXBar         xBar;
    @Mock
-   private InternalComponent   internalPart;
+   private ComponentStandard   internalPart;
 
    @Before
    public void setup(){

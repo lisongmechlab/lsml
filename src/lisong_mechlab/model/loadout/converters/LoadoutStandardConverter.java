@@ -26,7 +26,7 @@ import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpRename;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
@@ -74,7 +74,7 @@ public class LoadoutStandardConverter implements Converter{
       aContext.convertAnother(loadout.getEfficiencies());
       aWriter.endNode();
 
-      for(ConfiguredComponent part : loadout.getComponents()){
+      for(ConfiguredComponentBase part : loadout.getComponents()){
          aWriter.startNode("component");
          aContext.convertAnother(part);
          aWriter.endNode();
@@ -111,7 +111,7 @@ public class LoadoutStandardConverter implements Converter{
             loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak());
          }
          else if( "component".equals(aReader.getNodeName()) ){
-            aContext.convertAnother(loadout, ConfiguredComponent.class, new ConfiguredComponentConverter(xBar, loadout));
+            aContext.convertAnother(loadout, ConfiguredComponentBase.class, new ConfiguredComponentConverter(xBar, loadout));
          }
          aReader.moveUp();
       }

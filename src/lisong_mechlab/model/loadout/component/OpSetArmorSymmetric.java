@@ -33,7 +33,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class OpSetArmorSymmetric extends CompositeOperation{
-   private final ConfiguredComponent component;
+   private final ConfiguredComponentBase component;
    private final ArmorSide           side;
    private final boolean             manual;
    private final LoadoutBase<?, ?>   loadout;
@@ -46,7 +46,7 @@ public class OpSetArmorSymmetric extends CompositeOperation{
     * @param aLoadout
     *           The {@link LoadoutBase} to operate on.
     * @param aLoadoutPart
-    *           The primary side {@link ConfiguredComponent} to change (the opposite side will be changed
+    *           The primary side {@link ConfiguredComponentBase} to change (the opposite side will be changed
     *           automatically).
     * @param aArmorSide
     *           The side to set the armor for.
@@ -58,7 +58,7 @@ public class OpSetArmorSymmetric extends CompositeOperation{
     *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
     *            support the armor.
     */
-   public OpSetArmorSymmetric(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, ArmorSide aArmorSide,
+   public OpSetArmorSymmetric(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aLoadoutPart, ArmorSide aArmorSide,
                               int aArmorAmount, boolean aManualSet){
       super("change armor");
       loadout = aLoadout;

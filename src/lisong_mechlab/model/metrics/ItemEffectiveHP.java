@@ -25,11 +25,11 @@ import java.util.List;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 
 /**
  * This class calculates the statistical effective HP of an {@link Item} when it is equipped on a
- * {@link ConfiguredComponent} under the assumption that damage is dealt in infinitesimal chunks.
+ * {@link ConfiguredComponentBase} under the assumption that damage is dealt in infinitesimal chunks.
  * <p>
  * This applies mostly to for lasers. MG and LB 10-X AC have higher critical hit probabilities and different
  * multipliers.
@@ -37,7 +37,7 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponent;
  * @author Li Song
  */
 public class ItemEffectiveHP implements ItemMetric{
-   private final ConfiguredComponent loadoutPart;
+   private final ConfiguredComponentBase loadoutPart;
 
    private class ItemState{
       final Item item;
@@ -56,7 +56,7 @@ public class ItemEffectiveHP implements ItemMetric{
 
    final private List<ItemState> cache = new ArrayList<>();
 
-   public ItemEffectiveHP(ConfiguredComponent aLoadoutPart){
+   public ItemEffectiveHP(ConfiguredComponentBase aLoadoutPart){
       loadoutPart = aLoadoutPart;
    }
 
@@ -74,7 +74,7 @@ public class ItemEffectiveHP implements ItemMetric{
    private void updateCache(){
       cache.clear();
       for(Item item : loadoutPart.getItemsAll()){
-         if( item instanceof Internal && item != ConfiguredComponent.ENGINE_INTERNAL )
+         if( item instanceof Internal && item != ConfiguredComponentBase.ENGINE_INTERNAL )
             continue;
          if( item == ItemDB.CASE )
             continue;

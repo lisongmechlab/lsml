@@ -38,7 +38,7 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -131,7 +131,7 @@ public class LoadoutSerializationTest{
 
       // Right leg:
       {
-         ConfiguredComponent part = cut.getComponent(Location.RightLeg);
+         ConfiguredComponentBase part = cut.getComponent(Location.RightLeg);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -144,7 +144,7 @@ public class LoadoutSerializationTest{
 
       // Left leg:
       {
-         ConfiguredComponent part = cut.getComponent(Location.LeftLeg);
+         ConfiguredComponentBase part = cut.getComponent(Location.LeftLeg);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -156,7 +156,7 @@ public class LoadoutSerializationTest{
       }
       // Right arm:
       {
-         ConfiguredComponent part = cut.getComponent(Location.RightArm);
+         ConfiguredComponentBase part = cut.getComponent(Location.RightArm);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -169,7 +169,7 @@ public class LoadoutSerializationTest{
 
       // Left arm:
       {
-         ConfiguredComponent part = cut.getComponent(Location.LeftArm);
+         ConfiguredComponentBase part = cut.getComponent(Location.LeftArm);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -182,7 +182,7 @@ public class LoadoutSerializationTest{
 
       // Right torso:
       {
-         ConfiguredComponent part = cut.getComponent(Location.RightTorso);
+         ConfiguredComponentBase part = cut.getComponent(Location.RightTorso);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.lookup("AC/20")));
@@ -197,7 +197,7 @@ public class LoadoutSerializationTest{
 
       // Left torso:
       {
-         ConfiguredComponent part = cut.getComponent(Location.LeftTorso);
+         ConfiguredComponentBase part = cut.getComponent(Location.LeftTorso);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.lookup("LRM 20")));
@@ -215,7 +215,7 @@ public class LoadoutSerializationTest{
 
       // Center torso:
       {
-         ConfiguredComponent part = cut.getComponent(Location.CenterTorso);
+         ConfiguredComponentBase part = cut.getComponent(Location.CenterTorso);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.lookup("STD ENGINE 300")));
@@ -234,7 +234,7 @@ public class LoadoutSerializationTest{
 
       // Head:
       {
-         ConfiguredComponent part = cut.getComponent(Location.Head);
+         ConfiguredComponentBase part = cut.getComponent(Location.Head);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.SHS));
@@ -278,7 +278,7 @@ public class LoadoutSerializationTest{
 
       // Right leg:
       {
-         ConfiguredComponent part = cut.getComponent(Location.RightLeg);
+         ConfiguredComponentBase part = cut.getComponent(Location.RightLeg);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertEquals(12, part.getArmor(ArmorSide.ONLY));
@@ -289,7 +289,7 @@ public class LoadoutSerializationTest{
 
       // Left leg:
       {
-         ConfiguredComponent part = cut.getComponent(Location.LeftLeg);
+         ConfiguredComponentBase part = cut.getComponent(Location.LeftLeg);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertEquals(12, part.getArmor(ArmorSide.ONLY));
@@ -300,7 +300,7 @@ public class LoadoutSerializationTest{
 
       // Right arm:
       {
-         ConfiguredComponent part = cut.getComponent(Location.RightArm);
+         ConfiguredComponentBase part = cut.getComponent(Location.RightArm);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertEquals(10, part.getArmor(ArmorSide.ONLY));
@@ -311,7 +311,7 @@ public class LoadoutSerializationTest{
 
       // Left arm:
       {
-         ConfiguredComponent part = cut.getComponent(Location.LeftArm);
+         ConfiguredComponentBase part = cut.getComponent(Location.LeftArm);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertEquals(10, part.getArmor(ArmorSide.ONLY));
@@ -322,7 +322,7 @@ public class LoadoutSerializationTest{
 
       // Right torso:
       {
-         ConfiguredComponent part = cut.getComponent(Location.RightTorso);
+         ConfiguredComponentBase part = cut.getComponent(Location.RightTorso);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
@@ -338,7 +338,7 @@ public class LoadoutSerializationTest{
 
       // Left torso:
       {
-         ConfiguredComponent part = cut.getComponent(Location.LeftTorso);
+         ConfiguredComponentBase part = cut.getComponent(Location.LeftTorso);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
@@ -354,7 +354,7 @@ public class LoadoutSerializationTest{
 
       // Center torso:
       {
-         ConfiguredComponent part = cut.getComponent(Location.CenterTorso);
+         ConfiguredComponentBase part = cut.getComponent(Location.CenterTorso);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.lookup("STD ENGINE 240")));
@@ -371,7 +371,7 @@ public class LoadoutSerializationTest{
 
       // Head:
       {
-         ConfiguredComponent part = cut.getComponent(Location.Head);
+         ConfiguredComponentBase part = cut.getComponent(Location.Head);
          List<Item> items = new ArrayList<Item>(part.getItemsAll());
 
          assertTrue(items.remove(ItemDB.SHS));

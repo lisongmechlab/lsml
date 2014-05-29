@@ -30,9 +30,6 @@ public class BaseMovementProfile implements MovementProfile{
    private final MdfMovementTuning mdf; // TODO: Do not use the parsing classes, even though this is essentially a wrapper.
    private final MovementArchetype archetype;
 
-   /**
-    * @param aMdf
-    */
    public BaseMovementProfile(MdfMovementTuning aMdf){
       mdf =  aMdf;
       archetype = MovementArchetype.valueOf(mdf.MovementArchetype);

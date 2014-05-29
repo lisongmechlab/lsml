@@ -30,37 +30,37 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * A helper class for implementing {@link Operation}s that affect items on a {@link ConfiguredComponent}.
+ * A helper class for implementing {@link Operation}s that affect items on a {@link ConfiguredComponentBase}.
  * 
  * @author Li Song
  */
 abstract class OpItemBase extends Operation{
    private int                         numEngineHS = 0;
    private final MessageXBar           xBar;
-   protected final ConfiguredComponent component;
+   protected final ConfiguredComponentBase component;
    protected final LoadoutBase<?, ?>   loadout;
    protected final Item                item;
 
    /**
     * Creates a new {@link OpItemBase}. The deriving classes shall throw if the the operation with the given item would
-    * violate the {@link LoadoutStandard} or {@link ConfiguredComponent} invariant.
+    * violate the {@link LoadoutStandard} or {@link ConfiguredComponentBase} invariant.
     * 
     * @param aXBar
     *           The {@link MessageXBar} to send messages to when changes occur.
     * @param aLoadout
     *           The {@link LoadoutBase} to operate on.
     * @param aComponent
-    *           The {@link ConfiguredComponent} that this operation will affect.
+    *           The {@link ConfiguredComponentBase} that this operation will affect.
     * @param aItem
     *           The {@link Item} to add or remove.
     */
-   protected OpItemBase(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aComponent, Item aItem){
+   protected OpItemBase(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
       if( aItem instanceof Internal )
          throw new IllegalArgumentException("Can't add/remove internals to/from a loadout!");
 
@@ -95,19 +95,18 @@ abstract class OpItemBase extends Operation{
     *           The item to remove.
     */
    protected void removeItem(Item aItem){
-      int idx = component.getItemsAll().lastIndexOf(aItem);
-      if( !component.canRemoveItem(idx) )
+      if( !component.canRemoveItem(aItem) )
          throw new IllegalArgumentException("Can not remove item: " + aItem + " from " + component);
 
       if( aItem instanceof Engine ){
          Engine engine = (Engine)aItem;
          if( engine.getType() == EngineType.XL ){
-            ConfiguredComponent lt = loadout.getComponent(Location.LeftTorso);
-            ConfiguredComponent rt = loadout.getComponent(Location.RightTorso);
+            ConfiguredComponentBase lt = loadout.getComponent(Location.LeftTorso);
+            ConfiguredComponentBase rt = loadout.getComponent(Location.RightTorso);
 
-            Internal xlSide = engine.isClan() ? ConfiguredComponent.ENGINE_INTERNAL_CLAN : ConfiguredComponent.ENGINE_INTERNAL;
-            lt.removeItem(lt.getItemsAll().indexOf(xlSide));
-            rt.removeItem(lt.getItemsAll().indexOf(xlSide));
+            Internal xlSide = engine.isClan() ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN : ConfiguredComponentBase.ENGINE_INTERNAL;
+            lt.removeItem(xlSide);
+            rt.removeItem(xlSide);
             if( xBar != null ){
                xBar.post(new Message(lt, Type.ItemRemoved));
                xBar.post(new Message(rt, Type.ItemRemoved));
@@ -119,15 +118,10 @@ abstract class OpItemBase extends Operation{
          while( engineHsLeft > 0 ){
             engineHsLeft--;
             numEngineHS++;
-
-            component.getItemsAll().lastIndexOf(heatSinkType);
-            component.removeItem(component.getItemsAll().lastIndexOf(heatSinkType));
+            component.removeItem(heatSinkType);
          }
-
-         // Index may have changed...
-         idx = component.getItemsAll().lastIndexOf(aItem);
       }
-      component.removeItem(idx);
+      component.removeItem(aItem);
       if( xBar != null ){
          xBar.post(new Message(component, Type.ItemRemoved));
       }
@@ -143,10 +137,10 @@ abstract class OpItemBase extends Operation{
       if( aItem instanceof Engine ){
          Engine engine = (Engine)aItem;
          if( engine.getType() == EngineType.XL ){
-            ConfiguredComponent lt = loadout.getComponent(Location.LeftTorso);
-            ConfiguredComponent rt = loadout.getComponent(Location.RightTorso);
+            ConfiguredComponentBase lt = loadout.getComponent(Location.LeftTorso);
+            ConfiguredComponentBase rt = loadout.getComponent(Location.RightTorso);
 
-            Internal xlSide = engine.isClan() ? ConfiguredComponent.ENGINE_INTERNAL_CLAN : ConfiguredComponent.ENGINE_INTERNAL;
+            Internal xlSide = engine.isClan() ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN : ConfiguredComponentBase.ENGINE_INTERNAL;
             lt.addItem(xlSide);
             rt.addItem(xlSide);
             if( xBar != null ){

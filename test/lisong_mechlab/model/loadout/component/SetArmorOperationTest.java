@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -35,11 +35,11 @@ public class SetArmorOperationTest{
    @Mock
    private Upgrades            upgrades;
    @Mock
-   private ConfiguredComponent loadoutPart;
+   private ConfiguredComponentBase loadoutPart;
    @Mock
    private MessageXBar         xBar;
    @Mock
-   private InternalComponent   internalPart;
+   private ComponentStandard   internalPart;
 
    @Before
    public void setup(){
@@ -95,8 +95,8 @@ public class SetArmorOperationTest{
    @Test
    public final void testCanCoalescele() throws Exception{
       int armor = 20;
-      ConfiguredComponent part1 = Mockito.mock(ConfiguredComponent.class);
-      ConfiguredComponent part2 = Mockito.mock(ConfiguredComponent.class);
+      ConfiguredComponentBase part1 = Mockito.mock(ConfiguredComponentBase.class);
+      ConfiguredComponentBase part2 = Mockito.mock(ConfiguredComponentBase.class);
 
       // Part 1 & 2 are identical but not the same.
       Mockito.when(part1.getInternalComponent()).thenReturn(internalPart);
@@ -138,7 +138,7 @@ public class SetArmorOperationTest{
       final int oldArmor = 20;
       final int newArmor = oldArmor + (int)(freeTons * 32) + 1;
 
-      List<ConfiguredComponent> parts = new ArrayList<>();
+      List<ConfiguredComponentBase> parts = new ArrayList<>();
       Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
       Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);
       Mockito.when(loadout.getComponents()).thenReturn(parts);
@@ -230,7 +230,7 @@ public class SetArmorOperationTest{
 
       // Verify
       Mockito.verify(loadoutPart).setArmor(armorSide, newArmor, false);
-      Mockito.verify(xBar).post(new ConfiguredComponent.Message(loadoutPart, Type.ArmorChanged));
+      Mockito.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
    }
 
    /**
@@ -289,7 +289,7 @@ public class SetArmorOperationTest{
 
       // Verify
       Mockito.verify(loadoutPart).setArmor(armorSide, newArmor, false);
-      Mockito.verify(xBar).post(new ConfiguredComponent.Message(loadoutPart, Type.ArmorChanged));
+      Mockito.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
    }
 
    /**
@@ -396,8 +396,8 @@ public class SetArmorOperationTest{
 
       InOrder inOrder = Mockito.inOrder(xBar, loadoutPart);
       inOrder.verify(loadoutPart).setArmor(armorSide, newArmor, false);
-      inOrder.verify(xBar).post(new ConfiguredComponent.Message(loadoutPart, Type.ArmorChanged));
+      inOrder.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
       inOrder.verify(loadoutPart).setArmor(armorSide, oldArmor, true);
-      inOrder.verify(xBar).post(new ConfiguredComponent.Message(loadoutPart, Type.ArmorChanged));
+      inOrder.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
    }
 }

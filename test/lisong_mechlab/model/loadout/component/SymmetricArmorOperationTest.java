@@ -26,7 +26,7 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -56,9 +56,9 @@ public class SymmetricArmorOperationTest{
    @Test
    public void testCanCoalescele(){
       LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
-      ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
-      ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
-      ConfiguredComponent arm = loadout.getComponent(Location.LeftArm);
+      ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
+      ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
+      ConfiguredComponentBase arm = loadout.getComponent(Location.LeftArm);
       int amount = 40;
 
       OpSetArmorSymmetric cut1 = new OpSetArmorSymmetric(xBar, loadout, left, ArmorSide.BACK, amount, true);
@@ -82,8 +82,8 @@ public class SymmetricArmorOperationTest{
    @Test
    public void testApply(){
       LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
-      ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
-      ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
+      ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
+      ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
       ArmorSide side = ArmorSide.BACK;
       int amount = 40;
       boolean manual = true;
@@ -96,16 +96,16 @@ public class SymmetricArmorOperationTest{
       assertFalse(right.allowAutomaticArmor());
       assertEquals(amount, left.getArmor(side));
       assertEquals(amount, right.getArmor(side));
-      Mockito.verify(xBar).post(new ConfiguredComponent.Message(left, Type.ArmorChanged));
-      Mockito.verify(xBar).post(new ConfiguredComponent.Message(right, Type.ArmorChanged));
+      Mockito.verify(xBar).post(new ConfiguredComponentBase.Message(left, Type.ArmorChanged));
+      Mockito.verify(xBar).post(new ConfiguredComponentBase.Message(right, Type.ArmorChanged));
    }
 
    @Test
    public void testApply_OnlyOneSideChanges(){
       for(Location setSide : new Location[] {Location.LeftTorso, Location.RightTorso}){
          LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
-         ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
-         ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
+         ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
+         ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
          ArmorSide side = ArmorSide.BACK;
          int amount = 40;
          boolean manual = true;
@@ -119,15 +119,15 @@ public class SymmetricArmorOperationTest{
          assertFalse(right.allowAutomaticArmor());
          assertEquals(amount, left.getArmor(side));
          assertEquals(amount, right.getArmor(side));
-         Mockito.verify(xBar).post(new ConfiguredComponent.Message(left, Type.ArmorChanged));
-         Mockito.verify(xBar).post(new ConfiguredComponent.Message(right, Type.ArmorChanged));
+         Mockito.verify(xBar).post(new ConfiguredComponentBase.Message(left, Type.ArmorChanged));
+         Mockito.verify(xBar).post(new ConfiguredComponentBase.Message(right, Type.ArmorChanged));
       }
    }
 
    @Test(expected = IllegalArgumentException.class)
    public void testApply_NotSymmetric(){
       LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
-      ConfiguredComponent left = loadout.getComponent(Location.Head);
+      ConfiguredComponentBase left = loadout.getComponent(Location.Head);
       ArmorSide side = ArmorSide.BACK;
       int amount = 40;
       boolean manual = true;

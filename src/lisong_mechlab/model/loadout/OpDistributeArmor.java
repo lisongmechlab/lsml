@@ -30,7 +30,7 @@ import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.util.MessageXBar;
@@ -110,24 +110,24 @@ public class OpDistributeArmor extends CompositeOperation{
          if( prio == 0 )
             continue;
 
-         ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
+         ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
          int armor = Math.min(loadoutPart.getInternalComponent().getArmorMax(), armorLeft * prio / prioSum);
          setArmor(loadoutPart, armor);
          armorLeft -= armor;
          prioSum -= prio;
       }
 
-      List<ConfiguredComponent> parts = new ArrayList<>(aLoadout.getComponents());
+      List<ConfiguredComponentBase> parts = new ArrayList<>(aLoadout.getComponents());
       while( armorLeft > 0 && !parts.isEmpty() ){
-         Iterator<ConfiguredComponent> it = parts.iterator();
+         Iterator<ConfiguredComponentBase> it = parts.iterator();
          while( it.hasNext() ){
-            ConfiguredComponent part = it.next();
+            ConfiguredComponentBase part = it.next();
             if( !part.allowAutomaticArmor() || getArmor(part) == part.getInternalComponent().getArmorMax() )
                it.remove();
          }
 
          int partsLeft = parts.size();
-         for(ConfiguredComponent loadoutPart : parts){
+         for(ConfiguredComponentBase loadoutPart : parts){
             int additionalArmor = Math.min(loadoutPart.getInternalComponent().getArmorMax() - getArmor(loadoutPart), armorLeft / partsLeft);
             setArmor(loadoutPart, getArmor(loadoutPart) + additionalArmor);
             armorLeft -= additionalArmor;
@@ -151,7 +151,7 @@ public class OpDistributeArmor extends CompositeOperation{
 
       // Discount armor that is manually fixed.
       for(Location part : Location.values()){
-         final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
+         final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
          if( !loadoutPart.allowAutomaticArmor() ){
             armorLeft -= loadoutPart.getArmorTotal();
          }
@@ -163,20 +163,20 @@ public class OpDistributeArmor extends CompositeOperation{
       return armorLeft;
    }
 
-   private int getArmor(ConfiguredComponent aPart){
+   private int getArmor(ConfiguredComponentBase aPart){
       Integer stored = armors.get(aPart.getInternalComponent().getLocation());
       if( stored != null )
          return stored;
       return 0;
    }
 
-   private void setArmor(ConfiguredComponent aPart, int armor){
+   private void setArmor(ConfiguredComponentBase aPart, int armor){
       armors.put(aPart.getInternalComponent().getLocation(), armor);
    }
 
    private void applyArmors(LoadoutBase<?, ?> aLoadout, double aFrontRearRatio, MessageXBar aXBar){
       for(Location part : Location.values()){
-         final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
+         final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
 
          if( !loadoutPart.allowAutomaticArmor() )
             continue;
@@ -190,7 +190,7 @@ public class OpDistributeArmor extends CompositeOperation{
       }
 
       for(Location part : Location.values()){
-         final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
+         final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
 
          if( !loadoutPart.allowAutomaticArmor() )
             continue;
@@ -218,7 +218,7 @@ public class OpDistributeArmor extends CompositeOperation{
       Map<Location, Integer> ans = new HashMap<>(Location.values().length);
 
       for(Location part : Location.values()){
-         ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
+         ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
          if( !loadoutPart.allowAutomaticArmor() )
             continue;
 
@@ -226,7 +226,7 @@ public class OpDistributeArmor extends CompositeOperation{
          if( part == Location.CenterTorso ){
             ans.put(part, 2000);
          }
-         else if( loadoutPart.getItemsAll().contains(ConfiguredComponent.ENGINE_INTERNAL) ){
+         else if( loadoutPart.getItemsAll().contains(ConfiguredComponentBase.ENGINE_INTERNAL) ){
             ans.put(part, 1000);
          }
          // Legs and head are high priority too

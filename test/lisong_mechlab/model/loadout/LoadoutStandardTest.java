@@ -34,7 +34,7 @@ import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -121,7 +121,7 @@ public class LoadoutStandardTest{
       LoadoutStandard cut = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("LCT-3M"), xBar);
 
       // Execute + Verify
-      assertFalse(cut.canEquip(ConfiguredComponent.ENGINE_INTERNAL));
+      assertFalse(cut.canEquip(ConfiguredComponentBase.ENGINE_INTERNAL));
    }
 
    @Test
@@ -361,7 +361,7 @@ public class LoadoutStandardTest{
       assertTrue(cut.getFreeMass() > 20.0);
 
       // Execute + Verify
-      List<ConfiguredComponent> candidates = cut.getCandidateLocationsForItem(ItemDB.lookup("AC/20"));
+      List<ConfiguredComponentBase> candidates = cut.getCandidateLocationsForItem(ItemDB.lookup("AC/20"));
       assertEquals(1, candidates.size());
       assertEquals(Location.RightTorso, candidates.get(0).getInternalComponent().getLocation());
    }
@@ -381,7 +381,7 @@ public class LoadoutStandardTest{
       assertTrue(cut.getFreeMass() > 20.0);
 
       // Execute + Verify
-      List<ConfiguredComponent> candidates = cut.getCandidateLocationsForItem(ItemDB.DHS);
+      List<ConfiguredComponentBase> candidates = cut.getCandidateLocationsForItem(ItemDB.DHS);
       assertEquals(5, candidates.size()); // 2x arms + 3x torso
       assertTrue(candidates.remove(cut.getComponent(Location.LeftArm)));
       assertTrue(candidates.remove(cut.getComponent(Location.RightArm)));
@@ -407,7 +407,7 @@ public class LoadoutStandardTest{
       assertTrue(cut.getFreeMass() > 20.0);
 
       // Execute + Verify
-      List<ConfiguredComponent> candidates = cut.getCandidateLocationsForItem(ItemDB.lookup("AC/2"));
+      List<ConfiguredComponentBase> candidates = cut.getCandidateLocationsForItem(ItemDB.lookup("AC/2"));
       assertTrue(candidates.isEmpty());
    }
 

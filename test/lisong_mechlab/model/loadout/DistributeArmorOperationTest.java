@@ -25,8 +25,8 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
@@ -75,7 +75,7 @@ public class DistributeArmorOperationTest{
       // Verify
       assertEquals(9.0 + 10, loadout.getMass(), 0.0);
       assertEquals(320, loadout.getArmor());
-      Mockito.verify(xBar, Mockito.atLeastOnce()).post(new ConfiguredComponent.Message(loadout.getComponent(Location.CenterTorso), Type.ArmorChanged,
+      Mockito.verify(xBar, Mockito.atLeastOnce()).post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.CenterTorso), Type.ArmorChanged,
                                                                                        true));
    }
 
@@ -146,7 +146,7 @@ public class DistributeArmorOperationTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       LoadoutStandard loadout = coder.parse("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
-      for(ConfiguredComponent part : loadout.getComponents()){
+      for(ConfiguredComponentBase part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
@@ -338,7 +338,7 @@ public class DistributeArmorOperationTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       LoadoutStandard loadout = coder.parse("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
-      for(ConfiguredComponent part : loadout.getComponents()){
+      for(ConfiguredComponentBase part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
@@ -365,7 +365,7 @@ public class DistributeArmorOperationTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       LoadoutStandard loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
-      for(ConfiguredComponent part : loadout.getComponents()){
+      for(ConfiguredComponentBase part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
@@ -396,7 +396,7 @@ public class DistributeArmorOperationTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       LoadoutStandard loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
-      for(ConfiguredComponent part : loadout.getComponents()){
+      for(ConfiguredComponentBase part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
          }
@@ -450,8 +450,8 @@ public class DistributeArmorOperationTest{
       stack.pushAndApply(cut);
 
       // Verify
-      ConfiguredComponent shieldArm = loadout.getComponent(Location.RightArm);
-      ConfiguredComponent weaponArm = loadout.getComponent(Location.LeftArm);
+      ConfiguredComponentBase shieldArm = loadout.getComponent(Location.RightArm);
+      ConfiguredComponentBase weaponArm = loadout.getComponent(Location.LeftArm);
 
       assertTrue(shieldArm.getArmorTotal() < weaponArm.getArmorTotal() / 2);
    }

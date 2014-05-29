@@ -28,7 +28,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
@@ -48,7 +48,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class ItemEffectiveHPTest{
    List<Item>          items = new ArrayList<>();
    @Mock
-   ConfiguredComponent loadoutPart;
+   ConfiguredComponentBase loadoutPart;
    @Mock
    LoadoutStandard             loadout;
    @Mock
@@ -123,7 +123,7 @@ public class ItemEffectiveHPTest{
     */
    @Test
    public void testEngineInternals(){
-      Item i = ConfiguredComponent.ENGINE_INTERNAL;
+      Item i = ConfiguredComponentBase.ENGINE_INTERNAL;
       Item internal = Mockito.mock(Internal.class);
       Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);
       Mockito.when(internal.getHealth()).thenReturn(0);

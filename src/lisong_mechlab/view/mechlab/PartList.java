@@ -45,8 +45,8 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.metrics.CriticalItemDamage;
@@ -64,7 +64,7 @@ import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
    private static final long                   serialVersionUID = 5995694414450060827L;
-   private final ConfiguredComponent           component;
+   private final ConfiguredComponentBase           component;
    private final DynamicSlotDistributor        slotDistributor;
    private OperationStack                      opStack;
 
@@ -231,7 +231,7 @@ public class PartList extends JList<Item>{
 
          int c = 0;
          if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            for(Item item : component.getInternalComponent().getInternalItems()){
+            for(Item item : component.getInternalComponent().getFixedItems()){
                c += item.getNumCriticalSlots();
             }
          }
@@ -273,7 +273,7 @@ public class PartList extends JList<Item>{
       Pair<ListEntryType, Item> getElementTypeAt(int arg0){
          List<Item> items = new ArrayList<>(component.getItemsAll());
          if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            items.removeAll(component.getInternalComponent().getInternalItems());
+            items.removeAll(component.getInternalComponent().getFixedItems());
          }
          int numEngineHs = component.getEngineHeatsinks();
          boolean foundhs = true;
@@ -341,8 +341,8 @@ public class PartList extends JList<Item>{
          }
 
          // Only update on item changes or upgrades
-         if( aMsg instanceof ConfiguredComponent.Message || aMsg instanceof Upgrades.Message ){
-            if( aMsg instanceof ConfiguredComponent.Message && ((ConfiguredComponent.Message)aMsg).type == Type.ArmorChanged ){
+         if( aMsg instanceof ConfiguredComponentBase.Message || aMsg instanceof Upgrades.Message ){
+            if( aMsg instanceof ConfiguredComponentBase.Message && ((ConfiguredComponentBase.Message)aMsg).type == Type.ArmorChanged ){
                return; // Don't react to armor changes
             }
             fireContentsChanged(this, 0, component.getInternalComponent().getSlots());
@@ -350,7 +350,7 @@ public class PartList extends JList<Item>{
       }
    }
 
-   PartList(OperationStack aStack, final LoadoutBase<?, ?> aLoadout, final ConfiguredComponent aComponent, final MessageXBar aXBar, DynamicSlotDistributor aSlotDistributor){
+   PartList(OperationStack aStack, final LoadoutBase<?, ?> aLoadout, final ConfiguredComponentBase aComponent, final MessageXBar aXBar, DynamicSlotDistributor aSlotDistributor){
       slotDistributor = aSlotDistributor;
       opStack = aStack;
       component = aComponent;
@@ -432,7 +432,7 @@ public class PartList extends JList<Item>{
       return items;
    }
 
-   public ConfiguredComponent getPart(){
+   public ConfiguredComponentBase getPart(){
       return component;
    }
    

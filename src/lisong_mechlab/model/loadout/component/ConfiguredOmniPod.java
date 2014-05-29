@@ -19,7 +19,19 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ComponentOmniMech;
+import lisong_mechlab.model.chassi.HardPoint;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.item.BallisticWeapon;
+import lisong_mechlab.model.item.EnergyWeapon;
+import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 
 /**
@@ -27,27 +39,82 @@ import lisong_mechlab.model.loadout.LoadoutOmniMech;
  * 
  * @author Li Song
  */
-public class ConfiguredOmniPod extends ConfiguredComponent{
+public class ConfiguredOmniPod extends ConfiguredComponentBase{
+   /** Which chassis this is equipped on, determines fixed items. */
+   private final ChassisOmniMech chassis;
+   private OmniPod               omniPod;
 
-   /**
-    * @param aOmniPod
-    *           The internal omnipod for this component.
-    */
-   public ConfiguredOmniPod(OmniPod aOmniPod){
-      super(aOmniPod, true);
+   public ConfiguredOmniPod(ComponentOmniMech aComponentOmniMech, ChassisOmniMech aChassis, OmniPod aOmniPod){
+      super(aComponentOmniMech, true);
+      if( null == aOmniPod ){
+         throw new NullPointerException("aOmniPod must not be null!");
+      }
+      chassis = aChassis;
+      omniPod = aOmniPod;
    }
 
-   /**
-    * @param aConfiguredOmnipod
-    */
    public ConfiguredOmniPod(ConfiguredOmniPod aConfiguredOmnipod){
       super(aConfiguredOmnipod);
-      // TODO Auto-generated constructor stub
+      chassis = aConfiguredOmnipod.chassis;
+      omniPod = aConfiguredOmnipod.omniPod;
    }
 
    @Override
-   public OmniPod getInternalComponent(){
-      return (OmniPod)super.getInternalComponent();
+   public ComponentOmniMech getInternalComponent(){
+      return (ComponentOmniMech)super.getInternalComponent();
    }
 
+   @Override
+   public int getHardPointCount(HardPointType aHardpointType){
+      return omniPod.getHardPointCount(aHardpointType);
+   }
+
+   @Override
+   public Collection<HardPoint> getHardPoints(){
+      return omniPod.getHardPoints();
+   }
+
+   @Override
+   public List<Item> getItemsFixed(){
+      List<Item> ans = new ArrayList<>(getInternalComponent().getFixedItems());
+      List<Item> equip = new ArrayList<>(ans);
+      equip.addAll(getItemsEquipped());
+
+      // Remove LAA/HA if any  AC/PPC or Gauss rifle is equipped.
+      for(Item item : equip){
+         if( (item instanceof EnergyWeapon && item.getName().toLowerCase().contains("ppc"))
+             || (item instanceof BallisticWeapon && (item.getName().toLowerCase().contains("ac") || item.getName().toLowerCase().contains("gauss"))) ){
+            ans.remove(ItemDB.lookup("@mdf_LAA"));
+            ans.remove(ItemDB.lookup("@mdf_HA"));
+            break;
+         }
+      }
+
+      // TODO: Cache the above results.
+      return ans;
+   }
+
+   /**
+    * @return The currently mounted {@link OmniPod}.
+    */
+   public OmniPod getOmniPod(){
+      return omniPod;
+   }
+
+   /**
+    * @param aOmniPod
+    *           The {@link OmniPod} to set for this component.
+    */
+   public void setOmniPod(OmniPod aOmniPod){
+      if( null == aOmniPod )
+         throw new NullPointerException("aOmniPod must not be null.");
+      omniPod = aOmniPod;
+      
+   }
+
+   @Override
+   public boolean hasMissileBayDoors(){
+      // TODO Auto-generated method stub FIXME
+      return false;
+   }
 }

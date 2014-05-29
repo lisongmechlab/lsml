@@ -134,10 +134,10 @@ public class GarageTree extends JTree{
             sb.append("Max Tons: ").append(chassi.getMassMax()).append(" Engine: ").append(chassi.getEngineMin()).append(" - ")
               .append(chassi.getEngineMax()).append("<br>");
             sb.append("Max Jump Jets: ").append(chassi.getJumpJetsMax()).append(" ECM: ")
-              .append(chassi.getHardpointsCount(HardPointType.ECM) > 0 ? "Yes" : "No").append("<br>");
-            sb.append("Ballistics: ").append(chassi.getHardpointsCount(HardPointType.BALLISTIC)).append(" Energy: ")
-              .append(chassi.getHardpointsCount(HardPointType.ENERGY)).append(" Missile: ").append(chassi.getHardpointsCount(HardPointType.MISSILE))
-              .append(" AMS: ").append(chassi.getHardpointsCount(HardPointType.AMS)).append("<br>");
+              .append(chassi.getHardPointsCount(HardPointType.ECM) > 0 ? "Yes" : "No").append("<br>");
+            sb.append("Ballistics: ").append(chassi.getHardPointsCount(HardPointType.BALLISTIC)).append(" Energy: ")
+              .append(chassi.getHardPointsCount(HardPointType.ENERGY)).append(" Missile: ").append(chassi.getHardPointsCount(HardPointType.MISSILE))
+              .append(" AMS: ").append(chassi.getHardPointsCount(HardPointType.AMS)).append("<br>");
             sb.append("</html>");
             return sb.toString();
          }

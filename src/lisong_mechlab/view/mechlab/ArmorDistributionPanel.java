@@ -35,7 +35,7 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.OpDistributeArmor;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -68,7 +68,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 
       public ResetManualArmorOperation(){
          super("reset manual armor");
-         for(ConfiguredComponent loadoutPart : loadout.getComponents()){
+         for(ConfiguredComponentBase loadoutPart : loadout.getComponents()){
             if( loadoutPart.getInternalComponent().getLocation().isTwoSided() ){
                addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
                addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.BACK, loadoutPart.getArmor(ArmorSide.BACK), false));
@@ -174,7 +174,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
                                  + "Armor will be placed automatically among components without manually set armor values.<br/>"
                                  + "You can right click on the component's armor value to reset a manually set value.</html>");
 
-      ConfiguredComponent ct = aLoadout.getComponent(Location.CenterTorso);
+      ConfiguredComponentBase ct = aLoadout.getComponent(Location.CenterTorso);
       int backArmor = ct.getArmor(ArmorSide.BACK);
       int frontArmor = ct.getArmor(ArmorSide.FRONT);
       int initialFrontBack = 5;
@@ -237,8 +237,8 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
     */
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponent.Message ){
-         ConfiguredComponent.Message message = (ConfiguredComponent.Message)aMsg;
+      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.Message ){
+         ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message)aMsg;
          if( message.automatic )
             return;
          updateArmorDistribution();

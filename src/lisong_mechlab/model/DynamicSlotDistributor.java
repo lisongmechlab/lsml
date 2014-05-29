@@ -21,8 +21,8 @@ package lisong_mechlab.model;
 
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutOmniMech;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredOmniPod;
 
 /**
  * This class handles distribution of dynamic slots from Ferro Fibrous armor and Endo Steel internal structure.
@@ -48,16 +48,16 @@ public class DynamicSlotDistributor{
    }
 
    /**
-    * Returns the number of dynamic structure slots that should be visualized for the given {@link ConfiguredComponent}.
+    * Returns the number of dynamic structure slots that should be visualized for the given {@link ConfiguredComponentBase}.
     * 
     * @param aComponent
-    *           The {@link ConfiguredComponent} to get results for.
+    *           The {@link ConfiguredComponentBase} to get results for.
     * @return A number of slots to display, can be 0.
     */
-   public int getDynamicStructureSlots(ConfiguredComponent aComponent){
-      if( loadout instanceof LoadoutOmniMech ){
-         LoadoutOmniMech omniMech = (LoadoutOmniMech)loadout;
-         return omniMech.getChassis().getDynamicStructureSlots(aComponent.getInternalComponent().getLocation());
+   public int getDynamicStructureSlots(ConfiguredComponentBase aComponent){
+      if( aComponent instanceof ConfiguredOmniPod ){
+         ConfiguredOmniPod component = (ConfiguredOmniPod)aComponent;
+         return component.getInternalComponent().getDynamicStructureSlots();
       }
       
       final int structSlots = loadout.getUpgrades().getStructure().getExtraSlots();
@@ -72,16 +72,16 @@ public class DynamicSlotDistributor{
    }
 
    /**
-    * Returns the number of dynamic armor slots that should be visualized for the given {@link ConfiguredComponent}.
+    * Returns the number of dynamic armor slots that should be visualized for the given {@link ConfiguredComponentBase}.
     * 
     * @param aComponent
-    *           The {@link ConfiguredComponent} to get results for.
+    *           The {@link ConfiguredComponentBase} to get results for.
     * @return A number of slots to display, can be 0.
     */
-   public int getDynamicArmorSlots(ConfiguredComponent aComponent){
-      if( loadout instanceof LoadoutOmniMech ){
-         LoadoutOmniMech omniMech = (LoadoutOmniMech)loadout;
-         return omniMech.getChassis().getDynamicArmorSlots(aComponent.getInternalComponent().getLocation());
+   public int getDynamicArmorSlots(ConfiguredComponentBase aComponent){
+      if( aComponent instanceof ConfiguredOmniPod ){
+         ConfiguredOmniPod component = (ConfiguredOmniPod)aComponent;
+         return component.getInternalComponent().getDynamicArmorSlots();
       }
       
       final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();

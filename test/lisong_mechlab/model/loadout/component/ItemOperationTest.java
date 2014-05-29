@@ -19,13 +19,13 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
-import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -46,7 +46,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class ItemOperationTest{
 
    class CutClass extends OpItemBase{
-      public CutClass(MessageXBar anXBar, LoadoutBase<ConfiguredComponent, InternalComponent> aLoadout, ConfiguredComponent aLoadoutPart){
+      public CutClass(MessageXBar anXBar, LoadoutBase<ConfiguredComponentBase, ComponentStandard> aLoadout, ConfiguredComponentBase aLoadoutPart){
          super(anXBar, aLoadout, aLoadoutPart);
       }
 
@@ -58,9 +58,9 @@ public class ItemOperationTest{
    }
 
    @Mock
-   private LoadoutBase<ConfiguredComponent, InternalComponent> loadout;
+   private LoadoutBase<ConfiguredComponentBase, ComponentStandard> loadout;
    @Mock
-   private ConfiguredComponent                                 loadoutPart;
+   private ConfiguredComponentBase                                 loadoutPart;
    @Mock
    private MessageXBar                                         xBar;
 
@@ -116,16 +116,16 @@ public class ItemOperationTest{
    @Test
    public final void testRemoveItem_XLEngine(){
       Item item = ItemDB.lookup("XL ENGINE 300");
-      ConfiguredComponent lt = Mockito.mock(ConfiguredComponent.class);
-      ConfiguredComponent rt = Mockito.mock(ConfiguredComponent.class);
+      ConfiguredComponentBase lt = Mockito.mock(ConfiguredComponentBase.class);
+      ConfiguredComponentBase rt = Mockito.mock(ConfiguredComponentBase.class);
       Mockito.when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
       Mockito.when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
 
       cut.removeItem(item);
 
       Mockito.verify(loadoutPart).removeItem(item);
-      Mockito.verify(lt).removeItem(ConfiguredComponent.ENGINE_INTERNAL);
-      Mockito.verify(rt).removeItem(ConfiguredComponent.ENGINE_INTERNAL);
+      Mockito.verify(lt).removeItem(ConfiguredComponentBase.ENGINE_INTERNAL);
+      Mockito.verify(rt).removeItem(ConfiguredComponentBase.ENGINE_INTERNAL);
       Mockito.verify(xBar).post(new Message(loadoutPart, Type.ItemRemoved));
       Mockito.verify(xBar).post(new Message(lt, Type.ItemRemoved));
       Mockito.verify(xBar).post(new Message(rt, Type.ItemRemoved));
@@ -174,8 +174,8 @@ public class ItemOperationTest{
     */
    @Test
    public final void testAddItem_XLEngine(){
-      ConfiguredComponent lt = Mockito.mock(ConfiguredComponent.class);
-      ConfiguredComponent rt = Mockito.mock(ConfiguredComponent.class);
+      ConfiguredComponentBase lt = Mockito.mock(ConfiguredComponentBase.class);
+      ConfiguredComponentBase rt = Mockito.mock(ConfiguredComponentBase.class);
       Mockito.when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
       Mockito.when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
       Item item = ItemDB.lookup("XL ENGINE 300");
@@ -183,8 +183,8 @@ public class ItemOperationTest{
       cut.addItem(item);
 
       Mockito.verify(loadoutPart).addItem(item);
-      Mockito.verify(lt).addItem(ConfiguredComponent.ENGINE_INTERNAL);
-      Mockito.verify(rt).addItem(ConfiguredComponent.ENGINE_INTERNAL);
+      Mockito.verify(lt).addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
+      Mockito.verify(rt).addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
       Mockito.verify(xBar).post(new Message(loadoutPart, Type.ItemAdded));
       Mockito.verify(xBar).post(new Message(lt, Type.ItemAdded));
       Mockito.verify(xBar).post(new Message(rt, Type.ItemAdded));

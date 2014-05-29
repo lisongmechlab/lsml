@@ -25,7 +25,7 @@ import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
-import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
@@ -50,7 +50,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class AddItemOperationTest{
    @Mock
-   private ConfiguredComponent loadoutPart;
+   private ConfiguredComponentBase loadoutPart;
    @Mock
    private LoadoutStandard             loadout;
    @Mock
@@ -58,7 +58,7 @@ public class AddItemOperationTest{
    @Mock
    private MessageXBar         xBar;
    @Mock
-   private InternalComponent   internalPart;
+   private ComponentStandard   internalPart;
 
    @Before
    public void setup(){

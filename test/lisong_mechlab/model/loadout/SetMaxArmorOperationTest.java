@@ -26,8 +26,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.InternalComponent;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.chassi.ComponentStandard;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -61,7 +61,7 @@ public class SetMaxArmorOperationTest{
 
       // Verify
       // All parts have max armor
-      for(InternalComponent part : cut.getChassis().getComponents()){
+      for(ComponentStandard part : cut.getChassis().getComponents()){
          assertEquals(part.getArmorMax(), cut.getComponent(part.getLocation()).getArmorTotal());
 
          // Double sided parts have a ratio of 3 : 2 armor between front and back.
@@ -75,11 +75,11 @@ public class SetMaxArmorOperationTest{
             assertTrue(lb < front_back_ratio);
             assertTrue(ub > front_back_ratio);
 
-            verify(xBar, atLeast(2)).post(new ConfiguredComponent.Message(cut.getComponent(part.getLocation()),
-                                                                          ConfiguredComponent.Message.Type.ArmorChanged));
+            verify(xBar, atLeast(2)).post(new ConfiguredComponentBase.Message(cut.getComponent(part.getLocation()),
+                                                                          ConfiguredComponentBase.Message.Type.ArmorChanged));
          }
          else
-            verify(xBar).post(new ConfiguredComponent.Message(cut.getComponent(part.getLocation()), ConfiguredComponent.Message.Type.ArmorChanged));
+            verify(xBar).post(new ConfiguredComponentBase.Message(cut.getComponent(part.getLocation()), ConfiguredComponentBase.Message.Type.ArmorChanged));
       }
    }
 
@@ -97,7 +97,7 @@ public class SetMaxArmorOperationTest{
 
       // Verify
       // All parts have max armor
-      for(InternalComponent part : cut.getChassis().getComponents()){
+      for(ComponentStandard part : cut.getChassis().getComponents()){
          assertEquals(part.getArmorMax(), cut.getComponent(part.getLocation()).getArmorTotal());
 
          // Double sided parts have a ratio of 3 : 2 armor between front and back.

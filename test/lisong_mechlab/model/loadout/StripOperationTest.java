@@ -22,7 +22,7 @@ package lisong_mechlab.model.loadout;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -61,7 +61,7 @@ public class StripOperationTest{
       opStack.pushAndApply(new OpStripLoadout(cut, xBar));
 
       // Verify
-      for(ConfiguredComponent loadoutPart : cut.getComponents()){
+      for(ConfiguredComponentBase loadoutPart : cut.getComponents()){
          assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
          assertEquals(0, loadoutPart.getArmorTotal());
       }

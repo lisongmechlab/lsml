@@ -24,7 +24,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
@@ -109,7 +109,7 @@ public class OpSetGuidanceType extends OpUpgradeBase{
          if( newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree() )
             throw new IllegalArgumentException("Too few critical slots available in loadout!");
 
-         for(ConfiguredComponent part : loadout.getComponents()){
+         for(ConfiguredComponentBase part : loadout.getComponents()){
             if( newValue.getExtraSlots(part) > part.getSlotsFree() )
                throw new IllegalArgumentException("Too few critical slots available in " + part.getInternalComponent().getLocation() + "!");
          }
@@ -118,7 +118,7 @@ public class OpSetGuidanceType extends OpUpgradeBase{
             throw new IllegalArgumentException("Too heavy to add artmemis!");
          }
 
-         for(ConfiguredComponent component : loadout.getComponents()){
+         for(ConfiguredComponentBase component : loadout.getComponents()){
             for(Item item : component.getItemsAll()){
                if( item instanceof MissileWeapon ){
                   MissileWeapon oldWeapon = (MissileWeapon)item;

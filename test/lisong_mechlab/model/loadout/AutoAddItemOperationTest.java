@@ -34,8 +34,8 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
@@ -157,10 +157,10 @@ public class AutoAddItemOperationTest{
       assertTrue(allItems.remove(ItemDB.lookup("XL ENGINE 200")));
 
       // 1 + 1, move one lrm 5 here and add the wanted lrm 5
-      verify(xBar, times(2)).post(new ConfiguredComponent.Message(loadout.getComponent(Location.CenterTorso), Type.ItemAdded));
-      verify(xBar, times(1)).post(new ConfiguredComponent.Message(loadout.getComponent(Location.CenterTorso), Type.ItemRemoved));
-      verify(xBar, times(1)).post(new ConfiguredComponent.Message(loadout.getComponent(Location.LeftArm), Type.ItemAdded));
-      verify(xBar, times(1)).post(new ConfiguredComponent.Message(loadout.getComponent(Location.LeftArm), Type.ItemRemoved));
+      verify(xBar, times(2)).post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.CenterTorso), Type.ItemAdded));
+      verify(xBar, times(1)).post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.CenterTorso), Type.ItemRemoved));
+      verify(xBar, times(1)).post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.LeftArm), Type.ItemAdded));
+      verify(xBar, times(1)).post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.LeftArm), Type.ItemRemoved));
    }
 
    /**
@@ -299,7 +299,7 @@ public class AutoAddItemOperationTest{
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.DHS));
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.DHS));
       assertTrue(loadout.getComponent(Location.RightArm).getItemsAll().contains(ItemDB.DHS));
-      verify(xBar, times(1 + 2)).post(new ConfiguredComponent.Message(loadout.getComponent(Location.RightArm), Type.ItemAdded));
+      verify(xBar, times(1 + 2)).post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.RightArm), Type.ItemAdded));
 
       // Skips RA, RT, RL, HD, CT (too few slots) and places the item in LT
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.DHS));
@@ -325,7 +325,7 @@ public class AutoAddItemOperationTest{
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.SHS)); // Engine HS slot 2
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.SHS)); // Right arm
 
-      verify(xBar, times(1 + 2)).post(new ConfiguredComponent.Message(loadout.getComponent(Location.CenterTorso), Type.ItemAdded));
+      verify(xBar, times(1 + 2)).post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.CenterTorso), Type.ItemAdded));
       assertTrue(loadout.getComponent(Location.CenterTorso).getItemsAll().contains(ItemDB.SHS)); // 1 remaining
       assertTrue(loadout.getComponent(Location.RightArm).getItemsAll().contains(ItemDB.SHS));
    }

@@ -45,15 +45,15 @@ import javax.swing.text.DefaultFormatter;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.OmniPodDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -97,7 +97,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
                else{
                   stack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmorTotal(), false));
                }
-               xBar.post(new ConfiguredComponent.Message(loadoutPart, Type.ArmorDistributionUpdateRequest));
+               xBar.post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorDistributionUpdateRequest));
             }
          }));
          menu.show(e.getComponent(), e.getX(), e.getY());
@@ -114,7 +114,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    private final JLabel              armorLabel;
 
    private final LoadoutBase<?, ?>   loadout;
-   private final ConfiguredComponent loadoutPart;
+   private final ConfiguredComponentBase loadoutPart;
 
    private final boolean             canHaveHardpoints;
    private final ArmorPopupAdapter   armorPopupAdapter;
@@ -124,7 +124,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private final JComboBox<OmniPod>  omnipodSelection;
 
-   PartPanel(LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints,
+   PartPanel(LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints,
              DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric, OperationStack aStack){
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       anXBar.attach(this);
@@ -146,7 +146,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-         InternalComponent internalPart = aLoadoutPart.getInternalComponent();
+         ComponentBase internalPart = aLoadoutPart.getInternalComponent();
          setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(internalPart.getLocation().longName() + " ("
                                                                                        + (int)internalPart.getHitPoints() + " hp)"),
                                                       BorderFactory.createEmptyBorder(0, 2, 2, 4)));
@@ -191,7 +191,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
       for(HardPointType hp : HardPointType.values()){
          JLabel label = new JLabel();
-         StyleManager.styleHardpointLabel(label, loadoutPart.getInternalComponent(), hp);
+         StyleManager.styleHardpointLabel(label, loadoutPart, hp);
          panel.add(label);
       }
 
@@ -307,8 +307,8 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponent.Message ){
-         ConfiguredComponent.Message msg = (ConfiguredComponent.Message)aMsg;
+      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.Message ){
+         ConfiguredComponentBase.Message msg = (ConfiguredComponentBase.Message)aMsg;
          if( msg.type == Type.ArmorChanged ){
             SwingUtilities.invokeLater(new Runnable(){
                @Override
