@@ -21,7 +21,7 @@ package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.BinomialDistribution;
 
 /**
@@ -34,9 +34,9 @@ import lisong_mechlab.util.BinomialDistribution;
  * @author Emily Björk
  */
 public class CriticalItemDamage implements ItemMetric{
-   private final ConfiguredComponent loadoutPart;
+   private final ConfiguredComponentBase loadoutPart;
 
-   public CriticalItemDamage(ConfiguredComponent aLoadoutPart){
+   public CriticalItemDamage(ConfiguredComponentBase aLoadoutPart){
       loadoutPart = aLoadoutPart;
    }
 
@@ -45,10 +45,10 @@ public class CriticalItemDamage implements ItemMetric{
       return calculate(aItem, loadoutPart);
    }
 
-   public static double calculate(Item anItem, ConfiguredComponent aLoadoutPart){
+   public static double calculate(Item anItem, ConfiguredComponentBase aLoadoutPart){
       int slots = 0;
       for(Item it : aLoadoutPart.getItemsAll()){
-         if( it instanceof Internal && it != ConfiguredComponent.ENGINE_INTERNAL ){
+         if( it instanceof Internal && it != ConfiguredComponentBase.ENGINE_INTERNAL ){
             continue; // Internals (apart from engine side torsos) cannot be crit.
          }
          slots += it.getNumCriticalSlots();

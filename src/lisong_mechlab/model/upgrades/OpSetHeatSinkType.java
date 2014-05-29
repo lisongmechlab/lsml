@@ -22,7 +22,7 @@ package lisong_mechlab.model.upgrades;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
@@ -115,7 +115,7 @@ public class OpSetHeatSinkType extends OpUpgradeBase{
       operationReady = true;
 
       if( oldValue != newValue ){
-         for(ConfiguredComponent loadoutPart : loadout.getComponents()){
+         for(ConfiguredComponentBase loadoutPart : loadout.getComponents()){
             int hsRemoved = 0;
             for(Item item : loadoutPart.getItemsAll()){
                if( item instanceof HeatSink ){

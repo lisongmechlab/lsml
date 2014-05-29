@@ -21,13 +21,13 @@ package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} will change the armor of a {@link ConfiguredComponent}.
+ * This {@link Operation} will change the armor of a {@link ConfiguredComponentBase}.
  * 
  * @author Emily Björk
  */
@@ -38,7 +38,7 @@ public class OpSetArmor extends Operation{
    private boolean                   oldManual;
    private final MessageXBar         xBar;
    private final LoadoutBase<?, ?>   loadout;
-   private final ConfiguredComponent loadoutPart;
+   private final ConfiguredComponentBase loadoutPart;
    private final boolean             manual;
 
    /**
@@ -49,7 +49,7 @@ public class OpSetArmor extends Operation{
     * @param aLoadout
     *           The {@link LoadoutBase} to change.
     * @param aLoadoutPart
-    *           The {@link ConfiguredComponent} to change.
+    *           The {@link ConfiguredComponentBase} to change.
     * @param anArmorSide
     *           The side to set the armor for.
     * @param anArmorAmount
@@ -60,7 +60,7 @@ public class OpSetArmor extends Operation{
     *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
     *            support the armor.
     */
-   public OpSetArmor(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount,
+   public OpSetArmor(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount,
                      boolean aManualSet){
       xBar = anXBar;
       loadout = aLoadout;
@@ -118,7 +118,7 @@ public class OpSetArmor extends Operation{
             // afterwards. FIXME: Devise a proper solution, this is ugly.
             int freed = 0;
             if( manual == true && freed < armorDiff ){
-               for(ConfiguredComponent otherPart : loadout.getComponents()){
+               for(ConfiguredComponentBase otherPart : loadout.getComponents()){
                   if( loadoutPart != otherPart && otherPart.allowAutomaticArmor() ){
                      freed += otherPart.getArmorTotal();
                      if( otherPart.getInternalComponent().getLocation().isTwoSided() ){

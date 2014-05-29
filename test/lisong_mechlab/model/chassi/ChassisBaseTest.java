@@ -23,13 +23,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
+
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**
@@ -51,10 +59,28 @@ public abstract class ChassisBaseTest{
    protected ChassisVariant  variant     = ChassisVariant.FOUNDER;
 
    protected abstract ChassisBase makeDefaultCUT();
-   
+
    @Before
    public void setup(){
       movementProfile = Mockito.mock(MovementProfile.class);
+   }
+
+   /**
+    * {@link ChassisBase#getComponents()} shall return an immutable {@link Collection}.
+    */
+   @Test
+   public final void testGetComponents_AllThere(){
+      ChassisBase base = makeDefaultCUT();
+      assertEquals(Location.values().length, base.getComponents().size());
+   }
+
+   /**
+    * {@link ChassisBase#getComponents()} shall return an immutable {@link Collection}.
+    */
+   @Test(expected = UnsupportedOperationException.class)
+   public final void testGetComponents_Ammutable(){
+      ChassisBase base = makeDefaultCUT();
+      base.getComponents().remove(base.getComponent(Location.Head));
    }
 
    @Test
@@ -81,7 +107,7 @@ public abstract class ChassisBaseTest{
    public final void testGetMovementProfile() throws Exception{
       assertSame(movementProfile, makeDefaultCUT().getMovementProfile());
    }
-   
+
    @Test
    public final void testGetMwoId() throws Exception{
       assertEquals(mwoID, makeDefaultCUT().getMwoId());
@@ -143,6 +169,21 @@ public abstract class ChassisBaseTest{
    }
 
    @Test
+   public final void testIsAllowed_JJTooSmall(){
+      assertFalse(makeDefaultCUT().isAllowed(makeJumpJet(0, maxTons)));
+   }
+   
+   @Test
+   public final void testIsAllowed_JJTooBig(){
+      assertFalse(makeDefaultCUT().isAllowed(makeJumpJet(maxTons+1,maxTons*2)));
+   }
+   
+   @Test
+   public final void testIsAllowed_JJPerfectFit(){
+      assertTrue(makeDefaultCUT().isAllowed(makeJumpJet(maxTons, maxTons+1)));
+   }
+   
+   @Test
    public final void testIsClan() throws Exception{
       assertEquals(isClan, makeDefaultCUT().isClan());
    }
@@ -184,5 +225,26 @@ public abstract class ChassisBaseTest{
    @Test
    public final void testToString() throws Exception{
       assertEquals(shortName, makeDefaultCUT().toString());
+   }
+   
+   protected JumpJet makeJumpJet(int aMinTons, int aMaxTons){
+      JumpJet jj = Mockito.mock(JumpJet.class);
+      Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
+      Mockito.when(jj.isClan()).thenReturn(true);
+      Mockito.when(jj.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+
+      Mockito.when(jj.getMinTons()).thenReturn((double)aMinTons);
+      Mockito.when(jj.getMaxTons()).thenReturn((double)aMaxTons);
+      return jj;
+   }
+   
+   protected Engine makeEngine(int rating){
+      Engine engine = Mockito.mock(Engine.class);
+      Mockito.when(engine.isClan()).thenReturn(true);
+      Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+      Mockito.when(engine.getRating()).thenReturn(rating);
+      Mockito.when(engine.getType()).thenReturn(EngineType.XL);
+      Mockito.when(engine.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+      return engine;
    }
 }

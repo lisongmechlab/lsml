@@ -29,7 +29,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -101,7 +101,7 @@ public class SmurfyXML{
             {
                for(Location type : new Location[] {Location.Head, Location.LeftTorso, Location.CenterTorso, Location.RightTorso, Location.LeftLeg,
                      Location.RightLeg, Location.RightArm, Location.LeftArm}){
-                  ConfiguredComponent part = loadout.getComponent(type);
+                  ConfiguredComponentBase part = loadout.getComponent(type);
                   writer.startNode("component");
 
                   writeValue(writer, "name", part.getInternalComponent().getLocation().toMwoName());
@@ -129,7 +129,7 @@ public class SmurfyXML{
 
                }
                for(Location type : new Location[] {Location.LeftTorso, Location.CenterTorso, Location.RightTorso}){
-                  ConfiguredComponent part = loadout.getComponent(type);
+                  ConfiguredComponentBase part = loadout.getComponent(type);
                   writer.startNode("component");
                   writeValue(writer, "name", part.getInternalComponent().getLocation().toMwoRearName());
                   writeValue(writer, "armor", part.getArmor(ArmorSide.BACK));

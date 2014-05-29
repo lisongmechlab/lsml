@@ -20,17 +20,20 @@
 package lisong_mechlab.model.chassi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-
-import java.util.Arrays;
-
+import static org.junit.Assert.assertTrue;
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.EngineType;
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**
@@ -39,13 +42,11 @@ import org.mockito.Mockito;
  * @author Emily Björk
  */
 public class ChassisOmniMechTest extends ChassisBaseTest{
-   private Engine           engine;
-   private StructureUpgrade structureType;
-   private ArmorUpgrade     armorType;
-   private HeatSinkUpgrade  heatSinkType;
-   private OmniPod          centerTorso;
-   private int[]            dynArmor;
-   private int[]            dynStructure;
+   private Engine              engine;
+   private StructureUpgrade    structureType;
+   private ArmorUpgrade        armorType;
+   private HeatSinkUpgrade     heatSinkType;
+   private ComponentOmniMech[] components;
 
    @Override
    @Before
@@ -53,62 +54,68 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
       super.setup();
 
       engine = Mockito.mock(Engine.class);
+      Mockito.when(engine.isClan()).thenReturn(true);
+      Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+      Mockito.when(engine.getRating()).thenReturn(250);
+      Mockito.when(engine.getType()).thenReturn(EngineType.XL);
+      Mockito.when(engine.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+
       structureType = Mockito.mock(StructureUpgrade.class);
       armorType = Mockito.mock(ArmorUpgrade.class);
       heatSinkType = Mockito.mock(HeatSinkUpgrade.class);
-      centerTorso = Mockito.mock(OmniPod.class);
 
-      int dynArmorSlots = 0;
-      int dynStructureSlots = 0;
-      dynArmor = new int[Location.values().length];
-      dynStructure = new int[Location.values().length];
-
-      dynArmor[Location.Head.ordinal()] = 1;
-      dynArmor[Location.CenterTorso.ordinal()] = 1;
-      dynArmor[Location.LeftTorso.ordinal()] = 3;
-      dynArmor[Location.RightArm.ordinal()] = 2;
-
-      dynStructure[Location.LeftLeg.ordinal()] = 1;
-      dynStructure[Location.RightTorso.ordinal()] = 1;
-      dynStructure[Location.LeftArm.ordinal()] = 3;
-      dynStructure[Location.LeftLeg.ordinal()] = 2;
-
+      components = new ComponentOmniMech[Location.values().length];
       for(Location location : Location.values()){
-         dynArmorSlots += dynArmor[location.ordinal()];
-         dynStructureSlots += dynStructure[location.ordinal()];
+         components[location.ordinal()] = Mockito.mock(ComponentOmniMech.class);
+         Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class))).thenReturn(true);
       }
 
-      Mockito.when(structureType.getExtraSlots()).thenReturn(dynStructureSlots);
-      Mockito.when(armorType.getExtraSlots()).thenReturn(dynArmorSlots);
+      Mockito.when(components[Location.Head.ordinal()].getArmorMax()).thenReturn(18);
+      Mockito.when(components[Location.LeftArm.ordinal()].getArmorMax()).thenReturn(48);
+      Mockito.when(components[Location.LeftTorso.ordinal()].getArmorMax()).thenReturn(64);
+      Mockito.when(components[Location.LeftLeg.ordinal()].getArmorMax()).thenReturn(64);
+      Mockito.when(components[Location.CenterTorso.ordinal()].getArmorMax()).thenReturn(92);
+      Mockito.when(components[Location.RightArm.ordinal()].getArmorMax()).thenReturn(48);
+      Mockito.when(components[Location.RightTorso.ordinal()].getArmorMax()).thenReturn(64);
+      Mockito.when(components[Location.RightLeg.ordinal()].getArmorMax()).thenReturn(64);
 
+      Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(1);
+      Mockito.when(components[Location.CenterTorso.ordinal()].getDynamicArmorSlots()).thenReturn(1);
+      Mockito.when(components[Location.LeftTorso.ordinal()].getDynamicArmorSlots()).thenReturn(3);
+      Mockito.when(components[Location.RightArm.ordinal()].getDynamicArmorSlots()).thenReturn(2);
+
+      Mockito.when(components[Location.LeftLeg.ordinal()].getDynamicStructureSlots()).thenReturn(1);
+      Mockito.when(components[Location.RightTorso.ordinal()].getDynamicStructureSlots()).thenReturn(1);
+      Mockito.when(components[Location.LeftArm.ordinal()].getDynamicStructureSlots()).thenReturn(3);
+      Mockito.when(components[Location.RightLeg.ordinal()].getDynamicStructureSlots()).thenReturn(2);
+
+      Mockito.when(structureType.getExtraSlots()).thenReturn(7);
+      Mockito.when(armorType.getExtraSlots()).thenReturn(7);
    }
 
    @Override
    protected ChassisOmniMech makeDefaultCUT(){
-      return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, engine,
-                                 structureType, armorType, heatSinkType, centerTorso, dynStructure, dynArmor);
+      return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, components, engine,
+                                 structureType, armorType, heatSinkType);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public final void testCtor_BadDynStructure(){
-      int[] struct = Arrays.copyOf(dynStructure, dynStructure.length);
-      struct[Location.LeftTorso.ordinal()] = 12;
-      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, engine, structureType,
-                          armorType, heatSinkType, centerTorso, struct, dynArmor);
+      Mockito.when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);
+      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, components, engine,
+                          structureType, armorType, heatSinkType);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public final void testCtor_BadDynArmor(){
-      int[] armor = Arrays.copyOf(dynArmor, dynArmor.length);
-      armor[Location.LeftTorso.ordinal()] = 12;
-      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, engine, structureType,
-                          armorType, heatSinkType, centerTorso, dynStructure, armor);
+      Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(13);
+      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, components, engine,
+                          structureType, armorType, heatSinkType);
    }
 
    @Test
    public final void testGetArmorMax(){
-      ChassisOmniMech chassisOmniMech = (ChassisOmniMech)ChassisDB.lookup("TIMBERWOLF PRIME");
-      assertEquals(462, chassisOmniMech.getArmorMax());
+      assertEquals(462, makeDefaultCUT().getArmorMax());
    }
 
    @Test
@@ -132,18 +139,24 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
    }
 
    @Test
-   public final void testGetDynamicArmorSlots(){
-      ChassisOmniMech cut = makeDefaultCUT();
-      for(Location location : Location.values()){
-         assertEquals(dynArmor[location.ordinal()], cut.getDynamicArmorSlots(location));
-      }
+   public final void testIsAllowed_Engine(){
+      assertFalse(makeDefaultCUT().isAllowed(engine));
    }
-
+   
    @Test
-   public final void testGetDynamicStructureSlots(){
+   public final void testIsAllowed_NoComponentSupport(){
+      Item item = Mockito.mock(Item.class);
+      Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+      Mockito.when(item.isClan()).thenReturn(true);
+      Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+
       ChassisOmniMech cut = makeDefaultCUT();
+      assertTrue(cut.isAllowed(item)); // Item in it self is allowed
+      
+      // But no component supports it.
       for(Location location : Location.values()){
-         assertEquals(dynStructure[location.ordinal()], cut.getDynamicStructureSlots(location));
+         Mockito.when(components[location.ordinal()].isAllowed(item)).thenReturn(false);
       }
+      assertFalse(cut.isAllowed(item));     
    }
 }

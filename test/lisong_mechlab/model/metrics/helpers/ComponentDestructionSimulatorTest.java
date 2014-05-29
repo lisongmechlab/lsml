@@ -24,10 +24,10 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
 import lisong_mechlab.util.MessageXBar;
 
@@ -47,10 +47,10 @@ public class ComponentDestructionSimulatorTest{
       List<Item> partItems = new ArrayList<>();
       partItems.add(ItemDB.BAP);
 
-      InternalComponent internalPart = Mockito.mock(InternalComponent.class);
+      ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
       Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
 
-      ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
+      ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
       Mockito.when(part.getItemsAll()).thenReturn(partItems);
       Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
@@ -80,10 +80,10 @@ public class ComponentDestructionSimulatorTest{
       List<Item> partItems = new ArrayList<>();
       partItems.add(ItemDB.lookup("AC/20"));
 
-      InternalComponent internalPart = Mockito.mock(InternalComponent.class);
+      ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
       Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
 
-      ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
+      ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
       Mockito.when(part.getItemsAll()).thenReturn(partItems);
       Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
@@ -109,10 +109,10 @@ public class ComponentDestructionSimulatorTest{
       List<Item> partItems = new ArrayList<>();
       partItems.add(ItemDB.lookup("AC/20"));
 
-      InternalComponent internalPart = Mockito.mock(InternalComponent.class);
+      ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
       Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
 
-      ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
+      ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
       Mockito.when(part.getItemsAll()).thenReturn(partItems);
       Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 

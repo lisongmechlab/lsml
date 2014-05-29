@@ -24,7 +24,7 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
@@ -56,7 +56,7 @@ public class OpLoadStock extends OpLoadoutBase{
 
       for(StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()){
          Location location = stockComponent.getPart();
-         ConfiguredComponent configured = aLoadout.getComponent(location);
+         ConfiguredComponentBase configured = aLoadout.getComponent(location);
 
          if( location.isTwoSided() ){
             addOp(new OpSetArmor(xBar, aLoadout, configured, ArmorSide.BACK, stockComponent.getArmorBack(), true));

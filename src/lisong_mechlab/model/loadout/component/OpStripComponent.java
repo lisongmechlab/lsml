@@ -36,13 +36,13 @@ import lisong_mechlab.util.OperationStack.Operation;
 public class OpStripComponent extends CompositeOperation{
    /**
     * @param aLoadoutPart
-    *           The {@link ConfiguredComponent} to strip.
+    *           The {@link ConfiguredComponentBase} to strip.
     * @param anXBar
     *           Where to announce changes from this operation.
     * @param aLoadout
     *           The {@link LoadoutBase} to operate on.
     */
-   public OpStripComponent(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aLoadoutPart){
+   public OpStripComponent(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aLoadoutPart){
       super("strip part");
       // Engine heat sinks are removed together with the engine.
       int hsSkipp = aLoadoutPart.getEngineHeatsinks();

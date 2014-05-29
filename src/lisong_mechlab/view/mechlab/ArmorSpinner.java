@@ -27,8 +27,8 @@ import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.loadout.component.OpSetArmorSymmetric;
 import lisong_mechlab.util.MessageXBar;
@@ -37,14 +37,14 @@ import lisong_mechlab.util.OperationStack;
 
 public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Reader{
    private static final long         serialVersionUID = 2130487332299251881L;
-   private final ConfiguredComponent part;
+   private final ConfiguredComponentBase part;
    private final ArmorSide           side;
    private final JCheckBox           symmetric;
    private final OperationStack      opStack;
    private final MessageXBar         xBar;
    private final LoadoutBase<?, ?>   loadout;
 
-   public ArmorSpinner(LoadoutBase<?, ?> aLoadout, ConfiguredComponent aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
+   public ArmorSpinner(LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
       part = aPart;
       loadout = aLoadout;
       side = anArmorSide;
@@ -99,8 +99,8 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponent.Message ){
-         ConfiguredComponent.Message message = (ConfiguredComponent.Message)aMsg;
+      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.Message ){
+         ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message)aMsg;
          if( message.component != part )
             return;
          if( message.type == Type.ArmorChanged ){

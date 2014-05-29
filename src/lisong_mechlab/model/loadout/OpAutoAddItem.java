@@ -29,7 +29,7 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.util.MessageXBar;
@@ -126,13 +126,13 @@ public class OpAutoAddItem extends OpLoadoutBase{
    public OpAutoAddItem(LoadoutBase<?, ?> aLoadout, MessageXBar anXBar, Item anItem){
       super(aLoadout, anXBar, "auto place item");
       itemToPlace = anItem;
-      for(ConfiguredComponent part : aLoadout.getCandidateLocationsForItem(itemToPlace)){
+      for(ConfiguredComponentBase part : aLoadout.getCandidateLocationsForItem(itemToPlace)){
          validParts.add(part.getInternalComponent().getLocation());
       }
       partTraversalOrder = getPartTraversalOrder();
 
       // If it can go into the engine, put it there.
-      ConfiguredComponent ct = loadout.getComponent(Location.CenterTorso);
+      ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
       if( anItem instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax() && ct.canAddItem(anItem) ){
          addOp(new OpAddItem(xBar, loadout, ct, anItem));
          return;
@@ -155,7 +155,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
 
          // Not yet sweetie
          for(Location part : partTraversalOrder){
-            ConfiguredComponent loadoutPart = node.data.getComponent(part);
+            ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
             for(Item i : loadoutPart.getItemsAll()){
                if( i instanceof Internal )
                   continue;
@@ -191,7 +191,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
       // Look at the solution node to find which part in the original loadout the item should
       // be added to.
       for(Location part : partTraversalOrder){
-         ConfiguredComponent loadoutPart = node.data.getComponent(part);
+         ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
          if( loadoutPart.canAddItem(itemToPlace) ){
             ops.add(new OpAddItem(xBar, loadout, loadout.getComponent(part), itemToPlace));
             break;
@@ -220,12 +220,12 @@ public class OpAutoAddItem extends OpLoadoutBase{
       LoadoutBase<?, ?> tempLoadout = aParent.data.clone(null);
       stack.pushAndApply(new OpRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
 
-      ConfiguredComponent srcPart = tempLoadout.getComponent(aSourcePart);
+      ConfiguredComponentBase srcPart = tempLoadout.getComponent(aSourcePart);
       for(Location targetPart : Location.values()){
          if( aSourcePart == targetPart )
             continue;
 
-         ConfiguredComponent dstPart = tempLoadout.getComponent(targetPart);
+         ConfiguredComponentBase dstPart = tempLoadout.getComponent(targetPart);
          if( dstPart.canAddItem(aItem) ){
             // Don't consider swaps if the item can be directly moved. A swap will be generated in another point
             // of the search tree anyway when we move an item from that component back to this.
@@ -236,7 +236,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
             final int minItemSize = aItem.getNumCriticalSlots() - dstPart.getSlotsFree();
             HardPointType requiredType = aItem.getHardpointType();
             if( requiredType != HardPointType.NONE
-                && dstPart.getItemsOfHardpointType(requiredType) < dstPart.getInternalComponent().getHardPointCount(requiredType) ){
+                && dstPart.getItemsOfHardpointType(requiredType) < dstPart.getHardPointCount(requiredType) ){
                requiredType = HardPointType.NONE; // There is at least one free hard point, we don't need to swap with a
                                                   // item of the required type.
             }

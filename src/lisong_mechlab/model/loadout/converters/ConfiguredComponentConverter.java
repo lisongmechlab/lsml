@@ -30,7 +30,7 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.loadout.export.CompatibilityHelper;
@@ -56,12 +56,12 @@ public class ConfiguredComponentConverter implements Converter{
 
    @Override
    public boolean canConvert(Class aClass){
-      return ConfiguredComponent.class.isAssignableFrom(aClass);
+      return ConfiguredComponentBase.class.isAssignableFrom(aClass);
    }
 
    @Override
    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      ConfiguredComponent part = (ConfiguredComponent)anObject;
+      ConfiguredComponentBase part = (ConfiguredComponentBase)anObject;
 
       aWriter.addAttribute("part", part.getInternalComponent().getLocation().toString());
 
@@ -96,7 +96,7 @@ public class ConfiguredComponentConverter implements Converter{
       OperationStack operationStack = new OperationStack(0);
 
       Location partType = Location.valueOf(aReader.getAttribute("part"));
-      ConfiguredComponent loadoutPart = loadout.getComponent(partType);
+      ConfiguredComponentBase loadoutPart = loadout.getComponent(partType);
 
       String autoArmorString = aReader.getAttribute("autoarmor");
       boolean autoArmor = false;

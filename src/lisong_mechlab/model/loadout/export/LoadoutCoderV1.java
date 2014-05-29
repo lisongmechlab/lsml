@@ -43,7 +43,7 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -288,7 +288,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi, xBar);
          stack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
 
-         for(ConfiguredComponent component : loadout.getComponents()){
+         for(ConfiguredComponentBase component : loadout.getComponents()){
             for(Item item : new ArrayList<>(component.getItemsAll())){
                if( item.getName().toLowerCase().contains("artemis") ){
                   stack.pushAndApply(new OpRemoveItem(xBar, loadout, component, item));

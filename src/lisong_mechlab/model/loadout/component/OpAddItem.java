@@ -25,7 +25,7 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} adds an {@link Item} to a {@link ConfiguredComponent}.
+ * This {@link Operation} adds an {@link Item} to a {@link ConfiguredComponentBase}.
  * 
  * @author Emily Björk
  */
@@ -38,11 +38,11 @@ public class OpAddItem extends OpItemBase{
     * @param aLoadout
     *           The {@link LoadoutBase} to remove the item from.
     * @param aComponent
-    *           The {@link ConfiguredComponent} to add to.
+    *           The {@link ConfiguredComponentBase} to add to.
     * @param aItem
     *           The {@link Item} to add.
     */
-   public OpAddItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aComponent, Item aItem){
+   public OpAddItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
       super(aXBar, aLoadout, aComponent, aItem);
    }
 

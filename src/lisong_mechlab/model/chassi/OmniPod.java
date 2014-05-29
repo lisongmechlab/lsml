@@ -19,68 +19,62 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import java.util.List;
-
-import lisong_mechlab.model.item.Item;
-import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This class represents an omnipod of an omnimech configuration.
  * 
  * @author Emily Björk
  */
-public class OmniPod extends InternalComponent{
-
-   private final String          compatibleChassis;
+public class OmniPod{
+   private final int             mwoID;
+   private final Location        location;
+   private final String          chassis;
+   private final int             chassisVariant;
+   private final MovementProfile quirks;
+   private final HardPoint[]     hardPoints;
    private final int             maxJumpJets;
    private final int             maxPilotModules;
-   private final MovementProfile quirks;
-   private final int             originalChassisId;
 
    /**
+    * Creates a new {@link OmniPod}.
+    * 
+    * @param aMwoID
+    *           The MWO ID of this {@link OmniPod}.
     * @param aLocation
-    * @param aSlots
-    * @param aHP
-    * @param aFixedItems
-    * @param aHardPoints
-    * @param aOriginalChassisID
+    *           The {@link Location} that this omnipod can be mounted at.
     * @param aSeriesName
+    *           The name of the series this {@link OmniPod} belongs to, for example "TIMBER WOLF".
+    * @param aOriginalChassisID
+    *           The MWO ID of the specific variant that this {@link OmniPod} is part of, for example
+    *           "TIMBER WOLF PRIME".
+    * @param aQuirks
+    *           A set of quirks this {@link OmniPod} will bring to the loadout if equipped.
+    * @param aHardPoints
+    *           An array of {@link HardPoint}s for this {@link OmniPod}.
     * @param aMaxJumpJets
+    *           The maximum number of jump jets this {@link OmniPod} can support.
     * @param aMaxPilotModules
+    *           The number of pilot modules that this {@link OmniPod} adds to the loadout.
     */
-   public OmniPod(Location aLocation, int aSlots, double aHP, List<Item> aFixedItems, List<HardPoint> aHardPoints, int aOriginalChassisID,
-                  String aSeriesName, int aMaxJumpJets, int aMaxPilotModules){
-      super(aLocation, aSlots, aHP, aFixedItems, aHardPoints);
-
-      compatibleChassis = aSeriesName;
+   public OmniPod(int aMwoID, Location aLocation, String aSeriesName, int aOriginalChassisID, MovementProfile aQuirks, HardPoint[] aHardPoints,
+                  int aMaxJumpJets, int aMaxPilotModules){
+      mwoID = aMwoID;
+      location = aLocation;
+      chassis = aSeriesName;
+      chassisVariant = aOriginalChassisID;
+      quirks = aQuirks;
+      hardPoints = aHardPoints;
       maxJumpJets = aMaxJumpJets;
       maxPilotModules = aMaxPilotModules;
 
-      quirks = new BaseMovementProfile(new MdfMovementTuning());
-      originalChassisId = aOriginalChassisID;
-
-      // TODO: Add locked items to internalItems
    }
 
    @Override
    public String toString(){
-      return ((ChassisOmniMech)ChassisDB.lookup(originalChassisId)).getNameShort() + " " + getLocation().shortName();
-   }
-
-   /**
-    * @param aChassis
-    *           The chassis to check for compatibility to.
-    * @return <code>true</code> if the argument is a compatible chassis.
-    */
-   public boolean isCompatible(ChassisOmniMech aChassis){
-      return aChassis.getSeriesName().toLowerCase().contains(compatibleChassis);
-   }
-
-   /**
-    * @return The omnipod specific movement quirks.
-    */
-   public MovementProfile getQuirks(){
-      return quirks;
+      return ((ChassisOmniMech)ChassisDB.lookup(chassisVariant)).getNameShort() + " " + location.shortName();
    }
 
    /**
@@ -91,10 +85,68 @@ public class OmniPod extends InternalComponent{
    }
 
    /**
+    * @return {@link Location} that this omnipod can be equipped on.
+    */
+   public Location getLocation(){
+      return location;
+   }
+
+   /**
     * @return The mech ID of the original chassis this omnipod is a part of.
     */
    public int getOriginalChassisId(){
-      return originalChassisId;
+      return chassisVariant;
    }
 
+   /**
+    * @return The omnipod specific movement quirks.
+    */
+   public MovementProfile getQuirks(){
+      return quirks;
+   }
+
+   /**
+    * @param aChassis
+    *           The chassis to check for compatibility to.
+    * @return <code>true</code> if the argument is a compatible chassis.
+    */
+   public boolean isCompatible(ChassisOmniMech aChassis){
+      return aChassis.getSeriesName().toLowerCase().contains(chassis);
+   }
+
+   /**
+    * @return The MWO ID of this {@link OmniPod}.
+    */
+   public int getMwoID(){
+      return mwoID;
+   }
+
+   /**
+    * @return The maximum number of pilot modules this {@link OmniPod} can support.
+    */
+   public int getMaxPilotModules(){
+      return maxPilotModules;
+   }
+
+   /**
+    * @return An unmodifiable collection of all {@link HardPoint}s this {@link OmniPod} has.
+    */
+   public Collection<HardPoint> getHardPoints(){
+      return Collections.unmodifiableCollection(Arrays.asList(hardPoints));
+   }
+
+   /**
+    * @param aHardpointType
+    *           The type of {@link HardPoint}s to count.
+    * @return The number of {@link HardPoint}s of the given type.
+    */
+   public int getHardPointCount(HardPointType aHardpointType){
+      int ans = 0;
+      for(HardPoint it : hardPoints){
+         if( it.getType() == aHardpointType ){
+            ans++;
+         }
+      }
+      return ans;
+   }
 }

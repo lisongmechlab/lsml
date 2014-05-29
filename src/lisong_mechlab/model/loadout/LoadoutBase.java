@@ -28,8 +28,9 @@ import java.util.List;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ComponentBase;
+import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalComponent;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
@@ -39,7 +40,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
@@ -48,11 +49,11 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Emily Björk
  * @param <T>
- *           The type of the {@link ConfiguredComponent} in this loadout.
+ *           The type of the {@link ConfiguredComponentBase} in this loadout.
  * @param <U>
- *           The type of {@link InternalComponent} in T.
+ *           The type of {@link ComponentStandard} in T.
  */
-public abstract class LoadoutBase<T extends ConfiguredComponent, U extends InternalComponent> {
+public abstract class LoadoutBase<T extends ConfiguredComponentBase, U extends ComponentBase> {
    private String             name;
    private final T[]          components;
    private final ChassisBase  chassisBase;
@@ -239,7 +240,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
       // omnipods are equipped.
       int sum = 0;
       for(T component : components){
-         sum += component.getInternalComponent().getHardPointCount(aHardpointType);
+         sum += component.getHardPointCount(aHardpointType);
       }
       return sum;
    }
@@ -291,33 +292,33 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
    }
 
    /**
-    * Gets a {@link List} of {@link ConfiguredComponent}s that could possibly house the given item.
+    * Gets a {@link List} of {@link ConfiguredComponentBase}s that could possibly house the given item.
     * <p>
-    * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponent}s in
-    * the returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponent}s not in the
+    * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponentBase}s in
+    * the returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponentBase}s not in the
     * list are unable to hold the {@link Item}.
     * <p>
     * This method is mainly useful for limiting search spaces for various optimization algorithms.
     * 
     * @param anItem
-    *           The {@link Item} to find candidate {@link ConfiguredComponent}s for.
-    * @return A {@link List} of {@link ConfiguredComponent}s that might be able to hold the {@link Item}.
+    *           The {@link Item} to find candidate {@link ConfiguredComponentBase}s for.
+    * @return A {@link List} of {@link ConfiguredComponentBase}s that might be able to hold the {@link Item}.
     */
-   public List<ConfiguredComponent> getCandidateLocationsForItem(Item anItem){
-      List<ConfiguredComponent> candidates = new ArrayList<>();
+   public List<ConfiguredComponentBase> getCandidateLocationsForItem(Item anItem){
+      List<ConfiguredComponentBase> candidates = new ArrayList<>();
       if( !canEquipGlobal(anItem) )
          return candidates;
 
       int globalFreeHardPoints = 0;
       HardPointType hardpointType = anItem.getHardpointType();
 
-      for(ConfiguredComponent part : components){
+      for(ConfiguredComponentBase part : components){
          if( part.getInternalComponent().isAllowed(anItem) ){
             candidates.add(part);
          }
 
          if( hardpointType != HardPointType.NONE ){
-            final int localFreeHardPoints = part.getInternalComponent().getHardPointCount(hardpointType)
+            final int localFreeHardPoints = part.getHardPointCount(hardpointType)
                                             - part.getItemsOfHardpointType(hardpointType);
             globalFreeHardPoints += localFreeHardPoints;
          }
@@ -379,7 +380,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
          }
       }
 
-      for(ConfiguredComponent part : getComponents()){
+      for(ConfiguredComponentBase part : getComponents()){
          if( part.canAddItem(anItem) )
             return true;
       }
@@ -425,9 +426,9 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
       if( !canEquipGlobal(anItem) )
          return false;
 
-      List<ConfiguredComponent> candidates = getCandidateLocationsForItem(anItem);
+      List<ConfiguredComponentBase> candidates = getCandidateLocationsForItem(anItem);
 
-      for(ConfiguredComponent candidate : candidates){
+      for(ConfiguredComponentBase candidate : candidates){
          if( candidate.canAddItem(anItem) ){
             return true;
          }
@@ -457,7 +458,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
                continue;
 
             // Find first bin where it can be put
-            for(ConfiguredComponent part : getComponents()){
+            for(ConfiguredComponentBase part : getComponents()){
                if( part == candidate )
                   continue;
                final int partOrdinal = part.getInternalComponent().getLocation().ordinal();
@@ -465,7 +466,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponent, U extends Inter
                if( slotsFree[partOrdinal] >= numCrits ){
                   HardPointType needHp = toBeRemoved.getHardpointType();
                   if( needHp != HardPointType.NONE
-                      && part.getInternalComponent().getHardPointCount(needHp) - part.getItemsOfHardpointType(needHp) < 1 ){
+                      && part.getHardPointCount(needHp) - part.getItemsOfHardpointType(needHp) < 1 ){
                      continue;
                   }
                   slotsFree[partOrdinal] -= numCrits;

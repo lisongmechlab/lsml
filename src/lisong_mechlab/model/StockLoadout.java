@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -109,6 +110,9 @@ public class StockLoadout{
        * @return The {@link Item} IDs that are housed in this {@link StockComponent}.
        */
       public List<Integer> getItems(){
+         if(items ==null){
+            return new ArrayList<>();
+         }
          return items;
       }
    }

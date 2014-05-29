@@ -31,7 +31,7 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalComponent;
+import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Engine;
@@ -55,7 +55,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Test suite for {@link ConfiguredComponent}.
+ * Test suite for {@link ConfiguredComponentBase}.
  * 
  * @author Emily Björk
  */
@@ -68,7 +68,7 @@ public class LoadoutPartTest{
    MockLoadoutContainer mlc = new MockLoadoutContainer();
 
    @Mock
-   InternalComponent    part;
+   ComponentStandard    part;
 
    @Before
    public void setup(){
@@ -86,7 +86,7 @@ public class LoadoutPartTest{
    }
 
    /**
-    * Constructing a new {@link ConfiguredComponent} shall initialize the internal components and set armor to 0 on all
+    * Constructing a new {@link ConfiguredComponentBase} shall initialize the internal components and set armor to 0 on all
     * sides.
     * 
     * @param aPart
@@ -103,7 +103,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getLocation()).thenReturn(aPart);
 
       // Execute
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       // Verify
       assertEquals(internals, cut.getItemsAll());
@@ -126,7 +126,7 @@ public class LoadoutPartTest{
       List<Item> internals = new ArrayList<>();
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(aPart);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
       int anAmount = 10;
 
       // Execute
@@ -147,7 +147,7 @@ public class LoadoutPartTest{
       List<Item> internals = new ArrayList<>();
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(aPart);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
       int anAmount = 10;
 
       // Execute
@@ -180,7 +180,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getArmorMax()).thenReturn(maxArmor);
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(aPart);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       if( aPart.isTwoSided() ){
          int front = 4;
@@ -207,7 +207,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(Location.LeftTorso);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       Item item0 = Mockito.mock(Item.class);
       Item item1 = Mockito.mock(Item.class);
@@ -230,7 +230,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(Location.LeftTorso);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       Item engine = ItemDB.lookup("STD ENGINE 400");
       cut.addItem(engine);
@@ -253,7 +253,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getInternalItems()).thenReturn(internals);
       Mockito.when(part.getLocation()).thenReturn(Location.LeftTorso);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       Item engine = ItemDB.lookup("STD ENGINE 400");
       cut.addItem(engine);
@@ -286,7 +286,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getLocation()).thenReturn(Location.LeftLeg);
       Mockito.when(part.getSlots()).thenReturn(critSlots);
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
       cut.addItem(lrm_artemis);
       cut.addItem(srm);
 
@@ -310,7 +310,7 @@ public class LoadoutPartTest{
       Item engine = ItemDB.lookup("STD ENGINE 400");
       final int engineHs = ((Engine)engine).getNumHeatsinkSlots() + 1;
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
       cut.addItem(engine);
       for(int i = 0; i < engineHs; ++i)
          cut.addItem(ItemDB.SHS);
@@ -331,7 +331,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(part.getSlots()).thenReturn(critSlots);
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       assertEquals(0, cut.getEngineHeatsinks());
 
@@ -360,7 +360,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(part.getSlots()).thenReturn(critSlots);
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       // Execute & Verify (no engine)
       assertEquals(0, cut.getEngineHeatsinksMax());
@@ -373,7 +373,7 @@ public class LoadoutPartTest{
    }
 
    /**
-    * Items that are not supported by the {@link InternalComponent} are not addable.
+    * Items that are not supported by the {@link ComponentStandard} are not addable.
     */
    @Test
    public void testCanEquip_NoSupport(){
@@ -382,7 +382,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getSlots()).thenReturn(10);
       Mockito.when(part.getLocation()).thenReturn(Location.Head);
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       // Execute & Verify
       assertFalse(cut.canAddItem(jumpjet));
@@ -406,12 +406,12 @@ public class LoadoutPartTest{
       Mockito.when(part.getSlots()).thenReturn(8);
       Mockito.when(part.isAllowed(internal)).thenReturn(false);
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
       assertFalse(cut.canAddItem(internal));
    }
 
    /**
-    * {@link ConfiguredComponent#canAddItem(Item)} shall return false if the {@link LoadoutStandard} doesn't have enough free
+    * {@link ConfiguredComponentBase#canAddItem(Item)} shall return false if the {@link LoadoutStandard} doesn't have enough free
     * slots.
     */
    @Test
@@ -421,14 +421,14 @@ public class LoadoutPartTest{
       Mockito.when(part.getSlots()).thenReturn(ItemDB.BAP.getNumCriticalSlots() - 1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       // Execute & Verify
       assertFalse(cut.canAddItem(ItemDB.BAP));
    }
 
    /**
-    * {@link ConfiguredComponent#canAddItem(Item)} shall return false if the LoadoutPart already has a C.A.S.E.
+    * {@link ConfiguredComponentBase#canAddItem(Item)} shall return false if the LoadoutPart already has a C.A.S.E.
     */
    @Test
    public void testCanEquip_HasCase(){
@@ -437,7 +437,7 @@ public class LoadoutPartTest{
       Mockito.when(part.getSlots()).thenReturn(4);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
       cut.addItem(ItemDB.CASE);
 
       // Execute & Verify
@@ -462,15 +462,15 @@ public class LoadoutPartTest{
       Mockito.when(part.getHardPointCount(HardPointType.MISSILE)).thenReturn(1);
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       assertFalse(cut.canAddItem(srm6));
    }
 
    /**
-    * The {@link ConfiguredComponent} will allow items that don't require hard points if they are:
+    * The {@link ConfiguredComponentBase} will allow items that don't require hard points if they are:
     * <ul>
-    * <li>Supported by the {@link InternalComponent}.</li>
+    * <li>Supported by the {@link ComponentStandard}.</li>
     * <li>There is enough space in the component locally.</li>
     * </ul>
     * 
@@ -492,7 +492,7 @@ public class LoadoutPartTest{
 
       Engine engine = Mockito.mock(Engine.class);
       Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(2);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
       cut.addItem(engine);
 
       // Only test heat sinks of correct type. Wrong types are handled by loadout
@@ -515,9 +515,9 @@ public class LoadoutPartTest{
    }
 
    /**
-    * The {@link ConfiguredComponent} will allow items that don't require hard points if they are:
+    * The {@link ConfiguredComponentBase} will allow items that don't require hard points if they are:
     * <ul>
-    * <li>Supported by the {@link InternalComponent}.</li>
+    * <li>Supported by the {@link ComponentStandard}.</li>
     * <li>There is enough space in the component locally.</li>
     * </ul>
     */
@@ -528,15 +528,15 @@ public class LoadoutPartTest{
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item module = Mockito.mock(Item.class);
       Mockito.when(module.getHardpointType()).thenReturn(HardPointType.NONE);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       assertTrue(cut.canAddItem(module));
    }
 
    /**
-    * The {@link ConfiguredComponent} will allow items that require hard points if they are:
+    * The {@link ConfiguredComponentBase} will allow items that require hard points if they are:
     * <ul>
-    * <li>Supported by the {@link InternalComponent}.</li>
+    * <li>Supported by the {@link ComponentStandard}.</li>
     * <li>There is enough space in the component locally.</li>
     * <li>There are free hard points to use.</li>
     * </ul>
@@ -549,7 +549,7 @@ public class LoadoutPartTest{
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       assertTrue(cut.canAddItem(ballistic));
    }
@@ -565,7 +565,7 @@ public class LoadoutPartTest{
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
 
       assertFalse(cut.canAddItem(ballistic));
    }
@@ -581,7 +581,7 @@ public class LoadoutPartTest{
       Mockito.when(part.isAllowed(Matchers.any(Item.class))).thenReturn(true);
       Item ballistic = Mockito.mock(Item.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
       cut.addItem(ballistic);
 
       assertFalse(cut.canAddItem(ballistic));
@@ -590,7 +590,7 @@ public class LoadoutPartTest{
    @Test
    public void testRemoveItem_NoSuchItem() throws Exception{
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
-      ConfiguredComponent cut = new ConfiguredComponent( part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase( part, false);
       Item item = ItemDB.lookup("AC/20 AMMO");
 
       assertFalse(cut.removeItem(item));
@@ -600,10 +600,10 @@ public class LoadoutPartTest{
    public void testEquals_ArmorStatus() throws Exception{
       Mockito.when(part.getLocation()).thenReturn(Location.CenterTorso);
 
-      ConfiguredComponent cut = new ConfiguredComponent(part, false);
+      ConfiguredComponentBase cut = new ConfiguredComponentBase(part, false);
       cut.setArmor(ArmorSide.FRONT, 0, false);
 
-      ConfiguredComponent cut1 = new ConfiguredComponent(cut);
+      ConfiguredComponentBase cut1 = new ConfiguredComponentBase(cut);
       cut1.setArmor(ArmorSide.FRONT, 0, true);
 
       assertFalse(cut.equals(cut1));

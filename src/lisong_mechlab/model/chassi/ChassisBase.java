@@ -19,7 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.JumpJet;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -35,7 +40,6 @@ public abstract class ChassisBase{
    private final ChassisClass    chassiclass;
    @XStreamAsAttribute
    private final int             maxTons;
-   private final MovementProfile movementProfile;
    @XStreamAsAttribute
    private final int             mwoId;
    @XStreamAsAttribute
@@ -50,9 +54,39 @@ public abstract class ChassisBase{
    private final ChassisVariant  variant;
    @XStreamAsAttribute
    private final boolean         clan;
-   
+
+   private final MovementProfile movementProfile;
+   private final ComponentBase[] components;
+
+   /**
+    * @param aMwoID
+    *           The MWO ID of the chassis as found in the XML.
+    * @param aMwoName
+    *           The MWO name of the chassis as found in the XML.
+    * @param aSeries
+    *           The name of the series for example "ORION" or "JENNER".
+    * @param aName
+    *           The long name of the mech, for example "JENNER JR7-F".
+    * @param aShortName
+    *           The short name of the mech, for example "JR7-F".
+    * @param aMaxTons
+    *           The maximum tonnage of the mech.
+    * @param aVariant
+    *           The variant type of the mech, like hero, champion etc.
+    * @param aBaseVariant
+    *           The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
+    * @param aMovementProfile
+    *           The {@link MovementProfile} of this chassis.
+    * @param aIsClan
+    *           True if this is a clan chassis.
+    * @param aComponents
+    *           An array of components for this chassis.
+    */
    public ChassisBase(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
-                      int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan){
+                      int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan, ComponentBase[] aComponents){
+      if( aComponents.length != Location.values().length )
+         throw new IllegalArgumentException("Components array must contain all components!");
+
       mwoId = aMwoID;
       mwoName = aMwoName;
       series = aSeries;
@@ -64,6 +98,7 @@ public abstract class ChassisBase{
       baseVariant = aBaseVariant;
       movementProfile = aMovementProfile;
       clan = aIsClan;
+      components = aComponents;
    }
 
    @Override
@@ -72,17 +107,39 @@ public abstract class ChassisBase{
          return false;
       return (mwoId == ((ChassisBase)aObject).mwoId);
    }
-   
+
+   /**
+    * @param aLocation
+    *           The location of the internal component we're interested in.
+    * @return The internal component in the given location.
+    */
+   public ComponentBase getComponent(Location aLocation){
+      return components[aLocation.ordinal()];
+   }
+
+   /**
+    * @return A {@link Collection} of all the internal components.
+    */
+   public Collection<? extends ComponentBase> getComponents(){
+      return Collections.unmodifiableList(Arrays.asList(components));
+   }
+
    /**
     * @return The maximal, total amount of armor the chassis can support.
     */
-   public abstract int getArmorMax();
+   public int getArmorMax(){
+      int ans = 0;
+      for(ComponentBase internalPart : components){
+         ans += internalPart.getArmorMax();
+      }
+      return ans;
+   }
 
    /**
     * @return The ID of the base variant of this chassis, or <code>-1</code> if this is not a derived chassis type.
     */
    public int getBaseVariantId(){
-      return baseVariant;
+      return baseVariant; // TODO: Make this return a ChassisBase object
    }
 
    /**
@@ -174,7 +231,15 @@ public abstract class ChassisBase{
       if( aItem.isClan() != clan ){
          return false;
       }
-      return true;
+      else if( aItem instanceof JumpJet ){
+         JumpJet jj = (JumpJet)aItem;
+         return jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
+      }
+      for(ComponentBase part : getComponents()){
+         if( part.isAllowed(aItem) )
+            return true;
+      }
+      return false;
    }
 
    /**

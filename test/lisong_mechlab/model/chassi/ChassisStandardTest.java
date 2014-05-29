@@ -21,11 +21,10 @@ package lisong_mechlab.model.chassi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import junitparams.JUnitParamsRunner;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,289 +43,100 @@ public class ChassisStandardTest extends ChassisBaseTest{
    private int                 engineMin;
    private int                 engineMax;
    private int                 maxJumpJets;
-   private InternalComponent[] components;
+   private ComponentStandard[] components;
 
+   @Override
    @Before
-   public void init(){
-      components = new InternalComponent[Location.values().length];
+   public void setup(){
+      super.setup();
+      engineMin = 100;
+      engineMax = 325;
+      maxJumpJets = 2;
+      components = new ComponentStandard[Location.values().length];
       for(Location location : Location.values()){
-         components[location.ordinal()] = Mockito.mock(InternalComponent.class);
+         components[location.ordinal()] = Mockito.mock(ComponentStandard.class);
          Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class))).thenReturn(true);
       }
+   }
+
+   @Override
+   protected ChassisStandard makeDefaultCUT(){
+      return new ChassisStandard(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, engineMin,
+                                 engineMax, maxJumpJets, components);
    }
 
    /**
     * Internal parts list can not be modified.
     */
    @Test(expected = UnsupportedOperationException.class)
-   public void getParts_NoMod(){
-      // Setup
-      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("Ilya Muromets");
-
-      // Execute
-      cut.getComponents().add(null);
+   public void testGetComponents_Immutable(){
+      makeDefaultCUT().getComponents().add(null);
    }
 
    @Test
-   public void testLoadHeroMech(){
-      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("Ilya Muromets");
-
-      assertEquals(140, cut.getEngineMin());
-      assertEquals(340, cut.getEngineMax());
-
-      assertEquals("ILYA MUROMETS", cut.getName());
-      assertEquals("CTF-IM", cut.getNameShort());
-      assertEquals(cut.getNameShort(), cut.toString());
-      assertEquals("ctf-im", cut.getMwoName());
-
-      assertEquals(70.0, cut.getMassMax(), 0.0);
-
-      assertEquals(434, cut.getArmorMax());
-
-      assertEquals(16.2, cut.getMovementProfile().getMaxMovementSpeed(), 0.0);
-
-      assertSame(ChassisClass.HEAVY, cut.getChassiClass());
-      assertEquals(0, cut.getJumpJetsMax());
-      assertEquals(0, cut.getHardpointsCount(HardPointType.ECM));
-
-      // Do a through test only on the Ilyas components
-      {
-         InternalComponent pt = cut.getComponent(Location.Head);
-
-         assertEquals(18, pt.getArmorMax());
-         assertEquals(15.0, pt.getHitPoints(), 0.0);
-         assertEquals(6, pt.getSlots());
-         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
-         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
-         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
-         assertEquals(Location.Head, pt.getLocation());
-         assertFalse(pt.getLocation().isTwoSided());
-         assertEquals(pt.getLocation().toString(), pt.toString());
-
-         assertEquals(3, pt.getInternalItems().size());
-      }
-
-      {
-         InternalComponent pt = cut.getComponent(Location.RightArm);
-         assertEquals(44, pt.getArmorMax());
-         assertEquals(22.0, pt.getHitPoints(), 0.0);
-         assertEquals(12, pt.getSlots());
-         assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
-         assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
-         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
-         assertEquals(Location.RightArm, pt.getLocation());
-         assertFalse(pt.getLocation().isTwoSided());
-         assertEquals(pt.getLocation().toString(), pt.toString());
-         assertEquals(3, pt.getInternalItems().size());
-      }
-
-      {
-         InternalComponent pt = cut.getComponent(Location.LeftArm);
-         assertEquals(44, pt.getArmorMax());
-         assertEquals(22.0, pt.getHitPoints(), 0.0);
-         assertEquals(12, pt.getSlots());
-         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
-         assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
-         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
-         assertEquals(Location.LeftArm, pt.getLocation());
-         assertFalse(pt.getLocation().isTwoSided());
-         assertEquals(pt.getLocation().toString(), pt.toString());
-         assertEquals(4, pt.getInternalItems().size());
-      }
-
-      {
-         InternalComponent pt = cut.getComponent(Location.RightTorso);
-         assertEquals(60, pt.getArmorMax());
-         assertEquals(30.0, pt.getHitPoints(), 0.0);
-         assertEquals(12, pt.getSlots());
-         assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
-         assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
-         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
-         assertEquals(Location.RightTorso, pt.getLocation());
-         assertTrue(pt.getLocation().isTwoSided());
-         assertEquals(pt.getLocation().toString(), pt.toString());
-         assertEquals(0, pt.getInternalItems().size());
-      }
-
-      {
-         InternalComponent pt = cut.getComponent(Location.LeftTorso);
-         assertEquals(60, pt.getArmorMax());
-         assertEquals(30.0, pt.getHitPoints(), 0.0);
-         assertEquals(12, pt.getSlots());
-         assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
-         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
-         assertEquals(1, pt.getHardPointCount(HardPointType.AMS));
-         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
-         assertEquals(Location.LeftTorso, pt.getLocation());
-         assertTrue(pt.getLocation().isTwoSided());
-         assertEquals(pt.getLocation().toString(), pt.toString());
-         assertEquals(0, pt.getInternalItems().size());
-      }
-
-      {
-         InternalComponent pt = cut.getComponent(Location.CenterTorso);
-         assertEquals(88, pt.getArmorMax());
-         assertEquals(44.0, pt.getHitPoints(), 0.0);
-         assertEquals(12, pt.getSlots());
-         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
-         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
-         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
-         assertEquals(Location.CenterTorso, pt.getLocation());
-         assertTrue(pt.getLocation().isTwoSided());
-         assertEquals(pt.getLocation().toString(), pt.toString());
-         assertEquals(1, pt.getInternalItems().size());
-      }
-
-      {
-         InternalComponent pt = cut.getComponent(Location.RightLeg);
-         assertEquals(60, pt.getArmorMax());
-         assertEquals(30.0, pt.getHitPoints(), 0.0);
-         assertEquals(6, pt.getSlots());
-         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
-         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
-         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
-         assertEquals(Location.RightLeg, pt.getLocation());
-         assertFalse(pt.getLocation().isTwoSided());
-         assertEquals(pt.getLocation().toString(), pt.toString());
-         assertEquals(4, pt.getInternalItems().size());
-      }
-
-      {
-         InternalComponent pt = cut.getComponent(Location.LeftLeg);
-         assertEquals(60, pt.getArmorMax());
-         assertEquals(30.0, pt.getHitPoints(), 0.0);
-         assertEquals(6, pt.getSlots());
-         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
-         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
-         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
-         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
-         assertEquals(Location.LeftLeg, pt.getLocation());
-         assertFalse(pt.getLocation().isTwoSided());
-         assertEquals(pt.getLocation().toString(), pt.toString());
-         assertEquals(4, pt.getInternalItems().size());
-      }
+   public void testGetEngineMax(){
+      assertEquals(engineMax, makeDefaultCUT().getEngineMax());
    }
 
    @Test
-   public void testLoadHasECM(){
-      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("AS7-D-DC");
-
-      assertEquals(200, cut.getEngineMin());
-      assertEquals(360, cut.getEngineMax());
-
-      assertEquals("ATLAS AS7-D-DC", cut.getName());
-      assertEquals("AS7-D-DC", cut.getNameShort());
-      assertEquals(cut.getNameShort(), cut.toString());
-      assertEquals("as7-d-dc", cut.getMwoName());
-
-      assertEquals(100.0, cut.getMassMax(), 0.0);
-
-      assertEquals(614, cut.getArmorMax());
-
-      assertSame(ChassisClass.ASSAULT, cut.getChassiClass());
-      assertEquals(0, cut.getJumpJetsMax());
-      assertEquals(1, cut.getHardpointsCount(HardPointType.ECM));
-
-      assertEquals(3, cut.getComponent(Location.Head).getInternalItems().size());
-
-      assertEquals(4, cut.getComponent(Location.RightArm).getInternalItems().size());
-      assertEquals(4, cut.getComponent(Location.LeftArm).getInternalItems().size());
-
-      assertEquals(4, cut.getComponent(Location.RightLeg).getInternalItems().size());
-      assertEquals(4, cut.getComponent(Location.LeftLeg).getInternalItems().size());
-
-      assertEquals(1, cut.getComponent(Location.RightArm).getHardPointCount(HardPointType.ENERGY));
-      assertEquals(1, cut.getComponent(Location.LeftArm).getHardPointCount(HardPointType.ENERGY));
-      assertEquals(1, cut.getComponent(Location.LeftArm).getHardPointCount(HardPointType.AMS));
-      assertEquals(3, cut.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.MISSILE));
-      assertEquals(2, cut.getComponent(Location.RightTorso).getHardPointCount(HardPointType.BALLISTIC));
+   public void testGetEngineMin(){
+      assertEquals(engineMin, makeDefaultCUT().getEngineMin());
    }
 
    @Test
-   public void testLoadHasJJ(){
-      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("Jenner JR7-F");
-
-      assertEquals(70, cut.getEngineMin()); // However no such engine exists :)
-      assertEquals(300, cut.getEngineMax());
-
-      assertEquals("JENNER JR7-F", cut.getName());
-      assertEquals("JR7-F", cut.getNameShort());
-      assertEquals(cut.getNameShort(), cut.toString());
-      assertEquals("jr7-f", cut.getMwoName());
-
-      assertEquals(35.0, cut.getMassMax(), 0.0);
-
-      assertEquals(238, cut.getArmorMax());
-
-      assertSame(ChassisClass.LIGHT, cut.getChassiClass());
-      assertEquals(5, cut.getJumpJetsMax());
-      assertEquals(0, cut.getHardpointsCount(HardPointType.ECM));
-
-      assertEquals(3, cut.getComponent(Location.Head).getInternalItems().size());
-
-      assertEquals(2, cut.getComponent(Location.RightArm).getInternalItems().size());
-      assertEquals(2, cut.getComponent(Location.LeftArm).getInternalItems().size());
-
-      assertEquals(4, cut.getComponent(Location.RightLeg).getInternalItems().size());
-      assertEquals(4, cut.getComponent(Location.LeftLeg).getInternalItems().size());
-
-      assertEquals(3, cut.getComponent(Location.RightArm).getHardPointCount(HardPointType.ENERGY));
-      assertEquals(3, cut.getComponent(Location.LeftArm).getHardPointCount(HardPointType.ENERGY));
-      assertEquals(1, cut.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.AMS));
+   public void testGetJumpJetsMax(){
+      assertEquals(maxJumpJets, makeDefaultCUT().getJumpJetsMax());
    }
 
    @Test
-   public void testIsAllowed_JJ(){
-      ChassisStandard jj55tons = (ChassisStandard)ChassisDB.lookup("WVR-6R");
-      ChassisStandard jj70tons = (ChassisStandard)ChassisDB.lookup("QKD-4G");
-      ChassisStandard nojj55tons = (ChassisStandard)ChassisDB.lookup("KTO-18");
+   public void testGetHardPointsCount(){
+      HardPointType hp = HardPointType.BALLISTIC;
+      Mockito.when(components[Location.LeftArm.ordinal()].getHardPointCount(hp)).thenReturn(2);
+      Mockito.when(components[Location.RightTorso.ordinal()].getHardPointCount(hp)).thenReturn(1);
 
-      Item classIV = ItemDB.lookup("JUMP JETS - CLASS IV");
-      Item classIII = ItemDB.lookup("JUMP JETS - CLASS III");
-
-      assertFalse(nojj55tons.isAllowed(classIV));
-      assertFalse(nojj55tons.isAllowed(classIII));
-      assertTrue(jj55tons.isAllowed(classIV));
-      assertFalse(jj55tons.isAllowed(classIII));
-      assertFalse(jj70tons.isAllowed(classIV));
-      assertTrue(jj70tons.isAllowed(classIII));
+      assertEquals(3, makeDefaultCUT().getHardPointsCount(hp));
    }
 
    @Test
-   public void testIsAllowed_Engine(){
-      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("ILYA MUROMETS");
-
-      Item tooSmall = ItemDB.lookup("STD ENGINE 135");
-      Item tooLarge = ItemDB.lookup("STD ENGINE 345");
-      Item smallest = ItemDB.lookup("STD ENGINE 140");
-      Item largest = ItemDB.lookup("STD ENGINE 340");
-
-      assertFalse(cut.isAllowed(tooSmall));
-      assertTrue(cut.isAllowed(smallest));
-      assertTrue(cut.isAllowed(largest));
-      assertFalse(cut.isAllowed(tooLarge));
+   public void testIsAllowed_NoJJSupport(){
+      maxJumpJets = 0;
+      assertFalse(makeDefaultCUT().isAllowed(makeJumpJet(maxTons, maxTons + 1)));
    }
 
    @Test
-   public void testIsAllowed_Hardpoints(){
-      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("ILYA MUROMETS");
-
-      Item lrm20 = ItemDB.lookup("LRM 20");
-      Item ac20 = ItemDB.lookup("AC/20");
-
-      assertFalse(cut.isAllowed(lrm20));
-      assertTrue(cut.isAllowed(ac20));
+   public void testIsAllowed_EngineTooSmall(){
+      assertFalse(makeDefaultCUT().isAllowed(makeEngine(engineMin - 1)));
    }
 
-   @Override
-   protected ChassisBase makeDefaultCUT(){
-      return new ChassisStandard(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, engineMin,
-                                 engineMax, maxJumpJets, components);
+   @Test
+   public void testIsAllowed_EngineTooBig(){
+      assertFalse(makeDefaultCUT().isAllowed(makeEngine(engineMax + 1)));
+   }
+
+   @Test
+   public void testIsAllowed_EngineBigEnough(){
+      assertTrue(makeDefaultCUT().isAllowed(makeEngine(engineMin)));
+   }
+
+   @Test
+   public void testIsAllowed_EngineSmalllEnough(){
+      assertTrue(makeDefaultCUT().isAllowed(makeEngine(engineMax)));
+   }
+
+   @Test
+   public final void testIsAllowed_NoComponentSupport(){
+      Item item = Mockito.mock(Item.class);
+      Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+      Mockito.when(item.isClan()).thenReturn(true);
+      Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+
+      ChassisStandard cut = makeDefaultCUT();
+      assertTrue(cut.isAllowed(item)); // Item in it self is allowed
+
+      // But no component supports it.
+      for(Location location : Location.values()){
+         Mockito.when(components[location.ordinal()].isAllowed(item)).thenReturn(false);
+      }
+      assertFalse(cut.isAllowed(item));
    }
 }

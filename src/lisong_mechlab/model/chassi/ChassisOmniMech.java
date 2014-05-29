@@ -19,7 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import java.util.Collection;
+
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -35,11 +38,6 @@ public class ChassisOmniMech extends ChassisBase{
    private final StructureUpgrade structureType;
    private final ArmorUpgrade     armorType;
    private final HeatSinkUpgrade  heatSinkType;
-   private final OmniPod          centerTorsoOmniPod;
-   private final int[]            dynamicStructure;
-   private final int[]            dynamicArmor;
-
-   private transient int          maxArmor = -1;
 
    /**
     * @param aMwoID
@@ -62,6 +60,8 @@ public class ChassisOmniMech extends ChassisBase{
     *           The {@link MovementProfile} of this chassis.
     * @param aIsClan
     *           True if this is a clan chassis.
+    * @param aComponents
+    *           An array of components for this chassis.
     * @param aEngine
     *           The engine that is fixed on this chassis.
     * @param aStructureType
@@ -70,41 +70,21 @@ public class ChassisOmniMech extends ChassisBase{
     *           The armor type that is fixed on this chassis.
     * @param aHeatSinkType
     *           The heat sink type that is fixed on this chassis.
-    * @param aCenterTorso
-    *           TODO
-    * @param aDynamicStructureSlots
-    *           An array where each element represents the ordinal of a {@link Location} and how many dynamic structure
-    *           slots are fixed at that location.
-    * @param aDynamicArmorSlots
-    *           An array where each element represents the ordinal of a {@link Location} and how many dynamic armor
-    *           slots are fixed at that location.
     */
    public ChassisOmniMech(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
-                          int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan, Engine aEngine, StructureUpgrade aStructureType,
-                          ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType, OmniPod aCenterTorso, int[] aDynamicStructureSlots,
-                          int[] aDynamicArmorSlots){
-      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aIsClan);
+                          int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan, ComponentOmniMech[] aComponents, Engine aEngine,
+                          StructureUpgrade aStructureType, ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType){
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aIsClan, aComponents);
       engine = aEngine;
       structureType = aStructureType;
       armorType = aArmorType;
       heatSinkType = aHeatSinkType;
-      centerTorsoOmniPod = aCenterTorso;
-      dynamicStructure = aDynamicStructureSlots;
-      dynamicArmor = aDynamicArmorSlots;
-
-      if( dynamicArmor.length != Location.values().length ){
-         throw new IllegalArgumentException("The aDynamicArmorSlots argument must have one entry for each Location.");
-      }
-
-      if( dynamicStructure.length != Location.values().length ){
-         throw new IllegalArgumentException("The aDynamicStructureSlots argument must have one entry for each Location.");
-      }
-
+      
       int s = 0;
       int a = 0;
-      for(int i = 0; i < dynamicArmor.length; ++i){
-         s += dynamicStructure[i];
-         a += dynamicArmor[i];
+      for(ComponentOmniMech component : getComponents()){
+         s += component.getDynamicStructureSlots();
+         a += component.getDynamicArmorSlots();
       }
       if( s != structureType.getExtraSlots() ){
          throw new IllegalArgumentException("The values in aDynamicStructureSlots must sum up to the number of slots required by the structure type.");
@@ -115,26 +95,16 @@ public class ChassisOmniMech extends ChassisBase{
    }
 
    @Override
-   public int getArmorMax(){
-      if( maxArmor <= 0 ){
-         maxArmor = calculateMaxArmor();
-      }
-      return maxArmor;
+   public ComponentOmniMech getComponent(Location aLocation){
+      return (ComponentOmniMech)super.getComponent(aLocation);
    }
 
-   /**
-    * @return The maximal amount of armor this chassis can support.
-    */
-   private int calculateMaxArmor(){
-      // Assuming that all omnipods for a location can carry the same amount of armor.
-      int ans = 0;
-      for(Location location : Location.values()){
-         OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
-         ans += omniPod.getArmorMax();
-      }
-      return ans;
+   @SuppressWarnings("unchecked")
+   @Override
+   public Collection<ComponentOmniMech> getComponents(){
+      return (Collection<ComponentOmniMech>)super.getComponents();
    }
-
+   
    /**
     * @return The engine that is fixed to this omnimech chassis.
     */
@@ -162,22 +132,12 @@ public class ChassisOmniMech extends ChassisBase{
    public HeatSinkUpgrade getHeatSinkType(){
       return heatSinkType;
    }
-
-   /**
-    * @param aLocation
-    *           The location to query for.
-    * @return The number of dynamic armor slots in the given location.
-    */
-   public int getDynamicArmorSlots(Location aLocation){
-      return dynamicArmor[aLocation.ordinal()];
-   }
-
-   /**
-    * @param aLocation
-    *           The location to query for.
-    * @return The number of dynamic structure slots in the given location.
-    */
-   public int getDynamicStructureSlots(Location aLocation){
-      return dynamicStructure[aLocation.ordinal()];
+  
+   @Override
+   public boolean isAllowed(Item aItem){
+      if( aItem instanceof Engine ){
+         return false; // Engine is fixed.
+      }
+      return super.isAllowed(aItem); // Anything else depends on the actual combination of omnipods equipped
    }
 }

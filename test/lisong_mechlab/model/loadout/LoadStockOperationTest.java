@@ -33,8 +33,8 @@ import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
@@ -107,10 +107,10 @@ public class LoadStockOperationTest{
 
       // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full armor?!)
       assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
-      for(ConfiguredComponent part : loadout.getComponents()){
-         Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponent.Message(part, Type.ArmorChanged));
+      for(ConfiguredComponentBase part : loadout.getComponents()){
+         Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponentBase.Message(part, Type.ArmorChanged));
       }
-      Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponent.Message(Matchers.any(ConfiguredComponent.class), Type.ItemAdded));
+      Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponentBase.Message(Matchers.any(ConfiguredComponentBase.class), Type.ItemAdded));
       Mockito.verify(xBar, Mockito.atLeast(1)).post(new Upgrades.Message(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
    }
 

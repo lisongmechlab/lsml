@@ -19,9 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
@@ -39,12 +37,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ChassisStandard extends ChassisBase{
    @XStreamAsAttribute
-   private final int                 engineMin;
+   private final int engineMin;
    @XStreamAsAttribute
-   private final int                 engineMax;
+   private final int engineMax;
    @XStreamAsAttribute
-   private final int                 maxJumpJets;
-   private final InternalComponent[] components;
+   private final int maxJumpJets;
 
    /**
     * Creates a new {@link ChassisStandard}.
@@ -76,19 +73,15 @@ public class ChassisStandard extends ChassisBase{
     * @param aMaxJumpJets
     *           The maximal number of jump jets that can be equipped.
     * @param aComponents
-    *           An array of {@link InternalComponent} that defines the internal components of the chassis.
+    *           An array of {@link ComponentStandard} that defines the internal components of the chassis.
     */
    public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
                           int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan, int aEngineMin, int aEngineMax, int aMaxJumpJets,
-                          InternalComponent[] aComponents){
-      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aIsClan);
+                          ComponentStandard[] aComponents){
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aIsClan, aComponents);
       engineMin = aEngineMin;
       engineMax = aEngineMax;
       maxJumpJets = aMaxJumpJets;
-      components = aComponents;
-
-      if( components.length != Location.values().length )
-         throw new IllegalArgumentException("Components array must contain all components!");
    }
 
    /**
@@ -105,45 +98,28 @@ public class ChassisStandard extends ChassisBase{
       return engineMin;
    }
 
-   /**
-    * @return The maximal, total amount of armor the chassis can support.
-    */
    @Override
-   public int getArmorMax(){
-      int ans = 0;
-      for(InternalComponent internalPart : components){
-         ans += internalPart.getArmorMax();
-      }
-      return ans;
+   public ComponentStandard getComponent(Location aLocation){
+      return (ComponentStandard)super.getComponent(aLocation);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public Collection<ComponentStandard> getComponents(){
+      return (Collection<ComponentStandard>)super.getComponents();
    }
 
    /**
-    * @param aHardpointType
+    * @param aHardPointType
     *           The type of hard points to count.
     * @return The number of hard points of the given type.
     */
-   public int getHardpointsCount(HardPointType aHardpointType){
+   public int getHardPointsCount(HardPointType aHardPointType){
       int sum = 0;
-      for(InternalComponent part : components){
-         sum += part.getHardPointCount(aHardpointType);
+      for(ComponentStandard part : getComponents()){
+         sum += part.getHardPointCount(aHardPointType);
       }
       return sum;
-   }
-
-   /**
-    * @param aLocation
-    *           The location of the internal component we're interested in.
-    * @return The internal component in the given location.
-    */
-   public InternalComponent getComponent(Location aLocation){
-      return components[aLocation.ordinal()];
-   }
-
-   /**
-    * @return A {@link Collection} of all the internal components.
-    */
-   public Collection<InternalComponent> getComponents(){
-      return Collections.unmodifiableList(Arrays.asList(components));
    }
 
    /**
@@ -155,21 +131,13 @@ public class ChassisStandard extends ChassisBase{
 
    @Override
    public boolean isAllowed(Item aItem){
-      if( !super.isAllowed(aItem) ){
-         return false;
-      }
-      else if( aItem instanceof Engine ){
+      if( aItem instanceof Engine ){
          Engine engine = (Engine)aItem;
          return engine.getRating() >= getEngineMin() && engine.getRating() <= getEngineMax();
       }
-      else if( aItem instanceof JumpJet ){
-         JumpJet jj = (JumpJet)aItem;
-         return getJumpJetsMax() > 0 && jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
+      else if( aItem instanceof JumpJet && getJumpJetsMax() <= 0 ){
+         return false;
       }
-      for(InternalComponent part : components){
-         if( part.isAllowed(aItem) )
-            return true;
-      }
-      return false;
+      return super.isAllowed(aItem);
    }
 }

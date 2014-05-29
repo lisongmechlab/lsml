@@ -20,12 +20,16 @@
 package lisong_mechlab.model.chassi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +41,263 @@ import org.junit.runner.RunWith;
  */
 @RunWith(JUnitParamsRunner.class)
 public class ChassiDBTest{
+
+   @Test
+   public void testCanLoadJJInfo(){
+      ChassisStandard jj55tons = (ChassisStandard)ChassisDB.lookup("WVR-6R");
+      ChassisStandard jj70tons = (ChassisStandard)ChassisDB.lookup("QKD-4G");
+      ChassisStandard nojj55tons = (ChassisStandard)ChassisDB.lookup("KTO-18");
+
+      Item classIV = ItemDB.lookup("JUMP JETS - CLASS IV");
+      Item classIII = ItemDB.lookup("JUMP JETS - CLASS III");
+
+      assertFalse(nojj55tons.isAllowed(classIV));
+      assertFalse(nojj55tons.isAllowed(classIII));
+      assertTrue(jj55tons.isAllowed(classIV));
+      assertFalse(jj55tons.isAllowed(classIII));
+      assertFalse(jj70tons.isAllowed(classIV));
+      assertTrue(jj70tons.isAllowed(classIII));
+   }
+
+   @Test
+   public void testCanLoadEngineInfo(){
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("ILYA MUROMETS");
+
+      Item tooSmall = ItemDB.lookup("STD ENGINE 135");
+      Item tooLarge = ItemDB.lookup("STD ENGINE 345");
+      Item smallest = ItemDB.lookup("STD ENGINE 140");
+      Item largest = ItemDB.lookup("STD ENGINE 340");
+
+      assertFalse(cut.isAllowed(tooSmall));
+      assertTrue(cut.isAllowed(smallest));
+      assertTrue(cut.isAllowed(largest));
+      assertFalse(cut.isAllowed(tooLarge));
+   }
+
+   @Test
+   public void testCanLoadHardpointInfo(){
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("ILYA MUROMETS");
+
+      Item lrm20 = ItemDB.lookup("LRM 20");
+      Item ac20 = ItemDB.lookup("AC/20");
+
+      assertFalse(cut.isAllowed(lrm20));
+      assertTrue(cut.isAllowed(ac20));
+   }
+
+   @Test
+   public void testCanLoadBasicMech(){
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("Ilya Muromets");
+
+      assertEquals(140, cut.getEngineMin());
+      assertEquals(340, cut.getEngineMax());
+
+      assertEquals("ILYA MUROMETS", cut.getName());
+      assertEquals("CTF-IM", cut.getNameShort());
+      assertEquals(cut.getNameShort(), cut.toString());
+      assertEquals("ctf-im", cut.getMwoName());
+
+      assertEquals(70.0, cut.getMassMax(), 0.0);
+
+      assertEquals(434, cut.getArmorMax());
+
+      assertEquals(16.2, cut.getMovementProfile().getMaxMovementSpeed(), 0.0);
+
+      assertSame(ChassisClass.HEAVY, cut.getChassiClass());
+      assertEquals(0, cut.getJumpJetsMax());
+      assertEquals(0, cut.getHardPointsCount(HardPointType.ECM));
+
+      // Do a through test only on the Ilyas components
+      {
+         ComponentStandard pt = cut.getComponent(Location.Head);
+
+         assertEquals(18, pt.getArmorMax());
+         assertEquals(15.0, pt.getHitPoints(), 0.0);
+         assertEquals(6, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
+         assertEquals(Location.Head, pt.getLocation());
+         assertFalse(pt.getLocation().isTwoSided());
+         assertEquals(pt.getLocation().toString(), pt.toString());
+
+         assertEquals(3, pt.getFixedItems().size());
+      }
+
+      {
+         ComponentStandard pt = cut.getComponent(Location.RightArm);
+         assertEquals(44, pt.getArmorMax());
+         assertEquals(22.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
+         assertEquals(Location.RightArm, pt.getLocation());
+         assertFalse(pt.getLocation().isTwoSided());
+         assertEquals(pt.getLocation().toString(), pt.toString());
+         assertEquals(3, pt.getFixedItems().size());
+      }
+
+      {
+         ComponentStandard pt = cut.getComponent(Location.LeftArm);
+         assertEquals(44, pt.getArmorMax());
+         assertEquals(22.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
+         assertEquals(Location.LeftArm, pt.getLocation());
+         assertFalse(pt.getLocation().isTwoSided());
+         assertEquals(pt.getLocation().toString(), pt.toString());
+         assertEquals(4, pt.getFixedItems().size());
+      }
+
+      {
+         ComponentStandard pt = cut.getComponent(Location.RightTorso);
+         assertEquals(60, pt.getArmorMax());
+         assertEquals(30.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
+         assertEquals(Location.RightTorso, pt.getLocation());
+         assertTrue(pt.getLocation().isTwoSided());
+         assertEquals(pt.getLocation().toString(), pt.toString());
+         assertEquals(0, pt.getFixedItems().size());
+      }
+
+      {
+         ComponentStandard pt = cut.getComponent(Location.LeftTorso);
+         assertEquals(60, pt.getArmorMax());
+         assertEquals(30.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(1, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
+         assertEquals(Location.LeftTorso, pt.getLocation());
+         assertTrue(pt.getLocation().isTwoSided());
+         assertEquals(pt.getLocation().toString(), pt.toString());
+         assertEquals(0, pt.getFixedItems().size());
+      }
+
+      {
+         ComponentStandard pt = cut.getComponent(Location.CenterTorso);
+         assertEquals(88, pt.getArmorMax());
+         assertEquals(44.0, pt.getHitPoints(), 0.0);
+         assertEquals(12, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
+         assertEquals(Location.CenterTorso, pt.getLocation());
+         assertTrue(pt.getLocation().isTwoSided());
+         assertEquals(pt.getLocation().toString(), pt.toString());
+         assertEquals(1, pt.getFixedItems().size());
+      }
+
+      {
+         ComponentStandard pt = cut.getComponent(Location.RightLeg);
+         assertEquals(60, pt.getArmorMax());
+         assertEquals(30.0, pt.getHitPoints(), 0.0);
+         assertEquals(6, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
+         assertEquals(Location.RightLeg, pt.getLocation());
+         assertFalse(pt.getLocation().isTwoSided());
+         assertEquals(pt.getLocation().toString(), pt.toString());
+         assertEquals(4, pt.getFixedItems().size());
+      }
+
+      {
+         ComponentStandard pt = cut.getComponent(Location.LeftLeg);
+         assertEquals(60, pt.getArmorMax());
+         assertEquals(30.0, pt.getHitPoints(), 0.0);
+         assertEquals(6, pt.getSlots());
+         assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
+         assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
+         assertEquals(0, pt.getHardPointCount(HardPointType.AMS));
+         assertEquals(0, pt.getHardPointCount(HardPointType.MISSILE));
+         assertEquals(Location.LeftLeg, pt.getLocation());
+         assertFalse(pt.getLocation().isTwoSided());
+         assertEquals(pt.getLocation().toString(), pt.toString());
+         assertEquals(4, pt.getFixedItems().size());
+      }
+   }
+
+   @Test
+   public void testCanLoadBasicMech2(){
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("Jenner JR7-F");
+   
+      assertEquals(70, cut.getEngineMin()); // However no such engine exists :)
+      assertEquals(300, cut.getEngineMax());
+   
+      assertEquals("JENNER JR7-F", cut.getName());
+      assertEquals("JR7-F", cut.getNameShort());
+      assertEquals(cut.getNameShort(), cut.toString());
+      assertEquals("jr7-f", cut.getMwoName());
+   
+      assertEquals(35.0, cut.getMassMax(), 0.0);
+   
+      assertEquals(238, cut.getArmorMax());
+   
+      assertSame(ChassisClass.LIGHT, cut.getChassiClass());
+      assertEquals(5, cut.getJumpJetsMax());
+      assertEquals(0, cut.getHardPointsCount(HardPointType.ECM));
+   
+      assertEquals(3, cut.getComponent(Location.Head).getFixedItems().size());
+   
+      assertEquals(2, cut.getComponent(Location.RightArm).getFixedItems().size());
+      assertEquals(2, cut.getComponent(Location.LeftArm).getFixedItems().size());
+   
+      assertEquals(4, cut.getComponent(Location.RightLeg).getFixedItems().size());
+      assertEquals(4, cut.getComponent(Location.LeftLeg).getFixedItems().size());
+   
+      assertEquals(3, cut.getComponent(Location.RightArm).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(3, cut.getComponent(Location.LeftArm).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(1, cut.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.AMS));
+   }
+
+   @Test
+   public void testCanLoadECMInfo(){
+      ChassisStandard cut = (ChassisStandard)ChassisDB.lookup("AS7-D-DC");
+
+      assertEquals(200, cut.getEngineMin());
+      assertEquals(360, cut.getEngineMax());
+
+      assertEquals("ATLAS AS7-D-DC", cut.getName());
+      assertEquals("AS7-D-DC", cut.getNameShort());
+      assertEquals(cut.getNameShort(), cut.toString());
+      assertEquals("as7-d-dc", cut.getMwoName());
+
+      assertEquals(100.0, cut.getMassMax(), 0.0);
+
+      assertEquals(614, cut.getArmorMax());
+
+      assertSame(ChassisClass.ASSAULT, cut.getChassiClass());
+      assertEquals(0, cut.getJumpJetsMax());
+      assertEquals(1, cut.getHardPointsCount(HardPointType.ECM));
+
+      assertEquals(3, cut.getComponent(Location.Head).getFixedItems().size());
+
+      assertEquals(4, cut.getComponent(Location.RightArm).getFixedItems().size());
+      assertEquals(4, cut.getComponent(Location.LeftArm).getFixedItems().size());
+
+      assertEquals(4, cut.getComponent(Location.RightLeg).getFixedItems().size());
+      assertEquals(4, cut.getComponent(Location.LeftLeg).getFixedItems().size());
+
+      assertEquals(1, cut.getComponent(Location.RightArm).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(1, cut.getComponent(Location.LeftArm).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(1, cut.getComponent(Location.LeftArm).getHardPointCount(HardPointType.AMS));
+      assertEquals(3, cut.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.MISSILE));
+      assertEquals(2, cut.getComponent(Location.RightTorso).getHardPointCount(HardPointType.BALLISTIC));
+   }
 
    @Test(expected = IllegalArgumentException.class)
    public void testLookupFailed(){

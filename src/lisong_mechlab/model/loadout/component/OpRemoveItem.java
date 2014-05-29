@@ -25,7 +25,7 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
- * This {@link Operation} removes an {@link Item} from a {@link ConfiguredComponent}.
+ * This {@link Operation} removes an {@link Item} from a {@link ConfiguredComponentBase}.
  * 
  * @author Emily Björk
  */
@@ -38,11 +38,11 @@ public class OpRemoveItem extends OpItemBase{
     * @param aLoadout
     *           The {@link LoadoutBase} to remove the item from.
     * @param aComponent
-    *           The {@link ConfiguredComponent} to remove from.
+    *           The {@link ConfiguredComponentBase} to remove from.
     * @param aItem
     *           The {@link Item} to remove.
     */
-   public OpRemoveItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponent aComponent, Item aItem){
+   public OpRemoveItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
       super(aXBar, aLoadout, aComponent, aItem);
    }
 

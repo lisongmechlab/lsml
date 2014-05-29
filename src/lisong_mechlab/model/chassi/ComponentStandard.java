@@ -24,10 +24,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.mwo_data.HardPointCache;
 import lisong_mechlab.mwo_data.HardpointsXml;
@@ -38,8 +36,6 @@ import lisong_mechlab.mwo_data.helpers.MdfComponent;
 import lisong_mechlab.mwo_data.helpers.MdfInternal;
 import lisong_mechlab.util.ArrayUtils;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 /**
  * This class is a data structure representing an arbitrary internal part of the 'mech's structure.
  * <p>
@@ -47,23 +43,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Emily Björk
  */
-public class InternalComponent{
-   @XStreamAsAttribute
-   private final int             criticalslots;
+public class ComponentStandard  extends ComponentBase{
    private final List<HardPoint> hardPoints = new ArrayList<>();
-   @XStreamAsAttribute
-   private final double          hitpoints;
-
-   protected final List<Item>    internals  = new ArrayList<Item>();
-   @XStreamAsAttribute
-   private final Location        location;
-   @XStreamAsAttribute
-   private final int             internalSlots;
-   @XStreamAsAttribute
-   private final int             maxarmor;
 
    /**
-    * Creates a new {@link InternalComponent} with the given properties.
+    * Creates a new {@link ComponentStandard} with the given properties.
     * 
     * @param aSlots
     *           The total number of slots in this component.
@@ -72,27 +56,22 @@ public class InternalComponent{
     * @param aHP
     *           The hit points of the component.
     * @param aInternalItems
-    *           A {@link List} of internal items and other items that are locked.
+    *           An array of internal items and other items that are locked.
     * @param aHardPoints
     *           A {@link List} of {@link HardPoint}s for the component.
     */
-   public InternalComponent(Location aLocation, int aSlots, double aHP, List<Item> aInternalItems, List<HardPoint> aHardPoints){
-      criticalslots = aSlots;
-      location = aLocation;
-      hitpoints = aHP;
-      internals.addAll(aInternalItems);
+   public ComponentStandard(Location aLocation, int aSlots, double aHP, Item[] aInternalItems, List<HardPoint> aHardPoints){
+      super(aSlots, aHP, aLocation, aInternalItems);
       hardPoints.addAll(aHardPoints);
-      maxarmor = calculateMaxArmor(aLocation, aHP);
-      internalSlots = calculateInternalSlots(internals);
    }
 
    /**
-    * Constructs a new {@link InternalComponent} from MWO data files that are parsed.
+    * Constructs a new {@link ComponentStandard} from MWO data files that are parsed.
     * 
     * @param aComponent
     *           The component as parsed from the MWO .mdf for the chassis.
     * @param aLocation
-    *           The {@link Location} (head,leg etc) this {@link InternalComponent} is for.
+    *           The {@link Location} (head,leg etc) this {@link ComponentStandard} is for.
     * @param aHardpoints
     *           The hard points as parsed from the MWO .xml for hard points for the chassis.
     * @param aChassiMwoName
@@ -101,34 +80,38 @@ public class InternalComponent{
     *           A list to insert any internals created during the loading (used to extract internal actuators etc to the
     *           ItemDB to avoid data duplication).
     */
-   public InternalComponent(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, String aChassiMwoName,
+   public ComponentStandard(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, String aChassiMwoName,
                             List<Internal> aInternalsList){
       this(aLocation, aComponent.Slots, aComponent.HP, parseInternals(aComponent, aInternalsList), parseHardPoints(aLocation, aComponent,
                                                                                                                    aHardpoints, aChassiMwoName));
    }
 
    @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((hardPoints == null) ? 0 : hardPoints.hashCode());
+      return result;
+   }
+
+   @Override
    public boolean equals(Object obj){
       if( this == obj )
          return true;
-      if( !(obj instanceof InternalComponent) )
+      if( !super.equals(obj) )
          return false;
-      InternalComponent other = (InternalComponent)obj;
-
-      //@formatter:off
-      return criticalslots == other.criticalslots && 
-             location == other.location && 
-             maxarmor == other.maxarmor && 
-             hitpoints == other.hitpoints && 
-             ArrayUtils.equalsUnordered(internals, other.internals) && 
-             ArrayUtils.equalsUnordered(hardPoints, other.hardPoints);
-      //@formatter:on
+      if( !(obj instanceof ComponentStandard) )
+         return false;
+      ComponentStandard other = (ComponentStandard)obj;
+      if( hardPoints == null ){
+         if( other.hardPoints != null )
+            return false;
+      }
+      else if( !ArrayUtils.equalsUnordered(hardPoints, other.hardPoints) )
+         return false;
+      return true;
    }
-
-   public int getArmorMax(){
-      return maxarmor;
-   }
-
+   
    public int getHardPointCount(HardPointType aHardpointType){
       int ans = 0;
       for(HardPoint it : hardPoints){
@@ -143,43 +126,6 @@ public class InternalComponent{
       return Collections.unmodifiableList(hardPoints);
    }
 
-   public double getHitPoints(){
-      return hitpoints;
-   }
-
-   public Collection<Item> getInternalItems(){
-      return Collections.unmodifiableList(internals);
-   }
-
-   /**
-    * @return The {@link Location} this component is mounted at.
-    */
-   public Location getLocation(){
-      return location;
-   }
-
-   /**
-    * @return The total number of critical slots in this location.
-    */
-   public int getSlots(){
-      return criticalslots;
-   }
-
-   @Override
-   public int hashCode(){
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + criticalslots;
-      result = prime * result + hardPoints.hashCode();
-      long temp;
-      temp = Double.doubleToLongBits(hitpoints);
-      result = prime * result + (int)(temp ^ (temp >>> 32));
-      result = prime * result + internals.hashCode();
-      result = prime * result + maxarmor;
-      result = prime * result + location.hashCode();
-      return result;
-   }
-
    /**
     * @return <code>true</code> if this component has missile bay doors.
     */
@@ -192,23 +138,16 @@ public class InternalComponent{
       return false;
    }
 
-   /**
-    * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
-    * only useful if {@link ChassisStandard#isAllowed(Item)} returns true.
-    * 
-    * @param aItem
-    *           The {@link Item} to check.
-    * @return <code>true</code> if the given {@link Item} is allowed on this {@link InternalComponent}.
-    */
+   @Override
    public boolean isAllowed(Item aItem){
-      if( aItem instanceof Internal ){
-         return false; // Can't add internals!
+      if(!super.isAllowed(aItem)){
+         return false;
       }
-      else if( aItem instanceof Engine ){
-         return getLocation() == Location.CenterTorso;
+      else if( aItem.getHardpointType() != HardPointType.NONE && getHardPointCount(aItem.getHardpointType()) <= 0 ){
+         return false;
       }
       else if( aItem instanceof JumpJet ){
-         switch( location ){
+         switch( getLocation() ){
             case RightTorso:
             case CenterTorso:
             case LeftTorso:
@@ -219,13 +158,7 @@ public class InternalComponent{
                return false;
          }
       }
-      else if( aItem == ItemDB.CASE ){
-         return (location == Location.LeftTorso || location == Location.RightTorso);
-      }
-      else if( aItem.getHardpointType() != HardPointType.NONE && getHardPointCount(aItem.getHardpointType()) <= 0 ){
-         return false;
-      }
-      return aItem.getNumCriticalSlots() <= getSlots() - internalSlots;
+      return aItem.getNumCriticalSlots() <= getSlots() - getFixedItemSlots();
    }
 
    @Override
@@ -233,20 +166,7 @@ public class InternalComponent{
       return getLocation().toString();
    }
 
-   private static int calculateMaxArmor(Location aLocation, double aHP){
-      return (aLocation == Location.Head) ? 18 : (int)(aHP * 2);
-   }
-
-   private static int calculateInternalSlots(List<Item> aItems){
-      int ans = 0;
-      for(Item item : aItems){
-         if( item instanceof Internal )
-            ans += item.getNumCriticalSlots();
-      }
-      return ans;
-   }
-
-   private static List<Item> parseInternals(MdfComponent aComponent, List<Internal> aInternalsList){
+   private static Item[] parseInternals(MdfComponent aComponent, List<Internal> aInternalsList){
       List<Item> ans = new ArrayList<>();
       if( null != aComponent.internals ){
          for(MdfInternal internal : aComponent.internals){
@@ -268,7 +188,7 @@ public class InternalComponent{
             }
          }
       }
-      return ans;
+      return ans.toArray(new Item[ans.size()]);
    }
 
    private static List<HardPoint> parseHardPoints(Location aLocation, MdfComponent aComponent, HardpointsXml aHardpoints, String aChassiMwoName){

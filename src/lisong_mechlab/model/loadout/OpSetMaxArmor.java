@@ -20,7 +20,7 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
 
@@ -32,7 +32,7 @@ import lisong_mechlab.util.MessageXBar;
 public class OpSetMaxArmor extends OpLoadoutBase{
    public OpSetMaxArmor(LoadoutBase<?,?> aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet){
       super(aLoadout, anXBar, "set max armor");
-      for(ConfiguredComponent component : loadout.getComponents()){
+      for(ConfiguredComponentBase component : loadout.getComponents()){
          final int max = component.getInternalComponent().getArmorMax();
          if( component.getInternalComponent().getLocation().isTwoSided() ){
             // 1) front + back = max

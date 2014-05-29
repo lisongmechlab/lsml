@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.loadout.component.ConfiguredComponent;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpStripComponent;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
@@ -37,7 +37,7 @@ public class OpStripLoadout extends OpLoadoutBase{
    public OpStripLoadout(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
       super(aLoadout, aXBar, "strip mech");
 
-      for(ConfiguredComponent component : loadout.getComponents()){
+      for(ConfiguredComponentBase component : loadout.getComponents()){
          addOp(new OpStripComponent(xBar, loadout, component));
       }
 
