@@ -51,8 +51,8 @@ import lisong_mechlab.util.MessageXBar;
  */
 public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    private String             name;
-   private final T[]          components;
    private final ChassisBase  chassisBase;
+   private final T[]          components;
    private final Efficiencies efficiencies;
 
    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase, MessageXBar aXBar){
