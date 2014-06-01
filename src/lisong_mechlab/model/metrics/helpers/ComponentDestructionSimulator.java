@@ -51,10 +51,10 @@ import lisong_mechlab.util.MessageXBar.Message;
  */
 public class ComponentDestructionSimulator implements MessageXBar.Reader{
    private final ConfiguredComponentBase loadoutPart;
-   private final double              P_miss;
-   private final double              weaponAlpha;
-   private final int                 numShots;
-   private final double              partHp;
+   private final double                  P_miss;
+   private final double                  weaponAlpha;
+   private final int                     numShots;
+   private final double                  partHp;
 
    class ItemState{
       int    multiplicity;
@@ -115,8 +115,28 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
    public void simulate(){
       state = new HashMap<>();
       int slots = 0;
-      for(Item item : loadoutPart.getItemsAll()){
-         if( item instanceof Internal && item != ConfiguredComponentBase.ENGINE_INTERNAL ){
+      for(Item item : loadoutPart.getItemsEquipped()){
+         // TODO: Create Item#isCrittable and use it here
+         if( item instanceof Internal && (item != ConfiguredComponentBase.ENGINE_INTERNAL && item != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) ){
+            continue;
+         }
+         if( item == ItemDB.CASE )
+            continue;
+
+         slots += item.getNumCriticalSlots();
+
+         ItemState pair = state.get(item);
+         if( pair == null )
+            state.put(item, new ItemState(1, item));
+         else{
+            pair.multiplicity++;
+            pair.hpLeft += item.getHealth();
+         }
+      }
+
+      for(Item item : loadoutPart.getItemsFixed()){
+         // TODO: Create Item#isCrittable and use it here
+         if( item instanceof Internal && (item != ConfiguredComponentBase.ENGINE_INTERNAL && item != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) ){
             continue;
          }
          if( item == ItemDB.CASE )

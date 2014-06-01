@@ -106,7 +106,7 @@ public class RangeTimeMetricTest{
    /**
     * If {@link RangeTimeMetric#changeRange(double)} has not been called; a call to {@link RangeTimeMetric#calculate()}
     * should return the maximum value of {@link RangeTimeMetric#calculate(double, double)} for all the ranges returned
-    * by {@link WeaponRanges#getRanges(LoadoutStandard)}.
+    * by {@link WeaponRanges#getRanges(lisong_mechlab.model.loadout.LoadoutBase)}.
     */
    @Test
    public final void testCalculate_noChangeRange(){
@@ -129,7 +129,7 @@ public class RangeTimeMetricTest{
     * If {@link RangeTimeMetric#changeRange(double)} was last called with a negative or zero argument; a call to
     * {@link RangeTimeMetric#calculate()} should return the maximum value of
     * {@link RangeTimeMetric#calculate(double, double)} for all the ranges returned by
-    * {@link WeaponRanges#getRanges(LoadoutStandard)}.
+    * {@link WeaponRanges#getRanges(lisong_mechlab.model.loadout.LoadoutBase)}.
     */
    @Test
    public final void testCalculate_negativeChangeRange(){

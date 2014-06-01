@@ -100,8 +100,8 @@ public class SetGuidanceTypeOperationTest{
       Mockito.when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
       Mockito.when(mlc.rl.canAddItem(Matchers.any(Item.class))).thenReturn(true);
       Mockito.when(mlc.lt.canAddItem(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(mlc.rl.getItemsAll()).thenReturn(rlItems);
-      Mockito.when(mlc.lt.getItemsAll()).thenReturn(ltItems);
+      Mockito.when(mlc.rl.getItemsEquipped()).thenReturn(rlItems);
+      Mockito.when(mlc.lt.getItemsEquipped()).thenReturn(ltItems);
 
       stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
 

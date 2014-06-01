@@ -28,12 +28,11 @@ import java.util.List;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisVariant;
+import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
-import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
@@ -300,35 +299,33 @@ public class DynamicSlotDistributorTest{
    @Test
    public void testOmniMech(){
       // Prepare armor/structure
-      StructureUpgrade aStructureType = Mockito.mock(StructureUpgrade.class);
+      ComponentOmniMech[] components = new ComponentOmniMech[Location.values().length];
+      for(Location location : Location.values()){
+         components[location.ordinal()] = Mockito.mock(ComponentOmniMech.class);
+         Mockito.when(components[location.ordinal()].getLocation()).thenReturn(location);
+      }
+
+      int armorSlotsCount = 12;
       ArmorUpgrade armorType = Mockito.mock(ArmorUpgrade.class);
-      int armorSlotsCount = 0;
-      int structSlotsCount = 0;
-      int[] structureSlots = new int[Location.values().length];
-      int[] armorSlots = new int[Location.values().length];
-
-      armorSlots[Location.LeftArm.ordinal()] = 2;
-      armorSlots[Location.LeftLeg.ordinal()] = 2;
-      armorSlotsCount = 4;
-
-      structureSlots[Location.RightArm.ordinal()] = 2;
-      structureSlots[Location.RightLeg.ordinal()] = 2;
-      structSlotsCount = 4;
-      Mockito.when(aStructureType.getExtraSlots()).thenReturn(structSlotsCount);
       Mockito.when(armorType.getExtraSlots()).thenReturn(armorSlotsCount);
+      Mockito.when(components[Location.LeftLeg.ordinal()].getDynamicArmorSlots()).thenReturn(5);
+      Mockito.when(components[Location.LeftArm.ordinal()].getDynamicArmorSlots()).thenReturn(7);
+      
+      int structSlotsCount = 5;
+      StructureUpgrade aStructureType = Mockito.mock(StructureUpgrade.class);
+      Mockito.when(aStructureType.getExtraSlots()).thenReturn(structSlotsCount);
+      Mockito.when(components[Location.RightArm.ordinal()].getDynamicStructureSlots()).thenReturn(2);
+      Mockito.when(components[Location.RightLeg.ordinal()].getDynamicStructureSlots()).thenReturn(3);
 
       // Create chassis
-      ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null, false, null, aStructureType,
-                                                            armorType, null, null, structureSlots, armorSlots);
-
+      ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null, false, components, null,
+                                                            aStructureType, armorType, null);
       // Setup factory
       Factory<ConfiguredComponentOmniMech> aFactory = Mockito.mock(Factory.class);
       ConfiguredComponentOmniMech[] omniPods = new ConfiguredComponentOmniMech[Location.values().length];
       for(Location location : Location.values()){
-         OmniPod omniPod = Mockito.mock(OmniPod.class);
-         Mockito.when(omniPod.getLocation()).thenReturn(location);
          omniPods[location.ordinal()] = Mockito.mock(ConfiguredComponentOmniMech.class);
-         Mockito.when(omniPods[location.ordinal()].getInternalComponent()).thenReturn(omniPod);
+         Mockito.when(omniPods[location.ordinal()].getInternalComponent()).thenReturn(components[location.ordinal()]);
       }
       Mockito.when(aFactory.defaultComponents(Matchers.any(ChassisBase.class))).thenReturn(omniPods);
 
@@ -337,9 +334,11 @@ public class DynamicSlotDistributorTest{
 
       // Execute + Verify
       cut = new DynamicSlotDistributor(loadoutOmniMech);
-      for(Location location : Location.values()){
-         assertEquals(armorSlots[location.ordinal()], cut.getDynamicArmorSlots(loadoutOmniMech.getComponent(location)));
-         assertEquals(structureSlots[location.ordinal()], cut.getDynamicStructureSlots(loadoutOmniMech.getComponent(location)));
-      }
+      
+      assertEquals(5, cut.getDynamicArmorSlots(loadoutOmniMech.getComponent(Location.LeftLeg)));
+      assertEquals(7, cut.getDynamicArmorSlots(loadoutOmniMech.getComponent(Location.LeftArm)));
+      
+      assertEquals(2, cut.getDynamicStructureSlots(loadoutOmniMech.getComponent(Location.RightArm)));
+      assertEquals(3, cut.getDynamicStructureSlots(loadoutOmniMech.getComponent(Location.RightLeg)));
    }
 }

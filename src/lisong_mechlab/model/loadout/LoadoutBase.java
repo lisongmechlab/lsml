@@ -113,7 +113,8 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    public Collection<Item> getAllItems(){
       List<Item> items = new ArrayList<>();
       for(T component : components){
-         items.addAll(component.getItemsAll());
+         items.addAll(component.getItemsFixed());
+         items.addAll(component.getItemsEquipped());
       }
       return items;
    }
@@ -436,7 +437,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
          // Attempt to move items by taking the largest ones first and perform bin packing
          // with First Fit Decreasing heuristic.
-         List<Item> itemsBySlots = new ArrayList<>(candidate.getItemsAll());
+         List<Item> itemsBySlots = new ArrayList<>(candidate.getItemsEquipped());
          Collections.sort(itemsBySlots, new Comparator<Item>(){
             @Override
             public int compare(Item aO1, Item aO2){

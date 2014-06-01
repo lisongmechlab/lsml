@@ -113,7 +113,7 @@ public class SmurfyXML{
                   }
 
                   writer.startNode("items");
-                  for(Item item : part.getItemsAll()){
+                  for(Item item : part.getItemsEquipped()){
                      if( item instanceof Internal )
                         continue;
                      writer.startNode("item");

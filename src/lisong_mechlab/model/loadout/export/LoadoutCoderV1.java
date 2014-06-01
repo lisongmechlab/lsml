@@ -289,7 +289,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          stack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
 
          for(ConfiguredComponentBase component : loadout.getComponents()){
-            for(Item item : new ArrayList<>(component.getItemsAll())){
+            for(Item item : new ArrayList<>(component.getItemsEquipped())){
                if( item.getName().toLowerCase().contains("artemis") ){
                   stack.pushAndApply(new OpRemoveItem(xBar, loadout, component, item));
                   stack.pushAndApply(new OpAddItem(xBar, loadout, component, ItemDB.lookup(item.getName().substring(0,

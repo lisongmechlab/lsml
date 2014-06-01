@@ -36,7 +36,6 @@ import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
@@ -133,73 +132,73 @@ public class LoadoutSerializationTest{
       // Right leg:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.RightLeg);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.SHS));
          assertTrue(items.remove(ItemDB.SHS));
          assertEquals(82, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(4, items.size());
+         assertEquals(4, part.getItemsFixed().size());
       }
 
       // Left leg:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.LeftLeg);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.SHS));
          assertTrue(items.remove(ItemDB.SHS));
          assertEquals(82, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(4, items.size());
+         assertEquals(4, part.getItemsFixed().size());
       }
       // Right arm:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.RightArm);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.SHS));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
          assertEquals(68, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(4, items.size());
+         assertEquals(4, part.getItemsFixed().size());
       }
 
       // Left arm:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.LeftArm);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.SHS));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
          assertEquals(68, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(4, items.size());
+         assertEquals(4, part.getItemsFixed().size());
       }
 
       // Right torso:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.RightTorso);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.lookup("AC/20")));
          assertTrue(items.remove(ItemDB.lookup("AC/20 AMMO")));
          assertTrue(items.remove(ItemDB.lookup("AC/20 AMMO")));
          assertEquals(64, part.getArmor(ArmorSide.FRONT));
          assertEquals(20, part.getArmor(ArmorSide.BACK));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(0, items.size());
+         assertEquals(0, part.getItemsFixed().size());
       }
 
       // Left torso:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.LeftTorso);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.lookup("LRM 20")));
          assertTrue(items.remove(ItemDB.lookup("SRM6")));
@@ -209,15 +208,15 @@ public class LoadoutSerializationTest{
          assertTrue(items.remove(ItemDB.SHS));
          assertEquals(64, part.getArmor(ArmorSide.FRONT));
          assertEquals(20, part.getArmor(ArmorSide.BACK));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(0, items.size());
+         assertEquals(0, part.getItemsFixed().size());
       }
 
       // Center torso:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.CenterTorso);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.lookup("STD ENGINE 300")));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
@@ -228,21 +227,21 @@ public class LoadoutSerializationTest{
          assertEquals(28, part.getArmor(ArmorSide.BACK));
 
          assertEquals(2, part.getEngineHeatsinks());
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(1, items.size());
+         assertEquals(1, part.getItemsFixed().size());
       }
 
       // Head:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.Head);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.SHS));
          assertEquals(18, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(3, items.size());
+         assertEquals(3, part.getItemsFixed().size());
       }
 
       Efficiencies efficiencies = cut.getEfficiencies();
@@ -280,51 +279,51 @@ public class LoadoutSerializationTest{
       // Right leg:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.RightLeg);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertEquals(12, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(4, items.size());
+         assertEquals(4, part.getItemsFixed().size());
       }
 
       // Left leg:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.LeftLeg);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertEquals(12, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(4, items.size());
+         assertEquals(4, part.getItemsFixed().size());
       }
 
       // Right arm:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.RightArm);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertEquals(10, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(4, items.size());
+         assertEquals(4, part.getItemsFixed().size());
       }
 
       // Left arm:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.LeftArm);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertEquals(10, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(4, items.size());
+         assertEquals(4, part.getItemsFixed().size());
       }
 
       // Right torso:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.RightTorso);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
@@ -332,15 +331,15 @@ public class LoadoutSerializationTest{
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
          assertEquals(12, part.getArmor(ArmorSide.FRONT));
          assertEquals(4, part.getArmor(ArmorSide.BACK));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(0, items.size());
+         assertEquals(0, part.getItemsFixed().size());
       }
 
       // Left torso:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.LeftTorso);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
@@ -348,15 +347,15 @@ public class LoadoutSerializationTest{
          assertTrue(items.remove(ItemDB.lookup("JUMP JETS - CLASS V")));
          assertEquals(12, part.getArmor(ArmorSide.FRONT));
          assertEquals(4, part.getArmor(ArmorSide.BACK));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(0, items.size());
+         assertEquals(0, part.getItemsFixed().size());
       }
 
       // Center torso:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.CenterTorso);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.lookup("STD ENGINE 240")));
          assertTrue(items.remove(ItemDB.lookup("MEDIUM LASER")));
@@ -365,21 +364,21 @@ public class LoadoutSerializationTest{
          assertEquals(8, part.getArmor(ArmorSide.BACK));
 
          assertEquals(0, part.getEngineHeatsinks());
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(1, items.size());
+         assertEquals(1, part.getItemsFixed().size());
       }
 
       // Head:
       {
          ConfiguredComponentBase part = cut.getComponent(Location.Head);
-         List<Item> items = new ArrayList<Item>(part.getItemsAll());
+         List<Item> items = new ArrayList<Item>(part.getItemsEquipped());
 
          assertTrue(items.remove(ItemDB.SHS));
          assertEquals(12, part.getArmor(ArmorSide.ONLY));
+         assertTrue(items.isEmpty());
 
-         assertOnlyInternals(items);
-         assertEquals(3, items.size());
+         assertEquals(3, part.getItemsFixed().size());
       }
 
       Efficiencies efficiencies = cut.getEfficiencies();
@@ -440,11 +439,5 @@ public class LoadoutSerializationTest{
     * cut.getEfficiencies().setCoolRun(false); assertEquals(16, cut.getHeatsinksCount()); assertEquals((2 * 10 + 1.4 *
     * 6) * 1.075, cut.getHeatCapacity(), 0.0); assertEquals((2 * 10 + 1.4 * 6) / 10.0, cut.getHeatDissapation(), 0.0); }
     */
-
-   private void assertOnlyInternals(List<Item> aList){
-      for(Item item : aList){
-         assertTrue(item instanceof Internal);
-      }
-   }
 
 }

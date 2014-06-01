@@ -21,8 +21,6 @@ package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
@@ -31,7 +29,6 @@ import java.util.List;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
-import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
@@ -88,24 +85,6 @@ public class LoadoutStandardTest{
    public void testGetJumpJetCount() throws Exception{
       LoadoutStandard cut = new LoadoutStandard("SDR-5D", xBar);
       assertEquals(8, cut.getJumpJetCount()); // 8 stock
-   }
-
-   @Test
-   public void testGetJumpJetType_noJJCapability() throws Exception{
-      LoadoutStandard cut = new LoadoutStandard("HBK-4J", xBar);
-      assertNull(cut.getJumpJetType());
-   }
-
-   @Test
-   public void testGetJumpJetType_noJJEquipped() throws Exception{
-      LoadoutStandard cut = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("SDR-5D"), xBar);
-      assertNull(cut.getJumpJetType());
-   }
-
-   @Test
-   public void testGetJumpJetType() throws Exception{
-      LoadoutStandard cut = new LoadoutStandard("SDR-5D", xBar);
-      assertSame(ItemDB.lookup("JUMP JETS - CLASS V"), cut.getJumpJetType());
    }
 
    /**

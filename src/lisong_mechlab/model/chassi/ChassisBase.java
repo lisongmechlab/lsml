@@ -167,7 +167,7 @@ public abstract class ChassisBase{
    /**
     * @return The base {@link MovementProfile} for this chassis.
     */
-   public MovementProfile getMovementProfile(){
+   public MovementProfile getMovementProfileBase(){
       return movementProfile;
    }
 

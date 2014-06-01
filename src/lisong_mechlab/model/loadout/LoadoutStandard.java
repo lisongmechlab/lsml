@@ -84,7 +84,8 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
    public LoadoutStandard(ChassisStandard aChassi, MessageXBar aXBar){
       super(ComponentBuilder.getISComponentFactory(), aChassi, aXBar);
 
-      upgrades = new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE, UpgradeDB.STANDARD_GUIDANCE, UpgradeDB.STANDARD_HEATSINKS);
+      upgrades = new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE, UpgradeDB.STANDARD_GUIDANCE,
+                                     UpgradeDB.STANDARD_HEATSINKS);
 
       if( aXBar != null ){
          aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
@@ -123,7 +124,8 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
     */
    @Override
    public Engine getEngine(){
-      for(Item item : getComponent(Location.CenterTorso).getItemsAll()){
+      // The engine is not among the fixed items for a standard loadout.
+      for(Item item : getComponent(Location.CenterTorso).getItemsEquipped()){
          if( item instanceof Engine ){
             return (Engine)item;
          }
@@ -148,7 +150,7 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
 
    @Override
    public MovementProfile getMovementProfile(){
-      return getChassis().getMovementProfile();
+      return getChassis().getMovementProfileBase();
    }
 
    @Override

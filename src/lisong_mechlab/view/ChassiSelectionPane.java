@@ -44,6 +44,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
@@ -72,19 +73,19 @@ import lisong_mechlab.view.render.StyleManager;
  */
 public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
    static public class ChassiTableModel extends AbstractTableModel{
-      private static final long         serialVersionUID = -2726840937519789976L;
+      private static final long                 serialVersionUID = -2726840937519789976L;
       private final List<ChassisStandard>       lights           = new ArrayList<>();
       private final List<ChassisStandard>       mediums          = new ArrayList<>();
       private final List<ChassisStandard>       heavies          = new ArrayList<>();
       private final List<ChassisStandard>       assaults         = new ArrayList<>();
       private final Comparator<ChassisStandard> cmp              = new Comparator<ChassisStandard>(){
-                                                            @Override
-                                                            public int compare(ChassisStandard aArg0, ChassisStandard aArg1){
-                                                               if( aArg0.getMassMax() == aArg1.getMassMax() )
-                                                                  return aArg0.getMwoName().compareTo(aArg1.getMwoName());
-                                                               return Integer.compare(aArg0.getMassMax(), aArg1.getMassMax());
-                                                            }
-                                                         };
+                                                                    @Override
+                                                                    public int compare(ChassisStandard aArg0, ChassisStandard aArg1){
+                                                                       if( aArg0.getMassMax() == aArg1.getMassMax() )
+                                                                          return aArg0.getMwoName().compareTo(aArg1.getMwoName());
+                                                                       return Integer.compare(aArg0.getMassMax(), aArg1.getMassMax());
+                                                                    }
+                                                                 };
 
       public ChassiTableModel(boolean aFilterSpecials){
          recreate(aFilterSpecials);
@@ -100,13 +101,13 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       private void doit(List<ChassisStandard> aList, boolean aFilterSpecials, ChassisClass aChassiClass){
          Collection<? extends ChassisBase> all = ChassisDB.lookup(aChassiClass);
-         
+
          aList.clear();
          for(ChassisBase base : all){
-            if(base instanceof ChassisStandard)
+            if( base instanceof ChassisStandard )
                aList.add((ChassisStandard)base);
          }
-         
+
          if( aFilterSpecials ){
             Iterator<ChassisStandard> it = aList.iterator();
             while( it.hasNext() ){
@@ -217,10 +218,39 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         ChassisStandard chassi = (ChassisStandard)aSourceRowObject;
-         final double maxSpeed = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.0);
-         final double maxSpeedTweak = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.1);
-         return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
+         if( aSourceRowObject instanceof ChassisStandard ){
+            ChassisStandard chassis = (ChassisStandard)aSourceRowObject;
+
+            Efficiencies efficiencies = new Efficiencies((MessageXBar)null);
+            efficiencies.setSpeedTweak(false);
+
+            final double maxSpeed = TopSpeed.calculate(chassis.getEngineMax(), chassis.getMovementProfileBase(), chassis.getMassMax(),
+                                                       efficiencies.getSpeedModifier());
+
+            efficiencies.setSpeedTweak(true);
+            final double maxSpeedTweak = TopSpeed.calculate(chassis.getEngineMax(), chassis.getMovementProfileBase(), chassis.getMassMax(),
+                                                            efficiencies.getSpeedModifier());
+            return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
+         }
+         else if( aSourceRowObject instanceof ChassisOmniMech ){
+            ChassisOmniMech chassis = (ChassisOmniMech)aSourceRowObject;
+
+            Efficiencies efficiencies = new Efficiencies((MessageXBar)null);
+            efficiencies.setSpeedTweak(false);
+
+            final double maxSpeed = TopSpeed.calculate(chassis.getEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
+                                                       efficiencies.getSpeedModifier());
+
+            efficiencies.setSpeedTweak(true);
+            final double maxSpeedTweak = TopSpeed.calculate(chassis.getEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
+                                                            efficiencies.getSpeedModifier());
+
+            // TODO: Show min-max
+            return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
+         }
+         else{
+            throw new IllegalArgumentException("Unknown chassis type!");
+         }
       }
    }
 
@@ -258,12 +288,12 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
                ChassisBase chassi = (ChassisBase)aValue;
                LoadoutBase<?> stock;
-               if(aValue instanceof ChassisStandard){
+               if( aValue instanceof ChassisStandard ){
                   stock = new LoadoutStandard((ChassisStandard)chassi, null);
                   OperationStack stack = new OperationStack(0);
                   stack.pushAndApply(new OpLoadStock(chassi, stock, null));
                }
-               else if(aValue instanceof ChassisOmniMech){
+               else if( aValue instanceof ChassisOmniMech ){
                   stock = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi, null);
                   OperationStack stack = new OperationStack(0);
                   stack.pushAndApply(new OpLoadStock(chassi, stock, null));

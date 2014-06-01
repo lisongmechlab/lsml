@@ -47,8 +47,15 @@ public class CriticalItemDamage implements ItemMetric{
 
    public static double calculate(Item anItem, ConfiguredComponentBase aLoadoutPart){
       int slots = 0;
-      for(Item it : aLoadoutPart.getItemsAll()){
-         if( it instanceof Internal && it != ConfiguredComponentBase.ENGINE_INTERNAL ){
+      for(Item it : aLoadoutPart.getItemsEquipped()){
+         // TODO: Make Item#isCrittable() and use it instead of this junk
+         if( it instanceof Internal && (it != ConfiguredComponentBase.ENGINE_INTERNAL && it != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) ){
+            continue; // Internals (apart from engine side torsos) cannot be crit.
+         }
+         slots += it.getNumCriticalSlots();
+      }
+      for(Item it : aLoadoutPart.getItemsFixed()){
+         if( it instanceof Internal && (it != ConfiguredComponentBase.ENGINE_INTERNAL && it != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) ){
             continue; // Internals (apart from engine side torsos) cannot be crit.
          }
          slots += it.getNumCriticalSlots();

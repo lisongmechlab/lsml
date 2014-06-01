@@ -73,8 +73,17 @@ public class ItemEffectiveHP implements ItemMetric{
 
    private void updateCache(){
       cache.clear();
-      for(Item item : loadoutPart.getItemsAll()){
-         if( item instanceof Internal && item != ConfiguredComponentBase.ENGINE_INTERNAL )
+      for(Item item : loadoutPart.getItemsEquipped()){
+         // TODO: Create Item#isCrittable and use it here
+         if( item instanceof Internal && (item != ConfiguredComponentBase.ENGINE_INTERNAL && item != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) )
+            continue;
+         if( item == ItemDB.CASE )
+            continue;
+         cache.add(new ItemState(item));
+      }
+      for(Item item : loadoutPart.getItemsFixed()){
+         // TODO: Create Item#isCrittable and use it here
+         if( item instanceof Internal && (item != ConfiguredComponentBase.ENGINE_INTERNAL && item != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) )
             continue;
          if( item == ItemDB.CASE )
             continue;

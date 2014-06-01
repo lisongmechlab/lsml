@@ -79,7 +79,7 @@ public class ConfiguredComponentConverter implements Converter{
        * Integer.toString(part.getNumEngineHeatsinks())); }
        */
 
-      for(Item item : part.getItemsAll()){
+      for(Item item : part.getItemsEquipped()){
          if( item instanceof Internal ){
             continue;
          }

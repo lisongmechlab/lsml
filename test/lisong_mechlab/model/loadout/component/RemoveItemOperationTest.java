@@ -5,12 +5,12 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
-import lisong_mechlab.model.chassi.ComponentStandard;
+import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -27,13 +27,13 @@ public class RemoveItemOperationTest{
    @Mock
    private ConfiguredComponentBase loadoutPart;
    @Mock
-   private LoadoutStandard             loadout;
+   private LoadoutBase<?>          loadout;
    @Mock
-   private Upgrades            upgrades;
+   private Upgrades                upgrades;
    @Mock
-   private MessageXBar         xBar;
+   private MessageXBar             xBar;
    @Mock
-   private ComponentStandard   internalPart;
+   private ComponentBase           internalPart;
 
    @Before
    public void setup(){
@@ -75,7 +75,7 @@ public class RemoveItemOperationTest{
       OpRemoveItem cut = null;
       try{
          Item item = ItemDB.lookup("LRM 20");
-         Mockito.when(loadoutPart.getItemsAll()).thenReturn(new ArrayList<Item>());
+         Mockito.when(loadoutPart.getItemsEquipped()).thenReturn(new ArrayList<Item>());
          cut = new OpRemoveItem(xBar, loadout, loadoutPart, item);
       }
       catch( Throwable t ){

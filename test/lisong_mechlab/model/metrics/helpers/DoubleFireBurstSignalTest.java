@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics.helpers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.ItemDB;
 

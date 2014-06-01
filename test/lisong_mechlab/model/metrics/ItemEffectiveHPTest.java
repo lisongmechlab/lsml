@@ -27,7 +27,7 @@ import java.util.List;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -46,19 +46,19 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ItemEffectiveHPTest{
-   List<Item>          items = new ArrayList<>();
+   List<Item>              items = new ArrayList<>();
    @Mock
    ConfiguredComponentBase loadoutPart;
    @Mock
-   LoadoutStandard             loadout;
+   LoadoutBase<?>          loadout;
    @Mock
-   Upgrades            upgrades;
+   Upgrades                upgrades;
    @InjectMocks
-   ItemEffectiveHP     cut;
+   ItemEffectiveHP         cut;
 
    @Before
    public void setup(){
-      Mockito.when(loadoutPart.getItemsAll()).thenReturn(items);
+      Mockito.when(loadoutPart.getItemsEquipped()).thenReturn(items);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
    }
 
