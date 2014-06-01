@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import lisong_mechlab.model.DataCache;
 
@@ -35,6 +36,7 @@ import lisong_mechlab.model.DataCache;
  */
 public class OmniPodDB{
    private static final Map<ChassisOmniMech, List<OmniPod>> chassis2pod;
+   private static final Map<Integer, OmniPod>               id2pod;
 
    /**
     * @param aChassis
@@ -81,6 +83,7 @@ public class OmniPodDB{
       }
 
       chassis2pod = new HashMap<ChassisOmniMech, List<OmniPod>>();
+      id2pod = new TreeMap<>();
 
       for(OmniPod omniPod : dataCache.getOmniPods()){
          ChassisOmniMech originalChassis = (ChassisOmniMech)ChassisDB.lookup(omniPod.getOriginalChassisId());
@@ -91,7 +94,17 @@ public class OmniPodDB{
             chassis2pod.put(originalChassis, list);
          }
          list.add(omniPod);
+         id2pod.put(omniPod.getMwoID(), omniPod);
       }
 
+   }
+
+   /**
+    * @param aId
+    *           The id of the pod to look up.
+    * @return An {@link OmniPod} with the correct ID.
+    */
+   public static OmniPod lookup(int aId){
+      return id2pod.get(aId);
    }
 }

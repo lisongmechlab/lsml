@@ -55,6 +55,9 @@ public class ItemConverter implements Converter{
    @Override
    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
       String id = aReader.getAttribute("id");
+      if( id == null || id.isEmpty() ){
+         id = aReader.getValue();
+      }
       if( id != null && !id.isEmpty() ){
          int mwoidx = Integer.parseInt(id);
          return ItemDB.lookup(mwoidx);

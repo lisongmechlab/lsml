@@ -33,7 +33,7 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ConfiguredComponentConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
-import lisong_mechlab.model.loadout.converters.LoadoutStandardConverter;
+import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -64,7 +64,7 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
       stream.registerConverter(new ChassiConverter());
       stream.registerConverter(new ItemConverter());
       stream.registerConverter(new ConfiguredComponentConverter(aXBar, null));
-      stream.registerConverter(new LoadoutStandardConverter(aXBar));
+      stream.registerConverter(new LoadoutConverter(aXBar));
       stream.registerConverter(new UpgradeConverter());
       stream.registerConverter(new UpgradesConverter());
       stream.addImmutableType(Item.class);
