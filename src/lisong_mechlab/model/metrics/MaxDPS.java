@@ -31,7 +31,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class MaxDPS extends RangeMetric{
-   public MaxDPS(LoadoutBase<?, ?> aLoadout){
+   public MaxDPS(LoadoutBase<?> aLoadout){
       super(aLoadout);
    }
 

@@ -53,7 +53,7 @@ public class AddToGarageOperationTest{
    public void testAddLoadoutTwice() throws Exception{
       // Setup
       LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-      List<LoadoutBase<?, ?>> loadouts = new ArrayList<>();
+      List<LoadoutBase<?>> loadouts = new ArrayList<>();
       loadouts.add(loadout);
       Mockito.when(garage.getMechs()).thenReturn(loadouts);
 

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 
@@ -230,6 +231,9 @@ public abstract class ChassisBase{
    public boolean isAllowed(Item aItem){
       if( aItem.isClan() != clan ){
          return false;
+      }
+      else if( aItem instanceof Internal ){
+         return false; // Early exit here
       }
       else if( aItem instanceof JumpJet ){
          JumpJet jj = (JumpJet)aItem;

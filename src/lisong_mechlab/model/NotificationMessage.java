@@ -33,7 +33,7 @@ public class NotificationMessage implements Message{
       NOTICE, WARNING, ERROR
    }
 
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
    public final String             message;
    public final Severity           severity;
 
@@ -73,14 +73,14 @@ public class NotificationMessage implements Message{
     * @param aMessage
     *           The human readable message.
     */
-   public NotificationMessage(Severity aSeverity, LoadoutBase<?, ?> aLoadout, String aMessage){
+   public NotificationMessage(Severity aSeverity, LoadoutBase<?> aLoadout, String aMessage){
       loadout = aLoadout;
       severity = aSeverity;
       message = aMessage;
    }
 
    @Override
-   public boolean isForMe(LoadoutBase<?,?> aLoadout){
+   public boolean isForMe(LoadoutBase<?> aLoadout){
       return loadout == aLoadout;
    }
 

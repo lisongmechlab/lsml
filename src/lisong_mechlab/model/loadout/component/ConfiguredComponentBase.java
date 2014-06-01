@@ -88,7 +88,7 @@ public abstract class ConfiguredComponentBase{
       }
 
       @Override
-      public boolean isForMe(LoadoutBase<?, ?> aLoadout){
+      public boolean isForMe(LoadoutBase<?> aLoadout){
          return aLoadout.getComponents().contains(component);
       }
 
@@ -242,22 +242,26 @@ public abstract class ConfiguredComponentBase{
 
    /**
     * @param aArmorSide
-    *           The {@link ArmorSide} to query. Querying the wrong side results in a {@link NullPointerException}.
+    *           The {@link ArmorSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}.
     * @return The current amount of armor on the given side of this component.
     */
    public int getArmor(ArmorSide aArmorSide){
+      if( !armor.containsKey(aArmorSide) )
+         throw new IllegalArgumentException("No such armor side!");
       return armor.get(aArmorSide);
    }
 
    /**
     * Will return the number of armor points that can be set on the component. Taking both armor sides into account and
-    * respecting the max armor limit. Does not take free tonnage into account.
+    * respecting the max armor limit. Does not take free tonnage into account.Querying the wrong side results in a
+    * {@link IllegalArgumentException}.
     * 
     * @param aArmorSide
     *           The {@link ArmorSide} to get the max free armor for.
     * @return The number of armor points that can be maximally set (ignoring tonnage).
     */
    public int getArmorMax(ArmorSide aArmorSide){
+
       switch( aArmorSide ){
          case BACK:
             return getInternalComponent().getArmorMax() - getArmor(ArmorSide.FRONT);
@@ -265,6 +269,8 @@ public abstract class ConfiguredComponentBase{
             return getInternalComponent().getArmorMax() - getArmor(ArmorSide.BACK);
          default:
          case ONLY:
+            if( !armor.containsKey(aArmorSide) )
+               throw new IllegalArgumentException("No such armor side!");
             return getInternalComponent().getArmorMax();
       }
    }
@@ -281,12 +287,16 @@ public abstract class ConfiguredComponentBase{
    }
 
    /**
-    * @return The number of heat sinks inside the engine (if any) equipped on this component.
+    * @return The number of heat sinks inside the engine (if any) equipped on this component. Does not count the (up to)
+    *         10 included in the engine itself, rather it only counts the external heat sink slots.
     */
-   @Deprecated
    public int getEngineHeatsinks(){
       int ans = 0;
       for(Item i : items){
+         if( i instanceof HeatSink )
+            ans++;
+      }
+      for(Item i : getInternalComponent().getFixedItems()){
          if( i instanceof HeatSink )
             ans++;
       }
@@ -296,9 +306,13 @@ public abstract class ConfiguredComponentBase{
    /**
     * @return The maximal number of heat sinks that the engine (if any) equipped on this component can sustain.
     */
-   @Deprecated
    public int getEngineHeatsinksMax(){
       for(Item item : items){
+         if( item instanceof Engine ){
+            return ((Engine)item).getNumHeatsinkSlots();
+         }
+      }
+      for(Item item : getInternalComponent().getFixedItems()){
          if( item instanceof Engine ){
             return ((Engine)item).getNumHeatsinkSlots();
          }
@@ -319,6 +333,9 @@ public abstract class ConfiguredComponentBase{
    public double getItemMass(){
       double ans = 0;
       for(Item item : items){
+         ans += item.getMass();
+      }
+      for(Item item : getItemsFixed()){
          ans += item.getMass();
       }
       return ans;
@@ -354,7 +371,7 @@ public abstract class ConfiguredComponentBase{
     */
    public int getItemsOfHardpointType(HardPointType aHardpointType){
       int hardpoints = 0;
-      for(Item it : items){
+      for(Item it : getItemsAll()){
          if( it.getHardpointType() == aHardpointType ){
             hardpoints++;
          }
@@ -376,7 +393,7 @@ public abstract class ConfiguredComponentBase{
     *         armor or structure.
     */
    public int getSlotsUsed(){
-      int crits = 0;
+      int crits = getInternalComponent().getFixedItemSlots();
       int engineHsLeft = getEngineHeatsinksMax();
       for(Item item : items){
          if( item instanceof HeatSink && engineHsLeft > 0 ){
@@ -399,6 +416,8 @@ public abstract class ConfiguredComponentBase{
    }
 
    void setArmor(ArmorSide aArmorSide, int aAmount, boolean aAllowAutomaticArmor){
+      if( !armor.containsKey(aArmorSide) )
+         throw new IllegalArgumentException("No such armor side!");
       armor.put(aArmorSide, aAmount);
       autoArmor = aAllowAutomaticArmor;
    }

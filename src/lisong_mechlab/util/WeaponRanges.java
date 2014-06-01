@@ -65,7 +65,7 @@ public class WeaponRanges{
       return ans.toArray(new Double[ans.size()]);
    }
 
-   static public Double[] getRanges(LoadoutBase<?,?> aLoadout){
+   static public Double[] getRanges(LoadoutBase<?> aLoadout){
       List<Weapon> weapons = new ArrayList<>();
       for(Item item : aLoadout.getAllItems()){
          if( item instanceof Weapon ){

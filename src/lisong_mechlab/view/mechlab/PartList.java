@@ -72,7 +72,7 @@ public class PartList extends JList<Item>{
    private final DecimalFormat                 df2              = new DecimalFormat("###.##");
    private final ItemEffectiveHP               effectiveHP;
    private final CriticalStrikeProbability     criticalStrikeProbability;
-   private final LoadoutBase<?, ?>             loadout;
+   private final LoadoutBase<?>             loadout;
 
    private final ComponentDestructionSimulator cds;
 
@@ -350,7 +350,7 @@ public class PartList extends JList<Item>{
       }
    }
 
-   PartList(OperationStack aStack, final LoadoutBase<?, ?> aLoadout, final ConfiguredComponentBase aComponent, final MessageXBar aXBar, DynamicSlotDistributor aSlotDistributor){
+   PartList(OperationStack aStack, final LoadoutBase<?> aLoadout, final ConfiguredComponentBase aComponent, final MessageXBar aXBar, DynamicSlotDistributor aSlotDistributor){
       slotDistributor = aSlotDistributor;
       opStack = aStack;
       component = aComponent;
@@ -436,7 +436,7 @@ public class PartList extends JList<Item>{
       return component;
    }
    
-   public LoadoutBase<?, ?> getLoadout(){
+   public LoadoutBase<?> getLoadout(){
       return loadout;
    }
 

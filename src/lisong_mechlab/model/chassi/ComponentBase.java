@@ -19,16 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.util.ArrayUtils;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -37,15 +31,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Li Song
  */
-public class ComponentBase{
+public abstract class ComponentBase{
    @XStreamAsAttribute
-   private final int        criticalslots;
+   private final int        slots;
    @XStreamAsAttribute
    private final double     hitpoints;
    @XStreamAsAttribute
    private final Location   location;
-   @XStreamAsAttribute
-   private final int        maxarmor;
    private final List<Item> fixedItems;
 
    /**
@@ -60,50 +52,17 @@ public class ComponentBase{
     * @param aFixedItems
     *           An array of fixed {@link Item}s for this component.
     */
-   public ComponentBase(int aCriticalSlots, double aHitPoints, Location aLocation, Item[] aFixedItems){
-      criticalslots = aCriticalSlots;
+   public ComponentBase(int aCriticalSlots, double aHitPoints, Location aLocation, List<Item> aFixedItems){
+      slots = aCriticalSlots;
       hitpoints = aHitPoints;
       location = aLocation;
-      maxarmor = calculateMaxArmor(aLocation, aHitPoints);
-      fixedItems = Collections.unmodifiableList(Arrays.asList(aFixedItems));
-   }
-
-   @Override
-   public int hashCode(){
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + criticalslots;
-      long temp;
-      temp = Double.doubleToLongBits(hitpoints);
-      result = prime * result + (int)(temp ^ (temp >>> 32));
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj){
-      if( this == obj )
-         return true;
-      if( obj == null )
-         return false;
-      if( !(obj instanceof ComponentBase) )
-         return false;
-      ComponentBase other = (ComponentBase)obj;
-      if( criticalslots != other.criticalslots )
-         return false;
-      if( hitpoints != other.hitpoints )
-         return false;
-      if( location != other.location )
-         return false;
-      else if( !ArrayUtils.equalsUnordered(fixedItems, other.fixedItems) )
-         return false;
-      return true;
+      fixedItems = Collections.unmodifiableList(aFixedItems);
    }
 
    /**
     * @return An unmodifiable collection of all {@link Item}s this {@link ComponentOmniMech} has.
     */
-   public Collection<Item> getFixedItems(){
+   public List<Item> getFixedItems(){
       return fixedItems;
    }
 
@@ -122,9 +81,9 @@ public class ComponentBase{
     * @return The total number of critical slots in this location.
     */
    public int getSlots(){
-      return criticalslots;
+      return slots;
    }
-
+   
    /**
     * @return The {@link Location} this component is mounted at.
     */
@@ -143,9 +102,14 @@ public class ComponentBase{
     * @return The maximum amount of armor on this component.
     */
    public int getArmorMax(){
-      return maxarmor;
+      return calculateMaxArmor(getLocation(), hitpoints);
    }
 
+   @Override
+   public String toString(){
+      return getLocation().toString();
+   }
+   
    /**
     * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
     * only useful if {@link ChassisBase#isAllowed(Item)} returns true.
@@ -154,18 +118,7 @@ public class ComponentBase{
     *           The {@link Item} to check.
     * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
     */
-   public boolean isAllowed(Item aItem){
-      if( aItem instanceof Internal ){
-         return false; // Can't add internals!
-      }
-      else if( aItem instanceof Engine ){
-         return getLocation() == Location.CenterTorso;
-      }
-      else if( aItem == ItemDB.CASE ){
-         return (getLocation() == Location.LeftTorso || getLocation() == Location.RightTorso);
-      }
-      return true;
-   }
+   public abstract boolean isAllowed(Item aItem);
 
    private static int calculateMaxArmor(Location aLocation, double aHP){
       return (aLocation == Location.Head) ? 18 : (int)(aHP * 2);

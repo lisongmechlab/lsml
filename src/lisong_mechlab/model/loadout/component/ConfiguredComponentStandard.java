@@ -20,9 +20,7 @@
 package lisong_mechlab.model.loadout.component;
 
 import java.util.Collection;
-import java.util.List;
 
-import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
@@ -37,7 +35,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  */
 public class ConfiguredComponentStandard extends ConfiguredComponentBase{
 
-   public ConfiguredComponentStandard(ComponentBase aInternalPart, boolean aAutoArmor){
+   public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aAutoArmor){
       super(aInternalPart, aAutoArmor);
    }
    
@@ -47,13 +45,10 @@ public class ConfiguredComponentStandard extends ConfiguredComponentBase{
 
    @Override
    public boolean canAddItem(Item aItem){
-      if( !super.canAddItem(aItem) )
-         return false;
-
       if( aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax() ){
          return true;
       }
-      return true;
+      return super.canAddItem(aItem);
    }
 
    @Override

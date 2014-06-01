@@ -42,7 +42,7 @@ public class OpSetGuidanceType extends OpUpgradeBase{
    private final GuidanceUpgrade   newValue;
    private boolean                 operationReady = false;
    private final Upgrades          upgrades;
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
 
    /**
     * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
@@ -71,7 +71,7 @@ public class OpSetGuidanceType extends OpUpgradeBase{
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
-   public OpSetGuidanceType(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, GuidanceUpgrade aGuidanceUpgrade){
+   public OpSetGuidanceType(MessageXBar anXBar, LoadoutBase<?> aLoadout, GuidanceUpgrade aGuidanceUpgrade){
       super(anXBar, aGuidanceUpgrade.getName());
       upgrades = aLoadout.getUpgrades();
       loadout = aLoadout;

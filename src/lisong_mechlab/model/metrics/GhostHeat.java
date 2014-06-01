@@ -36,9 +36,9 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  */
 public class GhostHeat implements Metric{
    private static final double     HEAT_SCALE[] = {0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00, 3.00, 5.00};
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
 
-   public GhostHeat(LoadoutBase<?, ?> aLoadout){
+   public GhostHeat(LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 

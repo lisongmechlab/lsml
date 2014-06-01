@@ -22,6 +22,7 @@ package lisong_mechlab.model.loadout;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -47,7 +48,7 @@ public class RenameOperationTest{
    @Test
    public void testApply(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HBK-4J"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"), xBar);
       assertEquals("HBK-4J", loadout.getName());
 
       // Execute
@@ -66,7 +67,7 @@ public class RenameOperationTest{
    @Test
    public void testApply_nullXbar(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HBK-4J"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"), xBar);
       assertEquals("HBK-4J", loadout.getName());
 
       // Execute

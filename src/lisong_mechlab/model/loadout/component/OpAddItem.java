@@ -42,7 +42,7 @@ public class OpAddItem extends OpItemBase{
     * @param aItem
     *           The {@link Item} to add.
     */
-   public OpAddItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
+   public OpAddItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
       super(aXBar, aLoadout, aComponent, aItem);
    }
 

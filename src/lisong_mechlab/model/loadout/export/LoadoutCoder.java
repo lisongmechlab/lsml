@@ -39,7 +39,7 @@ public interface LoadoutCoder{
     * @throws EncodingException
     *            If the bit stream couldn't be written.
     */
-   public byte[] encode(LoadoutBase<?, ?> aLoadout) throws EncodingException;
+   public byte[] encode(LoadoutBase<?> aLoadout) throws EncodingException;
 
    /**
     * Decodes a given bit stream into a {@link LoadoutStandard}.

@@ -45,7 +45,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpDistributeArmor extends CompositeOperation{
    private final Map<Location, Integer> armors = new HashMap<>(Location.values().length);
-   private final LoadoutBase<?, ?>      loadout;
+   private final LoadoutBase<?>      loadout;
 
    /**
     * @param aLoadout
@@ -53,7 +53,7 @@ public class OpDistributeArmor extends CompositeOperation{
     * @param aFrontRearRatio
     * @param aXBar
     */
-   public OpDistributeArmor(LoadoutBase<?, ?> aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
+   public OpDistributeArmor(LoadoutBase<?> aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
       super("distribute armor");
 
       loadout = aLoadout;
@@ -81,7 +81,7 @@ public class OpDistributeArmor extends CompositeOperation{
       return loadout == operation.loadout;
    }
 
-   private void distribute(final LoadoutBase<?, ?> aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities){
+   private void distribute(final LoadoutBase<?> aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities){
       int prioSum = 0;
       for(double prio : aPriorities.values()){
          prioSum += prio;
@@ -136,7 +136,7 @@ public class OpDistributeArmor extends CompositeOperation{
       }
    }
 
-   private int calculateArmorToDistribute(LoadoutBase<?, ?> aLoadout, int aPointsOfArmor){
+   private int calculateArmorToDistribute(LoadoutBase<?> aLoadout, int aPointsOfArmor){
       final ArmorUpgrade armorUpgrade = aLoadout.getUpgrades().getArmor();
       final double armorPerTon = armorUpgrade.getArmorPerTon();
       final double armorTons = aPointsOfArmor / armorPerTon;
@@ -174,7 +174,7 @@ public class OpDistributeArmor extends CompositeOperation{
       armors.put(aPart.getInternalComponent().getLocation(), armor);
    }
 
-   private void applyArmors(LoadoutBase<?, ?> aLoadout, double aFrontRearRatio, MessageXBar aXBar){
+   private void applyArmors(LoadoutBase<?> aLoadout, double aFrontRearRatio, MessageXBar aXBar){
       for(Location part : Location.values()){
          final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
 
@@ -214,7 +214,7 @@ public class OpDistributeArmor extends CompositeOperation{
       }
    }
 
-   private Map<Location, Integer> prioritize(LoadoutBase<?, ?> aLoadout){
+   private Map<Location, Integer> prioritize(LoadoutBase<?> aLoadout){
       Map<Location, Integer> ans = new HashMap<>(Location.values().length);
 
       for(Location part : Location.values()){

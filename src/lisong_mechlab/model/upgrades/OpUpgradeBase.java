@@ -39,7 +39,7 @@ abstract class OpUpgradeBase extends CompositeOperation{
       xBar = anXBar;
    }
 
-   protected void verifyLoadoutInvariant(LoadoutBase<?, ?> aLoadout){
+   protected void verifyLoadoutInvariant(LoadoutBase<?> aLoadout){
       if( aLoadout == null )
          return;
       if( aLoadout.getFreeMass() < 0 ){

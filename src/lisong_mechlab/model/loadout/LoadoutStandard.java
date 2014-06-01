@@ -23,7 +23,6 @@ import java.io.File;
 
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
-import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
@@ -50,7 +49,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * 
  * @author Li Song
  */
-public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard, ComponentStandard>{
+public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
    private final UpgradesMutable upgrades;
 
    public static LoadoutStandard load(File aFile, MessageXBar aXBar){

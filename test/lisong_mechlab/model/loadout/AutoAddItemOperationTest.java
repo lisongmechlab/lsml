@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
@@ -90,7 +91,7 @@ public class AutoAddItemOperationTest{
    @Test
    public void testMoveItem_Bug1(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("BNC-3M"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("BNC-3M"), xBar);
       stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
@@ -131,7 +132,7 @@ public class AutoAddItemOperationTest{
    @Test
    public void testMoveItem_SwapItems(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("JR7-O"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("JR7-O"), xBar);
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 200")));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso), ItemDB.lookup("LRM 10")));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("LRM 10")));
@@ -173,7 +174,7 @@ public class AutoAddItemOperationTest{
       Item gaussRifle = null;
       try{
          // Setup
-         loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
+         loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), xBar);
          stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
 
          // 2 slots in either leg
@@ -213,7 +214,7 @@ public class AutoAddItemOperationTest{
    @Test
    public void testMoveItem(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), xBar);
       stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
@@ -242,7 +243,7 @@ public class AutoAddItemOperationTest{
       // Setup
       Item ac20 = ItemDB.lookup("AC/20");
       Item ac10 = ItemDB.lookup("AC/10");
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("CTF-IM"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("CTF-IM"), xBar);
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ac10));
 
       // Execute
@@ -268,7 +269,7 @@ public class AutoAddItemOperationTest{
     */
    @Test
    public void testAddItem(){
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), xBar);
       stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
 
       Item mlas = ItemDB.lookup("MEDIUM LASER");
@@ -315,7 +316,7 @@ public class AutoAddItemOperationTest{
     */
    @Test
    public void testAddItem_engineHS(){
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), xBar);
 
       Item std300 = ItemDB.lookup("STD ENGINE 300");
       stack.pushAndApply(new OpAutoAddItem(loadout, xBar, std300));

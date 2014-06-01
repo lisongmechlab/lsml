@@ -46,7 +46,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class ItemOperationTest{
 
    class CutClass extends OpItemBase{
-      public CutClass(MessageXBar anXBar, LoadoutBase<ConfiguredComponentBase, ComponentStandard> aLoadout, ConfiguredComponentBase aLoadoutPart){
+      public CutClass(MessageXBar anXBar, LoadoutBase<ConfiguredComponentBase> aLoadout, ConfiguredComponentBase aLoadoutPart){
          super(anXBar, aLoadout, aLoadoutPart);
       }
 
@@ -58,13 +58,13 @@ public class ItemOperationTest{
    }
 
    @Mock
-   private LoadoutBase<ConfiguredComponentBase, ComponentStandard> loadout;
+   private LoadoutBase<ConfiguredComponentBase> loadout;
    @Mock
-   private ConfiguredComponentBase                                 loadoutPart;
+   private ConfiguredComponentBase              loadoutPart;
    @Mock
-   private MessageXBar                                         xBar;
+   private MessageXBar                          xBar;
 
-   private CutClass                                            cut;
+   private CutClass                             cut;
 
    @Before
    public void setup(){

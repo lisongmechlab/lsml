@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -157,6 +158,14 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
       for(Location location : Location.values()){
          Mockito.when(components[location.ordinal()].isAllowed(item)).thenReturn(false);
       }
+      assertFalse(cut.isAllowed(item));     
+   }
+   
+   @Test
+   public final void testIsAllowed_CASE(){
+      Item item = ItemDB.CASE;
+      
+      ChassisOmniMech cut = makeDefaultCUT();
       assertFalse(cut.isAllowed(item));     
    }
 }

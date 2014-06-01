@@ -28,8 +28,6 @@ import java.util.List;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
-import lisong_mechlab.model.chassi.ComponentBase;
-import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
@@ -50,23 +48,21 @@ import lisong_mechlab.util.MessageXBar;
  * @author Li Song
  * @param <T>
  *           The type of the {@link ConfiguredComponentBase} in this loadout.
- * @param <U>
- *           The type of {@link ComponentStandard} in T.
  */
-public abstract class LoadoutBase<T extends ConfiguredComponentBase, U extends ComponentBase> {
+public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    private String             name;
    private final T[]          components;
    private final ChassisBase  chassisBase;
    private final Efficiencies efficiencies;
 
-   protected LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, ChassisBase aChassisBase, MessageXBar aXBar){
+   protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase, MessageXBar aXBar){
       name = aChassisBase.getNameShort();
       chassisBase = aChassisBase;
       efficiencies = new Efficiencies(aXBar);
       components = aFactory.defaultComponents(chassisBase);
    }
 
-   protected LoadoutBase(ComponentBuilder.Factory<T, U> aFactory, LoadoutBase<T, U> aLoadoutBase){
+   protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, LoadoutBase<T> aLoadoutBase){
       name = aLoadoutBase.name;
       chassisBase = aLoadoutBase.chassisBase;
       efficiencies = new Efficiencies(aLoadoutBase.efficiencies);
@@ -81,7 +77,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase, U extends C
          return false;
       @SuppressWarnings("unchecked")
       // I just checked it above...
-      LoadoutBase<T, U> that = (LoadoutBase<T, U>)obj;
+      LoadoutBase<T> that = (LoadoutBase<T>)obj;
       if( !chassisBase.equals(that.chassisBase) )
          return false;
       if( !efficiencies.equals(that.efficiencies) )
@@ -489,5 +485,5 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase, U extends C
     *           A {@link MessageXBar} to send messages on.
     * @return A deep copy of <code>this</code>.
     */
-   public abstract LoadoutBase<?, ?> clone(MessageXBar aXBar);
+   public abstract LoadoutBase<?> clone(MessageXBar aXBar);
 }

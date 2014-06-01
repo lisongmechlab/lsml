@@ -257,7 +257,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
                ChassisBase chassi = (ChassisBase)aValue;
-               LoadoutBase<?, ?> stock;
+               LoadoutBase<?> stock;
                if(aValue instanceof ChassisStandard){
                   stock = new LoadoutStandard((ChassisStandard)chassi, null);
                   OperationStack stack = new OperationStack(0);

@@ -31,11 +31,11 @@ public class LoadoutMessage implements MessageXBar.Message{
       RENAME, CREATE, UPDATE
    }
 
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
 
    public final Type               type;
 
-   public LoadoutMessage(LoadoutBase<?, ?> aLoadout, Type aType){
+   public LoadoutMessage(LoadoutBase<?> aLoadout, Type aType){
       loadout = aLoadout;
       type = aType;
    }
@@ -75,7 +75,7 @@ public class LoadoutMessage implements MessageXBar.Message{
    }
 
    @Override
-   public boolean isForMe(LoadoutBase<?, ?> aLoadout){
+   public boolean isForMe(LoadoutBase<?> aLoadout){
       return loadout == aLoadout;
    }
 }

@@ -52,7 +52,7 @@ public class Efficiencies{
       public final Type          type;
 
       @Override
-      public boolean isForMe(LoadoutBase<?,?> aLoadout){
+      public boolean isForMe(LoadoutBase<?> aLoadout){
          return aLoadout.getEfficiencies() == efficiencies;
       }
 

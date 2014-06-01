@@ -28,9 +28,9 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * @author Li Song
  */
 public class JumpDistance implements Metric{
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
 
-   public JumpDistance(final LoadoutBase<?, ?> aLoadout){
+   public JumpDistance(final LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 

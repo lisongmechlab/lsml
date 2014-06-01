@@ -45,7 +45,7 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class LoadStockAction extends AbstractAction{
    private static final long       serialVersionUID = 4350731510583942480L;
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
    private final OperationStack    stack;
    private final MessageXBar       xBar;
    private final Component         component;
@@ -62,7 +62,7 @@ public class LoadStockAction extends AbstractAction{
     * @param aComponent
     *           The {@link Component} on which any dialogs will be centered.
     */
-   public LoadStockAction(LoadoutBase<?, ?> aLoadout, OperationStack aStack, MessageXBar aXBar, Component aComponent){
+   public LoadStockAction(LoadoutBase<?> aLoadout, OperationStack aStack, MessageXBar aXBar, Component aComponent){
       super(getActionName(aLoadout.getChassis()));
       loadout = aLoadout;
       stack = aStack;

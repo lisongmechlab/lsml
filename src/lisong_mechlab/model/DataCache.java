@@ -639,28 +639,28 @@ public class DataCache{
       aMdfMovement.MaxArmRotationPitch = 30;
       
       ComponentOmniMech[] components = new ComponentOmniMech[Location.values().length];
-      components[Location.Head.ordinal()] = new ComponentOmniMech(6, 15, Location.Head,  new Item[]{  findItem("@mdf_LifeSupport", aInternalsList), 
+      components[Location.Head.ordinal()] = new ComponentOmniMech(Location.Head, 6, 15,  Arrays.asList(  findItem("@mdf_LifeSupport", aInternalsList), 
                                                                                                       findItem("@mdf_Sensors", aInternalsList),
-                                                                                                      findItem("@mdf_Cockpit", aInternalsList)}, null, 0, 1);
-      components[Location.LeftArm.ordinal()] = new ComponentOmniMech(12, 24, Location.LeftArm, new Item[]{findItem("@mdf_Shoulder", aInternalsList),
+                                                                                                      findItem("@mdf_Cockpit", aInternalsList)), null, 0, 1);
+      components[Location.LeftArm.ordinal()] = new ComponentOmniMech(Location.LeftArm, 12, 24, Arrays.asList(findItem("@mdf_Shoulder", aInternalsList),
                                                                                                           findItem("@mdf_UAA", aInternalsList),
                                                                                                           findItem("@mdf_LAA", aInternalsList),
-                                                                                                          findItem("@mdf_HA", aInternalsList)}, null, 2, 1);
-      components[Location.RightArm.ordinal()] = new ComponentOmniMech(12, 24, Location.RightArm, new Item[]{findItem("@mdf_Shoulder", aInternalsList),
+                                                                                                          findItem("@mdf_HA", aInternalsList)), null, 2, 1);
+      components[Location.RightArm.ordinal()] = new ComponentOmniMech(Location.RightArm, 12, 24, Arrays.asList(findItem("@mdf_Shoulder", aInternalsList),
                                                                                                             findItem("@mdf_UAA", aInternalsList),
                                                                                                             findItem("@mdf_LAA", aInternalsList),
-                                                                                                            findItem("@mdf_HA", aInternalsList)}, null, 2, 1);
-      components[Location.LeftTorso.ordinal()] = new ComponentOmniMech(12, 32, Location.LeftTorso, new Item[]{}, null, 1, 2);
-      components[Location.RightTorso.ordinal()] = new ComponentOmniMech(12, 32, Location.RightTorso, new Item[]{}, null, 1, 2);
-      components[Location.CenterTorso.ordinal()] = new ComponentOmniMech(12, 46, Location.CenterTorso, new Item[]{findItem("@mdf_Gyro", aInternalsList)}, null, 1, 0);
-      components[Location.LeftLeg.ordinal()] = new ComponentOmniMech(6, 32, Location.LeftLeg, new Item[]{findItem("@mdf_Hip", aInternalsList),
+                                                                                                            findItem("@mdf_HA", aInternalsList)), null, 2, 1);
+      components[Location.LeftTorso.ordinal()] = new ComponentOmniMech(Location.LeftTorso, 12, 32, Arrays.asList(new Item[]{}), null, 1, 2);
+      components[Location.RightTorso.ordinal()] = new ComponentOmniMech(Location.RightTorso, 12, 32, Arrays.asList(new Item[]{}), null, 1, 2);
+      components[Location.CenterTorso.ordinal()] = new ComponentOmniMech(Location.CenterTorso, 12, 46, Arrays.asList(findItem("@mdf_Gyro", aInternalsList)), null, 1, 0);
+      components[Location.LeftLeg.ordinal()] = new ComponentOmniMech(Location.LeftLeg, 6, 32, Arrays.asList(findItem("@mdf_Hip", aInternalsList),
                                                                                                          findItem("@mdf_ULA", aInternalsList),
                                                                                                          findItem("@mdf_LLA", aInternalsList),
-                                                                                                         findItem("@mdf_FA", aInternalsList)}, null, 0, 0);
-      components[Location.RightLeg.ordinal()] = new ComponentOmniMech(6, 32, Location.RightLeg, new Item[]{findItem("@mdf_Hip", aInternalsList),
+                                                                                                         findItem("@mdf_FA", aInternalsList)), null, 0, 0);
+      components[Location.RightLeg.ordinal()] = new ComponentOmniMech(Location.RightLeg, 6, 32, Arrays.asList(findItem("@mdf_Hip", aInternalsList),
                                                                                                            findItem("@mdf_ULA", aInternalsList),
                                                                                                            findItem("@mdf_LLA", aInternalsList),
-                                                                                                           findItem("@mdf_FA", aInternalsList)}, null, 0, 0);
+                                                                                                           findItem("@mdf_FA", aInternalsList)), null, 0, 0);
       
       ans.add(new ChassisOmniMech(40000, "TBW-PRIME", "TIMBERWOLF", "TIMBERWOLF PRIME", "TBW-PRIME", 75, ChassisVariant.NORMAL, -1,
                                   new BaseMovementProfile(aMdfMovement), true, components , xl375, clanes, clanff, clandhs));

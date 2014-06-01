@@ -37,7 +37,7 @@ public class OpSetArmor extends Operation{
    private int                       oldAmount = -1;
    private boolean                   oldManual;
    private final MessageXBar         xBar;
-   private final LoadoutBase<?, ?>   loadout;
+   private final LoadoutBase<?>   loadout;
    private final ConfiguredComponentBase loadoutPart;
    private final boolean             manual;
 
@@ -60,7 +60,7 @@ public class OpSetArmor extends Operation{
     *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
     *            support the armor.
     */
-   public OpSetArmor(MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount,
+   public OpSetArmor(MessageXBar anXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, ArmorSide anArmorSide, int anArmorAmount,
                      boolean aManualSet){
       xBar = anXBar;
       loadout = aLoadout;

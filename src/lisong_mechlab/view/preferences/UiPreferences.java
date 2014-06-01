@@ -41,7 +41,7 @@ public class UiPreferences{
       }
 
       @Override
-      public boolean isForMe(LoadoutBase<?,?> aLoadout){
+      public boolean isForMe(LoadoutBase<?> aLoadout){
          return false;
       }
 

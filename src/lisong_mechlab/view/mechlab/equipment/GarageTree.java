@@ -92,7 +92,7 @@ public class GarageTree extends JTree{
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
                Object clicked = getClickedObject(e);
                if( clicked instanceof ChassisBase ){
-                  LoadoutBase<?, ?> loadout = null;
+                  LoadoutBase<?> loadout = null;
                   if( clicked instanceof ChassisStandard ){
                      ChassisStandard chassi = (ChassisStandard)clicked;
                      loadout = new LoadoutStandard(chassi, xBar);

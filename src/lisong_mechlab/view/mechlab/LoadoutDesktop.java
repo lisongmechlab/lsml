@@ -73,7 +73,7 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
     * @param aLoadout
     *           The {@link LoadoutStandard} to create the frame for.
     */
-   public void openLoadout(LoadoutBase<?, ?> aLoadout){
+   public void openLoadout(LoadoutBase<?> aLoadout){
       assert (SwingUtilities.isEventDispatchThread());
 
       LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar);

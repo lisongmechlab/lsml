@@ -28,10 +28,10 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class HeatCapacity implements Metric{
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
    private static final double     MECH_BASE_HEAT_CAPACITY = 30;
 
-   public HeatCapacity(final LoadoutBase<?, ?> aLoadout){
+   public HeatCapacity(final LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 

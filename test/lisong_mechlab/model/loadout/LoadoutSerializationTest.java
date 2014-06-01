@@ -31,9 +31,10 @@ import java.util.List;
 import junitparams.JUnitParamsRunner;
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.chassi.ChassisStandard;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
@@ -68,11 +69,11 @@ public class LoadoutSerializationTest{
 
    @SuppressWarnings("unused")
    private Object[] allChassis(){
-      List<ChassisStandard> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-      chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-      chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-      chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-      return chassii.toArray();
+      List<ChassisBase> chassis = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      chassis.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+      chassis.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+      chassis.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
+      return chassis.toArray();
    }
 
    /**
@@ -80,7 +81,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testEmptyLoadout(){
-      ChassisStandard chassi = ChassisDB.lookup("CPLT-K2");
+      ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("CPLT-K2");
       LoadoutStandard cut = new LoadoutStandard(chassi, xBar);
 
       assertEquals(0, cut.getArmor());
@@ -111,7 +112,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testStockLoadoutAS7D() throws Exception{
-      ChassisStandard chassi = ChassisDB.lookup("AS7-D");
+      ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("AS7-D");
       LoadoutStandard cut = new LoadoutStandard("AS7-D", xBar);
 
       assertEquals(608, cut.getArmor());
@@ -258,7 +259,7 @@ public class LoadoutSerializationTest{
     */
    @Test
    public void testStockLoadoutSDR5V() throws Exception{
-      ChassisStandard chassi = ChassisDB.lookup("SDR-5V");
+      ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("SDR-5V");
       LoadoutStandard cut = new LoadoutStandard("SDR-5V", xBar);
 
       assertEquals(112, cut.getArmor());

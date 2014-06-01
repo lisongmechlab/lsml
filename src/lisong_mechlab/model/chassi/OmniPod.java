@@ -149,4 +149,12 @@ public class OmniPod{
       }
       return ans;
    }
+
+   /**
+    * @return <code>true</code> if this {@link OmniPod} has missile bay doors.
+    */
+   public boolean hasMissileBayDoors(){
+      // TODO Auto-generated method stub FIXME
+      return true;
+   }
 }

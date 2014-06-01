@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
@@ -66,7 +67,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_Distribute(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
 
       // Execute (10 tons of armor)
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 32 * 10, 1.0, xBar);
@@ -75,8 +78,8 @@ public class DistributeArmorOperationTest{
       // Verify
       assertEquals(9.0 + 10, loadout.getMass(), 0.0);
       assertEquals(320, loadout.getArmor());
-      Mockito.verify(xBar, Mockito.atLeastOnce()).post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.CenterTorso), Type.ArmorChanged,
-                                                                                       true));
+      Mockito.verify(xBar, Mockito.atLeastOnce()).post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.CenterTorso),
+                                                                                           Type.ArmorChanged, true));
    }
 
    /**
@@ -85,7 +88,7 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_CT_Priority(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar);
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 110, 1.0, xBar);
@@ -101,7 +104,7 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_Link_Priority(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar);
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("AC/20")));
 
       // Execute
@@ -122,7 +125,7 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_NotEnoughTonnage(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("LCT-3M"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("LCT-3M"), xBar);
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("ER PPC")));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso), ItemDB.lookup("STD ENGINE 190")));
 
@@ -170,7 +173,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_RespectManual_TooBigBudget(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 64, true));
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 64, true));
 
@@ -188,7 +193,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_RespectManual_NegativeBudget(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 64, true));
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 64, true));
 
@@ -207,7 +214,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_RespectManual_CorrectTotal(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 70, true));
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 70, true));
 
@@ -229,7 +238,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_RespectManual_DoNotAdd(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 70, true));
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 70, true));
 
@@ -251,7 +262,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_RespectManual_DoNotRemove(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmorSide.ONLY, 70, true));
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightLeg), ArmorSide.ONLY, 70, true));
 
@@ -274,7 +287,9 @@ public class DistributeArmorOperationTest{
    public void testArmorDistributor_FrontBackRatio(){
       // Setup
       final double frontBackRatio = 5.0;
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
 
       // Execute (10 tons of armor)
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 32 * 10, frontBackRatio, xBar);
@@ -298,7 +313,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_EvenHalfNoRoundDown(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
 
       // Execute (10.75 tons of armor)
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 32 * 10 + 16, 1.0, xBar);
@@ -315,7 +332,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_RoundDown(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
 
       // Execute (10.75 tons of armor)
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 32 * 10 + 16 + 8, 1.0, xBar);
@@ -423,7 +442,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_ClearOld(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("CPLT-A1"), xBar); // 65 tons, 6.5 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("CPLT-A1"), xBar); // 65 tons, 6.5
+                                                                                                         // tons
+                                                                                                         // internals
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.LeftArm), ArmorSide.ONLY, 2, false));
       stack.pushAndApply(new OpSetArmor(xBar, loadout, loadout.getComponent(Location.RightArm), ArmorSide.ONLY, 2, false));
 
@@ -442,7 +463,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_ShieldArm(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("BNC-3S"), xBar); // 95 tons, 9.5 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("BNC-3S"), xBar); // 95 tons, 9.5
+                                                                                                        // tons
+                                                                                                        // internals
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.LeftArm), ItemDB.lookup("PPC")));
 
       // Execute (10.0 tons of armor)
@@ -462,7 +485,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_AlreadyMaxArmor_FrontRear(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
       stack.pushAndApply(new OpSetMaxArmor(loadout, xBar, 5.0, false));
 
       // Execute (10.0 tons of armor)
@@ -480,7 +505,9 @@ public class DistributeArmorOperationTest{
    @Test
    public void testArmorDistributor_AlreadyMaxArmor_RearFront(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9 tons internals
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HGN-733C"), xBar); // 90 tons, 9
+                                                                                                          // tons
+                                                                                                          // internals
       stack.pushAndApply(new OpSetMaxArmor(loadout, xBar, 0.2, false));
 
       // Execute (10.0 tons of armor)

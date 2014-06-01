@@ -22,7 +22,7 @@ package lisong_mechlab.model;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredOmniPod;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 
 /**
  * This class handles distribution of dynamic slots from Ferro Fibrous armor and Endo Steel internal structure.
@@ -35,7 +35,7 @@ import lisong_mechlab.model.loadout.component.ConfiguredOmniPod;
  * @author Li Song
  */
 public class DynamicSlotDistributor{
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
 
    /**
     * Creates a new {@link DynamicSlotDistributor} for the given {@link LoadoutBase}.
@@ -43,7 +43,7 @@ public class DynamicSlotDistributor{
     * @param aLoadout
     *           The {@link LoadoutBase} to distribute dynamic slots for.
     */
-   public DynamicSlotDistributor(LoadoutBase<?, ?> aLoadout){
+   public DynamicSlotDistributor(LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 
@@ -55,8 +55,8 @@ public class DynamicSlotDistributor{
     * @return A number of slots to display, can be 0.
     */
    public int getDynamicStructureSlots(ConfiguredComponentBase aComponent){
-      if( aComponent instanceof ConfiguredOmniPod ){
-         ConfiguredOmniPod component = (ConfiguredOmniPod)aComponent;
+      if( aComponent instanceof ConfiguredComponentOmniMech ){
+         ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech)aComponent;
          return component.getInternalComponent().getDynamicStructureSlots();
       }
       
@@ -79,8 +79,8 @@ public class DynamicSlotDistributor{
     * @return A number of slots to display, can be 0.
     */
    public int getDynamicArmorSlots(ConfiguredComponentBase aComponent){
-      if( aComponent instanceof ConfiguredOmniPod ){
-         ConfiguredOmniPod component = (ConfiguredOmniPod)aComponent;
+      if( aComponent instanceof ConfiguredComponentOmniMech ){
+         ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech)aComponent;
          return component.getInternalComponent().getDynamicArmorSlots();
       }
       

@@ -80,14 +80,14 @@ public class MechLabPane extends JSplitPane{
     * @param aLoadout
     *           The {@link LoadoutBase} to create the frame for.
     */
-   public void openLoadout(LoadoutBase<?, ?> aLoadout){
+   public void openLoadout(LoadoutBase<?> aLoadout){
       desktop.openLoadout(aLoadout);
    }
 
    /**
     * @return The currently selected loadout.
     */
-   public LoadoutBase<?, ?> getCurrentLoadout(){
+   public LoadoutBase<?> getCurrentLoadout(){
       if( null != getActiveLoadoutFrame() )
          return getActiveLoadoutFrame().getLoadout();
       return null;

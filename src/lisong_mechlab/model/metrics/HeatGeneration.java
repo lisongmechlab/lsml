@@ -33,9 +33,9 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class HeatGeneration implements Metric{
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
 
-   public HeatGeneration(final LoadoutBase<?, ?> aLoadout){
+   public HeatGeneration(final LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 

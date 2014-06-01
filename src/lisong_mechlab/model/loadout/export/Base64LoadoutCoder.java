@@ -95,7 +95,7 @@ public class Base64LoadoutCoder{
     * @throws EncodingException
     *            Thrown if encoding failed for some reason. Shouldn't happen.
     */
-   public String encodeLSML(LoadoutBase<?, ?> aLoadout) throws EncodingException{
+   public String encodeLSML(LoadoutBase<?> aLoadout) throws EncodingException{
       return LSML_PROTOCOL + String.valueOf(base64.encode(preferredEncoder.encode(aLoadout)));
    }
 
@@ -109,7 +109,7 @@ public class Base64LoadoutCoder{
     *            Thrown if encoding failed for some reason. Shouldn't happen.
     * @throws UnsupportedEncodingException
     */
-   public String encodeHttpTrampoline(LoadoutBase<?, ?> aLoadout) throws EncodingException, UnsupportedEncodingException{
+   public String encodeHttpTrampoline(LoadoutBase<?> aLoadout) throws EncodingException, UnsupportedEncodingException{
       return LSML_TRAMPOLINE + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
    }
 }

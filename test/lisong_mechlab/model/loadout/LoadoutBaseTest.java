@@ -1,23 +1,63 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */  
+//@formatter:on
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.chassi.ChassisBase;
-import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.chassi.ComponentBase;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+/**
+ * Test suite for {@link LoadoutBase}
+ * 
+ * @author Li Song
+ */
 @RunWith(MockitoJUnitRunner.class)
 public abstract class LoadoutBaseTest{
-   protected abstract LoadoutBase<?, ?> makeDefaultCUT();
+   protected abstract LoadoutBase<?> makeDefaultCUT();
+   protected ConfiguredComponentBase[] components;
+   
+   class ComponentFactory implements ComponentBuilder.Factory<ConfiguredComponentBase, ComponentBase>{
+      @Override
+      public ConfiguredComponentBase[] cloneComponents(LoadoutBase<ConfiguredComponentBase, ComponentBase> aLoadout){
+         // TODO Auto-generated method stub
+         return null;
+      }
 
+      @Override
+      public ConfiguredComponentBase[] defaultComponents(ChassisBase aChassis){
+         // TODO Auto-generated method stub
+         return null;
+      }
+      
+   }
+   
+   
    @Test
    public final void testToString() throws Exception{
-      LoadoutBase<?, ?> cut = makeDefaultCUT();
+      LoadoutBase<?> cut = makeDefaultCUT();
       String name = "mamboyeeya";
       cut.rename(name);
 

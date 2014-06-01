@@ -19,8 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import java.util.List;
+
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.Weapon;
 
 /**
  * A component specific to omnimechs.
@@ -53,7 +56,7 @@ public class ComponentOmniMech extends ComponentBase{
     *           An array where each element represents the ordinal of a {@link Location} and how many dynamic armor
     *           slots are fixed at that location.
     */
-   public ComponentOmniMech(int aCriticalSlots, double aHitPoints, Location aLocation, Item[] aFixedItems, OmniPod aFixedOmniPod,
+   public ComponentOmniMech(Location aLocation, int aCriticalSlots, double aHitPoints, List<Item> aFixedItems, OmniPod aFixedOmniPod,
                             int aDynamicStructureSlots, int aDynamicArmorSlots){
       super(aCriticalSlots, aHitPoints, aLocation, aFixedItems);
       fixedOmniPod = aFixedOmniPod;
@@ -78,12 +81,25 @@ public class ComponentOmniMech extends ComponentBase{
 
    @Override
    public boolean isAllowed(Item aItem){
-      // Case not allowed on clan.
-      if( aItem == ItemDB.CASE ){
+
+      final int usedSlots;
+      if( shouldRemoveArmActuators(aItem) ){
+         int fixedSlots = 0;
+         for(Item item : getFixedItems()){
+            if( item != ItemDB.lookup("@mdf_LAA") && item != ItemDB.lookup("@mdf_HA") ){
+               fixedSlots += item.getNumCriticalSlots();
+            }
+         }
+         usedSlots = fixedSlots + getDynamicArmorSlots() + getDynamicStructureSlots();
+      }
+      else{
+         usedSlots = getFixedItemSlots() + getDynamicArmorSlots() + getDynamicStructureSlots();
+      }
+
+      if( aItem.getNumCriticalSlots() > getSlots() - usedSlots ){
          return false;
       }
 
-      // TODO: Consider that LAA/HA can be removed for PPC/Gauss/ACs
       return true;
    }
 
@@ -99,5 +115,21 @@ public class ComponentOmniMech extends ComponentBase{
     */
    public int getDynamicStructureSlots(){
       return dynamicStructure;
+   }
+
+   /**
+    * @param aItem The item to check with.
+    * @return <code>true</code> if the Lower Arm Actuator (LAA) and/or Hand Actuator (HA) should be removed if the given item is equipped.
+    */
+   public boolean shouldRemoveArmActuators(Item aItem){
+      if(aItem instanceof Weapon){
+         boolean isLargeBore = false;
+         isLargeBore |= aItem.getName().toLowerCase().contains("ppc");
+         isLargeBore |= aItem.getName().toLowerCase().contains("gauss");
+         isLargeBore |= aItem.getName().toLowerCase().contains("ac/");
+         isLargeBore |= aItem.getName().toLowerCase().contains("10-x");
+         return isLargeBore;
+      }
+      return false;
    }
 }
