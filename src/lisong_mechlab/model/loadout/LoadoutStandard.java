@@ -171,6 +171,15 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
    }
 
    @Override
+   public int getNumCriticalSlotsUsed(){
+      int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmor().getExtraSlots();
+      for(ConfiguredComponentStandard component : getComponents()){
+         ans += component.getSlotsUsed();
+      }
+      return ans;
+   }
+
+   @Override
    public MovementProfile getMovementProfile(){
       return getChassis().getMovementProfileBase();
    }

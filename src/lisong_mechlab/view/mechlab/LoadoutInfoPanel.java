@@ -554,7 +554,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                armorValue.setText((loadout.getChassis().getArmorMax() - loadout.getArmor()) + " free");
 
                critslotsBar.setValue(loadout.getNumCriticalSlotsUsed());
-               critslotsBar.setString(loadout.getNumCriticalSlotsUsed() + " / " + (12 * 5 + 3 * 6));
+               critslotsBar.setString(loadout.getNumCriticalSlotsUsed() + " / " + loadout.getChassis().getCriticalSlotsTotal());
                critslotsValue.setText(loadout.getNumCriticalSlotsFree() + " free");
 
                updateUpgrades();

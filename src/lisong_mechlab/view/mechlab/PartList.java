@@ -47,6 +47,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.metrics.CriticalItemDamage;
@@ -84,8 +85,8 @@ public class PartList extends JList<Item>{
       private static final long serialVersionUID = -8157859670319431469L;
 
       void setTooltipForItem(Item aItem){
-         if( aItem instanceof Internal ){
-            setToolTipText("");
+         if( aItem == null || aItem instanceof Internal ){
+            setToolTipText(null);
             return;
          }
 
@@ -150,7 +151,7 @@ public class PartList extends JList<Item>{
                   StyleManager.styleItem(this);
                   setText(Model.EMPTY);
                }
-               setToolTipText("");
+               setToolTipText(null);
                break;
             }
             case Item:{
@@ -194,22 +195,27 @@ public class PartList extends JList<Item>{
                break;
             }
          }
-         /*
-          * if( isSelected && pair.first != ListEntryType.Empty ){ setBackground(getBackground().brighter()); }
-          */
          return this;
       }
 
       private boolean isDynStructure(int aIndex){
-         int freeSlotOrdinal = aIndex - component.getSlotsUsed() - slotDistributor.getDynamicArmorSlots(component);
-         int dynStructNum = slotDistributor.getDynamicStructureSlots(component);
-         return freeSlotOrdinal >= 0 && freeSlotOrdinal < dynStructNum;
+         int struct = slotDistributor.getDynamicStructureSlots(component);
+         int slots = component.getSlotsUsed();
+         if( component instanceof ConfiguredComponentOmniMech ){
+            return aIndex >= slots - struct && aIndex < slots;
+         }
+         int armor = slotDistributor.getDynamicArmorSlots(component);
+         return aIndex >= slots + armor && aIndex < slots + armor + struct;
       }
 
       private boolean isDynArmor(int aIndex){
-         int freeSlotOrdinal = aIndex - component.getSlotsUsed();
-         int dynArmorNum = slotDistributor.getDynamicArmorSlots(component);
-         return freeSlotOrdinal < dynArmorNum;
+         int armor = slotDistributor.getDynamicArmorSlots(component);
+         int struct = slotDistributor.getDynamicStructureSlots(component);
+         int slots = component.getSlotsUsed();
+         if( component instanceof ConfiguredComponentOmniMech ){
+            return aIndex >= slots - struct - armor && aIndex < slots - struct;
+         }
+         return aIndex >= slots && aIndex < slots + armor;
       }
    }
 

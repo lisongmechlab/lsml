@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import lisong_mechlab.model.Efficiencies;
@@ -160,8 +159,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return The amount of free tonnage the loadout can still support.
     */
    public double getFreeMass(){
-      double freeMass = chassisBase.getMassMax() - getMass();
-      return freeMass;
+      return chassisBase.getMassMax() - getMass();
    }
 
    /**
@@ -188,13 +186,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    /**
     * @return The number of globally used critical slots.
     */
-   public int getNumCriticalSlotsUsed(){
-      int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmor().getExtraSlots();
-      for(T component : components){
-         ans += component.getSlotsUsed();
-      }
-      return ans;
-   }
+   public abstract int getNumCriticalSlotsUsed();
 
    /**
     * @param aLocation
@@ -203,16 +195,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     */
    public T getComponent(Location aLocation){
       return components[aLocation.ordinal()];
-   }
-
-   /**
-    * Assigns the internal component vector. Mostly useful for omnimechs.
-    * 
-    * @param aComponent
-    *           The component to set, location is figured out from the component's internal component.
-    */
-   protected void setComponent(T aComponent){
-      components[aComponent.getInternalComponent().getLocation().ordinal()] = aComponent;
    }
 
    /**
@@ -397,73 +379,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       if( anItem instanceof Engine && getEngine() != null )
          return false;
       return true;
-   }
-
-   /**
-    * Checks if an item can be equipped on a loadout in some way by moving other items around.
-    * 
-    * @param anItem
-    *           The {@link Item} to check for.
-    * @return <code>true</code> if the loadout can be permutated in some way that the item can be equipped.
-    */
-   public boolean hasEquippablePermutation(Item anItem){
-      if( !canEquipGlobal(anItem) )
-         return false;
-
-      List<ConfiguredComponentBase> candidates = getCandidateLocationsForItem(anItem);
-
-      for(ConfiguredComponentBase candidate : candidates){
-         if( candidate.canAddItem(anItem) ){
-            return true;
-         }
-
-         int slotsFree[] = new int[Location.values().length];
-         for(Location part : Location.values()){
-            slotsFree[part.ordinal()] = getComponent(part).getSlotsFree();
-         }
-
-         // Attempt to move items by taking the largest ones first and perform bin packing
-         // with First Fit Decreasing heuristic.
-         List<Item> itemsBySlots = new ArrayList<>(candidate.getItemsEquipped());
-         Collections.sort(itemsBySlots, new Comparator<Item>(){
-            @Override
-            public int compare(Item aO1, Item aO2){
-               return Integer.compare(aO1.getNumCriticalSlots(), aO2.getNumCriticalSlots());
-            }
-         });
-
-         // There are enough free hard points in the loadout to contain this item and there
-         // are enough globally free slots and free tonnage. Engine and jump jet constraints
-         // are already checked. It is enough if the candidate part has enough slots free.
-         int candidateSlotsFree = candidate.getSlotsFree();
-         while( candidateSlotsFree < anItem.getNumCriticalSlots() && !itemsBySlots.isEmpty() ){
-            Item toBeRemoved = itemsBySlots.remove(0);
-            if( toBeRemoved instanceof Internal )
-               continue;
-
-            // Find first bin where it can be put
-            for(ConfiguredComponentBase part : getComponents()){
-               if( part == candidate )
-                  continue;
-               final int partOrdinal = part.getInternalComponent().getLocation().ordinal();
-               final int numCrits = toBeRemoved.getNumCriticalSlots();
-               if( slotsFree[partOrdinal] >= numCrits ){
-                  HardPointType needHp = toBeRemoved.getHardpointType();
-                  if( needHp != HardPointType.NONE
-                      && part.getHardPointCount(needHp) - part.getItemsOfHardpointType(needHp) < 1 ){
-                     continue;
-                  }
-                  slotsFree[partOrdinal] -= numCrits;
-                  candidateSlotsFree += numCrits;
-                  break;
-               }
-            }
-         }
-         if( candidateSlotsFree >= anItem.getNumCriticalSlots() ){
-            return true;
-         }
-      }
-      return false;
    }
 
    public abstract MovementProfile getMovementProfile();

@@ -89,6 +89,11 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
    public OmniPod getOmniPod(){
       return omniPod;
    }
+   
+   @Override
+   public int getSlotsUsed(){
+      return super.getSlotsUsed() + getInternalComponent().getDynamicArmorSlots() + getInternalComponent().getDynamicStructureSlots();
+   }
 
    /**
     * @param aOmniPod

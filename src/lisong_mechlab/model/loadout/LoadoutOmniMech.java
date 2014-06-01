@@ -34,6 +34,8 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
+ * This class represents a configured loadout for an omnimech.
+ * 
  * @author Li Song
  */
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
@@ -49,6 +51,9 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
       super(aFactory, aChassis, aXBar);
       movementProfile = new MovementProfileSum(aChassis.getMovementProfileBase());
       upgrades = new Upgrades(aChassis.getArmorType(), aChassis.getStructureType(), UpgradeDB.STANDARD_GUIDANCE, aChassis.getHeatSinkType());
+      for(ConfiguredComponentOmniMech component : getComponents()){
+         movementProfile.addMovementProfile(component.getOmniPod().getQuirks());
+      }
    }
 
    /**
@@ -72,7 +77,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
     *           The omnipod to set, it's put in it's dedicated slot.
     */
    void setOmniPod(OmniPod aOmniPod){
-      ConfiguredComponentOmniMech component =  getComponent(aOmniPod.getLocation());
+      ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
       movementProfile.removeMovementProfile(component.getOmniPod().getQuirks());
       movementProfile.addMovementProfile(aOmniPod.getQuirks());
       component.setOmniPod(aOmniPod);
@@ -112,6 +117,18 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
    @Override
    public Engine getEngine(){
       return getChassis().getEngine();
+   }
+
+   /**
+    * @return The number of globally used critical slots.
+    */
+   @Override
+   public int getNumCriticalSlotsUsed(){
+      int ans = 0;
+      for(ConfiguredComponentOmniMech component : getComponents()){
+         ans += component.getSlotsUsed();
+      }
+      return ans;
    }
 
    @Override

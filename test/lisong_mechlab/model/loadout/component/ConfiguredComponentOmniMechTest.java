@@ -31,6 +31,7 @@ import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.util.ArrayUtils;
@@ -85,7 +86,30 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       ConfiguredComponentOmniMech cut = makeDefaultCUT();
       assertEquals(cut, new ConfiguredComponentOmniMech(cut));
    }
-   
+
+   @Test
+   public void testIsAllowed_DynamicSlots(){
+      Mockito.when(omniInternal.getDynamicArmorSlots()).thenReturn(2);
+      Mockito.when(omniInternal.getDynamicStructureSlots()).thenReturn(3);
+
+      Item internalItem = Mockito.mock(Internal.class);
+      Mockito.when(internalItem.getNumCriticalSlots()).thenReturn(5);
+      internalFixedItems.add(internalItem);
+      internalFixedSlots = 5;
+
+      int size = 2;
+      slots = 2 + 3 + internalFixedSlots + size;
+
+      Item item = Mockito.mock(Item.class);
+      Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+
+      Mockito.when(item.getNumCriticalSlots()).thenReturn(size);
+      assertTrue(makeDefaultCUT().canAddItem(item));
+
+      Mockito.when(item.getNumCriticalSlots()).thenReturn(size + 1);
+      assertFalse(makeDefaultCUT().canAddItem(item));
+   }
+
    @Test
    public void testIsAllowed_NoHardpoint(){
       Item item = Mockito.mock(Item.class);
@@ -106,13 +130,13 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
 
       assertTrue(makeDefaultCUT().canAddItem(item));
    }
-   
+
    @Test
    public void testIsAllowed_AllHardpointsTaken(){
       Item item = Mockito.mock(Item.class);
       Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
       Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
-      
+
       Mockito.when(omniPod.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
       hardPoints.add(new HardPoint(HardPointType.ENERGY));
       ConfiguredComponentOmniMech cut = makeDefaultCUT();
@@ -120,7 +144,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
 
       assertFalse(cut.canAddItem(item));
    }
-   
+
    @Test
    public final void testGetHardPointCount() throws Exception{
       Mockito.when(omniPod.getHardPointCount(HardPointType.MISSILE)).thenReturn(7);
@@ -147,18 +171,18 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       internalFixedItems.add(UAA);
       internalFixedItems.add(LAA);
       internalFixedItems.add(HA);
-      
+
       Item largeBoreGun = Mockito.mock(Item.class);
       Mockito.when(omniInternal.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
-      
+
       ConfiguredComponentOmniMech cut = makeDefaultCUT();
       cut.addItem(largeBoreGun);
-      
+
       List<Item> ans = cut.getItemsFixed();
       assertEquals(1, ans.size());
       assertSame(UAA, ans.remove(0));
    }
-   
+
    /**
     * When a large bore weapon such as any AC, Gauss or PPC is fixed on the chassis, the LLA/HA should be removed.
     */
@@ -171,18 +195,18 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       internalFixedItems.add(UAA);
       internalFixedItems.add(LAA);
       internalFixedItems.add(HA);
-      
+
       Item largeBoreGun = Mockito.mock(Item.class);
       Mockito.when(omniInternal.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
-      
+
       internalFixedItems.add(largeBoreGun);
-      
+
       List<Item> ans = makeDefaultCUT().getItemsFixed();
       assertEquals(2, ans.size());
       assertTrue(ans.remove(UAA));
       assertTrue(ans.remove(largeBoreGun));
    }
-   
+
    @Test
    public final void testHasMissileBayDoors() throws Exception{
       assertEquals(missileBayDoors, makeDefaultCUT().hasMissileBayDoors());
@@ -193,6 +217,15 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
    @Test
    public final void testGetOmniPod() throws Exception{
       assertSame(omniPod, makeDefaultCUT().getOmniPod());
+   }
+
+   @Test
+   public final void testGetSlotsUsedFree_DynamicSlots(){
+      Mockito.when(omniInternal.getDynamicArmorSlots()).thenReturn(2);
+      Mockito.when(omniInternal.getDynamicStructureSlots()).thenReturn(3);
+
+      assertEquals(5, makeDefaultCUT().getSlotsUsed());
+      assertEquals(slots - 5, makeDefaultCUT().getSlotsFree());
    }
 
    @Test(expected = NullPointerException.class)
