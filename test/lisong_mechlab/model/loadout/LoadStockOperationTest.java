@@ -128,7 +128,7 @@ public class LoadStockOperationTest{
       OperationStack opstack = new OperationStack(0);
       opstack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
 
-      assertTrue(loadout.getComponent(Location.LeftTorso).getItemsAll().contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
+      assertTrue(loadout.getComponent(Location.LeftTorso).getItemsEquipped().contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
    }
 
    /**

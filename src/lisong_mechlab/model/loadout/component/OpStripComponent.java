@@ -46,7 +46,7 @@ public class OpStripComponent extends CompositeOperation{
       super("strip part");
       // Engine heat sinks are removed together with the engine.
       int hsSkipp = aLoadoutPart.getEngineHeatsinks();
-      for(Item item : aLoadoutPart.getItemsAll()){
+      for(Item item : aLoadoutPart.getItemsEquipped()){
          if( !(item instanceof Internal) ){
             if( item instanceof HeatSink ){
                if( hsSkipp > 0 ){

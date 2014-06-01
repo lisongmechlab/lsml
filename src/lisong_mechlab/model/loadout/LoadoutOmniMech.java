@@ -47,7 +47,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
     */
    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis, MessageXBar aXBar){
       super(aFactory, aChassis, aXBar);
-      movementProfile = new MovementProfileSum(aChassis.getMovementProfile());
+      movementProfile = new MovementProfileSum(aChassis.getMovementProfileBase());
       upgrades = new Upgrades(aChassis.getArmorType(), aChassis.getStructureType(), UpgradeDB.STANDARD_GUIDANCE, aChassis.getHeatSinkType());
    }
 
@@ -57,7 +57,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
     */
    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aOmniPodFactory, LoadoutOmniMech aLoadoutOmniMech){
       super(aOmniPodFactory, aLoadoutOmniMech);
-      movementProfile = new MovementProfileSum(getChassis().getMovementProfile());
+      movementProfile = new MovementProfileSum(getChassis().getMovementProfileBase());
       for(ConfiguredComponentOmniMech component : getComponents()){
          movementProfile.addMovementProfile(component.getOmniPod().getQuirks());
       }

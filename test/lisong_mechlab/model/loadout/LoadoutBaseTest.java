@@ -21,7 +21,6 @@ package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.chassi.ChassisBase;
-import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 
@@ -37,11 +36,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public abstract class LoadoutBaseTest{
    protected abstract LoadoutBase<?> makeDefaultCUT();
+
    protected ConfiguredComponentBase[] components;
-   
-   class ComponentFactory implements ComponentBuilder.Factory<ConfiguredComponentBase, ComponentBase>{
+
+   class ComponentFactory implements ComponentBuilder.Factory<ConfiguredComponentBase>{
       @Override
-      public ConfiguredComponentBase[] cloneComponents(LoadoutBase<ConfiguredComponentBase, ComponentBase> aLoadout){
+      public ConfiguredComponentBase[] cloneComponents(LoadoutBase<ConfiguredComponentBase> aLoadout){
          // TODO Auto-generated method stub
          return null;
       }
@@ -51,10 +51,9 @@ public abstract class LoadoutBaseTest{
          // TODO Auto-generated method stub
          return null;
       }
-      
+
    }
-   
-   
+
    @Test
    public final void testToString() throws Exception{
       LoadoutBase<?> cut = makeDefaultCUT();

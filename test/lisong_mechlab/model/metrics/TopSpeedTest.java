@@ -21,23 +21,25 @@ package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.ItemDB;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TopSpeedTest{
    MockLoadoutContainer mlc        = new MockLoadoutContainer();
-   TopSpeed             statistics = new TopSpeed(mlc.loadout);
+   TopSpeed             cut = new TopSpeed(mlc.loadout);
 
    @Test
    public void testCalculate_noengine() throws Exception{
       when(mlc.loadout.getEngine()).thenReturn(null);
-      assertEquals(0, statistics.calculate(), 0.0);
+      assertEquals(0, cut.calculate(), 0.0);
    }
 
    @Test
@@ -45,15 +47,19 @@ public class TopSpeedTest{
       int rating = 300;
       double factor = 4;
       int tonnage = 30;
+      
+      MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
+      Mockito.when(movementProfile.getMaxMovementSpeed()).thenReturn(factor);
+      
       for(double speedtweak : new double[] {1.0, 1.1}){
          when(mlc.loadout.getEngine()).thenReturn((Engine)ItemDB.lookup("STD ENGINE " + rating));
-         when(mlc.chassi.getSpeedFactor()).thenReturn(factor);
+         when(mlc.loadout.getMovementProfile()).thenReturn(movementProfile);
          when(mlc.chassi.getMassMax()).thenReturn(tonnage);
          when(mlc.efficiencies.hasSpeedTweak()).thenReturn(speedtweak > 1.0);
          when(mlc.efficiencies.getSpeedModifier()).thenReturn(speedtweak);
 
          double expected = rating * factor / tonnage * speedtweak;
-         assertEquals(expected, statistics.calculate(), 0.0);
+         assertEquals(expected, cut.calculate(), 0.0);
       }
    }
 }

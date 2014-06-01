@@ -105,9 +105,9 @@ public abstract class ChassisBaseTest{
    }
 
    @Test
-   public final void testGetMovementProfile() throws Exception{
-      assertSame(movementProfile, makeDefaultCUT().getMovementProfile());
-   }
+      public final void testGetMovementProfileBase() throws Exception{
+         assertSame(movementProfile, makeDefaultCUT().getMovementProfileBase());
+      }
 
    @Test
    public final void testGetMwoId() throws Exception{

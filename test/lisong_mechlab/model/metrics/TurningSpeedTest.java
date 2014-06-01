@@ -22,10 +22,10 @@ package lisong_mechlab.model.metrics;
 import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisStandard;
+import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -38,41 +38,47 @@ public class TurningSpeedTest{
 
    @Test
    public final void testCalculate_NoEngine() throws Exception{
+      MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
       LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
+
       Mockito.when(loadout.getChassis()).thenReturn(chassi);
       Mockito.when(loadout.getEngine()).thenReturn(null);
+      Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
+
       double factor = 0.2;
       int mass = 50;
-      Mockito.when(chassi.getTurnFactor()).thenReturn(factor);
+      Mockito.when(movementProfile.getTurnLerpLowRate()).thenReturn(factor * Math.PI / 180.0);
       Mockito.when(chassi.getMassMax()).thenReturn(mass);
 
       TurningSpeed cut = new TurningSpeed(loadout);
       assertEquals(0, cut.calculate(), 0.0);
    }
 
-   // Temporarily disabled until re-factoring for 2.0 is done.
-   @Ignore 
    @Test
    public final void testCalculate() throws Exception{
+      MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
       LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
       Engine engine = Mockito.mock(Engine.class);
       Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
+
       double modifier = 1.1;
       Mockito.when(efficiencies.getTurnSpeedModifier()).thenReturn(modifier);
       Mockito.when(loadout.getEfficiencies()).thenReturn(efficiencies);
       Mockito.when(loadout.getChassis()).thenReturn(chassi);
       Mockito.when(loadout.getEngine()).thenReturn(engine);
+      Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
+
       double factor = 0.2;
       int rating = 300;
       int mass = 50;
-      Mockito.when(chassi.getTurnFactor()).thenReturn(factor);
+      Mockito.when(movementProfile.getTurnLerpLowRate()).thenReturn(factor * Math.PI / 180.0);
       Mockito.when(chassi.getMassMax()).thenReturn(mass);
       Mockito.when(engine.getRating()).thenReturn(rating);
 
       TurningSpeed cut = new TurningSpeed(loadout);
-      assertEquals(modifier * factor * rating / mass, cut.calculate(), 0.0);
+      assertEquals(modifier * factor * rating / mass, cut.calculate(), 1E-8);
    }
 
 }

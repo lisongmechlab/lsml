@@ -26,7 +26,7 @@ import java.util.List;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -47,9 +47,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class CriticalStrikeProbabilityTest{
    List<Item>                items = new ArrayList<>();
    @Mock
-   ConfiguredComponentBase       loadoutPart;
+   ConfiguredComponentBase   loadoutPart;
    @Mock
-   LoadoutStandard                   loadout;
+   LoadoutBase<?>            loadout;
    @Mock
    Upgrades                  upgrades;
    @InjectMocks
@@ -57,7 +57,7 @@ public class CriticalStrikeProbabilityTest{
 
    @Before
    public void setup(){
-      Mockito.when(loadoutPart.getItemsAll()).thenReturn(items);
+      Mockito.when(loadoutPart.getItemsEquipped()).thenReturn(items);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
    }
 

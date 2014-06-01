@@ -19,7 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
@@ -79,7 +81,7 @@ public class ChassisOmniMech extends ChassisBase{
       structureType = aStructureType;
       armorType = aArmorType;
       heatSinkType = aHeatSinkType;
-      
+
       int s = 0;
       int a = 0;
       for(ComponentOmniMech component : getComponents()){
@@ -104,7 +106,7 @@ public class ChassisOmniMech extends ChassisBase{
    public Collection<ComponentOmniMech> getComponents(){
       return (Collection<ComponentOmniMech>)super.getComponents();
    }
-   
+
    /**
     * @return The engine that is fixed to this omnimech chassis.
     */
@@ -132,12 +134,69 @@ public class ChassisOmniMech extends ChassisBase{
    public HeatSinkUpgrade getHeatSinkType(){
       return heatSinkType;
    }
-  
+
    @Override
    public boolean isAllowed(Item aItem){
       if( aItem instanceof Engine ){
          return false; // Engine is fixed.
       }
       return super.isAllowed(aItem); // Anything else depends on the actual combination of omnipods equipped
+   }
+
+   /**
+    * TODO: Test when we have all omnipods in {@link OmniPodDB}.
+    * 
+    * @return The {@link MovementProfile} for the stock selection of {@link OmniPod}s.
+    */
+   public MovementProfile getMovementProfileStock(){
+      MovementProfileSum ans = new MovementProfileSum(getMovementProfileBase());
+      for(Location location : Location.values()){
+         OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
+         ans.addMovementProfile(omniPod.getQuirks());
+      }
+      return ans;
+   }
+
+   /**
+    * TODO: Test when we have all omnipods in {@link OmniPodDB}.
+    * 
+    * @return The {@link MovementProfile} where the {@link OmniPod} for each {@link ComponentOmniMech} is selected to
+    *         minimize each attribute. All the values of the {@link MovementProfile} may not be attainable
+    *         simultaneously but each value of each attribute is independently attainable for some combination of
+    *         {@link OmniPod}.
+    */
+   public MovementProfile getMovementProfileMin(){
+      return new MinMovementProfile(getMovementProfileBase(), getOmniPodMovementProfileGroups());
+   }
+
+   /**
+    * TODO: Test when we have all omnipods in {@link OmniPodDB}.
+    * 
+    * @return The {@link MovementProfile} where the {@link OmniPod} for each {@link ComponentOmniMech} is selected to
+    *         maximize each attribute. All the values of the {@link MovementProfile} may not be attainable
+    *         simultaneously but each value of each attribute is independently attainable for some combination of
+    *         {@link OmniPod}.
+    */
+   public MovementProfile getMovementProfileMax(){
+      return new MaxMovementProfile(getMovementProfileBase(), getOmniPodMovementProfileGroups());
+   }
+
+   private List<List<MovementProfile>> getOmniPodMovementProfileGroups(){
+      List<List<MovementProfile>> groups = new ArrayList<>();
+
+      for(Location location : Location.values()){
+         List<MovementProfile> group = new ArrayList<>();
+
+         if( getComponent(location).hasFixedOmniPod() ){
+            group.add(OmniPodDB.lookupOriginal(this, location).getQuirks());
+         }
+         else{
+            for(OmniPod omniPod : OmniPodDB.lookup(this, location)){
+               group.add(omniPod.getQuirks());
+            }
+         }
+         groups.add(group);
+      }
+      return groups;
    }
 }

@@ -30,6 +30,7 @@ import java.util.TreeMap;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
@@ -45,7 +46,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpDistributeArmor extends CompositeOperation{
    private final Map<Location, Integer> armors = new HashMap<>(Location.values().length);
-   private final LoadoutBase<?>      loadout;
+   private final LoadoutBase<?>         loadout;
 
    /**
     * @param aLoadout
@@ -217,43 +218,44 @@ public class OpDistributeArmor extends CompositeOperation{
    private Map<Location, Integer> prioritize(LoadoutBase<?> aLoadout){
       Map<Location, Integer> ans = new HashMap<>(Location.values().length);
 
-      for(Location part : Location.values()){
-         ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
+      for(Location location : Location.values()){
+         ConfiguredComponentBase loadoutPart = aLoadout.getComponent(location);
          if( !loadoutPart.allowAutomaticArmor() )
             continue;
 
          // Protect engine at all costs
-         if( part == Location.CenterTorso ){
-            ans.put(part, 2000);
+         if( location == Location.CenterTorso ){
+            ans.put(location, 2000);
          }
-         else if( loadoutPart.getItemsAll().contains(ConfiguredComponentBase.ENGINE_INTERNAL) ){
-            ans.put(part, 1000);
+         else if( loadout.getEngine() != null && loadout.getEngine().getType() == EngineType.XL
+                  && (location == Location.LeftTorso || location == Location.RightTorso) ){
+            ans.put(location, 1000);
          }
          // Legs and head are high priority too
-         else if( part == Location.LeftLeg || part == Location.RightLeg ){
-            ans.put(part, 10);
+         else if( location == Location.LeftLeg || location == Location.RightLeg ){
+            ans.put(location, 10);
          }
-         else if( part == Location.Head ){
-            ans.put(part, 7);
+         else if( location == Location.Head ){
+            ans.put(location, 7);
          }
-         else if( loadoutPart.getItemMass() == 0.0 && !ans.containsKey(part) ){
-            ans.put(part, 0);
+         else if( loadoutPart.getItemMass() == 0.0 && !ans.containsKey(location) ){
+            ans.put(location, 0);
          }
          else{
-            if( part == Location.LeftArm ){
+            if( location == Location.LeftArm ){
                ans.put(Location.LeftArm, 10);
                if( aLoadout.getComponent(Location.LeftTorso).allowAutomaticArmor()
                    && (!ans.containsKey(Location.LeftTorso) || ans.get(Location.LeftTorso) < 10) )
                   ans.put(Location.LeftTorso, 10);
             }
-            else if( part == Location.RightArm ){
+            else if( location == Location.RightArm ){
                ans.put(Location.RightArm, 10);
                if( aLoadout.getComponent(Location.RightTorso).allowAutomaticArmor()
                    && (!ans.containsKey(Location.RightTorso) || ans.get(Location.RightTorso) < 10) )
                   ans.put(Location.RightTorso, 10);
             }
             else{
-               ans.put(part, 10);
+               ans.put(location, 10);
             }
          }
       }

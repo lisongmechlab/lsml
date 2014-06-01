@@ -155,7 +155,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          ids.add(-1);
 
          for(Location part : partOrder){
-            List<Item> items = aLoadout.getComponent(part).getItemsAll();
+            List<Item> items = aLoadout.getComponent(part).getItemsEquipped();
             for(Item item : items){
                if( !(item instanceof Internal) ){
                   ids.add(item.getMwoId());

@@ -365,8 +365,8 @@ public class DataCache{
       dataCache.upgrades = Collections.unmodifiableList(parseUpgrades(itemStatsXml));
       dataCache.chassisIS = Collections.unmodifiableList(parseChassisIS(aGameVfs, itemStatsXml, internalsList));
 
-      dataCache.omniPods = Collections.unmodifiableList(parseOmniPods(internalsList));
-      dataCache.chassisClan = Collections.unmodifiableList(parseChassisClan(aGameVfs, itemStatsXml, dataCache.items, internalsList, dataCache.omniPods,
+      dataCache.omniPods = Collections.unmodifiableList(parseOmniPods());
+      dataCache.chassisClan = Collections.unmodifiableList(parseChassisClan(dataCache.items, internalsList, dataCache.omniPods,
                                                                             dataCache.upgrades));
       dataCache.environments = Collections.unmodifiableList(parseEnvironments(aGameVfs));
       dataCache.stockLoadouts = Collections.unmodifiableList(parseStockLoadouts(aGameVfs, dataCache.chassisIS));
@@ -590,15 +590,11 @@ public class DataCache{
    /**
     * Parses all clan {@link ChassisOmniMech} from the ItemStats.xml file and related files.
     * 
-    * @param aGameVfs
-    *           A {@link GameVFS} used to open other game files.
-    * @param aItemStatsXml
-    *           A {@link GameFile} containing the ItemStats.xml file to parse
- * @param aInternalsList .
+    * @param aInternalsList .
     * @return A List of all {@link ChassisStandard} found in aItemStatsXml.
     */
-   private static List<ChassisOmniMech> parseChassisClan(GameVFS aGameVfs, ItemStatsXml aItemStatsXml, List<Item> aItems,List<Internal> aInternalsList,  List<OmniPod> aOmniPods,
-                                                         List<Upgrade> aUpgrades) throws IOException{
+   private static List<ChassisOmniMech> parseChassisClan(List<Item> aItems,List<Internal> aInternalsList,  List<OmniPod> aOmniPods,
+                                                         List<Upgrade> aUpgrades){
       List<ChassisOmniMech> ans = new ArrayList<>();
 
       OmniPod ct = null;
@@ -669,10 +665,9 @@ public class DataCache{
    }
 
    /**
-    * @param aInternalsList
     * @return
     */
-   private static List<? extends OmniPod> parseOmniPods(List<Internal> aInternalsList){
+   private static List<? extends OmniPod> parseOmniPods(){
       List<OmniPod> ans = new ArrayList<>();
 
       BaseMovementProfile mp = new BaseMovementProfile(new MdfMovementTuning());

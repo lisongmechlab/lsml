@@ -20,49 +20,49 @@
 package lisong_mechlab.model.chassi;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This {@link MovementProfile} gives the sum of all added {@link MovementProfile}s. One profile has to be chosen as
- * main profile that gives base attributes.
+ * This movement profile gives the minimum possible value of a combination of different movement profiles.
+ * <p>
+ * More specifically, a base profile is defined (typically chassis standard values) and a number of alternatives are
+ * given in groups. For each group the lowest value among the alternatives is taken and added to the base profile.
+ * <p>
+ * Movement archetype is always that of the base profile.
  * 
  * @author Emily Björk
  */
-public class MovementProfileSum extends CompositeMovementProfileBase{
+public class MinMovementProfile extends CompositeMovementProfileBase{
 
-   private List<MovementProfile> terms = new ArrayList<>();
-   MovementProfile               mainProfile;
+   private MovementProfile             base;
+   private List<List<MovementProfile>> groups;
+
+   public MinMovementProfile(MovementProfile aBase, List<List<MovementProfile>> aGroups){
+      base = aBase;
+      groups = aGroups;
+   }
 
    @Override
    protected double calc(String aMethodName){
-      double ans = 0;
       try{
-         for(MovementProfile profile : terms){
-            ans += (double)profile.getClass().getMethod(aMethodName).invoke(profile);
+         double ans = (double)base.getClass().getMethod(aMethodName).invoke(base);
+         for(List<MovementProfile> group : groups){
+            double min = Double.POSITIVE_INFINITY;
+            for(MovementProfile profile : group){
+               min = Math.min(min, (double)profile.getClass().getMethod(aMethodName).invoke(profile));
+            }
+            if( min != Double.POSITIVE_INFINITY )
+               ans += min;
          }
          return ans;
       }
       catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ){
-         throw new IllegalArgumentException(e);
+         throw new IllegalArgumentException();
       }
-   }
-
-   public MovementProfileSum(MovementProfile aMainProfile){
-      addMovementProfile(aMainProfile);
-      mainProfile = aMainProfile;
-   }
-
-   public void addMovementProfile(MovementProfile aMovementProfile){
-      terms.add(aMovementProfile);
-   }
-
-   public void removeMovementProfile(MovementProfile aMovementProfile){
-      terms.remove(aMovementProfile);
    }
 
    @Override
    public MovementArchetype getMovementArchetype(){
-      return mainProfile.getMovementArchetype();
+      return base.getMovementArchetype();
    }
 }

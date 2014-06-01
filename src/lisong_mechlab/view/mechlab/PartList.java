@@ -64,7 +64,7 @@ import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
    private static final long                   serialVersionUID = 5995694414450060827L;
-   private final ConfiguredComponentBase           component;
+   private final ConfiguredComponentBase       component;
    private final DynamicSlotDistributor        slotDistributor;
    private OperationStack                      opStack;
 
@@ -72,7 +72,7 @@ public class PartList extends JList<Item>{
    private final DecimalFormat                 df2              = new DecimalFormat("###.##");
    private final ItemEffectiveHP               effectiveHP;
    private final CriticalStrikeProbability     criticalStrikeProbability;
-   private final LoadoutBase<?>             loadout;
+   private final LoadoutBase<?>                loadout;
 
    private final ComponentDestructionSimulator cds;
 
@@ -238,12 +238,12 @@ public class PartList extends JList<Item>{
          compactCompensationSlots = c;
       }
 
-      boolean putElement(Item anItem, int anIndex, boolean aShouldReplace){
+      boolean putElement(Item aItem, int anIndex, boolean aShouldReplace){
          Pair<ListEntryType, Item> target = getElementTypeAt(anIndex);
          switch( target.first ){
             case EngineHeatSink:{
-               if( anItem instanceof HeatSink && loadout.canEquip(anItem) && component.canAddItem(anItem) ){
-                  opStack.pushAndApply(new OpAddItem(xBar, loadout, component, anItem));
+               if( aItem instanceof HeatSink && loadout.canEquip(aItem) && component.canAddItem(aItem) ){
+                  opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
                   return true;
                }
                return false;
@@ -252,14 +252,14 @@ public class PartList extends JList<Item>{
             case Item: // Fall through
             case MultiSlot:{
                // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
-               if( aShouldReplace && !(anItem instanceof HeatSink && target.second instanceof Engine) ){
+               if( aShouldReplace && component.canRemoveItem(aItem) && !(aItem instanceof HeatSink && target.second instanceof Engine) ){
                   opStack.pushAndApply(new OpRemoveItem(xBar, loadout, component, target.second));
                }
                // Fall through
             }
             case Empty:{
-               if( loadout.canEquip(anItem) && component.canAddItem(anItem) ){
-                  opStack.pushAndApply(new OpAddItem(xBar, loadout, component, anItem));
+               if( loadout.canEquip(aItem) && component.canAddItem(aItem) ){
+                  opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
                   return true;
                }
                return false;
@@ -271,10 +271,11 @@ public class PartList extends JList<Item>{
       }
 
       Pair<ListEntryType, Item> getElementTypeAt(int arg0){
-         List<Item> items = new ArrayList<>(component.getItemsAll());
-         if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            items.removeAll(component.getInternalComponent().getFixedItems());
+         List<Item> items = new ArrayList<>();
+         if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
+            items.addAll(component.getInternalComponent().getFixedItems());
          }
+         items.addAll(component.getItemsEquipped());
          int numEngineHs = component.getEngineHeatsinks();
          boolean foundhs = true;
          while( numEngineHs > 0 && !items.isEmpty() && foundhs ){
@@ -325,7 +326,7 @@ public class PartList extends JList<Item>{
       public Item getElementAt(int arg0){
          Pair<ListEntryType, Item> target = getElementTypeAt(arg0);
          if( target.first == ListEntryType.Item )
-            return getElementTypeAt(arg0).second;
+            return target.second;
          return null;
       }
 
@@ -350,7 +351,8 @@ public class PartList extends JList<Item>{
       }
    }
 
-   PartList(OperationStack aStack, final LoadoutBase<?> aLoadout, final ConfiguredComponentBase aComponent, final MessageXBar aXBar, DynamicSlotDistributor aSlotDistributor){
+   PartList(OperationStack aStack, final LoadoutBase<?> aLoadout, final ConfiguredComponentBase aComponent, final MessageXBar aXBar,
+            DynamicSlotDistributor aSlotDistributor){
       slotDistributor = aSlotDistributor;
       opStack = aStack;
       component = aComponent;
@@ -435,7 +437,7 @@ public class PartList extends JList<Item>{
    public ConfiguredComponentBase getPart(){
       return component;
    }
-   
+
    public LoadoutBase<?> getLoadout(){
       return loadout;
    }

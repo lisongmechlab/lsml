@@ -354,34 +354,6 @@ public abstract class ConfiguredComponentBaseTest{
    }
 
    @Test
-   public final void testGetItemsAll() throws Exception{
-      Item fixed1 = Mockito.mock(Item.class);
-      Mockito.when(fixed1.getMass()).thenReturn(2.0);
-      internalFixedItems.add(fixed1);
-      
-      Item fixed2 = Mockito.mock(Item.class);
-      Mockito.when(fixed2.getMass()).thenReturn(3.0);
-      internalFixedItems.add(fixed2);
-      
-      Item item1 = Mockito.mock(Item.class);
-      Mockito.when(item1.getMass()).thenReturn(5.0);
-      Item item2 = Mockito.mock(Item.class);
-      Mockito.when(item2.getMass()).thenReturn(7.0);
-      
-      ConfiguredComponentBase cut = makeDefaultCUT();
-      cut.addItem(item1);
-      cut.addItem(item2);
-      
-      List<Item> ans = new ArrayList<>();
-      ans.add(item1);
-      ans.add(item2);
-      ans.add(fixed1);
-      ans.add(fixed2);
-      
-      assertTrue(ArrayUtils.equalsUnordered(ans, cut.getItemsAll()));
-   }
-
-   @Test
    public final void testGetItemsEquipped() throws Exception{
       Item fixed1 = Mockito.mock(Item.class);
       Mockito.when(fixed1.getMass()).thenReturn(2.0);

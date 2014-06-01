@@ -342,17 +342,6 @@ public abstract class ConfiguredComponentBase{
    }
 
    /**
-    * @return An unmodifiable {@link List} of all items on this component, including {@link Internal}s and fixed items.
-    */
-   @Deprecated
-   // FIXME: Temporarily to catch all places where it is wrongly used.
-   public List<Item> getItemsAll(){
-      List<Item> ans = new ArrayList<>(getItemsFixed());
-      ans.addAll(getItemsEquipped());
-      return ans;
-   }
-
-   /**
     * @return A {@link List} of the user equipped items which can also be removed.
     */
    public List<Item> getItemsEquipped(){
@@ -371,7 +360,12 @@ public abstract class ConfiguredComponentBase{
     */
    public int getItemsOfHardpointType(HardPointType aHardpointType){
       int hardpoints = 0;
-      for(Item it : getItemsAll()){
+      for(Item it : getItemsEquipped()){
+         if( it.getHardpointType() == aHardpointType ){
+            hardpoints++;
+         }
+      }
+      for(Item it : getInternalComponent().getFixedItems()){
          if( it.getHardpointType() == aHardpointType ){
             hardpoints++;
          }

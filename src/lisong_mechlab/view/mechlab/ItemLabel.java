@@ -232,7 +232,8 @@ public class ItemLabel extends JLabel{
 
       if( item instanceof Engine && aLoadout != null ){
          Engine engine = (Engine)item;
-         double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getChassis(), aLoadout.getEfficiencies().getSpeedModifier());
+         double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(), aLoadout.getChassis().getMassMax(),
+                                           aLoadout.getEfficiencies().getSpeedModifier());
          DecimalFormat decimalFormat = new DecimalFormat("###");
          builder.append("<br/>" + decimalFormat.format(speed) + "kph");
       }

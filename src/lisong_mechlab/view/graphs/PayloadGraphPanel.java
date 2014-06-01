@@ -104,15 +104,18 @@ public class PayloadGraphPanel extends ChartPanel{
                if( rating < 100 ){
                   continue; // TODO: Remove this when they remove the engine limit.
                }
-               double speed = TopSpeed.calculate(rating, entry.representant, efficiencies.getSpeedModifier());
+               double speed = TopSpeed.calculate(rating, chassisStandard.getMovementProfileBase(), chassisStandard.getMassMax(),
+                                                 efficiencies.getSpeedModifier());
                series.add(speed, payloadStatistics.calculate(chassisStandard, rating));
             }
          }
          else{
-            // Omni mech
+            // Omnimech
             ChassisOmniMech chassisOmniMech = (ChassisOmniMech)entry.representant;
             Engine engine = chassisOmniMech.getEngine();
-            double speed = TopSpeed.calculate(engine.getRating(), chassisOmniMech, efficiencies.getSpeedModifier());
+            // TODO: Show min/max
+            double speed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileStock(), chassisOmniMech.getMassMax(),
+                                              efficiencies.getSpeedModifier());
             series.add(speed, payloadStatistics.calculate(chassisOmniMech, engine.getRating()));
          }
          dataset.addSeries(series);

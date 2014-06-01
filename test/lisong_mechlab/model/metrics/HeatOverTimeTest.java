@@ -12,6 +12,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.MessageXBar;
@@ -137,7 +138,7 @@ public class HeatOverTimeTest{
       items.add(erllas);
       items.add(ac20);
 
-      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
+      LoadoutBase<ConfiguredComponentBase> loadout = Mockito.mock(LoadoutBase.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);

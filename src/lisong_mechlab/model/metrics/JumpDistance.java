@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutBase;
 
@@ -36,7 +37,15 @@ public class JumpDistance implements Metric{
 
    @Override
    public double calculate(){
-      JumpJet jj = loadout.getJumpJetType();
+      JumpJet jj = null;
+
+      for(Item item : loadout.getAllItems()){
+         if( item instanceof JumpJet ){
+            jj = (JumpJet)item;
+            break;
+         }
+      }
+
       if( jj == null )
          return 0;
       return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() / (2 * loadout.getChassis().getMassMax());

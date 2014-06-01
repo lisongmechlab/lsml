@@ -119,7 +119,8 @@ public class OpSetGuidanceType extends OpUpgradeBase{
          }
 
          for(ConfiguredComponentBase component : loadout.getComponents()){
-            for(Item item : component.getItemsAll()){
+            for(Item item : component.getItemsEquipped()){
+               // FIXME: What about fixed missile launchers?
                if( item instanceof MissileWeapon ){
                   MissileWeapon oldWeapon = (MissileWeapon)item;
                   MissileWeapon newWeapon = newValue.upgrade(oldWeapon);

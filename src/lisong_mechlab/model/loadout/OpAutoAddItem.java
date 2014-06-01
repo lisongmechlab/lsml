@@ -156,7 +156,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
          // Not yet sweetie
          for(Location part : partTraversalOrder){
             ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
-            for(Item i : loadoutPart.getItemsAll()){
+            for(Item i : loadoutPart.getItemsEquipped()){
                if( i instanceof Internal )
                   continue;
                List<Node> branches = getBranches(node, part, i);
@@ -240,7 +240,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
                requiredType = HardPointType.NONE; // There is at least one free hard point, we don't need to swap with a
                                                   // item of the required type.
             }
-            for(Item item : dstPart.getItemsAll()){
+            for(Item item : dstPart.getItemsEquipped()){
                // The item has to clear enough room to make our item fit.
                if( item instanceof HeatSink && dstPart.getEngineHeatsinks() > 0 )
                   continue; // Engine HS will not clear slots...

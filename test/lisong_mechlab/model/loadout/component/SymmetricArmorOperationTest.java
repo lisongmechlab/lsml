@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
@@ -55,7 +56,7 @@ public class SymmetricArmorOperationTest{
     */
    @Test
    public void testCanCoalescele(){
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
       ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
       ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
       ConfiguredComponentBase arm = loadout.getComponent(Location.LeftArm);
@@ -81,7 +82,7 @@ public class SymmetricArmorOperationTest{
 
    @Test
    public void testApply(){
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
       ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
       ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
       ArmorSide side = ArmorSide.BACK;
@@ -103,7 +104,7 @@ public class SymmetricArmorOperationTest{
    @Test
    public void testApply_OnlyOneSideChanges(){
       for(Location setSide : new Location[] {Location.LeftTorso, Location.RightTorso}){
-         LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
+         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
          ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
          ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
          ArmorSide side = ArmorSide.BACK;
@@ -126,7 +127,7 @@ public class SymmetricArmorOperationTest{
 
    @Test(expected = IllegalArgumentException.class)
    public void testApply_NotSymmetric(){
-      LoadoutStandard loadout = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
       ConfiguredComponentBase left = loadout.getComponent(Location.Head);
       ArmorSide side = ArmorSide.BACK;
       int amount = 40;

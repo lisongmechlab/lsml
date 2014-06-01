@@ -117,7 +117,7 @@ public class OpSetHeatSinkType extends OpUpgradeBase{
       if( oldValue != newValue ){
          for(ConfiguredComponentBase loadoutPart : loadout.getComponents()){
             int hsRemoved = 0;
-            for(Item item : loadoutPart.getItemsAll()){
+            for(Item item : loadoutPart.getItemsEquipped()){ // Don't remove fixed HS, not that we could on an omnimech anyways.
                if( item instanceof HeatSink ){
                   addOp(new OpRemoveItem(xBar, loadout, loadoutPart, item));
                   hsRemoved++;
