@@ -53,11 +53,12 @@ import org.mockito.Spy;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * Test suite for {@link LoadoutStandard}
+ * Test suite for {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
 public class LoadoutStandardTest{
+   //FIXME inherit from LoadoutBaseTest
    @Spy
    MessageXBar    xBar;
 

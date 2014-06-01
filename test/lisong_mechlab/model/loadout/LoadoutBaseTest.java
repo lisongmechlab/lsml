@@ -20,39 +20,59 @@
 package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
-import lisong_mechlab.model.chassi.ChassisBase;
-import lisong_mechlab.model.loadout.component.ComponentBuilder;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.upgrades.ArmorUpgrade;
+import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
+import lisong_mechlab.model.upgrades.StructureUpgrade;
+import lisong_mechlab.util.ArrayUtils;
+import lisong_mechlab.util.MessageXBar;
+
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
 
 /**
  * Test suite for {@link LoadoutBase}
  * 
  * @author Emily Björk
  */
-@RunWith(MockitoJUnitRunner.class)
 public abstract class LoadoutBaseTest{
-   protected abstract LoadoutBase<?> makeDefaultCUT();
-
+   protected int                       mass             = 75;
+   protected String                    chassisName      = "chassis";
+   protected String                    chassisShortName = "short chassis";
+   protected MessageXBar               xBar;
+   protected ChassisBase               chassis;
    protected ConfiguredComponentBase[] components;
 
-   class ComponentFactory implements ComponentBuilder.Factory<ConfiguredComponentBase>{
-      @Override
-      public ConfiguredComponentBase[] cloneComponents(LoadoutBase<ConfiguredComponentBase> aLoadout){
-         // TODO Auto-generated method stub
-         return null;
-      }
+   protected int                       slots            = 10;
+   protected HeatSinkUpgrade           heatSinks;
+   protected StructureUpgrade          structure;
+   protected ArmorUpgrade              armor;
 
-      @Override
-      public ConfiguredComponentBase[] defaultComponents(ChassisBase aChassis){
-         // TODO Auto-generated method stub
-         return null;
-      }
-
+   @Before
+   public void setup(){
+      xBar = Mockito.mock(MessageXBar.class);
+      structure = Mockito.mock(StructureUpgrade.class);
+      armor = Mockito.mock(ArmorUpgrade.class);
+      heatSinks = Mockito.mock(HeatSinkUpgrade.class);
    }
+
+   protected abstract LoadoutBase<?> makeDefaultCUT();
 
    @Test
    public final void testToString() throws Exception{
@@ -60,92 +80,213 @@ public abstract class LoadoutBaseTest{
       String name = "mamboyeeya";
       cut.rename(name);
 
-      assertEquals(name + " (" + cut.getChassis().getNameShort() + ")", cut.toString());
+      assertEquals(name + " (" + chassis.getNameShort() + ")", cut.toString());
    }
 
    @Test
    public final void testGetAllItems() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      List<Item> empty = new ArrayList<>();
+      List<Item> fixed1 = new ArrayList<>();
+      List<Item> fixed2 = new ArrayList<>();
+      List<Item> equipped1 = new ArrayList<>();
+      List<Item> equipped2 = new ArrayList<>();
+
+      fixed1.add(ItemDB.BAP);
+      fixed1.add(ItemDB.CASE);
+
+      fixed2.add(ItemDB.SHS);
+
+      equipped1.add(ItemDB.AMS);
+      equipped1.add(ItemDB.DHS);
+
+      equipped2.add(ItemDB.DHS);
+      equipped2.add(ItemDB.DHS);
+      equipped2.add(ItemDB.DHS);
+
+      Mockito.when(components[0].getItemsFixed()).thenReturn(fixed1);
+      Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped1);
+      Mockito.when(components[1].getItemsFixed()).thenReturn(empty);
+      Mockito.when(components[1].getItemsEquipped()).thenReturn(empty);
+      Mockito.when(components[2].getItemsFixed()).thenReturn(empty);
+      Mockito.when(components[2].getItemsEquipped()).thenReturn(equipped2);
+      Mockito.when(components[3].getItemsFixed()).thenReturn(fixed2);
+      Mockito.when(components[3].getItemsEquipped()).thenReturn(empty);
+
+      for(int i = 4; i < Location.values().length; ++i){
+         Mockito.when(components[i].getItemsFixed()).thenReturn(empty);
+         Mockito.when(components[i].getItemsEquipped()).thenReturn(empty);
+      }
+
+      List<Item> ans = new ArrayList<>(makeDefaultCUT().getAllItems());
+      List<Item> expected = new ArrayList<>();
+      expected.addAll(fixed1);
+      expected.addAll(fixed2);
+      expected.addAll(equipped1);
+      expected.addAll(equipped2);
+
+      assertTrue(ArrayUtils.equalsUnordered(expected, ans));
    }
 
    @Test
    public final void testGetArmor() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      Mockito.when(components[0].getArmorTotal()).thenReturn(2);
+      Mockito.when(components[3].getArmorTotal()).thenReturn(3);
+      Mockito.when(components[5].getArmorTotal()).thenReturn(7);
+
+      assertEquals(12, makeDefaultCUT().getArmor());
    }
 
    @Test
    public final void testGetEfficiencies() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      assertNotSame(makeDefaultCUT(), makeDefaultCUT()); // Unique
+
+      LoadoutBase<?> cut = makeDefaultCUT();
+      assertSame(cut.getEfficiencies(), cut.getEfficiencies()); // Stable
    }
 
    @Test
-   public final void testGetMass() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
+   public final void testGetMassFreeMass() throws Exception{
+      Mockito.when(components[0].getItemMass()).thenReturn(2.0);
+      Mockito.when(components[3].getItemMass()).thenReturn(3.0);
+      Mockito.when(components[5].getItemMass()).thenReturn(7.0);
 
-   @Test
-   public final void testGetFreeMass() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      Mockito.when(components[0].getArmorTotal()).thenReturn(10);
+      Mockito.when(components[3].getArmorTotal()).thenReturn(13);
+      Mockito.when(components[5].getArmorTotal()).thenReturn(19);
+
+      Mockito.when(structure.getStructureMass(chassis)).thenReturn(7.3);
+      Mockito.when(armor.getArmorMass(42)).thenReturn(4.6);
+
+      assertEquals(23.9, makeDefaultCUT().getMass(), 1E-9);
+
+      Mockito.verify(armor).getArmorMass(42);
+      Mockito.verify(structure).getStructureMass(chassis);
+
+      assertEquals(mass - 23.9, makeDefaultCUT().getFreeMass(), 1E-9);
    }
 
    @Test
    public final void testGetChassis() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      assertSame(chassis, makeDefaultCUT().getChassis());
    }
 
    @Test
    public final void testGetName() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
-   public final void testGetNumCriticalSlotsFree() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
-
-   @Test
-   public final void testGetNumCriticalSlotsUsed() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      assertEquals(chassisShortName, makeDefaultCUT().getName());
    }
 
    @Test
    public final void testGetComponent() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      for(Location loc : Location.values()){
+         assertSame(components[loc.ordinal()], makeDefaultCUT().getComponent(loc));
+      }
+   }
+
+   @Test(expected = UnsupportedOperationException.class)
+   public final void testGetComponents_Immutable() throws Exception{
+      makeDefaultCUT().getComponents().add(null);
    }
 
    @Test
    public final void testGetComponents() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
+      Collection<?> ans = makeDefaultCUT().getComponents();
+      assertEquals(components.length, ans.size());
 
-   @Test
-   public final void testGetUpgrades() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      for(ConfiguredComponentBase component : components){
+         assertTrue(ans.contains(component));
+      }
    }
 
    @Test
    public final void testGetHardpointsCount() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      Mockito.when(components[0].getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
+      Mockito.when(components[1].getHardPointCount(HardPointType.ENERGY)).thenReturn(3);
+      Mockito.when(components[1].getHardPointCount(HardPointType.BALLISTIC)).thenReturn(5);
+      Mockito.when(components[2].getHardPointCount(HardPointType.MISSILE)).thenReturn(7);
+
+      assertEquals(5, makeDefaultCUT().getHardpointsCount(HardPointType.ENERGY));
+      assertEquals(5, makeDefaultCUT().getHardpointsCount(HardPointType.BALLISTIC));
+      assertEquals(7, makeDefaultCUT().getHardpointsCount(HardPointType.MISSILE));
    }
 
    @Test
    public final void testGetHeatsinksCount() throws Exception{
-      throw new RuntimeException("not yet implemented");
+      List<Item> empty = new ArrayList<>();
+      List<Item> fixed1 = new ArrayList<>();
+      List<Item> fixed2 = new ArrayList<>();
+      List<Item> equipped1 = new ArrayList<>();
+      List<Item> equipped2 = new ArrayList<>();
+
+      Engine engine = Mockito.mock(Engine.class);
+      Mockito.when(engine.getNumInternalHeatsinks()).thenReturn(3);
+
+      fixed1.add(ItemDB.BAP);
+      fixed1.add(ItemDB.CASE);
+
+      fixed2.add(ItemDB.SHS);
+
+      equipped1.add(ItemDB.AMS);
+      equipped1.add(ItemDB.DHS);
+      equipped1.add(engine);
+
+      equipped2.add(ItemDB.DHS);
+      equipped2.add(ItemDB.DHS);
+      equipped2.add(ItemDB.DHS);
+
+      Mockito.when(components[0].getItemsFixed()).thenReturn(fixed1);
+      Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped1);
+      Mockito.when(components[1].getItemsFixed()).thenReturn(empty);
+      Mockito.when(components[1].getItemsEquipped()).thenReturn(empty);
+      Mockito.when(components[2].getItemsFixed()).thenReturn(empty);
+      Mockito.when(components[2].getItemsEquipped()).thenReturn(equipped2);
+      Mockito.when(components[3].getItemsFixed()).thenReturn(fixed2);
+      Mockito.when(components[3].getItemsEquipped()).thenReturn(empty);
+
+      for(int i = 4; i < Location.values().length; ++i){
+         Mockito.when(components[i].getItemsFixed()).thenReturn(empty);
+         Mockito.when(components[i].getItemsEquipped()).thenReturn(empty);
+      }
+
+      assertEquals(8, makeDefaultCUT().getHeatsinksCount());
    }
 
    @Test
    public final void testGetJumpJetCount() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
+      List<Item> empty = new ArrayList<>();
+      List<Item> fixed1 = new ArrayList<>();
+      List<Item> fixed2 = new ArrayList<>();
+      List<Item> equipped1 = new ArrayList<>();
+      List<Item> equipped2 = new ArrayList<>();
 
-   @Test
-   public final void testGetJumpJetType() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
+      JumpJet jj = Mockito.mock(JumpJet.class);
 
-   @Test
-   public final void testGetMovementProfile() throws Exception{
-      throw new RuntimeException("not yet implemented");
-   }
+      fixed1.add(ItemDB.BAP);
+      fixed1.add(jj);
 
+      fixed2.add(ItemDB.SHS);
+
+      equipped1.add(ItemDB.AMS);
+      equipped1.add(jj);
+      equipped1.add(jj);
+
+      equipped2.add(ItemDB.DHS);
+      equipped2.add(ItemDB.DHS);
+      equipped2.add(ItemDB.DHS);
+
+      Mockito.when(components[0].getItemsFixed()).thenReturn(fixed1);
+      Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped1);
+      Mockito.when(components[1].getItemsFixed()).thenReturn(empty);
+      Mockito.when(components[1].getItemsEquipped()).thenReturn(empty);
+      Mockito.when(components[2].getItemsFixed()).thenReturn(empty);
+      Mockito.when(components[2].getItemsEquipped()).thenReturn(equipped2);
+      Mockito.when(components[3].getItemsFixed()).thenReturn(fixed2);
+      Mockito.when(components[3].getItemsEquipped()).thenReturn(empty);
+
+      for(int i = 4; i < Location.values().length; ++i){
+         Mockito.when(components[i].getItemsFixed()).thenReturn(empty);
+         Mockito.when(components[i].getItemsEquipped()).thenReturn(empty);
+      }
+
+      assertEquals(3, makeDefaultCUT().getJumpJetCount());
+   }
 }
