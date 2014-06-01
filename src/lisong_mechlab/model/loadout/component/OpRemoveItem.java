@@ -74,6 +74,8 @@ public class OpRemoveItem extends OpItemBase{
 
    @Override
    public void apply(){
+      if( !component.canRemoveItem(item) )
+         throw new IllegalArgumentException("Can not remove item: " + item + " from " + component);
       removeItem(item);
    }
 }

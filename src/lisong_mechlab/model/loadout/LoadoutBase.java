@@ -78,13 +78,13 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       @SuppressWarnings("unchecked")
       // I just checked it above...
       LoadoutBase<T> that = (LoadoutBase<T>)obj;
-      if( !chassisBase.equals(that.chassisBase) )
+      if(chassisBase != that.chassisBase )
          return false;
       if( !efficiencies.equals(that.efficiencies) )
          return false;
       if( !name.equals(that.name) )
          return false;
-      if( !components.equals(that.components) )
+      if( !Arrays.equals(components, that.components))
          return false;
       return true;
    }
@@ -273,19 +273,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
             ans++;
       }
       return ans;
-   }
-
-   /**
-    * @return The type of jump jets equipped. TODO: Is this really necessary?
-    */
-   @Deprecated
-   public JumpJet getJumpJetType(){
-      for(Item item : getAllItems()){
-         if( item instanceof JumpJet ){
-            return (JumpJet)item;
-         }
-      }
-      return null;
    }
 
    /**

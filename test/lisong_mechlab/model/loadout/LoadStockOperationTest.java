@@ -19,8 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +29,11 @@ import junitparams.Parameters;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -97,9 +98,19 @@ public class LoadStockOperationTest{
     */
    @Test
    @Parameters(method = "allChassis")
-   public void testApply(ChassisStandard aChassis) throws Exception{
+   public void testApply(ChassisBase aChassis) throws Exception{
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(aChassis, xBar);
+      final LoadoutBase<?> loadout;
+      if( aChassis instanceof ChassisStandard ){
+         loadout = new LoadoutStandard((ChassisStandard)aChassis, xBar);
+      }
+      else if( aChassis instanceof ChassisOmniMech ){
+         loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)aChassis, xBar);
+      }
+      else{
+         fail("Unknown chassis type");
+         return;
+      }
 
       // Execute
       OperationStack opstack = new OperationStack(0);

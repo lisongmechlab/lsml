@@ -102,6 +102,8 @@ public class SetGuidanceTypeOperationTest{
       Mockito.when(mlc.lt.canAddItem(Matchers.any(Item.class))).thenReturn(true);
       Mockito.when(mlc.rl.getItemsEquipped()).thenReturn(rlItems);
       Mockito.when(mlc.lt.getItemsEquipped()).thenReturn(ltItems);
+      Mockito.when(mlc.rl.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
+      Mockito.when(mlc.lt.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
 
       stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
 

@@ -92,6 +92,28 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
       }
    }
 
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + upgrades.hashCode();
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( !super.equals(obj) )
+         return false;
+      if( !(obj instanceof LoadoutStandard) )
+         return false;
+      LoadoutStandard other = (LoadoutStandard)obj;
+      if( !upgrades.equals(other.upgrades) )
+         return false;
+      return true;
+   }
+
    /**
     * Will load a stock load out for the given variation name.
     * 
