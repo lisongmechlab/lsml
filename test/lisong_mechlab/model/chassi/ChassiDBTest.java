@@ -361,9 +361,6 @@ public class ChassiDBTest{
    @Test
    public void testLookupByChassiSeries(){
       Collection<? extends ChassisBase> cataphracts = ChassisDB.lookupSeries("CATAphract");
-      Collection<? extends ChassisBase> cataphracts1 = ChassisDB.lookupSeries("CTF");
-
-      assertEquals(cataphracts, cataphracts1);
 
       assertTrue(cataphracts.remove(ChassisDB.lookup("ILYA MUROMETS")));
       assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-1X")));

@@ -95,8 +95,6 @@ abstract class OpItemBase extends Operation{
     *           The item to remove.
     */
    protected void removeItem(Item aItem){
-      if( !component.canRemoveItem(aItem) )
-         throw new IllegalArgumentException("Can not remove item: " + aItem + " from " + component);
 
       if( aItem instanceof Engine ){
          Engine engine = (Engine)aItem;

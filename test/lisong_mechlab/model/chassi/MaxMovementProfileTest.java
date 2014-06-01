@@ -34,7 +34,7 @@ import org.mockito.Mockito;
  */
 public class MaxMovementProfileTest{
 
-   @Test
+   @Test 
    public void testGetMovementArchetype(){
       MovementProfile base = Mockito.mock(MovementProfile.class);
       MovementProfile arm1 = Mockito.mock(MovementProfile.class);

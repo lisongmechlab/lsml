@@ -44,13 +44,13 @@ import lisong_mechlab.util.OperationStack.Operation;
 public class OpAutoAddItem extends OpLoadoutBase{
    private class Node implements Comparable<Node>{
       final LoadoutBase<?> data;
-      final Location          source;
-      final Location          target;
-      final Item              item;
-      final Node              parent;
-      final int               score;
+      final Location       source;
+      final Location       target;
+      final Item           item;
+      final Node           parent;
+      final int            score;
 
-      final Item              targetItem;
+      final Item           targetItem;
 
       Node(LoadoutBase<?> aRoot, Item aItem){
          parent = null;
@@ -235,8 +235,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
             // The part couldn't take the item directly, see if we can swap with some item in the part.
             final int minItemSize = aItem.getNumCriticalSlots() - dstPart.getSlotsFree();
             HardPointType requiredType = aItem.getHardpointType();
-            if( requiredType != HardPointType.NONE
-                && dstPart.getItemsOfHardpointType(requiredType) < dstPart.getHardPointCount(requiredType) ){
+            if( requiredType != HardPointType.NONE && dstPart.getItemsOfHardpointType(requiredType) < dstPart.getHardPointCount(requiredType) ){
                requiredType = HardPointType.NONE; // There is at least one free hard point, we don't need to swap with a
                                                   // item of the required type.
             }
@@ -252,6 +251,10 @@ public class OpAutoAddItem extends OpLoadoutBase{
                   continue;
                // Skip NOPs
                if( item == aItem )
+                  continue;
+
+               // We can't move engine internals
+               if( item == ConfiguredComponentBase.ENGINE_INTERNAL || item == ConfiguredComponentBase.ENGINE_INTERNAL_CLAN )
                   continue;
 
                if( srcPart.canAddItem(item) )

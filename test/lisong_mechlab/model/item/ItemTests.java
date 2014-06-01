@@ -192,29 +192,15 @@ public class ItemTests{
    public void testHeatsinks(){
       Collection<HeatSink> heatsinks = ItemDB.lookup(HeatSink.class);
 
-      // Should contain double and standard
-      assertEquals(2, heatsinks.size());
+      // Should contain at least double and standard (+ typically clan versions)
+      assertTrue(heatsinks.size() >= 2);
 
       // All parameters should be positive
-      HeatSink shs = null;
-      HeatSink dhs = null;
+      HeatSink shs = ItemDB.SHS;
+      HeatSink dhs = ItemDB.DHS;
       for(HeatSink heatSink : heatsinks){
          assertTrue(heatSink.getDissipation() > 0);
          assertTrue(heatSink.getCapacity() > 0);
-
-         // Determine which is double/single
-         if( null == shs ){
-            shs = heatSink;
-         }
-         else{
-            if( heatSink.getDissipation() > shs.getDissipation() ){
-               dhs = heatSink;
-            }
-            else{
-               dhs = shs;
-               shs = heatSink;
-            }
-         }
       }
 
       assertNotNull(dhs);

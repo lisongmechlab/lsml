@@ -21,14 +21,19 @@ package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 
 import org.junit.Test;
 
 /**
- * A test suite for {@link JumpDistance}
+ * A test suite for {@link JumpDistance}.
  * 
  * @author Emily Björk
  */
@@ -37,7 +42,7 @@ public class JumpDistanceTest{
    private final JumpDistance         cut = new JumpDistance(mlc.loadout);
 
    /**
-    * The jump jet definitions in the ItemStats.xml list forces in kilo newton. When weights are taken as tons, the
+    * The jump jet definitions in the xml list forces in kilo Newton. When weights are taken as tons, the
     * calculations can be done without compensating for factor 1000 (surprise, how convenient!). F = m*a h = a*t^2/2 =
     * F*t*t/(2*m) TODO: Does not take into account the impulse yet!
     */
@@ -51,9 +56,11 @@ public class JumpDistanceTest{
       final double F = jj.getForce();
       final double h = F * t * t / (2 * mass) * num_jj;
 
+      List<Item> items = new ArrayList<>();
+      items.add(jj);
       when(mlc.chassi.getMassMax()).thenReturn(mass);
       when(mlc.loadout.getJumpJetCount()).thenReturn(num_jj);
-
+      when(mlc.loadout.getAllItems()).thenReturn(items);
       assertEquals(h, cut.calculate(), 0.5);
    }
 
