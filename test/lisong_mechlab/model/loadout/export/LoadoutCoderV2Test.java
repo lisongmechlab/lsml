@@ -29,6 +29,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
@@ -66,14 +67,16 @@ public class LoadoutCoderV2Test{
     */
    @Test
    public void testEncodeAllStock() throws Exception{
-      List<ChassisStandard> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
       MessageXBar anXBar = new MessageXBar();
-      for(ChassisStandard chassi : chassii){
-         LoadoutStandard loadout = new LoadoutStandard(chassi.getName(), anXBar);
+      for(ChassisBase chassis : chassii){
+         if( !(chassis instanceof ChassisStandard) )
+            continue;
+         LoadoutStandard loadout = new LoadoutStandard(chassis.getName(), anXBar);
 
          byte[] result = cut.encode(loadout);
          LoadoutStandard decoded = cut.decode(result);
@@ -105,7 +108,7 @@ public class LoadoutCoderV2Test{
          Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
          Matcher m = pat.matcher(line);
          m.matches();
-         ChassisStandard chassi = ChassisDB.lookup(m.group(1));
+         ChassisBase chassi = ChassisDB.lookup(m.group(1));
          String lsml = m.group(2);
          LoadoutStandard reference = new LoadoutStandard(chassi.getName(), xBar);
          LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));

@@ -42,7 +42,7 @@ public class OpRemoveItem extends OpItemBase{
     * @param aItem
     *           The {@link Item} to remove.
     */
-   public OpRemoveItem(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
+   public OpRemoveItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
       super(aXBar, aLoadout, aComponent, aItem);
    }
 

@@ -74,9 +74,9 @@ public class MechGarage{
 
       public final Type               type;
       public final MechGarage         garage;
-      private final LoadoutBase<?, ?> loadout;
+      private final LoadoutBase<?> loadout;
 
-      public Message(Type aType, MechGarage aGarage, LoadoutBase<?, ?> aLoadout){
+      public Message(Type aType, MechGarage aGarage, LoadoutBase<?> aLoadout){
          type = aType;
          garage = aGarage;
          loadout = aLoadout;
@@ -87,7 +87,7 @@ public class MechGarage{
       }
 
       @Override
-      public boolean isForMe(LoadoutBase<?, ?> aLoadout){
+      public boolean isForMe(LoadoutBase<?> aLoadout){
          return aLoadout == loadout;
       }
 
@@ -97,7 +97,7 @@ public class MechGarage{
       }
    }
 
-   private final List<LoadoutBase<?, ?>> mechs = new ArrayList<>();
+   private final List<LoadoutBase<?>> mechs = new ArrayList<>();
    private File                          file;
    private transient MessageXBar         xBar;
 
@@ -208,7 +208,7 @@ public class MechGarage{
    /**
     * @return An unmodifiable list of all the {@link LoadoutStandard}s in this garage.
     */
-   public List<LoadoutBase<?, ?>> getMechs(){
+   public List<LoadoutBase<?>> getMechs(){
       return Collections.unmodifiableList(mechs);
    }
 
@@ -226,7 +226,7 @@ public class MechGarage{
     * @param aLoadout
     *           The {@link LoadoutStandard} to add.
     */
-   void add(LoadoutBase<?, ?> aLoadout){
+   void add(LoadoutBase<?> aLoadout){
       mechs.add(aLoadout);
       xBar.post(new Message(Message.Type.LoadoutAdded, MechGarage.this, aLoadout));
    }
@@ -238,7 +238,7 @@ public class MechGarage{
     * @param aLoadout
     *           The {@link LoadoutStandard} to remove.
     */
-   void remove(LoadoutBase<?, ?> aLoadout){
+   void remove(LoadoutBase<?> aLoadout){
       if( mechs.remove(aLoadout) ){
          xBar.post(new Message(Message.Type.LoadoutRemoved, MechGarage.this, aLoadout));
       }

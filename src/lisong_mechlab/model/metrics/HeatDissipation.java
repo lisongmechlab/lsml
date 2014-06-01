@@ -29,10 +29,10 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Emily Björk
  */
 public class HeatDissipation implements Metric{
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
    private Environment             environment;
 
-   public HeatDissipation(final LoadoutBase<?, ?> aLoadout, final Environment anEnvironment){
+   public HeatDissipation(final LoadoutBase<?> aLoadout, final Environment anEnvironment){
       loadout = aLoadout;
       environment = anEnvironment;
    }

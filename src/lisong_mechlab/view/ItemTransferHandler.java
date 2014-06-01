@@ -73,7 +73,7 @@ public class ItemTransferHandler extends TransferHandler{
             f = f.getParent();
          }
          LoadoutFrame frame = (LoadoutFrame)f;
-         LoadoutBase<?, ?> loadoutBase = frame.getLoadout();
+         LoadoutBase<?> loadoutBase = frame.getLoadout();
 
          StringBuffer buff = new StringBuffer();
          for(Pair<Item, Integer> it : sourceItems){
@@ -137,7 +137,7 @@ public class ItemTransferHandler extends TransferHandler{
          if( null == items )
             return false;
 
-         LoadoutBase<?, ?> loadout = ((PartList)uiComponent).getLoadout();
+         LoadoutBase<?> loadout = ((PartList)uiComponent).getLoadout();
          ConfiguredComponentBase component = ((PartList)uiComponent).getPart();
          for(Item item : items){
             if( loadout.canEquip(item) && !component.canAddItem(item) )

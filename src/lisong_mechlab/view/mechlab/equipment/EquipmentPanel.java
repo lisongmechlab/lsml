@@ -63,7 +63,7 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
    private final JPanel          energyItems      = new JPanel(new ModifiedFlowLayout());
    private final JPanel          ballisticItems   = new JPanel(new ModifiedFlowLayout());
    private final JPanel          missileItems     = new JPanel(new ModifiedFlowLayout());
-   private LoadoutBase<?, ?>     currentLoadout;
+   private LoadoutBase<?>     currentLoadout;
 
    public EquipmentPanel(LoadoutDesktop aDesktop, MessageXBar aXBar){
       aXBar.attach(this);
@@ -166,7 +166,7 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
       changeLoadout(frame.getLoadout());
    }
 
-   private void changeLoadout(LoadoutBase<?, ?> aLoadout){
+   private void changeLoadout(LoadoutBase<?> aLoadout){
       currentLoadout = aLoadout;
       for(ItemLabel itemLabel : itemLabels){
          itemLabel.updateVisibility(aLoadout);
@@ -199,7 +199,7 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
    @Override
    public void internalFrameOpened(InternalFrameEvent aArg0){/* NO-OP */}
 
-   public LoadoutBase<?,?> getCurrentLoadout(){
+   public LoadoutBase<?> getCurrentLoadout(){
       return currentLoadout;
    }
 }

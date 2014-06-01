@@ -23,13 +23,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
-import lisong_mechlab.model.item.BallisticWeapon;
-import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
@@ -39,23 +36,19 @@ import lisong_mechlab.model.loadout.LoadoutOmniMech;
  * 
  * @author Emily Björk
  */
-public class ConfiguredOmniPod extends ConfiguredComponentBase{
-   /** Which chassis this is equipped on, determines fixed items. */
-   private final ChassisOmniMech chassis;
-   private OmniPod               omniPod;
+public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
+   private OmniPod omniPod;
 
-   public ConfiguredOmniPod(ComponentOmniMech aComponentOmniMech, ChassisOmniMech aChassis, OmniPod aOmniPod){
-      super(aComponentOmniMech, true);
+   public ConfiguredComponentOmniMech(ComponentOmniMech aComponentOmniMech, boolean aAutoArmor, OmniPod aOmniPod){
+      super(aComponentOmniMech, aAutoArmor);
       if( null == aOmniPod ){
          throw new NullPointerException("aOmniPod must not be null!");
       }
-      chassis = aChassis;
       omniPod = aOmniPod;
    }
 
-   public ConfiguredOmniPod(ConfiguredOmniPod aConfiguredOmnipod){
+   public ConfiguredComponentOmniMech(ConfiguredComponentOmniMech aConfiguredOmnipod){
       super(aConfiguredOmnipod);
-      chassis = aConfiguredOmnipod.chassis;
       omniPod = aConfiguredOmnipod.omniPod;
    }
 
@@ -76,22 +69,18 @@ public class ConfiguredOmniPod extends ConfiguredComponentBase{
 
    @Override
    public List<Item> getItemsFixed(){
-      List<Item> ans = new ArrayList<>(getInternalComponent().getFixedItems());
-      List<Item> equip = new ArrayList<>(ans);
-      equip.addAll(getItemsEquipped());
-
-      // Remove LAA/HA if any  AC/PPC or Gauss rifle is equipped.
-      for(Item item : equip){
-         if( (item instanceof EnergyWeapon && item.getName().toLowerCase().contains("ppc"))
-             || (item instanceof BallisticWeapon && (item.getName().toLowerCase().contains("ac") || item.getName().toLowerCase().contains("gauss"))) ){
-            ans.remove(ItemDB.lookup("@mdf_LAA"));
-            ans.remove(ItemDB.lookup("@mdf_HA"));
-            break;
+      for(Item item : getInternalComponent().getFixedItems()){
+         if(getInternalComponent().shouldRemoveArmActuators(item)){
+            return stripHALAA();
          }
       }
-
-      // TODO: Cache the above results.
-      return ans;
+      
+      for(Item item : getItemsEquipped()){
+         if(getInternalComponent().shouldRemoveArmActuators(item)){
+            return stripHALAA();
+         }
+      }
+      return getInternalComponent().getFixedItems();
    }
 
    /**
@@ -109,12 +98,17 @@ public class ConfiguredOmniPod extends ConfiguredComponentBase{
       if( null == aOmniPod )
          throw new NullPointerException("aOmniPod must not be null.");
       omniPod = aOmniPod;
-      
    }
 
    @Override
    public boolean hasMissileBayDoors(){
-      // TODO Auto-generated method stub FIXME
-      return false;
+      return getOmniPod().hasMissileBayDoors();
+   }
+   
+   private List<Item> stripHALAA(){
+      List<Item> ans = new ArrayList<>(getInternalComponent().getFixedItems());
+      ans.remove(ItemDB.lookup("@mdf_LAA"));
+      ans.remove(ItemDB.lookup("@mdf_HA"));
+      return ans;
    }
 }

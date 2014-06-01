@@ -41,7 +41,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 public class MaxSustainedDPS extends RangeMetric{
    private final HeatDissipation dissipation;
 
-   public MaxSustainedDPS(final LoadoutBase<?, ?> aLoadout, final HeatDissipation aHeatDissipation){
+   public MaxSustainedDPS(final LoadoutBase<?> aLoadout, final HeatDissipation aHeatDissipation){
       super(aLoadout);
       dissipation = aHeatDissipation;
    }

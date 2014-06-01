@@ -100,7 +100,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
    }
 
    @Override
-   public byte[] encode(final LoadoutBase<?,?> aLoadout) throws EncodingException{
+   public byte[] encode(final LoadoutBase<?> aLoadout) throws EncodingException{
       throw new EncodingException("Protocol version 1 encoding is no longer allowed.");
       //@formatter:off
       /*

@@ -24,8 +24,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.mwo_data.HardPointCache;
 import lisong_mechlab.mwo_data.HardpointsXml;
@@ -34,7 +36,6 @@ import lisong_mechlab.mwo_data.WeaponDoorSet.WeaponDoor;
 import lisong_mechlab.mwo_data.helpers.HardPointInfo;
 import lisong_mechlab.mwo_data.helpers.MdfComponent;
 import lisong_mechlab.mwo_data.helpers.MdfInternal;
-import lisong_mechlab.util.ArrayUtils;
 
 /**
  * This class is a data structure representing an arbitrary internal part of the 'mech's structure.
@@ -43,7 +44,7 @@ import lisong_mechlab.util.ArrayUtils;
  * 
  * @author Emily Björk
  */
-public class ComponentStandard  extends ComponentBase{
+public class ComponentStandard extends ComponentBase{
    private final List<HardPoint> hardPoints = new ArrayList<>();
 
    /**
@@ -55,13 +56,13 @@ public class ComponentStandard  extends ComponentBase{
     *           The location that the component is mounted at.
     * @param aHP
     *           The hit points of the component.
-    * @param aInternalItems
+    * @param aFixedItems
     *           An array of internal items and other items that are locked.
     * @param aHardPoints
     *           A {@link List} of {@link HardPoint}s for the component.
     */
-   public ComponentStandard(Location aLocation, int aSlots, double aHP, Item[] aInternalItems, List<HardPoint> aHardPoints){
-      super(aSlots, aHP, aLocation, aInternalItems);
+   public ComponentStandard(Location aLocation, int aSlots, double aHP, List<Item> aFixedItems, List<HardPoint> aHardPoints){
+      super(aSlots, aHP, aLocation, aFixedItems);
       hardPoints.addAll(aHardPoints);
    }
 
@@ -86,32 +87,6 @@ public class ComponentStandard  extends ComponentBase{
                                                                                                                    aHardpoints, aChassiMwoName));
    }
 
-   @Override
-   public int hashCode(){
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((hardPoints == null) ? 0 : hardPoints.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj){
-      if( this == obj )
-         return true;
-      if( !super.equals(obj) )
-         return false;
-      if( !(obj instanceof ComponentStandard) )
-         return false;
-      ComponentStandard other = (ComponentStandard)obj;
-      if( hardPoints == null ){
-         if( other.hardPoints != null )
-            return false;
-      }
-      else if( !ArrayUtils.equalsUnordered(hardPoints, other.hardPoints) )
-         return false;
-      return true;
-   }
-   
    public int getHardPointCount(HardPointType aHardpointType){
       int ans = 0;
       for(HardPoint it : hardPoints){
@@ -140,10 +115,7 @@ public class ComponentStandard  extends ComponentBase{
 
    @Override
    public boolean isAllowed(Item aItem){
-      if(!super.isAllowed(aItem)){
-         return false;
-      }
-      else if( aItem.getHardpointType() != HardPointType.NONE && getHardPointCount(aItem.getHardpointType()) <= 0 ){
+      if( aItem.getHardpointType() != HardPointType.NONE && getHardPointCount(aItem.getHardpointType()) <= 0 ){
          return false;
       }
       else if( aItem instanceof JumpJet ){
@@ -158,15 +130,16 @@ public class ComponentStandard  extends ComponentBase{
                return false;
          }
       }
+      else if( aItem instanceof Engine ){
+         return getLocation() == Location.CenterTorso;
+      }
+      else if( aItem == ItemDB.CASE ){
+         return (getLocation() == Location.LeftTorso || getLocation() == Location.RightTorso);
+      }
       return aItem.getNumCriticalSlots() <= getSlots() - getFixedItemSlots();
    }
 
-   @Override
-   public String toString(){
-      return getLocation().toString();
-   }
-
-   private static Item[] parseInternals(MdfComponent aComponent, List<Internal> aInternalsList){
+   private static List<Item> parseInternals(MdfComponent aComponent, List<Internal> aInternalsList){
       List<Item> ans = new ArrayList<>();
       if( null != aComponent.internals ){
          for(MdfInternal internal : aComponent.internals){
@@ -188,7 +161,7 @@ public class ComponentStandard  extends ComponentBase{
             }
          }
       }
-      return ans.toArray(new Item[ans.size()]);
+      return ans;
    }
 
    private static List<HardPoint> parseHardPoints(Location aLocation, MdfComponent aComponent, HardpointsXml aHardpoints, String aChassiMwoName){

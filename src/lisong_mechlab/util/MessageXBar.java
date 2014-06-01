@@ -67,7 +67,7 @@ public class MessageXBar{
        *           The {@link LoadoutStandard} to check.
        * @return <code>true</code> if this message affects the given {@link LoadoutStandard}.
        */
-      public boolean isForMe(LoadoutBase<?, ?> aLoadout);
+      public boolean isForMe(LoadoutBase<?> aLoadout);
 
       /**
        * @return <code>true</code> if this message can affect the damage or heat output of the related

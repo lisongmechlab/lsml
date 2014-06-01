@@ -30,7 +30,7 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
 public abstract class OpLoadoutBase extends CompositeOperation{
 
    protected final MessageXBar       xBar;
-   protected final LoadoutBase<?, ?> loadout;
+   protected final LoadoutBase<?> loadout;
 
    /**
     * @param aLoadout
@@ -40,7 +40,7 @@ public abstract class OpLoadoutBase extends CompositeOperation{
     * @param aDescription
     *           A human readable description of the operation.
     */
-   public OpLoadoutBase(LoadoutBase<?, ?> aLoadout, MessageXBar anXBar, String aDescription){
+   public OpLoadoutBase(LoadoutBase<?> aLoadout, MessageXBar anXBar, String aDescription){
       super(aDescription);
       loadout = aLoadout;
       xBar = anXBar;

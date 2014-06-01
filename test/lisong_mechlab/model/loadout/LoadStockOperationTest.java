@@ -80,7 +80,7 @@ public class LoadStockOperationTest{
    }
 
    public Object[] allChassis(){
-      List<? extends ChassisBase> chassii = new ArrayList<>();
+      List<ChassisBase> chassii = new ArrayList<>();
       chassii.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
@@ -91,19 +91,19 @@ public class LoadStockOperationTest{
    /**
     * Loading stock configuration shall produce a complete loadout for all chassis
     * 
-    * @param aChassi
-    *           Chassi to test on.
+    * @param aChassis
+    *           Chassis to test on.
     * @throws Exception
     */
    @Test
    @Parameters(method = "allChassis")
-   public void testApply(ChassisStandard aChassi) throws Exception{
+   public void testApply(ChassisStandard aChassis) throws Exception{
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard(aChassi, xBar);
+      LoadoutStandard loadout = new LoadoutStandard(aChassis, xBar);
 
       // Execute
       OperationStack opstack = new OperationStack(0);
-      opstack.pushAndApply(new OpLoadStock(aChassi, loadout, xBar));
+      opstack.pushAndApply(new OpLoadStock(aChassis, loadout, xBar));
 
       // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full armor?!)
       assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));

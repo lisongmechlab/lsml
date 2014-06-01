@@ -26,58 +26,59 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.ChassisStandard;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
- * The purpose of this class is to provide a default mock structure of a {@link LoadoutStandard} which is easy to configure for
- * a particular test.
+ * The purpose of this class is to provide a default mock structure of a {@link LoadoutStandard} which is easy to
+ * configure for a particular test.
  * 
- * @author Emily Bjoerk
+ * @author Emily Björk
  */
 public class MockLoadoutContainer{
-   final public ChassisStandard             chassi;
-   final public LoadoutStandard             loadout;
-   final public Upgrades            upgrades;
-   final public Efficiencies        efficiencies;
-   final public ComponentStandard   ira;
-   final public ComponentStandard   irt;
-   final public ComponentStandard   irl;
-   final public ComponentStandard   ihd;
-   final public ComponentStandard   ict;
-   final public ComponentStandard   ilt;
-   final public ComponentStandard   ill;
-   final public ComponentStandard   ila;
-   final public ConfiguredComponentBase ra;
-   final public ConfiguredComponentBase rt;
-   final public ConfiguredComponentBase rl;
-   final public ConfiguredComponentBase hd;
-   final public ConfiguredComponentBase ct;
-   final public ConfiguredComponentBase lt;
-   final public ConfiguredComponentBase ll;
-   final public ConfiguredComponentBase la;
+   final public ChassisBase                          chassi;
+   final public LoadoutBase<ConfiguredComponentBase> loadout;
+   final public Upgrades                             upgrades;
+   final public Efficiencies                         efficiencies;
+   final public ComponentBase                        ira;
+   final public ComponentBase                        irt;
+   final public ComponentBase                        irl;
+   final public ComponentBase                        ihd;
+   final public ComponentBase                        ict;
+   final public ComponentBase                        ilt;
+   final public ComponentBase                        ill;
+   final public ComponentBase                        ila;
+   final public ConfiguredComponentBase              ra;
+   final public ConfiguredComponentBase              rt;
+   final public ConfiguredComponentBase              rl;
+   final public ConfiguredComponentBase              hd;
+   final public ConfiguredComponentBase              ct;
+   final public ConfiguredComponentBase              lt;
+   final public ConfiguredComponentBase              ll;
+   final public ConfiguredComponentBase              la;
 
    public MockLoadoutContainer(){
-      chassi = mock(ChassisStandard.class);
-      loadout = mock(LoadoutStandard.class);
+      chassi = mock(ChassisBase.class);
+      loadout = mock(LoadoutBase.class);
       upgrades = mock(Upgrades.class);
       efficiencies = mock(Efficiencies.class);
 
-      ira = mock(ComponentStandard.class);
-      irt = mock(ComponentStandard.class);
-      irl = mock(ComponentStandard.class);
-      ihd = mock(ComponentStandard.class);
-      ict = mock(ComponentStandard.class);
-      ilt = mock(ComponentStandard.class);
-      ill = mock(ComponentStandard.class);
-      ila = mock(ComponentStandard.class);
+      ira = mock(ComponentBase.class);
+      irt = mock(ComponentBase.class);
+      irl = mock(ComponentBase.class);
+      ihd = mock(ComponentBase.class);
+      ict = mock(ComponentBase.class);
+      ilt = mock(ComponentBase.class);
+      ill = mock(ComponentBase.class);
+      ila = mock(ComponentBase.class);
       ra = mock(ConfiguredComponentBase.class);
       rt = mock(ConfiguredComponentBase.class);
       rl = mock(ConfiguredComponentBase.class);

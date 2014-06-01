@@ -39,9 +39,9 @@ import lisong_mechlab.view.ProgramInit;
 public class AddToGarageAction extends AbstractAction{
    private static final long       serialVersionUID = -1720149730950545006L;
    private static final String     SHORTCUT_STROKE  = "control S";
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
 
-   public AddToGarageAction(LoadoutBase<?, ?> aLoadout){
+   public AddToGarageAction(LoadoutBase<?> aLoadout){
       super("Add to garage");
       loadout = aLoadout;
       setEnabled(!ProgramInit.lsml().getGarage().getMechs().contains(aLoadout));

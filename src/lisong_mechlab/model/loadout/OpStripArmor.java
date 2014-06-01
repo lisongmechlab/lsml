@@ -30,7 +30,7 @@ import lisong_mechlab.util.MessageXBar;
  * @author Emily Björk
  */
 public class OpStripArmor extends OpLoadoutBase{
-   public OpStripArmor(LoadoutBase<?, ?> aLoadout, MessageXBar anXBar){
+   public OpStripArmor(LoadoutBase<?> aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "strip armor");
       for(ConfiguredComponentBase component : loadout.getComponents()){
          if( component.getInternalComponent().getLocation().isTwoSided() ){

@@ -37,7 +37,7 @@ import lisong_mechlab.view.mechlab.LoadoutFrame;
  */
 public class MaxArmorAction extends AbstractAction{
    private static final long       serialVersionUID = -5939335331941199195L;
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
    private final double            ratio;
    private final LoadoutFrame      loadoutFrame;
    private final MessageXBar       xBar;

@@ -42,9 +42,9 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
    private final JCheckBox           symmetric;
    private final OperationStack      opStack;
    private final MessageXBar         xBar;
-   private final LoadoutBase<?, ?>   loadout;
+   private final LoadoutBase<?>   loadout;
 
-   public ArmorSpinner(LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
+   public ArmorSpinner(LoadoutBase<?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
       part = aPart;
       loadout = aLoadout;
       side = anArmorSide;

@@ -30,9 +30,9 @@ import lisong_mechlab.util.WeaponRanges;
 public abstract class RangeMetric implements Metric{
    protected double                  range      = -1;
    protected boolean                 fixedRange = false;
-   protected final LoadoutBase<?, ?> loadout;
+   protected final LoadoutBase<?> loadout;
 
-   public RangeMetric(LoadoutBase<?, ?> aLoadout){
+   public RangeMetric(LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 

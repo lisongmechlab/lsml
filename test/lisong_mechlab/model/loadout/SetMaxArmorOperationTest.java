@@ -26,6 +26,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.MessageXBar;
@@ -52,7 +53,7 @@ public class SetMaxArmorOperationTest{
    @Test
    public void testApply(){
       // Setup
-      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard cut = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), xBar);
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
 
@@ -76,17 +77,18 @@ public class SetMaxArmorOperationTest{
             assertTrue(ub > front_back_ratio);
 
             verify(xBar, atLeast(2)).post(new ConfiguredComponentBase.Message(cut.getComponent(part.getLocation()),
-                                                                          ConfiguredComponentBase.Message.Type.ArmorChanged));
+                                                                              ConfiguredComponentBase.Message.Type.ArmorChanged));
          }
          else
-            verify(xBar).post(new ConfiguredComponentBase.Message(cut.getComponent(part.getLocation()), ConfiguredComponentBase.Message.Type.ArmorChanged));
+            verify(xBar).post(new ConfiguredComponentBase.Message(cut.getComponent(part.getLocation()),
+                                                                  ConfiguredComponentBase.Message.Type.ArmorChanged));
       }
    }
 
    @Test
    public void testApply_alreadyMaxArmor(){
       // Setup
-      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard cut = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), xBar);
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
       stack.pushAndApply(new OpSetMaxArmor(cut, xBar, 1.0, true));

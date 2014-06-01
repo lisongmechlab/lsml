@@ -42,7 +42,7 @@ import lisong_mechlab.util.MessageXBar.Message;
  */
 public class HeatOverTime implements TimeMetric, MessageXBar.Reader{
 
-   private final LoadoutBase<?, ?>      loadout;
+   private final LoadoutBase<?>      loadout;
    private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
 
    /**
@@ -51,7 +51,7 @@ public class HeatOverTime implements TimeMetric, MessageXBar.Reader{
     * @param aLoadout
     * @param aXBar
     */
-   public HeatOverTime(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
+   public HeatOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar){
       loadout = aLoadout;
       updateEvents();
       aXBar.attach(this);

@@ -45,7 +45,7 @@ public class ItemDB{
    static public final Item                ECM;
    static public final Item                BAP;
    static public final Item                CASE;
-
+   
    static private final Map<String, Item>  locname2item;
    static private final Map<String, Item>  mwoname2item;
    static private final Map<Integer, Item> mwoidx2item;

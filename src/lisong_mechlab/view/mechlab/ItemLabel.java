@@ -154,7 +154,7 @@ public class ItemLabel extends JLabel{
          @Override
          public void mousePressed(MouseEvent anEvent){
             final LoadoutFrame frame = ProgramInit.lsml().mechLabPane.getActiveLoadoutFrame();
-            final LoadoutBase<?,?> loadout = aEquipmentPanel.getCurrentLoadout();
+            final LoadoutBase<?> loadout = aEquipmentPanel.getCurrentLoadout();
 
             Component component = anEvent.getComponent();
             if( component instanceof ItemLabel ){
@@ -223,7 +223,7 @@ public class ItemLabel extends JLabel{
       updateVisibility(null);
    }
 
-   private void updateText(LoadoutBase<?,?> aLoadout){
+   private void updateText(LoadoutBase<?> aLoadout){
       StringBuilder builder = new StringBuilder();
       builder.append("<html>");
       builder.append(item.getShortName());
@@ -265,7 +265,7 @@ public class ItemLabel extends JLabel{
       setOpaque(true);
    }
 
-   public void updateVisibility(LoadoutBase<?,?> aLoadout){
+   public void updateVisibility(LoadoutBase<?> aLoadout){
       boolean prevSmartPlace = smartPlace;
       smartPlace = false;
       if( aLoadout != null ){

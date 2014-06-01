@@ -30,9 +30,9 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Emily Björk
  */
 public class TopSpeed implements Metric{
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
 
-   public TopSpeed(final LoadoutBase<?, ?> aLoadout){
+   public TopSpeed(final LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 

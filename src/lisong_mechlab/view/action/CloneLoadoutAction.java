@@ -35,9 +35,9 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class CloneLoadoutAction extends AbstractAction{
    private static final long       serialVersionUID = 2146995440483341395L;
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
 
-   public CloneLoadoutAction(String aTitle, LoadoutBase<?, ?> aLoadout, KeyStroke aKeyStroke){
+   public CloneLoadoutAction(String aTitle, LoadoutBase<?> aLoadout, KeyStroke aKeyStroke){
       super(aTitle);
       loadout = aLoadout;
       putValue(Action.ACCELERATOR_KEY, aKeyStroke);

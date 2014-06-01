@@ -110,7 +110,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       df1.setMinimumFractionDigits(1);
    }
 
-   private final LoadoutBase<?, ?>      loadout;
+   private final LoadoutBase<?>      loadout;
 
    // General pane
    private final JProgressBar           massBar;

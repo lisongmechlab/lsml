@@ -44,7 +44,7 @@ abstract class OpItemBase extends Operation{
    private int                         numEngineHS = 0;
    private final MessageXBar           xBar;
    protected final ConfiguredComponentBase component;
-   protected final LoadoutBase<?, ?>   loadout;
+   protected final LoadoutBase<?>   loadout;
    protected final Item                item;
 
    /**
@@ -60,7 +60,7 @@ abstract class OpItemBase extends Operation{
     * @param aItem
     *           The {@link Item} to add or remove.
     */
-   protected OpItemBase(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
+   protected OpItemBase(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
       if( aItem instanceof Internal )
          throw new IllegalArgumentException("Can't add/remove internals to/from a loadout!");
 

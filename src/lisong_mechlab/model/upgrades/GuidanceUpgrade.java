@@ -65,7 +65,7 @@ public class GuidanceUpgrade extends Upgrade{
     *           The loadout to calculate for.
     * @return A number of slots needed.
     */
-   public int getExtraSlots(LoadoutBase<?, ?> aLoadout){
+   public int getExtraSlots(LoadoutBase<?> aLoadout){
       int ans = 0;
       for(ConfiguredComponentBase part : aLoadout.getComponents()){
          ans += getExtraSlots(part);
@@ -100,7 +100,7 @@ public class GuidanceUpgrade extends Upgrade{
     *           The {@link LoadoutStandard} to calculate for.
     * @return A number of tons needed.
     */
-   public double getExtraTons(LoadoutBase<?, ?> aLoadout){
+   public double getExtraTons(LoadoutBase<?> aLoadout){
       double ans = 0;
       for(ConfiguredComponentBase part : aLoadout.getComponents()){
          ans += getExtraTons(part);

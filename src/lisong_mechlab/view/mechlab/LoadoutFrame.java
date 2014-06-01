@@ -73,7 +73,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private static final long       serialVersionUID      = -9181002222136052106L;
    private static int              openFrameCount        = 0;
    private static final int        xOffset               = 30, yOffset = 30;
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
    private final MessageXBar       xbar;
    private final OperationStack    loadoutOperationStack = new OperationStack(128);
    private final Action            actionUndoLoadout;
@@ -82,7 +82,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
    private final Action            actionAddToGarage;
    private final LoadoutInfoPanel  infoPanel;
 
-   public LoadoutFrame(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
+   public LoadoutFrame(LoadoutBase<?> aLoadout, MessageXBar aXBar){
       super(aLoadout.toString(), true, // resizable
             true, // closable
             false, // maximizable
@@ -166,7 +166,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       return ProgramInit.lsml().getGarage().getMechs().contains(loadout);
    }
 
-   public LoadoutBase<?,?> getLoadout(){
+   public LoadoutBase<?> getLoadout(){
       return loadout;
    }
 
@@ -174,7 +174,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       return loadoutOperationStack;
    }
 
-   private JPanel createMechView(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
+   private JPanel createMechView(LoadoutBase<?> aLoadout, MessageXBar aXBar){
       final JPanel panel = new JPanel();
       panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 

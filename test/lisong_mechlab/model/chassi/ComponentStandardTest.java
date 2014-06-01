@@ -19,22 +19,17 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.item.MissileWeapon;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -44,250 +39,172 @@ import org.mockito.Mockito;
  * 
  * @author Emily Björk
  */
-public class ComponentStandardTest{
+public class ComponentStandardTest extends ComponentBaseTest{
 
-   ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("TDR-5S");
+   private List<HardPoint> hardPoints = new ArrayList<>();
 
+   @Override
+   protected ComponentStandard makeDefaultCUT(){
+      return new ComponentStandard(location, criticalSlots, hp, fixedItems, hardPoints);
+   }
+
+   /**
+    * A component has missile bay doors if any one of its {@link HardPoint}s has missile bay doors.
+    */
+   @Test
+   public void testHasMissileBayDoors_NoDoors(){
+      hardPoints.add(new HardPoint(HardPointType.MISSILE, 5, false));
+      ComponentStandard cut = makeDefaultCUT();
+      assertFalse(cut.hasMissileBayDoors());
+   }
+
+   /**
+    * A component has missile bay doors if any one of its {@link HardPoint}s has missile bay doors.
+    */
+   @Test
+   public void testHasMissileBayDoors_HasDoors(){
+      hardPoints.add(new HardPoint(HardPointType.MISSILE, 5, true));
+      ComponentStandard cut = makeDefaultCUT();
+      assertTrue(cut.hasMissileBayDoors());
+   }
+
+   /**
+    * The list of hard points returned shall be immutable.
+    */
    @Test(expected = UnsupportedOperationException.class)
-   public void testGetHardpoints_Immutable() throws Exception{
-      ComponentStandard cut = chassi.getComponent(Location.CenterTorso);
-      cut.getHardPoints().add(new HardPoint(HardPointType.ENERGY));
+   public void testGetHardpoints_Immutable(){
+      makeDefaultCUT().getHardPoints().add(new HardPoint(HardPointType.ENERGY));
    }
 
-   @Test
-   public void testGetHardpoints() throws Exception{
-      Collection<HardPoint> hardpoints = chassi.getComponent(Location.RightTorso).getHardPoints();
-      assertEquals(3, hardpoints.size());
-
-      List<HardPoint> hps = new ArrayList<>(hardpoints);
-      boolean foundAms = false;
-      boolean foundLrm10 = false;
-      boolean foundLrm20 = false;
-      for(HardPoint hardpoint : hps){
-         if( hardpoint.getType() == HardPointType.AMS ){
-            if( foundAms )
-               fail("Two ams when only one expected!");
-            foundAms = true;
-         }
-         else if( hardpoint.getType() == HardPointType.MISSILE ){
-            if( hardpoint.getNumMissileTubes() == 20 ){
-               if( foundLrm20 )
-                  fail("Expected only one 20-tuber!");
-               foundLrm20 = true;
-            }
-            else if( hardpoint.getNumMissileTubes() == 10 ){
-               if( foundLrm10 )
-                  fail("Expected only one 10-tuber!");
-               foundLrm10 = true;
-            }
-            else
-               fail("Unexpected tube count!");
-         }
-         else
-            fail("Unexpected hardpoint!");
-
-      }
-
-      assertTrue(foundAms);
-      assertTrue(foundLrm10);
-      assertTrue(foundLrm20);
-   }
-
-   @Test
-   public void testGetType() throws Exception{
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-
-         assertSame(part, cut.getLocation());
-      }
-   }
-
-   @Test
-   public void testGetArmorMax() throws Exception{
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-
-         if( part == Location.Head ){
-            assertEquals(18, cut.getArmorMax());
-         }
-         else{
-            assertEquals((int)cut.getHitPoints() * 2, cut.getArmorMax());
-         }
-      }
-   }
-
-   @Test
-   public void testGetNumCriticalslots() throws Exception{
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-
-         if( part == Location.Head || part == Location.RightLeg || part == Location.LeftLeg ){
-            assertEquals(6, cut.getSlots());
-         }
-         else{
-            assertEquals(12, cut.getSlots());
-         }
-      }
-   }
-
-   @Test
-   public void testGetNumHardpoints() throws Exception{
-      assertEquals(3, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.ENERGY));
-      assertEquals(0, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.BALLISTIC));
-
-      assertEquals(1, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.AMS));
-      assertEquals(2, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.MISSILE));
-   }
-
-   @Test
-   public void testGetInternalItems() throws Exception{
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-
-         switch( part ){
-            case Head:
-               assertEquals(3, cut.getFixedItems().size());
-               break;
-            case RightLeg:
-               assertEquals(4, cut.getFixedItems().size());
-               break;
-            case RightArm:
-               assertEquals(4, cut.getFixedItems().size());
-               break;
-            case LeftArm:
-               assertEquals(4, cut.getFixedItems().size());
-               break;
-            case LeftLeg:
-               assertEquals(4, cut.getFixedItems().size());
-               break;
-            case CenterTorso:
-               assertEquals(1, cut.getFixedItems().size());
-               break;
-            default:
-               break;
-         }
-      }
-   }
-
-   @Test(expected = UnsupportedOperationException.class)
-   public void testGetInternalItems_Immutable() throws Exception{
-      ComponentStandard cut = chassi.getComponent(Location.LeftLeg);
-      cut.getFixedItems().add(ConfiguredComponentBase.ENGINE_INTERNAL);
-   }
-
-   @Test
-   public void testGetHitpoints() throws Exception{
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-
-         switch( part ){
-            case RightArm:
-               assertEquals(20, cut.getHitPoints(), 0.0);
-               break;
-            case RightTorso:
-               assertEquals(30, cut.getHitPoints(), 0.0);
-               break;
-            case RightLeg:
-               assertEquals(30, cut.getHitPoints(), 0.0);
-               break;
-            case Head:
-               assertEquals(15, cut.getHitPoints(), 0.0);
-               break;
-            case CenterTorso:
-               assertEquals(42, cut.getHitPoints(), 0.0);
-               break;
-            case LeftTorso:
-               assertEquals(30, cut.getHitPoints(), 0.0);
-               break;
-            case LeftLeg:
-               assertEquals(30, cut.getHitPoints(), 0.0);
-               break;
-            case LeftArm:
-               assertEquals(20, cut.getHitPoints(), 0.0);
-               break;
-            default:
-               break;
-         }
-      }
-   }
-
-   @Test
-   public void testIsAllowed_Internals(){
-      Internal internal = Mockito.mock(Internal.class);
-      Mockito.when(internal.getNumCriticalSlots()).thenReturn(1);
-      Mockito.when(internal.getMass()).thenReturn(0.0);
-      Mockito.when(internal.getHardpointType()).thenReturn(HardPointType.NONE);
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-         assertFalse(cut.isAllowed(internal));
-      }
-   }
-
+   /**
+    * Engine is only allowed in CT
+    */
    @Test
    public void testIsAllowed_Engine(){
-      Engine engine = (Engine)ItemDB.lookup("STD ENGINE 200");
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-         if( part == Location.CenterTorso ){
-            assertTrue(cut.isAllowed(engine));
+      Engine engine = Mockito.mock(Engine.class);
+      Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+
+      for(Location loc : Location.values()){
+         location = loc;
+         if( loc == Location.CenterTorso ){
+            assertTrue(makeDefaultCUT().isAllowed(engine));
          }
          else{
-            assertFalse(cut.isAllowed(engine));
+            assertFalse(makeDefaultCUT().isAllowed(engine));
          }
       }
    }
 
+   /**
+    * Jump jets are only allowed in legs and torsii.
+    */
    @Test
    public void testIsAllowed_Jumpjets(){
-      JumpJet jj = (JumpJet)ItemDB.lookup("JUMP JETS - CLASS III");
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-         if( part == Location.CenterTorso || part == Location.RightTorso || part == Location.LeftTorso || part == Location.LeftLeg
-             || part == Location.RightLeg ){
-            assertTrue(cut.isAllowed(jj));
+      JumpJet jj = Mockito.mock(JumpJet.class);
+      Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
+
+      List<Location> allowedLocations = new ArrayList<>();
+      allowedLocations.add(Location.CenterTorso);
+      allowedLocations.add(Location.RightTorso);
+      allowedLocations.add(Location.LeftTorso);
+      allowedLocations.add(Location.LeftLeg);
+      allowedLocations.add(Location.RightLeg);
+
+      for(Location loc : Location.values()){
+         location = loc;
+         if( allowedLocations.contains(loc) ){
+            assertTrue(makeDefaultCUT().isAllowed(jj));
          }
          else{
-            assertFalse(cut.isAllowed(jj));
+            assertFalse(makeDefaultCUT().isAllowed(jj));
          }
       }
    }
 
+   /**
+    * C.A.S.E. is only allowed on side torsii, (doesn't make sense in CT).
+    */
    @Test
-   public void testIsAllowed_Case(){
-      Item case_module = ItemDB.CASE;
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-         if( part == Location.RightTorso || part == Location.LeftTorso ){
-            assertTrue(cut.isAllowed(case_module));
+   public void testIsAllowed_CASE(){
+      List<Location> allowedLocations = new ArrayList<>();
+      allowedLocations.add(Location.RightTorso);
+      allowedLocations.add(Location.LeftTorso);
+
+      for(Location loc : Location.values()){
+         location = loc;
+         if( allowedLocations.contains(loc) ){
+            assertTrue(makeDefaultCUT().isAllowed(ItemDB.CASE));
          }
          else{
-            assertFalse(cut.isAllowed(case_module));
+            assertFalse(makeDefaultCUT().isAllowed(ItemDB.CASE));
          }
       }
    }
 
+   /**
+    * Items that do not have a matching hard point are not allowed.
+    */
    @Test
-   public void testIsAllowed_Hardpoints(){
-      assertFalse(chassi.getComponent(Location.LeftArm).isAllowed(ItemDB.lookup("PPC")));
-      assertFalse(chassi.getComponent(Location.LeftArm).isAllowed(ItemDB.lookup("LRM 20")));
-      assertFalse(chassi.getComponent(Location.LeftArm).isAllowed(ItemDB.lookup("AMS")));
-      assertFalse(chassi.getComponent(Location.LeftArm).isAllowed(ItemDB.lookup("GUARDIAN ECM")));
-      assertTrue(chassi.getComponent(Location.LeftArm).isAllowed(ItemDB.lookup("AC/2")));
+   public void testIsAllowed_NoHardpoints(){
+      hardPoints.add(new HardPoint(HardPointType.BALLISTIC));
+      hardPoints.add(new HardPoint(HardPointType.ENERGY));
+
+      MissileWeapon missile = Mockito.mock(MissileWeapon.class);
+      Mockito.when(missile.getHardpointType()).thenReturn(HardPointType.MISSILE);
+
+      assertFalse(makeDefaultCUT().isAllowed(missile));
+
+      hardPoints.add(new HardPoint(HardPointType.MISSILE, 6, false));
+      assertTrue(makeDefaultCUT().isAllowed(missile));
    }
 
+   /**
+    * The presence of the correct hard point type shall not short circuit check for item size.
+    */
    @Test
-   public void testIsAllowed_Size(){
-      assertFalse(chassi.getComponent(Location.LeftArm).isAllowed(ItemDB.lookup("AC/20")));
+   public void testIsAllowed_HasHardpointsButTooBig(){
+      hardPoints.add(new HardPoint(HardPointType.MISSILE, 6, false));
 
-      assertFalse(chassi.getComponent(Location.LeftLeg).isAllowed(ItemDB.DHS));
-      assertFalse(chassi.getComponent(Location.Head).isAllowed(ItemDB.DHS));
+      MissileWeapon missile = Mockito.mock(MissileWeapon.class);
+      Mockito.when(missile.getHardpointType()).thenReturn(HardPointType.MISSILE);
+
+      assertTrue(makeDefaultCUT().isAllowed(missile));
+
+      Mockito.when(missile.getNumCriticalSlots()).thenReturn(criticalSlots + 1);
+
+      assertFalse(makeDefaultCUT().isAllowed(missile));
    }
 
+   /**
+    * Items that are too big to fit together with fixed items are not allowed.
+    */
    @Test
-   public void testIsAllowed_Modules(){
-      for(Location part : Location.values()){
-         ComponentStandard cut = chassi.getComponent(part);
-         assertTrue(cut.isAllowed(ItemDB.SHS));
-      }
+   public void testIsAllowed_TooBig(){
+      Item fixedItem = Mockito.mock(Item.class);
+      fixedItems.add(fixedItem);
+      int fixedSize = criticalSlots / 2;
+      Mockito.when(fixedItem.getNumCriticalSlots()).thenReturn(fixedSize);
+
+      Item item = Mockito.mock(Item.class);
+      Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+      Mockito.when(item.getNumCriticalSlots()).thenReturn(criticalSlots - fixedSize);
+
+      assertTrue(makeDefaultCUT().isAllowed(item));
+
+      Mockito.when(item.getNumCriticalSlots()).thenReturn(criticalSlots - fixedSize + 1);
+
+      assertFalse(makeDefaultCUT().isAllowed(item));
+   }
+
+   /**
+    * Item's with no particular hard point requirements and that are small enough should be allowed.
+    */
+   @Test
+   public void testIsAllowed_Basic(){
+      Item item = Mockito.mock(Item.class);
+      Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+      Mockito.when(item.getNumCriticalSlots()).thenReturn(criticalSlots / 2);
+
+      assertTrue(makeDefaultCUT().isAllowed(item));
    }
 }

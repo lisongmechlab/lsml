@@ -39,7 +39,7 @@ import lisong_mechlab.util.MessageXBar;
  * @author Emily Björk
  */
 public class OpLoadStock extends OpLoadoutBase{
-   public OpLoadStock(ChassisBase aChassiVariation, LoadoutBase<?, ?> aLoadout, MessageXBar anXBar){
+   public OpLoadStock(ChassisBase aChassiVariation, LoadoutBase<?> aLoadout, MessageXBar anXBar){
       super(aLoadout, anXBar, "load stock");
 
       StockLoadout stockLoadout = StockLoadoutDB.lookup(aChassiVariation);

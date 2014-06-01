@@ -51,7 +51,7 @@ import lisong_mechlab.util.MessageXBar.Reader;
  */
 public class WeaponSummaryTable extends JTable implements Reader{
    private static final long       serialVersionUID = 868861599143353045L;
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
    private final DecimalFormat     decimalFormat    = new DecimalFormat("####");
 
    private static class WeaponModel extends AbstractTableModel{
@@ -62,7 +62,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
          private int                ammoTons;
          private final List<Weapon> weapons = new ArrayList<Weapon>();
 
-         Entry(LoadoutBase<?, ?> aLoadout, Item anItem){
+         Entry(LoadoutBase<?> aLoadout, Item anItem){
             if( anItem instanceof Ammunition ){
                ammoType = (Ammunition)anItem;
                ammoTons = 1;
@@ -80,7 +80,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
                throw new IllegalArgumentException("Item must be ammuniton or weapon!");
          }
 
-         boolean consume(LoadoutBase<?, ?> aLoadout, Item anItem){
+         boolean consume(LoadoutBase<?> aLoadout, Item anItem){
             if( ammoType != null && ammoType == anItem ){
                ammoTons++;
                return true;
@@ -119,7 +119,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
 
       List<Entry> entries = new ArrayList<>();
 
-      public void update(LoadoutBase<?, ?> aLoadout){
+      public void update(LoadoutBase<?> aLoadout){
          entries.clear();
          for(Item item : aLoadout.getAllItems()){
             boolean found = false;
@@ -291,7 +291,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
       }
    }
 
-   public WeaponSummaryTable(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
+   public WeaponSummaryTable(LoadoutBase<?> aLoadout, MessageXBar aXBar){
       super(new WeaponModel());
       loadout = aLoadout;
       decimalFormat.setGroupingUsed(true);

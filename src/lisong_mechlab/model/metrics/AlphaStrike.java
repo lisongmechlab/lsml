@@ -32,7 +32,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  */
 public class AlphaStrike extends RangeMetric{
 
-   public AlphaStrike(final LoadoutBase<?, ?> aLoadout){
+   public AlphaStrike(final LoadoutBase<?> aLoadout){
       super(aLoadout);
    }
 

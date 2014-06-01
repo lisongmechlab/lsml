@@ -50,7 +50,7 @@ public class ExportToSmurfyAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      LoadoutBase<?,?> loadout = loadoutFrame.getLoadout();
+      LoadoutBase<?> loadout = loadoutFrame.getLoadout();
 
       SmurfyImportExport export = new SmurfyImportExport(null, ProgramInit.lsml().loadoutCoder);
 

@@ -23,8 +23,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -83,6 +86,56 @@ public class ChassiDBTest{
 
       assertFalse(cut.isAllowed(lrm20));
       assertTrue(cut.isAllowed(ac20));
+   }
+   
+   @Test
+   public void testCanLoadHardpointInfo2() throws Exception{
+      ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("TDR-5S");
+      Collection<HardPoint> hardpoints = chassi.getComponent(Location.RightTorso).getHardPoints();
+      assertEquals(3, hardpoints.size());
+
+      List<HardPoint> hps = new ArrayList<>(hardpoints);
+      boolean foundAms = false;
+      boolean foundLrm10 = false;
+      boolean foundLrm20 = false;
+      for(HardPoint hardpoint : hps){
+         if( hardpoint.getType() == HardPointType.AMS ){
+            if( foundAms )
+               fail("Two ams when only one expected!");
+            foundAms = true;
+         }
+         else if( hardpoint.getType() == HardPointType.MISSILE ){
+            if( hardpoint.getNumMissileTubes() == 20 ){
+               if( foundLrm20 )
+                  fail("Expected only one 20-tuber!");
+               foundLrm20 = true;
+            }
+            else if( hardpoint.getNumMissileTubes() == 10 ){
+               if( foundLrm10 )
+                  fail("Expected only one 10-tuber!");
+               foundLrm10 = true;
+            }
+            else
+               fail("Unexpected tube count!");
+         }
+         else
+            fail("Unexpected hardpoint!");
+
+      }
+
+      assertTrue(foundAms);
+      assertTrue(foundLrm10);
+      assertTrue(foundLrm20);
+   }
+   
+   @Test
+   public void testCanLoadHardpointInfo3() throws Exception{
+      ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("TDR-5S");
+      assertEquals(3, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.ENERGY));
+      assertEquals(0, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.BALLISTIC));
+
+      assertEquals(1, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.AMS));
+      assertEquals(2, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.MISSILE));
    }
 
    @Test

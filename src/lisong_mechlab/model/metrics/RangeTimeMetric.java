@@ -32,9 +32,9 @@ public abstract class RangeTimeMetric implements Metric{
    private double                    range      = -1;
    private double                    time       = 0;
    private boolean                   fixedRange = false;
-   protected final LoadoutBase<?, ?> loadout;
+   protected final LoadoutBase<?> loadout;
 
-   public RangeTimeMetric(LoadoutBase<?, ?> aLoadout){
+   public RangeTimeMetric(LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 

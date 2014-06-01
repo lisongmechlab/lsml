@@ -31,7 +31,7 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.util.MessageXBar;
 
-class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?, ?>>{
+class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?>>{
    private MechGarage         garage = null;
    private final ChassisClass chassiClass;
 
@@ -61,7 +61,7 @@ class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?, ?>>{
    }
 
    @Override
-   protected boolean filter(LoadoutBase<?, ?> aLoadout){
+   protected boolean filter(LoadoutBase<?> aLoadout){
       ChassisBase chassi = aLoadout.getChassis();
       return aLoadout.getName().toLowerCase().contains(getFilterString()) || chassi.getName().toLowerCase().contains(getFilterString());
    }
@@ -69,7 +69,7 @@ class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?, ?>>{
    private void garageChanged(){
       children.clear();
       if( garage != null ){
-         for(LoadoutBase<?, ?> loadout : garage.getMechs()){
+         for(LoadoutBase<?> loadout : garage.getMechs()){
             if( loadout.getChassis().getChassiClass() == chassiClass )
                children.add(loadout);
          }

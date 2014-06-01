@@ -36,7 +36,7 @@ public class OpSetArmorSymmetric extends CompositeOperation{
    private final ConfiguredComponentBase component;
    private final ArmorSide           side;
    private final boolean             manual;
-   private final LoadoutBase<?, ?>   loadout;
+   private final LoadoutBase<?>   loadout;
 
    /**
     * Creates a new {@link OpSetArmorSymmetric}.
@@ -58,7 +58,7 @@ public class OpSetArmorSymmetric extends CompositeOperation{
     *            Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage to
     *            support the armor.
     */
-   public OpSetArmorSymmetric(MessageXBar aXBar, LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aLoadoutPart, ArmorSide aArmorSide,
+   public OpSetArmorSymmetric(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, ArmorSide aArmorSide,
                               int aArmorAmount, boolean aManualSet){
       super("change armor");
       loadout = aLoadout;

@@ -31,6 +31,7 @@ import java.util.List;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
+import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
@@ -54,6 +55,11 @@ import org.mockito.Spy;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * Test suite for {@link LoadoutStandard}
+ * 
+ * @author Emily Björk
+ */
 public class LoadoutStandardTest{
    @Spy
    MessageXBar    xBar;

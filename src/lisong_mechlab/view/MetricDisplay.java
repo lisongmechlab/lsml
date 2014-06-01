@@ -39,18 +39,18 @@ import lisong_mechlab.util.MessageXBar.Reader;
  */
 public class MetricDisplay extends JLabel implements Reader{
    private static final long       serialVersionUID = 4947119462839900984L;
-   private final LoadoutBase<?, ?> loadout;
+   private final LoadoutBase<?> loadout;
    private final Formatter         formatter;
    private final StringBuilder     sb               = new StringBuilder();
    private final String            format;
    private final boolean           percent;
    protected final Metric          metric;
 
-   public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?, ?> aLoadout){
+   public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?> aLoadout){
       this(aMetric, aFormat, aTooltip, anXBar, aLoadout, false);
    }
 
-   public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?, ?> aLoadout, boolean aPercent){
+   public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?> aLoadout, boolean aPercent){
       loadout = aLoadout;
       anXBar.attach(this);
       setToolTipText(aTooltip);

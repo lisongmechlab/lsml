@@ -43,7 +43,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpAutoAddItem extends OpLoadoutBase{
    private class Node implements Comparable<Node>{
-      final LoadoutBase<?, ?> data;
+      final LoadoutBase<?> data;
       final Location          source;
       final Location          target;
       final Item              item;
@@ -52,7 +52,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
 
       final Item              targetItem;
 
-      Node(LoadoutBase<?, ?> aRoot, Item aItem){
+      Node(LoadoutBase<?> aRoot, Item aItem){
          parent = null;
          item = aItem;
          source = null;
@@ -123,7 +123,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
    private final List<Location> partTraversalOrder;
    private final OperationStack stack      = new OperationStack(0);
 
-   public OpAutoAddItem(LoadoutBase<?, ?> aLoadout, MessageXBar anXBar, Item anItem){
+   public OpAutoAddItem(LoadoutBase<?> aLoadout, MessageXBar anXBar, Item anItem){
       super(aLoadout, anXBar, "auto place item");
       itemToPlace = anItem;
       for(ConfiguredComponentBase part : aLoadout.getCandidateLocationsForItem(itemToPlace)){
@@ -217,7 +217,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
 
       // Create a temporary loadout where the item has been removed and find all
       // ways it can be placed on another part.
-      LoadoutBase<?, ?> tempLoadout = aParent.data.clone(null);
+      LoadoutBase<?> tempLoadout = aParent.data.clone(null);
       stack.pushAndApply(new OpRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
 
       ConfiguredComponentBase srcPart = tempLoadout.getComponent(aSourcePart);

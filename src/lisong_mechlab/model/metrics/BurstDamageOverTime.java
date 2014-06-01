@@ -53,7 +53,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.
     * @param aXBar
     *           The {@link MessageXBar} to listen for changes to 'aLoadout' on.
     */
-   public BurstDamageOverTime(LoadoutBase<?, ?> aLoadout, MessageXBar aXBar){
+   public BurstDamageOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar){
       super(aLoadout);
       updateEvents(getRange());
       aXBar.attach(this);

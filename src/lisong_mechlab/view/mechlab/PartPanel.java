@@ -113,7 +113,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    private final JLabel              backArmorLabel;
    private final JLabel              armorLabel;
 
-   private final LoadoutBase<?, ?>   loadout;
+   private final LoadoutBase<?>   loadout;
    private final ConfiguredComponentBase loadoutPart;
 
    private final boolean             canHaveHardpoints;
@@ -124,7 +124,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    private final JComboBox<OmniPod>  omnipodSelection;
 
-   PartPanel(LoadoutBase<?, ?> aLoadout, ConfiguredComponentBase aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints,
+   PartPanel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints,
              DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric, OperationStack aStack){
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       anXBar.attach(this);

@@ -39,7 +39,7 @@ public class OpRename extends OpLoadoutBase{
     * @param aName
     *           The new name of the loadout.
     */
-   public OpRename(LoadoutBase<?, ?> aLoadout, MessageXBar anXBar, String aName){
+   public OpRename(LoadoutBase<?> aLoadout, MessageXBar anXBar, String aName){
       super(aLoadout, anXBar, "rename loadout");
       newName = aName;
    }

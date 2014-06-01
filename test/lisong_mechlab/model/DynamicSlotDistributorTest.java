@@ -35,7 +35,7 @@ import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredOmniPod;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -49,9 +49,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicSlotDistributorTest{
-   MockLoadoutContainer      mlc = new MockLoadoutContainer();
+   MockLoadoutContainer          mlc = new MockLoadoutContainer();
    List<ConfiguredComponentBase> priorityOrder;
-   DynamicSlotDistributor    cut;
+   DynamicSlotDistributor        cut;
 
    @Before
    public void setup(){
@@ -299,7 +299,7 @@ public class DynamicSlotDistributorTest{
 
    @Test
    public void testOmniMech(){
-      // Prepare armor/structure 
+      // Prepare armor/structure
       StructureUpgrade aStructureType = Mockito.mock(StructureUpgrade.class);
       ArmorUpgrade armorType = Mockito.mock(ArmorUpgrade.class);
       int armorSlotsCount = 0;
@@ -316,25 +316,25 @@ public class DynamicSlotDistributorTest{
       structSlotsCount = 4;
       Mockito.when(aStructureType.getExtraSlots()).thenReturn(structSlotsCount);
       Mockito.when(armorType.getExtraSlots()).thenReturn(armorSlotsCount);
-      
+
       // Create chassis
       ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null, false, null, aStructureType,
                                                             armorType, null, null, structureSlots, armorSlots);
 
       // Setup factory
-      Factory<ConfiguredOmniPod, OmniPod> aFactory = Mockito.mock(Factory.class);
-            ConfiguredOmniPod[] omniPods = new ConfiguredOmniPod[Location.values().length];
+      Factory<ConfiguredComponentOmniMech> aFactory = Mockito.mock(Factory.class);
+      ConfiguredComponentOmniMech[] omniPods = new ConfiguredComponentOmniMech[Location.values().length];
       for(Location location : Location.values()){
          OmniPod omniPod = Mockito.mock(OmniPod.class);
          Mockito.when(omniPod.getLocation()).thenReturn(location);
-         omniPods[location.ordinal()] = Mockito.mock(ConfiguredOmniPod.class);
+         omniPods[location.ordinal()] = Mockito.mock(ConfiguredComponentOmniMech.class);
          Mockito.when(omniPods[location.ordinal()].getInternalComponent()).thenReturn(omniPod);
       }
       Mockito.when(aFactory.defaultComponents(Matchers.any(ChassisBase.class))).thenReturn(omniPods);
 
       // Create loadout
       LoadoutOmniMech loadoutOmniMech = new LoadoutOmniMech(aFactory, chassisOmniMech, null);
-      
+
       // Execute + Verify
       cut = new DynamicSlotDistributor(loadoutOmniMech);
       for(Location location : Location.values()){

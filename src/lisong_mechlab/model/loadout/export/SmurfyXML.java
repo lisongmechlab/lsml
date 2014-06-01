@@ -57,7 +57,7 @@ public class SmurfyXML{
     *           The {@link LoadoutStandard} to convert.
     * @return A {@link String} with the XML (including embedded new lines).
     */
-   static public String toXml(final LoadoutBase<?, ?> aLoadout){
+   static public String toXml(final LoadoutBase<?> aLoadout){
       StringWriter sw = new StringWriter();
       sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
       stream().marshal(aLoadout, new PrettyPrintWriter(sw, new NoNameCoder()){

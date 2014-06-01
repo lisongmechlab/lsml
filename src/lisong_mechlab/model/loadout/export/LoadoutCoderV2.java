@@ -103,7 +103,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
    }
 
    @Override
-   public byte[] encode(final LoadoutBase<?,?> aLoadout) throws EncodingException{
+   public byte[] encode(final LoadoutBase<?> aLoadout) throws EncodingException{
 
       final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
 

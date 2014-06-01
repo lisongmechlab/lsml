@@ -25,10 +25,11 @@ import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
-import lisong_mechlab.model.chassi.ComponentStandard;
+import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -52,13 +53,13 @@ public class AddItemOperationTest{
    @Mock
    private ConfiguredComponentBase loadoutPart;
    @Mock
-   private LoadoutStandard             loadout;
+   private LoadoutBase<?>          loadout;
    @Mock
-   private Upgrades            upgrades;
+   private Upgrades                upgrades;
    @Mock
-   private MessageXBar         xBar;
+   private MessageXBar             xBar;
    @Mock
-   private ComponentStandard   internalPart;
+   private ComponentBase           internalPart;
 
    @Before
    public void setup(){
