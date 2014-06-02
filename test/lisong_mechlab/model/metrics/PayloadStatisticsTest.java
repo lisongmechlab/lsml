@@ -21,7 +21,9 @@ package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisStandard;
+import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -29,6 +31,44 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class PayloadStatisticsTest{
+
+   @Test
+   public final void testOmniMech(){
+      double strippedMass = 50;
+      int maxMass = 100;
+      int fixedHs = 8;
+      ChassisOmniMech chassis = Mockito.mock(ChassisOmniMech.class);
+      Mockito.when(chassis.getMassMax()).thenReturn(maxMass);
+      Mockito.when(chassis.getMassStripped()).thenReturn(strippedMass);
+      Mockito.when(chassis.getFixedHeatSinks()).thenReturn(fixedHs);
+
+      PayloadStatistics cut = new PayloadStatistics(false, false, null);
+
+      assertEquals(maxMass - strippedMass - (10 - fixedHs), cut.calculate(chassis), 0.0);
+   }
+
+   @Test
+   public final void testOmniMech_MaxArmor(){
+      int maxArmor = 300;
+      double strippedMass = 50;
+      int maxMass = 100;
+      double armorMass = 10;
+      int fixedHs = 8;
+
+      ArmorUpgrade armorUpgrade = Mockito.mock(ArmorUpgrade.class);
+      Mockito.when(armorUpgrade.getArmorMass(maxArmor)).thenReturn(armorMass);
+      
+      ChassisOmniMech chassis = Mockito.mock(ChassisOmniMech.class);
+      Mockito.when(chassis.getMassMax()).thenReturn(maxMass);
+      Mockito.when(chassis.getMassStripped()).thenReturn(strippedMass);
+      Mockito.when(chassis.getFixedHeatSinks()).thenReturn(fixedHs);
+      Mockito.when(chassis.getArmorMax()).thenReturn(maxArmor);
+      Mockito.when(chassis.getArmorType()).thenReturn(armorUpgrade);
+
+      PayloadStatistics cut = new PayloadStatistics(false, true, null);
+
+      assertEquals(maxMass - strippedMass - (10 - fixedHs) - armorMass, cut.calculate(chassis), 0.0);
+   }
 
    @Test
    public final void testChangeUseXLEngine() throws Exception{

@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.graphs;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -98,7 +100,8 @@ public class PayloadSelectionPanel extends JPanel{
          JPanel entriesPanel = new JPanel();
          entriesPanel.setLayout(new BoxLayout(entriesPanel, BoxLayout.Y_AXIS));
          entriesPanel.setBorder(BorderFactory.createTitledBorder("Chassis to include"));
-         entriesPanel.add(graphEntries);
+         JScrollPane scrollPane = new JScrollPane(graphEntries);
+         entriesPanel.add(scrollPane);
          add(entriesPanel);
 
          graphEntries.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -171,7 +174,7 @@ public class PayloadSelectionPanel extends JPanel{
    private Collection<PayloadGraphPanel.Entry> chassis;
 
    public PayloadSelectionPanel(){
-      setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+      setLayout(new BorderLayout());
 
       chassis = calculateUniqueSpeedChassis();
       PayloadSettingsPanel settingsPanel = new PayloadSettingsPanel(chassis);
@@ -184,8 +187,8 @@ public class PayloadSelectionPanel extends JPanel{
 
       settingsPanel.setupListeners(payloadStatistics, graphPanel, upgrades);
 
-      add(settingsPanel);
-      add(graphPanel);
+      add(settingsPanel, BorderLayout.WEST);
+      add(graphPanel, BorderLayout.CENTER);
    }
 
    private Collection<PayloadGraphPanel.Entry> calculateUniqueSpeedChassis(){

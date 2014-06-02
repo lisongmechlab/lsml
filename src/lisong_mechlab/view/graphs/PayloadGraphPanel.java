@@ -113,10 +113,22 @@ public class PayloadGraphPanel extends ChartPanel{
             // Omnimech
             ChassisOmniMech chassisOmniMech = (ChassisOmniMech)entry.representant;
             Engine engine = chassisOmniMech.getEngine();
-            // TODO: Show min/max
-            double speed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileStock(), chassisOmniMech.getMassMax(),
-                                              efficiencies.getSpeedModifier());
-            series.add(speed, payloadStatistics.calculate(chassisOmniMech, engine.getRating()));
+
+            double minSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileMin(), chassisOmniMech.getMassMax(),
+                                                 efficiencies.getSpeedModifier());
+            double stockSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileStock(), chassisOmniMech.getMassMax(),
+                                                   efficiencies.getSpeedModifier());
+            double maxSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileMax(), chassisOmniMech.getMassMax(),
+                                                 efficiencies.getSpeedModifier());
+
+            double payload = payloadStatistics.calculate(chassisOmniMech);
+            if( minSpeed != stockSpeed ){
+               series.add(minSpeed, payload);
+            }
+            series.add(stockSpeed, payload);
+            if( maxSpeed != stockSpeed ){
+               series.add(maxSpeed, payload);
+            }
          }
          dataset.addSeries(series);
       }

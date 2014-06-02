@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
@@ -36,10 +37,10 @@ import lisong_mechlab.model.upgrades.StructureUpgrade;
  */
 public class ChassisOmniMech extends ChassisBase{
 
-   private final Engine           engine;
-   private final StructureUpgrade structureType;
    private final ArmorUpgrade     armorType;
+   private final Engine           engine;
    private final HeatSinkUpgrade  heatSinkType;
+   private final StructureUpgrade structureType;
 
    /**
     * @param aMwoID
@@ -96,6 +97,13 @@ public class ChassisOmniMech extends ChassisBase{
       }
    }
 
+   /**
+    * @return The type of the fixed armor of this omnimech.
+    */
+   public ArmorUpgrade getArmorType(){
+      return armorType;
+   }
+
    @Override
    public ComponentOmniMech getComponent(Location aLocation){
       return (ComponentOmniMech)super.getComponent(aLocation);
@@ -115,17 +123,18 @@ public class ChassisOmniMech extends ChassisBase{
    }
 
    /**
-    * @return The type of the fixed internal structure of this omnimech.
+    * @return The number of heat sinks that are fixed on this chassis, including the ones in the fixed engine.
     */
-   public StructureUpgrade getStructureType(){
-      return structureType;
-   }
-
-   /**
-    * @return The type of the fixed armor of this omnimech.
-    */
-   public ArmorUpgrade getArmorType(){
-      return armorType;
+   public int getFixedHeatSinks(){
+      int ans = getEngine().getNumInternalHeatsinks();
+      for(ComponentOmniMech component : getComponents()){
+         for(Item item : component.getFixedItems()){
+            if(item instanceof HeatSink){
+               ans++;
+            }
+         }
+      }
+      return ans;
    }
 
    /**
@@ -135,26 +144,29 @@ public class ChassisOmniMech extends ChassisBase{
       return heatSinkType;
    }
 
-   @Override
-   public boolean isAllowed(Item aItem){
-      if( aItem instanceof Engine ){
-         return false; // Engine is fixed.
+   /**
+    * @return The mass of this chassis when all non-fixed components and all armor is removed.
+    */
+   public double getMassStripped(){
+      double ans = structureType.getStructureMass(this);
+      for(ComponentOmniMech component : getComponents()){
+         for(Item item : component.getFixedItems()){
+            ans += item.getMass();
+         }
       }
-      return super.isAllowed(aItem); // Anything else depends on the actual combination of omnipods equipped
+      return ans;
    }
 
    /**
     * TODO: Test when we have all omnipods in {@link OmniPodDB}.
     * 
-    * @return The {@link MovementProfile} for the stock selection of {@link OmniPod}s.
+    * @return The {@link MovementProfile} where the {@link OmniPod} for each {@link ComponentOmniMech} is selected to
+    *         maximize each attribute. All the values of the {@link MovementProfile} may not be attainable
+    *         simultaneously but each value of each attribute is independently attainable for some combination of
+    *         {@link OmniPod}.
     */
-   public MovementProfile getMovementProfileStock(){
-      MovementProfileSum ans = new MovementProfileSum(getMovementProfileBase());
-      for(Location location : Location.values()){
-         OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
-         ans.addMovementProfile(omniPod.getQuirks());
-      }
-      return ans;
+   public MovementProfile getMovementProfileMax(){
+      return new MaxMovementProfile(getMovementProfileBase(), getOmniPodMovementProfileGroups());
    }
 
    /**
@@ -172,13 +184,15 @@ public class ChassisOmniMech extends ChassisBase{
    /**
     * TODO: Test when we have all omnipods in {@link OmniPodDB}.
     * 
-    * @return The {@link MovementProfile} where the {@link OmniPod} for each {@link ComponentOmniMech} is selected to
-    *         maximize each attribute. All the values of the {@link MovementProfile} may not be attainable
-    *         simultaneously but each value of each attribute is independently attainable for some combination of
-    *         {@link OmniPod}.
+    * @return The {@link MovementProfile} for the stock selection of {@link OmniPod}s.
     */
-   public MovementProfile getMovementProfileMax(){
-      return new MaxMovementProfile(getMovementProfileBase(), getOmniPodMovementProfileGroups());
+   public MovementProfile getMovementProfileStock(){
+      MovementProfileSum ans = new MovementProfileSum(getMovementProfileBase());
+      for(Location location : Location.values()){
+         OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
+         ans.addMovementProfile(omniPod.getQuirks());
+      }
+      return ans;
    }
 
    private List<List<MovementProfile>> getOmniPodMovementProfileGroups(){
@@ -198,5 +212,20 @@ public class ChassisOmniMech extends ChassisBase{
          groups.add(group);
       }
       return groups;
+   }
+
+   /**
+    * @return The type of the fixed internal structure of this omnimech.
+    */
+   public StructureUpgrade getStructureType(){
+      return structureType;
+   }
+
+   @Override
+   public boolean isAllowed(Item aItem){
+      if( aItem instanceof Engine ){
+         return false; // Engine is fixed.
+      }
+      return super.isAllowed(aItem); // Anything else depends on the actual combination of omnipods equipped
    }
 }

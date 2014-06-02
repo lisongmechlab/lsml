@@ -23,8 +23,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
@@ -123,6 +128,76 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
    public final void testGetEngine(){
       assertSame(engine, makeDefaultCUT().getEngine());
    }
+   
+   /**
+    * {@link ChassisOmniMech#getMassStripped()} shall return the mass of the chassis with all non fixed items and armor removed.
+    */
+   @Test
+   public final void testGetFixedHeatSinks(){
+      ChassisOmniMech cut = makeDefaultCUT();
+
+      List<Item> fixed1 = new ArrayList<>();
+      List<Item> fixed2 = new ArrayList<>();
+      List<Item> fixed3 = new ArrayList<>();
+
+      Item item1 = Mockito.mock(Item.class);
+      HeatSink item2 = Mockito.mock(HeatSink.class);
+      HeatSink item3 = Mockito.mock(HeatSink.class);
+
+      Mockito.when(item1.getMass()).thenReturn(1.0);
+      Mockito.when(item2.getMass()).thenReturn(2.0);
+      Mockito.when(item3.getMass()).thenReturn(3.0);
+
+      fixed1.add(item1);
+      fixed1.add(item2);
+      fixed2.add(item2);
+      fixed2.add(item2);
+      fixed3.add(item3);
+
+      Mockito.when(components[2].getFixedItems()).thenReturn(fixed1);
+      Mockito.when(components[3].getFixedItems()).thenReturn(fixed2);
+      Mockito.when(components[5].getFixedItems()).thenReturn(fixed3);
+
+      assertEquals(4, cut.getFixedHeatSinks());
+   }
+   
+   /**
+    * {@link ChassisOmniMech#getMassStripped()} shall return the mass of the chassis with all non fixed items and armor removed.
+    */
+   @Test
+   public final void testGetMassStripped(){
+      ChassisOmniMech cut = makeDefaultCUT();
+
+      List<Item> fixed1 = new ArrayList<>();
+      List<Item> fixed2 = new ArrayList<>();
+      List<Item> fixed3 = new ArrayList<>();
+
+      Item item1 = Mockito.mock(Item.class);
+      Item item2 = Mockito.mock(Item.class);
+      Item item3 = Mockito.mock(Item.class);
+
+      Mockito.when(item1.getMass()).thenReturn(1.0);
+      Mockito.when(item2.getMass()).thenReturn(2.0);
+      Mockito.when(item3.getMass()).thenReturn(3.0);
+
+      fixed1.add(item1);
+      fixed1.add(item2);
+      fixed2.add(item2);
+      fixed2.add(item2);
+      fixed3.add(item3);
+
+      Mockito.when(components[2].getFixedItems()).thenReturn(fixed1);
+      Mockito.when(components[3].getFixedItems()).thenReturn(fixed2);
+      Mockito.when(components[5].getFixedItems()).thenReturn(fixed3);
+
+      Mockito.when(structureType.getStructureMass(cut)).thenReturn(3.0);
+
+      double expected = 1 * 1 + 3 * 2 + 1 * 3 + 3;
+
+      assertEquals(expected, cut.getMassStripped(), 0.0);
+
+      Mockito.verify(armorType, Mockito.never()).getArmorMass(Matchers.anyInt());
+   }
 
    @Test
    public final void testGetStructureType(){
@@ -143,7 +218,7 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
    public final void testIsAllowed_Engine(){
       assertFalse(makeDefaultCUT().isAllowed(engine));
    }
-   
+
    @Test
    public final void testIsAllowed_NoComponentSupport(){
       Item item = Mockito.mock(Item.class);
@@ -153,19 +228,19 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
 
       ChassisOmniMech cut = makeDefaultCUT();
       assertTrue(cut.isAllowed(item)); // Item in it self is allowed
-      
+
       // But no component supports it.
       for(Location location : Location.values()){
          Mockito.when(components[location.ordinal()].isAllowed(item)).thenReturn(false);
       }
-      assertFalse(cut.isAllowed(item));     
+      assertFalse(cut.isAllowed(item));
    }
-   
+
    @Test
    public final void testIsAllowed_CASE(){
       Item item = ItemDB.CASE;
-      
+
       ChassisOmniMech cut = makeDefaultCUT();
-      assertFalse(cut.isAllowed(item));     
+      assertFalse(cut.isAllowed(item));
    }
 }
