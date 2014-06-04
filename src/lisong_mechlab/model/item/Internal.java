@@ -20,21 +20,17 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.MdfInternal;
+import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 /**
  * Internals are special items that do not exist in the ItemDB. Instead they are created and owned by the chassii.
  * 
  * @author Emily
  */
-public class Internal extends Item{
+public class Internal extends Module{
    public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardpointType, int aHP,
                    boolean aIsClan){
       super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aIsClan);
-   }
-
-   public Internal(MdfInternal aInternal){
-      super(aInternal.Name, aInternal.Desc, aInternal.Slots, 0); // TODO: Check translation
    }
 
    public Internal(String aNameTag, String aDescTag, int aSlots){
@@ -43,5 +39,10 @@ public class Internal extends Item{
 
    public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth){
       super(aNameTag, aDescTag, aSlots, aHealth);
+   }
+
+   
+   public Internal(ItemStatsModule aStatsModule){
+      super(aStatsModule);
    }
 }

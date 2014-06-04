@@ -98,8 +98,6 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * This class provides a centralized access point for all game data.
- * <p>
- * FIXME: Devise a method to prevent loading of out dated cache formats.
  * 
  * @author Emily Björk
  */
@@ -314,6 +312,7 @@ public class DataCache{
       ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Engines.xml")));
       ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Equipment.xml")));
       ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/JumpJets.xml")));
+      ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Internals.xml")));
       ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Mechs/Mechs.xml")));
       return ans;
    }
@@ -350,7 +349,6 @@ public class DataCache{
       File cacheLocation = getNewCacheLocation();
 
       Localization.initialize(aGameVfs);
-      List<Internal> internalsList = new ArrayList<>();
       DataCache dataCache = new DataCache();
 
       ItemStatsXml itemStatsXml = new ItemStatsXml();
@@ -363,15 +361,12 @@ public class DataCache{
       dataCache.items = parseItems(itemStatsXml);
       dataCache.items.addAll(parseClanItems());
       dataCache.upgrades = Collections.unmodifiableList(parseUpgrades(itemStatsXml));
-      dataCache.chassisIS = Collections.unmodifiableList(parseChassisIS(aGameVfs, itemStatsXml, internalsList));
+      dataCache.chassisIS = Collections.unmodifiableList(parseChassisIS(aGameVfs, itemStatsXml, dataCache));
 
       dataCache.omniPods = Collections.unmodifiableList(parseOmniPods());
-      dataCache.chassisClan = Collections.unmodifiableList(parseChassisClan(dataCache.items, internalsList, dataCache.omniPods,
-                                                                            dataCache.upgrades));
+      dataCache.chassisClan = Collections.unmodifiableList(parseChassisClan(dataCache));
       dataCache.environments = Collections.unmodifiableList(parseEnvironments(aGameVfs));
       dataCache.stockLoadouts = Collections.unmodifiableList(parseStockLoadouts(aGameVfs, dataCache.chassisIS));
-
-      dataCache.items.addAll(internalsList);
       dataCache.items = Collections.unmodifiableList(dataCache.items);
 
       XStream stream = stream();
@@ -447,6 +442,9 @@ public class DataCache{
             case "CCommandConsoleStats":
                ans.add(new Module(statsModule));
                break;
+            case "CInternalStats":
+               ans.add(new Internal(statsModule));
+               break;
             default:
                break; // Other modules not yet supported
          }
@@ -503,11 +501,11 @@ public class DataCache{
     *           A {@link GameVFS} used to open other game files.
     * @param aItemStatsXml
     *           A {@link GameFile} containing the ItemStats.xml file to parse.
-    * @param aInternalsList
+    * @param aDataCache
+    *           The {@link DataCache} that is being parsed.
     * @return A List of all {@link ChassisStandard} found in aItemStatsXml.
     */
-   private static List<ChassisStandard> parseChassisIS(GameVFS aGameVfs, ItemStatsXml aItemStatsXml, List<Internal> aInternalsList)
-                                                                                                                                   throws IOException{
+   private static List<ChassisStandard> parseChassisIS(GameVFS aGameVfs, ItemStatsXml aItemStatsXml, DataCache aDataCache) throws IOException{
       MechIdMap mechIdMap = MechIdMap.fromXml(aGameVfs.openGameFile(GameVFS.MECH_ID_MAP_XML).stream);
       List<ChassisStandard> ans = new ArrayList<>();
 
@@ -524,8 +522,9 @@ public class DataCache{
          HardpointsXml hardpoints = null;
          try{
             String mdfFile = mech.chassis + "/" + mech.name + ".mdf";
+            String hardpointsFile = mech.chassis + "/" + mech.chassis + "-hardpoints.xml";
             mdf = MechDefinition.fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, mdfFile)).stream);
-            hardpoints = HardpointsXml.fromXml(aGameVfs.openGameFile(new File("Game", mdf.HardpointPath)).stream);
+            hardpoints = HardpointsXml.fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, hardpointsFile)).stream);
          }
          catch( Exception e ){
             throw new IOException("Unable to load chassi configuration!", e);
@@ -545,7 +544,7 @@ public class DataCache{
                continue;
             }
             final Location part = Location.fromMwoName(component.Name);
-            components[part.ordinal()] = new ComponentStandard(component, part, hardpoints, mech.name, aInternalsList);
+            components[part.ordinal()] = new ComponentStandard(component, part, hardpoints, mech.name, aDataCache);
          }
 
          final ChassisStandard chassi = new ChassisStandard(mech.id, mech.name, mech.chassis, Localization.key2string("@" + mech.name),
@@ -590,15 +589,15 @@ public class DataCache{
    /**
     * Parses all clan {@link ChassisOmniMech} from the ItemStats.xml file and related files.
     * 
-    * @param aInternalsList .
+    * @param aInternalsList
+    *           .
     * @return A List of all {@link ChassisStandard} found in aItemStatsXml.
     */
-   private static List<ChassisOmniMech> parseChassisClan(List<Item> aItems,List<Internal> aInternalsList,  List<OmniPod> aOmniPods,
-                                                         List<Upgrade> aUpgrades){
+   private static List<ChassisOmniMech> parseChassisClan(DataCache aDataCache){
       List<ChassisOmniMech> ans = new ArrayList<>();
 
       OmniPod ct = null;
-      for(OmniPod omniPod : aOmniPods){
+      for(OmniPod omniPod : aDataCache.getOmniPods()){
          if( omniPod.getLocation() == Location.CenterTorso ){
             ct = omniPod;
             break;
@@ -606,10 +605,10 @@ public class DataCache{
       }
       if( ct == null )
          throw new RuntimeException("Fail");
-      ArmorUpgrade clanff = (ArmorUpgrade)findUpgrade("CLAN FERRO-FIBROUS", aUpgrades);
-      StructureUpgrade clanes = (StructureUpgrade)findUpgrade("CLAN ENDO-STEEL", aUpgrades);
-      HeatSinkUpgrade clandhs = (HeatSinkUpgrade)findUpgrade("CLAN DOUBLE HEAT SINKS", aUpgrades);
-      Engine xl375 = (Engine)findItem("CLAN XL ENGINE 375", aItems);
+      ArmorUpgrade clanff = (ArmorUpgrade)findUpgrade("CLAN FERRO-FIBROUS", aDataCache.getUpgrades());
+      StructureUpgrade clanes = (StructureUpgrade)findUpgrade("CLAN ENDO-STEEL", aDataCache.getUpgrades());
+      HeatSinkUpgrade clandhs = (HeatSinkUpgrade)findUpgrade("CLAN DOUBLE HEAT SINKS", aDataCache.getUpgrades());
+      Engine xl375 = (Engine)findItem("CLAN XL ENGINE 375", aDataCache.getItems());
 
       MdfMovementTuning aMdfMovement = new MdfMovementTuning();
       aMdfMovement.MovementArchetype = "Large";
@@ -633,33 +632,51 @@ public class DataCache{
       aMdfMovement.MaxTorsoAnglePitch = 20;
       aMdfMovement.MaxArmRotationYaw = 20;
       aMdfMovement.MaxArmRotationPitch = 30;
-      
+
       ComponentOmniMech[] components = new ComponentOmniMech[Location.values().length];
-      components[Location.Head.ordinal()] = new ComponentOmniMech(Location.Head, 6, 15,  Arrays.asList(  findItem("@mdf_LifeSupport", aInternalsList), 
-                                                                                                      findItem("@mdf_Sensors", aInternalsList),
-                                                                                                      findItem("@mdf_Cockpit", aInternalsList)), null, 0, 1);
-      components[Location.LeftArm.ordinal()] = new ComponentOmniMech(Location.LeftArm, 12, 24, Arrays.asList(findItem("@mdf_Shoulder", aInternalsList),
-                                                                                                          findItem("@mdf_UAA", aInternalsList),
-                                                                                                          findItem("@mdf_LAA", aInternalsList),
-                                                                                                          findItem("@mdf_HA", aInternalsList)), null, 2, 1);
-      components[Location.RightArm.ordinal()] = new ComponentOmniMech(Location.RightArm, 12, 24, Arrays.asList(findItem("@mdf_Shoulder", aInternalsList),
-                                                                                                            findItem("@mdf_UAA", aInternalsList),
-                                                                                                            findItem("@mdf_LAA", aInternalsList),
-                                                                                                            findItem("@mdf_HA", aInternalsList)), null, 2, 1);
-      components[Location.LeftTorso.ordinal()] = new ComponentOmniMech(Location.LeftTorso, 12, 32, Arrays.asList(new Item[]{}), null, 1, 2);
-      components[Location.RightTorso.ordinal()] = new ComponentOmniMech(Location.RightTorso, 12, 32, Arrays.asList(new Item[]{}), null, 1, 2);
-      components[Location.CenterTorso.ordinal()] = new ComponentOmniMech(Location.CenterTorso, 12, 46, Arrays.asList(findItem("@mdf_Gyro", aInternalsList)), null, 1, 0);
-      components[Location.LeftLeg.ordinal()] = new ComponentOmniMech(Location.LeftLeg, 6, 32, Arrays.asList(findItem("@mdf_Hip", aInternalsList),
-                                                                                                         findItem("@mdf_ULA", aInternalsList),
-                                                                                                         findItem("@mdf_LLA", aInternalsList),
-                                                                                                         findItem("@mdf_FA", aInternalsList)), null, 0, 0);
-      components[Location.RightLeg.ordinal()] = new ComponentOmniMech(Location.RightLeg, 6, 32, Arrays.asList(findItem("@mdf_Hip", aInternalsList),
-                                                                                                           findItem("@mdf_ULA", aInternalsList),
-                                                                                                           findItem("@mdf_LLA", aInternalsList),
-                                                                                                           findItem("@mdf_FA", aInternalsList)), null, 0, 0);
-      
+      components[Location.Head.ordinal()] = new ComponentOmniMech(Location.Head, 6, 15,
+                                                                  Arrays.asList(findItem("LifeSupport", aDataCache.getItems()),
+                                                                                findItem("Sensors", aDataCache.getItems()),
+                                                                                findItem("Cockpit", aDataCache.getItems())), null, 0, 1);
+      components[Location.LeftArm.ordinal()] = new ComponentOmniMech(Location.LeftArm, 12, 24, Arrays.asList(findItem("Shoulder",
+                                                                                                                      aDataCache.getItems()),
+                                                                                                             findItem("UpperArmActuator",
+                                                                                                                      aDataCache.getItems()),
+                                                                                                             findItem("LowerArmActuator",
+                                                                                                                      aDataCache.getItems()),
+                                                                                                             findItem("HandActuator",
+                                                                                                                      aDataCache.getItems())), null,
+                                                                     2, 1);
+      components[Location.RightArm.ordinal()] = new ComponentOmniMech(Location.RightArm, 12, 24, Arrays.asList(findItem("Shoulder",
+                                                                                                                        aDataCache.getItems()),
+                                                                                                               findItem("UpperArmActuator",
+                                                                                                                        aDataCache.getItems()),
+                                                                                                               findItem("LowerArmActuator",
+                                                                                                                        aDataCache.getItems()),
+                                                                                                               findItem("HandActuator",
+                                                                                                                        aDataCache.getItems())),
+                                                                      null, 2, 1);
+      components[Location.LeftTorso.ordinal()] = new ComponentOmniMech(Location.LeftTorso, 12, 32, Arrays.asList(new Item[] {}), null, 1, 2);
+      components[Location.RightTorso.ordinal()] = new ComponentOmniMech(Location.RightTorso, 12, 32, Arrays.asList(new Item[] {}), null, 1, 2);
+      components[Location.CenterTorso.ordinal()] = new ComponentOmniMech(Location.CenterTorso, 12, 46,
+                                                                         Arrays.asList(findItem("Gyro", aDataCache.getItems())), null, 1, 0);
+      components[Location.LeftLeg.ordinal()] = new ComponentOmniMech(Location.LeftLeg, 6, 32,
+                                                                     Arrays.asList(findItem("Hip", aDataCache.getItems()),
+                                                                                   findItem("UpperLegActuator", aDataCache.getItems()),
+                                                                                   findItem("LowerLegActuator", aDataCache.getItems()),
+                                                                                   findItem("FootActuator", aDataCache.getItems())), null, 0, 0);
+      components[Location.RightLeg.ordinal()] = new ComponentOmniMech(Location.RightLeg, 6, 32, Arrays.asList(findItem("Hip",
+                                                                                                                       aDataCache.getItems()),
+                                                                                                              findItem("UpperLegActuator",
+                                                                                                                       aDataCache.getItems()),
+                                                                                                              findItem("LowerLegActuator",
+                                                                                                                       aDataCache.getItems()),
+                                                                                                              findItem("FootActuator",
+                                                                                                                       aDataCache.getItems())), null,
+                                                                      0, 0);
+
       ans.add(new ChassisOmniMech(40000, "TBW-PRIME", "TIMBERWOLF", "TIMBERWOLF PRIME", "TBW-PRIME", 75, ChassisVariant.NORMAL, -1,
-                                  new BaseMovementProfile(aMdfMovement), true, components , xl375, clanes, clanff, clandhs));
+                                  new BaseMovementProfile(aMdfMovement), true, components, xl375, clanes, clanff, clandhs));
 
       return ans;
    }
@@ -671,7 +688,7 @@ public class DataCache{
       List<OmniPod> ans = new ArrayList<>();
 
       BaseMovementProfile mp = new BaseMovementProfile(new MdfMovementTuning());
-      
+
       //@formatter:off
       ans.add(new OmniPod(41001, Location.Head, "TIMBERWOLF", 40000, mp, new HardPoint[]{}, 0, 0));
       ans.add(new OmniPod(41002, Location.CenterTorso, "TIMBERWOLF", 40000, mp, new HardPoint[]{new HardPoint(HardPointType.BALLISTIC)}, 0, 0));

@@ -24,8 +24,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import lisong_mechlab.model.DataCache;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
@@ -77,14 +77,12 @@ public class ComponentStandard extends ComponentBase{
     *           The hard points as parsed from the MWO .xml for hard points for the chassis.
     * @param aChassiMwoName
     *           The MWO name of the chassis that this internal part will be a part of (used for hard point lookup).
-    * @param aInternalsList
-    *           A list to insert any internals created during the loading (used to extract internal actuators etc to the
-    *           ItemDB to avoid data duplication).
+    * @param aDataCache
+    *           The {@link DataCache} that is currently being parsed.
     */
-   public ComponentStandard(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, String aChassiMwoName,
-                            List<Internal> aInternalsList){
-      this(aLocation, aComponent.Slots, aComponent.HP, parseInternals(aComponent, aInternalsList), parseHardPoints(aLocation, aComponent,
-                                                                                                                   aHardpoints, aChassiMwoName));
+   public ComponentStandard(MdfComponent aComponent, Location aLocation, HardpointsXml aHardpoints, String aChassiMwoName, DataCache aDataCache){
+      this(aLocation, aComponent.Slots, aComponent.HP, parseInternals(aComponent, aDataCache), parseHardPoints(aLocation, aComponent, aHardpoints,
+                                                                                                               aChassiMwoName));
    }
 
    public int getHardPointCount(HardPointType aHardpointType){
@@ -139,25 +137,20 @@ public class ComponentStandard extends ComponentBase{
       return aItem.getNumCriticalSlots() <= getSlots() - getFixedItemSlots();
    }
 
-   private static List<Item> parseInternals(MdfComponent aComponent, List<Internal> aInternalsList){
+   private static List<Item> parseInternals(MdfComponent aComponent, DataCache aDataCache){
       List<Item> ans = new ArrayList<>();
       if( null != aComponent.internals ){
          for(MdfInternal internal : aComponent.internals){
             boolean found = false;
-            for(Internal i : aInternalsList){
-               if( i.getKey().equals(internal.Name) ){
-                  if( i.getNumCriticalSlots() != internal.Slots ){
-                     throw new RuntimeException("Slots missmatch between internals.");
-                  }
-                  ans.add(i);
+            for(Item item : aDataCache.getItems()){
+               if( item.getMwoId() == internal.ItemID ){
+                  ans.add(item);
                   found = true;
                   break;
                }
             }
             if( !found ){
-               Internal i = new Internal(internal);
-               ans.add(i);
-               aInternalsList.add(i);
+               throw new IllegalArgumentException("Internal not found in data cache!");
             }
          }
       }
