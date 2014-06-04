@@ -28,13 +28,15 @@ import lisong_mechlab.mwo_data.helpers.MdfMech;
 import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
+/**
+ * This class represents the XML content of the .mdf files.
+ * 
+ * @author Li Song
+ */
 public class MechDefinition{
-   @XStreamAsAttribute
-   public String             HardpointPath;
    public MdfMech            Mech;
    public List<MdfComponent> ComponentList;
 
@@ -63,11 +65,4 @@ public class MechDefinition{
       xstream.alias("MovementTuningConfiguration", MdfMovementTuning.class);
       return (MechDefinition)xstream.fromXML(is);
    }
-
-   // public static void main(String[] arg) throws IOException{
-   // GameDataFile dataFile = new GameDataFile();
-   // MechDefinition mechDef = MechDefinition.fromXml(dataFile.openGameFile(new File(GameDataFile.MDF_ROOT,
-   // "jenner/jr7-d.mdf")));
-   // System.out.println(mechDef);
-   // }
 }

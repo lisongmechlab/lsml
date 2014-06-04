@@ -23,9 +23,5 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class MdfInternal{
    @XStreamAsAttribute
-   public int    Slots;
-   @XStreamAsAttribute
-   public String Name;
-   @XStreamAsAttribute
-   public String Desc;
+   public int    ItemID;
 }

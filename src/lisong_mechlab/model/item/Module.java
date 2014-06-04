@@ -28,13 +28,16 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
  * @author Li Song
  */
 public class Module extends Item{
-   
+
    public Module(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardpointType, int aHP,
-               boolean aIsClan){
+                 boolean aIsClan){
       super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aIsClan);
    }
 
-   
+   public Module(String aNameTag, String aDesc, int aSlots, int aHealth){
+      super(aNameTag, aDesc, aSlots, aHealth);
+   }
+
    public Module(ItemStatsModule aModule){
       super(aModule, HardPointType.NONE, aModule.ModuleStats.slots, aModule.ModuleStats.tons, aModule.ModuleStats.health);
    }
