@@ -157,6 +157,8 @@ public class WeaponStatsTable extends JTable{
          columns.add(new StatColumn("DPS", "Damage Per Second (DPS).", "d/s"));
          columns.add(new StatColumn("DPH", "Damage Per Heat (DPH).", "d/h"));
          columns.add(new StatColumn("DPT", "Damage Per Ton (DPT).", "d/t"));
+         columns.add(new StatColumn("DPST", "Damage Per Second and Ton (DPST).", "d/st"));
+         columns.add(new StatColumn("DPSH", "Damage Per Second and Heat (DPSH).", "d/sh"));
          columns.add(new StatColumn("HPS", "Heat Per Second (HPS).", "h/s"));
       }
 
