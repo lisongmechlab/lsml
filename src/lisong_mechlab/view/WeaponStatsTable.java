@@ -231,7 +231,7 @@ public class WeaponStatsTable extends JTable{
 
       TableColumnModel tcm = getColumnModel();
       NumberFormat format = NumberFormat.getInstance();
-      format.setMaximumFractionDigits(1);
+      format.setMaximumFractionDigits(3);
 
       tcm.getColumn(0).setCellRenderer(new ZebraRenderer());
       DecimalFormatRenderer dfr = new DecimalFormatRenderer(format);
