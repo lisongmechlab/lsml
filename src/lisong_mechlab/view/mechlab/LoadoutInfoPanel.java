@@ -697,7 +697,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             }
          });
 
-         doubleHeatSinks.setAction(new AbstractAction(){
+         doubleHeatSinks.setAction(new AbstractAction("Double Heat Sinks"){
             private static final long serialVersionUID = 1L;
 
             @Override
