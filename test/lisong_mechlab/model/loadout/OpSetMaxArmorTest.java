@@ -43,7 +43,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SetMaxArmorOperationTest{
+public class OpSetMaxArmorTest{
 
    @Mock
    private MessageXBar          xBar;

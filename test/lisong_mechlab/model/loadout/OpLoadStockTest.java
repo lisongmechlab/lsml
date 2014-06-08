@@ -42,12 +42,15 @@ import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.MessageXBar.Message;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Test suite for {@link OpLoadStock}.
@@ -55,7 +58,7 @@ import org.mockito.Mockito;
  * @author Li Song
  */
 @RunWith(JUnitParamsRunner.class)
-public class LoadStockOperationTest{
+public class OpLoadStockTest{
    private MessageXBar xBar;
 
    @Before
@@ -163,5 +166,39 @@ public class LoadStockOperationTest{
 
       // Verify
       assertEquals(reference, loadout);
+   }
+
+   /**
+    * Loading stock shall succeed even if there is an automatic armor distribution thinggie going on.
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testApply_InPresenceOfAutomaticArmor() throws Exception{
+      // Setup
+      final LoadoutBase<?> loadout = new LoadoutStandard("BNC-3S", xBar);
+      final OperationStack stack = new OperationStack(0);
+
+      Mockito.doAnswer(new Answer<Void>(){
+         @Override
+         public Void answer(InvocationOnMock aInvocation) throws Throwable{
+            Message aMsg = (Message)aInvocation.getArguments()[0];
+            if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.Message ){
+               ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message)aMsg;
+               if( message.automatic )
+                  return null;
+               stack.pushAndApply(new OpDistributeArmor(loadout, loadout.getChassis().getArmorMax(), 10, xBar));
+            }
+            return null;
+         }
+      }).when(xBar).post(Matchers.any(ConfiguredComponentBase.Message.class));
+
+      // Execute
+      OpLoadStock cut = new OpLoadStock(loadout.getChassis(), loadout, xBar);
+      stack.pushAndApply(cut);
+
+      // Verify
+      assertEquals(95.0, loadout.getMass(), 0.01);
+      assertEquals(480, loadout.getArmor());
    }
 }

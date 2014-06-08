@@ -38,7 +38,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AddToGarageOperationTest{
+public class OpAddToGarageTest{
    @Mock
    private MechGarage     garage;
    private OperationStack opStack = new OperationStack(0);

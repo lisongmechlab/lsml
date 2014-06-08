@@ -20,10 +20,13 @@
 package lisong_mechlab.model.loadout;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -38,7 +41,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class StripOperationTest{
+public class OpStripLoadoutTest{
 
    @Mock
    private MessageXBar xBar;
@@ -51,8 +54,9 @@ public class StripOperationTest{
    @Test
    public void testStrip() throws Exception{
       // Setup
-      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-BH").getName(), xBar); // Has Endo-Steel standard and lots of
-                                                                             // stuff
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-BH").getName(), xBar); // Has Endo-Steel standard
+                                                                                             // and lots of
+      // stuff
 
       assertTrue(cut.getMass() > 99.0);
 
@@ -69,5 +73,25 @@ public class StripOperationTest{
       assertEquals(UpgradeDB.STANDARD_STRUCTURE, cut.getUpgrades().getStructure());
       assertEquals(UpgradeDB.STANDARD_ARMOR, cut.getUpgrades().getArmor());
       assertEquals(UpgradeDB.STANDARD_HEATSINKS, cut.getUpgrades().getHeatSink());
+   }
+
+   @Test
+   public void testStripMech() throws DecodingException{
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(xBar);
+      LoadoutStandard loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+      LoadoutStandard loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+      OperationStack stack = new OperationStack(1);
+
+      stack.pushAndApply(new OpStripLoadout(loadout, xBar));
+
+      assertEquals(loadout.getMass(), loadout.getChassis().getMassMax() * 0.1, 0.0);
+      assertSame(UpgradeDB.STANDARD_ARMOR, loadout.getUpgrades().getArmor());
+      assertSame(UpgradeDB.STANDARD_STRUCTURE, loadout.getUpgrades().getStructure());
+      assertSame(UpgradeDB.STANDARD_GUIDANCE, loadout.getUpgrades().getGuidance());
+      assertSame(UpgradeDB.STANDARD_HEATSINKS, loadout.getUpgrades().getHeatSink());
+
+      stack.undo();
+
+      assertEquals(loadoutOriginal, loadout);
    }
 }

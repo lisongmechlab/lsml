@@ -57,7 +57,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AutoAddItemOperationTest{
+public class OpAutoAddItemTest{
    @Mock
    private MessageXBar    xBar;
 

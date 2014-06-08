@@ -48,7 +48,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DistributeArmorOperationTest{
+public class OpDistributeArmorTest{
    @Mock
    MessageXBar    xBar;
 
