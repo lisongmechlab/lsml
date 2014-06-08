@@ -33,8 +33,11 @@ import java.io.IOException;
 
 import lisong_mechlab.model.garage.MechGarage.Message;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import org.junit.After;
 import org.junit.Before;
@@ -250,6 +253,27 @@ public class MechGarageTest{
       cut.remove(loadout);
 
       verifyZeroInteractions(xBar);
+   }
+
+   /**
+    * Make sure that we can load many of the stock builds saved from 1.5.0.
+    * <p>
+    * Note, this is a backwards compatibility test.
+    * @throws IOException 
+    */
+   @Test
+   public void testLoadStockBuilds_150() throws IOException{
+      MechGarage garage = MechGarage.open(new File("resources/resources/stock1.5.0.xml"), xBar);
+      OperationStack stack = new OperationStack(0);
+      assertEquals(64, garage.getMechs().size());
+      
+      for(LoadoutBase<?> loadout : garage.getMechs()){
+         LoadoutBase<?> clone = loadout.clone(xBar);
+         stack.pushAndApply(new OpLoadStock(clone.getChassis(), clone, xBar));
+         
+         assertEquals(clone, loadout);         
+      }
+      
    }
 
 }
