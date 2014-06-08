@@ -115,22 +115,50 @@ public class OpSetHeatSinkType extends OpUpgradeBase{
       operationReady = true;
 
       if( oldValue != newValue ){
-         for(ConfiguredComponentBase loadoutPart : loadout.getComponents()){
-            int hsRemoved = 0;
-            for(Item item : loadoutPart.getItemsEquipped()){ // Don't remove fixed HS, not that we could on an omnimech anyways.
+         HeatSink oldHsType = oldValue.getHeatSinkType();
+         HeatSink newHsType = newValue.getHeatSinkType();
+         
+         int globallyRemoved = 0;
+         int globalEngineHs = 0;
+
+         for(ConfiguredComponentBase component : loadout.getComponents()){
+            int locallyRemoved = 0;
+            for(Item item : component.getItemsEquipped()){
                if( item instanceof HeatSink ){
-                  addOp(new OpRemoveItem(xBar, loadout, loadoutPart, item));
+                  addOp(new OpRemoveItem(xBar, loadout, component, item));
+                  globallyRemoved++;
+                  locallyRemoved++;
+               }
+            }
+            // Note: This will not be correct for omnimechs, but you can't change heat sink upgrades on them anyways.
+            globalEngineHs += Math.min(locallyRemoved, component.getEngineHeatsinksMax());
+         }
+
+         int globalSlotsFree = (globallyRemoved - globalEngineHs)*oldHsType.getNumCriticalSlots() + loadout.getNumCriticalSlotsFree();
+         int globalHsLag = 0;
+         
+         for(ConfiguredComponentBase component : loadout.getComponents()){
+            int hsRemoved = 0;
+            for(Item item : component.getItemsEquipped()){ // Don't remove fixed HS, not that we could on an omnimech
+                                                           // anyways.
+               if( item instanceof HeatSink ){
                   hsRemoved++;
                }
             }
 
-            HeatSink oldHsType = oldValue.getHeatSinkType();
-            HeatSink newHsType = newValue.getHeatSinkType();
-            int slotsFree = oldHsType.getNumCriticalSlots() * hsRemoved + loadoutPart.getSlotsFree();
-            int hsToAdd = Math.min(hsRemoved, slotsFree / newHsType.getNumCriticalSlots());
+            int hsInEngine = Math.min(hsRemoved, component.getEngineHeatsinksMax());
+            int slotsFreed = (hsRemoved - hsInEngine) * oldHsType.getNumCriticalSlots();
+            int slotsFree = Math.min(slotsFreed + component.getSlotsFree(), globalSlotsFree);
+            int hsToAdd = Math.min(hsRemoved + globalHsLag, hsInEngine + slotsFree / newHsType.getNumCriticalSlots());
+            
+            globalSlotsFree -= newHsType.getNumCriticalSlots() * (hsToAdd - component.getEngineHeatsinksMax());
+            if(hsToAdd < hsRemoved){
+               globalHsLag += hsRemoved - hsToAdd;
+            }
+            
             while( hsToAdd > 0 ){
                hsToAdd--;
-               addOp(new OpAddItem(xBar, loadout, loadoutPart, newHsType));
+               addOp(new OpAddItem(xBar, loadout, component, newHsType));
             }
          }
       }

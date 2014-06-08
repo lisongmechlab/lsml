@@ -75,9 +75,9 @@ public class OpAddItem extends OpItemBase{
    @Override
    public void apply(){
       if( !loadout.canEquip(item) )
-         throw new IllegalArgumentException("Can't add " + item + "!");
+         throw new IllegalArgumentException("Can't add " + item + " to " + loadout.getName() + "!");
       if( !component.canAddItem(item) )
-         throw new IllegalArgumentException("Can't add " + item + "!");
+         throw new IllegalArgumentException("Can't add " + item + " to " + component.getInternalComponent().getLocation() + "!");
       addItem(item);
    }
 }

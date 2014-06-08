@@ -83,6 +83,7 @@ public class MaxSustainedDPS extends RangeMetric{
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
+               // Note: D/H == DPS / HPS so we're ordering by highest dps per hps. 
                double dps2 = aO2.getRangeEffectivity(aRange) * aO2.getStat("d/h", efficiencies);
                double dps1 = aO1.getRangeEffectivity(aRange) * aO1.getStat("d/h", efficiencies);
                if( aO1.getRangeMax() < aRange )

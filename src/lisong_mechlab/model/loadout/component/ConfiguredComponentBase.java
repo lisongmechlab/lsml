@@ -140,15 +140,14 @@ public abstract class ConfiguredComponentBase{
     * Adds a new item to this component. This method is unchecked and can put the component into an illegal state. It is
     * the caller's responsibility to make sure local and global conditions are met before adding an item.
     * <p>
-    * This is package visibility as it's intended use is only from {@link OpAddItem}, {@link OpRemoveItem} and
-    * relatives.
+    * This is intended for use only from {@link OpAddItem}, {@link OpRemoveItem} and relatives.
     * <p>
     * Please note that {@link #canAddItem(Item)} must return true prior to a call to {@link #addItem(Item)}.
     * 
     * @param aItem
     *           The item to add.
     */
-   void addItem(Item aItem){
+   public void addItem(Item aItem){
       items.add(aItem);
    }
 
@@ -204,13 +203,12 @@ public abstract class ConfiguredComponentBase{
    }
 
    /**
-    * This is package visibility as it's intended use is only from {@link OpAddItem}, {@link OpRemoveItem} and
-    * relatives.
+    * This is intended for use only from {@link OpAddItem}, {@link OpRemoveItem} and relatives.
     * 
     * @param aItem
     *           The item to remove.
     */
-   void removeItem(Item aItem){
+   public void removeItem(Item aItem){
       items.remove(aItem);
    }
 
