@@ -30,6 +30,7 @@ import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisVariant;
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
@@ -299,35 +300,38 @@ public class DynamicSlotDistributorTest{
    @Test
    public void testOmniMech(){
       // Prepare armor/structure
-      ComponentOmniMech[] components = new ComponentOmniMech[Location.values().length];
+      ComponentOmniMech[] internalComponents = new ComponentOmniMech[Location.values().length];
       for(Location location : Location.values()){
-         components[location.ordinal()] = Mockito.mock(ComponentOmniMech.class);
-         Mockito.when(components[location.ordinal()].getLocation()).thenReturn(location);
+         internalComponents[location.ordinal()] = Mockito.mock(ComponentOmniMech.class);
+         Mockito.when(internalComponents[location.ordinal()].getLocation()).thenReturn(location);
       }
 
       int armorSlotsCount = 12;
       ArmorUpgrade armorType = Mockito.mock(ArmorUpgrade.class);
       Mockito.when(armorType.getExtraSlots()).thenReturn(armorSlotsCount);
-      Mockito.when(components[Location.LeftLeg.ordinal()].getDynamicArmorSlots()).thenReturn(5);
-      Mockito.when(components[Location.LeftArm.ordinal()].getDynamicArmorSlots()).thenReturn(7);
+      Mockito.when(internalComponents[Location.LeftLeg.ordinal()].getDynamicArmorSlots()).thenReturn(5);
+      Mockito.when(internalComponents[Location.LeftArm.ordinal()].getDynamicArmorSlots()).thenReturn(7);
       
       int structSlotsCount = 5;
       StructureUpgrade aStructureType = Mockito.mock(StructureUpgrade.class);
       Mockito.when(aStructureType.getExtraSlots()).thenReturn(structSlotsCount);
-      Mockito.when(components[Location.RightArm.ordinal()].getDynamicStructureSlots()).thenReturn(2);
-      Mockito.when(components[Location.RightLeg.ordinal()].getDynamicStructureSlots()).thenReturn(3);
+      Mockito.when(internalComponents[Location.RightArm.ordinal()].getDynamicStructureSlots()).thenReturn(2);
+      Mockito.when(internalComponents[Location.RightLeg.ordinal()].getDynamicStructureSlots()).thenReturn(3);
 
       // Create chassis
-      ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null, false, components, null,
+      ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null, false, internalComponents, null,
                                                             aStructureType, armorType, null);
       // Setup factory
       Factory<ConfiguredComponentOmniMech> aFactory = Mockito.mock(Factory.class);
-      ConfiguredComponentOmniMech[] omniPods = new ConfiguredComponentOmniMech[Location.values().length];
+      ConfiguredComponentOmniMech[] configuredComponents = new ConfiguredComponentOmniMech[Location.values().length];
+      OmniPod[] omniPods = new OmniPod[Location.values().length];
       for(Location location : Location.values()){
-         omniPods[location.ordinal()] = Mockito.mock(ConfiguredComponentOmniMech.class);
-         Mockito.when(omniPods[location.ordinal()].getInternalComponent()).thenReturn(components[location.ordinal()]);
+         omniPods[location.ordinal()] = Mockito.mock(OmniPod.class);
+         configuredComponents[location.ordinal()] = Mockito.mock(ConfiguredComponentOmniMech.class);
+         Mockito.when(configuredComponents[location.ordinal()].getInternalComponent()).thenReturn(internalComponents[location.ordinal()]);
+         Mockito.when(configuredComponents[location.ordinal()].getOmniPod()).thenReturn(omniPods[location.ordinal()]);
       }
-      Mockito.when(aFactory.defaultComponents(Matchers.any(ChassisBase.class))).thenReturn(omniPods);
+      Mockito.when(aFactory.defaultComponents(Matchers.any(ChassisBase.class))).thenReturn(configuredComponents);
 
       // Create loadout
       LoadoutOmniMech loadoutOmniMech = new LoadoutOmniMech(aFactory, chassisOmniMech, null);

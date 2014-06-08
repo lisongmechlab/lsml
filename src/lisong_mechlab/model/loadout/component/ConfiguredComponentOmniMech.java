@@ -112,8 +112,8 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
    
    private List<Item> stripHALAA(){
       List<Item> ans = new ArrayList<>(getInternalComponent().getFixedItems());
-      ans.remove(ItemDB.lookup("@mdf_LAA"));
-      ans.remove(ItemDB.lookup("@mdf_HA"));
+      ans.remove(ItemDB.LAA);
+      ans.remove(ItemDB.HA);
       return ans;
    }
 }

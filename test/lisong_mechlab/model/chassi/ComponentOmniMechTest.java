@@ -77,44 +77,44 @@ public class ComponentOmniMechTest extends ComponentBaseTest{
       dynamicStructureSlots = 3;
       assertEquals(dynamicStructureSlots, makeDefaultCUT().getDynamicStructureSlots());
    }
-   
+
    /**
     * An item can't be too big considering the fixed dynamic slots and items.
     */
    @Test
-   public final void testIsAllowed_fixedItemsAndSlots() {
+   public final void testIsAllowed_fixedItemsAndSlots(){
       criticalSlots = 12;
       dynamicArmorSlots = 2;
       dynamicStructureSlots = 1;
       final int fixedSlots = 3;
       final int freeSlots = criticalSlots - dynamicArmorSlots - dynamicStructureSlots - fixedSlots;
-      
+
       Item fixed = Mockito.mock(Item.class);
       Mockito.when(fixed.getNumCriticalSlots()).thenReturn(fixedSlots);
-      
+
       fixedItems.clear();
       fixedItems.add(fixed);
 
       Item item = Mockito.mock(Item.class);
       Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
       Mockito.when(item.getName()).thenReturn("mock item");
-      
+
       assertTrue(makeDefaultCUT().isAllowed(item));
-      
-      Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots+1);
+
+      Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
       assertFalse(makeDefaultCUT().isAllowed(item));
    }
-   
+
    /**
-    * When any large bore weapon, such as any AC, PPC or Gauss rifle is equipped, any Lower Arm Actuator (LLA) and/or Hand Actuator (HA) is removed.
-    * This of course affects equipability of these weapons. 
+    * When any large bore weapon, such as any AC, PPC or Gauss rifle is equipped, any Lower Arm Actuator (LLA) and/or
+    * Hand Actuator (HA) is removed. This of course affects equipability of these weapons.
     */
    @Test
-   public final void testIsAllowed_LargeBoreWeapon() {
+   public final void testIsAllowed_LargeBoreWeapon(){
       criticalSlots = 12;
-      Item LAA = ItemDB.lookup("@mdf_LAA");
-      Item HA = ItemDB.lookup("@mdf_HA");
-      Item UAA = ItemDB.lookup("@mdf_UAA");
+      Item LAA = ItemDB.LAA;
+      Item HA = ItemDB.HA;
+      Item UAA = ItemDB.UAA;
       fixedItems.clear();
       fixedItems.add(UAA);
       fixedItems.add(LAA);
@@ -125,54 +125,54 @@ public class ComponentOmniMechTest extends ComponentBaseTest{
       BallisticWeapon weapon = Mockito.mock(BallisticWeapon.class);
       Mockito.when(weapon.getNumCriticalSlots()).thenReturn(freeSlots - internalSlots);
       Mockito.when(weapon.getName()).thenReturn("mock item");
-      
+
       // Pre check that the weapon is allowed in normal situations.
       assertTrue(makeDefaultCUT().isAllowed(weapon));
-      
+
       // Now it's too big to fit.
       Mockito.when(weapon.getNumCriticalSlots()).thenReturn(freeSlots);
       assertFalse(makeDefaultCUT().isAllowed(weapon));
-      
+
       // Check the real situation here
       Mockito.when(weapon.getName()).thenReturn("CLAN PPC");
       assertTrue(makeDefaultCUT().isAllowed(weapon));
-      
+
       Mockito.when(weapon.getName()).thenReturn("AC/15");
       assertTrue(makeDefaultCUT().isAllowed(weapon));
-      
+
       Mockito.when(weapon.getName()).thenReturn("LB 10-X AC");
       assertTrue(makeDefaultCUT().isAllowed(weapon));
-      
+
       Mockito.when(weapon.getName()).thenReturn("CLAN LIGHT GAUSS RIFLE");
       assertTrue(makeDefaultCUT().isAllowed(weapon));
-      
+
       Mockito.when(weapon.getName()).thenReturn("MACHINE GUN");
       assertFalse(makeDefaultCUT().isAllowed(weapon));
    }
-   
+
    @Test
    public final void testShouldRemoveArmActuators(){
       BallisticWeapon ballistic = Mockito.mock(BallisticWeapon.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
       EnergyWeapon energy = Mockito.mock(EnergyWeapon.class);
       Mockito.when(energy.getHardpointType()).thenReturn(HardPointType.ENERGY);
-      
+
       // Check the real situation here
       Mockito.when(energy.getName()).thenReturn("CLAN PPC");
       assertTrue(makeDefaultCUT().shouldRemoveArmActuators(energy));
 
       Mockito.when(energy.getName()).thenReturn("LARGE LASER");
       assertFalse(makeDefaultCUT().shouldRemoveArmActuators(energy));
-      
+
       Mockito.when(ballistic.getName()).thenReturn("AC/15");
       assertTrue(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
-      
+
       Mockito.when(ballistic.getName()).thenReturn("LB 10-X AC");
       assertTrue(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
-      
+
       Mockito.when(ballistic.getName()).thenReturn("CLAN LIGHT GAUSS RIFLE");
       assertTrue(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
-      
+
       Mockito.when(ballistic.getName()).thenReturn("MACHINE GUN");
       assertFalse(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
    }

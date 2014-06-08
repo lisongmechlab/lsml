@@ -86,7 +86,7 @@ public class ComponentOmniMech extends ComponentBase{
       if( shouldRemoveArmActuators(aItem) ){
          int fixedSlots = 0;
          for(Item item : getFixedItems()){
-            if( item != ItemDB.lookup("@mdf_LAA") && item != ItemDB.lookup("@mdf_HA") ){
+            if( item != ItemDB.LAA && item != ItemDB.HA ){
                fixedSlots += item.getNumCriticalSlots();
             }
          }
