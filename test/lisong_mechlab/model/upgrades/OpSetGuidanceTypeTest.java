@@ -47,7 +47,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SetGuidanceTypeOperationTest{
+public class OpSetGuidanceTypeTest{
    MockLoadoutContainer mlc = new MockLoadoutContainer();
 
    @Mock

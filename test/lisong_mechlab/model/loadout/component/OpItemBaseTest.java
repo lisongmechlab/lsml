@@ -42,7 +42,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ItemOperationTest{
+public class OpItemBaseTest{
 
    class CutClass extends OpItemBase{
       public CutClass(MessageXBar anXBar, LoadoutBase<ConfiguredComponentBase> aLoadout, ConfiguredComponentBase aLoadoutPart, Item aItem){

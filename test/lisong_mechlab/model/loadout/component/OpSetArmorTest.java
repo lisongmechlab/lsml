@@ -27,7 +27,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SetArmorOperationTest{
+public class OpSetArmorTest{
    private static final int                     TEST_MAX_ARMOR = 30;
    private ArmorSide                            armorSide      = ArmorSide.ONLY;
    @Mock
@@ -157,27 +157,6 @@ public class SetArmorOperationTest{
       cut.apply();
 
       // Verify (automatic)
-   }
-
-   /**
-    * A symmetric operation shall apply results to both sides.
-    */
-   @Test
-   public final void testApply_Symm(){
-      // Setup
-      final int oldArmor = 20;
-      final int newArmor = oldArmor;
-
-      Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
-      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
-      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
-
-      // Execute
-      cut.apply();
-
-      Mockito.verifyZeroInteractions(xBar);
-      Mockito.verify(loadoutPart, Mockito.never()).setArmor(Matchers.any(ArmorSide.class), Matchers.anyInt(), Matchers.anyBoolean());
    }
 
    /**

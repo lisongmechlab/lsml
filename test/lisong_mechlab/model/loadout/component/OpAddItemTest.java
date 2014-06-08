@@ -49,7 +49,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AddItemOperationTest{
+public class OpAddItemTest{
    @Mock
    private ConfiguredComponentBase loadoutPart;
    @Mock

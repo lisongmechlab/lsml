@@ -37,7 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RenameOperationTest{
+public class OpRenameTest{
 
    @Mock
    private MessageXBar xBar;

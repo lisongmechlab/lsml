@@ -44,7 +44,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SymmetricArmorOperationTest{
+public class OpSetArmorSymmetricTest{
    @Mock
    MessageXBar    xBar;
 
