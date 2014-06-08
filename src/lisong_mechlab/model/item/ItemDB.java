@@ -45,7 +45,11 @@ public class ItemDB{
    static public final Item                ECM;
    static public final Item                BAP;
    static public final Item                CASE;
-   
+
+   static public final Internal            UAA;
+   static public final Internal            LAA;
+   static public final Internal            HA;
+
    static private final Map<String, Item>  locname2item;
    static private final Map<String, Item>  mwoname2item;
    static private final Map<Integer, Item> mwoidx2item;
@@ -126,5 +130,9 @@ public class ItemDB{
       ECM = lookup("GUARDIAN ECM");
       BAP = lookup("BEAGLE ACTIVE PROBE");
       CASE = lookup("C.A.S.E.");
+
+      UAA = (Internal)lookup("UpperArmActuator");
+      LAA = (Internal)lookup("LowerArmActuator");
+      HA = (Internal)lookup("HandActuator");
    }
 }

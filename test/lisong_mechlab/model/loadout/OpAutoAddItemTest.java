@@ -63,6 +63,19 @@ public class OpAutoAddItemTest{
 
    private OperationStack stack = new OperationStack(0);
 
+   @Test(timeout=5000)
+   public void testApply_XLEnginePerformance() throws DecodingException{
+      // Setup
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+      LoadoutStandard loadout = coder.parse("lsml://rQAAKCwqCDISSg4qCDEDvqmbFj6wWK9evXsLLAEYCg==");
+      Mockito.reset(xBar);
+      // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
+
+      // Execute
+      stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.lookup("XL ENGINE 200")));
+   }
+
+   
    @Test
    public void testMoveItem_Bug2() throws DecodingException{
       // Setup

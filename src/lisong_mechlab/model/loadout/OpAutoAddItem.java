@@ -26,6 +26,8 @@ import java.util.List;
 
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
@@ -109,25 +111,32 @@ public class OpAutoAddItem extends OpLoadoutBase{
       }
 
       private int score(){
+         if( itemToPlace instanceof Engine && ((Engine)itemToPlace).getType() == EngineType.XL ){
+            int slotsFreeCt = Math.min(itemToPlace.getNumCriticalSlots(), data.getComponent(Location.CenterTorso).getSlotsFree());
+            int slotsFreeLt = Math.min(3, data.getComponent(Location.LeftTorso).getSlotsFree());
+            int slotsFreeRt = Math.min(3, data.getComponent(Location.RightTorso).getSlotsFree());
+            return (slotsFreeCt + slotsFreeLt + slotsFreeRt);
+         }
          int maxFree = 0;
-         for(Location part : validParts){
-            maxFree = Math.max(maxFree, data.getComponent(part).getSlotsFree()
-                                        * (data.getComponent(part).getInternalComponent().isAllowed(item) ? 1 : 0));
+         for(Location location : validLocations){
+            maxFree = Math.max(maxFree, data.getComponent(location).getSlotsFree()
+                                        * (data.getComponent(location).getInternalComponent().isAllowed(item) ? 1 : 0));
          }
          return maxFree;
+
       }
    }
 
    private final Item           itemToPlace;
-   private final List<Location> validParts = new ArrayList<>();
+   private final List<Location> validLocations = new ArrayList<>();
    private final List<Location> partTraversalOrder;
-   private final OperationStack stack      = new OperationStack(0);
+   private final OperationStack stack          = new OperationStack(0);
 
    public OpAutoAddItem(LoadoutBase<?> aLoadout, MessageXBar anXBar, Item anItem){
       super(aLoadout, anXBar, "auto place item");
       itemToPlace = anItem;
       for(ConfiguredComponentBase part : aLoadout.getCandidateLocationsForItem(itemToPlace)){
-         validParts.add(part.getInternalComponent().getLocation());
+         validLocations.add(part.getInternalComponent().getLocation());
       }
       partTraversalOrder = getPartTraversalOrder();
 
@@ -271,7 +280,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
 
       List<Location> order = new ArrayList<>();
       for(Location part : partOrder){
-         if( validParts.contains(part) )
+         if( validLocations.contains(part) )
             order.add(part);
       }
       for(Location part : partOrder){

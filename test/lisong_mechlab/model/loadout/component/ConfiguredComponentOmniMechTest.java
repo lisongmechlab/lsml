@@ -164,9 +164,9 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
     */
    @Test
    public final void testGetItemsFixed_LargeBoreEquipped(){
-      Item LAA = ItemDB.lookup("@mdf_LAA");
-      Item HA = ItemDB.lookup("@mdf_HA");
-      Item UAA = ItemDB.lookup("@mdf_UAA");
+      Item LAA = ItemDB.LAA;
+      Item HA = ItemDB.HA;
+      Item UAA = ItemDB.UAA;
       internalFixedItems.clear();
       internalFixedItems.add(UAA);
       internalFixedItems.add(LAA);
@@ -188,9 +188,9 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
     */
    @Test
    public final void testGetItemsFixed_LargeBoreFixed(){
-      Item LAA = ItemDB.lookup("@mdf_LAA");
-      Item HA = ItemDB.lookup("@mdf_HA");
-      Item UAA = ItemDB.lookup("@mdf_UAA");
+      Item LAA = ItemDB.LAA;
+      Item HA = ItemDB.HA;
+      Item UAA = ItemDB.UAA;
       internalFixedItems.clear();
       internalFixedItems.add(UAA);
       internalFixedItems.add(LAA);
