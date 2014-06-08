@@ -33,7 +33,6 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.util.DecodingException;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
