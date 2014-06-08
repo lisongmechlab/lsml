@@ -59,6 +59,7 @@ public class OpLoadStock extends OpLoadoutBase{
          ConfiguredComponentBase configured = aLoadout.getComponent(location);
 
          if( location.isTwoSided() ){
+            addOp(new OpSetArmor(xBar, aLoadout, configured, ArmorSide.FRONT, 0, true));
             addOp(new OpSetArmor(xBar, aLoadout, configured, ArmorSide.BACK, stockComponent.getArmorBack(), true));
             addOp(new OpSetArmor(xBar, aLoadout, configured, ArmorSide.FRONT, stockComponent.getArmorFront(), true));
          }

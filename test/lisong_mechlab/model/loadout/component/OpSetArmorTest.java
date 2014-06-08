@@ -158,7 +158,7 @@ public class OpSetArmorTest{
 
       // Verify (automatic)
    }
-
+   
    /**
     * An armor operation that would result in no change shall not execute.
     */
