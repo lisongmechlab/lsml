@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<loadout>
+  <id><![CDATA[stock]]></id>
+  <mech_id><![CDATA[17]]></mech_id>
+  <configuration>
+    <component>
+      <name><![CDATA[head]]></name>
+      <armor><![CDATA[18]]></armor>
+      <items>
+        <item>
+          <id><![CDATA[9012]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[COMMAND CONSOLE]]></name>
+        </item>
+      </items>
+    </component>
+    <component>
+      <name><![CDATA[left_torso]]></name>
+      <armor><![CDATA[64]]></armor>
+      <items>
+        <item>
+          <id><![CDATA[1002]]></id>
+          <type><![CDATA[weapon]]></type>
+          <name><![CDATA[LRM 20]]></name>
+        </item>
+        <item>
+          <id><![CDATA[1031]]></id>
+          <type><![CDATA[weapon]]></type>
+          <name><![CDATA[SRM 6]]></name>
+        </item>
+        <item>
+          <id><![CDATA[2027]]></id>
+          <type><![CDATA[ammo]]></type>
+          <name><![CDATA[LRM AMMO]]></name>
+        </item>
+        <item>
+          <id><![CDATA[2028]]></id>
+          <type><![CDATA[ammo]]></type>
+          <name><![CDATA[SRM AMMO]]></name>
+        </item>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+      </items>
+    </component>
+    <component>
+      <name><![CDATA[centre_torso]]></name>
+      <armor><![CDATA[94]]></armor>
+      <items>
+        <item>
+          <id><![CDATA[3258]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD ENGINE 300]]></name>
+        </item>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+      </items>
+    </component>
+    <component>
+      <name><![CDATA[right_torso]]></name>
+      <armor><![CDATA[64]]></armor>
+      <items>
+        <item>
+          <id><![CDATA[1000]]></id>
+          <type><![CDATA[weapon]]></type>
+          <name><![CDATA[AC/20]]></name>
+        </item>
+        <item>
+          <id><![CDATA[2000]]></id>
+          <type><![CDATA[ammo]]></type>
+          <name><![CDATA[AC/20 AMMO]]></name>
+        </item>
+        <item>
+          <id><![CDATA[2000]]></id>
+          <type><![CDATA[ammo]]></type>
+          <name><![CDATA[AC/20 AMMO]]></name>
+        </item>
+      </items>
+    </component>
+    <component>
+      <name><![CDATA[left_leg]]></name>
+      <armor><![CDATA[82]]></armor>
+      <items>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+      </items>
+    </component>
+    <component>
+      <name><![CDATA[right_leg]]></name>
+      <armor><![CDATA[82]]></armor>
+      <items>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+      </items>
+    </component>
+    <component>
+      <name><![CDATA[right_arm]]></name>
+      <armor><![CDATA[68]]></armor>
+      <items>
+        <item>
+          <id><![CDATA[1001]]></id>
+          <type><![CDATA[weapon]]></type>
+          <name><![CDATA[MEDIUM LASER]]></name>
+        </item>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+      </items>
+    </component>
+    <component>
+      <name><![CDATA[left_arm]]></name>
+      <armor><![CDATA[68]]></armor>
+      <items>
+        <item>
+          <id><![CDATA[1001]]></id>
+          <type><![CDATA[weapon]]></type>
+          <name><![CDATA[MEDIUM LASER]]></name>
+        </item>
+        <item>
+          <id><![CDATA[3000]]></id>
+          <type><![CDATA[module]]></type>
+          <name><![CDATA[STD HEAT SINK]]></name>
+        </item>
+      </items>
+    </component>
+    <component>
+      <name><![CDATA[left_torso_rear]]></name>
+      <armor><![CDATA[20]]></armor>
+    </component>
+    <component>
+      <name><![CDATA[centre_torso_rear]]></name>
+      <armor><![CDATA[28]]></armor>
+    </component>
+    <component>
+      <name><![CDATA[right_torso_rear]]></name>
+      <armor><![CDATA[20]]></armor>
+    </component>
+  </configuration>
+  <upgrades>
+    <upgrade>
+      <id>2810</id>
+      <type><![CDATA[0]]></type>
+      <name><![CDATA[STANDARD ARMOR]]></name>
+    </upgrade>
+    <upgrade>
+      <id>3100</id>
+      <type><![CDATA[1]]></type>
+      <name><![CDATA[STANDARD STRUCTURE]]></name>
+    </upgrade>
+    <upgrade>
+      <id>3003</id>
+      <type><![CDATA[2]]></type>
+      <name><![CDATA[STANDARD HEAT SINK]]></name>
+    </upgrade>
+    <upgrade>
+      <id>3051</id>
+      <type><![CDATA[3]]></type>
+      <name><![CDATA[STANDARD GUIDANCE]]></name>
+    </upgrade>
+  </upgrades>
+</loadout>
