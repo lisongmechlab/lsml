@@ -609,7 +609,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       ArmorUpgrade ff = isClan ? UpgradeDB.CLAN_FERRO_FIBROUS_ARMOR : UpgradeDB.FERRO_FIBROUS_ARMOR;
 
       {
-         final String esSavedMass = df2.format(es.getStructureMass(loadout.getChassis()));
+         final String esSavedMass = df2.format(UpgradeDB.STANDARD_STRUCTURE.getStructureMass(loadout.getChassis()) - es.getStructureMass(loadout.getChassis()));
          final String esSlots = Integer.toString(es.getExtraSlots());
          if( (loadout.getUpgrades().getStructure() == es) ){
             endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: green;\">-" + esSavedMass + "t</span>, " + "<span style=\"color: red;\">+"
