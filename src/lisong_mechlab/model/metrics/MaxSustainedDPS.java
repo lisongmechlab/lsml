@@ -28,7 +28,6 @@ import java.util.Map;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
@@ -75,7 +74,7 @@ public class MaxSustainedDPS extends RangeMetric{
       double heatleft = dissipation.calculate();
       List<Weapon> weapons = new ArrayList<>(15);
       for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon && item != ItemDB.AMS ){
+         if( item instanceof Weapon && ((Weapon)item).isOffensive() ){
             weapons.add((Weapon)item);
          }
       }
@@ -83,9 +82,11 @@ public class MaxSustainedDPS extends RangeMetric{
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
-               // Note: D/H == DPS / HPS so we're ordering by highest dps per hps. 
-               double dps2 = aO2.getRangeEffectivity(aRange, loadout.getWeaponModifiers()) * aO2.getStat("d/h", efficiencies, loadout.getWeaponModifiers());
-               double dps1 = aO1.getRangeEffectivity(aRange, loadout.getWeaponModifiers()) * aO1.getStat("d/h", efficiencies, loadout.getWeaponModifiers());
+               // Note: D/H == DPS / HPS so we're ordering by highest dps per hps.
+               double dps2 = aO2.getRangeEffectivity(aRange, loadout.getWeaponModifiers())
+                             * aO2.getStat("d/h", efficiencies, loadout.getWeaponModifiers());
+               double dps1 = aO1.getRangeEffectivity(aRange, loadout.getWeaponModifiers())
+                             * aO1.getStat("d/h", efficiencies, loadout.getWeaponModifiers());
                if( aO1.getRangeMax(loadout.getWeaponModifiers()) < aRange )
                   dps1 = 0;
                if( aO2.getRangeMax(loadout.getWeaponModifiers()) < aRange )
@@ -98,7 +99,8 @@ public class MaxSustainedDPS extends RangeMetric{
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
-               return Double.compare(aO2.getStat("d/h", efficiencies, loadout.getWeaponModifiers()), aO1.getStat("d/h", efficiencies, loadout.getWeaponModifiers()));
+               return Double.compare(aO2.getStat("d/h", efficiencies, loadout.getWeaponModifiers()), aO1.getStat("d/h", efficiencies,
+                                                                                                                 loadout.getWeaponModifiers()));
             }
          });
       }

@@ -77,7 +77,7 @@ public class OmniPod{
 
    @Override
    public String toString(){
-      return ((ChassisOmniMech)ChassisDB.lookup(chassis)).getNameShort() + " " + location.shortName();
+      return chassis + " " + location.shortName();
    }
 
    /**

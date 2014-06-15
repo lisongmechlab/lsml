@@ -17,15 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.mwo_data.helpers;
+package lisong_mechlab.model.item;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.junit.Assert.*;
 
-public class AmmoTypeStats{
-   @XStreamAsAttribute
-   public String type;
-   @XStreamAsAttribute
-   public int    numShots;
-   @XStreamAsAttribute
-   public double internalDamage;
+import org.junit.Test;
+
+/**
+ * Test suite for {@link AmmoWeapon}.
+ * 
+ * @author Emily Björk
+ */
+public class AmmoWeaponTest{
+
+   @Test
+   public final void testIsCompatibleAmmo() throws Exception{
+      BallisticWeapon ac20 = (BallisticWeapon)ItemDB.lookup("AC/20");
+      
+      Ammunition ac20ammo = (Ammunition)ItemDB.lookup("AC/20 AMMO");
+      Ammunition ac20ammoHalf = (Ammunition)ItemDB.lookup("AC/20 AMMO (1/2)");
+      
+      assertTrue(ac20.isCompatibleAmmo(ac20ammoHalf));
+      assertTrue(ac20.isCompatibleAmmo(ac20ammo));
+   }
+
 }

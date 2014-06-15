@@ -40,6 +40,7 @@ public class ItemDB{
 
    // AMS
    static public final AmmoWeapon          AMS;
+   static public final AmmoWeapon          C_AMS;
    static public final HeatSink            SHS;
    static public final HeatSink            DHS;
    static public final Item                ECM;
@@ -49,7 +50,6 @@ public class ItemDB{
    static public final Internal            UAA;
    static public final Internal            LAA;
    static public final Internal            HA;
-
    static private final Map<String, Item>  locname2item;
    static private final Map<String, Item>  mwoname2item;
    static private final Map<Integer, Item> mwoidx2item;
@@ -124,6 +124,7 @@ public class ItemDB{
       }
 
       // Initialize special items
+      C_AMS = (AmmoWeapon)lookup("C-AMS");
       AMS = (AmmoWeapon)lookup("ANTI-MISSILE SYSTEM");
       SHS = (HeatSink)lookup("STD HEAT SINK");
       DHS = (HeatSink)lookup("DOUBLE HEAT SINK");

@@ -59,6 +59,7 @@ import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Module;
 import lisong_mechlab.model.item.PilotModule;
+import lisong_mechlab.model.item.TargetingComputer;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.item.WeaponModule;
 import lisong_mechlab.model.loadout.converters.HardPointConverter;
@@ -513,6 +514,7 @@ public class DataCache{
                ans.add(new ECM(statsModule));
                break;
             case "CBAPStats":
+            case "CClanBAPStats":
             case "CCASEStats":
             case "CCommandConsoleStats":
                ans.add(new Module(statsModule));
@@ -520,6 +522,9 @@ public class DataCache{
             case "CLowerArmActuatorStats":
             case "CInternalStats":
                ans.add(new Internal(statsModule));
+               break;
+            case "CTargetingComputerStats":
+               ans.add(new TargetingComputer(statsModule));
                break;
             default:
                break; // Other modules not yet supported

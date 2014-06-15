@@ -59,6 +59,8 @@ public class Item implements Comparable<Item>{
       faction = aFaction;
    }
 
+   // TODO: Add a maximum allowed attribute here 
+   
    public Item(ItemStats anItemStats, HardPointType aHardpointType, int aNumSlots, double aNumTons, int aHealth){
       this(Localization.key2string(anItemStats.Loc.nameTag), Localization.key2string(anItemStats.Loc.descTag), anItemStats.name,
            Integer.parseInt(anItemStats.id), aNumSlots, aNumTons, aHardpointType, aHealth, Faction.fromMwo(anItemStats.faction));

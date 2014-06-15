@@ -39,9 +39,11 @@ public class MaxDPS extends RangeMetric{
    public double calculate(double aRange){
       double ans = 0;
       for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon && item != ItemDB.AMS ){
+         if( item instanceof Weapon ){
             Weapon weapon = (Weapon)item;
-            ans += weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers()) * weapon.getStat("d/s",  loadout.getEfficiencies(), loadout.getWeaponModifiers());
+            if( weapon.isOffensive() )
+               ans += weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers())
+                      * weapon.getStat("d/s", loadout.getEfficiencies(), loadout.getWeaponModifiers());
          }
       }
       return ans;

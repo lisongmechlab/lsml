@@ -26,7 +26,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
@@ -44,6 +43,9 @@ public class WeaponRanges{
 
       ans.add(Double.valueOf(0.0));
       for(Weapon weapon : aWeaponCollection){
+         if( !weapon.isOffensive() )
+            continue;
+
          if( weapon.hasSpread() ){
             ans.add(weapon.getRangeZero());
             double min = weapon.getRangeMin();
@@ -56,7 +58,7 @@ public class WeaponRanges{
             }
             ans.add(max);
          }
-         else if( weapon != ItemDB.AMS ){
+         else{
             ans.add(weapon.getRangeZero());
             ans.add(weapon.getRangeMin());
             ans.add(weapon.getRangeLong(aModifiers));
