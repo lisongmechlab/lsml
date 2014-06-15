@@ -72,7 +72,7 @@ public class WeaponTest{
    @Test
    public void testGetHeat_gauss(){
       Weapon gauss = (Weapon)ItemDB.lookup("GAUSS RIFLE");
-      assertEquals(1.0, gauss.getHeat(), 0.0);
+      assertEquals(1.0, gauss.getHeat(null), 0.0);
    }
 
    @Test
@@ -102,40 +102,40 @@ public class WeaponTest{
    @Test
    public void testGetRangeMax_ppc() throws Exception{
       Weapon ppc = (Weapon)ItemDB.lookup("PPC");
-      assertEquals(1080.0, ppc.getRangeMax(), 0.0);
+      assertEquals(1080.0, ppc.getRangeMax(null), 0.0);
    }
 
    @Test
    public void testGetRangeLong_ppc() throws Exception{
       Weapon ppc = (Weapon)ItemDB.lookup("PPC");
-      assertEquals(540.0, ppc.getRangeLong(), 0.0);
+      assertEquals(540.0, ppc.getRangeLong(null), 0.0);
    }
 
    @Test
    public void testGetRangeEffectivity_mg() throws Exception{
       BallisticWeapon mg = (BallisticWeapon)ItemDB.lookup("MACHINE GUN");
-      assertEquals(1.0, mg.getRangeEffectivity(0), 0.0);
-      assertEquals(1.0, mg.getRangeEffectivity(mg.getRangeLong()), 0.1); // High spread on MG
-      assertTrue(0.5 >= mg.getRangeEffectivity((mg.getRangeLong() + mg.getRangeMax()) / 2)); // Spread + falloff
-      assertEquals(0.0, mg.getRangeEffectivity(mg.getRangeMax()), 0.0);
+      assertEquals(1.0, mg.getRangeEffectivity(0, null), 0.0);
+      assertEquals(1.0, mg.getRangeEffectivity(mg.getRangeLong(null), null), 0.1); // High spread on MG
+      assertTrue(0.5 >= mg.getRangeEffectivity((mg.getRangeLong(null) + mg.getRangeMax(null)) / 2, null)); // Spread + falloff
+      assertEquals(0.0, mg.getRangeEffectivity(mg.getRangeMax(null), null), 0.0);
    }
 
    @Test
    public void testGetRangeEffectivity_gaussrifle() throws Exception{
       BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      assertEquals(1.0, gauss.getRangeEffectivity(0), 0.0);
-      assertEquals(1.0, gauss.getRangeEffectivity(gauss.getRangeLong()), 0.0);
-      assertEquals(0.5, gauss.getRangeEffectivity((gauss.getRangeLong() + gauss.getRangeMax()) / 2), 0.0);
-      assertEquals(0.0, gauss.getRangeEffectivity(gauss.getRangeMax()), 0.0);
+      assertEquals(1.0, gauss.getRangeEffectivity(0, null), 0.0);
+      assertEquals(1.0, gauss.getRangeEffectivity(gauss.getRangeLong(null), null), 0.0);
+      assertEquals(0.5, gauss.getRangeEffectivity((gauss.getRangeLong(null) + gauss.getRangeMax(null)) / 2, null), 0.0);
+      assertEquals(0.0, gauss.getRangeEffectivity(gauss.getRangeMax(null), null), 0.0);
 
-      assertTrue(gauss.getRangeEffectivity(750) < 0.95);
-      assertTrue(gauss.getRangeEffectivity(750) > 0.8);
+      assertTrue(gauss.getRangeEffectivity(750, null) < 0.95);
+      assertTrue(gauss.getRangeEffectivity(750, null) > 0.8);
    }
 
    @Test
    public void testGetStat_gauss() throws Exception{
       BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
-      assertEquals(gauss.getDamagePerShot() / gauss.getHeat(), gauss.getStat("d/h", null), 0.0);
+      assertEquals(gauss.getDamagePerShot() / gauss.getHeat(null), gauss.getStat("d/h", null, null), 0.0);
    }
 
 }

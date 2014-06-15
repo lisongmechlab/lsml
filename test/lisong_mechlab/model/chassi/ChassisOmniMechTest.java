@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
@@ -60,7 +61,7 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
       super.setup();
 
       engine = Mockito.mock(Engine.class);
-      Mockito.when(engine.getFaction()).thenReturn(true);
+      Mockito.when(engine.getFaction()).thenReturn(faction);
       Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
       Mockito.when(engine.getRating()).thenReturn(250);
       Mockito.when(engine.getType()).thenReturn(EngineType.XL);
@@ -101,21 +102,21 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
 
    @Override
    protected ChassisOmniMech makeDefaultCUT(){
-      return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, components, engine,
+      return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
                                  structureType, armorType, heatSinkType);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public final void testCtor_BadDynStructure(){
       Mockito.when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);
-      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, components, engine,
+      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
                           structureType, armorType, heatSinkType);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public final void testCtor_BadDynArmor(){
       Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(13);
-      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, components, engine,
+      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
                           structureType, armorType, heatSinkType);
    }
 
@@ -128,9 +129,10 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
    public final void testGetEngine(){
       assertSame(engine, makeDefaultCUT().getEngine());
    }
-   
+
    /**
-    * {@link ChassisOmniMech#getMassStripped()} shall return the mass of the chassis with all non fixed items and armor removed.
+    * {@link ChassisOmniMech#getMassStripped()} shall return the mass of the chassis with all non fixed items and armor
+    * removed.
     */
    @Test
    public final void testGetFixedHeatSinks(){
@@ -160,9 +162,10 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
 
       assertEquals(4, cut.getFixedHeatSinks());
    }
-   
+
    /**
-    * {@link ChassisOmniMech#getMassStripped()} shall return the mass of the chassis with all non fixed items and armor removed.
+    * {@link ChassisOmniMech#getMassStripped()} shall return the mass of the chassis with all non fixed items and armor
+    * removed.
     */
    @Test
    public final void testGetMassStripped(){
@@ -223,7 +226,7 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
    public final void testIsAllowed_NoComponentSupport(){
       Item item = Mockito.mock(Item.class);
       Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-      Mockito.when(item.getFaction()).thenReturn(true);
+      Mockito.when(item.getFaction()).thenReturn(Faction.Clan);
       Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
 
       ChassisOmniMech cut = makeDefaultCUT();

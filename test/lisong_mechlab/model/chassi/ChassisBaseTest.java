@@ -28,6 +28,7 @@ import java.util.Collection;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Internal;
@@ -49,7 +50,7 @@ import org.mockito.Mockito;
 @RunWith(JUnitParamsRunner.class)
 public abstract class ChassisBaseTest{
    protected int             baseVariant = 12;
-   protected boolean         isClan      = true;
+   protected Faction         faction     = Faction.Clan;
    protected int             maxTons     = 75;
    protected MovementProfile movementProfile;
    protected int             mwoID       = 300;
@@ -105,9 +106,9 @@ public abstract class ChassisBaseTest{
    }
 
    @Test
-      public final void testGetMovementProfileBase() throws Exception{
-         assertSame(movementProfile, makeDefaultCUT().getMovementProfileBase());
-      }
+   public final void testGetMovementProfileBase() throws Exception{
+      assertSame(movementProfile, makeDefaultCUT().getMovementProfileBase());
+   }
 
    @Test
    public final void testGetMwoId() throws Exception{
@@ -155,11 +156,11 @@ public abstract class ChassisBaseTest{
    public final void testIsAllowed() throws Exception{
       ChassisBase cut0 = makeDefaultCUT();
       Item clanItem = Mockito.mock(Item.class);
-      Mockito.when(clanItem.getFaction()).thenReturn(true);
+      Mockito.when(clanItem.getFaction()).thenReturn(Faction.Clan);
       Item isItem = Mockito.mock(Item.class);
-      Mockito.when(isItem.getFaction()).thenReturn(false);
+      Mockito.when(isItem.getFaction()).thenReturn(Faction.InnerSphere);
 
-      if( cut0.isClan() ){
+      if( cut0.getFaction() == Faction.Clan ){
          assertTrue(cut0.isAllowed(clanItem));
          assertFalse(cut0.isAllowed(isItem));
       }
@@ -186,12 +187,12 @@ public abstract class ChassisBaseTest{
 
    @Test
    public void testIsAllowed_Internal(){
-      assertFalse(makeDefaultCUT().isAllowed(new Internal("", "", "", 0, 1, 0, HardPointType.NONE, 0, isClan)));
+      assertFalse(makeDefaultCUT().isAllowed(new Internal("", "", "", 0, 1, 0, HardPointType.NONE, 0, faction)));
    }
 
    @Test
    public final void testIsClan() throws Exception{
-      assertEquals(isClan, makeDefaultCUT().isClan());
+      assertEquals(faction, makeDefaultCUT().getFaction());
    }
 
    @Test
@@ -236,7 +237,7 @@ public abstract class ChassisBaseTest{
    protected JumpJet makeJumpJet(int aMinTons, int aMaxTons){
       JumpJet jj = Mockito.mock(JumpJet.class);
       Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
-      Mockito.when(jj.getFaction()).thenReturn(isClan);
+      Mockito.when(jj.getFaction()).thenReturn(faction);
       Mockito.when(jj.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
 
       Mockito.when(jj.getMinTons()).thenReturn((double)aMinTons);
@@ -246,7 +247,7 @@ public abstract class ChassisBaseTest{
 
    protected Engine makeEngine(int rating){
       Engine engine = Mockito.mock(Engine.class);
-      Mockito.when(engine.getFaction()).thenReturn(isClan);
+      Mockito.when(engine.getFaction()).thenReturn(faction);
       Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
       Mockito.when(engine.getRating()).thenReturn(rating);
       Mockito.when(engine.getType()).thenReturn(EngineType.XL);
