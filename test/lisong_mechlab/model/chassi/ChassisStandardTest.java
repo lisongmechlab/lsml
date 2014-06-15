@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import junitparams.JUnitParamsRunner;
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -62,7 +63,7 @@ public class ChassisStandardTest extends ChassisBaseTest{
 
    @Override
    protected ChassisStandard makeDefaultCUT(){
-      return new ChassisStandard(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, engineMin,
+      return new ChassisStandard(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, engineMin,
                                  engineMax, maxJumpJets, components, maxPilotModules);
    }
 
@@ -128,7 +129,7 @@ public class ChassisStandardTest extends ChassisBaseTest{
    public final void testIsAllowed_NoComponentSupport(){
       Item item = Mockito.mock(Item.class);
       Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-      Mockito.when(item.getFaction()).thenReturn(true);
+      Mockito.when(item.getFaction()).thenReturn(Faction.Clan);
       Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
 
       ChassisStandard cut = makeDefaultCUT();
