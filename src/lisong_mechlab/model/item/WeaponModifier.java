@@ -77,7 +77,7 @@ public interface WeaponModifier{
     * @return The augmented value of the attribute (can be unchanged).
     */
    public double applyHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree);
-   
+
    /**
     * Applies the effect of this modifier on the given attribute. Must only be called after
     * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.

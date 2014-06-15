@@ -34,8 +34,8 @@ public class NotificationMessage implements Message{
    }
 
    private final LoadoutBase<?> loadout;
-   public final String             message;
-   public final Severity           severity;
+   public final String          message;
+   public final Severity        severity;
 
    @Override
    public boolean equals(Object obj){

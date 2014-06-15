@@ -35,7 +35,7 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * @author Emily Björk
  */
 public class GhostHeat implements Metric{
-   private static final double     HEAT_SCALE[] = {0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00, 3.00, 5.00};
+   private static final double  HEAT_SCALE[] = {0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00, 3.00, 5.00};
    private final LoadoutBase<?> loadout;
 
    public GhostHeat(LoadoutBase<?> aLoadout){
@@ -84,7 +84,7 @@ public class GhostHeat implements Metric{
          double maxbaseheat = Double.NEGATIVE_INFINITY;
          Weapon maxweapon = null;
          for(Weapon w : group){
-            // XXX: It's not certain that heat applied from modules will affect the base heat value 
+            // XXX: It's not certain that heat applied from modules will affect the base heat value
             if( w.getHeat(loadout.getWeaponModifiers()) > maxbaseheat ){
                maxbaseheat = w.getHeat(loadout.getWeaponModifiers());
                maxweapon = w;

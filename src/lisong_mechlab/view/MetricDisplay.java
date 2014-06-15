@@ -38,13 +38,13 @@ import lisong_mechlab.util.MessageXBar.Reader;
  * @author Emily Björk
  */
 public class MetricDisplay extends JLabel implements Reader{
-   private static final long       serialVersionUID = 4947119462839900984L;
+   private static final long    serialVersionUID = 4947119462839900984L;
    private final LoadoutBase<?> loadout;
-   private final Formatter         formatter;
-   private final StringBuilder     sb               = new StringBuilder();
-   private final String            format;
-   private final boolean           percent;
-   protected final Metric          metric;
+   private final Formatter      formatter;
+   private final StringBuilder  sb               = new StringBuilder();
+   private final String         format;
+   private final boolean        percent;
+   protected final Metric       metric;
 
    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?> aLoadout){
       this(aMetric, aFormat, aTooltip, anXBar, aLoadout, false);

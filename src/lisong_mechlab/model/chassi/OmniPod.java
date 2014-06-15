@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import lisong_mechlab.model.item.Item;
+
 /**
  * This class represents an omnipod of an omnimech configuration.
  * 
@@ -37,7 +39,7 @@ public class OmniPod{
    private final List<HardPoint>     hardPoints;
    private final int                 maxJumpJets;
    private final int                 maxPilotModules;
-
+   private final List<Item>          fixedItems;
    private transient boolean         originalChassisLoaded = false;
    private transient ChassisOmniMech originalChassis;
 
@@ -57,13 +59,15 @@ public class OmniPod{
     *           A set of quirks this {@link OmniPod} will bring to the loadout if equipped.
     * @param aHardPoints
     *           A {@link List} of {@link HardPoint}s for this {@link OmniPod}.
+    * @param aFixedItems
+    *           A {@link List} of fixed items in this {@link OmniPod}.
     * @param aMaxJumpJets
     *           The maximum number of jump jets this {@link OmniPod} can support.
     * @param aMaxPilotModules
     *           The number of pilot modules that this {@link OmniPod} adds to the loadout.
     */
    public OmniPod(int aMwoID, Location aLocation, String aSeriesName, String aOriginalChassisID, Quirks aQuirks, List<HardPoint> aHardPoints,
-                  int aMaxJumpJets, int aMaxPilotModules){
+                  List<Item> aFixedItems, int aMaxJumpJets, int aMaxPilotModules){
       mwoID = aMwoID;
       location = aLocation;
       series = aSeriesName;
@@ -72,7 +76,7 @@ public class OmniPod{
       hardPoints = Collections.unmodifiableList(aHardPoints);
       maxJumpJets = aMaxJumpJets;
       maxPilotModules = aMaxPilotModules;
-
+      fixedItems = Collections.unmodifiableList(aFixedItems);
    }
 
    @Override
@@ -179,5 +183,12 @@ public class OmniPod{
     */
    public String getChassisSeries(){
       return series;
+   }
+
+   /**
+    * @return A unmodifiable list of items that are fixed on this {@link OmniPod}. Typically only HA and LAA.
+    */
+   public List<? extends Item> getFixedItems(){
+      return fixedItems;
    }
 }

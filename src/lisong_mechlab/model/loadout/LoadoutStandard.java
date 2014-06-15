@@ -30,19 +30,12 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
-import lisong_mechlab.model.loadout.converters.ChassiConverter;
-import lisong_mechlab.model.loadout.converters.ConfiguredComponentConverter;
-import lisong_mechlab.model.loadout.converters.ItemConverter;
-import lisong_mechlab.model.loadout.converters.LoadoutConverter;
-import lisong_mechlab.model.loadout.converters.UpgradeConverter;
-import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
  * This class represents the complete state of a 'mechs configuration.

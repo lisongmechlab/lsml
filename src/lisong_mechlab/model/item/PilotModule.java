@@ -28,20 +28,24 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class PilotModule{
 
-   private final String        locName;
-   private final String        locDesc;
+   private final String locName;
+   private final String locDesc;
    @XStreamAsAttribute
-   private final String        mwoName;
+   private final String mwoName;
    @XStreamAsAttribute
-   private final int           mwoIdx;
-   
+   private final int    mwoIdx;
+
    /**
     * Creates a new {@link PilotModule}.
-    * @param aMwoName The name of the module in the MWO data files.
-    * @param aMwoIdx The ID of the module in the MWO data files.
-    * @param aName The human readable name of the module.
-    * @param aDescription The human readable description of the module.
     * 
+    * @param aMwoName
+    *           The name of the module in the MWO data files.
+    * @param aMwoIdx
+    *           The ID of the module in the MWO data files.
+    * @param aName
+    *           The human readable name of the module.
+    * @param aDescription
+    *           The human readable description of the module.
     */
    public PilotModule(String aMwoName, int aMwoIdx, String aName, String aDescription){
       mwoName = aMwoName;

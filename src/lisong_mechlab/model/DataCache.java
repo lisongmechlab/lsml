@@ -671,7 +671,7 @@ public class DataCache{
             String hardPointsXml = chassis + "/" + chassis + "-hardpoints.xml";
             XMLHardpoints hardPoints = XMLHardpoints.fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, hardPointsXml)).stream);
 
-            ans.addAll(omniPods.asOmniPods(aItemStatsXml, hardPoints));
+            ans.addAll(omniPods.asOmniPods(aItemStatsXml, hardPoints, aDataCache));
 
          }
          catch( Exception e ){

@@ -279,7 +279,7 @@ public class PartList extends JList<Item>{
       Pair<ListEntryType, Item> getElementTypeAt(int arg0){
          List<Item> items = new ArrayList<>();
          if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            items.addAll(component.getInternalComponent().getFixedItems());
+            items.addAll(component.getItemsFixed());
          }
          items.addAll(component.getItemsEquipped());
          int numEngineHs = component.getEngineHeatsinks();

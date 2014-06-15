@@ -31,7 +31,7 @@ import lisong_mechlab.util.MessageXBar;
  */
 public class OpSetMaxArmor extends OpLoadoutBase{
    private final boolean manualSet;
-   private double ratio;
+   private double        ratio;
 
    public OpSetMaxArmor(LoadoutBase<?> aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet){
       super(aLoadout, anXBar, "set max armor");

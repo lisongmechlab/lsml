@@ -96,11 +96,11 @@ public class OperationStack{
 
       @Override
       protected void apply(){
-         if(!isPerpared){
+         if( !isPerpared ){
             buildOperation();
             isPerpared = true;
          }
-         
+
          ListIterator<Operation> it = operations.listIterator();
          while( it.hasNext() ){
             it.next().apply();
@@ -109,10 +109,10 @@ public class OperationStack{
 
       @Override
       protected void undo(){
-         if(!isPerpared){
+         if( !isPerpared ){
             throw new IllegalStateException("Undo called before apply!");
          }
-         
+
          // Do it in the "right" i.e. backwards order
          ListIterator<Operation> it = operations.listIterator(operations.size());
          while( it.hasPrevious() ){

@@ -63,7 +63,8 @@ public class OpLoadStock extends OpLoadoutBase{
       else if( loadout instanceof LoadoutOmniMech ){
          LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech)loadout;
          for(Location location : Location.values()){
-            addOp(new OpChangeOmniPod(xBar, loadout, loadoutOmniMech.getComponent(location), OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(), location)));
+            addOp(new OpChangeOmniPod(xBar, loadout, loadoutOmniMech.getComponent(location), OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(),
+                                                                                                                      location)));
          }
       }
       addOp(new OpSetGuidanceType(xBar, loadout, stockLoadout.getGuidanceType()));

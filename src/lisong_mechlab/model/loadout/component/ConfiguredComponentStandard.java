@@ -38,7 +38,7 @@ public class ConfiguredComponentStandard extends ConfiguredComponentBase{
    public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aAutoArmor){
       super(aInternalPart, aAutoArmor);
    }
-   
+
    public ConfiguredComponentStandard(ConfiguredComponentStandard aComponent){
       super(aComponent);
    }
@@ -65,7 +65,7 @@ public class ConfiguredComponentStandard extends ConfiguredComponentBase{
    public Collection<Item> getItemsFixed(){
       return getInternalComponent().getFixedItems();
    }
-   
+
    @Override
    public ComponentStandard getInternalComponent(){
       return (ComponentStandard)super.getInternalComponent();

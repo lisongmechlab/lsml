@@ -86,7 +86,7 @@ public class PayloadStatistics{
 
    public double calculate(ChassisOmniMech aChassis){
       double ans = aChassis.getMassMax() - aChassis.getMassStripped() - (10 - aChassis.getFixedHeatSinks());
-      if(maxArmor){
+      if( maxArmor ){
          ans -= aChassis.getArmorType().getArmorMass(aChassis.getArmorMax());
       }
       return ans;

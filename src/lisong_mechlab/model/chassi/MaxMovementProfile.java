@@ -52,7 +52,7 @@ public class MaxMovementProfile extends CompositeMovementProfileBase{
                max = Math.max(max, (double)profile.getClass().getMethod(aMethodName).invoke(profile));
             }
             if( max != Double.NEGATIVE_INFINITY )
-               ans += ans*max;
+               ans += ans * max;
          }
          return ans;
       }

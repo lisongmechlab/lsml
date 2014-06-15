@@ -69,18 +69,30 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
 
    @Override
    public List<Item> getItemsFixed(){
-      for(Item item : getInternalComponent().getFixedItems()){
-         if( getInternalComponent().shouldRemoveArmActuators(item) ){
-            return stripHALAA();
-         }
-      }
+      boolean removeHALAA = false;
 
       for(Item item : getItemsEquipped()){
          if( getInternalComponent().shouldRemoveArmActuators(item) ){
-            return stripHALAA();
+            removeHALAA = true;
+            break;
          }
       }
-      return getInternalComponent().getFixedItems();
+
+      if( !removeHALAA ){
+         for(Item item : getInternalComponent().getFixedItems()){
+            if( getInternalComponent().shouldRemoveArmActuators(item) ){
+               removeHALAA = true;
+               break;
+            }
+         }
+      }
+
+      if( removeHALAA ){
+         return getInternalComponent().getFixedItems(); // HALAA are in omnipod...
+      }
+      List<Item> fixed = new ArrayList<>(getInternalComponent().getFixedItems());
+      fixed.addAll(getOmniPod().getFixedItems());
+      return fixed;
    }
 
    /**

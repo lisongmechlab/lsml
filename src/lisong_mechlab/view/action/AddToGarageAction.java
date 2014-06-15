@@ -37,8 +37,8 @@ import lisong_mechlab.view.ProgramInit;
  * @author Emily Björk
  */
 public class AddToGarageAction extends AbstractAction{
-   private static final long       serialVersionUID = -1720149730950545006L;
-   private static final String     SHORTCUT_STROKE  = "control S";
+   private static final long    serialVersionUID = -1720149730950545006L;
+   private static final String  SHORTCUT_STROKE  = "control S";
    private final LoadoutBase<?> loadout;
 
    public AddToGarageAction(LoadoutBase<?> aLoadout){

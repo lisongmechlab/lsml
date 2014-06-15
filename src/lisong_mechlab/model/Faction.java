@@ -39,7 +39,7 @@ public enum Faction{
     * @return The {@link Faction} matching the MWO string value.
     */
    public static Faction fromMwo(String aFaction){
-      if( null == aFaction || "clan,innersphere".equals(aFaction.toLowerCase()))
+      if( null == aFaction || "clan,innersphere".equals(aFaction.toLowerCase()) )
          return Any;
       return valueOf(aFaction);
    }

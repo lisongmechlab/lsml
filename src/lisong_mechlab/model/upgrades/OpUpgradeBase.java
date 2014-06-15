@@ -32,13 +32,13 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 abstract class OpUpgradeBase extends Operation{
    protected final transient MessageXBar xBar;
-   private final String description;
-   
+   private final String                  description;
+
    protected OpUpgradeBase(MessageXBar anXBar, String aDescription){
       description = aDescription;
       xBar = anXBar;
    }
-   
+
    @Override
    public String describe(){
       return description;

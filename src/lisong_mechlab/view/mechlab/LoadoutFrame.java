@@ -242,7 +242,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          modulePanel.setBorder(StyleManager.sectionBorder("Modules"));
          modulePanel.setLayout(new BoxLayout(modulePanel, BoxLayout.PAGE_AXIS));
          modulePanel.add(Box.createHorizontalGlue());
-         //modulePanel.add(Box.createVerticalGlue());
+         // modulePanel.add(Box.createVerticalGlue());
          modulePanel.add(new PilotModuleList(xbar, loadoutOperationStack, loadout));
          panel.add(createComponentPanel(padPanel, arm, modulePanel));
       }

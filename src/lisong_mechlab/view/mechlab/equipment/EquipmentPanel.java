@@ -63,7 +63,7 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
    private final JPanel          energyItems      = new JPanel(new ModifiedFlowLayout());
    private final JPanel          ballisticItems   = new JPanel(new ModifiedFlowLayout());
    private final JPanel          missileItems     = new JPanel(new ModifiedFlowLayout());
-   private LoadoutBase<?>     currentLoadout;
+   private LoadoutBase<?>        currentLoadout;
 
    public EquipmentPanel(LoadoutDesktop aDesktop, MessageXBar aXBar){
       aXBar.attach(this);

@@ -17,13 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view.mechlab.equipment;
+package lisong_mechlab.model.chassi;
 
-import javax.swing.JPanel;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
- * @author Emily
+ * Test suite for {@link OmniPodDB}.
+ * 
+ * @author Emily Björk
  */
-public class ModulePanel extends JPanel{
+public class OmniPodDBTest{
 
+   @Test
+   public void testLoadOmniPod_ECM(){
+      OmniPod kfx_c_ra = OmniPodDB.lookup(30192);
+      
+      assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ENERGY));
+      assertEquals(3, kfx_c_ra.getHardPointCount(HardPointType.AMS));
+      assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ECM));
+
+   }
 }

@@ -80,7 +80,7 @@ public class MdfComponent{
 
    public ComponentStandard asComponentStandard(DataCache aDataCache, XMLHardpoints aHardPointsXML, String aChassiMwoName){
       Location location = Location.fromMwoName(Name);
-      List<Item> fixedItems = getFixedItems(aDataCache);
+      List<Item> fixedItems = getFixedItems(aDataCache, internals, fixed);
       List<HardPoint> hardPoints = getHardPoints(location, aHardPointsXML, hardpoints, CanEquipECM, aChassiMwoName);
 
       return new ComponentStandard(location, Slots, HP, fixedItems, hardPoints);
@@ -88,7 +88,7 @@ public class MdfComponent{
 
    public ComponentOmniMech asComponentOmniMech(DataCache aDataCache){
       Location location = Location.fromMwoName(Name);
-      List<Item> fixedItems = getFixedItems(aDataCache);
+      List<Item> fixedItems = getFixedItems(aDataCache, internals, fixed);
       OmniPod fixedOmniPod = (omniPod > 0) ? aDataCache.findOmniPod(omniPod) : null;
 
       int dynStructure = 0;
@@ -109,15 +109,15 @@ public class MdfComponent{
       return new ComponentOmniMech(location, Slots, HP, fixedItems, fixedOmniPod, dynStructure, dynArmor);
    }
 
-   private List<Item> getFixedItems(DataCache aDataCache){
+   public static List<Item> getFixedItems(DataCache aDataCache, List<MdfItem> aInternals, List<MdfItem> aFixed){
       List<Item> fixedItems = new ArrayList<>();
-      if( null != internals ){
-         for(MdfItem item : internals){
+      if( null != aInternals ){
+         for(MdfItem item : aInternals){
             fixedItems.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
          }
       }
-      if( null != fixed ){
-         for(MdfItem item : fixed){
+      if( null != aFixed ){
+         for(MdfItem item : aFixed){
             fixedItems.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
          }
       }

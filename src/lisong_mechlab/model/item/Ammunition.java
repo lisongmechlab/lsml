@@ -39,17 +39,14 @@ public class Ammunition extends Item{
       rounds = aStatsModule.AmmoTypeStats.numShots;
       ammoType = aStatsModule.AmmoTypeStats.type;
 
-      if( getName().contains("AC") || getName().contains("GAUSS") || getName().contains("LB") ){
-         type = HardPointType.BALLISTIC;
-      }
-      else if( getName().contains("RM") || getName().contains("NARC") ){
+      if( getName().contains("LRM") || getName().contains("SRM") || getName().contains("NARC") ){
          type = HardPointType.MISSILE;
       }
       else if( getName().contains("AMS") ){
          type = HardPointType.AMS;
       }
       else{
-         type = HardPointType.ENERGY;
+         type = HardPointType.BALLISTIC;
       }
    }
 

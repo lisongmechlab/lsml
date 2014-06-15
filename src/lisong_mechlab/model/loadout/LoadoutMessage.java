@@ -33,7 +33,7 @@ public class LoadoutMessage implements MessageXBar.Message{
 
    private final LoadoutBase<?> loadout;
 
-   public final Type               type;
+   public final Type            type;
 
    public LoadoutMessage(LoadoutBase<?> aLoadout, Type aType){
       loadout = aLoadout;

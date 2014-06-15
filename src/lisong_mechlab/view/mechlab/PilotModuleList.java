@@ -38,17 +38,16 @@ import lisong_mechlab.view.render.ItemRenderer;
  * 
  * @author Emily Björk
  */
-public class PilotModuleList extends JList<PilotModule> {
-   private static final long serialVersionUID = -3812414074800032146L;
+public class PilotModuleList extends JList<PilotModule>{
+   private static final long    serialVersionUID = -3812414074800032146L;
    private final MessageXBar    xBar;
    private final LoadoutBase<?> loadout;
    private final OperationStack stack;
 
    /**
-    * @param aXBar 
-    * @param aOperationStack 
-    * @param aLoadout 
-    * 
+    * @param aXBar
+    * @param aOperationStack
+    * @param aLoadout
     */
    public PilotModuleList(MessageXBar aXBar, OperationStack aOperationStack, LoadoutBase<?> aLoadout){
       super(new PilotModuleModel(aLoadout, aXBar));
@@ -62,27 +61,28 @@ public class PilotModuleList extends JList<PilotModule> {
 
       addMouseListener(new MouseAdapter(){
          @Override
-         public void mouseClicked(java.awt.event.MouseEvent e) {
-            if(e.getClickCount() >= 2){
+         public void mouseClicked(java.awt.event.MouseEvent e){
+            if( e.getClickCount() >= 2 ){
                PilotModule module = getSelectedValue();
-               if(module != null){
+               if( module != null ){
                   stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
                }
             }
          }
       });
-      
+
       addKeyListener(new KeyAdapter(){
-      @Override
-      public void keyReleased(KeyEvent aE){
-         if(aE.getKeyCode() == KeyEvent.VK_DELETE){
-            PilotModule module = getSelectedValue();
-            if(module != null){
-               stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
+         @Override
+         public void keyReleased(KeyEvent aE){
+            if( aE.getKeyCode() == KeyEvent.VK_DELETE ){
+               PilotModule module = getSelectedValue();
+               if( module != null ){
+                  stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
+               }
             }
+            super.keyReleased(aE);
          }
-         super.keyReleased(aE);
-      }});
+      });
    }
 
    public LoadoutBase<?> getLoadout(){

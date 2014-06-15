@@ -76,7 +76,8 @@ public class ComponentBuilder{
          ChassisOmniMech omniMech = (ChassisOmniMech)aChassis;
          ConfiguredComponentOmniMech[] ans = new ConfiguredComponentOmniMech[Location.values().length];
          for(Location location : Location.values()){
-            ans[location.ordinal()] = new ConfiguredComponentOmniMech(omniMech.getComponent(location), true, OmniPodDB.lookupOriginal(omniMech, location));
+            ans[location.ordinal()] = new ConfiguredComponentOmniMech(omniMech.getComponent(location), true, OmniPodDB.lookupOriginal(omniMech,
+                                                                                                                                      location));
             if( (location == Location.LeftTorso || location == Location.RightTorso) && omniMech.getEngine().getType() == EngineType.XL ){
                ans[location.ordinal()].addItem(ConfiguredComponentBase.ENGINE_INTERNAL_CLAN);
             }
@@ -86,7 +87,7 @@ public class ComponentBuilder{
    }
 
    private static Factory<ConfiguredComponentStandard> is   = new StandardFactory();
-   private static Factory<ConfiguredComponentOmniMech>           omni = new OmniMechFactory();
+   private static Factory<ConfiguredComponentOmniMech> omni = new OmniMechFactory();
 
    static public Factory<ConfiguredComponentStandard> getISComponentFactory(){
       return is;

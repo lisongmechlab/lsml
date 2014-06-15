@@ -266,7 +266,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
                stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(part), i));
             }
          }
-         
+
          Integer v;
          while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
             stack.pushAndApply(new OpAddModule(xBar, loadout, PilotModuleDB.lookup(v.intValue())));

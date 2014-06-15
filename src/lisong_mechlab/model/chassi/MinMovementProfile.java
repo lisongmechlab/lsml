@@ -52,7 +52,7 @@ public class MinMovementProfile extends CompositeMovementProfileBase{
                min = Math.min(min, (double)profile.getClass().getMethod(aMethodName).invoke(profile));
             }
             if( min != Double.POSITIVE_INFINITY )
-               ans += ans*min;
+               ans += ans * min;
          }
          return ans;
       }

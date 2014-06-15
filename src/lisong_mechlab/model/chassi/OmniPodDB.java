@@ -56,7 +56,7 @@ public class OmniPodDB{
                return omniPod;
             }
          }
-     }
+      }
       throw new IllegalArgumentException("There exists no original omnipod for " + aChassis + " at " + aLocation);
    }
 

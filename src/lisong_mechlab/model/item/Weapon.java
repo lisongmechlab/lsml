@@ -99,7 +99,7 @@ public class Weapon extends HeatSource{
          ghostHeatFreeAlpha = -1;
       }
    }
-   
+
    public boolean isOffensive(){
       return this != ItemDB.AMS && this != ItemDB.C_AMS;
    }

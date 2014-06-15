@@ -29,7 +29,6 @@ import javax.swing.JOptionPane;
 
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
@@ -44,11 +43,11 @@ import lisong_mechlab.view.ProgramInit;
  * @author Emily Björk
  */
 public class LoadStockAction extends AbstractAction{
-   private static final long       serialVersionUID = 4350731510583942480L;
+   private static final long    serialVersionUID = 4350731510583942480L;
    private final LoadoutBase<?> loadout;
-   private final OperationStack    stack;
-   private final MessageXBar       xBar;
-   private final Component         component;
+   private final OperationStack stack;
+   private final MessageXBar    xBar;
+   private final Component      component;
 
    /**
     * Creates a new {@link LoadStockAction}.
@@ -79,7 +78,7 @@ public class LoadStockAction extends AbstractAction{
             stack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
          }
          else{
-            JList<ChassisStandard> list = new JList<>(variations.toArray(new ChassisStandard[variations.size()]));
+            JList<ChassisBase> list = new JList<>(variations.toArray(new ChassisBase[variations.size()]));
             JOptionPane.showConfirmDialog(component, list, "Which stock loadout?", JOptionPane.OK_CANCEL_OPTION);
             if( list.getSelectedValue() != null ){
                stack.pushAndApply(new OpLoadStock(list.getSelectedValue(), loadout, xBar));

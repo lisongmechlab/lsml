@@ -55,7 +55,7 @@ public class Upgrade{
    public String toString(){
       return getName();
    }
-   
+
    /**
     * @return The localized name of the upgrade.
     */

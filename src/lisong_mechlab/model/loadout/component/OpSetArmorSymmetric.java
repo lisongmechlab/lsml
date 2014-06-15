@@ -34,9 +34,9 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpSetArmorSymmetric extends CompositeOperation{
    private final ConfiguredComponentBase component;
-   private final ArmorSide           side;
-   private final boolean             manual;
-   private final LoadoutBase<?>   loadout;
+   private final ArmorSide               side;
+   private final boolean                 manual;
+   private final LoadoutBase<?>          loadout;
 
    /**
     * Creates a new {@link OpSetArmorSymmetric}.

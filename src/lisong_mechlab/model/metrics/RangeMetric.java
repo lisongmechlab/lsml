@@ -28,8 +28,8 @@ import lisong_mechlab.util.WeaponRanges;
  * @author Emily Björk
  */
 public abstract class RangeMetric implements Metric{
-   protected double                  range      = -1;
-   protected boolean                 fixedRange = false;
+   protected double               range      = -1;
+   protected boolean              fixedRange = false;
    protected final LoadoutBase<?> loadout;
 
    public RangeMetric(LoadoutBase<?> aLoadout){

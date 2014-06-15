@@ -32,14 +32,14 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class OpSetArmor extends Operation{
-   private final ArmorSide           side;
-   private final int                 amount;
-   private int                       oldAmount = -1;
-   private boolean                   oldManual;
-   private final MessageXBar         xBar;
-   private final LoadoutBase<?>   loadout;
+   private final ArmorSide               side;
+   private final int                     amount;
+   private int                           oldAmount = -1;
+   private boolean                       oldManual;
+   private final MessageXBar             xBar;
+   private final LoadoutBase<?>          loadout;
    private final ConfiguredComponentBase loadoutPart;
-   private final boolean             manual;
+   private final boolean                 manual;
 
    /**
     * Sets the armor for a given side of the component. Throws if the operation will fail.

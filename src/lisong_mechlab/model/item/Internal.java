@@ -42,7 +42,6 @@ public class Internal extends Module{
       super(aNameTag, aDescTag, aSlots, aHealth, aFaction);
    }
 
-   
    public Internal(ItemStatsModule aStatsModule){
       super(aStatsModule);
    }
