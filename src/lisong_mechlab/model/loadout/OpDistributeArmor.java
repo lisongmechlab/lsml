@@ -47,6 +47,9 @@ import lisong_mechlab.util.OperationStack.Operation;
 public class OpDistributeArmor extends CompositeOperation{
    private final Map<Location, Integer> armors = new HashMap<>(Location.values().length);
    private final LoadoutBase<?>         loadout;
+   private final int                    totalPointsOfArmor;
+   private final MessageXBar            xBar;
+   private final double                 frontRearRatio;
 
    /**
     * @param aLoadout
@@ -56,15 +59,10 @@ public class OpDistributeArmor extends CompositeOperation{
     */
    public OpDistributeArmor(LoadoutBase<?> aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar){
       super("distribute armor");
-
       loadout = aLoadout;
-
-      int armorLeft = calculateArmorToDistribute(aLoadout, aPointsOfArmor);
-      if( armorLeft > 0 ){
-         Map<Location, Integer> prioMap = prioritize(aLoadout);
-         distribute(aLoadout, armorLeft, prioMap);
-      }
-      applyArmors(aLoadout, aFrontRearRatio, aXBar);
+      totalPointsOfArmor = aPointsOfArmor;
+      xBar = aXBar;
+      frontRearRatio = aFrontRearRatio;
    }
 
    /**
@@ -80,6 +78,16 @@ public class OpDistributeArmor extends CompositeOperation{
          return false;
       OpDistributeArmor operation = (OpDistributeArmor)aOperation;
       return loadout == operation.loadout;
+   }
+
+   @Override
+   public void buildOperation(){
+      int armorLeft = calculateArmorToDistribute(loadout, totalPointsOfArmor);
+      if( armorLeft > 0 ){
+         Map<Location, Integer> prioMap = prioritize(loadout);
+         distribute(loadout, armorLeft, prioMap);
+      }
+      applyArmors(loadout, frontRearRatio, xBar);
    }
 
    private void distribute(final LoadoutBase<?> aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities){

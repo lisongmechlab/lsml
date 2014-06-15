@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.mwo_data.Localization;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
@@ -31,25 +32,30 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Upgrade{
    @XStreamAsAttribute
-   private final String name;
+   private final String  name;
    @XStreamAsAttribute
-   private final int    mwoId;
-   private final String description;
+   private final int     mwoId;
    @XStreamAsAttribute
-   private final int    associatedItem;
+   private final Faction faction;
+   private final String  description;
 
-   protected Upgrade(String aName, String aDescription, int aMwoId, int aAssociatedItem){
+   protected Upgrade(String aName, String aDescription, int aMwoId, Faction aFaction){
       name = aName;
       mwoId = aMwoId;
       description = aDescription;
-      associatedItem = aAssociatedItem;
+      faction = aFaction;
    }
 
    protected Upgrade(ItemStatsUpgradeType aUpgradeType){
       this(Localization.key2string(aUpgradeType.Loc.nameTag), Localization.key2string(aUpgradeType.Loc.descTag), Integer.parseInt(aUpgradeType.id),
-           aUpgradeType.UpgradeTypeStats.associatedItem);
+           Faction.fromMwo(aUpgradeType.faction));
    }
 
+   @Override
+   public String toString(){
+      return getName();
+   }
+   
    /**
     * @return The localized name of the upgrade.
     */
@@ -71,7 +77,11 @@ public class Upgrade{
       return description;
    }
 
-   public int getAssociateItemId(){
-      return associatedItem;
+   /**
+    * @return The faction that this upgrades is for.
+    */
+   public Faction getFaction(){
+      return faction;
+
    }
 }

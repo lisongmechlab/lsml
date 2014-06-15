@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -42,8 +43,11 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.PilotModule;
+import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpAddModule;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -164,7 +168,11 @@ public class LoadoutCoderV2 implements LoadoutCoder{
             ids.add(-1);
          }
 
-         // TODO: add pilot modules
+         Collection<PilotModule> modules = aLoadout.getModules();
+         for(PilotModule module : modules){
+            ids.add(module.getMwoId());
+         }
+         ids.add(-1);
 
          // Encode the list with huffman
          byte[] data = huff.encode(ids);
@@ -257,10 +265,12 @@ public class LoadoutCoderV2 implements LoadoutCoder{
             for(Item i : later){
                stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(part), i));
             }
-
          }
-
-         // TODO: read pilot modules
+         
+         Integer v;
+         while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
+            stack.pushAndApply(new OpAddModule(xBar, loadout, PilotModuleDB.lookup(v.intValue())));
+         }
       }
       return loadout;
    }

@@ -28,7 +28,7 @@ import lisong_mechlab.util.MessageXBar;
  */
 public class LoadoutMessage implements MessageXBar.Message{
    public enum Type{
-      RENAME, CREATE, UPDATE
+      RENAME, CREATE, UPDATE, MODULES_CHANGED
    }
 
    private final LoadoutBase<?> loadout;

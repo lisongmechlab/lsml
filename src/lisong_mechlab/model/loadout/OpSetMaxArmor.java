@@ -30,8 +30,17 @@ import lisong_mechlab.util.MessageXBar;
  * @author Emily Björk
  */
 public class OpSetMaxArmor extends OpLoadoutBase{
+   private final boolean manualSet;
+   private double ratio;
+
    public OpSetMaxArmor(LoadoutBase<?> aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet){
       super(aLoadout, anXBar, "set max armor");
+      manualSet = aManualSet;
+      ratio = aRatio;
+   }
+
+   @Override
+   public void buildOperation(){
       for(ConfiguredComponentBase component : loadout.getComponents()){
          final int max = component.getInternalComponent().getArmorMax();
          if( component.getInternalComponent().getLocation().isTwoSided() ){
@@ -40,15 +49,15 @@ public class OpSetMaxArmor extends OpLoadoutBase{
             // front = back * ratio
             // front = max - back
             // = > back * ratio = max - back
-            int back = (int)(max / (aRatio + 1));
+            int back = (int)(max / (ratio + 1));
             int front = max - back;
 
-            addOp(new OpSetArmor(xBar, aLoadout, component, ArmorSide.BACK, 0, aManualSet));
-            addOp(new OpSetArmor(xBar, aLoadout, component, ArmorSide.FRONT, front, aManualSet));
-            addOp(new OpSetArmor(xBar, aLoadout, component, ArmorSide.BACK, back, aManualSet));
+            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.BACK, 0, manualSet));
+            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.FRONT, front, manualSet));
+            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.BACK, back, manualSet));
          }
          else{
-            addOp(new OpSetArmor(xBar, aLoadout, component, ArmorSide.ONLY, max, aManualSet));
+            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.ONLY, max, manualSet));
          }
       }
    }

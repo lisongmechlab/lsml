@@ -20,7 +20,6 @@
 package lisong_mechlab.view;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
@@ -34,21 +33,20 @@ import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.PilotModule;
+import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.OpRemoveItem;
-import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.mechlab.ItemLabel;
-import lisong_mechlab.view.mechlab.LoadoutFrame;
 import lisong_mechlab.view.mechlab.PartList;
+import lisong_mechlab.view.mechlab.PilotModuleList;
 import lisong_mechlab.view.mechlab.equipment.GarageTree;
 import lisong_mechlab.view.render.ItemRenderer;
 
 public class ItemTransferHandler extends TransferHandler{
-   private static final long          serialVersionUID = -8109855943478269304L;
+   private static final long              serialVersionUID = -8109855943478269304L;
    private static ConfiguredComponentBase sourcePart       = null;
 
    @Override
@@ -61,29 +59,19 @@ public class ItemTransferHandler extends TransferHandler{
       assert (SwingUtilities.isEventDispatchThread());
       if( aComponent instanceof PartList ){
          PartList partList = (PartList)aComponent;
-
-         List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
+         List<Item> sourceItems = partList.removeSelected(ProgramInit.lsml().xBar);
+         
+         if(sourceItems.isEmpty())
+            return null;
+         
          sourcePart = partList.getPart();
 
-         if( sourceItems.size() < 1 )
-            return null;
-
-         Container f = aComponent;
-         while( !(f instanceof LoadoutFrame) ){
-            f = f.getParent();
-         }
-         LoadoutFrame frame = (LoadoutFrame)f;
-         LoadoutBase<?> loadoutBase = frame.getLoadout();
-
          StringBuffer buff = new StringBuffer();
-         for(Pair<Item, Integer> it : sourceItems){
-            if( it.first instanceof Internal )
-               return null;
-            buff.append(it.first.getName()).append('\n');
-            frame.getOpStack().pushAndApply(new OpRemoveItem(ProgramInit.lsml().xBar, loadoutBase, sourcePart, it.first));
+         for(Item it : sourceItems){
+            buff.append(it.getName()).append('\n');
          }
 
-         setPreview(sourceItems.get(0).first);
+         setPreview(sourceItems.get(0));
          return new StringSelection(buff.toString());
       }
       else if( aComponent instanceof GarageTree ){
@@ -145,6 +133,18 @@ public class ItemTransferHandler extends TransferHandler{
          }
          return true;
       }
+      else if( uiComponent instanceof PilotModuleList ){
+         List<PilotModule> modules = parseModules(aInfo);
+         if( null == modules )
+            return false;
+         LoadoutBase<?> loadout = ((PilotModuleList)uiComponent).getLoadout();
+
+         for(PilotModule module : modules){
+            if( !loadout.canAddModule(module) )
+               return false;
+         }
+         return true;
+      }
       return parseItems(aInfo) != null;
    }
 
@@ -167,7 +167,10 @@ public class ItemTransferHandler extends TransferHandler{
          int dropIndex = ((JList.DropLocation)info.getDropLocation()).getIndex();
          try{
             boolean first = true;
-            for(Item item : parseItems(info)){
+            List<Item> items = parseItems(info);
+            if( null == items )
+               return false;
+            for(Item item : items){
                model.putElement(item, dropIndex, first);
                dropIndex++;
                first = false;
@@ -177,8 +180,44 @@ public class ItemTransferHandler extends TransferHandler{
             return false;
          }
       }
+      else if( component instanceof PilotModuleList ){
+         PilotModuleList list = (PilotModuleList)component;
+         int dropIndex = ((JList.DropLocation)info.getDropLocation()).getIndex();
+         try{
+            List<PilotModule> modules = parseModules(info);
+            if( null == modules )
+               return false;
+            for(PilotModule module : modules){
+               list.putElement(module, dropIndex);
+               dropIndex++;
+            }
+         }
+         catch( Exception e ){
+            return false;
+         }
+      }
       // Allow the user to drop the item to get it removed
       return true;
+   }
+
+   /**
+    * @param aInfo
+    * @return
+    */
+   private List<PilotModule> parseModules(TransferSupport aInfo){
+      if( !aInfo.isDataFlavorSupported(DataFlavor.stringFlavor) ){
+         return null;
+      }
+      List<PilotModule> modules = new ArrayList<>();
+      try{
+         for(String moduleId : ((String)aInfo.getTransferable().getTransferData(DataFlavor.stringFlavor)).split("\n")){
+            modules.add(PilotModuleDB.lookup(Integer.parseInt(moduleId)));
+         }
+      }
+      catch( Exception e ){
+         return null;
+      }
+      return modules;
    }
 
    private List<Item> parseItems(TransferHandler.TransferSupport aInfo){

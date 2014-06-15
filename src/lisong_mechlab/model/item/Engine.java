@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
@@ -38,14 +39,14 @@ public class Engine extends HeatSource{
    final private int          heatSinkSlots;
 
    public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardPointType, int aHP,
-                        boolean aIsClan, int aRating, EngineType aType, int aInternalHS, int aHSSlots){
-      super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aIsClan, ENGINE_HEAT_FULL_THROTTLE);
+                 Faction aFaction, int aRating, EngineType aType, int aInternalHS, int aHSSlots){
+      super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, ENGINE_HEAT_FULL_THROTTLE);
       rating = aRating;
       type = aType;
       internalHs = aInternalHS;
       heatSinkSlots = aHSSlots;
    }
-   
+
    public Engine(ItemStatsModule aStatsModule){
       super(aStatsModule, HardPointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE, aStatsModule.EngineStats.health);
       int hs = aStatsModule.EngineStats.heatsinks;

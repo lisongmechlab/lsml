@@ -19,9 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * This class represents an omnipod of an omnimech configuration.
@@ -29,14 +29,17 @@ import java.util.Collections;
  * @author Emily Björk
  */
 public class OmniPod{
-   private final int             mwoID;
-   private final Location        location;
-   private final String          chassis;
-   private final int             chassisVariant;
-   private final MovementProfile quirks;
-   private final HardPoint[]     hardPoints;
-   private final int             maxJumpJets;
-   private final int             maxPilotModules;
+   private final int                 mwoID;
+   private final Location            location;
+   private final String              series;
+   private final String              chassis;
+   private final Quirks              quirks;
+   private final List<HardPoint>     hardPoints;
+   private final int                 maxJumpJets;
+   private final int                 maxPilotModules;
+
+   private transient boolean         originalChassisLoaded = false;
+   private transient ChassisOmniMech originalChassis;
 
    /**
     * Creates a new {@link OmniPod}.
@@ -53,20 +56,20 @@ public class OmniPod{
     * @param aQuirks
     *           A set of quirks this {@link OmniPod} will bring to the loadout if equipped.
     * @param aHardPoints
-    *           An array of {@link HardPoint}s for this {@link OmniPod}.
+    *           A {@link List} of {@link HardPoint}s for this {@link OmniPod}.
     * @param aMaxJumpJets
     *           The maximum number of jump jets this {@link OmniPod} can support.
     * @param aMaxPilotModules
     *           The number of pilot modules that this {@link OmniPod} adds to the loadout.
     */
-   public OmniPod(int aMwoID, Location aLocation, String aSeriesName, int aOriginalChassisID, MovementProfile aQuirks, HardPoint[] aHardPoints,
+   public OmniPod(int aMwoID, Location aLocation, String aSeriesName, String aOriginalChassisID, Quirks aQuirks, List<HardPoint> aHardPoints,
                   int aMaxJumpJets, int aMaxPilotModules){
       mwoID = aMwoID;
       location = aLocation;
-      chassis = aSeriesName;
-      chassisVariant = aOriginalChassisID;
+      series = aSeriesName;
+      chassis = aOriginalChassisID;
       quirks = aQuirks;
-      hardPoints = aHardPoints;
+      hardPoints = Collections.unmodifiableList(aHardPoints);
       maxJumpJets = aMaxJumpJets;
       maxPilotModules = aMaxPilotModules;
 
@@ -74,7 +77,7 @@ public class OmniPod{
 
    @Override
    public String toString(){
-      return ((ChassisOmniMech)ChassisDB.lookup(chassisVariant)).getNameShort() + " " + location.shortName();
+      return ((ChassisOmniMech)ChassisDB.lookup(chassis)).getNameShort() + " " + location.shortName();
    }
 
    /**
@@ -92,10 +95,20 @@ public class OmniPod{
    }
 
    /**
-    * @return The mech ID of the original chassis this omnipod is a part of.
+    * @return The mech ID of the original chassis this omnipod is a part of or <code>null</code> if this {@link OmniPod}
+    *         belongs to a chassis not in game.
     */
-   public int getOriginalChassisId(){
-      return chassisVariant;
+   public ChassisOmniMech getOriginalChassis(){
+      if( !originalChassisLoaded ){
+         originalChassisLoaded = true;
+         try{
+            originalChassis = (ChassisOmniMech)ChassisDB.lookup(chassis);
+         }
+         catch( IllegalArgumentException e ){
+            originalChassis = null;
+         }
+      }
+      return originalChassis;
    }
 
    /**
@@ -111,7 +124,7 @@ public class OmniPod{
     * @return <code>true</code> if the argument is a compatible chassis.
     */
    public boolean isCompatible(ChassisOmniMech aChassis){
-      return aChassis.getSeriesName().toLowerCase().contains(chassis);
+      return aChassis.getSeriesName().toLowerCase().contains(series);
    }
 
    /**
@@ -132,7 +145,7 @@ public class OmniPod{
     * @return An unmodifiable collection of all {@link HardPoint}s this {@link OmniPod} has.
     */
    public Collection<HardPoint> getHardPoints(){
-      return Collections.unmodifiableCollection(Arrays.asList(hardPoints));
+      return hardPoints;
    }
 
    /**
@@ -154,7 +167,17 @@ public class OmniPod{
     * @return <code>true</code> if this {@link OmniPod} has missile bay doors.
     */
    public boolean hasMissileBayDoors(){
-      // TODO Auto-generated method stub FIXME
-      return true;
+      for(HardPoint hardPoint : hardPoints){
+         if( hardPoint.hasBayDoor() )
+            return true;
+      }
+      return false;
+   }
+
+   /**
+    * @return The chassis series this {@link OmniPod} is part of. For example "DIRE WOLF".
+    */
+   public String getChassisSeries(){
+      return series;
    }
 }

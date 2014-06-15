@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
@@ -38,7 +39,6 @@ import lisong_mechlab.model.upgrades.StructureUpgrade;
 public class ChassisOmniMech extends ChassisBase{
 
    private final ArmorUpgrade     armorType;
-   private final Engine           engine;
    private final HeatSinkUpgrade  heatSinkType;
    private final StructureUpgrade structureType;
 
@@ -61,12 +61,10 @@ public class ChassisOmniMech extends ChassisBase{
     *           The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
     * @param aMovementProfile
     *           The {@link MovementProfile} of this chassis.
-    * @param aIsClan
-    *           True if this is a clan chassis.
+    * @param aFaction
+    *           The faction this chassis belongs to.
     * @param aComponents
     *           An array of components for this chassis.
-    * @param aEngine
-    *           The engine that is fixed on this chassis.
     * @param aStructureType
     *           The structure type that is fixed on this chassis.
     * @param aArmorType
@@ -75,10 +73,9 @@ public class ChassisOmniMech extends ChassisBase{
     *           The heat sink type that is fixed on this chassis.
     */
    public ChassisOmniMech(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
-                          int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan, ComponentOmniMech[] aComponents, Engine aEngine,
+                          int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, ComponentOmniMech[] aComponents,
                           StructureUpgrade aStructureType, ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType){
-      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aIsClan, aComponents);
-      engine = aEngine;
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents);
       structureType = aStructureType;
       armorType = aArmorType;
       heatSinkType = aHeatSinkType;
@@ -119,7 +116,11 @@ public class ChassisOmniMech extends ChassisBase{
     * @return The engine that is fixed to this omnimech chassis.
     */
    public Engine getEngine(){
-      return engine;
+      for(Item item : getComponent(Location.CenterTorso).getFixedItems()){
+         if( item instanceof Engine )
+            return (Engine)item;
+      }
+      throw new RuntimeException("No engine found in omnimech!");
    }
 
    /**
@@ -129,7 +130,7 @@ public class ChassisOmniMech extends ChassisBase{
       int ans = getEngine().getNumInternalHeatsinks();
       for(ComponentOmniMech component : getComponents()){
          for(Item item : component.getFixedItems()){
-            if(item instanceof HeatSink){
+            if( item instanceof HeatSink ){
                ans++;
             }
          }
@@ -187,7 +188,7 @@ public class ChassisOmniMech extends ChassisBase{
     * @return The {@link MovementProfile} for the stock selection of {@link OmniPod}s.
     */
    public MovementProfile getMovementProfileStock(){
-      MovementProfileSum ans = new MovementProfileSum(getMovementProfileBase());
+      MovementProfileProduct ans = new MovementProfileProduct(getMovementProfileBase());
       for(Location location : Location.values()){
          OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
          ans.addMovementProfile(omniPod.getQuirks());

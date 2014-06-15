@@ -158,7 +158,12 @@ public class ItemLabel extends JLabel{
 
             Component component = anEvent.getComponent();
             if( component instanceof ItemLabel ){
-               aInfoPanel.showItem(item, null != loadout ? loadout.getUpgrades() : null, null != loadout ? loadout.getEfficiencies() : null);
+               if( null != loadout ){
+                  aInfoPanel.showItem(item, loadout.getUpgrades(), loadout.getEfficiencies(), loadout.getWeaponModifiers());
+               }
+               else{
+                  aInfoPanel.showItem(item, null, null, null);
+               }
             }
 
             ItemLabel button = (ItemLabel)anEvent.getSource();

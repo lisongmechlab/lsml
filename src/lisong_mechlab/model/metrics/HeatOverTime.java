@@ -83,14 +83,14 @@ public class HeatOverTime implements TimeMetric, MessageXBar.Reader{
                EnergyWeapon energyWeapon = (EnergyWeapon)weapon;
                if( energyWeapon.getDuration() > 0 ){
                   heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(loadout.getEfficiencies()), energyWeapon.getDuration(),
-                                                             energyWeapon.getHeat() / energyWeapon.getDuration()));
+                                                             energyWeapon.getHeat(loadout.getWeaponModifiers()) / energyWeapon.getDuration()));
                   continue;
                }
             }
-            heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies()), weapon.getHeat()));
+            heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies()), weapon.getHeat(loadout.getWeaponModifiers())));
          }
          if( item instanceof Engine ){
-            heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine)item).getHeat()));
+            heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine)item).getHeat(loadout.getWeaponModifiers())));
          }
       }
    }

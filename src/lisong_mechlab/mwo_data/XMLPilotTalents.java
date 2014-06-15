@@ -19,8 +19,12 @@
 //@formatter:on
 package lisong_mechlab.mwo_data;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import lisong_mechlab.mwo_data.GameVFS.GameFile;
+import lisong_mechlab.mwo_data.XMLPilotTalents.XMLTalent.XMLRank;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -31,25 +35,44 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
- * This class models the format of MechIdMap.xml from the game data files to facilitate easy parsing.
+ * Representation of the PilotTalents.xml file.
  * 
- * @author Emily
+ * @author Emily Björk
  */
-@XStreamAlias("MechIdMap")
-public class MechIdMap{
-   public class Mech{
+@XStreamAlias("PilotTalents")
+public class XMLPilotTalents{
+
+   public class XMLTalent{
       @XStreamAsAttribute
-      public int baseID;
+      public int    id;
+
       @XStreamAsAttribute
-      public int variantID;
+      public String ename;
+
+      @XStreamAsAttribute
+      public int    ranks;
+
+      public class XMLRank{
+         @SuppressWarnings("hiding")
+         @XStreamAsAttribute
+         public int    id;
+
+         @XStreamAsAttribute
+         public String title;
+
+         @XStreamAsAttribute
+         public String description;
+      }
+
+      @XStreamImplicit
+      public List<XMLRank> rankEntries;
    }
 
-   @XStreamImplicit(itemFieldName = "Mech")
-   public List<Mech> MechIdMap;
+   @XStreamImplicit
+   public List<XMLTalent> talents;
 
-   private MechIdMap(){}
-
-   public static MechIdMap fromXml(InputStream is){
+   public static XMLPilotTalents read(GameVFS aGameVfs) throws IOException{
+      GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"));
       XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
          @Override
          protected MapperWrapper wrapMapper(MapperWrapper next){
@@ -65,7 +88,19 @@ public class MechIdMap{
          }
       };
       xstream.autodetectAnnotations(true);
-      xstream.alias("MechIdMap", MechIdMap.class);
-      return (MechIdMap)xstream.fromXML(is);
+      xstream.alias("PilotTalents", XMLPilotTalents.class);
+      xstream.alias("Talent", XMLTalent.class);
+      xstream.alias("Rank", XMLRank.class);
+
+      return (XMLPilotTalents)xstream.fromXML(gameFile.stream);
+   }
+
+   public XMLTalent getTalent(String aTalentid){
+      for(XMLTalent talent : talents){
+         if(talent.ename.toLowerCase().equals(aTalentid.toLowerCase())){
+            return talent;
+         }
+      }
+      throw new IllegalArgumentException("No such talent!");
    }
 }

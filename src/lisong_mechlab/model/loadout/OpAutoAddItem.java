@@ -139,11 +139,14 @@ public class OpAutoAddItem extends OpLoadoutBase{
          validLocations.add(part.getInternalComponent().getLocation());
       }
       partTraversalOrder = getPartTraversalOrder();
+   }
 
+   @Override
+   public void buildOperation(){
       // If it can go into the engine, put it there.
       ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
-      if( anItem instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax() && ct.canAddItem(anItem) ){
-         addOp(new OpAddItem(xBar, loadout, ct, anItem));
+      if( itemToPlace instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax() && ct.canAddItem(itemToPlace) ){
+         addOp(new OpAddItem(xBar, loadout, ct, itemToPlace));
          return;
       }
 
@@ -151,13 +154,13 @@ public class OpAutoAddItem extends OpLoadoutBase{
       List<Node> open = new ArrayList<>();
 
       // Initial node
-      open.add(new Node(aLoadout, anItem));
+      open.add(new Node(loadout, itemToPlace));
       while( !open.isEmpty() ){
          Node node = open.remove(0);
          closed.add(node);
 
          // Are we there yet?
-         if( node.data.canEquip(anItem) ){
+         if( node.data.canEquip(itemToPlace) ){
             applySolution(node);
             return; // Yes we are!
          }

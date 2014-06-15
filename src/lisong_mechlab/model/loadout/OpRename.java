@@ -21,15 +21,19 @@ package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.loadout.LoadoutMessage.Type;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.Operation;
 
 /**
  * This operation renames a loadout.
  * 
  * @author Emily Björk
  */
-public class OpRename extends OpLoadoutBase{
-   private String       oldName;
-   private final String newName;
+public class OpRename extends Operation{
+   private String                 oldName;
+   private final String           newName;
+
+   protected final MessageXBar    xBar;
+   protected final LoadoutBase<?> loadout;
 
    /**
     * @param aLoadout
@@ -40,7 +44,8 @@ public class OpRename extends OpLoadoutBase{
     *           The new name of the loadout.
     */
    public OpRename(LoadoutBase<?> aLoadout, MessageXBar anXBar, String aName){
-      super(aLoadout, anXBar, "rename loadout");
+      loadout = aLoadout;
+      xBar = anXBar;
       newName = aName;
    }
 
@@ -60,5 +65,10 @@ public class OpRename extends OpLoadoutBase{
       loadout.rename(newName);
       if( xBar != null )
          xBar.post(new LoadoutMessage(loadout, Type.RENAME));
+   }
+
+   @Override
+   public String describe(){
+      return "rename loadout";
    }
 }

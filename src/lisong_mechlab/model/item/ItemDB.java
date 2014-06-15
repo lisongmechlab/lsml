@@ -104,7 +104,7 @@ public class ItemDB{
 
    /**
     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
-    * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
+    * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
     */
    static{
       DataCache dataCache;

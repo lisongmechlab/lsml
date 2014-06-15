@@ -77,10 +77,7 @@ public class ComponentBuilder{
          ConfiguredComponentOmniMech[] ans = new ConfiguredComponentOmniMech[Location.values().length];
          for(Location location : Location.values()){
             ans[location.ordinal()] = new ConfiguredComponentOmniMech(omniMech.getComponent(location), true, OmniPodDB.lookupOriginal(omniMech, location));
-            if( location == Location.CenterTorso ){
-               ans[location.ordinal()].addItem(omniMech.getEngine());
-            }
-            else if( (location == Location.LeftTorso || location == Location.RightTorso) && omniMech.getEngine().getType() == EngineType.XL ){
+            if( (location == Location.LeftTorso || location == Location.RightTorso) && omniMech.getEngine().getType() == EngineType.XL ){
                ans[location.ordinal()].addItem(ConfiguredComponentBase.ENGINE_INTERNAL_CLAN);
             }
          }

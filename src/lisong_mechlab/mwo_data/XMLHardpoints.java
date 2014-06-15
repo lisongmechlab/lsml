@@ -33,14 +33,14 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
-public class HardpointsXml{
+public class XMLHardpoints{
    @XStreamImplicit(itemFieldName = "WeaponDoorSet")
    public List<WeaponDoorSet> weapondoors;
 
    @XStreamImplicit(itemFieldName = "Hardpoint")
    public List<HardPointInfo> hardpoints;
 
-   public static HardpointsXml fromXml(InputStream is){
+   public static XMLHardpoints fromXml(InputStream is){
       XStream xstream = new XStream(new StaxDriver()){
          @Override
          protected MapperWrapper wrapMapper(MapperWrapper next){
@@ -56,10 +56,10 @@ public class HardpointsXml{
          }
       };
       xstream.autodetectAnnotations(true);
-      xstream.alias("Hardpoints", HardpointsXml.class);
+      xstream.alias("Hardpoints", XMLHardpoints.class);
       xstream.alias("HardPoint", HardPointInfo.class);
       xstream.alias("WeaponSlot", HardPointWeaponSlot.class);
-      return (HardpointsXml)xstream.fromXML(is);
+      return (XMLHardpoints)xstream.fromXML(is);
    }
 
    public int slotsForId(int aID){

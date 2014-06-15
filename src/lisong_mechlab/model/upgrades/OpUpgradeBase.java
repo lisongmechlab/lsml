@@ -22,7 +22,6 @@ package lisong_mechlab.model.upgrades;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
@@ -31,12 +30,18 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-abstract class OpUpgradeBase extends CompositeOperation{
+abstract class OpUpgradeBase extends Operation{
    protected final transient MessageXBar xBar;
-
+   private final String description;
+   
    protected OpUpgradeBase(MessageXBar anXBar, String aDescription){
-      super(aDescription);
+      description = aDescription;
       xBar = anXBar;
+   }
+   
+   @Override
+   public String describe(){
+      return description;
    }
 
    protected void verifyLoadoutInvariant(LoadoutBase<?> aLoadout){

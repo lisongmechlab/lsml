@@ -17,18 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.mwo_data.helpers;
+package lisong_mechlab.mwo_data;
 
+import java.io.InputStream;
 import java.util.List;
 
+import lisong_mechlab.mwo_data.helpers.MdfCockpit;
+import lisong_mechlab.mwo_data.helpers.MdfComponent;
+import lisong_mechlab.mwo_data.helpers.MdfItem;
+import lisong_mechlab.mwo_data.helpers.MdfMech;
+import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
+
+import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.io.naming.NoNameCoder;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
- * @author Emily
+ * @author Emily Björk
  */
-public class LoadoutXML{
+public class XMLLoadout{
 
    public class Upgrades{
       public class Armor{
@@ -104,4 +115,24 @@ public class LoadoutXML{
    @XStreamAsAttribute
    String                 Name;
 
+   public static XMLLoadout fromXml(InputStream is){
+      XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
+         @Override
+         protected MapperWrapper wrapMapper(MapperWrapper next){
+            return new MapperWrapper(next){
+               @Override
+               public boolean shouldSerializeMember(Class definedIn, String fieldName){
+                  if( definedIn == Object.class ){
+                     return false;
+                  }
+                  return super.shouldSerializeMember(definedIn, fieldName);
+               }
+            };
+         }
+      };
+      xstream.autodetectAnnotations(true);
+      xstream.alias("Loadout", XMLLoadout.class);
+
+      return (XMLLoadout)xstream.fromXML(is);
+   }
 }

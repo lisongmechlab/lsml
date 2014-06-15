@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
@@ -37,17 +38,22 @@ public class StructureUpgrade extends Upgrade{
    @XStreamAsAttribute
    private final int    extraSlots;
 
-   public StructureUpgrade(String aName, String aDescription, int aMwoId, int aAssociatedItem, int aExtraSlots, double aStructurePct){
-      super(aName, aDescription, aMwoId, aAssociatedItem);
+   public StructureUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots, double aStructurePct){
+      super(aName, aDescription, aMwoId, aFaction);
       extraSlots = aExtraSlots;
       internalStructurePct = aStructurePct;
    }
-   
+
    public StructureUpgrade(ItemStatsUpgradeType aUpgradeType){
       super(aUpgradeType);
 
-      internalStructurePct = aUpgradeType.UpgradeTypeStats.pointMultiplier;
-      extraSlots = aUpgradeType.UpgradeTypeStats.slots;
+      internalStructurePct = aUpgradeType.StructureTypeStats.weightPerTon;
+      if( aUpgradeType.SlotUsage != null ){
+         extraSlots = aUpgradeType.SlotUsage.slots;
+      }
+      else{
+         extraSlots = 0;
+      }
    }
 
    /**
@@ -66,7 +72,6 @@ public class StructureUpgrade extends Upgrade{
     */
    public double getStructureMass(ChassisBase aChassis){
       double ans = aChassis.getMassMax() * internalStructurePct;
-
       return Math.round(10 * ans / 5) * 0.5;
    }
 }

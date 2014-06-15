@@ -143,16 +143,7 @@ public class ChassisDB{
       id2chassis = new TreeMap<>();
       chassis2variant = new HashMap<>();
 
-      List<ChassisBase> allChassis = new ArrayList<>();
-      for(ChassisBase omniMech : dataCache.getChassisClan()){
-         allChassis.add(omniMech);
-      }
-
-      for(ChassisBase omniMech : dataCache.getChassisIS()){
-         allChassis.add(omniMech);
-      }
-
-      for(ChassisBase chassis : allChassis){
+      for(ChassisBase chassis : dataCache.getChassis()){
          final String model = canonize(chassis.getName());
          final String modelShort = canonize(chassis.getNameShort());
 

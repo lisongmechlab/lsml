@@ -17,11 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.mwo_data.helpers;
+package lisong_mechlab.model;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+/**
+ * An enumeration of all the available factions.
+ * 
+ * @author Emily Björk
+ */
+public enum Faction{
+   Any, InnerSphere, Clan;
 
-public class MdfInternal{
-   @XStreamAsAttribute
-   public int    ItemID;
+   public boolean isCompatible(Faction aFaction){
+      if( this == Any || aFaction == Any )
+         return true;
+      return this == aFaction;
+   }
+
+   /**
+    * @param aFaction
+    *           The value found in MWO data files.
+    * @return The {@link Faction} matching the MWO string value.
+    */
+   public static Faction fromMwo(String aFaction){
+      if( null == aFaction || "clan,innersphere".equals(aFaction.toLowerCase()))
+         return Any;
+      return valueOf(aFaction);
+   }
 }

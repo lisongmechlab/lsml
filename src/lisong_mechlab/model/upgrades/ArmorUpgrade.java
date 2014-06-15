@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -35,18 +36,22 @@ public class ArmorUpgrade extends Upgrade{
    private final int    slots;
    @XStreamAsAttribute
    private final double armorPerTon;
-   
-   public ArmorUpgrade(String aName, String aDescription, int aMwoId, int aAssociatedItem, int aExtraSlots, double aArmorPerTon){
-      super(aName, aDescription, aMwoId, aAssociatedItem);
+
+   public ArmorUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots, double aArmorPerTon){
+      super(aName, aDescription, aMwoId, aFaction);
       slots = aExtraSlots;
       armorPerTon = aArmorPerTon;
    }
 
    public ArmorUpgrade(ItemStatsUpgradeType aUpgradeType){
       super(aUpgradeType);
-      slots = aUpgradeType.UpgradeTypeStats.slots;
-      armorPerTon = aUpgradeType.UpgradeTypeStats.pointMultiplier * 16;
-      // (LoadoutPart.ARMOR_PER_TON * (loadoutPart.getLoadout().getUpgrades().hasFerroFibrous() ? 1.12 : 1));
+      if( aUpgradeType.SlotUsage != null ){
+         slots = aUpgradeType.SlotUsage.slots;
+      }
+      else{
+         slots = 0;
+      }
+      armorPerTon = aUpgradeType.ArmorTypeStats.armorPerTon;
    }
 
    /**

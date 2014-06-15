@@ -76,9 +76,10 @@ public class OperationStack{
     * 
     * @author Emily Björk
     */
-   public static class CompositeOperation extends Operation{
+   public abstract static class CompositeOperation extends Operation{
       private final List<Operation> operations = new ArrayList<>();
       private final String          desciption;
+      private transient boolean     isPerpared = false;
 
       public CompositeOperation(String aDescription){
          desciption = aDescription;
@@ -95,6 +96,11 @@ public class OperationStack{
 
       @Override
       protected void apply(){
+         if(!isPerpared){
+            buildOperation();
+            isPerpared = true;
+         }
+         
          ListIterator<Operation> it = operations.listIterator();
          while( it.hasNext() ){
             it.next().apply();
@@ -103,6 +109,10 @@ public class OperationStack{
 
       @Override
       protected void undo(){
+         if(!isPerpared){
+            throw new IllegalStateException("Undo called before apply!");
+         }
+         
          // Do it in the "right" i.e. backwards order
          ListIterator<Operation> it = operations.listIterator(operations.size());
          while( it.hasPrevious() ){
@@ -118,6 +128,12 @@ public class OperationStack{
          result = prime * result + ((operations == null) ? 0 : operations.hashCode());
          return result;
       }
+
+      /**
+       * The user should implement this to create the operation. Will be called only once, immediately before the first
+       * time the operation is applied.
+       */
+      public abstract void buildOperation();
 
       @Override
       public boolean equals(Object obj){

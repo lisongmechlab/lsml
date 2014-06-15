@@ -17,15 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.mwo_data.helpers;
+package lisong_mechlab.model.pilot;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+/**
+ * @author Emily Björk
+ *
+ */
+public class PilotSkillTree{
 
-public class ItemStatsMech{
-   @XStreamAsAttribute
-   public String chassis;
-   @XStreamAsAttribute
-   public String name;
-   @XStreamAsAttribute
-   public int    id;
 }

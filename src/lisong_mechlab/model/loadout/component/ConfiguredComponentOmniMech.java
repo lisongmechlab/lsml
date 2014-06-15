@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
+import java.awt.ItemSelectable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -70,13 +71,13 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
    @Override
    public List<Item> getItemsFixed(){
       for(Item item : getInternalComponent().getFixedItems()){
-         if(getInternalComponent().shouldRemoveArmActuators(item)){
+         if( getInternalComponent().shouldRemoveArmActuators(item) ){
             return stripHALAA();
          }
       }
-      
+
       for(Item item : getItemsEquipped()){
-         if(getInternalComponent().shouldRemoveArmActuators(item)){
+         if( getInternalComponent().shouldRemoveArmActuators(item) ){
             return stripHALAA();
          }
       }
@@ -89,7 +90,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
    public OmniPod getOmniPod(){
       return omniPod;
    }
-   
+
    @Override
    public int getSlotsUsed(){
       return super.getSlotsUsed() + getInternalComponent().getDynamicArmorSlots() + getInternalComponent().getDynamicStructureSlots();
@@ -109,7 +110,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
    public boolean hasMissileBayDoors(){
       return getOmniPod().hasMissileBayDoors();
    }
-   
+
    private List<Item> stripHALAA(){
       List<Item> ans = new ArrayList<>(getInternalComponent().getFixedItems());
       ans.remove(ItemDB.LAA);

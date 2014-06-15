@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
@@ -38,7 +39,7 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  */
 public class WeaponRanges{
 
-   static public Double[] getRanges(Collection<Weapon> aWeaponCollection){
+   static public Double[] getRanges(Collection<Weapon> aWeaponCollection, Collection<WeaponModifier> aModifiers){
       SortedSet<Double> ans = new TreeSet<>();
 
       ans.add(Double.valueOf(0.0));
@@ -46,7 +47,7 @@ public class WeaponRanges{
          if( weapon.hasSpread() ){
             ans.add(weapon.getRangeZero());
             double min = weapon.getRangeMin();
-            double max = weapon.getRangeMax();
+            double max = weapon.getRangeMax(aModifiers);
             ans.add(min);
             final double step = 10;
             while( min + step < max ){
@@ -58,8 +59,8 @@ public class WeaponRanges{
          else if( weapon != ItemDB.AMS ){
             ans.add(weapon.getRangeZero());
             ans.add(weapon.getRangeMin());
-            ans.add(weapon.getRangeLong());
-            ans.add(weapon.getRangeMax());
+            ans.add(weapon.getRangeLong(aModifiers));
+            ans.add(weapon.getRangeMax(aModifiers));
          }
       }
       return ans.toArray(new Double[ans.size()]);
@@ -73,6 +74,6 @@ public class WeaponRanges{
             weapons.add(weapon);
          }
       }
-      return getRanges(weapons);
+      return getRanges(weapons, aLoadout.getWeaponModifiers());
    }
 }

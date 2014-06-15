@@ -29,17 +29,19 @@ import java.util.List;
  * 
  * @author Emily Björk
  */
-public class MovementProfileSum extends CompositeMovementProfileBase{
+public class MovementProfileProduct extends CompositeMovementProfileBase{
 
    private List<MovementProfile> terms = new ArrayList<>();
    MovementProfile               mainProfile;
 
    @Override
    protected double calc(String aMethodName){
-      double ans = 0;
       try{
+         double base = (double)mainProfile.getClass().getMethod(aMethodName).invoke(mainProfile);
+         double ans = base;
+
          for(MovementProfile profile : terms){
-            ans += (double)profile.getClass().getMethod(aMethodName).invoke(profile);
+            ans += base * (double)profile.getClass().getMethod(aMethodName).invoke(profile);
          }
          return ans;
       }
@@ -48,8 +50,7 @@ public class MovementProfileSum extends CompositeMovementProfileBase{
       }
    }
 
-   public MovementProfileSum(MovementProfile aMainProfile){
-      addMovementProfile(aMainProfile);
+   public MovementProfileProduct(MovementProfile aMainProfile){
       mainProfile = aMainProfile;
    }
 
