@@ -75,10 +75,10 @@ public class GarageTree extends JTree{
          public void mousePressed(MouseEvent e){
             if( SwingUtilities.isRightMouseButton(e) ){
                Object clicked = getClickedObject(e);
-               if( clicked instanceof LoadoutStandard ){
+               if( clicked instanceof LoadoutBase<?> ){
                   GarageTree.this.setSelectionPath(getClosestPathForLocation(e.getX(), e.getY()));
 
-                  LoadoutStandard clickedLoadout = (LoadoutStandard)clicked;
+                  LoadoutBase<?> clickedLoadout = (LoadoutBase<?>)clicked;
                   JPopupMenu menu = new JPopupMenu();
                   JMenuItem label = new JMenuItem(clickedLoadout.getName());
                   label.setEnabled(false);
@@ -107,8 +107,8 @@ public class GarageTree extends JTree{
                   }
                   aLoadoutDesktop.openLoadout(loadout);
                }
-               else if( clicked instanceof LoadoutStandard ){
-                  aLoadoutDesktop.openLoadout((LoadoutStandard)clicked);
+               else if( clicked instanceof LoadoutBase<?> ){
+                  aLoadoutDesktop.openLoadout((LoadoutBase<?>)clicked);
                }
             }
          }

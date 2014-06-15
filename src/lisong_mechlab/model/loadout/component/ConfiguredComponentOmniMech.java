@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
-import java.awt.ItemSelectable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
