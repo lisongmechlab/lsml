@@ -76,6 +76,8 @@ public class XMLOmniPods{
          private List<MdfHardpoint>     hardpoints;
          @XStreamImplicit(itemFieldName = "Quirk")
          private List<XMLOmniPodsQuirk> quirks;
+         @XStreamAsAttribute
+         private int CanEquipECM;
       }
 
       @XStreamAsAttribute
@@ -123,7 +125,7 @@ public class XMLOmniPods{
             }
 
             Location location = Location.fromMwoName(component.name);
-            List<HardPoint> hardPoints = MdfComponent.getHardPoints(location, aHardPointsXML, component.hardpoints, 0, set.name);
+            List<HardPoint> hardPoints = MdfComponent.getHardPoints(location, aHardPointsXML, component.hardpoints, component.CanEquipECM, set.name);
             Quirks quirks = new Quirks(quirksMap);
 
             ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, maxJumpjets, maxPilotModules));
