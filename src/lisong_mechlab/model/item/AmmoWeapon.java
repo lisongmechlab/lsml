@@ -39,6 +39,7 @@ public class AmmoWeapon extends Weapon{
       ammoTypeId = aAmmoType;
    }
 
+   @Deprecated
    public Ammunition getAmmoType(Upgrades aUpgrades){
       if( ammoType == null ){
          ammoType = (Ammunition)ItemDB.lookup(ammoTypeId);
@@ -46,6 +47,10 @@ public class AmmoWeapon extends Weapon{
       if( aUpgrades == null )
          return ammoType;
       return ammoType;
+   }
+   
+   public boolean isCompatibleAmmo(Ammunition aAmmunition){
+      return ammoTypeId.equals(aAmmunition.getAmmoType());
    }
 
    @Override

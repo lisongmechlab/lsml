@@ -99,6 +99,10 @@ public class Weapon extends HeatSource{
          ghostHeatFreeAlpha = -1;
       }
    }
+   
+   public boolean isOffensive(){
+      return this != ItemDB.AMS && this != ItemDB.C_AMS;
+   }
 
    /**
     * 0 = ungrouped 1 = PPC, ER PPC 2 = LRM20/15/10 3 = LL, ER LL, LPL 4 = SRM6 SRM4

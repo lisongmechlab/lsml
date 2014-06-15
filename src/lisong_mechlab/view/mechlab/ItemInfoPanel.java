@@ -184,7 +184,7 @@ public class ItemInfoPanel extends JPanel{
 
    private void showAmmoInfo(Ammunition anAmmo){
       ammoperton.setVisible(true);
-      ammoperton.setText("Ammo per ton: " + anAmmo.getShotsPerTon());
+      ammoperton.setText("Shots: " + anAmmo.getNumShots());
    }
 
    private void showWeaponInfo(Weapon aWeapon, Upgrades anUpgrades, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
@@ -225,7 +225,7 @@ public class ItemInfoPanel extends JPanel{
       if( aWeapon instanceof AmmoWeapon ){
          AmmoWeapon ammoWeapon = (AmmoWeapon)aWeapon;
          ammoperton.setVisible(true);
-         ammoperton.setText("Ammo per ton: " + ammoWeapon.getAmmoType(anUpgrades).getShotsPerTon());
+         ammoperton.setText("Shots: " + ammoWeapon.getAmmoType(anUpgrades).getNumShots());
       }
       else{
          ammoperton.setVisible(false);

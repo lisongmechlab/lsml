@@ -50,44 +50,48 @@ import lisong_mechlab.util.MessageXBar.Reader;
  * @author Li Song
  */
 public class WeaponSummaryTable extends JTable implements Reader{
-   private static final long       serialVersionUID = 868861599143353045L;
+   private static final long    serialVersionUID = 868861599143353045L;
    private final LoadoutBase<?> loadout;
-   private final DecimalFormat     decimalFormat    = new DecimalFormat("####");
+   private final DecimalFormat  decimalFormat    = new DecimalFormat("####");
 
    private static class WeaponModel extends AbstractTableModel{
       private static final long serialVersionUID = 1257566726770316140L;
 
       class Entry{
-         private final Ammunition   ammoType;
-         private int                ammoTons;
+         private int                rounds;
          private final List<Weapon> weapons = new ArrayList<Weapon>();
+         private final AmmoWeapon   ammoWeaponRepresentant;
+         private final Ammunition   ammoRepresentant;
 
-         Entry(LoadoutBase<?> aLoadout, Item anItem){
-            if( anItem instanceof Ammunition ){
-               ammoType = (Ammunition)anItem;
-               ammoTons = 1;
+         Entry(LoadoutBase<?> aLoadout, Weapon aWeapon){
+            weapons.add(aWeapon);
+            rounds = 0;
+            if( aWeapon instanceof AmmoWeapon ){
+               ammoWeaponRepresentant = (AmmoWeapon)aWeapon;
+               ammoRepresentant = ammoWeaponRepresentant.getAmmoType(aLoadout.getUpgrades());
             }
-            else if( anItem instanceof Weapon ){
-               weapons.add((Weapon)anItem);
-               if( anItem instanceof AmmoWeapon ){
-                  ammoType = ((AmmoWeapon)anItem).getAmmoType(aLoadout.getUpgrades());
-               }
-               else
-                  ammoType = null;
-               ammoTons = 0;
+            else{
+               ammoWeaponRepresentant = null;
+               ammoRepresentant = null;
             }
-            else
-               throw new IllegalArgumentException("Item must be ammuniton or weapon!");
          }
 
-         boolean consume(LoadoutBase<?> aLoadout, Item anItem){
-            if( ammoType != null && ammoType == anItem ){
-               ammoTons++;
-               return true;
+         Entry(Ammunition aItem){
+            ammoRepresentant = aItem;
+            rounds = ammoRepresentant.getNumShots();
+            ammoWeaponRepresentant = null;
+         }
+
+         boolean consume(Item anItem){
+            if( anItem instanceof Ammunition ){
+               Ammunition ammo = (Ammunition)anItem;
+               if( ammoRepresentant == ammo || (null != ammoWeaponRepresentant && ammoWeaponRepresentant.isCompatibleAmmo(ammo)) ){
+                  rounds += ammo.getNumShots();
+               }
             }
             else if( anItem instanceof AmmoWeapon ){
                AmmoWeapon ammoWeapon = (AmmoWeapon)anItem;
-               if( ammoType != null && ammoType == ammoWeapon.getAmmoType(aLoadout.getUpgrades()) ){
+               if( ammoRepresentant != null && ammoWeapon.isCompatibleAmmo(ammoRepresentant) ){
                   weapons.add(ammoWeapon);
                   return true;
                }
@@ -102,8 +106,9 @@ public class WeaponSummaryTable extends JTable implements Reader{
             return false;
          }
 
+         @Deprecated
          Ammunition getAmmoType(){
-            return ammoType;
+            return ammoRepresentant;
          }
 
          List<Weapon> getWeapons(){
@@ -111,8 +116,8 @@ public class WeaponSummaryTable extends JTable implements Reader{
          }
 
          double getNumShots(){
-            if( ammoType != null )
-               return ammoType.getShotsPerTon() * ammoTons;
+            if( ammoRepresentant != null )
+               return rounds;
             return Double.POSITIVE_INFINITY;
          }
       }
@@ -121,16 +126,37 @@ public class WeaponSummaryTable extends JTable implements Reader{
 
       public void update(LoadoutBase<?> aLoadout){
          entries.clear();
+         List<Item> ammo = new ArrayList<>();
          for(Item item : aLoadout.getAllItems()){
+            if( item instanceof Ammunition ){
+               ammo.add(item);
+               continue;
+            }
+
+            if( item instanceof Weapon ){
+               boolean found = false;
+               Weapon weapon = (Weapon)item;
+               for(Entry entry : entries){
+                  if( entry.consume(item) ){
+                     found = true;
+                     break;
+                  }
+               }
+               if( !found ){
+                  entries.add(new Entry(aLoadout, weapon));
+               }
+            }
+         }
+         for(Item item : ammo){
             boolean found = false;
             for(Entry entry : entries){
-               if( entry.consume(aLoadout, item) ){
+               if( entry.consume(item) ){
                   found = true;
                   break;
                }
             }
-            if( !found && (item instanceof Ammunition || item instanceof Weapon) ){
-               entries.add(new Entry(aLoadout, item));
+            if( !found ){
+               entries.add(new Entry((Ammunition)item));
             }
          }
          fireTableDataChanged();
@@ -162,7 +188,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
       @Override
       public String valueOf(Object aSourceRowObject){
          WeaponModel.Entry entry = (WeaponModel.Entry)aSourceRowObject;
-         if( entry.getWeapons().isEmpty() || entry.getWeapons().get(0) == ItemDB.AMS )
+         if( entry.getWeapons().isEmpty() || !entry.getWeapons().get(0).isOffensive() )
             return decimalFormat.format(0);
 
          double shots = entry.getNumShots();
