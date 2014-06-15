@@ -46,8 +46,8 @@ public class GuidanceUpgrade extends Upgrade{
 
    public GuidanceUpgrade(ItemStatsUpgradeType aUpgradeType){
       super(aUpgradeType);
-      slots = aUpgradeType.UpgradeTypeStats.slots;
-      tons = aUpgradeType.UpgradeTypeStats.pointMultiplier;
+      slots = aUpgradeType.ArtemisTypeStats.extraSlots;
+      tons = aUpgradeType.ArtemisTypeStats.extraTons;
    }
 
    public int getSlots(){

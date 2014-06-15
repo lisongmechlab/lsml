@@ -386,11 +386,7 @@ public class PartList extends JList<Item>{
          @Override
          public void keyPressed(KeyEvent aArg0){
             if( aArg0.getKeyCode() == KeyEvent.VK_DELETE ){
-               for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  if( itemPair.first instanceof Internal )
-                     continue;
-                  opStack.pushAndApply(new OpRemoveItem(aXBar, aLoadout, aComponent, itemPair.first));
-               }
+               removeSelected(aXBar);
             }
          }
       });
@@ -399,14 +395,21 @@ public class PartList extends JList<Item>{
          @Override
          public void mouseClicked(MouseEvent e){
             if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
-               for(Pair<Item, Integer> itemPair : getSelectedItems()){
-                  if( itemPair.first instanceof Internal )
-                     continue;
-                  opStack.pushAndApply(new OpRemoveItem(aXBar, aLoadout, aComponent, itemPair.first));
-               }
+               removeSelected(aXBar);
             }
          }
       });
+   }
+
+   public List<Item> removeSelected(MessageXBar aXBar){
+      List<Item> removed = new ArrayList<>();
+      for(Pair<Item, Integer> itemPair : getSelectedItems()){
+         if( !component.getItemsEquipped().contains(itemPair.first) || itemPair.first instanceof Internal )
+            continue;
+         opStack.pushAndApply(new OpRemoveItem(aXBar, loadout, component, itemPair.first));
+         removed.add(itemPair.first);
+      }
+      return removed;
    }
 
    public List<Pair<Item, Integer>> getSelectedItems(){

@@ -53,7 +53,7 @@ import lisong_mechlab.util.OperationStack.Operation;
 public abstract class ConfiguredComponentBase{
    public static class Message implements MessageXBar.Message{
       public enum Type{
-         ArmorChanged, ArmorDistributionUpdateRequest, ItemAdded, ItemRemoved, ItemsChanged
+         ArmorChanged, ArmorDistributionUpdateRequest, ItemAdded, ItemRemoved, ItemsChanged, OmniPodChanged
       }
 
       /**
@@ -98,8 +98,8 @@ public abstract class ConfiguredComponentBase{
       }
    }
 
-   public final static Internal              ENGINE_INTERNAL      = (Internal)ItemDB.lookup("mdf_Engine");
-   public final static Internal              ENGINE_INTERNAL_CLAN = new Internal("CLAN XL ENGINE", "", "", -1, 2, 0, HardPointType.NONE, 15, true);
+   public final static Internal              ENGINE_INTERNAL      = (Internal)ItemDB.lookup(60000);
+   public final static Internal              ENGINE_INTERNAL_CLAN = (Internal)ItemDB.lookup(60001);
    private final TreeMap<ArmorSide, Integer> armor                = new TreeMap<ArmorSide, Integer>();
    private final ComponentBase               internalComponent;
    private final List<Item>                  items                = new ArrayList<Item>();

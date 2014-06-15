@@ -95,4 +95,9 @@ public class OpSetArmorSymmetric extends CompositeOperation{
       return true;
    }
 
+   @Override
+   public void buildOperation(){
+      // No-op The preparation is invariant of time and performed in constructor
+   }
+
 }

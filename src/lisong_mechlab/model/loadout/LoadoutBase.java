@@ -36,6 +36,8 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.item.PilotModule;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -49,15 +51,17 @@ import lisong_mechlab.util.MessageXBar;
  *           The type of the {@link ConfiguredComponentBase} in this loadout.
  */
 public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
-   private String             name;
-   private final ChassisBase  chassisBase;
-   private final T[]          components;
-   private final Efficiencies efficiencies;
+   private String                  name;
+   private final ChassisBase       chassisBase;
+   private final T[]               components;
+   private final Efficiencies      efficiencies;
+   private final List<PilotModule> modules;
 
    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase, MessageXBar aXBar){
       name = aChassisBase.getNameShort();
       chassisBase = aChassisBase;
       efficiencies = new Efficiencies(aXBar);
+      modules = new ArrayList<>();
       components = aFactory.defaultComponents(chassisBase);
    }
 
@@ -65,6 +69,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       name = aLoadoutBase.name;
       chassisBase = aLoadoutBase.chassisBase;
       efficiencies = new Efficiencies(aLoadoutBase.efficiencies);
+      modules = new ArrayList<>(aLoadoutBase.modules);
       components = aFactory.cloneComponents(aLoadoutBase);
    }
 
@@ -77,13 +82,13 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       @SuppressWarnings("unchecked")
       // I just checked it above...
       LoadoutBase<T> that = (LoadoutBase<T>)obj;
-      if(chassisBase != that.chassisBase )
+      if( chassisBase != that.chassisBase )
          return false;
       if( !efficiencies.equals(that.efficiencies) )
          return false;
       if( !name.equals(that.name) )
          return false;
-      if( !Arrays.equals(components, that.components))
+      if( !Arrays.equals(components, that.components) )
          return false;
       return true;
    }
@@ -167,6 +172,44 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     */
    public ChassisBase getChassis(){
       return chassisBase;
+   }
+
+   /**
+    * @return An unmodifiable {@link Collection} of all the equipped pilot modules.
+    */
+   public List<PilotModule> getModules(){
+      return Collections.unmodifiableList(modules);
+   }
+
+   /**
+    * @return The maximal number of modules that can be equipped on this {@link LoadoutBase}.
+    */
+   public abstract int getModulesMax();
+
+   /**
+    * @param aModule
+    *           The module to test if it can be added to this loadout.
+    * @return <code>true</code> if the given module can be added to this loadout.
+    */
+   public boolean canAddModule(PilotModule aModule){
+      // TODO: Apply any limitations on modules
+      return getModules().size() < getModulesMax();
+   }
+
+   /**
+    * @param aModule
+    *           The {@link PilotModule} to add to this {@link LoadoutBase}.
+    */
+   public void addModule(PilotModule aModule){
+      modules.add(aModule);
+   }
+
+   /**
+    * @param aModule
+    *           The {@link PilotModule} to remove from this {@link LoadoutBase}.
+    */
+   public void removeModule(PilotModule aModule){
+      modules.remove(aModule);
    }
 
    /**
@@ -260,9 +303,9 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    /**
     * Gets a {@link List} of {@link ConfiguredComponentBase}s that could possibly house the given item.
     * <p>
-    * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponentBase}s in
-    * the returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponentBase}s not in the
-    * list are unable to hold the {@link Item}.
+    * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponentBase}s
+    * in the returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponentBase}s not
+    * in the list are unable to hold the {@link Item}.
     * <p>
     * This method is mainly useful for limiting search spaces for various optimization algorithms.
     * 
@@ -284,8 +327,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
          }
 
          if( hardpointType != HardPointType.NONE ){
-            final int localFreeHardPoints = part.getHardPointCount(hardpointType)
-                                            - part.getItemsOfHardpointType(hardpointType);
+            final int localFreeHardPoints = part.getHardPointCount(hardpointType) - part.getItemsOfHardpointType(hardpointType);
             globalFreeHardPoints += localFreeHardPoints;
          }
       }
@@ -389,4 +431,12 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return A deep copy of <code>this</code>.
     */
    public abstract LoadoutBase<?> clone(MessageXBar aXBar);
+
+   /**
+    * @return
+    */
+   public Collection<WeaponModifier> getWeaponModifiers(){
+      return new ArrayList<>(); // FIXME
+   }
+
 }

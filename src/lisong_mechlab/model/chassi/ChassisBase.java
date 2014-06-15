@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
@@ -54,7 +55,7 @@ public abstract class ChassisBase{
    @XStreamAsAttribute
    private final ChassisVariant  variant;
    @XStreamAsAttribute
-   private final boolean         clan;
+   private final Faction         faction;
 
    private final MovementProfile movementProfile;
    private final ComponentBase[] components;
@@ -78,13 +79,13 @@ public abstract class ChassisBase{
     *           The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
     * @param aMovementProfile
     *           The {@link MovementProfile} of this chassis.
-    * @param aIsClan
-    *           True if this is a clan chassis.
+    * @param aFaction
+    *           The {@link Faction} of this clan.
     * @param aComponents
     *           An array of components for this chassis.
     */
    public ChassisBase(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
-                      int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan, ComponentBase[] aComponents){
+                      int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, ComponentBase[] aComponents){
       if( aComponents.length != Location.values().length )
          throw new IllegalArgumentException("Components array must contain all components!");
 
@@ -98,7 +99,7 @@ public abstract class ChassisBase{
       variant = aVariant;
       baseVariant = aBaseVariant;
       movementProfile = aMovementProfile;
-      clan = aIsClan;
+      faction = aFaction;
       components = aComponents;
    }
 
@@ -229,7 +230,7 @@ public abstract class ChassisBase{
     * @return <code>true</code> if this chassis can equip the {@link Item}.
     */
    public boolean isAllowed(Item aItem){
-      if( aItem.isClan() != clan ){
+      if( !aItem.getFaction().isCompatible(getFaction())){
          return false;
       }
       else if( aItem instanceof Internal ){
@@ -256,10 +257,10 @@ public abstract class ChassisBase{
    }
 
    /**
-    * @return <code>true</code> if this chassis is a clan chassis.
+    * @return The faction that this chassis is from.
     */
-   public boolean isClan(){
-      return clan;
+   public Faction getFaction(){
+      return faction;
    }
 
    @Override

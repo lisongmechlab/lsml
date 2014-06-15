@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,24 +146,54 @@ public class Weapon extends HeatSource{
       return rangeMin;
    }
 
-   public double getRangeMax(){
-      return rangeMax;
+   public double getRangeMax(Collection<WeaponModifier> aPilotModules){
+      double a = 0;
+      if( aPilotModules != null ){
+         for(WeaponModifier mod : aPilotModules){
+            if( mod.affectsWeapon(this) ){
+               a += mod.applyMaxRange(this, rangeMax, null);
+            }
+         }
+      }
+      return rangeMax + a;
    }
 
-   public double getRangeLong(){
-      return rangeLong;
+   public double getRangeLong(Collection<WeaponModifier> aPilotModules){
+      double a = 0;
+      if( aPilotModules != null ){
+         for(WeaponModifier mod : aPilotModules){
+            if( mod.affectsWeapon(this) ){
+               a += mod.applyLongRange(this, rangeLong, null);
+            }
+         }
+      }
+      return rangeLong + a;
    }
 
-   public double getRangeEffectivity(double range){
+   @Override
+   public double getHeat(Collection<WeaponModifier> aPilotModules){
+      double a = 0;
+      if( aPilotModules != null ){
+         for(WeaponModifier mod : aPilotModules){
+            if( mod.affectsWeapon(this) ){
+               a += mod.applyHeat(this, super.getHeat(aPilotModules), null);
+            }
+
+         }
+      }
+      return super.getHeat(aPilotModules) + a;
+   }
+
+   public double getRangeEffectivity(double range, Collection<WeaponModifier> aPilotModules){
       // Assume linear fall off
       if( range < getRangeZero() )
          return 0;
       if( range < getRangeMin() )
          return (range - getRangeZero()) / (getRangeMin() - getRangeZero());
-      else if( range <= getRangeLong() )
+      else if( range <= getRangeLong(aPilotModules) )
          return 1.0;
-      else if( range < getRangeMax() )
-         return 1.0 - (range - getRangeLong()) / (getRangeMax() - getRangeLong());
+      else if( range < getRangeMax(aPilotModules) )
+         return 1.0 - (range - getRangeLong(aPilotModules)) / (getRangeMax(aPilotModules) - getRangeLong(aPilotModules));
       else
          return 0;
    }
@@ -178,9 +209,11 @@ public class Weapon extends HeatSource{
     * @param aEfficiencies
     *           Any {@link Efficiencies} that can affect the stats, can be <code>null</code> to assume no
     *           {@link Efficiencies}.
+    * @param aCollection
+    *           A list of pilot modules to take into account.
     * @return The calculated statistic.
     */
-   public double getStat(String aWeaponStat, Efficiencies aEfficiencies){
+   public double getStat(String aWeaponStat, Efficiencies aEfficiencies, Collection<WeaponModifier> aCollection){
       double nominator = 1;
       int index = 0;
       while( index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/' ){
@@ -195,7 +228,7 @@ public class Weapon extends HeatSource{
                nominator *= getMass();
                break;
             case 'h':
-               nominator *= getHeat();
+               nominator *= getHeat(aCollection);
                break;
             case 'c':
                nominator *= getNumCriticalSlots();
@@ -220,7 +253,7 @@ public class Weapon extends HeatSource{
                denominator *= getMass();
                break;
             case 'h':
-               denominator *= getHeat();
+               denominator *= getHeat(aCollection);
                break;
             case 'c':
                denominator *= getNumCriticalSlots();

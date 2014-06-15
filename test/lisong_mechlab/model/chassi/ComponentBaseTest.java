@@ -26,6 +26,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 
 import org.junit.Test;
@@ -81,6 +84,33 @@ public abstract class ComponentBaseTest{
       fixedItems.add(item2);
       
       assertEquals(7, makeDefaultCUT().getFixedItemSlots());
+   }
+   
+   @Test
+   public void testGetFixedItemSlots_EngineHS(){
+      criticalSlots = 12;
+      Engine engine = Mockito.mock(Engine.class);
+      HeatSink hs = Mockito.mock(HeatSink.class);
+      Internal gyro = Mockito.mock(Internal.class);
+      
+      Mockito.when(engine.getNumCriticalSlots()).thenReturn(6);
+      Mockito.when(gyro.getNumCriticalSlots()).thenReturn(4);
+      Mockito.when(hs.getNumCriticalSlots()).thenReturn(2);
+      
+      Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(4);
+      
+      fixedItems.clear();
+      fixedItems.add(gyro);
+      fixedItems.add(hs); // Add some heat sinks before the engine and some after.
+      fixedItems.add(hs);
+      fixedItems.add(engine);
+      fixedItems.add(hs);
+      fixedItems.add(hs);
+      fixedItems.add(hs);
+      
+      // Gyro (4) + Engine (6) + 4x Engine HS (0) + 1x External HS (2) = 12 
+      
+      assertEquals(12, makeDefaultCUT().getFixedItemSlots());
    }
    
    @Test

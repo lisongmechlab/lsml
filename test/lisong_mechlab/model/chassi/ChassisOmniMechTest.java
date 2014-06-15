@@ -60,7 +60,7 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
       super.setup();
 
       engine = Mockito.mock(Engine.class);
-      Mockito.when(engine.isClan()).thenReturn(true);
+      Mockito.when(engine.getFaction()).thenReturn(true);
       Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
       Mockito.when(engine.getRating()).thenReturn(250);
       Mockito.when(engine.getType()).thenReturn(EngineType.XL);
@@ -223,7 +223,7 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
    public final void testIsAllowed_NoComponentSupport(){
       Item item = Mockito.mock(Item.class);
       Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-      Mockito.when(item.isClan()).thenReturn(true);
+      Mockito.when(item.getFaction()).thenReturn(true);
       Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
 
       ChassisOmniMech cut = makeDefaultCUT();

@@ -40,35 +40,35 @@ public class OpSetArmorType extends OpUpgradeBase{
     * Creates a {@link OpSetArmorType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
     * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
     * 
-    * @param anUpgrades
+    * @param aUpgrades
     *           The {@link UpgradesMutable} object to alter with this {@link Operation}.
-    * @param anArmorUpgrade
+    * @param aArmorUpgrade
     *           The new armor type when this upgrades has been applied.
     */
-   public OpSetArmorType(UpgradesMutable anUpgrades, ArmorUpgrade anArmorUpgrade){
-      super(null, anArmorUpgrade.getName());
-      upgrades = anUpgrades;
+   public OpSetArmorType(UpgradesMutable aUpgrades, ArmorUpgrade aArmorUpgrade){
+      super(null, aArmorUpgrade.getName());
+      upgrades = aUpgrades;
       loadout = null;
       oldValue = upgrades.getArmor();
-      newValue = anArmorUpgrade;
+      newValue = aArmorUpgrade;
    }
 
    /**
     * Creates a new {@link OpSetStructureType} that will change the armor type of a {@link LoadoutStandard}.
     * 
-    * @param anXBar
+    * @param aXBar
     *           A {@link MessageXBar} to signal changes in internal structure on.
     * @param aLoadout
     *           The {@link LoadoutStandard} to alter.
-    * @param anArmorUpgrade
+    * @param aArmorUpgrade
     *           The new armor type this upgrades is applied.
     */
-   public OpSetArmorType(MessageXBar anXBar, LoadoutStandard aLoadout, ArmorUpgrade anArmorUpgrade){
-      super(anXBar, anArmorUpgrade.getName());
+   public OpSetArmorType(MessageXBar aXBar, LoadoutStandard aLoadout, ArmorUpgrade aArmorUpgrade){
+      super(aXBar, aArmorUpgrade.getName());
       upgrades = aLoadout.getUpgrades();
       loadout = aLoadout;
       oldValue = upgrades.getArmor();
-      newValue = anArmorUpgrade;
+      newValue = aArmorUpgrade;
    }
 
    @Override

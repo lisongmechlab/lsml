@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.chassi.Location;
@@ -41,11 +42,11 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 abstract class OpItemBase extends Operation{
-   private int                         numEngineHS = 0;
-   private final MessageXBar           xBar;
+   private int                             numEngineHS = 0;
+   private final MessageXBar               xBar;
    protected final ConfiguredComponentBase component;
-   protected final LoadoutBase<?>   loadout;
-   protected final Item                item;
+   protected final LoadoutBase<?>          loadout;
+   protected final Item                    item;
 
    /**
     * Creates a new {@link OpItemBase}. The deriving classes shall throw if the the operation with the given item would
@@ -102,7 +103,8 @@ abstract class OpItemBase extends Operation{
             ConfiguredComponentBase lt = loadout.getComponent(Location.LeftTorso);
             ConfiguredComponentBase rt = loadout.getComponent(Location.RightTorso);
 
-            Internal xlSide = engine.isClan() ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN : ConfiguredComponentBase.ENGINE_INTERNAL;
+            Internal xlSide = engine.getFaction() == Faction.Clan ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN
+                                                                 : ConfiguredComponentBase.ENGINE_INTERNAL;
             lt.removeItem(xlSide);
             rt.removeItem(xlSide);
             if( xBar != null ){
@@ -138,7 +140,8 @@ abstract class OpItemBase extends Operation{
             ConfiguredComponentBase lt = loadout.getComponent(Location.LeftTorso);
             ConfiguredComponentBase rt = loadout.getComponent(Location.RightTorso);
 
-            Internal xlSide = engine.isClan() ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN : ConfiguredComponentBase.ENGINE_INTERNAL;
+            Internal xlSide = engine.getFaction() == Faction.Clan ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN
+                                                                 : ConfiguredComponentBase.ENGINE_INTERNAL;
             lt.addItem(xlSide);
             rt.addItem(xlSide);
             if( xBar != null ){

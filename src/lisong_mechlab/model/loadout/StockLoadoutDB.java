@@ -34,7 +34,7 @@ import lisong_mechlab.model.chassi.ChassisStandard;
  * @author Li Song
  */
 public class StockLoadoutDB{
-   private static final Map<ChassisStandard, StockLoadout> stockloadouts;
+   private static final Map<ChassisBase, StockLoadout> stockloadouts;
 
    /**
     * Will find the stock loadout matching the given {@link ChassisStandard}.

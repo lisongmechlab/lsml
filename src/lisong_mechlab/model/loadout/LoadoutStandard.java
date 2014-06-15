@@ -198,4 +198,9 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
    public UpgradesMutable getUpgrades(){
       return upgrades;
    }
+
+   @Override
+   public int getModulesMax(){
+      return getChassis().getPilotModulesMax() + 1;
+   }
 }

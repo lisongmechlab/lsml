@@ -23,13 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.mwo_data.GameVFS.GameFile;
-import lisong_mechlab.mwo_data.helpers.ItemStatsMech;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+import lisong_mechlab.mwo_data.helpers.ItemStatsOmniPodType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+import lisong_mechlab.mwo_data.helpers.XMLItemStatsMech;
+import lisong_mechlab.mwo_data.helpers.XMLPilotModuleStats;
+import lisong_mechlab.mwo_data.helpers.XMLPilotModuleWeaponStats;
+import lisong_mechlab.mwo_data.helpers.XMLWeaponStats;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
@@ -40,18 +43,19 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * 
  * @author Li Song
  */
-@XStreamAlias("ItemStats")
-public class ItemStatsXml{
+public class XMLItemStats{
    @XStreamImplicit
-   public List<ItemStatsMech>        MechList        = new ArrayList<>();
+   public List<XMLItemStatsMech>     MechList        = new ArrayList<>();
    @XStreamImplicit
    public List<ItemStatsWeapon>      WeaponList      = new ArrayList<>();
    @XStreamImplicit
    public List<ItemStatsModule>      ModuleList      = new ArrayList<>();
    @XStreamImplicit
    public List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
+   @XStreamImplicit
+   public List<ItemStatsOmniPodType> OmniPodList     = new ArrayList<>();
 
-   public static ItemStatsXml fromXml(GameFile aGameFile){
+   public static XMLItemStats fromXml(GameFile aGameFile){
       XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
          @Override
          protected MapperWrapper wrapMapper(MapperWrapper next){
@@ -67,23 +71,31 @@ public class ItemStatsXml{
          }
       };
       xstream.autodetectAnnotations(true);
-      xstream.alias("WeaponList", ItemStatsXml.class);
-      xstream.alias("MechList", ItemStatsXml.class);
-      xstream.alias("UpgradeTypeList", ItemStatsXml.class);
-      xstream.alias("ModuleList", ItemStatsXml.class);
-      xstream.alias("Mech", ItemStatsMech.class);
+      xstream.alias("WeaponList", XMLItemStats.class);
+      xstream.alias("MechList", XMLItemStats.class);
+      xstream.alias("OmniPodList", XMLItemStats.class);
+      xstream.alias("UpgradeTypeList", XMLItemStats.class);
+      xstream.alias("ModuleList", XMLItemStats.class);
+      
+      xstream.alias("Mech", XMLItemStatsMech.class);
       xstream.alias("Weapon", ItemStatsWeapon.class);
       xstream.alias("Module", ItemStatsModule.class);
+      xstream.alias("Internal", ItemStatsModule.class);
       xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
+      xstream.alias("OmniPod", ItemStatsOmniPodType.class);
+      xstream.alias("PilotModuleStats", XMLPilotModuleStats.class);
+      xstream.alias("WeaponStats", XMLWeaponStats.class);
+      xstream.alias("PilotModuleWeaponStats", XMLPilotModuleWeaponStats.class);
 
       // Fixes for broken XML from PGI
       xstream.aliasAttribute("Ctype", "CType");
+      xstream.aliasAttribute("talentid", "talentId");
 
-      return (ItemStatsXml)xstream.fromXML(aGameFile.stream);
+      return (XMLItemStats)xstream.fromXML(aGameFile.stream);
    }
 
    public void append(GameFile aGameFile){
-      ItemStatsXml xml = fromXml(aGameFile);
+      XMLItemStats xml = fromXml(aGameFile);
       if( null != xml.MechList )
          MechList.addAll(xml.MechList);
       if( null != xml.WeaponList )
@@ -92,5 +104,7 @@ public class ItemStatsXml{
          ModuleList.addAll(xml.ModuleList);
       if( null != xml.UpgradeTypeList )
          UpgradeTypeList.addAll(xml.UpgradeTypeList);
+      if( null != xml.OmniPodList )
+         OmniPodList.addAll(xml.OmniPodList);
    }
 }

@@ -30,6 +30,7 @@ import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
@@ -37,59 +38,60 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-public class OpSetGuidanceType extends OpUpgradeBase{
-   private final GuidanceUpgrade   oldValue;
-   private final GuidanceUpgrade   newValue;
-   private boolean                 operationReady = false;
-   private final Upgrades          upgrades;
-   private final LoadoutBase<?> loadout;
+public class OpSetGuidanceType extends CompositeOperation{
+   private final GuidanceUpgrade oldValue;
+   private final GuidanceUpgrade newValue;
+   private final Upgrades        upgrades;
+   private final LoadoutBase<?>  loadout;
+   private final MessageXBar     xBar;
 
    /**
     * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
     * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutBase} in any way.
     * 
-    * @param anUpgrades
+    * @param aUpgrades
     *           The {@link UpgradesMutable} object to alter with this {@link Operation}.
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
-   public OpSetGuidanceType(Upgrades anUpgrades, GuidanceUpgrade aGuidanceUpgrade){
-      super(null, aGuidanceUpgrade.getName());
-      upgrades = anUpgrades;
+   public OpSetGuidanceType(Upgrades aUpgrades, GuidanceUpgrade aGuidanceUpgrade){
+      super(aGuidanceUpgrade.getName());
+      upgrades = aUpgrades;
       loadout = null;
       oldValue = upgrades.getGuidance();
       newValue = aGuidanceUpgrade;
+      xBar = null;
    }
 
    /**
     * Creates a new {@link OpSetGuidanceType} that will change the guidance upgrade of a {@link LoadoutStandard}.
     * 
-    * @param anXBar
+    * @param aXBar
     *           A {@link MessageXBar} to signal changes in guidance status on.
     * @param aLoadout
     *           The {@link LoadoutBase} to alter.
     * @param aGuidanceUpgrade
     *           The new upgrade to use.
     */
-   public OpSetGuidanceType(MessageXBar anXBar, LoadoutBase<?> aLoadout, GuidanceUpgrade aGuidanceUpgrade){
-      super(anXBar, aGuidanceUpgrade.getName());
+   public OpSetGuidanceType(MessageXBar aXBar, LoadoutBase<?> aLoadout, GuidanceUpgrade aGuidanceUpgrade){
+      super(aGuidanceUpgrade.getName());
       upgrades = aLoadout.getUpgrades();
       loadout = aLoadout;
       oldValue = upgrades.getGuidance();
       newValue = aGuidanceUpgrade;
+      xBar = aXBar;
    }
 
    @Override
    protected void apply(){
-      prepareOperation();
       set(newValue);
       super.apply();
    }
 
    @Override
    protected void undo(){
-      super.undo();
       set(oldValue);
+      super.undo();
    }
 
    protected void set(GuidanceUpgrade aValue){
@@ -100,11 +102,8 @@ public class OpSetGuidanceType extends OpUpgradeBase{
       }
    }
 
-   private void prepareOperation(){
-      if( operationReady )
-         return;
-      operationReady = true;
-
+   @Override
+   public void buildOperation(){
       if( loadout != null ){
          if( newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree() )
             throw new IllegalArgumentException("Too few critical slots available in loadout!");

@@ -42,7 +42,7 @@ public class AlphaStrike extends RangeMetric{
       for(Item item : loadout.getAllItems()){
          if( item instanceof Weapon && item != ItemDB.AMS ){
             Weapon weapon = (Weapon)item;
-            ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange);
+            ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers());
          }
       }
       return ans;

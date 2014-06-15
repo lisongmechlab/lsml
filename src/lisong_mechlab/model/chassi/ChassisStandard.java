@@ -21,6 +21,7 @@ package lisong_mechlab.model.chassi;
 
 import java.util.Collection;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
@@ -42,6 +43,8 @@ public class ChassisStandard extends ChassisBase{
    private final int engineMax;
    @XStreamAsAttribute
    private final int maxJumpJets;
+   @XStreamAsAttribute
+   private final int pilotModulesMax;
 
    /**
     * Creates a new {@link ChassisStandard}.
@@ -64,8 +67,8 @@ public class ChassisStandard extends ChassisBase{
     *           The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
     * @param aMovementProfile
     *           The {@link MovementProfile} of this chassis.
-    * @param aIsClan
-    *           True if this is a clan chassis.
+    * @param aFaction
+    *           The {@link Faction} this chassis belongs to.
     * @param aEngineMin
     *           The smallest engine rating that can be equipped.
     * @param aEngineMax
@@ -74,14 +77,17 @@ public class ChassisStandard extends ChassisBase{
     *           The maximal number of jump jets that can be equipped.
     * @param aComponents
     *           An array of {@link ComponentStandard} that defines the internal components of the chassis.
+    * @param aMaxPilotModules
+    *           The maximum number of pilot modules that can be equipped.
     */
    public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
-                          int aBaseVariant, MovementProfile aMovementProfile, boolean aIsClan, int aEngineMin, int aEngineMax, int aMaxJumpJets,
-                          ComponentStandard[] aComponents){
-      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aIsClan, aComponents);
+                          int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, int aEngineMin, int aEngineMax, int aMaxJumpJets,
+                          ComponentStandard[] aComponents, int aMaxPilotModules){
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents);
       engineMin = aEngineMin;
       engineMax = aEngineMax;
       maxJumpJets = aMaxJumpJets;
+      pilotModulesMax = aMaxPilotModules;
    }
 
    /**
@@ -139,5 +145,12 @@ public class ChassisStandard extends ChassisBase{
          return false;
       }
       return super.isAllowed(aItem);
+   }
+
+   /**
+    * @return The maximal number of pilot modules this chassis can support.
+    */
+   public int getPilotModulesMax(){
+      return pilotModulesMax;
    }
 }

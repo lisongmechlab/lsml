@@ -35,8 +35,8 @@ import lisong_mechlab.model.DataCache;
  * @author Li Song
  */
 public class OmniPodDB{
-   private static final Map<ChassisOmniMech, List<OmniPod>> chassis2pod;
-   private static final Map<Integer, OmniPod>               id2pod;
+   private static final Map<String, List<OmniPod>> series2pod;
+   private static final Map<Integer, OmniPod>      id2pod;
 
    /**
     * @param aChassis
@@ -46,27 +46,45 @@ public class OmniPodDB{
     * @return The {@link OmniPod}s that is "original" to the given chassis and {@link Location}.
     */
    public static OmniPod lookupOriginal(ChassisOmniMech aChassis, Location aLocation){
-      for(OmniPod omniPod : lookup(aChassis, aLocation)){
-         if( omniPod.getOriginalChassisId() == aChassis.getMwoId() )
+      for(OmniPod omniPod : lookup(aChassis.getSeriesName(), aLocation)){
+         if( omniPod.getOriginalChassis() == aChassis )
             return omniPod;
-      }
+         int idx = aChassis.getNameShort().indexOf('(');
+         if( -1 != idx ){
+            String primeBaseName = aChassis.getNameShort().substring(0, idx);
+            if( omniPod.getOriginalChassis().getNameShort().equals(primeBaseName) ){
+               return omniPod;
+            }
+         }
+     }
       throw new IllegalArgumentException("There exists no original omnipod for " + aChassis + " at " + aLocation);
    }
 
    /**
-    * @param aChassis
-    *           A chassis to get all compatible pods for.
+    * @param aSeries
+    *           A chassis series to get all compatible pods for.
     * @param aLocation
     *           A location on the chassis to get all compatible pods for.
     * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
     */
-   public static Collection<OmniPod> lookup(ChassisOmniMech aChassis, Location aLocation){
+   public static Collection<OmniPod> lookup(String aSeries, Location aLocation){
       List<OmniPod> ans = new ArrayList<>();
-      for(OmniPod omniPod : chassis2pod.get(aChassis)){
+      for(OmniPod omniPod : series2pod.get(aSeries)){
          if( omniPod.getLocation() == aLocation )
             ans.add(omniPod);
       }
       return ans;
+   }
+
+   /**
+    * @param aChassisSeries
+    *           A chassis series to get all compatible pods for.
+    * @param aLocation
+    *           A location on the chassis to get all compatible pods for.
+    * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
+    */
+   public static Collection<OmniPod> lookup(ChassisOmniMech aChassisSeries, Location aLocation){
+      return lookup(aChassisSeries.getSeriesName(), aLocation);
    }
 
    /**
@@ -82,18 +100,20 @@ public class OmniPodDB{
          throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
       }
 
-      chassis2pod = new HashMap<ChassisOmniMech, List<OmniPod>>();
+      series2pod = new HashMap<String, List<OmniPod>>();
       id2pod = new TreeMap<>();
 
       for(OmniPod omniPod : dataCache.getOmniPods()){
-         ChassisOmniMech originalChassis = (ChassisOmniMech)ChassisDB.lookup(omniPod.getOriginalChassisId());
 
-         List<OmniPod> list = chassis2pod.get(originalChassis);
+         String series = omniPod.getChassisSeries();
+
+         List<OmniPod> list = series2pod.get(series);
          if( list == null ){
             list = new ArrayList<>();
-            chassis2pod.put(originalChassis, list);
+            series2pod.put(series, list);
          }
          list.add(omniPod);
+
          id2pod.put(omniPod.getMwoID(), omniPod);
       }
 

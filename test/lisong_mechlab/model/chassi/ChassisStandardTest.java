@@ -44,6 +44,7 @@ public class ChassisStandardTest extends ChassisBaseTest{
    private int                 engineMax;
    private int                 maxJumpJets;
    private ComponentStandard[] components;
+   private int                 maxPilotModules;
 
    @Override
    @Before
@@ -62,7 +63,7 @@ public class ChassisStandardTest extends ChassisBaseTest{
    @Override
    protected ChassisStandard makeDefaultCUT(){
       return new ChassisStandard(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, isClan, engineMin,
-                                 engineMax, maxJumpJets, components);
+                                 engineMax, maxJumpJets, components, maxPilotModules);
    }
 
    /**
@@ -127,7 +128,7 @@ public class ChassisStandardTest extends ChassisBaseTest{
    public final void testIsAllowed_NoComponentSupport(){
       Item item = Mockito.mock(Item.class);
       Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-      Mockito.when(item.isClan()).thenReturn(true);
+      Mockito.when(item.getFaction()).thenReturn(true);
       Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
 
       ChassisStandard cut = makeDefaultCUT();

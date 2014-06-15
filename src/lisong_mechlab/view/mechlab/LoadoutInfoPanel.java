@@ -52,6 +52,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.environment.EnvironmentDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
@@ -77,6 +78,7 @@ import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.metrics.TurningSpeed;
 import lisong_mechlab.model.metrics.TwistSpeed;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
+import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
@@ -110,7 +112,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       df1.setMinimumFractionDigits(1);
    }
 
-   private final LoadoutBase<?>      loadout;
+   private final LoadoutBase<?>         loadout;
 
    // General pane
    private final JProgressBar           massBar;
@@ -603,13 +605,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       ferroFibros.setSelected(loadout.getUpgrades().getArmor() != UpgradeDB.STANDARD_ARMOR);
       doubleHeatSinks.setSelected(loadout.getUpgrades().getHeatSink() != UpgradeDB.STANDARD_HEATSINKS);
 
-      boolean isClan = loadout.getChassis().isClan();
+      boolean isClan = loadout.getChassis().getFaction() == Faction.Clan;
 
       StructureUpgrade es = isClan ? UpgradeDB.CLAN_ENDO_STEEL_STRUCTURE : UpgradeDB.ENDO_STEEL_STRUCTURE;
       ArmorUpgrade ff = isClan ? UpgradeDB.CLAN_FERRO_FIBROUS_ARMOR : UpgradeDB.FERRO_FIBROUS_ARMOR;
 
       {
-         final String esSavedMass = df2.format(UpgradeDB.STANDARD_STRUCTURE.getStructureMass(loadout.getChassis()) - es.getStructureMass(loadout.getChassis()));
+         final String esSavedMass = df2.format(UpgradeDB.STANDARD_STRUCTURE.getStructureMass(loadout.getChassis())
+                                               - es.getStructureMass(loadout.getChassis()));
          final String esSlots = Integer.toString(es.getExtraSlots());
          if( (loadout.getUpgrades().getStructure() == es) ){
             endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: green;\">-" + esSavedMass + "t</span>, " + "<span style=\"color: red;\">+"
@@ -672,13 +675,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
             @Override
             public void actionPerformed(ActionEvent aE){
-               if( loadout.getChassis().isClan() ){
-                  // FIXME: Implement
+               final StructureUpgrade structure;
+               if( loadout.getChassis().getFaction() == Faction.Clan ){
+                  structure = endoSteel.isSelected() ? UpgradeDB.CLAN_ENDO_STEEL_STRUCTURE : UpgradeDB.CLAN_STANDARD_STRUCTURE;
                }
                else{
-                  opStack.pushAndApply(new OpSetStructureType(xBar, loadoutStandard, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
-                                                                                                           : UpgradeDB.STANDARD_STRUCTURE));
+                  structure = endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE;
                }
+               opStack.pushAndApply(new OpSetStructureType(xBar, loadoutStandard, structure));
             }
          });
 
@@ -687,13 +691,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
             @Override
             public void actionPerformed(ActionEvent aE){
-               if( loadout.getChassis().isClan() ){
-                  // FIXME: Implement
+               final ArmorUpgrade armor;
+               if( loadout.getChassis().getFaction() == Faction.Clan ){
+                  armor = ferroFibros.isSelected() ? UpgradeDB.CLAN_FERRO_FIBROUS_ARMOR : UpgradeDB.CLAN_STANDARD_ARMOR;
                }
                else{
-                  opStack.pushAndApply(new OpSetArmorType(xBar, loadoutStandard, ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR
-                                                                                                         : UpgradeDB.STANDARD_ARMOR));
+                  armor = ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
                }
+               opStack.pushAndApply(new OpSetArmorType(xBar, loadoutStandard, armor));
             }
          });
 
@@ -702,13 +707,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
             @Override
             public void actionPerformed(ActionEvent aE){
-               if( loadout.getChassis().isClan() ){
-                  // FIXME: Implement
+               final HeatSinkUpgrade heatSink;
+               if( loadout.getChassis().getFaction() == Faction.Clan ){
+                  heatSink = doubleHeatSinks.isSelected() ? UpgradeDB.CLAN_DOUBLE_HEATSINKS : UpgradeDB.CLAN_STANDARD_HEATSINKS;
                }
                else{
-                  opStack.pushAndApply(new OpSetHeatSinkType(xBar, loadoutStandard, doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS
-                                                                                                                : UpgradeDB.STANDARD_HEATSINKS));
+                  heatSink = doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
                }
+               opStack.pushAndApply(new OpSetHeatSinkType(xBar, loadoutStandard, heatSink));
             }
          });
       }
@@ -718,12 +724,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          @Override
          public void actionPerformed(ActionEvent aE){
-            if( loadout.getChassis().isClan() ){
-               // FIXME: Implement
-            }
-            else{
-               opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE));
-            }
+            opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE));
          }
       });
 

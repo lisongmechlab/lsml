@@ -21,7 +21,7 @@ package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.MovementProfile;
-import lisong_mechlab.model.chassi.MovementProfileSum;
+import lisong_mechlab.model.chassi.MovementProfileProduct;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
@@ -39,7 +39,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
-   transient private final MovementProfileSum movementProfile;
+   transient private final MovementProfileProduct movementProfile;
    transient private final Upgrades           upgrades;
 
    /**
@@ -49,7 +49,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
     */
    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis, MessageXBar aXBar){
       super(aFactory, aChassis, aXBar);
-      movementProfile = new MovementProfileSum(aChassis.getMovementProfileBase());
+      movementProfile = new MovementProfileProduct(aChassis.getMovementProfileBase());
       upgrades = new Upgrades(aChassis.getArmorType(), aChassis.getStructureType(), UpgradeDB.STANDARD_GUIDANCE, aChassis.getHeatSinkType());
       for(ConfiguredComponentOmniMech component : getComponents()){
          movementProfile.addMovementProfile(component.getOmniPod().getQuirks());
@@ -62,7 +62,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
     */
    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aOmniPodFactory, LoadoutOmniMech aLoadoutOmniMech){
       super(aOmniPodFactory, aLoadoutOmniMech);
-      movementProfile = new MovementProfileSum(getChassis().getMovementProfileBase());
+      movementProfile = new MovementProfileProduct(getChassis().getMovementProfileBase());
       for(ConfiguredComponentOmniMech component : getComponents()){
          movementProfile.addMovementProfile(component.getOmniPod().getQuirks());
       }
@@ -134,5 +134,14 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
    @Override
    public Upgrades getUpgrades(){
       return upgrades;
+   }
+
+   @Override
+   public int getModulesMax(){
+      int ans = 0;
+      for(ConfiguredComponentOmniMech component : getComponents()){
+         ans += component.getOmniPod().getMaxPilotModules();
+      }
+      return ans;
    }
 }

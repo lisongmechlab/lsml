@@ -23,22 +23,32 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.CompositeOperation;
 
 /**
  * This operation removes all armor from a {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
-public class OpStripArmor extends OpLoadoutBase{
+public class OpStripArmor extends CompositeOperation{
+   protected final MessageXBar    xBar;
+   protected final LoadoutBase<?> loadout;
+
    public OpStripArmor(LoadoutBase<?> aLoadout, MessageXBar anXBar){
-      super(aLoadout, anXBar, "strip armor");
+      super("strip armor");
+      loadout = aLoadout;
+      xBar = anXBar;
+   }
+
+   @Override
+   public void buildOperation(){
       for(ConfiguredComponentBase component : loadout.getComponents()){
          if( component.getInternalComponent().getLocation().isTwoSided() ){
-            addOp(new OpSetArmor(xBar, aLoadout, component, ArmorSide.FRONT, 0, true));
-            addOp(new OpSetArmor(xBar, aLoadout, component, ArmorSide.BACK, 0, true));
+            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.FRONT, 0, true));
+            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.BACK, 0, true));
          }
          else{
-            addOp(new OpSetArmor(xBar, aLoadout, component, ArmorSide.ONLY, 0, true));
+            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.ONLY, 0, true));
          }
       }
    }

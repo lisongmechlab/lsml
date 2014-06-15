@@ -68,15 +68,6 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 
       public ResetManualArmorOperation(){
          super("reset manual armor");
-         for(ConfiguredComponentBase loadoutPart : loadout.getComponents()){
-            if( loadoutPart.getInternalComponent().getLocation().isTwoSided() ){
-               addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
-               addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.BACK, loadoutPart.getArmor(ArmorSide.BACK), false));
-            }
-            else{
-               addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmor(ArmorSide.ONLY), false));
-            }
-         }
       }
 
       @Override
@@ -98,6 +89,19 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
             return operation.opLoadout == opLoadout;
          }
          return false;
+      }
+
+      @Override
+      public void buildOperation(){
+         for(ConfiguredComponentBase loadoutPart : loadout.getComponents()){
+            if( loadoutPart.getInternalComponent().getLocation().isTwoSided() ){
+               addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
+               addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.BACK, loadoutPart.getArmor(ArmorSide.BACK), false));
+            }
+            else{
+               addOp(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmor(ArmorSide.ONLY), false));
+            }
+         }
       }
    }
 
@@ -138,6 +142,11 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
          slider.setValue(newValue);
          super.apply();
          disableSliderAction = false;
+      }
+
+      @Override
+      public void buildOperation(){
+         // TODO I think this operation possibly should inherit from OpDistributeArmor         
       }
    }
 

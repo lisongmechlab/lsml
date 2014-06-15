@@ -44,10 +44,10 @@ public class HeatGeneration implements Metric{
       double heat = 0;
       for(Item item : loadout.getAllItems()){
          if( item instanceof Weapon ){
-            heat += ((Weapon)item).getStat("h/s", loadout.getEfficiencies());
+            heat += ((Weapon)item).getStat("h/s", loadout.getEfficiencies(), loadout.getWeaponModifiers());
          }
          else if( item instanceof Engine ){
-            heat += ((Engine)item).getHeat();
+            heat += ((Engine)item).getHeat(loadout.getWeaponModifiers());
          }
       }
       return heat;

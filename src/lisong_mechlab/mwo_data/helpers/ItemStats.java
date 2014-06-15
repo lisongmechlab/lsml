@@ -26,5 +26,7 @@ public class ItemStats{
    public String       name;
    @XStreamAsAttribute
    public String       id;
+   @XStreamAsAttribute
+   public String       faction;
    public ItemStatsLoc Loc;
 }

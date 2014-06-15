@@ -31,6 +31,7 @@ import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -63,24 +64,27 @@ import lisong_mechlab.view.action.RedoLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.action.UndoLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
-import lisong_mechlab.view.render.ItemRenderer;
+import lisong_mechlab.view.render.StyleManager;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
-   private static final String     CMD_UNDO_LOADOUT      = "undo loadout";
-   private static final String     CMD_REDO_LOADOUT      = "redo loadout";
-   private static final String     CMD_RENAME_LOADOUT    = "rename loadout";
-   private static final String     CMD_SAVE_TO_GARAGE    = "add to garage";
-   private static final long       serialVersionUID      = -9181002222136052106L;
-   private static int              openFrameCount        = 0;
-   private static final int        xOffset               = 30, yOffset = 30;
-   private final LoadoutBase<?> loadout;
-   private final MessageXBar       xbar;
-   private final OperationStack    loadoutOperationStack = new OperationStack(128);
-   private final Action            actionUndoLoadout;
-   private final Action            actionRedoLoadout;
-   private final Action            actionRename;
-   private final Action            actionAddToGarage;
-   private final LoadoutInfoPanel  infoPanel;
+   private static final String    CMD_UNDO_LOADOUT      = "undo loadout";
+   private static final String    CMD_REDO_LOADOUT      = "redo loadout";
+   private static final String    CMD_RENAME_LOADOUT    = "rename loadout";
+   private static final String    CMD_SAVE_TO_GARAGE    = "add to garage";
+   private static final long      serialVersionUID      = -9181002222136052106L;
+   private static int             openFrameCount        = 0;
+   private static final int       xOffset               = 30, yOffset = 30;
+   private static final int       ARM_OFFSET            = 60;
+   private static final int       TORSO_OFFSET          = 20;
+   private static final int       HEAD_OFFSET           = 0;
+   private final LoadoutBase<?>   loadout;
+   private final MessageXBar      xbar;
+   private final OperationStack   loadoutOperationStack = new OperationStack(128);
+   private final Action           actionUndoLoadout;
+   private final Action           actionRedoLoadout;
+   private final Action           actionRename;
+   private final Action           actionAddToGarage;
+   private final LoadoutInfoPanel infoPanel;
 
    public LoadoutFrame(LoadoutBase<?> aLoadout, MessageXBar aXBar){
       super(aLoadout.toString(), true, // resizable
@@ -174,6 +178,42 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       return loadoutOperationStack;
    }
 
+   private JPanel createComponentPadPanel(final int height, JComponent aChild){
+      final JPanel padPanel = new JPanel();
+      padPanel.setLayout(new BoxLayout(padPanel, BoxLayout.LINE_AXIS));
+
+      if( null != aChild ){
+         JPanel content = new JPanel(){
+            private static final long serialVersionUID = -7026792320508640323L;
+
+            @Override
+            public Dimension getMaximumSize(){
+               Dimension d = super.getMaximumSize();
+               d.height = height;
+               return d;
+            }
+         };
+         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
+         content.add(aChild);
+         content.add(Box.createVerticalGlue());
+         padPanel.add(content);
+      }
+      padPanel.add(Box.createRigidArea(new Dimension(0, height)));
+      return padPanel;
+   }
+
+   private JPanel createComponentPanel(JPanel aPadPanel, JPanel aContentPanel, JPanel aContentPanel2){
+      final JPanel panel = new JPanel();
+      panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+      panel.add(aPadPanel);
+      panel.add(aContentPanel);
+      if( null != aContentPanel2 ){
+         panel.add(aContentPanel2);
+      }
+      panel.add(Box.createVerticalGlue());
+      return panel;
+   }
+
    private JPanel createMechView(LoadoutBase<?> aLoadout, MessageXBar aXBar){
       final JPanel panel = new JPanel();
       panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
@@ -191,20 +231,20 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       else{
          symmetricArmor = new JCheckBox("Symmetric armor", false);
       }
-      final int symmHeight = 20;
-      symmetricArmor.setMaximumSize(new Dimension(ItemRenderer.getItemWidth() + 20, symmHeight));
-      symmetricArmor.setMinimumSize(new Dimension(ItemRenderer.getItemWidth() + 20, symmHeight));
+      // symmetricArmor.setAlignmentX(LEFT_ALIGNMENT);
+
       // Right Arm
       {
-         final JPanel subPanel = new JPanel();
-         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(symmetricArmor);
-         symmetricArmor.setAlignmentX(LEFT_ALIGNMENT);
-         subPanel.add(Box.createVerticalStrut(50 - symmHeight - 3));
-         subPanel.add(new PartPanel(aLoadout, aLoadout.getComponent(Location.RightArm), aXBar, true, slotDistributor, symmetricArmor,
-                                    loadoutOperationStack));
-         subPanel.add(Box.createVerticalGlue());
-         panel.add(subPanel);
+         JPanel padPanel = createComponentPadPanel(ARM_OFFSET, symmetricArmor);
+         final JPanel arm = new PartPanel(aLoadout, aLoadout.getComponent(Location.RightArm), aXBar, true, slotDistributor, symmetricArmor,
+                                          loadoutOperationStack);
+         JPanel modulePanel = new JPanel();
+         modulePanel.setBorder(StyleManager.sectionBorder("Modules"));
+         modulePanel.setLayout(new BoxLayout(modulePanel, BoxLayout.PAGE_AXIS));
+         modulePanel.add(Box.createHorizontalGlue());
+         //modulePanel.add(Box.createVerticalGlue());
+         modulePanel.add(new PilotModuleList(xbar, loadoutOperationStack, loadout));
+         panel.add(createComponentPanel(padPanel, arm, modulePanel));
       }
 
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
@@ -212,14 +252,11 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       // Right Torso + Leg
       {
-         final JPanel subPanel = new JPanel();
-         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aLoadout, aLoadout.getComponent(Location.RightTorso), aXBar, true, slotDistributor, symmetricArmor,
-                                    loadoutOperationStack));
-         subPanel.add(new PartPanel(aLoadout, aLoadout.getComponent(Location.RightLeg), aXBar, false, slotDistributor, symmetricArmor,
-                                    loadoutOperationStack));
-         subPanel.add(Box.createVerticalGlue());
-         panel.add(subPanel);
+         final JPanel torso = new PartPanel(aLoadout, aLoadout.getComponent(Location.RightTorso), aXBar, true, slotDistributor, symmetricArmor,
+                                            loadoutOperationStack);
+         final JPanel leg = new PartPanel(aLoadout, aLoadout.getComponent(Location.RightLeg), aXBar, false, slotDistributor, symmetricArmor,
+                                          loadoutOperationStack);
+         panel.add(createComponentPanel(createComponentPadPanel(TORSO_OFFSET, null), torso, leg));
       }
 
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
@@ -227,14 +264,11 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       // Center Torso + Head
       {
-         final JPanel subPanel = new JPanel();
-         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aLoadout, aLoadout.getComponent(Location.Head), aXBar, true, slotDistributor, symmetricArmor,
-                                    loadoutOperationStack));
-         subPanel.add(new PartPanel(aLoadout, aLoadout.getComponent(Location.CenterTorso), aXBar, true, slotDistributor, symmetricArmor,
-                                    loadoutOperationStack));
-         subPanel.add(Box.createVerticalGlue());
-         panel.add(subPanel);
+         final JPanel head = new PartPanel(aLoadout, aLoadout.getComponent(Location.Head), aXBar, true, slotDistributor, symmetricArmor,
+                                           loadoutOperationStack);
+         final JPanel torso = new PartPanel(aLoadout, aLoadout.getComponent(Location.CenterTorso), aXBar, true, slotDistributor, symmetricArmor,
+                                            loadoutOperationStack);
+         panel.add(createComponentPanel(createComponentPadPanel(HEAD_OFFSET, null), head, torso));
       }
 
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
@@ -242,14 +276,11 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       // Left Torso + Leg
       {
-         final JPanel subPanel = new JPanel();
-         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(new PartPanel(aLoadout, aLoadout.getComponent(Location.LeftTorso), aXBar, true, slotDistributor, symmetricArmor,
-                                    loadoutOperationStack));
-         subPanel.add(new PartPanel(aLoadout, aLoadout.getComponent(Location.LeftLeg), aXBar, false, slotDistributor, symmetricArmor,
-                                    loadoutOperationStack));
-         subPanel.add(Box.createVerticalGlue());
-         panel.add(subPanel);
+         final JPanel torso = new PartPanel(aLoadout, aLoadout.getComponent(Location.LeftTorso), aXBar, true, slotDistributor, symmetricArmor,
+                                            loadoutOperationStack);
+         final JPanel leg = new PartPanel(aLoadout, aLoadout.getComponent(Location.LeftLeg), aXBar, false, slotDistributor, symmetricArmor,
+                                          loadoutOperationStack);
+         panel.add(createComponentPanel(createComponentPadPanel(TORSO_OFFSET, null), torso, leg));
       }
 
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )
@@ -257,19 +288,10 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
 
       // Left Arm
       {
-         final JPanel subPanel = new JPanel();
-         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.PAGE_AXIS));
-         subPanel.add(Box.createVerticalStrut(50));
-         subPanel.add(new PartPanel(aLoadout, aLoadout.getComponent(Location.LeftArm), aXBar, true, slotDistributor, symmetricArmor,
-                                    loadoutOperationStack));
-         subPanel.add(Box.createVerticalGlue());
-         panel.add(subPanel);
+         final JPanel arm = new PartPanel(aLoadout, aLoadout.getComponent(Location.LeftArm), aXBar, true, slotDistributor, symmetricArmor,
+                                          loadoutOperationStack);
+         panel.add(createComponentPanel(createComponentPadPanel(ARM_OFFSET, null), arm, null));
       }
-      // panel.setVisible(true);
-      // panel.validate();
-      // setMinimumSize(panel.getSize());
-      // setMaximumSize(getMinimumSize());
-      // setPreferredSize(getMinimumSize());
       return panel;
    }
 

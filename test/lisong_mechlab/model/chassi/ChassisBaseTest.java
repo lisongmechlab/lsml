@@ -155,9 +155,9 @@ public abstract class ChassisBaseTest{
    public final void testIsAllowed() throws Exception{
       ChassisBase cut0 = makeDefaultCUT();
       Item clanItem = Mockito.mock(Item.class);
-      Mockito.when(clanItem.isClan()).thenReturn(true);
+      Mockito.when(clanItem.getFaction()).thenReturn(true);
       Item isItem = Mockito.mock(Item.class);
-      Mockito.when(isItem.isClan()).thenReturn(false);
+      Mockito.when(isItem.getFaction()).thenReturn(false);
 
       if( cut0.isClan() ){
          assertTrue(cut0.isAllowed(clanItem));
@@ -236,7 +236,7 @@ public abstract class ChassisBaseTest{
    protected JumpJet makeJumpJet(int aMinTons, int aMaxTons){
       JumpJet jj = Mockito.mock(JumpJet.class);
       Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
-      Mockito.when(jj.isClan()).thenReturn(isClan);
+      Mockito.when(jj.getFaction()).thenReturn(isClan);
       Mockito.when(jj.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
 
       Mockito.when(jj.getMinTons()).thenReturn((double)aMinTons);
@@ -246,7 +246,7 @@ public abstract class ChassisBaseTest{
 
    protected Engine makeEngine(int rating){
       Engine engine = Mockito.mock(Engine.class);
-      Mockito.when(engine.isClan()).thenReturn(isClan);
+      Mockito.when(engine.getFaction()).thenReturn(isClan);
       Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
       Mockito.when(engine.getRating()).thenReturn(rating);
       Mockito.when(engine.getType()).thenReturn(EngineType.XL);

@@ -72,7 +72,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.
          if( item instanceof Weapon && item != ItemDB.AMS ){
             Weapon weapon = (Weapon)item;
 
-            double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange);
+            double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers());
             double period = weapon.getSecondsPerShot(loadout.getEfficiencies());
             double damage = factor * weapon.getDamagePerShot();
 
@@ -86,7 +86,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.
             else if(weapon instanceof BallisticWeapon){
                BallisticWeapon ballisticWeapon = (BallisticWeapon)weapon;
                if(ballisticWeapon.canDoubleFire()){
-                  damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, loadout.getEfficiencies(), aRange));
+                  damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, loadout.getEfficiencies(), loadout.getWeaponModifiers(), aRange));
                   continue;
                }
             }

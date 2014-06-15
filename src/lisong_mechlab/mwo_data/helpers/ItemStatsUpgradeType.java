@@ -21,17 +21,42 @@ package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ItemStatsUpgradeType extends ItemStats{
-   public static class UpgradeTypeStatsTag{
+public class ItemStatsUpgradeType extends ItemStatsModule{
+   public static class ArmorTypeStatsType{
       @XStreamAsAttribute
-      public String type;
+      public double armorPerTon;
       @XStreamAsAttribute
-      public int    slots;
-      @XStreamAsAttribute
-      public double pointMultiplier;
-      @XStreamAsAttribute
-      public int    associatedItem;
+      public int    containerId;
    }
 
-   public UpgradeTypeStatsTag UpgradeTypeStats;
+   public static class SlotUsageType{
+      @XStreamAsAttribute
+      public int slots;
+      @XStreamAsAttribute
+      public int fixedSlotItem;
+   }
+
+   public static class StructureTypeStatsType{
+      @XStreamAsAttribute
+      public double weightPerTon;
+   }
+
+   public static class HeatSinkTypeStatsType{
+      @XStreamAsAttribute
+      public int compatibleHeatSink;
+   }
+
+   public static class ArtemisTypeStatsType{
+      @XStreamAsAttribute
+      public int    extraSlots;
+      @XStreamAsAttribute
+      public double extraTons;
+   }
+
+   public ArmorTypeStatsType     ArmorTypeStats;
+   public StructureTypeStatsType StructureTypeStats;
+   public HeatSinkTypeStatsType  HeatSinkTypeStats;
+   public ArtemisTypeStatsType   ArtemisTypeStats;
+   public SlotUsageType          SlotUsage;
+
 }

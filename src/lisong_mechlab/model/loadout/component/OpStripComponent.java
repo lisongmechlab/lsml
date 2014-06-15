@@ -65,4 +65,9 @@ public class OpStripComponent extends CompositeOperation{
          addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.ONLY, 0, false));
       }
    }
+
+   @Override
+   public void buildOperation(){
+      // No-op The preparation is invariant of time and performed in constructor
+   }
 }

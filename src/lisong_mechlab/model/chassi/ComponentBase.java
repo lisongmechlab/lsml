@@ -22,6 +22,8 @@ package lisong_mechlab.model.chassi;
 import java.util.Collections;
 import java.util.List;
 
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -71,10 +73,21 @@ public abstract class ComponentBase{
     */
    public int getFixedItemSlots(){
       int ans = 0;
+      int hs = 0;
+      int hsSlots = 0;
+      int hsSize = 0;
       for(Item item : getFixedItems()){
          ans += item.getNumCriticalSlots();
+         if( item instanceof Engine ){
+            Engine engine = (Engine)item;
+            hsSlots = engine.getNumHeatsinkSlots();
+         }
+         else if( item instanceof HeatSink ){
+            hs++;
+            hsSize = item.getNumCriticalSlots();
+         }
       }
-      return ans;
+      return ans - Math.min(hs, hsSlots) * hsSize;
    }
 
    /**
@@ -83,7 +96,7 @@ public abstract class ComponentBase{
    public int getSlots(){
       return slots;
    }
-   
+
    /**
     * @return The {@link Location} this component is mounted at.
     */
@@ -109,7 +122,7 @@ public abstract class ComponentBase{
    public String toString(){
       return getLocation().toString();
    }
-   
+
    /**
     * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
     * only useful if {@link ChassisBase#isAllowed(Item)} returns true.

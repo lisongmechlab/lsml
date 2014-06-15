@@ -84,8 +84,9 @@ public class GhostHeat implements Metric{
          double maxbaseheat = Double.NEGATIVE_INFINITY;
          Weapon maxweapon = null;
          for(Weapon w : group){
-            if( w.getHeat() > maxbaseheat ){
-               maxbaseheat = w.getHeat();
+            // XXX: It's not certain that heat applied from modules will affect the base heat value 
+            if( w.getHeat(loadout.getWeaponModifiers()) > maxbaseheat ){
+               maxbaseheat = w.getHeat(loadout.getWeaponModifiers());
                maxweapon = w;
             }
          }
@@ -98,7 +99,7 @@ public class GhostHeat implements Metric{
       double penalty = 0;
       int count = aCount;
       while( count > aWeapon.getGhostHeatMaxFreeAlpha() ){
-         penalty += HEAT_SCALE[count] * aWeapon.getGhostHeatMultiplier() * aWeapon.getHeat();
+         penalty += HEAT_SCALE[count] * aWeapon.getGhostHeatMultiplier() * aWeapon.getHeat(loadout.getWeaponModifiers());
          count--;
       }
       return penalty;

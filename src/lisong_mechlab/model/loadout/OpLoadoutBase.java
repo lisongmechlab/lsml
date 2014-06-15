@@ -35,14 +35,14 @@ public abstract class OpLoadoutBase extends CompositeOperation{
    /**
     * @param aLoadout
     *           The {@link LoadoutStandard} to operate on.
-    * @param anXBar
+    * @param aXBar
     *           The {@link MessageXBar} to announce changes on the loadout to.
     * @param aDescription
     *           A human readable description of the operation.
     */
-   public OpLoadoutBase(LoadoutBase<?> aLoadout, MessageXBar anXBar, String aDescription){
+   public OpLoadoutBase(LoadoutBase<?> aLoadout, MessageXBar aXBar, String aDescription){
       super(aDescription);
       loadout = aLoadout;
-      xBar = anXBar;
+      xBar = aXBar;
    }
 }

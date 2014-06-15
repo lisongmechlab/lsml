@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Collection;
 import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardPointType;
@@ -64,10 +65,10 @@ public class MissileWeapon extends AmmoWeapon{
    }
 
    @Override
-   public double getRangeMax(){
+   public double getRangeMax(Collection<WeaponModifier> aPilotModules){
       // Missile fall off is a bit different from other weapons because long = max.
       // Emulate a steep fall off by nudging max ever so slightly
-      return super.getRangeMax() + Math.ulp(super.getRangeMax()) * RANGE_ULP_FUZZ;
+      return super.getRangeMax(aPilotModules) + Math.ulp(super.getRangeMax(aPilotModules)) * RANGE_ULP_FUZZ;
    }
 
    @Override

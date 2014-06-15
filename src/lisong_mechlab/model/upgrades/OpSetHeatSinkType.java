@@ -28,6 +28,7 @@ import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
@@ -35,89 +36,77 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-public class OpSetHeatSinkType extends OpUpgradeBase{
+public class OpSetHeatSinkType extends CompositeOperation{
    private final HeatSinkUpgrade oldValue;
    private final HeatSinkUpgrade newValue;
    private final UpgradesMutable upgrades;
    private final LoadoutStandard loadout;
-
-   private boolean               operationReady = false;
+   private final MessageXBar     xBar;
 
    /**
     * Creates a {@link OpSetHeatSinkType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
     * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
     * 
-    * @param anUpgrades
+    * @param aUpgrades
     *           The {@link UpgradesMutable} object to alter with this {@link Operation}.
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public OpSetHeatSinkType(UpgradesMutable anUpgrades, HeatSinkUpgrade aHeatsinkUpgrade){
-      super(null, aHeatsinkUpgrade.getName());
-      upgrades = anUpgrades;
+   public OpSetHeatSinkType(UpgradesMutable aUpgrades, HeatSinkUpgrade aHeatsinkUpgrade){
+      super(aHeatsinkUpgrade.getName());
+      upgrades = aUpgrades;
       loadout = null;
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
+      xBar = null;
    }
 
    /**
     * Creates a new {@link OpSetHeatSinkType} that will change the heat sink type of a {@link LoadoutStandard}.
     * 
-    * @param anXBar
+    * @param aXBar
     *           A {@link MessageXBar} to signal changes in DHS status on.
     * @param aLoadout
     *           The {@link LoadoutStandard} to alter.
     * @param aHeatsinkUpgrade
     *           The new heat sink type.
     */
-   public OpSetHeatSinkType(MessageXBar anXBar, LoadoutStandard aLoadout, HeatSinkUpgrade aHeatsinkUpgrade){
-      super(anXBar, aHeatsinkUpgrade.getName());
+   public OpSetHeatSinkType(MessageXBar aXBar, LoadoutStandard aLoadout, HeatSinkUpgrade aHeatsinkUpgrade){
+      super(aHeatsinkUpgrade.getName());
       upgrades = aLoadout.getUpgrades();
       loadout = aLoadout;
       oldValue = upgrades.getHeatSink();
       newValue = aHeatsinkUpgrade;
+      xBar = aXBar;
    }
 
    @Override
    protected void apply(){
-      prepareOperation();
       set(newValue);
       super.apply();
    }
 
    @Override
    protected void undo(){
-      super.undo();
       set(oldValue);
+      super.undo();
    }
 
    protected void set(HeatSinkUpgrade aValue){
       if( aValue != upgrades.getHeatSink() ){
-         HeatSinkUpgrade old = upgrades.getHeatSink();
          upgrades.setHeatSink(aValue);
-
-         try{
-            verifyLoadoutInvariant(loadout);
-         }
-         catch( Exception e ){
-            upgrades.setHeatSink(old);
-            throw new IllegalArgumentException("Couldn't change heat sinks: ", e);
-         }
 
          if( xBar != null )
             xBar.post(new Message(ChangeMsg.HEATSINKS, upgrades));
       }
    }
 
-   private void prepareOperation(){
-      if( operationReady )
-         return;
-      operationReady = true;
-
+   @Override
+   public void buildOperation(){
       if( oldValue != newValue ){
          HeatSink oldHsType = oldValue.getHeatSinkType();
          HeatSink newHsType = newValue.getHeatSinkType();
-         
+
          int globallyRemoved = 0;
          int globalEngineHs = 0;
 
@@ -134,9 +123,9 @@ public class OpSetHeatSinkType extends OpUpgradeBase{
             globalEngineHs += Math.min(locallyRemoved, component.getEngineHeatsinksMax());
          }
 
-         int globalSlotsFree = (globallyRemoved - globalEngineHs)*oldHsType.getNumCriticalSlots() + loadout.getNumCriticalSlotsFree();
+         int globalSlotsFree = (globallyRemoved - globalEngineHs) * oldHsType.getNumCriticalSlots() + loadout.getNumCriticalSlotsFree();
          int globalHsLag = 0;
-         
+
          for(ConfiguredComponentBase component : loadout.getComponents()){
             int hsRemoved = 0;
             for(Item item : component.getItemsEquipped()){ // Don't remove fixed HS, not that we could on an omnimech
@@ -150,12 +139,12 @@ public class OpSetHeatSinkType extends OpUpgradeBase{
             int slotsFreed = (hsRemoved - hsInEngine) * oldHsType.getNumCriticalSlots();
             int slotsFree = Math.min(slotsFreed + component.getSlotsFree(), globalSlotsFree);
             int hsToAdd = Math.min(hsRemoved + globalHsLag, hsInEngine + slotsFree / newHsType.getNumCriticalSlots());
-            
+
             globalSlotsFree -= newHsType.getNumCriticalSlots() * (hsToAdd - component.getEngineHeatsinksMax());
-            if(hsToAdd < hsRemoved){
+            if( hsToAdd < hsRemoved ){
                globalHsLag += hsRemoved - hsToAdd;
             }
-            
+
             while( hsToAdd > 0 ){
                hsToAdd--;
                addOp(new OpAddItem(xBar, loadout, component, newHsType));

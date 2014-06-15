@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Collection;
 import java.util.Comparator;
 
 import lisong_mechlab.model.Efficiencies;
@@ -103,7 +104,7 @@ public class BallisticWeapon extends AmmoWeapon{
    }
 
    @Override
-   public double getRangeEffectivity(double range){
+   public double getRangeEffectivity(double range, Collection<WeaponModifier> aPilotModules){
       double spreadFactor = 1.0;
       if( hasSpread() ){
          // Assumption:
@@ -120,7 +121,7 @@ public class BallisticWeapon extends AmmoWeapon{
          double P_hit = 2 * gaussianDistribution.cdf(maxAngle / spread) - 1;
          spreadFactor = P_hit;
       }
-      return spreadFactor * super.getRangeEffectivity(range);
+      return spreadFactor * super.getRangeEffectivity(range, aPilotModules);
    }
 
    public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;

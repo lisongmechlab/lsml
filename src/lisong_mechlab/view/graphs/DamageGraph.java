@@ -129,7 +129,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(new Comparator<Weapon>(){
          @Override
          public int compare(Weapon aO1, Weapon aO2){
-            int comp = Double.compare(aO2.getRangeMax(), aO1.getRangeMax());
+            int comp = Double.compare(aO2.getRangeMax(loadout.getWeaponModifiers()), aO1.getRangeMax(loadout.getWeaponModifiers()));
             if( comp == 0 )
                return aO1.compareTo(aO2);
             return comp;
@@ -142,8 +142,8 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
             final Weapon weapon = entry.getKey();
             final double ratio = entry.getValue();
-            final double dps = weapon.getStat("d/s", loadout.getEfficiencies());
-            final double rangeEff = weapon.getRangeEffectivity(range);
+            final double dps = weapon.getStat("d/s", loadout.getEfficiencies(), loadout.getWeaponModifiers());
+            final double rangeEff = weapon.getRangeEffectivity(range, loadout.getWeaponModifiers());
 
             if( !data.containsKey(weapon) ){
                data.put(weapon, new ArrayList<Pair<Double, Double>>());

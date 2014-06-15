@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
@@ -110,7 +110,7 @@ public class StockLoadout{
        * @return The {@link Item} IDs that are housed in this {@link StockComponent}.
        */
       public List<Integer> getItems(){
-         if(items ==null){
+         if( items == null ){
             return new ArrayList<>();
          }
          return items;
@@ -157,10 +157,10 @@ public class StockLoadout{
    }
 
    /**
-    * @return The {@link ChassisStandard} for this {@link StockLoadout}.
+    * @return The {@link ChassisBase} for this {@link StockLoadout}.
     */
-   public ChassisStandard getChassis(){
-      return (ChassisStandard)ChassisDB.lookup(chassisId);
+   public ChassisBase getChassis(){
+      return ChassisDB.lookup(chassisId);
    }
 
    /**

@@ -42,6 +42,9 @@ public class UpgradeDB{
    public static final HeatSinkUpgrade        CLAN_DOUBLE_HEATSINKS;
    public static final ArmorUpgrade           CLAN_FERRO_FIBROUS_ARMOR;
    public static final StructureUpgrade       CLAN_ENDO_STEEL_STRUCTURE;
+   public static final HeatSinkUpgrade        CLAN_STANDARD_HEATSINKS;
+   public static final ArmorUpgrade           CLAN_STANDARD_ARMOR;
+   public static final StructureUpgrade       CLAN_STANDARD_STRUCTURE;
    private static final Map<Integer, Upgrade> id2upgrade;
 
    /**
@@ -77,21 +80,22 @@ public class UpgradeDB{
       id2upgrade = new TreeMap<Integer, Upgrade>();
       for(Upgrade upgrade : dataCache.getUpgrades()){
          id2upgrade.put(upgrade.getMwoId(), upgrade);
-         if( upgrade.getAssociateItemId() > 0 )
-            id2upgrade.put(upgrade.getAssociateItemId(), upgrade);
       }
 
       STANDARD_ARMOR = (ArmorUpgrade)lookup(2810);
       FERRO_FIBROUS_ARMOR = (ArmorUpgrade)lookup(2811);
-      CLAN_FERRO_FIBROUS_ARMOR = (ArmorUpgrade)lookup(30000); // TODO: Wrong number
+      CLAN_FERRO_FIBROUS_ARMOR = (ArmorUpgrade)lookup(2815);
+      CLAN_STANDARD_ARMOR = (ArmorUpgrade)lookup(2816);
 
       STANDARD_STRUCTURE = (StructureUpgrade)lookup(3100);
       ENDO_STEEL_STRUCTURE = (StructureUpgrade)lookup(3101);
-      CLAN_ENDO_STEEL_STRUCTURE = (StructureUpgrade)lookup(30001); // TODO: Wrong number
-      
+      CLAN_ENDO_STEEL_STRUCTURE = (StructureUpgrade)lookup(3102);
+      CLAN_STANDARD_STRUCTURE = (StructureUpgrade)lookup(3103);
+
       STANDARD_HEATSINKS = (HeatSinkUpgrade)lookup(3003);
       DOUBLE_HEATSINKS = (HeatSinkUpgrade)lookup(3002);
-      CLAN_DOUBLE_HEATSINKS = (HeatSinkUpgrade)lookup(30002); // TODO: Wrong number
+      CLAN_DOUBLE_HEATSINKS = (HeatSinkUpgrade)lookup(3005);
+      CLAN_STANDARD_HEATSINKS = (HeatSinkUpgrade)lookup(3006);
 
       STANDARD_GUIDANCE = (GuidanceUpgrade)lookup(3051);
       ARTEMIS_IV = (GuidanceUpgrade)lookup(3050);

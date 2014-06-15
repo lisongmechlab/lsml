@@ -22,28 +22,35 @@ package lisong_mechlab.mwo_data;
 import java.io.InputStream;
 import java.util.List;
 
-import lisong_mechlab.mwo_data.helpers.MdfComponent;
-import lisong_mechlab.mwo_data.helpers.MdfInternal;
-import lisong_mechlab.mwo_data.helpers.MdfMech;
-import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
-
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
- * This class represents the XML content of the .mdf files.
+ * This class models the format of MechIdMap.xml from the game data files to facilitate easy parsing.
  * 
  * @author Li Song
  */
-public class MechDefinition{
-   public MdfMech            Mech;
-   public List<MdfComponent> ComponentList;
+@XStreamAlias("MechIdMap")
+public class XMLMechIdMap{
+   public class Mech{
+      @XStreamAsAttribute
+      public int baseID;
+      @XStreamAsAttribute
+      public int variantID;
+   }
 
-   public MdfMovementTuning  MovementTuningConfiguration;
+   @XStreamImplicit(itemFieldName = "Mech")
+   public List<Mech> MechIdMap;
 
-   public static MechDefinition fromXml(InputStream is){
-      XStream xstream = new XStream(new StaxDriver()){
+   private XMLMechIdMap(){}
+
+   public static XMLMechIdMap fromXml(InputStream is){
+      XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
          @Override
          protected MapperWrapper wrapMapper(MapperWrapper next){
             return new MapperWrapper(next){
@@ -58,11 +65,7 @@ public class MechDefinition{
          }
       };
       xstream.autodetectAnnotations(true);
-      xstream.alias("MechDefinition", MechDefinition.class);
-      xstream.alias("Mech", MdfMech.class);
-      xstream.alias("Component", MdfComponent.class);
-      xstream.alias("Internal", MdfInternal.class);
-      xstream.alias("MovementTuningConfiguration", MdfMovementTuning.class);
-      return (MechDefinition)xstream.fromXML(is);
+      xstream.alias("MechIdMap", XMLMechIdMap.class);
+      return (XMLMechIdMap)xstream.fromXML(is);
    }
 }
