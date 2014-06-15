@@ -77,11 +77,11 @@ public class ItemDB{
       return ans;
    }
 
-   public static Item lookup(int anMwoIndex){
-      if( !mwoidx2item.containsKey(anMwoIndex) ){
-         throw new IllegalArgumentException("No item with that index: " + anMwoIndex);
+   public static Item lookup(int aMwoIndex){
+      if( !mwoidx2item.containsKey(aMwoIndex) ){
+         throw new IllegalArgumentException("No item with that index: " + aMwoIndex);
       }
-      return mwoidx2item.get(anMwoIndex);
+      return mwoidx2item.get(aMwoIndex);
    }
 
    private static void put(Item anItem){

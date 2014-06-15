@@ -31,8 +31,6 @@ import lisong_mechlab.model.chassi.ChassisVariant;
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;

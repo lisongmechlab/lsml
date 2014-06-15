@@ -22,12 +22,6 @@ package lisong_mechlab.mwo_data;
 import java.io.InputStream;
 import java.util.List;
 
-import lisong_mechlab.mwo_data.helpers.MdfCockpit;
-import lisong_mechlab.mwo_data.helpers.MdfComponent;
-import lisong_mechlab.mwo_data.helpers.MdfItem;
-import lisong_mechlab.mwo_data.helpers.MdfMech;
-import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
