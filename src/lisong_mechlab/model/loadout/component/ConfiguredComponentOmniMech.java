@@ -27,6 +27,8 @@ import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
@@ -104,7 +106,28 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
 
    @Override
    public int getSlotsUsed(){
-      return super.getSlotsUsed() + getInternalComponent().getDynamicArmorSlots() + getInternalComponent().getDynamicStructureSlots();
+      int slots = 0;
+      int engineHsSlots = 0;
+      int numHs = 0;
+      int hsSize = 0;
+      for(Item item : getItemsFixed()){
+         slots += item.getNumCriticalSlots();
+         if( item instanceof Engine ){
+            engineHsSlots = ((Engine)item).getNumHeatsinkSlots();
+         }
+         else if( item instanceof HeatSink ){
+            hsSize = item.getNumCriticalSlots();
+            numHs++;
+         }
+      }
+      for(Item item : getItemsEquipped()){
+         slots += item.getNumCriticalSlots();
+         if( item instanceof HeatSink ){
+            hsSize = item.getNumCriticalSlots();
+            numHs++;
+         }
+      }
+      return slots + getInternalComponent().getDynamicArmorSlots() + getInternalComponent().getDynamicStructureSlots() - Math.min(engineHsSlots, numHs)*hsSize;
    }
 
    /**
@@ -122,10 +145,4 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
       return getOmniPod().hasMissileBayDoors();
    }
 
-   private List<Item> stripHALAA(){
-      List<Item> ans = new ArrayList<>(getInternalComponent().getFixedItems());
-      ans.remove(ItemDB.LAA);
-      ans.remove(ItemDB.HA);
-      return ans;
-   }
 }
