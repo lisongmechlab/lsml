@@ -76,7 +76,7 @@ public class XMLItemStats{
       xstream.alias("OmniPodList", XMLItemStats.class);
       xstream.alias("UpgradeTypeList", XMLItemStats.class);
       xstream.alias("ModuleList", XMLItemStats.class);
-      
+
       xstream.alias("Mech", XMLItemStatsMech.class);
       xstream.alias("Weapon", ItemStatsWeapon.class);
       xstream.alias("Module", ItemStatsModule.class);

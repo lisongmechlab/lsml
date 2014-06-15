@@ -27,11 +27,12 @@ import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
  * @author Li Song
  */
 public class BaseMovementProfile implements MovementProfile{
-   private final MdfMovementTuning mdf; // TODO: Do not use the parsing classes, even though this is essentially a wrapper.
+   private final MdfMovementTuning mdf;      // TODO: Do not use the parsing classes, even though this is essentially a
+                                              // wrapper.
    private final MovementArchetype archetype;
 
    public BaseMovementProfile(MdfMovementTuning aMdf){
-      mdf =  aMdf;
+      mdf = aMdf;
       archetype = MovementArchetype.valueOf(mdf.MovementArchetype);
    }
 
@@ -84,6 +85,7 @@ public class BaseMovementProfile implements MovementProfile{
    public double getArmPitchMax(){
       return mdf.MaxArmRotationPitch;
    }
+
    @Override
    public double getArmPitchSpeed(){
       return mdf.ArmTurnSpeedPitch;

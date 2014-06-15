@@ -48,7 +48,8 @@ public class DynamicSlotDistributor{
    }
 
    /**
-    * Returns the number of dynamic structure slots that should be visualized for the given {@link ConfiguredComponentBase}.
+    * Returns the number of dynamic structure slots that should be visualized for the given
+    * {@link ConfiguredComponentBase}.
     * 
     * @param aComponent
     *           The {@link ConfiguredComponentBase} to get results for.
@@ -59,7 +60,7 @@ public class DynamicSlotDistributor{
          ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech)aComponent;
          return component.getInternalComponent().getDynamicStructureSlots();
       }
-      
+
       final int structSlots = loadout.getUpgrades().getStructure().getExtraSlots();
       final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();
       if( structSlots < 1 )
@@ -83,7 +84,7 @@ public class DynamicSlotDistributor{
          ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech)aComponent;
          return component.getInternalComponent().getDynamicArmorSlots();
       }
-      
+
       final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();
       if( armorSlots < 1 )
          return 0;

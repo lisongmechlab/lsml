@@ -17,30 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model;
+package lisong_mechlab.model.chassi;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
- * An enumeration of all the available factions.
+ * Test suite for {@link OmniPodDB}.
  * 
  * @author Li Song
  */
-public enum Faction{
-   Any, InnerSphere, Clan;
+public class OmniPodDBTest{
 
-   public boolean isCompatible(Faction aFaction){
-      if( this == Any || aFaction == Any )
-         return true;
-      return this == aFaction;
-   }
+   @Test
+   public void testLoadOmniPod_ECM(){
+      OmniPod kfx_c_ra = OmniPodDB.lookup(30192);
+      
+      assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ENERGY));
+      assertEquals(3, kfx_c_ra.getHardPointCount(HardPointType.AMS));
+      assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ECM));
 
-   /**
-    * @param aFaction
-    *           The value found in MWO data files.
-    * @return The {@link Faction} matching the MWO string value.
-    */
-   public static Faction fromMwo(String aFaction){
-      if( null == aFaction || "clan,innersphere".equals(aFaction.toLowerCase()) )
-         return Any;
-      return valueOf(aFaction);
    }
 }

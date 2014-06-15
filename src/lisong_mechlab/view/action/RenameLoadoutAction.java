@@ -33,12 +33,12 @@ import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 public class RenameLoadoutAction extends AbstractAction{
-   private static final String     SHORTCUT_STROKE  = "control R";
-   private static final long       serialVersionUID = -673375419929455179L;
-   private final LoadoutFrame      loadoutFrame;
+   private static final String  SHORTCUT_STROKE  = "control R";
+   private static final long    serialVersionUID = -673375419929455179L;
+   private final LoadoutFrame   loadoutFrame;
    private final LoadoutBase<?> loadout;
-   private final MessageXBar       xBar;
-   private final OperationStack    stack;
+   private final MessageXBar    xBar;
+   private final OperationStack stack;
 
    public RenameLoadoutAction(LoadoutBase<?> aLoadout, MessageXBar aXBar, OperationStack aStack){
       super("Rename loadout...");

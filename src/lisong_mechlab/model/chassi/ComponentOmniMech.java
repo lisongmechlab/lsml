@@ -118,11 +118,13 @@ public class ComponentOmniMech extends ComponentBase{
    }
 
    /**
-    * @param aItem The item to check with.
-    * @return <code>true</code> if the Lower Arm Actuator (LAA) and/or Hand Actuator (HA) should be removed if the given item is equipped.
+    * @param aItem
+    *           The item to check with.
+    * @return <code>true</code> if the Lower Arm Actuator (LAA) and/or Hand Actuator (HA) should be removed if the given
+    *         item is equipped.
     */
    public boolean shouldRemoveArmActuators(Item aItem){
-      if(aItem instanceof Weapon){
+      if( aItem instanceof Weapon ){
          boolean isLargeBore = false;
          isLargeBore |= aItem.getName().toLowerCase().contains("ppc");
          isLargeBore |= aItem.getName().toLowerCase().contains("gauss");

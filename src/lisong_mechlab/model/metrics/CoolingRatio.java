@@ -22,9 +22,9 @@ package lisong_mechlab.model.metrics;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
- * This {@link Metric} calculates the effectiveness of the {@link LoadoutStandard}'s cooling. A ratio of 0.0 means no heat is
- * dissipated. A ratio of 1.0 means all generated heat is dissipated. A ratio of > 1.0 means the mech has too much
- * cooling.
+ * This {@link Metric} calculates the effectiveness of the {@link LoadoutStandard}'s cooling. A ratio of 0.0 means no
+ * heat is dissipated. A ratio of 1.0 means all generated heat is dissipated. A ratio of > 1.0 means the mech has too
+ * much cooling.
  * 
  * @author Li Song
  */

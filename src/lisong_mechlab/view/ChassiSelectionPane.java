@@ -176,6 +176,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          return Integer.toString(((ChassisStandard)aSourceRowObject).getMassMax());
       }
    }
+
    static class JumpJetsColumn extends TableColumn{
       private static final long serialVersionUID = -3845466109033447928L;
       private final JPanel      panel            = new JPanel();
@@ -206,17 +207,17 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          };
       }
    }
-   
+
    static class PilotModulesColumn extends TableColumn{
       private static final long serialVersionUID = -3845466109033447928L;
       private final JPanel      panel            = new JPanel();
-      private final JLabel      modules              = new JLabel();
+      private final JLabel      modules          = new JLabel();
 
       public PilotModulesColumn(){
          super(0);
          panel.add(modules);
          setHeaderValue("Modules");
-         //StyleManager.styleThinItem(jjs, ItemDB.lookup("JUMP JETS - CLASS V"));
+         // StyleManager.styleThinItem(jjs, ItemDB.lookup("JUMP JETS - CLASS V"));
       }
 
       @Override
@@ -226,7 +227,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
                ChassisStandard chassi = (ChassisStandard)aValue;
                modules.setText(Integer.toString(chassi.getPilotModulesMax()));
-                  
+
                return panel;
             }
          };

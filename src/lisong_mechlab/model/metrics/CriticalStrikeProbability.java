@@ -33,9 +33,10 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
  * @author Li Song
  */
 public class CriticalStrikeProbability implements ItemMetric{
-   public final static double        CRIT_CHANCE[] = {0.25, 0.14, 0.03}; // 25% risk of 1 hit, 15% risk of 2 hits, 3%
-                                                                         // risk of 3
-                                                                         // hits
+   public final static double            CRIT_CHANCE[] = {0.25, 0.14, 0.03}; // 25% risk of 1 hit, 15% risk of 2 hits,
+                                                                             // 3%
+                                                                             // risk of 3
+                                                                             // hits
    private final ConfiguredComponentBase loadoutPart;
 
    public CriticalStrikeProbability(ConfiguredComponentBase aLoadoutPart){
@@ -46,7 +47,7 @@ public class CriticalStrikeProbability implements ItemMetric{
    public double calculate(Item aItem){
       int slots = 0;
       for(Item it : loadoutPart.getItemsEquipped()){
-         
+
          // TODO: Create Item#isCrittable and use it here
          if( it instanceof Internal && (it != ConfiguredComponentBase.ENGINE_INTERNAL && it != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) ){
             continue;

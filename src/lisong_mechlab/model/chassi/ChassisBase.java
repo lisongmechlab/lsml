@@ -230,7 +230,7 @@ public abstract class ChassisBase{
     * @return <code>true</code> if this chassis can equip the {@link Item}.
     */
    public boolean isAllowed(Item aItem){
-      if( !aItem.getFaction().isCompatible(getFaction())){
+      if( !aItem.getFaction().isCompatible(getFaction()) ){
          return false;
       }
       else if( aItem instanceof Internal ){

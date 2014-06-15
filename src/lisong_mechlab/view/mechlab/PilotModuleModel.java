@@ -80,7 +80,7 @@ public class PilotModuleModel implements ListModel<PilotModule>, MessageXBar.Rea
 
    @Override
    public PilotModule getElementAt(int aIndex){
-      if(aIndex >= loadout.getModules().size())
+      if( aIndex >= loadout.getModules().size() )
          return null;
       return loadout.getModules().get(aIndex);
    }

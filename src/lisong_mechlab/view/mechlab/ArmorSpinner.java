@@ -36,15 +36,16 @@ import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 
 public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Reader{
-   private static final long         serialVersionUID = 2130487332299251881L;
+   private static final long             serialVersionUID = 2130487332299251881L;
    private final ConfiguredComponentBase part;
-   private final ArmorSide           side;
-   private final JCheckBox           symmetric;
-   private final OperationStack      opStack;
-   private final MessageXBar         xBar;
-   private final LoadoutBase<?>   loadout;
+   private final ArmorSide               side;
+   private final JCheckBox               symmetric;
+   private final OperationStack          opStack;
+   private final MessageXBar             xBar;
+   private final LoadoutBase<?>          loadout;
 
-   public ArmorSpinner(LoadoutBase<?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
+   public ArmorSpinner(LoadoutBase<?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric,
+                       OperationStack anOperationStack){
       part = aPart;
       loadout = aLoadout;
       side = anArmorSide;

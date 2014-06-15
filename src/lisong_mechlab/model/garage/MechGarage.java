@@ -72,8 +72,8 @@ public class MechGarage{
          LoadoutAdded, LoadoutRemoved, NewGarage, Saved
       }
 
-      public final Type               type;
-      public final MechGarage         garage;
+      public final Type            type;
+      public final MechGarage      garage;
       private final LoadoutBase<?> loadout;
 
       public Message(Type aType, MechGarage aGarage, LoadoutBase<?> aLoadout){
@@ -98,8 +98,8 @@ public class MechGarage{
    }
 
    private final List<LoadoutBase<?>> mechs = new ArrayList<>();
-   private File                          file;
-   private transient MessageXBar         xBar;
+   private File                       file;
+   private transient MessageXBar      xBar;
 
    /**
     * Creates a new, empty {@link MechGarage}.

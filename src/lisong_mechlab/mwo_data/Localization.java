@@ -42,10 +42,10 @@ public class Localization{
 
    public static String key2string(String aKey){
       String canon = canonize(aKey);
-      if( !key2string.containsKey(canon) ){        
-         if(aKey.contains("_desc"))
+      if( !key2string.containsKey(canon) ){
+         if( aKey.contains("_desc") )
             return "Empty Description";
-         
+
          throw new IllegalArgumentException("No such key found!: " + canon);
       }
       return key2string.get(canon);

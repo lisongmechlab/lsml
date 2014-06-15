@@ -42,7 +42,7 @@ import lisong_mechlab.util.MessageXBar.Message;
  */
 public class HeatOverTime implements TimeMetric, MessageXBar.Reader{
 
-   private final LoadoutBase<?>      loadout;
+   private final LoadoutBase<?>         loadout;
    private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
 
    /**
@@ -87,7 +87,8 @@ public class HeatOverTime implements TimeMetric, MessageXBar.Reader{
                   continue;
                }
             }
-            heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies()), weapon.getHeat(loadout.getWeaponModifiers())));
+            heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies()),
+                                                         weapon.getHeat(loadout.getWeaponModifiers())));
          }
          if( item instanceof Engine ){
             heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine)item).getHeat(loadout.getWeaponModifiers())));

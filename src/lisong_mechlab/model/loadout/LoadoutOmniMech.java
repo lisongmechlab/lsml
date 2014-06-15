@@ -40,7 +40,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
    transient private final MovementProfileProduct movementProfile;
-   transient private final Upgrades           upgrades;
+   transient private final Upgrades               upgrades;
 
    /**
     * @param aFactory

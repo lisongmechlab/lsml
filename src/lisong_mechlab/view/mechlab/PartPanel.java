@@ -164,6 +164,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          Dimension max = omnipodSelection.getMaximumSize();
          max.height = ItemRenderer.getItemHeight();
          omnipodSelection.setMaximumSize(max);
+         omnipodSelection.setSelectedItem(((ConfiguredComponentOmniMech)component).getOmniPod());
          omnipodSelection.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){

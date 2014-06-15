@@ -77,9 +77,9 @@ public class OpChangeOmniPod extends CompositeOperation{
    @Override
    protected void apply(){
       super.apply();
-      
-      component.setOmniPod(newOmniPod);     
-      if(null != xBar){
+
+      component.setOmniPod(newOmniPod);
+      if( null != xBar ){
          xBar.post(new ConfiguredComponentBase.Message(component, Type.OmniPodChanged));
       }
    }
@@ -87,10 +87,10 @@ public class OpChangeOmniPod extends CompositeOperation{
    @Override
    protected void undo(){
       component.setOmniPod(oldOmniPod);
-      if(null != xBar){
+      if( null != xBar ){
          xBar.post(new ConfiguredComponentBase.Message(component, Type.OmniPodChanged));
       }
-      
+
       super.undo();
    }
 }

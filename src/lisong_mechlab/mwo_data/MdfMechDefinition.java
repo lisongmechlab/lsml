@@ -102,14 +102,13 @@ public class MdfMechDefinition{
          ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache);
          components[componentStandard.getLocation().ordinal()] = componentStandard;
       }
-      
+
       StructureUpgrade structure = (StructureUpgrade)aDataCache.findUpgrade(aLoadout.upgrades.structure.ItemID);
       ArmorUpgrade armor = (ArmorUpgrade)aDataCache.findUpgrade(aLoadout.upgrades.armor.ItemID);
-      HeatSinkUpgrade heatSink =  (HeatSinkUpgrade)aDataCache.findUpgrade(aLoadout.upgrades.heatsinks.ItemID);
+      HeatSinkUpgrade heatSink = (HeatSinkUpgrade)aDataCache.findUpgrade(aLoadout.upgrades.heatsinks.ItemID);
 
       return new ChassisOmniMech(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons, ChassisVariant.fromString(Mech.VariantType),
-                                 baseVariant, new BaseMovementProfile(MovementTuningConfiguration), faction, components, structure, armor,
-                                 heatSink);
+                                 baseVariant, new BaseMovementProfile(MovementTuningConfiguration), faction, components, structure, armor, heatSink);
    }
 
    private int getBaseVariant(XMLMechIdMap aMechIdMap, XMLItemStatsMech aMech){

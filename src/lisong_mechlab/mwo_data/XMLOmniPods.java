@@ -25,10 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lisong_mechlab.model.DataCache;
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.Quirks;
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsComponent;
 import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsQuirk;
 import lisong_mechlab.mwo_data.helpers.ItemStatsOmniPodType;
@@ -77,7 +79,7 @@ public class XMLOmniPods{
          @XStreamImplicit(itemFieldName = "Quirk")
          private List<XMLOmniPodsQuirk> quirks;
          @XStreamAsAttribute
-         private int CanEquipECM;
+         private int                    CanEquipECM;
       }
 
       @XStreamAsAttribute
@@ -92,7 +94,7 @@ public class XMLOmniPods{
    @XStreamImplicit(itemFieldName = "Set")
    List<XMLOmniPodsSet> sets;
 
-   public List<OmniPod> asOmniPods(XMLItemStats aItemStatsXml, XMLHardpoints aHardPointsXML){
+   public List<OmniPod> asOmniPods(XMLItemStats aItemStatsXml, XMLHardpoints aHardPointsXML, DataCache aDataCache){
       List<OmniPod> ans = new ArrayList<>();
 
       for(XMLOmniPodsSet set : sets){
@@ -128,7 +130,9 @@ public class XMLOmniPods{
             List<HardPoint> hardPoints = MdfComponent.getHardPoints(location, aHardPointsXML, component.hardpoints, component.CanEquipECM, set.name);
             Quirks quirks = new Quirks(quirksMap);
 
-            ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, maxJumpjets, maxPilotModules));
+            List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals, null);
+
+            ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, fixedItems, maxJumpjets, maxPilotModules));
          }
       }
 

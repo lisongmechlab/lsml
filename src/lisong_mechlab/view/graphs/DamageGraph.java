@@ -73,10 +73,10 @@ import org.jfree.ui.VerticalAlignment;
  * @author Li Song
  */
 public class DamageGraph extends JFrame implements MessageXBar.Reader{
-   private static final long       serialVersionUID = -8812749194029184861L;
-   private final LoadoutBase<?> loadout;
-   private final MaxSustainedDPS   maxSustainedDPS;
-   private final ChartPanel        chartPanel;
+   private static final long     serialVersionUID = -8812749194029184861L;
+   private final LoadoutBase<?>  loadout;
+   private final MaxSustainedDPS maxSustainedDPS;
+   private final ChartPanel      chartPanel;
 
    JFreeChart makechart(){
       return ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout, "range [m]", "damage / second", getSeries(),

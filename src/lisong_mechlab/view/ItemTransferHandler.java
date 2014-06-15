@@ -60,10 +60,10 @@ public class ItemTransferHandler extends TransferHandler{
       if( aComponent instanceof PartList ){
          PartList partList = (PartList)aComponent;
          List<Item> sourceItems = partList.removeSelected(ProgramInit.lsml().xBar);
-         
-         if(sourceItems.isEmpty())
+
+         if( sourceItems.isEmpty() )
             return null;
-         
+
          sourcePart = partList.getPart();
 
          StringBuffer buff = new StringBuffer();

@@ -50,18 +50,18 @@ import lisong_mechlab.view.render.StyleManager;
  * @author Li Song
  */
 public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader, ChangeListener{
-   private static final long       serialVersionUID    = 6835003047682738947L;
+   private static final long    serialVersionUID    = 6835003047682738947L;
 
    private final LoadoutBase<?> loadout;
-   private final OperationStack    stack;
-   private final MessageXBar       xBar;
-   private final JSlider           ratioSlider;
-   private final JSlider           armorSlider;
+   private final OperationStack stack;
+   private final MessageXBar    xBar;
+   private final JSlider        ratioSlider;
+   private final JSlider        armorSlider;
 
-   private int                     lastRatio           = 0;
-   private int                     lastAmount          = 0;
+   private int                  lastRatio           = 0;
+   private int                  lastAmount          = 0;
 
-   boolean                         disableSliderAction = false;
+   boolean                      disableSliderAction = false;
 
    class ResetManualArmorOperation extends CompositeOperation{
       private final LoadoutBase<?> opLoadout = loadout;
@@ -146,7 +146,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 
       @Override
       public void buildOperation(){
-         // TODO I think this operation possibly should inherit from OpDistributeArmor         
+         // TODO I think this operation possibly should inherit from OpDistributeArmor
       }
    }
 

@@ -44,12 +44,12 @@ public class TurningSpeed implements Metric{
          return 0.0;
       return getTurnRateAtThrottle(0.0, engine.getRating()) * loadout.getEfficiencies().getTurnSpeedModifier();
    }
-   
+
    public double getTurnRateAtThrottle(double aThrottle, int aEngineRating){
       final double k = (double)aEngineRating / loadout.getChassis().getMassMax() * 180.0 / Math.PI;
-      
+
       MovementProfile mp = loadout.getMovementProfile();
-      
+
       if( aThrottle <= mp.getTurnLerpLowSpeed() ){
          return k * mp.getTurnLerpLowRate();
       }

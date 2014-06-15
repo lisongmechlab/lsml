@@ -30,7 +30,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpAddModule extends Operation{
    private final PilotModule           module;
-   private final LoadoutBase<?>       loadout;
+   private final LoadoutBase<?>        loadout;
    private final transient MessageXBar xBar;
 
    /**

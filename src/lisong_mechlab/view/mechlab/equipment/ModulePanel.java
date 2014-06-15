@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 
 /**
  * @author Li Song
- *
  */
 public class ModulePanel extends JPanel{
 

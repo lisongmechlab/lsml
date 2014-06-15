@@ -25,9 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.HardPointType;
@@ -52,6 +49,9 @@ import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
  * This base class right 'ere models contains the common functionality needed for both clan and inner sphere mechs.
@@ -83,7 +83,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       components = aFactory.cloneComponents(aLoadoutBase);
    }
 
-
    public static XStream loadoutXstream(MessageXBar aXBar){
       XStream stream = new XStream(new StaxDriver());
       stream.autodetectAnnotations(true);
@@ -99,7 +98,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       stream.alias("loadout", LoadoutBase.class);
       return stream;
    }
-   
+
    @Override
    public boolean equals(Object obj){
       if( this == obj )

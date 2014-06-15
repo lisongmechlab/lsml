@@ -29,7 +29,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  */
 public class HeatCapacity implements Metric{
    private final LoadoutBase<?> loadout;
-   private static final double     MECH_BASE_HEAT_CAPACITY = 30;
+   private static final double  MECH_BASE_HEAT_CAPACITY = 30;
 
    public HeatCapacity(final LoadoutBase<?> aLoadout){
       loadout = aLoadout;

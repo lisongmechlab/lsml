@@ -97,7 +97,7 @@ public class XMLPilotTalents{
 
    public XMLTalent getTalent(String aTalentid){
       for(XMLTalent talent : talents){
-         if(talent.ename.toLowerCase().equals(aTalentid.toLowerCase())){
+         if( talent.ename.toLowerCase().equals(aTalentid.toLowerCase()) ){
             return talent;
          }
       }

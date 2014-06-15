@@ -23,8 +23,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class MdfItem{
    @XStreamAsAttribute
-   public int    ItemID;
-   
+   public int ItemID;
+
    @XStreamAsAttribute
-   public int    Toggleable;
+   public int Toggleable;
 }
