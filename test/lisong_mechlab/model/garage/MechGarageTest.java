@@ -31,11 +31,15 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import java.io.File;
 import java.io.IOException;
 
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.garage.MechGarage.Message;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -162,9 +166,18 @@ public class MechGarageTest{
       // Setup
       LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc", xBar);
       LoadoutStandard lo2 = new LoadoutStandard("as7-k", xBar);
+      LoadoutOmniMech lo3 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("nva-prime"), xBar);
+      LoadoutOmniMech lo4 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("tbr-c"), xBar);
+      
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new OpLoadStock(lo3.getChassis(), lo3, xBar));
+      stack.pushAndApply(new OpLoadStock(lo4.getChassis(), lo4, xBar));
+      
       MechGarage cut = new MechGarage(xBar);
       cut.add(lo1);
       cut.add(lo2);
+      cut.add(lo3);
+      cut.add(lo4);
       reset(xBar);
 
       // Execute
@@ -174,9 +187,11 @@ public class MechGarageTest{
       // Verify
       verify(xBar).post(new MechGarage.Message(Type.Saved, cut));
       verify(xBar).post(new MechGarage.Message(Type.NewGarage, loadedGarage));
-      assertEquals(2, loadedGarage.getMechs().size());
+      assertEquals(4, loadedGarage.getMechs().size());
       assertEquals(lo1, loadedGarage.getMechs().get(0));
       assertEquals(lo2, loadedGarage.getMechs().get(1));
+      assertEquals(lo3, loadedGarage.getMechs().get(2));
+      assertEquals(lo4, loadedGarage.getMechs().get(3));
    }
 
    /**

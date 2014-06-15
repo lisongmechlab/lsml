@@ -57,22 +57,6 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
       return (LoadoutStandard)stream.fromXML(aFile);
    }
 
-   public static XStream loadoutXstream(MessageXBar aXBar){
-      XStream stream = new XStream(new StaxDriver());
-      stream.autodetectAnnotations(true);
-      stream.setMode(XStream.NO_REFERENCES);
-      stream.registerConverter(new ChassiConverter());
-      stream.registerConverter(new ItemConverter());
-      stream.registerConverter(new ConfiguredComponentConverter(aXBar, null));
-      stream.registerConverter(new LoadoutConverter(aXBar));
-      stream.registerConverter(new UpgradeConverter());
-      stream.registerConverter(new UpgradesConverter());
-      stream.addImmutableType(Item.class);
-      stream.alias("component", ConfiguredComponentStandard.class);
-      stream.alias("loadout", LoadoutStandard.class);
-      return stream;
-   }
-
    /**
     * Will create a new, empty load out based on the given chassis. TODO: Is anXBar really needed?
     * 
