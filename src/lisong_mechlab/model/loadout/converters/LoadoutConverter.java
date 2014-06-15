@@ -87,17 +87,19 @@ public class LoadoutConverter implements Converter{
       }
 
       // Specific to LoadoutStandard
+      aWriter.startNode("upgrades");
       if( loadout instanceof LoadoutStandard ){
-         aWriter.startNode("upgrades");
          aContext.convertAnother(loadout.getUpgrades());
-         aWriter.endNode();
       }
       else if( loadout instanceof LoadoutOmniMech ){
-         aWriter.addAttribute("artemis", Integer.toString(loadout.getUpgrades().getGuidance().getMwoId()));
+         aWriter.startNode("guidance");
+         aWriter.setValue(Integer.toString(loadout.getUpgrades().getGuidance().getMwoId()));
+         aWriter.endNode();
       }
       else{
          throw new IllegalArgumentException("Unsupported loadout type: " + loadout.getClass());
       }
+      aWriter.endNode();
 
    }
 
@@ -127,9 +129,6 @@ public class LoadoutConverter implements Converter{
       else if( chassi instanceof ChassisOmniMech ){
          LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi, xBar);
          loadoutBase = loadout;
-
-         GuidanceUpgrade artemis = (GuidanceUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getAttribute("artemis")));
-         stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis));
       }
       else{
          throw new RuntimeException("Unsupported chassis class: " + chassi.getClass());
@@ -140,16 +139,24 @@ public class LoadoutConverter implements Converter{
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
          if( "upgrades".equals(aReader.getNodeName()) ){
-            if( !(chassi instanceof ChassisStandard) ){
-               aReader.moveUp(); // Shouldn't happen, skip past...
-               continue;
+            if( loadoutBase instanceof LoadoutStandard ){
+               LoadoutStandard loadout = (LoadoutStandard)loadoutBase;
+               Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
+               stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, upgrades.getGuidance()));
+               stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, upgrades.getHeatSink()));
+               stack.pushAndApply(new OpSetStructureType(xBar, loadout, upgrades.getStructure()));
+               stack.pushAndApply(new OpSetArmorType(xBar, loadout, upgrades.getArmor()));
             }
-            LoadoutStandard loadout = (LoadoutStandard)loadoutBase;
-            Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
-            stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, upgrades.getGuidance()));
-            stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, upgrades.getHeatSink()));
-            stack.pushAndApply(new OpSetStructureType(xBar, loadout, upgrades.getStructure()));
-            stack.pushAndApply(new OpSetArmorType(xBar, loadout, upgrades.getArmor()));
+            else if( loadoutBase instanceof LoadoutOmniMech ){
+               while( aReader.hasMoreChildren() ){
+                  aReader.moveDown();
+                  if( aReader.getNodeName().equals("guidance") ){
+                     GuidanceUpgrade artemis = (GuidanceUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+                     stack.pushAndApply(new OpSetGuidanceType(xBar, loadoutBase, artemis));
+                  }
+                  aReader.moveUp();
+               }
+            }
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadoutBase, Efficiencies.class);

@@ -25,6 +25,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.HardPointType;
@@ -40,6 +43,13 @@ import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
+import lisong_mechlab.model.loadout.converters.ChassiConverter;
+import lisong_mechlab.model.loadout.converters.ConfiguredComponentConverter;
+import lisong_mechlab.model.loadout.converters.ItemConverter;
+import lisong_mechlab.model.loadout.converters.LoadoutConverter;
+import lisong_mechlab.model.loadout.converters.UpgradeConverter;
+import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 
@@ -73,6 +83,23 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       components = aFactory.cloneComponents(aLoadoutBase);
    }
 
+
+   public static XStream loadoutXstream(MessageXBar aXBar){
+      XStream stream = new XStream(new StaxDriver());
+      stream.autodetectAnnotations(true);
+      stream.setMode(XStream.NO_REFERENCES);
+      stream.registerConverter(new ChassiConverter());
+      stream.registerConverter(new ItemConverter());
+      stream.registerConverter(new ConfiguredComponentConverter(aXBar, null));
+      stream.registerConverter(new LoadoutConverter(aXBar));
+      stream.registerConverter(new UpgradeConverter());
+      stream.registerConverter(new UpgradesConverter());
+      stream.addImmutableType(Item.class);
+      stream.alias("component", ConfiguredComponentStandard.class);
+      stream.alias("loadout", LoadoutBase.class);
+      return stream;
+   }
+   
    @Override
    public boolean equals(Object obj){
       if( this == obj )
