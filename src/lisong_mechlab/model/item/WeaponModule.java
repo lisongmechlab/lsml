@@ -92,17 +92,17 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
 
    @Override
    public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
-      return aRange + maxRangeModifier[maxRank - 1];
+      return maxRangeModifier[maxRank - 1];
    }
 
    @Override
    public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
-      return aRange + longRangeModifier[maxRank - 1];
+      return longRangeModifier[maxRank - 1];
    }
 
    @Override
    public double extraHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
-      return aHeat + heatModifier[maxRank - 1]; // TODO: Use pilot skill tree
+      return heatModifier[maxRank - 1]; // TODO: Use pilot skill tree
    }
 
    @Override
