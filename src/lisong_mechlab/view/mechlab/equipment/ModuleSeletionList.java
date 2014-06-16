@@ -19,11 +19,31 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab.equipment;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
+import lisong_mechlab.model.item.PilotModule;
+import lisong_mechlab.model.item.PilotModuleDB;
+
 /**
+ * This {@link JPanel} shows all the available pilot modules on the equipment panel.
+ * 
  * @author Li Song
  */
-public class ModulePanel extends JPanel{
+public class ModuleSeletionList extends JList<PilotModule>{
+   private static final long serialVersionUID = -5162141596342256532L;
+
+   public ModuleSeletionList(){
+      DefaultListModel<PilotModule> model = new DefaultListModel<>();
+      for(PilotModule pilotModule : PilotModuleDB.lookup(PilotModule.class)){
+         model.addElement(pilotModule);   
+      }
+      
+      setModel(model);
+            
+      setTransferHandler(new ModuleTransferHandler());
+      setDragEnabled(true);
+   }
 
 }

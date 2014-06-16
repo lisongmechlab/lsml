@@ -218,6 +218,8 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return <code>true</code> if the given module can be added to this loadout.
     */
    public boolean canAddModule(PilotModule aModule){
+      if( getModules().contains(aModule) )
+         return false;
       // TODO: Apply any limitations on modules
       return getModules().size() < getModulesMax();
    }
@@ -393,10 +395,11 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return <code>true</code> if the given {@link Item} is globally feasible on this loadout.
     */
    public boolean canEquip(Item anItem){
-      if( !canEquipGlobal(anItem) ){ // FIXME: The case where adding a weapon that would cause LAA/HA to be removed while at max global slots fails even if it might succeed.
+      if( !canEquipGlobal(anItem) ){ // FIXME: The case where adding a weapon that would cause LAA/HA to be removed
+                                     // while at max global slots fails even if it might succeed.
          return false;
       }
-      
+
       // FIXME: There are problems with jump jet limits
 
       if( anItem instanceof Engine ){
@@ -461,10 +464,20 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    public abstract LoadoutBase<?> clone(MessageXBar aXBar);
 
    /**
-    * @return
+    * @return A {@link List} of all {@link WeaponModifier}s that apply to this loadout.
     */
    public Collection<WeaponModifier> getWeaponModifiers(){
-      return new ArrayList<>(); // FIXME
+      List<WeaponModifier> ans = new ArrayList<>();
+      for(PilotModule module : modules){
+         if( module instanceof WeaponModifier )
+            ans.add((WeaponModifier)module);
+      }
+      for(Item item : getAllItems()){
+         if( item instanceof WeaponModifier )
+            ans.add((WeaponModifier)item);
+      }
+
+      return ans;
    }
 
 }

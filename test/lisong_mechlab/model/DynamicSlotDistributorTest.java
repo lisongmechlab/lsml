@@ -311,7 +311,7 @@ public class DynamicSlotDistributorTest{
       Mockito.when(armorType.getExtraSlots()).thenReturn(armorSlotsCount);
       Mockito.when(internalComponents[Location.LeftLeg.ordinal()].getDynamicArmorSlots()).thenReturn(5);
       Mockito.when(internalComponents[Location.LeftArm.ordinal()].getDynamicArmorSlots()).thenReturn(7);
-      
+
       int structSlotsCount = 5;
       StructureUpgrade aStructureType = Mockito.mock(StructureUpgrade.class);
       Mockito.when(aStructureType.getExtraSlots()).thenReturn(structSlotsCount);
@@ -319,7 +319,7 @@ public class DynamicSlotDistributorTest{
       Mockito.when(internalComponents[Location.RightLeg.ordinal()].getDynamicStructureSlots()).thenReturn(3);
 
       // Create chassis
-      ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null, false, internalComponents, null,
+      ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null, Faction.InnerSphere, internalComponents, 0,
                                                             aStructureType, armorType, null);
       // Setup factory
       Factory<ConfiguredComponentOmniMech> aFactory = Mockito.mock(Factory.class);
@@ -338,10 +338,10 @@ public class DynamicSlotDistributorTest{
 
       // Execute + Verify
       cut = new DynamicSlotDistributor(loadoutOmniMech);
-      
+
       assertEquals(5, cut.getDynamicArmorSlots(loadoutOmniMech.getComponent(Location.LeftLeg)));
       assertEquals(7, cut.getDynamicArmorSlots(loadoutOmniMech.getComponent(Location.LeftArm)));
-      
+
       assertEquals(2, cut.getDynamicStructureSlots(loadoutOmniMech.getComponent(Location.RightArm)));
       assertEquals(3, cut.getDynamicStructureSlots(loadoutOmniMech.getComponent(Location.RightLeg)));
    }

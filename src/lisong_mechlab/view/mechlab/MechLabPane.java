@@ -38,7 +38,7 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.equipment.EquipmentPanel;
 import lisong_mechlab.view.mechlab.equipment.GarageTree;
-import lisong_mechlab.view.mechlab.equipment.ModulePanel;
+import lisong_mechlab.view.mechlab.equipment.ModuleSeletionList;
 import lisong_mechlab.view.preferences.Preferences;
 
 /**
@@ -69,7 +69,7 @@ public class MechLabPane extends JSplitPane{
       JTabbedPane tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
       tabbedPane.addTab("Garage", garagePanel);
-      tabbedPane.addTab("Modules", new ModulePanel());
+      tabbedPane.addTab("Modules", new ModuleSeletionList());
 
       setLeftComponent(tabbedPane);
       setRightComponent(desktop);

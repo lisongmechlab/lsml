@@ -45,7 +45,6 @@ public class ChassisStandardTest extends ChassisBaseTest{
    private int                 engineMax;
    private int                 maxJumpJets;
    private ComponentStandard[] components;
-   private int                 maxPilotModules;
 
    @Override
    @Before

@@ -65,8 +65,8 @@ public class BurstDamageOverTimeTest{
 
       // Verify
       double expected = erllas.getDamagePerShot() * 3.5;
-      expected += ((int)(time / ac20.getSecondsPerShot(efficiencies) + 1)) * ac20.getDamagePerShot() * ac20.getRangeEffectivity(500);
-      expected += ((int)(time / erppc.getSecondsPerShot(efficiencies) + 1)) * erppc.getDamagePerShot() * erppc.getRangeEffectivity(500);
+      expected += ((int)(time / ac20.getSecondsPerShot(efficiencies) + 1)) * ac20.getDamagePerShot() * ac20.getRangeEffectivity(500, null);
+      expected += ((int)(time / erppc.getSecondsPerShot(efficiencies) + 1)) * erppc.getDamagePerShot() * erppc.getRangeEffectivity(500, null);
       assertEquals(expected, burst, 0.0);
    }
 

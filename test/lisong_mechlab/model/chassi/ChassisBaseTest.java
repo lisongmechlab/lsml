@@ -59,6 +59,7 @@ public abstract class ChassisBaseTest{
    protected String          series      = "Timber Wolf";
    protected String          shortName   = "tbw primal";
    protected ChassisVariant  variant     = ChassisVariant.FOUNDER;
+   protected int             maxPilotModules;
 
    protected abstract ChassisBase makeDefaultCUT();
 
