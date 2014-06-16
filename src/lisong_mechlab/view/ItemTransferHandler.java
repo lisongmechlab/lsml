@@ -131,10 +131,7 @@ public class ItemTransferHandler extends TransferHandler{
          }
          return true;
       }
-      else if(uiComponent instanceof JDesktopPane){
-         return true;
-      }
-      return parseItems(aInfo) != null;
+      return true;
    }
 
    /**
