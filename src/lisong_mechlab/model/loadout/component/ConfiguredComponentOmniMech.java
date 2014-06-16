@@ -30,7 +30,6 @@ import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 
 /**

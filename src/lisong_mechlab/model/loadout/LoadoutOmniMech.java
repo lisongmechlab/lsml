@@ -90,7 +90,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
 
    @Override
    public int getJumpJetsMax(){
-      int ans = 0;
+      int ans = getChassis().getFixedJumpJets();
       for(ConfiguredComponentOmniMech component : getComponents()){
          ans += component.getOmniPod().getJumpJetsMax();
       }

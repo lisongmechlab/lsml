@@ -56,6 +56,8 @@ public abstract class ChassisBase{
    private final ChassisVariant  variant;
    @XStreamAsAttribute
    private final Faction         faction;
+   @XStreamAsAttribute
+   private final int pilotModulesMax;
 
    private final MovementProfile movementProfile;
    private final ComponentBase[] components;
@@ -83,9 +85,11 @@ public abstract class ChassisBase{
     *           The {@link Faction} of this clan.
     * @param aComponents
     *           An array of components for this chassis.
+    * @param aMaxPilotModules
+    *           The maximum number of pilot modules that can be equipped.
     */
    public ChassisBase(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
-                      int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, ComponentBase[] aComponents){
+                      int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, ComponentBase[] aComponents, int aMaxPilotModules){
       if( aComponents.length != Location.values().length )
          throw new IllegalArgumentException("Components array must contain all components!");
 
@@ -101,6 +105,7 @@ public abstract class ChassisBase{
       movementProfile = aMovementProfile;
       faction = aFaction;
       components = aComponents;
+      pilotModulesMax = aMaxPilotModules;
    }
 
    @Override
@@ -266,5 +271,12 @@ public abstract class ChassisBase{
    @Override
    public String toString(){
       return getNameShort();
+   }
+   
+   /**
+    * @return The maximal number of pilot modules this chassis can support.
+    */
+   public int getPilotModulesMax(){
+      return pilotModulesMax;
    }
 }

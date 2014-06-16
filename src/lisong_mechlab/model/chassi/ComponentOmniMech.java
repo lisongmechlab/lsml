@@ -95,7 +95,7 @@ public class ComponentOmniMech extends ComponentBase{
       else{
          usedSlots = getFixedItemSlots() + getDynamicArmorSlots() + getDynamicStructureSlots();
       }
-
+      
       if( aItem.getNumCriticalSlots() > getSlots() - usedSlots ){
          return false;
       }
@@ -129,6 +129,7 @@ public class ComponentOmniMech extends ComponentBase{
          isLargeBore |= aItem.getName().toLowerCase().contains("ppc");
          isLargeBore |= aItem.getName().toLowerCase().contains("gauss");
          isLargeBore |= aItem.getName().toLowerCase().contains("ac/");
+         isLargeBore |= aItem.getName().toLowerCase().contains("x ac");
          isLargeBore |= aItem.getName().toLowerCase().contains("10-x");
          return isLargeBore;
       }

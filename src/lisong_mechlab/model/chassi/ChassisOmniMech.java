@@ -27,6 +27,7 @@ import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -65,6 +66,8 @@ public class ChassisOmniMech extends ChassisBase{
     *           The faction this chassis belongs to.
     * @param aComponents
     *           An array of components for this chassis.
+    * @param aMaxPilotModules
+    *           The maximum number of pilot modules that can be equipped.
     * @param aStructureType
     *           The structure type that is fixed on this chassis.
     * @param aArmorType
@@ -74,8 +77,8 @@ public class ChassisOmniMech extends ChassisBase{
     */
    public ChassisOmniMech(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
                           int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, ComponentOmniMech[] aComponents,
-                          StructureUpgrade aStructureType, ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType){
-      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents);
+                          int aMaxPilotModules, StructureUpgrade aStructureType, ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType){
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents, aMaxPilotModules);
       structureType = aStructureType;
       armorType = aArmorType;
       heatSinkType = aHeatSinkType;
@@ -228,5 +231,20 @@ public class ChassisOmniMech extends ChassisBase{
          return false; // Engine is fixed.
       }
       return super.isAllowed(aItem); // Anything else depends on the actual combination of omnipods equipped
+   }
+
+   /**
+    * @return The number of jump jets that are fixed on this chassis.
+    */
+   public int getFixedJumpJets(){
+      int ans = 0;
+      for(ComponentOmniMech component : getComponents()){
+         for(Item item : component.getFixedItems()){
+            if( item instanceof JumpJet ){
+               ans++;
+            }
+         }
+      }
+      return ans;
    }
 }

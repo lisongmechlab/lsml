@@ -159,17 +159,20 @@ public abstract class ConfiguredComponentBase{
     *           The item to check with.
     * @return <code>true</code> if local constraints allow the item to be equipped here.
     */
-   public boolean canAddItem(Item aItem){
+   public boolean canAddItem(Item aItem){     
       if( !getInternalComponent().isAllowed(aItem) )
          return false;
 
-      // Check enough free critical slots
-      if( getSlotsFree() < aItem.getNumCriticalSlots() ){
-         return false;
-      }
-
       if( aItem == ItemDB.CASE && items.contains(ItemDB.CASE) )
          return false;
+
+      
+      items.add(aItem); // Ugly workaround to check if adding the item would succeed if it removed HALAA     
+      if( getSlotsFree() < 0 ){
+         items.remove(aItem);
+         return false;
+      }
+      items.remove(aItem);
 
       // Check enough free hard points
       if( aItem.getHardpointType() != HardPointType.NONE
