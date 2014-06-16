@@ -169,8 +169,11 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       Item UAA = ItemDB.UAA;
       internalFixedItems.clear();
       internalFixedItems.add(UAA);
-      internalFixedItems.add(LAA);
-      internalFixedItems.add(HA);
+
+      List<Item> omniPodFixed = new ArrayList<>();
+      Mockito.when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
+      omniPodFixed.add(LAA);
+      omniPodFixed.add(HA);
 
       Item largeBoreGun = Mockito.mock(Item.class);
       Mockito.when(omniInternal.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
@@ -193,8 +196,11 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       Item UAA = ItemDB.UAA;
       internalFixedItems.clear();
       internalFixedItems.add(UAA);
-      internalFixedItems.add(LAA);
-      internalFixedItems.add(HA);
+      
+      List<Item> omniPodFixed = new ArrayList<>();
+      Mockito.when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
+      omniPodFixed.add(LAA);
+      omniPodFixed.add(HA);
 
       Item largeBoreGun = Mockito.mock(Item.class);
       Mockito.when(omniInternal.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
@@ -205,6 +211,35 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       assertEquals(2, ans.size());
       assertTrue(ans.remove(UAA));
       assertTrue(ans.remove(largeBoreGun));
+   }
+   
+   /**
+    * When a large bore weapon such as any AC, Gauss or PPC is fixed on the chassis, the LLA/HA should be removed.
+    */
+   @Test
+   public final void testGetItemsFixed_NoLargeBore(){
+      Item LAA = ItemDB.LAA;
+      Item HA = ItemDB.HA;
+      Item UAA = ItemDB.UAA;
+      internalFixedItems.clear();
+      internalFixedItems.add(UAA);
+      
+      List<Item> omniPodFixed = new ArrayList<>();
+      Mockito.when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
+      omniPodFixed.add(LAA);
+      omniPodFixed.add(HA);
+
+      Item smallBoreGun = Mockito.mock(Item.class);
+      Mockito.when(omniInternal.shouldRemoveArmActuators(smallBoreGun)).thenReturn(false);
+
+      internalFixedItems.add(smallBoreGun);
+
+      List<Item> ans = makeDefaultCUT().getItemsFixed();
+      assertEquals(4, ans.size());
+      assertTrue(ans.remove(UAA));
+      assertTrue(ans.remove(HA));
+      assertTrue(ans.remove(LAA));
+      assertTrue(ans.remove(smallBoreGun));
    }
 
    @Test

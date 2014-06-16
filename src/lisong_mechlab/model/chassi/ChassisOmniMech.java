@@ -90,10 +90,10 @@ public class ChassisOmniMech extends ChassisBase{
          a += component.getDynamicArmorSlots();
       }
       if( s != structureType.getExtraSlots() ){
-         throw new IllegalArgumentException("The values in aDynamicStructureSlots must sum up to the number of slots required by the structure type.");
+         throw new IllegalArgumentException("The fixed structure slots in components must sum up the number of slots required by the structure type.");
       }
       if( a != armorType.getExtraSlots() ){
-         throw new IllegalArgumentException("The values in aDynamicArmorSlots must sum up to the number of slots required by the armor type.");
+         throw new IllegalArgumentException("The fixed armor slots in components must sum up the number of slots required by the armor type.");
       }
    }
 
@@ -123,7 +123,7 @@ public class ChassisOmniMech extends ChassisBase{
          if( item instanceof Engine )
             return (Engine)item;
       }
-      throw new RuntimeException("No engine found in omnimech!");
+      throw new IllegalStateException("No engine found in omnimech!");
    }
 
    /**
@@ -170,7 +170,7 @@ public class ChassisOmniMech extends ChassisBase{
     *         {@link OmniPod}.
     */
    public MovementProfile getMovementProfileMax(){
-      return new MaxMovementProfile(getMovementProfileBase(), getOmniPodMovementProfileGroups());
+      return new MaxMovementProfile(getMovementProfileBase(), getQuirkGroups());
    }
 
    /**
@@ -182,7 +182,7 @@ public class ChassisOmniMech extends ChassisBase{
     *         {@link OmniPod}.
     */
    public MovementProfile getMovementProfileMin(){
-      return new MinMovementProfile(getMovementProfileBase(), getOmniPodMovementProfileGroups());
+      return new MinMovementProfile(getMovementProfileBase(), getQuirkGroups());
    }
 
    /**
@@ -191,19 +191,19 @@ public class ChassisOmniMech extends ChassisBase{
     * @return The {@link MovementProfile} for the stock selection of {@link OmniPod}s.
     */
    public MovementProfile getMovementProfileStock(){
-      MovementProfileProduct ans = new MovementProfileProduct(getMovementProfileBase());
+      QuirkedMovementProfile ans = new QuirkedMovementProfile(getMovementProfileBase());
       for(Location location : Location.values()){
          OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
-         ans.addMovementProfile(omniPod.getQuirks());
+         ans.addMovementModifier(omniPod.getQuirks());
       }
       return ans;
    }
 
-   private List<List<MovementProfile>> getOmniPodMovementProfileGroups(){
-      List<List<MovementProfile>> groups = new ArrayList<>();
+   private List<List<Quirks>> getQuirkGroups(){
+      List<List<Quirks>> groups = new ArrayList<>();
 
       for(Location location : Location.values()){
-         List<MovementProfile> group = new ArrayList<>();
+         List<Quirks> group = new ArrayList<>();
 
          if( getComponent(location).hasFixedOmniPod() ){
             group.add(OmniPodDB.lookupOriginal(this, location).getQuirks());

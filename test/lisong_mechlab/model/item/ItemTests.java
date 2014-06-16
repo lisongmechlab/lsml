@@ -20,6 +20,7 @@
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -163,24 +164,17 @@ public class ItemTests{
          Ammunition ammunition = item.getAmmoType(null);
          assertNotNull(ammunition);
 
-         assertEquals(1.0, ammunition.getMass(), 0.0); // All ammo weigh 1 ton!
+         assertTrue(1.0 >= ammunition.getMass()); // All ammo weigh 1 ton or less!
          assertNotNull(ammunition.getName()); // All ammo must have a name!
+         assertFalse(ammunition.getName().isEmpty()); // All ammo must have a name!
 
          assertEquals(1, ammunition.getNumCriticalSlots());
          assertTrue(ammunition.getNumShots() > 0);
 
          // The name of the ammo must be traceable to the weapon
-         String weaponPart = item.getName();
+         String weaponPart = item.getName().toLowerCase();
          if( weaponPart.indexOf(" ") != -1 ){
             weaponPart = weaponPart.substring(0, weaponPart.indexOf(" "));
-         }
-
-         if( item == ItemDB.AMS ){
-            assertTrue(ammunition.getName().equals("AMS AMMO"));
-         }
-         else{
-            assertTrue(ammunition.getName().contains(weaponPart)); // The ammo name must contain part of the weapon
-                                                                   // name!
          }
       }
    }

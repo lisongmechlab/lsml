@@ -155,7 +155,7 @@ public class Weapon extends HeatSource{
       if( aPilotModules != null ){
          for(WeaponModifier mod : aPilotModules){
             if( mod.affectsWeapon(this) ){
-               a += mod.applyMaxRange(this, rangeMax, null);
+               a += mod.extraMaxRange(this, rangeMax, null);
             }
          }
       }
@@ -167,7 +167,7 @@ public class Weapon extends HeatSource{
       if( aPilotModules != null ){
          for(WeaponModifier mod : aPilotModules){
             if( mod.affectsWeapon(this) ){
-               a += mod.applyLongRange(this, rangeLong, null);
+               a += mod.extraLongRange(this, rangeLong, null);
             }
          }
       }
@@ -180,7 +180,7 @@ public class Weapon extends HeatSource{
       if( aPilotModules != null ){
          for(WeaponModifier mod : aPilotModules){
             if( mod.affectsWeapon(this) ){
-               a += mod.applyHeat(this, super.getHeat(aPilotModules), null);
+               a += mod.extraHeat(this, super.getHeat(aPilotModules), null);
             }
 
          }

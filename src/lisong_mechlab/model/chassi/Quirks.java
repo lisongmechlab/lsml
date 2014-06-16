@@ -19,146 +19,210 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import lisong_mechlab.model.item.BallisticWeapon;
+import lisong_mechlab.model.item.EnergyWeapon;
+import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.pilot.PilotSkillTree;
 
 /**
- * This class represents quirks in the form of movement and weapon stats.
+ * This class represents quirks in the form of movement, health and weapon stats.
  * 
  * @author Emily Björk
  */
-public class Quirks implements MovementProfile, WeaponModifier{
-   private final Map<String, Double> quirks;
+public class Quirks implements MovementModifier, WeaponModifier, HealthModifier{
+   private final Map<String, Double>          quirks;
+
+   /**
+    * [ , armor_resist_ra_multiplier, internal_resist_rl_multiplier, , , internal_resist_ll_multiplier, ,
+    * armor_resist_hd_multiplier, , , overheat_damage_multiplier, , , armor_resist_la_multiplier]
+    */
+   private static transient final Set<String> q = new HashSet<>();
 
    /**
     * @param aQuirks
     */
    public Quirks(Map<String, Double> aQuirks){
-      quirks = aQuirks;
+      quirks = aQuirks; // ui_quirk_ + <quirkname> is description
+
+      for(String s : quirks.keySet()){
+         q.add(s);
+      }
    }
 
    @Override
-   public MovementArchetype getMovementArchetype(){
-      return null;
+   public double extraTorsoYawMax(double aBase){
+      Double v = quirks.get("torso_angle_yaw_additive");
+      if( v != null )
+         return v;
+      return 0;
    }
 
    @Override
-   public double getMaxMovementSpeed(){
-      return 0; // TODO Auto-generated method stub
-   }
-
-   @Override
-   public double getReverseSpeedMultiplier(){
-      return 0; // TODO Auto-generated method stub
-   }
-
-   @Override
-   public double getTorsoYawMax(){
-      return 0; // TODO Auto-generated method stub
-   }
-
-   @Override
-   public double getTorsoYawSpeed(){
+   public double extraTorsoYawSpeed(double aBase){
       Double v = quirks.get("torso_speed_yaw_multiplier");
       if( v != null )
+         return v * aBase;
+      return 0;
+   }
+
+   @Override
+   public double extraTorsoPitchMax(double aBase){
+      Double v = quirks.get("torso_angle_pitch_additive");
+      if( v != null )
          return v;
       return 0;
    }
 
    @Override
-   public double getTorsoPitchMax(){
-      return 0; // TODO Auto-generated method stub
-   }
-
-   @Override
-   public double getTorsoPitchSpeed(){
+   public double extraTorsoPitchSpeed(double aBase){
       Double v = quirks.get("torso_speed_pitch_multiplier");
       if( v != null )
+         return v * aBase;
+      return 0;
+   }
+
+   @Override
+   public double extraArmYawMax(double aBase){
+      Double v = quirks.get("arm_angle_yaw_additive");
+      if( v != null )
          return v;
       return 0;
    }
 
    @Override
-   public double getArmYawMax(){
-      return 0; // TODO Auto-generated method stub
-   }
-
-   @Override
-   public double getArmYawSpeed(){
+   public double extraArmYawSpeed(double aBase){
       Double v = quirks.get("arm_speed_yaw_multiplier");
       if( v != null )
-         return v;
+         return v * aBase;
       return 0;
    }
 
    @Override
-   public double getArmPitchMax(){
-      return 0; // TODO Auto-generated method stub
-   }
-
-   @Override
-   public double getArmPitchSpeed(){
-      Double v = quirks.get("arm_speed_pitch_multiplier");
+   public double extraArmPitchMax(double aBase){
+      Double v = quirks.get("arm_angle_pitch_additive");
       if( v != null )
          return v;
       return 0;
    }
 
    @Override
-   public double getTurnLerpLowSpeed(){
-      return 0; // TODO Auto-generated method stub
+   public double extraArmPitchSpeed(double aBase){
+      Double v = quirks.get("arm_speed_pitch_multiplier");
+      if( v != null )
+         return v * aBase;
+      return 0;
    }
 
    @Override
-   public double getTurnLerpMidSpeed(){
-      return 0; // TODO Auto-generated method stub
+   public double extraTurnLerpLowSpeed(double aBase){
+      Double v = quirks.get("turn_lerp_low_speed_multiplier");
+      if( v != null )
+         return v * aBase;
+      return 0;
    }
 
    @Override
-   public double getTurnLerpHighSpeed(){
-      return 0; // TODO Auto-generated method stub
+   public double extraTurnLerpMidSpeed(double aBase){
+      Double v = quirks.get("turn_lerp_mid_speed_multiplier");
+      if( v != null )
+         return v * aBase;
+      return 0;
    }
 
    @Override
-   public double getTurnLerpLowRate(){
-      return 0; // TODO Auto-generated method stub
+   public double extraTurnLerpHighSpeed(double aBase){
+      Double v = quirks.get("turn_lerp_high_speed_multiplier");
+      if( v != null )
+         return v * aBase;
+      return 0;
    }
 
    @Override
-   public double getTurnLerpMidRate(){
-      return 0; // TODO Auto-generated method stub
+   public double extraTurnLerpLowRate(double aBase){
+      Double v = quirks.get("turn_lerp_low_rate_multiplier");
+      if( v != null )
+         return v * aBase;
+      return 0;
    }
 
    @Override
-   public double getTurnLerpHighRate(){
-      return 0; // TODO Auto-generated method stub
+   public double extraTurnLerpMidRate(double aBase){
+      Double v = quirks.get("turn_lerp_mid_rate_multiplier");
+      if( v != null )
+         return v * aBase;
+      return 0;
+   }
+
+   @Override
+   public double extraTurnLerpHighRate(double aBase){
+      Double v = quirks.get("turn_lerp_high_rate_multiplier");
+      if( v != null )
+         return v * aBase;
+      return 0;
    }
 
    @Override
    public boolean affectsWeapon(Weapon aWeapon){
-      return false; // TODO Auto-generated method stub
+      if( aWeapon instanceof MissileWeapon && quirks.containsKey("missile_cooldown_multiplier") )
+         return true;
+      if( aWeapon instanceof EnergyWeapon && quirks.containsKey("energy_cooldown_multiplier") )
+         return true;
+      if( aWeapon instanceof BallisticWeapon && quirks.containsKey("ballistic_cooldown_multiplier") )
+         return true;
+      return false;
    }
 
    @Override
-   public double applyMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
-      return 0; // TODO Auto-generated method stub
+   public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
+      return 0;
    }
 
    @Override
-   public double applyLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
-      return 0; // TODO Auto-generated method stub
+   public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
+      return 0;
    }
 
    @Override
-   public double applyHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
-      return 0; // TODO Auto-generated method stub
+   public double extraHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
+      return 0;
    }
 
    @Override
-   public double applyCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree){
-      return 0; // TODO Auto-generated method stub
+   public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree){
+      if( aWeapon instanceof EnergyWeapon ){
+         double value = quirks.get("energy_cooldown_multiplier");
+         return aCooldown * value;
+      }
+      else if( aWeapon instanceof MissileWeapon ){
+         double value = quirks.get("missile_cooldown_multiplier");
+         return aCooldown * value;
+      }
+      else if( aWeapon instanceof BallisticWeapon ){
+         double value = quirks.get("ballistic_cooldown_multiplier");
+         return aCooldown * value;
+      }
+      return 0;
+   }
+
+   @Override
+   public double extraInternalHP(Location aLocation, double aHP){
+      Double v = quirks.get("internal_resist_" + aLocation.shortName().toLowerCase() + "_multiplier");
+      if( null != v )
+         return aHP * v;
+      return 0;
+   }
+
+   @Override
+   public double extraArmor(Location aLocation, double aHP){
+      Double v = quirks.get("armor_resist_" + aLocation.shortName().toLowerCase() + "_multiplier");
+      if( null != v )
+         return aHP * v;
+      return 0;
    }
 }

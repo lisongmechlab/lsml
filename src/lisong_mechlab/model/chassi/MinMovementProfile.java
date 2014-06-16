@@ -32,12 +32,12 @@ import java.util.List;
  * 
  * @author Emily Björk
  */
-public class MinMovementProfile extends CompositeMovementProfileBase{
+public class MinMovementProfile extends ModifiedProfileBase{
 
-   private MovementProfile             base;
-   private List<List<MovementProfile>> groups;
+   private MovementProfile    base;
+   private List<List<Quirks>> groups;
 
-   public MinMovementProfile(MovementProfile aBase, List<List<MovementProfile>> aGroups){
+   public MinMovementProfile(MovementProfile aBase, List<List<Quirks>> aGroups){
       base = aBase;
       groups = aGroups;
    }
@@ -45,14 +45,15 @@ public class MinMovementProfile extends CompositeMovementProfileBase{
    @Override
    protected double calc(String aMethodName){
       try{
-         double ans = (double)base.getClass().getMethod(aMethodName).invoke(base);
-         for(List<MovementProfile> group : groups){
+         double baseValue =(double)base.getClass().getMethod(aMethodName).invoke(base); 
+         double ans = baseValue;
+         for(List<Quirks> group : groups){
             double min = Double.POSITIVE_INFINITY;
-            for(MovementProfile profile : group){
-               min = Math.min(min, (double)profile.getClass().getMethod(aMethodName).invoke(profile));
+            for(MovementModifier profile : group){
+               min = Math.min(min, (double)profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class).invoke(profile, baseValue));
             }
             if( min != Double.POSITIVE_INFINITY )
-               ans += ans * min;
+               ans += min;
          }
          return ans;
       }

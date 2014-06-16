@@ -27,6 +27,7 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementArchetype;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
@@ -131,9 +132,9 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
 
    @Test
    public final void testGetMovementProfile_() throws Exception{
-      MovementProfile quirkEmpty = Mockito.mock(MovementProfile.class);
-      MovementProfile quirk1 = Mockito.mock(MovementProfile.class);
-      MovementProfile quirk2 = Mockito.mock(MovementProfile.class);
+      Quirks quirkEmpty = Mockito.mock(Quirks.class);
+      Quirks quirk1 = Mockito.mock(Quirks.class);
+      Quirks quirk2 = Mockito.mock(Quirks.class);
 
       for(Location location : Location.values()){
          if( location.ordinal() >= 2 )
@@ -144,8 +145,8 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
 
       Mockito.when(quirkBase.getMovementArchetype()).thenReturn(MovementArchetype.Huge);
       Mockito.when(quirkBase.getArmYawMax()).thenReturn(14.0);
-      Mockito.when(quirk1.getArmYawMax()).thenReturn(4.0);
-      Mockito.when(quirk2.getArmYawMax()).thenReturn(-1.0);
+      Mockito.when(quirk1.extraArmYawMax(14.0)).thenReturn(4.0);
+      Mockito.when(quirk2.extraArmYawMax(14.0)).thenReturn(-1.0);
 
       assertEquals(17.0, makeDefaultCUT().getMovementProfile().getArmYawMax(), 0.0);
       assertSame(MovementArchetype.Huge, makeDefaultCUT().getMovementProfile().getMovementArchetype());

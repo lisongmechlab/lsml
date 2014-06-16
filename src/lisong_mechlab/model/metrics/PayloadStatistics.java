@@ -84,8 +84,18 @@ public class PayloadStatistics{
       return maxPayload;
    }
 
+   /**
+    * Calculates how much user payload the given omnimech can carry. Will consider the status of the
+    * {@link #changeUseMaxArmor(boolean)} the status of XL engine or other upgrades are ignored as they are fixed on
+    * omnimechs.
+    * 
+    * @param aChassis
+    *           The {@link ChassisOmniMech} to calculate the payload tonnage for.
+    * @return The payload tonnage.
+    */
    public double calculate(ChassisOmniMech aChassis){
-      double ans = aChassis.getMassMax() - aChassis.getMassStripped() - (10 - aChassis.getFixedHeatSinks());
+      int missingHs = Math.max(0, 10 - aChassis.getFixedHeatSinks());
+      double ans = aChassis.getMassMax() - aChassis.getMassStripped() - missingHs;
       if( maxArmor ){
          ans -= aChassis.getArmorType().getArmorMass(aChassis.getArmorMax());
       }

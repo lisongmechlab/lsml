@@ -37,14 +37,14 @@ public class MaxMovementProfileTest{
    @Test 
    public void testGetMovementArchetype(){
       MovementProfile base = Mockito.mock(MovementProfile.class);
-      MovementProfile arm1 = Mockito.mock(MovementProfile.class);
-      MovementProfile arm2 = Mockito.mock(MovementProfile.class);
-      MovementProfile leg1 = Mockito.mock(MovementProfile.class);
-      MovementProfile leg2 = Mockito.mock(MovementProfile.class);
+      Quirks arm1 = Mockito.mock(Quirks.class);
+      Quirks arm2 = Mockito.mock(Quirks.class);
+      Quirks leg1 = Mockito.mock(Quirks.class);
+      Quirks leg2 = Mockito.mock(Quirks.class);
 
-      List<MovementProfile> arm = new ArrayList<>();
-      List<MovementProfile> leg = new ArrayList<>();
-      List<List<MovementProfile>> groups = new ArrayList<>();
+      List<Quirks> arm = new ArrayList<>();
+      List<Quirks> leg = new ArrayList<>();
+      List<List<Quirks>> groups = new ArrayList<>();
       groups.add(arm);
       groups.add(leg);
       arm.add(arm1);
@@ -55,10 +55,6 @@ public class MaxMovementProfileTest{
       MaxMovementProfile cut = new MaxMovementProfile(base, groups);
 
       Mockito.when(base.getMovementArchetype()).thenReturn(MovementArchetype.Small);
-      Mockito.when(arm1.getMovementArchetype()).thenReturn(MovementArchetype.Large);
-      Mockito.when(arm2.getMovementArchetype()).thenReturn(MovementArchetype.Large);
-      Mockito.when(leg1.getMovementArchetype()).thenReturn(MovementArchetype.Large);
-      Mockito.when(leg2.getMovementArchetype()).thenReturn(MovementArchetype.Large);
 
       assertEquals(MovementArchetype.Small, cut.getMovementArchetype());
    }
@@ -66,15 +62,15 @@ public class MaxMovementProfileTest{
    @Test
    public void testGetMaxMovementSpeed(){
       MovementProfile base = Mockito.mock(MovementProfile.class);
-      MovementProfile arm1 = Mockito.mock(MovementProfile.class);
-      MovementProfile arm2 = Mockito.mock(MovementProfile.class);
-      MovementProfile leg1 = Mockito.mock(MovementProfile.class);
-      MovementProfile leg2 = Mockito.mock(MovementProfile.class);
+      Quirks arm1 = Mockito.mock(Quirks.class);
+      Quirks arm2 = Mockito.mock(Quirks.class);
+      Quirks leg1 = Mockito.mock(Quirks.class);
+      Quirks leg2 = Mockito.mock(Quirks.class);
 
-      List<MovementProfile> arm = new ArrayList<>();
-      List<MovementProfile> leg = new ArrayList<>();
-      List<MovementProfile> torso = new ArrayList<>(); // Empty groups should be handled correctly
-      List<List<MovementProfile>> groups = new ArrayList<>();
+      List<Quirks> arm = new ArrayList<>();
+      List<Quirks> leg = new ArrayList<>();
+      List<Quirks> torso = new ArrayList<>(); // Empty groups should be handled correctly
+      List<List<Quirks>> groups = new ArrayList<>();
       groups.add(arm);
       groups.add(leg);
       groups.add(torso);
@@ -85,12 +81,12 @@ public class MaxMovementProfileTest{
 
       MaxMovementProfile cut = new MaxMovementProfile(base, groups);
 
-      Mockito.when(base.getMaxMovementSpeed()).thenReturn(3.0);
-      Mockito.when(arm1.getMaxMovementSpeed()).thenReturn(-0.1);
-      Mockito.when(arm2.getMaxMovementSpeed()).thenReturn(0.2);
-      Mockito.when(leg1.getMaxMovementSpeed()).thenReturn(0.4);
-      Mockito.when(leg2.getMaxMovementSpeed()).thenReturn(0.3);
+      Mockito.when(base.getTorsoPitchSpeed()).thenReturn(3.0);
+      Mockito.when(arm1.extraTorsoPitchSpeed(3.0)).thenReturn(-0.1);
+      Mockito.when(arm2.extraTorsoPitchSpeed(3.0)).thenReturn(0.2);
+      Mockito.when(leg1.extraTorsoPitchSpeed(3.0)).thenReturn(0.4);
+      Mockito.when(leg2.extraTorsoPitchSpeed(3.0)).thenReturn(0.3);
 
-      assertEquals(3.6, cut.getMaxMovementSpeed(), 0.0);
+      assertEquals(3.6, cut.getTorsoPitchSpeed(), 0.0);
    }
 }

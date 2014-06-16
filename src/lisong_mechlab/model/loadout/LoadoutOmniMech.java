@@ -21,7 +21,7 @@ package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.MovementProfile;
-import lisong_mechlab.model.chassi.MovementProfileProduct;
+import lisong_mechlab.model.chassi.QuirkedMovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
@@ -39,7 +39,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
-   transient private final MovementProfileProduct movementProfile;
+   transient private final QuirkedMovementProfile movementProfile;
    transient private final Upgrades               upgrades;
 
    /**
@@ -49,10 +49,10 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
     */
    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis, MessageXBar aXBar){
       super(aFactory, aChassis, aXBar);
-      movementProfile = new MovementProfileProduct(aChassis.getMovementProfileBase());
+      movementProfile = new QuirkedMovementProfile(aChassis.getMovementProfileBase());
       upgrades = new Upgrades(aChassis.getArmorType(), aChassis.getStructureType(), UpgradeDB.STANDARD_GUIDANCE, aChassis.getHeatSinkType());
       for(ConfiguredComponentOmniMech component : getComponents()){
-         movementProfile.addMovementProfile(component.getOmniPod().getQuirks());
+         movementProfile.addMovementModifier(component.getOmniPod().getQuirks());
       }
    }
 
@@ -62,9 +62,9 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
     */
    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aOmniPodFactory, LoadoutOmniMech aLoadoutOmniMech){
       super(aOmniPodFactory, aLoadoutOmniMech);
-      movementProfile = new MovementProfileProduct(getChassis().getMovementProfileBase());
+      movementProfile = new QuirkedMovementProfile(getChassis().getMovementProfileBase());
       for(ConfiguredComponentOmniMech component : getComponents()){
-         movementProfile.addMovementProfile(component.getOmniPod().getQuirks());
+         movementProfile.addMovementModifier(component.getOmniPod().getQuirks());
       }
       upgrades = new Upgrades(aLoadoutOmniMech.getUpgrades());
    }
@@ -78,8 +78,8 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
     */
    void setOmniPod(OmniPod aOmniPod){
       ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
-      movementProfile.removeMovementProfile(component.getOmniPod().getQuirks());
-      movementProfile.addMovementProfile(aOmniPod.getQuirks());
+      movementProfile.removeMovementModifier(component.getOmniPod().getQuirks());
+      movementProfile.addMovementModifier(aOmniPod.getQuirks());
       component.setOmniPod(aOmniPod);
    }
 

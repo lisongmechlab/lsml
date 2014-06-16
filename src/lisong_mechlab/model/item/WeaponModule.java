@@ -91,22 +91,22 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
    }
 
    @Override
-   public double applyMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
+   public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
       return aRange + maxRangeModifier[maxRank - 1];
    }
 
    @Override
-   public double applyLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
+   public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
       return aRange + longRangeModifier[maxRank - 1];
    }
 
    @Override
-   public double applyHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
+   public double extraHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
       return aHeat + heatModifier[maxRank - 1]; // TODO: Use pilot skill tree
    }
 
    @Override
-   public double applyCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree){
+   public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree){
       return 0; // No pilot module modifies cooldown yet.
    }
 }
