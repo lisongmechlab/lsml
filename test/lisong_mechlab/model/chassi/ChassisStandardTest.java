@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import junitparams.JUnitParamsRunner;
 import lisong_mechlab.model.Faction;
+import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -119,6 +120,22 @@ public class ChassisStandardTest extends ChassisBaseTest{
       assertTrue(makeDefaultCUT().isAllowed(makeEngine(engineMin)));
    }
 
+   @Test
+   public void testIsAllowed_ClanEngineIsChassis(){
+      faction = Faction.Clan;
+      Engine engine = makeEngine(engineMin);
+      
+      faction = Faction.InnerSphere;
+      assertFalse(makeDefaultCUT().isAllowed(engine));
+   }
+   @Test
+   public void testIsAllowed_IsEngineClanChassis(){
+      faction = Faction.InnerSphere;
+      Engine engine = makeEngine(engineMin);
+      
+      faction = Faction.Clan;
+      assertFalse(makeDefaultCUT().isAllowed(engine));
+   }
    @Test
    public void testIsAllowed_EngineSmalllEnough(){
       assertTrue(makeDefaultCUT().isAllowed(makeEngine(engineMax)));
