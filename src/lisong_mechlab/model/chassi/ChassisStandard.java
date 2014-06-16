@@ -136,7 +136,10 @@ public class ChassisStandard extends ChassisBase{
    public boolean isAllowed(Item aItem){
       if( aItem instanceof Engine ){
          Engine engine = (Engine)aItem;
-         return engine.getRating() >= getEngineMin() && engine.getRating() <= getEngineMax();
+
+         if( engine.getRating() < getEngineMin() || engine.getRating() > getEngineMax() ){
+            return false;
+         }
       }
       else if( aItem instanceof JumpJet && getJumpJetsMax() <= 0 ){
          return false;
