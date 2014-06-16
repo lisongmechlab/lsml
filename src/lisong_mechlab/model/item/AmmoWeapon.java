@@ -59,4 +59,11 @@ public class AmmoWeapon extends Weapon{
       name = name.replace("ANTI-MISSILE SYSTEM", "AMS");
       return name;
    }
+
+   /**
+    * @return The {@link String} name of the ammo type required for this weapon.
+    */
+   public String getAmmoType(){
+      return ammoTypeId;
+   }
 }

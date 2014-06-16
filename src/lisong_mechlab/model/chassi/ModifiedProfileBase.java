@@ -37,16 +37,6 @@ public abstract class ModifiedProfileBase implements MovementProfile{
    protected abstract double calc(String aMethodName);
 
    @Override
-   public double getMaxMovementSpeed(){
-      return calc("getMaxMovementSpeed");
-   }
-
-   @Override
-   public double getReverseSpeedMultiplier(){
-      return calc("getReverseSpeedMultiplier");
-   }
-
-   @Override
    public double getTorsoYawMax(){
       return calc("getTorsoYawMax");
    }

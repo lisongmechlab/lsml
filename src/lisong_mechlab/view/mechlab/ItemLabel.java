@@ -302,7 +302,7 @@ public class ItemLabel extends JLabel{
                   boolean isUsable = false;
                   for(Item it : aLoadout.getAllItems()){
                      if( it instanceof AmmoWeapon ){
-                        if( ((AmmoWeapon)it).getAmmoType(aLoadout.getUpgrades()) == ammunition ){
+                        if( ((AmmoWeapon)it).isCompatibleAmmo(ammunition) ){
                            isUsable = true;
                            break;
                         }
