@@ -393,9 +393,11 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return <code>true</code> if the given {@link Item} is globally feasible on this loadout.
     */
    public boolean canEquip(Item anItem){
-      if( !canEquipGlobal(anItem) ){
+      if( !canEquipGlobal(anItem) ){ // FIXME: The case where adding a weapon that would cause LAA/HA to be removed while at max global slots fails even if it might succeed.
          return false;
       }
+      
+      // FIXME: There are problems with jump jet limits
 
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;

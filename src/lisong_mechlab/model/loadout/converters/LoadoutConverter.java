@@ -64,7 +64,7 @@ public class LoadoutConverter implements Converter{
 
    @Override
    public boolean canConvert(Class aClass){
-      return LoadoutStandard.class.isAssignableFrom(aClass) || LoadoutOmniMech.class.isAssignableFrom(aClass);
+      return LoadoutBase.class.isAssignableFrom(aClass);
    }
 
    @Override

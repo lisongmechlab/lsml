@@ -43,8 +43,6 @@ public class ChassisStandard extends ChassisBase{
    private final int engineMax;
    @XStreamAsAttribute
    private final int maxJumpJets;
-   @XStreamAsAttribute
-   private final int pilotModulesMax;
 
    /**
     * Creates a new {@link ChassisStandard}.
@@ -83,11 +81,10 @@ public class ChassisStandard extends ChassisBase{
    public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
                           int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, int aEngineMin, int aEngineMax, int aMaxJumpJets,
                           ComponentStandard[] aComponents, int aMaxPilotModules){
-      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents);
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents, aMaxPilotModules);
       engineMin = aEngineMin;
       engineMax = aEngineMax;
       maxJumpJets = aMaxJumpJets;
-      pilotModulesMax = aMaxPilotModules;
    }
 
    /**
@@ -147,10 +144,4 @@ public class ChassisStandard extends ChassisBase{
       return super.isAllowed(aItem);
    }
 
-   /**
-    * @return The maximal number of pilot modules this chassis can support.
-    */
-   public int getPilotModulesMax(){
-      return pilotModulesMax;
-   }
 }

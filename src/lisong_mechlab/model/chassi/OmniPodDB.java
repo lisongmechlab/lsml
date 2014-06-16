@@ -40,6 +40,19 @@ public class OmniPodDB{
 
    /**
     * @param aChassis
+    *           The chassis to get the pods for.
+    * @return A {@List} of the {@link OmniPod}s that are "original" to the given chassis.
+    */
+   public static List<OmniPod> lookupOriginal(ChassisOmniMech aChassis){
+      List<OmniPod> ans = new ArrayList<>();
+      for(Location location : Location.values()){
+         ans.add(OmniPodDB.lookupOriginal(aChassis, location));
+      }
+      return ans;
+   }
+
+   /**
+    * @param aChassis
     *           The chassis to get the pod for.
     * @param aLocation
     *           The location to get the pod for.

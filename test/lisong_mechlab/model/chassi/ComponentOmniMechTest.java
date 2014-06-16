@@ -173,7 +173,11 @@ public class ComponentOmniMechTest extends ComponentBaseTest{
       Mockito.when(ballistic.getName()).thenReturn("CLAN LIGHT GAUSS RIFLE");
       assertTrue(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
 
+      Mockito.when(ballistic.getName()).thenReturn("C-LB5-X AC");
+      assertTrue(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
+      
       Mockito.when(ballistic.getName()).thenReturn("MACHINE GUN");
       assertFalse(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
+      
    }
 }
