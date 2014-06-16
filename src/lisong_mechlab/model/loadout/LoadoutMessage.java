@@ -71,7 +71,7 @@ public class LoadoutMessage implements MessageXBar.Message{
 
    @Override
    public boolean affectsHeatOrDamage(){
-      return type == Type.UPDATE;
+      return type == Type.UPDATE || type == Type.MODULES_CHANGED;
    }
 
    @Override

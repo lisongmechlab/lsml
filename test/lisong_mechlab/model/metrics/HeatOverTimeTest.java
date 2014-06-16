@@ -55,9 +55,9 @@ public class HeatOverTimeTest{
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
 
       assertEquals(0, cut.calculate(0), 0.0);
-      assertEquals(erllas.getHeat() / 2, cut.calculate(erllas.getDuration() / 2), 0.0);
+      assertEquals(erllas.getHeat(null) / 2, cut.calculate(erllas.getDuration() / 2), 0.0);
 
-      assertEquals(erllas.getHeat() * 10.5, cut.calculate(erllas.getSecondsPerShot(null) * 10 + erllas.getDuration() / 2), 0.0);
+      assertEquals(erllas.getHeat(null) * 10.5, cut.calculate(erllas.getSecondsPerShot(null) * 10 + erllas.getDuration() / 2), 0.0);
    }
 
    @Test
@@ -71,10 +71,10 @@ public class HeatOverTimeTest{
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
 
-      assertEquals(erppc.getHeat(), cut.calculate(0), 0.0);
-      assertEquals(erppc.getHeat(), cut.calculate(0 + Math.ulp(1)), 0.0);
+      assertEquals(erppc.getHeat(null), cut.calculate(0), 0.0);
+      assertEquals(erppc.getHeat(null), cut.calculate(0 + Math.ulp(1)), 0.0);
 
-      assertEquals(erppc.getHeat() * 5, cut.calculate(erppc.getSecondsPerShot(null) * 5 - Math.ulp(1)), 0.0);
+      assertEquals(erppc.getHeat(null) * 5, cut.calculate(erppc.getSecondsPerShot(null) * 5 - Math.ulp(1)), 0.0);
    }
 
    @Test
@@ -88,10 +88,10 @@ public class HeatOverTimeTest{
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
 
-      assertEquals(ac20.getHeat(), cut.calculate(0), 0.0);
-      assertEquals(ac20.getHeat(), cut.calculate(0 + Math.ulp(1)), 0.0);
+      assertEquals(ac20.getHeat(null), cut.calculate(0), 0.0);
+      assertEquals(ac20.getHeat(null), cut.calculate(0 + Math.ulp(1)), 0.0);
 
-      assertEquals(ac20.getHeat() * 5, cut.calculate(ac20.getSecondsPerShot(null) * 5 - Math.ulp(1)), 0.0);
+      assertEquals(ac20.getHeat(null) * 5, cut.calculate(ac20.getSecondsPerShot(null) * 5 - Math.ulp(1)), 0.0);
    }
 
    @Test
@@ -125,7 +125,7 @@ public class HeatOverTimeTest{
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
 
-      assertEquals(0.2 * 20 + ac20.getHeat() * 5 + erllas.getHeat() * 5, cut.calculate(20 - Math.ulp(20)), Math.ulp(80));
+      assertEquals(0.2 * 20 + ac20.getHeat(null) * 5 + erllas.getHeat(null) * 5, cut.calculate(20 - Math.ulp(20)), Math.ulp(80));
    }
 
    @Test

@@ -601,8 +601,18 @@ public class DataCache{
                   affected.add((Weapon)findItem(weaps[i].trim(), aDataCache.items));
                }
 
-               String name = Localization.key2string(statsModule.Loc.nameTag);
-               String desc = Localization.key2string(statsModule.Loc.descTag);
+               final String name;
+               final String desc;
+
+               if( null != pms.talentId && !"".equals(pms.talentId) ){
+                  XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentId);
+                  name = Localization.key2string(talent.rankEntries.get(talent.rankEntries.size()-1).title);
+                  desc = Localization.key2string(talent.rankEntries.get(talent.rankEntries.size()-1).description);
+               }
+               else{
+                  name = Localization.key2string(statsModule.Loc.nameTag);
+                  desc = Localization.key2string(statsModule.Loc.descTag);
+               }
 
                int maxRank = weaponStats.size();
                double longRange[] = new double[maxRank];

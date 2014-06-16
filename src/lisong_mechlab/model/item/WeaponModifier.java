@@ -84,7 +84,7 @@ public interface WeaponModifier{
     * 
     * @param aWeapon
     *           The weapon to apply the modifier to.
-    * @param aCooldownomniPod
+    * @param aCooldown
     *           The attribute to augment.
     * @param aPilotSkillTree
     *           The skills of the pilot, may affect the results.

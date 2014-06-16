@@ -167,7 +167,7 @@ public class ItemTests{
          assertNotNull(ammunition.getName()); // All ammo must have a name!
 
          assertEquals(1, ammunition.getNumCriticalSlots());
-         assertTrue(ammunition.getShotsPerTon() > 0);
+         assertTrue(ammunition.getNumShots() > 0);
 
          // The name of the ammo must be traceable to the weapon
          String weaponPart = item.getName();

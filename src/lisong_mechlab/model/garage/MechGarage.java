@@ -252,7 +252,7 @@ public class MechGarage{
     * @return An {@link XStream} object usable for deserialization of garages.
     */
    private static XStream garageXstream(MessageXBar anXBar){
-      XStream stream = LoadoutStandard.loadoutXstream(anXBar);
+      XStream stream = LoadoutBase.loadoutXstream(anXBar);
       stream.alias("garage", MechGarage.class);
       stream.omitField(MechGarage.class, "file");
       return stream;

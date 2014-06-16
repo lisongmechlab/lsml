@@ -29,19 +29,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JDesktopPane;
 import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.item.PilotModule;
-import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.view.mechlab.ItemLabel;
 import lisong_mechlab.view.mechlab.PartList;
-import lisong_mechlab.view.mechlab.PilotModuleList;
 import lisong_mechlab.view.mechlab.equipment.GarageTree;
 import lisong_mechlab.view.render.ItemRenderer;
 
@@ -113,7 +111,7 @@ public class ItemTransferHandler extends TransferHandler{
    @Override
    protected void exportDone(JComponent c, Transferable t, int action){
       // NO-OP
-      // The items are removed during the import, otherwise the drop
+      // The items are removed during the eport, otherwise the drop
       // may fail because of loadout tonnage limits etc.
    }
 
@@ -133,16 +131,7 @@ public class ItemTransferHandler extends TransferHandler{
          }
          return true;
       }
-      else if( uiComponent instanceof PilotModuleList ){
-         List<PilotModule> modules = parseModules(aInfo);
-         if( null == modules )
-            return false;
-         LoadoutBase<?> loadout = ((PilotModuleList)uiComponent).getLoadout();
-
-         for(PilotModule module : modules){
-            if( !loadout.canAddModule(module) )
-               return false;
-         }
+      else if(uiComponent instanceof JDesktopPane){
          return true;
       }
       return parseItems(aInfo) != null;
@@ -180,44 +169,8 @@ public class ItemTransferHandler extends TransferHandler{
             return false;
          }
       }
-      else if( component instanceof PilotModuleList ){
-         PilotModuleList list = (PilotModuleList)component;
-         int dropIndex = ((JList.DropLocation)info.getDropLocation()).getIndex();
-         try{
-            List<PilotModule> modules = parseModules(info);
-            if( null == modules )
-               return false;
-            for(PilotModule module : modules){
-               list.putElement(module, dropIndex);
-               dropIndex++;
-            }
-         }
-         catch( Exception e ){
-            return false;
-         }
-      }
       // Allow the user to drop the item to get it removed
       return true;
-   }
-
-   /**
-    * @param aInfo
-    * @return
-    */
-   private List<PilotModule> parseModules(TransferSupport aInfo){
-      if( !aInfo.isDataFlavorSupported(DataFlavor.stringFlavor) ){
-         return null;
-      }
-      List<PilotModule> modules = new ArrayList<>();
-      try{
-         for(String moduleId : ((String)aInfo.getTransferable().getTransferData(DataFlavor.stringFlavor)).split("\n")){
-            modules.add(PilotModuleDB.lookup(Integer.parseInt(moduleId)));
-         }
-      }
-      catch( Exception e ){
-         return null;
-      }
-      return modules;
    }
 
    private List<Item> parseItems(TransferHandler.TransferSupport aInfo){

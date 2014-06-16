@@ -31,6 +31,7 @@ import lisong_mechlab.model.loadout.OpAddModule;
 import lisong_mechlab.model.loadout.OpRemoveModule;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.view.mechlab.equipment.ModuleTransferHandler;
 import lisong_mechlab.view.render.ItemRenderer;
 
 /**
@@ -58,15 +59,14 @@ public class PilotModuleList extends JList<PilotModule>{
       setVisibleRowCount(4);
       setFixedCellWidth(ItemRenderer.getItemWidth());
       setFixedCellHeight(ItemRenderer.getItemHeight());
+      setDragEnabled(true);
+      setTransferHandler(new ModuleTransferHandler());
 
       addMouseListener(new MouseAdapter(){
          @Override
          public void mouseClicked(java.awt.event.MouseEvent e){
             if( e.getClickCount() >= 2 ){
-               PilotModule module = getSelectedValue();
-               if( module != null ){
-                  stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
-               }
+               takeCurrent();
             }
          }
       });
@@ -75,12 +75,8 @@ public class PilotModuleList extends JList<PilotModule>{
          @Override
          public void keyReleased(KeyEvent aE){
             if( aE.getKeyCode() == KeyEvent.VK_DELETE ){
-               PilotModule module = getSelectedValue();
-               if( module != null ){
-                  stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
-               }
+               takeCurrent();
             }
-            super.keyReleased(aE);
          }
       });
    }
@@ -91,9 +87,16 @@ public class PilotModuleList extends JList<PilotModule>{
 
    /**
     * @param aModule
-    * @param aDropIndex
     */
-   public void putElement(PilotModule aModule, int aDropIndex){
+   public void putElement(PilotModule aModule){
       stack.pushAndApply(new OpAddModule(xBar, loadout, aModule));
+   }
+   
+   public PilotModule takeCurrent(){
+      PilotModule module = getSelectedValue();
+      if( module != null ){
+         stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
+      }
+      return module;
    }
 }

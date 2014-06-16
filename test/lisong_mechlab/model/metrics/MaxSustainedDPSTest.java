@@ -104,7 +104,7 @@ public class MaxSustainedDPSTest{
       when(loadout.getAllItems()).thenReturn(items);
       when(heatDissipation.calculate()).thenReturn(10.0);
 
-      assertEquals(ppc.getStat("d/s", null), cut.calculate(90.0 + 0.001), 0.0);
+      assertEquals(ppc.getStat("d/s", null, null), cut.calculate(90.0 + 0.001), 0.0);
       assertEquals(0.0, cut.calculate(90.0 - 0.001), 0.0);
    }
 
@@ -148,7 +148,7 @@ public class MaxSustainedDPSTest{
       Collections.shuffle(items, rng); // "Deterministically random" shuffle
 
       // There is enough heat to dissipate the GAUSS, LLaser and 1.5 ER PPCs
-      double heat = gauss.getStat("h/s", null) + erppc.getStat("h/s", null) * 1.5 + llas.getStat("h/s", null);
+      double heat = gauss.getStat("h/s", null, null) + erppc.getStat("h/s", null, null) * 1.5 + llas.getStat("h/s", null, null);
 
       when(loadout.getAllItems()).thenReturn(items);
       when(heatDissipation.calculate()).thenReturn(heat);
@@ -157,7 +157,7 @@ public class MaxSustainedDPSTest{
       double result = cut.calculate(300.0); // 300.0 is inside LLAS optimal
 
       // Verify
-      double expected = gauss.getStat("d/s", null) + erppc.getStat("d/s", null) * 1.5 + llas.getStat("d/s", null);
+      double expected = gauss.getStat("d/s", null, null) + erppc.getStat("d/s", null, null) * 1.5 + llas.getStat("d/s", null, null);
       assertEquals(expected, result, 0.0);
    }
 
@@ -177,6 +177,6 @@ public class MaxSustainedDPSTest{
 
       double result = cut.calculate(0.0);
 
-      assertEquals(gauss.getStat("d/s", null), result, 0.0);
+      assertEquals(gauss.getStat("d/s", null, null), result, 0.0);
    }
 }

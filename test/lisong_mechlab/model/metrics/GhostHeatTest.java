@@ -20,9 +20,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class GhostHeatTest{
    @Mock
-   private LoadoutStandard   loadout;
+   private LoadoutStandard loadout;
    @InjectMocks
-   private GhostHeat cut;
+   private GhostHeat       cut;
 
    @Test
    public void testCalculate_2ppc() throws Exception{
@@ -76,10 +76,10 @@ public class GhostHeatTest{
       Weapon lpl = (Weapon)ItemDB.lookup("LRG PULSE LASER");
       Weapon erll = (Weapon)ItemDB.lookup("ER LARGE LASER");
 
-      Weapon max = lpl.getHeat() > erll.getHeat() ? lpl : erll;
+      Weapon max = lpl.getHeat(null) > erll.getHeat(null) ? lpl : erll;
 
       double result = cut.calculate();
-      assertEquals(max.getGhostHeatMultiplier() * max.getHeat() * (0.18 + 0.30), result, 0.0001);
+      assertEquals(max.getGhostHeatMultiplier() * max.getHeat(null) * (0.18 + 0.30), result, 0.0001);
    }
 
    @Test
@@ -103,8 +103,8 @@ public class GhostHeatTest{
       Weapon mlas = (Weapon)ItemDB.lookup("MEDIUM LASER");
 
       double result = cut.calculate();
-      double ac20penalty = ac20.getGhostHeatMultiplier() * ac20.getHeat() * 0.08;
-      double mlaspenalty = mlas.getGhostHeatMultiplier() * mlas.getHeat() * (0.80 + 1.10 + 1.50);
+      double ac20penalty = ac20.getGhostHeatMultiplier() * ac20.getHeat(null) * 0.08;
+      double mlaspenalty = mlas.getGhostHeatMultiplier() * mlas.getHeat(null) * (0.80 + 1.10 + 1.50);
       assertEquals(ac20penalty + mlaspenalty, result, 0.0001);
    }
 

@@ -103,21 +103,21 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
    @Override
    protected ChassisOmniMech makeDefaultCUT(){
       return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
-                                 structureType, armorType, heatSinkType);
+                                 maxPilotModules, structureType, armorType, heatSinkType);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public final void testCtor_BadDynStructure(){
       Mockito.when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);
       new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
-                          structureType, armorType, heatSinkType);
+                          maxPilotModules, structureType, armorType, heatSinkType);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public final void testCtor_BadDynArmor(){
       Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(13);
       new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
-                          structureType, armorType, heatSinkType);
+                          maxPilotModules, structureType, armorType, heatSinkType);
    }
 
    @Test
@@ -143,18 +143,18 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
       List<Item> fixed3 = new ArrayList<>();
 
       Item item1 = Mockito.mock(Item.class);
-      HeatSink item2 = Mockito.mock(HeatSink.class);
-      HeatSink item3 = Mockito.mock(HeatSink.class);
+      HeatSink hs1 = Mockito.mock(HeatSink.class);
+      HeatSink hs2 = Mockito.mock(HeatSink.class);
 
       Mockito.when(item1.getMass()).thenReturn(1.0);
-      Mockito.when(item2.getMass()).thenReturn(2.0);
-      Mockito.when(item3.getMass()).thenReturn(3.0);
+      Mockito.when(hs1.getMass()).thenReturn(2.0);
+      Mockito.when(hs2.getMass()).thenReturn(3.0);
 
       fixed1.add(item1);
-      fixed1.add(item2);
-      fixed2.add(item2);
-      fixed2.add(item2);
-      fixed3.add(item3);
+      fixed1.add(hs1);
+      fixed2.add(hs1);
+      fixed2.add(hs1);
+      fixed3.add(hs2);
 
       Mockito.when(components[2].getFixedItems()).thenReturn(fixed1);
       Mockito.when(components[3].getFixedItems()).thenReturn(fixed2);
