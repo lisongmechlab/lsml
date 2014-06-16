@@ -118,7 +118,7 @@ public class OmniPod{
    /**
     * @return The omnipod specific movement quirks.
     */
-   public MovementProfile getQuirks(){
+   public Quirks getQuirks(){
       return quirks;
    }
 
@@ -188,7 +188,7 @@ public class OmniPod{
    /**
     * @return A unmodifiable list of items that are fixed on this {@link OmniPod}. Typically only HA and LAA.
     */
-   public List<? extends Item> getFixedItems(){
+   public List<Item> getFixedItems(){
       return fixedItems;
    }
 }

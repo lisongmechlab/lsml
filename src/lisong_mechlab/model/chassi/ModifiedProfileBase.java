@@ -25,7 +25,7 @@ package lisong_mechlab.model.chassi;
  * 
  * @author Li Song
  */
-public abstract class CompositeMovementProfileBase implements MovementProfile{
+public abstract class ModifiedProfileBase implements MovementProfile{
 
    /**
     * Uses reflection to calculate the sought for value.

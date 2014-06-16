@@ -29,9 +29,9 @@ import java.util.List;
  * 
  * @author Li Song
  */
-public class MovementProfileProduct extends CompositeMovementProfileBase{
+public class QuirkedMovementProfile extends ModifiedProfileBase{
 
-   private List<MovementProfile> terms = new ArrayList<>();
+   private List<MovementModifier> terms = new ArrayList<>();
    MovementProfile               mainProfile;
 
    @Override
@@ -40,8 +40,8 @@ public class MovementProfileProduct extends CompositeMovementProfileBase{
          double base = (double)mainProfile.getClass().getMethod(aMethodName).invoke(mainProfile);
          double ans = base;
 
-         for(MovementProfile profile : terms){
-            ans += base * (double)profile.getClass().getMethod(aMethodName).invoke(profile);
+         for(MovementModifier profile : terms){
+            ans += (double)profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class).invoke(profile, base);
          }
          return ans;
       }
@@ -50,15 +50,15 @@ public class MovementProfileProduct extends CompositeMovementProfileBase{
       }
    }
 
-   public MovementProfileProduct(MovementProfile aMainProfile){
+   public QuirkedMovementProfile(MovementProfile aMainProfile){
       mainProfile = aMainProfile;
    }
 
-   public void addMovementProfile(MovementProfile aMovementProfile){
+   public void addMovementModifier(MovementModifier aMovementProfile){
       terms.add(aMovementProfile);
    }
 
-   public void removeMovementProfile(MovementProfile aMovementProfile){
+   public void removeMovementModifier(MovementModifier aMovementProfile){
       terms.remove(aMovementProfile);
    }
 

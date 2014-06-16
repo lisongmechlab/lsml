@@ -121,12 +121,16 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
       }
       for(Item item : getItemsEquipped()){
          slots += item.getNumCriticalSlots();
-         if( item instanceof HeatSink ){
+         if( item instanceof Engine ){
+            engineHsSlots = ((Engine)item).getNumHeatsinkSlots();
+         }
+         else if( item instanceof HeatSink ){
             hsSize = item.getNumCriticalSlots();
             numHs++;
          }
       }
-      return slots + getInternalComponent().getDynamicArmorSlots() + getInternalComponent().getDynamicStructureSlots() - Math.min(engineHsSlots, numHs)*hsSize;
+      return slots + getInternalComponent().getDynamicArmorSlots() + getInternalComponent().getDynamicStructureSlots()
+             - Math.min(engineHsSlots, numHs) * hsSize;
    }
 
    /**

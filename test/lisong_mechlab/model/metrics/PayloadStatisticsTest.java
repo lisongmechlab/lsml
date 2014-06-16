@@ -36,7 +36,7 @@ public class PayloadStatisticsTest{
    public final void testOmniMech(){
       double strippedMass = 50;
       int maxMass = 100;
-      int fixedHs = 8;
+      int fixedHs = 8; // < 10
       ChassisOmniMech chassis = Mockito.mock(ChassisOmniMech.class);
       Mockito.when(chassis.getMassMax()).thenReturn(maxMass);
       Mockito.when(chassis.getMassStripped()).thenReturn(strippedMass);
@@ -48,12 +48,27 @@ public class PayloadStatisticsTest{
    }
 
    @Test
+   public final void testOmniMech_lotsOfHeatsinks(){
+      double strippedMass = 50;
+      int maxMass = 100;
+      int fixedHs = 15; // > 10
+      ChassisOmniMech chassis = Mockito.mock(ChassisOmniMech.class);
+      Mockito.when(chassis.getMassMax()).thenReturn(maxMass);
+      Mockito.when(chassis.getMassStripped()).thenReturn(strippedMass);
+      Mockito.when(chassis.getFixedHeatSinks()).thenReturn(fixedHs);
+
+      PayloadStatistics cut = new PayloadStatistics(false, false, null);
+
+      assertEquals(maxMass - strippedMass, cut.calculate(chassis), 0.0);
+   }
+   
+   @Test
    public final void testOmniMech_MaxArmor(){
       int maxArmor = 300;
       double strippedMass = 50;
       int maxMass = 100;
       double armorMass = 10;
-      int fixedHs = 8;
+      int fixedHs = 8; // < 10
 
       ArmorUpgrade armorUpgrade = Mockito.mock(ArmorUpgrade.class);
       Mockito.when(armorUpgrade.getArmorMass(maxArmor)).thenReturn(armorMass);
@@ -135,7 +150,7 @@ public class PayloadStatisticsTest{
       assertEquals(40.0, cut.calculate(jm6_a, 250), 0.0);
       assertEquals(33.5, cut.calculate(jm6_a, 300), 0.0);
    }
-
+   
    @Test
    public final void testCalculate_xl() throws Exception{
       ChassisStandard jm6_a = (ChassisStandard)ChassisDB.lookup("JM6-A");

@@ -32,12 +32,12 @@ import java.util.List;
  * 
  * @author Li Song
  */
-public class MaxMovementProfile extends CompositeMovementProfileBase{
+public class MaxMovementProfile extends ModifiedProfileBase{
 
    private MovementProfile             base;
-   private List<List<MovementProfile>> groups;
+   private List<List<Quirks>> groups;
 
-   public MaxMovementProfile(MovementProfile aBase, List<List<MovementProfile>> aGroups){
+   public MaxMovementProfile(MovementProfile aBase, List<List<Quirks>> aGroups){
       base = aBase;
       groups = aGroups;
    }
@@ -45,14 +45,15 @@ public class MaxMovementProfile extends CompositeMovementProfileBase{
    @Override
    protected double calc(String aMethodName){
       try{
-         double ans = (double)base.getClass().getMethod(aMethodName).invoke(base);
-         for(List<MovementProfile> group : groups){
+         double baseValue =(double)base.getClass().getMethod(aMethodName).invoke(base); 
+         double ans = baseValue;
+         for(List<Quirks> group : groups){
             double max = Double.NEGATIVE_INFINITY;
-            for(MovementProfile profile : group){
-               max = Math.max(max, (double)profile.getClass().getMethod(aMethodName).invoke(profile));
+            for(MovementModifier profile : group){
+               max = Math.max(max, (double)profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class).invoke(profile, baseValue));
             }
             if( max != Double.NEGATIVE_INFINITY )
-               ans += ans * max;
+               ans += max;
          }
          return ans;
       }

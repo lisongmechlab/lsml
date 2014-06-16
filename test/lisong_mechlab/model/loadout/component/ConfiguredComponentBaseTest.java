@@ -429,7 +429,8 @@ public abstract class ConfiguredComponentBaseTest{
 
    @Test
    public final void testGetSlotsFreeUsed() throws Exception{
-      slots = 15;
+      slots = 20;
+      internalFixedSlots = 5;
       
       Item fixed1 = Mockito.mock(Item.class);
       Mockito.when(fixed1.getNumCriticalSlots()).thenReturn(2);
@@ -448,8 +449,8 @@ public abstract class ConfiguredComponentBaseTest{
       cut.addItem(item1);
       cut.addItem(item2);
       
-      assertEquals(12, cut.getSlotsUsed());
-      assertEquals(slots-12, cut.getSlotsFree());
+      assertEquals(17, cut.getSlotsUsed());
+      assertEquals(slots-17, cut.getSlotsFree());
    }
    
    @Test

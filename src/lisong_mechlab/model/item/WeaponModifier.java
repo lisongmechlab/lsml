@@ -48,7 +48,7 @@ public interface WeaponModifier{
     *           The skills of the pilot, may affect the results.
     * @return The augmented value of the attribute (can be unchanged).
     */
-   public double applyMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree);
+   public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree);
 
    /**
     * Applies the effect of this modifier on the given attribute. Must only be called after
@@ -62,7 +62,7 @@ public interface WeaponModifier{
     *           The skills of the pilot, may affect the results.
     * @return The augmented value of the attribute (can be unchanged).
     */
-   public double applyLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree);
+   public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree);
 
    /**
     * Applies the effect of this modifier on the given attribute. Must only be called after
@@ -76,7 +76,7 @@ public interface WeaponModifier{
     *           The skills of the pilot, may affect the results.
     * @return The augmented value of the attribute (can be unchanged).
     */
-   public double applyHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree);
+   public double extraHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree);
 
    /**
     * Applies the effect of this modifier on the given attribute. Must only be called after
@@ -90,5 +90,5 @@ public interface WeaponModifier{
     *           The skills of the pilot, may affect the results.
     * @return The augmented value of the attribute (can be unchanged).
     */
-   public double applyCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree);
+   public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree);
 }
