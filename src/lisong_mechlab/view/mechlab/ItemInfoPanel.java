@@ -222,14 +222,7 @@ public class ItemInfoPanel extends JPanel{
       range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "")
                     + df0.format(aWeapon.getRangeLong(aModifiers)) + " / " + df0.format(aWeapon.getRangeMax(aModifiers)));
 
-      if( aWeapon instanceof AmmoWeapon ){
-         AmmoWeapon ammoWeapon = (AmmoWeapon)aWeapon;
-         ammoperton.setVisible(true);
-         ammoperton.setText("Shots: " + ammoWeapon.getAmmoType(anUpgrades).getNumShots());
-      }
-      else{
-         ammoperton.setVisible(false);
-      }
+      ammoperton.setVisible(false);
    }
 
    private void clearDisplay(){

@@ -66,4 +66,14 @@ public class QuirkedMovementProfile extends ModifiedProfileBase{
    public MovementArchetype getMovementArchetype(){
       return mainProfile.getMovementArchetype();
    }
+
+   @Override
+   public double getMaxMovementSpeed(){
+      return mainProfile.getMaxMovementSpeed();
+   }
+
+   @Override
+   public double getReverseSpeedMultiplier(){
+      return mainProfile.getReverseSpeedMultiplier();
+   }
 }

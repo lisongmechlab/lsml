@@ -36,6 +36,8 @@ import lisong_mechlab.view.render.ItemRenderer;
 
 /**
  * This class implements a JList for {@link PilotModule}s.
+ * <p>
+ * TODO: Make it render empty cells.
  * 
  * @author Emily Björk
  */
@@ -45,18 +47,13 @@ public class PilotModuleList extends JList<PilotModule>{
    private final LoadoutBase<?> loadout;
    private final OperationStack stack;
 
-   /**
-    * @param aXBar
-    * @param aOperationStack
-    * @param aLoadout
-    */
    public PilotModuleList(MessageXBar aXBar, OperationStack aOperationStack, LoadoutBase<?> aLoadout){
       super(new PilotModuleModel(aLoadout, aXBar));
       xBar = aXBar;
       stack = aOperationStack;
       loadout = aLoadout;
       setVisible(true);
-      setVisibleRowCount(4);
+      setVisibleRowCount(aLoadout.getModulesMax());
       setFixedCellWidth(ItemRenderer.getItemWidth());
       setFixedCellHeight(ItemRenderer.getItemHeight());
       setDragEnabled(true);
@@ -91,7 +88,7 @@ public class PilotModuleList extends JList<PilotModule>{
    public void putElement(PilotModule aModule){
       stack.pushAndApply(new OpAddModule(xBar, loadout, aModule));
    }
-   
+
    public PilotModule takeCurrent(){
       PilotModule module = getSelectedValue();
       if( module != null ){

@@ -45,7 +45,7 @@ public class MinMovementProfile extends ModifiedProfileBase{
    @Override
    protected double calc(String aMethodName){
       try{
-         double baseValue =(double)base.getClass().getMethod(aMethodName).invoke(base); 
+         double baseValue = (double)base.getClass().getMethod(aMethodName).invoke(base);
          double ans = baseValue;
          for(List<Quirks> group : groups){
             double min = Double.POSITIVE_INFINITY;
@@ -60,6 +60,16 @@ public class MinMovementProfile extends ModifiedProfileBase{
       catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ){
          throw new IllegalArgumentException();
       }
+   }
+
+   @Override
+   public double getMaxMovementSpeed(){
+      return base.getMaxMovementSpeed();
+   }
+
+   @Override
+   public double getReverseSpeedMultiplier(){
+      return base.getReverseSpeedMultiplier();
    }
 
    @Override

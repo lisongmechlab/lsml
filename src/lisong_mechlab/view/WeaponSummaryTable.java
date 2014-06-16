@@ -34,6 +34,7 @@ import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
@@ -59,38 +60,39 @@ public class WeaponSummaryTable extends JTable implements Reader{
       class Entry{
          private int                rounds;
          private final List<Weapon> weapons = new ArrayList<Weapon>();
-         private final AmmoWeapon   ammoWeaponRepresentant;
-         private final Ammunition   ammoRepresentant;
+         private final AmmoWeapon   weaponRepresentant;
+         private final String       ammoType;
 
-         Entry(LoadoutBase<?> aLoadout, Weapon aWeapon){
+         Entry(Weapon aWeapon){
             weapons.add(aWeapon);
             rounds = 0;
             if( aWeapon instanceof AmmoWeapon ){
-               ammoWeaponRepresentant = (AmmoWeapon)aWeapon;
-               ammoRepresentant = ammoWeaponRepresentant.getAmmoType(aLoadout.getUpgrades());
+               weaponRepresentant = (AmmoWeapon)aWeapon;
+               ammoType = weaponRepresentant.getAmmoType();
             }
             else{
-               ammoWeaponRepresentant = null;
-               ammoRepresentant = null;
+               weaponRepresentant = null;
+               ammoType = null;
             }
          }
 
          Entry(Ammunition aItem){
-            ammoRepresentant = aItem;
-            rounds = ammoRepresentant.getNumShots();
-            ammoWeaponRepresentant = null;
+            ammoType = aItem.getAmmoType();
+            rounds = aItem.getNumShots();
+            weaponRepresentant = null;
          }
 
          boolean consume(Item anItem){
             if( anItem instanceof Ammunition ){
                Ammunition ammo = (Ammunition)anItem;
-               if( ammoRepresentant == ammo || (null != ammoWeaponRepresentant && ammoWeaponRepresentant.isCompatibleAmmo(ammo)) ){
+               if( null != weaponRepresentant && weaponRepresentant.isCompatibleAmmo(ammo) ){
                   rounds += ammo.getNumShots();
+                  return true;
                }
             }
             else if( anItem instanceof AmmoWeapon ){
                AmmoWeapon ammoWeapon = (AmmoWeapon)anItem;
-               if( ammoRepresentant != null && ammoWeapon.isCompatibleAmmo(ammoRepresentant) ){
+               if( ammoType != null && ammoWeapon.getAmmoType().equals(ammoType) ){
                   weapons.add(ammoWeapon);
                   return true;
                }
@@ -105,19 +107,18 @@ public class WeaponSummaryTable extends JTable implements Reader{
             return false;
          }
 
-         @Deprecated
-         Ammunition getAmmoType(){
-            return ammoRepresentant;
-         }
-
          List<Weapon> getWeapons(){
             return weapons;
          }
 
          double getNumShots(){
-            if( ammoRepresentant != null )
+            if( ammoType != null )
                return rounds;
             return Double.POSITIVE_INFINITY;
+         }
+
+         public String getAmmoType(){
+            return ammoType;
          }
       }
 
@@ -142,7 +143,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
                   }
                }
                if( !found ){
-                  entries.add(new Entry(aLoadout, weapon));
+                  entries.add(new Entry(weapon));
                }
             }
          }
@@ -271,9 +272,11 @@ public class WeaponSummaryTable extends JTable implements Reader{
       @Override
       public String valueOf(Object aSourceRowObject){
          WeaponModel.Entry entry = (WeaponModel.Entry)aSourceRowObject;
-         // Weapon that doesn't use ammo
-         if( entry.getAmmoType() == null ){
-            // Ammo type will only be null if the entry was constructed with a Weapon that is not
+
+         if( entry.getNumShots() == Double.POSITIVE_INFINITY ){
+            // Weapon that doesn't use ammo
+
+            // Num shots will only be positive infinity if the entry was constructed with a Weapon that is not
             // AmmoWeapon, thus the weapons list will contain at least one entry. This is safe.
             String weaponName = entry.getWeapons().get(0).getShortName();
             if( entry.getWeapons().size() > 1 ){
@@ -281,10 +284,15 @@ public class WeaponSummaryTable extends JTable implements Reader{
             }
             return weaponName;
          }
-         // Ammo without matching weapon
-         if( entry.getWeapons().isEmpty() ){
-            return entry.getAmmoType().getShortName();
+         else if( entry.getWeapons().isEmpty() ){
+            // Ammo without matching weapon
+            for(AmmoWeapon ammoWeapon : ItemDB.lookup(AmmoWeapon.class)){
+               if( ammoWeapon.getAmmoType().equals(entry.getAmmoType()) ){
+                  return ammoWeapon.getShortName() + " AMMO";
+               }
+            }
          }
+
          // 1 >= AmmoWeapon with 0 or more tons of ammo.
          Weapon protoWeapon = entry.getWeapons().get(0);
          String weaponName = protoWeapon.getShortName();

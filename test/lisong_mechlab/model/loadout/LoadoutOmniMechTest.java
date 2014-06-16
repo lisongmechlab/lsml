@@ -111,11 +111,23 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
 
    @Test
    public final void testGetJumpJetsMax() throws Exception{
+      Mockito.when(chassisOmni.getFixedJumpJets()).thenReturn(7);
+      
       Mockito.when(pods[3].getJumpJetsMax()).thenReturn(2);
       Mockito.when(pods[6].getJumpJetsMax()).thenReturn(3);
       Mockito.when(pods[7].getJumpJetsMax()).thenReturn(5);
 
-      assertEquals(10, makeDefaultCUT().getJumpJetsMax());
+      assertEquals(17, makeDefaultCUT().getJumpJetsMax());
+   }
+   
+   @Test
+   public final void testGetModulesMax() throws Exception{
+      Mockito.when(chassisOmni.getPilotModulesMax()).thenReturn(2);
+      
+      Mockito.when(pods[3].getMaxPilotModules()).thenReturn(1);
+      Mockito.when(pods[7].getMaxPilotModules()).thenReturn(3);
+
+      assertEquals(6, makeDefaultCUT().getModulesMax());
    }
 
    @Test

@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class MaxMovementProfile extends ModifiedProfileBase{
 
-   private MovementProfile             base;
+   private MovementProfile    base;
    private List<List<Quirks>> groups;
 
    public MaxMovementProfile(MovementProfile aBase, List<List<Quirks>> aGroups){
@@ -45,7 +45,7 @@ public class MaxMovementProfile extends ModifiedProfileBase{
    @Override
    protected double calc(String aMethodName){
       try{
-         double baseValue =(double)base.getClass().getMethod(aMethodName).invoke(base); 
+         double baseValue = (double)base.getClass().getMethod(aMethodName).invoke(base);
          double ans = baseValue;
          for(List<Quirks> group : groups){
             double max = Double.NEGATIVE_INFINITY;
@@ -60,6 +60,16 @@ public class MaxMovementProfile extends ModifiedProfileBase{
       catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ){
          throw new IllegalArgumentException();
       }
+   }
+
+   @Override
+   public double getMaxMovementSpeed(){
+      return base.getMaxMovementSpeed();
+   }
+
+   @Override
+   public double getReverseSpeedMultiplier(){
+      return base.getReverseSpeedMultiplier();
    }
 
    @Override
