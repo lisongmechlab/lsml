@@ -88,19 +88,30 @@ public class BallisticWeapon extends AmmoWeapon{
    }
 
    @Override
-   public double getSecondsPerShot(Efficiencies aEfficiencies){
+   public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       if( canDoubleFire() ){
-         final double cd = getRawSecondsPerShot(aEfficiencies);
+         final double cd = getRawSecondsPerShot(aEfficiencies, aModifiers);
          return (jammingTime * jammingChance + cd) / ((1 - jammingChance) * (1 + shotsduringcooldown) + jammingChance);
       }
-      return getRawSecondsPerShot(aEfficiencies);
+      return getRawSecondsPerShot(aEfficiencies, aModifiers);
    }
 
-   public double getRawSecondsPerShot(Efficiencies aEfficiencies){
+   /**
+    * The unmodified rate of fire for the weapon. Mainly useful for ultra-ac type weapons where
+    * {@link #getSecondsPerShot(Efficiencies, Collection)} returns the statistical value.
+    * 
+    * @param aEfficiencies
+    *           The efficiencies to apply.
+    * @param aModifiers
+    *           The modifiers to apply from quirks etc.
+    * @return The rate of fire [seconds/round]
+    */
+   public double getRawSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       if( getMwoId() == 1021 ){ // Gauss rifle
-         return getCycleTime(aEfficiencies) + 0.75; // TODO: Fix this when they add the charge time to the itemstats.xml
+         return getCoolDown(aEfficiencies, aModifiers) + 0.75; // TODO: Fix this when they add the charge time to the
+                                                               // itemstats.xml
       }
-      return getCycleTime(aEfficiencies);
+      return getCoolDown(aEfficiencies, aModifiers);
    }
 
    @Override

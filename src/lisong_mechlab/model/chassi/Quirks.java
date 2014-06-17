@@ -19,9 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.EnergyWeapon;
@@ -36,134 +34,163 @@ import lisong_mechlab.model.pilot.PilotSkillTree;
  * @author Emily Björk
  */
 public class Quirks implements MovementModifier, WeaponModifier, HealthModifier{
-   private final Map<String, Double>          quirks;
+   public static class Quirk{
+      public final String name;
+      public final String key;
+      public final double value;
+      public final boolean positiveGood;
 
-   /**
-    * [ , armor_resist_ra_multiplier, internal_resist_rl_multiplier, , , internal_resist_ll_multiplier, ,
-    * armor_resist_hd_multiplier, , , overheat_damage_multiplier, , , armor_resist_la_multiplier]
-    */
-   private static transient final Set<String> q = new HashSet<>();
+      public Quirk(String aKey, String aName, double aValue, boolean aPositiveGood){
+         key = aKey;
+         name = aName;
+         value = aValue;
+         positiveGood = aPositiveGood;
+      }
+   }
+
+   private final Map<String, Quirk>           quirks;
 
    /**
     * @param aQuirks
     */
-   public Quirks(Map<String, Double> aQuirks){
+   public Quirks(Map<String, Quirk> aQuirks){
       quirks = aQuirks; // ui_quirk_ + <quirkname> is description
+   }
 
-      for(String s : quirks.keySet()){
-         q.add(s);
+   public String describeAsHtml(){
+      if(quirks.isEmpty())
+         return "";
+      StringBuilder sb = new StringBuilder();
+      sb.append("<html>");
+      sb.append("<body>");
+      sb.append("<p>Quirks:</p>");
+      for(Quirk quirk : quirks.values()){
+         final String color;
+         if(quirk.positiveGood == quirk.value > 0){
+            color = "green";
+         }
+         else{
+            color = "red";
+         }
+         
+         sb.append("<p style=\"color:").append(color).append(";\">");
+         sb.append(quirk.name).append(": ").append(quirk.value);
+         sb.append("</p>");
       }
+      sb.append("</body>");
+      sb.append("</html>");
+      return sb.toString();
    }
 
    @Override
    public double extraTorsoYawMax(double aBase){
-      Double v = quirks.get("torso_angle_yaw_additive");
-      if( v != null )
-         return v;
+      Quirk quirk = quirks.get("torso_angle_yaw_additive");
+      if( quirk != null )
+         return quirk.value;
       return 0;
    }
 
    @Override
    public double extraTorsoYawSpeed(double aBase){
-      Double v = quirks.get("torso_speed_yaw_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("torso_speed_yaw_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
    @Override
    public double extraTorsoPitchMax(double aBase){
-      Double v = quirks.get("torso_angle_pitch_additive");
-      if( v != null )
-         return v;
+      Quirk quirk = quirks.get("torso_angle_pitch_additive");
+      if( quirk != null )
+         return quirk.value;
       return 0;
    }
 
    @Override
    public double extraTorsoPitchSpeed(double aBase){
-      Double v = quirks.get("torso_speed_pitch_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("torso_speed_pitch_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
    @Override
    public double extraArmYawMax(double aBase){
-      Double v = quirks.get("arm_angle_yaw_additive");
-      if( v != null )
-         return v;
+      Quirk quirk = quirks.get("arm_angle_yaw_additive");
+      if( quirk != null )
+         return quirk.value;
       return 0;
    }
 
    @Override
    public double extraArmYawSpeed(double aBase){
-      Double v = quirks.get("arm_speed_yaw_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("arm_speed_yaw_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
    @Override
    public double extraArmPitchMax(double aBase){
-      Double v = quirks.get("arm_angle_pitch_additive");
-      if( v != null )
-         return v;
+      Quirk quirk = quirks.get("arm_angle_pitch_additive");
+      if( quirk != null )
+         return quirk.value;
       return 0;
    }
 
    @Override
    public double extraArmPitchSpeed(double aBase){
-      Double v = quirks.get("arm_speed_pitch_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("arm_speed_pitch_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
    @Override
    public double extraTurnLerpLowSpeed(double aBase){
-      Double v = quirks.get("turn_lerp_low_speed_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("turn_lerp_low_speed_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
    @Override
    public double extraTurnLerpMidSpeed(double aBase){
-      Double v = quirks.get("turn_lerp_mid_speed_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("turn_lerp_mid_speed_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
    @Override
    public double extraTurnLerpHighSpeed(double aBase){
-      Double v = quirks.get("turn_lerp_high_speed_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("turn_lerp_high_speed_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
    @Override
    public double extraTurnLerpLowRate(double aBase){
-      Double v = quirks.get("turn_lerp_low_rate_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("turn_lerp_low_rate_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
    @Override
    public double extraTurnLerpMidRate(double aBase){
-      Double v = quirks.get("turn_lerp_mid_rate_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("turn_lerp_mid_rate_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
    @Override
    public double extraTurnLerpHighRate(double aBase){
-      Double v = quirks.get("turn_lerp_high_rate_multiplier");
-      if( v != null )
-         return v * aBase;
+      Quirk quirk = quirks.get("turn_lerp_high_rate_multiplier");
+      if( quirk != null )
+         return quirk.value * aBase;
       return 0;
    }
 
@@ -196,15 +223,15 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier{
    @Override
    public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree){
       if( aWeapon instanceof EnergyWeapon ){
-         double value = quirks.get("energy_cooldown_multiplier");
+         double value = quirks.get("energy_cooldown_multiplier").value;
          return aCooldown * value;
       }
       else if( aWeapon instanceof MissileWeapon ){
-         double value = quirks.get("missile_cooldown_multiplier");
+         double value = quirks.get("missile_cooldown_multiplier").value;
          return aCooldown * value;
       }
       else if( aWeapon instanceof BallisticWeapon ){
-         double value = quirks.get("ballistic_cooldown_multiplier");
+         double value = quirks.get("ballistic_cooldown_multiplier").value;
          return aCooldown * value;
       }
       return 0;
@@ -212,17 +239,17 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier{
 
    @Override
    public double extraInternalHP(Location aLocation, double aHP){
-      Double v = quirks.get("internal_resist_" + aLocation.shortName().toLowerCase() + "_multiplier");
-      if( null != v )
-         return aHP * v;
+      Quirk quirk = quirks.get("internal_resist_" + aLocation.shortName().toLowerCase() + "_multiplier");
+      if( quirk != null )
+         return quirk.value * aHP;
       return 0;
    }
 
    @Override
    public double extraArmor(Location aLocation, double aHP){
-      Double v = quirks.get("armor_resist_" + aLocation.shortName().toLowerCase() + "_multiplier");
-      if( null != v )
-         return aHP * v;
+      Quirk quirk = quirks.get("armor_resist_" + aLocation.shortName().toLowerCase() + "_multiplier");
+      if( quirk != null )
+         return quirk.value * aHP;
       return 0;
    }
 }

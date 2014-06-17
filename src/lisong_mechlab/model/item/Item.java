@@ -73,6 +73,10 @@ public class Item implements Comparable<Item>{
    public String getKey(){
       return mwoName;
    }
+   
+   public boolean isCrittable(){
+      return health > 0;
+   }
 
    @Override
    public String toString(){

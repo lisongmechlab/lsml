@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,11 +52,11 @@ public class EnergyWeapon extends Weapon{
    }
 
    @Override
-   public double getSecondsPerShot(Efficiencies aEfficiencies){
+   public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       if( burnTime == Double.POSITIVE_INFINITY ){
-         return getCycleTime(aEfficiencies);
+         return getCoolDown(aEfficiencies, aModifiers);
       }
-      return getCycleTime(aEfficiencies) + burnTime;
+      return getCoolDown(aEfficiencies, aModifiers) + getDuration();
    }
 
    @Override

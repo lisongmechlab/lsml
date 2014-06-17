@@ -21,6 +21,7 @@ package lisong_mechlab.view.render;
 
 import java.awt.Color;
 import java.awt.Insets;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -104,7 +105,28 @@ public class StyleManager{
    }
 
    public static void styleHardpointLabel(JLabel aLabel, ConfiguredComponentBase aComponentBase, HardPointType aHardPointType){
-      int hardPoints = aComponentBase.getHardPointCount(aHardPointType);
+      styleHardpointLabel(aLabel, aHardPointType, aComponentBase.getHardPoints());
+   }
+
+   private static int countHardPoints(HardPointType aHardPointType, Collection<HardPoint> aHardPoints){
+      int ans = 0;
+      for(HardPoint hardPoint : aHardPoints){
+         if( hardPoint.getType() == aHardPointType )
+            ans++;
+      }
+      return ans;
+   }
+
+   private static boolean hasMissileBayDoors(Collection<HardPoint> aHardPoints){
+      for(HardPoint hardPoint : aHardPoints){
+         if( hardPoint.hasBayDoor() )
+            return true;
+      }
+      return false;
+   }
+
+   public static void styleHardpointLabel(JLabel aLabel, HardPointType aHardPointType, Collection<HardPoint> aHardPoints){
+      int hardPoints = countHardPoints(aHardPointType, aHardPoints);
       if( hardPoints < 1 ){
          aLabel.setVisible(false);
          return;
@@ -114,9 +136,9 @@ public class StyleManager{
       styleThinItem(aLabel, aHardPointType);
 
       if( aHardPointType == HardPointType.MISSILE ){
-         aLabel.setText(formatMissileHardpointText(aComponentBase));
+         aLabel.setText(formatMissileHardpointText(aHardPoints));
 
-         if( aComponentBase.hasMissileBayDoors() ){
+         if( hasMissileBayDoors(aHardPoints) ){
             aLabel.setIcon(MISSILE_BAY_DOOR_ICON);
             aLabel.setToolTipText("This component has missile bay doors. While the doors are closed the component takes 10% less damage.");
          }
@@ -134,8 +156,12 @@ public class StyleManager{
    }
 
    public static String formatMissileHardpointText(ConfiguredComponentBase aComponentBase){
+      return formatMissileHardpointText(aComponentBase.getHardPoints());
+   }
+
+   public static String formatMissileHardpointText(Collection<HardPoint> aHardPoints){
       Map<Integer, Integer> tubecounts = new TreeMap<>();
-      for(HardPoint hp : aComponentBase.getHardPoints()){
+      for(HardPoint hp : aHardPoints){
          if( hp.getType() == HardPointType.MISSILE ){
             final int tubes = hp.getNumMissileTubes();
             if( tubecounts.containsKey(tubes) )
@@ -145,7 +171,7 @@ public class StyleManager{
          }
       }
 
-      String ans = aComponentBase.getHardPointCount(HardPointType.MISSILE) + " M (";
+      String ans = countHardPoints(HardPointType.MISSILE, aHardPoints) + " M (";
       boolean first = true;
       for(Entry<Integer, Integer> it : tubecounts.entrySet()){
          if( !first )

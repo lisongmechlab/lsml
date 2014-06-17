@@ -74,7 +74,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.
                continue;
 
             double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers());
-            double period = weapon.getSecondsPerShot(loadout.getEfficiencies());
+            double period = weapon.getSecondsPerShot(loadout.getEfficiencies(), loadout.getWeaponModifiers());
             double damage = factor * weapon.getDamagePerShot();
 
             if( weapon instanceof EnergyWeapon ){

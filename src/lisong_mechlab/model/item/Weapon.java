@@ -125,13 +125,22 @@ public class Weapon extends HeatSource{
       return roundsPerShot;
    }
 
-   public double getSecondsPerShot(Efficiencies aEfficiencies){
-      return getCycleTime(aEfficiencies);
+   public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
+      return getCoolDown(aEfficiencies, aModifiers);
    }
 
-   public double getCycleTime(Efficiencies aEfficiencies){
+   public double getCoolDown(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
+      double a = 0;
+      if( aModifiers != null ){
+         for(WeaponModifier mod : aModifiers){
+            if( mod.affectsWeapon(this) ){
+               a += mod.extraCooldown(this, cycleTime, null);
+            }
+         }
+      }
+
       double factor = (null == aEfficiencies) ? 1.0 : aEfficiencies.getWeaponCycleTimeModifier();
-      return cycleTime * factor;
+      return (cycleTime + a) * factor;
    }
 
    public double getProjectileSpeed(){
@@ -146,10 +155,10 @@ public class Weapon extends HeatSource{
       return rangeMin;
    }
 
-   public double getRangeMax(Collection<WeaponModifier> aPilotModules){
+   public double getRangeMax(Collection<WeaponModifier> aModifiers){
       double a = 0;
-      if( aPilotModules != null ){
-         for(WeaponModifier mod : aPilotModules){
+      if( aModifiers != null ){
+         for(WeaponModifier mod : aModifiers){
             if( mod.affectsWeapon(this) ){
                a += mod.extraMaxRange(this, rangeMax, null);
             }
@@ -158,10 +167,10 @@ public class Weapon extends HeatSource{
       return rangeMax + a;
    }
 
-   public double getRangeLong(Collection<WeaponModifier> aPilotModules){
+   public double getRangeLong(Collection<WeaponModifier> aModifiers){
       double a = 0;
-      if( aPilotModules != null ){
-         for(WeaponModifier mod : aPilotModules){
+      if( aModifiers != null ){
+         for(WeaponModifier mod : aModifiers){
             if( mod.affectsWeapon(this) ){
                a += mod.extraLongRange(this, rangeLong, null);
             }
@@ -171,29 +180,29 @@ public class Weapon extends HeatSource{
    }
 
    @Override
-   public double getHeat(Collection<WeaponModifier> aPilotModules){
+   public double getHeat(Collection<WeaponModifier> aModifiers){
       double a = 0;
-      if( aPilotModules != null ){
-         for(WeaponModifier mod : aPilotModules){
+      if( aModifiers != null ){
+         for(WeaponModifier mod : aModifiers){
             if( mod.affectsWeapon(this) ){
-               a += mod.extraHeat(this, super.getHeat(aPilotModules), null);
+               a += mod.extraHeat(this, super.getHeat(aModifiers), null);
             }
 
          }
       }
-      return super.getHeat(aPilotModules) + a;
+      return super.getHeat(aModifiers) + a;
    }
 
-   public double getRangeEffectivity(double range, Collection<WeaponModifier> aPilotModules){
+   public double getRangeEffectivity(double range, Collection<WeaponModifier> aModifiers){
       // Assume linear fall off
       if( range < getRangeZero() )
          return 0;
       if( range < getRangeMin() )
          return (range - getRangeZero()) / (getRangeMin() - getRangeZero());
-      else if( range <= getRangeLong(aPilotModules) )
+      else if( range <= getRangeLong(aModifiers) )
          return 1.0;
-      else if( range < getRangeMax(aPilotModules) )
-         return 1.0 - (range - getRangeLong(aPilotModules)) / (getRangeMax(aPilotModules) - getRangeLong(aPilotModules));
+      else if( range < getRangeMax(aModifiers) )
+         return 1.0 - (range - getRangeLong(aModifiers)) / (getRangeMax(aModifiers) - getRangeLong(aModifiers));
       else
          return 0;
    }
@@ -209,11 +218,11 @@ public class Weapon extends HeatSource{
     * @param aEfficiencies
     *           Any {@link Efficiencies} that can affect the stats, can be <code>null</code> to assume no
     *           {@link Efficiencies}.
-    * @param aCollection
+    * @param aModifiers
     *           A list of pilot modules to take into account.
     * @return The calculated statistic.
     */
-   public double getStat(String aWeaponStat, Efficiencies aEfficiencies, Collection<WeaponModifier> aCollection){
+   public double getStat(String aWeaponStat, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       double nominator = 1;
       int index = 0;
       while( index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/' ){
@@ -222,13 +231,13 @@ public class Weapon extends HeatSource{
                nominator *= getDamagePerShot();
                break;
             case 's':
-               nominator *= getSecondsPerShot(aEfficiencies);
+               nominator *= getSecondsPerShot(aEfficiencies, aModifiers);
                break;
             case 't':
                nominator *= getMass();
                break;
             case 'h':
-               nominator *= getHeat(aCollection);
+               nominator *= getHeat(aModifiers);
                break;
             case 'c':
                nominator *= getNumCriticalSlots();
@@ -247,13 +256,13 @@ public class Weapon extends HeatSource{
                denominator *= getDamagePerShot();
                break;
             case 's':
-               denominator *= getSecondsPerShot(aEfficiencies);
+               denominator *= getSecondsPerShot(aEfficiencies, aModifiers);
                break;
             case 't':
                denominator *= getMass();
                break;
             case 'h':
-               denominator *= getHeat(aCollection);
+               denominator *= getHeat(aModifiers);
                break;
             case 'c':
                denominator *= getNumCriticalSlots();

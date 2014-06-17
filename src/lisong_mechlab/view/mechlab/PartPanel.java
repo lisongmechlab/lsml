@@ -63,7 +63,9 @@ import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.render.ItemRenderer;
+import lisong_mechlab.view.render.OmniPodRenderer;
 import lisong_mechlab.view.render.StyleManager;
+import lisong_mechlab.view.render.StyledComboBox;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
    class ArmorPopupAdapter extends MouseAdapter{
@@ -161,6 +163,9 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          // Omnimech
          Collection<OmniPod> compatiblePods = OmniPodDB.lookup(omniMech.getChassis(), aLoadoutPart.getInternalComponent().getLocation());
          omnipodSelection = new JComboBox<>(new Vector<>(compatiblePods));
+         omnipodSelection.setRenderer(new OmniPodRenderer());
+         omnipodSelection.addPopupMenuListener(new StyledComboBox(true, false));
+         
          Dimension max = omnipodSelection.getMaximumSize();
          max.height = ItemRenderer.getItemHeight();
          omnipodSelection.setMaximumSize(max);

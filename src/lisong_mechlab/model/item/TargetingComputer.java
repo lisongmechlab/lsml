@@ -35,31 +35,26 @@ public class TargetingComputer extends Module implements WeaponModifier{
 
    @Override
    public boolean affectsWeapon(Weapon aWeapon){
-      // TODO Auto-generated method stub
       return false;
    }
 
    @Override
    public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
-      // TODO Auto-generated method stub
       return 0;
    }
 
    @Override
    public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree){
-      // TODO Auto-generated method stub
       return 0;
    }
 
    @Override
    public double extraHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
-      // TODO Auto-generated method stub
       return 0;
    }
 
    @Override
    public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree){
-      // TODO Auto-generated method stub
       return 0;
    }
 

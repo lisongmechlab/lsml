@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
@@ -116,11 +115,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
       state = new HashMap<>();
       int slots = 0;
       for(Item item : loadoutPart.getItemsEquipped()){
-         // TODO: Create Item#isCrittable and use it here
-         if( item instanceof Internal && (item != ConfiguredComponentBase.ENGINE_INTERNAL && item != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) ){
-            continue;
-         }
-         if( item == ItemDB.CASE )
+         if( !item.isCrittable() )
             continue;
 
          slots += item.getNumCriticalSlots();
@@ -135,11 +130,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
       }
 
       for(Item item : loadoutPart.getItemsFixed()){
-         // TODO: Create Item#isCrittable and use it here
-         if( item instanceof Internal && (item != ConfiguredComponentBase.ENGINE_INTERNAL && item != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) ){
-            continue;
-         }
-         if( item == ItemDB.CASE )
+         if( !item.isCrittable() )
             continue;
 
          slots += item.getNumCriticalSlots();
