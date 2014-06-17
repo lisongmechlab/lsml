@@ -209,8 +209,6 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
             efficiencies.setSpeedTweak(true);
             final double maxSpeedTweak = TopSpeed.calculate(chassis.getEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
                                                             efficiencies.getSpeedModifier());
-
-            // TODO: Show min-max
             return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
          }
          else{

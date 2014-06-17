@@ -146,7 +146,7 @@ public abstract class ChassisBase{
     * @return The ID of the base variant of this chassis, or <code>-1</code> if this is not a derived chassis type.
     */
    public int getBaseVariantId(){
-      return baseVariant; // TODO: Make this return a ChassisBase object
+      return baseVariant;
    }
 
    /**
