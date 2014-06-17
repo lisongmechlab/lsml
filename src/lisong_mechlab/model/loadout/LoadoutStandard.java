@@ -27,7 +27,6 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -130,21 +129,6 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
          }
       }
       return null;
-   }
-
-   /**
-    * Checks only global constraints against the {@link Item}. These are necessary but not sufficient conditions. Local
-    * conditions are needed to be sufficient.
-    * 
-    * @param anItem
-    *           The {@link Item} to check.
-    * @return <code>true</code> if the necessary checks are passed.
-    */
-   @Override
-   protected boolean canEquipGlobal(Item anItem){
-      if( anItem instanceof JumpJet && getChassis().getJumpJetsMax() - getJumpJetCount() < 1 )
-         return false;
-      return super.canEquipGlobal(anItem);
    }
 
    @Override

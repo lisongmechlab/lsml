@@ -80,7 +80,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
     * @param aOmniPod
     *           The omnipod to set, it's put in it's dedicated slot.
     */
-   void setOmniPod(OmniPod aOmniPod){
+   public void setOmniPod(OmniPod aOmniPod){
       ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
       movementProfile.removeMovementModifier(component.getOmniPod().getQuirks());
       movementProfile.addMovementModifier(aOmniPod.getQuirks());

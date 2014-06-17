@@ -22,7 +22,7 @@ package lisong_mechlab.model.loadout.component;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.util.MessageXBar;
@@ -38,7 +38,7 @@ public class OpChangeOmniPod extends CompositeOperation{
 
    private final ConfiguredComponentOmniMech component;
    private final OmniPod                     newOmniPod;
-   private final LoadoutBase<?>              loadout;
+   private final LoadoutOmniMech             loadout;
    private final MessageXBar                 xBar;
    private OmniPod                           oldOmniPod;
 
@@ -54,7 +54,7 @@ public class OpChangeOmniPod extends CompositeOperation{
     * @param aOmniPod
     *           The new {@link OmniPod} to change to.
     */
-   public OpChangeOmniPod(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod){
+   public OpChangeOmniPod(MessageXBar aXBar, LoadoutOmniMech aLoadout, ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod){
       super("change omnipod on " + aComponentOmniMech.getInternalComponent().getLocation());
       component = aComponentOmniMech;
       newOmniPod = aOmniPod;
@@ -64,21 +64,36 @@ public class OpChangeOmniPod extends CompositeOperation{
 
    @Override
    public void buildOperation(){
+      oldOmniPod = component.getOmniPod();
+      
       // Remove any items that has a hard point requirement other than none.
       for(Item item : component.getItemsEquipped()){
          if( item.getHardpointType() != HardPointType.NONE ){
             addOp(new OpRemoveItem(xBar, loadout, component, item));
          }
       }
-
-      oldOmniPod = component.getOmniPod();
+      
+      // Make sure we respect global jump-jet limit
+      int jjLeft = loadout.getJumpJetsMax() + (newOmniPod.getJumpJetsMax() - oldOmniPod.getJumpJetsMax()); 
+      for(ConfiguredComponentOmniMech componentOmniMech : loadout.getComponents()){
+         for(Item item : componentOmniMech.getItemsEquipped()){
+            if(item instanceof JumpJet){
+               if(jjLeft > 0 ){
+                  jjLeft--;
+               }
+               else{
+                  addOp(new OpRemoveItem(xBar, loadout, componentOmniMech, item));
+               }
+            }
+         }
+      }
    }
 
    @Override
    protected void apply(){
       super.apply();
 
-      component.setOmniPod(newOmniPod);
+      loadout.setOmniPod(newOmniPod);
       if( null != xBar ){
          xBar.post(new ConfiguredComponentBase.Message(component, Type.OmniPodChanged));
       }
@@ -86,7 +101,7 @@ public class OpChangeOmniPod extends CompositeOperation{
 
    @Override
    protected void undo(){
-      component.setOmniPod(oldOmniPod);
+      loadout.setOmniPod(oldOmniPod);
       if( null != xBar ){
          xBar.post(new ConfiguredComponentBase.Message(component, Type.OmniPodChanged));
       }

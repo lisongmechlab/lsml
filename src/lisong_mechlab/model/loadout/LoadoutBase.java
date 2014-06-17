@@ -441,6 +441,9 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
          return false;
       if( !anItem.isCompatible(getUpgrades()) )
          return false;
+      
+      if( anItem instanceof JumpJet && getJumpJetsMax() - getJumpJetCount() < 1 )
+         return false;
 
       // Allow engine slot heat sinks as long as there is enough free mass.
       if( anItem instanceof HeatSink

@@ -27,7 +27,6 @@ import java.util.List;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.item.JumpJet;
 
 /**
  * This class is a data structure representing an arbitrary internal part of the 'mech's structure.
@@ -89,24 +88,15 @@ public class ComponentStandard extends ComponentBase{
       if( aItem.getHardpointType() != HardPointType.NONE && getHardPointCount(aItem.getHardpointType()) <= 0 ){
          return false;
       }
-      else if( aItem instanceof JumpJet ){
-         switch( getLocation() ){
-            case RightTorso:
-            case CenterTorso:
-            case LeftTorso:
-            case RightLeg:
-            case LeftLeg:
-               return true;
-            default:
-               return false;
-         }
-      }
       else if( aItem instanceof Engine ){
          return getLocation() == Location.CenterTorso;
       }
       else if( aItem == ItemDB.CASE ){
          return (getLocation() == Location.LeftTorso || getLocation() == Location.RightTorso);
       }
-      return aItem.getNumCriticalSlots() <= getSlots() - getFixedItemSlots();
+      if( aItem.getNumCriticalSlots() > getSlots() - getFixedItemSlots() ){
+         return false;
+      }
+      return super.isAllowed(aItem);
    }
 }
