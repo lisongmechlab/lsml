@@ -81,9 +81,9 @@ public class OmniPod{
 
    @Override
    public String toString(){
-      return chassis + " " + location.shortName();
+      return chassis.toUpperCase();
    }
-
+   
    /**
     * @return The maximum number of jump jets one can equip on this omnipod.
     */

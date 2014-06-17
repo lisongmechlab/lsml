@@ -19,8 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import static org.junit.Assert.assertSame;
-
 import org.junit.Test;
 
 public class UpgradeDBTest{

@@ -44,6 +44,6 @@ public class DoubleFireBurstSignalTest{
 
       double p_jam = uac5.getJamProbability();
       double expected = (p_jam + (1 - p_jam) * 2) * uac5.getDamagePerShot();
-      assertEquals(expected, cut.integrateFromZeroTo(uac5.getRawSecondsPerShot(null) / 2), 0.0);
+      assertEquals(expected, cut.integrateFromZeroTo(uac5.getRawSecondsPerShot(null, null) / 2), 0.0);
    }
 }

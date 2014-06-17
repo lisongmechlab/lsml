@@ -85,7 +85,6 @@ public class UpgradesConverter implements Converter{
          // <artemis>bool</artemis><ferroFibrous>bool</ferroFibrous><endoSteel>bool</endoSteel><dhs>bool</dhs>
          while( aReader.hasMoreChildren() ){
             aReader.moveDown();
-            // FIXME: Replace ItemID constants with something smart
             switch( aReader.getNodeName() ){
                case "artemis":
                   if( Boolean.parseBoolean(aReader.getValue()) ){

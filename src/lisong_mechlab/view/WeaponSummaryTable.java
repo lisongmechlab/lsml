@@ -218,7 +218,7 @@ public class WeaponSummaryTable extends JTable implements Reader{
          for(Weapon weapon : entry.getWeapons()){
             if( weapon instanceof AmmoWeapon ){
                AmmoWeapon ammoWeapon = (AmmoWeapon)weapon;
-               shotsPerSecond += ammoWeapon.getAmmoPerPerShot() / ammoWeapon.getSecondsPerShot(loadout.getEfficiencies());
+               shotsPerSecond += ammoWeapon.getAmmoPerPerShot() / ammoWeapon.getSecondsPerShot(loadout.getEfficiencies(), loadout.getWeaponModifiers());
             }
          }
          return decimalFormat.format(shots / shotsPerSecond);

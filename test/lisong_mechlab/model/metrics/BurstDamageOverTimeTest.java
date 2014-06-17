@@ -57,7 +57,7 @@ public class BurstDamageOverTimeTest{
       Mockito.when(aLoadout.getAllItems()).thenReturn(items);
       Mockito.when(aLoadout.getEfficiencies()).thenReturn(efficiencies);
       MessageXBar aXBar = Mockito.mock(MessageXBar.class);
-      final double time = erllas.getSecondsPerShot(efficiencies) * 3 + erllas.getDuration() / 2; // 3.5 ER LLAS
+      final double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration() / 2; // 3.5 ER LLAS
 
       // Execute
       BurstDamageOverTime cut = new BurstDamageOverTime(aLoadout, aXBar);
@@ -65,8 +65,8 @@ public class BurstDamageOverTimeTest{
 
       // Verify
       double expected = erllas.getDamagePerShot() * 3.5;
-      expected += ((int)(time / ac20.getSecondsPerShot(efficiencies) + 1)) * ac20.getDamagePerShot() * ac20.getRangeEffectivity(500, null);
-      expected += ((int)(time / erppc.getSecondsPerShot(efficiencies) + 1)) * erppc.getDamagePerShot() * erppc.getRangeEffectivity(500, null);
+      expected += ((int)(time / ac20.getSecondsPerShot(efficiencies, null) + 1)) * ac20.getDamagePerShot() * ac20.getRangeEffectivity(500, null);
+      expected += ((int)(time / erppc.getSecondsPerShot(efficiencies, null) + 1)) * erppc.getDamagePerShot() * erppc.getRangeEffectivity(500, null);
       assertEquals(expected, burst, 0.0);
    }
 
@@ -144,7 +144,7 @@ public class BurstDamageOverTimeTest{
       BurstDamageOverTime cut = new BurstDamageOverTime(aLoadout, aXBar);
       cut.calculate(123, 321); // Dummy just make sure it's different from below
 
-      double time = erllas.getSecondsPerShot(efficiencies) * 3 + erllas.getDuration() / 2; // 3.5 ER LLAS
+      double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration() / 2; // 3.5 ER LLAS
       double burst = cut.calculate(500, time);
 
       // Verify

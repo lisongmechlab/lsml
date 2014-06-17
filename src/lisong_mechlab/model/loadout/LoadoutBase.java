@@ -220,7 +220,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    public boolean canAddModule(PilotModule aModule){
       if( getModules().contains(aModule) )
          return false;
-      // TODO: Apply any limitations on modules
+      // TODO: Apply any additional limitations on modules
       return getModules().size() < getModulesMax();
    }
 

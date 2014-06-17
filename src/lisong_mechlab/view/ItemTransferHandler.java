@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JDesktopPane;
 import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;

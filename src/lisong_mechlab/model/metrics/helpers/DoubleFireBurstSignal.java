@@ -64,7 +64,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal{
       if( aTime < 0 )
          return 0;
       final double p_jam = weapon.getJamProbability();
-      final double cd = weapon.getRawSecondsPerShot(efficiencies);
+      final double cd = weapon.getRawSecondsPerShot(efficiencies, pilotModules);
       final double jamtime = weapon.getJamTime();
       return p_jam * (1 + probableDamage(aTime - jamtime - cd)) + (1 - p_jam) * (2 + probableDamage(aTime - cd));
    }

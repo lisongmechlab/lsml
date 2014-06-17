@@ -162,8 +162,6 @@ public class ChassisOmniMech extends ChassisBase{
    }
 
    /**
-    * TODO: Test when we have all omnipods in {@link OmniPodDB}.
-    * 
     * @return The {@link MovementProfile} where the {@link OmniPod} for each {@link ComponentOmniMech} is selected to
     *         maximize each attribute. All the values of the {@link MovementProfile} may not be attainable
     *         simultaneously but each value of each attribute is independently attainable for some combination of
@@ -174,8 +172,6 @@ public class ChassisOmniMech extends ChassisBase{
    }
 
    /**
-    * TODO: Test when we have all omnipods in {@link OmniPodDB}.
-    * 
     * @return The {@link MovementProfile} where the {@link OmniPod} for each {@link ComponentOmniMech} is selected to
     *         minimize each attribute. All the values of the {@link MovementProfile} may not be attainable
     *         simultaneously but each value of each attribute is independently attainable for some combination of
@@ -186,8 +182,6 @@ public class ChassisOmniMech extends ChassisBase{
    }
 
    /**
-    * TODO: Test when we have all omnipods in {@link OmniPodDB}.
-    * 
     * @return The {@link MovementProfile} for the stock selection of {@link OmniPod}s.
     */
    public MovementProfile getMovementProfileStock(){

@@ -22,14 +22,17 @@ package lisong_mechlab.mwo_data;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import lisong_mechlab.model.DataCache;
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.Quirks;
+import lisong_mechlab.model.chassi.Quirks.Quirk;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsComponent;
 import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsQuirk;
@@ -92,7 +95,9 @@ public class XMLOmniPods{
    }
 
    @XStreamImplicit(itemFieldName = "Set")
-   List<XMLOmniPodsSet> sets;
+   List<XMLOmniPodsSet>             sets;
+
+   static final private Set<String> quirksSet = new HashSet<>();
 
    public List<OmniPod> asOmniPods(XMLItemStats aItemStatsXml, XMLHardpoints aHardPointsXML, DataCache aDataCache){
       List<OmniPod> ans = new ArrayList<>();
@@ -113,16 +118,22 @@ public class XMLOmniPods{
 
             int maxJumpjets = 0;
             int maxPilotModules = 0;
-            Map<String, Double> quirksMap = new HashMap<>();
+            Map<String, Quirk> quirksMap = new HashMap<>();
             if( null != component.quirks ){
                for(XMLOmniPodsQuirk quirk : component.quirks){
+                  // Store a list of all possible values for inspection durin debugging. It won't be created during
+                  // execution from a cache.
+                  quirksSet.add(quirk.name);
+
                   if( "jump_jet_slots_additive".equals(quirk.name.toLowerCase()) ){
                      maxJumpjets = (int)quirk.value;
                   }
                   else{
-                     quirksMap.put(quirk.name, quirk.value);
+                     boolean aPositiveGood = determinePositiveGoodForQuirk(quirk.name);
+                     Quirk q = new Quirk(quirk.name, Localization.key2string("ui_quirk_" + quirk.name), quirk.value, aPositiveGood);
+                     quirksMap.put(quirk.name, q);
                   }
-                  // TODO: check for pilot modules
+                  // TODO: check for pilot modules as soon as we know what they're called.
                }
             }
 
@@ -137,6 +148,23 @@ public class XMLOmniPods{
       }
 
       return ans;
+   }
+
+   /**
+    * This function determines the "positiveGood" attribute for a quirk. If positiveGood is true, then a positive value
+    * on the quirk is beneficial.
+    * 
+    * @param aName
+    *           The name of the quirk to determine positiveGood for.
+    * @return <code>true</code> if the given attribute is good for you.
+    */
+   private boolean determinePositiveGoodForQuirk(String aName){
+      if( aName.contains("_cooldown_multiplier") )
+         return false;
+      if( aName.contains("overheat_damage_multiplier") )
+         return false;
+      
+      return true; // Most quirks are positive-good.
    }
 
    public static XMLOmniPods fromXml(InputStream is){

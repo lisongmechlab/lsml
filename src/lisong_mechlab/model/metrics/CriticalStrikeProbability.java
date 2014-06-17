@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 
@@ -47,18 +46,12 @@ public class CriticalStrikeProbability implements ItemMetric{
    public double calculate(Item aItem){
       int slots = 0;
       for(Item it : loadoutPart.getItemsEquipped()){
-
-         // TODO: Create Item#isCrittable and use it here
-         if( it instanceof Internal && (it != ConfiguredComponentBase.ENGINE_INTERNAL && it != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) ){
-            continue;
-         }
-         slots += it.getNumCriticalSlots();
+         if( it.isCrittable() )
+            slots += it.getNumCriticalSlots();
       }
       for(Item it : loadoutPart.getItemsFixed()){
-         if( it instanceof Internal && (it != ConfiguredComponentBase.ENGINE_INTERNAL && it != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) ){
-            continue;
-         }
-         slots += it.getNumCriticalSlots();
+         if( it.isCrittable() )
+            slots += it.getNumCriticalSlots();
       }
 
       // The probability that this item will be hit at any one event

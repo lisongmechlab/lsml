@@ -22,7 +22,6 @@ package lisong_mechlab.view.action;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -89,10 +88,6 @@ public class ExportToLsmlAction extends AbstractAction{
          p.add(textArea);
 
          JOptionPane.showMessageDialog(loadoutFrame, p, "Link to share this loadout!", JOptionPane.PLAIN_MESSAGE);
-      }
-      catch( HeadlessException e ){
-         // TODO Auto-generated catch block
-         e.printStackTrace();
       }
       catch( Exception e ){
          JOptionPane.showMessageDialog(loadoutFrame, "Unable to encode loadout!" + e);

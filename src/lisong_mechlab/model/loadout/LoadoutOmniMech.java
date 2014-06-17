@@ -19,12 +19,16 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
+import java.util.Collection;
+import java.util.List;
+
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.MovementProfile;
-import lisong_mechlab.model.chassi.QuirkedMovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.chassi.QuirkedMovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
@@ -141,6 +145,18 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
       int ans = getChassis().getPilotModulesMax();
       for(ConfiguredComponentOmniMech component : getComponents()){
          ans += component.getOmniPod().getMaxPilotModules();
+      }
+      return ans;
+   }
+
+   /**
+    * @return A {@link List} of all {@link WeaponModifier}s that apply to this loadout.
+    */
+   @Override
+   public Collection<WeaponModifier> getWeaponModifiers(){
+      Collection<WeaponModifier> ans = super.getWeaponModifiers();
+      for(ConfiguredComponentOmniMech component : getComponents()){
+         ans.add(component.getOmniPod().getQuirks());
       }
       return ans;
    }

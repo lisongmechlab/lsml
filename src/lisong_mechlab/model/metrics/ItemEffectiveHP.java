@@ -22,9 +22,7 @@ package lisong_mechlab.model.metrics;
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 
 /**
@@ -74,20 +72,12 @@ public class ItemEffectiveHP implements ItemMetric{
    private void updateCache(){
       cache.clear();
       for(Item item : loadoutPart.getItemsEquipped()){
-         // TODO: Create Item#isCrittable and use it here
-         if( item instanceof Internal && (item != ConfiguredComponentBase.ENGINE_INTERNAL && item != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) )
-            continue;
-         if( item == ItemDB.CASE )
-            continue;
-         cache.add(new ItemState(item));
+         if( item.isCrittable() )
+            cache.add(new ItemState(item));
       }
       for(Item item : loadoutPart.getItemsFixed()){
-         // TODO: Create Item#isCrittable and use it here
-         if( item instanceof Internal && (item != ConfiguredComponentBase.ENGINE_INTERNAL && item != ConfiguredComponentBase.ENGINE_INTERNAL_CLAN) )
-            continue;
-         if( item == ItemDB.CASE )
-            continue;
-         cache.add(new ItemState(item));
+         if( item.isCrittable() )
+            cache.add(new ItemState(item));
       }
 
       boolean changed = true;
