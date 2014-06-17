@@ -95,12 +95,12 @@ public class ComponentOmniMech extends ComponentBase{
       else{
          usedSlots = getFixedItemSlots() + getDynamicArmorSlots() + getDynamicStructureSlots();
       }
-      
+
       if( aItem.getNumCriticalSlots() > getSlots() - usedSlots ){
          return false;
       }
 
-      return true;
+      return super.isAllowed(aItem);
    }
 
    /**
