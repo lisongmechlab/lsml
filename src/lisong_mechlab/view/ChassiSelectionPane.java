@@ -323,6 +323,13 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
                         ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
                         ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(chassi, ProgramInit.lsml().xBar));
                      }
+                     else if( cell instanceof ChassisOmniMech ){
+                        ChassisOmniMech chassi = (ChassisOmniMech)cell;
+                        ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
+                        ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi,
+                                                                                       ProgramInit.lsml().xBar));
+
+                     }
                   }
                }
             });
