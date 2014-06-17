@@ -56,20 +56,14 @@ public class ItemTransferHandler extends TransferHandler{
       assert (SwingUtilities.isEventDispatchThread());
       if( aComponent instanceof PartList ){
          PartList partList = (PartList)aComponent;
-         List<Item> sourceItems = partList.removeSelected(ProgramInit.lsml().xBar);
 
-         if( sourceItems.isEmpty() )
+         Item sourceItems = partList.removeSelected(ProgramInit.lsml().xBar);
+         if( sourceItems == null )
             return null;
 
          sourcePart = partList.getPart();
-
-         StringBuffer buff = new StringBuffer();
-         for(Item it : sourceItems){
-            buff.append(it.getName()).append('\n');
-         }
-
-         setPreview(sourceItems.get(0));
-         return new StringSelection(buff.toString());
+         setPreview(sourceItems);
+         return new StringSelection(sourceItems.getName());
       }
       else if( aComponent instanceof GarageTree ){
          sourcePart = null;

@@ -28,8 +28,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
@@ -48,7 +46,6 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.metrics.CriticalItemDamage;
@@ -59,9 +56,10 @@ import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
-import lisong_mechlab.util.Pair;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.view.render.ComponentRenderer;
+import lisong_mechlab.view.render.ComponentRenderer.RenderState;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item>{
@@ -76,11 +74,10 @@ public class PartList extends JList<Item>{
    private final CriticalStrikeProbability     criticalStrikeProbability;
    private final LoadoutBase<?>                loadout;
 
+   private final ComponentRenderer             componentRenderer;
+   private final MessageXBar                   xBar;
    private final ComponentDestructionSimulator cds;
-
-   private enum ListEntryType{
-      Empty, MultiSlot, Item, EngineHeatSink, LastSlot
-   }
+   private final boolean                       isCompact        = ProgramInit.lsml().preferences.uiPreferences.getCompactMode();
 
    private class Renderer extends JLabel implements ListCellRenderer<Object>{
       private static final long serialVersionUID = -8157859670319431469L;
@@ -129,40 +126,24 @@ public class PartList extends JList<Item>{
       }
 
       @Override
-      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus){
-         JList.DropLocation dropLocation = list.getDropLocation();
-         if( dropLocation != null && !dropLocation.isInsert() && dropLocation.getIndex() == index ){
+      public Component getListCellRendererComponent(JList<?> aList, Object aValue, int aIndex, boolean aIsSelected, boolean aHasFocus){
+         JList.DropLocation dropLocation = aList.getDropLocation();
+         if( dropLocation != null && !dropLocation.isInsert() && dropLocation.getIndex() == aIndex ){
             setCursor(null);
          }
 
-         Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(index);
+         RenderState state = componentRenderer.getRenderState(aIndex, isCompact);
+         Item item = state.getItem();
+
          setBorder(BorderFactory.createEmptyBorder());
-         Item item = pair.second;
 
-         final boolean fixed;
-         if( null == item || item instanceof Internal){
-            fixed = false;
-         }
-         else if( component.getItemsEquipped().contains(item) ){
-            if( component.getItemsFixed().contains(item) ){
-               fixed = false;
-            }
-            else{
-               // Difficult case, it could be one of the fixed, or one of the equipped...
-               fixed = false; // FIXME
-            }
-         }
-         else{
-            fixed = true;
-         }
-
-         switch( pair.first ){
+         switch( state.getRenderType() ){
             case Empty:{
-               if( isDynArmor(index + ((Model)getModel()).compactCompensationSlots) ){
+               if( isDynArmor(aIndex) ){
                   StyleManager.styleDynamicEntry(this);
                   setText(Model.DYN_ARMOR);
                }
-               else if( isDynStructure(index + ((Model)getModel()).compactCompensationSlots) ){
+               else if( isDynStructure(aIndex) ){
                   StyleManager.styleDynamicEntry(this);
                   setText(Model.DYN_STRUCT);
                }
@@ -175,12 +156,7 @@ public class PartList extends JList<Item>{
             }
             case Item:{
                setTooltipForItem(item);
-               if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-                  setText(item.getShortName());
-               }
-               else{
-                  setText(item.getName());
-               }
+               setText(isCompact ? item.getShortName() : item.getName());
 
                if( item.getNumCriticalSlots() == 1 ){
                   StyleManager.styleItem(this, item);
@@ -204,20 +180,16 @@ public class PartList extends JList<Item>{
             }
             case EngineHeatSink:{
                setTooltipForItem(item);
-               if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-                  setText(Model.HEATSINKS_COMPACT_STRING + component.getEngineHeatsinks() + "/" + component.getEngineHeatsinksMax());
-               }
-               else{
-                  setText(Model.HEATSINKS_STRING + component.getEngineHeatsinks() + "/" + component.getEngineHeatsinksMax());
-               }
+               setText(isCompact ? Model.HEATSINKS_COMPACT_STRING : Model.HEATSINKS_STRING + component.getEngineHeatsinks() + "/"
+                                                                    + component.getEngineHeatsinksMax());
                StyleManager.styleItemBottom(this, item);
                break;
             }
          }
 
-         if( fixed ){
+         if( state.isFixed() ){
             Color bg = getBackground();
-            float[] hsb = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);           
+            float[] hsb = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);
             hsb[1] *= 0.2;
             bg = Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
             setBackground(bg);
@@ -228,21 +200,14 @@ public class PartList extends JList<Item>{
 
       private boolean isDynStructure(int aIndex){
          int struct = slotDistributor.getDynamicStructureSlots(component);
-         int slots = component.getSlotsUsed();
-         if( component instanceof ConfiguredComponentOmniMech ){
-            return aIndex >= slots - struct && aIndex < slots;
-         }
+         int slots = componentRenderer.getFirstEmpty(isCompact);
          int armor = slotDistributor.getDynamicArmorSlots(component);
          return aIndex >= slots + armor && aIndex < slots + armor + struct;
       }
 
       private boolean isDynArmor(int aIndex){
          int armor = slotDistributor.getDynamicArmorSlots(component);
-         int struct = slotDistributor.getDynamicStructureSlots(component);
-         int slots = component.getSlotsUsed();
-         if( component instanceof ConfiguredComponentOmniMech ){
-            return aIndex >= slots - struct - armor && aIndex < slots - struct;
-         }
+         int slots = componentRenderer.getFirstEmpty(isCompact);
          return aIndex >= slots && aIndex < slots + armor;
       }
    }
@@ -255,118 +220,19 @@ public class PartList extends JList<Item>{
       private static final String DYN_ARMOR                = "DYNAMIC ARMOR";
       private static final String DYN_STRUCT               = "DYNAMIC STRUCTURE";
       private static final long   serialVersionUID         = 2438473891359444131L;
-      private final MessageXBar   xBar;
-
-      private final int           compactCompensationSlots;
 
       Model(MessageXBar aXBar){
-         xBar = aXBar;
-         xBar.attach(this);
-
-         int c = 0;
-         if( ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            for(Item item : component.getInternalComponent().getFixedItems()){
-               c += item.getNumCriticalSlots();
-            }
-         }
-         compactCompensationSlots = c;
-      }
-
-      boolean putElement(Item aItem, int anIndex, boolean aShouldReplace){
-         Pair<ListEntryType, Item> target = getElementTypeAt(anIndex);
-         switch( target.first ){
-            case EngineHeatSink:{
-               if( aItem instanceof HeatSink && loadout.canEquip(aItem) && component.canAddItem(aItem) ){
-                  opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
-                  return true;
-               }
-               return false;
-            }
-            case LastSlot: // Fall through
-            case Item: // Fall through
-            case MultiSlot:{
-               // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
-               if( aShouldReplace && component.canRemoveItem(aItem) && !(aItem instanceof HeatSink && target.second instanceof Engine) ){
-                  opStack.pushAndApply(new OpRemoveItem(xBar, loadout, component, target.second));
-               }
-               // Fall through
-            }
-            case Empty:{
-               if( loadout.canEquip(aItem) && component.canAddItem(aItem) ){
-                  opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
-                  return true;
-               }
-               return false;
-            }
-            default:
-               break;
-         }
-         return false;
-      }
-
-      Pair<ListEntryType, Item> getElementTypeAt(int arg0){
-         List<Item> items = new ArrayList<>();
-         if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-            items.addAll(component.getItemsFixed());
-         }
-         items.addAll(component.getItemsEquipped());
-         int numEngineHs = component.getEngineHeatsinks();
-         boolean foundhs = true;
-         while( numEngineHs > 0 && !items.isEmpty() && foundhs ){
-            foundhs = false;
-            for(Item item : items){
-               if( item instanceof HeatSink ){
-                  items.remove(item);
-                  numEngineHs--;
-                  foundhs = true;
-                  break;
-               }
-            }
-         }
-
-         if( items.isEmpty() )
-            return new Pair<ListEntryType, Item>(ListEntryType.Empty, null);
-
-         int itemsIdx = 0;
-         Item item = items.get(itemsIdx);
-         itemsIdx++;
-
-         int spaceLeft = item.getNumCriticalSlots();
-         for(int slot = 0; slot < arg0; ++slot){
-            spaceLeft--;
-            if( spaceLeft == 0 ){
-               if( itemsIdx < items.size() ){
-                  item = items.get(itemsIdx);
-                  itemsIdx++;
-                  spaceLeft = item.getNumCriticalSlots();
-               }
-               else
-                  return new Pair<ListEntryType, Item>(ListEntryType.Empty, null);
-            }
-         }
-         if( spaceLeft == 1 && item.getNumCriticalSlots() > 1 ){
-            if( item instanceof Engine )
-               return new Pair<ListEntryType, Item>(ListEntryType.EngineHeatSink, item);
-            return new Pair<ListEntryType, Item>(ListEntryType.LastSlot, item);
-         }
-         if( spaceLeft == item.getNumCriticalSlots() )
-            return new Pair<ListEntryType, Item>(ListEntryType.Item, item);
-         if( spaceLeft > 0 )
-            return new Pair<ListEntryType, Item>(ListEntryType.MultiSlot, item);
-         return new Pair<ListEntryType, Item>(ListEntryType.Empty, null);
+         aXBar.attach(this);
       }
 
       @Override
-      public Item getElementAt(int arg0){
-         Pair<ListEntryType, Item> target = getElementTypeAt(arg0);
-         if( target.first == ListEntryType.Item )
-            return target.second;
-         return null;
+      public Item getElementAt(int aIndex){
+         return componentRenderer.getRenderState(aIndex, isCompact).getItem();
       }
 
       @Override
       public int getSize(){
-         return component.getInternalComponent().getSlots() - compactCompensationSlots;
+         return componentRenderer.getVisibleCount(isCompact);
       }
 
       @Override
@@ -380,6 +246,7 @@ public class PartList extends JList<Item>{
             if( aMsg instanceof ConfiguredComponentBase.Message && ((ConfiguredComponentBase.Message)aMsg).type == Type.ArmorChanged ){
                return; // Don't react to armor changes
             }
+            componentRenderer.setDirty();
             fireContentsChanged(this, 0, component.getInternalComponent().getSlots());
          }
       }
@@ -391,6 +258,8 @@ public class PartList extends JList<Item>{
       opStack = aStack;
       component = aComponent;
       loadout = aLoadout;
+      xBar = aXBar;
+      componentRenderer = new ComponentRenderer(component);
       effectiveHP = new ItemEffectiveHP(component);
       cds = new ComponentDestructionSimulator(component, aXBar);
       cds.simulate();
@@ -429,46 +298,13 @@ public class PartList extends JList<Item>{
       });
    }
 
-   public List<Item> removeSelected(MessageXBar aXBar){
-      List<Item> removed = new ArrayList<>();
-      for(Pair<Item, Integer> itemPair : getSelectedItems()){
-         if( !component.getItemsEquipped().contains(itemPair.first) || itemPair.first instanceof Internal )
-            continue;
-         opStack.pushAndApply(new OpRemoveItem(aXBar, loadout, component, itemPair.first));
-         removed.add(itemPair.first);
+   public Item removeSelected(MessageXBar aXBar){
+      RenderState state = componentRenderer.getRenderState(getSelectedIndex(), isCompact);
+      if( component.canRemoveItem(state.getItem()) ){
+         opStack.pushAndApply(new OpRemoveItem(aXBar, loadout, component, state.getItem()));
+         return state.getItem();
       }
-      return removed;
-   }
-
-   public List<Pair<Item, Integer>> getSelectedItems(){
-      List<Pair<Item, Integer>> items = new ArrayList<>();
-      int[] idxs = getSelectedIndices();
-      for(int i : idxs){
-         Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(i);
-         int rootId = i;
-         while( rootId >= 0 && ((Model)getModel()).getElementAt(rootId) == null )
-            rootId--;
-
-         switch( pair.first ){
-            case Empty:
-               break;
-            case EngineHeatSink:
-               if( component.getEngineHeatsinks() > 0 ){
-                  Item heatSink = loadout.getUpgrades().getHeatSink().getHeatSinkType();
-                  items.add(new Pair<Item, Integer>(heatSink, i));
-               }
-               break;
-            case Item:
-            case LastSlot:
-            case MultiSlot:
-               items.add(new Pair<Item, Integer>(pair.second, rootId));
-               break;
-            default:
-               break;
-
-         }
-      }
-      return items;
+      return null;
    }
 
    public ConfiguredComponentBase getPart(){
@@ -479,7 +315,31 @@ public class PartList extends JList<Item>{
       return loadout;
    }
 
-   public void putElement(Item aItem, int aDropIndex, boolean aFirst){
-      ((Model)getModel()).putElement(aItem, aDropIndex, aFirst);
+   public void putElement(Item aItem, int aDropIndex, boolean aShouldReplace){
+      RenderState state = componentRenderer.getRenderState(aDropIndex, isCompact);
+
+      switch( state.getRenderType() ){
+         case EngineHeatSink:{
+            if( aItem instanceof HeatSink && loadout.canEquip(aItem) && component.canAddItem(aItem) ){
+               opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
+            }
+         }
+         case LastSlot: // Fall through
+         case Item: // Fall through
+         case MultiSlot:{
+            // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
+            if( aShouldReplace && component.canRemoveItem(aItem) && !(aItem instanceof HeatSink && state.getItem() instanceof Engine) ){
+               opStack.pushAndApply(new OpRemoveItem(xBar, loadout, component, state.getItem()));
+            }
+            // Fall through
+         }
+         case Empty:{
+            if( loadout.canEquip(aItem) && component.canAddItem(aItem) ){
+               opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
+            }
+         }
+         default:
+            break;
+      }
    }
 }
