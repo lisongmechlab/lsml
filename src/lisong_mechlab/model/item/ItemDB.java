@@ -96,9 +96,6 @@ public class ItemDB{
 
    private static String canonize(String aString){
       String key = aString.toLowerCase();
-      if( key.equals("anti-missile system") ){
-         return "ams"; // TODO: Update references
-      }
       return key;
    }
 
@@ -125,7 +122,7 @@ public class ItemDB{
 
       // Initialize special items
       C_AMS = (AmmoWeapon)lookup("C-AMS");
-      AMS = (AmmoWeapon)lookup("ANTI-MISSILE SYSTEM");
+      AMS = (AmmoWeapon)lookup("AMS");
       SHS = (HeatSink)lookup("STD HEAT SINK");
       DHS = (HeatSink)lookup("DOUBLE HEAT SINK");
       ECM = lookup("GUARDIAN ECM");
