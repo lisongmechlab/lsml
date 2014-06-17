@@ -52,6 +52,8 @@ public class ItemStatsWeapon extends ItemStats{
       public double heatdamage;
       @XStreamAsAttribute
       public double damage;
+      
+      /** The number of ammunition rounds expelled in one shot. */
       @XStreamAsAttribute
       public int    numFiring;
       @XStreamAsAttribute
@@ -64,6 +66,7 @@ public class ItemStatsWeapon extends ItemStats{
       public int    Health;
       @XStreamAsAttribute
       public String artemisAmmoType;
+      /** The number of projectile in one round of ammo. Fired simultaneously (only LB type AC). */
       @XStreamAsAttribute
       public int    numPerShot;
       @XStreamAsAttribute

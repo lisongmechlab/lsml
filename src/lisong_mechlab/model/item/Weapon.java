@@ -44,11 +44,9 @@ public class Weapon extends HeatSource{
    @XStreamAsAttribute
    private final double    rangeMax;
    @XStreamAsAttribute
-   private final int       ammoPerShot;
+   private final int       projectilesPerRound;
    @XStreamAsAttribute
-   private final int       projectilesPerShot;
-   @XStreamAsAttribute
-   private final int       shotsPerFiring;
+   private final int       roundsPerShot;
    @XStreamAsAttribute
    private final int       ghostHeatGroupId;
    @XStreamAsAttribute
@@ -82,10 +80,8 @@ public class Weapon extends HeatSource{
       rangeMax = aStatsWeapon.WeaponStats.maxRange;
       rangeLong = aStatsWeapon.WeaponStats.longRange;
 
-      shotsPerFiring = aStatsWeapon.WeaponStats.numFiring;
-      projectilesPerShot = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
-      ammoPerShot = aStatsWeapon.WeaponStats.ammoPerShot;
-
+      roundsPerShot = aStatsWeapon.WeaponStats.numFiring;
+      projectilesPerRound = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
       projectileSpeed = aStatsWeapon.WeaponStats.speed;
 
       if( aStatsWeapon.WeaponStats.minheatpenaltylevel != 0 ){
@@ -122,11 +118,11 @@ public class Weapon extends HeatSource{
    }
 
    public double getDamagePerShot(){
-      return damagePerProjectile * projectilesPerShot * shotsPerFiring;
+      return damagePerProjectile * projectilesPerRound * roundsPerShot;
    }
 
    public int getAmmoPerPerShot(){
-      return ammoPerShot;
+      return roundsPerShot;
    }
 
    public double getSecondsPerShot(Efficiencies aEfficiencies){
