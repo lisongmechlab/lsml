@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -137,6 +138,24 @@ public class PartList extends JList<Item>{
          Pair<ListEntryType, Item> pair = ((Model)getModel()).getElementTypeAt(index);
          setBorder(BorderFactory.createEmptyBorder());
          Item item = pair.second;
+
+         final boolean fixed;
+         if( null == item || item instanceof Internal){
+            fixed = false;
+         }
+         else if( component.getItemsEquipped().contains(item) ){
+            if( component.getItemsFixed().contains(item) ){
+               fixed = false;
+            }
+            else{
+               // Difficult case, it could be one of the fixed, or one of the equipped...
+               fixed = false; // FIXME
+            }
+         }
+         else{
+            fixed = true;
+         }
+
          switch( pair.first ){
             case Empty:{
                if( isDynArmor(index + ((Model)getModel()).compactCompensationSlots) ){
@@ -195,6 +214,15 @@ public class PartList extends JList<Item>{
                break;
             }
          }
+
+         if( fixed ){
+            Color bg = getBackground();
+            float[] hsb = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);           
+            hsb[1] *= 0.2;
+            bg = Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
+            setBackground(bg);
+         }
+
          return this;
       }
 
