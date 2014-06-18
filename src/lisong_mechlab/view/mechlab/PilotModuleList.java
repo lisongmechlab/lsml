@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -69,6 +70,14 @@ public class PilotModuleList extends JList<String>{
          public Component getListCellRendererComponent(JList<? extends String> aList, String aValue, int aIndex, boolean aIsSelected,
                                                        boolean aCellHasFocus){
             label.setText(aValue);
+            
+            if(aIndex == aList.getModel().getSize()-1){
+               label.setBackground(new Color(0xb8aa81));
+               label.setOpaque(true);
+            }else{
+               label.setBackground(Color.WHITE);
+               label.setOpaque(false);
+            }
             return label;
          }
       });
