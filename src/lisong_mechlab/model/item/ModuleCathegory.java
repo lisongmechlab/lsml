@@ -17,18 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.mwo_data.helpers;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+package lisong_mechlab.model.item;
 
 /**
- * A helper class for reading pilot module information from the game data xml.
- * 
  * @author Emily Björk
  */
-public class XMLPilotModuleStats{
-   @XStreamAsAttribute
-   public String talentId;
-   @XStreamAsAttribute
-   public String category;
+public enum ModuleCathegory{
+   Support, Consumable, Vision, Sensor, Targeting;
+
+   public static ModuleCathegory fromMwo(String aMwoValue){
+      switch( aMwoValue ){
+         case "ePTModule_Support":
+            return Support;
+         case "ePTModule_Vision":
+            return Vision;
+         case "ePTModule_Sensor":
+            return Sensor;
+         case "ePTModule_Target":
+            return Targeting;
+         case "ePTModule_Consumable":
+            return Consumable;
+         default:
+            throw new IllegalArgumentException("Unknown module type.");
+      }
+   }
 }

@@ -42,7 +42,7 @@ import lisong_mechlab.util.MessageXBar.Message;
  * 
  * @author Emily Björk
  */
-public class PilotModuleModel implements ListModel<PilotModule>, MessageXBar.Reader{
+public class PilotModuleModel implements ListModel<String>, MessageXBar.Reader{
    private final LoadoutBase<?>        loadout;
    private final Set<ListDataListener> listeners = new HashSet<>();
    private final List<PilotModule>     modules   = new ArrayList<>();
@@ -79,10 +79,10 @@ public class PilotModuleModel implements ListModel<PilotModule>, MessageXBar.Rea
    }
 
    @Override
-   public PilotModule getElementAt(int aIndex){
+   public String getElementAt(int aIndex){
       if( aIndex >= loadout.getModules().size() )
-         return null;
-      return loadout.getModules().get(aIndex);
+         return "EMPTY";
+      return loadout.getModules().get(aIndex).getName();
    }
 
    @Override

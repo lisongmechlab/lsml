@@ -19,6 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import lisong_mechlab.model.Faction;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -28,12 +30,16 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class PilotModule{
 
-   private final String locName;
-   private final String locDesc;
+   private final String          locName;
+   private final String          locDesc;
    @XStreamAsAttribute
-   private final String mwoName;
+   private final String          mwoName;
    @XStreamAsAttribute
-   private final int    mwoIdx;
+   private final int             mwoIdx;
+   @XStreamAsAttribute
+   private final Faction         faction;
+   @XStreamAsAttribute
+   private final ModuleCathegory cathegory;
 
    /**
     * Creates a new {@link PilotModule}.
@@ -46,12 +52,18 @@ public class PilotModule{
     *           The human readable name of the module.
     * @param aDescription
     *           The human readable description of the module.
+    * @param aFaction
+    *           The required faction for this module.
+    * @param aCathegory
+    *           The {@link ModuleCathegory} for this {@link Module}.
     */
-   public PilotModule(String aMwoName, int aMwoIdx, String aName, String aDescription){
+   public PilotModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction, ModuleCathegory aCathegory){
       mwoName = aMwoName;
       mwoIdx = aMwoIdx;
       locName = aName;
       locDesc = aDescription;
+      faction = aFaction;
+      cathegory = aCathegory;
    }
 
    public String getKey(){
@@ -73,5 +85,13 @@ public class PilotModule{
 
    public String getDescription(){
       return locDesc;
+   }
+
+   public Faction getFaction(){
+      return faction;
+   }
+
+   public ModuleCathegory getCathegory(){
+      return cathegory;
    }
 }
