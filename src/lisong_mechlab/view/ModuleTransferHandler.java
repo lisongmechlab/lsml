@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.view.mechlab.equipment;
+package lisong_mechlab.view;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -29,6 +29,7 @@ import javax.swing.TransferHandler;
 import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.view.mechlab.PilotModuleList;
+import lisong_mechlab.view.mechlab.equipment.ModuleSeletionList;
 
 /**
  * This class handles dragging and transfer of {@link PilotModule}s.

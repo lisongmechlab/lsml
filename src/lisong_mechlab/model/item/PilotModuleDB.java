@@ -34,9 +34,20 @@ import lisong_mechlab.model.DataCache;
  */
 public class PilotModuleDB{
    private final static Map<Integer, PilotModule> mwoidx2module;
+   private final static Map<String, PilotModule>  name2module;
 
    public static PilotModule lookup(int aId){
       return mwoidx2module.get(aId);
+   }
+
+   public static List<PilotModule> lookup(ModuleCathegory aCathegory){
+      List<PilotModule> ans = new ArrayList<>();
+      for(PilotModule module : mwoidx2module.values()){
+         if( module.getCathegory() == aCathegory ){
+            ans.add(module);
+         }
+      }
+      return ans;
    }
 
    public static List<PilotModule> lookup(Class<? extends PilotModule> aClass){
@@ -63,9 +74,26 @@ public class PilotModuleDB{
       }
 
       mwoidx2module = new HashMap<>();
+      name2module = new HashMap<>();
 
       for(PilotModule module : dataCache.getPilotModules()){
          mwoidx2module.put(module.getMwoId(), module);
+         name2module.put(module.getName(), module);
       }
+   }
+
+   /**
+    * Looks up a pilot module by string name.
+    * 
+    * @param aName
+    *           The name of the module to lookup.
+    * @return A {@link PilotModule} by the given name.
+    */
+   public static PilotModule lookup(String aName){
+      PilotModule module = name2module.get(aName);
+      if( module == null ){
+         throw new IllegalArgumentException("No module by name: " + aName);
+      }
+      return module;
    }
 }

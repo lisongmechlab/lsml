@@ -19,29 +19,33 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
+import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 
 import lisong_mechlab.model.item.PilotModule;
+import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.OpAddModule;
 import lisong_mechlab.model.loadout.OpRemoveModule;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
-import lisong_mechlab.view.mechlab.equipment.ModuleTransferHandler;
+import lisong_mechlab.view.ModuleTransferHandler;
 import lisong_mechlab.view.render.ItemRenderer;
 
 /**
- * This class implements a JList for {@link PilotModule}s.
+ * This class implements a JList for {@link PilotModule}s equipped on a {@link LoadoutBase}.
  * <p>
- * TODO: Make it render empty cells.
+ * TODO: Make it adapt to changes in pilot modules form omnipods when they add pilot modules as quirks.
  * 
  * @author Li Song
  */
-public class PilotModuleList extends JList<PilotModule>{
+public class PilotModuleList extends JList<String>{
    private static final long    serialVersionUID = -3812414074800032146L;
    private final MessageXBar    xBar;
    private final LoadoutBase<?> loadout;
@@ -58,6 +62,16 @@ public class PilotModuleList extends JList<PilotModule>{
       setFixedCellHeight(ItemRenderer.getItemHeight());
       setDragEnabled(true);
       setTransferHandler(new ModuleTransferHandler());
+      setCellRenderer(new ListCellRenderer<String>(){
+         private final JLabel label = new JLabel();
+
+         @Override
+         public Component getListCellRendererComponent(JList<? extends String> aList, String aValue, int aIndex, boolean aIsSelected,
+                                                       boolean aCellHasFocus){
+            label.setText(aValue);
+            return label;
+         }
+      });
 
       addMouseListener(new MouseAdapter(){
          @Override
@@ -82,15 +96,12 @@ public class PilotModuleList extends JList<PilotModule>{
       return loadout;
    }
 
-   /**
-    * @param aModule
-    */
    public void putElement(PilotModule aModule){
       stack.pushAndApply(new OpAddModule(xBar, loadout, aModule));
    }
 
    public PilotModule takeCurrent(){
-      PilotModule module = getSelectedValue();
+      PilotModule module = PilotModuleDB.lookup(getSelectedValue());
       if( module != null ){
          stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
       }

@@ -66,6 +66,9 @@ public class XMLPilotTalents{
 
       @XStreamImplicit
       public List<XMLRank> rankEntries;
+
+      @XStreamAsAttribute
+      public String category;
    }
 
    @XStreamImplicit

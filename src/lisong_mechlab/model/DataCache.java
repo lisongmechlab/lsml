@@ -58,6 +58,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Module;
+import lisong_mechlab.model.item.ModuleCathegory;
 import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.TargetingComputer;
 import lisong_mechlab.model.item.Weapon;
@@ -604,15 +605,21 @@ public class DataCache{
                final String name;
                final String desc;
 
+               final ModuleCathegory cathegory;
                if( null != pms.talentId && !"".equals(pms.talentId) ){
                   XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentId);
-                  name = Localization.key2string(talent.rankEntries.get(talent.rankEntries.size()-1).title);
-                  desc = Localization.key2string(talent.rankEntries.get(talent.rankEntries.size()-1).description);
+                  name = Localization.key2string(talent.rankEntries.get(talent.rankEntries.size() - 1).title);
+                  desc = Localization.key2string(talent.rankEntries.get(talent.rankEntries.size() - 1).description);
+                  cathegory = ModuleCathegory.fromMwo(talent.category);
                }
                else{
                   name = Localization.key2string(statsModule.Loc.nameTag);
                   desc = Localization.key2string(statsModule.Loc.descTag);
+
+                  cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
                }
+
+               Faction faction = Faction.fromMwo(statsModule.faction);
 
                int maxRank = weaponStats.size();
                double longRange[] = new double[maxRank];
@@ -631,7 +638,8 @@ public class DataCache{
                   heat[rank - 1] = weaponStats.get(i).heat;
                }
 
-               ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, affected, maxRank, longRange, maxRange, heat));
+               ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction, cathegory, affected, maxRank,
+                                        longRange, maxRange, heat));
                break;
             }
             case "CAdvancedZoomStats":
@@ -646,18 +654,31 @@ public class DataCache{
             case "CTargetDecayStats":
             case "CTargetInfoGatherStats":
             case "CUAVStats":{
-               String name;
-               String desc;
-               if( statsModule.Loc != null ){
-                  name = Localization.key2string(statsModule.Loc.nameTag);
-                  desc = Localization.key2string(statsModule.Loc.descTag);
-               }
-               else{
+               final String name;
+               final String desc;
+               final ModuleCathegory cathegory;
+
+               if( statsModule.PilotModuleStats.talentId != null && !statsModule.PilotModuleStats.talentId.isEmpty() ){
                   XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentId);
                   name = Localization.key2string(talent.rankEntries.get(0).title);
                   desc = Localization.key2string(talent.rankEntries.get(0).description);
+                  cathegory = ModuleCathegory.fromMwo(talent.category);
                }
-               ans.add(new PilotModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc));
+               else{
+                  name = Localization.key2string(statsModule.Loc.nameTag);
+                  desc = Localization.key2string(statsModule.Loc.descTag);
+                  switch( statsModule.CType ){
+                     case "CUAVStats":
+                     case "CStrategicStrikeStats":
+                     case "CCoolantFlushStats":
+                        cathegory = ModuleCathegory.Consumable;
+                        break;
+                     default:
+                        throw new IllegalArgumentException("Unknown module cathegory");
+                  }
+               }
+               Faction faction = Faction.fromMwo(statsModule.faction);
+               ans.add(new PilotModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction, cathegory));
                break;
             }
             default:

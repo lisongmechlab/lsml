@@ -21,6 +21,7 @@ package lisong_mechlab.model.item;
 
 import java.util.List;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.pilot.PilotSkillTree;
 
 /**
@@ -44,6 +45,10 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
     *           The human readable name of the module.
     * @param aDescription
     *           The human readable description of the module.
+    * @param aFaction
+    *           The required faction for this module.
+    * @param aCathegory
+    *           The {@link ModuleCathegory} for this {@link Module}.
     * @param aAffectedWeapon
     *           The weapon that this module affects.
     * @param aMaxRank
@@ -58,9 +63,9 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
     *           An array of <code>aMaxRank</code> length with the amounts to add or subtract from the heat attribute of
     *           the weapon.
     */
-   public WeaponModule(String aMwoName, int aMwoIdx, String aName, String aDescription, List<Weapon> aAffectedWeapon, int aMaxRank,
-                       double aLongRangeModifier[], double aMaxRangeModifier[], double aHeatModifier[]){
-      super(aMwoName, aMwoIdx, aName, aDescription);
+   public WeaponModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction, ModuleCathegory aCathegory,
+                       List<Weapon> aAffectedWeapon, int aMaxRank, double aLongRangeModifier[], double aMaxRangeModifier[], double aHeatModifier[]){
+      super(aMwoName, aMwoIdx, aName, aDescription, aFaction, aCathegory);
       maxRank = aMaxRank;
       affectedWeapon = aAffectedWeapon;
 

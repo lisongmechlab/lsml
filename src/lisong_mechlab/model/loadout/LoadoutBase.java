@@ -220,6 +220,9 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    public boolean canAddModule(PilotModule aModule){
       if( getModules().contains(aModule) )
          return false;
+      if( !aModule.getFaction().isCompatible(getChassis().getFaction()) )
+         return false;
+
       // TODO: Apply any additional limitations on modules
       return getModules().size() < getModulesMax();
    }
@@ -441,7 +444,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
          return false;
       if( !anItem.isCompatible(getUpgrades()) )
          return false;
-      
+
       if( anItem instanceof JumpJet && getJumpJetsMax() - getJumpJetCount() < 1 )
          return false;
 

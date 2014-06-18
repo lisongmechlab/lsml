@@ -22,6 +22,7 @@ package lisong_mechlab.view.mechlab;
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,6 +32,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import lisong_mechlab.model.item.ModuleCathegory;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.DecodingException;
@@ -40,6 +42,8 @@ import lisong_mechlab.view.mechlab.equipment.EquipmentPanel;
 import lisong_mechlab.view.mechlab.equipment.GarageTree;
 import lisong_mechlab.view.mechlab.equipment.ModuleSeletionList;
 import lisong_mechlab.view.preferences.Preferences;
+import lisong_mechlab.view.render.ScrollablePanel;
+import lisong_mechlab.view.render.StyleManager;
 
 /**
  * This class shows the 'mech lab pane in the main tabbed pane.
@@ -69,7 +73,19 @@ public class MechLabPane extends JSplitPane{
       JTabbedPane tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
       tabbedPane.addTab("Garage", garagePanel);
-      tabbedPane.addTab("Modules", new ModuleSeletionList());
+      
+      JPanel modulesPanel = new ScrollablePanel();
+      modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.PAGE_AXIS));
+      
+      for(ModuleCathegory moduleCathegory : ModuleCathegory.values()){
+         JPanel panel = new JPanel();
+         panel.setLayout(new BorderLayout());
+         panel.setBorder(StyleManager.sectionBorder(moduleCathegory.toString()));
+         panel.add(new ModuleSeletionList(desktop, anXBar, moduleCathegory), BorderLayout.CENTER);
+         modulesPanel.add(panel);
+      }
+      
+      tabbedPane.addTab("Modules", modulesPanel);
 
       setLeftComponent(tabbedPane);
       setRightComponent(desktop);
