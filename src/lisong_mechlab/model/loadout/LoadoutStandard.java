@@ -162,6 +162,6 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
 
    @Override
    public int getModulesMax(){
-      return getChassis().getPilotModulesMax() + 1;
+      return getChassis().getPilotModulesMax() + 1;// +1 for mastery.
    }
 }

@@ -142,7 +142,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
 
    @Override
    public int getModulesMax(){
-      int ans = getChassis().getPilotModulesMax();
+      int ans = getChassis().getPilotModulesMax() + 1; // +1 for mastery
       for(ConfiguredComponentOmniMech component : getComponents()){
          ans += component.getOmniPod().getMaxPilotModules();
       }
