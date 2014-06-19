@@ -21,7 +21,9 @@ package lisong_mechlab.model.loadout.component;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.HardPoint;
@@ -30,6 +32,7 @@ import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 
 /**
@@ -38,14 +41,12 @@ import lisong_mechlab.model.loadout.LoadoutOmniMech;
  * @author Emily Björk
  */
 public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
-   private OmniPod omniPod;
+   private OmniPod                  omniPod;
+   private final Map<Item, Boolean> toggleStates = new HashMap<>();
 
    public ConfiguredComponentOmniMech(ComponentOmniMech aComponentOmniMech, boolean aAutoArmor, OmniPod aOmniPod){
       super(aComponentOmniMech, aAutoArmor);
-      if( null == aOmniPod ){
-         throw new NullPointerException("aOmniPod must not be null!");
-      }
-      omniPod = aOmniPod;
+      setOmniPod(aOmniPod);
    }
 
    public ConfiguredComponentOmniMech(ConfiguredComponentOmniMech aConfiguredOmnipod){
@@ -70,29 +71,14 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
 
    @Override
    public List<Item> getItemsFixed(){
-      boolean removeHALAA = false;
-
-      for(Item item : getItemsEquipped()){
-         if( getInternalComponent().shouldRemoveArmActuators(item) ){
-            removeHALAA = true;
-            break;
-         }
-      }
-
-      if( !removeHALAA ){
-         for(Item item : getInternalComponent().getFixedItems()){
-            if( getInternalComponent().shouldRemoveArmActuators(item) ){
-               removeHALAA = true;
-               break;
-            }
-         }
-      }
-
-      if( removeHALAA ){
-         return getInternalComponent().getFixedItems(); // HALAA are in omnipod...
-      }
       List<Item> fixed = new ArrayList<>(getInternalComponent().getFixedItems());
-      fixed.addAll(getOmniPod().getFixedItems());
+      Boolean ha = toggleStates.get(ItemDB.HA);
+      if( ha != null && ha == true )
+         fixed.add(ItemDB.HA);
+
+      Boolean laa = toggleStates.get(ItemDB.LAA);
+      if( laa != null && laa == true )
+         fixed.add(ItemDB.LAA);
       return fixed;
    }
 
@@ -134,6 +120,79 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
    }
 
    /**
+    * Checks local conditions if the given item can be toggled on. The loadout must have enough free slots and tonnage
+    * globally too which is up to the caller to make sure.
+    * 
+    * @param aItem
+    *           The item to try to enable.
+    * @return <code>true</code> if the item can be toggled on.
+    */
+   public boolean canToggleOn(Item aItem){
+      if( !toggleStates.containsKey(aItem) ){
+         return false;
+      }
+
+      if( getSlotsFree() < 1 )
+         return false;
+
+      boolean removeHALAA = false;
+
+      for(Item item : getItemsEquipped()){
+         if( ComponentOmniMech.shouldRemoveArmActuators(item) ){
+            removeHALAA = true;
+            break;
+         }
+      }
+
+      if( !removeHALAA ){
+         for(Item item : getInternalComponent().getFixedItems()){
+            if( ComponentOmniMech.shouldRemoveArmActuators(item) ){
+               removeHALAA = true;
+               break;
+            }
+         }
+      }
+
+      if( removeHALAA ){
+         return false;
+      }
+
+      if( aItem == ItemDB.HA ){
+         return toggleStates.get(ItemDB.LAA); // HA can only be enabled if LAA is enabled
+      }
+      return true; // This can only be LAA, which can always be enabled if there is at least one free slot locally and
+                   // globally
+
+   }
+
+   /**
+    * @param aItem
+    *           The item to get the toggle state for.
+    * @return <code>true</code> if the given item is toggled on. Returns <code>false</code> for items that are not
+    *         toggleable.
+    */
+   public boolean getToggleState(Item aItem){
+      Boolean ans = toggleStates.get(aItem);
+      return ans == null ? false : ans;
+   }
+
+   /**
+    * Sets the toggle state of the item without any questions asked. The caller must verify that the toggle will result
+    * in a valid loadout.
+    * 
+    * @param aItem
+    *           The item to toggle. If this is not a toggleable item, an {@link IllegalArgumentException} will be
+    *           thrown.
+    * @param aNewState
+    *           The new state of the toggle.
+    */
+   public void setToggleState(Item aItem, boolean aNewState){
+      if( !toggleStates.containsKey(aItem) )
+         throw new IllegalArgumentException("Not a toggleable item: " + aItem);
+      toggleStates.put(aItem, aNewState);
+   }
+
+   /**
     * @param aOmniPod
     *           The {@link OmniPod} to set for this component.
     */
@@ -141,6 +200,13 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
       if( null == aOmniPod )
          throw new NullPointerException("aOmniPod must not be null.");
       omniPod = aOmniPod;
+
+      // Well, I assume that the togglable internals are only ever defined in the omnipods and the only fixed items ever
+      // defined in the omnipods.
+      toggleStates.clear();
+      for(Item item : omniPod.getFixedItems()){
+         toggleStates.put(item, true); // Default enabled
+      }
    }
 
    @Override

@@ -83,7 +83,7 @@ public class OmniPod{
    public String toString(){
       return chassis.toUpperCase();
    }
-   
+
    /**
     * @return The maximum number of jump jets one can equip on this omnipod.
     */
