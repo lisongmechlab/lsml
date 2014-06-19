@@ -160,21 +160,21 @@ abstract class OpItemBase extends Operation{
       if( aItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL && xBar != null ){
          xBar.post(new NotificationMessage(Severity.WARNING, loadout, "C.A.S.E. together with XL engine has no effect."));
       }
-      if( aItem.getName().contains("GAUSS") ){
+      if( null != aItem.getName() && aItem.getName().contains("GAUSS") ){
          int rifles = 0;
          for(ConfiguredComponentBase componentOmniMech : loadout.getComponents()){
             boolean done = false;
             for(Item itemToCheck : componentOmniMech.getItemsEquipped()){ // Surely we won't have a fixed gauss rifle?
-               if(itemToCheck instanceof BallisticWeapon && itemToCheck.getName().contains("GAUSS")){
+               if( itemToCheck instanceof BallisticWeapon && itemToCheck.getName().contains("GAUSS") ){
                   rifles++;
-                  if(rifles >= 2){
+                  if( rifles >= 2 ){
                      xBar.post(new NotificationMessage(Severity.WARNING, loadout, "Only two gauss rifles can be charged simultaneously."));
                      done = true;
                      break;
                   }
                }
             }
-            if(done)
+            if( done )
                break;
          }
       }

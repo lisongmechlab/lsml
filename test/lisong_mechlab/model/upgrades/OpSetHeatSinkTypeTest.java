@@ -43,7 +43,7 @@ import org.mockito.stubbing.Answer;
  * 
  * @author Li Song
  */
-public class HeatSinkUpgradeTest{
+public class OpSetHeatSinkTypeTest{
    private int                               maxEquippableNewType;
    private int                               equippedHs;
    private int                               engineHsSlots;
@@ -128,6 +128,20 @@ public class HeatSinkUpgradeTest{
    @Test
    public void testIssue288_test2() throws DecodingException{
       String lsml = "lsml://rQAAFwAAAAAAAAAAAAAAQapmxMmTJkwmTJkwFvpkyZMAmTJh";
+      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+      LoadoutStandard loaded = coder.parse(lsml);
+
+      OpSetHeatSinkType cut = new OpSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
+      cut.apply();
+
+      for(Item item : loaded.getAllItems()){
+         assertNotEquals(item, ItemDB.SHS);
+      }
+   }
+
+   @Test
+   public void testDHSBug1() throws DecodingException{
+      String lsml = "lsml://rQAAawgMBA4ODAQMBA4IQapmzq6gTJgt1+H0kJkx1dSMFA==";
       Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
       LoadoutStandard loaded = coder.parse(lsml);
 
