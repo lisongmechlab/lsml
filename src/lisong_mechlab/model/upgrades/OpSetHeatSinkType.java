@@ -141,9 +141,7 @@ public class OpSetHeatSinkType extends CompositeOperation{
             int hsToAdd = Math.min(hsRemoved + globalHsLag, hsInEngine + slotsFree / newHsType.getNumCriticalSlots());
 
             globalSlotsFree -= newHsType.getNumCriticalSlots() * (hsToAdd - component.getEngineHeatsinksMax());
-            if( hsToAdd < hsRemoved ){
-               globalHsLag += hsRemoved - hsToAdd;
-            }
+            globalHsLag += hsRemoved - hsToAdd;
 
             while( hsToAdd > 0 ){
                hsToAdd--;
