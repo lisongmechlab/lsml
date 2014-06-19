@@ -45,7 +45,6 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.metrics.CriticalItemDamage;
@@ -132,7 +131,7 @@ public class PartList extends JList<Item>{
             setCursor(null);
          }
 
-         RenderState state = componentRenderer.getRenderState(aIndex, isCompact);
+         RenderState state = componentRenderer.getRenderState(aIndex);
          Item item = state.getItem();
 
          setBorder(BorderFactory.createEmptyBorder());
@@ -200,14 +199,14 @@ public class PartList extends JList<Item>{
 
       private boolean isDynStructure(int aIndex){
          int struct = slotDistributor.getDynamicStructureSlots(component);
-         int slots = componentRenderer.getFirstEmpty(isCompact);
+         int slots = componentRenderer.getFirstEmpty();
          int armor = slotDistributor.getDynamicArmorSlots(component);
          return aIndex >= slots + armor && aIndex < slots + armor + struct;
       }
 
       private boolean isDynArmor(int aIndex){
          int armor = slotDistributor.getDynamicArmorSlots(component);
-         int slots = componentRenderer.getFirstEmpty(isCompact);
+         int slots = componentRenderer.getFirstEmpty();
          return aIndex >= slots && aIndex < slots + armor;
       }
    }
@@ -227,12 +226,12 @@ public class PartList extends JList<Item>{
 
       @Override
       public Item getElementAt(int aIndex){
-         return componentRenderer.getRenderState(aIndex, isCompact).getItem();
+         return componentRenderer.getRenderState(aIndex).getItem();
       }
 
       @Override
       public int getSize(){
-         return componentRenderer.getVisibleCount(isCompact);
+         return componentRenderer.getVisibleCount();
       }
 
       @Override
@@ -243,10 +242,6 @@ public class PartList extends JList<Item>{
 
          // Only update on item changes or upgrades
          if( aMsg instanceof ConfiguredComponentBase.Message || aMsg instanceof Upgrades.Message ){
-            if( aMsg instanceof ConfiguredComponentBase.Message && ((ConfiguredComponentBase.Message)aMsg).type == Type.ArmorChanged ){
-               return; // Don't react to armor changes
-            }
-            componentRenderer.setDirty();
             fireContentsChanged(this, 0, component.getInternalComponent().getSlots());
          }
       }
@@ -259,7 +254,7 @@ public class PartList extends JList<Item>{
       component = aComponent;
       loadout = aLoadout;
       xBar = aXBar;
-      componentRenderer = new ComponentRenderer(component);
+      componentRenderer = new ComponentRenderer(aXBar, component, isCompact);
       effectiveHP = new ItemEffectiveHP(component);
       cds = new ComponentDestructionSimulator(component, aXBar);
       cds.simulate();
@@ -299,7 +294,7 @@ public class PartList extends JList<Item>{
    }
 
    public Item removeSelected(MessageXBar aXBar){
-      RenderState state = componentRenderer.getRenderState(getSelectedIndex(), isCompact);
+      RenderState state = componentRenderer.getRenderState(getSelectedIndex());
       if( component.canRemoveItem(state.getItem()) ){
          opStack.pushAndApply(new OpRemoveItem(aXBar, loadout, component, state.getItem()));
          return state.getItem();
@@ -316,7 +311,7 @@ public class PartList extends JList<Item>{
    }
 
    public void putElement(Item aItem, int aDropIndex, boolean aShouldReplace){
-      RenderState state = componentRenderer.getRenderState(aDropIndex, isCompact);
+      RenderState state = componentRenderer.getRenderState(aDropIndex);
 
       switch( state.getRenderType() ){
          case EngineHeatSink:{
