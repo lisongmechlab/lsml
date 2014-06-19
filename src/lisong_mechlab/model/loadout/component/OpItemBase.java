@@ -19,9 +19,14 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
+import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.Engine;
@@ -43,11 +48,12 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 abstract class OpItemBase extends Operation{
-   private int                             numEngineHS = 0;
+   private int                             numEngineHS     = 0;
    private final MessageXBar               xBar;
    protected final ConfiguredComponentBase component;
    protected final LoadoutBase<?>          loadout;
    protected final Item                    item;
+   protected final Map<Item, Boolean>      oldToggleStates = new HashMap<>();
 
    /**
     * Creates a new {@link OpItemBase}. The deriving classes shall throw if the the operation with the given item would
@@ -122,6 +128,9 @@ abstract class OpItemBase extends Operation{
             component.removeItem(heatSinkType);
          }
       }
+
+      restoreForcedToggles(aItem);
+
       component.removeItem(aItem);
       if( xBar != null ){
          xBar.post(new Message(component, Type.ItemRemoved));
@@ -156,10 +165,80 @@ abstract class OpItemBase extends Operation{
          }
       }
 
+      applyForcedToggles(aItem);
+
+      checkCaseXLWarning(aItem);
+      checkManyGaussWarning(aItem);
+
+      component.addItem(aItem);
+      if( xBar != null ){
+         xBar.post(new Message(component, Type.ItemAdded));
+      }
+   }
+
+   private void applyForcedToggles(Item aItem){
+      if( component instanceof ConfiguredComponentOmniMech && ComponentOmniMech.shouldRemoveArmActuators(aItem) ){
+         if( !oldToggleStates.isEmpty() ){
+            // Restore toggle state
+            for(Entry<Item, Boolean> entry : oldToggleStates.entrySet()){
+               ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
+               ccom.setToggleState(entry.getKey(), entry.getValue());
+            }
+            oldToggleStates.clear();
+         }
+         else{
+            // Force toggle off on HA/LAA
+            ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
+
+            if( ccom.getToggleState(ItemDB.HA) ){
+               ccom.setToggleState(ItemDB.HA, false);
+               oldToggleStates.put(ItemDB.HA, true);
+            }
+            if( ccom.getToggleState(ItemDB.LAA) ){
+               ccom.setToggleState(ItemDB.LAA, false);
+               oldToggleStates.put(ItemDB.LAA, true);
+            }
+         }
+      }
+   }
+
+   private void restoreForcedToggles(Item aItem){
+      if( component instanceof ConfiguredComponentOmniMech && ComponentOmniMech.shouldRemoveArmActuators(aItem) ){
+         if( !oldToggleStates.isEmpty() ){
+            // Restore toggle state
+            for(Entry<Item, Boolean> entry : oldToggleStates.entrySet()){
+               ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
+               ccom.setToggleState(entry.getKey(), entry.getValue());
+            }
+            oldToggleStates.clear();
+         }
+         else{
+            ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
+
+            component.removeItem(aItem); // Work around, checks would fail on the item to be removed otherwise.
+            
+            if( loadout.getNumCriticalSlotsFree() > 0 && ccom.canToggleOn(ItemDB.LAA) ){
+               oldToggleStates.put(ItemDB.LAA, ccom.getToggleState(ItemDB.LAA));
+               ccom.setToggleState(ItemDB.LAA, true);
+            }
+            if( loadout.getNumCriticalSlotsFree() > 0 && ccom.canToggleOn(ItemDB.HA) ){
+               oldToggleStates.put(ItemDB.HA, ccom.getToggleState(ItemDB.HA));
+               ccom.setToggleState(ItemDB.HA, true);
+            }
+            
+            component.addItem(aItem);
+         }
+      }
+   }
+
+   private void checkCaseXLWarning(Item aItem){
       Engine engine = loadout.getEngine();
       if( aItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL && xBar != null ){
          xBar.post(new NotificationMessage(Severity.WARNING, loadout, "C.A.S.E. together with XL engine has no effect."));
       }
+   }
+
+   private void checkManyGaussWarning(Item aItem){
       if( null != aItem.getName() && aItem.getName().contains("GAUSS") ){
          int rifles = 0;
          for(ConfiguredComponentBase componentOmniMech : loadout.getComponents()){
@@ -177,10 +256,6 @@ abstract class OpItemBase extends Operation{
             if( done )
                break;
          }
-      }
-      component.addItem(aItem);
-      if( xBar != null ){
-         xBar.post(new Message(component, Type.ItemAdded));
       }
    }
 }

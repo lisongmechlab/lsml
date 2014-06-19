@@ -20,6 +20,7 @@
 package lisong_mechlab.view.mechlab;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,13 +52,16 @@ import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.OmniPodDB;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.OpChangeOmniPod;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
+import lisong_mechlab.model.loadout.component.OpToggleItem;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
@@ -130,6 +134,9 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
    private final JComboBox<OmniPod>      omnipodSelection;
    private JPanel                        hardPointsPanel;
 
+   private final JCheckBox               toggleHA;
+   private final JCheckBox               toggleLAA;
+
    PartPanel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, final MessageXBar aXBar, boolean aCanHaveHardpoints,
              DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric, final OperationStack aStack){
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -150,6 +157,40 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          armorLabel = new JLabel();
       }
 
+      Location location = aLoadoutPart.getInternalComponent().getLocation();
+      if( aLoadoutPart instanceof ConfiguredComponentOmniMech && (location == Location.LeftArm || location == Location.RightArm) ){
+
+         final ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)aLoadoutPart;
+
+         toggleLAA = new JCheckBox(ItemDB.LAA.getShortName());
+         add(toggleLAA);
+         toggleLAA.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               aStack.pushAndApply(new OpToggleItem(aXBar, loadout, ccom, ItemDB.LAA, toggleLAA.isSelected()));
+            }
+         });
+         toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA));
+         toggleLAA.setSelected(ccom.getToggleState(ItemDB.LAA));
+         toggleLAA.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+         toggleHA = new JCheckBox(ItemDB.HA.getShortName());
+         add(toggleHA);
+         toggleHA.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               aStack.pushAndApply(new OpToggleItem(aXBar, loadout, ccom, ItemDB.HA, toggleHA.isSelected()));
+            }
+         });
+         toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA));
+         toggleHA.setSelected(ccom.getToggleState(ItemDB.HA));
+         toggleHA.setAlignmentX(Component.CENTER_ALIGNMENT);
+      }
+      else{
+         toggleHA = null;
+         toggleLAA = null;
+      }
+
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
          ComponentBase internalPart = aLoadoutPart.getInternalComponent();
@@ -165,7 +206,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          omnipodSelection = new JComboBox<>(new Vector<>(compatiblePods));
          omnipodSelection.setRenderer(new OmniPodRenderer());
          omnipodSelection.addPopupMenuListener(new StyledComboBox(true, false));
-         
+
          Dimension max = omnipodSelection.getMaximumSize();
          max.height = ItemRenderer.getItemHeight();
          omnipodSelection.setMaximumSize(max);
@@ -322,21 +363,52 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       }
    }
 
+   private void updateActuatorToggles(){
+      if( toggleLAA != null ){
+         SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+               ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
+               toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA));
+               toggleLAA.setSelected(ccom.getToggleState(ItemDB.LAA));
+            }
+         });
+      }
+
+      if( toggleHA != null ){
+         SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+               ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
+               toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA));
+               toggleHA.setSelected(ccom.getToggleState(ItemDB.HA));
+            }
+         });
+      }
+   }
+
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.Message ){
-         ConfiguredComponentBase.Message msg = (ConfiguredComponentBase.Message)aMsg;
-         if( msg.type == Type.ArmorChanged ){
-            SwingUtilities.invokeLater(new Runnable(){
-               @Override
-               public void run(){
-                  updateArmorPanel();
+      if( aMsg.isForMe(loadout) ){
+         if( aMsg instanceof ConfiguredComponentBase.Message ){
+
+            ConfiguredComponentBase.Message msg = (ConfiguredComponentBase.Message)aMsg;
+            if( msg.type == Type.ArmorChanged ){
+               SwingUtilities.invokeLater(new Runnable(){
+                  @Override
+                  public void run(){
+                     updateArmorPanel();
+                  }
+               });
+            }
+            else if( msg.type == Type.OmniPodChanged ){
+               if( canHaveHardpoints ){
+                  updateHardpointsPanel(hardPointsPanel);
                }
-            });
-         }
-         else if( msg.type == Type.OmniPodChanged ){
-            if( canHaveHardpoints ){
-               updateHardpointsPanel(hardPointsPanel);
+               updateActuatorToggles();
+            }
+            else if( msg.type == Type.ItemAdded || msg.type == Type.ItemRemoved || msg.type == Type.ItemsChanged ){
+               updateActuatorToggles();
             }
          }
       }

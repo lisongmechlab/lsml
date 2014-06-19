@@ -45,4 +45,12 @@ public class Internal extends Module{
    public Internal(ItemStatsModule aStatsModule){
       super(aStatsModule);
    }
+
+   @Override
+   public String getShortName(){
+      String ans = getName().replace("UPPER ", "U-");
+      ans = ans.replace("LOWER ", "L-");
+      ans = ans.replace("ACTUATOR", "");
+      return ans;
+   }
 }
