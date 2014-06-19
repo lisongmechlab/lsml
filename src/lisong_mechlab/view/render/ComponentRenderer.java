@@ -25,13 +25,16 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
 
 /**
  * This class is a helper class to map a display list index to an item and associated render state.
  * 
  * @author Emily Björk
  */
-public class ComponentRenderer{
+public class ComponentRenderer implements MessageXBar.Reader{
    public enum RenderType{
       Empty, MultiSlot, Item, EngineHeatSink, LastSlot
    }
@@ -58,11 +61,13 @@ public class ComponentRenderer{
    private final RenderState[]           states;
    private boolean                       dirty        = true;
    private int                           compactOffest;
-
+   private final boolean                 isCompact;
    private int                           engineHsLeft = 0;
 
-   public ComponentRenderer(ConfiguredComponentBase aComponent){
+   public ComponentRenderer(MessageXBar aXBar, ConfiguredComponentBase aComponent, boolean aCompact){
+      aXBar.attach(this);
       component = aComponent;
+      isCompact = aCompact;
 
       states = new RenderState[component.getInternalComponent().getSlots()];
       for(int i = 0; i < states.length; ++i){
@@ -70,14 +75,14 @@ public class ComponentRenderer{
       }
    }
 
-   public RenderState getRenderState(int aIndex, boolean aCompact){
+   public RenderState getRenderState(int aIndex){
       if( dirty ){
-         updateStates(aCompact);
+         updateStates();
       }
       return states[compactOffest + aIndex];
    }
 
-   private void updateStates(boolean aCompact){
+   private void updateStates(){
       engineHsLeft = component.getEngineHeatsinksMax();
       int offs = updateStates(0, component.getItemsFixed(), true);
       offs = updateStates(offs, component.getItemsEquipped(), false);
@@ -89,7 +94,7 @@ public class ComponentRenderer{
       }
 
       compactOffest = 0;
-      if( aCompact ){
+      if( isCompact ){
          for(Item item : component.getInternalComponent().getFixedItems()){
             compactOffest += item.getNumCriticalSlots();
          }
@@ -138,9 +143,9 @@ public class ComponentRenderer{
       dirty = true;
    }
 
-   public int getFirstEmpty(boolean aCompact){
+   public int getFirstEmpty(){
       if( dirty ){
-         updateStates(aCompact);
+         updateStates();
       }
       for(int i = 0; i < states.length; ++i){
          if( states[i].renderType == RenderType.Empty )
@@ -149,10 +154,24 @@ public class ComponentRenderer{
       return states.length - compactOffest;
    }
 
-   public int getVisibleCount(boolean aCompact){
+   public int getVisibleCount(){
       if( dirty ){
-         updateStates(aCompact);
+         updateStates();
       }
       return states.length - compactOffest;
+   }
+
+   @Override
+   public void receive(Message aMsg){
+      if( aMsg instanceof ConfiguredComponentBase.Message ){
+         ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message)aMsg;
+
+         if( message.component == component ){
+            if( message.type == Type.ArmorChanged || message.type == Type.ArmorDistributionUpdateRequest )
+               return;
+            updateStates();
+         }
+      }
+
    }
 }

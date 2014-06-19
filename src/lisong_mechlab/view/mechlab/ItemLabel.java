@@ -121,7 +121,7 @@ public class ItemLabel extends JLabel{
       public Void doInBackground(){
          try{
             operation = new OpAutoAddItem(loadoutFrame.getLoadout(), xBar, itemToPlace);
-            loadoutFrame.getOpStack().pushAndApply(operation);
+            operation.buildOperation();
          }
          catch( Throwable e ){ // Yeah anything thrown is a failure.
             operation = null;
@@ -135,6 +135,9 @@ public class ItemLabel extends JLabel{
          if( !isCancelled() ){
             if( operation == null ){
                JOptionPane.showMessageDialog(dialog, "No can do cap'n!", "Not possible", JOptionPane.OK_OPTION);
+            }
+            else{
+               loadoutFrame.getOpStack().pushAndApply(operation);
             }
          }
          dialog.dispose();
