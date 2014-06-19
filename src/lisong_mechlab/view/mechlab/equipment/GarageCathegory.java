@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.garage.MechGarage;
@@ -34,11 +35,13 @@ import lisong_mechlab.util.MessageXBar;
 class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?>>{
    private MechGarage         garage = null;
    private final ChassisClass chassiClass;
+   private final Faction faction;
 
    public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar, ChassisClass aChassiClass,
-                          JTextField aFilterBar, GarageTree aGarageTree){
+                          JTextField aFilterBar, GarageTree aGarageTree, Faction aFaction){
       super(xbar, aName, aParent, aModel, aFilterBar, aGarageTree);
       chassiClass = aChassiClass;
+      faction = aFaction;
    }
 
    @Override
@@ -70,7 +73,7 @@ class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?>>{
       children.clear();
       if( garage != null ){
          for(LoadoutBase<?> loadout : garage.getMechs()){
-            if( loadout.getChassis().getChassiClass() == chassiClass )
+            if( loadout.getChassis().getChassiClass() == chassiClass && loadout.getChassis().getFaction().isCompatible(faction))
                children.add(loadout);
          }
       }
