@@ -121,7 +121,7 @@ public class ItemLabel extends JLabel{
       public Void doInBackground(){
          try{
             operation = new OpAutoAddItem(loadoutFrame.getLoadout(), xBar, itemToPlace);
-            operation.buildOperation();
+            operation.prepareOperationAheadOfTime();
          }
          catch( Throwable e ){ // Yeah anything thrown is a failure.
             operation = null;

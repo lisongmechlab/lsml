@@ -166,7 +166,7 @@ public abstract class ConfiguredComponentBase{
       if( aItem == ItemDB.CASE && items.contains(ItemDB.CASE) )
          return false;
       
-      if( getSlotsFree() < 0 ){
+      if( getSlotsFree() < aItem.getNumCriticalSlots() ){
          return false;
       }
 

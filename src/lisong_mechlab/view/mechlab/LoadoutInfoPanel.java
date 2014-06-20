@@ -682,7 +682,13 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                else{
                   structure = endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE;
                }
-               opStack.pushAndApply(new OpSetStructureType(xBar, loadoutStandard, structure));
+               try{
+                  opStack.pushAndApply(new OpSetStructureType(xBar, loadoutStandard, structure));
+               }
+               catch( IllegalArgumentException e ){
+                  endoSteel.setSelected(!endoSteel.isSelected());
+                  JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
+               }
             }
          });
 
@@ -698,7 +704,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                else{
                   armor = ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
                }
-               opStack.pushAndApply(new OpSetArmorType(xBar, loadoutStandard, armor));
+               try{
+                  opStack.pushAndApply(new OpSetArmorType(xBar, loadoutStandard, armor));
+               }
+               catch( IllegalArgumentException e ){
+                  JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
+               }
             }
          });
 
@@ -714,7 +725,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                else{
                   heatSink = doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
                }
-               opStack.pushAndApply(new OpSetHeatSinkType(xBar, loadoutStandard, heatSink));
+               try{
+                  opStack.pushAndApply(new OpSetHeatSinkType(xBar, loadoutStandard, heatSink));
+               }
+               catch( IllegalArgumentException e ){
+                  JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
+               }
             }
          });
       }
@@ -724,7 +740,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
          @Override
          public void actionPerformed(ActionEvent aE){
-            opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE));
+            try{
+               opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE));
+            }
+            catch( IllegalArgumentException e ){
+               JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
+            }
          }
       });
 
