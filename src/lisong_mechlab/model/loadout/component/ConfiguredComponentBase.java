@@ -165,20 +165,20 @@ public abstract class ConfiguredComponentBase{
 
       if( aItem == ItemDB.CASE && items.contains(ItemDB.CASE) )
          return false;
-
       
-      items.add(aItem); // Ugly workaround to check if adding the item would succeed if it removed HALAA     
       if( getSlotsFree() < 0 ){
-         items.remove(aItem);
          return false;
       }
-      items.remove(aItem);
 
       // Check enough free hard points
       if( aItem.getHardpointType() != HardPointType.NONE
           && getItemsOfHardpointType(aItem.getHardpointType()) >= getHardPointCount(aItem.getHardpointType()) ){
          return false; // Not enough hard points!
       }
+      return true;
+   }
+   
+   public boolean isValidLoadout(){
       return true;
    }
 

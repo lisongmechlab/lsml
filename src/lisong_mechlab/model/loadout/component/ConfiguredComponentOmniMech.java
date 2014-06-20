@@ -59,7 +59,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
       return (ComponentOmniMech)super.getInternalComponent();
    }
 
-   @Override                     
+   @Override
    public int getHardPointCount(HardPointType aHardpointType){
       return omniPod.getHardPointCount(aHardpointType);
    }
@@ -87,6 +87,32 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
     */
    public OmniPod getOmniPod(){
       return omniPod;
+   }
+
+   @Override
+   public boolean canAddItem(Item aItem){
+      //TODO: This is copy pasted from ConfiguredComponentBase and then modified.
+      if( !getInternalComponent().isAllowed(aItem) )
+         return false;
+
+      int slotComp = 0;
+      if( ComponentOmniMech.shouldRemoveArmActuators(aItem) ){
+         if( getToggleState(ItemDB.HA) )
+            slotComp++;
+         if( getToggleState(ItemDB.LAA) )
+            slotComp++;
+      }
+
+      if( getSlotsFree() + slotComp < aItem.getNumCriticalSlots() ){
+         return false;
+      }
+
+      // Check enough free hard points
+      if( aItem.getHardpointType() != HardPointType.NONE
+          && getItemsOfHardpointType(aItem.getHardpointType()) >= getHardPointCount(aItem.getHardpointType()) ){
+         return false; // Not enough hard points!
+      }
+      return true;
    }
 
    @Override
