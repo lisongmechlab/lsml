@@ -352,7 +352,7 @@ public abstract class ConfiguredComponentBase{
    /**
     * @return A {@link List} of items that are fixed on this component.
     */
-   public abstract Collection<Item> getItemsFixed();
+   public abstract List<Item> getItemsFixed();
 
    /**
     * @param aHardpointType

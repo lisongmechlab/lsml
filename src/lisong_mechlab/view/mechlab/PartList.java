@@ -295,9 +295,10 @@ public class PartList extends JList<Item>{
 
    public Item removeSelected(MessageXBar aXBar){
       RenderState state = componentRenderer.getRenderState(getSelectedIndex());
+      Item item = state.getItem();
       if( component.canRemoveItem(state.getItem()) ){
          opStack.pushAndApply(new OpRemoveItem(aXBar, loadout, component, state.getItem()));
-         return state.getItem();
+         return item;
       }
       return null;
    }

@@ -175,10 +175,16 @@ public class GuidanceUpgrade extends Upgrade{
       if( aOldAmmo.getWeaponHardpointType() != HardPointType.MISSILE ){
          return aOldAmmo;
       }
-
+      
       for(MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)){
-         if( weapon.getAmmoType(null) == aOldAmmo ){
-            return upgrade(weapon).getAmmoType(null);
+         if(weapon.isCompatibleAmmo(aOldAmmo)){
+            MissileWeapon representant = upgrade(weapon);
+
+            for(Ammunition ammunition : ItemDB.lookup(Ammunition.class)){
+               if(representant.isCompatibleAmmo(ammunition) && ammunition.getMass() == aOldAmmo.getMass())
+                  return ammunition;
+            }
+            break;
          }
       }
 

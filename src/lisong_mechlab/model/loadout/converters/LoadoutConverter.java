@@ -80,12 +80,6 @@ public class LoadoutConverter implements Converter{
       aContext.convertAnother(loadout.getEfficiencies());
       aWriter.endNode();
 
-      for(ConfiguredComponentBase part : loadout.getComponents()){
-         aWriter.startNode("component");
-         aContext.convertAnother(part);
-         aWriter.endNode();
-      }
-
       // Specific to LoadoutStandard
       aWriter.startNode("upgrades");
       if( loadout instanceof LoadoutStandard ){
@@ -101,6 +95,11 @@ public class LoadoutConverter implements Converter{
       }
       aWriter.endNode();
 
+      for(ConfiguredComponentBase part : loadout.getComponents()){
+         aWriter.startNode("component");
+         aContext.convertAnother(part);
+         aWriter.endNode();
+      }
    }
 
    @Override

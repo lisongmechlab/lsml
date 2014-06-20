@@ -59,7 +59,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
       return (ComponentOmniMech)super.getInternalComponent();
    }
 
-   @Override
+   @Override                     
    public int getHardPointCount(HardPointType aHardpointType){
       return omniPod.getHardPointCount(aHardpointType);
    }
@@ -72,13 +72,13 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
    @Override
    public List<Item> getItemsFixed(){
       List<Item> fixed = new ArrayList<>(getInternalComponent().getFixedItems());
-      Boolean ha = toggleStates.get(ItemDB.HA);
-      if( ha != null && ha == true )
-         fixed.add(ItemDB.HA);
 
       Boolean laa = toggleStates.get(ItemDB.LAA);
       if( laa != null && laa == true )
          fixed.add(ItemDB.LAA);
+      Boolean ha = toggleStates.get(ItemDB.HA);
+      if( ha != null && ha == true )
+         fixed.add(ItemDB.HA);
       return fixed;
    }
 
