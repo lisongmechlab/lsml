@@ -296,7 +296,7 @@ public class LoadoutCoderV3 implements LoadoutCoder{
          stack.pushAndApply(new OpSetGuidanceType(null, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.remove(0))));
 
          for(Location location : componentOrder){
-            if( isOmniMech && location != Location.CenterTorso){
+            if( isOmniMech && location != Location.CenterTorso ){
                LoadoutOmniMech omniMech = (LoadoutOmniMech)loadout;
                OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
                stack.pushAndApply(new OpChangeOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
@@ -378,9 +378,9 @@ public class LoadoutCoderV3 implements LoadoutCoder{
     * @throws Exception
     */
    public static void main(String[] arg) throws Exception{
-       generateAllLoadouts();
+      //generateAllLoadouts();
       // generateStatsFromStdin();
-      //generateStatsFromStock();
+      // generateStatsFromStock();
    }
 
    @SuppressWarnings("unused")
@@ -398,12 +398,13 @@ public class LoadoutCoderV3 implements LoadoutCoder{
             loadout = new LoadoutStandard((ChassisStandard)chassis, xBar);
          else
             loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis, xBar);
-         
+
          stack.pushAndApply(new OpLoadStock(chassis, loadout, xBar));
          System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
       }
    }
 
+   @SuppressWarnings("unused")
    private static void generateStatsFromStock() throws Exception{
       Map<Integer, Integer> freqs = new HashMap<>();
 
