@@ -127,7 +127,7 @@ public class OmniPodDB{
          }
          list.add(omniPod);
 
-         id2pod.put(omniPod.getMwoID(), omniPod);
+         id2pod.put(omniPod.getMwoId(), omniPod);
       }
 
    }
@@ -138,6 +138,16 @@ public class OmniPodDB{
     * @return An {@link OmniPod} with the correct ID.
     */
    public static OmniPod lookup(int aId){
-      return id2pod.get(aId);
+      OmniPod omnipod = id2pod.get(aId);
+      if(omnipod == null)
+         throw new IllegalArgumentException("No omnipod with ID: " + aId);
+      return omnipod;
+   }
+
+   /**
+    * @return A {@link Collection} of all {@link OmniPod}s.
+    */
+   public static Collection<OmniPod> all(){
+      return id2pod.values();
    }
 }

@@ -20,15 +20,13 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class AmmoWeapon extends Weapon{
    @XStreamAsAttribute
-   private final String         ammoTypeId;
-   private transient Ammunition ammoType;
+   private final String ammoTypeId;
 
    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType){
       this(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.ammoType);
@@ -37,16 +35,6 @@ public class AmmoWeapon extends Weapon{
    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType, String aAmmoType){
       super(aStatsWeapon, aHardpointType);
       ammoTypeId = aAmmoType;
-   }
-
-   @Deprecated
-   public Ammunition getAmmoType(Upgrades aUpgrades){
-      if( ammoType == null ){
-         ammoType = (Ammunition)ItemDB.lookup(ammoTypeId);
-      }
-      if( aUpgrades == null )
-         return ammoType;
-      return ammoType;
    }
 
    public boolean isCompatibleAmmo(Ammunition aAmmunition){

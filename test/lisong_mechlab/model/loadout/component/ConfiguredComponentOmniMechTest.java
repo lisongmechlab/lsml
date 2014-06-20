@@ -176,7 +176,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       omniPodFixed.add(HA);
 
       Item largeBoreGun = Mockito.mock(Item.class);
-      Mockito.when(omniInternal.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
+      Mockito.when(ComponentOmniMech.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
 
       ConfiguredComponentOmniMech cut = makeDefaultCUT();
       cut.addItem(largeBoreGun);
@@ -203,7 +203,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       omniPodFixed.add(HA);
 
       Item largeBoreGun = Mockito.mock(Item.class);
-      Mockito.when(omniInternal.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
+      Mockito.when(ComponentOmniMech.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
 
       internalFixedItems.add(largeBoreGun);
 
@@ -230,7 +230,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       omniPodFixed.add(HA);
 
       Item smallBoreGun = Mockito.mock(Item.class);
-      Mockito.when(omniInternal.shouldRemoveArmActuators(smallBoreGun)).thenReturn(false);
+      Mockito.when(ComponentOmniMech.shouldRemoveArmActuators(smallBoreGun)).thenReturn(false);
 
       internalFixedItems.add(smallBoreGun);
 

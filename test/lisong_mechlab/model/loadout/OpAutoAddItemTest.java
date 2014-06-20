@@ -66,8 +66,8 @@ public class OpAutoAddItemTest{
    @Test(timeout=5000)
    public void testApply_XLEnginePerformance() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-      LoadoutStandard loadout = coder.parse("lsml://rQAAKCwqCDISSg4qCDEDvqmbFj6wWK9evXsLLAEYCg==");
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse("lsml://rQAAKCwqCDISSg4qCDEDvqmbFj6wWK9evXsLLAEYCg==");
       Mockito.reset(xBar);
       // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
@@ -79,8 +79,8 @@ public class OpAutoAddItemTest{
    @Test
    public void testMoveItem_Bug2() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-      LoadoutStandard loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
       Mockito.reset(xBar);
       // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 

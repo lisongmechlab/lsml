@@ -48,6 +48,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import lisong_mechlab.model.garage.OpAddToGarage;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.SmurfyImportExport;
@@ -168,14 +169,14 @@ public class ImportFromSmurfyAction extends AbstractAction{
                         SmurfyImportExport action = null;
                         try{
                            action = new SmurfyImportExport(textApiKey.getText(), decoder);
-                           List<LoadoutStandard> mechbay = action.listMechBay();
+                           List<LoadoutBase<?>> mechbay = action.listMechBay();
 
                            if( rememberKey.isSelected() ){
                               preferences.remeberAPIKey(textApiKey.getText());
                            }
 
                            clearModel();
-                           for(LoadoutStandard loadout : mechbay){
+                           for(LoadoutBase<?> loadout : mechbay){
                               model.addRow(new Object[] {false, loadout});
                            }
                            model.fireTableDataChanged();

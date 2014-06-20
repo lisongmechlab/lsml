@@ -32,10 +32,15 @@ import java.util.regex.Pattern;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.OpRename;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.OperationStack;
@@ -43,12 +48,13 @@ import lisong_mechlab.util.OperationStack;
 import org.junit.Test;
 
 /**
- * A test suite for {@link LoadoutCoderV2}.
+ * Test suite for {@link LoadoutCoderV3}.
  * 
  * @author Li Song
  */
-public class LoadoutCoderV2Test{
-   private LoadoutCoderV2 cut = new LoadoutCoderV2();
+public class LoadoutCoderV3Test{
+
+   private LoadoutCoderV3 cut = new LoadoutCoderV3();
 
    /**
     * The coder shall be able to decode all stock mechs.
@@ -62,16 +68,20 @@ public class LoadoutCoderV2Test{
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
+      OperationStack stack = new OperationStack(0);
+
       for(ChassisBase chassis : chassii){
-         if( !(chassis instanceof ChassisStandard) )
-            continue;
-         LoadoutStandard loadout = new LoadoutStandard(chassis.getName(), null);
+         LoadoutBase<?> loadout;
+         if( chassis instanceof ChassisOmniMech )
+            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis, null);
+         else
+            loadout = new LoadoutStandard((ChassisStandard)chassis, null);
+         stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
 
          byte[] result = cut.encode(loadout);
-         LoadoutStandard decoded = cut.decode(result);
+         LoadoutBase<?> decoded = cut.decode(result);
 
          // Name is not encoded
-         OperationStack stack = new OperationStack(0);
          stack.pushAndApply(new OpRename(decoded, null, loadout.getName()));
 
          // Verify
@@ -86,10 +96,11 @@ public class LoadoutCoderV2Test{
     */
    @Test
    public void testDecodeAllStock() throws Exception{
-      InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv2stock.txt");
+      InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv3stock.txt");
       Scanner sc = new Scanner(is);
-
       Base64 base64 = new Base64();
+
+      OperationStack stack = new OperationStack(0);
 
       // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
       while( sc.hasNextLine() ){
@@ -99,11 +110,17 @@ public class LoadoutCoderV2Test{
          m.matches();
          ChassisBase chassi = ChassisDB.lookup(m.group(1));
          String lsml = m.group(2);
-         LoadoutStandard reference = new LoadoutStandard(chassi.getName(), null);
-         LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
+
+         LoadoutBase<?> reference;
+         if( chassi instanceof ChassisOmniMech )
+            reference = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi, null);
+         else
+            reference = new LoadoutStandard((ChassisStandard)chassi, null);
+         stack.pushAndApply(new OpLoadStock(chassi, reference, null));
+
+         LoadoutBase<?> decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
          // Name is not encoded
-         OperationStack stack = new OperationStack(0);
          stack.pushAndApply(new OpRename(decoded, null, reference.getName()));
 
          // Verify
@@ -122,8 +139,7 @@ public class LoadoutCoderV2Test{
    @Test
    public void testDecodeHeatsinksBeforeEngine() throws DecodingException{
       Base64 base64 = new Base64();
-
-      LoadoutStandard l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
+      LoadoutBase<?> l = cut.decode(base64.decode("rgARREYOMRJoFEYOMUQW090bjrvw0U7naZlgpgo7QitVUhC1vt9v2LBYLBpMywUNG8btEw==".toCharArray()));
 
       assertTrue(l.getFreeMass() < 0.005);
       assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
