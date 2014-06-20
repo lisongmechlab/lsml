@@ -398,12 +398,11 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return <code>true</code> if the given {@link Item} is globally feasible on this loadout.
     */
    public boolean canEquip(Item anItem){
-      if( !canEquipGlobal(anItem) ){ // FIXME: The case where adding a weapon that would cause LAA/HA to be removed
-                                     // while at max global slots fails even if it might succeed.
+      if( !canEquipGlobal(anItem) ){
+         // The case where adding a weapon that would cause LAA/HA to be removed will not cause an issue as omnimechs
+         // where this can occur, have fixed armor and structure slots.
          return false;
       }
-
-      // FIXME: There are problems with jump jet limits
 
       if( anItem instanceof Engine ){
          Engine engine = (Engine)anItem;
@@ -428,6 +427,30 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       }
       return false;
    }
+   
+   public boolean isValidLoadout(){
+      if(getFreeMass() < 0)
+         return false;
+      
+      if(getNumCriticalSlotsFree() <0)
+         return false;
+     
+      if(getJumpJetCount() > getJumpJetsMax())
+         return false;
+      
+      if(getModules().size() > getModulesMax())
+         return false;
+      
+      if(getArmor() > getChassis().getArmorMax())
+         return false;
+      
+      for(T component : getComponents()){
+         if(!component.isValidLoadout())
+            return false;
+      }      
+      return true;
+   }
+   
 
    /**
     * Checks only global constraints against the {@link Item}. These are necessary but not sufficient conditions. Local
