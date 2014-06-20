@@ -84,10 +84,10 @@ import lisong_mechlab.util.OperationStack;
  * @author Emily Björk
  */
 public class LoadoutCoderV3 implements LoadoutCoder{
-   private static final int        HEADER_MAGIC   = 0xAC + 2;
-   private final Huffman1<Integer> huff;
    private static final Location[] componentOrder = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head,
          Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
+   private static final int        HEADER_MAGIC   = 0xAC + 2;
+   private final Huffman1<Integer> huff;
 
    public LoadoutCoderV3(){
       ObjectInputStream in = null;
@@ -114,6 +114,78 @@ public class LoadoutCoderV3 implements LoadoutCoder{
             }
          }
       }
+   }
+
+   @Override
+   public boolean canDecode(byte[] aBitStream){
+      final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
+      return buffer.read() == HEADER_MAGIC;
+   }
+
+   @Override
+   public LoadoutBase<?> decode(final byte[] aBitStream) throws DecodingException{
+      final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
+      final OperationStack stack = new OperationStack(0);
+
+      // Read header
+      if( buffer.read() != HEADER_MAGIC ){
+         throw new DecodingException("Wrong format!"); // Wrong format
+      }
+
+      final LoadoutBase<?> loadout = readChassisLoadout(buffer);
+      final boolean isOmniMech = loadout instanceof LoadoutOmniMech;
+
+      readArmorValues(buffer, loadout, stack);
+      if( isOmniMech ){
+         readActuatorState(buffer, loadout, stack);
+      }
+
+      // Items are encoded as a list of integers which record the item ID. Components are separated by -1.
+      // The order is the same as for armor: RA, RT, RL, HD, CT, LT, LL, LA
+      {
+         byte[] rest = new byte[buffer.available()];
+         try{
+            buffer.read(rest);
+         }
+         catch( IOException e ){
+            throw new DecodingException(e);
+         }
+         List<Integer> ids = huff.decode(rest);
+         if( !isOmniMech ){
+            LoadoutStandard loadoutStandard = (LoadoutStandard)loadout;
+            stack.pushAndApply(new OpSetArmorType(null, loadoutStandard, (ArmorUpgrade)UpgradeDB.lookup(ids.remove(0))));
+            stack.pushAndApply(new OpSetStructureType(null, loadoutStandard, (StructureUpgrade)UpgradeDB.lookup(ids.remove(0))));
+            stack.pushAndApply(new OpSetHeatSinkType(null, loadoutStandard, (HeatSinkUpgrade)UpgradeDB.lookup(ids.remove(0))));
+         }
+         stack.pushAndApply(new OpSetGuidanceType(null, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.remove(0))));
+
+         for(Location location : componentOrder){
+            if( isOmniMech && location != Location.CenterTorso ){
+               LoadoutOmniMech omniMech = (LoadoutOmniMech)loadout;
+               OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
+               stack.pushAndApply(new OpChangeOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
+            }
+
+            Integer v;
+            List<Item> later = new ArrayList<>();
+            while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
+               Item item = ItemDB.lookup(v);
+               if( item instanceof HeatSink ){
+                  later.add(item); // Add heat sinks last after engine has been added
+                  continue;
+               }
+               stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
+            }
+            for(Item i : later){
+               stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), i));
+            }
+         }
+
+         while( !ids.isEmpty() ){
+            stack.pushAndApply(new OpAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
+         }
+      }
+      return loadout;
    }
 
    /**
@@ -258,82 +330,31 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       }
    }
 
-   @Override
-   public LoadoutBase<?> decode(final byte[] aBitStream) throws DecodingException{
-      final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
-      final OperationStack stack = new OperationStack(0);
+   private void readActuatorState(ByteArrayInputStream aBuffer, LoadoutBase<?> aLoadout, OperationStack aStack){
+      int actuatorState = aBuffer.read();
+      boolean RLAA = (actuatorState & (1 << 3)) != 0;
+      boolean RHA = (actuatorState & (1 << 2)) != 0;
+      boolean LLAA = (actuatorState & (1 << 1)) != 0;
+      boolean LHA = (actuatorState & (1 << 0)) != 0;
 
-      // Read header
-      if( buffer.read() != HEADER_MAGIC ){
-         throw new DecodingException("Wrong format!"); // Wrong format
-      }
-
-      final LoadoutBase<?> loadout = readChassisLoadout(buffer);
-      final boolean isOmniMech = loadout instanceof LoadoutOmniMech;
-
-      readArmorValues(buffer, loadout, stack);
-      if( isOmniMech ){
-         readActuatorState(buffer, loadout, stack);
-      }
-
-      // Items are encoded as a list of integers which record the item ID. Components are separated by -1.
-      // The order is the same as for armor: RA, RT, RL, HD, CT, LT, LL, LA
-      {
-         byte[] rest = new byte[buffer.available()];
-         try{
-            buffer.read(rest);
-         }
-         catch( IOException e ){
-            throw new DecodingException(e);
-         }
-         List<Integer> ids = huff.decode(rest);
-         if( !isOmniMech ){
-            LoadoutStandard loadoutStandard = (LoadoutStandard)loadout;
-            stack.pushAndApply(new OpSetArmorType(null, loadoutStandard, (ArmorUpgrade)UpgradeDB.lookup(ids.remove(0))));
-            stack.pushAndApply(new OpSetStructureType(null, loadoutStandard, (StructureUpgrade)UpgradeDB.lookup(ids.remove(0))));
-            stack.pushAndApply(new OpSetHeatSinkType(null, loadoutStandard, (HeatSinkUpgrade)UpgradeDB.lookup(ids.remove(0))));
-         }
-         stack.pushAndApply(new OpSetGuidanceType(null, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.remove(0))));
-
-         for(Location location : componentOrder){
-            if( isOmniMech && location != Location.CenterTorso ){
-               LoadoutOmniMech omniMech = (LoadoutOmniMech)loadout;
-               OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
-               stack.pushAndApply(new OpChangeOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
-            }
-
-            Integer v;
-            List<Item> later = new ArrayList<>();
-            while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
-               Item item = ItemDB.lookup(v);
-               if( item instanceof HeatSink ){
-                  later.add(item); // Add heat sinks last after engine has been added
-                  continue;
-               }
-               stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
-            }
-            for(Item i : later){
-               stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), i));
-            }
-         }
-
-         while( !ids.isEmpty() ){
-            stack.pushAndApply(new OpAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
-         }
-      }
-      return loadout;
+      LoadoutOmniMech omniMech = (LoadoutOmniMech)aLoadout;
+      aStack.pushAndApply(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.LAA, LLAA));
+      aStack.pushAndApply(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.HA, LHA));
+      aStack.pushAndApply(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.LAA, RLAA));
+      aStack.pushAndApply(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.HA, RHA));
    }
 
-   private LoadoutBase<?> readChassisLoadout(ByteArrayInputStream aBuffer){
-
-      // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
-      short chassisId = (short)(((aBuffer.read() & 0xFF) << 8) | (aBuffer.read() & 0xFF));
-      ChassisBase chassis = ChassisDB.lookup(chassisId);
-
-      if( chassis instanceof ChassisOmniMech ){
-         return new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis, null);
-      }
-      return new LoadoutStandard((ChassisStandard)chassis, null);
+   private void writeActuatorState(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout){
+      LoadoutOmniMech omniMech = (LoadoutOmniMech)aLoadout;
+      int actuatorState = 0; // 8 bits for actuator toggle states.
+      // All actuator states are encoded even if they don't exist on the equipped omnipod. Actuators that don't exist
+      // are
+      // encoded as false/0.
+      actuatorState = (actuatorState << 1) | (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.LAA) ? 1 : 0);
+      actuatorState = (actuatorState << 1) | (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.HA) ? 1 : 0);
+      actuatorState = (actuatorState << 1) | (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA) ? 1 : 0);
+      actuatorState = (actuatorState << 1) | (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.HA) ? 1 : 0);
+      aBuffer.write((byte)actuatorState);
    }
 
    private void readArmorValues(ByteArrayInputStream aBuffer, LoadoutBase<?> aLoadout, OperationStack aStack){
@@ -351,24 +372,37 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       }
    }
 
-   private void readActuatorState(ByteArrayInputStream aBuffer, LoadoutBase<?> aLoadout, OperationStack aStack){
-      int actuatorState = aBuffer.read();
-      boolean RLAA = (actuatorState & (1 << 3)) != 0;
-      boolean RHA = (actuatorState & (1 << 2)) != 0;
-      boolean LLAA = (actuatorState & (1 << 1)) != 0;
-      boolean LHA = (actuatorState & (1 << 0)) != 0;
-
-      LoadoutOmniMech omniMech = (LoadoutOmniMech)aLoadout;
-      aStack.pushAndApply(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.LAA, LLAA));
-      aStack.pushAndApply(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.HA, LHA));
-      aStack.pushAndApply(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.LAA, RLAA));
-      aStack.pushAndApply(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.HA, RHA));
+   private void writeArmorValues(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout){
+      for(Location part : componentOrder){
+         if( part.isTwoSided() ){
+            aBuffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.FRONT));
+            aBuffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.BACK));
+         }
+         else{
+            aBuffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.ONLY));
+         }
+      }
    }
 
-   @Override
-   public boolean canDecode(byte[] aBitStream){
-      final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
-      return buffer.read() == HEADER_MAGIC;
+   private LoadoutBase<?> readChassisLoadout(ByteArrayInputStream aBuffer){
+
+      // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
+      short chassisId = (short)(((aBuffer.read() & 0xFF) << 8) | (aBuffer.read() & 0xFF));
+      ChassisBase chassis = ChassisDB.lookup(chassisId);
+
+      if( chassis instanceof ChassisOmniMech ){
+         return new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis, null);
+      }
+      return new LoadoutStandard((ChassisStandard)chassis, null);
+   }
+
+   private void writeChassis(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout){
+      // 16 bits (BigEndian, respecting RFC 1700) contains chassis ID.
+      short chassiId = (short)aLoadout.getChassis().getMwoId();
+      if( chassiId != aLoadout.getChassis().getMwoId() )
+         throw new RuntimeException("Chassi ID was larger than 16 bits!");
+      aBuffer.write((chassiId & 0xFF00) >> 8);
+      aBuffer.write((chassiId & 0xFF));
    }
 
    /**
@@ -402,6 +436,46 @@ public class LoadoutCoderV3 implements LoadoutCoder{
          stack.pushAndApply(new OpLoadStock(chassis, loadout, xBar));
          System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
       }
+   }
+
+   @SuppressWarnings("unused")
+   private static void generateStatsFromStdin() throws Exception{
+      Scanner sc = new Scanner(System.in);
+
+      int numLoadouts = Integer.parseInt(sc.nextLine());
+
+      Map<Integer, Integer> freqs = new TreeMap<>();
+      String line = sc.nextLine();
+      do{
+         String[] s = line.split(" ");
+         int id = Integer.parseInt(s[0]);
+         int freq = Integer.parseInt(s[1]);
+         freqs.put(id, freq);
+         line = sc.nextLine();
+      }
+      while( !line.contains("q") );
+
+      // Make sure all items are in the statistics even if they have a very low probability
+      for(Item item : ItemDB.lookup(Item.class)){
+         int id = item.getMwoId();
+         if( !freqs.containsKey(id) )
+            freqs.put(id, 1);
+      }
+
+      freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
+      freqs.put(UpgradeDB.STANDARD_ARMOR.getMwoId(), numLoadouts * 7 / 10); // Standard armor
+      freqs.put(UpgradeDB.FERRO_FIBROUS_ARMOR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armor
+      freqs.put(UpgradeDB.STANDARD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
+      freqs.put(UpgradeDB.ENDO_STEEL_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
+      freqs.put(UpgradeDB.STANDARD_HEATSINKS.getMwoId(), numLoadouts * 1 / 20); // SHS
+      freqs.put(UpgradeDB.DOUBLE_HEATSINKS.getMwoId(), numLoadouts * 19 / 20); // DHS
+      freqs.put(UpgradeDB.STANDARD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
+      freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
+
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("resources/resources/coderstats_v2.bin"));
+      out.writeObject(freqs);
+      out.close();
+      sc.close();
    }
 
    @SuppressWarnings("unused")
@@ -523,79 +597,5 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("resources/resources/coderstats_v3.bin"));
       out.writeObject(freqs);
       out.close();
-   }
-
-   @SuppressWarnings("unused")
-   private static void generateStatsFromStdin() throws Exception{
-      Scanner sc = new Scanner(System.in);
-
-      int numLoadouts = Integer.parseInt(sc.nextLine());
-
-      Map<Integer, Integer> freqs = new TreeMap<>();
-      String line = sc.nextLine();
-      do{
-         String[] s = line.split(" ");
-         int id = Integer.parseInt(s[0]);
-         int freq = Integer.parseInt(s[1]);
-         freqs.put(id, freq);
-         line = sc.nextLine();
-      }
-      while( !line.contains("q") );
-
-      // Make sure all items are in the statistics even if they have a very low probability
-      for(Item item : ItemDB.lookup(Item.class)){
-         int id = item.getMwoId();
-         if( !freqs.containsKey(id) )
-            freqs.put(id, 1);
-      }
-
-      freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
-      freqs.put(UpgradeDB.STANDARD_ARMOR.getMwoId(), numLoadouts * 7 / 10); // Standard armor
-      freqs.put(UpgradeDB.FERRO_FIBROUS_ARMOR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armor
-      freqs.put(UpgradeDB.STANDARD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
-      freqs.put(UpgradeDB.ENDO_STEEL_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
-      freqs.put(UpgradeDB.STANDARD_HEATSINKS.getMwoId(), numLoadouts * 1 / 20); // SHS
-      freqs.put(UpgradeDB.DOUBLE_HEATSINKS.getMwoId(), numLoadouts * 19 / 20); // DHS
-      freqs.put(UpgradeDB.STANDARD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
-      freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
-
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("resources/resources/coderstats_v2.bin"));
-      out.writeObject(freqs);
-      out.close();
-      sc.close();
-   }
-
-   private void writeActuatorState(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout){
-      LoadoutOmniMech omniMech = (LoadoutOmniMech)aLoadout;
-      int actuatorState = 0; // 8 bits for actuator toggle states.
-      // All actuator states are encoded even if they don't exist on the equipped omnipod. Actuators that don't exist
-      // are
-      // encoded as false/0.
-      actuatorState = (actuatorState << 1) | (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.LAA) ? 1 : 0);
-      actuatorState = (actuatorState << 1) | (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.HA) ? 1 : 0);
-      actuatorState = (actuatorState << 1) | (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA) ? 1 : 0);
-      actuatorState = (actuatorState << 1) | (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.HA) ? 1 : 0);
-      aBuffer.write((byte)actuatorState);
-   }
-
-   private void writeArmorValues(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout){
-      for(Location part : componentOrder){
-         if( part.isTwoSided() ){
-            aBuffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.FRONT));
-            aBuffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.BACK));
-         }
-         else{
-            aBuffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.ONLY));
-         }
-      }
-   }
-
-   private void writeChassis(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout){
-      // 16 bits (BigEndian, respecting RFC 1700) contains chassis ID.
-      short chassiId = (short)aLoadout.getChassis().getMwoId();
-      if( chassiId != aLoadout.getChassis().getMwoId() )
-         throw new RuntimeException("Chassi ID was larger than 16 bits!");
-      aBuffer.write((chassiId & 0xFF00) >> 8);
-      aBuffer.write((chassiId & 0xFF));
    }
 }
