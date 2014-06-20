@@ -44,6 +44,7 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
@@ -140,11 +141,18 @@ public class PartList extends JList<Item>{
             case Empty:{
                if( isDynArmor(aIndex) ){
                   StyleManager.styleDynamicEntry(this);
-                  setText(Model.DYN_ARMOR);
+                  if( loadout instanceof LoadoutStandard )
+                     setText(Model.DYN_ARMOR);
+                  else
+                     setText(Model.FIX_ARMOR);
                }
                else if( isDynStructure(aIndex) ){
                   StyleManager.styleDynamicEntry(this);
-                  setText(Model.DYN_STRUCT);
+                  if( loadout instanceof LoadoutStandard )
+                     setText(Model.DYN_STRUCT);
+
+                  else
+                     setText(Model.FIX_STRUCT);
                }
                else{
                   StyleManager.styleItem(this);
@@ -218,6 +226,8 @@ public class PartList extends JList<Item>{
       private static final String MULTISLOT                = "";
       private static final String DYN_ARMOR                = "DYNAMIC ARMOR";
       private static final String DYN_STRUCT               = "DYNAMIC STRUCTURE";
+      private static final String FIX_ARMOR                = "FIXED ARMOR";
+      private static final String FIX_STRUCT               = "FIXED STRUCTURE";
       private static final long   serialVersionUID         = 2438473891359444131L;
 
       Model(MessageXBar aXBar){
