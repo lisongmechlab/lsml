@@ -142,7 +142,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
    }
 
    @Override
-   public void buildOperation(){
+   protected void buildOperation(){
       // If it can go into the engine, put it there.
       ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
       if( itemToPlace instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax() && ct.canAddItem(itemToPlace) ){

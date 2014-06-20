@@ -129,11 +129,18 @@ public class OperationStack{
          return result;
       }
 
+      public void prepareOperationAheadOfTime(){
+         if(!isPerpared){
+            buildOperation();
+            isPerpared = true;
+         }
+      }
+      
       /**
        * The user should implement this to create the operation. Will be called only once, immediately before the first
        * time the operation is applied.
        */
-      public abstract void buildOperation();
+      protected abstract void buildOperation();
 
       @Override
       public boolean equals(Object obj){
