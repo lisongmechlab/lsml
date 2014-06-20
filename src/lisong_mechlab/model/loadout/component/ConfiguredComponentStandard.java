@@ -20,6 +20,7 @@
 package lisong_mechlab.model.loadout.component;
 
 import java.util.Collection;
+import java.util.List;
 
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.HardPoint;
@@ -62,7 +63,7 @@ public class ConfiguredComponentStandard extends ConfiguredComponentBase{
    }
 
    @Override
-   public Collection<Item> getItemsFixed(){
+   public List<Item> getItemsFixed(){
       return getInternalComponent().getFixedItems();
    }
 
