@@ -25,8 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import lisong_mechlab.model.upgrades.Upgrades;
-
 import org.junit.Test;
 
 public class MissileWeaponTest{
@@ -53,19 +51,6 @@ public class MissileWeaponTest{
       MissileWeapon srm6artemis = (MissileWeapon)ItemDB.lookup("SRM 6 + ARTEMIS");
 
       assertEquals(srm6.getMass() + 1.0, srm6artemis.getMass(), 0.0);
-   }
-
-   /**
-    * {@link MissileWeapon#getAmmoType(Upgrades)} shall return Artemis ammo type for weapons that are Artemis capable.
-    */
-   @Test
-   public void testGetAmmoType(){
-      for(MissileWeapon weapon : allMissileWeapons){
-         if( weapon.getName().contains("ARTEMIS") )
-            assertTrue(weapon.getAmmoType(null).getName().contains("ARTEMIS"));
-         else
-            assertFalse(weapon.getAmmoType(null).getName().contains("ARTEMIS"));
-      }
    }
 
    /**

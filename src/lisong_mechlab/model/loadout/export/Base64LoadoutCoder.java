@@ -27,7 +27,6 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
-import lisong_mechlab.util.MessageXBar;
 
 /**
  * This class handles conversions of {@link LoadoutStandard}s to and from Base64 strings. It will correctly determine
@@ -40,13 +39,15 @@ public class Base64LoadoutCoder{
    private static final String            LSML_TRAMPOLINE = "http://t.li-soft.org/?l=";
    private final transient LoadoutCoderV1 coderV1;
    private final transient LoadoutCoderV2 coderV2;
+   private final transient LoadoutCoderV3 coderV3;
    private final transient LoadoutCoder   preferredEncoder;
    private final transient Base64         base64;
 
-   public Base64LoadoutCoder(MessageXBar anXBar){
-      coderV1 = new LoadoutCoderV1(anXBar);
-      coderV2 = new LoadoutCoderV2(anXBar);
-      preferredEncoder = coderV2;
+   public Base64LoadoutCoder(){
+      coderV1 = new LoadoutCoderV1();
+      coderV2 = new LoadoutCoderV2();
+      coderV3 = new LoadoutCoderV3();
+      preferredEncoder = coderV3;
       base64 = new Base64();
    }
 
@@ -59,7 +60,7 @@ public class Base64LoadoutCoder{
     * @throws DecodingException
     *            Thrown if decoding of the string failed.
     */
-   public LoadoutStandard parse(String aUrl) throws DecodingException{
+   public LoadoutBase<?> parse(String aUrl) throws DecodingException{
       String url = aUrl.trim();
       if( url.toLowerCase().startsWith(LSML_PROTOCOL) ){
          url = url.substring(LSML_PROTOCOL.length());
@@ -80,6 +81,9 @@ public class Base64LoadoutCoder{
       }
       else if( coderV2.canDecode(bitstream) ){
          return coderV2.decode(bitstream);
+      }
+      else if( coderV3.canDecode(bitstream) ){
+         return coderV3.decode(bitstream);
       }
       else{
          throw new DecodingException("No suitable decoder found to decode : " + aUrl + " with!");

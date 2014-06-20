@@ -159,25 +159,32 @@ public class ComponentOmniMechTest extends ComponentBaseTest{
 
       // Check the real situation here
       Mockito.when(energy.getName()).thenReturn("CLAN PPC");
-      assertTrue(makeDefaultCUT().shouldRemoveArmActuators(energy));
+      makeDefaultCUT();
+      assertTrue(ComponentOmniMech.shouldRemoveArmActuators(energy));
 
       Mockito.when(energy.getName()).thenReturn("LARGE LASER");
-      assertFalse(makeDefaultCUT().shouldRemoveArmActuators(energy));
+      makeDefaultCUT();
+      assertFalse(ComponentOmniMech.shouldRemoveArmActuators(energy));
 
       Mockito.when(ballistic.getName()).thenReturn("AC/15");
-      assertTrue(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
+      makeDefaultCUT();
+      assertTrue(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
 
       Mockito.when(ballistic.getName()).thenReturn("LB 10-X AC");
-      assertTrue(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
+      makeDefaultCUT();
+      assertTrue(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
 
       Mockito.when(ballistic.getName()).thenReturn("CLAN LIGHT GAUSS RIFLE");
-      assertTrue(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
+      makeDefaultCUT();
+      assertTrue(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
 
       Mockito.when(ballistic.getName()).thenReturn("C-LB5-X AC");
-      assertTrue(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
+      makeDefaultCUT();
+      assertTrue(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
       
       Mockito.when(ballistic.getName()).thenReturn("MACHINE GUN");
-      assertFalse(makeDefaultCUT().shouldRemoveArmActuators(ballistic));
+      makeDefaultCUT();
+      assertFalse(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
       
    }
 }

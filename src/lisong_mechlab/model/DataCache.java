@@ -886,7 +886,7 @@ public class DataCache{
 
    public OmniPod findOmniPod(int aOmniPod){
       for(OmniPod item : getOmniPods()){
-         if( item.getMwoID() == aOmniPod )
+         if( item.getMwoId() == aOmniPod )
             return item;
       }
       throw new IllegalArgumentException("Unknown OmniPod: " + aOmniPod);

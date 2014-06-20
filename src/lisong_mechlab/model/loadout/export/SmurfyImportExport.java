@@ -116,8 +116,8 @@ public class SmurfyImportExport{
 
    @SuppressWarnings("resource")
    // The resource is auto-closed with new try-resource statement
-   public List<LoadoutStandard> listMechBay() throws DecodingException, IOException{
-      List<LoadoutStandard> ans = new ArrayList<>();
+   public List<LoadoutBase<?>> listMechBay() throws DecodingException, IOException{
+      List<LoadoutBase<?>> ans = new ArrayList<>();
 
       HttpURLConnection connection = connect(userMechbayUrl);
       connection.setRequestMethod("GET");
@@ -143,7 +143,7 @@ public class SmurfyImportExport{
                if( name == null )
                   throw new IOException("Found lsml without name!");
                String lsml = lsmlMatcher.group(1);
-               LoadoutStandard loadout = coder.parse(lsml);
+               LoadoutBase<?> loadout = coder.parse(lsml);
                stack.pushAndApply(new OpRename(loadout, null, name));
                ans.add(loadout);
                name = null;

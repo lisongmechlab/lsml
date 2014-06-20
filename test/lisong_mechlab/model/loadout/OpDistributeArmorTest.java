@@ -147,8 +147,8 @@ public class OpDistributeArmorTest{
    @Test
    public void testArmorDistributor_NotEnoughTonnage2() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-      LoadoutStandard loadout = coder.parse("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
       for(ConfiguredComponentBase part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
@@ -355,8 +355,8 @@ public class OpDistributeArmorTest{
    @Test
    public void testArmorDistributor_RoundDown2() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-      LoadoutStandard loadout = coder.parse("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
       for(ConfiguredComponentBase part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
@@ -382,8 +382,8 @@ public class OpDistributeArmorTest{
    @Test
    public void testArmorDistributor_LeaveManualTorsoAloneWhenAutomaticArm() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-      LoadoutStandard loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
       for(ConfiguredComponentBase part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
@@ -413,8 +413,8 @@ public class OpDistributeArmorTest{
    @Test
    public void testArmorDistributor_RequestSmallerThanManuallySet() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-      LoadoutStandard loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
       for(ConfiguredComponentBase part : loadout.getComponents()){
          if( part.getInternalComponent().getLocation().isTwoSided() ){
             stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));

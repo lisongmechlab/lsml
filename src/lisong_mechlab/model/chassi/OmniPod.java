@@ -134,7 +134,7 @@ public class OmniPod{
    /**
     * @return The MWO ID of this {@link OmniPod}.
     */
-   public int getMwoID(){
+   public int getMwoId(){
       return mwoID;
    }
 

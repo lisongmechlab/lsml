@@ -56,6 +56,9 @@ public class OpChangeOmniPod extends CompositeOperation{
     */
    public OpChangeOmniPod(MessageXBar aXBar, LoadoutOmniMech aLoadout, ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod){
       super("change omnipod on " + aComponentOmniMech.getInternalComponent().getLocation());
+      if(aOmniPod == null)
+         throw new IllegalArgumentException("Omnipod must not be null!");
+      
       component = aComponentOmniMech;
       newOmniPod = aOmniPod;
       loadout = aLoadout;

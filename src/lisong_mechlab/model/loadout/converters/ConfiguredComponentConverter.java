@@ -74,7 +74,7 @@ public class ConfiguredComponentConverter implements Converter{
 
       if( part instanceof ConfiguredComponentOmniMech ){
          if( !((ConfiguredComponentOmniMech)part).getInternalComponent().hasFixedOmniPod() ){
-            aWriter.addAttribute("omnipod", Integer.toString(((ConfiguredComponentOmniMech)part).getOmniPod().getMwoID()));
+            aWriter.addAttribute("omnipod", Integer.toString(((ConfiguredComponentOmniMech)part).getOmniPod().getMwoId()));
          }
       }
 

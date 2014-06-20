@@ -476,6 +476,9 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
           && getComponent(Location.CenterTorso).getEngineHeatsinks() < getComponent(Location.CenterTorso).getEngineHeatsinksMax() )
          return true;
 
+      // FIXME: The case where adding a weapon that would cause LAA/HA to be removed
+      // while at max global slots fails even if it might succeed.
+      
       if( anItem.getNumCriticalSlots() > getNumCriticalSlotsFree() )
          return false;
       if( anItem instanceof Engine && getEngine() != null )
