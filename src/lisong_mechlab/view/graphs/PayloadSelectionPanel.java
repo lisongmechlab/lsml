@@ -227,7 +227,7 @@ public class PayloadSelectionPanel extends JPanel{
             else if( currentChassis instanceof ChassisOmniMech && aChassi instanceof ChassisOmniMech ){
                ChassisOmniMech currentOmniChassis = (ChassisOmniMech)currentChassis;
                ChassisOmniMech omniChassis = (ChassisOmniMech)aChassi;
-               if( omniChassis.getMassMax() == currentOmniChassis.getMassMax() && omniChassis.getEngine() == currentOmniChassis.getEngine()
+               if( omniChassis.getMassMax() == currentOmniChassis.getMassMax() && omniChassis.getFixedEngine() == currentOmniChassis.getFixedEngine()
                    && omniChassis.getMovementProfileBase().getMaxMovementSpeed() == currentOmniChassis.getMovementProfileBase().getMaxMovementSpeed()
                    && omniChassis.isSameSeries(currentOmniChassis) ){
                   chassiGroup.add(currentOmniChassis);

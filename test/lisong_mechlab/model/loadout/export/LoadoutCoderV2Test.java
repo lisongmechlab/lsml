@@ -23,16 +23,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lisong_mechlab.model.chassi.ChassisBase;
-import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpRename;
@@ -49,35 +45,6 @@ import org.junit.Test;
  */
 public class LoadoutCoderV2Test{
    private LoadoutCoderV2 cut = new LoadoutCoderV2();
-
-   /**
-    * The coder shall be able to decode all stock mechs.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testEncodeAllStock() throws Exception{
-      List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-      chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-      chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-      chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-
-      for(ChassisBase chassis : chassii){
-         if( !(chassis instanceof ChassisStandard) )
-            continue;
-         LoadoutStandard loadout = new LoadoutStandard(chassis.getName(), null);
-
-         byte[] result = cut.encode(loadout);
-         LoadoutStandard decoded = cut.decode(result);
-
-         // Name is not encoded
-         OperationStack stack = new OperationStack(0);
-         stack.pushAndApply(new OpRename(decoded, null, loadout.getName()));
-
-         // Verify
-         assertEquals(loadout, decoded);
-      }
-   }
 
    /**
     * The coder shall be able to decode all stock mechs.

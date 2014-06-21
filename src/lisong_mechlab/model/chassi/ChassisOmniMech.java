@@ -97,13 +97,6 @@ public class ChassisOmniMech extends ChassisBase{
       }
    }
 
-   /**
-    * @return The type of the fixed armor of this omnimech.
-    */
-   public ArmorUpgrade getArmorType(){
-      return armorType;
-   }
-
    @Override
    public ComponentOmniMech getComponent(Location aLocation){
       return (ComponentOmniMech)super.getComponent(aLocation);
@@ -116,9 +109,16 @@ public class ChassisOmniMech extends ChassisBase{
    }
 
    /**
+    * @return The type of the fixed armor of this omnimech.
+    */
+   public ArmorUpgrade getFixedArmorType(){
+      return armorType;
+   }
+
+   /**
     * @return The engine that is fixed to this omnimech chassis.
     */
-   public Engine getEngine(){
+   public Engine getFixedEngine(){
       for(Item item : getComponent(Location.CenterTorso).getFixedItems()){
          if( item instanceof Engine )
             return (Engine)item;
@@ -130,7 +130,7 @@ public class ChassisOmniMech extends ChassisBase{
     * @return The number of heat sinks that are fixed on this chassis, including the ones in the fixed engine.
     */
    public int getFixedHeatSinks(){
-      int ans = getEngine().getNumInternalHeatsinks();
+      int ans = getFixedEngine().getNumInternalHeatsinks();
       for(ComponentOmniMech component : getComponents()){
          for(Item item : component.getFixedItems()){
             if( item instanceof HeatSink ){
@@ -144,14 +144,29 @@ public class ChassisOmniMech extends ChassisBase{
    /**
     * @return The type of the fixed heat sinks of this omnimech.
     */
-   public HeatSinkUpgrade getHeatSinkType(){
+   public HeatSinkUpgrade getFixedHeatSinkType(){
       return heatSinkType;
+   }
+
+   /**
+    * @return The number of jump jets that are fixed on this chassis.
+    */
+   public int getFixedJumpJets(){
+      int ans = 0;
+      for(ComponentOmniMech component : getComponents()){
+         for(Item item : component.getFixedItems()){
+            if( item instanceof JumpJet ){
+               ans++;
+            }
+         }
+      }
+      return ans;
    }
 
    /**
     * @return The mass of this chassis when all non-fixed components and all armor is removed.
     */
-   public double getMassStripped(){
+   public double getFixedMass(){
       double ans = structureType.getStructureMass(this);
       for(ComponentOmniMech component : getComponents()){
          for(Item item : component.getFixedItems()){
@@ -159,6 +174,13 @@ public class ChassisOmniMech extends ChassisBase{
          }
       }
       return ans;
+   }
+
+   /**
+    * @return The type of the fixed internal structure of this omnimech.
+    */
+   public StructureUpgrade getFixedStructureType(){
+      return structureType;
    }
 
    /**
@@ -193,6 +215,14 @@ public class ChassisOmniMech extends ChassisBase{
       return ans;
    }
 
+   @Override
+   public boolean isAllowed(Item aItem){
+      if( aItem instanceof Engine ){
+         return false; // Engine is fixed.
+      }
+      return super.isAllowed(aItem); // Anything else depends on the actual combination of omnipods equipped
+   }
+
    private List<List<Quirks>> getQuirkGroups(){
       List<List<Quirks>> groups = new ArrayList<>();
 
@@ -210,35 +240,5 @@ public class ChassisOmniMech extends ChassisBase{
          groups.add(group);
       }
       return groups;
-   }
-
-   /**
-    * @return The type of the fixed internal structure of this omnimech.
-    */
-   public StructureUpgrade getStructureType(){
-      return structureType;
-   }
-
-   @Override
-   public boolean isAllowed(Item aItem){
-      if( aItem instanceof Engine ){
-         return false; // Engine is fixed.
-      }
-      return super.isAllowed(aItem); // Anything else depends on the actual combination of omnipods equipped
-   }
-
-   /**
-    * @return The number of jump jets that are fixed on this chassis.
-    */
-   public int getFixedJumpJets(){
-      int ans = 0;
-      for(ComponentOmniMech component : getComponents()){
-         for(Item item : component.getFixedItems()){
-            if( item instanceof JumpJet ){
-               ans++;
-            }
-         }
-      }
-      return ans;
    }
 }

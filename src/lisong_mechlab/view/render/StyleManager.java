@@ -119,7 +119,7 @@ public class StyleManager{
 
    private static boolean hasMissileBayDoors(Collection<HardPoint> aHardPoints){
       for(HardPoint hardPoint : aHardPoints){
-         if( hardPoint.hasBayDoor() )
+         if( hardPoint.hasMissileBayDoor() )
             return true;
       }
       return false;

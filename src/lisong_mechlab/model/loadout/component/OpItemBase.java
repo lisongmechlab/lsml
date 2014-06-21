@@ -216,7 +216,7 @@ abstract class OpItemBase extends Operation{
             ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
 
             component.removeItem(aItem); // Work around, checks would fail on the item to be removed otherwise.
-            
+
             if( loadout.getNumCriticalSlotsFree() > 0 && ccom.canToggleOn(ItemDB.LAA) ){
                oldToggleStates.put(ItemDB.LAA, ccom.getToggleState(ItemDB.LAA));
                ccom.setToggleState(ItemDB.LAA, true);
@@ -225,36 +225,41 @@ abstract class OpItemBase extends Operation{
                oldToggleStates.put(ItemDB.HA, ccom.getToggleState(ItemDB.HA));
                ccom.setToggleState(ItemDB.HA, true);
             }
-            
+
             component.addItem(aItem);
          }
       }
    }
 
    private void checkCaseXLWarning(Item aItem){
-      Engine engine = loadout.getEngine();
-      if( aItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL && xBar != null ){
-         xBar.post(new NotificationMessage(Severity.WARNING, loadout, "C.A.S.E. together with XL engine has no effect."));
+      if( null != xBar ){
+         Engine engine = loadout.getEngine();
+         if( aItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL ){
+            xBar.post(new NotificationMessage(Severity.WARNING, loadout, "C.A.S.E. together with XL engine has no effect."));
+         }
       }
    }
 
    private void checkManyGaussWarning(Item aItem){
-      if( null != aItem.getName() && aItem.getName().contains("GAUSS") ){
-         int rifles = 0;
-         for(ConfiguredComponentBase componentOmniMech : loadout.getComponents()){
-            boolean done = false;
-            for(Item itemToCheck : componentOmniMech.getItemsEquipped()){ // Surely we won't have a fixed gauss rifle?
-               if( itemToCheck instanceof BallisticWeapon && itemToCheck.getName().contains("GAUSS") ){
-                  rifles++;
-                  if( rifles >= 2 ){
-                     xBar.post(new NotificationMessage(Severity.WARNING, loadout, "Only two gauss rifles can be charged simultaneously."));
-                     done = true;
-                     break;
+      if( null != xBar ){
+         if( null != aItem.getName() && aItem.getName().contains("GAUSS") ){
+            int rifles = 0;
+            for(ConfiguredComponentBase componentOmniMech : loadout.getComponents()){
+               boolean done = false;
+               for(Item itemToCheck : componentOmniMech.getItemsEquipped()){ // Surely we won't have a fixed gauss
+                                                                             // rifle?
+                  if( itemToCheck instanceof BallisticWeapon && itemToCheck.getName().contains("GAUSS") ){
+                     rifles++;
+                     if( rifles >= 2 ){
+                        xBar.post(new NotificationMessage(Severity.WARNING, loadout, "Only two gauss rifles can be charged simultaneously."));
+                        done = true;
+                        break;
+                     }
                   }
                }
+               if( done )
+                  break;
             }
-            if( done )
-               break;
          }
       }
    }

@@ -35,9 +35,9 @@ import lisong_mechlab.model.pilot.PilotSkillTree;
  */
 public class Quirks implements MovementModifier, WeaponModifier, HealthModifier{
    public static class Quirk{
-      public final String name;
-      public final String key;
-      public final double value;
+      public final String  name;
+      public final String  key;
+      public final double  value;
       public final boolean positiveGood;
 
       public Quirk(String aKey, String aName, double aValue, boolean aPositiveGood){
@@ -48,17 +48,20 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier{
       }
    }
 
-   private final Map<String, Quirk>           quirks;
+   private final Map<String, Quirk> quirks;
 
    /**
+    * Creates a mew {@link Quirks} object.
+    * 
     * @param aQuirks
+    *           A {@link Map} of {@link Quirk}s that make up this {@link Quirks}.
     */
    public Quirks(Map<String, Quirk> aQuirks){
-      quirks = aQuirks; // ui_quirk_ + <quirkname> is description
+      quirks = aQuirks;
    }
 
    public String describeAsHtml(){
-      if(quirks.isEmpty())
+      if( quirks.isEmpty() )
          return "";
       StringBuilder sb = new StringBuilder();
       sb.append("<html>");
@@ -66,13 +69,13 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier{
       sb.append("<p>Quirks:</p>");
       for(Quirk quirk : quirks.values()){
          final String color;
-         if(quirk.positiveGood == quirk.value > 0){
+         if( quirk.positiveGood == quirk.value > 0 ){
             color = "green";
          }
          else{
             color = "red";
          }
-         
+
          sb.append("<p style=\"color:").append(color).append(";\">");
          sb.append(quirk.name).append(": ").append(quirk.value);
          sb.append("</p>");

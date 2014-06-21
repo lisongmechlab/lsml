@@ -20,6 +20,7 @@
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -30,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
@@ -44,6 +46,25 @@ public class ItemTests{
    @Before
    public void setup(){
       MockitoAnnotations.initMocks(this);
+   }
+
+   /**
+    * According to: <a href=
+    * "http://mwomercs.com/forums/topic/147990-paging-karl-bergkarl-berg-please-pick-up-the-white-courtesy-phone/page__view__findpost__p__3484591"
+    * >here</a> C.A.S.E. can not be critically hit and should not be a part of the calculations.
+    */
+   @Test
+   public void testIsCrittable_Case(){
+      assertFalse(ItemDB.CASE.isCrittable());
+   }
+
+   /**
+    * XL engine sides do affect the critical hit rolls.
+    */
+   @Test
+   public void testIsCrittable_EngineSides(){
+      assertTrue(ConfiguredComponentBase.ENGINE_INTERNAL.isCrittable());
+      assertTrue(ConfiguredComponentBase.ENGINE_INTERNAL_CLAN.isCrittable());
    }
 
    @Test
@@ -93,7 +114,7 @@ public class ItemTests{
     */
    @Test
    public void testAMS(){
-      AmmoWeapon ams = (AmmoWeapon)ItemDB.lookup("ANTI-MISSILE SYSTEM");
+      AmmoWeapon ams = (AmmoWeapon)ItemDB.lookup("AMS");
       assertSame(ams, ItemDB.AMS);
       assertEquals(1, ams.getNumCriticalSlots());
       assertEquals(0.5, ams.getMass(), 0.0);

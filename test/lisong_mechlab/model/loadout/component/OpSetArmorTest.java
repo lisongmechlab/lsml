@@ -14,13 +14,10 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
-import lisong_mechlab.model.upgrades.Upgrade;
-import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;

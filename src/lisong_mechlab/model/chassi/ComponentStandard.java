@@ -76,7 +76,7 @@ public class ComponentStandard extends ComponentBase{
     */
    public boolean hasMissileBayDoors(){
       for(HardPoint hardPoint : hardPoints){
-         if( hardPoint.hasBayDoor() ){
+         if( hardPoint.hasMissileBayDoor() ){
             return true;
          }
       }

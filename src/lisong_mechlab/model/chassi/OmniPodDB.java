@@ -60,14 +60,8 @@ public class OmniPodDB{
     */
    public static OmniPod lookupOriginal(ChassisOmniMech aChassis, Location aLocation){
       for(OmniPod omniPod : lookup(aChassis.getSeriesName(), aLocation)){
-         if( omniPod.getOriginalChassis() == aChassis )
+         if( omniPod.isOriginalForChassis(aChassis) ){
             return omniPod;
-         int idx = aChassis.getNameShort().indexOf('(');
-         if( -1 != idx ){
-            String primeBaseName = aChassis.getNameShort().substring(0, idx);
-            if( omniPod.getOriginalChassis().getNameShort().equals(primeBaseName) ){
-               return omniPod;
-            }
          }
       }
       throw new IllegalArgumentException("There exists no original omnipod for " + aChassis + " at " + aLocation);
@@ -82,7 +76,7 @@ public class OmniPodDB{
     */
    public static Collection<OmniPod> lookup(String aSeries, Location aLocation){
       List<OmniPod> ans = new ArrayList<>();
-      for(OmniPod omniPod : series2pod.get(aSeries)){
+      for(OmniPod omniPod : series2pod.get(canonize(aSeries))){
          if( omniPod.getLocation() == aLocation )
             ans.add(omniPod);
       }
@@ -98,6 +92,10 @@ public class OmniPodDB{
     */
    public static Collection<OmniPod> lookup(ChassisOmniMech aChassisSeries, Location aLocation){
       return lookup(aChassisSeries.getSeriesName(), aLocation);
+   }
+
+   private static String canonize(String aKey){
+      return aKey.toUpperCase();
    }
 
    /**
@@ -120,16 +118,15 @@ public class OmniPodDB{
 
          String series = omniPod.getChassisSeries();
 
-         List<OmniPod> list = series2pod.get(series);
+         List<OmniPod> list = series2pod.get(canonize(series));
          if( list == null ){
             list = new ArrayList<>();
-            series2pod.put(series, list);
+            series2pod.put(canonize(series), list);
          }
          list.add(omniPod);
 
          id2pod.put(omniPod.getMwoId(), omniPod);
       }
-
    }
 
    /**
@@ -139,7 +136,7 @@ public class OmniPodDB{
     */
    public static OmniPod lookup(int aId){
       OmniPod omnipod = id2pod.get(aId);
-      if(omnipod == null)
+      if( omnipod == null )
          throw new IllegalArgumentException("No omnipod with ID: " + aId);
       return omnipod;
    }

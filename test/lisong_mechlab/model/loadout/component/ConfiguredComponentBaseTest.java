@@ -119,39 +119,6 @@ public abstract class ConfiguredComponentBaseTest{
       assertFalse(cut.canAddItem(item));
    }
 
-   /**
-    * We do not allow two C.A.S.E. in the same component as that is just bonkers.
-    */
-   @Test
-   public final void testCanAddItem_TwoCASE(){
-      ConfiguredComponentBase cut = makeDefaultCUT();
-      cut.addItem(ItemDB.CASE);
-      assertFalse(cut.canAddItem(ItemDB.CASE));
-   }
-
-   /**
-    * Having C.A.S.E. does not prohibit other items.
-    */
-   @Test
-   public final void testCanAddItem_OneCASE(){
-      ConfiguredComponentBase cut = makeDefaultCUT();
-      cut.addItem(ItemDB.CASE);
-
-      Item item = Mockito.mock(Item.class);
-      Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-      Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
-
-      assertTrue(cut.canAddItem(item));
-   }
-
-   /**
-    * C.A.S.E. is allowed (provided internal component allows it).
-    */
-   @Test
-   public final void testCanAddItem_CASEAllowed(){
-      assertTrue(makeDefaultCUT().canAddItem(ItemDB.CASE));
-   }
-
    @Test
    public final void testAddRemoveCanRemoveItem() throws Exception{
       ConfiguredComponentBase cut = makeDefaultCUT();

@@ -86,10 +86,10 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
       Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
       Mockito.when(chassis.getMassMax()).thenReturn(mass);
       Mockito.when(chassis.getCriticalSlotsTotal()).thenReturn(slots);
-      Mockito.when(chassisOmni.getArmorType()).thenReturn(armor);
-      Mockito.when(chassisOmni.getStructureType()).thenReturn(structure);
-      Mockito.when(chassisOmni.getHeatSinkType()).thenReturn(heatSinks);
-      Mockito.when(chassisOmni.getEngine()).thenReturn(engine);
+      Mockito.when(chassisOmni.getFixedArmorType()).thenReturn(armor);
+      Mockito.when(chassisOmni.getFixedStructureType()).thenReturn(structure);
+      Mockito.when(chassisOmni.getFixedHeatSinkType()).thenReturn(heatSinks);
+      Mockito.when(chassisOmni.getFixedEngine()).thenReturn(engine);
       Mockito.when(chassisOmni.getMovementProfileBase()).thenReturn(quirkBase);
       return new LoadoutOmniMech(new ComponentFactory(), (ChassisOmniMech)chassis, xBar);
    }
@@ -112,22 +112,22 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
    @Test
    public final void testGetJumpJetsMax() throws Exception{
       Mockito.when(chassisOmni.getFixedJumpJets()).thenReturn(7);
-      
+
       Mockito.when(pods[3].getJumpJetsMax()).thenReturn(2);
       Mockito.when(pods[6].getJumpJetsMax()).thenReturn(3);
       Mockito.when(pods[7].getJumpJetsMax()).thenReturn(5);
 
       assertEquals(17, makeDefaultCUT().getJumpJetsMax());
    }
-   
+
    @Test
    public final void testGetModulesMax() throws Exception{
       Mockito.when(chassisOmni.getPilotModulesMax()).thenReturn(2);
-      
-      Mockito.when(pods[3].getMaxPilotModules()).thenReturn(1);
-      Mockito.when(pods[7].getMaxPilotModules()).thenReturn(3);
 
-      assertEquals(6, makeDefaultCUT().getModulesMax());
+      Mockito.when(pods[3].getPilotModulesMax()).thenReturn(1);
+      Mockito.when(pods[7].getPilotModulesMax()).thenReturn(3);
+
+      assertEquals(6 + 1, makeDefaultCUT().getModulesMax()); // +1 for mastery
    }
 
    @Test

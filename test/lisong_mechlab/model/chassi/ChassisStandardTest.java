@@ -59,6 +59,7 @@ public class ChassisStandardTest extends ChassisBaseTest{
          components[location.ordinal()] = Mockito.mock(ComponentStandard.class);
          Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class))).thenReturn(true);
       }
+      componentBases = components;
    }
 
    @Override
@@ -124,18 +125,20 @@ public class ChassisStandardTest extends ChassisBaseTest{
    public void testIsAllowed_ClanEngineIsChassis(){
       faction = Faction.Clan;
       Engine engine = makeEngine(engineMin);
-      
+
       faction = Faction.InnerSphere;
       assertFalse(makeDefaultCUT().isAllowed(engine));
    }
+
    @Test
    public void testIsAllowed_IsEngineClanChassis(){
       faction = Faction.InnerSphere;
       Engine engine = makeEngine(engineMin);
-      
+
       faction = Faction.Clan;
       assertFalse(makeDefaultCUT().isAllowed(engine));
    }
+
    @Test
    public void testIsAllowed_EngineSmalllEnough(){
       assertTrue(makeDefaultCUT().isAllowed(makeEngine(engineMax)));

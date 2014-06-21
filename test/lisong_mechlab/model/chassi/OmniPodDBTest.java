@@ -21,6 +21,8 @@ package lisong_mechlab.model.chassi;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
+
 import org.junit.Test;
 
 /**
@@ -37,6 +39,13 @@ public class OmniPodDBTest{
       assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ENERGY));
       assertEquals(3, kfx_c_ra.getHardPointCount(HardPointType.AMS));
       assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ECM));
-
+   }
+   
+   @Test
+   public void testLookup_BySeries(){
+      
+      Collection<OmniPod> ans = OmniPodDB.lookup("kItFox", Location.RightArm);
+      
+      assertTrue(ans.size() >= 4);
    }
 }

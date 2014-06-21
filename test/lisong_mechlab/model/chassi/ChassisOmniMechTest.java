@@ -35,6 +35,7 @@ import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -51,12 +52,12 @@ import org.mockito.Mockito;
  * @author Li Song
  */
 public class ChassisOmniMechTest extends ChassisBaseTest{
-   private Engine                    engine;
-   private StructureUpgrade          structureType;
    private ArmorUpgrade              armorType;
-   private HeatSinkUpgrade           heatSinkType;
    private ComponentOmniMech[]       components;
+   private Engine                    engine;
+   private HeatSinkUpgrade           heatSinkType;
    private Map<Location, List<Item>> items;
+   private StructureUpgrade          structureType;
 
    @Override
    @Before
@@ -82,17 +83,18 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
          Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class))).thenReturn(true);
          Mockito.when(components[location.ordinal()].getFixedItems()).thenReturn(items.get(location));
       }
+      componentBases = components;
 
       items.get(Location.CenterTorso).add(engine);
 
-      Mockito.when(components[Location.Head.ordinal()].getArmorMax()).thenReturn(18);
-      Mockito.when(components[Location.LeftArm.ordinal()].getArmorMax()).thenReturn(48);
-      Mockito.when(components[Location.LeftTorso.ordinal()].getArmorMax()).thenReturn(64);
-      Mockito.when(components[Location.LeftLeg.ordinal()].getArmorMax()).thenReturn(64);
-      Mockito.when(components[Location.CenterTorso.ordinal()].getArmorMax()).thenReturn(92);
-      Mockito.when(components[Location.RightArm.ordinal()].getArmorMax()).thenReturn(48);
-      Mockito.when(components[Location.RightTorso.ordinal()].getArmorMax()).thenReturn(64);
-      Mockito.when(components[Location.RightLeg.ordinal()].getArmorMax()).thenReturn(64);
+      // Mockito.when(components[Location.Head.ordinal()].getArmorMax()).thenReturn(18);
+      // Mockito.when(components[Location.LeftArm.ordinal()].getArmorMax()).thenReturn(48);
+      // Mockito.when(components[Location.LeftTorso.ordinal()].getArmorMax()).thenReturn(64);
+      // Mockito.when(components[Location.LeftLeg.ordinal()].getArmorMax()).thenReturn(64);
+      // Mockito.when(components[Location.CenterTorso.ordinal()].getArmorMax()).thenReturn(92);
+      // Mockito.when(components[Location.RightArm.ordinal()].getArmorMax()).thenReturn(48);
+      // Mockito.when(components[Location.RightTorso.ordinal()].getArmorMax()).thenReturn(64);
+      // Mockito.when(components[Location.RightLeg.ordinal()].getArmorMax()).thenReturn(64);
 
       Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(1);
       Mockito.when(components[Location.CenterTorso.ordinal()].getDynamicArmorSlots()).thenReturn(1);
@@ -108,10 +110,11 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
       Mockito.when(armorType.getExtraSlots()).thenReturn(7);
    }
 
-   @Override
-   protected ChassisOmniMech makeDefaultCUT(){
-      return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
-                                 maxPilotModules, structureType, armorType, heatSinkType);
+   @Test(expected = IllegalArgumentException.class)
+   public final void testCtor_BadDynArmor(){
+      Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(13);
+      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
+                          maxPilotModules, structureType, armorType, heatSinkType);
    }
 
    @Test(expected = IllegalArgumentException.class)
@@ -121,40 +124,33 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
                           maxPilotModules, structureType, armorType, heatSinkType);
    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public final void testCtor_BadDynArmor(){
-      Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(13);
-      new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
-                          maxPilotModules, structureType, armorType, heatSinkType);
+   @Test
+   public final void testGetFixedArmorType(){
+      assertSame(armorType, makeDefaultCUT().getFixedArmorType());
    }
 
    @Test
-   public final void testGetArmorMax(){
-      assertEquals(462, makeDefaultCUT().getArmorMax());
-   }
-
-   @Test
-   public final void testGetEngine(){
-      assertSame(engine, makeDefaultCUT().getEngine());
+   public final void testGetFixedEngine(){
+      assertSame(engine, makeDefaultCUT().getFixedEngine());
    }
 
    @Test(expected = IllegalStateException.class)
-   public final void testGetEngine_noEngine(){
+   public final void testGetFixedEngine_noEngine(){
       Item item1 = Mockito.mock(Item.class);
       HeatSink hs1 = Mockito.mock(HeatSink.class);
-      
+
       items.get(Location.LeftArm).add(item1);
       items.get(Location.RightTorso).add(hs1);
       items.get(Location.RightTorso).add(item1);
       items.get(Location.CenterTorso).clear(); // Remove engine.
       items.get(Location.CenterTorso).add(hs1);
       items.get(Location.CenterTorso).add(item1);
-      
-      makeDefaultCUT().getEngine();
+
+      makeDefaultCUT().getFixedEngine();
    }
 
    /**
-    * {@link ChassisOmniMech#getMassStripped()} shall return the mass of the chassis with all non fixed items and armor
+    * {@link ChassisOmniMech#getFixedMass()} shall return the mass of the chassis with all non fixed items and armor
     * removed.
     */
    @Test
@@ -186,12 +182,40 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
       assertEquals(4, cut.getFixedHeatSinks());
    }
 
+   @Test
+   public final void testGetFixedHeatSinkType(){
+      assertSame(heatSinkType, makeDefaultCUT().getFixedHeatSinkType());
+   }
+
+   @Test
+   public final void testGetFixedJumpJets(){
+      List<Item> fixed1 = new ArrayList<>();
+      List<Item> fixed2 = new ArrayList<>();
+      List<Item> fixed3 = new ArrayList<>();
+
+      Item item1 = Mockito.mock(Item.class);
+      JumpJet jj1 = Mockito.mock(JumpJet.class);
+      JumpJet jj2 = Mockito.mock(JumpJet.class);
+
+      fixed1.add(item1);
+      fixed1.add(jj1);
+      fixed2.add(jj1);
+      fixed2.add(jj1);
+      fixed3.add(jj2);
+      
+      Mockito.when(components[2].getFixedItems()).thenReturn(fixed1);
+      Mockito.when(components[3].getFixedItems()).thenReturn(fixed2);
+      Mockito.when(components[5].getFixedItems()).thenReturn(fixed3);
+      
+      assertSame(4, makeDefaultCUT().getFixedJumpJets());
+   }
+   
    /**
-    * {@link ChassisOmniMech#getMassStripped()} shall return the mass of the chassis with all non fixed items and armor
+    * {@link ChassisOmniMech#getFixedMass()} shall return the mass of the chassis with all non fixed items and armor
     * removed.
     */
    @Test
-   public final void testGetMassStripped(){
+   public final void testGetFixedMass(){
       ChassisOmniMech cut = makeDefaultCUT();
 
       List<Item> fixed1 = new ArrayList<>();
@@ -220,24 +244,39 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
 
       double expected = 1 * 1 + 3 * 2 + 1 * 3 + 3;
 
-      assertEquals(expected, cut.getMassStripped(), 0.0);
+      assertEquals(expected, cut.getFixedMass(), 0.0);
 
       Mockito.verify(armorType, Mockito.never()).getArmorMass(Matchers.anyInt());
    }
 
    @Test
-   public final void testGetStructureType(){
-      assertSame(structureType, makeDefaultCUT().getStructureType());
+   public final void testGetFixedStructureType(){
+      assertSame(structureType, makeDefaultCUT().getFixedStructureType());
    }
 
    @Test
-   public final void testGetArmorType(){
-      assertSame(armorType, makeDefaultCUT().getArmorType());
+   public final void testGetMovementProfiles(){
+      ChassisOmniMech mech = (ChassisOmniMech)ChassisDB.lookup("kfx-prime");
+
+      MovementProfile baseProfile = mech.getMovementProfileBase();
+
+      MovementProfile max = mech.getMovementProfileMax();
+      MovementProfile min = mech.getMovementProfileMin();
+      MovementProfile stock = mech.getMovementProfileStock();
+
+      assertEquals(baseProfile.getTorsoYawSpeed() * 1.05, stock.getTorsoYawSpeed(), 0.0);
+      assertEquals(baseProfile.getTorsoYawMax() + 5, stock.getTorsoYawMax(), 0.0);
+
+      assertEquals(baseProfile.getTorsoYawSpeed() * 0.95, min.getTorsoYawSpeed(), 0.0);
+      assertEquals(baseProfile.getTorsoYawSpeed() * 1.10, max.getTorsoYawSpeed(), 0.0);
    }
 
    @Test
-   public final void testGetHeatSinkType(){
-      assertSame(heatSinkType, makeDefaultCUT().getHeatSinkType());
+   public final void testIsAllowed_CASE(){
+      Item item = ItemDB.CASE;
+
+      ChassisOmniMech cut = makeDefaultCUT();
+      assertFalse(cut.isAllowed(item));
    }
 
    @Test
@@ -262,28 +301,9 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
       assertFalse(cut.isAllowed(item));
    }
 
-   @Test
-   public final void testIsAllowed_CASE(){
-      Item item = ItemDB.CASE;
-
-      ChassisOmniMech cut = makeDefaultCUT();
-      assertFalse(cut.isAllowed(item));
-   }
-   
-   @Test
-   public final void testGetMovementProfiles(){
-      ChassisOmniMech mech = (ChassisOmniMech)ChassisDB.lookup("kfx-prime");
-      
-      MovementProfile baseProfile = mech.getMovementProfileBase();
-      
-      MovementProfile max = mech.getMovementProfileMax();
-      MovementProfile min = mech.getMovementProfileMin();
-      MovementProfile stock = mech.getMovementProfileStock();
-      
-      assertEquals(baseProfile.getTorsoYawSpeed()*1.05, stock.getTorsoYawSpeed(), 0.0);
-      assertEquals(baseProfile.getTorsoYawMax() + 5, stock.getTorsoYawMax(), 0.0);
-      
-      assertEquals(baseProfile.getTorsoYawSpeed()*0.95, min.getTorsoYawSpeed(), 0.0);
-      assertEquals(baseProfile.getTorsoYawSpeed()*1.10, max.getTorsoYawSpeed(), 0.0);
+   @Override
+   protected ChassisOmniMech makeDefaultCUT(){
+      return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
+                                 maxPilotModules, structureType, armorType, heatSinkType);
    }
 }

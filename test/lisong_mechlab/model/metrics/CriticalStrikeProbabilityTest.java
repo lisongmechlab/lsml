@@ -69,6 +69,7 @@ public class CriticalStrikeProbabilityTest{
    public void testOneItem(){
       Item i = Mockito.mock(Item.class);
       Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(i.isCrittable()).thenReturn(true);
       items.add(i);
 
       assertEquals(0.25 + 0.14 + 0.03, cut.calculate(i), 0.0);
@@ -78,13 +79,15 @@ public class CriticalStrikeProbabilityTest{
     * Internal items do not affect the crit rolls.
     */
    @Test
-   public void testNoInternals(){
+   public void testUncrittableItems(){
       Item i = Mockito.mock(Item.class);
-      Item internal = Mockito.mock(Internal.class);
+      Item nocrit = Mockito.mock(Internal.class);
       Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
-      Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(i.isCrittable()).thenReturn(true);
+      Mockito.when(nocrit.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(nocrit.isCrittable()).thenReturn(false);
       items.add(i);
-      items.add(internal);
+      items.add(nocrit);
 
       assertEquals(0.25 + 0.14 + 0.03, cut.calculate(i), 0.0);
    }
@@ -95,8 +98,10 @@ public class CriticalStrikeProbabilityTest{
    @Test
    public void testEngineInternals(){
       Item i = ConfiguredComponentBase.ENGINE_INTERNAL;
+      
       Item internal = Mockito.mock(Internal.class);
       Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(internal.isCrittable()).thenReturn(false);
       items.add(i);
       items.add(internal);
 
@@ -117,7 +122,9 @@ public class CriticalStrikeProbabilityTest{
       Item i0 = Mockito.mock(Item.class);
       Item i1 = Mockito.mock(Item.class);
       Mockito.when(i0.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(i0.isCrittable()).thenReturn(true);
       Mockito.when(i1.getNumCriticalSlots()).thenReturn(15);
+      Mockito.when(i1.isCrittable()).thenReturn(true);
       items.add(i0);
       items.add(i1);
 
