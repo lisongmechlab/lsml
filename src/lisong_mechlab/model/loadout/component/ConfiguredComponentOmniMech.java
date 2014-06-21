@@ -51,7 +51,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
 
    public ConfiguredComponentOmniMech(ConfiguredComponentOmniMech aConfiguredOmnipod){
       super(aConfiguredOmnipod);
-      omniPod = aConfiguredOmnipod.omniPod;
+      setOmniPod(aConfiguredOmnipod.omniPod);
    }
 
    @Override

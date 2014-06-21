@@ -136,8 +136,9 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       final boolean isOmniMech = loadout instanceof LoadoutOmniMech;
 
       readArmorValues(buffer, loadout, stack);
+      int actuatorState = 0;
       if( isOmniMech ){
-         readActuatorState(buffer, loadout, stack);
+         actuatorState = buffer.read();
       }
 
       // Items are encoded as a list of integers which record the item ID. Components are separated by -1.
@@ -185,6 +186,10 @@ public class LoadoutCoderV3 implements LoadoutCoder{
             stack.pushAndApply(new OpAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
          }
       }
+      
+      if(isOmniMech)
+         readActuatorState(actuatorState, loadout, stack);
+      
       return loadout;
    }
 
@@ -330,12 +335,11 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       }
    }
 
-   private void readActuatorState(ByteArrayInputStream aBuffer, LoadoutBase<?> aLoadout, OperationStack aStack){
-      int actuatorState = aBuffer.read();
-      boolean RLAA = (actuatorState & (1 << 3)) != 0;
-      boolean RHA = (actuatorState & (1 << 2)) != 0;
-      boolean LLAA = (actuatorState & (1 << 1)) != 0;
-      boolean LHA = (actuatorState & (1 << 0)) != 0;
+   private void readActuatorState(int aActuatorState, LoadoutBase<?> aLoadout, OperationStack aStack){
+      boolean RLAA = (aActuatorState & (1 << 3)) != 0;
+      boolean RHA = (aActuatorState & (1 << 2)) != 0;
+      boolean LLAA = (aActuatorState & (1 << 1)) != 0;
+      boolean LHA = (aActuatorState & (1 << 0)) != 0;
 
       LoadoutOmniMech omniMech = (LoadoutOmniMech)aLoadout;
       aStack.pushAndApply(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.LAA, LLAA));
