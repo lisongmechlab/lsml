@@ -169,7 +169,7 @@ public class ComponentRenderer implements MessageXBar.Reader{
          if( message.component == component ){
             if( message.type == Type.ArmorChanged || message.type == Type.ArmorDistributionUpdateRequest )
                return;
-            updateStates();
+            setDirty();
          }
       }
 
