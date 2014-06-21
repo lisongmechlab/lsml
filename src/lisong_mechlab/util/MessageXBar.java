@@ -99,34 +99,41 @@ public class MessageXBar{
       if( dispatching )
          throw new IllegalStateException("Recursive dispatch!");
       dispatching = true;
-      Iterator<WeakReference<Reader>> it = readers.iterator();
-      while( it.hasNext() ){
-         WeakReference<Reader> ref = it.next();
-         Reader reader = ref.get();
-         if( reader == null ){
-            it.remove();
-            continue;
-         }
-         if( debug ){
-            long startNs = System.nanoTime();
-            reader.receive(aMessage);
-            long endNs = System.nanoTime();
-            Double v = perf_walltime.get(reader.getClass());
-            Integer u = perf_calls.get(reader.getClass());
-            if( v == null ){
-               v = 0.0;
-               u = 0;
+      try{
+         Iterator<WeakReference<Reader>> it = readers.iterator();
+         while( it.hasNext() ){
+            WeakReference<Reader> ref = it.next();
+            Reader reader = ref.get();
+            if( reader == null ){
+               it.remove();
+               continue;
             }
-            v += (endNs - startNs) / 1E9;
-            u += 1;
-            perf_walltime.put(reader.getClass(), v);
-            perf_calls.put(reader.getClass(), u);
-         }
-         else{
-            reader.receive(aMessage);
+            if( debug ){
+               long startNs = System.nanoTime();
+               reader.receive(aMessage);
+               long endNs = System.nanoTime();
+               Double v = perf_walltime.get(reader.getClass());
+               Integer u = perf_calls.get(reader.getClass());
+               if( v == null ){
+                  v = 0.0;
+                  u = 0;
+               }
+               v += (endNs - startNs) / 1E9;
+               u += 1;
+               perf_walltime.put(reader.getClass(), v);
+               perf_calls.put(reader.getClass(), u);
+            }
+            else{
+               reader.receive(aMessage);
+            }
          }
       }
-      dispatching = false;
+      catch( Throwable t ){
+         t.printStackTrace();
+      }
+      finally{
+         dispatching = false;
+      }
    }
 
    /**

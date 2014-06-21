@@ -112,8 +112,11 @@ public class OpSetArmor extends Operation{
             throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + loadoutPart.getArmorMax(side) + " Was: " + amount);
 
          int armorDiff = amount - oldAmount;
-         double armorTons = loadout.getUpgrades().getArmor().getArmorMass(armorDiff);
-         if( armorTons > loadout.getFreeMass() ){
+         int totalArmor = armorDiff + loadout.getArmor(); // This is important to prevent numerical stability issues. Calculate whole armor in integer precision.
+         double armorTons = loadout.getUpgrades().getArmor().getArmorMass(totalArmor);
+         double freeTonnage = loadout.getChassis().getMassMax() - (loadout.getMassStructItems() + armorTons);
+         
+         if( freeTonnage <0 ){
             // See if the armor can be freed from a combination of automatic components. They will be redistributed
             // afterwards. FIXME: Devise a proper solution, this is ugly.
             int freed = 0;

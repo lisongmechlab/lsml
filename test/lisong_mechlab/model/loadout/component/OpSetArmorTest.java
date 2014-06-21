@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.upgrades.ArmorUpgrade;
+import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -24,12 +27,14 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpSetArmorTest{
-   private static final int                     TEST_MAX_ARMOR = 30;
-   private ArmorSide                            armorSide      = ArmorSide.ONLY;
+   private static final int                     TEST_MAX_ARMOR        = 40;
+   private ArmorSide                            armorSide             = ArmorSide.ONLY;
    @Mock
    private LoadoutBase<ConfiguredComponentBase> loadout;
    @Mock
@@ -40,14 +45,52 @@ public class OpSetArmorTest{
    private MessageXBar                          xBar;
    @Mock
    private ComponentBase                        internalPart;
+   private double                               armorPerTon           = 32;
+   @Mock
+   private ArmorUpgrade                         armorUpgrade;
+   @Mock
+   private ChassisBase                          chassis;
 
-   @Before
-   public void setup(){
+   private Integer                              chassisMass           = 100;
+   private double                               itemMass              = 50;
+   private int                                  priorArmor            = 300;
+   private int                                  oldArmor              = 20;
+   private List<ConfiguredComponentBase>        parts                 = new ArrayList<>();
+   private Boolean                              oldManualArmor        = false;
+   private int                                  componentMaxArmorLeft = TEST_MAX_ARMOR;
+
+   public OpSetArmor makeCUT(int armor, boolean isManual){
+      Mockito.when(chassis.getMassMax()).thenReturn(chassisMass);
+
+      double armorMass = priorArmor / armorPerTon;
+      double freeMass = chassisMass - (itemMass + armorMass);
+      Mockito.when(loadout.getFreeMass()).thenReturn(freeMass);
+      Mockito.when(loadout.getMassStructItems()).thenReturn(itemMass);
+      Mockito.when(loadout.getArmor()).thenReturn(priorArmor);
+      Mockito.when(loadout.getChassis()).thenReturn(chassis);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+      Mockito.when(loadout.getComponents()).thenReturn(parts);
+
       Mockito.when(loadoutPart.getInternalComponent()).thenReturn(internalPart);
-      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(TEST_MAX_ARMOR);
+      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
+      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(componentMaxArmorLeft);
+      Mockito.when(loadoutPart.allowAutomaticArmor()).thenReturn(!oldManualArmor);
+
       Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
       Mockito.when(internalPart.getArmorMax()).thenReturn(TEST_MAX_ARMOR);
+
+      Mockito.when(upgrades.getArmor()).thenReturn(armorUpgrade);
+
+      Mockito.when(armorUpgrade.getArmorPerTon()).thenReturn(armorPerTon);
+      Mockito.when(armorUpgrade.getArmorMass(Matchers.anyInt())).thenAnswer(new Answer<Double>(){
+         @Override
+         public Double answer(InvocationOnMock aInvocation) throws Throwable{
+            int arg0 = ((Integer)aInvocation.getArguments()[0]);
+            return arg0 / armorPerTon;
+         }
+      });
+
+      return new OpSetArmor(xBar, loadout, loadoutPart, armorSide, armor, isManual);
    }
 
    /**
@@ -58,7 +101,7 @@ public class OpSetArmorTest{
    @Test
    public final void testDescribe() throws Exception{
       int armor = 13;
-      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, armor, true);
+      OpSetArmor cut = makeCUT(armor, true);
 
       assertTrue(cut.describe().contains("armor"));
       assertTrue(cut.describe().contains("change"));
@@ -72,7 +115,7 @@ public class OpSetArmorTest{
     */
    @Test(expected = IllegalArgumentException.class)
    public final void testCtorNegativeArmor() throws Exception{
-      new OpSetArmor(xBar, loadout, loadoutPart, armorSide, -1, true);
+      makeCUT(-1, true);
    }
 
    /**
@@ -83,7 +126,7 @@ public class OpSetArmorTest{
     */
    @Test(expected = IllegalArgumentException.class)
    public final void testCtorTooMuchArmor() throws Exception{
-      new OpSetArmor(xBar, loadout, loadoutPart, armorSide, TEST_MAX_ARMOR + 1, true);
+      makeCUT(TEST_MAX_ARMOR + 1, true);
    }
 
    /**
@@ -134,19 +177,16 @@ public class OpSetArmorTest{
    @Test(expected = IllegalArgumentException.class)
    public final void testApply_TooHeavy(){
       // Setup
-      final double freeTons = 0.1;
-      final int oldArmor = 20;
-      final int newArmor = oldArmor + (int)(freeTons * 32) + 1;
+      armorPerTon = 32 * 1.12;
+      chassisMass = 10;
+      itemMass = 9;
+      oldArmor = 20;
+      priorArmor = (int)(armorPerTon - 10);
+      final int newArmor = oldArmor + 11;
 
-      List<ConfiguredComponentBase> parts = new ArrayList<>();
-      Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
-      Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);
-      Mockito.when(loadout.getComponents()).thenReturn(parts);
-      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
-      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       OpSetArmor cut = null;
       try{
-         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
+         cut = makeCUT(newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -158,46 +198,45 @@ public class OpSetArmorTest{
 
       // Verify (automatic)
    }
-   
+
    /**
     * An armor operation that would result in no change shall not execute.
     */
    @Test
    public final void testApply_NoChange(){
       // Setup
-      final int oldArmor = 20;
-      final int newArmor = oldArmor;
-
-      Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
-      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
-      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
-
-      // Execute
-      cut.apply();
+      makeCUT(oldArmor, oldManualArmor).apply();
 
       Mockito.verifyZeroInteractions(xBar);
       Mockito.verify(loadoutPart, Mockito.never()).setArmor(Matchers.any(ArmorSide.class), Matchers.anyInt(), Matchers.anyBoolean());
    }
 
    /**
-    * Setting the armor up-to and including the maximum free tonnage shall succeed. Shall take ferro fibrous into
-    * account too.
+    * Apply should correctly handle numerical precision problems that arise from armor amounts that result in irrational
+    * tonnages.
     */
    @Test
-   public final void testApply_NotTooHeavy_ferro(){
+   public final void testApply_FloatingPointPrecision(){
       // Setup
-      final double freeTons = 0.1;
-      final int oldArmor = 20;
-      final int newArmor = oldArmor + (int)(freeTons * 32 * 1.12);
+      armorPerTon = 38.4;
+      chassisMass = 30;
+      priorArmor = 192 - 20;
 
-      Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.FERRO_FIBROUS_ARMOR);
-      Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);
-      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
-      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
+      // DO NOT SIMPLIFY!
+      // These repeated additions are required to simulate compounding rounding errors of floating point numbers that
+      // occur
+      // in real usage cases!
+      itemMass = 1.5 + 5.5 + 1.0 + 1.0 + 1.0; // Structure, engine, fixed HS
+      itemMass += 0.5 + 0.5 + 0.5 + 6.0 + 1.0 + 0.5; // RA
+      itemMass += 0.5 + 0.5 + 1.0 + 1.0; // LA
+      itemMass += 1.0 + 1.0 + 1.0; // RT, LT RL
+
+      oldArmor = 0;
+      final int newArmor = 20;
+
       OpSetArmor cut = null;
       try{
-         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
+         cut = makeCUT(newArmor, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -219,13 +258,15 @@ public class OpSetArmorTest{
    @Test(expected = IllegalArgumentException.class)
    public final void testApply_TooMuchArmorForSide(){
       // Setup
-      final int newArmor = 20;
+      componentMaxArmorLeft = TEST_MAX_ARMOR / 2;
+      itemMass = 0;
+      chassisMass = 100;
 
-      Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(newArmor - 1);
+      final int newArmor = componentMaxArmorLeft + 1;
+
       OpSetArmor cut = null;
       try{
-         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
+         cut = makeCUT(newArmor, oldManualArmor);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -246,17 +287,13 @@ public class OpSetArmorTest{
    public void testApply_ReduceWhenOverTonnage() throws Exception{
 
       // Setup
-      final double freeTons = -0.1; // Over-tonned
-      final int oldArmor = 20;
-      final int newArmor = 1;
+      chassisMass = 100;
+      itemMass = 90;
+      oldArmor = (int)(1.5 * (chassisMass - itemMass) * armorPerTon); // Over-tonnage
 
-      Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
-      Mockito.when(loadout.getFreeMass()).thenReturn(freeTons);
-      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
-      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
       OpSetArmor cut = null;
       try{
-         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
+         cut = makeCUT(1, true);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -267,7 +304,7 @@ public class OpSetArmorTest{
       cut.apply();
 
       // Verify
-      Mockito.verify(loadoutPart).setArmor(armorSide, newArmor, false);
+      Mockito.verify(loadoutPart).setArmor(armorSide, 1, false);
       Mockito.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
    }
 
@@ -277,14 +314,8 @@ public class OpSetArmorTest{
    @Test
    public final void testUndo_NoChange(){
       // Setup
-      int newArmor = 20;
-      int oldArmor = 20;
 
-      Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
-      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
-
-      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
+      OpSetArmor cut = makeCUT(oldArmor, oldManualArmor);
 
       // Execute
       cut.apply();
@@ -304,14 +335,8 @@ public class OpSetArmorTest{
       OpSetArmor cut = null;
       try{
          int newArmor = 20;
-         int oldArmor = 21;
-
-         Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-         Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
-         Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
-
-         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
-
+         oldArmor = 21;
+         cut = makeCUT(newArmor, oldManualArmor);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -330,14 +355,8 @@ public class OpSetArmorTest{
       OpSetArmor cut = null;
       try{
          int newArmor = 20;
-         int oldArmor = 21;
-
-         Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-         Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
-         Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
-
-         cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
-
+         oldArmor = 21;
+         cut = makeCUT(newArmor, oldManualArmor);
       }
       catch( Throwable t ){
          fail("Setup threw!");
@@ -357,26 +376,22 @@ public class OpSetArmorTest{
    public final void testUndo(){
       // Setup
       int newArmor = 20;
-      int oldArmor = 25;
+      oldArmor = 25;
 
-      Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
-      Mockito.when(loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(loadoutPart.getArmorMax(armorSide)).thenReturn(TEST_MAX_ARMOR);
-      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(0);
-      Mockito.when(loadoutPart.allowAutomaticArmor()).thenReturn(true);
-
-      OpSetArmor cut = new OpSetArmor(xBar, loadout, loadoutPart, armorSide, newArmor, true);
-
-      Mockito.when(loadoutPart.getArmor(armorSide)).thenReturn(oldArmor);
+      boolean oldAuto = !oldManualArmor;
+      boolean newManual = !oldManualArmor;
+      boolean newAuto = !newManual;
+      
+      OpSetArmor cut = makeCUT(newArmor, newManual);
 
       // Execute
       cut.apply();
       cut.undo();
 
       InOrder inOrder = Mockito.inOrder(xBar, loadoutPart);
-      inOrder.verify(loadoutPart).setArmor(armorSide, newArmor, false);
+      inOrder.verify(loadoutPart).setArmor(armorSide, newArmor, newAuto);
       inOrder.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
-      inOrder.verify(loadoutPart).setArmor(armorSide, oldArmor, true);
+      inOrder.verify(loadoutPart).setArmor(armorSide, oldArmor, oldAuto);
       inOrder.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
    }
 }

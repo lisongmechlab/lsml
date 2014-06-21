@@ -175,13 +175,21 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    public abstract Engine getEngine();
 
    /**
-    * @return The current mass of the loadout.
+    * @return The mass of the loadout excluding armor. This is useful to avoid floating point precision issues from irrational armor values.
     */
-   public double getMass(){
+   public double getMassStructItems(){
       double ans = getUpgrades().getStructure().getStructureMass(chassisBase);
       for(T component : components){
          ans += component.getItemMass();
       }
+      return ans;
+   }
+   
+   /**
+    * @return The current mass of the loadout.
+    */
+   public double getMass(){
+      double ans = getMassStructItems();
       ans += getUpgrades().getArmor().getArmorMass(getArmor());
       return ans;
    }
@@ -190,7 +198,8 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return The amount of free tonnage the loadout can still support.
     */
    public double getFreeMass(){
-      return chassisBase.getMassMax() - getMass();
+      double ans = chassisBase.getMassMax() - getMass();
+      return ans;
    }
 
    /**

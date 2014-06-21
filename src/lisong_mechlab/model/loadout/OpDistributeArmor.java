@@ -81,7 +81,7 @@ public class OpDistributeArmor extends CompositeOperation{
    }
 
    @Override
-   public void buildOperation(){
+   protected void buildOperation(){
       int armorLeft = calculateArmorToDistribute(loadout, totalPointsOfArmor);
       if( armorLeft > 0 ){
          Map<Location, Integer> prioMap = prioritize(loadout);
