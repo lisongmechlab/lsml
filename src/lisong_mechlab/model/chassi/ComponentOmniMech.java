@@ -22,7 +22,6 @@ package lisong_mechlab.model.chassi;
 import java.util.List;
 
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 
 /**
@@ -81,25 +80,12 @@ public class ComponentOmniMech extends ComponentBase{
 
    @Override
    public boolean isAllowed(Item aItem){
-
-      final int usedSlots;
-      if( shouldRemoveArmActuators(aItem) ){
-         int fixedSlots = 0;
-         for(Item item : getFixedItems()){
-            if( item != ItemDB.LAA && item != ItemDB.HA ){
-               fixedSlots += item.getNumCriticalSlots();
-            }
-         }
-         usedSlots = fixedSlots + getDynamicArmorSlots() + getDynamicStructureSlots();
-      }
-      else{
-         usedSlots = getFixedItemSlots() + getDynamicArmorSlots() + getDynamicStructureSlots();
-      }
-
+      // Toggleable actuators are not part of the component, but rather of the omnipod.
+      // So we don't need to consider them here.
+      final int usedSlots = getFixedItemSlots() + getDynamicArmorSlots() + getDynamicStructureSlots();
       if( aItem.getNumCriticalSlots() > getSlots() - usedSlots ){
          return false;
       }
-
       return super.isAllowed(aItem);
    }
 

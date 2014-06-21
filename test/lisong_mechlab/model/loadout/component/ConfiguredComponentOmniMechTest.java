@@ -170,10 +170,10 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       internalFixedItems.clear();
       internalFixedItems.add(UAA);
 
-      List<Item> omniPodFixed = new ArrayList<>();
-      Mockito.when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
-      omniPodFixed.add(LAA);
-      omniPodFixed.add(HA);
+      List<Item> omniPodToggleable = new ArrayList<>();
+      Mockito.when(omniPod.getToggleableItems()).thenReturn(omniPodToggleable);
+      omniPodToggleable.add(LAA);
+      omniPodToggleable.add(HA);
 
       Item largeBoreGun = Mockito.mock(Item.class);
       Mockito.when(ComponentOmniMech.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
@@ -198,7 +198,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       internalFixedItems.add(UAA);
       
       List<Item> omniPodFixed = new ArrayList<>();
-      Mockito.when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
+      Mockito.when(omniPod.getToggleableItems()).thenReturn(omniPodFixed);
       omniPodFixed.add(LAA);
       omniPodFixed.add(HA);
 
@@ -225,7 +225,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       internalFixedItems.add(UAA);
       
       List<Item> omniPodFixed = new ArrayList<>();
-      Mockito.when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
+      Mockito.when(omniPod.getToggleableItems()).thenReturn(omniPodFixed);
       omniPodFixed.add(LAA);
       omniPodFixed.add(HA);
 

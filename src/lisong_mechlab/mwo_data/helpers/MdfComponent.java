@@ -110,18 +110,37 @@ public class MdfComponent{
    }
 
    public static List<Item> getFixedItems(DataCache aDataCache, List<MdfItem> aInternals, List<MdfItem> aFixed){
-      List<Item> fixedItems = new ArrayList<>();
+      List<Item> ans = new ArrayList<>();
       if( null != aInternals ){
          for(MdfItem item : aInternals){
-            fixedItems.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
+            if( item.Toggleable == 0 )
+               ans.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
          }
       }
       if( null != aFixed ){
          for(MdfItem item : aFixed){
-            fixedItems.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
+            if( item.Toggleable == 0 )
+               ans.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
          }
       }
-      return fixedItems;
+      return ans;
+   }
+
+   public static List<Item> getToggleableItems(DataCache aDataCache, List<MdfItem> aInternals, List<MdfItem> aFixed){
+      List<Item> ans = new ArrayList<>();
+      if( null != aInternals ){
+         for(MdfItem item : aInternals){
+            if( item.Toggleable != 0 )
+               ans.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
+         }
+      }
+      if( null != aFixed ){
+         for(MdfItem item : aFixed){
+            if( item.Toggleable != 0 )
+               ans.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
+         }
+      }
+      return ans;
    }
 
    public static List<HardPoint> getHardPoints(Location aLocation, XMLHardpoints aHardPointsXML, List<MdfHardpoint> aHardPoints, int aCanEquipECM,
@@ -190,7 +209,7 @@ public class MdfComponent{
                      continue;
                   int tubes = ans.get(i).getNumMissileTubes();
                   if( (tubes < maxTubes && tubes > 5) || (tubes == maxTubes && maxAdded == true && tubes > 5) ){
-                     ans.set(i, new HardPoint(HardPointType.MISSILE, 5, ans.get(i).hasBayDoor()));
+                     ans.set(i, new HardPoint(HardPointType.MISSILE, 5, ans.get(i).hasMissileBayDoor()));
                   }
                   if( tubes == maxTubes )
                      maxAdded = true;

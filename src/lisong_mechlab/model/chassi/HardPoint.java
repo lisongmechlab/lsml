@@ -64,7 +64,7 @@ public class HardPoint{
    /**
     * @return <code>true</code> if this hard point has missile bay doors.
     */
-   public boolean hasBayDoor(){
+   public boolean hasMissileBayDoor(){
       return hasBayDoor;
    }
 }

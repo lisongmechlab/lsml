@@ -49,17 +49,18 @@ import org.mockito.Mockito;
  */
 @RunWith(JUnitParamsRunner.class)
 public abstract class ChassisBaseTest{
-   protected int             baseVariant = 12;
-   protected Faction         faction     = Faction.Clan;
-   protected int             maxTons     = 75;
+   protected int             baseVariant     = 12;
+   protected Faction         faction         = Faction.Clan;
+   protected int             maxTons         = 75;
    protected MovementProfile movementProfile;
-   protected int             mwoID       = 300;
-   protected String          mwoName     = "tbw-p";
-   protected String          name        = "Timber Wolf Primal";
-   protected String          series      = "Timber Wolf";
-   protected String          shortName   = "tbw primal";
-   protected ChassisVariant  variant     = ChassisVariant.FOUNDER;
-   protected int             maxPilotModules;
+   protected int             mwoID           = 300;
+   protected String          mwoName         = "tbw-p";
+   protected String          name            = "Timber Wolf Primal";
+   protected String          series          = "Timber Wolf";
+   protected String          shortName       = "tbw primal";
+   protected ChassisVariant  variant         = ChassisVariant.FOUNDER;
+   protected int             maxPilotModules = 3;
+   protected ComponentBase[] componentBases;
 
    protected abstract ChassisBase makeDefaultCUT();
 
@@ -84,6 +85,16 @@ public abstract class ChassisBaseTest{
    public final void testGetComponents_Ammutable(){
       ChassisBase base = makeDefaultCUT();
       base.getComponents().remove(base.getComponent(Location.Head));
+   }
+
+   @Test
+   public final void testGetArmorMax(){
+      int armor = 12;
+      for(Location location : Location.values()){
+         Mockito.when(componentBases[location.ordinal()].getArmorMax()).thenReturn(armor);
+      }
+
+      assertEquals(armor * Location.values().length, makeDefaultCUT().getArmorMax());
    }
 
    @Test
@@ -129,6 +140,11 @@ public abstract class ChassisBaseTest{
    @Test
    public final void testGetNameShort() throws Exception{
       assertEquals(shortName, makeDefaultCUT().getNameShort());
+   }
+
+   @Test
+   public final void testGetPilotModulesMax() throws Exception{
+      assertEquals(maxPilotModules, makeDefaultCUT().getPilotModulesMax());
    }
 
    @Test
@@ -234,7 +250,30 @@ public abstract class ChassisBaseTest{
    public final void testToString() throws Exception{
       assertEquals(shortName, makeDefaultCUT().toString());
    }
+   
+   @Test
+   public final void testHashCode() {
+      // Hash code should always be the MWO id as it's unique.
+      assertEquals(mwoID, makeDefaultCUT().hashCode());
+   }
 
+   /**
+    * As the MWO id is unique, two chassis are equal if they have the same ID.
+    */
+   @Test
+   public final void testEquals() {
+      ChassisBase A = makeDefaultCUT();
+      mwoID *= 2;
+      ChassisBase B = makeDefaultCUT();
+      name = "fosabarium";
+      mwoID /= 2;
+      ChassisBase C = makeDefaultCUT();
+      
+      assertFalse(A.equals(B)); // Otherwise Equals but MWO id differs.
+      assertTrue(A.equals(C)); // MWO id same but differs other where.
+      assertFalse(C.equals(name)); // Not equal to same name.
+   }
+   
    protected JumpJet makeJumpJet(int aMinTons, int aMaxTons){
       JumpJet jj = Mockito.mock(JumpJet.class);
       Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);

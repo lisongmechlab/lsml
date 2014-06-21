@@ -162,7 +162,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
                   ChassisOmniMech omniMech = (ChassisOmniMech)chassis;
 
                   for(OmniPod omniPod : OmniPodDB.lookupOriginal(omniMech)){
-                     modules += omniPod.getMaxPilotModules();
+                     modules += omniPod.getPilotModulesMax();
                   }
                }
 
@@ -203,11 +203,11 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
             Efficiencies efficiencies = new Efficiencies((MessageXBar)null);
             efficiencies.setSpeedTweak(false);
 
-            final double maxSpeed = TopSpeed.calculate(chassis.getEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
+            final double maxSpeed = TopSpeed.calculate(chassis.getFixedEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
                                                        efficiencies.getSpeedModifier());
 
             efficiencies.setSpeedTweak(true);
-            final double maxSpeedTweak = TopSpeed.calculate(chassis.getEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
+            final double maxSpeedTweak = TopSpeed.calculate(chassis.getFixedEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
                                                             efficiencies.getSpeedModifier());
             return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
          }

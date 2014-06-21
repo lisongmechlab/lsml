@@ -39,7 +39,7 @@ public class PayloadStatisticsTest{
       int fixedHs = 8; // < 10
       ChassisOmniMech chassis = Mockito.mock(ChassisOmniMech.class);
       Mockito.when(chassis.getMassMax()).thenReturn(maxMass);
-      Mockito.when(chassis.getMassStripped()).thenReturn(strippedMass);
+      Mockito.when(chassis.getFixedMass()).thenReturn(strippedMass);
       Mockito.when(chassis.getFixedHeatSinks()).thenReturn(fixedHs);
 
       PayloadStatistics cut = new PayloadStatistics(false, false, null);
@@ -54,7 +54,7 @@ public class PayloadStatisticsTest{
       int fixedHs = 15; // > 10
       ChassisOmniMech chassis = Mockito.mock(ChassisOmniMech.class);
       Mockito.when(chassis.getMassMax()).thenReturn(maxMass);
-      Mockito.when(chassis.getMassStripped()).thenReturn(strippedMass);
+      Mockito.when(chassis.getFixedMass()).thenReturn(strippedMass);
       Mockito.when(chassis.getFixedHeatSinks()).thenReturn(fixedHs);
 
       PayloadStatistics cut = new PayloadStatistics(false, false, null);
@@ -75,10 +75,10 @@ public class PayloadStatisticsTest{
       
       ChassisOmniMech chassis = Mockito.mock(ChassisOmniMech.class);
       Mockito.when(chassis.getMassMax()).thenReturn(maxMass);
-      Mockito.when(chassis.getMassStripped()).thenReturn(strippedMass);
+      Mockito.when(chassis.getFixedMass()).thenReturn(strippedMass);
       Mockito.when(chassis.getFixedHeatSinks()).thenReturn(fixedHs);
       Mockito.when(chassis.getArmorMax()).thenReturn(maxArmor);
-      Mockito.when(chassis.getArmorType()).thenReturn(armorUpgrade);
+      Mockito.when(chassis.getFixedArmorType()).thenReturn(armorUpgrade);
 
       PayloadStatistics cut = new PayloadStatistics(false, true, null);
 

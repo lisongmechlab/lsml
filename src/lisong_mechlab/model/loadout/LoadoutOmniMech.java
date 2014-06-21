@@ -54,7 +54,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis, MessageXBar aXBar){
       super(aFactory, aChassis, aXBar);
       movementProfile = new QuirkedMovementProfile(aChassis.getMovementProfileBase());
-      upgrades = new Upgrades(aChassis.getArmorType(), aChassis.getStructureType(), UpgradeDB.STANDARD_GUIDANCE, aChassis.getHeatSinkType());
+      upgrades = new Upgrades(aChassis.getFixedArmorType(), aChassis.getFixedStructureType(), UpgradeDB.STANDARD_GUIDANCE, aChassis.getFixedHeatSinkType());
       for(ConfiguredComponentOmniMech component : getComponents()){
          movementProfile.addMovementModifier(component.getOmniPod().getQuirks());
       }
@@ -120,7 +120,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
 
    @Override
    public Engine getEngine(){
-      return getChassis().getEngine();
+      return getChassis().getFixedEngine();
    }
 
    /**
@@ -144,7 +144,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
    public int getModulesMax(){
       int ans = getChassis().getPilotModulesMax() + 1; // +1 for mastery
       for(ConfiguredComponentOmniMech component : getComponents()){
-         ans += component.getOmniPod().getMaxPilotModules();
+         ans += component.getOmniPod().getPilotModulesMax();
       }
       return ans;
    }

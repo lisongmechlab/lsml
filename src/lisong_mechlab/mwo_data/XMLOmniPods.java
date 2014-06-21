@@ -142,8 +142,10 @@ public class XMLOmniPods{
             Quirks quirks = new Quirks(quirksMap);
 
             List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals, null);
+            List<Item> toggleableItems = MdfComponent.getToggleableItems(aDataCache, component.internals, null);
 
-            ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, fixedItems, maxJumpjets, maxPilotModules));
+            ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, toggleableItems, fixedItems, maxJumpjets,
+                                maxPilotModules));
          }
       }
 
@@ -163,7 +165,7 @@ public class XMLOmniPods{
          return false;
       if( aName.contains("overheat_damage_multiplier") )
          return false;
-      
+
       return true; // Most quirks are positive-good.
    }
 

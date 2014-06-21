@@ -40,8 +40,12 @@ public abstract class ChassisBase{
    private final int             baseVariant;
    @XStreamAsAttribute
    private final ChassisClass    chassiclass;
+   private final ComponentBase[] components;
+   @XStreamAsAttribute
+   private final Faction         faction;
    @XStreamAsAttribute
    private final int             maxTons;
+   private final MovementProfile movementProfile;
    @XStreamAsAttribute
    private final int             mwoId;
    @XStreamAsAttribute
@@ -49,18 +53,13 @@ public abstract class ChassisBase{
    @XStreamAsAttribute
    private final String          name;
    @XStreamAsAttribute
+   private final int pilotModulesMax;
+   @XStreamAsAttribute
    private final String          series;
    @XStreamAsAttribute
    private final String          shortName;
    @XStreamAsAttribute
    private final ChassisVariant  variant;
-   @XStreamAsAttribute
-   private final Faction         faction;
-   @XStreamAsAttribute
-   private final int pilotModulesMax;
-
-   private final MovementProfile movementProfile;
-   private final ComponentBase[] components;
 
    /**
     * @param aMwoID
@@ -116,22 +115,6 @@ public abstract class ChassisBase{
    }
 
    /**
-    * @param aLocation
-    *           The location of the internal component we're interested in.
-    * @return The internal component in the given location.
-    */
-   public ComponentBase getComponent(Location aLocation){
-      return components[aLocation.ordinal()];
-   }
-
-   /**
-    * @return A {@link Collection} of all the internal components.
-    */
-   public Collection<? extends ComponentBase> getComponents(){
-      return Collections.unmodifiableList(Arrays.asList(components));
-   }
-
-   /**
     * @return The maximal, total amount of armor the chassis can support.
     */
    public int getArmorMax(){
@@ -157,10 +140,33 @@ public abstract class ChassisBase{
    }
 
    /**
+    * @param aLocation
+    *           The location of the internal component we're interested in.
+    * @return The internal component in the given location.
+    */
+   public ComponentBase getComponent(Location aLocation){
+      return components[aLocation.ordinal()];
+   }
+
+   /**
+    * @return A {@link Collection} of all the internal components.
+    */
+   public Collection<? extends ComponentBase> getComponents(){
+      return Collections.unmodifiableList(Arrays.asList(components));
+   }
+
+   /**
     * @return The total number of critical slots on this chassis.
     */
    public int getCriticalSlotsTotal(){
       return 12 * 5 + 6 * 3;
+   }
+
+   /**
+    * @return The faction that this chassis is from.
+    */
+   public Faction getFaction(){
+      return faction;
    }
 
    /**
@@ -206,6 +212,13 @@ public abstract class ChassisBase{
    }
 
    /**
+    * @return The maximal number of pilot modules this chassis can support.
+    */
+   public int getPilotModulesMax(){
+      return pilotModulesMax;
+   }
+
+   /**
     * @return The name of the series this {@link ChassisStandard} belongs to, e.g. "CATAPHRACT", "ATLAS" etc.
     */
    public String getSeriesName(){
@@ -232,19 +245,20 @@ public abstract class ChassisBase{
     * 
     * @param aItem
     *           The {@link Item} to check for.
-    * @return <code>true</code> if this chassis can equip the {@link Item}.
+    * @return <code>true</code> if this chassis can, in some configuration, support the {@link Item}.
     */
    public boolean isAllowed(Item aItem){
-      if( !aItem.getFaction().isCompatible(getFaction()) ){
+      if( !aItem.getFaction().isCompatible(getFaction()) )
          return false;
-      }
-      else if( aItem instanceof Internal ){
-         return false; // Early exit here
-      }
-      else if( aItem instanceof JumpJet ){
+      
+      if( aItem instanceof Internal )
+         return false;
+      
+      if( aItem instanceof JumpJet ){
          JumpJet jj = (JumpJet)aItem;
          return jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
       }
+      
       for(ComponentBase part : getComponents()){
          if( part.isAllowed(aItem) )
             return true;
@@ -260,23 +274,9 @@ public abstract class ChassisBase{
    public boolean isSameSeries(ChassisBase aChassis){
       return series.equals(aChassis.series);
    }
-
-   /**
-    * @return The faction that this chassis is from.
-    */
-   public Faction getFaction(){
-      return faction;
-   }
-
+   
    @Override
    public String toString(){
       return getNameShort();
-   }
-   
-   /**
-    * @return The maximal number of pilot modules this chassis can support.
-    */
-   public int getPilotModulesMax(){
-      return pilotModulesMax;
    }
 }

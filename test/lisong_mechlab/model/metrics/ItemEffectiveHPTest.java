@@ -26,7 +26,6 @@ import java.util.List;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -80,6 +79,7 @@ public class ItemEffectiveHPTest{
       Item i = Mockito.mock(Item.class);
       Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
       Mockito.when(i.getHealth()).thenReturn(15);
+      Mockito.when(i.isCrittable()).thenReturn(true);
       items.add(i);
 
       assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
@@ -91,44 +91,15 @@ public class ItemEffectiveHPTest{
    @Test
    public void testNoInternals(){
       Item i = Mockito.mock(Item.class);
-      Item internal = Mockito.mock(Internal.class);
+      Item nocrit = Mockito.mock(Internal.class);
       Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
       Mockito.when(i.getHealth()).thenReturn(15);
-      Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);
-      Mockito.when(internal.getHealth()).thenReturn(0);
+      Mockito.when(i.isCrittable()).thenReturn(true);
+      Mockito.when(nocrit.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(nocrit.getHealth()).thenReturn(0);
+      Mockito.when(nocrit.isCrittable()).thenReturn(false);
       items.add(i);
-      items.add(internal);
-
-      assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
-   }
-
-   /**
-    * According to: http://mwomercs.com/forums/topic/81945-crits-and-you-a-brief-guide/ C.A.S.E. can not be critically
-    * hit and should not be a part of the calculations.
-    */
-   @Test
-   public void testCASE(){
-      Item i = Mockito.mock(Item.class);
-      Item ammoCase = ItemDB.lookup("C.A.S.E.");
-      Mockito.when(i.getNumCriticalSlots()).thenReturn(1);
-      Mockito.when(i.getHealth()).thenReturn(10);
-      items.add(i);
-      items.add(ammoCase);
-
-      assertEquals(10 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
-   }
-
-   /**
-    * XL engine sides do affect the critical hit rolls.
-    */
-   @Test
-   public void testEngineInternals(){
-      Item i = ConfiguredComponentBase.ENGINE_INTERNAL;
-      Item internal = Mockito.mock(Internal.class);
-      Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);
-      Mockito.when(internal.getHealth()).thenReturn(0);
-      items.add(i);
-      items.add(internal);
+      items.add(nocrit);
 
       assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
    }
@@ -144,8 +115,10 @@ public class ItemEffectiveHPTest{
       Item i1 = Mockito.mock(Item.class);
       Mockito.when(i0.getNumCriticalSlots()).thenReturn(5);
       Mockito.when(i0.getHealth()).thenReturn(15);
+      Mockito.when(i0.isCrittable()).thenReturn(true);
       Mockito.when(i1.getNumCriticalSlots()).thenReturn(15);
       Mockito.when(i1.getHealth()).thenReturn(15);
+      Mockito.when(i1.isCrittable()).thenReturn(true);
       items.add(i0);
       items.add(i1);
 

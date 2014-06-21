@@ -32,6 +32,7 @@ import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.util.ArrayUtils;
 
 import org.junit.Before;
@@ -69,6 +70,39 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
       return new ConfiguredComponentStandard(stdInternal, autoArmor);
    }
 
+   /**
+    * We do not allow two C.A.S.E. in the same component as that is just bonkers.
+    */
+   @Test
+   public final void testCanAddItem_TwoCASE(){
+      ConfiguredComponentBase cut = makeDefaultCUT();
+      cut.addItem(ItemDB.CASE);
+      assertFalse(cut.canAddItem(ItemDB.CASE));
+   }
+
+   /**
+    * Having C.A.S.E. does not prohibit other items.
+    */
+   @Test
+   public final void testCanAddItem_OneCASE(){
+      ConfiguredComponentBase cut = makeDefaultCUT();
+      cut.addItem(ItemDB.CASE);
+
+      Item item = Mockito.mock(Item.class);
+      Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+      Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+
+      assertTrue(cut.canAddItem(item));
+   }
+
+   /**
+    * C.A.S.E. is allowed (provided internal component allows it).
+    */
+   @Test
+   public final void testCanAddItem_CASEAllowed(){
+      assertTrue(makeDefaultCUT().canAddItem(ItemDB.CASE));
+   }
+
    @Test
    public void testCopyCtorEquals(){
       ConfiguredComponentStandard cut = makeDefaultCUT();
@@ -90,7 +124,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
 
       assertTrue(ArrayUtils.equalsUnordered(hardPoints, new ArrayList<>(makeDefaultCUT().getHardPoints())));
    }
-   
+
    @Test
    public void testHasMissileBayDoors(){
       assertEquals(baydoors, makeDefaultCUT().hasMissileBayDoors());
@@ -116,7 +150,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
       cut.addItem(heatSink);
       assertFalse(cut.canAddItem(heatSink));
    }
-   
+
    @Test
    public void testIsAllowed_NoHardpoint(){
       Item item = Mockito.mock(Item.class);
@@ -137,13 +171,13 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
 
       assertTrue(makeDefaultCUT().canAddItem(item));
    }
-   
+
    @Test
    public void testIsAllowed_AllHardpointsTaken(){
       Item item = Mockito.mock(Item.class);
       Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
       Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
-      
+
       Mockito.when(stdInternal.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
       hardPoints.add(new HardPoint(HardPointType.ENERGY));
       ConfiguredComponentStandard cut = makeDefaultCUT();
@@ -151,5 +185,5 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
 
       assertFalse(cut.canAddItem(item));
    }
-   
+
 }

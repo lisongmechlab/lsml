@@ -43,8 +43,8 @@ public class HardPointConverter implements Converter{
       if( hp.getNumMissileTubes() > 0 ){
          aWriter.addAttribute("tubes", Integer.toString(hp.getNumMissileTubes()));
       }
-      if( hp.hasBayDoor() != false ){
-         aWriter.addAttribute("bayDoor", Boolean.toString(hp.hasBayDoor()));
+      if( hp.hasMissileBayDoor() != false ){
+         aWriter.addAttribute("bayDoor", Boolean.toString(hp.hasMissileBayDoor()));
       }
    }
 

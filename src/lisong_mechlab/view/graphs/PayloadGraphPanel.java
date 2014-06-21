@@ -112,7 +112,7 @@ public class PayloadGraphPanel extends ChartPanel{
          else{
             // Omnimech
             ChassisOmniMech chassisOmniMech = (ChassisOmniMech)entry.representant;
-            Engine engine = chassisOmniMech.getEngine();
+            Engine engine = chassisOmniMech.getFixedEngine();
 
             double minSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileMin(), chassisOmniMech.getMassMax(),
                                                  efficiencies.getSpeedModifier());

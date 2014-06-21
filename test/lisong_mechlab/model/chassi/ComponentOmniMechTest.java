@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -105,53 +104,10 @@ public class ComponentOmniMechTest extends ComponentBaseTest{
       assertFalse(makeDefaultCUT().isAllowed(item));
    }
 
-   /**
-    * When any large bore weapon, such as any AC, PPC or Gauss rifle is equipped, any Lower Arm Actuator (LLA) and/or
-    * Hand Actuator (HA) is removed. This of course affects equipability of these weapons.
-    */
-   @Test
-   public final void testIsAllowed_LargeBoreWeapon(){
-      criticalSlots = 12;
-      Item LAA = ItemDB.LAA;
-      Item HA = ItemDB.HA;
-      Item UAA = ItemDB.UAA;
-      fixedItems.clear();
-      fixedItems.add(UAA);
-      fixedItems.add(LAA);
-      fixedItems.add(HA);
-      int freeSlots = criticalSlots - UAA.getNumCriticalSlots();
-      int internalSlots = LAA.getNumCriticalSlots() + HA.getNumCriticalSlots();
-
-      BallisticWeapon weapon = Mockito.mock(BallisticWeapon.class);
-      Mockito.when(weapon.getNumCriticalSlots()).thenReturn(freeSlots - internalSlots);
-      Mockito.when(weapon.getName()).thenReturn("mock item");
-
-      // Pre check that the weapon is allowed in normal situations.
-      assertTrue(makeDefaultCUT().isAllowed(weapon));
-
-      // Now it's too big to fit.
-      Mockito.when(weapon.getNumCriticalSlots()).thenReturn(freeSlots);
-      assertFalse(makeDefaultCUT().isAllowed(weapon));
-
-      // Check the real situation here
-      Mockito.when(weapon.getName()).thenReturn("CLAN PPC");
-      assertTrue(makeDefaultCUT().isAllowed(weapon));
-
-      Mockito.when(weapon.getName()).thenReturn("AC/15");
-      assertTrue(makeDefaultCUT().isAllowed(weapon));
-
-      Mockito.when(weapon.getName()).thenReturn("LB 10-X AC");
-      assertTrue(makeDefaultCUT().isAllowed(weapon));
-
-      Mockito.when(weapon.getName()).thenReturn("CLAN LIGHT GAUSS RIFLE");
-      assertTrue(makeDefaultCUT().isAllowed(weapon));
-
-      Mockito.when(weapon.getName()).thenReturn("MACHINE GUN");
-      assertFalse(makeDefaultCUT().isAllowed(weapon));
-   }
-
    @Test
    public final void testShouldRemoveArmActuators(){
+      Item item = Mockito.mock(Item.class);
+      Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
       BallisticWeapon ballistic = Mockito.mock(BallisticWeapon.class);
       Mockito.when(ballistic.getHardpointType()).thenReturn(HardPointType.BALLISTIC);
       EnergyWeapon energy = Mockito.mock(EnergyWeapon.class);
@@ -159,32 +115,27 @@ public class ComponentOmniMechTest extends ComponentBaseTest{
 
       // Check the real situation here
       Mockito.when(energy.getName()).thenReturn("CLAN PPC");
-      makeDefaultCUT();
       assertTrue(ComponentOmniMech.shouldRemoveArmActuators(energy));
 
       Mockito.when(energy.getName()).thenReturn("LARGE LASER");
-      makeDefaultCUT();
       assertFalse(ComponentOmniMech.shouldRemoveArmActuators(energy));
 
       Mockito.when(ballistic.getName()).thenReturn("AC/15");
-      makeDefaultCUT();
       assertTrue(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
 
       Mockito.when(ballistic.getName()).thenReturn("LB 10-X AC");
-      makeDefaultCUT();
       assertTrue(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
 
       Mockito.when(ballistic.getName()).thenReturn("CLAN LIGHT GAUSS RIFLE");
-      makeDefaultCUT();
       assertTrue(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
 
       Mockito.when(ballistic.getName()).thenReturn("C-LB5-X AC");
-      makeDefaultCUT();
       assertTrue(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
       
       Mockito.when(ballistic.getName()).thenReturn("MACHINE GUN");
-      makeDefaultCUT();
-      assertFalse(ComponentOmniMech.shouldRemoveArmActuators(ballistic));
-      
+      assertFalse(ComponentOmniMech.shouldRemoveArmActuators(ballistic));     
+
+      Mockito.when(item.getName()).thenReturn("Hyper flux cube capacitor");
+      assertFalse(ComponentOmniMech.shouldRemoveArmActuators(item));
    }
 }

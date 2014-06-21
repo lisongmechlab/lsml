@@ -31,17 +31,16 @@ import lisong_mechlab.model.item.Item;
  * @author Emily Björk
  */
 public class OmniPod{
-   private final int                 mwoID;
-   private final Location            location;
-   private final String              series;
-   private final String              chassis;
-   private final Quirks              quirks;
-   private final List<HardPoint>     hardPoints;
-   private final int                 maxJumpJets;
-   private final int                 maxPilotModules;
-   private final List<Item>          fixedItems;
-   private transient boolean         originalChassisLoaded = false;
-   private transient ChassisOmniMech originalChassis;
+   private final String          chassis;
+   private final List<Item>      fixedItems;
+   private final List<HardPoint> hardPoints;
+   private final Location        location;
+   private final int             maxJumpJets;
+   private final int             maxPilotModules;
+   private final int             mwoID;
+   private final Quirks          quirks;
+   private final String          series;
+   private final List<Item>      toggleableItems;
 
    /**
     * Creates a new {@link OmniPod}.
@@ -56,100 +55,58 @@ public class OmniPod{
     *           The MWO ID of the specific variant that this {@link OmniPod} is part of, for example
     *           "TIMBER WOLF PRIME".
     * @param aQuirks
-    *           A set of quirks this {@link OmniPod} will bring to the loadout if equipped.
+    *           A set of {@link Quirks} this {@link OmniPod} will bring to the loadout if equipped.
     * @param aHardPoints
     *           A {@link List} of {@link HardPoint}s for this {@link OmniPod}.
     * @param aFixedItems
-    *           A {@link List} of fixed items in this {@link OmniPod}.
+    *           A {@link List} of fixed items on this {@link OmniPod}.
+    * @param aToggleableItems
+    *           A {@link List} of items in this {@link OmniPod} that may be toggled.
     * @param aMaxJumpJets
     *           The maximum number of jump jets this {@link OmniPod} can support.
     * @param aMaxPilotModules
     *           The number of pilot modules that this {@link OmniPod} adds to the loadout.
     */
    public OmniPod(int aMwoID, Location aLocation, String aSeriesName, String aOriginalChassisID, Quirks aQuirks, List<HardPoint> aHardPoints,
-                  List<Item> aFixedItems, int aMaxJumpJets, int aMaxPilotModules){
+                  List<Item> aFixedItems, List<Item> aToggleableItems, int aMaxJumpJets, int aMaxPilotModules){
       mwoID = aMwoID;
       location = aLocation;
-      series = aSeriesName;
-      chassis = aOriginalChassisID;
+      series = aSeriesName.toUpperCase();
+      chassis = aOriginalChassisID.toUpperCase();
       quirks = aQuirks;
       hardPoints = Collections.unmodifiableList(aHardPoints);
       maxJumpJets = aMaxJumpJets;
       maxPilotModules = aMaxPilotModules;
       fixedItems = Collections.unmodifiableList(aFixedItems);
+      toggleableItems = Collections.unmodifiableList(aToggleableItems);
    }
 
    @Override
-   public String toString(){
-      return chassis.toUpperCase();
+   public boolean equals(Object aObj){
+      if( aObj instanceof OmniPod )
+         return ((OmniPod)aObj).getMwoId() == getMwoId();
+      return false;
    }
 
    /**
-    * @return The maximum number of jump jets one can equip on this omnipod.
+    * @return The name of the chassis that this {@link OmniPod} belongs to.
     */
-   public int getJumpJetsMax(){
-      return maxJumpJets;
+   public String getChassisName(){
+      return chassis;
    }
 
    /**
-    * @return {@link Location} that this omnipod can be equipped on.
+    * @return The chassis series this {@link OmniPod} is part of. For example "DIRE WOLF".
     */
-   public Location getLocation(){
-      return location;
+   public String getChassisSeries(){
+      return series;
    }
 
    /**
-    * @return The mech ID of the original chassis this omnipod is a part of or <code>null</code> if this {@link OmniPod}
-    *         belongs to a chassis not in game.
+    * @return A unmodifiable {@link List} of {@link Item}s that are fixed on this {@link OmniPod}. Typically empty.
     */
-   public ChassisOmniMech getOriginalChassis(){
-      if( !originalChassisLoaded ){
-         originalChassisLoaded = true;
-         try{
-            originalChassis = (ChassisOmniMech)ChassisDB.lookup(chassis);
-         }
-         catch( IllegalArgumentException e ){
-            originalChassis = null;
-         }
-      }
-      return originalChassis;
-   }
-
-   /**
-    * @return The omnipod specific movement quirks.
-    */
-   public Quirks getQuirks(){
-      return quirks;
-   }
-
-   /**
-    * @param aChassis
-    *           The chassis to check for compatibility to.
-    * @return <code>true</code> if the argument is a compatible chassis.
-    */
-   public boolean isCompatible(ChassisOmniMech aChassis){
-      return aChassis.getSeriesName().toLowerCase().contains(series);
-   }
-
-   /**
-    * @return The MWO ID of this {@link OmniPod}.
-    */
-   public int getMwoId(){
-      return mwoID;
-   }
-
-   /**
-    * @return The maximum number of pilot modules this {@link OmniPod} can support.
-    */
-   public int getMaxPilotModules(){
-      return maxPilotModules;
-   }
-
-   /**
-    * @return An unmodifiable collection of all {@link HardPoint}s this {@link OmniPod} has.
-    */
-   public Collection<HardPoint> getHardPoints(){
-      return hardPoints;
+   public List<Item> getFixedItems(){
+      return fixedItems;
    }
 
    /**
@@ -168,27 +125,99 @@ public class OmniPod{
    }
 
    /**
+    * @return An unmodifiable collection of all {@link HardPoint}s this {@link OmniPod} has.
+    */
+   public Collection<HardPoint> getHardPoints(){
+      return hardPoints;
+   }
+
+   /**
+    * @return The maximum number of jump jets one can equip on this omnipod.
+    */
+   public int getJumpJetsMax(){
+      return maxJumpJets;
+   }
+
+   /**
+    * @return {@link Location} that this omnipod can be equipped on.
+    */
+   public Location getLocation(){
+      return location;
+   }
+
+   /**
+    * @return The MWO ID of this {@link OmniPod}.
+    */
+   public int getMwoId(){
+      return mwoID;
+   }
+
+   /**
+    * @return The maximum number of pilot modules this {@link OmniPod} can support.
+    */
+   public int getPilotModulesMax(){
+      return maxPilotModules;
+   }
+
+   /**
+    * @return The omnipod specific movement quirks.
+    */
+   public Quirks getQuirks(){
+      return quirks;
+   }
+
+   /**
+    * @return A unmodifiable {@link List} of {@link Item}s that are toggleable on this {@link OmniPod}. Typically only
+    *         LAA and HA.
+    */
+   public List<Item> getToggleableItems(){
+      return toggleableItems;
+   }
+
+   @Override
+   public int hashCode(){
+      return mwoID;
+   }
+
+   /**
     * @return <code>true</code> if this {@link OmniPod} has missile bay doors.
     */
    public boolean hasMissileBayDoors(){
       for(HardPoint hardPoint : hardPoints){
-         if( hardPoint.hasBayDoor() )
+         if( hardPoint.hasMissileBayDoor() )
             return true;
       }
       return false;
    }
 
    /**
-    * @return The chassis series this {@link OmniPod} is part of. For example "DIRE WOLF".
+    * @param aChassis
+    *           The chassis to check for compatibility to.
+    * @return <code>true</code> if the argument is a compatible chassis.
     */
-   public String getChassisSeries(){
-      return series;
+   public boolean isCompatible(ChassisOmniMech aChassis){
+      return aChassis.getSeriesName().toUpperCase().equals(series);
    }
 
    /**
-    * @return A unmodifiable list of items that are fixed on this {@link OmniPod}. Typically only HA and LAA.
+    * Tests if this {@link OmniPod} is the stock/original {@link OmniPod} on a given {@link ChassisBase}.
+    * 
+    * @param aChassisBase
+    *           The {@link ChassisBase} to test.
+    * @return <code>true</code> if this {@link OmniPod} is original on the given {@link ChassisBase}.
     */
-   public List<Item> getFixedItems(){
-      return fixedItems;
+   public boolean isOriginalForChassis(ChassisBase aChassisBase){
+      // Handle variations without a proper variation tag for now.
+      String name = aChassisBase.getNameShort().toUpperCase();
+      int idx = name.indexOf('(');
+      if( -1 != idx ){
+         name = name.substring(0, idx);
+      }
+      return chassis.equals(name);
+   }
+
+   @Override
+   public String toString(){
+      return getChassisName();
    }
 }
