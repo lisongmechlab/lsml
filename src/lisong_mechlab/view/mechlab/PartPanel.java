@@ -368,7 +368,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
             @Override
             public void run(){
                ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
-               toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA));
+               toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA) || ccom.getToggleState(ItemDB.LAA));
                toggleLAA.setSelected(ccom.getToggleState(ItemDB.LAA));
             }
          });
@@ -379,7 +379,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
             @Override
             public void run(){
                ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
-               toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA));
+               toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA) || ccom.getToggleState(ItemDB.HA));
                toggleHA.setSelected(ccom.getToggleState(ItemDB.HA));
             }
          });

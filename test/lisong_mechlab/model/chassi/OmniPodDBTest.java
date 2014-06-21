@@ -42,10 +42,15 @@ public class OmniPodDBTest{
    }
    
    @Test
+   public void testLoadOmniPod_Togglables(){
+      OmniPod ans = OmniPodDB.lookup(30077); // Kitfox Prime Right Arm
+      
+      assertEquals(2, ans.getToggleableItems().size());
+   }
+   
+   @Test
    public void testLookup_BySeries(){
-      
       Collection<OmniPod> ans = OmniPodDB.lookup("kItFox", Location.RightArm);
-      
       assertTrue(ans.size() >= 4);
    }
 }

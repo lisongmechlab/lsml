@@ -144,7 +144,7 @@ public class XMLOmniPods{
             List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals, null);
             List<Item> toggleableItems = MdfComponent.getToggleableItems(aDataCache, component.internals, null);
 
-            ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, toggleableItems, fixedItems, maxJumpjets,
+            ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, fixedItems, toggleableItems, maxJumpjets,
                                 maxPilotModules));
          }
       }
