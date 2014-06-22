@@ -90,11 +90,13 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
          else{
             opStack.pushAndApply(new OpSetArmor(xBar, loadout, part, side, armor, true));
          }
-         fireStateChanged();
       }
       catch( IllegalArgumentException exception ){
          // TODO: Handle failed case better!
          Toolkit.getDefaultToolkit().beep();
+      }
+      finally{
+         fireStateChanged();
       }
    }
 

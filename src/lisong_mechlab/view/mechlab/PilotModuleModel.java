@@ -47,6 +47,8 @@ public class PilotModuleModel implements ListModel<String>, MessageXBar.Reader{
    private final Set<ListDataListener> listeners = new HashSet<>();
    private final List<PilotModule>     modules   = new ArrayList<>();
 
+   public final static String          EMPTY     = "EMPTY";
+
    public PilotModuleModel(LoadoutBase<?> aLoadout, MessageXBar aXBar){
       loadout = aLoadout;
       aXBar.attach(this);
@@ -81,7 +83,7 @@ public class PilotModuleModel implements ListModel<String>, MessageXBar.Reader{
    @Override
    public String getElementAt(int aIndex){
       if( aIndex >= loadout.getModules().size() )
-         return "EMPTY";
+         return EMPTY;
       return loadout.getModules().get(aIndex).getName();
    }
 

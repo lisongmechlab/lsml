@@ -21,12 +21,15 @@ package lisong_mechlab.view.mechlab.equipment;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -40,6 +43,7 @@ import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.LoadoutMessage.Type;
+import lisong_mechlab.model.loadout.OpAddModule;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.ModuleTransferHandler;
@@ -57,7 +61,7 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
    private LoadoutBase<?>                      currentLoadout;
    private ModuleCathegory                     cathegory;
 
-   public ModuleSeletionList(LoadoutDesktop aDesktop, MessageXBar aXBar, ModuleCathegory aCathegory){
+   public ModuleSeletionList(final LoadoutDesktop aDesktop, final MessageXBar aXBar, ModuleCathegory aCathegory){
       model = new DefaultListModel<>();
       cathegory = aCathegory;
       changeLoadout(null);
@@ -82,6 +86,21 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
       });
       setTransferHandler(new ModuleTransferHandler());
       setDragEnabled(true);
+      addMouseListener(new MouseAdapter(){
+         @Override
+         public void mouseClicked(MouseEvent aE){
+            if( aE.getClickCount() >= 2 && currentLoadout != null ){
+               PilotModule module = getSelectedValue();
+               if( module != null && currentLoadout.canAddModule(module) ){
+                  JInternalFrame frame = aDesktop.getSelectedFrame();
+                  if( frame != null ){
+                     LoadoutFrame loadoutFrame = (LoadoutFrame)frame;
+                     loadoutFrame.getOpStack().pushAndApply(new OpAddModule(aXBar, currentLoadout, module));
+                  }
+               }
+            }
+         }
+      });
       aXBar.attach(this);
       aDesktop.addInternalFrameListener(this);
    }
