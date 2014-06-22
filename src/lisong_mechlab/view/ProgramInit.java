@@ -135,7 +135,6 @@ public class ProgramInit extends JFrame{
          PrintWriter writer = new PrintWriter(System.out);
          DataCache.getInstance(writer);
          writer.flush();
-         writer.close();
 
          switch( DataCache.getStatus() ){
             case Builtin:
