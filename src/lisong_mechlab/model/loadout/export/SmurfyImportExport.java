@@ -114,8 +114,6 @@ public class SmurfyImportExport{
       return true;
    }
 
-   @SuppressWarnings("resource")
-   // The resource is auto-closed with new try-resource statement
    public List<LoadoutBase<?>> listMechBay() throws DecodingException, IOException{
       List<LoadoutBase<?>> ans = new ArrayList<>();
 
@@ -125,16 +123,19 @@ public class SmurfyImportExport{
       connection.setRequestProperty("Accept-Charset", "UTF-8");
       connection.setRequestProperty("Authorization", "APIKEY " + apiKey);
 
-      try( BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream())) ){
+      try( InputStream is = connection.getInputStream();
+           InputStreamReader isr = new InputStreamReader(is);
+           BufferedReader in = new BufferedReader(isr) ){
          String line;
          Pattern namePattern = Pattern.compile("\\s*<name>.*CDATA\\[([^\\]]+).*");
          Pattern lsmlPattern = Pattern.compile("\\s*<lsml>.*CDATA\\[lsml://([^\\]]+).*");
 
+         int lines = 0;
          String name = null;
          while( null != (line = in.readLine()) ){
             Matcher nameMatcher = namePattern.matcher(line);
             Matcher lsmlMatcher = lsmlPattern.matcher(line);
-
+            lines++;
             if( nameMatcher.matches() && name == null ){
                name = nameMatcher.group(1);
             }
@@ -149,12 +150,17 @@ public class SmurfyImportExport{
                name = null;
             }
          }
+
+         if( ans.isEmpty() ){
+            if( lines > 10 ){
+               throw new IOException("Mechbay contained no LSML links. Link generation may be disabled by mwo.smurfy-net.de.");
+            }
+            throw new IOException("Mechbay was empty.");
+         }
       }
       return ans;
    }
 
-   @SuppressWarnings("resource")
-   // It is closed!
    public String sendLoadout(LoadoutBase<?> aLoadout) throws IOException{
       int mechId = aLoadout.getChassis().getMwoId();
       URL loadoutUploadUrlXml = new URL("https://mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts.xml");
@@ -175,7 +181,9 @@ public class SmurfyImportExport{
          wr.write(rawData);
       }
 
-      try( BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream())) ){
+      try( InputStream is = connection.getInputStream();
+           InputStreamReader isr = new InputStreamReader(is);
+           BufferedReader rd = new BufferedReader(isr) ){
          Pattern pattern = Pattern.compile(".*mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts/([^.]{40})\\..*");
          for(String line = rd.readLine(); line != null; line = rd.readLine()){
             Matcher m = pattern.matcher(line);

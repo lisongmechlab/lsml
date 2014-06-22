@@ -28,6 +28,7 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrade;
@@ -72,15 +73,15 @@ public class SmurfyXML{
    static private XStream stream(){
       XStream stream = new XStream(new StaxDriver(new NoNameCoder()));
       stream.setMode(XStream.NO_REFERENCES);
-      stream.alias("loadout", LoadoutStandard.class);
+      stream.alias("loadout", LoadoutBase.class);
       stream.registerConverter(new Converter(){
          @Override
-         public boolean canConvert(Class aArg0){
-            return LoadoutStandard.class.isAssignableFrom(aArg0);
+         public boolean canConvert(Class aClass){
+            return LoadoutBase.class.isAssignableFrom(aClass);
          }
 
          @Override
-         public Object unmarshal(HierarchicalStreamReader aArg0, UnmarshallingContext aArg1){
+         public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
             return null; // Implement this if we need to import from smurfy.
          }
 
@@ -91,69 +92,76 @@ public class SmurfyXML{
          }
 
          @Override
-         public void marshal(Object aObject, HierarchicalStreamWriter writer, MarshallingContext context){
+         public void marshal(Object aObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
 
-            LoadoutStandard loadout = (LoadoutStandard)aObject;
-            writeValue(writer, "id", loadout.getName());
-            writeValue(writer, "mech_id", loadout.getChassis().getMwoId());
+            LoadoutBase<?> loadoutBase = (LoadoutBase<?>)aObject;
+            LoadoutOmniMech loadoutOmniMech = (loadoutBase instanceof LoadoutOmniMech) ? (LoadoutOmniMech)loadoutBase : null;
+            //LoadoutStandard loadoutStandard = (loadoutBase instanceof LoadoutStandard) ? (LoadoutStandard)loadoutBase : null;
 
-            writer.startNode("configuration");
+            writeValue(aWriter, "id", loadoutBase.getName());
+            writeValue(aWriter, "mech_id", loadoutBase.getChassis().getMwoId());
+
+            aWriter.startNode("configuration");
             {
-               for(Location type : new Location[] {Location.Head, Location.LeftTorso, Location.CenterTorso, Location.RightTorso, Location.LeftLeg,
+               for(Location location : new Location[] {Location.Head, Location.LeftTorso, Location.CenterTorso, Location.RightTorso, Location.LeftLeg,
                      Location.RightLeg, Location.RightArm, Location.LeftArm}){
-                  ConfiguredComponentBase part = loadout.getComponent(type);
-                  writer.startNode("component");
+                  ConfiguredComponentBase part = loadoutBase.getComponent(location);
+                  aWriter.startNode("component");
 
-                  writeValue(writer, "name", part.getInternalComponent().getLocation().toMwoName());
+                  writeValue(aWriter, "name", part.getInternalComponent().getLocation().toMwoName());
                   if( part.getInternalComponent().getLocation().isTwoSided() ){
-                     writeValue(writer, "armor", part.getArmor(ArmorSide.FRONT));
+                     writeValue(aWriter, "armor", part.getArmor(ArmorSide.FRONT));
                   }
                   else{
-                     writeValue(writer, "armor", part.getArmorTotal());
+                     writeValue(aWriter, "armor", part.getArmorTotal());
+                  }
+                  
+                  if(loadoutOmniMech != null){
+                     writeValue(aWriter, "omni_pod", loadoutOmniMech.getComponent(location).getOmniPod().getMwoId());
                   }
 
-                  writer.startNode("items");
+                  aWriter.startNode("items");
                   for(Item item : part.getItemsEquipped()){
                      if( item instanceof Internal )
                         continue;
-                     writer.startNode("item");
+                     aWriter.startNode("item");
 
-                     writeValue(writer, "id", item.getMwoId());
-                     writeValue(writer, "type", item instanceof Weapon ? "weapon" : item instanceof Ammunition ? "ammo" : "module");
-                     writeValue(writer, "name", item.getName());
-                     writer.endNode();
+                     writeValue(aWriter, "id", item.getMwoId());
+                     writeValue(aWriter, "type", item instanceof Weapon ? "weapon" : item instanceof Ammunition ? "ammo" : "module");
+                     writeValue(aWriter, "name", item.getName());
+                     aWriter.endNode();
                   }
-                  writer.endNode();
+                  aWriter.endNode();
 
-                  writer.endNode();
+                  aWriter.endNode();
 
                }
                for(Location type : new Location[] {Location.LeftTorso, Location.CenterTorso, Location.RightTorso}){
-                  ConfiguredComponentBase part = loadout.getComponent(type);
-                  writer.startNode("component");
-                  writeValue(writer, "name", part.getInternalComponent().getLocation().toMwoRearName());
-                  writeValue(writer, "armor", part.getArmor(ArmorSide.BACK));
-                  writer.endNode();
+                  ConfiguredComponentBase part = loadoutBase.getComponent(type);
+                  aWriter.startNode("component");
+                  writeValue(aWriter, "name", part.getInternalComponent().getLocation().toMwoRearName());
+                  writeValue(aWriter, "armor", part.getArmor(ArmorSide.BACK));
+                  aWriter.endNode();
                }
             }
-            writer.endNode();
+            aWriter.endNode();
 
-            writer.startNode("upgrades");
+            aWriter.startNode("upgrades");
             {
-               Upgrades upgrades = loadout.getUpgrades();
+               Upgrades upgrades = loadoutBase.getUpgrades();
                Upgrade ups[] = new Upgrade[] {upgrades.getArmor(), upgrades.getStructure(), upgrades.getHeatSink(), upgrades.getGuidance()};
                for(int i = 0; i < ups.length; ++i){
                   Upgrade up = ups[i];
-                  writer.startNode("upgrade");
-                  writer.startNode("id");
-                  writer.setValue("" + up.getMwoId());
-                  writer.endNode();
-                  writeValue(writer, "type", i);
-                  writeValue(writer, "name", up.getName());
-                  writer.endNode();
+                  aWriter.startNode("upgrade");
+                  aWriter.startNode("id");
+                  aWriter.setValue("" + up.getMwoId());
+                  aWriter.endNode();
+                  writeValue(aWriter, "type", i);
+                  writeValue(aWriter, "name", up.getName());
+                  aWriter.endNode();
                }
             }
-            writer.endNode();
+            aWriter.endNode();
          }
       });
       return stream;
