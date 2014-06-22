@@ -35,7 +35,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -43,7 +42,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.text.DefaultFormatter;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
@@ -205,6 +203,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          omnipodSelection = new JComboBox<>(new Vector<>(compatiblePods));
          omnipodSelection.setRenderer(new OmniPodRenderer());
          omnipodSelection.addPopupMenuListener(new StyledComboBox(true, false));
+         omnipodSelection.setFocusable(false);
 
          Dimension max = omnipodSelection.getMaximumSize();
          max.height = ItemRenderer.getItemHeight();
@@ -235,6 +234,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       PartList list = new PartList(aStack, aLoadout, aLoadoutPart, aXBar, aSlotDistributor);
       list.setFixedCellHeight(ItemRenderer.getItemHeight());
       list.setFixedCellWidth(ItemRenderer.getItemWidth());
+      list.setFocusable(false);
 
       add(list);
 
@@ -269,8 +269,6 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          frontSpinner = new JSpinner(new ArmorSpinner(loadout, component, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
          frontSpinner.setMaximumSize(labelDimension);
          frontSpinner.getEditor().setPreferredSize(spinnerDimension);
-         JFormattedTextField field = (JFormattedTextField)frontSpinner.getEditor().getComponent(0);
-         ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
          backSpinner = new JSpinner(new ArmorSpinner(loadout, component, ArmorSide.BACK, anXBar, aSymmetric, aStack));
          backSpinner.setMaximumSize(labelDimension);
@@ -310,8 +308,6 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          spinner = new JSpinner(new ArmorSpinner(loadout, component, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
          spinner.setMaximumSize(labelDimension);
          spinner.getEditor().setPreferredSize(spinnerDimension);
-         JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
-         ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
          if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
             panel.add(new JLabel("Armor:"));

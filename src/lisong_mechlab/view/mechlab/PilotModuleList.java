@@ -58,6 +58,7 @@ public class PilotModuleList extends JList<String>{
       stack = aOperationStack;
       loadout = aLoadout;
       setVisible(true);
+      setFocusable(false);
       setVisibleRowCount(aLoadout.getModulesMax());
       setFixedCellWidth(ItemRenderer.getItemWidth());
       setFixedCellHeight(ItemRenderer.getItemHeight());
@@ -70,11 +71,12 @@ public class PilotModuleList extends JList<String>{
          public Component getListCellRendererComponent(JList<? extends String> aList, String aValue, int aIndex, boolean aIsSelected,
                                                        boolean aCellHasFocus){
             label.setText(aValue);
-            
-            if(aIndex == aList.getModel().getSize()-1){
+
+            if( aIndex == aList.getModel().getSize() - 1 ){
                label.setBackground(new Color(0xb8aa81));
                label.setOpaque(true);
-            }else{
+            }
+            else{
                label.setBackground(Color.WHITE);
                label.setOpaque(false);
             }
@@ -110,6 +112,10 @@ public class PilotModuleList extends JList<String>{
    }
 
    public PilotModule takeCurrent(){
+      String sel = getSelectedValue();
+      if( sel.equals(PilotModuleModel.EMPTY) )
+         return null;
+
       PilotModule module = PilotModuleDB.lookup(getSelectedValue());
       if( module != null ){
          stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));

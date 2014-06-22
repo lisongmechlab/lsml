@@ -54,6 +54,8 @@ public class ModuleTransferHandler extends TransferHandler{
       else if( aComponent instanceof PilotModuleList ){
          PilotModuleList pml = (PilotModuleList)aComponent;
          module = pml.takeCurrent();
+         if(module == null)
+            return null;
       }
       else{
          return null;
