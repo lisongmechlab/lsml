@@ -28,6 +28,7 @@ import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
@@ -242,7 +243,7 @@ abstract class OpItemBase extends Operation{
 
    private void checkManyGaussWarning(Item aItem){
       if( null != xBar ){
-         if( null != aItem.getName() && aItem.getName().contains("GAUSS") ){
+         if( aItem instanceof BallisticWeapon && aItem.getName().contains("GAUSS") ){
             int rifles = 0;
             for(ConfiguredComponentBase componentOmniMech : loadout.getComponents()){
                boolean done = false;
