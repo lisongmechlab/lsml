@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -255,6 +256,8 @@ public class MechGarage{
       XStream stream = LoadoutBase.loadoutXstream(anXBar);
       stream.alias("garage", MechGarage.class);
       stream.omitField(MechGarage.class, "file");
+      stream.alias("loadout", LoadoutOmniMech.class);
+      stream.alias("loadout", LoadoutStandard.class);
       return stream;
    }
 }

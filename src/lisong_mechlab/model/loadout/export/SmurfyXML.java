@@ -74,6 +74,8 @@ public class SmurfyXML{
       XStream stream = new XStream(new StaxDriver(new NoNameCoder()));
       stream.setMode(XStream.NO_REFERENCES);
       stream.alias("loadout", LoadoutBase.class);
+      stream.alias("loadout", LoadoutStandard.class);
+      stream.alias("loadout", LoadoutOmniMech.class);
       stream.registerConverter(new Converter(){
          @Override
          public boolean canConvert(Class aClass){
