@@ -45,6 +45,7 @@ import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.chassi.Quirks.Quirk;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
@@ -817,6 +818,7 @@ public class DataCache{
    private static XStream stream(){
       XStream stream = new XStream();
       stream.autodetectAnnotations(true);
+      stream.setMode(XStream.ID_REFERENCES);
       stream.alias("datacache", DataCache.class);
       stream.alias("jumpjet", JumpJet.class);
       stream.alias("ammunition", Ammunition.class);
@@ -834,7 +836,11 @@ public class DataCache{
       stream.alias("missileweapon", MissileWeapon.class);
       stream.alias("module", Module.class);
       stream.alias("part", Location.class);
-      stream.alias("GuidanceUpgrade", GuidanceUpgrade.class);
+      stream.alias("guidanceupgrade", GuidanceUpgrade.class);
+      stream.alias("pilotmodule", PilotModule.class);
+      stream.alias("weaponmodule", WeaponModule.class);
+      stream.alias("omnipod", OmniPod.class);
+      stream.alias("quirk  ", Quirk.class);
 
       // stream.addImmutableType(Internal.class);
       stream.registerConverter(new HardPointConverter());

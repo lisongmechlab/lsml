@@ -25,20 +25,29 @@ import java.util.List;
 
 import lisong_mechlab.model.item.Item;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
  * This class represents an omnipod of an omnimech configuration.
  * 
  * @author Li Song
  */
 public class OmniPod{
+   @XStreamAsAttribute
    private final String          chassis;
    private final List<Item>      fixedItems;
    private final List<HardPoint> hardPoints;
+   @XStreamAsAttribute
    private final Location        location;
+   @XStreamAsAttribute
    private final int             maxJumpJets;
+   @XStreamAsAttribute
    private final int             maxPilotModules;
+   @XStreamAsAttribute
    private final int             mwoID;
+   @XStreamAsAttribute
    private final Quirks          quirks;
+   @XStreamAsAttribute
    private final String          series;
    private final List<Item>      toggleableItems;
 

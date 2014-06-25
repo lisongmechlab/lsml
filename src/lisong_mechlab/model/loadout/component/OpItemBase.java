@@ -28,7 +28,6 @@ import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;

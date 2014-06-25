@@ -28,6 +28,8 @@ import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.pilot.PilotSkillTree;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
  * This class represents quirks in the form of movement, health and weapon stats.
  * 
@@ -35,9 +37,13 @@ import lisong_mechlab.model.pilot.PilotSkillTree;
  */
 public class Quirks implements MovementModifier, WeaponModifier, HealthModifier{
    public static class Quirk{
+      @XStreamAsAttribute
       public final String  name;
+      @XStreamAsAttribute
       public final String  key;
+      @XStreamAsAttribute
       public final double  value;
+      @XStreamAsAttribute
       public final boolean positiveGood;
 
       public Quirk(String aKey, String aName, double aValue, boolean aPositiveGood){
@@ -47,7 +53,7 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier{
          positiveGood = aPositiveGood;
       }
    }
-
+   
    private final Map<String, Quirk> quirks;
 
    /**
