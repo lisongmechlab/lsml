@@ -74,7 +74,7 @@ public class OmniPodRenderer implements ListCellRenderer<OmniPod>{
       // Render item in list
       border.setTitle(aValue.toString());
 
-      if( !aValue.getHardPoints().isEmpty() ){
+      if( !aValue.getHardPoints().isEmpty() || 0 != aValue.getJumpJetsMax()){
          hardpoints.setVisible(true);
          hardpoints.removeAll();
          for(HardPointType hp : HardPointType.values()){
