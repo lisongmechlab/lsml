@@ -312,7 +312,7 @@ public class StyleManager{
       else if( anItem instanceof JumpJet ){
          return COLOR_BG_JJ;
       }
-      else if( anItem.getName().equals("TAG") ){
+      else if( anItem.getName().contains("TAG") ){
          return COLOR_BG_ENERGY_ALT;
       }
       else if( anItem instanceof Weapon || anItem == ItemDB.ECM ){
