@@ -37,6 +37,7 @@ import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
+import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
@@ -84,6 +85,9 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
       JPanel engineXlItems = new JPanel(new ModifiedFlowLayout());
       engineXlItems.setBorder(BorderFactory.createTitledBorder("Engine - XL"));
       for(Item item : items){
+         if(item instanceof Internal)
+            continue;
+         
          ItemLabel itemLabel = new ItemLabel(item, this, infoPanel, aXBar);
          if( item instanceof Ammunition ){
             Ammunition ammunition = (Ammunition)item;
