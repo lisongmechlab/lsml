@@ -308,7 +308,7 @@ public class DataCache{
                   status = ParseStatus.Parsed;
                }
             }
-            catch( IOException exception ){
+            catch( Throwable exception ){
                if( null != aLog ){
                   aLog.append("Parsing of game data failed...").append(System.lineSeparator());
                   exception.printStackTrace(new PrintWriter(aLog));

@@ -34,7 +34,8 @@ public class JumpJet extends Module{
       maxTons = aModule.JumpJetStats.maxTons;
       boost_z = aModule.JumpJetStats.boost;
       duration = aModule.JumpJetStats.duration;
-      heat = aModule.JumpJetStats.heat;
+      heat = Double.parseDouble(aModule.JumpJetStats.heat.split(",")[0]); // Two values, first is heat for one JJ, second is heat for every additional JJ
+      // TODO: Parse extra heat and make use of it somethow.
    }
 
    public double getForce(){
