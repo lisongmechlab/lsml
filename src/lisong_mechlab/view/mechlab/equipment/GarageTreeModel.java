@@ -71,7 +71,7 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
       DefaultTreeCathegory<AbstractTreeCathegory> chassisClan = new DefaultTreeCathegory<AbstractTreeCathegory>("Clan", root, this);
       for(final ChassisClass chassiClass : ChassisClass.values()){
          DefaultTreeCathegory<ChassisBase> classIS = new ChassisFilterTreeCathegory(aXBar, chassiClass.toString(), chassisIS, aFilterBar, aGarageTree);
-         DefaultTreeCathegory<ChassisBase> classClan = new ChassisFilterTreeCathegory(aXBar, chassiClass.toString(), chassisIS, aFilterBar,
+         DefaultTreeCathegory<ChassisBase> classClan = new ChassisFilterTreeCathegory(aXBar, chassiClass.toString(), chassisClan, aFilterBar,
                                                                                       aGarageTree);
 
          for(ChassisBase chassi : ChassisDB.lookup(chassiClass)){
@@ -92,13 +92,15 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener{
 
       DefaultTreeCathegory<GarageCathegory> garageIs = new DefaultTreeCathegory<>("Garage - IS", root, this);
       for(ChassisClass chassiClass : ChassisClass.values()){
-         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garageIs, this, aXBar, chassiClass, aFilterBar, aGarageTree, Faction.InnerSphere);
+         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garageIs, this, aXBar, chassiClass, aFilterBar, aGarageTree,
+                                                     Faction.InnerSphere);
          garageIs.addChild(clazz);
       }
-      
+
       DefaultTreeCathegory<GarageCathegory> garageClan = new DefaultTreeCathegory<>("Garage - Clan", root, this);
       for(ChassisClass chassiClass : ChassisClass.values()){
-         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garageClan, this, aXBar, chassiClass, aFilterBar, aGarageTree, Faction.Clan);
+         GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garageClan, this, aXBar, chassiClass, aFilterBar, aGarageTree,
+                                                     Faction.Clan);
          garageClan.addChild(clazz);
       }
 
