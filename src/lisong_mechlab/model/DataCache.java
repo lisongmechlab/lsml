@@ -89,7 +89,6 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import lisong_mechlab.mwo_data.helpers.Mission;
 import lisong_mechlab.mwo_data.helpers.XMLItemStatsMech;
 import lisong_mechlab.mwo_data.helpers.XMLPilotModuleStats;
-import lisong_mechlab.mwo_data.helpers.XMLTargetingComputerStats.XMLWeaponStatsFilter;
 import lisong_mechlab.mwo_data.helpers.XMLWeaponStats;
 import lisong_mechlab.util.OS;
 import lisong_mechlab.util.OS.WindowsVersion;
