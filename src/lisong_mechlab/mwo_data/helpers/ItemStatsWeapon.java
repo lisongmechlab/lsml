@@ -39,6 +39,8 @@ public class ItemStatsWeapon extends ItemStats{
       @XStreamAsAttribute
       public double minRange;
       @XStreamAsAttribute
+      public double nullRange;
+      @XStreamAsAttribute
       public int    ammoPerShot;
       @XStreamAsAttribute
       public String ammoType;
@@ -85,6 +87,8 @@ public class ItemStatsWeapon extends ItemStats{
       public double JammedTime;
       @XStreamAsAttribute
       public int    ShotsDuringCooldown;
+      @XStreamAsAttribute
+      public double falloffexponent;
    }
 
    public WeaponStatsTag WeaponStats;

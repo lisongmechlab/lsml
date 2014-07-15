@@ -38,11 +38,15 @@ public class Weapon extends HeatSource{
    @XStreamAsAttribute
    private final double    cycleTime;
    @XStreamAsAttribute
+   private final double    rangeZero;
+   @XStreamAsAttribute
    private final double    rangeMin;
    @XStreamAsAttribute
    private final double    rangeLong;
    @XStreamAsAttribute
    private final double    rangeMax;
+   @XStreamAsAttribute
+   private final double    fallOffExponent;
    @XStreamAsAttribute
    private final int       projectilesPerRound;
    @XStreamAsAttribute
@@ -76,9 +80,11 @@ public class Weapon extends HeatSource{
       else{
          cycleTime = aStatsWeapon.WeaponStats.cooldown;
       }
+      rangeZero = aStatsWeapon.WeaponStats.nullRange;
       rangeMin = aStatsWeapon.WeaponStats.minRange;
       rangeMax = aStatsWeapon.WeaponStats.maxRange;
       rangeLong = aStatsWeapon.WeaponStats.longRange;
+      fallOffExponent = aStatsWeapon.WeaponStats.falloffexponent != 0 ? aStatsWeapon.WeaponStats.falloffexponent : 1.0;
 
       roundsPerShot = aStatsWeapon.WeaponStats.numFiring;
       projectilesPerRound = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
@@ -148,7 +154,9 @@ public class Weapon extends HeatSource{
    }
 
    public double getRangeZero(){
-      return 0;
+      if(rangeZero == rangeMin)
+         return rangeZero - Math.ulp(rangeZero);
+      return rangeZero;
    }
 
    public double getRangeMin(){
@@ -164,6 +172,10 @@ public class Weapon extends HeatSource{
             }
          }
       }
+      
+      if(rangeMax == rangeLong)
+         a += Math.ulp(a);
+      
       return rangeMax + a;
    }
 
@@ -197,12 +209,14 @@ public class Weapon extends HeatSource{
       // Assume linear fall off
       if( range < getRangeZero() )
          return 0;
-      if( range < getRangeMin() )
-         return (range - getRangeZero()) / (getRangeMin() - getRangeZero());
+      else if( range < getRangeMin() )
+         return Math.pow((range - getRangeZero()) / (getRangeMin() - getRangeZero()), fallOffExponent);
       else if( range <= getRangeLong(aModifiers) )
          return 1.0;
-      else if( range < getRangeMax(aModifiers) )
+      else if( range < getRangeMax(aModifiers) ){
+         // Presumably long range fall off can also be exponential, we'll wait until there is evidence of the fact.
          return 1.0 - (range - getRangeLong(aModifiers)) / (getRangeMax(aModifiers) - getRangeLong(aModifiers));
+      }
       else
          return 0;
    }
@@ -309,5 +323,12 @@ public class Weapon extends HeatSource{
             return mLhs.group(1).compareTo(mRhs.group(1));
          }
       };
+   }
+   
+   /**
+    * @return <code>true</code> if this weapon has a non-linear fall off.
+    */
+   public boolean hasNonLinearFalloff(){
+      return 1.0 != fallOffExponent;
    }
 }
