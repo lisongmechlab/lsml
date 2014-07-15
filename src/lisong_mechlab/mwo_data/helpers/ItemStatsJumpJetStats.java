@@ -31,7 +31,7 @@ public class ItemStatsJumpJetStats{
    @XStreamAsAttribute
    public double duration;
    @XStreamAsAttribute
-   public double heat;
+   public String heat;
    @XStreamAsAttribute
    public int    minTons;
    @XStreamAsAttribute
