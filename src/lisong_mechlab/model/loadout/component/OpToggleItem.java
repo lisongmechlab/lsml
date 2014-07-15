@@ -38,6 +38,7 @@ public class OpToggleItem extends Operation{
    private final ConfiguredComponentOmniMech component;
    private final boolean                     newState;
    private boolean                           oldState;
+   private boolean                           oldHAState;
 
    public OpToggleItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentOmniMech aComponent, Item aItem, boolean aNewState){
       if( aItem != ItemDB.HA && aItem != ItemDB.LAA ){
@@ -58,21 +59,25 @@ public class OpToggleItem extends Operation{
    @Override
    protected void apply(){
       oldState = component.getToggleState(item);
+      oldHAState = component.getToggleState(ItemDB.HA);
 
       if( newState == oldState )
          return;
 
-      if( loadout.getNumCriticalSlotsFree() < 1 ){
-         throw new IllegalArgumentException("Not enough globally free slots to toggle " + item);
-      }
-
       if( newState == true ){
+         if( loadout.getNumCriticalSlotsFree() < 1 ){
+            throw new IllegalArgumentException("Not enough globally free slots to toggle " + item);
+         }
          if( !component.canToggleOn(item) ){
             throw new IllegalArgumentException("Not allowed to toggle " + item);
          }
       }
 
       component.setToggleState(item, newState);
+      
+      if(item == ItemDB.LAA && newState == false){
+         component.setToggleState(ItemDB.HA, false);   
+      }
 
       if( xBar != null ){
          xBar.post(new ConfiguredComponentBase.Message(component, Type.ItemsChanged));
@@ -84,5 +89,11 @@ public class OpToggleItem extends Operation{
       if( newState == oldState )
          return;
       component.setToggleState(item, oldState);
+      if(item == ItemDB.LAA && oldHAState == true){
+         component.setToggleState(ItemDB.HA, true);   
+      }
+      if( xBar != null ){
+         xBar.post(new ConfiguredComponentBase.Message(component, Type.ItemsChanged));
+      }
    }
 }
