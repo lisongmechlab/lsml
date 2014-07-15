@@ -38,6 +38,14 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  */
 public class WeaponRanges{
 
+   static private void addRange(SortedSet<Double> result, double start, double end){
+      final double step = 10;
+      while( start + step < end ){
+         start += step;
+         result.add(start);
+      }
+   }
+
    static public Double[] getRanges(Collection<Weapon> aWeaponCollection, Collection<WeaponModifier> aModifiers){
       SortedSet<Double> ans = new TreeSet<>();
 
@@ -46,22 +54,21 @@ public class WeaponRanges{
          if( !weapon.isOffensive() )
             continue;
 
+         ans.add(weapon.getRangeZero());
+         if( weapon.hasNonLinearFalloff() ){
+            addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
+         }
+         ans.add(weapon.getRangeMin());
+
          if( weapon.hasSpread() ){
-            ans.add(weapon.getRangeZero());
-            double min = weapon.getRangeMin();
-            double max = weapon.getRangeMax(aModifiers);
-            ans.add(min);
-            final double step = 10;
-            while( min + step < max ){
-               min += step;
-               ans.add(min);
-            }
-            ans.add(max);
+            addRange(ans, weapon.getRangeMin(), weapon.getRangeMax(aModifiers));
+            ans.add(weapon.getRangeMax(aModifiers));
          }
          else{
-            ans.add(weapon.getRangeZero());
-            ans.add(weapon.getRangeMin());
             ans.add(weapon.getRangeLong(aModifiers));
+            if( weapon.hasNonLinearFalloff() ){
+               addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
+            }
             ans.add(weapon.getRangeMax(aModifiers));
          }
       }

@@ -121,6 +121,16 @@ public class WeaponTest{
    }
 
    @Test
+   public void testGetRangeEffectivity_clrm() throws Exception{
+      MissileWeapon lrm = (MissileWeapon)ItemDB.lookup("C-LRM 20");
+      assertEquals(0.0, lrm.getRangeEffectivity(0, null), 0.0);
+      assertEquals(0.444, lrm.getRangeEffectivity(120, null), 0.001);
+      assertEquals(1.0, lrm.getRangeEffectivity(180, null), 0.0);
+      assertEquals(1.0, lrm.getRangeEffectivity(1000, null), 0.0);
+      assertEquals(0.0, lrm.getRangeEffectivity(1000 + Math.ulp(2000), null), 0.0);
+   }
+   
+   @Test
    public void testGetRangeEffectivity_gaussrifle() throws Exception{
       BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
       assertEquals(1.0, gauss.getRangeEffectivity(0, null), 0.0);
