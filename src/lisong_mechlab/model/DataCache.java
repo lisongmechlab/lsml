@@ -89,6 +89,7 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import lisong_mechlab.mwo_data.helpers.Mission;
 import lisong_mechlab.mwo_data.helpers.XMLItemStatsMech;
 import lisong_mechlab.mwo_data.helpers.XMLPilotModuleStats;
+import lisong_mechlab.mwo_data.helpers.XMLTargetingComputerStats.XMLWeaponStatsFilter;
 import lisong_mechlab.mwo_data.helpers.XMLWeaponStats;
 import lisong_mechlab.util.OS;
 import lisong_mechlab.util.OS.WindowsVersion;
@@ -518,7 +519,6 @@ public class DataCache{
             case "CBAPStats":
             case "CClanBAPStats":
             case "CCASEStats":
-            case "CCommandConsoleStats":
                ans.add(new Module(statsModule));
                break;
             case "CLowerArmActuatorStats":
@@ -840,7 +840,9 @@ public class DataCache{
       stream.alias("pilotmodule", PilotModule.class);
       stream.alias("weaponmodule", WeaponModule.class);
       stream.alias("omnipod", OmniPod.class);
-      stream.alias("quirk  ", Quirk.class);
+      stream.alias("quirk", Quirk.class);
+//      stream.alias("WeaponStats", XMLWeaponStatsFilter.class);
+//      stream.alias("WeaponStatsFilter", XMLWeaponStatsFilter.class);
 
       // stream.addImmutableType(Internal.class);
       stream.registerConverter(new HardPointConverter());

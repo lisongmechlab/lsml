@@ -21,23 +21,38 @@ package lisong_mechlab.mwo_data.helpers;
 
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class ItemStatsModule extends ItemStats{
-   @XStreamAsAttribute
-   public String                    CType;
+/**
+ * Helper class for parsing targeting computer information from XML files.
+ * 
+ * @author Li Song
+ */
+public class XMLTargetingComputerStats{
+   @XStreamAlias("WeaponStatsFilter")
+   public static class XMLWeaponStatsFilter{
+      @XStreamAlias("WeaponStats")
+      public static class XMLWeaponStats{
+         @XStreamAsAttribute
+         public String operation;
+         @XStreamAsAttribute
+         public double longRange;
+         @XStreamAsAttribute
+         public double maxRange;
+         @XStreamAsAttribute
+         public double speed;
+         @XStreamAsAttribute
+         public String critChanceIncrease;
+      }
 
-   public ItemStatsModuleStats      ModuleStats;
-   public ItemStatsJumpJetStats     JumpJetStats;
-   public ItemStatsHeatSinkStats    HeatSinkStats;
-   public ItemStatsEngineStats      EngineStats;
-   public AmmoTypeStats             AmmoTypeStats;
-   public XMLPilotModuleStats       PilotModuleStats;
-   public XMLTargetingComputerStats TargetingComputerStats;
-
-   public XMLPilotModuleWeaponStats PilotModuleWeaponStats;
+      @XStreamImplicit
+      public List<XMLWeaponStats> WeaponStats;
+      @XStreamAsAttribute
+      public String               compatibleWeapons;
+   }
 
    @XStreamImplicit
-   public List<XMLWeaponStats>      WeaponStats;
+   public List<XMLWeaponStatsFilter> WeaponStatsFilter;
 }
