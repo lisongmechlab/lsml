@@ -154,8 +154,8 @@ public class Weapon extends HeatSource{
    }
 
    public double getRangeZero(){
-      if(rangeZero == rangeMin)
-         return rangeZero - Math.ulp(rangeZero);
+      if( rangeZero == rangeMin )
+         return rangeZero - Math.ulp(rangeMin);
       return rangeZero;
    }
 
@@ -172,10 +172,10 @@ public class Weapon extends HeatSource{
             }
          }
       }
-      
-      if(rangeMax == rangeLong)
-         a += Math.ulp(a);
-      
+
+      if( rangeMax == rangeLong )
+         a += Math.ulp(rangeMax + a);
+
       return rangeMax + a;
    }
 
@@ -324,7 +324,7 @@ public class Weapon extends HeatSource{
          }
       };
    }
-   
+
    /**
     * @return <code>true</code> if this weapon has a non-linear fall off.
     */

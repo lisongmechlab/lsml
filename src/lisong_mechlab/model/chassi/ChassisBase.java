@@ -260,7 +260,7 @@ public abstract class ChassisBase{
       }
       
       for(ComponentBase part : getComponents()){
-         if( part.isAllowed(aItem) )
+         if( part.isAllowed(aItem, null) )
             return true;
       }
       return false;

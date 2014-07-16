@@ -102,6 +102,7 @@ public class ComponentStandardTest extends ComponentBaseTest{
    public void testIsAllowed_Jumpjets(){
       JumpJet jj = Mockito.mock(JumpJet.class);
       Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
+      criticalSlots = 12;
 
       List<Location> allowedLocations = new ArrayList<>();
       allowedLocations.add(Location.CenterTorso);

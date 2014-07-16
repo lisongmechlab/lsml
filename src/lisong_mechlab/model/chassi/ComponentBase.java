@@ -133,6 +133,19 @@ public abstract class ComponentBase{
     * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
     */
    public boolean isAllowed(Item aItem){
+      return isAllowed(aItem, null);
+   }
+   
+   /**
+    * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
+    * only useful if {@link ChassisBase#isAllowed(Item)} returns true.
+    * 
+    * @param aItem
+    *           The {@link Item} to check.
+    * @param aEngine If not <code>null</code>, this engine is assumed to be equipped.
+    * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
+    */
+   public boolean isAllowed(Item aItem, @SuppressWarnings("unused") Engine aEngine){
       if( aItem instanceof JumpJet ){
          switch( getLocation() ){
             case RightTorso:
