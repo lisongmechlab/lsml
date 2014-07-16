@@ -29,7 +29,6 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -37,7 +36,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Emily Björk
  */
-@XStreamAlias("GuidanceUpgrade")
 public class GuidanceUpgrade extends Upgrade{
    @XStreamAsAttribute
    final private int    slots;

@@ -23,7 +23,6 @@ import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -31,7 +30,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Emily Björk
  */
-@XStreamAlias("StructureUpgrade")
 public class StructureUpgrade extends Upgrade{
    @XStreamAsAttribute
    private final double internalStructurePct;

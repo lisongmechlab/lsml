@@ -24,10 +24,8 @@ import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias("HeatSinkUpgrade")
 public class HeatSinkUpgrade extends Upgrade{
    @XStreamAsAttribute
    private final HeatSink heatSinkType;
