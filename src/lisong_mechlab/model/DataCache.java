@@ -126,24 +126,19 @@ public class DataCache{
    private static transient Boolean     loading   = false;
    private static transient ParseStatus status    = ParseStatus.NotInitialized;
 
-   private List<ChassisBase>            chassis;
-
-   private Map<String, Long>            checksums = new HashMap<>();           // Filename - CRC
-
-   private List<Environment>            environments;
-
-   private List<Item>                   items;
-
    @XStreamAsAttribute
    private String                       lsmlVersion;
+   private Map<String, Long>            checksums = new HashMap<>();           // Filename - CRC
+   private List<Upgrade>                upgrades;
+   private List<Environment>            environments;
+   private List<Item>                   items;
+   private List<ChassisBase>            chassis;
 
    private List<PilotModule>            modules;
 
    private List<OmniPod>                omniPods;
 
    private List<StockLoadout>           stockLoadouts;
-
-   private List<Upgrade>                upgrades;
 
    /**
     * @return An unmodifiable {@link List} of all inner sphere {@link ChassisStandard}s.
@@ -835,7 +830,6 @@ public class DataCache{
       stream.alias("missileweapon", MissileWeapon.class);
       stream.alias("module", Module.class);
       stream.alias("part", Location.class);
-      stream.alias("guidanceupgrade", GuidanceUpgrade.class);
       stream.alias("pilotmodule", PilotModule.class);
       stream.alias("weaponmodule", WeaponModule.class);
       stream.alias("omnipod", OmniPod.class);
