@@ -167,7 +167,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
                aStack.pushAndApply(new OpToggleItem(aXBar, loadout, ccom, ItemDB.LAA, toggleLAA.isSelected()));
             }
          });
-         toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA));
+         toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA) || ccom.getToggleState(ItemDB.LAA) == true);
          toggleLAA.setSelected(ccom.getToggleState(ItemDB.LAA));
          toggleLAA.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -179,7 +179,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
                aStack.pushAndApply(new OpToggleItem(aXBar, loadout, ccom, ItemDB.HA, toggleHA.isSelected()));
             }
          });
-         toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA));
+         toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA) || ccom.getToggleState(ItemDB.HA) == true);
          toggleHA.setSelected(ccom.getToggleState(ItemDB.HA));
          toggleHA.setAlignmentX(Component.CENTER_ALIGNMENT);
       }
