@@ -54,6 +54,20 @@ public class OpDistributeArmorTest{
 
    OperationStack stack = new OperationStack(0);
 
+   private LoadoutBase<?> loadLink(String aLsml) throws DecodingException{
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse(aLsml);
+      for(ConfiguredComponentBase part : loadout.getComponents()){
+         if( part.getInternalComponent().getLocation().isTwoSided() ){
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
+         }
+         else{
+            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.ONLY, part.getArmorTotal(), false));
+         }
+      }
+      return loadout;
+   }
+   
    @BeforeClass
    static public void setup(){
       // Make sure everything is parsed so that we don't cause a timeout due to game-file parsing
@@ -147,16 +161,7 @@ public class OpDistributeArmorTest{
    @Test
    public void testArmorDistributor_NotEnoughTonnage2() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder();
-      LoadoutBase<?> loadout = coder.parse("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
-      for(ConfiguredComponentBase part : loadout.getComponents()){
-         if( part.getInternalComponent().getLocation().isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
-         }
-         else{
-            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.ONLY, part.getArmorTotal(), false));
-         }
-      }
+      LoadoutBase<?> loadout = loadLink("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 500, 8.0, xBar);
@@ -345,6 +350,26 @@ public class OpDistributeArmorTest{
       double diffTons = loadout.getMass() - evenHalfTons;
       assertTrue(Math.abs(diffTons) < loadout.getUpgrades().getArmor().getArmorMass(1));
    }
+   
+   
+
+   /**
+    * The operation shall round down to the closest half ton, even if quarter ton items are present.
+    * 
+    * @throws DecodingException
+    */
+   @Test
+   public void testArmorDistributor_RoundDownQuarterTons() throws DecodingException{
+      // Setup
+      LoadoutBase<?> loadout = loadLink("lsml://rgC0CCwECQc7BSwECAAP7yRJsKlypaqXUqEzupiWGwqLamWi");
+
+      // Execute
+      OpDistributeArmor cut = new OpDistributeArmor(loadout, 192, 8.0, xBar);
+      stack.pushAndApply(cut);
+
+      // Verify
+      assertEquals(184, loadout.getArmor());
+   }
 
    /**
     * The operator shall not barf if there is not enough free tonnage to accommodate the request. It shall allocate as
@@ -355,16 +380,7 @@ public class OpDistributeArmorTest{
    @Test
    public void testArmorDistributor_RoundDown2() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder();
-      LoadoutBase<?> loadout = coder.parse("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
-      for(ConfiguredComponentBase part : loadout.getComponents()){
-         if( part.getInternalComponent().getLocation().isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
-         }
-         else{
-            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.ONLY, part.getArmorTotal(), false));
-         }
-      }
+      LoadoutBase<?> loadout = loadLink("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 558, 8.0, xBar);
@@ -382,16 +398,8 @@ public class OpDistributeArmorTest{
    @Test
    public void testArmorDistributor_LeaveManualTorsoAloneWhenAutomaticArm() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder();
-      LoadoutBase<?> loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
-      for(ConfiguredComponentBase part : loadout.getComponents()){
-         if( part.getInternalComponent().getLocation().isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
-         }
-         else{
-            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.ONLY, part.getArmorTotal(), false));
-         }
-      }
+      LoadoutBase<?> loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+      
       stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.Head), ArmorSide.ONLY, 12, true));
       stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.RightArm), ArmorSide.ONLY, 0, true));
       stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.LeftTorso), ArmorSide.FRONT, 56, true));
@@ -413,16 +421,8 @@ public class OpDistributeArmorTest{
    @Test
    public void testArmorDistributor_RequestSmallerThanManuallySet() throws DecodingException{
       // Setup
-      Base64LoadoutCoder coder = new Base64LoadoutCoder();
-      LoadoutBase<?> loadout = coder.parse("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
-      for(ConfiguredComponentBase part : loadout.getComponents()){
-         if( part.getInternalComponent().getLocation().isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
-         }
-         else{
-            stack.pushAndApply(new OpSetArmor(null, loadout, part, ArmorSide.ONLY, part.getArmorTotal(), false));
-         }
-      }
+      LoadoutBase<?> loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+      
       stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.Head), ArmorSide.ONLY, 12, true));
       stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.RightArm), ArmorSide.ONLY, 0, true));
       stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(Location.LeftTorso), ArmorSide.FRONT, 56, true));

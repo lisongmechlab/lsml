@@ -147,13 +147,14 @@ public class OpDistributeArmor extends CompositeOperation{
 
    private int calculateArmorToDistribute(LoadoutBase<?> aLoadout, int aPointsOfArmor){
       final ArmorUpgrade armorUpgrade = aLoadout.getUpgrades().getArmor();
-      final double armorPerTon = armorUpgrade.getArmorPerTon();
-      final double armorTons = aPointsOfArmor / armorPerTon;
-      final int armorHalfTons = (int)(armorTons * 2.0);
-      int armorLeft = (int)(armorPerTon * armorHalfTons / 2.0);
+      final double unarmoredMass = aLoadout.getMassStructItems();
+      final double requestedArmorMass = aPointsOfArmor / armorUpgrade.getArmorPerTon();
+      final double expectedLoadoutMass = Math.floor((unarmoredMass + requestedArmorMass)*2)/2; // Round down to closest half ton
+      final double expectedArmorMass = expectedLoadoutMass - unarmoredMass;
+      int armorLeft = (int)(expectedArmorMass*armorUpgrade.getArmorPerTon());
 
       // We can't apply more armor than we can carry
-      int maxArmorTonnage = (int)((aLoadout.getFreeMass() + armorUpgrade.getArmorMass(aLoadout.getArmor())) * armorPerTon);
+      int maxArmorTonnage = (int)((aLoadout.getChassis().getMassMax() - unarmoredMass) * armorUpgrade.getArmorPerTon());
       armorLeft = Math.min(maxArmorTonnage, armorLeft);
 
       int maxArmorPoints = 0;
