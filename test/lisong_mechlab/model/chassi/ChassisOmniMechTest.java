@@ -81,6 +81,7 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
          items.put(location, new ArrayList<Item>());
          components[location.ordinal()] = Mockito.mock(ComponentOmniMech.class);
          Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class))).thenReturn(true);
+         Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class), Matchers.any(Engine.class))).thenReturn(true);
          Mockito.when(components[location.ordinal()].getFixedItems()).thenReturn(items.get(location));
       }
       componentBases = components;
@@ -296,7 +297,7 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
 
       // But no component supports it.
       for(Location location : Location.values()){
-         Mockito.when(components[location.ordinal()].isAllowed(item)).thenReturn(false);
+         Mockito.when(components[location.ordinal()].isAllowed(item, null)).thenReturn(false);
       }
       assertFalse(cut.isAllowed(item));
    }

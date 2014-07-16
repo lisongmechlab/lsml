@@ -21,6 +21,7 @@ package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -77,5 +78,14 @@ public class Engine extends HeatSource{
       String name = getName();
       name = name.replace("ENGINE ", "");
       return name;
+   }
+
+   /**
+    * @return The side part of this engine if it is an XL engine, <code>null</code> otherwise.
+    */
+   public Internal getSide(){
+      if( getType() == EngineType.XL )
+         return getFaction() == Faction.Clan ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN : ConfiguredComponentBase.ENGINE_INTERNAL;
+      return null;
    }
 }

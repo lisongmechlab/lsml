@@ -252,9 +252,10 @@ public class LoadoutStandardTest{
    public void testCanEquip_XLEngineNoSpaceCentreTorso() throws Exception{
       // Setup
       LoadoutStandard cut = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("SDR-5D"), xBar);
+
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
-      stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.CenterTorso), ItemDB.DHS));
+      cut.getComponent(Location.CenterTorso).addItem(ItemDB.DHS);
 
       // Execute + Verify
       assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
@@ -368,16 +369,15 @@ public class LoadoutStandardTest{
 
       // Execute + Verify
       List<ConfiguredComponentBase> candidates = cut.getCandidateLocationsForItem(ItemDB.DHS);
-      assertEquals(5, candidates.size()); // 2x arms + 3x torso
+      assertEquals(4, candidates.size()); // 2x arms + 2x torso (CT has to have engine so it can't contain the DHS)
       assertTrue(candidates.remove(cut.getComponent(Location.LeftArm)));
       assertTrue(candidates.remove(cut.getComponent(Location.RightArm)));
       assertTrue(candidates.remove(cut.getComponent(Location.RightTorso)));
       assertTrue(candidates.remove(cut.getComponent(Location.LeftTorso)));
-      assertTrue(candidates.remove(cut.getComponent(Location.CenterTorso)));
    }
 
    /**
-    * Empty list shall be returned if there are no free hardpoints
+    * Empty list shall be returned if there are no free hard points
     * 
     * @throws Exception
     */

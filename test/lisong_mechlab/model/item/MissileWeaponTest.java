@@ -25,6 +25,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import lisong_mechlab.model.Faction;
+
 import org.junit.Test;
 
 public class MissileWeaponTest{
@@ -54,11 +56,13 @@ public class MissileWeaponTest{
    }
 
    /**
-    * All missiles have an instant fall off on the near range.
+    * All missiles except clan LRM have an instant fall off on the near range.
     */
    @Test
    public void testGetRangeZero(){
       for(MissileWeapon weapon : allMissileWeapons){
+         if(weapon.getName().contains("LRM") && weapon.getFaction() == Faction.Clan)
+            continue;
          assertTrue(weapon.getRangeMin() - weapon.getRangeZero() < 0.0001);
       }
    }

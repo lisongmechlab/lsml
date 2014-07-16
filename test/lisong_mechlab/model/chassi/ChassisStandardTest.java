@@ -58,6 +58,7 @@ public class ChassisStandardTest extends ChassisBaseTest{
       for(Location location : Location.values()){
          components[location.ordinal()] = Mockito.mock(ComponentStandard.class);
          Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class))).thenReturn(true);
+         Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class), Matchers.any(Engine.class))).thenReturn(true);
       }
       componentBases = components;
    }
@@ -156,7 +157,7 @@ public class ChassisStandardTest extends ChassisBaseTest{
 
       // But no component supports it.
       for(Location location : Location.values()){
-         Mockito.when(components[location.ordinal()].isAllowed(item)).thenReturn(false);
+         Mockito.when(components[location.ordinal()].isAllowed(item, null)).thenReturn(false);
       }
       assertFalse(cut.isAllowed(item));
    }

@@ -27,6 +27,7 @@ import java.util.List;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
@@ -40,6 +41,7 @@ import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ConfiguredComponentConverter;
@@ -175,7 +177,8 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    public abstract Engine getEngine();
 
    /**
-    * @return The mass of the loadout excluding armor. This is useful to avoid floating point precision issues from irrational armor values.
+    * @return The mass of the loadout excluding armor. This is useful to avoid floating point precision issues from
+    *         irrational armor values.
     */
    public double getMassStructItems(){
       double ans = getUpgrades().getStructure().getStructureMass(chassisBase);
@@ -184,7 +187,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       }
       return ans;
    }
-   
+
    /**
     * @return The current mass of the loadout.
     */
@@ -349,20 +352,26 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * <p>
     * This method is mainly useful for limiting search spaces for various optimization algorithms.
     * 
-    * @param anItem
+    * @param aItem
     *           The {@link Item} to find candidate {@link ConfiguredComponentBase}s for.
     * @return A {@link List} of {@link ConfiguredComponentBase}s that might be able to hold the {@link Item}.
     */
-   public List<ConfiguredComponentBase> getCandidateLocationsForItem(Item anItem){
+   public List<ConfiguredComponentBase> getCandidateLocationsForItem(Item aItem){
       List<ConfiguredComponentBase> candidates = new ArrayList<>();
-      if( !canEquipGlobal(anItem) )
+      if( !canEquipGlobal(aItem) )
          return candidates;
 
       int globalFreeHardPoints = 0;
-      HardPointType hardpointType = anItem.getHardpointType();
+      HardPointType hardpointType = aItem.getHardpointType();
 
       for(ConfiguredComponentBase part : components){
-         if( part.getInternalComponent().isAllowed(anItem) ){
+         ComponentBase internal = part.getInternalComponent();
+         if( internal.isAllowed(aItem, getEngine()) ){
+            if(aItem.getHardpointType() != HardPointType.NONE && part instanceof ConfiguredComponentOmniMech){
+               ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech)part;
+               if(componentOmniMech.getOmniPod().getHardPointCount(aItem.getHardpointType()) < 1)
+                  continue;
+            }
             candidates.add(part);
          }
 
@@ -436,30 +445,29 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       }
       return false;
    }
-   
+
    public boolean isValidLoadout(){
-      if(getFreeMass() < 0)
+      if( getFreeMass() < 0 )
          return false;
-      
-      if(getNumCriticalSlotsFree() <0)
+
+      if( getNumCriticalSlotsFree() < 0 )
          return false;
-     
-      if(getJumpJetCount() > getJumpJetsMax())
+
+      if( getJumpJetCount() > getJumpJetsMax() )
          return false;
-      
-      if(getModules().size() > getModulesMax())
+
+      if( getModules().size() > getModulesMax() )
          return false;
-      
-      if(getArmor() > getChassis().getArmorMax())
+
+      if( getArmor() > getChassis().getArmorMax() )
          return false;
-      
+
       for(T component : getComponents()){
-         if(!component.isValidLoadout())
+         if( !component.isValidLoadout() )
             return false;
-      }      
+      }
       return true;
    }
-   
 
    /**
     * Checks only global constraints against the {@link Item}. These are necessary but not sufficient conditions. Local
@@ -487,7 +495,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
       // FIXME: The case where adding a weapon that would cause LAA/HA to be removed
       // while at max global slots fails even if it might succeed.
-      
+
       if( anItem.getNumCriticalSlots() > getNumCriticalSlotsFree() )
          return false;
       if( anItem instanceof Engine && getEngine() != null )

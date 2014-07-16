@@ -120,7 +120,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
          int maxFree = 0;
          for(Location location : validLocations){
             maxFree = Math.max(maxFree, data.getComponent(location).getSlotsFree()
-                                        * (data.getComponent(location).getInternalComponent().isAllowed(item) ? 1 : 0));
+                                        * (data.getComponent(location).getInternalComponent().isAllowed(item, data.getEngine()) ? 1 : 0));
          }
          return maxFree;
 
@@ -243,7 +243,7 @@ public class OpAutoAddItem extends OpLoadoutBase{
             // of the search tree anyway when we move an item from that component back to this.
             ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
          }
-         else if( dstPart.getInternalComponent().isAllowed(aItem) ){
+         else if( dstPart.getInternalComponent().isAllowed(aItem, tempLoadout.getEngine()) ){
             // The part couldn't take the item directly, see if we can swap with some item in the part.
             final int minItemSize = aItem.getNumCriticalSlots() - dstPart.getSlotsFree();
             HardPointType requiredType = aItem.getHardpointType();

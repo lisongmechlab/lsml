@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 
@@ -84,7 +85,7 @@ public class ComponentStandard extends ComponentBase{
    }
 
    @Override
-   public boolean isAllowed(Item aItem){
+   public boolean isAllowed(Item aItem, Engine aEngine){
       if( aItem.getHardpointType() != HardPointType.NONE && getHardPointCount(aItem.getHardpointType()) <= 0 ){
          return false;
       }
@@ -92,11 +93,20 @@ public class ComponentStandard extends ComponentBase{
          return getLocation() == Location.CenterTorso;
       }
       else if( aItem == ItemDB.CASE ){
-         return (getLocation() == Location.LeftTorso || getLocation() == Location.RightTorso);
+         return (getLocation().isSideTorso());
       }
-      if( aItem.getNumCriticalSlots() > getSlots() - getFixedItemSlots() ){
+      
+      int extraslots = 0;
+      if( getLocation() == Location.CenterTorso ){
+         extraslots += 6; // There has to be an engine and they always have 6 slots.
+      }
+      else if(getLocation().isSideTorso() && aEngine != null && aEngine.getType() == EngineType.XL){
+         extraslots += aEngine.getSide().getNumCriticalSlots();
+      }
+      
+      if( aItem.getNumCriticalSlots() > getSlots() - getFixedItemSlots() - extraslots ){
          return false;
       }
-      return super.isAllowed(aItem);
+      return super.isAllowed(aItem, aEngine);
    }
 }

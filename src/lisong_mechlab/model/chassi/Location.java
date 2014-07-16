@@ -99,6 +99,10 @@ public enum Location{
       throw new RuntimeException("Unknown component in mech chassi! " + componentName);
    }
 
+   public boolean isSideTorso(){
+      return this == RightTorso || this == LeftTorso;
+   }
+   
    public static boolean isRear(String aName){
       return aName.endsWith("_rear");
    }

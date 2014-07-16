@@ -75,7 +75,7 @@ public class OpToggleItem extends Operation{
 
       component.setToggleState(item, newState);
       
-      if(item == ItemDB.LAA && newState == false){
+      if(item == ItemDB.LAA && newState == false && component.getToggleState(ItemDB.HA)){
          component.setToggleState(ItemDB.HA, false);   
       }
 
@@ -89,7 +89,7 @@ public class OpToggleItem extends Operation{
       if( newState == oldState )
          return;
       component.setToggleState(item, oldState);
-      if(item == ItemDB.LAA && oldHAState == true){
+      if(item == ItemDB.LAA && oldHAState == true && component.canToggleOn(ItemDB.HA)){
          component.setToggleState(ItemDB.HA, true);   
       }
       if( xBar != null ){
