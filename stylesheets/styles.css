@@ -21,7 +21,7 @@ h1, h2, h3 {
 }
 
 div.disclaimer{
-    clear:left,right;
+    clear: both;
     background: #FF00FF;
 }
 
