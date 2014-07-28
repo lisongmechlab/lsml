@@ -242,10 +242,12 @@ footer {
 
     #panel_info {
         display: inline-block;
+        vertical-align: top;
     }
 
     #panel_buttons {
         display: inline-block;
+        vertical-align: top;
     }
 
     .hiddeninfo:target {
