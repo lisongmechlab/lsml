@@ -20,7 +20,7 @@ h1, h2, h3 {
     line-height:1.1;
 }
 
-.banner{
+div.disclaimer{
     clear:left,right;
     background: #FF00FF;
 }
