@@ -11,6 +11,7 @@ body {
 #social {
     display: block;
     background: pink;
+    margin-bottom: 5px;
 }
 
 h1, h2, h3, h4, h5, h6 {
