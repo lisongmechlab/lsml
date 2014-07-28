@@ -1,7 +1,8 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
 
 body {
-    padding:50px;
+    margin:0px;
+    padding:0px;
     font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     color:#777;
     font-weight:300;
@@ -22,7 +23,10 @@ h1, h2, h3 {
 
 div.disclaimer{
     clear: both;
+    text-align: center;
     background: #FF00FF;
+    position:fixed;
+    width: 100%;
 }
 
 h1 {
@@ -74,6 +78,7 @@ img.float {
 
 .wrapper {
     width:860px;
+    padding-top: 50px;
     margin:0 auto;
 }
 
@@ -207,7 +212,7 @@ footer {
     width:270px;
     float:left;
     position:fixed;
-    bottom:50px;
+    bottom:10px;
 }
 
 @media print, screen and (max-width: 960px) {
