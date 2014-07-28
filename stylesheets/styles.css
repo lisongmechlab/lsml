@@ -251,22 +251,13 @@ footer {
     }
 
     .hiddeninfo:target {
-        display: block;
-        -moz-border-radius: 15px;
-        border-radius: 15px;
-        border-width: thin;
-        border: solid;
-        padding: 1em;
-        z-index: 999;
         position: static;
-
-        background: white;
-        max-width: 400px;
     }
     
     div.wrapper {
         width:auto;
         margin:15px;
+        padding: 0px;
     }
     
     header, section, footer {
