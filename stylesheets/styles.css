@@ -8,6 +8,14 @@ body {
     font-weight:300;
 }
 
+#panel_info {
+
+}
+
+#panel_buttons {
+
+}
+
 #social {
     display: block;
     margin-bottom: 5px;
@@ -230,6 +238,14 @@ footer {
 @media print, screen and (max-width: 960px) {
     div.disclaimer{
         position: static;
+    }
+
+    #panel_info {
+        float: left;
+    }
+
+    #panel_buttons {
+
     }
 
     .hiddeninfo:target {
