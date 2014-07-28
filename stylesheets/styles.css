@@ -289,6 +289,7 @@ footer {
     }
     
     header ul {
+        position:static;
 /*        position:absolute;
         right:50px;
         top:52px;*/
