@@ -312,10 +312,10 @@ footer {
     div.wrapper {
         width:auto;
     }
-    
+    /*
     header ul {
         display:none;
-    }
+    }*/
 }
 
 @media print {
