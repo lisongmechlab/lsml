@@ -8,13 +8,8 @@ body {
     font-weight:300;
 }
 
-#panel_info {
-
-}
-
-#panel_buttons {
-
-}
+#panel_info {}
+#panel_buttons {}
 
 #social {
     display: block;
@@ -47,6 +42,10 @@ div.disclaimer{
     background: -ms-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
     background: linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
     border-bottom: 1px solid #bbbbbb;
+}
+
+div.disclaimer:target{
+    display: none;
 }
 
 h1 {
