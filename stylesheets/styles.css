@@ -228,10 +228,6 @@ footer {
 }
 
 @media print, screen and (max-width: 960px) {
-    body {
-        padding:15px;
-    }
-
     div.disclaimer{
         position:absolute;
     }
@@ -252,7 +248,7 @@ footer {
     
     div.wrapper {
         width:auto;
-        margin:0;
+        margin:15px;
     }
     
     header, section, footer {
@@ -304,7 +300,6 @@ footer {
 @media print, screen and (max-width: 480px) {
     div.wrapper {
         width:auto;
-        margin:15px;
     }
     
     header ul {
