@@ -72,4 +72,9 @@ public class StructureUpgrade extends Upgrade{
       double ans = aChassis.getMassMax() * internalStructurePct;
       return Math.round(10 * ans / 5) * 0.5;
    }
+
+   @Override
+   public UpgradeType getType(){
+      return UpgradeType.STRUCTURE;
+   }
 }

@@ -31,6 +31,7 @@ import lisong_mechlab.model.chassi.OmniPodDB;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
@@ -38,6 +39,7 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
+import lisong_mechlab.model.loadout.component.OpToggleItem;
 import lisong_mechlab.model.loadout.export.CompatibilityHelper;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
@@ -66,26 +68,39 @@ public class ConfiguredComponentConverter implements Converter{
 
    @Override
    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      ConfiguredComponentBase part = (ConfiguredComponentBase)anObject;
+      ConfiguredComponentBase component = (ConfiguredComponentBase)anObject;
+      ConfiguredComponentOmniMech omniComponent = null;
+      if( component instanceof ConfiguredComponentOmniMech ){
+         omniComponent = (ConfiguredComponentOmniMech)component;
+      }
 
       aWriter.addAttribute("version", "2");
-      aWriter.addAttribute("location", part.getInternalComponent().getLocation().toString());
-      aWriter.addAttribute("autoarmor", Boolean.toString(part.allowAutomaticArmor()));
+      aWriter.addAttribute("location", component.getInternalComponent().getLocation().toString());
+      aWriter.addAttribute("autoarmor", Boolean.toString(component.allowAutomaticArmor()));
 
-      if( part instanceof ConfiguredComponentOmniMech ){
-         if( !((ConfiguredComponentOmniMech)part).getInternalComponent().hasFixedOmniPod() ){
-            aWriter.addAttribute("omnipod", Integer.toString(((ConfiguredComponentOmniMech)part).getOmniPod().getMwoId()));
+      if( null != omniComponent ){
+         if( !omniComponent.getInternalComponent().hasFixedOmniPod() ){
+            aWriter.addAttribute("omnipod", Integer.toString(omniComponent.getOmniPod().getMwoId()));
          }
       }
 
-      if( part.getInternalComponent().getLocation().isTwoSided() ){
-         aWriter.addAttribute("armor", part.getArmor(ArmorSide.FRONT) + "/" + part.getArmor(ArmorSide.BACK));
+      if( component.getInternalComponent().getLocation().isTwoSided() ){
+         aWriter.addAttribute("armor", component.getArmor(ArmorSide.FRONT) + "/" + component.getArmor(ArmorSide.BACK));
       }
       else{
-         aWriter.addAttribute("armor", Integer.toString(part.getArmor(ArmorSide.ONLY)));
+         aWriter.addAttribute("armor", Integer.toString(component.getArmor(ArmorSide.ONLY)));
       }
 
-      for(Item item : part.getItemsEquipped()){
+      if( null != omniComponent ){
+         for(Item togglable : omniComponent.getOmniPod().getToggleableItems()){
+            aWriter.startNode("togglestate");
+            aWriter.addAttribute("item", Integer.toString(togglable.getMwoId()));
+            aWriter.addAttribute("enabled", Boolean.toString(omniComponent.getToggleState(togglable)));
+            aWriter.endNode();
+         }
+      }
+
+      for(Item item : component.getItemsEquipped()){
          if( item instanceof Internal ){
             continue;
          }
@@ -156,6 +171,11 @@ public class ConfiguredComponentConverter implements Converter{
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
                                                                  + " is corrupt. Continuing to load as much as possible.");
             }
+         }
+         else if( "togglestate".equals(aReader.getNodeName()) ){
+            Item item = ItemDB.lookup(Integer.parseInt(aReader.getAttribute("item")));
+            operationStack.pushAndApply(new OpToggleItem(xBar, loadout, (ConfiguredComponentOmniMech)loadoutPart, item,
+                                                         Boolean.parseBoolean(aReader.getAttribute("enabled"))));
          }
          aReader.moveUp();
       }

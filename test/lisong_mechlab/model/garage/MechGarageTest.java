@@ -19,11 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.garage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -33,8 +29,10 @@ import java.io.IOException;
 
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.garage.MechGarage.Message;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
@@ -288,7 +286,30 @@ public class MechGarageTest{
          
          assertEquals(clone, loadout);         
       }
+   }
+   
+   
+   /**
+    * Issue #337. 
+    * Actuator state is not saved properly.
+    * @throws IOException 
+    */
+   @Test
+   public void testActuatorStateSaved() throws IOException{
+      ChassisOmniMech chassi = (ChassisOmniMech)ChassisDB.lookup("WHK-B");
+      LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi, xBar);
+
+      loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, false);
       
+      MechGarage garage = new MechGarage(xBar);
+      garage.add(loadout);
+      garage.saveas(testFile);
+      garage = null;
+      garage = MechGarage.open(testFile, xBar);
+   
+      LoadoutOmniMech loaded = (LoadoutOmniMech)garage.getMechs().get(0);
+      
+      assertFalse(loaded.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));      
    }
 
 }

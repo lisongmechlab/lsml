@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<loadout>
+	<id><![CDATA[stock]]></id>
+	<mech_id>176</mech_id>
+	<valid>true</valid>
+	<configuration>
+		<component>
+			<name><![CDATA[head]]></name>
+			<armor>18</armor>
+			<omni_pod>30080</omni_pod>
+		</component>
+		<component>
+			<name><![CDATA[left_torso]]></name>
+			<armor>16</armor>
+			<omni_pod>30082</omni_pod>
+			<items>
+				<item>
+					<id><![CDATA[2214]]></id>
+					<type><![CDATA[ammo]]></type>
+					<name><![CDATA[C-LRM AMMO]]></name>
+				</item>
+			</items>
+		</component>
+		<component>
+			<name><![CDATA[centre_torso]]></name>
+			<armor>18</armor>
+		</component>
+		<component>
+			<name><![CDATA[right_torso]]></name>
+			<armor>16</armor>
+			<omni_pod>30084</omni_pod>
+			<items>
+				<item>
+					<id><![CDATA[2214]]></id>
+					<type><![CDATA[ammo]]></type>
+					<name><![CDATA[C-LRM AMMO]]></name>
+				</item>
+				<item>
+					<id><![CDATA[2214]]></id>
+					<type><![CDATA[ammo]]></type>
+					<name><![CDATA[C-LRM AMMO]]></name>
+				</item>
+				<item>
+					<id><![CDATA[2219]]></id>
+					<type><![CDATA[ammo]]></type>
+					<name><![CDATA[C-NARC AMMO]]></name>
+				</item>
+			</items>
+		</component>
+		<component>
+			<name><![CDATA[left_leg]]></name>
+			<armor>16</armor>
+			<omni_pod>30086</omni_pod>
+		</component>
+		<component>
+			<name><![CDATA[right_leg]]></name>
+			<armor>16</armor>
+			<omni_pod>30087</omni_pod>
+		</component>
+		<component>
+			<name><![CDATA[right_arm]]></name>
+			<armor>14</armor>
+			<actuators>
+				<actuator>
+					<id>1910</id>
+					<enabled>true</enabled>
+				</actuator>
+				<actuator>
+					<id>1911</id>
+					<enabled>true</enabled>
+				</actuator>
+			</actuators>
+			<omni_pod>30085</omni_pod>
+			<items>
+				<item>
+					<id><![CDATA[1220]]></id>
+					<type><![CDATA[weapon]]></type>
+					<name><![CDATA[C-LRM 15]]></name>
+				</item>
+				<item>
+					<id><![CDATA[1235]]></id>
+					<type><![CDATA[weapon]]></type>
+					<name><![CDATA[C-NARC]]></name>
+				</item>
+			</items>
+		</component>
+		<component>
+			<name><![CDATA[left_arm]]></name>
+			<armor>14</armor>
+			<actuators>
+				<actuator>
+					<id>1910</id>
+					<enabled>true</enabled>
+				</actuator>
+				<actuator>
+					<id>1911</id>
+					<enabled>true</enabled>
+				</actuator>
+			</actuators>
+			<omni_pod>30081</omni_pod>
+			<items>
+				<item>
+					<id><![CDATA[2214]]></id>
+					<type><![CDATA[ammo]]></type>
+					<name><![CDATA[C-LRM AMMO]]></name>
+				</item>
+				<item>
+					<id><![CDATA[2214]]></id>
+					<type><![CDATA[ammo]]></type>
+					<name><![CDATA[C-LRM AMMO]]></name>
+				</item>
+				<item>
+					<id><![CDATA[1220]]></id>
+					<type><![CDATA[weapon]]></type>
+					<name><![CDATA[C-LRM 15]]></name>
+				</item>
+				<item>
+					<id><![CDATA[1218]]></id>
+					<type><![CDATA[weapon]]></type>
+					<name><![CDATA[C-LRM 5]]></name>
+				</item>
+			</items>
+		</component>
+		<component>
+			<name><![CDATA[left_torso_rear]]></name>
+			<armor>8</armor>
+		</component>
+		<component>
+			<name><![CDATA[centre_torso_rear]]></name>
+			<armor>8</armor>
+		</component>
+		<component>
+			<name><![CDATA[right_torso_rear]]></name>
+			<armor>8</armor>
+		</component>
+	</configuration>
+	<upgrades>
+		<upgrade>
+			<id><![CDATA[2815]]></id>
+			<type><![CDATA[Armor]]></type>
+			<name><![CDATA[CLAN FERRO FIBROUS ARMOR]]></name>
+		</upgrade>
+		<upgrade>
+			<id><![CDATA[3102]]></id>
+			<type><![CDATA[Structure]]></type>
+			<name><![CDATA[CLAN ENDO-STEEL STRUCTURE]]></name>
+		</upgrade>
+		<upgrade>
+			<id><![CDATA[3005]]></id>
+			<type><![CDATA[HeatSink]]></type>
+			<name><![CDATA[CLAN DOUBLE HEAT SINK]]></name>
+		</upgrade>
+		<upgrade>
+			<id><![CDATA[3051]]></id>
+			<type><![CDATA[Artemis]]></type>
+			<name><![CDATA[STANDARD GUIDANCE]]></name>
+		</upgrade>
+	</upgrades>
+</loadout>

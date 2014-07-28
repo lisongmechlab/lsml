@@ -25,4 +25,15 @@ public enum UpgradeType{
    public static UpgradeType fromMwo(String aMwoType){
       return valueOf(aMwoType.toUpperCase());
    }
+   
+   public String toSmurfy(){
+      switch(this){
+         case ARMOR:return "Armor";
+         case STRUCTURE: return "Structure";
+         case HEATSINK: return "HeatSink";
+         case ARTEMIS: return "Artemis";
+         default:
+            throw new RuntimeException("Unknown upgrade type! " + this);
+      }
+   }
 }

@@ -54,4 +54,8 @@ public class HeatSinkUpgrade extends Upgrade{
       return getHeatSinkType().getNumCriticalSlots() > 1;
    }
 
+   @Override
+   public UpgradeType getType(){
+      return UpgradeType.HEATSINK;
+   }
 }

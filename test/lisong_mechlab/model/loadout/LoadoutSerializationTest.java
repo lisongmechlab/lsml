@@ -50,7 +50,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Test suite for {@link LoadoutSerializationTest}.
+ * Tests for verifying save-load behaviour of Loadouts.
  * 
  * @author Emily Björk
  */
