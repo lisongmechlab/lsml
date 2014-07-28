@@ -241,7 +241,7 @@ footer {
     }
 
     #panel_info {
-        float: left;
+        display: inline-block;
     }
 
     #panel_buttons {
