@@ -228,6 +228,14 @@ footer {
 }
 
 @media print, screen and (max-width: 960px) {
+    body {
+        padding:15px;
+    }
+
+    div.disclaimer{
+        position:absolute;
+    }
+
     .hiddeninfo:target {
         display: block;
         -moz-border-radius: 15px;
