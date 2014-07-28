@@ -245,7 +245,7 @@ footer {
     }
 
     #panel_buttons {
-
+        display: inline-block;
     }
 
     .hiddeninfo:target {
