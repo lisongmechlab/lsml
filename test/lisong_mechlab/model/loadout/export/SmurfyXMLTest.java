@@ -14,18 +14,16 @@ import lisong_mechlab.util.OperationStack;
 import org.junit.Test;
 
 public class SmurfyXMLTest{
-
-   @Test
-   public final void testToXml() throws Exception{
-      String lsml = "lsml://rQAAEURAFFISXhxAFFJEuipmxNhITziZMSPxcTJkwsqfyJMJkwmw";
+   
+   private void referenceTest(String aLSMLLink, String aResource) throws Exception{
       Base64LoadoutCoder coder = new Base64LoadoutCoder();
-      LoadoutBase<?> loadout = coder.parse(lsml);
+      LoadoutBase<?> loadout = coder.parse(aLSMLLink);
       (new OperationStack(0)).pushAndApply(new OpRename(loadout, null, "stock"));
 
       String xml = SmurfyXML.toXml(loadout);
       String lines[] = xml.split("\n");
 
-      try( InputStream is = SmurfyXMLTest.class.getResourceAsStream("/resources/smurfy_as7ddcstock.xml");
+      try( InputStream is = SmurfyXMLTest.class.getResourceAsStream(aResource);
            InputStreamReader isr = new InputStreamReader(is);
            BufferedReader br = new BufferedReader(isr) ){
 
@@ -42,6 +40,16 @@ public class SmurfyXMLTest{
             assertEquals(expectedTrim, lineTrim);
          }
       }
+   }
+
+   @Test
+   public final void testToXmlIS() throws Exception{
+      referenceTest("lsml://rQAAEURAFFISXhxAFFJEuipmxNhITziZMSPxcTJkwsqfyJMJkwmw", "/resources/smurfy_as7ddcstock.xml");
+   }
+   
+   @Test
+   public final void testToXmlClan() throws Exception{
+      referenceTest("lsml://rgCwDhAIEBISCBAIEA4P7ySKNDuBRanJyUilmpjpSJnFM1SInJw0ONRE", "/resources/smurfy_kfxdstock.xml");
    }
 
 }

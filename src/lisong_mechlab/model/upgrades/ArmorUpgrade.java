@@ -76,4 +76,10 @@ public class ArmorUpgrade extends Upgrade{
    public double getArmorMass(int aArmor){
       return aArmor / armorPerTon;
    }
+   
+
+   @Override
+   public UpgradeType getType(){
+      return UpgradeType.ARMOR;
+   }
 }

@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Li Song
  */
-public class Upgrade{
+public abstract class Upgrade{
    @XStreamAsAttribute
    private final String  name;
    @XStreamAsAttribute
@@ -84,4 +84,9 @@ public class Upgrade{
       return faction;
 
    }
+
+   /**
+    * @return The {@link UpgradeType} of this upgrade.
+    */
+   public abstract UpgradeType getType();
 }

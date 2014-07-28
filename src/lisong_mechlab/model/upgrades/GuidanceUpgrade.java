@@ -188,4 +188,10 @@ public class GuidanceUpgrade extends Upgrade{
 
       throw new RuntimeException("Unable to find upgraded version of: " + aOldAmmo);
    }
+   
+
+   @Override
+   public UpgradeType getType(){
+      return UpgradeType.ARTEMIS;
+   }
 }

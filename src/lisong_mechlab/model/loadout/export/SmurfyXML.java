@@ -31,6 +31,7 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.Upgrades;
 
@@ -87,9 +88,13 @@ public class SmurfyXML{
             return null; // Implement this if we need to import from smurfy.
          }
 
-         private <T> void writeValue(HierarchicalStreamWriter aWriter, String aName, T aVal){
+         private <T> void writeCData(HierarchicalStreamWriter aWriter, String aName, T aVal){
+            writeValueTag(aWriter, aName, "<![CDATA[" + aVal + "]]>");
+         }
+
+         private <T> void writeValueTag(HierarchicalStreamWriter aWriter, String aName, T aVal){
             aWriter.startNode(aName);
-            aWriter.setValue("<![CDATA[" + aVal + "]]>");
+            aWriter.setValue(aVal.toString());
             aWriter.endNode();
          }
 
@@ -98,42 +103,70 @@ public class SmurfyXML{
 
             LoadoutBase<?> loadoutBase = (LoadoutBase<?>)aObject;
             LoadoutOmniMech loadoutOmniMech = (loadoutBase instanceof LoadoutOmniMech) ? (LoadoutOmniMech)loadoutBase : null;
-            //LoadoutStandard loadoutStandard = (loadoutBase instanceof LoadoutStandard) ? (LoadoutStandard)loadoutBase : null;
 
-            writeValue(aWriter, "id", loadoutBase.getName());
-            writeValue(aWriter, "mech_id", loadoutBase.getChassis().getMwoId());
+            writeCData(aWriter, "id", loadoutBase.getName());
+            writeValueTag(aWriter, "mech_id", loadoutBase.getChassis().getMwoId());
+            writeValueTag(aWriter, "valid", true);
 
             aWriter.startNode("configuration");
             {
-               for(Location location : new Location[] {Location.Head, Location.LeftTorso, Location.CenterTorso, Location.RightTorso, Location.LeftLeg,
-                     Location.RightLeg, Location.RightArm, Location.LeftArm}){
+               for(Location location : new Location[] {Location.Head, Location.LeftTorso, Location.CenterTorso, Location.RightTorso,
+                     Location.LeftLeg, Location.RightLeg, Location.RightArm, Location.LeftArm}){
                   ConfiguredComponentBase part = loadoutBase.getComponent(location);
                   aWriter.startNode("component");
 
-                  writeValue(aWriter, "name", part.getInternalComponent().getLocation().toMwoName());
+                  writeCData(aWriter, "name", part.getInternalComponent().getLocation().toMwoName());
                   if( part.getInternalComponent().getLocation().isTwoSided() ){
-                     writeValue(aWriter, "armor", part.getArmor(ArmorSide.FRONT));
+                     writeValueTag(aWriter, "armor", part.getArmor(ArmorSide.FRONT));
                   }
                   else{
-                     writeValue(aWriter, "armor", part.getArmorTotal());
-                  }
-                  
-                  if(loadoutOmniMech != null){
-                     writeValue(aWriter, "omni_pod", loadoutOmniMech.getComponent(location).getOmniPod().getMwoId());
+                     writeValueTag(aWriter, "armor", part.getArmorTotal());
                   }
 
-                  aWriter.startNode("items");
+                  if( loadoutOmniMech != null ){
+                     ConfiguredComponentOmniMech componentOmniMech = loadoutOmniMech.getComponent(location);
+
+                     boolean actuatorsStarted = false;
+                     for(Item togglable : componentOmniMech.getOmniPod().getToggleableItems()){
+                        if( !actuatorsStarted ){
+                           aWriter.startNode("actuators");
+                           actuatorsStarted = true;
+                        }
+
+                        aWriter.startNode("actuator");
+                        writeValueTag(aWriter, "id", togglable.getMwoId());
+                        writeValueTag(aWriter, "enabled", Boolean.valueOf(componentOmniMech.getToggleState(togglable)));
+                        aWriter.endNode();
+                     }
+
+                     if( actuatorsStarted )
+                        aWriter.endNode();
+
+                     if( location != Location.CenterTorso ){
+                        writeValueTag(aWriter, "omni_pod", componentOmniMech.getOmniPod().getMwoId());
+                     }
+                  }
+
+                  boolean itemsStarted = false;
                   for(Item item : part.getItemsEquipped()){
                      if( item instanceof Internal )
                         continue;
+
+                     if( !itemsStarted ){
+                        aWriter.startNode("items");
+                        itemsStarted = true;
+                     }
+
                      aWriter.startNode("item");
 
-                     writeValue(aWriter, "id", item.getMwoId());
-                     writeValue(aWriter, "type", item instanceof Weapon ? "weapon" : item instanceof Ammunition ? "ammo" : "module");
-                     writeValue(aWriter, "name", item.getName());
+                     writeCData(aWriter, "id", item.getMwoId());
+                     writeCData(aWriter, "type", item instanceof Weapon ? "weapon" : item instanceof Ammunition ? "ammo" : "module");
+                     writeCData(aWriter, "name", item.getName());
                      aWriter.endNode();
                   }
-                  aWriter.endNode();
+
+                  if( itemsStarted )
+                     aWriter.endNode();
 
                   aWriter.endNode();
 
@@ -141,8 +174,8 @@ public class SmurfyXML{
                for(Location type : new Location[] {Location.LeftTorso, Location.CenterTorso, Location.RightTorso}){
                   ConfiguredComponentBase part = loadoutBase.getComponent(type);
                   aWriter.startNode("component");
-                  writeValue(aWriter, "name", part.getInternalComponent().getLocation().toMwoRearName());
-                  writeValue(aWriter, "armor", part.getArmor(ArmorSide.BACK));
+                  writeCData(aWriter, "name", part.getInternalComponent().getLocation().toMwoRearName());
+                  writeValueTag(aWriter, "armor", part.getArmor(ArmorSide.BACK));
                   aWriter.endNode();
                }
             }
@@ -155,11 +188,9 @@ public class SmurfyXML{
                for(int i = 0; i < ups.length; ++i){
                   Upgrade up = ups[i];
                   aWriter.startNode("upgrade");
-                  aWriter.startNode("id");
-                  aWriter.setValue("" + up.getMwoId());
-                  aWriter.endNode();
-                  writeValue(aWriter, "type", i);
-                  writeValue(aWriter, "name", up.getName());
+                  writeCData(aWriter, "id", up.getMwoId());
+                  writeCData(aWriter, "type", up.getType().toSmurfy());
+                  writeCData(aWriter, "name", up.getName());
                   aWriter.endNode();
                }
             }
