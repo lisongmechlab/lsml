@@ -229,7 +229,7 @@ footer {
 
 @media print, screen and (max-width: 960px) {
     div.disclaimer{
-        position:absolute;
+        position: static;
     }
 
     .hiddeninfo:target {
@@ -240,7 +240,7 @@ footer {
         border: solid;
         padding: 1em;
         z-index: 999;
-        position: absolute;
+        position: static;
 
         background: white;
         max-width: 400px;
