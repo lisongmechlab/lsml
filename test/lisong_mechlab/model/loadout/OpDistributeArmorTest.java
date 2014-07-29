@@ -361,7 +361,7 @@ public class OpDistributeArmorTest{
    @Test
    public void testArmorDistributor_RoundDownQuarterTons() throws DecodingException{
       // Setup
-      LoadoutBase<?> loadout = loadLink("lsml://rgC0CCwECQc7BSwECAAP7yRJsKlypaqXUqEzupiWGwqLamWi");
+      LoadoutBase<?> loadout = loadLink("lsml://rgC0CCwECQc7BSwECAAP6zHaJmuzrtq69oNmgrsUyma7Wuws");
 
       // Execute
       OpDistributeArmor cut = new OpDistributeArmor(loadout, 192, 8.0, xBar);

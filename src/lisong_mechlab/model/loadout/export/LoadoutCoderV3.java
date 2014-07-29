@@ -75,6 +75,7 @@ import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
+import lisong_mechlab.util.Huffman2;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
@@ -87,7 +88,7 @@ public class LoadoutCoderV3 implements LoadoutCoder{
    private static final Location[] componentOrder = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head,
          Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
    private static final int        HEADER_MAGIC   = 0xAC + 2;
-   private final Huffman1<Integer> huff;
+   private final Huffman2<Integer> huff;
 
    public LoadoutCoderV3(){
       ObjectInputStream in = null;
@@ -96,10 +97,47 @@ public class LoadoutCoderV3 implements LoadoutCoder{
          in = new ObjectInputStream(is);
          @SuppressWarnings("unchecked")
          Map<Integer, Integer> freqs = (Map<Integer, Integer>)in.readObject();
-         huff = new Huffman1<Integer>(freqs, null);
+         huff = new Huffman2<Integer>(freqs, null);
+/*
+         for(Map.Entry<Integer, Integer> e : freqs.entrySet())
+            System.out.println("[" + e.getKey() + "] = " + e.getValue());
 
-         // for(Map.Entry<Integer, Integer> e : freqs.entrySet())
-         // System.out.println("["+e.getKey() + "] = " + e.getValue());
+         List<Integer> tmp = new ArrayList<>();
+         tmp.add(3051);
+         tmp.add(30077);
+         tmp.add(1233);
+         tmp.add(1201);
+         tmp.add(2218);
+         tmp.add(2202);
+         tmp.add(-1);
+         tmp.add(30076);
+         tmp.add(-1);
+         tmp.add(30079);
+         tmp.add(-1);
+         tmp.add(30072);
+         tmp.add(-1);
+         tmp.add(-1);
+         tmp.add(30074);
+         tmp.add(-1);
+         tmp.add(30078);
+         tmp.add(-1);
+         tmp.add(30073);
+         tmp.add(1213);
+         tmp.add(1214);
+         tmp.add(-1);
+
+         byte[] out = huff.encode(tmp);
+
+         for(byte b : out){
+            int i;
+            if( b < 0 ){
+               i = 256 + b;
+            }
+            else
+               i = b;
+            System.out.println(i);
+         }
+*/
       }
       catch( Exception e ){
          throw new RuntimeException(e);
@@ -186,10 +224,10 @@ public class LoadoutCoderV3 implements LoadoutCoder{
             stack.pushAndApply(new OpAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
          }
       }
-      
-      if(isOmniMech)
+
+      if( isOmniMech )
          readActuatorState(actuatorState, loadout, stack);
-      
+
       return loadout;
    }
 
@@ -416,7 +454,7 @@ public class LoadoutCoderV3 implements LoadoutCoder{
     * @throws Exception
     */
    public static void main(String[] arg) throws Exception{
-      //generateAllLoadouts();
+       generateAllLoadouts();
       // generateStatsFromStdin();
       // generateStatsFromStock();
    }

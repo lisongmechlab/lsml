@@ -19,6 +19,16 @@
 			<name><![CDATA[left_torso]]></name>
 			<armor>64</armor>
 			<items>
+                <item>
+                    <id><![CDATA[2027]]></id>
+                    <type><![CDATA[ammo]]></type>
+                    <name><![CDATA[LRM AMMO]]></name>
+                </item>
+                <item>
+                    <id><![CDATA[2028]]></id>
+                    <type><![CDATA[ammo]]></type>
+                    <name><![CDATA[SRM AMMO]]></name>
+                </item>
 				<item>
 					<id><![CDATA[1002]]></id>
 					<type><![CDATA[weapon]]></type>
@@ -28,16 +38,6 @@
 					<id><![CDATA[1031]]></id>
 					<type><![CDATA[weapon]]></type>
 					<name><![CDATA[SRM 6]]></name>
-				</item>
-				<item>
-					<id><![CDATA[2027]]></id>
-					<type><![CDATA[ammo]]></type>
-					<name><![CDATA[LRM AMMO]]></name>
-				</item>
-				<item>
-					<id><![CDATA[2028]]></id>
-					<type><![CDATA[ammo]]></type>
-					<name><![CDATA[SRM AMMO]]></name>
 				</item>
 				<item>
 					<id><![CDATA[3000]]></id>
@@ -76,20 +76,20 @@
 			<name><![CDATA[right_torso]]></name>
 			<armor>64</armor>
 			<items>
+                <item>
+                    <id><![CDATA[2000]]></id>
+                    <type><![CDATA[ammo]]></type>
+                    <name><![CDATA[AC/20 AMMO]]></name>
+                </item>
+                <item>
+                    <id><![CDATA[2000]]></id>
+                    <type><![CDATA[ammo]]></type>
+                    <name><![CDATA[AC/20 AMMO]]></name>
+                </item>
 				<item>
 					<id><![CDATA[1000]]></id>
 					<type><![CDATA[weapon]]></type>
 					<name><![CDATA[AC/20]]></name>
-				</item>
-				<item>
-					<id><![CDATA[2000]]></id>
-					<type><![CDATA[ammo]]></type>
-					<name><![CDATA[AC/20 AMMO]]></name>
-				</item>
-				<item>
-					<id><![CDATA[2000]]></id>
-					<type><![CDATA[ammo]]></type>
-					<name><![CDATA[AC/20 AMMO]]></name>
 				</item>
 			</items>
 		</component>
