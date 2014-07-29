@@ -44,12 +44,12 @@ public class SmurfyXMLTest{
 
    @Test
    public final void testToXmlIS() throws Exception{
-      referenceTest("lsml://rQAAEURAFFISXhxAFFJEuipmxNhITziZMSPxcTJkwsqfyJMJkwmw", "/resources/smurfy_as7ddcstock.xml");
+      referenceTest("lsml://rgARREAUUhJeHEAUUkTne6/ep3rMhjZ5PGcsMNEXVOQww3HhhS2RYYbDGw==", "/resources/smurfy_as7ddcstock.xml");
    }
    
    @Test
    public final void testToXmlClan() throws Exception{
-      referenceTest("lsml://rgCwDhAIEBISCBAIEA4P7ySKNDuBRanJyUilmpjpSJnFM1SInJw0ONRE", "/resources/smurfy_kfxdstock.xml");
+      referenceTest("lsml://rgCwDhAIEBISCBAIEA4P6zHOZYy8rm2ZmaFXPVy9rmWaudrmGZmyxno2", "/resources/smurfy_kfxdstock.xml");
    }
 
 }

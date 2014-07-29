@@ -139,7 +139,7 @@ public class LoadoutCoderV3Test{
    @Test
    public void testDecodeHeatsinksBeforeEngine() throws DecodingException{
       Base64 base64 = new Base64();
-      LoadoutBase<?> l = cut.decode(base64.decode("rgARREYOMRJoFEYOMUQW090bjrvw0U7naZlgpgo7QitVUhC1vt9v2LBYLBpMywUNG8btEw==".toCharArray()));
+      LoadoutBase<?> l = cut.decode(base64.decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg==".toCharArray()));
 
       assertTrue(l.getFreeMass() < 0.005);
       assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
