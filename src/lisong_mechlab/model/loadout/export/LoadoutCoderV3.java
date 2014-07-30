@@ -85,8 +85,6 @@ import lisong_mechlab.util.OperationStack;
  * @author Li Song
  */
 public class LoadoutCoderV3 implements LoadoutCoder{
-   private static final Location[] componentOrder = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head,
-         Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
    private static final int        HEADER_MAGIC   = 0xAC + 2;
    private final Huffman2<Integer> huff;
 
@@ -98,46 +96,14 @@ public class LoadoutCoderV3 implements LoadoutCoder{
          @SuppressWarnings("unchecked")
          Map<Integer, Integer> freqs = (Map<Integer, Integer>)in.readObject();
          huff = new Huffman2<Integer>(freqs, null);
-/*
-         for(Map.Entry<Integer, Integer> e : freqs.entrySet())
-            System.out.println("[" + e.getKey() + "] = " + e.getValue());
-
-         List<Integer> tmp = new ArrayList<>();
-         tmp.add(3051);
-         tmp.add(30077);
-         tmp.add(1233);
-         tmp.add(1201);
-         tmp.add(2218);
-         tmp.add(2202);
-         tmp.add(-1);
-         tmp.add(30076);
-         tmp.add(-1);
-         tmp.add(30079);
-         tmp.add(-1);
-         tmp.add(30072);
-         tmp.add(-1);
-         tmp.add(-1);
-         tmp.add(30074);
-         tmp.add(-1);
-         tmp.add(30078);
-         tmp.add(-1);
-         tmp.add(30073);
-         tmp.add(1213);
-         tmp.add(1214);
-         tmp.add(-1);
-
-         byte[] out = huff.encode(tmp);
-
-         for(byte b : out){
-            int i;
-            if( b < 0 ){
-               i = 256 + b;
-            }
-            else
-               i = b;
-            System.out.println(i);
-         }
-*/
+         /*
+          * for(Map.Entry<Integer, Integer> e : freqs.entrySet()) System.out.println("[" + e.getKey() + "] = " +
+          * e.getValue()); List<Integer> tmp = new ArrayList<>(); tmp.add(3051); tmp.add(30077); tmp.add(1233);
+          * tmp.add(1201); tmp.add(2218); tmp.add(2202); tmp.add(-1); tmp.add(30076); tmp.add(-1); tmp.add(30079);
+          * tmp.add(-1); tmp.add(30072); tmp.add(-1); tmp.add(-1); tmp.add(30074); tmp.add(-1); tmp.add(30078);
+          * tmp.add(-1); tmp.add(30073); tmp.add(1213); tmp.add(1214); tmp.add(-1); byte[] out = huff.encode(tmp);
+          * for(byte b : out){ int i; if( b < 0 ){ i = 256 + b; } else i = b; System.out.println(i); }
+          */
       }
       catch( Exception e ){
          throw new RuntimeException(e);
@@ -198,7 +164,7 @@ public class LoadoutCoderV3 implements LoadoutCoder{
          }
          stack.pushAndApply(new OpSetGuidanceType(null, loadout, (GuidanceUpgrade)UpgradeDB.lookup(ids.remove(0))));
 
-         for(Location location : componentOrder){
+         for(Location location : Location.right2Left()){
             if( isOmniMech && location != Location.CenterTorso ){
                LoadoutOmniMech omniMech = (LoadoutOmniMech)loadout;
                OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
@@ -344,7 +310,7 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       }
       ids.add(aLoadout.getUpgrades().getGuidance().getMwoId());
 
-      for(Location location : componentOrder){
+      for(Location location : Location.right2Left()){
          ConfiguredComponentBase component = aLoadout.getComponent(location);
          if( isOmniMech && location != Location.CenterTorso ){
             ids.add(((ConfiguredComponentOmniMech)component).getOmniPod().getMwoId());
@@ -403,7 +369,7 @@ public class LoadoutCoderV3 implements LoadoutCoder{
 
       // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA
       // 1 byte per armor value (2 for RT,CT,LT front first)
-      for(Location part : componentOrder){
+      for(Location part : Location.right2Left()){
          if( part.isTwoSided() ){
             aStack.pushAndApply(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.FRONT, aBuffer.read(), true));
             aStack.pushAndApply(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.BACK, aBuffer.read(), true));
@@ -415,7 +381,7 @@ public class LoadoutCoderV3 implements LoadoutCoder{
    }
 
    private void writeArmorValues(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout){
-      for(Location part : componentOrder){
+      for(Location part : Location.right2Left()){
          if( part.isTwoSided() ){
             aBuffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.FRONT));
             aBuffer.write((byte)aLoadout.getComponent(part).getArmor(ArmorSide.BACK));
@@ -454,7 +420,7 @@ public class LoadoutCoderV3 implements LoadoutCoder{
     * @throws Exception
     */
    public static void main(String[] arg) throws Exception{
-       generateAllLoadouts();
+      // generateAllLoadouts();
       // generateStatsFromStdin();
       // generateStatsFromStock();
    }

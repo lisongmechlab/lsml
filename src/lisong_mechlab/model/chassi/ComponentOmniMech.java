@@ -23,7 +23,6 @@ import java.util.List;
 
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.Weapon;
 
 /**
  * A component specific to omnimechs.
@@ -106,24 +105,5 @@ public class ComponentOmniMech extends ComponentBase{
     */
    public int getDynamicStructureSlots(){
       return dynamicStructure;
-   }
-
-   /**
-    * @param aItem
-    *           The item to check with.
-    * @return <code>true</code> if the Lower Arm Actuator (LAA) and/or Hand Actuator (HA) should be removed if the given
-    *         item is equipped.
-    */
-   public static boolean shouldRemoveArmActuators(Item aItem){
-      if( aItem instanceof Weapon ){
-         boolean isLargeBore = false;
-         isLargeBore |= aItem.getName().toLowerCase().contains("ppc");
-         isLargeBore |= aItem.getName().toLowerCase().contains("gauss");
-         isLargeBore |= aItem.getName().toLowerCase().contains("ac/");
-         isLargeBore |= aItem.getName().toLowerCase().contains("x ac");
-         isLargeBore |= aItem.getName().toLowerCase().contains("10-x");
-         return isLargeBore;
-      }
-      return false;
    }
 }

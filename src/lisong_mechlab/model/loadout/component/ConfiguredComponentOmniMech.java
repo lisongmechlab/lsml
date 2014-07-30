@@ -33,6 +33,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 
 /**
@@ -91,12 +92,12 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
 
    @Override
    public boolean canAddItem(Item aItem){
-      //TODO: This is copy pasted from ConfiguredComponentBase and then modified.
+      // TODO: This is copy pasted from ConfiguredComponentBase and then modified.
       if( !getInternalComponent().isAllowed(aItem) )
          return false;
 
       int slotComp = 0;
-      if( ComponentOmniMech.shouldRemoveArmActuators(aItem) ){
+      if( aItem instanceof Weapon && ((Weapon)aItem).isLargeBore() ){
          if( getToggleState(ItemDB.HA) )
             slotComp++;
          if( getToggleState(ItemDB.LAA) )
@@ -164,7 +165,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
       boolean removeHALAA = false;
 
       for(Item item : getItemsEquipped()){
-         if( ComponentOmniMech.shouldRemoveArmActuators(item) ){
+         if( item instanceof Weapon && ((Weapon)item).isLargeBore() ){
             removeHALAA = true;
             break;
          }
@@ -172,7 +173,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
 
       if( !removeHALAA ){
          for(Item item : getInternalComponent().getFixedItems()){
-            if( ComponentOmniMech.shouldRemoveArmActuators(item) ){
+            if( item instanceof Weapon && ((Weapon)item).isLargeBore() ){
                removeHALAA = true;
                break;
             }

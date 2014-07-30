@@ -33,7 +33,6 @@ import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.util.ArrayUtils;
 
 import org.junit.Before;
@@ -157,89 +156,6 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       hardPoints.add(new HardPoint(HardPointType.BALLISTIC));
 
       assertTrue(ArrayUtils.equalsUnordered(hardPoints, new ArrayList<>(makeDefaultCUT().getHardPoints())));
-   }
-
-   /**
-    * When a large bore weapon such as any AC, Gauss or PPC is equipped, the LLA/HA should be removed.
-    */
-   @Test
-   public final void testGetItemsFixed_LargeBoreEquipped(){
-      Item LAA = ItemDB.LAA;
-      Item HA = ItemDB.HA;
-      Item UAA = ItemDB.UAA;
-      internalFixedItems.clear();
-      internalFixedItems.add(UAA);
-
-      List<Item> omniPodToggleable = new ArrayList<>();
-      Mockito.when(omniPod.getToggleableItems()).thenReturn(omniPodToggleable);
-      omniPodToggleable.add(LAA);
-      omniPodToggleable.add(HA);
-
-      Item largeBoreGun = Mockito.mock(Item.class);
-      Mockito.when(ComponentOmniMech.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
-
-      ConfiguredComponentOmniMech cut = makeDefaultCUT();
-      cut.addItem(largeBoreGun);
-
-      List<Item> ans = cut.getItemsFixed();
-      assertEquals(1, ans.size());
-      assertSame(UAA, ans.remove(0));
-   }
-
-   /**
-    * When a large bore weapon such as any AC, Gauss or PPC is fixed on the chassis, the LLA/HA should be removed.
-    */
-   @Test
-   public final void testGetItemsFixed_LargeBoreFixed(){
-      Item LAA = ItemDB.LAA;
-      Item HA = ItemDB.HA;
-      Item UAA = ItemDB.UAA;
-      internalFixedItems.clear();
-      internalFixedItems.add(UAA);
-      
-      List<Item> omniPodFixed = new ArrayList<>();
-      Mockito.when(omniPod.getToggleableItems()).thenReturn(omniPodFixed);
-      omniPodFixed.add(LAA);
-      omniPodFixed.add(HA);
-
-      Item largeBoreGun = Mockito.mock(Item.class);
-      Mockito.when(ComponentOmniMech.shouldRemoveArmActuators(largeBoreGun)).thenReturn(true);
-
-      internalFixedItems.add(largeBoreGun);
-
-      List<Item> ans = makeDefaultCUT().getItemsFixed();
-      assertEquals(2, ans.size());
-      assertTrue(ans.remove(UAA));
-      assertTrue(ans.remove(largeBoreGun));
-   }
-   
-   /**
-    * When a large bore weapon such as any AC, Gauss or PPC is fixed on the chassis, the LLA/HA should be removed.
-    */
-   @Test
-   public final void testGetItemsFixed_NoLargeBore(){
-      Item LAA = ItemDB.LAA;
-      Item HA = ItemDB.HA;
-      Item UAA = ItemDB.UAA;
-      internalFixedItems.clear();
-      internalFixedItems.add(UAA);
-      
-      List<Item> omniPodFixed = new ArrayList<>();
-      Mockito.when(omniPod.getToggleableItems()).thenReturn(omniPodFixed);
-      omniPodFixed.add(LAA);
-      omniPodFixed.add(HA);
-
-      Item smallBoreGun = Mockito.mock(Item.class);
-      Mockito.when(ComponentOmniMech.shouldRemoveArmActuators(smallBoreGun)).thenReturn(false);
-
-      internalFixedItems.add(smallBoreGun);
-
-      List<Item> ans = makeDefaultCUT().getItemsFixed();
-      assertEquals(4, ans.size());
-      assertTrue(ans.remove(UAA));
-      assertTrue(ans.remove(HA));
-      assertTrue(ans.remove(LAA));
-      assertTrue(ans.remove(smallBoreGun));
    }
 
    @Test

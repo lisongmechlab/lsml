@@ -147,5 +147,18 @@ public class WeaponTest{
       BallisticWeapon gauss = (BallisticWeapon)ItemDB.lookup("GAUSS RIFLE");
       assertEquals(gauss.getDamagePerShot() / gauss.getHeat(null), gauss.getStat("d/h", null, null), 0.0);
    }
+   
+
+   @Test
+   public final void testIsLargeBore(){
+      assertTrue(((Weapon)ItemDB.lookup("C-ER PPC")).isLargeBore());
+      assertFalse(((Weapon)ItemDB.lookup("LARGE LASER")).isLargeBore());
+      assertTrue(((Weapon)ItemDB.lookup("AC/10")).isLargeBore());
+      assertTrue(((Weapon)ItemDB.lookup("LB 10-X AC")).isLargeBore());
+      assertTrue(((Weapon)ItemDB.lookup("GAUSS RIFLE")).isLargeBore());
+      assertTrue(((Weapon)ItemDB.lookup("C-LB5-X AC")).isLargeBore());
+      assertFalse(((Weapon)ItemDB.lookup("MACHINE GUN")).isLargeBore());     
+      assertFalse(((Weapon)ItemDB.lookup("AMS")).isLargeBore());
+   }
 
 }

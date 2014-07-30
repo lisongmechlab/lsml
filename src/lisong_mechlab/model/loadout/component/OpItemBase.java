@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
-import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.Engine;
@@ -35,6 +34,7 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message;
@@ -177,7 +177,11 @@ abstract class OpItemBase extends Operation{
    }
 
    private void applyForcedToggles(Item aItem){
-      if( component instanceof ConfiguredComponentOmniMech && ComponentOmniMech.shouldRemoveArmActuators(aItem) ){
+      if( !(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech) )
+         return;
+
+      Weapon weapon = (Weapon)aItem;
+      if( weapon.isLargeBore() ){
          if( !oldToggleStates.isEmpty() ){
             // Restore toggle state
             for(Entry<Item, Boolean> entry : oldToggleStates.entrySet()){
@@ -203,7 +207,11 @@ abstract class OpItemBase extends Operation{
    }
 
    private void restoreForcedToggles(Item aItem){
-      if( component instanceof ConfiguredComponentOmniMech && ComponentOmniMech.shouldRemoveArmActuators(aItem) ){
+      if( !(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech) )
+         return;
+
+      Weapon weapon = (Weapon)aItem;
+      if( weapon.isLargeBore() ){
          if( !oldToggleStates.isEmpty() ){
             // Restore toggle state
             for(Entry<Item, Boolean> entry : oldToggleStates.entrySet()){

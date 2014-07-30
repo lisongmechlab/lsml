@@ -102,7 +102,7 @@ public class DynamicSlotDistributor{
     */
    private int getCumulativeFreeSlots(Location aLocation){
       int ans = 0;
-      for(Location part : Location.leftToRight()){
+      for(Location part : Location.right2Left()){
          if( part == aLocation )
             break;
          ans += loadout.getComponent(part).getSlotsFree();

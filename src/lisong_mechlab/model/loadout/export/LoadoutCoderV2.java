@@ -70,8 +70,6 @@ import lisong_mechlab.util.OperationStack;
 public class LoadoutCoderV2 implements LoadoutCoder{
    private static final int        HEADER_MAGIC = 0xAC + 1;
    private final Huffman1<Integer> huff;
-   private final Location[]        partOrder    = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head,
-         Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
 
    public LoadoutCoderV2(){
       ObjectInputStream in = null;
@@ -135,13 +133,13 @@ public class LoadoutCoderV2 implements LoadoutCoder{
 
       // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA
       // 1 byte per armor value (2 for RT,CT,LT front first)
-      for(Location part : partOrder){
-         if( part.isTwoSided() ){
-            stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(part), ArmorSide.FRONT, buffer.read(), true));
-            stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(part), ArmorSide.BACK, buffer.read(), true));
+      for(Location location : Location.right2Left()){
+         if( location.isTwoSided() ){
+            stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.FRONT, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.BACK, buffer.read(), true));
          }
          else{
-            stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(part), ArmorSide.ONLY, buffer.read(), true));
+            stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.ONLY, buffer.read(), true));
          }
       }
 
@@ -170,7 +168,7 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          ids.remove(1);
          ids.remove(0);
 
-         for(Location part : partOrder){
+         for(Location location : Location.right2Left()){
             Integer v;
             List<Item> later = new ArrayList<>();
             while( !ids.isEmpty() && -1 != (v = ids.remove(0)) ){
@@ -179,10 +177,10 @@ public class LoadoutCoderV2 implements LoadoutCoder{
                   later.add(item); // Add heat sinks last after engine has been added
                   continue;
                }
-               stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(part), ItemDB.lookup(v)));
+               stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
             }
             for(Item i : later){
-               stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(part), i));
+               stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), i));
             }
          }
 
