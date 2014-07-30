@@ -331,4 +331,18 @@ public class Weapon extends HeatSource{
    public boolean hasNonLinearFalloff(){
       return 1.0 != fallOffExponent;
    }
+
+   /**
+    * @return <code>true</code> if the Lower Arm Actuator (LAA) and/or Hand Actuator (HA) should be removed if this
+    *         weapon is equipped.
+    */
+   public boolean isLargeBore(){
+      boolean isLargeBore = false;
+      isLargeBore |= getName().toLowerCase().contains("ppc");
+      isLargeBore |= getName().toLowerCase().contains("gauss");
+      isLargeBore |= getName().toLowerCase().contains("ac/");
+      isLargeBore |= getName().toLowerCase().contains("x ac");
+      isLargeBore |= getName().toLowerCase().contains("10-x");
+      return isLargeBore;
+   }
 }

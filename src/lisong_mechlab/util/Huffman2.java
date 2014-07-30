@@ -170,8 +170,28 @@ public class Huffman2<T extends Comparable<T>> {
       // Pre-calculate all the prefix codes for the leaves
       for(Leaf<T> leaf : leafs.values()){
          leaf.createPrefix();
+         
+//         int prefixlen = leaf.prefixSize;
+//         long prefix = leaf.prefix;
+//         String p = "";
+//         while(prefixlen > 0){
+//            p += ((prefix & Leaf.LONG_HIGH_BIT) != 0) ? "1" : "0";
+//            prefix <<= 1;
+//            prefixlen--;
+//         }
+//         System.out.println("["+leaf.symbol+"]="+p);
       }
       stopLeaf.createPrefix();
+      
+//      int prefixlen = stopLeaf.prefixSize;
+//      long prefix = stopLeaf.prefix;
+//      String p = "";
+//      while(prefixlen > 0){
+//         p += ((prefix & Leaf.LONG_HIGH_BIT) != 0) ? "1" : "0";
+//         prefix <<= 1;
+//         prefixlen--;
+//      }
+//      System.out.println("[STOP]="+p);
    }
 
    /**

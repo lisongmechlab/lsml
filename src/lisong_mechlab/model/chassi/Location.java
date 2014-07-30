@@ -64,11 +64,11 @@ public enum Location{
       return twosided;
    }
 
-   private final static Location[] left2right = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head,
+   private final static Location[] right2left = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head,
          Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
 
-   public static Location[] leftToRight(){
-      return left2right;
+   public static Location[] right2Left(){
+      return right2left;
    }
 
    public Location oppositeSide(){
