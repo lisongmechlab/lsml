@@ -320,7 +320,7 @@ public class DynamicSlotDistributorTest{
 
       // Create chassis
       ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null, Faction.InnerSphere, internalComponents, 0,
-                                                            aStructureType, armorType, null);
+                                                            0, 0, aStructureType, armorType, null);
       // Setup factory
       Factory<ConfiguredComponentOmniMech> aFactory = Mockito.mock(Factory.class);
       ConfiguredComponentOmniMech[] configuredComponents = new ConfiguredComponentOmniMech[Location.values().length];

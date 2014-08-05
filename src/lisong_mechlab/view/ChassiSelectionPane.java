@@ -157,7 +157,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
                ChassisBase chassis = (ChassisBase)aValue;
-               int modules = chassis.getPilotModulesMax();
+               int modules = chassis.getMechModulesMax();
                if( chassis instanceof ChassisOmniMech ){
                   ChassisOmniMech omniMech = (ChassisOmniMech)chassis;
 

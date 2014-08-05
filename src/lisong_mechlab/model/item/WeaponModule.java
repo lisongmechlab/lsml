@@ -49,6 +49,8 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
     *           The required faction for this module.
     * @param aCathegory
     *           The {@link ModuleCathegory} for this {@link Module}.
+    * @param aModuleSlot
+    *           The {@link ModuleSlot} of this {@link Module}.
     * @param aAffectedWeapon
     *           The weapon that this module affects.
     * @param aMaxRank
@@ -64,8 +66,9 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
     *           the weapon.
     */
    public WeaponModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction, ModuleCathegory aCathegory,
-                       List<Weapon> aAffectedWeapon, int aMaxRank, double aLongRangeModifier[], double aMaxRangeModifier[], double aHeatModifier[]){
-      super(aMwoName, aMwoIdx, aName, aDescription, aFaction, aCathegory);
+                       ModuleSlot aModuleSlot, List<Weapon> aAffectedWeapon, int aMaxRank, double aLongRangeModifier[], double aMaxRangeModifier[],
+                       double aHeatModifier[]){
+      super(aMwoName, aMwoIdx, aName, aDescription, aFaction, aCathegory, aModuleSlot);
       maxRank = aMaxRank;
       affectedWeapon = aAffectedWeapon;
 

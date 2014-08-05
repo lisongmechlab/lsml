@@ -32,7 +32,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.item.ModuleCathegory;
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.DecodingException;
@@ -77,15 +77,15 @@ public class MechLabPane extends JSplitPane{
       JPanel modulesPanel = new ScrollablePanel();
       modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.PAGE_AXIS));
       
-      for(ModuleCathegory moduleCathegory : ModuleCathegory.values()){
+      for(ModuleSlot slotType : ModuleSlot.values()){
          JPanel panel = new JPanel();
          panel.setLayout(new BorderLayout());
-         panel.setBorder(StyleManager.sectionBorder(moduleCathegory.toString()));
-         panel.add(new ModuleSeletionList(desktop, anXBar, moduleCathegory), BorderLayout.CENTER);
+         panel.setBorder(StyleManager.sectionBorder(slotType.toString()));
+         panel.add(new ModuleSeletionList(desktop, anXBar, slotType), BorderLayout.CENTER);
          modulesPanel.add(panel);
       }
       
-      tabbedPane.addTab("Modules", modulesPanel);
+      tabbedPane.addTab("Modules", new JScrollPane(modulesPanel));
 
       setLeftComponent(tabbedPane);
       setRightComponent(desktop);

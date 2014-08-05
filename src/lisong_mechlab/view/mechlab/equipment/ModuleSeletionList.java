@@ -37,7 +37,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import lisong_mechlab.model.item.ModuleCathegory;
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
@@ -59,11 +59,11 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
    private static final long                   serialVersionUID = -5162141596342256532L;
    private final DefaultListModel<PilotModule> model;
    private LoadoutBase<?>                      currentLoadout;
-   private ModuleCathegory                     cathegory;
+   private ModuleSlot                          slotType;
 
-   public ModuleSeletionList(final LoadoutDesktop aDesktop, final MessageXBar aXBar, ModuleCathegory aCathegory){
+   public ModuleSeletionList(final LoadoutDesktop aDesktop, final MessageXBar aXBar, ModuleSlot aCathegory){
       model = new DefaultListModel<>();
-      cathegory = aCathegory;
+      slotType = aCathegory;
       changeLoadout(null);
 
       setModel(model);
@@ -115,7 +115,7 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
       model.removeAllElements();
       List<PilotModule> modules = new ArrayList<>();
 
-      for(PilotModule pilotModule : PilotModuleDB.lookup(cathegory)){
+      for(PilotModule pilotModule : PilotModuleDB.lookup(slotType)){
          if( aLoadout == null ){
             modules.add(pilotModule);
          }

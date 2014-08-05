@@ -20,29 +20,34 @@
 package lisong_mechlab.model.item;
 
 /**
+ * Enumerates all possible module slot types.
+ * 
  * @author Li Song
  */
-public enum ModuleCathegory{
-   Support, Consumable, Vision, Sensor, Targeting, WeaponModule, UNKOWN;
+public enum ModuleSlot{
+   CONSUMABLE("Consumable"), WEAPON("Weapon"), MECH("Mech");
 
-   public static ModuleCathegory fromMwo(String aMwoValue){
-      if(null == aMwoValue)
-         return UNKOWN;
-      switch( aMwoValue ){
-         case "ePTModule_Support":
-            return Support;
-         case "ePTModule_Vision":
-            return Vision;
-         case "ePTModule_Sensor":
-            return Sensor;
-         case "ePTModule_Target":
-            return Targeting;
-         case "ePTModule_Consumable":
-            return Consumable;
-         case "ePTModule_WeaponMod":
-            return WeaponModule;
-         default:
-            throw new IllegalArgumentException("Unknown module type.");
+   public static ModuleSlot fromMwo(String aString){
+      switch( aString ){
+         case "WeaponMod":
+            return WEAPON;
+         case "Consumable":
+            return CONSUMABLE;
+         case "Pilot":
+            return MECH;
+            default:
+               throw new IllegalArgumentException("Unknown module type!: " + aString);
       }
+   }
+   
+   private final String name;
+
+   private ModuleSlot(String aName){
+      name = aName;
+   }
+   
+   @Override
+   public String toString(){
+      return name;
    }
 }

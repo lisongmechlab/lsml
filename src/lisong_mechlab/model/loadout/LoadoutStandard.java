@@ -27,6 +27,7 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -161,7 +162,18 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
    }
 
    @Override
-   public int getModulesMax(){
-      return getChassis().getPilotModulesMax() + 1;// +1 for mastery.
+   public int getModulesMax(ModuleSlot aModuleSlot){
+      if( aModuleSlot == ModuleSlot.MECH ){
+         return getChassis().getMechModulesMax() + 1;// +1 for mastery.
+      }
+      else if( aModuleSlot == ModuleSlot.CONSUMABLE ){
+         return getChassis().getConsumableModulesMax();
+      }
+      else if( aModuleSlot == ModuleSlot.WEAPON ){
+         return getChassis().getWeaponModulesMax();
+      }
+      else{
+         throw new IllegalArgumentException("Unknown module slot type!");
+      }
    }
 }

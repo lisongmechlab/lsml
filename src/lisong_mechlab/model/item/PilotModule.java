@@ -40,6 +40,8 @@ public class PilotModule{
    private final Faction         faction;
    @XStreamAsAttribute
    private final ModuleCathegory cathegory;
+   @XStreamAsAttribute
+   private final ModuleSlot      slotType;
 
    /**
     * Creates a new {@link PilotModule}.
@@ -56,14 +58,18 @@ public class PilotModule{
     *           The required faction for this module.
     * @param aCathegory
     *           The {@link ModuleCathegory} for this {@link Module}.
+    * @param aSlotType
+    *           The {@link ModuleSlot} of the module.
     */
-   public PilotModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction, ModuleCathegory aCathegory){
+   public PilotModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction, ModuleCathegory aCathegory,
+                      ModuleSlot aSlotType){
       mwoName = aMwoName;
       mwoIdx = aMwoIdx;
       locName = aName;
       locDesc = aDescription;
       faction = aFaction;
       cathegory = aCathegory;
+      slotType = aSlotType;
    }
 
    public String getKey(){
@@ -93,5 +99,9 @@ public class PilotModule{
 
    public ModuleCathegory getCathegory(){
       return cathegory;
+   }
+
+   public ModuleSlot getSlot(){
+      return slotType;
    }
 }

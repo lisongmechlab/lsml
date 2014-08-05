@@ -68,6 +68,10 @@ public class ChassisOmniMech extends ChassisBase{
     *           An array of components for this chassis.
     * @param aMaxPilotModules
     *           The maximum number of pilot modules that can be equipped.
+    * @param aMaxConsumableModules
+    *           The maximal number of consumable modules this chassis can support.
+    * @param aMaxWeaponModules
+    *           The maximal number of weapon modules this chassis can support.
     * @param aStructureType
     *           The structure type that is fixed on this chassis.
     * @param aArmorType
@@ -77,8 +81,10 @@ public class ChassisOmniMech extends ChassisBase{
     */
    public ChassisOmniMech(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
                           int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, ComponentOmniMech[] aComponents,
-                          int aMaxPilotModules, StructureUpgrade aStructureType, ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType){
-      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents, aMaxPilotModules);
+                          int aMaxPilotModules, int aMaxConsumableModules, int aMaxWeaponModules, StructureUpgrade aStructureType,
+                          ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType){
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents,
+            aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules);
       structureType = aStructureType;
       armorType = aArmorType;
       heatSinkType = aHeatSinkType;

@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
@@ -42,7 +43,7 @@ import lisong_mechlab.view.render.ItemRenderer;
 /**
  * This class implements a JList for {@link PilotModule}s equipped on a {@link LoadoutBase}.
  * <p>
- * TODO: Make it adapt to changes in pilot modules form omnipods when they add pilot modules as quirks.
+ * TODO: Make it adapt to changes in pilot modules from omnipods when they add pilot modules as quirks.
  * 
  * @author Li Song
  */
@@ -51,15 +52,17 @@ public class PilotModuleList extends JList<String>{
    private final MessageXBar    xBar;
    private final LoadoutBase<?> loadout;
    private final OperationStack stack;
+   private final ModuleSlot moduleSlot;
 
-   public PilotModuleList(MessageXBar aXBar, OperationStack aOperationStack, LoadoutBase<?> aLoadout){
-      super(new PilotModuleModel(aLoadout, aXBar));
+   public PilotModuleList(MessageXBar aXBar, OperationStack aOperationStack, LoadoutBase<?> aLoadout, ModuleSlot aModuleSlot){
+      super(new PilotModuleModel(aLoadout, aXBar, aModuleSlot));
       xBar = aXBar;
       stack = aOperationStack;
       loadout = aLoadout;
+      moduleSlot = aModuleSlot;
       setVisible(true);
       setFocusable(false);
-      setVisibleRowCount(aLoadout.getModulesMax());
+      setVisibleRowCount(aLoadout.getModulesMax(aModuleSlot));
       setFixedCellWidth(ItemRenderer.getItemWidth());
       setFixedCellHeight(ItemRenderer.getItemHeight());
       setDragEnabled(true);
@@ -72,13 +75,15 @@ public class PilotModuleList extends JList<String>{
                                                        boolean aCellHasFocus){
             label.setText(aValue);
 
-            if( aIndex == aList.getModel().getSize() - 1 ){
-               label.setBackground(new Color(0xb8aa81));
-               label.setOpaque(true);
-            }
-            else{
-               label.setBackground(Color.WHITE);
-               label.setOpaque(false);
+            if( moduleSlot == ModuleSlot.MECH ){
+               if( aIndex == aList.getModel().getSize() - 1 ){
+                  label.setBackground(new Color(0xb8aa81));
+                  label.setOpaque(true);
+               }
+               else{
+                  label.setBackground(Color.WHITE);
+                  label.setOpaque(false);
+               }
             }
             return label;
          }
