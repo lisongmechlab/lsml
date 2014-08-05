@@ -31,4 +31,6 @@ public class XMLPilotModuleStats{
    public String talentId;
    @XStreamAsAttribute
    public String category;
+   @XStreamAsAttribute
+   public String slot;
 }

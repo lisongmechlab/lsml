@@ -49,6 +49,16 @@ public class PilotModuleDB{
       }
       return ans;
    }
+   
+   public static List<PilotModule> lookup(ModuleSlot aSlotType){
+      List<PilotModule> ans = new ArrayList<>();
+      for(PilotModule module : mwoidx2module.values()){
+         if( module.getSlot() == aSlotType ){
+            ans.add(module);
+         }
+      }
+      return ans;
+   }
 
    public static List<PilotModule> lookup(Class<? extends PilotModule> aClass){
       List<PilotModule> ans = new ArrayList<>();

@@ -29,6 +29,7 @@ import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -121,13 +122,13 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
    }
 
    @Test
-   public final void testGetModulesMax() throws Exception{
-      Mockito.when(chassisOmni.getPilotModulesMax()).thenReturn(2);
+   public final void testMechModulesMax() throws Exception{
+      Mockito.when(chassisOmni.getMechModulesMax()).thenReturn(2);
 
       Mockito.when(pods[3].getPilotModulesMax()).thenReturn(1);
       Mockito.when(pods[7].getPilotModulesMax()).thenReturn(3);
 
-      assertEquals(6 + 1, makeDefaultCUT().getModulesMax()); // +1 for mastery
+      assertEquals(6 + 1, makeDefaultCUT().getModulesMax(ModuleSlot.MECH)); // +1 for mastery
    }
 
    @Test

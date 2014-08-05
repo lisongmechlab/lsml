@@ -44,6 +44,7 @@ import javax.swing.ScrollPaneConstants;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.OpStripArmor;
@@ -238,13 +239,19 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
          JPanel padPanel = createComponentPadPanel(ARM_OFFSET, symmetricArmor);
          final JPanel arm = new PartPanel(aLoadout, aLoadout.getComponent(Location.RightArm), aXBar, true, slotDistributor, symmetricArmor,
                                           loadoutOperationStack);
-         JPanel modulePanel = new JPanel();
-         modulePanel.setBorder(StyleManager.sectionBorder("Modules"));
-         modulePanel.setLayout(new BoxLayout(modulePanel, BoxLayout.PAGE_AXIS));
-         modulePanel.add(Box.createHorizontalGlue());
-         // modulePanel.add(Box.createVerticalGlue());
-         modulePanel.add(new PilotModuleList(xbar, loadoutOperationStack, loadout));
-         panel.add(createComponentPanel(padPanel, arm, modulePanel));
+
+         JPanel modulesPanel = new JPanel();
+         modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.PAGE_AXIS));
+         for(ModuleSlot moduleSlot : ModuleSlot.values()){
+            JPanel modulePanel = new JPanel();
+            modulePanel.setBorder(StyleManager.sectionBorder(moduleSlot.toString() + " Modules"));
+            modulePanel.setLayout(new BoxLayout(modulePanel, BoxLayout.PAGE_AXIS));
+            modulePanel.add(Box.createHorizontalGlue());
+            // modulePanel.add(Box.createVerticalGlue());
+            modulePanel.add(new PilotModuleList(xbar, loadoutOperationStack, loadout, moduleSlot));
+            modulesPanel.add(modulePanel);
+         }
+         panel.add(createComponentPanel(padPanel, arm, modulesPanel));
       }
 
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() )

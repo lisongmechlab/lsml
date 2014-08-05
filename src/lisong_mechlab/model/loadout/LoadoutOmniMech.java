@@ -28,6 +28,7 @@ import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.QuirkedMovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
@@ -141,12 +142,23 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
    }
 
    @Override
-   public int getModulesMax(){
-      int ans = getChassis().getPilotModulesMax() + 1; // +1 for mastery
+   public int getModulesMax(ModuleSlot aModuleSlot){
+      if(aModuleSlot == ModuleSlot.MECH ){
+      int ans = getChassis().getMechModulesMax() + 1; // +1 for mastery
       for(ConfiguredComponentOmniMech component : getComponents()){
          ans += component.getOmniPod().getPilotModulesMax();
       }
       return ans;
+      }
+      else if(aModuleSlot == ModuleSlot.CONSUMABLE){
+         return getChassis().getConsumableModulesMax();
+      }
+      else if(aModuleSlot == ModuleSlot.WEAPON){
+         return getChassis().getWeaponModulesMax();
+      }
+      else{
+         throw new IllegalArgumentException("Unknown module slot type!");
+      }
    }
 
    /**

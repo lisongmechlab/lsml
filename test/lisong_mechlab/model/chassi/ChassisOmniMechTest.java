@@ -115,14 +115,14 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
    public final void testCtor_BadDynArmor(){
       Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(13);
       new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
-                          maxPilotModules, structureType, armorType, heatSinkType);
+                          maxPilotModules, maxConsumableModules, maxWeaponModules, structureType, armorType, heatSinkType);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public final void testCtor_BadDynStructure(){
       Mockito.when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);
       new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
-                          maxPilotModules, structureType, armorType, heatSinkType);
+                          maxPilotModules, maxConsumableModules, maxWeaponModules, structureType, armorType, heatSinkType);
    }
 
    @Test
@@ -305,6 +305,6 @@ public class ChassisOmniMechTest extends ChassisBaseTest{
    @Override
    protected ChassisOmniMech makeDefaultCUT(){
       return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, components,
-                                 maxPilotModules, structureType, armorType, heatSinkType);
+                                 maxPilotModules, maxConsumableModules, maxWeaponModules, structureType, armorType, heatSinkType);
    }
 }

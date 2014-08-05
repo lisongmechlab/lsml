@@ -23,9 +23,11 @@ package lisong_mechlab.model.item;
  * @author Emily Björk
  */
 public enum ModuleCathegory{
-   Support, Consumable, Vision, Sensor, Targeting;
+   Support, Consumable, Vision, Sensor, Targeting, WeaponModule, UNKOWN;
 
    public static ModuleCathegory fromMwo(String aMwoValue){
+      if(null == aMwoValue)
+         return UNKOWN;
       switch( aMwoValue ){
          case "ePTModule_Support":
             return Support;
@@ -37,6 +39,8 @@ public enum ModuleCathegory{
             return Targeting;
          case "ePTModule_Consumable":
             return Consumable;
+         case "ePTModule_WeaponMod":
+            return WeaponModule;
          default:
             throw new IllegalArgumentException("Unknown module type.");
       }

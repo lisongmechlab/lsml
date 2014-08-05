@@ -95,18 +95,16 @@ public class Huffman2<T extends Comparable<T>> {
       @Override
       public int compareTo(Node that){
          int v = Integer.compare(this.frequency, that.frequency);
-         if(v == 0)
+         if( v == 0 )
             return Integer.compare(this.tieBreaker, that.tieBreaker);
          return v;
       }
    }
 
-   private final Map<T, Leaf<T>> leafs       = new TreeMap<>();
+   private final Map<T, Leaf<T>> leafs = new TreeMap<>();
    private final Node            root;
    private final Leaf<T>         stopLeaf;
    private final double          sourceEntropy;
-
-   private int                   nodeCounter = 0;
 
    /**
     * Instantiates a new Huffman coder using the given frequency table to generate codewords.
@@ -136,7 +134,6 @@ public class Huffman2<T extends Comparable<T>> {
       }
 
       sourceEntropy = calculateEntropy(aSymbolFrequencyTable);
-
       List<Map.Entry<T, Integer>> frequencies = new LinkedList<>(aSymbolFrequencyTable.entrySet());
       Collections.sort(frequencies, new Comparator<Map.Entry<T, Integer>>(){
          @Override
@@ -145,53 +142,52 @@ public class Huffman2<T extends Comparable<T>> {
          }
       }); // Order frequencies by natural ordering of the symbols.
 
+      int tieBreaker = 0;
+      
       // Populate initial forest of leaves and the leaves map
       PriorityQueue<Node> forest = new PriorityQueue<>(aSymbolFrequencyTable.size());
       for(Map.Entry<T, Integer> pair : frequencies){
          if( pair.getValue() < 1 )
             continue;
-         final Leaf<T> leaf = new Leaf<T>(pair.getKey(), pair.getValue(), nodeCounter);
-         nodeCounter++;
+         final Leaf<T> leaf = new Leaf<T>(pair.getKey(), pair.getValue(), tieBreaker++);
          forest.offer(leaf);
          leafs.put(pair.getKey(), leaf);
       }
       // Some implementations of map do not allow null as a key, and stopLeaf can be null so don't add it to leaves.
-      stopLeaf = new Leaf<T>(aStopSymbol, 0, nodeCounter);
-      nodeCounter++;
+      stopLeaf = new Leaf<T>(aStopSymbol, 0, tieBreaker++);
       forest.offer(stopLeaf);
 
       // Create Huffman tree
       while( forest.size() > 1 ){
-         forest.offer(new Branch(forest.poll(), forest.poll(), nodeCounter));
-         nodeCounter++;
+         forest.offer(new Branch(forest.poll(), forest.poll(), tieBreaker++));
       }
       root = forest.poll();
 
       // Pre-calculate all the prefix codes for the leaves
       for(Leaf<T> leaf : leafs.values()){
          leaf.createPrefix();
-         
-//         int prefixlen = leaf.prefixSize;
-//         long prefix = leaf.prefix;
-//         String p = "";
-//         while(prefixlen > 0){
-//            p += ((prefix & Leaf.LONG_HIGH_BIT) != 0) ? "1" : "0";
-//            prefix <<= 1;
-//            prefixlen--;
-//         }
-//         System.out.println("["+leaf.symbol+"]="+p);
+
+         // int prefixlen = leaf.prefixSize;
+         // long prefix = leaf.prefix;
+         // String p = "";
+         // while(prefixlen > 0){
+         // p += ((prefix & Leaf.LONG_HIGH_BIT) != 0) ? "1" : "0";
+         // prefix <<= 1;
+         // prefixlen--;
+         // }
+         // System.out.println("["+leaf.symbol+"]="+p);
       }
       stopLeaf.createPrefix();
-      
-//      int prefixlen = stopLeaf.prefixSize;
-//      long prefix = stopLeaf.prefix;
-//      String p = "";
-//      while(prefixlen > 0){
-//         p += ((prefix & Leaf.LONG_HIGH_BIT) != 0) ? "1" : "0";
-//         prefix <<= 1;
-//         prefixlen--;
-//      }
-//      System.out.println("[STOP]="+p);
+
+      // int prefixlen = stopLeaf.prefixSize;
+      // long prefix = stopLeaf.prefix;
+      // String p = "";
+      // while(prefixlen > 0){
+      // p += ((prefix & Leaf.LONG_HIGH_BIT) != 0) ? "1" : "0";
+      // prefix <<= 1;
+      // prefixlen--;
+      // }
+      // System.out.println("[STOP]="+p);
    }
 
    /**
@@ -256,7 +252,7 @@ public class Huffman2<T extends Comparable<T>> {
             }
          }
       }
-      if(bits != 0){
+      if( bits != 0 ){
          bytes++;
       }
       return Arrays.copyOf(output, bytes);

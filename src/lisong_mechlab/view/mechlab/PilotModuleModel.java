@@ -24,13 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
-import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.LoadoutMessage.Type;
@@ -38,7 +37,7 @@ import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 
 /**
- * This class implements a {@link ComboBoxModel} for selecting {@link PilotModule}s for a {@link LoadoutBase}.
+ * This class implements a {@link ListModel} for selecting {@link PilotModule}s for a {@link LoadoutBase}.
  * 
  * @author Emily Björk
  */
@@ -46,11 +45,13 @@ public class PilotModuleModel implements ListModel<String>, MessageXBar.Reader{
    private final LoadoutBase<?>        loadout;
    private final Set<ListDataListener> listeners = new HashSet<>();
    private final List<PilotModule>     modules   = new ArrayList<>();
+   private final ModuleSlot moduleSlot;
 
    public final static String          EMPTY     = "EMPTY";
 
-   public PilotModuleModel(LoadoutBase<?> aLoadout, MessageXBar aXBar){
+   public PilotModuleModel(LoadoutBase<?> aLoadout, MessageXBar aXBar, ModuleSlot aModuleSlot){
       loadout = aLoadout;
+      moduleSlot = aModuleSlot;
       aXBar.attach(this);
       updateModules();
    }
@@ -64,27 +65,25 @@ public class PilotModuleModel implements ListModel<String>, MessageXBar.Reader{
    }
 
    private void updateModules(){
-      List<PilotModule> mods = PilotModuleDB.lookup(PilotModule.class);
       modules.clear();
-      for(PilotModule module : mods){
-         if( loadout.canAddModule(module) ){
+      for(PilotModule module : loadout.getModules()){
+         if(module.getSlot() == moduleSlot){
             modules.add(module);
          }
       }
-
       fireListeners();
    }
 
    @Override
    public int getSize(){
-      return loadout.getModulesMax();
+      return loadout.getModulesMax(moduleSlot);
    }
 
    @Override
    public String getElementAt(int aIndex){
-      if( aIndex >= loadout.getModules().size() )
+      if( aIndex >= modules.size() )
          return EMPTY;
-      return loadout.getModules().get(aIndex).getName();
+      return modules.get(aIndex).getName();
    }
 
    @Override

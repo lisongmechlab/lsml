@@ -53,13 +53,17 @@ public abstract class ChassisBase{
    @XStreamAsAttribute
    private final String          name;
    @XStreamAsAttribute
-   private final int pilotModulesMax;
+   private final int             mechModules;
    @XStreamAsAttribute
    private final String          series;
    @XStreamAsAttribute
    private final String          shortName;
    @XStreamAsAttribute
    private final ChassisVariant  variant;
+   @XStreamAsAttribute
+   private final int             consumableModules;
+   @XStreamAsAttribute
+   private final int             weaponModules;
 
    /**
     * @param aMwoID
@@ -84,11 +88,16 @@ public abstract class ChassisBase{
     *           The {@link Faction} of this clan.
     * @param aComponents
     *           An array of components for this chassis.
-    * @param aMaxPilotModules
+    * @param aMaxMechModules
     *           The maximum number of pilot modules that can be equipped.
+    * @param aMaxConsumables
+    *           The maximal number of consumable modules this chassis can support.
+    * @param aMaxWeaponModules
+    *           The maximal number of weapon modules this chassis can support.
     */
    public ChassisBase(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
-                      int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, ComponentBase[] aComponents, int aMaxPilotModules){
+                      int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, ComponentBase[] aComponents, int aMaxMechModules,
+                      int aMaxConsumables, int aMaxWeaponModules){
       if( aComponents.length != Location.values().length )
          throw new IllegalArgumentException("Components array must contain all components!");
 
@@ -104,7 +113,9 @@ public abstract class ChassisBase{
       movementProfile = aMovementProfile;
       faction = aFaction;
       components = aComponents;
-      pilotModulesMax = aMaxPilotModules;
+      mechModules = aMaxMechModules;
+      consumableModules = aMaxConsumables;
+      weaponModules = aMaxWeaponModules;
    }
 
    @Override
@@ -212,10 +223,24 @@ public abstract class ChassisBase{
    }
 
    /**
-    * @return The maximal number of pilot modules this chassis can support.
+    * @return The maximal number of mech modules this chassis can support.
     */
-   public int getPilotModulesMax(){
-      return pilotModulesMax;
+   public int getMechModulesMax(){
+      return mechModules;
+   }
+
+   /**
+    * @return The maximal number of consumable modules this chassis can support.
+    */
+   public int getConsumableModulesMax(){
+      return consumableModules;
+   }
+
+   /**
+    * @return The maximal number of weapon modules this chassis can support.
+    */
+   public int getWeaponModulesMax(){
+      return weaponModules;
    }
 
    /**
@@ -250,15 +275,15 @@ public abstract class ChassisBase{
    public boolean isAllowed(Item aItem){
       if( !aItem.getFaction().isCompatible(getFaction()) )
          return false;
-      
+
       if( aItem instanceof Internal )
          return false;
-      
+
       if( aItem instanceof JumpJet ){
          JumpJet jj = (JumpJet)aItem;
          return jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
       }
-      
+
       for(ComponentBase part : getComponents()){
          if( part.isAllowed(aItem, null) )
             return true;
@@ -274,7 +299,7 @@ public abstract class ChassisBase{
    public boolean isSameSeries(ChassisBase aChassis){
       return series.equals(aChassis.series);
    }
-   
+
    @Override
    public String toString(){
       return getNameShort();

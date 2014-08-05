@@ -85,7 +85,7 @@ public class MdfMechDefinition{
 
       return new ChassisStandard(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons, ChassisVariant.fromString(Mech.VariantType),
                                  baseVariant, new BaseMovementProfile(MovementTuningConfiguration), faction, Mech.MinEngineRating,
-                                 Mech.MaxEngineRating, Mech.MaxJumpJets, components, Cockpit.TechSlots);
+                                 Mech.MaxEngineRating, Mech.MaxJumpJets, components, Cockpit.TechSlots, Cockpit.ConsumableSlots, Cockpit.WeaponModSlots);
    }
 
    public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, DataCache aDataCache, XMLMechIdMap aMechIdMap, XMLLoadout aLoadout){
@@ -109,7 +109,7 @@ public class MdfMechDefinition{
 
       return new ChassisOmniMech(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons, ChassisVariant.fromString(Mech.VariantType),
                                  baseVariant, new BaseMovementProfile(MovementTuningConfiguration), faction, components, Cockpit.TechSlots,
-                                 structure, armor, heatSink);
+                                 Cockpit.ConsumableSlots, Cockpit.WeaponModSlots, structure, armor, heatSink);
    }
 
    private int getBaseVariant(XMLMechIdMap aMechIdMap, XMLItemStatsMech aMech){

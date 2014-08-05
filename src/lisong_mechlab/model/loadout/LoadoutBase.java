@@ -37,6 +37,7 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
@@ -220,9 +221,27 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    }
 
    /**
+    * @param aModuleSlot
+    *           The type of module slots to get the max for.
     * @return The maximal number of modules that can be equipped on this {@link LoadoutBase}.
     */
-   public abstract int getModulesMax();
+   public abstract int getModulesMax(ModuleSlot aModuleSlot);
+
+   /**
+    * Counts the number of modules equipped of the given slot type.
+    * 
+    * @param aModuleSlot
+    *           The {@link ModuleSlot} type to count modules of.
+    * @return The number of modules.
+    */
+   public int getModulesOfType(ModuleSlot aModuleSlot){
+      int ans = 0;
+      for(PilotModule module : getModules()){
+         if( module.getSlot() == aModuleSlot )
+            ans++;
+      }
+      return ans;
+   }
 
    /**
     * @param aModule
@@ -235,8 +254,11 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       if( !aModule.getFaction().isCompatible(getChassis().getFaction()) )
          return false;
 
+      if(getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot()))
+         return false;
+      
       // TODO: Apply any additional limitations on modules
-      return getModules().size() < getModulesMax();
+      return true;
    }
 
    /**
@@ -367,9 +389,9 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       for(ConfiguredComponentBase part : components){
          ComponentBase internal = part.getInternalComponent();
          if( internal.isAllowed(aItem, getEngine()) ){
-            if(aItem.getHardpointType() != HardPointType.NONE && part instanceof ConfiguredComponentOmniMech){
+            if( aItem.getHardpointType() != HardPointType.NONE && part instanceof ConfiguredComponentOmniMech ){
                ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech)part;
-               if(componentOmniMech.getOmniPod().getHardPointCount(aItem.getHardpointType()) < 1)
+               if( componentOmniMech.getOmniPod().getHardPointCount(aItem.getHardpointType()) < 1 )
                   continue;
             }
             candidates.add(part);
@@ -456,8 +478,10 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       if( getJumpJetCount() > getJumpJetsMax() )
          return false;
 
-      if( getModules().size() > getModulesMax() )
-         return false;
+      for(ModuleSlot moduleSlot : ModuleSlot.values()){
+         if( getModulesOfType(moduleSlot) > getModulesMax(moduleSlot) )
+            return false;         
+      }
 
       if( getArmor() > getChassis().getArmorMax() )
          return false;

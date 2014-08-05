@@ -60,6 +60,7 @@ import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Module;
 import lisong_mechlab.model.item.ModuleCathegory;
+import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.TargetingComputer;
 import lisong_mechlab.model.item.Weapon;
@@ -351,6 +352,7 @@ public class DataCache{
       ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Internals.xml")));
       ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/PilotModules.xml")));
       ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/WeaponMods.xml")));
+      ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Consumables.xml")));
       ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Mechs/Mechs.xml")));
       ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/OmniPods.xml")));
       return ans;
@@ -633,7 +635,9 @@ public class DataCache{
                   heat[rank - 1] = weaponStats.get(i).heat;
                }
 
-               ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction, cathegory, affected, maxRank,
+               ModuleSlot moduleSlot = ModuleSlot.fromMwo(pms.slot);
+               
+               ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction, cathegory, moduleSlot, affected, maxRank,
                                         longRange, maxRange, heat));
                break;
             }
@@ -673,7 +677,9 @@ public class DataCache{
                   }
                }
                Faction faction = Faction.fromMwo(statsModule.faction);
-               ans.add(new PilotModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction, cathegory));
+
+               ModuleSlot moduleSlot = ModuleSlot.fromMwo(statsModule.PilotModuleStats.slot);
+               ans.add(new PilotModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction, cathegory, moduleSlot));
                break;
             }
             default:

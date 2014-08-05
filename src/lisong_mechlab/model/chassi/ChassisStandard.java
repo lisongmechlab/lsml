@@ -77,11 +77,16 @@ public class ChassisStandard extends ChassisBase{
     *           An array of {@link ComponentStandard} that defines the internal components of the chassis.
     * @param aMaxPilotModules
     *           The maximum number of pilot modules that can be equipped.
+    * @param aMaxConsumableModules
+    *           The maximal number of consumable modules this chassis can support.
+    * @param aMaxWeaponModules
+    *           The maximal number of weapon modules this chassis can support.
     */
    public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
                           int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, int aEngineMin, int aEngineMax, int aMaxJumpJets,
-                          ComponentStandard[] aComponents, int aMaxPilotModules){
-      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents, aMaxPilotModules);
+                          ComponentStandard[] aComponents, int aMaxPilotModules, int aMaxConsumableModules, int aMaxWeaponModules){
+      super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents,
+            aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules);
       engineMin = aEngineMin;
       engineMax = aEngineMax;
       maxJumpJets = aMaxJumpJets;

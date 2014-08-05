@@ -17,20 +17,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.mwo_data.helpers;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+package lisong_mechlab.model.item;
 
 /**
- * Helper class for parsing game data files from mwo.
+ * Enumerates all possible module slot types.
  * 
  * @author Emily Björk
  */
-public class MdfCockpit{
-   @XStreamAsAttribute
-   public int TechSlots;
-   @XStreamAsAttribute
-   public int ConsumableSlots;
-   @XStreamAsAttribute
-   public int WeaponModSlots;
+public enum ModuleSlot{
+   CONSUMABLE("Consumable"), WEAPON("Weapon"), MECH("Mech");
+
+   public static ModuleSlot fromMwo(String aString){
+      switch( aString ){
+         case "WeaponMod":
+            return WEAPON;
+         case "Consumable":
+            return CONSUMABLE;
+         case "Pilot":
+            return MECH;
+            default:
+               throw new IllegalArgumentException("Unknown module type!: " + aString);
+      }
+   }
+   
+   private final String name;
+
+   private ModuleSlot(String aName){
+      name = aName;
+   }
+   
+   @Override
+   public String toString(){
+      return name;
+   }
 }
