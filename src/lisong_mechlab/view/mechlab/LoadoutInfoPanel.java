@@ -708,6 +708,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                   opStack.pushAndApply(new OpSetArmorType(xBar, loadoutStandard, armor));
                }
                catch( IllegalArgumentException e ){
+                  ferroFibros.setSelected(!ferroFibros.isSelected());
                   JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
                }
             }
@@ -729,6 +730,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                   opStack.pushAndApply(new OpSetHeatSinkType(xBar, loadoutStandard, heatSink));
                }
                catch( IllegalArgumentException e ){
+                  doubleHeatSinks.setSelected(!doubleHeatSinks.isSelected());
                   JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
                }
             }
@@ -744,6 +746,13 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE));
             }
             catch( IllegalArgumentException e ){
+               SwingUtilities.invokeLater(new Runnable(){
+                  @Override
+                  public void run(){
+                     // No idea why the other upgrades work with the set selected in the same event.
+                     artemis.setSelected(false); // Disabling can never fail 
+                  }
+               });
                JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
             }
          }

@@ -33,7 +33,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.util.ArrayUtils;
+import lisong_mechlab.util.ListArrayUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -122,7 +122,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
       hardPoints.add(new HardPoint(HardPointType.ENERGY));
       hardPoints.add(new HardPoint(HardPointType.ENERGY));
 
-      assertTrue(ArrayUtils.equalsUnordered(hardPoints, new ArrayList<>(makeDefaultCUT().getHardPoints())));
+      assertTrue(ListArrayUtils.equalsUnordered(hardPoints, new ArrayList<>(makeDefaultCUT().getHardPoints())));
    }
 
    @Test

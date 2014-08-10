@@ -76,7 +76,7 @@ public interface WeaponModifier{
     *           The skills of the pilot, may affect the results.
     * @return The augmented value of the attribute (can be unchanged).
     */
-   public double extraHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree);
+   public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree);
 
    /**
     * Applies the effect of this modifier on the given attribute. Must only be called after

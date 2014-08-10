@@ -414,7 +414,7 @@ public class DataCache{
             }
          }
          catch( Exception e ){
-            throw new IOException("Unable to load chassi configuration!", e);
+            throw new IOException("Unable to load chassi configuration for [" + mech.name + "]!", e);
          }
       }
       return ans;
@@ -636,9 +636,9 @@ public class DataCache{
                }
 
                ModuleSlot moduleSlot = ModuleSlot.fromMwo(pms.slot);
-               
-               ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction, cathegory, moduleSlot, affected, maxRank,
-                                        longRange, maxRange, heat));
+
+               ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction, cathegory, moduleSlot, affected,
+                                        maxRank, longRange, maxRange, heat));
                break;
             }
             case "CAdvancedZoomStats":
@@ -840,8 +840,8 @@ public class DataCache{
       stream.alias("weaponmodule", WeaponModule.class);
       stream.alias("omnipod", OmniPod.class);
       stream.alias("quirk", Quirk.class);
-//      stream.alias("WeaponStats", XMLWeaponStatsFilter.class);
-//      stream.alias("WeaponStatsFilter", XMLWeaponStatsFilter.class);
+      // stream.alias("WeaponStats", XMLWeaponStatsFilter.class);
+      // stream.alias("WeaponStatsFilter", XMLWeaponStatsFilter.class);
 
       // stream.addImmutableType(Internal.class);
       stream.registerConverter(new HardPointConverter());

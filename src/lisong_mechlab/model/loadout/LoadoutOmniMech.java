@@ -55,7 +55,8 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis, MessageXBar aXBar){
       super(aFactory, aChassis, aXBar);
       movementProfile = new QuirkedMovementProfile(aChassis.getMovementProfileBase());
-      upgrades = new Upgrades(aChassis.getFixedArmorType(), aChassis.getFixedStructureType(), UpgradeDB.STANDARD_GUIDANCE, aChassis.getFixedHeatSinkType());
+      upgrades = new Upgrades(aChassis.getFixedArmorType(), aChassis.getFixedStructureType(), UpgradeDB.STANDARD_GUIDANCE,
+                              aChassis.getFixedHeatSinkType());
       for(ConfiguredComponentOmniMech component : getComponents()){
          movementProfile.addMovementModifier(component.getOmniPod().getQuirks());
       }
@@ -143,17 +144,17 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
 
    @Override
    public int getModulesMax(ModuleSlot aModuleSlot){
-      if(aModuleSlot == ModuleSlot.MECH ){
-      int ans = getChassis().getMechModulesMax() + 1; // +1 for mastery
-      for(ConfiguredComponentOmniMech component : getComponents()){
-         ans += component.getOmniPod().getPilotModulesMax();
+      if( aModuleSlot == ModuleSlot.MECH ){
+         int ans = getChassis().getMechModulesMax() + 1; // +1 for mastery
+         for(ConfiguredComponentOmniMech component : getComponents()){
+            ans += component.getOmniPod().getPilotModulesMax();
+         }
+         return ans;
       }
-      return ans;
-      }
-      else if(aModuleSlot == ModuleSlot.CONSUMABLE){
+      else if( aModuleSlot == ModuleSlot.CONSUMABLE ){
          return getChassis().getConsumableModulesMax();
       }
-      else if(aModuleSlot == ModuleSlot.WEAPON){
+      else if( aModuleSlot == ModuleSlot.WEAPON ){
          return getChassis().getWeaponModulesMax();
       }
       else{
@@ -171,5 +172,20 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
          ans.add(component.getOmniPod().getQuirks());
       }
       return ans;
+   }
+
+   @Override
+   public String getQuirkHtmlSummary(){
+      StringBuilder sb = new StringBuilder();
+      sb.append("<html>");
+      sb.append("<body>");
+
+      sb.append("<p>Quirks:</p>");
+      for(ConfiguredComponentOmniMech component : getComponents()){
+         component.getOmniPod().getQuirks().describeAsHtmlWithoutHeaders(sb);
+      }
+      sb.append("</body>");
+      sb.append("</html>");
+      return sb.toString();
    }
 }

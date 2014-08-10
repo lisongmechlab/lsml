@@ -33,7 +33,7 @@ import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.util.ArrayUtils;
+import lisong_mechlab.util.ListArrayUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -155,7 +155,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       hardPoints.add(new HardPoint(HardPointType.ENERGY));
       hardPoints.add(new HardPoint(HardPointType.BALLISTIC));
 
-      assertTrue(ArrayUtils.equalsUnordered(hardPoints, new ArrayList<>(makeDefaultCUT().getHardPoints())));
+      assertTrue(ListArrayUtils.equalsUnordered(hardPoints, new ArrayList<>(makeDefaultCUT().getHardPoints())));
    }
 
    @Test

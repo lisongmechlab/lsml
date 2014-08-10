@@ -37,7 +37,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.util.ArrayUtils;
+import lisong_mechlab.util.ListArrayUtils;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -159,13 +159,13 @@ public abstract class ConfiguredComponentBase{
     *           The item to check with.
     * @return <code>true</code> if local constraints allow the item to be equipped here.
     */
-   public boolean canAddItem(Item aItem){     
+   public boolean canAddItem(Item aItem){
       if( !getInternalComponent().isAllowed(aItem) )
          return false;
 
       if( aItem == ItemDB.CASE && items.contains(ItemDB.CASE) )
          return false;
-      
+
       if( getSlotsFree() < aItem.getNumCriticalSlots() ){
          return false;
       }
@@ -177,7 +177,7 @@ public abstract class ConfiguredComponentBase{
       }
       return true;
    }
-   
+
    public boolean isValidLoadout(){
       return true;
    }
@@ -232,7 +232,7 @@ public abstract class ConfiguredComponentBase{
 
       if( !internalComponent.equals(that.internalComponent) )
          return false;
-      if( !ArrayUtils.equalsUnordered(items, that.items) )
+      if( !ListArrayUtils.equalsUnordered(items, that.items) )
          return false;
       if( !armor.equals(that.armor) )
          return false;
@@ -292,15 +292,8 @@ public abstract class ConfiguredComponentBase{
     *         10 included in the engine itself, rather it only counts the external heat sink slots.
     */
    public int getEngineHeatsinks(){
-      int ans = 0;
-      for(Item i : items){
-         if( i instanceof HeatSink )
-            ans++;
-      }
-      for(Item i : getInternalComponent().getFixedItems()){
-         if( i instanceof HeatSink )
-            ans++;
-      }
+      int ans = ListArrayUtils.countByType(items, HeatSink.class)
+                + ListArrayUtils.countByType(getInternalComponent().getFixedItems(), HeatSink.class);
       return Math.min(ans, getEngineHeatsinksMax());
    }
 

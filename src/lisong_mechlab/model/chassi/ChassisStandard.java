@@ -20,8 +20,10 @@
 package lisong_mechlab.model.chassi;
 
 import java.util.Collection;
+import java.util.List;
 
 import lisong_mechlab.model.Faction;
+import lisong_mechlab.model.chassi.Quirks.Quirk;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
@@ -38,11 +40,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ChassisStandard extends ChassisBase{
    @XStreamAsAttribute
-   private final int engineMin;
+   private final int    engineMin;
    @XStreamAsAttribute
-   private final int engineMax;
+   private final int    engineMax;
    @XStreamAsAttribute
-   private final int maxJumpJets;
+   private final int    maxJumpJets;
+   private final Quirks quirks;
 
    /**
     * Creates a new {@link ChassisStandard}.
@@ -81,15 +84,18 @@ public class ChassisStandard extends ChassisBase{
     *           The maximal number of consumable modules this chassis can support.
     * @param aMaxWeaponModules
     *           The maximal number of weapon modules this chassis can support.
+    * @param aQuirks
+    *           The chassis quirks for this chassis.
     */
    public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons, ChassisVariant aVariant,
                           int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction, int aEngineMin, int aEngineMax, int aMaxJumpJets,
-                          ComponentStandard[] aComponents, int aMaxPilotModules, int aMaxConsumableModules, int aMaxWeaponModules){
+                          ComponentStandard[] aComponents, int aMaxPilotModules, int aMaxConsumableModules, int aMaxWeaponModules, Quirks aQuirks){
       super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile, aFaction, aComponents,
             aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules);
       engineMin = aEngineMin;
       engineMax = aEngineMax;
       maxJumpJets = aMaxJumpJets;
+      quirks = aQuirks;
    }
 
    /**
@@ -152,4 +158,10 @@ public class ChassisStandard extends ChassisBase{
       return super.isAllowed(aItem);
    }
 
+   /**
+    * @return A {@link List} of all the {@link Quirk} on the chassis.
+    */
+   public Quirks getQuirks(){
+      return quirks;
+   }
 }

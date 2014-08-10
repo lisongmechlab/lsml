@@ -27,15 +27,36 @@ import java.util.List;
  * 
  * @author Li Song
  */
-public class ArrayUtils{
+public class ListArrayUtils{
 
-   public static <E> boolean equalsUnordered(List<E> left, List<E> right){
-      List<E> t = new ArrayList<>(left);
-      for(E i : right){
+   public static <E> boolean equalsUnordered(List<E> aLeft, List<E> aRight){
+      List<E> t = new ArrayList<>(aLeft);
+      for(E i : aRight){
          if( !t.remove(i) )
             return false;
       }
       return t.isEmpty();
    }
 
+   @SuppressWarnings("unchecked") // It is checked. 
+   public static <T,E> List<T> filterByType(List<E> aList, Class<T> clazz){
+      List<T> ans = new ArrayList<>();
+      for(E e: aList){
+         if(clazz.isAssignableFrom(e.getClass())){
+            ans.add((T)e);
+         }
+      }
+      return ans;
+   }
+    
+   public static <T,E> int countByType(List<E> aList, Class<T> clazz){
+      int ans = 0;
+      for(E e: aList){
+         if(clazz.isAssignableFrom(e.getClass())){
+            ans++;
+         }
+      }
+      return ans;
+   }
+   
 }

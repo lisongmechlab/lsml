@@ -39,10 +39,11 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
-import lisong_mechlab.util.ArrayUtils;
+import lisong_mechlab.util.ListArrayUtils;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -124,7 +125,7 @@ public abstract class LoadoutBaseTest{
       expected.addAll(equipped1);
       expected.addAll(equipped2);
 
-      assertTrue(ArrayUtils.equalsUnordered(expected, ans));
+      assertTrue(ListArrayUtils.equalsUnordered(expected, ans));
    }
 
    @Test
@@ -209,6 +210,7 @@ public abstract class LoadoutBaseTest{
       assertEquals(7, makeDefaultCUT().getHardpointsCount(HardPointType.MISSILE));
    }
 
+   @Ignore // Needs to be tested in subclasses due to handling of engines.
    @Test
    public final void testGetHeatsinksCount() throws Exception{
       List<Item> empty = new ArrayList<>();

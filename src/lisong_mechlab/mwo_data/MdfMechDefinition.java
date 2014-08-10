@@ -20,7 +20,9 @@
 package lisong_mechlab.mwo_data;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lisong_mechlab.model.DataCache;
 import lisong_mechlab.model.Faction;
@@ -31,9 +33,11 @@ import lisong_mechlab.model.chassi.ChassisVariant;
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
+import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsQuirk;
 import lisong_mechlab.mwo_data.helpers.MdfCockpit;
 import lisong_mechlab.mwo_data.helpers.MdfComponent;
 import lisong_mechlab.mwo_data.helpers.MdfItem;
@@ -59,6 +63,8 @@ public class MdfMechDefinition{
    public MdfCockpit         Cockpit;
 
    public MdfMovementTuning  MovementTuningConfiguration;
+   
+   public List<XMLOmniPodsQuirk> QuirkList; 
 
    public boolean isOmniMech(){
       for(MdfComponent component : ComponentList){
@@ -82,10 +88,19 @@ public class MdfMechDefinition{
          ComponentStandard componentStandard = component.asComponentStandard(aDataCache, aHardPointsXML, aMech.name);
          components[componentStandard.getLocation().ordinal()] = componentStandard;
       }
+      
+      Map<String, Quirks.Quirk> quirksMap = new HashMap<>();
+      if(null != QuirkList){
+         for(XMLOmniPodsQuirk quirk : QuirkList){
+            quirksMap.put(quirk.name, XMLOmniPods.makeQuirk(quirk));
+         }
+      }
+      
+      Quirks quirks = new Quirks(quirksMap);
 
       return new ChassisStandard(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons, ChassisVariant.fromString(Mech.VariantType),
                                  baseVariant, new BaseMovementProfile(MovementTuningConfiguration), faction, Mech.MinEngineRating,
-                                 Mech.MaxEngineRating, Mech.MaxJumpJets, components, Cockpit.TechSlots, Cockpit.ConsumableSlots, Cockpit.WeaponModSlots);
+                                 Mech.MaxEngineRating, Mech.MaxJumpJets, components, Cockpit.TechSlots, Cockpit.ConsumableSlots, Cockpit.WeaponModSlots, quirks);
    }
 
    public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, DataCache aDataCache, XMLMechIdMap aMechIdMap, XMLLoadout aLoadout){
@@ -153,6 +168,7 @@ public class MdfMechDefinition{
       xstream.alias("Internal", MdfItem.class);
       xstream.alias("Fixed", MdfItem.class);
       xstream.alias("MovementTuningConfiguration", MdfMovementTuning.class);
+      xstream.alias("Quirk", XMLOmniPodsQuirk.class);
       return (MdfMechDefinition)xstream.fromXML(is);
    }
 }

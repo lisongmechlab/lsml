@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
+import lisong_mechlab.model.chassi.HeatModifier;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
@@ -50,6 +51,13 @@ public class HeatGeneration implements Metric{
             heat += ((Engine)item).getHeat(loadout.getWeaponModifiers());
          }
       }
-      return heat;
+      
+      double extra = 0;
+      for(HeatModifier heatModifier : loadout.getHeatModifiers()){
+         // XXX: No modifiers of this kind have been seen in the game yet so we do not know if this is correct.
+         extra += heatModifier.extraHeatGeneration(heat);
+      }
+      
+      return heat+extra;
    }
 }
