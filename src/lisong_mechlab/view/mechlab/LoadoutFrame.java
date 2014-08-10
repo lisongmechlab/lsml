@@ -20,25 +20,35 @@
 package lisong_mechlab.view.mechlab;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JWindow;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
@@ -297,7 +307,42 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader{
       {
          final JPanel arm = new PartPanel(aLoadout, aLoadout.getComponent(Location.LeftArm), aXBar, true, slotDistributor, symmetricArmor,
                                           loadoutOperationStack);
-         panel.add(createComponentPanel(createComponentPadPanel(ARM_OFFSET, null), arm, null));
+
+         final JLabel quirksummary = new JLabel("Quirk summary");
+         quirksummary.addMouseListener(new MouseAdapter(){
+            JWindow window = null;
+
+            @Override
+            public void mouseEntered(MouseEvent aE){
+               window = new JWindow(ProgramInit.lsml());
+               JLabel text = new JLabel(loadout.getQuirkHtmlSummary());
+               JPanel textPanel = new JPanel();
+
+               textPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK), BorderFactory.createEmptyBorder(5, 5,
+                                                                                                                                               5, 5)));
+               textPanel.add(text);
+               textPanel.setBackground(Color.WHITE);
+               window.add(textPanel);
+               window.pack();
+               window.setLocation(aE.getLocationOnScreen());
+               window.setVisible(true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e){
+               if( window != null ){
+                  window.dispose();
+                  window = null;
+               }
+            }
+         });
+         quirksummary.setForeground(Color.BLUE);
+         Font font = quirksummary.getFont();
+         Map<TextAttribute, Object> attributes = new HashMap<>();
+         attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+         quirksummary.setFont(font.deriveFont(attributes));
+
+         panel.add(createComponentPanel(createComponentPadPanel(ARM_OFFSET, quirksummary), arm, null));
       }
       return panel;
    }

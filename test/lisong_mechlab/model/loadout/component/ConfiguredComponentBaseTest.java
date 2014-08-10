@@ -35,7 +35,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.util.ArrayUtils;
+import lisong_mechlab.util.ListArrayUtils;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -343,7 +343,7 @@ public abstract class ConfiguredComponentBaseTest{
       ans.add(item1);
       ans.add(item2);
       
-      assertTrue(ArrayUtils.equalsUnordered(ans, cut.getItemsEquipped()));
+      assertTrue(ListArrayUtils.equalsUnordered(ans, cut.getItemsEquipped()));
    }
 
    @Test
@@ -369,7 +369,7 @@ public abstract class ConfiguredComponentBaseTest{
       ans.add(fixed1);
       ans.add(fixed2);
       
-      assertTrue(ArrayUtils.equalsUnordered(ans, new ArrayList<>(cut.getItemsFixed())));
+      assertTrue(ListArrayUtils.equalsUnordered(ans, new ArrayList<>(cut.getItemsFixed())));
    }
 
    @Test

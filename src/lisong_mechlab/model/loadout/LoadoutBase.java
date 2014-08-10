@@ -27,8 +27,10 @@ import java.util.List;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.HeatModifier;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
@@ -51,6 +53,7 @@ import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.util.ListArrayUtils;
 import lisong_mechlab.util.MessageXBar;
 
 import com.thoughtworks.xstream.XStream;
@@ -341,14 +344,32 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return The total number of heat sinks equipped.
     */
    public int getHeatsinksCount(){
+      int ans = countItemsOfType(HeatSink.class);
+      
+      Engine engine = getEngine();
+      if(engine != null){
+         ans += engine.getNumInternalHeatsinks();
+      }
+      
+      return ans;
+   }
+   
+   private <E> Collection<E> getItemsOfType(Class<E> aClass){
+      List<E> ans = new ArrayList<>();
+      
+      for(T component : getComponents()){
+         ans.addAll(ListArrayUtils.filterByType(component.getItemsEquipped(), aClass));
+         ans.addAll(ListArrayUtils.filterByType(component.getItemsFixed(), aClass));
+      }
+      return ans;
+   }
+   
+   private int countItemsOfType(Class<?> aClass){
       int ans = 0;
-      for(Item item : getAllItems()){
-         if( item instanceof HeatSink ){
-            ans++;
-         }
-         else if( item instanceof Engine ){
-            ans += ((Engine)item).getNumInternalHeatsinks();
-         }
+      
+      for(T component : getComponents()){
+         ans += ListArrayUtils.countByType(component.getItemsEquipped(), aClass);
+         ans += ListArrayUtils.countByType(component.getItemsFixed(), aClass);
       }
       return ans;
    }
@@ -357,12 +378,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return The total number of jump jets equipped.
     */
    public int getJumpJetCount(){
-      int ans = 0;
-      for(Item item : getAllItems()){
-         if( item instanceof JumpJet )
-            ans++;
-      }
-      return ans;
+      return countItemsOfType(JumpJet.class);
    }
 
    /**
@@ -535,22 +551,35 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return A deep copy of <code>this</code>.
     */
    public abstract LoadoutBase<?> clone(MessageXBar aXBar);
+   
+   /**
+    * @return A String containing a HTML formatted summary of the quirks for this loadout.
+    */
+   public abstract String getQuirkHtmlSummary();
 
    /**
     * @return A {@link List} of all {@link WeaponModifier}s that apply to this loadout.
     */
    public Collection<WeaponModifier> getWeaponModifiers(){
-      List<WeaponModifier> ans = new ArrayList<>();
-      for(PilotModule module : modules){
-         if( module instanceof WeaponModifier )
-            ans.add((WeaponModifier)module);
+      Collection<WeaponModifier> ans = getItemsOfType(WeaponModifier.class);
+      ans.addAll(ListArrayUtils.filterByType(modules, WeaponModifier.class));
+      ChassisBase chassis = getChassis();
+      if(chassis instanceof ChassisStandard){
+         ans.add(((ChassisStandard)getChassis()).getQuirks());
       }
-      for(Item item : getAllItems()){
-         if( item instanceof WeaponModifier )
-            ans.add((WeaponModifier)item);
-      }
-
       return ans;
    }
-
+   
+   /**
+    * @return A {@link List} of all {@link WeaponModifier}s that apply to this loadout.
+    */
+   public Collection<HeatModifier> getHeatModifiers(){
+      Collection<HeatModifier> ans = getItemsOfType(HeatModifier.class);
+      ans.addAll(ListArrayUtils.filterByType(modules, HeatModifier.class));
+      ChassisBase chassis = getChassis();
+      if(chassis instanceof ChassisStandard){
+         ans.add(((ChassisStandard)getChassis()).getQuirks());
+      }
+      return ans;
+   }
 }

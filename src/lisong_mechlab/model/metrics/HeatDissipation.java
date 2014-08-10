@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
+import lisong_mechlab.model.chassi.HeatModifier;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
@@ -49,9 +50,20 @@ public class HeatDissipation implements Metric{
       ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 0.2 : 0.1);
       ans += (loadout.getHeatsinksCount() - enginehs) * loadout.getUpgrades().getHeatSink().getHeatSinkType().getDissipation();
       ans *= loadout.getEfficiencies().getHeatDissipationModifier();
+      
+      double externalHeat = 0;
       if( environment != null ){
-         ans -= environment.getHeat();
+         externalHeat = (environment.getHeat());
       }
+      
+      double extra = 0;
+      double extraExternal = 0;
+      for(HeatModifier heatModifier : loadout.getHeatModifiers()){
+         extra += heatModifier.extraHeatDissipation(ans);
+         extraExternal += heatModifier.extraEnvironmentHeat(externalHeat);
+      }
+      
+      ans = (ans + extra) - (externalHeat + extraExternal);     
       return ans;
    }
 

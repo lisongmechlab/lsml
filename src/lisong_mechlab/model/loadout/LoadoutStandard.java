@@ -176,4 +176,18 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
          throw new IllegalArgumentException("Unknown module slot type!");
       }
    }
+
+   @Override
+   public String getQuirkHtmlSummary(){
+      StringBuilder sb = new StringBuilder();
+      sb.append("<html>");
+      sb.append("<body>");
+
+      sb.append("<p>Quirks:</p>");
+      getChassis().getQuirks().describeAsHtmlWithoutHeaders(sb);
+
+      sb.append("</body>");
+      sb.append("</html>");
+      return sb.toString();
+   }
 }

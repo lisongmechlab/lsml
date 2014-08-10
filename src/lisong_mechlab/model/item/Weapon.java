@@ -197,7 +197,7 @@ public class Weapon extends HeatSource{
       if( aModifiers != null ){
          for(WeaponModifier mod : aModifiers){
             if( mod.affectsWeapon(this) ){
-               a += mod.extraHeat(this, super.getHeat(aModifiers), null);
+               a += mod.extraWeaponHeat(this, super.getHeat(aModifiers), null);
             }
 
          }

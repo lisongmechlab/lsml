@@ -31,6 +31,7 @@ import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
+import lisong_mechlab.util.ListArrayUtils;
 
 /**
  * This class models an omnimech chassis, i.e. the basic attributes associated with the chassis and the center omnipod.
@@ -138,11 +139,7 @@ public class ChassisOmniMech extends ChassisBase{
    public int getFixedHeatSinks(){
       int ans = getFixedEngine().getNumInternalHeatsinks();
       for(ComponentOmniMech component : getComponents()){
-         for(Item item : component.getFixedItems()){
-            if( item instanceof HeatSink ){
-               ans++;
-            }
-         }
+         ans += ListArrayUtils.countByType(component.getFixedItems(), HeatSink.class);
       }
       return ans;
    }
@@ -160,11 +157,7 @@ public class ChassisOmniMech extends ChassisBase{
    public int getFixedJumpJets(){
       int ans = 0;
       for(ComponentOmniMech component : getComponents()){
-         for(Item item : component.getFixedItems()){
-            if( item instanceof JumpJet ){
-               ans++;
-            }
-         }
+         ans += ListArrayUtils.countByType(component.getFixedItems(), JumpJet.class);
       }
       return ans;
    }

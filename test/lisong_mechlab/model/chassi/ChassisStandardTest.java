@@ -46,6 +46,7 @@ public class ChassisStandardTest extends ChassisBaseTest{
    private int                 engineMax;
    private int                 maxJumpJets;
    private ComponentStandard[] components;
+   private Quirks              quirks;
 
    @Override
    @Before
@@ -61,12 +62,13 @@ public class ChassisStandardTest extends ChassisBaseTest{
          Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class), Matchers.any(Engine.class))).thenReturn(true);
       }
       componentBases = components;
+      quirks = Mockito.mock(Quirks.class);
    }
 
    @Override
    protected ChassisStandard makeDefaultCUT(){
       return new ChassisStandard(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile, faction, engineMin,
-                                 engineMax, maxJumpJets, components, maxPilotModules, maxConsumableModules, maxWeaponModules);
+                                 engineMax, maxJumpJets, components, maxPilotModules, maxConsumableModules, maxWeaponModules, quirks);
    }
 
    /**

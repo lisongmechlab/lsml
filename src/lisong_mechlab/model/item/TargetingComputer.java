@@ -86,7 +86,7 @@ public class TargetingComputer extends Module implements WeaponModifier{
       }
 
       @Override
-      public double extraHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
+      public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
          return 0;
       }
 
@@ -143,10 +143,10 @@ public class TargetingComputer extends Module implements WeaponModifier{
    }
 
    @Override
-   public double extraHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
+   public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
       for(Filter filter : filters){
          if( filter.affectsWeapon(aWeapon) ){
-            return filter.extraHeat(aWeapon, aHeat, aPilotSkillTree);
+            return filter.extraWeaponHeat(aWeapon, aHeat, aPilotSkillTree);
          }
       }
       return 0;
