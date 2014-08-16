@@ -108,7 +108,7 @@ public class LoadoutCoderV1 implements LoadoutCoder{
                                                                                            // 1700
 
          ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup(chassiId);
-         loadout = new LoadoutStandard(chassi, null);
+         loadout = new LoadoutStandard(chassi);
 
          boolean artemisIv = (upeff & (1 << 7)) != 0;
          boolean endoSteel = (upeff & (1 << 4)) != 0;
@@ -123,10 +123,10 @@ public class LoadoutCoderV1 implements LoadoutCoder{
          stack.pushAndApply(new OpSetHeatSinkType(null, loadout, heatSinks));
          stack.pushAndApply(new OpSetStructureType(null, loadout, structure));
          stack.pushAndApply(new OpSetArmorType(null, loadout, armor));
-         loadout.getEfficiencies().setCoolRun((upeff & (1 << 3)) != 0);
-         loadout.getEfficiencies().setHeatContainment((upeff & (1 << 2)) != 0);
-         loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 1)) != 0);
-         loadout.getEfficiencies().setDoubleBasics((upeff & (1 << 0)) != 0);
+         loadout.getEfficiencies().setCoolRun((upeff & (1 << 3)) != 0, null);
+         loadout.getEfficiencies().setHeatContainment((upeff & (1 << 2)) != 0, null);
+         loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 1)) != 0, null);
+         loadout.getEfficiencies().setDoubleBasics((upeff & (1 << 0)) != 0, null);
       }
 
       // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA

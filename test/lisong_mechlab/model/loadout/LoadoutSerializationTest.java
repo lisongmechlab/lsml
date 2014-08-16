@@ -81,7 +81,7 @@ public class LoadoutSerializationTest{
    @Test
    public void testEmptyLoadout(){
       ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("CPLT-K2");
-      LoadoutStandard cut = new LoadoutStandard(chassi, xBar);
+      LoadoutStandard cut = new LoadoutStandard(chassi);
 
       assertEquals(0, cut.getArmor());
       assertSame(chassi, cut.getChassis());
@@ -112,7 +112,7 @@ public class LoadoutSerializationTest{
    @Test
    public void testStockLoadoutAS7D() throws Exception{
       ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("AS7-D");
-      LoadoutStandard cut = new LoadoutStandard("AS7-D", xBar);
+      LoadoutStandard cut = new LoadoutStandard("AS7-D");
 
       assertEquals(608, cut.getArmor());
       assertSame(chassi, cut.getChassis());
@@ -259,7 +259,7 @@ public class LoadoutSerializationTest{
    @Test
    public void testStockLoadoutSDR5V() throws Exception{
       ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("SDR-5V");
-      LoadoutStandard cut = new LoadoutStandard("SDR-5V", xBar);
+      LoadoutStandard cut = new LoadoutStandard("SDR-5V");
 
       assertEquals(112, cut.getArmor());
       assertSame(chassi, cut.getChassis());

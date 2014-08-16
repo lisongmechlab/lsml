@@ -95,12 +95,12 @@ public class GarageTree extends JTree{
                   LoadoutBase<?> loadout = null;
                   if( clicked instanceof ChassisStandard ){
                      ChassisStandard chassi = (ChassisStandard)clicked;
-                     loadout = new LoadoutStandard(chassi, xBar);
+                     loadout = new LoadoutStandard(chassi);
 
                   }
                   else if( clicked instanceof ChassisOmniMech ){
                      ChassisOmniMech chassi = (ChassisOmniMech)clicked;
-                     loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi, xBar);
+                     loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi);
                   }
                   else{
                      throw new RuntimeException("Unknown chassis type!");

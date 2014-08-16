@@ -63,29 +63,22 @@ public class Efficiencies{
    }
 
    // Elite
-   private boolean                     speedTweak;
+   private boolean speedTweak;
 
    // Basic
-   private boolean                     coolRun;
-   private boolean                     heatContainment;
-   private boolean                     anchorTurn;
+   private boolean coolRun;
+   private boolean heatContainment;
+   private boolean anchorTurn;
 
    // Meta
-   private boolean                     doubleBasics;
+   private boolean doubleBasics;
 
-   private transient final MessageXBar xBar;
-
-   private boolean                     fastfire;
+   private boolean fastfire;
 
    /**
     * Creates a new efficiencies object.
-    * 
-    * @param aXBar
-    *           The {@link MessageXBar} on which messages about changes to the efficiencies are to be sent.
     */
-   public Efficiencies(MessageXBar aXBar){
-      xBar = aXBar;
-   }
+   public Efficiencies(){}
 
    public Efficiencies(Efficiencies aEfficiencies){
       speedTweak = aEfficiencies.speedTweak;
@@ -93,7 +86,6 @@ public class Efficiencies{
       heatContainment = aEfficiencies.coolRun;
       anchorTurn = aEfficiencies.anchorTurn;
       doubleBasics = aEfficiencies.doubleBasics;
-      xBar = aEfficiencies.xBar;
       fastfire = aEfficiencies.fastfire;
    }
 
@@ -169,8 +161,10 @@ public class Efficiencies{
     * 
     * @param aSpeedTweak
     *           The value to set.
+    * @param xBar
+    *           {@link MessageXBar} to signal changes on.
     */
-   public void setSpeedTweak(boolean aSpeedTweak){
+   public void setSpeedTweak(boolean aSpeedTweak, MessageXBar xBar){
       if( aSpeedTweak != speedTweak ){
          speedTweak = aSpeedTweak;
          if( xBar != null )
@@ -183,8 +177,11 @@ public class Efficiencies{
     * 
     * @param aAnchorTurn
     *           The value to set.
+    * @param xBar
+    *           {@link MessageXBar} to signal changes on.
+    *           
     */
-   public void setAnchorTurn(boolean aAnchorTurn){
+   public void setAnchorTurn(boolean aAnchorTurn, MessageXBar xBar){
       if( aAnchorTurn != anchorTurn ){
          anchorTurn = aAnchorTurn;
          if( xBar != null )
@@ -197,8 +194,10 @@ public class Efficiencies{
     * 
     * @param aCoolRun
     *           The value to set.
+    * @param xBar
+    *           {@link MessageXBar} to signal changes on.
     */
-   public void setCoolRun(boolean aCoolRun){
+   public void setCoolRun(boolean aCoolRun, MessageXBar xBar){
       if( aCoolRun != coolRun ){
          coolRun = aCoolRun;
          if( xBar != null )
@@ -211,8 +210,10 @@ public class Efficiencies{
     * 
     * @param aHeatContainment
     *           The value to set.
+    * @param xBar
+    *           {@link MessageXBar} to signal changes on.
     */
-   public void setHeatContainment(boolean aHeatContainment){
+   public void setHeatContainment(boolean aHeatContainment, MessageXBar xBar){
       if( aHeatContainment != heatContainment ){
          heatContainment = aHeatContainment;
          if( xBar != null )
@@ -225,8 +226,10 @@ public class Efficiencies{
     * 
     * @param aDoubleBasics
     *           The value to set.
+    * @param xBar
+    *           {@link MessageXBar} to signal changes on.
     */
-   public void setDoubleBasics(boolean aDoubleBasics){
+   public void setDoubleBasics(boolean aDoubleBasics, MessageXBar xBar){
       if( aDoubleBasics != doubleBasics ){
          doubleBasics = aDoubleBasics;
          if( xBar != null )
@@ -301,8 +304,10 @@ public class Efficiencies{
     * 
     * @param aFastFire
     *           The new status of the fast fire efficiency.
+    * @param xBar
+    *           {@link MessageXBar} to signal changes on.
     */
-   public void setFastFire(boolean aFastFire){
+   public void setFastFire(boolean aFastFire, MessageXBar xBar){
       if( aFastFire != fastfire ){
          fastfire = aFastFire;
          if( xBar != null )

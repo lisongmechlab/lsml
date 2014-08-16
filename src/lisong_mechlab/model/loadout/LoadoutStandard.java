@@ -55,18 +55,12 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
     * 
     * @param aChassi
     *           The chassis to base the load out on.
-    * @param aXBar
-    *           The {@link MessageXBar} to signal changes to this loadout on.
     */
-   public LoadoutStandard(ChassisStandard aChassi, MessageXBar aXBar){
-      super(ComponentBuilder.getISComponentFactory(), aChassi, aXBar);
+   public LoadoutStandard(ChassisStandard aChassi){
+      super(ComponentBuilder.getISComponentFactory(), aChassi);
 
       upgrades = new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE, UpgradeDB.STANDARD_GUIDANCE,
                                      UpgradeDB.STANDARD_HEATSINKS);
-
-      if( aXBar != null ){
-         aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
-      }
    }
 
    @Override
@@ -96,13 +90,12 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
     * 
     * @param aString
     *           The name of the stock variation to load.
-    * @param aXBar
     * @throws Exception
     */
-   public LoadoutStandard(String aString, MessageXBar aXBar) throws Exception{
-      this((ChassisStandard)ChassisDB.lookup(aString), aXBar);
+   public LoadoutStandard(String aString) throws Exception{
+      this((ChassisStandard)ChassisDB.lookup(aString));
       OperationStack operationStack = new OperationStack(0);
-      operationStack.pushAndApply(new OpLoadStock(getChassis(), this, aXBar));
+      operationStack.pushAndApply(new OpLoadStock(getChassis(), this, null));
    }
 
    public LoadoutStandard(LoadoutStandard aLoadout, MessageXBar aXBar){

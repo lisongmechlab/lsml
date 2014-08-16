@@ -48,7 +48,7 @@ public class OpRenameTest{
    @Test
    public void testApply(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"));
       assertEquals("HBK-4J", loadout.getName());
 
       // Execute
@@ -67,7 +67,7 @@ public class OpRenameTest{
    @Test
    public void testApply_nullXbar(){
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"));
       assertEquals("HBK-4J", loadout.getName());
 
       // Execute
