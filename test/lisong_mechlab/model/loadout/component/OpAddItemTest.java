@@ -118,7 +118,7 @@ public class OpAddItemTest{
     */
    @Test
    public void testAddItem_XLCaseLeft(){
-      LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
 
@@ -133,7 +133,7 @@ public class OpAddItemTest{
     */
    @Test
    public void testAddItem_XLCaseRight(){
-      LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
 

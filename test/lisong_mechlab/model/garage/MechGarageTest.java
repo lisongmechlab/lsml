@@ -162,10 +162,10 @@ public class MechGarageTest{
    @Test
    public void testSaveAsOpen() throws Exception{
       // Setup
-      LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc", xBar);
-      LoadoutStandard lo2 = new LoadoutStandard("as7-k", xBar);
-      LoadoutOmniMech lo3 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("nva-prime"), xBar);
-      LoadoutOmniMech lo4 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("tbr-c"), xBar);
+      LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
+      LoadoutStandard lo2 = new LoadoutStandard("as7-k");
+      LoadoutOmniMech lo3 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("nva-prime"));
+      LoadoutOmniMech lo4 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("tbr-c"));
       
       OperationStack stack = new OperationStack(0);
       stack.pushAndApply(new OpLoadStock(lo3.getChassis(), lo3, xBar));
@@ -201,8 +201,8 @@ public class MechGarageTest{
    @Test
    public void testSave() throws Exception{
       // Setup
-      LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc", xBar);
-      LoadoutStandard lo2 = new LoadoutStandard("as7-k", xBar);
+      LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
+      LoadoutStandard lo2 = new LoadoutStandard("as7-k");
       MechGarage cut = new MechGarage(xBar);
       cut.add(lo1);
       cut.saveas(testFile); // Create garage with one mech and save it.
@@ -232,7 +232,7 @@ public class MechGarageTest{
    @Test
    public void testAddRemoveLoadout() throws Exception{
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard("as7-d-dc", xBar);
+      LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
       MechGarage cut = new MechGarage(xBar);
 
       // Execute
@@ -260,7 +260,7 @@ public class MechGarageTest{
    @Test
    public void testRemoveLoadoutNonexistent() throws Exception{
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard("as7-d-dc", xBar);
+      LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
       MechGarage cut = new MechGarage(xBar);
       reset(xBar);
       cut.remove(loadout);
@@ -297,7 +297,7 @@ public class MechGarageTest{
    @Test
    public void testActuatorStateSaved() throws IOException{
       ChassisOmniMech chassi = (ChassisOmniMech)ChassisDB.lookup("WHK-B");
-      LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi, xBar);
+      LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi);
 
       loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, false);
       

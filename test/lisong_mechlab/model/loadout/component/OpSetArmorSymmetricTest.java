@@ -56,7 +56,7 @@ public class OpSetArmorSymmetricTest{
     */
    @Test
    public void testCanCoalescele(){
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
       ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
       ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
       ConfiguredComponentBase arm = loadout.getComponent(Location.LeftArm);
@@ -82,7 +82,7 @@ public class OpSetArmorSymmetricTest{
 
    @Test
    public void testApply(){
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
       ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
       ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
       ArmorSide side = ArmorSide.BACK;
@@ -104,7 +104,7 @@ public class OpSetArmorSymmetricTest{
    @Test
    public void testApply_OnlyOneSideChanges(){
       for(Location setSide : new Location[] {Location.LeftTorso, Location.RightTorso}){
-         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
+         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
          ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
          ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
          ArmorSide side = ArmorSide.BACK;
@@ -127,7 +127,7 @@ public class OpSetArmorSymmetricTest{
 
    @Test(expected = IllegalArgumentException.class)
    public void testApply_NotSymmetric(){
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), null);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
       ConfiguredComponentBase left = loadout.getComponent(Location.Head);
       ArmorSide side = ArmorSide.BACK;
       int amount = 40;

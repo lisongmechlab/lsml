@@ -33,7 +33,6 @@ import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.metrics.TopSpeed;
-import lisong_mechlab.util.MessageXBar;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -75,7 +74,7 @@ public class PayloadGraphPanel extends ChartPanel{
 
    private static final long       serialVersionUID = -5907483118809173045L;
    private final PayloadStatistics payloadStatistics;
-   private final Efficiencies      efficiencies     = new Efficiencies((MessageXBar)null);
+   private final Efficiencies      efficiencies     = new Efficiencies();
    private Collection<Entry>       chassis;
 
    public PayloadGraphPanel(PayloadStatistics aPayloadStatistics, final JCheckBox aSpeedTweak){
@@ -83,7 +82,7 @@ public class PayloadGraphPanel extends ChartPanel{
       aSpeedTweak.addActionListener(new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent aArg0){
-            efficiencies.setSpeedTweak(aSpeedTweak.isSelected());
+            efficiencies.setSpeedTweak(aSpeedTweak.isSelected(), null);
             updateGraph();
          }
       });

@@ -50,10 +50,9 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
    /**
     * @param aFactory
     * @param aChassis
-    * @param aXBar
     */
-   public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis, MessageXBar aXBar){
-      super(aFactory, aChassis, aXBar);
+   public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis){
+      super(aFactory, aChassis);
       movementProfile = new QuirkedMovementProfile(aChassis.getMovementProfileBase());
       upgrades = new Upgrades(aChassis.getFixedArmorType(), aChassis.getFixedStructureType(), UpgradeDB.STANDARD_GUIDANCE,
                               aChassis.getFixedHeatSinkType());

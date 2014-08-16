@@ -59,7 +59,6 @@ import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
 /**
@@ -123,12 +122,12 @@ public class LoadoutCoderV2 implements LoadoutCoder{
          if( !(chassi instanceof ChassisStandard) ){
             throw new DecodingException("LSML link format v2 does not support omni mechs.");
          }
-         loadout = new LoadoutStandard((ChassisStandard)chassi, null);
-         loadout.getEfficiencies().setCoolRun((upeff & (1 << 4)) != 0);
-         loadout.getEfficiencies().setHeatContainment((upeff & (1 << 3)) != 0);
-         loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 2)) != 0);
-         loadout.getEfficiencies().setDoubleBasics((upeff & (1 << 1)) != 0);
-         loadout.getEfficiencies().setFastFire((upeff & (1 << 0)) != 0);
+         loadout = new LoadoutStandard((ChassisStandard)chassi);
+         loadout.getEfficiencies().setCoolRun((upeff & (1 << 4)) != 0, null);
+         loadout.getEfficiencies().setHeatContainment((upeff & (1 << 3)) != 0, null);
+         loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 2)) != 0, null);
+         loadout.getEfficiencies().setDoubleBasics((upeff & (1 << 1)) != 0, null);
+         loadout.getEfficiencies().setFastFire((upeff & (1 << 0)) != 0, null);
       }
 
       // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA
@@ -215,14 +214,13 @@ public class LoadoutCoderV2 implements LoadoutCoder{
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-      MessageXBar xBar = new MessageXBar();
       Base64LoadoutCoder coder = new Base64LoadoutCoder();
       OperationStack stack = new OperationStack(0);
       for(ChassisBase chassis : chassii){
          if( !(chassis instanceof ChassisStandard) )
             continue;
-         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassis, xBar);
-         stack.pushAndApply(new OpLoadStock(chassis, loadout, xBar));
+         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassis);
+         stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
          System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
       }
    }

@@ -76,7 +76,6 @@ import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
 import lisong_mechlab.util.Huffman2;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
 /**
@@ -169,6 +168,10 @@ public class LoadoutCoderV3 implements LoadoutCoder{
                LoadoutOmniMech omniMech = (LoadoutOmniMech)loadout;
                OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
                stack.pushAndApply(new OpChangeOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
+
+               // We need to make sure the actuator state is setup before adding items. For now we just parse it again.
+               if( isOmniMech && (location == Location.RightArm || location == Location.LeftArm))
+                  readActuatorState(actuatorState, loadout, stack);
             }
 
             Integer v;
@@ -190,9 +193,6 @@ public class LoadoutCoderV3 implements LoadoutCoder{
             stack.pushAndApply(new OpAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
          }
       }
-
-      if( isOmniMech )
-         readActuatorState(actuatorState, loadout, stack);
 
       return loadout;
    }
@@ -399,9 +399,9 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       ChassisBase chassis = ChassisDB.lookup(chassisId);
 
       if( chassis instanceof ChassisOmniMech ){
-         return new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis, null);
+         return new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis);
       }
-      return new LoadoutStandard((ChassisStandard)chassis, null);
+      return new LoadoutStandard((ChassisStandard)chassis);
    }
 
    private void writeChassis(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout){
@@ -431,17 +431,16 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-      MessageXBar xBar = new MessageXBar();
       Base64LoadoutCoder coder = new Base64LoadoutCoder();
       OperationStack stack = new OperationStack(0);
       for(ChassisBase chassis : chassii){
          LoadoutBase<?> loadout;
          if( chassis instanceof ChassisStandard )
-            loadout = new LoadoutStandard((ChassisStandard)chassis, xBar);
+            loadout = new LoadoutStandard((ChassisStandard)chassis);
          else
-            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis, xBar);
+            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis);
 
-         stack.pushAndApply(new OpLoadStock(chassis, loadout, xBar));
+         stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
          System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
       }
    }
@@ -494,7 +493,6 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
       chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
       chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-      MessageXBar xBar = new MessageXBar();
       OperationStack stack = new OperationStack(0);
 
       List<Integer> idStats = new ArrayList<>();
@@ -503,15 +501,15 @@ public class LoadoutCoderV3 implements LoadoutCoder{
       for(ChassisBase chassis : chassii){
          final LoadoutBase<?> loadout;
          if( chassis instanceof ChassisStandard ){
-            loadout = new LoadoutStandard((ChassisStandard)chassis, xBar);
+            loadout = new LoadoutStandard((ChassisStandard)chassis);
          }
          else if( chassis instanceof ChassisOmniMech ){
-            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis, xBar);
+            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis);
          }
          else{
             throw new RuntimeException("Unknown chassis type!");
          }
-         stack.pushAndApply(new OpLoadStock(chassis, loadout, xBar));
+         stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
 
          for(ConfiguredComponentBase component : loadout.getComponents()){
             for(Item item : component.getItemsEquipped()){

@@ -122,11 +122,11 @@ public class LoadoutConverter implements Converter{
       LoadoutBase<?> loadoutBase;
 
       if( chassi instanceof ChassisStandard ){
-         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi, xBar);
+         LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi);
          loadoutBase = loadout;
       }
       else if( chassi instanceof ChassisOmniMech ){
-         LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi, xBar);
+         LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi);
          loadoutBase = loadout;
       }
       else{
@@ -159,12 +159,12 @@ public class LoadoutConverter implements Converter{
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadoutBase, Efficiencies.class);
-            loadoutBase.getEfficiencies().setCoolRun(eff.hasCoolRun());
-            loadoutBase.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics());
-            loadoutBase.getEfficiencies().setHeatContainment(eff.hasHeatContainment());
-            loadoutBase.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak());
-            loadoutBase.getEfficiencies().setAnchorTurn(eff.hasAnchorTurn());
-            loadoutBase.getEfficiencies().setFastFire(eff.hasFastFire());
+            loadoutBase.getEfficiencies().setCoolRun(eff.hasCoolRun(), xBar);
+            loadoutBase.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics(), xBar);
+            loadoutBase.getEfficiencies().setHeatContainment(eff.hasHeatContainment(), xBar);
+            loadoutBase.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak(), xBar);
+            loadoutBase.getEfficiencies().setAnchorTurn(eff.hasAnchorTurn(), xBar);
+            loadoutBase.getEfficiencies().setFastFire(eff.hasFastFire(), xBar);
          }
          else if( "component".equals(aReader.getNodeName()) ){
             aContext.convertAnother(loadoutBase, ConfiguredComponentStandard.class, new ConfiguredComponentConverter(xBar, loadoutBase));
@@ -181,7 +181,7 @@ public class LoadoutConverter implements Converter{
       if( !(chassi instanceof ChassisStandard) )
          throw new RuntimeException("Error parsing loadout: " + name + " expected standard mech but found an omni mech chassis.");
 
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi, xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi);
       stack.pushAndApply(new OpRename(loadout, xBar, name));
 
       while( aReader.hasMoreChildren() ){
@@ -195,10 +195,10 @@ public class LoadoutConverter implements Converter{
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadout, Efficiencies.class);
-            loadout.getEfficiencies().setCoolRun(eff.hasCoolRun());
-            loadout.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics());
-            loadout.getEfficiencies().setHeatContainment(eff.hasHeatContainment());
-            loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak());
+            loadout.getEfficiencies().setCoolRun(eff.hasCoolRun(), xBar);
+            loadout.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics(), xBar);
+            loadout.getEfficiencies().setHeatContainment(eff.hasHeatContainment(), xBar);
+            loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak(), xBar);
          }
          else if( "component".equals(aReader.getNodeName()) ){
             aContext.convertAnother(loadout, ConfiguredComponentStandard.class, new ConfiguredComponentConverter(xBar, loadout));

@@ -73,10 +73,10 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    private final Efficiencies      efficiencies;
    private final List<PilotModule> modules;
 
-   protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase, MessageXBar aXBar){
+   protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase){
       name = aChassisBase.getNameShort();
       chassisBase = aChassisBase;
-      efficiencies = new Efficiencies(aXBar);
+      efficiencies = new Efficiencies();
       modules = new ArrayList<>();
       components = aFactory.defaultComponents(chassisBase);
    }
@@ -257,9 +257,9 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       if( !aModule.getFaction().isCompatible(getChassis().getFaction()) )
          return false;
 
-      if(getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot()))
+      if( getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot()) )
          return false;
-      
+
       // TODO: Apply any additional limitations on modules
       return true;
    }
@@ -345,28 +345,28 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     */
    public int getHeatsinksCount(){
       int ans = countItemsOfType(HeatSink.class);
-      
+
       Engine engine = getEngine();
-      if(engine != null){
+      if( engine != null ){
          ans += engine.getNumInternalHeatsinks();
       }
-      
+
       return ans;
    }
-   
+
    private <E> Collection<E> getItemsOfType(Class<E> aClass){
       List<E> ans = new ArrayList<>();
-      
+
       for(T component : getComponents()){
          ans.addAll(ListArrayUtils.filterByType(component.getItemsEquipped(), aClass));
          ans.addAll(ListArrayUtils.filterByType(component.getItemsFixed(), aClass));
       }
       return ans;
    }
-   
+
    private int countItemsOfType(Class<?> aClass){
       int ans = 0;
-      
+
       for(T component : getComponents()){
          ans += ListArrayUtils.countByType(component.getItemsEquipped(), aClass);
          ans += ListArrayUtils.countByType(component.getItemsFixed(), aClass);
@@ -496,7 +496,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
       for(ModuleSlot moduleSlot : ModuleSlot.values()){
          if( getModulesOfType(moduleSlot) > getModulesMax(moduleSlot) )
-            return false;         
+            return false;
       }
 
       if( getArmor() > getChassis().getArmorMax() )
@@ -551,7 +551,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     * @return A deep copy of <code>this</code>.
     */
    public abstract LoadoutBase<?> clone(MessageXBar aXBar);
-   
+
    /**
     * @return A String containing a HTML formatted summary of the quirks for this loadout.
     */
@@ -564,12 +564,12 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       Collection<WeaponModifier> ans = getItemsOfType(WeaponModifier.class);
       ans.addAll(ListArrayUtils.filterByType(modules, WeaponModifier.class));
       ChassisBase chassis = getChassis();
-      if(chassis instanceof ChassisStandard){
+      if( chassis instanceof ChassisStandard ){
          ans.add(((ChassisStandard)getChassis()).getQuirks());
       }
       return ans;
    }
-   
+
    /**
     * @return A {@link List} of all {@link WeaponModifier}s that apply to this loadout.
     */
@@ -577,7 +577,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       Collection<HeatModifier> ans = getItemsOfType(HeatModifier.class);
       ans.addAll(ListArrayUtils.filterByType(modules, HeatModifier.class));
       ChassisBase chassis = getChassis();
-      if(chassis instanceof ChassisStandard){
+      if( chassis instanceof ChassisStandard ){
          ans.add(((ChassisStandard)getChassis()).getQuirks());
       }
       return ans;

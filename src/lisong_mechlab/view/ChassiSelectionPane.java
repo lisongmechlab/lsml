@@ -186,13 +186,13 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          if( aSourceRowObject instanceof ChassisStandard ){
             ChassisStandard chassis = (ChassisStandard)aSourceRowObject;
 
-            Efficiencies efficiencies = new Efficiencies((MessageXBar)null);
-            efficiencies.setSpeedTweak(false);
+            Efficiencies efficiencies = new Efficiencies();
+            efficiencies.setSpeedTweak(false, null);
 
             final double maxSpeed = TopSpeed.calculate(chassis.getEngineMax(), chassis.getMovementProfileBase(), chassis.getMassMax(),
                                                        efficiencies.getSpeedModifier());
 
-            efficiencies.setSpeedTweak(true);
+            efficiencies.setSpeedTweak(true, null);
             final double maxSpeedTweak = TopSpeed.calculate(chassis.getEngineMax(), chassis.getMovementProfileBase(), chassis.getMassMax(),
                                                             efficiencies.getSpeedModifier());
             return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
@@ -200,15 +200,15 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          else if( aSourceRowObject instanceof ChassisOmniMech ){
             ChassisOmniMech chassis = (ChassisOmniMech)aSourceRowObject;
 
-            Efficiencies efficiencies = new Efficiencies((MessageXBar)null);
-            efficiencies.setSpeedTweak(false);
+            Efficiencies efficiencies = new Efficiencies();
+            efficiencies.setSpeedTweak(false, null);
 
             final double maxSpeed = TopSpeed.calculate(chassis.getFixedEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
                                                        efficiencies.getSpeedModifier());
 
-            efficiencies.setSpeedTweak(true);
-            final double maxSpeedTweak = TopSpeed.calculate(chassis.getFixedEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
-                                                            efficiencies.getSpeedModifier());
+            efficiencies.setSpeedTweak(true, null);
+            final double maxSpeedTweak = TopSpeed.calculate(chassis.getFixedEngine().getRating(), chassis.getMovementProfileStock(),
+                                                            chassis.getMassMax(), efficiencies.getSpeedModifier());
             return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
          }
          else{
@@ -252,12 +252,12 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
                ChassisBase chassi = (ChassisBase)aValue;
                LoadoutBase<?> stock;
                if( aValue instanceof ChassisStandard ){
-                  stock = new LoadoutStandard((ChassisStandard)chassi, null);
+                  stock = new LoadoutStandard((ChassisStandard)chassi);
                   OperationStack stack = new OperationStack(0);
                   stack.pushAndApply(new OpLoadStock(chassi, stock, null));
                }
                else if( aValue instanceof ChassisOmniMech ){
-                  stock = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi, null);
+                  stock = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi);
                   OperationStack stack = new OperationStack(0);
                   stack.pushAndApply(new OpLoadStock(chassi, stock, null));
                }
@@ -319,13 +319,12 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
                      if( cell instanceof ChassisStandard ){
                         ChassisStandard chassi = (ChassisStandard)cell;
                         ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                        ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(chassi, ProgramInit.lsml().xBar));
+                        ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(chassi));
                      }
                      else if( cell instanceof ChassisOmniMech ){
                         ChassisOmniMech chassi = (ChassisOmniMech)cell;
                         ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                        ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi,
-                                                                                       ProgramInit.lsml().xBar));
+                        ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi));
 
                      }
                   }

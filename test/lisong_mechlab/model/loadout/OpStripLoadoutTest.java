@@ -54,7 +54,7 @@ public class OpStripLoadoutTest{
    @Test
    public void testStrip() throws Exception{
       // Setup
-      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-BH").getName(), xBar); // Has Endo-Steel standard
+      LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-BH").getName()); // Has Endo-Steel standard
                                                                                              // and lots of
       // stuff
 
