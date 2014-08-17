@@ -130,7 +130,7 @@ public class MechLabPane extends JSplitPane{
          openLoadout(ProgramInit.lsml().loadoutCoder.parse(aLSMLUrl));
       }
       catch( DecodingException e ){
-         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to import loadout from \"" + aLSMLUrl + "\"! Error:" + e);
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to import loadout from \"" + aLSMLUrl + "\"!\n\nError:\n" + e);
       }
       catch( Throwable e ){
          JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to decode: " + aLSMLUrl + "\n\n" + "The link is malformed.\nError:" + e);

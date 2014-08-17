@@ -30,7 +30,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-abstract class OpUpgradeBase extends Operation{
+public abstract class OpUpgradeBase extends Operation{
    protected final transient MessageXBar xBar;
    private final String                  description;
 

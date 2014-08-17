@@ -45,8 +45,8 @@ import com.thoughtworks.xstream.XStream;
 public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
    private final UpgradesMutable upgrades;
 
-   public static LoadoutStandard load(File aFile, MessageXBar aXBar){
-      XStream stream = loadoutXstream(aXBar);
+   public static LoadoutStandard load(File aFile){
+      XStream stream = loadoutXstream();
       return (LoadoutStandard)stream.fromXML(aFile);
    }
 

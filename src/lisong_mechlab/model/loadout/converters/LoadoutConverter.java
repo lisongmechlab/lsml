@@ -25,6 +25,7 @@ import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutBuilder;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpRename;
@@ -38,7 +39,6 @@ import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -54,14 +54,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * @author Li Song
  */
 public class LoadoutConverter implements Converter{
-
-   private final MessageXBar    xBar;
-   private final OperationStack stack = new OperationStack(0);
-
-   public LoadoutConverter(MessageXBar aXBar){
-      xBar = aXBar;
-   }
-
    @Override
    public boolean canConvert(Class aClass){
       return LoadoutBase.class.isAssignableFrom(aClass);
@@ -120,6 +112,7 @@ public class LoadoutConverter implements Converter{
       String name = aReader.getAttribute("name");
       ChassisBase chassi = ChassisDB.lookup(aReader.getAttribute("chassis"));
       LoadoutBase<?> loadoutBase;
+      LoadoutBuilder builder = new LoadoutBuilder();
 
       if( chassi instanceof ChassisStandard ){
          LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi);
@@ -133,7 +126,7 @@ public class LoadoutConverter implements Converter{
          throw new RuntimeException("Unsupported chassis class: " + chassi.getClass());
       }
 
-      stack.pushAndApply(new OpRename(loadoutBase, xBar, name));
+      builder.push(new OpRename(loadoutBase, null, name));
 
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
@@ -141,17 +134,17 @@ public class LoadoutConverter implements Converter{
             if( loadoutBase instanceof LoadoutStandard ){
                LoadoutStandard loadout = (LoadoutStandard)loadoutBase;
                Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
-               stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, upgrades.getGuidance()));
-               stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, upgrades.getHeatSink()));
-               stack.pushAndApply(new OpSetStructureType(xBar, loadout, upgrades.getStructure()));
-               stack.pushAndApply(new OpSetArmorType(xBar, loadout, upgrades.getArmor()));
+               builder.push(new OpSetGuidanceType(null, loadout, upgrades.getGuidance()));
+               builder.push(new OpSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
+               builder.push(new OpSetStructureType(null, loadout, upgrades.getStructure()));
+               builder.push(new OpSetArmorType(null, loadout, upgrades.getArmor()));
             }
             else if( loadoutBase instanceof LoadoutOmniMech ){
                while( aReader.hasMoreChildren() ){
                   aReader.moveDown();
                   if( aReader.getNodeName().equals("guidance") ){
                      GuidanceUpgrade artemis = (GuidanceUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
-                     stack.pushAndApply(new OpSetGuidanceType(xBar, loadoutBase, artemis));
+                     builder.push(new OpSetGuidanceType(null, loadoutBase, artemis));
                   }
                   aReader.moveUp();
                }
@@ -159,18 +152,19 @@ public class LoadoutConverter implements Converter{
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadoutBase, Efficiencies.class);
-            loadoutBase.getEfficiencies().setCoolRun(eff.hasCoolRun(), xBar);
-            loadoutBase.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics(), xBar);
-            loadoutBase.getEfficiencies().setHeatContainment(eff.hasHeatContainment(), xBar);
-            loadoutBase.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak(), xBar);
-            loadoutBase.getEfficiencies().setAnchorTurn(eff.hasAnchorTurn(), xBar);
-            loadoutBase.getEfficiencies().setFastFire(eff.hasFastFire(), xBar);
+            loadoutBase.getEfficiencies().setCoolRun(eff.hasCoolRun(), null);
+            loadoutBase.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics(), null);
+            loadoutBase.getEfficiencies().setHeatContainment(eff.hasHeatContainment(), null);
+            loadoutBase.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak(), null);
+            loadoutBase.getEfficiencies().setAnchorTurn(eff.hasAnchorTurn(), null);
+            loadoutBase.getEfficiencies().setFastFire(eff.hasFastFire(), null);
          }
          else if( "component".equals(aReader.getNodeName()) ){
-            aContext.convertAnother(loadoutBase, ConfiguredComponentStandard.class, new ConfiguredComponentConverter(xBar, loadoutBase));
+            aContext.convertAnother(loadoutBase, ConfiguredComponentStandard.class, new ConfiguredComponentConverter(loadoutBase, builder));
          }
          aReader.moveUp();
       }
+      builder.apply();
       return loadoutBase;
    }
 
@@ -182,29 +176,37 @@ public class LoadoutConverter implements Converter{
          throw new RuntimeException("Error parsing loadout: " + name + " expected standard mech but found an omni mech chassis.");
 
       LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)chassi);
-      stack.pushAndApply(new OpRename(loadout, xBar, name));
+      LoadoutBuilder builder = new LoadoutBuilder();
+      builder.push(new OpRename(loadout, null, name));
 
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
          if( "upgrades".equals(aReader.getNodeName()) ){
             Upgrades upgrades = (Upgrades)aContext.convertAnother(loadout, Upgrades.class);
-            stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, upgrades.getGuidance()));
-            stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, upgrades.getHeatSink()));
-            stack.pushAndApply(new OpSetStructureType(xBar, loadout, upgrades.getStructure()));
-            stack.pushAndApply(new OpSetArmorType(xBar, loadout, upgrades.getArmor()));
+            builder.push(new OpSetGuidanceType(null, loadout, upgrades.getGuidance()));
+            builder.push(new OpSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
+            builder.push(new OpSetStructureType(null, loadout, upgrades.getStructure()));
+            builder.push(new OpSetArmorType(null, loadout, upgrades.getArmor()));
+            
+            // We cheat here to preserve backwards compatibility with really old V1 garages.
+            // Just make sure that the guidance type is set so that fixes for artemis changes will be applied in
+            // v1 parser in ConfiguredComponentConverter.
+            (new OperationStack(0)).pushAndApply(new OpSetGuidanceType(null, loadout, upgrades.getGuidance()));
+            
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadout, Efficiencies.class);
-            loadout.getEfficiencies().setCoolRun(eff.hasCoolRun(), xBar);
-            loadout.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics(), xBar);
-            loadout.getEfficiencies().setHeatContainment(eff.hasHeatContainment(), xBar);
-            loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak(), xBar);
+            loadout.getEfficiencies().setCoolRun(eff.hasCoolRun(), null);
+            loadout.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics(), null);
+            loadout.getEfficiencies().setHeatContainment(eff.hasHeatContainment(), null);
+            loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak(), null);
          }
          else if( "component".equals(aReader.getNodeName()) ){
-            aContext.convertAnother(loadout, ConfiguredComponentStandard.class, new ConfiguredComponentConverter(xBar, loadout));
+            aContext.convertAnother(loadout, ConfiguredComponentStandard.class, new ConfiguredComponentConverter(loadout, builder));
          }
          aReader.moveUp();
       }
+      builder.apply();
       return loadout;
    }
 
