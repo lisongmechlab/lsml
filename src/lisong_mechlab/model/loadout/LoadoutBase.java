@@ -89,14 +89,14 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       components = aFactory.cloneComponents(aLoadoutBase);
    }
 
-   public static XStream loadoutXstream(MessageXBar aXBar){
+   public static XStream loadoutXstream(){
       XStream stream = new XStream(new StaxDriver());
       stream.autodetectAnnotations(true);
       stream.setMode(XStream.NO_REFERENCES);
       stream.registerConverter(new ChassiConverter());
       stream.registerConverter(new ItemConverter());
-      stream.registerConverter(new ConfiguredComponentConverter(aXBar, null));
-      stream.registerConverter(new LoadoutConverter(aXBar));
+      stream.registerConverter(new ConfiguredComponentConverter(null, null));
+      stream.registerConverter(new LoadoutConverter());
       stream.registerConverter(new UpgradeConverter());
       stream.registerConverter(new UpgradesConverter());
       stream.addImmutableType(Item.class);

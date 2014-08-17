@@ -19,20 +19,17 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JOptionPane;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.OmniPodDB;
-import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutBuilder;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
@@ -41,8 +38,6 @@ import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.loadout.component.OpToggleItem;
 import lisong_mechlab.model.loadout.export.CompatibilityHelper;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -52,13 +47,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class ConfiguredComponentConverter implements Converter{
-   private final OperationStack operationStack = new OperationStack(0);
+   private final LoadoutBuilder builder;
    private final LoadoutBase<?> loadout;
-   private final MessageXBar    xBar;
 
-   public ConfiguredComponentConverter(MessageXBar anXBar, LoadoutBase<?> aLoadoutBase){
+   public ConfiguredComponentConverter(LoadoutBase<?> aLoadoutBase, LoadoutBuilder aBuilder){
       loadout = aLoadoutBase;
-      xBar = anXBar;
+      builder = aBuilder;
    }
 
    @Override
@@ -139,13 +133,12 @@ public class ConfiguredComponentConverter implements Converter{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");
             if( armors.length == 2 ){
-               operationStack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0]), !autoArmor));
-               operationStack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1]), !autoArmor));
+               builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0]), !autoArmor));
+               builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1]), !autoArmor));
             }
          }
          else{
-            operationStack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")),
-                                                       !autoArmor));
+            builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
          }
       }
       catch( IllegalArgumentException exception ){
@@ -153,19 +146,12 @@ public class ConfiguredComponentConverter implements Converter{
                                                            + " is corrupt. Continuing to load as much as possible.");
       }
 
-      List<Item> later = new ArrayList<>();
-
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
          if( "item".equals(aReader.getNodeName()) ){
             try{
                Item item = (Item)aContext.convertAnother(null, Item.class);
-               if( item instanceof HeatSink ){
-                  later.add(item);
-               }
-               else{
-                  operationStack.pushAndApply(new OpAddItem(xBar, loadout, loadoutPart, item));
-               }
+               builder.push(new OpAddItem(null, loadout, loadoutPart, item));
             }
             catch( IllegalArgumentException exception ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
@@ -174,20 +160,10 @@ public class ConfiguredComponentConverter implements Converter{
          }
          else if( "togglestate".equals(aReader.getNodeName()) ){
             Item item = ItemDB.lookup(Integer.parseInt(aReader.getAttribute("item")));
-            operationStack.pushAndApply(new OpToggleItem(xBar, loadout, (ConfiguredComponentOmniMech)loadoutPart, item,
-                                                         Boolean.parseBoolean(aReader.getAttribute("enabled"))));
+            builder.push(new OpToggleItem(null, loadout, (ConfiguredComponentOmniMech)loadoutPart, item,
+                                          Boolean.parseBoolean(aReader.getAttribute("enabled"))));
          }
          aReader.moveUp();
-      }
-
-      try{
-         for(Item item : later){
-            operationStack.pushAndApply(new OpAddItem(xBar, loadout, loadoutPart, item));
-         }
-      }
-      catch( IllegalArgumentException exception ){
-         JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
-                                                           + " is corrupt. Continuing to load as much as possible.");
       }
    }
 
@@ -205,21 +181,18 @@ public class ConfiguredComponentConverter implements Converter{
          if( partType.isTwoSided() ){
             String[] armors = aReader.getAttribute("armor").split("/");
             if( armors.length == 2 ){
-               operationStack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0]), !autoArmor));
-               operationStack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1]), !autoArmor));
+               builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT, Integer.parseInt(armors[0]), !autoArmor));
+               builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.BACK, Integer.parseInt(armors[1]), !autoArmor));
             }
          }
          else{
-            operationStack.pushAndApply(new OpSetArmor(xBar, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")),
-                                                       !autoArmor));
+            builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
          }
       }
       catch( IllegalArgumentException exception ){
          JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
                                                            + " is corrupt. Continuing to load as much as possible.");
       }
-
-      List<Item> later = new ArrayList<>();
 
       while( aReader.hasMoreChildren() ){
          aReader.moveDown();
@@ -227,12 +200,7 @@ public class ConfiguredComponentConverter implements Converter{
             try{
                Item item = (Item)aContext.convertAnother(null, Item.class);
                item = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().getGuidance());
-               if( item instanceof HeatSink ){
-                  later.add(item);
-               }
-               else{
-                  operationStack.pushAndApply(new OpAddItem(xBar, loadout, loadoutPart, item));
-               }
+               builder.push(new OpAddItem(null, loadout, loadoutPart, item));
             }
             catch( IllegalArgumentException exception ){
                JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
@@ -240,16 +208,6 @@ public class ConfiguredComponentConverter implements Converter{
             }
          }
          aReader.moveUp();
-      }
-
-      try{
-         for(Item item : later){
-            operationStack.pushAndApply(new OpAddItem(xBar, loadout, loadoutPart, item));
-         }
-      }
-      catch( IllegalArgumentException exception ){
-         JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
-                                                           + " is corrupt. Continuing to load as much as possible.");
       }
    }
 }
