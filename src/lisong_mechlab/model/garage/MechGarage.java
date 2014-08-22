@@ -133,7 +133,7 @@ public class MechGarage{
       MechGarage mg = null;
       try{
          fis = new FileInputStream(aFile);
-         mg = (MechGarage)garageXstream(aXBar).fromXML(fis);
+         mg = (MechGarage)garageXstream().fromXML(fis);
       }
       finally{
          if( null != fis )
@@ -192,7 +192,7 @@ public class MechGarage{
       try{
          fileWriter = new FileOutputStream(aFile);
          writer = new OutputStreamWriter(fileWriter, "UTF-8");
-         writer.write(garageXstream(xBar).toXML(this));
+         writer.write(garageXstream().toXML(this));
          file = aFile;
       }
       finally{
@@ -248,12 +248,10 @@ public class MechGarage{
    /**
     * Private helper method for the {@link XStream} serialization.
     * 
-    * @param anXBar
-    *           The {@link MessageXBar} to use for any {@link LoadoutStandard}s loaded from files.
     * @return An {@link XStream} object usable for deserialization of garages.
     */
-   private static XStream garageXstream(MessageXBar anXBar){
-      XStream stream = LoadoutBase.loadoutXstream(anXBar);
+   private static XStream garageXstream(){
+      XStream stream = LoadoutBase.loadoutXstream();
       stream.alias("garage", MechGarage.class);
       stream.omitField(MechGarage.class, "file");
       stream.alias("loadout", LoadoutOmniMech.class);

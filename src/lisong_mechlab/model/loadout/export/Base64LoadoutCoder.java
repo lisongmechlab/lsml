@@ -86,7 +86,7 @@ public class Base64LoadoutCoder{
          return coderV3.decode(bitstream);
       }
       else{
-         throw new DecodingException("No suitable decoder found to decode : " + aUrl + " with!");
+         throw new DecodingException("No suitable decoder found to decode [" + aUrl + "] with!");
       }
    }
 
