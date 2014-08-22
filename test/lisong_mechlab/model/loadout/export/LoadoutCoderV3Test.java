@@ -73,9 +73,9 @@ public class LoadoutCoderV3Test{
       for(ChassisBase chassis : chassii){
          LoadoutBase<?> loadout;
          if( chassis instanceof ChassisOmniMech )
-            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis, null);
+            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis);
          else
-            loadout = new LoadoutStandard((ChassisStandard)chassis, null);
+            loadout = new LoadoutStandard((ChassisStandard)chassis);
          stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
 
          byte[] result = cut.encode(loadout);
@@ -113,9 +113,9 @@ public class LoadoutCoderV3Test{
 
          LoadoutBase<?> reference;
          if( chassi instanceof ChassisOmniMech )
-            reference = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi, null);
+            reference = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi);
          else
-            reference = new LoadoutStandard((ChassisStandard)chassi, null);
+            reference = new LoadoutStandard((ChassisStandard)chassi);
          stack.pushAndApply(new OpLoadStock(chassi, reference, null));
 
          LoadoutBase<?> decoded = cut.decode(base64.decode(lsml.toCharArray()));

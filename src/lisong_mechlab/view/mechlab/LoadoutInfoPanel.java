@@ -388,7 +388,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          upgrades.add(doubleHeatSinks);
          upgrades.add(doubleBasics);
          heat.add(upgrades);
-
+         
          doubleBasics.addItemListener(this);
          heatContainment.addItemListener(this);
          coolRun.addItemListener(this);
@@ -772,22 +772,22 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 
       try{
          if( source == speedTweak ){
-            loadout.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == anchorTurn ){
-            loadout.getEfficiencies().setAnchorTurn(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setAnchorTurn(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == coolRun ){
-            loadout.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == heatContainment ){
-            loadout.getEfficiencies().setHeatContainment(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setHeatContainment(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == doubleBasics ){
-            loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == fastFire ){
-            loadout.getEfficiencies().setFastFire(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setFastFire(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else{
             throw new RuntimeException("Unknown source control!");

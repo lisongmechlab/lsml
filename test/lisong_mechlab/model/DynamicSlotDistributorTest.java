@@ -335,7 +335,7 @@ public class DynamicSlotDistributorTest{
       Mockito.when(aFactory.defaultComponents(Matchers.any(ChassisBase.class))).thenReturn(configuredComponents);
 
       // Create loadout
-      LoadoutOmniMech loadoutOmniMech = new LoadoutOmniMech(aFactory, chassisOmniMech, null);
+      LoadoutOmniMech loadoutOmniMech = new LoadoutOmniMech(aFactory, chassisOmniMech);
 
       // Execute + Verify
       cut = new DynamicSlotDistributor(loadoutOmniMech);

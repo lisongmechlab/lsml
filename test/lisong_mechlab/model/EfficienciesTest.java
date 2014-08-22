@@ -40,7 +40,7 @@ public class EfficienciesTest{
 
    @Before
    public void setup(){
-      cut = new Efficiencies(xBar);
+      cut = new Efficiencies();
    }
 
    @Test
@@ -51,7 +51,7 @@ public class EfficienciesTest{
 
       // We want messages too!
       for(boolean b : new boolean[] {true, false}){
-         cut.setSpeedTweak(b);
+         cut.setSpeedTweak(b, xBar);
          assertEquals(b, cut.hasSpeedTweak());
          verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
          reset(xBar);
@@ -59,9 +59,9 @@ public class EfficienciesTest{
 
       // No messages if there was no change.
       for(boolean b : new boolean[] {true, false}){
-         cut.setSpeedTweak(b);
+         cut.setSpeedTweak(b, xBar);
          reset(xBar);
-         cut.setSpeedTweak(b);
+         cut.setSpeedTweak(b, xBar);
          verifyZeroInteractions(xBar);
       }
    }
@@ -71,15 +71,15 @@ public class EfficienciesTest{
       assertEquals(1.0, cut.getSpeedModifier(), 0.0);
 
       // These don't affect heat capacity
-      cut.setHeatContainment(true);
-      cut.setCoolRun(true);
-      cut.setDoubleBasics(true);
+      cut.setHeatContainment(true, xBar);
+      cut.setCoolRun(true, xBar);
+      cut.setDoubleBasics(true, xBar);
       assertEquals(1.0, cut.getSpeedModifier(), 0.0);
 
       // These do
-      cut.setSpeedTweak(true);
+      cut.setSpeedTweak(true, xBar);
       assertEquals(1.1, cut.getSpeedModifier(), 0.0);
-      cut.setDoubleBasics(false);
+      cut.setDoubleBasics(false, xBar);
       assertEquals(1.1, cut.getSpeedModifier(), 0.0);
    }
 
@@ -91,7 +91,7 @@ public class EfficienciesTest{
 
       // We want messages too!
       for(boolean b : new boolean[] {true, false}){
-         cut.setCoolRun(b);
+         cut.setCoolRun(b, xBar);
          assertEquals(b, cut.hasCoolRun());
          verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
          reset(xBar);
@@ -99,9 +99,9 @@ public class EfficienciesTest{
 
       // No messages if there was no change.
       for(boolean b : new boolean[] {true, false}){
-         cut.setCoolRun(b);
+         cut.setCoolRun(b, xBar);
          reset(xBar);
-         cut.setCoolRun(b);
+         cut.setCoolRun(b, xBar);
          verifyZeroInteractions(xBar);
       }
    }
@@ -111,19 +111,19 @@ public class EfficienciesTest{
       assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
 
       // These don't affect heat capacity
-      cut.setHeatContainment(true);
-      cut.setSpeedTweak(true);
-      cut.setDoubleBasics(true); // Only if we have heat containment
+      cut.setHeatContainment(true, xBar);
+      cut.setSpeedTweak(true, xBar);
+      cut.setDoubleBasics(true, xBar); // Only if we have heat containment
       assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
 
-      cut.setHeatContainment(false);
-      cut.setSpeedTweak(false);
-      cut.setDoubleBasics(false);
+      cut.setHeatContainment(false, xBar);
+      cut.setSpeedTweak(false, xBar);
+      cut.setDoubleBasics(false, xBar);
 
       // These do
-      cut.setCoolRun(true);
+      cut.setCoolRun(true, xBar);
       assertEquals(1.075, cut.getHeatDissipationModifier(), 0.0);
-      cut.setDoubleBasics(true);
+      cut.setDoubleBasics(true, xBar);
       assertEquals(1.15, cut.getHeatDissipationModifier(), 0.0);
    }
 
@@ -135,7 +135,7 @@ public class EfficienciesTest{
 
       // We want messages too!
       for(boolean b : new boolean[] {true, false}){
-         cut.setHeatContainment(b);
+         cut.setHeatContainment(b, xBar);
          assertEquals(b, cut.hasHeatContainment());
          verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
          reset(xBar);
@@ -143,9 +143,9 @@ public class EfficienciesTest{
 
       // No messages if there was no change.
       for(boolean b : new boolean[] {true, false}){
-         cut.setHeatContainment(b);
+         cut.setHeatContainment(b, xBar);
          reset(xBar);
-         cut.setHeatContainment(b);
+         cut.setHeatContainment(b, xBar);
          verifyZeroInteractions(xBar);
       }
    }
@@ -155,19 +155,19 @@ public class EfficienciesTest{
       assertEquals(1.0, cut.getHeatCapacityModifier(), 0.0);
 
       // These don't affect heat capacity
-      cut.setCoolRun(true);
-      cut.setSpeedTweak(true);
-      cut.setDoubleBasics(true); // Only if we have heat containment
+      cut.setCoolRun(true, xBar);
+      cut.setSpeedTweak(true, xBar);
+      cut.setDoubleBasics(true, xBar); // Only if we have heat containment
       assertEquals(1.0, cut.getHeatCapacityModifier(), 0.0);
 
-      cut.setCoolRun(false);
-      cut.setSpeedTweak(false);
-      cut.setDoubleBasics(false);
+      cut.setCoolRun(false, xBar);
+      cut.setSpeedTweak(false, xBar);
+      cut.setDoubleBasics(false, xBar);
 
       // These do
-      cut.setHeatContainment(true);
+      cut.setHeatContainment(true, xBar);
       assertEquals(1.1, cut.getHeatCapacityModifier(), 0.0);
-      cut.setDoubleBasics(true);
+      cut.setDoubleBasics(true, xBar);
       assertEquals(1.2, cut.getHeatCapacityModifier(), 0.0);
    }
 
@@ -179,7 +179,7 @@ public class EfficienciesTest{
 
       // We want messages too!
       for(boolean b : new boolean[] {true, false}){
-         cut.setDoubleBasics(b);
+         cut.setDoubleBasics(b, xBar);
          assertEquals(b, cut.hasDoubleBasics());
          verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
          reset(xBar);
@@ -187,9 +187,9 @@ public class EfficienciesTest{
 
       // No messages if there was no change.
       for(boolean b : new boolean[] {true, false}){
-         cut.setDoubleBasics(b);
+         cut.setDoubleBasics(b, xBar);
          reset(xBar);
-         cut.setDoubleBasics(b);
+         cut.setDoubleBasics(b, xBar);
          verifyZeroInteractions(xBar);
       }
    }
@@ -202,7 +202,7 @@ public class EfficienciesTest{
 
       // We want messages too!
       for(boolean b : new boolean[] {true, false}){
-         cut.setFastFire(b);
+         cut.setFastFire(b, xBar);
          assertEquals(b, cut.hasFastFire());
          verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
          reset(xBar);
@@ -210,9 +210,9 @@ public class EfficienciesTest{
 
       // No messages if there was no change.
       for(boolean b : new boolean[] {true, false}){
-         cut.setFastFire(b);
+         cut.setFastFire(b, xBar);
          reset(xBar);
-         cut.setFastFire(b);
+         cut.setFastFire(b, xBar);
          verifyZeroInteractions(xBar);
       }
    }
@@ -221,12 +221,12 @@ public class EfficienciesTest{
    public void testGetWeaponCycletimeModifier() throws Exception{
       assertEquals(1.0, cut.getWeaponCycleTimeModifier(), 0.0);
 
-      cut.setFastFire(true);
+      cut.setFastFire(true, xBar);
 
       assertEquals(0.95, cut.getWeaponCycleTimeModifier(), 0.0);
 
       // Double basics doesn't affect cycle time
-      cut.setDoubleBasics(true);
+      cut.setDoubleBasics(true, xBar);
       assertEquals(0.95, cut.getWeaponCycleTimeModifier(), 0.0);
    }
 

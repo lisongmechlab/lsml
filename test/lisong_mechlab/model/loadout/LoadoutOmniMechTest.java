@@ -92,7 +92,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
       Mockito.when(chassisOmni.getFixedHeatSinkType()).thenReturn(heatSinks);
       Mockito.when(chassisOmni.getFixedEngine()).thenReturn(engine);
       Mockito.when(chassisOmni.getMovementProfileBase()).thenReturn(quirkBase);
-      return new LoadoutOmniMech(new ComponentFactory(), (ChassisOmniMech)chassis, xBar);
+      return new LoadoutOmniMech(new ComponentFactory(), (ChassisOmniMech)chassis);
    }
 
    @Test

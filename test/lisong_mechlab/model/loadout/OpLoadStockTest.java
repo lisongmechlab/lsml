@@ -75,7 +75,7 @@ public class OpLoadStockTest{
    public void testNotEmpty() throws Exception{
       // Setup
       ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("JR7-F");
-      LoadoutStandard loadout = new LoadoutStandard(chassi, xBar);
+      LoadoutStandard loadout = new LoadoutStandard(chassi);
       OperationStack opstack = new OperationStack(0);
       opstack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
 
@@ -107,10 +107,10 @@ public class OpLoadStockTest{
       // Setup
       final LoadoutBase<?> loadout;
       if( aChassis instanceof ChassisStandard ){
-         loadout = new LoadoutStandard((ChassisStandard)aChassis, xBar);
+         loadout = new LoadoutStandard((ChassisStandard)aChassis);
       }
       else if( aChassis instanceof ChassisOmniMech ){
-         loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)aChassis, xBar);
+         loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)aChassis);
       }
       else{
          fail("Unknown chassis type");
@@ -138,7 +138,7 @@ public class OpLoadStockTest{
    @Test
    public void testApply_artemisFeb4() throws Exception{
       // Setup
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("CN9-D"), xBar);
+      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("CN9-D"));
 
       // Execute
       OperationStack opstack = new OperationStack(0);
@@ -156,8 +156,8 @@ public class OpLoadStockTest{
    public void testUndo() throws Exception{
       // Setup
       ChassisStandard chassi = (ChassisStandard)ChassisDB.lookup("JR7-F");
-      LoadoutStandard reference = new LoadoutStandard(chassi, xBar);
-      LoadoutStandard loadout = new LoadoutStandard(chassi, xBar);
+      LoadoutStandard reference = new LoadoutStandard(chassi);
+      LoadoutStandard loadout = new LoadoutStandard(chassi);
       OperationStack opstack = new OperationStack(1);
       opstack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
 
@@ -176,7 +176,7 @@ public class OpLoadStockTest{
    @Test
    public void testApply_InPresenceOfAutomaticArmor() throws Exception{
       // Setup
-      final LoadoutBase<?> loadout = new LoadoutStandard("BNC-3S", xBar);
+      final LoadoutBase<?> loadout = new LoadoutStandard("BNC-3S");
       final OperationStack stack = new OperationStack(0);
 
       Mockito.doAnswer(new Answer<Void>(){

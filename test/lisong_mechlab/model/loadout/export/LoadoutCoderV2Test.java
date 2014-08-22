@@ -66,7 +66,7 @@ public class LoadoutCoderV2Test{
          m.matches();
          ChassisBase chassi = ChassisDB.lookup(m.group(1));
          String lsml = m.group(2);
-         LoadoutStandard reference = new LoadoutStandard(chassi.getName(), null);
+         LoadoutStandard reference = new LoadoutStandard(chassi.getName());
          LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
          // Name is not encoded

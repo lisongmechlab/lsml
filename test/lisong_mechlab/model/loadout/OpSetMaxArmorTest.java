@@ -53,7 +53,7 @@ public class OpSetMaxArmorTest{
    @Test
    public void testApply(){
       // Setup
-      LoadoutStandard cut = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard cut = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
 
@@ -88,7 +88,7 @@ public class OpSetMaxArmorTest{
    @Test
    public void testApply_alreadyMaxArmor(){
       // Setup
-      LoadoutStandard cut = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"), xBar);
+      LoadoutStandard cut = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
       final double front_back_ratio = 3.0 / 2.0;
       final int tolerance = 1;
       stack.pushAndApply(new OpSetMaxArmor(cut, xBar, 1.0, true));

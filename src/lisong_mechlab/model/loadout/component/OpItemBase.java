@@ -47,7 +47,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-abstract class OpItemBase extends Operation{
+public abstract class OpItemBase extends Operation{
    private int                             numEngineHS     = 0;
    private final MessageXBar               xBar;
    protected final ConfiguredComponentBase component;
@@ -76,6 +76,13 @@ abstract class OpItemBase extends Operation{
       component = aComponent;
       xBar = aXBar;
       item = aItem;
+   }
+
+   /**
+    * @return The {@link Item} that is the argument of the operation.
+    */
+   public Item getItem(){
+      return item;
    }
 
    @Override

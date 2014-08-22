@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class Quirks implements MovementModifier, WeaponModifier, HealthModifier, HeatModifier{
+   private final static DecimalFormat FORMAT = new DecimalFormat("###.#");
+
    enum QuirkBenefit{
       POSITIVE_GOOD, NEGATIVE_GOOD, INDETERMINATE
    }
@@ -151,10 +154,10 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier,
                color = "black";
                break;
             case NEGATIVE_GOOD:
-               color = (quirk.value < 0) ? "green": "red";
+               color = (quirk.value < 0) ? "green" : "red";
                break;
             case POSITIVE_GOOD:
-               color = (quirk.value > 0) ? "green": "red";
+               color = (quirk.value > 0) ? "green" : "red";
                break;
             default:
                throw new IllegalArgumentException("Unknown quirkmode!");
@@ -167,10 +170,10 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier,
             aOutput.append("+");
          }
          if( quirk.key.contains("multip") ){
-            aOutput.append(quirk.value * 100).append("%");
+            aOutput.append(FORMAT.format(quirk.value * 100)).append("%");
          }
          else{
-            aOutput.append(quirk.value);
+            aOutput.append(FORMAT.format(quirk.value));
          }
          aOutput.append("</p>");
       }
@@ -303,7 +306,6 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier,
          return aValue * quirk.value;
       }
       return 0;
-
    }
 
    private double add(String aQuirk){
@@ -312,7 +314,6 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier,
          return quirk.value;
       }
       return 0;
-
    }
 
    @Override
@@ -325,23 +326,13 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier,
       return mult("heat_loss_multiplier", aHeat);
    }
 
-   /*
-    * (non-Javadoc)
-    * @see lisong_mechlab.model.chassi.HeatModifier#extraHeatGeneration(double)
-    */
    @Override
    public double extraHeatGeneration(double aHeat){
-      // TODO Auto-generated method stub
-      return 0;
+      return 0; // XXX: NYI
    }
 
-   /*
-    * (non-Javadoc)
-    * @see lisong_mechlab.model.chassi.HeatModifier#extraHeatCapacity(double)
-    */
    @Override
    public double extraHeatCapacity(double aHeat){
-      // TODO Auto-generated method stub
-      return 0;
+      return 0; // XXX: NYI
    }
 }
