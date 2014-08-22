@@ -26,8 +26,8 @@ import java.util.List;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
@@ -45,20 +45,19 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CriticalItemDamageTest{
-   List<Item>         items = new ArrayList<>();
+   List<Item>              items = new ArrayList<>();
    @Mock
-   LoadoutPart        loadoutPart;
+   ConfiguredComponentBase loadoutPart;
    @Mock
-   Loadout            loadout;
+   LoadoutBase<?>          loadout;
    @Mock
-   Upgrades           upgrades;
+   Upgrades                upgrades;
    @InjectMocks
-   CriticalItemDamage cut;
+   CriticalItemDamage      cut;
 
    @Before
    public void setup(){
-      Mockito.when(loadoutPart.getItems()).thenReturn(items);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
+      Mockito.when(loadoutPart.getItemsEquipped()).thenReturn(items);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
    }
 
@@ -69,7 +68,8 @@ public class CriticalItemDamageTest{
    @Test
    public void testOneItem(){
       Item i = Mockito.mock(Item.class);
-      Mockito.when(i.getNumCriticalSlots(upgrades)).thenReturn(5);
+      Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(i.isCrittable()).thenReturn(true);
       items.add(i);
 
       assertEquals(0.25 * 1 + 0.14 * 2 + 0.03 * 3, cut.calculate(i), 0.0);
@@ -79,13 +79,15 @@ public class CriticalItemDamageTest{
     * Internal items do not affect the critical hit rolls.
     */
    @Test
-   public void testNoInternals(){
+   public void testNotCrittable(){
       Item i = Mockito.mock(Item.class);
-      Item internal = Mockito.mock(Internal.class);
-      Mockito.when(i.getNumCriticalSlots(upgrades)).thenReturn(5);
-      Mockito.when(internal.getNumCriticalSlots(upgrades)).thenReturn(5);
+      Item nocrit = Mockito.mock(Internal.class);
+      Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(i.isCrittable()).thenReturn(true);
+      Mockito.when(nocrit.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(nocrit.isCrittable()).thenReturn(false);
       items.add(i);
-      items.add(internal);
+      items.add(nocrit);
 
       assertEquals(0.25 * 1 + 0.14 * 2 + 0.03 * 3, cut.calculate(i), 0.0);
    }
@@ -95,9 +97,9 @@ public class CriticalItemDamageTest{
     */
    @Test
    public void testEngineInternals(){
-      Item i = LoadoutPart.ENGINE_INTERNAL;
+      Item i = ConfiguredComponentBase.ENGINE_INTERNAL;
       Item internal = Mockito.mock(Internal.class);
-      Mockito.when(internal.getNumCriticalSlots(upgrades)).thenReturn(5);
+      Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);
       items.add(i);
       items.add(internal);
 
@@ -115,8 +117,10 @@ public class CriticalItemDamageTest{
    public void testTwoItems(){
       Item i0 = Mockito.mock(Item.class);
       Item i1 = Mockito.mock(Item.class);
-      Mockito.when(i0.getNumCriticalSlots(upgrades)).thenReturn(5);
-      Mockito.when(i1.getNumCriticalSlots(upgrades)).thenReturn(15);
+      Mockito.when(i0.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(i0.isCrittable()).thenReturn(true);
+      Mockito.when(i1.getNumCriticalSlots()).thenReturn(15);
+      Mockito.when(i1.isCrittable()).thenReturn(true);
       items.add(i0);
       items.add(i1);
 

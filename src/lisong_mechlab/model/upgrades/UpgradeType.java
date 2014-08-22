@@ -22,8 +22,18 @@ package lisong_mechlab.model.upgrades;
 public enum UpgradeType{
    ARMOR, STRUCTURE, HEATSINK, ARTEMIS;
 
-
    public static UpgradeType fromMwo(String aMwoType){
       return valueOf(aMwoType.toUpperCase());
+   }
+   
+   public String toSmurfy(){
+      switch(this){
+         case ARMOR:return "Armor";
+         case STRUCTURE: return "Structure";
+         case HEATSINK: return "HeatSink";
+         case ARTEMIS: return "Artemis";
+         default:
+            throw new RuntimeException("Unknown upgrade type! " + this);
+      }
    }
 }

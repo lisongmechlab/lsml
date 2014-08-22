@@ -23,69 +23,28 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.Part;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.RenameOperation;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * A test suite for {@link LoadoutCoderV2}.
  * 
  * @author Li Song
  */
-@RunWith(MockitoJUnitRunner.class)
 public class LoadoutCoderV2Test{
-
-   @Mock
-   private MessageXBar    xBar;
-   @InjectMocks
-   private LoadoutCoderV2 cut;
-
-   /**
-    * The coder shall be able to decode all stock mechs.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testEncodeAllStock() throws Exception{
-      List<Chassis> chassii = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-      chassii.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
-
-      MessageXBar anXBar = new MessageXBar();
-      for(Chassis chassi : chassii){
-         Loadout loadout = new Loadout(chassi.getName(), anXBar);
-
-         byte[] result = cut.encode(loadout);
-         Loadout decoded = cut.decode(result);
-
-         // Name is not encoded
-         OperationStack stack = new OperationStack(0);
-         stack.pushAndApply(new RenameOperation(decoded, xBar, loadout.getName()));
-
-         // Verify
-         assertEquals(loadout, decoded);
-      }
-   }
+   private LoadoutCoderV2 cut = new LoadoutCoderV2();
 
    /**
     * The coder shall be able to decode all stock mechs.
@@ -105,14 +64,14 @@ public class LoadoutCoderV2Test{
          Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
          Matcher m = pat.matcher(line);
          m.matches();
-         Chassis chassi = ChassiDB.lookup(m.group(1));
+         ChassisBase chassi = ChassisDB.lookup(m.group(1));
          String lsml = m.group(2);
-         Loadout reference = new Loadout(chassi.getName(), xBar);
-         Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
+         LoadoutStandard reference = new LoadoutStandard(chassi.getName());
+         LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
          // Name is not encoded
          OperationStack stack = new OperationStack(0);
-         stack.pushAndApply(new RenameOperation(decoded, xBar, reference.getName()));
+         stack.pushAndApply(new OpRename(decoded, null, reference.getName()));
 
          // Verify
          assertEquals(reference, decoded);
@@ -131,9 +90,9 @@ public class LoadoutCoderV2Test{
    public void testDecodeHeatsinksBeforeEngine() throws DecodingException{
       Base64 base64 = new Base64();
 
-      Loadout l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
+      LoadoutStandard l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
 
       assertTrue(l.getFreeMass() < 0.005);
-      assertEquals(3, l.getPart(Part.CenterTorso).getNumEngineHeatsinks());
+      assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
    }
 }

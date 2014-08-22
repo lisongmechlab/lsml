@@ -19,7 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar.Message;
 
 /**
@@ -32,9 +33,9 @@ public class NotificationMessage implements Message{
       NOTICE, WARNING, ERROR
    }
 
-   private final Loadout  loadout;
-   public final String   message;
-   public final Severity severity;
+   private final LoadoutBase<?> loadout;
+   public final String          message;
+   public final Severity        severity;
 
    @Override
    public boolean equals(Object obj){
@@ -68,18 +69,18 @@ public class NotificationMessage implements Message{
     * @param aSeverity
     *           The {@link Severity} of the message.
     * @param aLoadout
-    *           The {@link Loadout} the message is for.
+    *           The {@link LoadoutStandard} the message is for.
     * @param aMessage
     *           The human readable message.
     */
-   public NotificationMessage(Severity aSeverity, Loadout aLoadout, String aMessage){
+   public NotificationMessage(Severity aSeverity, LoadoutBase<?> aLoadout, String aMessage){
       loadout = aLoadout;
       severity = aSeverity;
       message = aMessage;
    }
 
    @Override
-   public boolean isForMe(Loadout aLoadout){
+   public boolean isForMe(LoadoutBase<?> aLoadout){
       return loadout == aLoadout;
    }
 

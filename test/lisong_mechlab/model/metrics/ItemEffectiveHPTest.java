@@ -26,9 +26,8 @@ import java.util.List;
 
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
@@ -46,20 +45,19 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ItemEffectiveHPTest{
-   List<Item>      items = new ArrayList<>();
+   List<Item>              items = new ArrayList<>();
    @Mock
-   LoadoutPart     loadoutPart;
+   ConfiguredComponentBase loadoutPart;
    @Mock
-   Loadout         loadout;
+   LoadoutBase<?>          loadout;
    @Mock
-   Upgrades        upgrades;
+   Upgrades                upgrades;
    @InjectMocks
-   ItemEffectiveHP cut;
+   ItemEffectiveHP         cut;
 
    @Before
    public void setup(){
-      Mockito.when(loadoutPart.getItems()).thenReturn(items);
-      Mockito.when(loadoutPart.getLoadout()).thenReturn(loadout);
+      Mockito.when(loadoutPart.getItemsEquipped()).thenReturn(items);
       Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
    }
 
@@ -79,8 +77,9 @@ public class ItemEffectiveHPTest{
    @Test
    public void testOneItem(){
       Item i = Mockito.mock(Item.class);
-      Mockito.when(i.getNumCriticalSlots(upgrades)).thenReturn(5);
+      Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
       Mockito.when(i.getHealth()).thenReturn(15);
+      Mockito.when(i.isCrittable()).thenReturn(true);
       items.add(i);
 
       assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
@@ -92,44 +91,15 @@ public class ItemEffectiveHPTest{
    @Test
    public void testNoInternals(){
       Item i = Mockito.mock(Item.class);
-      Item internal = Mockito.mock(Internal.class);
-      Mockito.when(i.getNumCriticalSlots(upgrades)).thenReturn(5);
+      Item nocrit = Mockito.mock(Internal.class);
+      Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
       Mockito.when(i.getHealth()).thenReturn(15);
-      Mockito.when(internal.getNumCriticalSlots(upgrades)).thenReturn(5);
-      Mockito.when(internal.getHealth()).thenReturn(0);
+      Mockito.when(i.isCrittable()).thenReturn(true);
+      Mockito.when(nocrit.getNumCriticalSlots()).thenReturn(5);
+      Mockito.when(nocrit.getHealth()).thenReturn(0);
+      Mockito.when(nocrit.isCrittable()).thenReturn(false);
       items.add(i);
-      items.add(internal);
-
-      assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
-   }
-
-   /**
-    * According to: http://mwomercs.com/forums/topic/81945-crits-and-you-a-brief-guide/
-    * C.A.S.E. can not be critically hit and should not be a part of the calculations.
-    */
-   @Test
-   public void testCASE(){
-      Item i = Mockito.mock(Item.class);
-      Item ammoCase = ItemDB.lookup("C.A.S.E.");
-      Mockito.when(i.getNumCriticalSlots(upgrades)).thenReturn(1);
-      Mockito.when(i.getHealth()).thenReturn(10);
-      items.add(i);
-      items.add(ammoCase);
-
-      assertEquals(10 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
-   }
-   
-   /**
-    * XL engine sides do affect the critical hit rolls.
-    */
-   @Test
-   public void testEngineInternals(){
-      Item i = LoadoutPart.ENGINE_INTERNAL;
-      Item internal = Mockito.mock(Internal.class);
-      Mockito.when(internal.getNumCriticalSlots(upgrades)).thenReturn(5);
-      Mockito.when(internal.getHealth()).thenReturn(0);
-      items.add(i);
-      items.add(internal);
+      items.add(nocrit);
 
       assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
    }
@@ -143,10 +113,12 @@ public class ItemEffectiveHPTest{
    public void testTwoItems(){
       Item i0 = Mockito.mock(Item.class);
       Item i1 = Mockito.mock(Item.class);
-      Mockito.when(i0.getNumCriticalSlots(upgrades)).thenReturn(5);
+      Mockito.when(i0.getNumCriticalSlots()).thenReturn(5);
       Mockito.when(i0.getHealth()).thenReturn(15);
-      Mockito.when(i1.getNumCriticalSlots(upgrades)).thenReturn(15);
+      Mockito.when(i0.isCrittable()).thenReturn(true);
+      Mockito.when(i1.getNumCriticalSlots()).thenReturn(15);
       Mockito.when(i1.getHealth()).thenReturn(15);
+      Mockito.when(i1.isCrittable()).thenReturn(true);
       items.add(i0);
       items.add(i1);
 
@@ -158,10 +130,10 @@ public class ItemEffectiveHPTest{
       double ehpDealt = Math.min(i0_ehp, i1_ehp); // Deal enough effective damage to break the weakest component.
       i0_hpLeft -= ehpDealt * CriticalItemDamage.calculate(5, 20); // Figure out new actual HP
       i1_hpLeft -= ehpDealt * CriticalItemDamage.calculate(15, 20);
-      
-      assert(i1_hpLeft == 0.0); // Weakest component destroyed
 
-      i0_ehp = (15-i0_hpLeft)  / CriticalItemDamage.calculate(5, 20); // The effective HP accumulated from first round 
+      assert (i1_hpLeft == 0.0); // Weakest component destroyed
+
+      i0_ehp = (15 - i0_hpLeft) / CriticalItemDamage.calculate(5, 20); // The effective HP accumulated from first round
       i0_ehp += i0_hpLeft / CriticalItemDamage.calculate(5, 5); // Critical slot count adjusted as i1 was destroyed
 
       assertEquals(i0_ehp, cut.calculate(i0), 0.00001);

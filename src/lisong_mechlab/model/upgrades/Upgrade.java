@@ -19,25 +19,41 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.mwo_data.Localization;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Base class for all upgrades for 'mechs.
  * 
  * @author Li Song
  */
-public class Upgrade{
-   private final String name;
-   private final int    mwoId;
-   private final String description;
-   private final int    associatedItem;
+public abstract class Upgrade{
+   @XStreamAsAttribute
+   private final String  name;
+   @XStreamAsAttribute
+   private final int     mwoId;
+   @XStreamAsAttribute
+   private final Faction faction;
+   private final String  description;
 
-   public Upgrade(ItemStatsUpgradeType aUpgradeType){
-      name = Localization.key2string(aUpgradeType.Loc.nameTag);
-      description = Localization.key2string(aUpgradeType.Loc.descTag);
-      mwoId = Integer.parseInt(aUpgradeType.id);
-      associatedItem = aUpgradeType.UpgradeTypeStats.associatedItem;
+   protected Upgrade(String aName, String aDescription, int aMwoId, Faction aFaction){
+      name = aName;
+      mwoId = aMwoId;
+      description = aDescription;
+      faction = aFaction;
+   }
+
+   protected Upgrade(ItemStatsUpgradeType aUpgradeType){
+      this(Localization.key2string(aUpgradeType.Loc.nameTag), Localization.key2string(aUpgradeType.Loc.descTag), Integer.parseInt(aUpgradeType.id),
+           Faction.fromMwo(aUpgradeType.faction));
+   }
+
+   @Override
+   public String toString(){
+      return getName();
    }
 
    /**
@@ -61,7 +77,16 @@ public class Upgrade{
       return description;
    }
 
-   public int getAssociateItemId(){
-      return associatedItem;
+   /**
+    * @return The faction that this upgrades is for.
+    */
+   public Faction getFaction(){
+      return faction;
+
    }
+
+   /**
+    * @return The {@link UpgradeType} of this upgrade.
+    */
+   public abstract UpgradeType getType();
 }

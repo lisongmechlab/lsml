@@ -19,18 +19,17 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 public class EnergyWeapon extends Weapon{
    protected final double burnTime;
-   protected final double zeroRange;
 
    public EnergyWeapon(ItemStatsWeapon aStatsWeapon){
       super(aStatsWeapon, HardPointType.ENERGY);
@@ -38,30 +37,19 @@ public class EnergyWeapon extends Weapon{
          burnTime = Double.POSITIVE_INFINITY;
       else
          burnTime = aStatsWeapon.WeaponStats.duration;
-      if( getName().equals("PPC") ){
-         zeroRange = getRangeMin() - Math.ulp(getRangeMin()) * RANGE_ULP_FUZZ;
-      }
-      else{
-         zeroRange = 0;
-      }
    }
 
    @Override
-   public double getRangeZero(){
-      return zeroRange;
-   }
-
-   @Override
-   public double getSecondsPerShot(Efficiencies aEfficiencies){
+   public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       if( burnTime == Double.POSITIVE_INFINITY ){
-         return getCycleTime(aEfficiencies);
+         return getCoolDown(aEfficiencies, aModifiers);
       }
-      return getCycleTime(aEfficiencies) + burnTime;
+      return getCoolDown(aEfficiencies, aModifiers) + getDuration();
    }
 
    @Override
-   public String getShortName(Upgrades anUpgrades){
-      String name = getName(anUpgrades);
+   public String getShortName(){
+      String name = getName();
       name = name.replace("LASER", "LAS");
       name = name.replace("LARGE ", "L");
       name = name.replace("LRG ", "L");

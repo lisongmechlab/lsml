@@ -19,8 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -36,13 +37,22 @@ public class Engine extends HeatSource{
    @XStreamAsAttribute
    final private int          internalHs;
    @XStreamAsAttribute
-   final private int          heatsinkslots;
+   final private int          heatSinkSlots;
+
+   public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardPointType, int aHP,
+                 Faction aFaction, int aRating, EngineType aType, int aInternalHS, int aHSSlots){
+      super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, ENGINE_HEAT_FULL_THROTTLE);
+      rating = aRating;
+      type = aType;
+      internalHs = aInternalHS;
+      heatSinkSlots = aHSSlots;
+   }
 
    public Engine(ItemStatsModule aStatsModule){
       super(aStatsModule, HardPointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE, aStatsModule.EngineStats.health);
       int hs = aStatsModule.EngineStats.heatsinks;
       internalHs = Math.min(10, hs);
-      heatsinkslots = hs - internalHs;
+      heatSinkSlots = hs - internalHs;
       type = (getName().toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
       rating = aStatsModule.EngineStats.rating;
    }
@@ -60,13 +70,22 @@ public class Engine extends HeatSource{
    }
 
    public int getNumHeatsinkSlots(){
-      return heatsinkslots;
+      return heatSinkSlots;
    }
 
    @Override
-   public String getShortName(Upgrades anUpgrades){
-      String name = getName(anUpgrades);
+   public String getShortName(){
+      String name = getName();
       name = name.replace("ENGINE ", "");
       return name;
+   }
+
+   /**
+    * @return The side part of this engine if it is an XL engine, <code>null</code> otherwise.
+    */
+   public Internal getSide(){
+      if( getType() == EngineType.XL )
+         return getFaction() == Faction.Clan ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN : ConfiguredComponentBase.ENGINE_INTERNAL;
+      return null;
    }
 }

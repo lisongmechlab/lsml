@@ -24,10 +24,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -50,11 +49,11 @@ import lisong_mechlab.util.MessageXBar.Message;
  * @author Li Song
  */
 public class ComponentDestructionSimulator implements MessageXBar.Reader{
-   private final LoadoutPart loadoutPart;
-   private final double      P_miss;
-   private final double      weaponAlpha;
-   private final int         numShots;
-   private final double      partHp;
+   private final ConfiguredComponentBase loadoutPart;
+   private final double                  P_miss;
+   private final double                  weaponAlpha;
+   private final int                     numShots;
+   private final double                  partHp;
 
    class ItemState{
       int    multiplicity;
@@ -89,7 +88,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
     * @param aLoadoutPart
     * @param aXBar
     */
-   public ComponentDestructionSimulator(LoadoutPart aLoadoutPart, MessageXBar aXBar){
+   public ComponentDestructionSimulator(ConfiguredComponentBase aLoadoutPart, MessageXBar aXBar){
       loadoutPart = aLoadoutPart;
       aXBar.attach(this);
 
@@ -99,7 +98,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
       }
       P_miss = p_miss;
 
-      partHp = loadoutPart.getInternalPart().getHitpoints();
+      partHp = loadoutPart.getInternalComponent().getHitPoints();
       weaponAlpha = ItemDB.lookup("AC/20 AMMO").getHealth();
       numShots = (int)Math.ceil(partHp / weaponAlpha);
    }
@@ -115,14 +114,26 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
    public void simulate(){
       state = new HashMap<>();
       int slots = 0;
-      for(Item item : loadoutPart.getItems()){
-         if( item instanceof Internal && item != LoadoutPart.ENGINE_INTERNAL ){
-            continue;
-         }
-         if( item == ItemDB.CASE )
+      for(Item item : loadoutPart.getItemsEquipped()){
+         if( !item.isCrittable() )
             continue;
 
-         slots += item.getNumCriticalSlots(loadoutPart.getLoadout().getUpgrades());
+         slots += item.getNumCriticalSlots();
+
+         ItemState pair = state.get(item);
+         if( pair == null )
+            state.put(item, new ItemState(1, item));
+         else{
+            pair.multiplicity++;
+            pair.hpLeft += item.getHealth();
+         }
+      }
+
+      for(Item item : loadoutPart.getItemsFixed()){
+         if( !item.isCrittable() )
+            continue;
+
+         slots += item.getNumCriticalSlots();
 
          ItemState pair = state.get(item);
          if( pair == null )
@@ -164,7 +175,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
          // For every item that can be hit...
          for(Entry<Item, ItemState> entry : aState.entrySet()){
             Item item = entry.getKey();
-            int itemSlots = item.getNumCriticalSlots(loadoutPart.getLoadout().getUpgrades());
+            int itemSlots = item.getNumCriticalSlots();
             int multi = entry.getValue().multiplicity;
 
             // Determine the probability that it'll be hit
@@ -202,9 +213,9 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader{
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg instanceof LoadoutPart.Message ){
-         LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
-         if( message.part == loadoutPart && message.affectsHeatOrDamage() ){
+      if( aMsg instanceof ConfiguredComponentBase.Message ){
+         ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message)aMsg;
+         if( message.component == loadoutPart && message.affectsHeatOrDamage() ){
             simulate();
          }
       }

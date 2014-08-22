@@ -20,7 +20,7 @@
 package lisong_mechlab.model.chassi;
 
 /**
- * This enumeration names the sides of an {@link InternalPart} for use with armor.
+ * This enumeration names the sides of an {@link ComponentStandard} for use with armor.
  * 
  * @author Li Song
  */

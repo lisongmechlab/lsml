@@ -1,6 +1,7 @@
 package lisong_mechlab.model.metrics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,8 +12,9 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Test;
@@ -32,7 +34,7 @@ public class HeatOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(erllas);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
@@ -40,22 +42,22 @@ public class HeatOverTimeTest{
       assertEquals(0, cut.calculate(0), 0.0);
       assertEquals(0, cut.calculate(100), 0.0);
    }
-   
+
    @Test
    public void testCalculate_ERLLAS(){
       EnergyWeapon erllas = (EnergyWeapon)ItemDB.lookup("ER LARGE LASER");
       List<Item> items = new ArrayList<>();
       items.add(erllas);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
 
       assertEquals(0, cut.calculate(0), 0.0);
-      assertEquals(erllas.getHeat() / 2, cut.calculate(erllas.getDuration() / 2), 0.0);
+      assertEquals(erllas.getHeat(null) / 2, cut.calculate(erllas.getDuration() / 2), 0.0);
 
-      assertEquals(erllas.getHeat() * 10.5, cut.calculate(erllas.getSecondsPerShot(null) * 10 + erllas.getDuration() / 2), 0.0);
+      assertEquals(erllas.getHeat(null) * 10.5, cut.calculate(erllas.getSecondsPerShot(null, null) * 10 + erllas.getDuration() / 2), 0.0);
    }
 
    @Test
@@ -64,15 +66,15 @@ public class HeatOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(erppc);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
 
-      assertEquals(erppc.getHeat(), cut.calculate(0), 0.0);
-      assertEquals(erppc.getHeat(), cut.calculate(0 + Math.ulp(1)), 0.0);
+      assertEquals(erppc.getHeat(null), cut.calculate(0), 0.0);
+      assertEquals(erppc.getHeat(null), cut.calculate(0 + Math.ulp(1)), 0.0);
 
-      assertEquals(erppc.getHeat() * 5, cut.calculate(erppc.getSecondsPerShot(null) * 5 - Math.ulp(1)), 0.0);
+      assertEquals(erppc.getHeat(null) * 5, cut.calculate(erppc.getSecondsPerShot(null, null) * 5 - Math.ulp(1)), 0.0);
    }
 
    @Test
@@ -81,15 +83,15 @@ public class HeatOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(ac20);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
 
-      assertEquals(ac20.getHeat(), cut.calculate(0), 0.0);
-      assertEquals(ac20.getHeat(), cut.calculate(0 + Math.ulp(1)), 0.0);
+      assertEquals(ac20.getHeat(null), cut.calculate(0), 0.0);
+      assertEquals(ac20.getHeat(null), cut.calculate(0 + Math.ulp(1)), 0.0);
 
-      assertEquals(ac20.getHeat() * 5, cut.calculate(ac20.getSecondsPerShot(null) * 5 - Math.ulp(1)), 0.0);
+      assertEquals(ac20.getHeat(null) * 5, cut.calculate(ac20.getSecondsPerShot(null, null) * 5 - Math.ulp(1)), 0.0);
    }
 
    @Test
@@ -98,7 +100,7 @@ public class HeatOverTimeTest{
       List<Item> items = new ArrayList<>();
       items.add(engine);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
@@ -118,12 +120,12 @@ public class HeatOverTimeTest{
       items.add(erllas);
       items.add(ac20);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
 
-      assertEquals(0.2 * 20 + ac20.getHeat() * 5 + erllas.getHeat() * 5, cut.calculate(20 - Math.ulp(20)), Math.ulp(80));
+      assertEquals(0.2 * 20 + ac20.getHeat(null) * 5 + erllas.getHeat(null) * 5, cut.calculate(20 - Math.ulp(20)), Math.ulp(80));
    }
 
    @Test
@@ -136,7 +138,7 @@ public class HeatOverTimeTest{
       items.add(erllas);
       items.add(ac20);
 
-      Loadout loadout = Mockito.mock(Loadout.class);
+      LoadoutBase<ConfiguredComponentBase> loadout = Mockito.mock(LoadoutBase.class);
       Mockito.when(loadout.getAllItems()).thenReturn(items);
 
       HeatOverTime cut = new HeatOverTime(loadout, xBar);
@@ -144,10 +146,10 @@ public class HeatOverTimeTest{
 
       double old = cut.calculate(20);
       items.remove(ac20);
-      Collection<LoadoutPart> partLoadouts = Mockito.mock(Collection.class);
+      Collection<ConfiguredComponentBase> partLoadouts = Mockito.mock(Collection.class);
       Mockito.when(partLoadouts.contains(null)).thenReturn(true);
-      Mockito.when(loadout.getPartLoadOuts()).thenReturn(partLoadouts);
-      cut.receive(new LoadoutPart.Message(null, LoadoutPart.Message.Type.ItemAdded));
+      Mockito.when(loadout.getComponents()).thenReturn(partLoadouts);
+      cut.receive(new ConfiguredComponentBase.Message(null, ConfiguredComponentBase.Message.Type.ItemAdded));
 
       assertTrue(old != cut.calculate(20));
    }

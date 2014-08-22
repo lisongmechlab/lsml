@@ -19,12 +19,21 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import lisong_mechlab.model.Faction;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class HeatSink extends Module{
    private final double dissapation;
    private final double capacity;
+
+   public HeatSink(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardpointType, int aHP,
+                   Faction aFaction, double aDissipation, double aCapacity){
+      super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+      dissapation = aDissipation;
+      capacity = aCapacity;
+   }
 
    public HeatSink(ItemStatsModule aStatsModule){
       super(aStatsModule);

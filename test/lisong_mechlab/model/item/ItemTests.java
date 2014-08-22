@@ -20,17 +20,18 @@
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.ChassiDB;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.MessageXBar;
 
 import org.junit.Before;
@@ -47,14 +48,33 @@ public class ItemTests{
       MockitoAnnotations.initMocks(this);
    }
 
+   /**
+    * According to: <a href=
+    * "http://mwomercs.com/forums/topic/147990-paging-karl-bergkarl-berg-please-pick-up-the-white-courtesy-phone/page__view__findpost__p__3484591"
+    * >here</a> C.A.S.E. can not be critically hit and should not be a part of the calculations.
+    */
+   @Test
+   public void testIsCrittable_Case(){
+      assertFalse(ItemDB.CASE.isCrittable());
+   }
+
+   /**
+    * XL engine sides do affect the critical hit rolls.
+    */
+   @Test
+   public void testIsCrittable_EngineSides(){
+      assertTrue(ConfiguredComponentBase.ENGINE_INTERNAL.isCrittable());
+      assertTrue(ConfiguredComponentBase.ENGINE_INTERNAL_CLAN.isCrittable());
+   }
+
    @Test
    public void testJumpJets(){
       JumpJet jj = (JumpJet)ItemDB.lookup(1503); // Class IV JJ
 
       assertEquals(3.75, jj.getDuration(), 0);
-      assertEquals(0.1, jj.getJumpHeat(), 0);
-      assertEquals(39.3, jj.getForce(), 0);
-      
+      assertTrue(jj.getJumpHeat() != 0.0);
+      assertTrue(jj.getForce() > 1);
+
       assertTrue(jj.getMinTons() > 0);
       assertTrue(jj.getMaxTons() > 0);
       assertTrue(jj.getMaxTons() > jj.getMinTons());
@@ -62,29 +82,27 @@ public class ItemTests{
 
    @Test
    public void testEngines() throws Exception{
-      Loadout hm = new Loadout(ChassiDB.lookup("Heavy Metal"), xBar);
-
       Engine std175 = (Engine)ItemDB.lookup("STD ENGINE 175");
       Engine std180 = (Engine)ItemDB.lookup("STD ENGINE 180");
       Engine xl330 = (Engine)ItemDB.lookup("XL ENGINE 330");
       Engine xl335 = (Engine)ItemDB.lookup("XL ENGINE 335");
 
-      assertEquals(6, std175.getNumCriticalSlots(hm.getUpgrades()));
-      assertEquals(6, std180.getNumCriticalSlots(hm.getUpgrades()));
-      assertEquals(6, xl330.getNumCriticalSlots(hm.getUpgrades()));
-      assertEquals(6, xl335.getNumCriticalSlots(hm.getUpgrades()));
+      assertEquals(6, std175.getNumCriticalSlots());
+      assertEquals(6, std180.getNumCriticalSlots());
+      assertEquals(6, xl330.getNumCriticalSlots());
+      assertEquals(6, xl335.getNumCriticalSlots());
 
-      assertEquals(9.0, std175.getMass(hm.getUpgrades()), 0.0);
-      assertEquals(9.0, std180.getMass(hm.getUpgrades()), 0.0);
-      assertEquals(19.5, xl330.getMass(hm.getUpgrades()), 0.0);
-      assertEquals(20.0, xl335.getMass(hm.getUpgrades()), 0.0);
+      assertEquals(9.0, std175.getMass(), 0.0);
+      assertEquals(9.0, std180.getMass(), 0.0);
+      assertEquals(19.5, xl330.getMass(), 0.0);
+      assertEquals(20.0, xl335.getMass(), 0.0);
 
       // Engines have a base heat of the dissipation equal to 2 standard heat sinks when using 100% throttle.
-      assertEquals(0.2, std175.getHeat(), 0.0);
-      assertEquals(0.2, std180.getHeat(), 0.0);
-      assertEquals(0.2, xl330.getHeat(), 0.0);
-      assertEquals(0.2, xl335.getHeat(), 0.0);
-      
+      assertEquals(0.2, std175.getHeat(null), 0.0);
+      assertEquals(0.2, std180.getHeat(null), 0.0);
+      assertEquals(0.2, xl330.getHeat(null), 0.0);
+      assertEquals(0.2, xl335.getHeat(null), 0.0);
+
       assertEquals(EngineType.STD, std175.getType());
       assertEquals(EngineType.STD, std180.getType());
       assertEquals(EngineType.XL, xl330.getType());
@@ -96,10 +114,10 @@ public class ItemTests{
     */
    @Test
    public void testAMS(){
-      AmmoWeapon ams = (AmmoWeapon)ItemDB.lookup("ANTI-MISSILE SYSTEM");
+      AmmoWeapon ams = (AmmoWeapon)ItemDB.lookup("AMS");
       assertSame(ams, ItemDB.AMS);
-      assertEquals(1, ams.getNumCriticalSlots(null));
-      assertEquals(0.5, ams.getMass(null), 0.0);
+      assertEquals(1, ams.getNumCriticalSlots());
+      assertEquals(0.5, ams.getMass(), 0.0);
       assertEquals(HardPointType.AMS, ams.getHardpointType());
    }
 
@@ -120,21 +138,21 @@ public class ItemTests{
       Item JJC4 = ItemDB.lookup("Jump Jets - Class IV");
       Item JJC5 = ItemDB.lookup("Jump Jets - Class V");
 
-      assertEquals(2, ECM.getNumCriticalSlots(null));
-      assertEquals(1, CC.getNumCriticalSlots(null));
-      assertEquals(2, BAP.getNumCriticalSlots(null));
-      assertEquals(1, Case.getNumCriticalSlots(null));
-      assertEquals(1, JJC3.getNumCriticalSlots(null));
-      assertEquals(1, JJC4.getNumCriticalSlots(null));
-      assertEquals(1, JJC5.getNumCriticalSlots(null));
+      assertEquals(2, ECM.getNumCriticalSlots());
+      assertEquals(1, CC.getNumCriticalSlots());
+      assertEquals(2, BAP.getNumCriticalSlots());
+      assertEquals(1, Case.getNumCriticalSlots());
+      assertEquals(1, JJC3.getNumCriticalSlots());
+      assertEquals(1, JJC4.getNumCriticalSlots());
+      assertEquals(1, JJC5.getNumCriticalSlots());
 
-      assertEquals(1.5, ECM.getMass(null), 0.0);
-      assertEquals(3, CC.getMass(null), 0.0);
-      assertEquals(1.5, BAP.getMass(null), 0.0);
-      assertEquals(0.5, Case.getMass(null), 0.0);
-      assertEquals(1, JJC3.getMass(null), 0.0);
-      assertEquals(0.5, JJC4.getMass(null), 0.0);
-      assertEquals(0.5, JJC5.getMass(null), 0.0);
+      assertEquals(1.5, ECM.getMass(), 0.0);
+      assertEquals(3, CC.getMass(), 0.0);
+      assertEquals(1.5, BAP.getMass(), 0.0);
+      assertEquals(0.5, Case.getMass(), 0.0);
+      assertEquals(1, JJC3.getMass(), 0.0);
+      assertEquals(0.5, JJC4.getMass(), 0.0);
+      assertEquals(0.5, JJC5.getMass(), 0.0);
 
       assertEquals(HardPointType.ECM, ECM.getHardpointType());
    }
@@ -156,68 +174,21 @@ public class ItemTests{
    }
 
    /**
-    * All weapons with ammo must have a valid ammo item and all ammo items are valid
-    */
-   @Test
-   public void testWeaponsHaveAmmo(){
-      Collection<AmmoWeapon> items = ItemDB.lookup(AmmoWeapon.class);
-
-      for(AmmoWeapon item : items){
-         Ammunition ammunition = item.getAmmoType(null);
-         assertNotNull(ammunition);
-
-         assertEquals(1.0, ammunition.getMass(null), 0.0); // All ammo weigh 1 ton!
-         assertNotNull(ammunition.getName()); // All ammo must have a name!
-
-         assertEquals(1, ammunition.getNumCriticalSlots(null));
-         assertTrue(ammunition.getShotsPerTon() > 0);
-
-         // The name of the ammo must be traceable to the weapon
-         String weaponPart = item.getName();
-         if( weaponPart.indexOf(" ") != -1 ){
-            weaponPart = weaponPart.substring(0, weaponPart.indexOf(" "));
-         }
-
-         if( item == ItemDB.AMS ){
-            assertTrue(ammunition.getName().equals("AMS AMMO"));
-         }
-         else{
-            assertTrue(ammunition.getName().contains(weaponPart)); // The ammo name must contain part of the weapon
-                                                                   // name!
-         }
-      }
-   }
-
-   /**
     * There must be heat sinks in the item database
     */
    @Test
    public void testHeatsinks(){
       Collection<HeatSink> heatsinks = ItemDB.lookup(HeatSink.class);
 
-      // Should contain double and standard
-      assertEquals(2, heatsinks.size());
+      // Should contain at least double and standard (+ typically clan versions)
+      assertTrue(heatsinks.size() >= 2);
 
       // All parameters should be positive
-      HeatSink shs = null;
-      HeatSink dhs = null;
+      HeatSink shs = ItemDB.SHS;
+      HeatSink dhs = ItemDB.DHS;
       for(HeatSink heatSink : heatsinks){
          assertTrue(heatSink.getDissipation() > 0);
          assertTrue(heatSink.getCapacity() > 0);
-
-         // Determine which is double/single
-         if( null == shs ){
-            shs = heatSink;
-         }
-         else{
-            if( heatSink.getDissipation() > shs.getDissipation() ){
-               dhs = heatSink;
-            }
-            else{
-               dhs = shs;
-               shs = heatSink;
-            }
-         }
       }
 
       assertNotNull(dhs);
@@ -227,7 +198,7 @@ public class ItemTests{
       assertTrue(dhs.getDissipation() > shs.getDissipation());
       assertTrue(dhs.getCapacity() > shs.getCapacity());
 
-      assertEquals(3, dhs.getNumCriticalSlots(null));
-      assertEquals(1, shs.getNumCriticalSlots(null));
+      assertEquals(3, dhs.getNumCriticalSlots());
+      assertEquals(1, shs.getNumCriticalSlots());
    }
 }

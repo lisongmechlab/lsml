@@ -19,9 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
  * This {@link Metric} calculates the maximal speed the loadout can have, taking speed tweak into account.
@@ -29,9 +30,9 @@ import lisong_mechlab.model.loadout.Loadout;
  * @author Li Song
  */
 public class TopSpeed implements Metric{
-   private final Loadout loadout;
+   private final LoadoutBase<?> loadout;
 
-   public TopSpeed(final Loadout aLoadout){
+   public TopSpeed(final LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 
@@ -40,22 +41,25 @@ public class TopSpeed implements Metric{
       Engine engine = loadout.getEngine();
       if( null == engine )
          return 0;
-      return calculate(engine.getRating(), loadout.getChassi(), loadout.getEfficiencies().getSpeedModifier());
+      return calculate(engine.getRating(), loadout.getMovementProfile(), loadout.getChassis().getMassMax(), loadout.getEfficiencies()
+                                                                                                                   .getSpeedModifier());
    }
 
    /**
     * Performs the actual calculation. This has been extracted because there are situations where the maximal speed is
-    * needed without having a {@link Loadout} at hand.
+    * needed without having a {@link LoadoutStandard} at hand.
     * 
     * @param aRating
     *           The engine rating.
-    * @param aChassi
-    *           The chassi the speed is for (determines speed factor).
+    * @param aMovementProfile
+    *           The movement profile to calculate the speed with.
+    * @param aMaxMass
+    *           The mass of the chassis to calculate for.
     * @param aModifier
     *           A modifier to use, 1.0 for normal and 1.1 for speed tweak.
     * @return The speed in [km/h].
     */
-   static public double calculate(final int aRating, final Chassis aChassi, final double aModifier){
-      return aChassi.getSpeedFactor() * aRating / aChassi.getMassMax() * aModifier;
+   static public double calculate(final int aRating, final MovementProfile aMovementProfile, final double aMaxMass, final double aModifier){
+      return aMovementProfile.getMaxMovementSpeed() * aRating / aMaxMass * aModifier;
    }
 }

@@ -24,7 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisStandard;
 
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class StructureUpgradeTest{
       final int ss_id = 3100;
       StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(ss_id);
 
-      Chassis chassi = mock(Chassis.class);
+      ChassisStandard chassi = mock(ChassisStandard.class);
       final int chassiMass = 35;
       when(chassi.getMassMax()).thenReturn(chassiMass);
 
@@ -62,7 +62,7 @@ public class StructureUpgradeTest{
       final int es_id = 3101;
       StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(es_id);
 
-      Chassis chassi = mock(Chassis.class);
+      ChassisStandard chassi = mock(ChassisStandard.class);
       final int chassiMass = 35;
       when(chassi.getMassMax()).thenReturn(chassiMass);
 
@@ -73,7 +73,7 @@ public class StructureUpgradeTest{
       assertEquals(14, cut.getExtraSlots());
       assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
    }
-   
+
    /**
     * Test the rounding of endo-steel structure (all tonnage amounts are rounded up to the closest half ton)
     */
@@ -82,7 +82,7 @@ public class StructureUpgradeTest{
       final int es_id = 3101;
       StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(es_id);
 
-      Chassis chassi = mock(Chassis.class);
+      ChassisStandard chassi = mock(ChassisStandard.class);
       final int chassiMass = 35;
       when(chassi.getMassMax()).thenReturn(chassiMass);
       assertEquals(2.0, cut.getStructureMass(chassi), 0.0);

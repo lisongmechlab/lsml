@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.WeaponRanges;
 
 /**
@@ -29,12 +29,12 @@ import lisong_mechlab.util.WeaponRanges;
  * @author Li Song
  */
 public abstract class RangeTimeMetric implements Metric{
-   private double          range      = -1;
-   private double          time       = 0;
-   private boolean         fixedRange = false;
-   protected final Loadout loadout;
+   private double                 range      = -1;
+   private double                 time       = 0;
+   private boolean                fixedRange = false;
+   protected final LoadoutBase<?> loadout;
 
-   public RangeTimeMetric(Loadout aLoadout){
+   public RangeTimeMetric(LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 
@@ -76,8 +76,8 @@ public abstract class RangeTimeMetric implements Metric{
 
    /**
     * Will handle calculation of the metric with the current values for range and time. If range is set to below 0, the
-    * metric will be evaluated in all range points returned by {@link WeaponRanges#getRanges(Loadout)} and the maximum
-    * value (with ties breaking to larger ranges) be returned.
+    * metric will be evaluated in all range points returned by {@link WeaponRanges#getRanges(LoadoutBase)} and the
+    * maximum value (with ties breaking to larger ranges) be returned.
     * 
     * @see lisong_mechlab.model.metrics.Metric#calculate()
     */

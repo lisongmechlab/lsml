@@ -19,11 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Collection;
 import java.util.Comparator;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import lisong_mechlab.util.GaussianDistribution;
 
@@ -59,8 +59,8 @@ public class BallisticWeapon extends AmmoWeapon{
    }
 
    @Override
-   public String getShortName(Upgrades anUpgrades){
-      String name = getName(anUpgrades);
+   public String getShortName(){
+      String name = getName();
       name = name.replace("ULTRA ", "U");
       name = name.replace("MACHINE GUN", "MG");
       return name;
@@ -88,23 +88,34 @@ public class BallisticWeapon extends AmmoWeapon{
    }
 
    @Override
-   public double getSecondsPerShot(Efficiencies aEfficiencies){
+   public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       if( canDoubleFire() ){
-         final double cd = getRawSecondsPerShot(aEfficiencies);
+         final double cd = getRawSecondsPerShot(aEfficiencies, aModifiers);
          return (jammingTime * jammingChance + cd) / ((1 - jammingChance) * (1 + shotsduringcooldown) + jammingChance);
       }
-      return getRawSecondsPerShot(aEfficiencies);
+      return getRawSecondsPerShot(aEfficiencies, aModifiers);
    }
 
-   public double getRawSecondsPerShot(Efficiencies aEfficiencies){
+   /**
+    * The unmodified rate of fire for the weapon. Mainly useful for ultra-ac type weapons where
+    * {@link #getSecondsPerShot(Efficiencies, Collection)} returns the statistical value.
+    * 
+    * @param aEfficiencies
+    *           The efficiencies to apply.
+    * @param aModifiers
+    *           The modifiers to apply from quirks etc.
+    * @return The rate of fire [seconds/round]
+    */
+   public double getRawSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       if( getMwoId() == 1021 ){ // Gauss rifle
-         return getCycleTime(aEfficiencies) + 0.75; // TODO: Fix this when they add the charge time to the itemstats.xml
+         return getCoolDown(aEfficiencies, aModifiers) + 0.75; // TODO: Fix this when they add the charge time to the
+                                                               // itemstats.xml
       }
-      return getCycleTime(aEfficiencies);
+      return getCoolDown(aEfficiencies, aModifiers);
    }
 
    @Override
-   public double getRangeEffectivity(double range){
+   public double getRangeEffectivity(double range, Collection<WeaponModifier> aPilotModules){
       double spreadFactor = 1.0;
       if( hasSpread() ){
          // Assumption:
@@ -121,7 +132,7 @@ public class BallisticWeapon extends AmmoWeapon{
          double P_hit = 2 * gaussianDistribution.cdf(maxAngle / spread) - 1;
          spreadFactor = P_hit;
       }
-      return spreadFactor * super.getRangeEffectivity(range);
+      return spreadFactor * super.getRangeEffectivity(range, aPilotModules);
    }
 
    public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;

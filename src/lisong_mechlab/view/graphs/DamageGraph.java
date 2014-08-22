@@ -39,8 +39,8 @@ import javax.swing.WindowConstants;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
@@ -74,7 +74,7 @@ import org.jfree.ui.VerticalAlignment;
  */
 public class DamageGraph extends JFrame implements MessageXBar.Reader{
    private static final long     serialVersionUID = -8812749194029184861L;
-   private final Loadout         loadout;
+   private final LoadoutBase<?>  loadout;
    private final MaxSustainedDPS maxSustainedDPS;
    private final ChartPanel      chartPanel;
 
@@ -93,10 +93,10 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
     * @param aMaxSustainedDpsMetric
     *           A {@link MaxSustainedDPS} instance to use in calculation.
     */
-   public DamageGraph(Loadout aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric){
+   public DamageGraph(LoadoutBase<?> aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric){
       super("Max Sustained DPS over range for " + aLoadout);
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-      
+
       anXbar.attach(this);
 
       loadout = aLoadout;
@@ -129,7 +129,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(new Comparator<Weapon>(){
          @Override
          public int compare(Weapon aO1, Weapon aO2){
-            int comp = Double.compare(aO2.getRangeMax(), aO1.getRangeMax());
+            int comp = Double.compare(aO2.getRangeMax(loadout.getWeaponModifiers()), aO1.getRangeMax(loadout.getWeaponModifiers()));
             if( comp == 0 )
                return aO1.compareTo(aO2);
             return comp;
@@ -142,8 +142,8 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
          for(Map.Entry<Weapon, Double> entry : damageDistributio){
             final Weapon weapon = entry.getKey();
             final double ratio = entry.getValue();
-            final double dps = weapon.getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies());
-            final double rangeEff = weapon.getRangeEffectivity(range);
+            final double dps = weapon.getStat("d/s", loadout.getEfficiencies(), loadout.getWeaponModifiers());
+            final double rangeEff = weapon.getRangeEffectivity(range, loadout.getWeaponModifiers());
 
             if( !data.containsKey(weapon) ){
                data.put(weapon, new ArrayList<Pair<Double, Double>>());
@@ -154,7 +154,7 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
 
       DefaultTableXYDataset dataset = new DefaultTableXYDataset();
       for(Map.Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()){
-         XYSeries series = new XYSeries(entry.getKey().getName(loadout.getUpgrades()), true, false);
+         XYSeries series = new XYSeries(entry.getKey().getName(), true, false);
          for(Pair<Double, Double> pair : entry.getValue()){
             series.add(pair.first, pair.second);
          }
@@ -168,9 +168,9 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       if( !aMsg.isForMe(loadout) )
          return;
 
-      if( aMsg instanceof LoadoutPart.Message ){
-         LoadoutPart.Message msg = (LoadoutPart.Message)aMsg;
-         if( msg.type == LoadoutPart.Message.Type.ArmorChanged )
+      if( aMsg instanceof ConfiguredComponentBase.Message ){
+         ConfiguredComponentBase.Message msg = (ConfiguredComponentBase.Message)aMsg;
+         if( msg.type == ConfiguredComponentBase.Message.Type.ArmorChanged )
             return;
       }
       else if( aMsg instanceof Upgrades.Message ){

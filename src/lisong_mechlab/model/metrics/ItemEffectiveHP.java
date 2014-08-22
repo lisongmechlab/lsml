@@ -22,15 +22,12 @@ package lisong_mechlab.model.metrics;
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 
 /**
- * This class calculates the statistical effective HP of an {@link Item} when it is equipped on a {@link LoadoutPart}
- * under the assumption that damage is dealt in infinitesimal chunks.
+ * This class calculates the statistical effective HP of an {@link Item} when it is equipped on a
+ * {@link ConfiguredComponentBase} under the assumption that damage is dealt in infinitesimal chunks.
  * <p>
  * This applies mostly to for lasers. MG and LB 10-X AC have higher critical hit probabilities and different
  * multipliers.
@@ -38,7 +35,7 @@ import lisong_mechlab.model.upgrades.Upgrades;
  * @author Li Song
  */
 public class ItemEffectiveHP implements ItemMetric{
-   private final LoadoutPart loadoutPart;
+   private final ConfiguredComponentBase loadoutPart;
 
    private class ItemState{
       final Item item;
@@ -57,7 +54,7 @@ public class ItemEffectiveHP implements ItemMetric{
 
    final private List<ItemState> cache = new ArrayList<>();
 
-   public ItemEffectiveHP(LoadoutPart aLoadoutPart){
+   public ItemEffectiveHP(ConfiguredComponentBase aLoadoutPart){
       loadoutPart = aLoadoutPart;
    }
 
@@ -69,18 +66,18 @@ public class ItemEffectiveHP implements ItemMetric{
             return itemState.ehp;
       }
       return Double.POSITIVE_INFINITY;
-      //throw new RuntimeException("Item not found in EHP cache");
+      // throw new RuntimeException("Item not found in EHP cache");
    }
 
    private void updateCache(){
-      Upgrades upgrades = loadoutPart.getLoadout().getUpgrades();
       cache.clear();
-      for(Item item : loadoutPart.getItems()){
-         if( item instanceof Internal && item != LoadoutPart.ENGINE_INTERNAL )
-            continue;
-         if( item == ItemDB.CASE )
-            continue;
-         cache.add(new ItemState(item));
+      for(Item item : loadoutPart.getItemsEquipped()){
+         if( item.isCrittable() )
+            cache.add(new ItemState(item));
+      }
+      for(Item item : loadoutPart.getItemsFixed()){
+         if( item.isCrittable() )
+            cache.add(new ItemState(item));
       }
 
       boolean changed = true;
@@ -88,7 +85,7 @@ public class ItemEffectiveHP implements ItemMetric{
          int slotsLeft = 0;
          for(ItemState state : cache){
             if( state.hpLeft > 10 * Math.ulp(1) ){
-               slotsLeft += state.item.getNumCriticalSlots(upgrades);
+               slotsLeft += state.item.getNumCriticalSlots();
             }
          }
          double minEHpLeft = Double.POSITIVE_INFINITY;
@@ -96,12 +93,12 @@ public class ItemEffectiveHP implements ItemMetric{
             if( state.hpLeft < 10 * Math.ulp(1) ){
                continue;
             }
-            minEHpLeft = Math.min(minEHpLeft, state.hpLeft / CriticalItemDamage.calculate(state.item.getNumCriticalSlots(upgrades), slotsLeft));
+            minEHpLeft = Math.min(minEHpLeft, state.hpLeft / CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft));
          }
 
          changed = false;
          for(ItemState state : cache){
-            double multiplier = CriticalItemDamage.calculate(state.item.getNumCriticalSlots(upgrades), slotsLeft);
+            double multiplier = CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft);
             double actualDmg = minEHpLeft * multiplier;
             if( state.hpLeft > 0 ){
                state.hpLeft -= actualDmg;

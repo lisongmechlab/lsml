@@ -26,8 +26,8 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import lisong_mechlab.model.garage.AddToGarageOperation;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.garage.OpAddToGarage;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.view.LSML;
 import lisong_mechlab.view.ProgramInit;
 
@@ -37,11 +37,11 @@ import lisong_mechlab.view.ProgramInit;
  * @author Li Song
  */
 public class AddToGarageAction extends AbstractAction{
-   private static final long   serialVersionUID = -1720149730950545006L;
-   private static final String SHORTCUT_STROKE  = "control S";
-   private final Loadout       loadout;
+   private static final long    serialVersionUID = -1720149730950545006L;
+   private static final String  SHORTCUT_STROKE  = "control S";
+   private final LoadoutBase<?> loadout;
 
-   public AddToGarageAction(Loadout aLoadout){
+   public AddToGarageAction(LoadoutBase<?> aLoadout){
       super("Add to garage");
       loadout = aLoadout;
       setEnabled(!ProgramInit.lsml().getGarage().getMechs().contains(aLoadout));
@@ -52,7 +52,7 @@ public class AddToGarageAction extends AbstractAction{
    public void actionPerformed(ActionEvent aArg0){
       try{
          LSML lsml = ProgramInit.lsml();
-         lsml.garageOperationStack.pushAndApply(new AddToGarageOperation(lsml.getGarage(), loadout));
+         lsml.garageOperationStack.pushAndApply(new OpAddToGarage(lsml.getGarage(), loadout));
          setEnabled(false);
       }
       catch( IllegalArgumentException e ){

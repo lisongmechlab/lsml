@@ -19,11 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.garage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -31,10 +27,19 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import java.io.File;
 import java.io.IOException;
 
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.garage.MechGarage.Message;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpLoadStock;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 
 import org.junit.After;
 import org.junit.Before;
@@ -44,10 +49,10 @@ import org.mockito.MockitoAnnotations;
 
 public class MechGarageTest{
 
-   File           testFile = null;
+   File        testFile = null;
 
    @Mock
-   MessageXBar    xBar;
+   MessageXBar xBar;
 
    @Before
    public void setup(){
@@ -157,11 +162,20 @@ public class MechGarageTest{
    @Test
    public void testSaveAsOpen() throws Exception{
       // Setup
-      Loadout lo1 = new Loadout("as7-d-dc", xBar);
-      Loadout lo2 = new Loadout("as7-k", xBar);
+      LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
+      LoadoutStandard lo2 = new LoadoutStandard("as7-k");
+      LoadoutOmniMech lo3 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("nva-prime"));
+      LoadoutOmniMech lo4 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("tbr-c"));
+      
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new OpLoadStock(lo3.getChassis(), lo3, xBar));
+      stack.pushAndApply(new OpLoadStock(lo4.getChassis(), lo4, xBar));
+      
       MechGarage cut = new MechGarage(xBar);
       cut.add(lo1);
       cut.add(lo2);
+      cut.add(lo3);
+      cut.add(lo4);
       reset(xBar);
 
       // Execute
@@ -171,9 +185,11 @@ public class MechGarageTest{
       // Verify
       verify(xBar).post(new MechGarage.Message(Type.Saved, cut));
       verify(xBar).post(new MechGarage.Message(Type.NewGarage, loadedGarage));
-      assertEquals(2, loadedGarage.getMechs().size());
+      assertEquals(4, loadedGarage.getMechs().size());
       assertEquals(lo1, loadedGarage.getMechs().get(0));
       assertEquals(lo2, loadedGarage.getMechs().get(1));
+      assertEquals(lo3, loadedGarage.getMechs().get(2));
+      assertEquals(lo4, loadedGarage.getMechs().get(3));
    }
 
    /**
@@ -185,8 +201,8 @@ public class MechGarageTest{
    @Test
    public void testSave() throws Exception{
       // Setup
-      Loadout lo1 = new Loadout("as7-d-dc", xBar);
-      Loadout lo2 = new Loadout("as7-k", xBar);
+      LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
+      LoadoutStandard lo2 = new LoadoutStandard("as7-k");
       MechGarage cut = new MechGarage(xBar);
       cut.add(lo1);
       cut.saveas(testFile); // Create garage with one mech and save it.
@@ -216,7 +232,7 @@ public class MechGarageTest{
    @Test
    public void testAddRemoveLoadout() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
       MechGarage cut = new MechGarage(xBar);
 
       // Execute
@@ -244,12 +260,56 @@ public class MechGarageTest{
    @Test
    public void testRemoveLoadoutNonexistent() throws Exception{
       // Setup
-      Loadout loadout = new Loadout("as7-d-dc", xBar);
+      LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
       MechGarage cut = new MechGarage(xBar);
       reset(xBar);
       cut.remove(loadout);
 
       verifyZeroInteractions(xBar);
+   }
+
+   /**
+    * Make sure that we can load many of the stock builds saved from 1.5.0.
+    * <p>
+    * Note, this is a backwards compatibility test.
+    * @throws IOException 
+    */
+   @Test
+   public void testLoadStockBuilds_150() throws IOException{
+      MechGarage garage = MechGarage.open(new File("resources/resources/stock1.5.0.xml"), xBar);
+      OperationStack stack = new OperationStack(0);
+      assertEquals(64, garage.getMechs().size());
+      
+      for(LoadoutBase<?> loadout : garage.getMechs()){
+         LoadoutBase<?> clone = loadout.clone(xBar);
+         stack.pushAndApply(new OpLoadStock(clone.getChassis(), clone, xBar));
+         
+         assertEquals(clone, loadout);         
+      }
+   }
+   
+   
+   /**
+    * Issue #337. 
+    * Actuator state is not saved properly.
+    * @throws IOException 
+    */
+   @Test
+   public void testActuatorStateSaved() throws IOException{
+      ChassisOmniMech chassi = (ChassisOmniMech)ChassisDB.lookup("WHK-B");
+      LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi);
+
+      loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, false);
+      
+      MechGarage garage = new MechGarage(xBar);
+      garage.add(loadout);
+      garage.saveas(testFile);
+      garage = null;
+      garage = MechGarage.open(testFile, xBar);
+   
+      LoadoutOmniMech loaded = (LoadoutOmniMech)garage.getMechs().get(0);
+      
+      assertFalse(loaded.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));      
    }
 
 }

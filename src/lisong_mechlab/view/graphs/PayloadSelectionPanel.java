@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.graphs;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -35,18 +36,21 @@ import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.metrics.PayloadStatistics;
-import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
+import lisong_mechlab.model.upgrades.OpSetArmorType;
+import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
-import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.graphs.PayloadGraphPanel.Entry;
 
@@ -96,14 +100,15 @@ public class PayloadSelectionPanel extends JPanel{
          JPanel entriesPanel = new JPanel();
          entriesPanel.setLayout(new BoxLayout(entriesPanel, BoxLayout.Y_AXIS));
          entriesPanel.setBorder(BorderFactory.createTitledBorder("Chassis to include"));
-         entriesPanel.add(graphEntries);
+         JScrollPane scrollPane = new JScrollPane(graphEntries);
+         entriesPanel.add(scrollPane);
          add(entriesPanel);
 
          graphEntries.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
          graphEntries.addSelectionInterval(0, graphEntries.getModel().getSize() - 1);
       }
 
-      void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel, final Upgrades aUpgrades){
+      void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel, final UpgradesMutable aUpgrades){
          final OperationStack stack = new OperationStack(0);
 
          graphEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
@@ -145,16 +150,15 @@ public class PayloadSelectionPanel extends JPanel{
          endoSteel.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               stack.pushAndApply(new SetStructureTypeOperation(aUpgrades, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
-                                                                                                 : UpgradeDB.STANDARD_STRUCTURE));
+               stack.pushAndApply(new OpSetStructureType(aUpgrades, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
+                                                                                          : UpgradeDB.STANDARD_STRUCTURE));
                aGraphPanel.updateGraph();
             }
          });
          ferroFibrous.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent aE){
-               stack.pushAndApply(new SetArmorTypeOperation(aUpgrades, ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR
-                                                                                                : UpgradeDB.STANDARD_ARMOR));
+               stack.pushAndApply(new OpSetArmorType(aUpgrades, ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR));
                aGraphPanel.updateGraph();
             }
          });
@@ -164,18 +168,18 @@ public class PayloadSelectionPanel extends JPanel{
 
    private static final long                   serialVersionUID = 1L;
 
-   private final Upgrades                      upgrades;
+   private final UpgradesMutable               upgrades;
    private final PayloadGraphPanel             graphPanel;
    private final PayloadStatistics             payloadStatistics;
    private Collection<PayloadGraphPanel.Entry> chassis;
 
    public PayloadSelectionPanel(){
-      setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+      setLayout(new BorderLayout());
 
       chassis = calculateUniqueSpeedChassis();
       PayloadSettingsPanel settingsPanel = new PayloadSettingsPanel(chassis);
 
-      upgrades = new Upgrades();
+      upgrades = new UpgradesMutable(UpgradeDB.FERRO_FIBROUS_ARMOR, UpgradeDB.ENDO_STEEL_STRUCTURE, UpgradeDB.ARTEMIS_IV, UpgradeDB.DOUBLE_HEATSINKS);
       payloadStatistics = new PayloadStatistics(false, true, upgrades);
       graphPanel = new PayloadGraphPanel(payloadStatistics, settingsPanel.speedTweak);
       graphPanel.selectChassis(chassis);
@@ -183,46 +187,62 @@ public class PayloadSelectionPanel extends JPanel{
 
       settingsPanel.setupListeners(payloadStatistics, graphPanel, upgrades);
 
-      add(settingsPanel);
-      add(graphPanel);
+      add(settingsPanel, BorderLayout.WEST);
+      add(graphPanel, BorderLayout.CENTER);
    }
 
    private Collection<PayloadGraphPanel.Entry> calculateUniqueSpeedChassis(){
-      Collection<Collection<Chassis>> temp = new ArrayList<>();
+      Collection<Collection<ChassisBase>> temp = new ArrayList<>();
 
-      List<Chassis> all = new ArrayList<>(ChassiDB.lookup(ChassiClass.LIGHT));
-      all.addAll(ChassiDB.lookup(ChassiClass.MEDIUM));
-      all.addAll(ChassiDB.lookup(ChassiClass.HEAVY));
-      all.addAll(ChassiDB.lookup(ChassiClass.ASSAULT));
+      List<ChassisBase> all = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+      all.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+      all.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+      all.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
-      Collections.sort(all, new Comparator<Chassis>(){
+      Collections.sort(all, new Comparator<ChassisBase>(){
          @Override
-         public int compare(Chassis aO1, Chassis aO2){
+         public int compare(ChassisBase aO1, ChassisBase aO2){
             return Integer.compare(aO1.getMassMax(), aO2.getMassMax());
          }
       });
 
-      for(Chassis chassi : all){
-         if( chassi.getVariantType().isVariation() )
+      for(ChassisBase currentChassis : all){
+         if( currentChassis.getVariantType().isVariation() )
             continue;
          boolean skip = false;
-         for(Collection<Chassis> chassiGroup : temp){
-            Chassis aChassi = chassiGroup.iterator().next();
-            if( aChassi.getMassMax() == chassi.getMassMax() && aChassi.getEngineMin() == chassi.getEngineMin()
-                && aChassi.getEngineMax() == chassi.getEngineMax() && aChassi.getSpeedFactor() == chassi.getSpeedFactor()
-                && aChassi.isSameSeries(chassi) ){
-               chassiGroup.add(chassi);
-               skip = true;
-               break;
+         for(Collection<ChassisBase> chassiGroup : temp){
+            ChassisBase aChassi = chassiGroup.iterator().next();
+            if( currentChassis instanceof ChassisStandard && aChassi instanceof ChassisStandard ){
+               ChassisStandard currentStdChassis = (ChassisStandard)currentChassis;
+               ChassisStandard stdChassis = (ChassisStandard)aChassi;
+               if( stdChassis.getMassMax() == currentStdChassis.getMassMax() && stdChassis.getEngineMin() == currentStdChassis.getEngineMin()
+                   && stdChassis.getEngineMax() == currentStdChassis.getEngineMax()
+                   && stdChassis.getMovementProfileBase().getMaxMovementSpeed() == currentStdChassis.getMovementProfileBase().getMaxMovementSpeed()
+                   && stdChassis.isSameSeries(currentStdChassis) ){
+                  chassiGroup.add(currentStdChassis);
+                  skip = true;
+                  break;
+               }
+            }
+            else if( currentChassis instanceof ChassisOmniMech && aChassi instanceof ChassisOmniMech ){
+               ChassisOmniMech currentOmniChassis = (ChassisOmniMech)currentChassis;
+               ChassisOmniMech omniChassis = (ChassisOmniMech)aChassi;
+               if( omniChassis.getMassMax() == currentOmniChassis.getMassMax() && omniChassis.getFixedEngine() == currentOmniChassis.getFixedEngine()
+                   && omniChassis.getMovementProfileBase().getMaxMovementSpeed() == currentOmniChassis.getMovementProfileBase().getMaxMovementSpeed()
+                   && omniChassis.isSameSeries(currentOmniChassis) ){
+                  chassiGroup.add(currentOmniChassis);
+                  skip = true;
+                  break;
+               }
             }
          }
          if( !skip ){
-            temp.add(new ArrayList<Chassis>(Arrays.asList(chassi)));
+            temp.add(new ArrayList<ChassisBase>(Arrays.asList(currentChassis)));
          }
       }
 
       Collection<PayloadGraphPanel.Entry> ans = new ArrayList<>();
-      for(Collection<Chassis> chassiGroup : temp){
+      for(Collection<ChassisBase> chassiGroup : temp){
          ans.add(new PayloadGraphPanel.Entry(chassiGroup));
       }
 

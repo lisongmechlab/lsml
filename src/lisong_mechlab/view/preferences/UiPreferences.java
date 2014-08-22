@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.preferences;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 
 /**
@@ -41,7 +41,7 @@ public class UiPreferences{
       }
 
       @Override
-      public boolean isForMe(Loadout aLoadout){
+      public boolean isForMe(LoadoutBase<?> aLoadout){
          return false;
       }
 

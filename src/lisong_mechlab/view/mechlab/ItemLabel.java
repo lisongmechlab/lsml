@@ -52,10 +52,9 @@ import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.AutoAddItemOperation;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.OpAutoAddItem;
 import lisong_mechlab.model.metrics.TopSpeed;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.ProgramInit;
@@ -105,11 +104,11 @@ public class ItemLabel extends JLabel{
    }
 
    private static class AutoPlaceTask extends SwingWorker<Void, Void>{
-      private AutoAddItemOperation operation;
-      private JDialog              dialog;
-      private LoadoutFrame         loadoutFrame;
-      private MessageXBar          xBar;
-      private Item                 itemToPlace;
+      private OpAutoAddItem operation;
+      private JDialog       dialog;
+      private LoadoutFrame  loadoutFrame;
+      private MessageXBar   xBar;
+      private Item          itemToPlace;
 
       public AutoPlaceTask(JDialog aDialog, LoadoutFrame aLoadoutFrame, MessageXBar anXBar, Item aItem){
          dialog = aDialog;
@@ -121,8 +120,10 @@ public class ItemLabel extends JLabel{
       @Override
       public Void doInBackground(){
          try{
-         operation = new AutoAddItemOperation(loadoutFrame.getLoadout(), xBar, itemToPlace);
-         }catch(Throwable e){ // Yeah anything thrown is a failure.
+            operation = new OpAutoAddItem(loadoutFrame.getLoadout(), xBar, itemToPlace);
+            operation.prepareOperationAheadOfTime();
+         }
+         catch( Throwable e ){ // Yeah anything thrown is a failure.
             operation = null;
          }
          return null;
@@ -132,11 +133,11 @@ public class ItemLabel extends JLabel{
       public void done(){
          // In EDT
          if( !isCancelled() ){
-            if(operation == null){
+            if( operation == null ){
                JOptionPane.showMessageDialog(dialog, "No can do cap'n!", "Not possible", JOptionPane.OK_OPTION);
             }
             else{
-            loadoutFrame.getOpStack().pushAndApply(operation);
+               loadoutFrame.getOpStack().pushAndApply(operation);
             }
          }
          dialog.dispose();
@@ -154,11 +155,16 @@ public class ItemLabel extends JLabel{
          @Override
          public void mousePressed(MouseEvent anEvent){
             final LoadoutFrame frame = ProgramInit.lsml().mechLabPane.getActiveLoadoutFrame();
-            final Loadout loadout = aEquipmentPanel.getCurrentLoadout();
+            final LoadoutBase<?> loadout = aEquipmentPanel.getCurrentLoadout();
 
             Component component = anEvent.getComponent();
             if( component instanceof ItemLabel ){
-               aInfoPanel.showItem(item, null != loadout ? loadout.getUpgrades() : null, null != loadout ? loadout.getEfficiencies() : null);
+               if( null != loadout ){
+                  aInfoPanel.showItem(item, loadout.getEfficiencies(), loadout.getWeaponModifiers());
+               }
+               else{
+                  aInfoPanel.showItem(item, null, null);
+               }
             }
 
             ItemLabel button = (ItemLabel)anEvent.getSource();
@@ -211,8 +217,9 @@ public class ItemLabel extends JLabel{
                      catch( TimeoutException e ){
                         dialog.setVisible(true); // Show progress meter if it's taking time and resume EDT
                      }
-                  }else if(loadout.canEquip(item)){
-                     frame.getOpStack().pushAndApply(new AutoAddItemOperation(loadout, anXBar, item));
+                  }
+                  else if( loadout.canEquip(item) ){
+                     frame.getOpStack().pushAndApply(new OpAutoAddItem(loadout, anXBar, item));
                   }
                }
             }
@@ -222,17 +229,17 @@ public class ItemLabel extends JLabel{
       updateVisibility(null);
    }
 
-   private void updateText(Loadout aLoadout){
-      Upgrades anUpgrades = aLoadout == null ? null : aLoadout.getUpgrades();
+   private void updateText(LoadoutBase<?> aLoadout){
       StringBuilder builder = new StringBuilder();
       builder.append("<html>");
-      builder.append(item.getShortName(anUpgrades));
+      builder.append(item.getShortName());
       builder.append("<br/><span style=\"font-size:x-small;\">");
-      builder.append("Tons: ").append(item.getMass(anUpgrades)).append("<br/>Slots: ").append(item.getNumCriticalSlots(anUpgrades));
+      builder.append("Tons: ").append(item.getMass()).append("<br/>Slots: ").append(item.getNumCriticalSlots());
 
       if( item instanceof Engine && aLoadout != null ){
          Engine engine = (Engine)item;
-         double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getChassi(), aLoadout.getEfficiencies().getSpeedModifier());
+         double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(), aLoadout.getChassis().getMassMax(),
+                                           aLoadout.getEfficiencies().getSpeedModifier());
          DecimalFormat decimalFormat = new DecimalFormat("###");
          builder.append("<br/>" + decimalFormat.format(speed) + "kph");
       }
@@ -265,12 +272,12 @@ public class ItemLabel extends JLabel{
       setOpaque(true);
    }
 
-   public void updateVisibility(Loadout aLoadout){
+   public void updateVisibility(LoadoutBase<?> aLoadout){
       boolean prevSmartPlace = smartPlace;
       smartPlace = false;
       if( aLoadout != null ){
          updateText(aLoadout);
-         if( !aLoadout.getChassi().isAllowed(item) || !item.isCompatible(aLoadout.getUpgrades()) ){
+         if( !aLoadout.getChassis().isAllowed(item) || !item.isCompatible(aLoadout.getUpgrades()) ){
             setVisible(false);
          }
          else{
@@ -289,14 +296,14 @@ public class ItemLabel extends JLabel{
 
             if( item instanceof Ammunition ){
                Ammunition ammunition = (Ammunition)item;
-               if( aLoadout.getChassi().getHardpointsCount(ammunition.getWeaponHardpointType()) < 1 ){
+               if( aLoadout.getHardpointsCount(ammunition.getWeaponHardpointType()) < 1 ){
                   setVisible(false);
                }
                else{
                   boolean isUsable = false;
                   for(Item it : aLoadout.getAllItems()){
                      if( it instanceof AmmoWeapon ){
-                        if( ((AmmoWeapon)it).getAmmoType(aLoadout.getUpgrades()) == ammunition ){
+                        if( ((AmmoWeapon)it).isCompatibleAmmo(ammunition) ){
                            isUsable = true;
                            break;
                         }

@@ -20,38 +20,38 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class AmmoWeapon extends Weapon{
    @XStreamAsAttribute
-   private final String         ammoTypeId;
-   private transient Ammunition ammoType;
+   private final String ammoTypeId;
 
    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType){
       this(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.ammoType);
    }
-   
+
    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType, String aAmmoType){
       super(aStatsWeapon, aHardpointType);
       ammoTypeId = aAmmoType;
    }
 
-   public Ammunition getAmmoType(Upgrades aUpgrades){
-      if( ammoType == null ){
-         ammoType = (Ammunition)ItemDB.lookup(ammoTypeId);
-      }
-      if( aUpgrades == null )
-         return ammoType;
-      return ammoType;
+   public boolean isCompatibleAmmo(Ammunition aAmmunition){
+      return ammoTypeId.equals(aAmmunition.getAmmoType());
    }
 
    @Override
-   public String getShortName(Upgrades anUpgrades){
-      String name = getName(anUpgrades);
+   public String getShortName(){
+      String name = getName();
       name = name.replace("ANTI-MISSILE SYSTEM", "AMS");
       return name;
+   }
+
+   /**
+    * @return The {@link String} name of the ammo type required for this weapon.
+    */
+   public String getAmmoType(){
+      return ammoTypeId;
    }
 }

@@ -28,7 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.export.SmurfyImportExport;
 import lisong_mechlab.util.SwingHelpers;
 import lisong_mechlab.view.ProgramInit;
@@ -50,19 +50,19 @@ public class ExportToSmurfyAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      Loadout loadout = loadoutFrame.getLoadout();
-      
+      LoadoutBase<?> loadout = loadoutFrame.getLoadout();
+
       SmurfyImportExport export = new SmurfyImportExport(null, ProgramInit.lsml().loadoutCoder);
 
       try{
          String url = export.sendLoadout(loadout);
-         
+
          JPanel panel = new JPanel(new BorderLayout());
          panel.add(new JLabel("Your loadout is available at:"), BorderLayout.NORTH);
          JLabel link = new JLabel();
          panel.add(link);
          SwingHelpers.hypertextLink(link, url, url);
-         
+
          JOptionPane.showMessageDialog(loadoutFrame, panel, "Export complete", JOptionPane.INFORMATION_MESSAGE);
       }
       catch( IOException e ){

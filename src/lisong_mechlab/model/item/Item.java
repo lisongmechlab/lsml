@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.Localization;
@@ -42,33 +43,39 @@ public class Item implements Comparable<Item>{
    private final HardPointType hardpointType;
    @XStreamAsAttribute
    private final int           health;
+   @XStreamAsAttribute
+   private final Faction       faction;
 
-   public Item(ItemStats anItemStats, HardPointType aHardpointType, int aNumSlots, double aNumTons, int aHealth){
-      locName = Localization.key2string(anItemStats.Loc.nameTag);
-      locDesc = Localization.key2string(anItemStats.Loc.descTag);
-      mwoName = anItemStats.name;
-      mwoIdx = Integer.parseInt(anItemStats.id);
-      health = aHealth;
-
-      slots = aNumSlots;
-      tons = aNumTons;
+   public Item(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardpointType, int aHP,
+               Faction aFaction){
+      locName = aName;
+      locDesc = aDesc;
+      mwoName = aMwoName;
+      mwoIdx = aMwoId;
+      slots = aSlots;
+      tons = aTons;
       hardpointType = aHardpointType;
+      health = aHP;
+      faction = aFaction;
    }
 
-   public Item(String aNameTag, String aDesc, int aSlots, int aHealth){
-      locName = Localization.key2string(aNameTag);
-      locDesc = Localization.key2string(aDesc);
-      mwoName = aNameTag;
-      mwoIdx = -1;
-      health = aHealth;
+   // TODO: Add a maximum allowed attribute here
 
-      slots = aSlots;
-      tons = 0;
-      hardpointType = HardPointType.NONE;
+   public Item(ItemStats anItemStats, HardPointType aHardpointType, int aNumSlots, double aNumTons, int aHealth){
+      this(Localization.key2string(anItemStats.Loc.nameTag), Localization.key2string(anItemStats.Loc.descTag), anItemStats.name,
+           Integer.parseInt(anItemStats.id), aNumSlots, aNumTons, aHardpointType, aHealth, Faction.fromMwo(anItemStats.faction));
+   }
+
+   public Item(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction){
+      this(Localization.key2string(aNameTag), Localization.key2string(aDesc), aNameTag, -1, aSlots, 0.0, HardPointType.NONE, aHealth, aFaction);
    }
 
    public String getKey(){
       return mwoName;
+   }
+   
+   public boolean isCrittable(){
+      return health > 0;
    }
 
    @Override
@@ -80,9 +87,7 @@ public class Item implements Comparable<Item>{
       return locName;
    }
 
-   public int getNumCriticalSlots(Upgrades aUpgrades){
-      if( aUpgrades == null )
-         return slots;
+   public int getNumCriticalSlots(){
       return slots;
    }
 
@@ -90,9 +95,7 @@ public class Item implements Comparable<Item>{
       return hardpointType;
    }
 
-   public double getMass(Upgrades aUpgrades){
-      if( aUpgrades == null )
-         return tons;
+   public double getMass(){
       return tons;
    }
 
@@ -100,8 +103,8 @@ public class Item implements Comparable<Item>{
       return mwoIdx;
    }
 
-   public String getShortName(Upgrades aUpgrades){
-      return getName(aUpgrades);
+   public String getShortName(){
+      return getName();
    }
 
    public String getDescription(){
@@ -115,7 +118,8 @@ public class Item implements Comparable<Item>{
     *           The {@link Upgrades} to check against.
     * @return <code>true</code> if this {@link Item} is compatible with the given upgrades.
     */
-   @SuppressWarnings("unused") // Interface
+   @SuppressWarnings("unused")
+   // Interface
    public boolean isCompatible(Upgrades aUpgrades){
       return true;
    }
@@ -183,13 +187,14 @@ public class Item implements Comparable<Item>{
       return hp;
    }
 
-   public String getName(Upgrades aUpgrades){
-      if( aUpgrades == null )
-         return getName();
-      return getName();
-   }
-
    public int getHealth(){
       return health;
+   }
+
+   /**
+    * @return The faction requirement of this {@link Item}.
+    */
+   public Faction getFaction(){
+      return faction;
    }
 }

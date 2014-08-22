@@ -26,94 +26,86 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalPart;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 /**
- * The purpose of this class is to provide a default mock structure of a {@link Loadout} which is easy to configure for
- * a particular test.
+ * The purpose of this class is to provide a default mock structure of a {@link LoadoutStandard} which is easy to
+ * configure for a particular test.
  * 
  * @author Li Song
  */
 public class MockLoadoutContainer{
-   final public Chassis       chassi;
-   final public Loadout      loadout;
-   final public Upgrades     upgrades;
-   final public Efficiencies efficiencies;
-   final public InternalPart ira;
-   final public InternalPart irt;
-   final public InternalPart irl;
-   final public InternalPart ihd;
-   final public InternalPart ict;
-   final public InternalPart ilt;
-   final public InternalPart ill;
-   final public InternalPart ila;
-   final public LoadoutPart  ra;
-   final public LoadoutPart  rt;
-   final public LoadoutPart  rl;
-   final public LoadoutPart  hd;
-   final public LoadoutPart  ct;
-   final public LoadoutPart  lt;
-   final public LoadoutPart  ll;
-   final public LoadoutPart  la;
+   final public ChassisBase                          chassi;
+   final public LoadoutBase<ConfiguredComponentBase> loadout;
+   final public Upgrades                             upgrades;
+   final public Efficiencies                         efficiencies;
+   final public ComponentBase                        ira;
+   final public ComponentBase                        irt;
+   final public ComponentBase                        irl;
+   final public ComponentBase                        ihd;
+   final public ComponentBase                        ict;
+   final public ComponentBase                        ilt;
+   final public ComponentBase                        ill;
+   final public ComponentBase                        ila;
+   final public ConfiguredComponentBase              ra;
+   final public ConfiguredComponentBase              rt;
+   final public ConfiguredComponentBase              rl;
+   final public ConfiguredComponentBase              hd;
+   final public ConfiguredComponentBase              ct;
+   final public ConfiguredComponentBase              lt;
+   final public ConfiguredComponentBase              ll;
+   final public ConfiguredComponentBase              la;
 
    public MockLoadoutContainer(){
-      chassi = mock(Chassis.class);
-      loadout = mock(Loadout.class);
+      chassi = mock(ChassisBase.class);
+      loadout = mock(LoadoutBase.class);
       upgrades = mock(Upgrades.class);
       efficiencies = mock(Efficiencies.class);
 
-      ira = mock(InternalPart.class);
-      irt = mock(InternalPart.class);
-      irl = mock(InternalPart.class);
-      ihd = mock(InternalPart.class);
-      ict = mock(InternalPart.class);
-      ilt = mock(InternalPart.class);
-      ill = mock(InternalPart.class);
-      ila = mock(InternalPart.class);
-      ra = mock(LoadoutPart.class);
-      rt = mock(LoadoutPart.class);
-      rl = mock(LoadoutPart.class);
-      hd = mock(LoadoutPart.class);
-      ct = mock(LoadoutPart.class);
-      lt = mock(LoadoutPart.class);
-      ll = mock(LoadoutPart.class);
-      la = mock(LoadoutPart.class);
+      ira = mock(ComponentBase.class);
+      irt = mock(ComponentBase.class);
+      irl = mock(ComponentBase.class);
+      ihd = mock(ComponentBase.class);
+      ict = mock(ComponentBase.class);
+      ilt = mock(ComponentBase.class);
+      ill = mock(ComponentBase.class);
+      ila = mock(ComponentBase.class);
+      ra = mock(ConfiguredComponentBase.class);
+      rt = mock(ConfiguredComponentBase.class);
+      rl = mock(ConfiguredComponentBase.class);
+      hd = mock(ConfiguredComponentBase.class);
+      ct = mock(ConfiguredComponentBase.class);
+      lt = mock(ConfiguredComponentBase.class);
+      ll = mock(ConfiguredComponentBase.class);
+      la = mock(ConfiguredComponentBase.class);
 
-      when(ira.getType()).thenReturn(Part.RightArm);
-      when(irt.getType()).thenReturn(Part.RightTorso);
-      when(irl.getType()).thenReturn(Part.RightLeg);
-      when(ihd.getType()).thenReturn(Part.Head);
-      when(ict.getType()).thenReturn(Part.CenterTorso);
-      when(ilt.getType()).thenReturn(Part.LeftTorso);
-      when(ill.getType()).thenReturn(Part.LeftLeg);
-      when(ila.getType()).thenReturn(Part.LeftArm);
+      when(ira.getLocation()).thenReturn(Location.RightArm);
+      when(irt.getLocation()).thenReturn(Location.RightTorso);
+      when(irl.getLocation()).thenReturn(Location.RightLeg);
+      when(ihd.getLocation()).thenReturn(Location.Head);
+      when(ict.getLocation()).thenReturn(Location.CenterTorso);
+      when(ilt.getLocation()).thenReturn(Location.LeftTorso);
+      when(ill.getLocation()).thenReturn(Location.LeftLeg);
+      when(ila.getLocation()).thenReturn(Location.LeftArm);
 
-      when(ra.getInternalPart()).thenReturn(ira);
-      when(rt.getInternalPart()).thenReturn(irt);
-      when(rl.getInternalPart()).thenReturn(irl);
-      when(hd.getInternalPart()).thenReturn(ihd);
-      when(ct.getInternalPart()).thenReturn(ict);
-      when(lt.getInternalPart()).thenReturn(ilt);
-      when(ll.getInternalPart()).thenReturn(ill);
-      when(la.getInternalPart()).thenReturn(ila);
+      when(ra.getInternalComponent()).thenReturn(ira);
+      when(rt.getInternalComponent()).thenReturn(irt);
+      when(rl.getInternalComponent()).thenReturn(irl);
+      when(hd.getInternalComponent()).thenReturn(ihd);
+      when(ct.getInternalComponent()).thenReturn(ict);
+      when(lt.getInternalComponent()).thenReturn(ilt);
+      when(ll.getInternalComponent()).thenReturn(ill);
+      when(la.getInternalComponent()).thenReturn(ila);
 
-      when(ra.getLoadout()).thenReturn(loadout);
-      when(rt.getLoadout()).thenReturn(loadout);
-      when(rl.getLoadout()).thenReturn(loadout);
-      when(hd.getLoadout()).thenReturn(loadout);
-      when(ct.getLoadout()).thenReturn(loadout);
-      when(lt.getLoadout()).thenReturn(loadout);
-      when(ll.getLoadout()).thenReturn(loadout);
-      when(la.getLoadout()).thenReturn(loadout);
-      
       when(ra.toString()).thenReturn("RA");
       when(rt.toString()).thenReturn("RT");
       when(rl.toString()).thenReturn("RL");
@@ -122,18 +114,18 @@ public class MockLoadoutContainer{
       when(lt.toString()).thenReturn("LT");
       when(ll.toString()).thenReturn("LL");
       when(la.toString()).thenReturn("LA");
-      when(loadout.getPart(Part.RightArm)).thenReturn(ra);
-      when(loadout.getPart(Part.RightTorso)).thenReturn(rt);
-      when(loadout.getPart(Part.RightLeg)).thenReturn(rl);
-      when(loadout.getPart(Part.Head)).thenReturn(hd);
-      when(loadout.getPart(Part.CenterTorso)).thenReturn(ct);
-      when(loadout.getPart(Part.LeftTorso)).thenReturn(lt);
-      when(loadout.getPart(Part.LeftLeg)).thenReturn(ll);
-      when(loadout.getPart(Part.LeftArm)).thenReturn(la);
-      when(loadout.getPartLoadOuts()).thenReturn(Arrays.asList(ra, rt, rl, hd, ct, lt, ll, la));
+      when(loadout.getComponent(Location.RightArm)).thenReturn(ra);
+      when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
+      when(loadout.getComponent(Location.RightLeg)).thenReturn(rl);
+      when(loadout.getComponent(Location.Head)).thenReturn(hd);
+      when(loadout.getComponent(Location.CenterTorso)).thenReturn(ct);
+      when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
+      when(loadout.getComponent(Location.LeftLeg)).thenReturn(ll);
+      when(loadout.getComponent(Location.LeftArm)).thenReturn(la);
+      when(loadout.getComponents()).thenReturn(Arrays.asList(ra, rt, rl, hd, ct, lt, ll, la));
       when(loadout.getUpgrades()).thenReturn(upgrades);
       when(loadout.getEfficiencies()).thenReturn(efficiencies);
-      when(loadout.getChassi()).thenReturn(chassi);
+      when(loadout.getChassis()).thenReturn(chassi);
    }
 
    public Internal makeInternal(String aName, int aNumSlots){
@@ -147,8 +139,8 @@ public class MockLoadoutContainer{
    public Internal makeInternal(String aName, int aNumSlots, double aTons){
       Internal internalItem = mock(Internal.class);
       when(internalItem.toString()).thenReturn(aName);
-      when(internalItem.getNumCriticalSlots(any(Upgrades.class))).thenReturn(aNumSlots);
-      when(internalItem.getMass(any(Upgrades.class))).thenReturn(aTons);
+      when(internalItem.getNumCriticalSlots()).thenReturn(aNumSlots);
+      when(internalItem.getMass()).thenReturn(aTons);
       when(internalItem.compareTo(any(Item.class))).thenCallRealMethod();
       when(internalItem.getHardpointType()).thenReturn(HardPointType.NONE);
       return internalItem;

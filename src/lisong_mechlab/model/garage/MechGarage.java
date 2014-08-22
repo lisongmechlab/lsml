@@ -28,7 +28,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -36,7 +38,7 @@ import lisong_mechlab.util.OperationStack.Operation;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * This class is a serialisable collection of {@link Loadout}s, known as a {@link MechGarage}.
+ * This class is a serialisable collection of {@link LoadoutStandard}s, known as a {@link MechGarage}.
  * 
  * @author Li Song
  */
@@ -71,11 +73,11 @@ public class MechGarage{
          LoadoutAdded, LoadoutRemoved, NewGarage, Saved
       }
 
-      public final Type       type;
-      public final MechGarage garage;
-      private final Loadout   loadout;
+      public final Type            type;
+      public final MechGarage      garage;
+      private final LoadoutBase<?> loadout;
 
-      public Message(Type aType, MechGarage aGarage, Loadout aLoadout){
+      public Message(Type aType, MechGarage aGarage, LoadoutBase<?> aLoadout){
          type = aType;
          garage = aGarage;
          loadout = aLoadout;
@@ -86,7 +88,7 @@ public class MechGarage{
       }
 
       @Override
-      public boolean isForMe(Loadout aLoadout){
+      public boolean isForMe(LoadoutBase<?> aLoadout){
          return aLoadout == loadout;
       }
 
@@ -96,9 +98,9 @@ public class MechGarage{
       }
    }
 
-   private final List<Loadout>   mechs = new ArrayList<Loadout>();
-   private File                  file;
-   private transient MessageXBar xBar;
+   private final List<LoadoutBase<?>> mechs = new ArrayList<>();
+   private File                       file;
+   private transient MessageXBar      xBar;
 
    /**
     * Creates a new, empty {@link MechGarage}.
@@ -118,7 +120,7 @@ public class MechGarage{
     *           The {@link File} to read from.
     * @param aXBar
     *           The {@link MessageXBar} to signal changes to the garage on.
-    * @return A new {@link MechGarage} containing the {@link Loadout}s found in <code>aFile</code>.
+    * @return A new {@link MechGarage} containing the {@link LoadoutStandard}s found in <code>aFile</code>.
     * @throws IOException
     *            Thrown if there was an error reading the garage file.
     */
@@ -131,7 +133,7 @@ public class MechGarage{
       MechGarage mg = null;
       try{
          fis = new FileInputStream(aFile);
-         mg = (MechGarage)garageXstream(aXBar).fromXML(fis);
+         mg = (MechGarage)garageXstream().fromXML(fis);
       }
       finally{
          if( null != fis )
@@ -190,7 +192,7 @@ public class MechGarage{
       try{
          fileWriter = new FileOutputStream(aFile);
          writer = new OutputStreamWriter(fileWriter, "UTF-8");
-         writer.write(garageXstream(xBar).toXML(this));
+         writer.write(garageXstream().toXML(this));
          file = aFile;
       }
       finally{
@@ -205,9 +207,9 @@ public class MechGarage{
    }
 
    /**
-    * @return An unmodifiable list of all the {@link Loadout}s in this garage.
+    * @return An unmodifiable list of all the {@link LoadoutStandard}s in this garage.
     */
-   public List<Loadout> getMechs(){
+   public List<LoadoutBase<?>> getMechs(){
       return Collections.unmodifiableList(mechs);
    }
 
@@ -219,25 +221,25 @@ public class MechGarage{
    }
 
    /**
-    * Adds a new {@link Loadout} to this garage. This will submit an {@link Operation} to the {@link OperationStack}
-    * given in the constructor so that the action can be undone.
+    * Adds a new {@link LoadoutStandard} to this garage. This will submit an {@link Operation} to the
+    * {@link OperationStack} given in the constructor so that the action can be undone.
     * 
     * @param aLoadout
-    *           The {@link Loadout} to add.
+    *           The {@link LoadoutStandard} to add.
     */
-   void add(Loadout aLoadout){
+   void add(LoadoutBase<?> aLoadout){
       mechs.add(aLoadout);
       xBar.post(new Message(Message.Type.LoadoutAdded, MechGarage.this, aLoadout));
    }
 
    /**
-    * Removes the given {@link Loadout} from the garage. This will submit an {@link Operation} to the
+    * Removes the given {@link LoadoutStandard} from the garage. This will submit an {@link Operation} to the
     * {@link OperationStack} given in the constructor so that the action can be undone.
     * 
     * @param aLoadout
-    *           The {@link Loadout} to remove.
+    *           The {@link LoadoutStandard} to remove.
     */
-   void remove(Loadout aLoadout){
+   void remove(LoadoutBase<?> aLoadout){
       if( mechs.remove(aLoadout) ){
          xBar.post(new Message(Message.Type.LoadoutRemoved, MechGarage.this, aLoadout));
       }
@@ -246,14 +248,14 @@ public class MechGarage{
    /**
     * Private helper method for the {@link XStream} serialization.
     * 
-    * @param anXBar
-    *           The {@link MessageXBar} to use for any {@link Loadout}s loaded from files.
     * @return An {@link XStream} object usable for deserialization of garages.
     */
-   private static XStream garageXstream(MessageXBar anXBar){
-      XStream stream = Loadout.loadoutXstream(anXBar);
+   private static XStream garageXstream(){
+      XStream stream = LoadoutBase.loadoutXstream();
       stream.alias("garage", MechGarage.class);
       stream.omitField(MechGarage.class, "file");
+      stream.alias("loadout", LoadoutOmniMech.class);
+      stream.alias("loadout", LoadoutStandard.class);
       return stream;
    }
 }

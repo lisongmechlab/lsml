@@ -34,16 +34,16 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public class WeaponDoorSet{
    @XStreamAsAttribute
    public int id;
-     
+
    public class WeaponDoor{
       @XStreamAsAttribute
-      double closedDamageFactor;
+      double                  closedDamageFactor;
 
       @XStreamAsAttribute
-      public String AName;
-      
+      public String           AName;
+
       @XStreamAsAttribute
-      double firingdelay;
+      double                  firingdelay;
 
       @XStreamImplicit(itemFieldName = "Attachment")
       public List<Attachment> attachments;

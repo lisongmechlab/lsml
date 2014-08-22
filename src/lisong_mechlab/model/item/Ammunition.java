@@ -20,7 +20,6 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 /**
@@ -29,33 +28,30 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
  * @author Li Song
  */
 public class Ammunition extends Item{
-   protected final int           shotsPerTon;
+   protected final int           rounds;
    protected final double        internalDamage;
-   protected final int           hp;
    protected final HardPointType type;
+   protected final String        ammoType;
 
    public Ammunition(ItemStatsModule aStatsModule){
-      super(aStatsModule, HardPointType.NONE, 1, 1.0, aStatsModule.AmmoTypeStats.health);
-      hp = aStatsModule.AmmoTypeStats.health;
+      super(aStatsModule, HardPointType.NONE, aStatsModule.ModuleStats.slots, aStatsModule.ModuleStats.tons, aStatsModule.ModuleStats.health);
       internalDamage = aStatsModule.AmmoTypeStats.internalDamage;
-      shotsPerTon = aStatsModule.AmmoTypeStats.shotsPerTon;
+      rounds = aStatsModule.AmmoTypeStats.numShots;
+      ammoType = aStatsModule.AmmoTypeStats.type;
 
-      if( getName().contains("AC") || getName().contains("GAUSS") || getName().contains("LB") ){
-         type = HardPointType.BALLISTIC;
-      }
-      else if( getName().contains("RM") || getName().contains("NARC") ){
+      if( getName().contains("LRM") || getName().contains("SRM") || getName().contains("NARC") ){
          type = HardPointType.MISSILE;
       }
       else if( getName().contains("AMS") ){
          type = HardPointType.AMS;
       }
       else{
-         type = HardPointType.ENERGY;
+         type = HardPointType.BALLISTIC;
       }
    }
 
-   public int getShotsPerTon(){
-      return shotsPerTon;
+   public int getNumShots(){
+      return rounds;
    }
 
    /**
@@ -67,10 +63,17 @@ public class Ammunition extends Item{
    }
 
    @Override
-   public String getShortName(Upgrades anUpgrades){
-      String name = getName(anUpgrades);
+   public String getShortName(){
+      String name = getName();
       name = name.replace("ULTRA ", "U");
       name = name.replace("MACHINE GUN", "MG");
       return name;
+   }
+
+   /**
+    * @return The type name of this {@link Ammunition}. Used to match with {@link Weapon} ammo type.
+    */
+   public String getAmmoType(){
+      return ammoType;
    }
 }

@@ -59,18 +59,6 @@ public class MissileWeapon extends AmmoWeapon{
    }
 
    @Override
-   public double getRangeZero(){
-      return super.getRangeMin() - Math.ulp(super.getRangeMin()) * RANGE_ULP_FUZZ;
-   }
-
-   @Override
-   public double getRangeMax(){
-      // Missile fall off is a bit different from other weapons because long = max.
-      // Emulate a steep fall off by nudging max ever so slightly
-      return super.getRangeMax() + Math.ulp(super.getRangeMax()) * RANGE_ULP_FUZZ;
-   }
-
-   @Override
    public boolean isCompatible(Upgrades aUpgrades){
       if( isArtemisCapable() ){
          return aUpgrades.getGuidance().getMwoId() == requiredGuidancetype;
@@ -79,19 +67,19 @@ public class MissileWeapon extends AmmoWeapon{
    }
 
    @Override
-   public int getNumCriticalSlots(Upgrades aUpgrades){
+   public int getNumCriticalSlots(){
       if( isArtemisCapable() ){
-         return super.getNumCriticalSlots(aUpgrades) + ((GuidanceUpgrade)UpgradeDB.lookup(requiredGuidancetype)).getSlots();
+         return super.getNumCriticalSlots() + ((GuidanceUpgrade)UpgradeDB.lookup(requiredGuidancetype)).getSlots();
       }
-      return super.getNumCriticalSlots(aUpgrades);
+      return super.getNumCriticalSlots();
    }
 
    @Override
-   public double getMass(Upgrades aUpgrades){
+   public double getMass(){
       if( isArtemisCapable() ){
-         return super.getMass(aUpgrades) + ((GuidanceUpgrade)UpgradeDB.lookup(requiredGuidancetype)).getTons();
+         return super.getMass() + ((GuidanceUpgrade)UpgradeDB.lookup(requiredGuidancetype)).getTons();
       }
-      return super.getMass(aUpgrades);
+      return super.getMass();
    }
 
    public boolean isArtemisCapable(){

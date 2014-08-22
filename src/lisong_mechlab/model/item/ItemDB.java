@@ -40,12 +40,16 @@ public class ItemDB{
 
    // AMS
    static public final AmmoWeapon          AMS;
+   static public final AmmoWeapon          C_AMS;
    static public final HeatSink            SHS;
    static public final HeatSink            DHS;
    static public final Item                ECM;
    static public final Item                BAP;
    static public final Item                CASE;
 
+   static public final Internal            UAA;
+   static public final Internal            LAA;
+   static public final Internal            HA;
    static private final Map<String, Item>  locname2item;
    static private final Map<String, Item>  mwoname2item;
    static private final Map<Integer, Item> mwoidx2item;
@@ -73,17 +77,17 @@ public class ItemDB{
       return ans;
    }
 
-   public static Item lookup(int anMwoIndex){
-      if( !mwoidx2item.containsKey(anMwoIndex) ){
-         throw new IllegalArgumentException("No item with that index: " + anMwoIndex);
+   public static Item lookup(int aMwoIndex){
+      if( !mwoidx2item.containsKey(aMwoIndex) ){
+         throw new IllegalArgumentException("No item with that index: " + aMwoIndex);
       }
-      return mwoidx2item.get(anMwoIndex);
+      return mwoidx2item.get(aMwoIndex);
    }
 
    private static void put(Item anItem){
       assert anItem != null;
       assert (!locname2item.containsKey(anItem));
-      
+
       mwoname2item.put(canonize(anItem.getKey()), anItem);
       locname2item.put(canonize(anItem.getName()), anItem);
       if( anItem.getMwoId() >= 0 )
@@ -92,15 +96,12 @@ public class ItemDB{
 
    private static String canonize(String aString){
       String key = aString.toLowerCase();
-      if( key.equals("anti-missile system") ){
-         return "ams"; // TODO: Update references
-      }
       return key;
    }
 
    /**
     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
-    * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
+    * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
     */
    static{
       DataCache dataCache;
@@ -120,11 +121,16 @@ public class ItemDB{
       }
 
       // Initialize special items
-      AMS = (AmmoWeapon)lookup("ANTI-MISSILE SYSTEM");
+      C_AMS = (AmmoWeapon)lookup("C-AMS");
+      AMS = (AmmoWeapon)lookup("AMS");
       SHS = (HeatSink)lookup("STD HEAT SINK");
       DHS = (HeatSink)lookup("DOUBLE HEAT SINK");
       ECM = lookup("GUARDIAN ECM");
       BAP = lookup("BEAGLE ACTIVE PROBE");
       CASE = lookup("C.A.S.E.");
+
+      UAA = (Internal)lookup("UpperArmActuator");
+      LAA = (Internal)lookup("LowerArmActuator");
+      HA = (Internal)lookup("HandActuator");
    }
 }

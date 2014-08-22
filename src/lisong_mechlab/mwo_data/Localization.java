@@ -20,6 +20,7 @@
 package lisong_mechlab.mwo_data;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,8 +43,10 @@ public class Localization{
    public static String key2string(String aKey){
       String canon = canonize(aKey);
       if( !key2string.containsKey(canon) ){
-         System.out.println(key2string);
-         throw new RuntimeException("No such key found!: " + canon);
+         if( aKey.contains("_desc") )
+            return "Empty Description";
+
+         throw new IllegalArgumentException("No such key found!: " + canon);
       }
       return key2string.get(canon);
    }
@@ -68,7 +71,7 @@ public class Localization{
       return aKey;
    }
 
-   public static void initialize(GameVFS aGameVFS){
+   public static void initialize(GameVFS aGameVFS) throws IOException{
       key2string = new HashMap<String, String>();
 
       File[] files = new File[] {new File("Game/Localized/Languages/TheRealLoc.xml")};
@@ -104,32 +107,27 @@ public class Localization{
       xstream.alias("Workbook", Workbook.class);
       xstream.autodetectAnnotations(true);
       for(File file : files){
-         try{
-            Workbook workbook = (Workbook)xstream.fromXML(aGameVFS.openGameFile(file).stream);
-            for(Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows){ // Skip past junk
-               if( row.cells == null || row.cells.size() < 1 ){
-                  // debugprintrow(row);
-                  continue;
-               }
-               if( row.cells.get(0).Data == null ){
-                  // debugprintrow(row);
-                  continue;
-               }
-               if( row.cells.size() >= 2 ){
-                  String key = row.cells.get(0).Data;
-                  String data = row.cells.get(1).Data;
-                  if( data == null || data.length() < 2 ){
-                     debugprintrow(row);
-                  }
-                  key2string.put(canonize(key), data);
-               }
-               else{
-                  debugprintrow(row); // Debug Breakpoint
-               }
+         Workbook workbook = (Workbook)xstream.fromXML(aGameVFS.openGameFile(file).stream);
+         for(Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows){ // Skip past junk
+            if( row.cells == null || row.cells.size() < 1 ){
+               // debugprintrow(row);
+               continue;
             }
-         }
-         catch( Exception e ){
-            throw new RuntimeException(e);
+            if( row.cells.get(0).Data == null ){
+               // debugprintrow(row);
+               continue;
+            }
+            if( row.cells.size() >= 2 ){
+               String key = row.cells.get(0).Data;
+               String data = row.cells.get(1).Data;
+               if( data == null || data.length() < 2 ){
+                  debugprintrow(row);
+               }
+               key2string.put(canonize(key), data);
+            }
+            else{
+               debugprintrow(row); // Debug Breakpoint
+            }
          }
       }
 

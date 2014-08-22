@@ -37,5 +37,5 @@ public class MdfMech{
    @XStreamAsAttribute
    public String VariantType;
    @XStreamAsAttribute
-   public int VariantParent;
+   public int    VariantParent;
 }

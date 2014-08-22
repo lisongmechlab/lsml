@@ -20,9 +20,9 @@
 
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * This {@link Metric} calculates how fast a mech will turn (degrees per second).
@@ -31,18 +31,38 @@ import lisong_mechlab.model.loadout.Loadout;
  */
 public class TurningSpeed implements Metric{
 
-   private final Loadout loadout;
+   private final LoadoutBase<?> loadout;
 
-   public TurningSpeed(Loadout aLoadout){
+   public TurningSpeed(LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 
    @Override
    public double calculate(){
-      Chassis chassi = loadout.getChassi();
       Engine engine = loadout.getEngine();
       if( engine == null )
          return 0.0;
-      return chassi.getTurnRateAtThrottle(0.0, engine.getRating()) * loadout.getEfficiencies().getTurnSpeedModifier();
+      return getTurnRateAtThrottle(0.0, engine.getRating()) * loadout.getEfficiencies().getTurnSpeedModifier();
+   }
+
+   public double getTurnRateAtThrottle(double aThrottle, int aEngineRating){
+      final double k = (double)aEngineRating / loadout.getChassis().getMassMax() * 180.0 / Math.PI;
+
+      MovementProfile mp = loadout.getMovementProfile();
+
+      if( aThrottle <= mp.getTurnLerpLowSpeed() ){
+         return k * mp.getTurnLerpLowRate();
+      }
+      else if( aThrottle <= mp.getTurnLerpMidSpeed() ){
+         final double f = (aThrottle - mp.getTurnLerpLowSpeed()) / (mp.getTurnLerpMidSpeed() - mp.getTurnLerpLowSpeed());
+         return k * (mp.getTurnLerpLowRate() + (mp.getTurnLerpMidRate() - mp.getTurnLerpLowRate()) * f);
+      }
+      else if( aThrottle < mp.getTurnLerpHighSpeed() ){
+         final double f = (aThrottle - mp.getTurnLerpMidSpeed()) / (mp.getTurnLerpHighSpeed() - mp.getTurnLerpMidSpeed());
+         return k * (mp.getTurnLerpMidRate() + (mp.getTurnLerpHighRate() - mp.getTurnLerpMidRate()) * f);
+      }
+      else{
+         return k * mp.getTurnLerpHighRate();
+      }
    }
 }

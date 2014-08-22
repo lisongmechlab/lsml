@@ -83,7 +83,7 @@ public class LSML extends JFrame{
    public final Preferences        preferences            = new Preferences(xBar);
    public final OperationStack     garageOperationStack   = new OperationStack(256);
 
-   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder(xBar);
+   public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder();
    public final MechLabPane        mechLabPane            = new MechLabPane(xBar, preferences);
    public final JTabbedPane        tabbedPane             = new JTabbedPane();
    final Action                    undoGarageAction       = new UndoGarageAction(xBar);
@@ -108,7 +108,7 @@ public class LSML extends JFrame{
          return value;
       }
       catch( IOException e ){
-          return "(develop)";
+         return "(develop)";
       }
    }
 

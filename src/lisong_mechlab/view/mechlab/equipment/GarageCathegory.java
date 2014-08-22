@@ -23,22 +23,25 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.Faction;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.garage.MechGarage.Message.Type;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.Loadout.Message;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.util.MessageXBar;
 
-class GarageCathegory extends FilterTreeCathegory<Loadout>{
-   private MechGarage        garage = null;
-   private final ChassiClass chassiClass;
+class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?>>{
+   private MechGarage         garage = null;
+   private final ChassisClass chassiClass;
+   private final Faction faction;
 
-   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar, ChassiClass aChassiClass,
-                          JTextField aFilterBar, GarageTree aGarageTree){
+   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar, ChassisClass aChassiClass,
+                          JTextField aFilterBar, GarageTree aGarageTree, Faction aFaction){
       super(xbar, aName, aParent, aModel, aFilterBar, aGarageTree);
       chassiClass = aChassiClass;
+      faction = aFaction;
    }
 
    @Override
@@ -51,9 +54,9 @@ class GarageCathegory extends FilterTreeCathegory<Loadout>{
          }
          garageChanged();
       }
-      else if( aMsg instanceof Loadout.Message ){
-         Loadout.Message message = (Message)aMsg;
-         if( message.type == Loadout.Message.Type.CREATE || message.type == Loadout.Message.Type.RENAME ){
+      else if( aMsg instanceof LoadoutMessage ){
+         LoadoutMessage message = (LoadoutMessage)aMsg;
+         if( message.type == LoadoutMessage.Type.CREATE || message.type == LoadoutMessage.Type.RENAME ){
             garageChanged();
          }
       }
@@ -61,16 +64,16 @@ class GarageCathegory extends FilterTreeCathegory<Loadout>{
    }
 
    @Override
-   protected boolean filter(Loadout aLoadout){
-      Chassis chassi = aLoadout.getChassi();
+   protected boolean filter(LoadoutBase<?> aLoadout){
+      ChassisBase chassi = aLoadout.getChassis();
       return aLoadout.getName().toLowerCase().contains(getFilterString()) || chassi.getName().toLowerCase().contains(getFilterString());
    }
 
    private void garageChanged(){
       children.clear();
       if( garage != null ){
-         for(Loadout loadout : garage.getMechs()){
-            if( loadout.getChassi().getChassiClass() == chassiClass )
+         for(LoadoutBase<?> loadout : garage.getMechs()){
+            if( loadout.getChassis().getChassiClass() == chassiClass && loadout.getChassis().getFaction().isCompatible(faction))
                children.add(loadout);
          }
       }

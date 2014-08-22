@@ -19,9 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * This {@link Metric} calculates how quickly a mech can twist its torso in relation to its feet.
@@ -29,19 +29,18 @@ import lisong_mechlab.model.loadout.Loadout;
  * @author Li Song
  */
 public class TwistSpeed implements Metric{
-   private final Loadout loadout;
+   private final LoadoutBase<?> loadout;
 
-   public TwistSpeed(Loadout aLoadout){
+   public TwistSpeed(LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 
    @Override
    public double calculate(){
-      Chassis chassi = loadout.getChassi();
+      ChassisBase chassi = loadout.getChassis();
       Engine engine = loadout.getEngine();
       if( engine == null )
          return 0.0;
-      return chassi.getTwistFactor() * loadout.getEngine().getRating() / chassi.getMassMax();
+      return loadout.getMovementProfile().getTorsoYawSpeed() * loadout.getEngine().getRating() / chassi.getMassMax();
    }
-
 }

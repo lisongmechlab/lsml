@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 
 /**
@@ -27,11 +27,11 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Li Song
  */
-public class Upgrades implements Cloneable{
-   private ArmorUpgrade     armorType     = UpgradeDB.STANDARD_ARMOR;
-   private StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
-   private GuidanceUpgrade  guidanceType  = UpgradeDB.STANDARD_GUIDANCE;
-   private HeatSinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
+public class Upgrades{
+   protected ArmorUpgrade     armorType     = UpgradeDB.STANDARD_ARMOR;
+   protected StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
+   protected GuidanceUpgrade  guidanceType  = UpgradeDB.STANDARD_GUIDANCE;
+   protected HeatSinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
 
    public static class Message implements MessageXBar.Message{
       public final ChangeMsg msg;
@@ -56,7 +56,7 @@ public class Upgrades implements Cloneable{
       }
 
       @Override
-      public boolean isForMe(Loadout aLoadout){
+      public boolean isForMe(LoadoutBase<?> aLoadout){
          return aLoadout.getUpgrades() == source;
       }
 
@@ -86,11 +86,6 @@ public class Upgrades implements Cloneable{
       this(aUpgrades.armorType, aUpgrades.structureType, aUpgrades.guidanceType, aUpgrades.heatSinkType);
    }
 
-   /**
-    * 
-    */
-   public Upgrades(){}
-
    @Override
    public boolean equals(Object obj){
       if( this == obj )
@@ -111,17 +106,6 @@ public class Upgrades implements Cloneable{
       return true;
    }
 
-   @Override
-   public Upgrades clone(){
-      try{
-         Upgrades clone = (Upgrades)super.clone();
-         return clone;
-      }
-      catch( CloneNotSupportedException e ){
-         throw new RuntimeException(e);
-      }
-   }
-
    public GuidanceUpgrade getGuidance(){
       return guidanceType;
    }
@@ -138,19 +122,16 @@ public class Upgrades implements Cloneable{
       return armorType;
    }
 
+   /**
+    * Changes the guidance type.
+    * <p>
+    * This is package visibility as it is only intended to be modified by the Op* classes.
+    * 
+    * @param aGuidanceUpgrade
+    *           The new {@link GuidanceUpgrade}.
+    */
    void setGuidance(GuidanceUpgrade aGuidanceUpgrade){
       guidanceType = aGuidanceUpgrade;
    }
 
-   void setHeatSink(HeatSinkUpgrade aHeatsinkUpgrade){
-      heatSinkType = aHeatsinkUpgrade;
-   }
-
-   void setStructure(StructureUpgrade aStructureUpgrade){
-      structureType = aStructureUpgrade;
-   }
-
-   void setArmor(ArmorUpgrade anArmorUpgrade){
-      armorType = anArmorUpgrade;
-   }
 }

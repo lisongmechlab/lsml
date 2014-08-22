@@ -28,8 +28,8 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.garage.MechGarage;
-import lisong_mechlab.model.garage.RemoveFromGarageOperation;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.garage.OpRemoveFromGarage;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
@@ -37,21 +37,21 @@ import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 public class DeleteLoadoutAction extends AbstractAction implements Reader{
-   private static final long   serialVersionUID = -4813215864397617783L;
-   private static final String SHORTCUT_STROKE  = "control D";
-   private final Loadout       loadout;
-   private final MechGarage    garage;
-   private final LoadoutFrame  loadoutFrame;
+   private static final long    serialVersionUID = -4813215864397617783L;
+   private static final String  SHORTCUT_STROKE  = "control D";
+   private final LoadoutBase<?> loadout;
+   private final MechGarage     garage;
+   private final LoadoutFrame   loadoutFrame;
 
    public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame){
       this(anXBar, aGarage, aLoadoutFrame, aLoadoutFrame.getLoadout());
    }
 
-   public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, Loadout aLoadout){
+   public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutBase<?> aLoadout){
       this(anXBar, aGarage, null, aLoadout);
    }
 
-   private DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame, Loadout aLoadout){
+   private DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame, LoadoutBase<?> aLoadout){
       super("Delete loadout");
       loadoutFrame = aLoadoutFrame;
       loadout = aLoadout;
@@ -70,7 +70,7 @@ public class DeleteLoadoutAction extends AbstractAction implements Reader{
                                                     "Confirm operation", JOptionPane.YES_NO_OPTION);
          if( JOptionPane.YES_OPTION == result ){
             try{
-               ProgramInit.lsml().garageOperationStack.pushAndApply(new RemoveFromGarageOperation(garage, loadout));
+               ProgramInit.lsml().garageOperationStack.pushAndApply(new OpRemoveFromGarage(garage, loadout));
             }
             catch( RuntimeException e ){
                JOptionPane.showMessageDialog(source,

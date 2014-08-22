@@ -19,13 +19,13 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -38,17 +38,19 @@ public class Weapon extends HeatSource{
    @XStreamAsAttribute
    private final double    cycleTime;
    @XStreamAsAttribute
+   private final double    rangeZero;
+   @XStreamAsAttribute
    private final double    rangeMin;
    @XStreamAsAttribute
    private final double    rangeLong;
    @XStreamAsAttribute
    private final double    rangeMax;
    @XStreamAsAttribute
-   private final int       ammoPerShot;
+   private final double    fallOffExponent;
    @XStreamAsAttribute
-   private final int       projectilesPerShot;
+   private final int       projectilesPerRound;
    @XStreamAsAttribute
-   private final int       shotsPerFiring;
+   private final int       roundsPerShot;
    @XStreamAsAttribute
    private final int       ghostHeatGroupId;
    @XStreamAsAttribute
@@ -78,16 +80,16 @@ public class Weapon extends HeatSource{
       else{
          cycleTime = aStatsWeapon.WeaponStats.cooldown;
       }
+      rangeZero = aStatsWeapon.WeaponStats.nullRange;
       rangeMin = aStatsWeapon.WeaponStats.minRange;
       rangeMax = aStatsWeapon.WeaponStats.maxRange;
       rangeLong = aStatsWeapon.WeaponStats.longRange;
+      fallOffExponent = aStatsWeapon.WeaponStats.falloffexponent != 0 ? aStatsWeapon.WeaponStats.falloffexponent : 1.0;
 
-      shotsPerFiring = aStatsWeapon.WeaponStats.numFiring;
-      projectilesPerShot = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
-      ammoPerShot = aStatsWeapon.WeaponStats.ammoPerShot;
-
+      roundsPerShot = aStatsWeapon.WeaponStats.numFiring;
+      projectilesPerRound = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
       projectileSpeed = aStatsWeapon.WeaponStats.speed;
-      
+
       if( aStatsWeapon.WeaponStats.minheatpenaltylevel != 0 ){
          ghostHeatGroupId = aStatsWeapon.WeaponStats.heatPenaltyID;
          ghostHeatMultiplier = aStatsWeapon.WeaponStats.heatpenalty;
@@ -98,6 +100,10 @@ public class Weapon extends HeatSource{
          ghostHeatMultiplier = 0;
          ghostHeatFreeAlpha = -1;
       }
+   }
+
+   public boolean isOffensive(){
+      return this != ItemDB.AMS && this != ItemDB.C_AMS;
    }
 
    /**
@@ -118,20 +124,29 @@ public class Weapon extends HeatSource{
    }
 
    public double getDamagePerShot(){
-      return damagePerProjectile * projectilesPerShot * shotsPerFiring;
+      return damagePerProjectile * projectilesPerRound * roundsPerShot;
    }
 
    public int getAmmoPerPerShot(){
-      return ammoPerShot;
+      return roundsPerShot;
    }
 
-   public double getSecondsPerShot(Efficiencies aEfficiencies){
-      return getCycleTime(aEfficiencies);
+   public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
+      return getCoolDown(aEfficiencies, aModifiers);
    }
 
-   public double getCycleTime(Efficiencies aEfficiencies){
+   public double getCoolDown(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
+      double a = 0;
+      if( aModifiers != null ){
+         for(WeaponModifier mod : aModifiers){
+            if( mod.affectsWeapon(this) ){
+               a += mod.extraCooldown(this, cycleTime, null);
+            }
+         }
+      }
+
       double factor = (null == aEfficiencies) ? 1.0 : aEfficiencies.getWeaponCycleTimeModifier();
-      return cycleTime * factor;
+      return (cycleTime + a) * factor;
    }
 
    public double getProjectileSpeed(){
@@ -139,31 +154,69 @@ public class Weapon extends HeatSource{
    }
 
    public double getRangeZero(){
-      return 0;
+      if( rangeZero == rangeMin )
+         return rangeZero - Math.ulp(rangeMin);
+      return rangeZero;
    }
 
    public double getRangeMin(){
       return rangeMin;
    }
 
-   public double getRangeMax(){
-      return rangeMax;
+   public double getRangeMax(Collection<WeaponModifier> aModifiers){
+      double a = 0;
+      if( aModifiers != null ){
+         for(WeaponModifier mod : aModifiers){
+            if( mod.affectsWeapon(this) ){
+               a += mod.extraMaxRange(this, rangeMax, null);
+            }
+         }
+      }
+
+      if( rangeMax == rangeLong )
+         a += Math.ulp(rangeMax + a);
+
+      return rangeMax + a;
    }
 
-   public double getRangeLong(){
-      return rangeLong;
+   public double getRangeLong(Collection<WeaponModifier> aModifiers){
+      double a = 0;
+      if( aModifiers != null ){
+         for(WeaponModifier mod : aModifiers){
+            if( mod.affectsWeapon(this) ){
+               a += mod.extraLongRange(this, rangeLong, null);
+            }
+         }
+      }
+      return rangeLong + a;
    }
 
-   public double getRangeEffectivity(double range){
+   @Override
+   public double getHeat(Collection<WeaponModifier> aModifiers){
+      double a = 0;
+      if( aModifiers != null ){
+         for(WeaponModifier mod : aModifiers){
+            if( mod.affectsWeapon(this) ){
+               a += mod.extraWeaponHeat(this, super.getHeat(aModifiers), null);
+            }
+
+         }
+      }
+      return super.getHeat(aModifiers) + a;
+   }
+
+   public double getRangeEffectivity(double range, Collection<WeaponModifier> aModifiers){
       // Assume linear fall off
       if( range < getRangeZero() )
          return 0;
-      if( range < getRangeMin() )
-         return (range - getRangeZero()) / (getRangeMin() - getRangeZero());
-      else if( range <= getRangeLong() )
+      else if( range < getRangeMin() )
+         return Math.pow((range - getRangeZero()) / (getRangeMin() - getRangeZero()), fallOffExponent);
+      else if( range <= getRangeLong(aModifiers) )
          return 1.0;
-      else if( range < getRangeMax() )
-         return 1.0 - (range - getRangeLong()) / (getRangeMax() - getRangeLong());
+      else if( range < getRangeMax(aModifiers) ){
+         // Presumably long range fall off can also be exponential, we'll wait until there is evidence of the fact.
+         return 1.0 - (range - getRangeLong(aModifiers)) / (getRangeMax(aModifiers) - getRangeLong(aModifiers));
+      }
       else
          return 0;
    }
@@ -176,14 +229,14 @@ public class Weapon extends HeatSource{
     * @param aWeaponStat
     *           A string specifying the statistic to be calculated. Must match the regexp pattern
     *           "[dsthc]+(/[dsthc]+)?".
-    * @param anUpgrades
-    *           Any {@link Upgrades} that can affect the stats, can be <code>null</code> to assume no {@link Upgrades}.
     * @param aEfficiencies
     *           Any {@link Efficiencies} that can affect the stats, can be <code>null</code> to assume no
     *           {@link Efficiencies}.
+    * @param aModifiers
+    *           A list of pilot modules to take into account.
     * @return The calculated statistic.
     */
-   public double getStat(String aWeaponStat, Upgrades anUpgrades, Efficiencies aEfficiencies){
+   public double getStat(String aWeaponStat, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       double nominator = 1;
       int index = 0;
       while( index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/' ){
@@ -192,16 +245,16 @@ public class Weapon extends HeatSource{
                nominator *= getDamagePerShot();
                break;
             case 's':
-               nominator *= getSecondsPerShot(aEfficiencies);
+               nominator *= getSecondsPerShot(aEfficiencies, aModifiers);
                break;
             case 't':
-               nominator *= getMass(anUpgrades);
+               nominator *= getMass();
                break;
             case 'h':
-               nominator *= getHeat();
+               nominator *= getHeat(aModifiers);
                break;
             case 'c':
-               nominator *= getNumCriticalSlots(anUpgrades);
+               nominator *= getNumCriticalSlots();
                break;
             default:
                throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
@@ -217,16 +270,16 @@ public class Weapon extends HeatSource{
                denominator *= getDamagePerShot();
                break;
             case 's':
-               denominator *= getSecondsPerShot(aEfficiencies);
+               denominator *= getSecondsPerShot(aEfficiencies, aModifiers);
                break;
             case 't':
-               denominator *= getMass(anUpgrades);
+               denominator *= getMass();
                break;
             case 'h':
-               denominator *= getHeat();
+               denominator *= getHeat(aModifiers);
                break;
             case 'c':
-               denominator *= getNumCriticalSlots(anUpgrades);
+               denominator *= getNumCriticalSlots();
                break;
             default:
                throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
@@ -270,5 +323,26 @@ public class Weapon extends HeatSource{
             return mLhs.group(1).compareTo(mRhs.group(1));
          }
       };
+   }
+
+   /**
+    * @return <code>true</code> if this weapon has a non-linear fall off.
+    */
+   public boolean hasNonLinearFalloff(){
+      return 1.0 != fallOffExponent;
+   }
+
+   /**
+    * @return <code>true</code> if the Lower Arm Actuator (LAA) and/or Hand Actuator (HA) should be removed if this
+    *         weapon is equipped.
+    */
+   public boolean isLargeBore(){
+      boolean isLargeBore = false;
+      isLargeBore |= getName().toLowerCase().contains("ppc");
+      isLargeBore |= getName().toLowerCase().contains("gauss");
+      isLargeBore |= getName().toLowerCase().contains("ac/");
+      isLargeBore |= getName().toLowerCase().contains("x ac");
+      isLargeBore |= getName().toLowerCase().contains("10-x");
+      return isLargeBore;
    }
 }

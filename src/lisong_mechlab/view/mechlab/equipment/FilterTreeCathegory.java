@@ -18,7 +18,7 @@ public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> imp
    private String             nameFilter       = "";
    private boolean            wasExpandedBeforeFilter;
    private final List<T>      filteredChildren = new ArrayList<>();
-   private boolean            filterDirty = true;
+   private boolean            filterDirty      = true;
 
    public FilterTreeCathegory(MessageXBar aXBar, String aName, TreeCathegory aParent, GarageTreeModel aModel, final JTextField aFilterBar,
                               GarageTree aGarageTree){
@@ -59,7 +59,7 @@ public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> imp
    public void setDirtyBit(){
       filterDirty = true;
    }
-   
+
    protected String getFilterString(){
       return nameFilter;
    }

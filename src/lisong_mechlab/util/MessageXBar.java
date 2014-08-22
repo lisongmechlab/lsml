@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
  * Implements a message passing framework for an UI where the components don't have to know about each other, only about
@@ -60,16 +61,17 @@ public class MessageXBar{
     */
    public static interface Message{
       /**
-       * Checks if this message is related to a specific {@link Loadout}.
+       * Checks if this message is related to a specific {@link LoadoutStandard}.
        * 
        * @param aLoadout
-       *           The {@link Loadout} to check.
-       * @return <code>true</code> if this message affects the given {@link Loadout}.
+       *           The {@link LoadoutStandard} to check.
+       * @return <code>true</code> if this message affects the given {@link LoadoutStandard}.
        */
-      public boolean isForMe(Loadout aLoadout);
+      public boolean isForMe(LoadoutBase<?> aLoadout);
 
       /**
-       * @return <code>true</code> if this message can affect the damage or heat output of the related {@link Loadout}.
+       * @return <code>true</code> if this message can affect the damage or heat output of the related
+       *         {@link LoadoutStandard}.
        */
       public boolean affectsHeatOrDamage();
    }
@@ -97,34 +99,41 @@ public class MessageXBar{
       if( dispatching )
          throw new IllegalStateException("Recursive dispatch!");
       dispatching = true;
-      Iterator<WeakReference<Reader>> it = readers.iterator();
-      while( it.hasNext() ){
-         WeakReference<Reader> ref = it.next();
-         Reader reader = ref.get();
-         if( reader == null ){
-            it.remove();
-            continue;
-         }
-         if( debug ){
-            long startNs = System.nanoTime();
-            reader.receive(aMessage);
-            long endNs = System.nanoTime();
-            Double v = perf_walltime.get(reader.getClass());
-            Integer u = perf_calls.get(reader.getClass());
-            if( v == null ){
-               v = 0.0;
-               u = 0;
+      try{
+         Iterator<WeakReference<Reader>> it = readers.iterator();
+         while( it.hasNext() ){
+            WeakReference<Reader> ref = it.next();
+            Reader reader = ref.get();
+            if( reader == null ){
+               it.remove();
+               continue;
             }
-            v += (endNs - startNs) / 1E9;
-            u += 1;
-            perf_walltime.put(reader.getClass(), v);
-            perf_calls.put(reader.getClass(), u);
-         }
-         else{
-            reader.receive(aMessage);
+            if( debug ){
+               long startNs = System.nanoTime();
+               reader.receive(aMessage);
+               long endNs = System.nanoTime();
+               Double v = perf_walltime.get(reader.getClass());
+               Integer u = perf_calls.get(reader.getClass());
+               if( v == null ){
+                  v = 0.0;
+                  u = 0;
+               }
+               v += (endNs - startNs) / 1E9;
+               u += 1;
+               perf_walltime.put(reader.getClass(), v);
+               perf_calls.put(reader.getClass(), u);
+            }
+            else{
+               reader.receive(aMessage);
+            }
          }
       }
-      dispatching = false;
+      catch( Throwable t ){
+         t.printStackTrace();
+      }
+      finally{
+         dispatching = false;
+      }
    }
 
    /**

@@ -27,10 +27,11 @@ import javax.swing.AbstractAction;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.loadout.LoadStockOperation;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;
@@ -43,7 +44,7 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class LoadStockAction extends AbstractAction{
    private static final long    serialVersionUID = 4350731510583942480L;
-   private final Loadout        loadout;
+   private final LoadoutBase<?> loadout;
    private final OperationStack stack;
    private final MessageXBar    xBar;
    private final Component      component;
@@ -52,16 +53,16 @@ public class LoadStockAction extends AbstractAction{
     * Creates a new {@link LoadStockAction}.
     * 
     * @param aLoadout
-    *           The {@link Loadout} to load stock for.
+    *           The {@link LoadoutStandard} to load stock for.
     * @param aStack
     *           The {@link OperationStack} stack that shall be used for undo information.
     * @param aXBar
-    *           The {@link MessageXBar} that shall be used for signaling changes to the {@link Loadout}.
+    *           The {@link MessageXBar} that shall be used for signaling changes to the {@link LoadoutStandard}.
     * @param aComponent
     *           The {@link Component} on which any dialogs will be centered.
     */
-   public LoadStockAction(Loadout aLoadout, OperationStack aStack, MessageXBar aXBar, Component aComponent){
-      super(getActionName(aLoadout.getChassi()));
+   public LoadStockAction(LoadoutBase<?> aLoadout, OperationStack aStack, MessageXBar aXBar, Component aComponent){
+      super(getActionName(aLoadout.getChassis()));
       loadout = aLoadout;
       stack = aStack;
       xBar = aXBar;
@@ -70,17 +71,17 @@ public class LoadStockAction extends AbstractAction{
 
    @Override
    public void actionPerformed(ActionEvent aArg0){
-      final Collection<Chassis> variations = ChassiDB.lookupVariations(loadout.getChassi());
+      final Collection<? extends ChassisBase> variations = ChassisDB.lookupVariations(loadout.getChassis());
 
       try{
          if( variations.size() == 1 ){
-            stack.pushAndApply(new LoadStockOperation(loadout.getChassi(), loadout, xBar));
+            stack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
          }
          else{
-            JList<Chassis> list = new JList<>(variations.toArray(new Chassis[variations.size()]));
+            JList<ChassisBase> list = new JList<>(variations.toArray(new ChassisBase[variations.size()]));
             JOptionPane.showConfirmDialog(component, list, "Which stock loadout?", JOptionPane.OK_CANCEL_OPTION);
             if( list.getSelectedValue() != null ){
-               stack.pushAndApply(new LoadStockOperation(list.getSelectedValue(), loadout, xBar));
+               stack.pushAndApply(new OpLoadStock(list.getSelectedValue(), loadout, xBar));
             }
          }
       }
@@ -89,8 +90,8 @@ public class LoadStockAction extends AbstractAction{
       }
    }
 
-   private static String getActionName(Chassis aChassis){
-      if( ChassiDB.lookupVariations(aChassis).size() > 1 ){
+   private static String getActionName(ChassisBase aChassis){
+      if( ChassisDB.lookupVariations(aChassis).size() > 1 ){
          return "Load stock...";
       }
       return "Load stock";

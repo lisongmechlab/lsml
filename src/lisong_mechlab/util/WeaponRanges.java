@@ -26,9 +26,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.item.WeaponModifier;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * This class will calculate the set of ranges at which weapons change damage. In essence, it calculates the ordered
@@ -38,34 +38,44 @@ import lisong_mechlab.model.loadout.Loadout;
  */
 public class WeaponRanges{
 
-   static public Double[] getRanges(Collection<Weapon> aWeaponCollection){
+   static private void addRange(SortedSet<Double> result, double start, double end){
+      final double step = 10;
+      while( start + step < end ){
+         start += step;
+         result.add(start);
+      }
+   }
+
+   static public Double[] getRanges(Collection<Weapon> aWeaponCollection, Collection<WeaponModifier> aModifiers){
       SortedSet<Double> ans = new TreeSet<>();
 
       ans.add(Double.valueOf(0.0));
       for(Weapon weapon : aWeaponCollection){
-         if( weapon.hasSpread() ){
-            ans.add(weapon.getRangeZero());
-            double min = weapon.getRangeMin();
-            double max = weapon.getRangeMax();
-            ans.add(min);
-            final double step = 10;
-            while( min + step < max ){
-               min += step;
-               ans.add(min);
-            }
-            ans.add(max);
+         if( !weapon.isOffensive() )
+            continue;
+
+         ans.add(weapon.getRangeZero());
+         if( weapon.hasNonLinearFalloff() ){
+            addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
          }
-         else if( weapon != ItemDB.AMS ){
-            ans.add(weapon.getRangeZero());
-            ans.add(weapon.getRangeMin());
-            ans.add(weapon.getRangeLong());
-            ans.add(weapon.getRangeMax());
+         ans.add(weapon.getRangeMin());
+
+         if( weapon.hasSpread() ){
+            addRange(ans, weapon.getRangeMin(), weapon.getRangeMax(aModifiers));
+            ans.add(weapon.getRangeMax(aModifiers));
+         }
+         else{
+            ans.add(weapon.getRangeLong(aModifiers));
+            if( weapon.hasNonLinearFalloff() ){
+               addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
+            }
+            ans.add(weapon.getRangeMax(aModifiers));
          }
       }
       return ans.toArray(new Double[ans.size()]);
    }
 
-   static public Double[] getRanges(Loadout aLoadout){
+   static public Double[] getRanges(LoadoutBase<?> aLoadout){
       List<Weapon> weapons = new ArrayList<>();
       for(Item item : aLoadout.getAllItems()){
          if( item instanceof Weapon ){
@@ -73,6 +83,6 @@ public class WeaponRanges{
             weapons.add(weapon);
          }
       }
-      return getRanges(weapons);
+      return getRanges(weapons, aLoadout.getWeaponModifiers());
    }
 }

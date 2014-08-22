@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.Faction;
 
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ public class MissileWeaponTest{
       MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
       MissileWeapon srm6artemis = (MissileWeapon)ItemDB.lookup("SRM 6 + ARTEMIS");
 
-      assertEquals(srm6artemis.getNumCriticalSlots(null), srm6.getNumCriticalSlots(null) + 1);
+      assertEquals(srm6artemis.getNumCriticalSlots(), srm6.getNumCriticalSlots() + 1);
    }
 
    /**
@@ -52,28 +52,17 @@ public class MissileWeaponTest{
       MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
       MissileWeapon srm6artemis = (MissileWeapon)ItemDB.lookup("SRM 6 + ARTEMIS");
 
-      assertEquals(srm6.getMass(null) + 1.0, srm6artemis.getMass(null), 0.0);
+      assertEquals(srm6.getMass() + 1.0, srm6artemis.getMass(), 0.0);
    }
 
    /**
-    * {@link MissileWeapon#getAmmoType(Upgrades)} shall return Artemis ammo type for weapons that are Artemis capable.
-    */
-   @Test
-   public void testGetAmmoType(){
-      for(MissileWeapon weapon : allMissileWeapons){
-         if( weapon.getName().contains("ARTEMIS") )
-            assertTrue(weapon.getAmmoType(null).getName().contains("ARTEMIS"));
-         else
-            assertFalse(weapon.getAmmoType(null).getName().contains("ARTEMIS"));
-      }
-   }
-
-   /**
-    * All missiles have an instant fall off on the near range.
+    * All missiles except clan LRM have an instant fall off on the near range.
     */
    @Test
    public void testGetRangeZero(){
       for(MissileWeapon weapon : allMissileWeapons){
+         if(weapon.getName().contains("LRM") && weapon.getFaction() == Faction.Clan)
+            continue;
          assertTrue(weapon.getRangeMin() - weapon.getRangeZero() < 0.0001);
       }
    }
@@ -84,7 +73,7 @@ public class MissileWeaponTest{
    @Test
    public void testGetRangeMax(){
       for(MissileWeapon weapon : allMissileWeapons){
-         assertTrue(weapon.getRangeMax() - weapon.getRangeLong() < 0.0001);
+         assertTrue(weapon.getRangeMax(null) - weapon.getRangeLong(null) < 0.0001);
       }
    }
 
@@ -130,21 +119,21 @@ public class MissileWeaponTest{
    @Test
    public void testGetRangeEffectivity_lrm20() throws Exception{
       MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("LRM 20");
-      assertEquals(0.0, srm6.getRangeEffectivity(0), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMin() - Math.ulp(srm6.getRangeLong()) * Weapon.RANGE_ULP_FUZZ), 0.0);
-      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeMin()), 0.0);
-      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong()), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * Weapon.RANGE_ULP_FUZZ), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax()), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(0, null), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMin() - Math.ulp(srm6.getRangeLong(null)) * Weapon.RANGE_ULP_FUZZ, null), 0.0);
+      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeMin(), null), 0.0);
+      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong(null), null), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong(null) + Math.ulp(srm6.getRangeLong(null)) * Weapon.RANGE_ULP_FUZZ, null), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax(null), null), 0.0);
    }
 
    @Test
    public void testGetRangeEffectivity_srm6() throws Exception{
       MissileWeapon srm6 = (MissileWeapon)ItemDB.lookup("SRM 6");
-      assertEquals(1.0, srm6.getRangeEffectivity(0), 0.0);
-      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong()), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong() + Math.ulp(srm6.getRangeLong()) * Weapon.RANGE_ULP_FUZZ), 0.0);
-      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax()), 0.0);
+      assertEquals(1.0, srm6.getRangeEffectivity(0, null), 0.0);
+      assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong(null), null), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeLong(null) + Math.ulp(srm6.getRangeLong(null)) * Weapon.RANGE_ULP_FUZZ, null), 0.0);
+      assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax(null), null), 0.0);
    }
 
 }

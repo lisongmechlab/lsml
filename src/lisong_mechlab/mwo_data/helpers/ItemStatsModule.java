@@ -19,15 +19,25 @@
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import java.util.List;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 public class ItemStatsModule extends ItemStats{
    @XStreamAsAttribute
-   public String                 CType;
+   public String                    CType;
 
-   public ItemStatsModuleStats   ModuleStats;
-   public ItemStatsJumpJetStats  JumpJetStats;
-   public ItemStatsHeatSinkStats HeatSinkStats;
-   public ItemStatsEngineStats   EngineStats;
-   public AmmoTypeStats          AmmoTypeStats;
+   public ItemStatsModuleStats      ModuleStats;
+   public ItemStatsJumpJetStats     JumpJetStats;
+   public ItemStatsHeatSinkStats    HeatSinkStats;
+   public ItemStatsEngineStats      EngineStats;
+   public AmmoTypeStats             AmmoTypeStats;
+   public XMLPilotModuleStats       PilotModuleStats;
+   public XMLTargetingComputerStats TargetingComputerStats;
+
+   public XMLPilotModuleWeaponStats PilotModuleWeaponStats;
+
+   @XStreamImplicit
+   public List<XMLWeaponStats>      WeaponStats;
 }

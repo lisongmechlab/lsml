@@ -28,20 +28,19 @@ import java.util.Map;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
- * This {@link Metric} calculates the maximal DPS that a {@link Loadout} can sustain indefinitely.
+ * This {@link Metric} calculates the maximal DPS that a {@link LoadoutStandard} can sustain indefinitely.
  * 
  * @author Li Song
  */
 public class MaxSustainedDPS extends RangeMetric{
    private final HeatDissipation dissipation;
 
-   public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation){
+   public MaxSustainedDPS(final LoadoutBase<?> aLoadout, final HeatDissipation aHeatDissipation){
       super(aLoadout);
       dissipation = aHeatDissipation;
    }
@@ -53,8 +52,8 @@ public class MaxSustainedDPS extends RangeMetric{
       for(Map.Entry<Weapon, Double> entry : dd.entrySet()){
          Weapon weapon = entry.getKey();
          double ratio = entry.getValue();
-         double rangeEffectivity = weapon.getRangeEffectivity(aRange);
-         ans += rangeEffectivity * weapon.getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies()) * ratio;
+         double rangeEffectivity = weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers());
+         ans += rangeEffectivity * weapon.getStat("d/s", loadout.getEfficiencies(), loadout.getWeaponModifiers()) * ratio;
       }
       return ans;
    }
@@ -70,13 +69,12 @@ public class MaxSustainedDPS extends RangeMetric{
     *         weapon is used.
     */
    public Map<Weapon, Double> getWeaponRatios(final double aRange){
-      final Upgrades upgrades = loadout.getUpgrades();
       final Efficiencies efficiencies = loadout.getEfficiencies();
 
       double heatleft = dissipation.calculate();
       List<Weapon> weapons = new ArrayList<>(15);
       for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon && item != ItemDB.AMS ){
+         if( item instanceof Weapon && ((Weapon)item).isOffensive() ){
             weapons.add((Weapon)item);
          }
       }
@@ -84,11 +82,14 @@ public class MaxSustainedDPS extends RangeMetric{
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
-               double dps2 = aO2.getRangeEffectivity(aRange) * aO2.getStat("d/h", upgrades, efficiencies);
-               double dps1 = aO1.getRangeEffectivity(aRange) * aO1.getStat("d/h", upgrades, efficiencies);
-               if( aO1.getRangeMax() < aRange )
+               // Note: D/H == DPS / HPS so we're ordering by highest dps per hps.
+               double dps2 = aO2.getRangeEffectivity(aRange, loadout.getWeaponModifiers())
+                             * aO2.getStat("d/h", efficiencies, loadout.getWeaponModifiers());
+               double dps1 = aO1.getRangeEffectivity(aRange, loadout.getWeaponModifiers())
+                             * aO1.getStat("d/h", efficiencies, loadout.getWeaponModifiers());
+               if( aO1.getRangeMax(loadout.getWeaponModifiers()) < aRange )
                   dps1 = 0;
-               if( aO2.getRangeMax() < aRange )
+               if( aO2.getRangeMax(loadout.getWeaponModifiers()) < aRange )
                   dps2 = 0;
                return Double.compare(dps2, dps1);
             }
@@ -98,7 +99,8 @@ public class MaxSustainedDPS extends RangeMetric{
          Collections.sort(weapons, new Comparator<Weapon>(){
             @Override
             public int compare(Weapon aO1, Weapon aO2){
-               return Double.compare(aO2.getStat("d/h", upgrades, efficiencies), aO1.getStat("d/h", upgrades, efficiencies));
+               return Double.compare(aO2.getStat("d/h", efficiencies, loadout.getWeaponModifiers()), aO1.getStat("d/h", efficiencies,
+                                                                                                                 loadout.getWeaponModifiers()));
             }
          });
       }
@@ -106,7 +108,7 @@ public class MaxSustainedDPS extends RangeMetric{
       Map<Weapon, Double> ans = new HashMap<>();
       while( !weapons.isEmpty() ){
          Weapon weapon = weapons.remove(0);
-         final double heat = weapon.getStat("h/s", upgrades, efficiencies);
+         final double heat = weapon.getStat("h/s", efficiencies, loadout.getWeaponModifiers());
          final double ratio;
 
          if( heatleft == 0 ){

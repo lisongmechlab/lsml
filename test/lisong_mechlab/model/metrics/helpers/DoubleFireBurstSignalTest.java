@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.metrics.helpers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.ItemDB;
 
@@ -35,15 +35,15 @@ public class DoubleFireBurstSignalTest{
 
    @Test(expected = IllegalArgumentException.class)
    public void testInvalidWeapon(){
-      new DoubleFireBurstSignal((BallisticWeapon)ItemDB.lookup("AC/20"), null, 0);
+      new DoubleFireBurstSignal((BallisticWeapon)ItemDB.lookup("AC/20"), null, null, 0);
    }
 
    @Test
    public void testOneCooldown(){
-      DoubleFireBurstSignal cut = new DoubleFireBurstSignal(uac5, null, 0);
+      DoubleFireBurstSignal cut = new DoubleFireBurstSignal(uac5, null, null, 0);
 
       double p_jam = uac5.getJamProbability();
       double expected = (p_jam + (1 - p_jam) * 2) * uac5.getDamagePerShot();
-      assertEquals(expected, cut.integrateFromZeroTo(uac5.getRawSecondsPerShot(null) / 2), 0.0);
+      assertEquals(expected, cut.integrateFromZeroTo(uac5.getRawSecondsPerShot(null, null) / 2), 0.0);
    }
 }

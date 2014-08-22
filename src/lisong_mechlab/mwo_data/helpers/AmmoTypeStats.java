@@ -25,9 +25,7 @@ public class AmmoTypeStats{
    @XStreamAsAttribute
    public String type;
    @XStreamAsAttribute
-   public int    health;
-   @XStreamAsAttribute
-   public int    shotsPerTon;
+   public int    numShots;
    @XStreamAsAttribute
    public double internalDamage;
 }

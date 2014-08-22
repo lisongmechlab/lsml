@@ -1,6 +1,5 @@
 *.class
 *.log
-*.xml
 *.msi
 *.wixobj
 *.wixpdb
@@ -10,6 +9,7 @@
 /bin
 *#
 build/build.sh
+build/launch4j.xml
 .gradle
 build/gradle
 *~

@@ -27,115 +27,51 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import lisong_mechlab.model.chassi.ChassiClass;
-import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.Efficiencies;
+import lisong_mechlab.model.Faction;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.chassi.OmniPodDB;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpLoadStock;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.preferences.Preferences;
 import lisong_mechlab.view.preferences.UiPreferences;
 import lisong_mechlab.view.preferences.UiPreferences.Message;
+import lisong_mechlab.view.render.ScrollablePanel;
 import lisong_mechlab.view.render.StyleManager;
 
 /**
- * Displays all available {@link Chassis} in a pane.
+ * Displays all available {@link ChassisStandard} in a pane.
  * 
  * @author Li Song
  */
 public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
-   static public class ChassiTableModel extends AbstractTableModel{
-      private static final long         serialVersionUID = -2726840937519789976L;
-      private final List<Chassis>       lights           = new ArrayList<>();
-      private final List<Chassis>       mediums          = new ArrayList<>();
-      private final List<Chassis>       heavies          = new ArrayList<>();
-      private final List<Chassis>       assaults         = new ArrayList<>();
-      private final Comparator<Chassis> cmp              = new Comparator<Chassis>(){
-                                                            @Override
-                                                            public int compare(Chassis aArg0, Chassis aArg1){
-                                                               if( aArg0.getMassMax() == aArg1.getMassMax() )
-                                                                  return aArg0.getMwoName().compareTo(aArg1.getMwoName());
-                                                               return Integer.compare(aArg0.getMassMax(), aArg1.getMassMax());
-                                                            }
-                                                         };
-
-      public ChassiTableModel(boolean aFilterSpecials){
-         recreate(aFilterSpecials);
-      }
-
-      public void recreate(boolean filterSpecials){
-         doit(lights, filterSpecials, ChassiClass.LIGHT);
-         doit(mediums, filterSpecials, ChassiClass.MEDIUM);
-         doit(heavies, filterSpecials, ChassiClass.HEAVY);
-         doit(assaults, filterSpecials, ChassiClass.ASSAULT);
-         fireTableDataChanged();
-      }
-
-      private void doit(List<Chassis> aList, boolean aFilterSpecials, ChassiClass aChassiClass){
-         aList.clear();
-         aList.addAll(ChassiDB.lookup(aChassiClass));
-         if( aFilterSpecials ){
-            Iterator<Chassis> it = aList.iterator();
-            while( it.hasNext() ){
-               Chassis c = it.next();
-               if( c.getVariantType().isVariation() ){
-                  it.remove();
-               }
-            }
-         }
-         Collections.sort(aList, cmp);
-      }
-
-      @Override
-      public int getColumnCount(){
-         return 1;
-      }
-
-      @Override
-      public int getRowCount(){
-         return lights.size() + mediums.size() + heavies.size() + assaults.size();
-      }
-
-      @Override
-      public Object getValueAt(int row, int col){
-         if( row < lights.size() )
-            return lights.get(row);
-
-         row -= lights.size();
-         if( row >= 0 && row < mediums.size() )
-            return mediums.get(row);
-
-         row -= mediums.size();
-         if( row >= 0 && row < heavies.size() )
-            return heavies.get(row);
-
-         row -= heavies.size();
-         if( row >= 0 && row < assaults.size() )
-            return assaults.get(row);
-
-         return "";
-      }
-   }
-
    static class NameColumn extends AttributeTableColumn{
       private static final long serialVersionUID = -816217603635882304L;
 
@@ -145,7 +81,7 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return ((Chassis)aSourceRowObject).getName();
+         return ((ChassisBase)aSourceRowObject).getName();
       }
    }
 
@@ -158,19 +94,19 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         return Integer.toString(((Chassis)aSourceRowObject).getMassMax());
+         return Integer.toString(((ChassisBase)aSourceRowObject).getMassMax());
       }
    }
 
    static class JumpJetsColumn extends TableColumn{
       private static final long serialVersionUID = -3845466109033447928L;
       private final JPanel      panel            = new JPanel();
-      private final JLabel      jjs              = new JLabel();
+      private final JLabel      text             = new JLabel();
 
       public JumpJetsColumn(){
          super(0);
          setHeaderValue("Jump Jets");
-         StyleManager.styleThinItem(jjs, ItemDB.lookup("JUMP JETS - CLASS V"));
+         StyleManager.styleThinItem(text, ItemDB.lookup("JUMP JETS - CLASS V"));
       }
 
       @Override
@@ -178,15 +114,59 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassis chassi = (Chassis)aValue;
+               ChassisBase chassis = (ChassisBase)aValue;
                panel.removeAll();
 
-               int jjsa = chassi.getMaxJumpJets();
+               final int jjsa;
+               if( chassis instanceof ChassisStandard ){
+                  jjsa = ((ChassisStandard)chassis).getJumpJetsMax();
+               }
+               else{
+                  ChassisOmniMech omniMech = (ChassisOmniMech)chassis;
+                  int jjs = omniMech.getFixedJumpJets();
+                  for(OmniPod omniPod : OmniPodDB.lookupOriginal(omniMech)){
+                     jjs += omniPod.getJumpJetsMax();
+                  }
+                  jjsa = jjs;
+               }
 
                if( jjsa > 0 ){
-                  jjs.setText(jjsa + " JJ");
-                  panel.add(jjs);
+                  text.setText(jjsa + " JJ");
+                  panel.add(text);
                }
+               return panel;
+            }
+         };
+      }
+   }
+
+   static class PilotModulesColumn extends TableColumn{
+      private static final long serialVersionUID = -3845466109033447928L;
+      private final JPanel      panel            = new JPanel();
+      private final JLabel      text             = new JLabel();
+
+      public PilotModulesColumn(){
+         super(0);
+         panel.add(text);
+         setHeaderValue("Modules");
+      }
+
+      @Override
+      public TableCellRenderer getCellRenderer(){
+         return new TableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
+               ChassisBase chassis = (ChassisBase)aValue;
+               int modules = chassis.getMechModulesMax();
+               if( chassis instanceof ChassisOmniMech ){
+                  ChassisOmniMech omniMech = (ChassisOmniMech)chassis;
+
+                  for(OmniPod omniPod : OmniPodDB.lookupOriginal(omniMech)){
+                     modules += omniPod.getPilotModulesMax();
+                  }
+               }
+
+               text.setText(Integer.toString(modules));
                return panel;
             }
          };
@@ -203,10 +183,37 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
 
       @Override
       public String valueOf(Object aSourceRowObject){
-         Chassis chassi = (Chassis)aSourceRowObject;
-         final double maxSpeed = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.0);
-         final double maxSpeedTweak = TopSpeed.calculate(chassi.getEngineMax(), chassi, 1.1);
-         return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
+         if( aSourceRowObject instanceof ChassisStandard ){
+            ChassisStandard chassis = (ChassisStandard)aSourceRowObject;
+
+            Efficiencies efficiencies = new Efficiencies();
+            efficiencies.setSpeedTweak(false, null);
+
+            final double maxSpeed = TopSpeed.calculate(chassis.getEngineMax(), chassis.getMovementProfileBase(), chassis.getMassMax(),
+                                                       efficiencies.getSpeedModifier());
+
+            efficiencies.setSpeedTweak(true, null);
+            final double maxSpeedTweak = TopSpeed.calculate(chassis.getEngineMax(), chassis.getMovementProfileBase(), chassis.getMassMax(),
+                                                            efficiencies.getSpeedModifier());
+            return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
+         }
+         else if( aSourceRowObject instanceof ChassisOmniMech ){
+            ChassisOmniMech chassis = (ChassisOmniMech)aSourceRowObject;
+
+            Efficiencies efficiencies = new Efficiencies();
+            efficiencies.setSpeedTweak(false, null);
+
+            final double maxSpeed = TopSpeed.calculate(chassis.getFixedEngine().getRating(), chassis.getMovementProfileStock(), chassis.getMassMax(),
+                                                       efficiencies.getSpeedModifier());
+
+            efficiencies.setSpeedTweak(true, null);
+            final double maxSpeedTweak = TopSpeed.calculate(chassis.getFixedEngine().getRating(), chassis.getMovementProfileStock(),
+                                                            chassis.getMassMax(), efficiencies.getSpeedModifier());
+            return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
+         }
+         else{
+            throw new IllegalArgumentException("Unknown chassis type!");
+         }
       }
    }
 
@@ -218,9 +225,9 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
       private final JLabel      missile          = new JLabel();
       private final JLabel      ams              = new JLabel();
       private final JLabel      ecm              = new JLabel();
-      private final Part        part;
+      private final Location    part;
 
-      public PartColumn(Part aPart){
+      public PartColumn(Location aPart){
          super(0);
          setHeaderValue(aPart.longName());
          StyleManager.styleThinItem(energy, HardPointType.ENERGY);
@@ -242,22 +249,36 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          return new TableCellRenderer(){
             @Override
             public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected, boolean aHasFocus, int aRow, int aColumn){
-               Chassis chassi = (Chassis)aValue;
-               StyleManager.styleHardpointLabel(energy, chassi.getInternalPart(part), HardPointType.ENERGY);
-               StyleManager.styleHardpointLabel(ballistic, chassi.getInternalPart(part), HardPointType.BALLISTIC);
-               StyleManager.styleHardpointLabel(missile, chassi.getInternalPart(part), HardPointType.MISSILE);
-               StyleManager.styleHardpointLabel(ams, chassi.getInternalPart(part), HardPointType.AMS);
-               StyleManager.styleHardpointLabel(ecm, chassi.getInternalPart(part), HardPointType.ECM);
+               ChassisBase chassi = (ChassisBase)aValue;
+               LoadoutBase<?> stock;
+               if( aValue instanceof ChassisStandard ){
+                  stock = new LoadoutStandard((ChassisStandard)chassi);
+                  OperationStack stack = new OperationStack(0);
+                  stack.pushAndApply(new OpLoadStock(chassi, stock, null));
+               }
+               else if( aValue instanceof ChassisOmniMech ){
+                  stock = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi);
+                  OperationStack stack = new OperationStack(0);
+                  stack.pushAndApply(new OpLoadStock(chassi, stock, null));
+               }
+               else{
+                  throw new IllegalArgumentException("Expected a chassis type as value!");
+               }
+               StyleManager.styleHardpointLabel(energy, stock.getComponent(part), HardPointType.ENERGY);
+               StyleManager.styleHardpointLabel(ballistic, stock.getComponent(part), HardPointType.BALLISTIC);
+               StyleManager.styleHardpointLabel(missile, stock.getComponent(part), HardPointType.MISSILE);
+               StyleManager.styleHardpointLabel(ams, stock.getComponent(part), HardPointType.AMS);
+               StyleManager.styleHardpointLabel(ecm, stock.getComponent(part), HardPointType.ECM);
                return panel;
             }
          };
       }
    }
 
-   private static final long serialVersionUID = -4134588793726908789L;
-   private final JTable      table;
-   private final JCheckBox   hideSpecials;
-   private final Preferences preferences;
+   private static final long  serialVersionUID = -4134588793726908789L;
+   private final List<JTable> tables           = new ArrayList<>();
+   private final JCheckBox    hideSpecials;
+   private final Preferences  preferences;
 
    public ChassiSelectionPane(final Preferences aPreferences, MessageXBar aXBar){
       super(new BorderLayout());
@@ -278,36 +299,65 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          });
          add(hideSpecials, BorderLayout.NORTH);
       }
-      {
-         table = new JTable(new ChassiTableModel(aPreferences.uiPreferences.getHideSpecialMechs()));
-         table.setRowHeight(30);
-         table.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseClicked(MouseEvent e){
-               if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
-                  final JTable target = (JTable)e.getSource();
-                  final int row = target.getSelectedRow();
-                  final int column = target.getSelectedColumn();
-                  final Object cell = target.getValueAt(row, column);
-                  if( cell instanceof Chassis ){
-                     Chassis chassi = (Chassis)cell;
-                     ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                     ProgramInit.lsml().mechLabPane.openLoadout(new Loadout(chassi, ProgramInit.lsml().xBar));
+
+      JPanel tablesPanel = new ScrollablePanel();
+      tablesPanel.setLayout(new BoxLayout(tablesPanel, BoxLayout.PAGE_AXIS));
+
+      for(Faction faction : new Faction[] {Faction.InnerSphere, Faction.Clan}){
+         for(ChassisClass chassisClass : ChassisClass.values()){
+
+            JTable table = new JTable(new ChassiTableModel(faction, chassisClass, aPreferences.uiPreferences.getHideSpecialMechs()));
+            table.setRowHeight(30);
+            table.addMouseListener(new MouseAdapter(){
+               @Override
+               public void mouseClicked(MouseEvent e){
+                  if( SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2 ){
+                     final JTable target = (JTable)e.getSource();
+                     final int row = target.getSelectedRow();
+                     final int column = target.getSelectedColumn();
+                     final Object cell = target.getValueAt(row, column);
+                     if( cell instanceof ChassisStandard ){
+                        ChassisStandard chassi = (ChassisStandard)cell;
+                        ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
+                        ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(chassi));
+                     }
+                     else if( cell instanceof ChassisOmniMech ){
+                        ChassisOmniMech chassi = (ChassisOmniMech)cell;
+                        ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
+                        ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi));
+
+                     }
                   }
                }
-            }
-         });
+            });
 
-         table.removeColumn(table.getColumnModel().getColumn(0)); // Remove auto-generated column
-         table.addColumn(new NameColumn());
-         table.addColumn(new SpeedColumn());
-         table.addColumn(new TonsColumn());
-         for(Part part : Arrays.asList(Part.RightArm, Part.RightTorso, Part.CenterTorso, Part.LeftTorso, Part.LeftArm, Part.Head)){
-            table.addColumn(new PartColumn(part));
+            table.removeColumn(table.getColumnModel().getColumn(0)); // Remove auto-generated column
+            table.addColumn(new NameColumn());
+            table.addColumn(new SpeedColumn());
+            table.addColumn(new TonsColumn());
+            table.addColumn(new PilotModulesColumn());
+            for(Location part : Arrays.asList(Location.RightArm, Location.RightTorso, Location.CenterTorso, Location.LeftTorso, Location.LeftArm,
+                                              Location.Head)){
+               table.addColumn(new PartColumn(part));
+            }
+            table.addColumn(new JumpJetsColumn());
+            tables.add(table);
+
+            JPanel tp = new JPanel(new BorderLayout());
+            tp.add(table.getTableHeader(), BorderLayout.NORTH);
+            tp.add(table, BorderLayout.CENTER);
+
+            tablesPanel.add(new CollapsiblePanel(faction.toString() + " - " + chassisClass.toString(), tp, true));
          }
-         table.addColumn(new JumpJetsColumn());
-         add(new JScrollPane(table), BorderLayout.CENTER);
       }
+
+      tablesPanel.add(Box.createVerticalGlue());
+
+      JScrollPane js = new JScrollPane(tablesPanel);
+      js.getVerticalScrollBar().setUnitIncrement(32);
+      add(js, BorderLayout.CENTER);
+
+      add(Box.createVerticalGlue(), BorderLayout.SOUTH);
    }
 
    @Override
@@ -316,7 +366,10 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader{
          UiPreferences.Message msg = (Message)aMsg;
          if( msg.attribute == UiPreferences.UI_HIDE_SPECIAL_MECHS ){
             hideSpecials.setSelected(preferences.uiPreferences.getHideSpecialMechs());
-            ((ChassiTableModel)table.getModel()).recreate(hideSpecials.isSelected());
+
+            for(JTable table : tables){
+               ((ChassiTableModel)table.getModel()).recreate(hideSpecials.isSelected());
+            }
          }
       }
    }

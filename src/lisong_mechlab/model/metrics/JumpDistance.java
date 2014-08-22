@@ -19,8 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * A metric that calculates how high the mech can jump.
@@ -28,17 +29,25 @@ import lisong_mechlab.model.loadout.Loadout;
  * @author Li Song
  */
 public class JumpDistance implements Metric{
-   private final Loadout loadout;
+   private final LoadoutBase<?> loadout;
 
-   public JumpDistance(final Loadout aLoadout){
+   public JumpDistance(final LoadoutBase<?> aLoadout){
       loadout = aLoadout;
    }
 
    @Override
    public double calculate(){
-      JumpJet jj = loadout.getJumpJetType();
+      JumpJet jj = null;
+
+      for(Item item : loadout.getAllItems()){
+         if( item instanceof JumpJet ){
+            jj = (JumpJet)item;
+            break;
+         }
+      }
+
       if( jj == null )
          return 0;
-      return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() / (2 * loadout.getChassi().getMassMax());
+      return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() / (2 * loadout.getChassis().getMassMax());
    }
 }

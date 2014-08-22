@@ -19,42 +19,53 @@
 //@formatter:on
 package lisong_mechlab.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.ChassiDB;
-import lisong_mechlab.model.chassi.Chassis;
-import lisong_mechlab.model.chassi.Part;
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
 /**
- * This immutable class defines a stock loadout pattern that can be used for loading stock on a {@link Loadout}.
+ * This immutable class defines a stock loadout pattern that can be used for loading stock on a {@link LoadoutBase}.
  * 
  * @author Li Song
  */
+@XStreamAlias("StockLoadout")
 public class StockLoadout{
    /**
     * This immutable class defines a component in a stock loadout.
     * 
     * @author Li Song
     */
+   @XStreamAlias("Component")
    public static class StockComponent{
-      private final Part          part;
+      @XStreamAsAttribute
+      private final Location      part;
+      @XStreamAsAttribute
       private final Integer       armorFront;
+      @XStreamAsAttribute
       private final Integer       armorBack;
+      @XStreamImplicit
       private final List<Integer> items;
 
       /**
        * Creates a new {@link StockComponent}.
        * 
        * @param aPart
-       *           The {@link Part} that this {@link StockComponent} is for.
+       *           The {@link Location} that this {@link StockComponent} is for.
        * @param aFront
        *           The front armor (or total armor if one sided).
        * @param aBack
@@ -62,7 +73,7 @@ public class StockLoadout{
        * @param aItems
        *           A {@link List} of items in the component.
        */
-      public StockComponent(Part aPart, int aFront, int aBack, List<Integer> aItems){
+      public StockComponent(Location aPart, int aFront, int aBack, List<Integer> aItems){
          part = aPart;
          armorFront = aFront;
          if( part.isTwoSided() ){
@@ -75,9 +86,9 @@ public class StockLoadout{
       }
 
       /**
-       * @return The {@link Part} that defines this {@link StockComponent}.
+       * @return The {@link Location} that defines this {@link StockComponent}.
        */
-      public Part getPart(){
+      public Location getPart(){
          return part;
       }
 
@@ -99,16 +110,25 @@ public class StockLoadout{
        * @return The {@link Item} IDs that are housed in this {@link StockComponent}.
        */
       public List<Integer> getItems(){
+         if( items == null ){
+            return new ArrayList<>();
+         }
          return items;
       }
    }
 
+   @XStreamImplicit
    private final List<StockComponent> components;
 
+   @XStreamAsAttribute
    private final Integer              armorId;
+   @XStreamAsAttribute
    private final Integer              structureId;
+   @XStreamAsAttribute
    private final Integer              heatsinkId;
+   @XStreamAsAttribute
    private final Integer              guidanceId;
+   @XStreamAsAttribute
    private final Integer              chassisId;
 
    /**
@@ -137,10 +157,10 @@ public class StockLoadout{
    }
 
    /**
-    * @return The {@link Chassis} for this {@link StockLoadout}.
+    * @return The {@link ChassisBase} for this {@link StockLoadout}.
     */
-   public Chassis getChassis(){
-      return ChassiDB.lookup(chassisId);
+   public ChassisBase getChassis(){
+      return ChassisDB.lookup(chassisId);
    }
 
    /**

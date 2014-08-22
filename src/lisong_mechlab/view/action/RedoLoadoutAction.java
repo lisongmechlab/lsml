@@ -26,7 +26,7 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.loadout.part.LoadoutPart;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -72,7 +72,7 @@ public class RedoLoadoutAction extends AbstractAction implements Reader{
       SwingUtilities.invokeLater(new Runnable(){
          @Override
          public void run(){
-            if( aMsg instanceof LoadoutPart.Message || aMsg instanceof Upgrades.Message ){
+            if( aMsg instanceof ConfiguredComponentBase.Message || aMsg instanceof Upgrades.Message ){
                if( ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null )
                   setEnabled(false);
                else

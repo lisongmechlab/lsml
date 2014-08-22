@@ -37,6 +37,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -51,9 +52,13 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.environment.EnvironmentDB;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutMessage;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.AlphaStrike;
 import lisong_mechlab.model.metrics.AlphaTimeToOverHeat;
 import lisong_mechlab.model.metrics.BurstDamageOverTime;
@@ -72,10 +77,13 @@ import lisong_mechlab.model.metrics.TimeToCool;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.metrics.TurningSpeed;
 import lisong_mechlab.model.metrics.TwistSpeed;
-import lisong_mechlab.model.upgrades.SetArmorTypeOperation;
-import lisong_mechlab.model.upgrades.SetGuidanceTypeOperation;
-import lisong_mechlab.model.upgrades.SetHeatSinkTypeOperation;
-import lisong_mechlab.model.upgrades.SetStructureTypeOperation;
+import lisong_mechlab.model.upgrades.ArmorUpgrade;
+import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
+import lisong_mechlab.model.upgrades.OpSetArmorType;
+import lisong_mechlab.model.upgrades.OpSetGuidanceType;
+import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
+import lisong_mechlab.model.upgrades.OpSetStructureType;
+import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
@@ -104,7 +112,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       df1.setMinimumFractionDigits(1);
    }
 
-   private final Loadout                loadout;
+   private final LoadoutBase<?>         loadout;
 
    // General pane
    private final JProgressBar           massBar;
@@ -113,9 +121,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
    private final JLabel                 armorValue       = new JLabel("xxx");
    private final JProgressBar           critslotsBar     = new JProgressBar(0, 5 * 12 + 3 * 6);
    private final JLabel                 critslotsValue   = new JLabel("xxx");
-   private final JCheckBox              ferroFibros      = new JCheckBox("Ferro-Fibrous");
-   private final JCheckBox              endoSteel        = new JCheckBox("Endo-Steel");
-   private final JCheckBox              artemis          = new JCheckBox("Artemis IV");
+   private final JCheckBox              ferroFibros      = new JCheckBox();
+   private final JCheckBox              endoSteel        = new JCheckBox();
+   private final JCheckBox              artemis          = new JCheckBox();
 
    // Movement pane
    private final MetricDisplay          topSpeed;
@@ -175,11 +183,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          critslotsTxt.setAlignmentY(CENTER_ALIGNMENT);
 
          JLabel massTxt = new JLabel("Tons:");
-         massBar = new JProgressBar(0, loadout.getChassi().getMassMax());
+         massBar = new JProgressBar(0, loadout.getChassis().getMassMax());
          massBar.setUI(new ProgressBarRenderer());
 
          JLabel armorTxt = new JLabel("Armor:");
-         armorBar = new JProgressBar(0, loadout.getChassi().getArmorMax());
+         armorBar = new JProgressBar(0, loadout.getChassis().getArmorMax());
          armorBar.setUI(new ProgressBarRenderer());
 
          // One property change listener is enough, if one gets it all get it.
@@ -197,17 +205,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             }
          });
 
-         Insets upgradeInsets = new Insets(0, 0, 0, 0);
-         ferroFibros.addItemListener(this);
-         ferroFibros.setVerticalTextPosition(SwingConstants.TOP);
-         ferroFibros.setMargin(upgradeInsets);
-         ferroFibros.setMultiClickThreshhold(100);
-         endoSteel.addItemListener(this);
-         endoSteel.setVerticalTextPosition(SwingConstants.TOP);
-         endoSteel.setMargin(upgradeInsets);
-         artemis.addItemListener(this);
-         artemis.setVerticalTextPosition(SwingConstants.TOP);
-         artemis.setMargin(upgradeInsets);
+         setupUpgrades();
 
          Box upgradesBox = Box.createHorizontalBox();
          upgradesBox.add(ferroFibros);
@@ -320,7 +318,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             public void actionPerformed(ActionEvent aArg0){
                Environment environment = (Environment)environemnts.getSelectedItem();
                heatDissipation.changeEnvironment(environment);
-               xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
+               xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.UPDATE));
             }
          });
          environemnts.setSelectedIndex(0);
@@ -390,10 +388,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
          upgrades.add(doubleHeatSinks);
          upgrades.add(doubleBasics);
          heat.add(upgrades);
-
+         
          doubleBasics.addItemListener(this);
          heatContainment.addItemListener(this);
-         doubleHeatSinks.addItemListener(this);
          coolRun.addItemListener(this);
       }
 
@@ -450,7 +447,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                   SwingUtilities.invokeLater(new Runnable(){
                      @Override
                      public void run(){
-                        xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
+                        xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.UPDATE));
                      }
                   });
                }
@@ -476,7 +473,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                      SwingUtilities.invokeLater(new Runnable(){
                         @Override
                         public void run(){
-                           xBar.post(new Loadout.Message(loadout, Loadout.Message.Type.UPDATE));
+                           xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.UPDATE));
                         }
                      });
                   }
@@ -551,69 +548,28 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
                // ----------------------------------------------------------------------
                double mass = loadout.getMass();
                massBar.setValue((int)Math.ceil(mass));
-               massValue.setText(df2_floor.format(loadout.getChassi().getMassMax() - mass) + " free");
-               massBar.setString(df1_floor.format(mass) + " / " + df0.format(loadout.getChassi().getMassMax()));
+               massValue.setText(df2_floor.format(loadout.getChassis().getMassMax() - mass) + " free");
+               massBar.setString(df1_floor.format(mass) + " / " + df0.format(loadout.getChassis().getMassMax()));
 
                armorBar.setValue(loadout.getArmor());
-               armorBar.setString(loadout.getArmor() + " / " + loadout.getChassi().getArmorMax());
-               armorValue.setText((loadout.getChassi().getArmorMax() - loadout.getArmor()) + " free");
+               armorBar.setString(loadout.getArmor() + " / " + loadout.getChassis().getArmorMax());
+               armorValue.setText((loadout.getChassis().getArmorMax() - loadout.getArmor()) + " free");
 
                critslotsBar.setValue(loadout.getNumCriticalSlotsUsed());
-               critslotsBar.setString(loadout.getNumCriticalSlotsUsed() + " / " + (12 * 5 + 3 * 6));
+               critslotsBar.setString(loadout.getNumCriticalSlotsUsed() + " / " + loadout.getChassis().getCriticalSlotsTotal());
                critslotsValue.setText(loadout.getNumCriticalSlotsFree() + " free");
 
-               artemis.setSelected(loadout.getUpgrades().getGuidance() == UpgradeDB.ARTEMIS_IV);
-               endoSteel.setSelected(loadout.getUpgrades().getStructure() == UpgradeDB.ENDO_STEEL_STRUCTURE);
-               ferroFibros.setSelected(loadout.getUpgrades().getArmor() == UpgradeDB.FERRO_FIBROUS_ARMOR);
-
-               {
-                  final String esSavedMass = df2.format(UpgradeDB.ENDO_STEEL_STRUCTURE.getStructureMass(loadout.getChassi()));
-                  if( (loadout.getUpgrades().getStructure() == UpgradeDB.ENDO_STEEL_STRUCTURE) ){
-                     endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: green;\">-" + esSavedMass + "t</span>, "
-                                       + "<span style=\"color: red;\">+14s</span>)" + "</html>");
-                  }
-                  else{
-                     endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: gray;\">-" + esSavedMass + "t</span>, "
-                                       + "<span style=\"color: gray;\">+14s</span>)" + "</html>");
-                  }
-               }
-
-               {
-                  final String ffSavedMass = df2.format(UpgradeDB.STANDARD_ARMOR.getArmorMass(loadout.getArmor())
-                                                        - UpgradeDB.FERRO_FIBROUS_ARMOR.getArmorMass(loadout.getArmor()));
-                  if( loadout.getUpgrades().getArmor() == UpgradeDB.FERRO_FIBROUS_ARMOR ){
-                     ferroFibros.setText("<html>Ferro-Fibrous<br>(<span style=\"color: green;\">-" + ffSavedMass + "t</span>, "
-                                         + "<span style=\"color: red;\">+14s</span>)" + "</html>");
-                  }
-                  else{
-                     ferroFibros.setText("<html>Ferro-Fibrous<br>(<span style=\"color: gray;\">-" + ffSavedMass + "t</span>, "
-                                         + "<span style=\"color: gray;\">+14s</span>)" + "</html>");
-                  }
-               }
-
-               {
-                  final String artemisMass = df0.format(UpgradeDB.ARTEMIS_IV.getExtraTons(loadout));
-                  final int artemisSlots = UpgradeDB.ARTEMIS_IV.getExtraSlots(loadout);
-                  if( loadout.getUpgrades().getGuidance() == UpgradeDB.ARTEMIS_IV ){
-                     artemis.setText("<html>Artemis IV<br>(<span style=\"color: red;\">+" + artemisMass + "t</span>, "
-                                     + "<span style=\"color: red;\">+" + artemisSlots + "s</span>)" + "</html>");
-                  }
-                  else{
-                     artemis.setText("<html>Artemis IV<br>(<span style=\"color: gray;\">+" + artemisMass + "t</span>, "
-                                     + "<span style=\"color: gray;\">+" + artemisSlots + "s</span>)" + "</html>");
-                  }
-               }
+               updateUpgrades();
 
                // Mobility
                // ----------------------------------------------------------------------
-               jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getChassi().getMaxJumpJets() + " ("
+               jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getJumpJetsMax() + " ("
                                 + df2.format(metricJumpDistance.calculate()) + " m)");
                speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
                anchorTurn.setSelected(loadout.getEfficiencies().hasAnchorTurn());
 
                // Heat
                // ----------------------------------------------------------------------
-               doubleHeatSinks.setSelected(loadout.getUpgrades().getHeatSink() == UpgradeDB.DOUBLE_HEATSINKS);
                coolRun.setSelected(loadout.getEfficiencies().hasCoolRun());
                heatContainment.setSelected(loadout.getEfficiencies().hasHeatContainment());
                if( !coolRun.isSelected() || !heatContainment.isSelected() ){
@@ -641,7 +597,168 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
             }
          }
       });
+   }
 
+   private void updateUpgrades(){
+      artemis.setSelected(loadout.getUpgrades().getGuidance() != UpgradeDB.STANDARD_GUIDANCE);
+      endoSteel.setSelected(loadout.getUpgrades().getStructure() != UpgradeDB.STANDARD_STRUCTURE);
+      ferroFibros.setSelected(loadout.getUpgrades().getArmor() != UpgradeDB.STANDARD_ARMOR);
+      doubleHeatSinks.setSelected(loadout.getUpgrades().getHeatSink() != UpgradeDB.STANDARD_HEATSINKS);
+
+      boolean isClan = loadout.getChassis().getFaction() == Faction.Clan;
+
+      StructureUpgrade es = isClan ? UpgradeDB.CLAN_ENDO_STEEL_STRUCTURE : UpgradeDB.ENDO_STEEL_STRUCTURE;
+      ArmorUpgrade ff = isClan ? UpgradeDB.CLAN_FERRO_FIBROUS_ARMOR : UpgradeDB.FERRO_FIBROUS_ARMOR;
+
+      {
+         final String esSavedMass = df2.format(UpgradeDB.STANDARD_STRUCTURE.getStructureMass(loadout.getChassis())
+                                               - es.getStructureMass(loadout.getChassis()));
+         final String esSlots = Integer.toString(es.getExtraSlots());
+         if( (loadout.getUpgrades().getStructure() == es) ){
+            endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: green;\">-" + esSavedMass + "t</span>, " + "<span style=\"color: red;\">+"
+                              + esSlots + "s</span>)" + "</html>");
+         }
+         else{
+            endoSteel.setText("<html>Endo-Steel<br>(<span style=\"color: gray;\">-" + esSavedMass + "t</span>, " + "<span style=\"color: gray;\">+"
+                              + esSlots + "s</span>)" + "</html>");
+         }
+      }
+
+      {
+         final String ffSavedMass = df2.format(UpgradeDB.STANDARD_ARMOR.getArmorMass(loadout.getArmor()) - ff.getArmorMass(loadout.getArmor()));
+         final String ffSlots = Integer.toString(ff.getExtraSlots());
+         if( loadout.getUpgrades().getArmor() == ff ){
+            ferroFibros.setText("<html>Ferro-Fibrous<br>(<span style=\"color: green;\">-" + ffSavedMass + "t</span>, "
+                                + "<span style=\"color: red;\">+" + ffSlots + "s</span>)" + "</html>");
+         }
+         else{
+            ferroFibros.setText("<html>Ferro-Fibrous<br>(<span style=\"color: gray;\">-" + ffSavedMass + "t</span>, "
+                                + "<span style=\"color: gray;\">+" + ffSlots + "s</span>)" + "</html>");
+         }
+      }
+
+      {
+         final String artemisMass = df0.format(UpgradeDB.ARTEMIS_IV.getExtraTons(loadout));
+         final int artemisSlots = UpgradeDB.ARTEMIS_IV.getExtraSlots(loadout);
+         if( loadout.getUpgrades().getGuidance() == UpgradeDB.ARTEMIS_IV ){
+            artemis.setText("<html>Artemis IV<br>(<span style=\"color: red;\">+" + artemisMass + "t</span>, " + "<span style=\"color: red;\">+"
+                            + artemisSlots + "s</span>)" + "</html>");
+         }
+         else{
+            artemis.setText("<html>Artemis IV<br>(<span style=\"color: gray;\">+" + artemisMass + "t</span>, " + "<span style=\"color: gray;\">+"
+                            + artemisSlots + "s</span>)" + "</html>");
+         }
+      }
+   }
+
+   private void setupUpgrades(){
+      Insets upgradeInsets = new Insets(0, 0, 0, 0);
+      ferroFibros.setVerticalTextPosition(SwingConstants.TOP);
+      ferroFibros.setMargin(upgradeInsets);
+      ferroFibros.setMultiClickThreshhold(100);
+      endoSteel.setVerticalTextPosition(SwingConstants.TOP);
+      endoSteel.setMargin(upgradeInsets);
+      endoSteel.setMultiClickThreshhold(100);
+      artemis.setVerticalTextPosition(SwingConstants.TOP);
+      artemis.setMargin(upgradeInsets);
+      artemis.setMultiClickThreshhold(100);
+
+      if( loadout instanceof LoadoutOmniMech ){
+         ferroFibros.setEnabled(false);
+         endoSteel.setEnabled(false);
+         doubleHeatSinks.setEnabled(false);
+      }
+      else if( loadout instanceof LoadoutStandard ){
+         final LoadoutStandard loadoutStandard = (LoadoutStandard)loadout;
+         endoSteel.setAction(new AbstractAction(){
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               final StructureUpgrade structure;
+               if( loadout.getChassis().getFaction() == Faction.Clan ){
+                  structure = endoSteel.isSelected() ? UpgradeDB.CLAN_ENDO_STEEL_STRUCTURE : UpgradeDB.CLAN_STANDARD_STRUCTURE;
+               }
+               else{
+                  structure = endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE;
+               }
+               try{
+                  opStack.pushAndApply(new OpSetStructureType(xBar, loadoutStandard, structure));
+               }
+               catch( IllegalArgumentException e ){
+                  endoSteel.setSelected(!endoSteel.isSelected());
+                  JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
+               }
+            }
+         });
+
+         ferroFibros.setAction(new AbstractAction(){
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               final ArmorUpgrade armor;
+               if( loadout.getChassis().getFaction() == Faction.Clan ){
+                  armor = ferroFibros.isSelected() ? UpgradeDB.CLAN_FERRO_FIBROUS_ARMOR : UpgradeDB.CLAN_STANDARD_ARMOR;
+               }
+               else{
+                  armor = ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
+               }
+               try{
+                  opStack.pushAndApply(new OpSetArmorType(xBar, loadoutStandard, armor));
+               }
+               catch( IllegalArgumentException e ){
+                  ferroFibros.setSelected(!ferroFibros.isSelected());
+                  JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
+               }
+            }
+         });
+
+         doubleHeatSinks.setAction(new AbstractAction("Double Heat Sinks"){
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               final HeatSinkUpgrade heatSink;
+               if( loadout.getChassis().getFaction() == Faction.Clan ){
+                  heatSink = doubleHeatSinks.isSelected() ? UpgradeDB.CLAN_DOUBLE_HEATSINKS : UpgradeDB.CLAN_STANDARD_HEATSINKS;
+               }
+               else{
+                  heatSink = doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
+               }
+               try{
+                  opStack.pushAndApply(new OpSetHeatSinkType(xBar, loadoutStandard, heatSink));
+               }
+               catch( IllegalArgumentException e ){
+                  doubleHeatSinks.setSelected(!doubleHeatSinks.isSelected());
+                  JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
+               }
+            }
+         });
+      }
+
+      artemis.setAction(new AbstractAction(){
+         private static final long serialVersionUID = 1L;
+
+         @Override
+         public void actionPerformed(ActionEvent aE){
+            try{
+               opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE));
+            }
+            catch( IllegalArgumentException e ){
+               SwingUtilities.invokeLater(new Runnable(){
+                  @Override
+                  public void run(){
+                     // No idea why the other upgrades work with the set selected in the same event.
+                     artemis.setSelected(false); // Disabling can never fail 
+                  }
+               });
+               JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
+            }
+         }
+      });
+
+      updateUpgrades();
    }
 
    @Override
@@ -654,39 +771,23 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
       JCheckBox source = (JCheckBox)anEvent.getSource();
 
       try{
-         if( source == artemis ){
-            opStack.pushAndApply(new SetGuidanceTypeOperation(xBar, loadout, artemis.isSelected() ? UpgradeDB.ARTEMIS_IV
-                                                                                                 : UpgradeDB.STANDARD_GUIDANCE));
-         }
-         else if( source == endoSteel ){
-            opStack.pushAndApply(new SetStructureTypeOperation(xBar, loadout, endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE
-                                                                                                    : UpgradeDB.STANDARD_STRUCTURE));
-         }
-         else if( source == ferroFibros ){
-            opStack.pushAndApply(new SetArmorTypeOperation(xBar, loadout, ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR
-                                                                                                  : UpgradeDB.STANDARD_ARMOR));
-         }
-         else if( source == speedTweak ){
-            loadout.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED);
+         if( source == speedTweak ){
+            loadout.getEfficiencies().setSpeedTweak(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == anchorTurn ){
-            loadout.getEfficiencies().setAnchorTurn(anEvent.getStateChange() == ItemEvent.SELECTED);
-         }
-         else if( source == doubleHeatSinks ){
-            opStack.pushAndApply(new SetHeatSinkTypeOperation(xBar, loadout, doubleHeatSinks.isSelected() ? UpgradeDB.DOUBLE_HEATSINKS
-                                                                                                         : UpgradeDB.STANDARD_HEATSINKS));
+            loadout.getEfficiencies().setAnchorTurn(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == coolRun ){
-            loadout.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setCoolRun(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == heatContainment ){
-            loadout.getEfficiencies().setHeatContainment(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setHeatContainment(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == doubleBasics ){
-            loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setDoubleBasics(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else if( source == fastFire ){
-            loadout.getEfficiencies().setFastFire(anEvent.getStateChange() == ItemEvent.SELECTED);
+            loadout.getEfficiencies().setFastFire(anEvent.getStateChange() == ItemEvent.SELECTED, xBar);
          }
          else{
             throw new RuntimeException("Unknown source control!");

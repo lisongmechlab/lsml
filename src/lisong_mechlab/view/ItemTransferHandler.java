@@ -20,7 +20,6 @@
 package lisong_mechlab.view;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
@@ -34,22 +33,18 @@ import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.RemoveItemOperation;
-import lisong_mechlab.util.Pair;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.view.mechlab.ItemLabel;
-import lisong_mechlab.view.mechlab.LoadoutFrame;
 import lisong_mechlab.view.mechlab.PartList;
 import lisong_mechlab.view.mechlab.equipment.GarageTree;
 import lisong_mechlab.view.render.ItemRenderer;
 
 public class ItemTransferHandler extends TransferHandler{
-   private static final long  serialVersionUID = -8109855943478269304L;
-   private static LoadoutPart sourcePart       = null;
+   private static final long              serialVersionUID = -8109855943478269304L;
+   private static ConfiguredComponentBase sourcePart       = null;
 
    @Override
    public int getSourceActions(JComponent aComponent){
@@ -62,28 +57,13 @@ public class ItemTransferHandler extends TransferHandler{
       if( aComponent instanceof PartList ){
          PartList partList = (PartList)aComponent;
 
-         List<Pair<Item, Integer>> sourceItems = partList.getSelectedItems();
-         sourcePart = partList.getPart();
-
-         if( sourceItems.size() < 1 )
+         Item sourceItems = partList.removeSelected(ProgramInit.lsml().xBar);
+         if( sourceItems == null )
             return null;
 
-         Container f = aComponent;
-         while( !(f instanceof LoadoutFrame) ){
-            f = f.getParent();
-         }
-         LoadoutFrame frame = (LoadoutFrame)f;
-
-         StringBuffer buff = new StringBuffer();
-         for(Pair<Item, Integer> it : sourceItems){
-            if( it.first instanceof Internal )
-               return null;
-            buff.append(it.first.getName()).append('\n');
-            frame.getOpStack().pushAndApply(new RemoveItemOperation(ProgramInit.lsml().xBar, sourcePart, it.first));
-         }
-
-         setPreview(sourceItems.get(0).first, sourcePart.getLoadout());
-         return new StringSelection(buff.toString());
+         sourcePart = partList.getPart();
+         setPreview(sourceItems);
+         return new StringSelection(sourceItems.getName());
       }
       else if( aComponent instanceof GarageTree ){
          sourcePart = null;
@@ -103,21 +83,19 @@ public class ItemTransferHandler extends TransferHandler{
          else{
             return null;
          }
-         Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
-         setPreview(item, loadout);
+         setPreview(item);
          return new StringSelection(item.getName());
       }
       else if( aComponent instanceof ItemLabel ){
-         Loadout loadout = ProgramInit.lsml().mechLabPane.getCurrentLoadout();
          Item item = ((ItemLabel)aComponent).getItem();
-         setPreview(item, loadout);
+         setPreview(item);
          return new StringSelection(item.getName());
       }
       return null;
    }
 
-   private void setPreview(Item anItem, Loadout aLoadout){
-      Image preview = ItemRenderer.render(anItem, aLoadout != null ? aLoadout.getUpgrades() : null);
+   private void setPreview(Item anItem){
+      Image preview = ItemRenderer.render(anItem);
       setDragImage(preview);
       Point mouse = new Point(getDragImage().getWidth(null) / 2, ItemRenderer.getItemHeight() / 2);
       setDragImageOffset(mouse);
@@ -126,26 +104,27 @@ public class ItemTransferHandler extends TransferHandler{
    @Override
    protected void exportDone(JComponent c, Transferable t, int action){
       // NO-OP
-      // The items are removed during the import, otherwise the drop
+      // The items are removed during the eport, otherwise the drop
       // may fail because of loadout tonnage limits etc.
    }
 
    @Override
    public boolean canImport(TransferHandler.TransferSupport aInfo){
-      Component component = aInfo.getComponent();
-      if( component instanceof PartList ){
+      Component uiComponent = aInfo.getComponent();
+      if( uiComponent instanceof PartList ){
          List<Item> items = parseItems(aInfo);
          if( null == items )
             return false;
 
-         LoadoutPart part = ((PartList)component).getPart();
+         LoadoutBase<?> loadout = ((PartList)uiComponent).getLoadout();
+         ConfiguredComponentBase component = ((PartList)uiComponent).getPart();
          for(Item item : items){
-            if( part.getLoadout().canEquip(item) && !part.canEquip(item) )
+            if( loadout.canEquip(item) && !component.canAddItem(item) )
                return false;
          }
          return true;
       }
-      return parseItems(aInfo) != null;
+      return true;
    }
 
    /**
@@ -167,7 +146,10 @@ public class ItemTransferHandler extends TransferHandler{
          int dropIndex = ((JList.DropLocation)info.getDropLocation()).getIndex();
          try{
             boolean first = true;
-            for(Item item : parseItems(info)){
+            List<Item> items = parseItems(info);
+            if( null == items )
+               return false;
+            for(Item item : items){
                model.putElement(item, dropIndex, first);
                dropIndex++;
                first = false;

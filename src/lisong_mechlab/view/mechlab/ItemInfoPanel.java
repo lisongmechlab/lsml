@@ -22,6 +22,7 @@ package lisong_mechlab.view.mechlab;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.text.DecimalFormat;
+import java.util.Collection;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -31,13 +32,12 @@ import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.item.WeaponModifier;
 
 /**
  * This class implements a panel that will show information about an item.
@@ -82,12 +82,12 @@ public class ItemInfoPanel extends JPanel{
                                     + "For beam weapons this incudes the beam's burn time.");
       cycleTime.setToolTipText("The time it takes for the weapon to cool down before the next shot.");
       burntime.setToolTipText("The time the beam is active and needs to be kept on the target to deal full damage. After this the weapon starts to cool down.");
-     
+
       {
          JPanel stats = new JPanel();
          add(stats, BorderLayout.NORTH);
          stats.setLayout(new BoxLayout(stats, BoxLayout.Y_AXIS));
-         
+
          JPanel basicInfo = new JPanel();
          basicInfo.setLayout(new BoxLayout(basicInfo, BoxLayout.X_AXIS));
          basicInfo.setAlignmentX(LEFT_ALIGNMENT);
@@ -121,7 +121,7 @@ public class ItemInfoPanel extends JPanel{
          damageInfo.add(Box.createHorizontalGlue());
          damageInfo.add(dps);
          stats.add(damageInfo);
-         
+
          JPanel damageInfo2 = new JPanel();
          damageInfo2.setLayout(new BoxLayout(damageInfo2, BoxLayout.X_AXIS));
          damageInfo2.setAlignmentX(LEFT_ALIGNMENT);
@@ -158,8 +158,8 @@ public class ItemInfoPanel extends JPanel{
       if( null != anItem ){
          ((TitledBorder)getBorder()).setTitle(anItem.getName());
          repaint();
-         slots.setText("Slots: " + anItem.getNumCriticalSlots(null));
-         mass.setText("Tons: " + anItem.getMass(null));
+         slots.setText("Slots: " + anItem.getNumCriticalSlots());
+         mass.setText("Tons: " + anItem.getMass());
          description.setText("Description:\n" + anItem.getDescription());
          health.setText("HP: " + anItem.getHealth());
       }
@@ -182,10 +182,10 @@ public class ItemInfoPanel extends JPanel{
 
    private void showAmmoInfo(Ammunition anAmmo){
       ammoperton.setVisible(true);
-      ammoperton.setText("Ammo per ton: " + anAmmo.getShotsPerTon());
+      ammoperton.setText("Shots: " + anAmmo.getNumShots());
    }
 
-   private void showWeaponInfo(Weapon aWeapon, Upgrades anUpgrades, Efficiencies aEfficiencies){
+   private void showWeaponInfo(Weapon aWeapon, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       DecimalFormat df0 = new DecimalFormat("###");
       DecimalFormat df1 = new DecimalFormat("###.#");
       DecimalFormat df2 = new DecimalFormat("###.##");
@@ -193,41 +193,34 @@ public class ItemInfoPanel extends JPanel{
       damage.setVisible(true);
       damage.setText("Damage: " + aWeapon.getDamagePerShot());
       heat.setVisible(true);
-      heat.setText("Heat: " + aWeapon.getHeat());
+      heat.setText("Heat: " + aWeapon.getHeat(aModifiers));
       gh_MaxFreeAlpha.setVisible(true);
       gh_MaxFreeAlpha.setText("Max free alpha: "
                               + df0.format((aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha() : Double.POSITIVE_INFINITY));
 
       cycleTime.setVisible(true);
-      cycleTime.setText("Cycle time: " + df2.format(aWeapon.getCycleTime(aEfficiencies)));
+      cycleTime.setText("Cycle time: " + df2.format(aWeapon.getCoolDown(aEfficiencies, aModifiers)));
       if( aWeapon instanceof EnergyWeapon ){
          burntime.setVisible(true);
          burntime.setText("Burn time: " + df1.format(((EnergyWeapon)aWeapon).getDuration()));
       }
       secondsPerShot.setVisible(true);
-      secondsPerShot.setText("RoF: " + df2.format(aWeapon.getSecondsPerShot(aEfficiencies)) + " s/shot");
+      secondsPerShot.setText("RoF: " + df2.format(aWeapon.getSecondsPerShot(aEfficiencies, aModifiers)) + " s/shot");
 
       heatPerSecond.setVisible(true);
-      heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", anUpgrades, aEfficiencies)));
+      heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", aEfficiencies, aModifiers)));
 
       dps.setVisible(true);
-      dps.setText("DPS: " + df1.format(aWeapon.getStat("d/s", anUpgrades, aEfficiencies)));
+      dps.setText("DPS: " + df1.format(aWeapon.getStat("d/s", aEfficiencies, aModifiers)));
 
       dph.setVisible(true);
-      dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", anUpgrades, aEfficiencies)));
+      dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", aEfficiencies, aModifiers)));
 
       range.setVisible(true);
-      range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "") + df0.format(aWeapon.getRangeLong()) + " / "
-                    + df0.format(aWeapon.getRangeMax()));
+      range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "")
+                    + df0.format(aWeapon.getRangeLong(aModifiers)) + " / " + df0.format(aWeapon.getRangeMax(aModifiers)));
 
-      if( aWeapon instanceof AmmoWeapon ){
-         AmmoWeapon ammoWeapon = (AmmoWeapon)aWeapon;
-         ammoperton.setVisible(true);
-         ammoperton.setText("Ammo per ton: " + ammoWeapon.getAmmoType(anUpgrades).getShotsPerTon());
-      }
-      else{
-         ammoperton.setVisible(false);
-      }
+      ammoperton.setVisible(false);
    }
 
    private void clearDisplay(){
@@ -248,12 +241,12 @@ public class ItemInfoPanel extends JPanel{
       ammoperton.setVisible(false);
    }
 
-   public void showItem(Item anItem, Upgrades anUpgrades, Efficiencies aEfficiencies){
+   public void showItem(Item anItem, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
       clearDisplay();
       showBasicInfo(anItem);
 
       if( anItem instanceof Weapon ){
-         showWeaponInfo((Weapon)anItem, anUpgrades, aEfficiencies);
+         showWeaponInfo((Weapon)anItem, aEfficiencies, aModifiers);
       }
       else if( anItem instanceof Ammunition ){
          showAmmoInfo((Ammunition)anItem);

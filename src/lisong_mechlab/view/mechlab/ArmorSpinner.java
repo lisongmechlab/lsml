@@ -26,24 +26,28 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.chassi.ArmorSide;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
-import lisong_mechlab.model.loadout.part.SetArmorOperation;
-import lisong_mechlab.model.loadout.part.SymmetricArmorOperation;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.OpSetArmor;
+import lisong_mechlab.model.loadout.component.OpSetArmorSymmetric;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 
 public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Reader{
-   private static final long    serialVersionUID = 2130487332299251881L;
-   private final LoadoutPart    part;
-   private final ArmorSide      side;
-   private final JCheckBox      symmetric;
-   private final OperationStack opStack;
-   private final MessageXBar    xBar;
+   private static final long             serialVersionUID = 2130487332299251881L;
+   private final ConfiguredComponentBase part;
+   private final ArmorSide               side;
+   private final JCheckBox               symmetric;
+   private final OperationStack          opStack;
+   private final MessageXBar             xBar;
+   private final LoadoutBase<?>          loadout;
 
-   public ArmorSpinner(LoadoutPart aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack){
+   public ArmorSpinner(LoadoutBase<?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide, MessageXBar anXBar, JCheckBox aSymmetric,
+                       OperationStack anOperationStack){
       part = aPart;
+      loadout = aLoadout;
       side = anArmorSide;
       symmetric = aSymmetric;
       xBar = anXBar;
@@ -77,28 +81,30 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
          return;
 
       try{
-         final boolean setSymmetric = symmetric.isSelected() && part.getInternalPart().getType().oppositeSide() != null;
+         final boolean setSymmetric = symmetric.isSelected() && part.getInternalComponent().getLocation().oppositeSide() != null;
          final int armor = ((Integer)arg0).intValue();
 
          if( setSymmetric ){
-            opStack.pushAndApply(new SymmetricArmorOperation(xBar, part, side, armor, true));
+            opStack.pushAndApply(new OpSetArmorSymmetric(xBar, loadout, part, side, armor, true));
          }
          else{
-            opStack.pushAndApply(new SetArmorOperation(xBar, part, side, armor, true));
+            opStack.pushAndApply(new OpSetArmor(xBar, loadout, part, side, armor, true));
          }
-         fireStateChanged();
       }
       catch( IllegalArgumentException exception ){
          // TODO: Handle failed case better!
          Toolkit.getDefaultToolkit().beep();
       }
+      finally{
+         fireStateChanged();
+      }
    }
 
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(part.getLoadout()) && aMsg instanceof LoadoutPart.Message ){
-         LoadoutPart.Message message = (LoadoutPart.Message)aMsg;
-         if( message.part != part )
+      if( aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.Message ){
+         ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message)aMsg;
+         if( message.component != part )
             return;
          if( message.type == Type.ArmorChanged ){
             SwingUtilities.invokeLater(new Runnable(){

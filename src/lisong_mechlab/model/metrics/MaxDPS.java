@@ -20,17 +20,17 @@
 package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
- * This {@link Metric} calculates the maximal DPS a {@link Loadout} can output.
+ * This {@link Metric} calculates the maximal DPS a {@link LoadoutStandard} can output.
  * 
  * @author Li Song
  */
 public class MaxDPS extends RangeMetric{
-   public MaxDPS(Loadout aLoadout){
+   public MaxDPS(LoadoutBase<?> aLoadout){
       super(aLoadout);
    }
 
@@ -38,9 +38,11 @@ public class MaxDPS extends RangeMetric{
    public double calculate(double aRange){
       double ans = 0;
       for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon && item != ItemDB.AMS ){
+         if( item instanceof Weapon ){
             Weapon weapon = (Weapon)item;
-            ans += weapon.getRangeEffectivity(aRange) * weapon.getStat("d/s", loadout.getUpgrades(), loadout.getEfficiencies());
+            if( weapon.isOffensive() )
+               ans += weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers())
+                      * weapon.getStat("d/s", loadout.getEfficiencies(), loadout.getWeaponModifiers());
          }
       }
       return ans;

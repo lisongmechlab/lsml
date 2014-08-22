@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.garage;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
  * Thrown if the attempt to add a mech to the garage failed due to it already being in the garage.
@@ -31,7 +31,7 @@ public class AlreadyInGarageException extends Exception{
     * @param aLoadout
     *           The loadout that the error occurred for.
     */
-   public AlreadyInGarageException(Loadout aLoadout){
+   public AlreadyInGarageException(LoadoutBase<?> aLoadout){
       super("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
    }
 

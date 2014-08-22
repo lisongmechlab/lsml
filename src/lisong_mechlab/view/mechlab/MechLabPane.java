@@ -22,6 +22,7 @@ package lisong_mechlab.view.mechlab;
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,13 +32,18 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.item.ModuleSlot;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.equipment.EquipmentPanel;
 import lisong_mechlab.view.mechlab.equipment.GarageTree;
+import lisong_mechlab.view.mechlab.equipment.ModuleSeletionList;
 import lisong_mechlab.view.preferences.Preferences;
+import lisong_mechlab.view.render.ScrollablePanel;
+import lisong_mechlab.view.render.StyleManager;
 
 /**
  * This class shows the 'mech lab pane in the main tabbed pane.
@@ -67,6 +73,19 @@ public class MechLabPane extends JSplitPane{
       JTabbedPane tabbedPane = new JTabbedPane();
       tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
       tabbedPane.addTab("Garage", garagePanel);
+      
+      JPanel modulesPanel = new ScrollablePanel();
+      modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.PAGE_AXIS));
+      
+      for(ModuleSlot slotType : ModuleSlot.values()){
+         JPanel panel = new JPanel();
+         panel.setLayout(new BorderLayout());
+         panel.setBorder(StyleManager.sectionBorder(slotType.toString()));
+         panel.add(new ModuleSeletionList(desktop, anXBar, slotType), BorderLayout.CENTER);
+         modulesPanel.add(panel);
+      }
+      
+      tabbedPane.addTab("Modules", new JScrollPane(modulesPanel));
 
       setLeftComponent(tabbedPane);
       setRightComponent(desktop);
@@ -74,19 +93,19 @@ public class MechLabPane extends JSplitPane{
    }
 
    /**
-    * Will open the given {@link Loadout} into the desktop pane by creating a new {@link LoadoutFrame}.
+    * Will open the given {@link LoadoutBase} into the desktop pane by creating a new {@link LoadoutFrame}.
     * 
     * @param aLoadout
-    *           The {@link Loadout} to create the frame for.
+    *           The {@link LoadoutBase} to create the frame for.
     */
-   public void openLoadout(Loadout aLoadout){
+   public void openLoadout(LoadoutBase<?> aLoadout){
       desktop.openLoadout(aLoadout);
    }
 
    /**
     * @return The currently selected loadout.
     */
-   public Loadout getCurrentLoadout(){
+   public LoadoutBase<?> getCurrentLoadout(){
       if( null != getActiveLoadoutFrame() )
          return getActiveLoadoutFrame().getLoadout();
       return null;
@@ -100,7 +119,7 @@ public class MechLabPane extends JSplitPane{
    }
 
    /**
-    * Will open the given {@link Loadout} into the desktop pane by creating a new {@link LoadoutFrame}.
+    * Will open the given {@link LoadoutStandard} into the desktop pane by creating a new {@link LoadoutFrame}.
     * 
     * @param aLSMLUrl
     *           The LSML link to open.
@@ -111,7 +130,7 @@ public class MechLabPane extends JSplitPane{
          openLoadout(ProgramInit.lsml().loadoutCoder.parse(aLSMLUrl));
       }
       catch( DecodingException e ){
-         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to import loadout from \"" + aLSMLUrl + "\"! Error:" + e);
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to import loadout from \"" + aLSMLUrl + "\"!\n\nError:\n" + e);
       }
       catch( Throwable e ){
          JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to decode: " + aLSMLUrl + "\n\n" + "The link is malformed.\nError:" + e);

@@ -38,8 +38,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import lisong_mechlab.model.loadout.Loadout;
-import lisong_mechlab.model.loadout.RenameOperation;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.LSML;
@@ -63,7 +64,7 @@ public class SmurfyImportExport{
     * @param aApiKey
     *           The API key to import or export for.
     * @param aCoder
-    *           A {@link Base64LoadoutCoder} to use for encoding and decoding {@link Loadout}s.
+    *           A {@link Base64LoadoutCoder} to use for encoding and decoding {@link LoadoutStandard}s.
     */
    public SmurfyImportExport(String aApiKey, Base64LoadoutCoder aCoder){
       if( aApiKey != null )
@@ -113,10 +114,8 @@ public class SmurfyImportExport{
       return true;
    }
 
-   @SuppressWarnings("resource")
-   // The resource is auto-closed with new try-resource statement
-   public List<Loadout> listMechBay() throws DecodingException, IOException{
-      List<Loadout> ans = new ArrayList<>();
+   public List<LoadoutBase<?>> listMechBay() throws DecodingException, IOException{
+      List<LoadoutBase<?>> ans = new ArrayList<>();
 
       HttpURLConnection connection = connect(userMechbayUrl);
       connection.setRequestMethod("GET");
@@ -124,16 +123,19 @@ public class SmurfyImportExport{
       connection.setRequestProperty("Accept-Charset", "UTF-8");
       connection.setRequestProperty("Authorization", "APIKEY " + apiKey);
 
-      try( BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream())) ){
+      try( InputStream is = connection.getInputStream();
+           InputStreamReader isr = new InputStreamReader(is);
+           BufferedReader in = new BufferedReader(isr) ){
          String line;
          Pattern namePattern = Pattern.compile("\\s*<name>.*CDATA\\[([^\\]]+).*");
          Pattern lsmlPattern = Pattern.compile("\\s*<lsml>.*CDATA\\[lsml://([^\\]]+).*");
 
+         int lines = 0;
          String name = null;
          while( null != (line = in.readLine()) ){
             Matcher nameMatcher = namePattern.matcher(line);
             Matcher lsmlMatcher = lsmlPattern.matcher(line);
-
+            lines++;
             if( nameMatcher.matches() && name == null ){
                name = nameMatcher.group(1);
             }
@@ -142,20 +144,25 @@ public class SmurfyImportExport{
                if( name == null )
                   throw new IOException("Found lsml without name!");
                String lsml = lsmlMatcher.group(1);
-               Loadout loadout = coder.parse(lsml);
-               stack.pushAndApply(new RenameOperation(loadout, null, name));
+               LoadoutBase<?> loadout = coder.parse(lsml);
+               stack.pushAndApply(new OpRename(loadout, null, name));
                ans.add(loadout);
                name = null;
             }
+         }
+
+         if( ans.isEmpty() ){
+            if( lines > 10 ){
+               throw new IOException("Mechbay contained no LSML links. Link generation may be disabled by mwo.smurfy-net.de.");
+            }
+            throw new IOException("Mechbay was empty.");
          }
       }
       return ans;
    }
 
-   @SuppressWarnings("resource")
-   // It is closed!
-   public String sendLoadout(Loadout aLoadout) throws IOException{
-      int mechId = aLoadout.getChassi().getMwoId();
+   public String sendLoadout(LoadoutBase<?> aLoadout) throws IOException{
+      int mechId = aLoadout.getChassis().getMwoId();
       URL loadoutUploadUrlXml = new URL("https://mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts.xml");
 
       String data = SmurfyXML.toXml(aLoadout);
@@ -174,7 +181,9 @@ public class SmurfyImportExport{
          wr.write(rawData);
       }
 
-      try( BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream())) ){
+      try( InputStream is = connection.getInputStream();
+           InputStreamReader isr = new InputStreamReader(is);
+           BufferedReader rd = new BufferedReader(isr) ){
          Pattern pattern = Pattern.compile(".*mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts/([^.]{40})\\..*");
          for(String line = rd.readLine(); line != null; line = rd.readLine()){
             Matcher m = pattern.matcher(line);

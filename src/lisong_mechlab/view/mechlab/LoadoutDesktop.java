@@ -31,7 +31,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import lisong_mechlab.model.loadout.Loadout;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
 
@@ -67,12 +68,12 @@ public class LoadoutDesktop extends JDesktopPane implements InternalFrameListene
    }
 
    /**
-    * Will open the given {@link Loadout} into the desktop pane by creating a new {@link LoadoutFrame}.
+    * Will open the given {@link LoadoutStandard} into the desktop pane by creating a new {@link LoadoutFrame}.
     * 
     * @param aLoadout
-    *           The {@link Loadout} to create the frame for.
+    *           The {@link LoadoutStandard} to create the frame for.
     */
-   public void openLoadout(Loadout aLoadout){
+   public void openLoadout(LoadoutBase<?> aLoadout){
       assert (SwingUtilities.isEventDispatchThread());
 
       LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar);

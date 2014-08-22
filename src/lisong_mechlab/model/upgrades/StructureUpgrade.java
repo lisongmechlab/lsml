@@ -19,8 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.Faction;
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Represents an upgrade to a 'mechs internal structure.
@@ -28,14 +31,27 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
  * @author Li Song
  */
 public class StructureUpgrade extends Upgrade{
+   @XStreamAsAttribute
    private final double internalStructurePct;
+   @XStreamAsAttribute
    private final int    extraSlots;
+
+   public StructureUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots, double aStructurePct){
+      super(aName, aDescription, aMwoId, aFaction);
+      extraSlots = aExtraSlots;
+      internalStructurePct = aStructurePct;
+   }
 
    public StructureUpgrade(ItemStatsUpgradeType aUpgradeType){
       super(aUpgradeType);
 
-      internalStructurePct = aUpgradeType.UpgradeTypeStats.pointMultiplier;
-      extraSlots = aUpgradeType.UpgradeTypeStats.slots;
+      internalStructurePct = aUpgradeType.StructureTypeStats.weightPerTon;
+      if( aUpgradeType.SlotUsage != null ){
+         extraSlots = aUpgradeType.SlotUsage.slots;
+      }
+      else{
+         extraSlots = 0;
+      }
    }
 
    /**
@@ -52,9 +68,13 @@ public class StructureUpgrade extends Upgrade{
     *           The chassis to calculate the internal structure mass for.
     * @return The mass of the internal structure.
     */
-   public double getStructureMass(Chassis aChassis){
+   public double getStructureMass(ChassisBase aChassis){
       double ans = aChassis.getMassMax() * internalStructurePct;
-      
-      return Math.round(10*ans / 5) * 0.5;
+      return Math.round(10 * ans / 5) * 0.5;
+   }
+
+   @Override
+   public UpgradeType getType(){
+      return UpgradeType.STRUCTURE;
    }
 }

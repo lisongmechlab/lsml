@@ -19,7 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.Chassis;
+import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -55,22 +56,49 @@ public class PayloadStatistics{
    }
 
    /**
-    * @param aChassi
-    * @param anEngineRating
-    * @return the calculated value
+    * Calculates the payload tonnage for the given {@link ChassisStandard}, with the given engine rating under the
+    * upgrades that have been given to the constructor. Will consider the status of the
+    * {@link #changeUpgrades(Upgrades)}, {@link #changeUseMaxArmor(boolean)} and {@link #changeUseXLEngine(boolean)}.
+    * <p>
+    * If the engine is smaller than 250, then additional heat sinks required to operate the mech will be subtracted from
+    * the payload.
+    * 
+    * @param aChassis
+    *           The {@link ChassisStandard} to calculate for.
+    * @param aEngineRating
+    *           The engine rating to use.
+    * @return The payload tonnage.
     */
-   public double calculate(Chassis aChassi, int anEngineRating){
-      double internalMass = upgrades.getStructure().getStructureMass(aChassi);
-      double maxPayload = aChassi.getMassMax() - internalMass;
+   public double calculate(ChassisStandard aChassis, int aEngineRating){
+      double internalMass = upgrades.getStructure().getStructureMass(aChassis);
+      double maxPayload = aChassis.getMassMax() - internalMass;
 
-      Engine engine = (Engine)ItemDB.lookup((xlEngine ? "XL" : "STD") + " ENGINE " + anEngineRating);
-      maxPayload -= engine.getMass(null);
+      Engine engine = (Engine)ItemDB.lookup((xlEngine ? "XL" : "STD") + " ENGINE " + aEngineRating);
+      maxPayload -= engine.getMass();
       maxPayload -= 10 - engine.getNumInternalHeatsinks();
 
       if( maxArmor ){
-         maxPayload -= upgrades.getArmor().getArmorMass(aChassi.getArmorMax());
+         maxPayload -= upgrades.getArmor().getArmorMass(aChassis.getArmorMax());
       }
 
       return maxPayload;
+   }
+
+   /**
+    * Calculates how much user payload the given omnimech can carry. Will consider the status of the
+    * {@link #changeUseMaxArmor(boolean)} the status of XL engine or other upgrades are ignored as they are fixed on
+    * omnimechs.
+    * 
+    * @param aChassis
+    *           The {@link ChassisOmniMech} to calculate the payload tonnage for.
+    * @return The payload tonnage.
+    */
+   public double calculate(ChassisOmniMech aChassis){
+      int missingHs = Math.max(0, 10 - aChassis.getFixedHeatSinks());
+      double ans = aChassis.getMassMax() - aChassis.getFixedMass() - missingHs;
+      if( maxArmor ){
+         ans -= aChassis.getFixedArmorType().getArmorMass(aChassis.getArmorMax());
+      }
+      return ans;
    }
 }

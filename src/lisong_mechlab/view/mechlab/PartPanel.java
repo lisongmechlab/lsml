@@ -19,19 +19,22 @@
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JFormattedTextField;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -39,21 +42,31 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.text.DefaultFormatter;
 
 import lisong_mechlab.model.DynamicSlotDistributor;
 import lisong_mechlab.model.chassi.ArmorSide;
+import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.InternalPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.loadout.part.LoadoutPart.Message.Type;
-import lisong_mechlab.model.loadout.part.SetArmorOperation;
+import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.chassi.OmniPodDB;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
+import lisong_mechlab.model.loadout.component.OpChangeOmniPod;
+import lisong_mechlab.model.loadout.component.OpSetArmor;
+import lisong_mechlab.model.loadout.component.OpToggleItem;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.render.ItemRenderer;
+import lisong_mechlab.view.render.OmniPodRenderer;
 import lisong_mechlab.view.render.StyleManager;
+import lisong_mechlab.view.render.StyledComboBox;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader{
    class ArmorPopupAdapter extends MouseAdapter{
@@ -84,45 +97,53 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
             @Override
             public void actionPerformed(ActionEvent aE){
-               if( loadoutPart.getInternalPart().getType().isTwoSided() ){
-                  stack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.FRONT, loadoutPart.getArmor(ArmorSide.FRONT), false));
+               if( component.getInternalComponent().getLocation().isTwoSided() ){
+                  stack.pushAndApply(new OpSetArmor(xBar, loadout, component, ArmorSide.FRONT, component.getArmor(ArmorSide.FRONT), false));
                }
                else{
-                  stack.pushAndApply(new SetArmorOperation(xBar, loadoutPart, ArmorSide.ONLY, loadoutPart.getArmorTotal(), false));
+                  stack.pushAndApply(new OpSetArmor(xBar, loadout, component, ArmorSide.ONLY, component.getArmorTotal(), false));
                }
-               xBar.post(new LoadoutPart.Message(loadoutPart, Type.ArmorDistributionUpdateRequest));
+               xBar.post(new ConfiguredComponentBase.Message(component, Type.ArmorDistributionUpdateRequest));
             }
          }));
          menu.show(e.getComponent(), e.getX(), e.getY());
       }
    }
 
-   private static final int        ARMOR_LABEL_WIDTH   = 30;
-   private static final int        ARMOR_SPINNER_WIDTH = 20;
+   private static final int              ARMOR_LABEL_WIDTH   = 30;
+   private static final int              ARMOR_SPINNER_WIDTH = 20;
 
-   private static final long       serialVersionUID    = -4399442572295284661L;
+   private static final long             serialVersionUID    = -4399442572295284661L;
 
-   private final JLabel            frontArmorLabel;
-   private final JLabel            backArmorLabel;
-   private final JLabel            armorLabel;
+   private final JLabel                  frontArmorLabel;
+   private final JLabel                  backArmorLabel;
+   private final JLabel                  armorLabel;
 
-   private final LoadoutPart       loadoutPart;
+   private final LoadoutBase<?>          loadout;
+   private final ConfiguredComponentBase component;
 
-   private final boolean           canHaveHardpoints;
-   private final ArmorPopupAdapter armorPopupAdapter;
-   private JSpinner                frontSpinner;
-   private JSpinner                backSpinner;
-   private JSpinner                spinner;
+   private final boolean                 canHaveHardpoints;
+   private final ArmorPopupAdapter       armorPopupAdapter;
+   private JSpinner                      frontSpinner;
+   private JSpinner                      backSpinner;
+   private JSpinner                      spinner;
 
-   PartPanel(LoadoutPart aLoadoutPart, MessageXBar anXBar, boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
-             OperationStack aStack){
-      super(new BorderLayout());
-      anXBar.attach(this);
-      loadoutPart = aLoadoutPart;
+   private final JComboBox<OmniPod>      omnipodSelection;
+   private JPanel                        hardPointsPanel;
+
+   private final JCheckBox               toggleHA;
+   private final JCheckBox               toggleLAA;
+
+   PartPanel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, final MessageXBar aXBar, boolean aCanHaveHardpoints,
+             DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric, final OperationStack aStack){
+      setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+      aXBar.attach(this);
+      loadout = aLoadout;
+      component = aLoadoutPart;
       canHaveHardpoints = aCanHaveHardpoints;
-      armorPopupAdapter = new ArmorPopupAdapter(aStack, anXBar);
+      armorPopupAdapter = new ArmorPopupAdapter(aStack, aXBar);
 
-      if( aLoadoutPart.getInternalPart().getType().isTwoSided() ){
+      if( aLoadoutPart.getInternalComponent().getLocation().isTwoSided() ){
          frontArmorLabel = new JLabel();
          backArmorLabel = new JLabel();
          armorLabel = null;
@@ -133,45 +154,107 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          armorLabel = new JLabel();
       }
 
+      Location location = aLoadoutPart.getInternalComponent().getLocation();
+      if( aLoadoutPart instanceof ConfiguredComponentOmniMech && (location == Location.LeftArm || location == Location.RightArm) ){
+
+         final ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)aLoadoutPart;
+
+         toggleLAA = new JCheckBox(ItemDB.LAA.getShortName());
+         add(toggleLAA);
+         toggleLAA.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               aStack.pushAndApply(new OpToggleItem(aXBar, loadout, ccom, ItemDB.LAA, toggleLAA.isSelected()));
+            }
+         });
+         toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA) || ccom.getToggleState(ItemDB.LAA) == true);
+         toggleLAA.setSelected(ccom.getToggleState(ItemDB.LAA));
+         toggleLAA.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+         toggleHA = new JCheckBox(ItemDB.HA.getShortName());
+         add(toggleHA);
+         toggleHA.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               aStack.pushAndApply(new OpToggleItem(aXBar, loadout, ccom, ItemDB.HA, toggleHA.isSelected()));
+            }
+         });
+         toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA) || ccom.getToggleState(ItemDB.HA) == true);
+         toggleHA.setSelected(ccom.getToggleState(ItemDB.HA));
+         toggleHA.setAlignmentX(Component.CENTER_ALIGNMENT);
+      }
+      else{
+         toggleHA = null;
+         toggleLAA = null;
+      }
+
       setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
       if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
-         InternalPart internalPart = aLoadoutPart.getInternalPart();
-         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(internalPart.getType().longName() + " ("
-                                                                                       + (int)internalPart.getHitpoints() + " hp)"),
+         ComponentBase internalPart = aLoadoutPart.getInternalComponent();
+         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(internalPart.getLocation().longName() + " ("
+                                                                                       + (int)internalPart.getHitPoints() + " hp)"),
                                                       BorderFactory.createEmptyBorder(0, 2, 2, 4)));
       }
-      add(makeArmorPanel(anXBar, aSymmetric, aStack));
 
-      if( canHaveHardpoints )
-         add(makeHardpointsPanel());
+      if( LoadoutOmniMech.class.isAssignableFrom(aLoadout.getClass()) && aLoadoutPart.getInternalComponent().getLocation() != Location.CenterTorso ){
+         final LoadoutOmniMech omniMech = (LoadoutOmniMech)aLoadout;
+         // Omnimech
+         Collection<OmniPod> compatiblePods = OmniPodDB.lookup(omniMech.getChassis(), aLoadoutPart.getInternalComponent().getLocation());
+         omnipodSelection = new JComboBox<>(new Vector<>(compatiblePods));
+         omnipodSelection.setRenderer(new OmniPodRenderer());
+         omnipodSelection.addPopupMenuListener(new StyledComboBox(true, false));
+         omnipodSelection.setFocusable(false);
+
+         Dimension max = omnipodSelection.getMaximumSize();
+         max.height = ItemRenderer.getItemHeight();
+         omnipodSelection.setMaximumSize(max);
+         omnipodSelection.setSelectedItem(((ConfiguredComponentOmniMech)component).getOmniPod());
+         omnipodSelection.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent aE){
+               aStack.pushAndApply(new OpChangeOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech)component,
+                                                       (OmniPod)omnipodSelection.getSelectedItem()));
+            }
+         });
+         add(omnipodSelection);
+      }
+      else{
+         omnipodSelection = null;
+      }
+
+      add(makeArmorPanel(aXBar, aSymmetric, aStack));
+
+      if( canHaveHardpoints ){
+         hardPointsPanel = new JPanel();
+         updateHardpointsPanel(hardPointsPanel);
+         add(hardPointsPanel);
+      }
 
       // Critical slots
-      PartList list = new PartList(aStack, aLoadoutPart, anXBar, aSlotDistributor);
+      PartList list = new PartList(aStack, aLoadout, aLoadoutPart, aXBar, aSlotDistributor);
       list.setFixedCellHeight(ItemRenderer.getItemHeight());
       list.setFixedCellWidth(ItemRenderer.getItemWidth());
+      list.setFocusable(false);
 
-      setAlignmentX(LEFT_ALIGNMENT);
       add(list);
 
       updateArmorPanel();
    }
 
-   private JPanel makeHardpointsPanel(){
-      JPanel panel = new JPanel();
-      BoxLayout layoutManager = new BoxLayout(panel, BoxLayout.LINE_AXIS);
-      panel.setLayout(layoutManager);
-      // /panel.setBackground(Color.PINK.darker());
-      panel.add(Box.createVerticalStrut(ItemRenderer.getItemHeight() + ItemRenderer.getItemHeight() / 2));
+   private void updateHardpointsPanel(JPanel aPanel){
+      BoxLayout layoutManager = new BoxLayout(aPanel, BoxLayout.LINE_AXIS);
+      aPanel.removeAll();
+      aPanel.setLayout(layoutManager);
+      aPanel.add(Box.createVerticalStrut(3 * ItemRenderer.getItemHeight() / 2));
 
       for(HardPointType hp : HardPointType.values()){
          JLabel label = new JLabel();
-         StyleManager.styleHardpointLabel(label, loadoutPart.getInternalPart(), hp);
-         panel.add(label);
+         StyleManager.styleHardpointLabel(label, component, hp);
+         aPanel.add(label);
       }
 
-      panel.add(Box.createHorizontalGlue());
+      aPanel.add(Box.createHorizontalGlue());
       updateArmorPanel();
-      return panel;
    }
 
    private JPanel makeArmorPanel(MessageXBar anXBar, JCheckBox aSymmetric, OperationStack aStack){
@@ -179,17 +262,15 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, ItemRenderer.getItemHeight());
       Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);
 
-      if( loadoutPart.getInternalPart().getType().isTwoSided() ){
+      if( component.getInternalComponent().getLocation().isTwoSided() ){
          frontArmorLabel.setPreferredSize(labelDimension);
          backArmorLabel.setPreferredSize(labelDimension);
 
-         frontSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
+         frontSpinner = new JSpinner(new ArmorSpinner(loadout, component, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
          frontSpinner.setMaximumSize(labelDimension);
          frontSpinner.getEditor().setPreferredSize(spinnerDimension);
-         JFormattedTextField field = (JFormattedTextField)frontSpinner.getEditor().getComponent(0);
-         ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
-         backSpinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.BACK, anXBar, aSymmetric, aStack));
+         backSpinner = new JSpinner(new ArmorSpinner(loadout, component, ArmorSide.BACK, anXBar, aSymmetric, aStack));
          backSpinner.setMaximumSize(labelDimension);
          backSpinner.getEditor().setPreferredSize(spinnerDimension);
 
@@ -224,11 +305,9 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       else{
          armorLabel.setPreferredSize(labelDimension);
 
-         spinner = new JSpinner(new ArmorSpinner(loadoutPart, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
+         spinner = new JSpinner(new ArmorSpinner(loadout, component, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
          spinner.setMaximumSize(labelDimension);
          spinner.getEditor().setPreferredSize(spinnerDimension);
-         JFormattedTextField field = (JFormattedTextField)spinner.getEditor().getComponent(0);
-         ((DefaultFormatter)field.getFormatter()).setCommitsOnValidEdit(true);
 
          if( !ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ){
             panel.add(new JLabel("Armor:"));
@@ -246,10 +325,10 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
 
    void updateArmorPanel(){
       if( armorLabel != null ){
-         armorLabel.setText(" /" + Integer.valueOf(loadoutPart.getInternalPart().getArmorMax()));
+         armorLabel.setText(" /" + Integer.valueOf(component.getInternalComponent().getArmorMax()));
          JTextField tf = ((JSpinner.DefaultEditor)spinner.getEditor()).getTextField();
-         
-         if( loadoutPart.allowAutomaticArmor() ){
+
+         if( component.allowAutomaticArmor() ){
             armorLabel.setForeground(Color.GRAY);
             tf.setForeground(Color.GRAY);
          }
@@ -259,13 +338,12 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
          }
       }
       if( backArmorLabel != null && frontArmorLabel != null ){
-         frontArmorLabel.setText(" /" + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.FRONT)));
-         backArmorLabel.setText(" /" + Integer.valueOf(loadoutPart.getArmorMax(ArmorSide.BACK)));
+         frontArmorLabel.setText(" /" + Integer.valueOf(component.getArmorMax(ArmorSide.FRONT)));
+         backArmorLabel.setText(" /" + Integer.valueOf(component.getArmorMax(ArmorSide.BACK)));
          JTextField tff = ((JSpinner.DefaultEditor)frontSpinner.getEditor()).getTextField();
          JTextField tfb = ((JSpinner.DefaultEditor)backSpinner.getEditor()).getTextField();
 
-         
-         if( loadoutPart.allowAutomaticArmor() ){
+         if( component.allowAutomaticArmor() ){
             frontArmorLabel.setForeground(Color.GRAY);
             backArmorLabel.setForeground(Color.GRAY);
             tff.setForeground(Color.GRAY);
@@ -280,17 +358,53 @@ public class PartPanel extends JPanel implements MessageXBar.Reader{
       }
    }
 
+   private void updateActuatorToggles(){
+      if( toggleLAA != null ){
+         SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+               ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
+               toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA) || ccom.getToggleState(ItemDB.LAA));
+               toggleLAA.setSelected(ccom.getToggleState(ItemDB.LAA));
+            }
+         });
+      }
+
+      if( toggleHA != null ){
+         SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+               ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech)component;
+               toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA) || ccom.getToggleState(ItemDB.HA));
+               toggleHA.setSelected(ccom.getToggleState(ItemDB.HA));
+            }
+         });
+      }
+   }
+
    @Override
    public void receive(Message aMsg){
-      if( aMsg.isForMe(loadoutPart.getLoadout()) && aMsg instanceof LoadoutPart.Message ){
-         LoadoutPart.Message msg = (LoadoutPart.Message)aMsg;
-         if( msg.type == Type.ArmorChanged ){
-            SwingUtilities.invokeLater(new Runnable(){
-               @Override
-               public void run(){
-                  updateArmorPanel();
+      if( aMsg.isForMe(loadout) ){
+         if( aMsg instanceof ConfiguredComponentBase.Message ){
+
+            ConfiguredComponentBase.Message msg = (ConfiguredComponentBase.Message)aMsg;
+            if( msg.type == Type.ArmorChanged ){
+               SwingUtilities.invokeLater(new Runnable(){
+                  @Override
+                  public void run(){
+                     updateArmorPanel();
+                  }
+               });
+            }
+            else if( msg.type == Type.OmniPodChanged ){
+               if( canHaveHardpoints ){
+                  updateHardpointsPanel(hardPointsPanel);
                }
-            });
+               updateActuatorToggles();
+            }
+            else if( msg.type == Type.ItemAdded || msg.type == Type.ItemRemoved || msg.type == Type.ItemsChanged ){
+               updateActuatorToggles();
+            }
          }
       }
    }

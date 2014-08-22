@@ -19,40 +19,43 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.part.LoadoutPart;
-import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 
 /**
- * This {@link ItemMetric} calculates the probability that the given item will be critically hit at least once by a shot. 
+ * This {@link ItemMetric} calculates the probability that the given item will be critically hit at least once by a
+ * shot.
  * <p>
- * If hit by an high alpha weapons such as PPC, Gauss Rifle, AC/20,10 the item will likely be destroyed if it's hp is 10 or less.
+ * If hit by an high alpha weapons such as PPC, Gauss Rifle, AC/20,10 the item will likely be destroyed if it's hp is 10
+ * or less.
  * 
  * @author Li Song
  */
 public class CriticalStrikeProbability implements ItemMetric{
-   public final static double CRIT_CHANCE[] = {0.25, 0.14, 0.03}; // 25% risk of 1 hit, 15% risk of 2 hits, 3% risk of 3
-                                                                  // hits
-   private final LoadoutPart  loadoutPart;
+   public final static double            CRIT_CHANCE[] = {0.25, 0.14, 0.03}; // 25% risk of 1 hit, 15% risk of 2 hits,
+                                                                             // 3%
+                                                                             // risk of 3
+                                                                             // hits
+   private final ConfiguredComponentBase loadoutPart;
 
-   public CriticalStrikeProbability(LoadoutPart aLoadoutPart){
+   public CriticalStrikeProbability(ConfiguredComponentBase aLoadoutPart){
       loadoutPart = aLoadoutPart;
    }
 
    @Override
    public double calculate(Item aItem){
       int slots = 0;
-      Upgrades upgrades = loadoutPart.getLoadout().getUpgrades();
-      for(Item it : loadoutPart.getItems()){
-         if( it instanceof Internal && it != LoadoutPart.ENGINE_INTERNAL ){
-            continue;
-         }
-         slots += it.getNumCriticalSlots(upgrades);
+      for(Item it : loadoutPart.getItemsEquipped()){
+         if( it.isCrittable() )
+            slots += it.getNumCriticalSlots();
+      }
+      for(Item it : loadoutPart.getItemsFixed()){
+         if( it.isCrittable() )
+            slots += it.getNumCriticalSlots();
       }
 
       // The probability that this item will be hit at any one event
-      double p_hit = (double)aItem.getNumCriticalSlots(upgrades) / slots;
+      double p_hit = (double)aItem.getNumCriticalSlots() / slots;
       return calculate(p_hit);
    }
 
