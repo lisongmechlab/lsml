@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.Localization;

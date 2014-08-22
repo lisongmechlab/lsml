@@ -53,6 +53,7 @@ import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.ECM;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;

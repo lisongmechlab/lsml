@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import lisong_mechlab.model.DataCache;
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.BaseMovementProfile;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisStandard;
@@ -34,6 +33,7 @@ import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.Quirks;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;

@@ -19,8 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.Faction;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**

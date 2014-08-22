@@ -20,7 +20,6 @@
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
-import lisong_mechlab.model.Faction;
 
 import org.junit.Test;
 

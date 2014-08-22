@@ -25,8 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import lisong_mechlab.model.Faction;
-
 import org.junit.Test;
 
 public class MissileWeaponTest{

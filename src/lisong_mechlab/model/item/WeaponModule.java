@@ -21,7 +21,6 @@ package lisong_mechlab.model.item;
 
 import java.util.List;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.pilot.PilotSkillTree;
 
 /**

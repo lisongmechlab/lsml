@@ -21,7 +21,6 @@ package lisong_mechlab.model.item;
 
 import java.util.Collection;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.mwo_data.helpers.ItemStats;
 

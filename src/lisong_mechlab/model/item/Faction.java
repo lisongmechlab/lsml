@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */  
 //@formatter:on
-package lisong_mechlab.model;
+package lisong_mechlab.model.item;
 
 /**
  * An enumeration of all the available factions.
