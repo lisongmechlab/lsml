@@ -31,10 +31,10 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.view.preferences.Preferences;
 

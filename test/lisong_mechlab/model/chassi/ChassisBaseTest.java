@@ -28,9 +28,9 @@ import java.util.Collection;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;

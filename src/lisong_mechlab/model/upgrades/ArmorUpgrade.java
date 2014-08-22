@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import lisong_mechlab.model.Faction;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

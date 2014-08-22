@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;

@@ -52,9 +52,9 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.environment.EnvironmentDB;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;

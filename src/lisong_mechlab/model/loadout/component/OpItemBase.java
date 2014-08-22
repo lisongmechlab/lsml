@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;

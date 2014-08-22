@@ -27,10 +27,10 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.item.Faction;
 
 public class ChassiTableModel extends AbstractTableModel{
    private static final long             serialVersionUID = -2726840937519789976L;

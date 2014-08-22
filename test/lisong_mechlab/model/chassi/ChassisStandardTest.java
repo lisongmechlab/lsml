@@ -23,8 +23,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import junitparams.JUnitParamsRunner;
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.upgrades.Upgrades;
 
