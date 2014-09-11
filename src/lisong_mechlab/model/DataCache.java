@@ -634,6 +634,7 @@ public class DataCache{
                double longRange[] = new double[maxRank];
                double maxRange[] = new double[maxRank];
                double heat[] = new double[maxRank];
+               double cooldown[] =  new double[maxRank];
 
                for(int i = 0; i < maxRank; ++i){
                   int rank = weaponStats.get(i).rank;
@@ -645,12 +646,13 @@ public class DataCache{
                      maxRange[rank - 1] = 0;
                   }
                   heat[rank - 1] = weaponStats.get(i).heat;
+                  cooldown[rank -1] = weaponStats.get(i).cooldown;
                }
 
                ModuleSlot moduleSlot = ModuleSlot.fromMwo(pms.slot);
 
                ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction, cathegory, moduleSlot, affected,
-                                        maxRank, longRange, maxRange, heat));
+                                        maxRank, longRange, maxRange, heat, cooldown));
                break;
             }
             case "CAdvancedZoomStats":

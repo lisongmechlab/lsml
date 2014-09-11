@@ -23,7 +23,7 @@ package lisong_mechlab.model.item;
  * @author Emily Björk
  */
 public enum ModuleCathegory{
-   Support, Consumable, Vision, Sensor, Targeting, WeaponModule, UNKOWN;
+   Support, Consumable, Vision, Sensor, Targeting, WeaponModule, WeaponRange, UNKOWN, Miscelaneous, WeaponCooldown;
 
    public static ModuleCathegory fromMwo(String aMwoValue){
       if(null == aMwoValue)
@@ -41,8 +41,14 @@ public enum ModuleCathegory{
             return Consumable;
          case "ePTModule_WeaponMod":
             return WeaponModule;
+         case "ePTModule_Range":
+            return WeaponRange;
+         case "ePTModule_Misc":
+            return Miscelaneous;
+         case "ePTModule_Cooldown":
+            return WeaponCooldown;
          default:
-            throw new IllegalArgumentException("Unknown module type.");
+            throw new IllegalArgumentException("Unknown module type: " + aMwoValue);
       }
    }
 }
