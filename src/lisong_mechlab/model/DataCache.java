@@ -495,37 +495,46 @@ public class DataCache{
       // ans.add(new Internal("mdf_Engine", "mdf_EngineDesc", 3, 15, Faction.InnerSphere));
 
       // Modules (they contain ammo now, and weapons need to find their ammo types when parsed)
-      for(ItemStatsModule statsModule : aItemStatsXml.ModuleList){
-         switch( statsModule.CType ){
-            case "CAmmoTypeStats":
-               ans.add(new Ammunition(statsModule));
-               break;
-            case "CEngineStats":
-               ans.add(new Engine(statsModule));
-               break;
-            case "CHeatSinkStats":
-               ans.add(new HeatSink(statsModule));
-               break;
-            case "CJumpJetStats":
-               ans.add(new JumpJet(statsModule));
-               break;
-            case "CGECMStats":
-               ans.add(new ECM(statsModule));
-               break;
-            case "CBAPStats":
-            case "CClanBAPStats":
-            case "CCASEStats":
-               ans.add(new Module(statsModule));
-               break;
-            case "CLowerArmActuatorStats":
-            case "CInternalStats":
-               ans.add(new Internal(statsModule));
-               break;
-            case "CTargetingComputerStats":
-               ans.add(new TargetingComputer(statsModule));
-               break;
-            default:
-               break; // Other modules not yet supported
+      {
+         Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();
+         while( it.hasNext() ){
+            ItemStatsModule statsModule = it.next();
+            boolean processed = true;
+            switch( statsModule.CType ){
+               case "CAmmoTypeStats":
+                  ans.add(new Ammunition(statsModule));
+                  break;
+               case "CEngineStats":
+                  ans.add(new Engine(statsModule));
+                  break;
+               case "CHeatSinkStats":
+                  ans.add(new HeatSink(statsModule));
+                  break;
+               case "CJumpJetStats":
+                  ans.add(new JumpJet(statsModule));
+                  break;
+               case "CGECMStats":
+                  ans.add(new ECM(statsModule));
+                  break;
+               case "CBAPStats":
+               case "CClanBAPStats":
+               case "CCASEStats":
+                  ans.add(new Module(statsModule));
+                  break;
+               case "CLowerArmActuatorStats":
+               case "CInternalStats":
+                  ans.add(new Internal(statsModule));
+                  break;
+               case "CTargetingComputerStats":
+                  ans.add(new TargetingComputer(statsModule));
+                  break;
+               default:
+                  processed = false;
+                  break; // Other modules not yet supported
+            }
+            if( processed ){
+               it.remove();
+            }
          }
       }
 
@@ -587,7 +596,10 @@ public class DataCache{
       XMLPilotTalents pt = XMLPilotTalents.read(aGameVfs);
 
       List<PilotModule> ans = new ArrayList<>();
-      for(ItemStatsModule statsModule : aItemStatsXml.ModuleList){
+      Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();
+      while( it.hasNext() ){
+         boolean processed = true;
+         ItemStatsModule statsModule = it.next();
          switch( statsModule.CType ){
             case "CWeaponModStats":{
                XMLPilotModuleStats pms = statsModule.PilotModuleStats;
@@ -652,11 +664,15 @@ public class DataCache{
             case "CStrategicStrikeStats":
             case "CTargetDecayStats":
             case "CTargetInfoGatherStats":
+            case "CStealthDecayStats":
+            case "CCrippledPerformanceStats":
+            case "CImpulseElectricFieldStats":
             case "CUAVStats":{
                final String name;
                final String desc;
                final ModuleCathegory cathegory;
 
+               // XXX: This should be cleaned up
                if( statsModule.PilotModuleStats.talentId != null && !statsModule.PilotModuleStats.talentId.isEmpty() ){
                   XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentId);
                   name = Localization.key2string(talent.rankEntries.get(0).title);
@@ -666,14 +682,21 @@ public class DataCache{
                else{
                   name = Localization.key2string(statsModule.Loc.nameTag);
                   desc = Localization.key2string(statsModule.Loc.descTag);
-                  switch( statsModule.CType ){
-                     case "CUAVStats":
-                     case "CStrategicStrikeStats":
-                     case "CCoolantFlushStats":
-                        cathegory = ModuleCathegory.Consumable;
-                        break;
-                     default:
-                        throw new IllegalArgumentException("Unknown module cathegory");
+                  if( statsModule.PilotModuleStats.category != null ){
+                     cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
+                  }
+                  else{
+                     switch( statsModule.CType ){
+                        case "CUAVStats":
+                        case "CStrategicStrikeStats":
+                        case "CCoolantFlushStats":
+                           cathegory = ModuleCathegory.Consumable;
+                           break;
+                        case "CTargetDecayStats":
+                           cathegory = ModuleCathegory.Targeting;
+                        default:
+                           throw new IllegalArgumentException("Unknown module cathegory: " + statsModule.CType);
+                     }
                   }
                }
                Faction faction = Faction.fromMwo(statsModule.faction);
@@ -683,7 +706,12 @@ public class DataCache{
                break;
             }
             default:
+               processed = false;
+               System.out.println("Unknown module type: " + statsModule.CType);
                break; // Other modules not yet supported
+         }
+         if( processed ){
+            it.remove();
          }
       }
       return ans;
