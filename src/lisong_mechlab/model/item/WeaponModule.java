@@ -119,7 +119,7 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
 
    @Override
    public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
-      return heatModifier[maxRank - 1]; // TODO: Use pilot skill tree
+      return heatModifier[maxRank - 1];
    }
 
    @Override

@@ -157,13 +157,16 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard>{
    @Override
    public int getModulesMax(ModuleSlot aModuleSlot){
       if( aModuleSlot == ModuleSlot.MECH ){
-         return getChassis().getMechModulesMax() + 1;// +1 for mastery.
+         return getChassis().getMechModulesMax();
       }
       else if( aModuleSlot == ModuleSlot.CONSUMABLE ){
          return getChassis().getConsumableModulesMax();
       }
       else if( aModuleSlot == ModuleSlot.WEAPON ){
          return getChassis().getWeaponModulesMax();
+      }
+      else if( aModuleSlot == ModuleSlot.HYBRID ){
+         return 1;// 1 from mastery
       }
       else{
          throw new IllegalArgumentException("Unknown module slot type!");
