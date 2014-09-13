@@ -25,7 +25,7 @@ package lisong_mechlab.model.item;
  * @author Emily Björk
  */
 public enum ModuleSlot{
-   CONSUMABLE("Consumable"), WEAPON("Weapon"), MECH("Mech");
+   CONSUMABLE("Consumable"), WEAPON("Weapon"), MECH("Mech"), HYBRID("Hybrid");
 
    public static ModuleSlot fromMwo(String aString){
       switch( aString ){
@@ -35,17 +35,17 @@ public enum ModuleSlot{
             return CONSUMABLE;
          case "Pilot":
             return MECH;
-            default:
-               throw new IllegalArgumentException("Unknown module type!: " + aString);
+         default:
+            throw new IllegalArgumentException("Unknown module type!: " + aString);
       }
    }
-   
+
    private final String name;
 
    private ModuleSlot(String aName){
       name = aName;
    }
-   
+
    @Override
    public String toString(){
       return name;

@@ -19,10 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +30,7 @@ import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.util.ListArrayUtils;
 
 import org.junit.Before;
@@ -51,6 +49,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
    protected OmniPod           omniPod;
    protected boolean           missileBayDoors;
    protected List<HardPoint>   hardPoints = new ArrayList<>();
+   protected List<Item>        togglables = new ArrayList<>();
 
    @Before
    public void setup(){
@@ -70,6 +69,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
       if( null != omniPod ){
          Mockito.when(omniPod.hasMissileBayDoors()).thenReturn(missileBayDoors);
          Mockito.when(omniPod.getHardPoints()).thenReturn(hardPoints);
+         Mockito.when(omniPod.getToggleableItems()).thenReturn(togglables);
       }
       return new ConfiguredComponentOmniMech(omniInternal, autoArmor, omniPod);
    }
@@ -81,9 +81,71 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
    }
 
    @Test
-   public final void testCopyCtor(){
+   public final void testCopyCtor_ToggleStateOff(){
+      togglables.add(ItemDB.LAA);
       ConfiguredComponentOmniMech cut = makeDefaultCUT();
-      assertEquals(cut, new ConfiguredComponentOmniMech(cut));
+      cut.setToggleState(ItemDB.LAA, false);
+      
+      ConfiguredComponentOmniMech copy = new ConfiguredComponentOmniMech(cut);
+      assertEquals(cut, copy);
+   }
+
+   @Test
+   public final void testCopyCtor_ToggleStateOn(){
+      togglables.add(ItemDB.LAA);
+      ConfiguredComponentOmniMech cut = makeDefaultCUT();
+      cut.setToggleState(ItemDB.LAA, true);
+      
+      ConfiguredComponentOmniMech copy = new ConfiguredComponentOmniMech(cut);
+      assertEquals(cut, copy);
+   }
+
+   @Test
+   public final void testCopyCtor_ToggleStateNotLinked(){
+      togglables.add(ItemDB.LAA);
+      ConfiguredComponentOmniMech cut = makeDefaultCUT();
+      cut.setToggleState(ItemDB.LAA, true);
+      
+      ConfiguredComponentOmniMech copy = new ConfiguredComponentOmniMech(cut);
+      copy.setToggleState(ItemDB.LAA, false);
+      assertNotEquals(cut, copy);
+   }
+   
+   @Test
+   public final void testEquals_Same(){
+      togglables.add(ItemDB.LAA);
+      ConfiguredComponentOmniMech cut = makeDefaultCUT();
+      ConfiguredComponentOmniMech cut2 = makeDefaultCUT();
+
+      assertEquals(cut, cut2);
+      assertEquals(cut, cut);
+      assertEquals(cut2, cut2);
+   }
+   
+   
+   @Test
+   public final void testEquals_ToggleState(){
+      togglables.add(ItemDB.LAA);
+      ConfiguredComponentOmniMech cut = makeDefaultCUT();
+      ConfiguredComponentOmniMech cut2 = makeDefaultCUT();
+      cut.setToggleState(ItemDB.LAA, false);
+      cut2.setToggleState(ItemDB.LAA, true);
+
+      assertNotEquals(cut, cut2);
+   }
+   
+
+   @Test
+   public final void testEquals_OmniPods(){
+      togglables.add(ItemDB.LAA);
+      ConfiguredComponentOmniMech cut = makeDefaultCUT();
+      ConfiguredComponentOmniMech cut2 = makeDefaultCUT();
+      OmniPod pod1 = Mockito.mock(OmniPod.class);
+      OmniPod pod2 = Mockito.mock(OmniPod.class);
+      cut.setOmniPod(pod1);
+      cut2.setOmniPod(pod2);
+      
+      assertNotEquals(cut, cut2);
    }
 
    @Test

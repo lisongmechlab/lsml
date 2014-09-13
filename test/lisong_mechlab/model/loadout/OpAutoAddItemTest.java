@@ -68,7 +68,6 @@ public class OpAutoAddItemTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder();
       LoadoutBase<?> loadout = coder.parse("lsml://rQAAKCwqCDISSg4qCDEDvqmbFj6wWK9evXsLLAEYCg==");
-      Mockito.reset(xBar);
       // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
       // Execute
@@ -81,7 +80,6 @@ public class OpAutoAddItemTest{
       // Setup
       Base64LoadoutCoder coder = new Base64LoadoutCoder();
       LoadoutBase<?> loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
-      Mockito.reset(xBar);
       // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
       // Execute
@@ -95,6 +93,34 @@ public class OpAutoAddItemTest{
             it.remove();
       }
       assertTrue(allItems.remove(ItemDB.AMS));
+   }
+   
+   // Bug #345
+   @Test
+   public void testMoveItem_Bug_345() throws DecodingException{ 
+      // Setup
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse("lsml://rgCkLzsFLw9VBzsFLy4A6zGmSpSSkyq1vElShF9atWn3ErScSVKlVqtahiYkqVKs");
+      Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
+
+      // Execute
+      stack.pushAndApply(new OpAutoAddItem(loadout, xBar, item));
+
+      // Verify
+      assertEquals(27, loadout.getHeatsinksCount()); // Heat sink is added
+      assertEquals(72.4, loadout.getMass(), 0.1); // Mass is as is expected
+   }
+   
+   // Bug #349
+   @Test(expected=IllegalArgumentException.class, timeout=5000)
+   public void testMoveItem_Bug_349() throws DecodingException{ 
+      // Setup
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse("lsml://rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M");
+      Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
+
+      // Execute
+      stack.pushAndApply(new OpAutoAddItem(loadout, xBar, item));
    }
 
    /**
@@ -121,7 +147,6 @@ public class OpAutoAddItemTest{
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.LeftTorso), ItemDB.DHS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.LeftTorso), ItemDB.DHS));
       stack.pushAndApply(new OpAddItem(xBar, loadout, loadout.getComponent(Location.LeftArm), ItemDB.DHS));
-      Mockito.reset(xBar);
       // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
       // Execute

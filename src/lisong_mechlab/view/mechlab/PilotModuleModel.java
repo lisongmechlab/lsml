@@ -45,7 +45,7 @@ public class PilotModuleModel implements ListModel<String>, MessageXBar.Reader{
    private final LoadoutBase<?>        loadout;
    private final Set<ListDataListener> listeners = new HashSet<>();
    private final List<PilotModule>     modules   = new ArrayList<>();
-   private final ModuleSlot moduleSlot;
+   private final ModuleSlot            moduleSlot;
 
    public final static String          EMPTY     = "EMPTY";
 
@@ -66,9 +66,34 @@ public class PilotModuleModel implements ListModel<String>, MessageXBar.Reader{
 
    private void updateModules(){
       modules.clear();
-      for(PilotModule module : loadout.getModules()){
-         if(module.getSlot() == moduleSlot){
-            modules.add(module);
+
+      if( moduleSlot == ModuleSlot.HYBRID ){
+         int weaponMax = loadout.getModulesMax(ModuleSlot.WEAPON);
+         int mechMax = loadout.getModulesMax(ModuleSlot.MECH);
+         for(PilotModule module : loadout.getModules()){
+            if(module.getSlot() == ModuleSlot.WEAPON){
+               weaponMax--;
+               if(weaponMax <0){
+                  modules.add(module); // Overflows
+               }
+            }
+            if(module.getSlot() == ModuleSlot.MECH){
+               mechMax--;
+               if(mechMax <0){
+                  modules.add(module); // Overflows
+               }
+            }
+         }
+      }
+      else{
+         final int max = loadout.getModulesMax(moduleSlot);
+         for(PilotModule module : loadout.getModules()){
+            if( module.getSlot() == moduleSlot ){
+               modules.add(module);
+            }
+            if( modules.size() == max ){
+               break;
+            }
          }
       }
       fireListeners();
