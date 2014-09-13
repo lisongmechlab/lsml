@@ -110,6 +110,18 @@ public class OpAutoAddItemTest{
       assertEquals(27, loadout.getHeatsinksCount()); // Heat sink is added
       assertEquals(72.4, loadout.getMass(), 0.1); // Mass is as is expected
    }
+   
+   // Bug #349
+   @Test(expected=IllegalArgumentException.class, timeout=5000)
+   public void testMoveItem_Bug_349() throws DecodingException{ 
+      // Setup
+      Base64LoadoutCoder coder = new Base64LoadoutCoder();
+      LoadoutBase<?> loadout = coder.parse("lsml://rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M");
+      Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
+
+      // Execute
+      stack.pushAndApply(new OpAutoAddItem(loadout, xBar, item));
+   }
 
    /**
     * This test is a regression test for a bug where auto-add an ER PPC would fail on
