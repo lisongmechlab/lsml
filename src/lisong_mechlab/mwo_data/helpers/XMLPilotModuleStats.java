@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -27,6 +28,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class XMLPilotModuleStats{
+   @XStreamAlias(value="talentid")
    @XStreamAsAttribute
    public String talentId;
    @XStreamAsAttribute

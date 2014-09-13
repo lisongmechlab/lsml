@@ -33,6 +33,7 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
    private final double[]     longRangeModifier;
    private final double[]     maxRangeModifier;
    private final double[]     heatModifier;
+   private final double[]     cooldownModifier;
    private final int          maxRank;
 
    /**
@@ -63,10 +64,13 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
     * @param aHeatModifier
     *           An array of <code>aMaxRank</code> length with the amounts to add or subtract from the heat attribute of
     *           the weapon.
+    * @param aCooldownModifier
+    *           An array of <code>aMaxRank</code> length with the amounts to add or subtract from the cooldown attribute
+    *           of the weapon.
     */
    public WeaponModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction, ModuleCathegory aCathegory,
                        ModuleSlot aModuleSlot, List<Weapon> aAffectedWeapon, int aMaxRank, double aLongRangeModifier[], double aMaxRangeModifier[],
-                       double aHeatModifier[]){
+                       double aHeatModifier[], double aCooldownModifier[]){
       super(aMwoName, aMwoIdx, aName, aDescription, aFaction, aCathegory, aModuleSlot);
       maxRank = aMaxRank;
       affectedWeapon = aAffectedWeapon;
@@ -83,9 +87,14 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
          throw new IllegalArgumentException("Length of aHeatModifier must match aMaxRank!");
       }
 
+      if( aCooldownModifier.length != maxRank ){
+         throw new IllegalArgumentException("Length of aCooldownModifier must match aMaxRank!");
+      }
+      
       longRangeModifier = aLongRangeModifier;
       maxRangeModifier = aMaxRangeModifier;
       heatModifier = aHeatModifier;
+      cooldownModifier = aCooldownModifier;
    }
 
    public int getMaxRank(){
@@ -109,11 +118,11 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
 
    @Override
    public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree){
-      return heatModifier[maxRank - 1]; // TODO: Use pilot skill tree
+      return heatModifier[maxRank - 1];
    }
 
    @Override
    public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree){
-      return 0; // No pilot module modifies cooldown yet.
+      return cooldownModifier[maxRank - 1];
    }
 }

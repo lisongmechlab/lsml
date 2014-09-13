@@ -75,15 +75,9 @@ public class PilotModuleList extends JList<String>{
                                                        boolean aCellHasFocus){
             label.setText(aValue);
 
-            if( moduleSlot == ModuleSlot.MECH ){
-               if( aIndex == aList.getModel().getSize() - 1 ){
+            if( moduleSlot == ModuleSlot.HYBRID ){
                   label.setBackground(new Color(0xb8aa81));
                   label.setOpaque(true);
-               }
-               else{
-                  label.setBackground(Color.WHITE);
-                  label.setOpaque(false);
-               }
             }
             return label;
          }
