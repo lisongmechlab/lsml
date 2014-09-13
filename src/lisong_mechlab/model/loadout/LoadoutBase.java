@@ -71,7 +71,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    private final ChassisBase       chassisBase;
    private final T[]               components;
    private final Efficiencies      efficiencies;
-   private final List<PilotModule> modules;
+   private final List<PilotModule> modules; // TODO: Modules should be handled as separate categories.
 
    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase){
       name = aChassisBase.getNameShort();
@@ -257,7 +257,12 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       if( !aModule.getFaction().isCompatible(getChassis().getFaction()) )
          return false;
 
-      if( getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot()) )
+      final boolean canUseHybridSlot = aModule.getSlot() == ModuleSlot.WEAPON || aModule.getSlot() == ModuleSlot.MECH;
+      
+      final boolean isHybridSlotFree = !(getModulesOfType(ModuleSlot.MECH) > getModulesMax(ModuleSlot.MECH)
+                                       || getModulesOfType(ModuleSlot.WEAPON) > getModulesMax(ModuleSlot.WEAPON));
+
+      if( getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot()) && (!canUseHybridSlot || !isHybridSlotFree) )
          return false;
 
       // TODO: Apply any additional limitations on modules

@@ -144,7 +144,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
    @Override
    public int getModulesMax(ModuleSlot aModuleSlot){
       if( aModuleSlot == ModuleSlot.MECH ){
-         int ans = getChassis().getMechModulesMax() + 1; // +1 for mastery
+         int ans = getChassis().getMechModulesMax();
          for(ConfiguredComponentOmniMech component : getComponents()){
             ans += component.getOmniPod().getPilotModulesMax();
          }
@@ -155,6 +155,9 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
       }
       else if( aModuleSlot == ModuleSlot.WEAPON ){
          return getChassis().getWeaponModulesMax();
+      }
+      else if (aModuleSlot == ModuleSlot.HYBRID){
+         return 1; // +1 for mastery
       }
       else{
          throw new IllegalArgumentException("Unknown module slot type!");

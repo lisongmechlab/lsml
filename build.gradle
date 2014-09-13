@@ -47,6 +47,11 @@ jar {
   destinationDir = file('build')
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   archiveName="lsml.jar"
+
+  if(version == null){
+    version = '0.0.0'
+  }
+
   manifest {
     attributes('Main-Class': mainClassName, 
                'Implementation-Title': 'Li Song Mechlab', 
@@ -72,10 +77,8 @@ buildscript {
   }
 }
 
-tasks.withType(Compile) {
-  options.encoding = 'UTF-8'
-  options.compilerArgs << '-Xlint:unchecked'
-}
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
 
 task wixCandle64(type: Exec) {
   workingDir 'build'

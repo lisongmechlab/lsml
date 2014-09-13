@@ -35,4 +35,6 @@ public class XMLWeaponStats{
    public double heat;
    @XStreamAsAttribute
    public int    rank;
+   @XStreamAsAttribute
+   public double cooldown;
 }
