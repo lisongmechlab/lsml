@@ -128,7 +128,9 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
       Mockito.when(pods[3].getPilotModulesMax()).thenReturn(1);
       Mockito.when(pods[7].getPilotModulesMax()).thenReturn(3);
 
-      assertEquals(6 + 1, makeDefaultCUT().getModulesMax(ModuleSlot.MECH)); // +1 for mastery
+      assertEquals(6, makeDefaultCUT().getModulesMax(ModuleSlot.MECH));
+      
+      assertEquals(1, makeDefaultCUT().getModulesMax(ModuleSlot.HYBRID));
    }
 
    @Test

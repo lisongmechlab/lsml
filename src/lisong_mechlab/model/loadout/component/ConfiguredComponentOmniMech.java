@@ -53,6 +53,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
    public ConfiguredComponentOmniMech(ConfiguredComponentOmniMech aConfiguredOmnipod){
       super(aConfiguredOmnipod);
       setOmniPod(aConfiguredOmnipod.omniPod);
+      toggleStates.putAll(aConfiguredOmnipod.toggleStates);
    }
 
    @Override
@@ -63,6 +64,31 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase{
    @Override
    public int getHardPointCount(HardPointType aHardpointType){
       return omniPod.getHardPointCount(aHardpointType);
+   }
+
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((omniPod == null) ? 0 : omniPod.hashCode());
+      result = prime * result + ((toggleStates == null) ? 0 : toggleStates.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( !super.equals(obj) )
+         return false;
+      if( getClass() != obj.getClass() )
+         return false;
+      ConfiguredComponentOmniMech other = (ConfiguredComponentOmniMech)obj;
+      if( omniPod != other.omniPod )
+         return false;
+      if(!toggleStates.equals(other.toggleStates) )
+         return false;
+      return true;
    }
 
    @Override
