@@ -40,10 +40,12 @@ import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
+import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.SwingHelpers;
 import lisong_mechlab.view.action.RedoGarageAction;
@@ -59,7 +61,7 @@ import lisong_mechlab.view.preferences.Preferences;
  * 
  * @author Emily Björk
  */
-public class LSML extends JFrame{
+public class LSML extends JFrame implements MessageXBar.Reader{
    public static final String      PROGRAM_FNAME          = "Li Song Mechlab ";
    private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
    private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter(){
@@ -122,6 +124,8 @@ public class LSML extends JFrame{
       setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       setJMenuBar(new MenuBar(this));
 
+      xBar.attach(this);
+      
       JTabbedPane mechTab = new JTabbedPane();
       mechTab.add("By tonnage", new ChassiSelectionPane(preferences, xBar));
       mechTab.add("By payload", new PayloadSelectionPanel());
@@ -328,5 +332,15 @@ public class LSML extends JFrame{
       if( lsmlProtocolIPC != null )
          lsmlProtocolIPC.close();
       dispose();
+   }
+
+   @Override
+   public void receive(Message aMsg){
+      if( aMsg instanceof NotificationMessage && aMsg.isForMe(null) ){
+         NotificationMessage notice = (NotificationMessage)aMsg;
+         String message = notice.severity.toString() + ": " + notice.message;
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), message);
+         Toolkit.getDefaultToolkit().beep();
+      }
    }
 }

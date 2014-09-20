@@ -52,7 +52,6 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.SmurfyImportExport;
-import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.SwingHelpers;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.preferences.SmurfyPreferences;
@@ -169,7 +168,7 @@ public class ImportFromSmurfyAction extends AbstractAction{
                         SmurfyImportExport action = null;
                         try{
                            action = new SmurfyImportExport(textApiKey.getText(), decoder);
-                           List<LoadoutBase<?>> mechbay = action.listMechBay();
+                           List<LoadoutBase<?>> mechbay = action.listMechBay(ProgramInit.lsml().xBar);
 
                            if( rememberKey.isSelected() ){
                               preferences.remeberAPIKey(textApiKey.getText());
@@ -182,9 +181,6 @@ public class ImportFromSmurfyAction extends AbstractAction{
                            model.fireTableDataChanged();
                            dialog.pack();
                            dialog.setVisible(true);
-                        }
-                        catch( DecodingException e ){
-                           JOptionPane.showMessageDialog(parent, "Unable to decode loadout from Smurfy's.\nError: " + e.getMessage());
                         }
                         catch( IOException e ){
                            JOptionPane.showMessageDialog(parent, "Unable to retrieve mechbay from Smurfy's.\nError: " + e.getMessage());

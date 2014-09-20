@@ -38,10 +38,13 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+import lisong_mechlab.model.NotificationMessage;
+import lisong_mechlab.model.NotificationMessage.Severity;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.util.DecodingException;
+import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.LSML;
 
@@ -114,7 +117,7 @@ public class SmurfyImportExport{
       return true;
    }
 
-   public List<LoadoutBase<?>> listMechBay() throws DecodingException, IOException{
+   public List<LoadoutBase<?>> listMechBay(MessageXBar aXBar) throws IOException{
       List<LoadoutBase<?>> ans = new ArrayList<>();
 
       HttpURLConnection connection = connect(userMechbayUrl);
@@ -144,9 +147,15 @@ public class SmurfyImportExport{
                if( name == null )
                   throw new IOException("Found lsml without name!");
                String lsml = lsmlMatcher.group(1);
-               LoadoutBase<?> loadout = coder.parse(lsml);
-               stack.pushAndApply(new OpRename(loadout, null, name));
-               ans.add(loadout);
+               try{
+                  LoadoutBase<?> loadout = coder.parse(lsml);
+                  stack.pushAndApply(new OpRename(loadout, null, name));
+                  ans.add(loadout);
+               }
+               catch( DecodingException|IllegalArgumentException e ){
+                  aXBar.post(new NotificationMessage(Severity.ERROR, null, "Unable to decode \""+name+"\", loadout is not available for import.\n\nReason: " + e.getMessage()));
+               }
+
                name = null;
             }
          }
