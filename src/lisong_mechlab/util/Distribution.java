@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -24,8 +24,8 @@ package lisong_mechlab.util;
  * 
  * @author Li Song
  */
-public interface Distribution{
-   public double pdf(double x);
+public interface Distribution {
+	public double pdf(double x);
 
-   public double cdf(double x);
+	public double cdf(double x);
 }

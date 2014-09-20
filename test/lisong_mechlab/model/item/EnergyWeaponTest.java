@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -28,11 +28,11 @@ import org.junit.Test;
  * 
  * @author Li Song
  */
-public class EnergyWeaponTest{
+public class EnergyWeaponTest {
 
-   @Test
-   public void testCompare_flamers_flamers(){
-      EnergyWeapon weapon = (EnergyWeapon)ItemDB.lookup("FLAMER");
-      assertEquals(0, weapon.compareTo(weapon));
-   }
+	@Test
+	public void testCompare_flamers_flamers() {
+		EnergyWeapon weapon = (EnergyWeapon) ItemDB.lookup("FLAMER");
+		assertEquals(0, weapon.compareTo(weapon));
+	}
 }

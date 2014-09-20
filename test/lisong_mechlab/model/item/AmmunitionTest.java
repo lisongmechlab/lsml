@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -28,15 +28,15 @@ import org.junit.Test;
  * 
  * @author Li Song
  */
-public class AmmunitionTest{
+public class AmmunitionTest {
 
-   @Test
-   public void testHalfTonAmmo(){
-      Ammunition cut = (Ammunition)ItemDB.lookup(2233);
+	@Test
+	public void testHalfTonAmmo() {
+		Ammunition cut = (Ammunition) ItemDB.lookup(2233);
 
-      assertEquals(0.5, cut.getMass(), 0.0);
-      assertEquals(1, cut.getNumCriticalSlots());
-      assertEquals(10.0, cut.getHealth(), 0.0);
-   }
-   
+		assertEquals(0.5, cut.getMass(), 0.0);
+		assertEquals(1, cut.getNumCriticalSlots());
+		assertEquals(10.0, cut.getHealth(), 0.0);
+	}
+
 }

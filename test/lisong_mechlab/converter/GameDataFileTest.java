@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.converter;
 
@@ -30,16 +30,16 @@ import lisong_mechlab.view.preferences.PreferenceStore;
 
 import org.junit.Test;
 
-public class GameDataFileTest{
+public class GameDataFileTest {
 
-   @Test
-   public void test() throws IOException{
-      File gameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
-      GameVFS dataFile = new GameVFS(gameDir);
+	@Test
+	public void test() throws IOException {
+		File gameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+		GameVFS dataFile = new GameVFS(gameDir);
 
-      InputStream inputStream = dataFile.openGameFile(new File("Game/Objects/mechs/spider/sdr-5k.mdf")).stream;
+		InputStream inputStream = dataFile.openGameFile(new File("Game/Objects/mechs/spider/sdr-5k.mdf")).stream;
 
-      assertTrue(inputStream.available() > 6000);
-   }
+		assertTrue(inputStream.available() > 6000);
+	}
 
 }

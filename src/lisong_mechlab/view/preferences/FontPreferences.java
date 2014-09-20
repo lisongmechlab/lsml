@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.preferences;
 
@@ -34,66 +34,68 @@ import lisong_mechlab.view.ProgramInit;
  * 
  * @author Li Song
  */
-public class FontPreferences{
-   public enum FontSize{
-      VerySmall(0.6), Small(0.8), Normal(1.0), Large(1.2), VeryLarge(1.4);
+public class FontPreferences {
+	public enum FontSize {
+		VerySmall(0.6), Small(0.8), Normal(1.0), Large(1.2), VeryLarge(1.4);
 
-      private FontSize(double aFactor){
-         factor = aFactor;
-      }
+		private FontSize(double aFactor) {
+			factor = aFactor;
+		}
 
-      private double factor;
+		private double factor;
 
-      public double getSizeFactor(){
-         return factor;
-      }
-   }
+		public double getSizeFactor() {
+			return factor;
+		}
+	}
 
-   public static final String   FONTSIZE_KEY = "fontSize";
-   private FontSize             fontSize;
-   private Map<Object, Integer> defaultSizes = new HashMap<>();
+	public static final String FONTSIZE_KEY = "fontSize";
+	private FontSize fontSize;
+	private Map<Object, Integer> defaultSizes = new HashMap<>();
 
-   public FontPreferences(){
-      for(Map.Entry<Object, Object> entry : UIManager.getDefaults().entrySet()){
-         Object key = entry.getKey();
-         Object value = UIManager.get(key);
-         if( value != null && value instanceof FontUIResource ){
-            FontUIResource fr = (FontUIResource)value;
-            defaultSizes.put(key, fr.getSize());
-         }
-      }
+	public FontPreferences() {
+		for (Map.Entry<Object, Object> entry : UIManager.getDefaults().entrySet()) {
+			Object key = entry.getKey();
+			Object value = UIManager.get(key);
+			if (value != null && value instanceof FontUIResource) {
+				FontUIResource fr = (FontUIResource) value;
+				defaultSizes.put(key, fr.getSize());
+			}
+		}
 
-      fontSize = FontSize.valueOf(PreferenceStore.getString(FONTSIZE_KEY, FontSize.Normal.name()));
-      updateFonts();
-   }
+		fontSize = FontSize.valueOf(PreferenceStore.getString(FONTSIZE_KEY, FontSize.Normal.name()));
+		updateFonts();
+	}
 
-   /**
-    * Sets the fonts for the application. This must be called before the main frame has opened.
-    */
-   public void updateFonts(){
-      for(Map.Entry<Object, Integer> e : defaultSizes.entrySet()){
-         Object key = e.getKey();
-         UIManager.put(key, new FontUIResource(new Font("SansSerif", Font.PLAIN, (int)(e.getValue() * fontSize.getSizeFactor()))));
-      }
-   }
+	/**
+	 * Sets the fonts for the application. This must be called before the main frame has opened.
+	 */
+	public void updateFonts() {
+		for (Map.Entry<Object, Integer> e : defaultSizes.entrySet()) {
+			Object key = e.getKey();
+			UIManager.put(key,
+					new FontUIResource(new Font("SansSerif", Font.PLAIN,
+							(int) (e.getValue() * fontSize.getSizeFactor()))));
+		}
+	}
 
-   /**
-    * Stores the font size into the settings file but doesn't update the font in the application.
-    * 
-    * @param aFontSize
-    *           The {@link FontSize} to use.
-    */
-   public void setFontSize(FontSize aFontSize){
-      fontSize = aFontSize;
-      PreferenceStore.setString(FONTSIZE_KEY, fontSize.name());
-      updateFonts();
-      SwingUtilities.updateComponentTreeUI(ProgramInit.lsml());
-   }
+	/**
+	 * Stores the font size into the settings file but doesn't update the font in the application.
+	 * 
+	 * @param aFontSize
+	 *            The {@link FontSize} to use.
+	 */
+	public void setFontSize(FontSize aFontSize) {
+		fontSize = aFontSize;
+		PreferenceStore.setString(FONTSIZE_KEY, fontSize.name());
+		updateFonts();
+		SwingUtilities.updateComponentTreeUI(ProgramInit.lsml());
+	}
 
-   /**
-    * @return The currently stored {@link FontSize}. Which may be different from the currently displayed fontsize.
-    */
-   public FontSize getFontSize(){
-      return fontSize;
-   }
+	/**
+	 * @return The currently stored {@link FontSize}. Which may be different from the currently displayed fontsize.
+	 */
+	public FontSize getFontSize() {
+		return fontSize;
+	}
 }

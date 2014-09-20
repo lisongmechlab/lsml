@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -24,27 +24,27 @@ package lisong_mechlab.model.chassi;
  * 
  * @author Li Song
  */
-public interface HealthModifier{
+public interface HealthModifier {
 
-   /**
-    * Calculates how much extra HP is added to the given location by this modifier.
-    * 
-    * @param aLocation
-    *           The location to calculate bonus HP for.
-    * @param aHP
-    *           The original HP of the location.
-    * @return The extra HP that should be added on top.
-    */
-   public double extraInternalHP(Location aLocation, double aHP);
+	/**
+	 * Calculates how much extra HP is added to the given location by this modifier.
+	 * 
+	 * @param aLocation
+	 *            The location to calculate bonus HP for.
+	 * @param aHP
+	 *            The original HP of the location.
+	 * @return The extra HP that should be added on top.
+	 */
+	public double extraInternalHP(Location aLocation, double aHP);
 
-   /**
-    * Calculates how much armor HP is added to the given location by this modifier.
-    * 
-    * @param aLocation
-    *           The location to calculate bonus HP for.
-    * @param aHP
-    *           The original HP of the location.
-    * @return The extra HP that should be added on top.
-    */
-   double extraArmor(Location aLocation, double aHP);
+	/**
+	 * Calculates how much armor HP is added to the given location by this modifier.
+	 * 
+	 * @param aLocation
+	 *            The location to calculate bonus HP for.
+	 * @param aHP
+	 *            The original HP of the location.
+	 * @return The extra HP that should be added on top.
+	 */
+	double extraArmor(Location aLocation, double aHP);
 }

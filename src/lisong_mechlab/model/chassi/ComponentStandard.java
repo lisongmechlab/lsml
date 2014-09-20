@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -36,77 +36,75 @@ import lisong_mechlab.model.item.ItemDB;
  * 
  * @author Li Song
  */
-public class ComponentStandard extends ComponentBase{
-   private final List<HardPoint> hardPoints = new ArrayList<>();
+public class ComponentStandard extends ComponentBase {
+	private final List<HardPoint> hardPoints = new ArrayList<>();
 
-   /**
-    * Creates a new {@link ComponentStandard} with the given properties.
-    * 
-    * @param aSlots
-    *           The total number of slots in this component.
-    * @param aLocation
-    *           The location that the component is mounted at.
-    * @param aHP
-    *           The hit points of the component.
-    * @param aFixedItems
-    *           An array of internal items and other items that are locked.
-    * @param aHardPoints
-    *           A {@link List} of {@link HardPoint}s for the component.
-    */
-   public ComponentStandard(Location aLocation, int aSlots, double aHP, List<Item> aFixedItems, List<HardPoint> aHardPoints){
-      super(aSlots, aHP, aLocation, aFixedItems);
-      hardPoints.addAll(aHardPoints);
-   }
+	/**
+	 * Creates a new {@link ComponentStandard} with the given properties.
+	 * 
+	 * @param aSlots
+	 *            The total number of slots in this component.
+	 * @param aLocation
+	 *            The location that the component is mounted at.
+	 * @param aHP
+	 *            The hit points of the component.
+	 * @param aFixedItems
+	 *            An array of internal items and other items that are locked.
+	 * @param aHardPoints
+	 *            A {@link List} of {@link HardPoint}s for the component.
+	 */
+	public ComponentStandard(Location aLocation, int aSlots, double aHP, List<Item> aFixedItems,
+			List<HardPoint> aHardPoints) {
+		super(aSlots, aHP, aLocation, aFixedItems);
+		hardPoints.addAll(aHardPoints);
+	}
 
-   public int getHardPointCount(HardPointType aHardpointType){
-      int ans = 0;
-      for(HardPoint it : hardPoints){
-         if( it.getType() == aHardpointType ){
-            ans++;
-         }
-      }
-      return ans;
-   }
+	public int getHardPointCount(HardPointType aHardpointType) {
+		int ans = 0;
+		for (HardPoint it : hardPoints) {
+			if (it.getType() == aHardpointType) {
+				ans++;
+			}
+		}
+		return ans;
+	}
 
-   public Collection<HardPoint> getHardPoints(){
-      return Collections.unmodifiableList(hardPoints);
-   }
+	public Collection<HardPoint> getHardPoints() {
+		return Collections.unmodifiableList(hardPoints);
+	}
 
-   /**
-    * @return <code>true</code> if this component has missile bay doors.
-    */
-   public boolean hasMissileBayDoors(){
-      for(HardPoint hardPoint : hardPoints){
-         if( hardPoint.hasMissileBayDoor() ){
-            return true;
-         }
-      }
-      return false;
-   }
+	/**
+	 * @return <code>true</code> if this component has missile bay doors.
+	 */
+	public boolean hasMissileBayDoors() {
+		for (HardPoint hardPoint : hardPoints) {
+			if (hardPoint.hasMissileBayDoor()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-   @Override
-   public boolean isAllowed(Item aItem, Engine aEngine){
-      if( aItem.getHardpointType() != HardPointType.NONE && getHardPointCount(aItem.getHardpointType()) <= 0 ){
-         return false;
-      }
-      else if( aItem instanceof Engine ){
-         return getLocation() == Location.CenterTorso;
-      }
-      else if( aItem == ItemDB.CASE ){
-         return (getLocation().isSideTorso());
-      }
-      
-      int extraslots = 0;
-      if( getLocation() == Location.CenterTorso ){
-         extraslots += 6; // There has to be an engine and they always have 6 slots.
-      }
-      else if(getLocation().isSideTorso() && aEngine != null && aEngine.getType() == EngineType.XL){
-         extraslots += aEngine.getSide().getNumCriticalSlots();
-      }
-      
-      if( aItem.getNumCriticalSlots() > getSlots() - getFixedItemSlots() - extraslots ){
-         return false;
-      }
-      return super.isAllowed(aItem, aEngine);
-   }
+	@Override
+	public boolean isAllowed(Item aItem, Engine aEngine) {
+		if (aItem.getHardpointType() != HardPointType.NONE && getHardPointCount(aItem.getHardpointType()) <= 0) {
+			return false;
+		} else if (aItem instanceof Engine) {
+			return getLocation() == Location.CenterTorso;
+		} else if (aItem == ItemDB.CASE) {
+			return (getLocation().isSideTorso());
+		}
+
+		int extraslots = 0;
+		if (getLocation() == Location.CenterTorso) {
+			extraslots += 6; // There has to be an engine and they always have 6 slots.
+		} else if (getLocation().isSideTorso() && aEngine != null && aEngine.getType() == EngineType.XL) {
+			extraslots += aEngine.getSide().getNumCriticalSlots();
+		}
+
+		if (aItem.getNumCriticalSlots() > getSlots() - getFixedItemSlots() - extraslots) {
+			return false;
+		}
+		return super.isAllowed(aItem, aEngine);
+	}
 }

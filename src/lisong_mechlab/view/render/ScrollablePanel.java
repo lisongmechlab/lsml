@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.render;
 
@@ -25,31 +25,31 @@ import java.awt.Rectangle;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 
-public class ScrollablePanel extends JPanel implements Scrollable{
-   private static final long serialVersionUID = -5231044372862875923L;
+public class ScrollablePanel extends JPanel implements Scrollable {
+	private static final long serialVersionUID = -5231044372862875923L;
 
-   @Override
-   public Dimension getPreferredScrollableViewportSize(){
-      return null;
-   }
+	@Override
+	public Dimension getPreferredScrollableViewportSize() {
+		return null;
+	}
 
-   @Override
-   public int getScrollableBlockIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection){
-      return 150; // Arbitrary number, works well enough.
-   }
+	@Override
+	public int getScrollableBlockIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection) {
+		return 150; // Arbitrary number, works well enough.
+	}
 
-   @Override
-   public boolean getScrollableTracksViewportHeight(){
-      return false;
-   }
+	@Override
+	public boolean getScrollableTracksViewportHeight() {
+		return false;
+	}
 
-   @Override
-   public boolean getScrollableTracksViewportWidth(){
-      return true;
-   }
+	@Override
+	public boolean getScrollableTracksViewportWidth() {
+		return true;
+	}
 
-   @Override
-   public int getScrollableUnitIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection){
-      return 50; // Arbitrary number, works well enough.
-   }
+	@Override
+	public int getScrollableUnitIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection) {
+		return 50; // Arbitrary number, works well enough.
+	}
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -25,66 +25,69 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class Engine extends HeatSource{
-   public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
-   public final static double ENGINE_HEAT_66_THROTTLE   = 0.1;
+public class Engine extends HeatSource {
+	public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
+	public final static double ENGINE_HEAT_66_THROTTLE = 0.1;
 
-   @XStreamAsAttribute
-   protected final int        rating;
-   @XStreamAsAttribute
-   protected final EngineType type;
-   @XStreamAsAttribute
-   final private int          internalHs;
-   @XStreamAsAttribute
-   final private int          heatSinkSlots;
+	@XStreamAsAttribute
+	protected final int rating;
+	@XStreamAsAttribute
+	protected final EngineType type;
+	@XStreamAsAttribute
+	final private int internalHs;
+	@XStreamAsAttribute
+	final private int heatSinkSlots;
 
-   public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardPointType, int aHP,
-                 Faction aFaction, int aRating, EngineType aType, int aInternalHS, int aHSSlots){
-      super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, ENGINE_HEAT_FULL_THROTTLE);
-      rating = aRating;
-      type = aType;
-      internalHs = aInternalHS;
-      heatSinkSlots = aHSSlots;
-   }
+	public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+			HardPointType aHardPointType, int aHP, Faction aFaction, int aRating, EngineType aType, int aInternalHS,
+			int aHSSlots) {
+		super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, ENGINE_HEAT_FULL_THROTTLE);
+		rating = aRating;
+		type = aType;
+		internalHs = aInternalHS;
+		heatSinkSlots = aHSSlots;
+	}
 
-   public Engine(ItemStatsModule aStatsModule){
-      super(aStatsModule, HardPointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE, aStatsModule.EngineStats.health);
-      int hs = aStatsModule.EngineStats.heatsinks;
-      internalHs = Math.min(10, hs);
-      heatSinkSlots = hs - internalHs;
-      type = (getName().toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
-      rating = aStatsModule.EngineStats.rating;
-   }
+	public Engine(ItemStatsModule aStatsModule) {
+		super(aStatsModule, HardPointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE,
+				aStatsModule.EngineStats.health);
+		int hs = aStatsModule.EngineStats.heatsinks;
+		internalHs = Math.min(10, hs);
+		heatSinkSlots = hs - internalHs;
+		type = (getName().toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
+		rating = aStatsModule.EngineStats.rating;
+	}
 
-   public EngineType getType(){
-      return type;
-   }
+	public EngineType getType() {
+		return type;
+	}
 
-   public int getRating(){
-      return rating;
-   }
+	public int getRating() {
+		return rating;
+	}
 
-   public int getNumInternalHeatsinks(){
-      return internalHs;
-   }
+	public int getNumInternalHeatsinks() {
+		return internalHs;
+	}
 
-   public int getNumHeatsinkSlots(){
-      return heatSinkSlots;
-   }
+	public int getNumHeatsinkSlots() {
+		return heatSinkSlots;
+	}
 
-   @Override
-   public String getShortName(){
-      String name = getName();
-      name = name.replace("ENGINE ", "");
-      return name;
-   }
+	@Override
+	public String getShortName() {
+		String name = getName();
+		name = name.replace("ENGINE ", "");
+		return name;
+	}
 
-   /**
-    * @return The side part of this engine if it is an XL engine, <code>null</code> otherwise.
-    */
-   public Internal getSide(){
-      if( getType() == EngineType.XL )
-         return getFaction() == Faction.Clan ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN : ConfiguredComponentBase.ENGINE_INTERNAL;
-      return null;
-   }
+	/**
+	 * @return The side part of this engine if it is an XL engine, <code>null</code> otherwise.
+	 */
+	public Internal getSide() {
+		if (getType() == EngineType.XL)
+			return getFaction() == Faction.Clan ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN
+					: ConfiguredComponentBase.ENGINE_INTERNAL;
+		return null;
+	}
 }

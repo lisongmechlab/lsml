@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -28,21 +28,21 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * 
  * @author Li Song
  */
-public class CoolingRatio implements Metric{
-   private final HeatDissipation dissipation;
-   private final HeatGeneration  generation;
+public class CoolingRatio implements Metric {
+	private final HeatDissipation dissipation;
+	private final HeatGeneration generation;
 
-   public CoolingRatio(final HeatDissipation aDissipation, final HeatGeneration aHeatGeneration){
-      dissipation = aDissipation;
-      generation = aHeatGeneration;
-   }
+	public CoolingRatio(final HeatDissipation aDissipation, final HeatGeneration aHeatGeneration) {
+		dissipation = aDissipation;
+		generation = aHeatGeneration;
+	}
 
-   @Override
-   public double calculate(){
-      final double generatedHeat = generation.calculate();
-      if( generatedHeat <= 0 ){
-         return 1.0;
-      }
-      return dissipation.calculate() / generatedHeat;
-   }
+	@Override
+	public double calculate() {
+		final double generatedHeat = generation.calculate();
+		if (generatedHeat <= 0) {
+			return 1.0;
+		}
+		return dissipation.calculate() / generatedHeat;
+	}
 }

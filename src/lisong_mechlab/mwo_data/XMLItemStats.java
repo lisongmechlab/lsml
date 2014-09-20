@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data;
 
@@ -43,68 +43,68 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * 
  * @author Li Song
  */
-public class XMLItemStats{
-   @XStreamImplicit
-   public List<XMLItemStatsMech>     MechList        = new ArrayList<>();
-   @XStreamImplicit
-   public List<ItemStatsWeapon>      WeaponList      = new ArrayList<>();
-   @XStreamImplicit
-   public List<ItemStatsModule>      ModuleList      = new ArrayList<>();
-   @XStreamImplicit
-   public List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
-   @XStreamImplicit
-   public List<ItemStatsOmniPodType> OmniPodList     = new ArrayList<>();
+public class XMLItemStats {
+	@XStreamImplicit
+	public List<XMLItemStatsMech> MechList = new ArrayList<>();
+	@XStreamImplicit
+	public List<ItemStatsWeapon> WeaponList = new ArrayList<>();
+	@XStreamImplicit
+	public List<ItemStatsModule> ModuleList = new ArrayList<>();
+	@XStreamImplicit
+	public List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
+	@XStreamImplicit
+	public List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
 
-   public static XMLItemStats fromXml(GameFile aGameFile){
-      XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
-         @Override
-         protected MapperWrapper wrapMapper(MapperWrapper next){
-            return new MapperWrapper(next){
-               @Override
-               public boolean shouldSerializeMember(Class definedIn, String fieldName){
-                  if( definedIn == Object.class ){
-                     return false;
-                  }
-                  return super.shouldSerializeMember(definedIn, fieldName);
-               }
-            };
-         }
-      };
-      xstream.autodetectAnnotations(true);
-      xstream.alias("WeaponList", XMLItemStats.class);
-      xstream.alias("MechList", XMLItemStats.class);
-      xstream.alias("OmniPodList", XMLItemStats.class);
-      xstream.alias("UpgradeTypeList", XMLItemStats.class);
-      xstream.alias("ModuleList", XMLItemStats.class);
+	public static XMLItemStats fromXml(GameFile aGameFile) {
+		XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
+			@Override
+			protected MapperWrapper wrapMapper(MapperWrapper next) {
+				return new MapperWrapper(next) {
+					@Override
+					public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+						if (definedIn == Object.class) {
+							return false;
+						}
+						return super.shouldSerializeMember(definedIn, fieldName);
+					}
+				};
+			}
+		};
+		xstream.autodetectAnnotations(true);
+		xstream.alias("WeaponList", XMLItemStats.class);
+		xstream.alias("MechList", XMLItemStats.class);
+		xstream.alias("OmniPodList", XMLItemStats.class);
+		xstream.alias("UpgradeTypeList", XMLItemStats.class);
+		xstream.alias("ModuleList", XMLItemStats.class);
 
-      xstream.alias("Mech", XMLItemStatsMech.class);
-      xstream.alias("Weapon", ItemStatsWeapon.class);
-      xstream.alias("Module", ItemStatsModule.class);
-      xstream.alias("Internal", ItemStatsModule.class);
-      xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
-      xstream.alias("OmniPod", ItemStatsOmniPodType.class);
-      xstream.alias("PilotModuleStats", XMLPilotModuleStats.class);
-      xstream.alias("WeaponStats", XMLWeaponStats.class);
-      xstream.alias("PilotModuleWeaponStats", XMLPilotModuleWeaponStats.class);
+		xstream.alias("Mech", XMLItemStatsMech.class);
+		xstream.alias("Weapon", ItemStatsWeapon.class);
+		xstream.alias("Module", ItemStatsModule.class);
+		xstream.alias("Internal", ItemStatsModule.class);
+		xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
+		xstream.alias("OmniPod", ItemStatsOmniPodType.class);
+		xstream.alias("PilotModuleStats", XMLPilotModuleStats.class);
+		xstream.alias("WeaponStats", XMLWeaponStats.class);
+		xstream.alias("PilotModuleWeaponStats", XMLPilotModuleWeaponStats.class);
 
-      // Fixes for broken XML from PGI
-      xstream.aliasAttribute("Ctype", "CType");
-      xstream.aliasAttribute("talentid", "talentId");
+		// Fixes for broken XML from PGI
+		xstream.aliasAttribute("Ctype", "CType");
+		xstream.aliasAttribute("talentid", "talentId");
 
-      return (XMLItemStats)xstream.fromXML(aGameFile.stream);
-   }
+		return (XMLItemStats) xstream.fromXML(aGameFile.stream);
+	}
 
-   public void append(GameFile aGameFile){
-      XMLItemStats xml = fromXml(aGameFile);
-      if( null != xml.MechList )
-         MechList.addAll(xml.MechList);
-      if( null != xml.WeaponList )
-         WeaponList.addAll(xml.WeaponList);
-      if( null != xml.ModuleList )
-         ModuleList.addAll(xml.ModuleList);
-      if( null != xml.UpgradeTypeList )
-         UpgradeTypeList.addAll(xml.UpgradeTypeList);
-      if( null != xml.OmniPodList )
-         OmniPodList.addAll(xml.OmniPodList);
-   }
+	public void append(GameFile aGameFile) {
+		XMLItemStats xml = fromXml(aGameFile);
+		if (null != xml.MechList)
+			MechList.addAll(xml.MechList);
+		if (null != xml.WeaponList)
+			WeaponList.addAll(xml.WeaponList);
+		if (null != xml.ModuleList)
+			ModuleList.addAll(xml.ModuleList);
+		if (null != xml.UpgradeTypeList)
+			UpgradeTypeList.addAll(xml.UpgradeTypeList);
+		if (null != xml.OmniPodList)
+			OmniPodList.addAll(xml.OmniPodList);
+	}
 }

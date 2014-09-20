@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -28,19 +28,19 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * 
  * @author Li Song
  */
-public class TwistSpeed implements Metric{
-   private final LoadoutBase<?> loadout;
+public class TwistSpeed implements Metric {
+	private final LoadoutBase<?> loadout;
 
-   public TwistSpeed(LoadoutBase<?> aLoadout){
-      loadout = aLoadout;
-   }
+	public TwistSpeed(LoadoutBase<?> aLoadout) {
+		loadout = aLoadout;
+	}
 
-   @Override
-   public double calculate(){
-      ChassisBase chassi = loadout.getChassis();
-      Engine engine = loadout.getEngine();
-      if( engine == null )
-         return 0.0;
-      return loadout.getMovementProfile().getTorsoYawSpeed() * loadout.getEngine().getRating() / chassi.getMassMax();
-   }
+	@Override
+	public double calculate() {
+		ChassisBase chassi = loadout.getChassis();
+		Engine engine = loadout.getEngine();
+		if (engine == null)
+			return 0.0;
+		return loadout.getMovementProfile().getTorsoYawSpeed() * loadout.getEngine().getRating() / chassi.getMassMax();
+	}
 }

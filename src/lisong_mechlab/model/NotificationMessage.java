@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model;
 
@@ -28,64 +28,62 @@ import lisong_mechlab.util.MessageXBar.Message;
  * 
  * @author Li Song
  */
-public class NotificationMessage implements Message{
-   public enum Severity{
-      NOTICE, WARNING, ERROR
-   }
+public class NotificationMessage implements Message {
+	public enum Severity {
+		NOTICE, WARNING, ERROR
+	}
 
-   private final LoadoutBase<?> loadout;
-   public final String          message;
-   public final Severity        severity;
+	private final LoadoutBase<?> loadout;
+	public final String message;
+	public final Severity severity;
 
-   @Override
-   public boolean equals(Object obj){
-      if( this == obj )
-         return true;
-      if( obj == null )
-         return false;
-      if( !(obj instanceof NotificationMessage) )
-         return false;
-      NotificationMessage other = (NotificationMessage)obj;
-      if( loadout == null ){
-         if( other.loadout != null )
-            return false;
-      }
-      else if( !loadout.equals(other.loadout) )
-         return false;
-      if( message == null ){
-         if( other.message != null )
-            return false;
-      }
-      else if( !message.equals(other.message) )
-         return false;
-      if( severity != other.severity )
-         return false;
-      return true;
-   }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof NotificationMessage))
+			return false;
+		NotificationMessage other = (NotificationMessage) obj;
+		if (loadout == null) {
+			if (other.loadout != null)
+				return false;
+		} else if (!loadout.equals(other.loadout))
+			return false;
+		if (message == null) {
+			if (other.message != null)
+				return false;
+		} else if (!message.equals(other.message))
+			return false;
+		if (severity != other.severity)
+			return false;
+		return true;
+	}
 
-   /**
-    * Creates a new {@link NotificationMessage}.
-    * 
-    * @param aSeverity
-    *           The {@link Severity} of the message.
-    * @param aLoadout
-    *           The {@link LoadoutStandard} the message is for.
-    * @param aMessage
-    *           The human readable message.
-    */
-   public NotificationMessage(Severity aSeverity, LoadoutBase<?> aLoadout, String aMessage){
-      loadout = aLoadout;
-      severity = aSeverity;
-      message = aMessage;
-   }
+	/**
+	 * Creates a new {@link NotificationMessage}.
+	 * 
+	 * @param aSeverity
+	 *            The {@link Severity} of the message.
+	 * @param aLoadout
+	 *            The {@link LoadoutStandard} the message is for.
+	 * @param aMessage
+	 *            The human readable message.
+	 */
+	public NotificationMessage(Severity aSeverity, LoadoutBase<?> aLoadout, String aMessage) {
+		loadout = aLoadout;
+		severity = aSeverity;
+		message = aMessage;
+	}
 
-   @Override
-   public boolean isForMe(LoadoutBase<?> aLoadout){
-      return loadout == aLoadout;
-   }
+	@Override
+	public boolean isForMe(LoadoutBase<?> aLoadout) {
+		return loadout == aLoadout;
+	}
 
-   @Override
-   public boolean affectsHeatOrDamage(){
-      return false;
-   }
+	@Override
+	public boolean affectsHeatOrDamage() {
+		return false;
+	}
 }

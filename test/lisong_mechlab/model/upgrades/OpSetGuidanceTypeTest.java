@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
@@ -48,106 +48,105 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class OpSetGuidanceTypeTest{
-   MockLoadoutContainer mlc = new MockLoadoutContainer();
+public class OpSetGuidanceTypeTest {
+	MockLoadoutContainer mlc = new MockLoadoutContainer();
 
-   @Mock
-   GuidanceUpgrade      oldGuidance;
-   @Mock
-   GuidanceUpgrade      newGuidance;
-   @Mock
-   MessageXBar          xBar;
+	@Mock
+	GuidanceUpgrade oldGuidance;
+	@Mock
+	GuidanceUpgrade newGuidance;
+	@Mock
+	MessageXBar xBar;
 
-   /**
-    * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link LoadoutStandard}
-    * given as argument.
-    */
-   @Test
-   public void testApply(){
-      Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
-      OperationStack stack = new OperationStack(0);
-      Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
+	/**
+	 * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link LoadoutStandard}
+	 * given as argument.
+	 */
+	@Test
+	public void testApply() {
+		Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
+		OperationStack stack = new OperationStack(0);
+		Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
+		Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
 
-      stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
+		stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
-      Mockito.verify(mlc.upgrades).setGuidance(newGuidance);
-   }
+		Mockito.verify(mlc.upgrades).setGuidance(newGuidance);
+	}
 
-   /**
-    * If apply fails, the changes shall have been rolled back completely.
-    */
-   @Test
-   public void testApply_FailRollback(){
-      Mockito.when(mlc.loadout.getFreeMass()).thenReturn(0.0);
-      Mockito.when(newGuidance.getExtraTons(mlc.loadout)).thenReturn(1.0);
-      Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
+	/**
+	 * If apply fails, the changes shall have been rolled back completely.
+	 */
+	@Test
+	public void testApply_FailRollback() {
+		Mockito.when(mlc.loadout.getFreeMass()).thenReturn(0.0);
+		Mockito.when(newGuidance.getExtraTons(mlc.loadout)).thenReturn(1.0);
+		Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
 
-      try{
-         (new OperationStack(0)).pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
-      }
-      catch( Throwable t ){
-         /* No-Op */
-      }
+		try {
+			(new OperationStack(0)).pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
+		} catch (Throwable t) {
+			/* No-Op */
+		}
 
-      Mockito.verify(mlc.upgrades, Mockito.never()).setGuidance(Matchers.any(GuidanceUpgrade.class));
-   }
+		Mockito.verify(mlc.upgrades, Mockito.never()).setGuidance(Matchers.any(GuidanceUpgrade.class));
+	}
 
-   /**
-    * Apply shall delegate to the upgrades object to change all Missile Weapons and Ammunition types.
-    */
-   @Test
-   public void testApply_changeMissileLaunchersAndAmmo(){
-      Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
-      OperationStack stack = new OperationStack(0);
-      Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
-      Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
-      Mockito.when(mlc.loadout.canEquip(Matchers.any(Item.class))).thenReturn(true);
+	/**
+	 * Apply shall delegate to the upgrades object to change all Missile Weapons and Ammunition types.
+	 */
+	@Test
+	public void testApply_changeMissileLaunchersAndAmmo() {
+		Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
+		OperationStack stack = new OperationStack(0);
+		Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
+		Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
+		Mockito.when(mlc.loadout.canEquip(Matchers.any(Item.class))).thenReturn(true);
 
-      MissileWeapon lrm5 = Mockito.mock(MissileWeapon.class);
-      MissileWeapon lrm5Artemis = Mockito.mock(MissileWeapon.class);
-      MissileWeapon narc = Mockito.mock(MissileWeapon.class);
-      Ammunition lrmAmmo = Mockito.mock(Ammunition.class);
-      Ammunition lrmAmmoArtemis = Mockito.mock(Ammunition.class);
-      Ammunition narcAmmo = Mockito.mock(Ammunition.class);
+		MissileWeapon lrm5 = Mockito.mock(MissileWeapon.class);
+		MissileWeapon lrm5Artemis = Mockito.mock(MissileWeapon.class);
+		MissileWeapon narc = Mockito.mock(MissileWeapon.class);
+		Ammunition lrmAmmo = Mockito.mock(Ammunition.class);
+		Ammunition lrmAmmoArtemis = Mockito.mock(Ammunition.class);
+		Ammunition narcAmmo = Mockito.mock(Ammunition.class);
 
-      List<Item> rlItems = Arrays.asList(lrm5, lrmAmmo);
-      List<Item> ltItems = Arrays.asList(lrm5, narcAmmo, narc, lrmAmmo);
+		List<Item> rlItems = Arrays.asList(lrm5, lrmAmmo);
+		List<Item> ltItems = Arrays.asList(lrm5, narcAmmo, narc, lrmAmmo);
 
-      Mockito.when(newGuidance.upgrade(lrm5)).thenReturn(lrm5Artemis);
-      Mockito.when(newGuidance.upgrade(narc)).thenReturn(narc);
-      Mockito.when(newGuidance.upgrade(lrmAmmo)).thenReturn(lrmAmmoArtemis);
-      Mockito.when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
-      Mockito.when(mlc.rl.canAddItem(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(mlc.lt.canAddItem(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(mlc.rl.getItemsEquipped()).thenReturn(rlItems);
-      Mockito.when(mlc.lt.getItemsEquipped()).thenReturn(ltItems);
-      Mockito.when(mlc.rl.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
-      Mockito.when(mlc.lt.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
+		Mockito.when(newGuidance.upgrade(lrm5)).thenReturn(lrm5Artemis);
+		Mockito.when(newGuidance.upgrade(narc)).thenReturn(narc);
+		Mockito.when(newGuidance.upgrade(lrmAmmo)).thenReturn(lrmAmmoArtemis);
+		Mockito.when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
+		Mockito.when(mlc.rl.canAddItem(Matchers.any(Item.class))).thenReturn(true);
+		Mockito.when(mlc.lt.canAddItem(Matchers.any(Item.class))).thenReturn(true);
+		Mockito.when(mlc.rl.getItemsEquipped()).thenReturn(rlItems);
+		Mockito.when(mlc.lt.getItemsEquipped()).thenReturn(ltItems);
+		Mockito.when(mlc.rl.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
+		Mockito.when(mlc.lt.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
 
-      stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
+		stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
-      // FIXME: Verify... I can't gain access to verify this in any way...
-      // assertEquals(2, rlItems.size());
-      // assertEquals(4, ltItems.size());
-      // assertTrue(rlItems.remove(lrm5Artemis));
-      // assertTrue(rlItems.remove(lrmAmmoArtemis));
-      // assertTrue(ltItems.remove(lrm5Artemis));
-      // assertTrue(ltItems.remove(lrmAmmoArtemis));
-      // assertTrue(ltItems.remove(narcAmmo));
-      // assertTrue(ltItems.remove(narc));
-   }
+		// FIXME: Verify... I can't gain access to verify this in any way...
+		// assertEquals(2, rlItems.size());
+		// assertEquals(4, ltItems.size());
+		// assertTrue(rlItems.remove(lrm5Artemis));
+		// assertTrue(rlItems.remove(lrmAmmoArtemis));
+		// assertTrue(ltItems.remove(lrm5Artemis));
+		// assertTrue(ltItems.remove(lrmAmmoArtemis));
+		// assertTrue(ltItems.remove(narcAmmo));
+		// assertTrue(ltItems.remove(narc));
+	}
 
-   @Test
-   public void testUndo() throws DecodingException{
-      Base64LoadoutCoder coder = new Base64LoadoutCoder();
-      LoadoutBase<?> loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-      LoadoutBase<?> loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-      OperationStack stack = new OperationStack(1);
+	@Test
+	public void testUndo() throws DecodingException {
+		Base64LoadoutCoder coder = new Base64LoadoutCoder();
+		LoadoutBase<?> loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+		LoadoutBase<?> loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+		OperationStack stack = new OperationStack(1);
 
-      stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
-      stack.undo();
+		stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
+		stack.undo();
 
-      assertEquals(loadoutOriginal, loadout);
-   }
+		assertEquals(loadoutOriginal, loadout);
+	}
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -34,79 +34,80 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
  * 
  * @author Li Song
  */
-public class ItemEffectiveHP implements ItemMetric{
-   private final ConfiguredComponentBase loadoutPart;
+public class ItemEffectiveHP implements ItemMetric {
+	private final ConfiguredComponentBase loadoutPart;
 
-   private class ItemState{
-      final Item item;
+	private class ItemState {
+		final Item item;
 
-      ItemState(Item aItem){
-         item = aItem;
-         hpLeft = aItem.getHealth();
-         if( hpLeft == 0 )
-            hpLeft = Double.POSITIVE_INFINITY; // Not breakable
-         ehp = 0;
-      }
+		ItemState(Item aItem) {
+			item = aItem;
+			hpLeft = aItem.getHealth();
+			if (hpLeft == 0)
+				hpLeft = Double.POSITIVE_INFINITY; // Not breakable
+			ehp = 0;
+		}
 
-      double hpLeft;
-      double ehp;
-   }
+		double hpLeft;
+		double ehp;
+	}
 
-   final private List<ItemState> cache = new ArrayList<>();
+	final private List<ItemState> cache = new ArrayList<>();
 
-   public ItemEffectiveHP(ConfiguredComponentBase aLoadoutPart){
-      loadoutPart = aLoadoutPart;
-   }
+	public ItemEffectiveHP(ConfiguredComponentBase aLoadoutPart) {
+		loadoutPart = aLoadoutPart;
+	}
 
-   @Override
-   public double calculate(Item aItem){
-      updateCache();
-      for(ItemState itemState : cache){
-         if( itemState.item == aItem )
-            return itemState.ehp;
-      }
-      return Double.POSITIVE_INFINITY;
-      // throw new RuntimeException("Item not found in EHP cache");
-   }
+	@Override
+	public double calculate(Item aItem) {
+		updateCache();
+		for (ItemState itemState : cache) {
+			if (itemState.item == aItem)
+				return itemState.ehp;
+		}
+		return Double.POSITIVE_INFINITY;
+		// throw new RuntimeException("Item not found in EHP cache");
+	}
 
-   private void updateCache(){
-      cache.clear();
-      for(Item item : loadoutPart.getItemsEquipped()){
-         if( item.isCrittable() )
-            cache.add(new ItemState(item));
-      }
-      for(Item item : loadoutPart.getItemsFixed()){
-         if( item.isCrittable() )
-            cache.add(new ItemState(item));
-      }
+	private void updateCache() {
+		cache.clear();
+		for (Item item : loadoutPart.getItemsEquipped()) {
+			if (item.isCrittable())
+				cache.add(new ItemState(item));
+		}
+		for (Item item : loadoutPart.getItemsFixed()) {
+			if (item.isCrittable())
+				cache.add(new ItemState(item));
+		}
 
-      boolean changed = true;
-      while( changed ){
-         int slotsLeft = 0;
-         for(ItemState state : cache){
-            if( state.hpLeft > 10 * Math.ulp(1) ){
-               slotsLeft += state.item.getNumCriticalSlots();
-            }
-         }
-         double minEHpLeft = Double.POSITIVE_INFINITY;
-         for(ItemState state : cache){
-            if( state.hpLeft < 10 * Math.ulp(1) ){
-               continue;
-            }
-            minEHpLeft = Math.min(minEHpLeft, state.hpLeft / CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft));
-         }
+		boolean changed = true;
+		while (changed) {
+			int slotsLeft = 0;
+			for (ItemState state : cache) {
+				if (state.hpLeft > 10 * Math.ulp(1)) {
+					slotsLeft += state.item.getNumCriticalSlots();
+				}
+			}
+			double minEHpLeft = Double.POSITIVE_INFINITY;
+			for (ItemState state : cache) {
+				if (state.hpLeft < 10 * Math.ulp(1)) {
+					continue;
+				}
+				minEHpLeft = Math.min(minEHpLeft,
+						state.hpLeft / CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft));
+			}
 
-         changed = false;
-         for(ItemState state : cache){
-            double multiplier = CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft);
-            double actualDmg = minEHpLeft * multiplier;
-            if( state.hpLeft > 0 ){
-               state.hpLeft -= actualDmg;
-               state.ehp += actualDmg / multiplier;
-               changed = true;
-            }
-         }
-      }
-   }
+			changed = false;
+			for (ItemState state : cache) {
+				double multiplier = CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft);
+				double actualDmg = minEHpLeft * multiplier;
+				if (state.hpLeft > 0) {
+					state.hpLeft -= actualDmg;
+					state.ehp += actualDmg / multiplier;
+					changed = true;
+				}
+			}
+		}
+	}
 
 }

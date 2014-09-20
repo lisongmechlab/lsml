@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.help;
 
@@ -26,13 +26,12 @@ import javax.swing.JOptionPane;
 
 import lisong_mechlab.view.ProgramInit;
 
-public class OnlineHelp{
-   public static void openHelp(String aHelpTag){
-      try{
-         Desktop.getDesktop().browse((new URL("https://github.com/lisongmechlab/lsml/wiki/" + aHelpTag).toURI()));
-      }
-      catch( Exception e ){
-         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't open help file!\n" + e);
-      }
-   }
+public class OnlineHelp {
+	public static void openHelp(String aHelpTag) {
+		try {
+			Desktop.getDesktop().browse((new URL("https://github.com/lisongmechlab/lsml/wiki/" + aHelpTag).toURI()));
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't open help file!\n" + e);
+		}
+	}
 }

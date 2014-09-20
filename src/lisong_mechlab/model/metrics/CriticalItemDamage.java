@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -32,46 +32,46 @@ import lisong_mechlab.util.BinomialDistribution;
  * 
  * @author Li Song
  */
-public class CriticalItemDamage implements ItemMetric{
-   private final ConfiguredComponentBase loadoutPart;
+public class CriticalItemDamage implements ItemMetric {
+	private final ConfiguredComponentBase loadoutPart;
 
-   public CriticalItemDamage(ConfiguredComponentBase aLoadoutPart){
-      loadoutPart = aLoadoutPart;
-   }
+	public CriticalItemDamage(ConfiguredComponentBase aLoadoutPart) {
+		loadoutPart = aLoadoutPart;
+	}
 
-   @Override
-   public double calculate(Item aItem){
-      return calculate(aItem, loadoutPart);
-   }
+	@Override
+	public double calculate(Item aItem) {
+		return calculate(aItem, loadoutPart);
+	}
 
-   public static double calculate(Item anItem, ConfiguredComponentBase aLoadoutPart){
-      int slots = 0;
-      for(Item it : aLoadoutPart.getItemsEquipped()){
-         if( it.isCrittable() )
-            slots += it.getNumCriticalSlots();
-      }
-      for(Item it : aLoadoutPart.getItemsFixed()){
-         if( it.isCrittable() )
-            slots += it.getNumCriticalSlots();
-      }
-      return calculate(anItem.getNumCriticalSlots(), slots);
-   }
+	public static double calculate(Item anItem, ConfiguredComponentBase aLoadoutPart) {
+		int slots = 0;
+		for (Item it : aLoadoutPart.getItemsEquipped()) {
+			if (it.isCrittable())
+				slots += it.getNumCriticalSlots();
+		}
+		for (Item it : aLoadoutPart.getItemsFixed()) {
+			if (it.isCrittable())
+				slots += it.getNumCriticalSlots();
+		}
+		return calculate(anItem.getNumCriticalSlots(), slots);
+	}
 
-   public static double calculate(int aItemCrits, int aTotalCrits){
-      double p_hit = (double)aItemCrits / aTotalCrits;
+	public static double calculate(int aItemCrits, int aTotalCrits) {
+		double p_hit = (double) aItemCrits / aTotalCrits;
 
-      double ans = 0;
-      for(int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i){
-         final int numCritRolls = i + 1;
-         // The event of 'k' hits out of numCritRolls tries, with p_hit probability is
-         // binomially distributed.
-         BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
+		double ans = 0;
+		for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
+			final int numCritRolls = i + 1;
+			// The event of 'k' hits out of numCritRolls tries, with p_hit probability is
+			// binomially distributed.
+			BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
 
-         for(int numHits = 1; numHits <= numCritRolls; ++numHits){
-            ans += bin.pdf(numHits) * numHits * CriticalStrikeProbability.CRIT_CHANCE[i];
-         }
-      }
-      return ans;
-   }
+			for (int numHits = 1; numHits <= numCritRolls; ++numHits) {
+				ans += bin.pdf(numHits) * numHits * CriticalStrikeProbability.CRIT_CHANCE[i];
+			}
+		}
+		return ans;
+	}
 
 }

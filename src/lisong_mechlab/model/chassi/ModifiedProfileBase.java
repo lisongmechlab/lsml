@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -25,85 +25,85 @@ package lisong_mechlab.model.chassi;
  * 
  * @author Li Song
  */
-public abstract class ModifiedProfileBase implements MovementProfile{
+public abstract class ModifiedProfileBase implements MovementProfile {
 
-   /**
-    * Uses reflection to calculate the sought for value.
-    * 
-    * @param aMethodName
-    *           The name of the function to call to get the value.
-    * @return The calculated value.
-    */
-   protected abstract double calc(String aMethodName);
+	/**
+	 * Uses reflection to calculate the sought for value.
+	 * 
+	 * @param aMethodName
+	 *            The name of the function to call to get the value.
+	 * @return The calculated value.
+	 */
+	protected abstract double calc(String aMethodName);
 
-   @Override
-   public double getTorsoYawMax(){
-      return calc("getTorsoYawMax");
-   }
+	@Override
+	public double getTorsoYawMax() {
+		return calc("getTorsoYawMax");
+	}
 
-   @Override
-   public double getTorsoYawSpeed(){
-      return calc("getTorsoYawSpeed");
-   }
+	@Override
+	public double getTorsoYawSpeed() {
+		return calc("getTorsoYawSpeed");
+	}
 
-   @Override
-   public double getTorsoPitchMax(){
-      return calc("getTorsoPitchMax");
-   }
+	@Override
+	public double getTorsoPitchMax() {
+		return calc("getTorsoPitchMax");
+	}
 
-   @Override
-   public double getTorsoPitchSpeed(){
-      return calc("getTorsoPitchSpeed");
-   }
+	@Override
+	public double getTorsoPitchSpeed() {
+		return calc("getTorsoPitchSpeed");
+	}
 
-   @Override
-   public double getArmYawMax(){
-      return calc("getArmYawMax");
-   }
+	@Override
+	public double getArmYawMax() {
+		return calc("getArmYawMax");
+	}
 
-   @Override
-   public double getArmYawSpeed(){
-      return calc("getArmYawSpeed");
-   }
+	@Override
+	public double getArmYawSpeed() {
+		return calc("getArmYawSpeed");
+	}
 
-   @Override
-   public double getArmPitchMax(){
-      return calc("getArmPitchMax");
-   }
+	@Override
+	public double getArmPitchMax() {
+		return calc("getArmPitchMax");
+	}
 
-   @Override
-   public double getArmPitchSpeed(){
-      return calc("getArmPitchSpeed");
-   }
+	@Override
+	public double getArmPitchSpeed() {
+		return calc("getArmPitchSpeed");
+	}
 
-   @Override
-   public double getTurnLerpLowSpeed(){
-      return calc("getTurnLerpLowSpeed");
-   }
+	@Override
+	public double getTurnLerpLowSpeed() {
+		return calc("getTurnLerpLowSpeed");
+	}
 
-   @Override
-   public double getTurnLerpMidSpeed(){
-      return calc("getTurnLerpMidSpeed");
-   }
+	@Override
+	public double getTurnLerpMidSpeed() {
+		return calc("getTurnLerpMidSpeed");
+	}
 
-   @Override
-   public double getTurnLerpHighSpeed(){
-      return calc("getTurnLerpHighSpeed");
-   }
+	@Override
+	public double getTurnLerpHighSpeed() {
+		return calc("getTurnLerpHighSpeed");
+	}
 
-   @Override
-   public double getTurnLerpLowRate(){
-      return calc("getTurnLerpLowRate");
-   }
+	@Override
+	public double getTurnLerpLowRate() {
+		return calc("getTurnLerpLowRate");
+	}
 
-   @Override
-   public double getTurnLerpMidRate(){
-      return calc("getTurnLerpMidRate");
-   }
+	@Override
+	public double getTurnLerpMidRate() {
+		return calc("getTurnLerpMidRate");
+	}
 
-   @Override
-   public double getTurnLerpHighRate(){
-      return calc("getTurnLerpHighRate");
-   }
+	@Override
+	public double getTurnLerpHighRate() {
+		return calc("getTurnLerpHighRate");
+	}
 
 }

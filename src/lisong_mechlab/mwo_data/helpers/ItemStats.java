@@ -15,18 +15,18 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ItemStats{
-   @XStreamAsAttribute
-   public String       name;
-   @XStreamAsAttribute
-   public String       id;
-   @XStreamAsAttribute
-   public String       faction;
-   public ItemStatsLoc Loc;
+public class ItemStats {
+	@XStreamAsAttribute
+	public String name;
+	@XStreamAsAttribute
+	public String id;
+	@XStreamAsAttribute
+	public String faction;
+	public ItemStatsLoc Loc;
 }

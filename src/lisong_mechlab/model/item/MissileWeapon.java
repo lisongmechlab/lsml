@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -28,78 +28,78 @@ import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
-public class MissileWeapon extends AmmoWeapon{
-   protected final double flightSpeed;
-   protected final int    requiredGuidancetype;
-   private final int      baseItemId;
+public class MissileWeapon extends AmmoWeapon {
+	protected final double flightSpeed;
+	protected final int requiredGuidancetype;
+	private final int baseItemId;
 
-   public MissileWeapon(ItemStatsWeapon aStatsWeapon, int aBaseItemId){
-      super(aStatsWeapon, HardPointType.MISSILE, getAmmoType(aStatsWeapon));
-      flightSpeed = aStatsWeapon.WeaponStats.speed;
+	public MissileWeapon(ItemStatsWeapon aStatsWeapon, int aBaseItemId) {
+		super(aStatsWeapon, HardPointType.MISSILE, getAmmoType(aStatsWeapon));
+		flightSpeed = aStatsWeapon.WeaponStats.speed;
 
-      if( null != aStatsWeapon.Artemis )
-         requiredGuidancetype = aStatsWeapon.Artemis.RestrictedTo;
-      else
-         requiredGuidancetype = -1;
+		if (null != aStatsWeapon.Artemis)
+			requiredGuidancetype = aStatsWeapon.Artemis.RestrictedTo;
+		else
+			requiredGuidancetype = -1;
 
-      baseItemId = aBaseItemId == -1 ? (isArtemisCapable() ? getMwoId() : -1) : aBaseItemId;
-   }
+		baseItemId = aBaseItemId == -1 ? (isArtemisCapable() ? getMwoId() : -1) : aBaseItemId;
+	}
 
-   static private String getAmmoType(ItemStatsWeapon aStatsWeapon){
-      String regularAmmo = aStatsWeapon.WeaponStats.ammoType;
-      if( aStatsWeapon.WeaponStats.artemisAmmoType == null )
-         return regularAmmo;
+	static private String getAmmoType(ItemStatsWeapon aStatsWeapon) {
+		String regularAmmo = aStatsWeapon.WeaponStats.ammoType;
+		if (aStatsWeapon.WeaponStats.artemisAmmoType == null)
+			return regularAmmo;
 
-      if( aStatsWeapon.Artemis == null )
-         return regularAmmo;
+		if (aStatsWeapon.Artemis == null)
+			return regularAmmo;
 
-      if( aStatsWeapon.Artemis.RestrictedTo == 3051 ) // No artemis
-         return regularAmmo;
-      return aStatsWeapon.WeaponStats.artemisAmmoType;
-   }
+		if (aStatsWeapon.Artemis.RestrictedTo == 3051) // No artemis
+			return regularAmmo;
+		return aStatsWeapon.WeaponStats.artemisAmmoType;
+	}
 
-   @Override
-   public boolean isCompatible(Upgrades aUpgrades){
-      if( isArtemisCapable() ){
-         return aUpgrades.getGuidance().getMwoId() == requiredGuidancetype;
-      }
-      return super.isCompatible(aUpgrades);
-   }
+	@Override
+	public boolean isCompatible(Upgrades aUpgrades) {
+		if (isArtemisCapable()) {
+			return aUpgrades.getGuidance().getMwoId() == requiredGuidancetype;
+		}
+		return super.isCompatible(aUpgrades);
+	}
 
-   @Override
-   public int getNumCriticalSlots(){
-      if( isArtemisCapable() ){
-         return super.getNumCriticalSlots() + ((GuidanceUpgrade)UpgradeDB.lookup(requiredGuidancetype)).getSlots();
-      }
-      return super.getNumCriticalSlots();
-   }
+	@Override
+	public int getNumCriticalSlots() {
+		if (isArtemisCapable()) {
+			return super.getNumCriticalSlots() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidancetype)).getSlots();
+		}
+		return super.getNumCriticalSlots();
+	}
 
-   @Override
-   public double getMass(){
-      if( isArtemisCapable() ){
-         return super.getMass() + ((GuidanceUpgrade)UpgradeDB.lookup(requiredGuidancetype)).getTons();
-      }
-      return super.getMass();
-   }
+	@Override
+	public double getMass() {
+		if (isArtemisCapable()) {
+			return super.getMass() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidancetype)).getTons();
+		}
+		return super.getMass();
+	}
 
-   public boolean isArtemisCapable(){
-      return requiredGuidancetype != -1;
-   }
+	public boolean isArtemisCapable() {
+		return requiredGuidancetype != -1;
+	}
 
-   public MissileWeapon getBaseVariant(){
-      if( baseItemId <= 0 ){
-         return null;
-      }
-      return (MissileWeapon)ItemDB.lookup(baseItemId);
-   }
+	public MissileWeapon getBaseVariant() {
+		if (baseItemId <= 0) {
+			return null;
+		}
+		return (MissileWeapon) ItemDB.lookup(baseItemId);
+	}
 
-   public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;
+	public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;
 
-   /**
-    * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns
-    *         <code>null</code>.
-    */
-   public Upgrade getRequiredUpgrade(){
-      return UpgradeDB.lookup(requiredGuidancetype);
-   }
+	/**
+	 * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns
+	 *         <code>null</code>.
+	 */
+	public Upgrade getRequiredUpgrade() {
+		return UpgradeDB.lookup(requiredGuidancetype);
+	}
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
@@ -24,20 +24,20 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class ItemStatsModule extends ItemStats{
-   @XStreamAsAttribute
-   public String                    CType;
+public class ItemStatsModule extends ItemStats {
+	@XStreamAsAttribute
+	public String CType;
 
-   public ItemStatsModuleStats      ModuleStats;
-   public ItemStatsJumpJetStats     JumpJetStats;
-   public ItemStatsHeatSinkStats    HeatSinkStats;
-   public ItemStatsEngineStats      EngineStats;
-   public AmmoTypeStats             AmmoTypeStats;
-   public XMLPilotModuleStats       PilotModuleStats;
-   public XMLTargetingComputerStats TargetingComputerStats;
+	public ItemStatsModuleStats ModuleStats;
+	public ItemStatsJumpJetStats JumpJetStats;
+	public ItemStatsHeatSinkStats HeatSinkStats;
+	public ItemStatsEngineStats EngineStats;
+	public AmmoTypeStats AmmoTypeStats;
+	public XMLPilotModuleStats PilotModuleStats;
+	public XMLTargetingComputerStats TargetingComputerStats;
 
-   public XMLPilotModuleWeaponStats PilotModuleWeaponStats;
+	public XMLPilotModuleWeaponStats PilotModuleWeaponStats;
 
-   @XStreamImplicit
-   public List<XMLWeaponStats>      WeaponStats;
+	@XStreamImplicit
+	public List<XMLWeaponStats> WeaponStats;
 }

@@ -15,46 +15,46 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class MdfMovementTuning{
-   @XStreamAsAttribute
-   public String MovementArchetype = "Huge";
-   @XStreamAsAttribute
-   public double MaxMovementSpeed;
-   @XStreamAsAttribute
-   public double TorsoTurnSpeedYaw;
-   @XStreamAsAttribute
-   public double TorsoTurnSpeedPitch;
-   @XStreamAsAttribute
-   public double ArmTurnSpeedYaw;
-   @XStreamAsAttribute
-   public double ArmTurnSpeedPitch;
-   @XStreamAsAttribute
-   public double MaxTorsoAngleYaw;
-   @XStreamAsAttribute
-   public double MaxTorsoAnglePitch;
-   @XStreamAsAttribute
-   public double MaxArmRotationYaw;
-   @XStreamAsAttribute
-   public double MaxArmRotationPitch;
-   @XStreamAsAttribute
-   public double ReverseSpeedMultiplier;
+public class MdfMovementTuning {
+	@XStreamAsAttribute
+	public String MovementArchetype = "Huge";
+	@XStreamAsAttribute
+	public double MaxMovementSpeed;
+	@XStreamAsAttribute
+	public double TorsoTurnSpeedYaw;
+	@XStreamAsAttribute
+	public double TorsoTurnSpeedPitch;
+	@XStreamAsAttribute
+	public double ArmTurnSpeedYaw;
+	@XStreamAsAttribute
+	public double ArmTurnSpeedPitch;
+	@XStreamAsAttribute
+	public double MaxTorsoAngleYaw;
+	@XStreamAsAttribute
+	public double MaxTorsoAnglePitch;
+	@XStreamAsAttribute
+	public double MaxArmRotationYaw;
+	@XStreamAsAttribute
+	public double MaxArmRotationPitch;
+	@XStreamAsAttribute
+	public double ReverseSpeedMultiplier;
 
-   @XStreamAsAttribute
-   public double TurnLerpLowSpeed;
-   @XStreamAsAttribute
-   public double TurnLerpMidSpeed;
-   @XStreamAsAttribute
-   public double TurnLerpHighSpeed;
-   @XStreamAsAttribute
-   public double TurnLerpLowRate;
-   @XStreamAsAttribute
-   public double TurnLerpMidRate;
-   @XStreamAsAttribute
-   public double TurnLerpHighRate;
+	@XStreamAsAttribute
+	public double TurnLerpLowSpeed;
+	@XStreamAsAttribute
+	public double TurnLerpMidSpeed;
+	@XStreamAsAttribute
+	public double TurnLerpHighSpeed;
+	@XStreamAsAttribute
+	public double TurnLerpLowRate;
+	@XStreamAsAttribute
+	public double TurnLerpMidRate;
+	@XStreamAsAttribute
+	public double TurnLerpHighRate;
 }

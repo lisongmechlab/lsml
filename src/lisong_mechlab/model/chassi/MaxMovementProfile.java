@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -32,48 +32,50 @@ import java.util.List;
  * 
  * @author Li Song
  */
-public class MaxMovementProfile extends ModifiedProfileBase{
+public class MaxMovementProfile extends ModifiedProfileBase {
 
-   private MovementProfile    base;
-   private List<List<Quirks>> groups;
+	private MovementProfile base;
+	private List<List<Quirks>> groups;
 
-   public MaxMovementProfile(MovementProfile aBase, List<List<Quirks>> aGroups){
-      base = aBase;
-      groups = aGroups;
-   }
+	public MaxMovementProfile(MovementProfile aBase, List<List<Quirks>> aGroups) {
+		base = aBase;
+		groups = aGroups;
+	}
 
-   @Override
-   protected double calc(String aMethodName){
-      try{
-         double baseValue = (double)base.getClass().getMethod(aMethodName).invoke(base);
-         double ans = baseValue;
-         for(List<Quirks> group : groups){
-            double max = Double.NEGATIVE_INFINITY;
-            for(MovementModifier profile : group){
-               max = Math.max(max, (double)profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class).invoke(profile, baseValue));
-            }
-            if( max != Double.NEGATIVE_INFINITY )
-               ans += max;
-         }
-         return ans;
-      }
-      catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ){
-         throw new IllegalArgumentException();
-      }
-   }
+	@Override
+	protected double calc(String aMethodName) {
+		try {
+			double baseValue = (double) base.getClass().getMethod(aMethodName).invoke(base);
+			double ans = baseValue;
+			for (List<Quirks> group : groups) {
+				double max = Double.NEGATIVE_INFINITY;
+				for (MovementModifier profile : group) {
+					max = Math.max(max,
+							(double) profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class)
+									.invoke(profile, baseValue));
+				}
+				if (max != Double.NEGATIVE_INFINITY)
+					ans += max;
+			}
+			return ans;
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+				| SecurityException e) {
+			throw new IllegalArgumentException();
+		}
+	}
 
-   @Override
-   public double getMaxMovementSpeed(){
-      return base.getMaxMovementSpeed();
-   }
+	@Override
+	public double getMaxMovementSpeed() {
+		return base.getMaxMovementSpeed();
+	}
 
-   @Override
-   public double getReverseSpeedMultiplier(){
-      return base.getReverseSpeedMultiplier();
-   }
+	@Override
+	public double getReverseSpeedMultiplier() {
+		return base.getReverseSpeedMultiplier();
+	}
 
-   @Override
-   public MovementArchetype getMovementArchetype(){
-      return base.getMovementArchetype();
-   }
+	@Override
+	public MovementArchetype getMovementArchetype() {
+		return base.getMovementArchetype();
+	}
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -27,22 +27,23 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
  * 
  * @author Li Song
  */
-public class Module extends Item{
+public class Module extends Item {
 
-   public Module(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardpointType, int aHP,
-                 Faction aFaction){
-      super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
-   }
+	public Module(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+			HardPointType aHardpointType, int aHP, Faction aFaction) {
+		super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+	}
 
-   public Module(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction){
-      super(aNameTag, aDesc, aSlots, aHealth, aFaction);
-   }
+	public Module(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {
+		super(aNameTag, aDesc, aSlots, aHealth, aFaction);
+	}
 
-   public Module(ItemStatsModule aModule){
-      super(aModule, HardPointType.NONE, aModule.ModuleStats.slots, aModule.ModuleStats.tons, aModule.ModuleStats.health);
-   }
+	public Module(ItemStatsModule aModule) {
+		super(aModule, HardPointType.NONE, aModule.ModuleStats.slots, aModule.ModuleStats.tons,
+				aModule.ModuleStats.health);
+	}
 
-   public Module(ItemStatsModule aModule, HardPointType hardpoint){
-      super(aModule, hardpoint, aModule.ModuleStats.slots, aModule.ModuleStats.tons, aModule.ModuleStats.health);
-   }
+	public Module(ItemStatsModule aModule, HardPointType hardpoint) {
+		super(aModule, hardpoint, aModule.ModuleStats.slots, aModule.ModuleStats.tons, aModule.ModuleStats.health);
+	}
 }

@@ -15,17 +15,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
 import org.junit.Test;
 
-public class UpgradeDBTest{
+public class UpgradeDBTest {
 
-   @Test(expected = IllegalArgumentException.class)
-   public void testLookup_BadId(){
-      UpgradeDB.lookup(0);
-   }
+	@Test(expected = IllegalArgumentException.class)
+	public void testLookup_BadId() {
+		UpgradeDB.lookup(0);
+	}
 
 }

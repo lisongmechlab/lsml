@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -34,72 +34,73 @@ import org.mockito.Mockito;
  * 
  * @author Li Song
  */
-public class ComponentOmniMechTest extends ComponentBaseTest{
+public class ComponentOmniMechTest extends ComponentBaseTest {
 
-   private OmniPod omniPod;
-   private int     dynamicArmorSlots;
-   private int     dynamicStructureSlots;
+	private OmniPod omniPod;
+	private int dynamicArmorSlots;
+	private int dynamicStructureSlots;
 
-   @Override
-   protected ComponentOmniMech makeDefaultCUT(){
-      return new ComponentOmniMech(location, criticalSlots, hp, fixedItems, omniPod, dynamicStructureSlots, dynamicArmorSlots);
-   }
+	@Override
+	protected ComponentOmniMech makeDefaultCUT() {
+		return new ComponentOmniMech(location, criticalSlots, hp, fixedItems, omniPod, dynamicStructureSlots,
+				dynamicArmorSlots);
+	}
 
-   @Test
-   public final void testHasFixedOmniPod() throws Exception{
-      omniPod = null;
-      assertFalse(makeDefaultCUT().hasFixedOmniPod());
+	@Test
+	public final void testHasFixedOmniPod() throws Exception {
+		omniPod = null;
+		assertFalse(makeDefaultCUT().hasFixedOmniPod());
 
-      omniPod = Mockito.mock(OmniPod.class);
-      assertTrue(makeDefaultCUT().hasFixedOmniPod());
-   }
+		omniPod = Mockito.mock(OmniPod.class);
+		assertTrue(makeDefaultCUT().hasFixedOmniPod());
+	}
 
-   @Test
-   public final void testGetFixedOmniPod() throws Exception{
-      omniPod = null;
-      assertNull(null, makeDefaultCUT().getFixedOmniPod());
+	@Test
+	public final void testGetFixedOmniPod() throws Exception {
+		omniPod = null;
+		assertNull(null, makeDefaultCUT().getFixedOmniPod());
 
-      omniPod = Mockito.mock(OmniPod.class);
-      assertSame(omniPod, makeDefaultCUT().getFixedOmniPod());
-   }
+		omniPod = Mockito.mock(OmniPod.class);
+		assertSame(omniPod, makeDefaultCUT().getFixedOmniPod());
+	}
 
-   @Test
-   public final void testGetDynamicArmorSlots() throws Exception{
-      dynamicArmorSlots = 3;
-      assertEquals(dynamicArmorSlots, makeDefaultCUT().getDynamicArmorSlots());
-   }
+	@Test
+	public final void testGetDynamicArmorSlots() throws Exception {
+		dynamicArmorSlots = 3;
+		assertEquals(dynamicArmorSlots, makeDefaultCUT().getDynamicArmorSlots());
+	}
 
-   @Test
-   public final void testGetDynamicStructureSlots() throws Exception{
-      dynamicStructureSlots = 3;
-      assertEquals(dynamicStructureSlots, makeDefaultCUT().getDynamicStructureSlots());
-   }
+	@Test
+	public final void testGetDynamicStructureSlots() throws Exception {
+		dynamicStructureSlots = 3;
+		assertEquals(dynamicStructureSlots, makeDefaultCUT().getDynamicStructureSlots());
+	}
 
-   /**
-    * An item can't be too big considering the fixed dynamic slots and items.
-    */
-   @Test
-   public final void testIsAllowed_fixedItemsAndSlots(){
-      criticalSlots = 12;
-      dynamicArmorSlots = 2;
-      dynamicStructureSlots = 1;
-      final int fixedSlots = 3;
-      final int freeSlots = criticalSlots - dynamicArmorSlots - dynamicStructureSlots - fixedSlots;
+	/**
+	 * An item can't be too big considering the fixed dynamic slots and items.
+	 */
+	@Test
+	public final void testIsAllowed_fixedItemsAndSlots() {
+		criticalSlots = 12;
+		dynamicArmorSlots = 2;
+		dynamicStructureSlots = 1;
+		final int fixedSlots = 3;
+		final int freeSlots = criticalSlots - dynamicArmorSlots - dynamicStructureSlots - fixedSlots;
 
-      Item fixed = Mockito.mock(Item.class);
-      Mockito.when(fixed.getNumCriticalSlots()).thenReturn(fixedSlots);
+		Item fixed = Mockito.mock(Item.class);
+		Mockito.when(fixed.getNumCriticalSlots()).thenReturn(fixedSlots);
 
-      fixedItems.clear();
-      fixedItems.add(fixed);
+		fixedItems.clear();
+		fixedItems.add(fixed);
 
-      Item item = Mockito.mock(Item.class);
-      Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
-      Mockito.when(item.getName()).thenReturn("mock item");
+		Item item = Mockito.mock(Item.class);
+		Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
+		Mockito.when(item.getName()).thenReturn("mock item");
 
-      assertTrue(makeDefaultCUT().isAllowed(item));
+		assertTrue(makeDefaultCUT().isAllowed(item));
 
-      Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
-      assertFalse(makeDefaultCUT().isAllowed(item));
-   }
+		Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
+		assertFalse(makeDefaultCUT().isAllowed(item));
+	}
 
 }

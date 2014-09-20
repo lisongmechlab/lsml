@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
@@ -44,215 +44,215 @@ import lisong_mechlab.model.item.WeaponModifier;
  * 
  * @author Li Song
  */
-public class ItemInfoPanel extends JPanel{
-   private static final long serialVersionUID = -1180217243714551398L;
+public class ItemInfoPanel extends JPanel {
+	private static final long serialVersionUID = -1180217243714551398L;
 
-   // Basic common info
-   private final JLabel      slots            = new JLabel();
-   private final JLabel      mass             = new JLabel();
-   private final JLabel      health           = new JLabel();
-   private final JTextArea   description      = new JTextArea();
+	// Basic common info
+	private final JLabel slots = new JLabel();
+	private final JLabel mass = new JLabel();
+	private final JLabel health = new JLabel();
+	private final JTextArea description = new JTextArea();
 
-   // Engine slots
-   private final JLabel      engineInternalHS = new JLabel();
-   private final JLabel      engineHSSlots    = new JLabel();
+	// Engine slots
+	private final JLabel engineInternalHS = new JLabel();
+	private final JLabel engineHSSlots = new JLabel();
 
-   // Weapon info
-   private final JLabel      damage           = new JLabel();
-   private final JLabel      heat             = new JLabel();
-   private final JLabel      heatPerSecond    = new JLabel();
-   private final JLabel      cycleTime        = new JLabel();
-   private final JLabel      secondsPerShot   = new JLabel();
-   private final JLabel      burntime         = new JLabel();
-   private final JLabel      gh_MaxFreeAlpha  = new JLabel();
-   private final JLabel      range            = new JLabel();
-   private final JLabel      dps              = new JLabel();
-   private final JLabel      dph              = new JLabel();
-   // Ammo info
-   private final JLabel      ammoperton       = new JLabel();
+	// Weapon info
+	private final JLabel damage = new JLabel();
+	private final JLabel heat = new JLabel();
+	private final JLabel heatPerSecond = new JLabel();
+	private final JLabel cycleTime = new JLabel();
+	private final JLabel secondsPerShot = new JLabel();
+	private final JLabel burntime = new JLabel();
+	private final JLabel gh_MaxFreeAlpha = new JLabel();
+	private final JLabel range = new JLabel();
+	private final JLabel dps = new JLabel();
+	private final JLabel dph = new JLabel();
+	// Ammo info
+	private final JLabel ammoperton = new JLabel();
 
-   public ItemInfoPanel(){
-      // setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-      setLayout(new BorderLayout());
-      setBorder(new TitledBorder("Information"));
+	public ItemInfoPanel() {
+		// setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new BorderLayout());
+		setBorder(new TitledBorder("Information"));
 
-      gh_MaxFreeAlpha.setToolTipText("The maximum number of weapons in this group that may be fired simultaneously without incurring ghost heat.");
-      secondsPerShot.setToolTipText("Shows how many seconds between shots. "
-                                    + "For weapons which can double fire, such as the UAC/5, this includes double fire with chance of jamming. "
-                                    + "For beam weapons this incudes the beam's burn time.");
-      cycleTime.setToolTipText("The time it takes for the weapon to cool down before the next shot.");
-      burntime.setToolTipText("The time the beam is active and needs to be kept on the target to deal full damage. After this the weapon starts to cool down.");
+		gh_MaxFreeAlpha
+				.setToolTipText("The maximum number of weapons in this group that may be fired simultaneously without incurring ghost heat.");
+		secondsPerShot
+				.setToolTipText("Shows how many seconds between shots. "
+						+ "For weapons which can double fire, such as the UAC/5, this includes double fire with chance of jamming. "
+						+ "For beam weapons this incudes the beam's burn time.");
+		cycleTime.setToolTipText("The time it takes for the weapon to cool down before the next shot.");
+		burntime.setToolTipText("The time the beam is active and needs to be kept on the target to deal full damage. After this the weapon starts to cool down.");
 
-      {
-         JPanel stats = new JPanel();
-         add(stats, BorderLayout.NORTH);
-         stats.setLayout(new BoxLayout(stats, BoxLayout.Y_AXIS));
+		{
+			JPanel stats = new JPanel();
+			add(stats, BorderLayout.NORTH);
+			stats.setLayout(new BoxLayout(stats, BoxLayout.Y_AXIS));
 
-         JPanel basicInfo = new JPanel();
-         basicInfo.setLayout(new BoxLayout(basicInfo, BoxLayout.X_AXIS));
-         basicInfo.setAlignmentX(LEFT_ALIGNMENT);
-         basicInfo.add(slots);
-         basicInfo.add(Box.createHorizontalGlue());
-         basicInfo.add(mass);
-         basicInfo.add(Box.createHorizontalGlue());
-         basicInfo.add(health);
-         stats.add(basicInfo);
+			JPanel basicInfo = new JPanel();
+			basicInfo.setLayout(new BoxLayout(basicInfo, BoxLayout.X_AXIS));
+			basicInfo.setAlignmentX(LEFT_ALIGNMENT);
+			basicInfo.add(slots);
+			basicInfo.add(Box.createHorizontalGlue());
+			basicInfo.add(mass);
+			basicInfo.add(Box.createHorizontalGlue());
+			basicInfo.add(health);
+			stats.add(basicInfo);
 
-         JPanel heatInfo = new JPanel();
-         heatInfo.setLayout(new BoxLayout(heatInfo, BoxLayout.X_AXIS));
-         heatInfo.setAlignmentX(LEFT_ALIGNMENT);
-         heatInfo.add(heat);
-         heatInfo.add(Box.createHorizontalGlue());
-         heatInfo.add(dph);
-         stats.add(heatInfo);
+			JPanel heatInfo = new JPanel();
+			heatInfo.setLayout(new BoxLayout(heatInfo, BoxLayout.X_AXIS));
+			heatInfo.setAlignmentX(LEFT_ALIGNMENT);
+			heatInfo.add(heat);
+			heatInfo.add(Box.createHorizontalGlue());
+			heatInfo.add(dph);
+			stats.add(heatInfo);
 
-         JPanel rangeInfo = new JPanel();
-         rangeInfo.setLayout(new BoxLayout(rangeInfo, BoxLayout.X_AXIS));
-         rangeInfo.setAlignmentX(LEFT_ALIGNMENT);
-         rangeInfo.add(range);
-         stats.add(rangeInfo);
+			JPanel rangeInfo = new JPanel();
+			rangeInfo.setLayout(new BoxLayout(rangeInfo, BoxLayout.X_AXIS));
+			rangeInfo.setAlignmentX(LEFT_ALIGNMENT);
+			rangeInfo.add(range);
+			stats.add(rangeInfo);
 
-         JPanel damageInfo = new JPanel();
-         damageInfo.setLayout(new BoxLayout(damageInfo, BoxLayout.X_AXIS));
-         damageInfo.setAlignmentX(LEFT_ALIGNMENT);
-         damageInfo.add(damage);
-         damageInfo.add(Box.createHorizontalGlue());
-         damageInfo.add(burntime);
-         damageInfo.add(Box.createHorizontalGlue());
-         damageInfo.add(dps);
-         stats.add(damageInfo);
+			JPanel damageInfo = new JPanel();
+			damageInfo.setLayout(new BoxLayout(damageInfo, BoxLayout.X_AXIS));
+			damageInfo.setAlignmentX(LEFT_ALIGNMENT);
+			damageInfo.add(damage);
+			damageInfo.add(Box.createHorizontalGlue());
+			damageInfo.add(burntime);
+			damageInfo.add(Box.createHorizontalGlue());
+			damageInfo.add(dps);
+			stats.add(damageInfo);
 
-         JPanel damageInfo2 = new JPanel();
-         damageInfo2.setLayout(new BoxLayout(damageInfo2, BoxLayout.X_AXIS));
-         damageInfo2.setAlignmentX(LEFT_ALIGNMENT);
-         damageInfo2.add(cycleTime);
-         damageInfo2.add(Box.createHorizontalGlue());
-         damageInfo2.add(secondsPerShot);
-         stats.add(damageInfo2);
+			JPanel damageInfo2 = new JPanel();
+			damageInfo2.setLayout(new BoxLayout(damageInfo2, BoxLayout.X_AXIS));
+			damageInfo2.setAlignmentX(LEFT_ALIGNMENT);
+			damageInfo2.add(cycleTime);
+			damageInfo2.add(Box.createHorizontalGlue());
+			damageInfo2.add(secondsPerShot);
+			stats.add(damageInfo2);
 
-         stats.add(gh_MaxFreeAlpha);
-         stats.add(ammoperton);
-         stats.add(engineHSSlots);
-         stats.add(engineInternalHS);
-      }
+			stats.add(gh_MaxFreeAlpha);
+			stats.add(ammoperton);
+			stats.add(engineHSSlots);
+			stats.add(engineInternalHS);
+		}
 
-      description.setColumns(30);
-      description.setRows(5);
-      description.setWrapStyleWord(true);
-      description.setEditable(false);
-      description.setFocusable(false);
-      description.setLineWrap(true);
-      description.setMinimumSize(new Dimension(200, 50));
-      description.setPreferredSize(new Dimension(400, 50));
-      description.setMaximumSize(new Dimension(2000, 200));
-      description.setAlignmentX(LEFT_ALIGNMENT);
-      description.setFont(slots.getFont());
-      description.setBackground(slots.getBackground());
+		description.setColumns(30);
+		description.setRows(5);
+		description.setWrapStyleWord(true);
+		description.setEditable(false);
+		description.setFocusable(false);
+		description.setLineWrap(true);
+		description.setMinimumSize(new Dimension(200, 50));
+		description.setPreferredSize(new Dimension(400, 50));
+		description.setMaximumSize(new Dimension(2000, 200));
+		description.setAlignmentX(LEFT_ALIGNMENT);
+		description.setFont(slots.getFont());
+		description.setBackground(slots.getBackground());
 
-      add(description, BorderLayout.CENTER);
+		add(description, BorderLayout.CENTER);
 
-      showItem(null, null, null);
-   }
+		showItem(null, null, null);
+	}
 
-   private void showBasicInfo(Item anItem){
-      if( null != anItem ){
-         ((TitledBorder)getBorder()).setTitle(anItem.getName());
-         repaint();
-         slots.setText("Slots: " + anItem.getNumCriticalSlots());
-         mass.setText("Tons: " + anItem.getMass());
-         description.setText("Description:\n" + anItem.getDescription());
-         health.setText("HP: " + anItem.getHealth());
-      }
-      else{
-         ((TitledBorder)getBorder()).setTitle("No item selected");
-         repaint();
-         slots.setText("Slots: N/A");
-         mass.setText("Tons: N/A");
-         description.setText("Description:\nN/A");
-         health.setText("HP: N/A");
-      }
-   }
+	private void showBasicInfo(Item anItem) {
+		if (null != anItem) {
+			((TitledBorder) getBorder()).setTitle(anItem.getName());
+			repaint();
+			slots.setText("Slots: " + anItem.getNumCriticalSlots());
+			mass.setText("Tons: " + anItem.getMass());
+			description.setText("Description:\n" + anItem.getDescription());
+			health.setText("HP: " + anItem.getHealth());
+		} else {
+			((TitledBorder) getBorder()).setTitle("No item selected");
+			repaint();
+			slots.setText("Slots: N/A");
+			mass.setText("Tons: N/A");
+			description.setText("Description:\nN/A");
+			health.setText("HP: N/A");
+		}
+	}
 
-   private void showEngineInfo(Engine anEngine){
-      engineInternalHS.setVisible(true);
-      engineInternalHS.setText("Internal heat sinks: " + anEngine.getNumInternalHeatsinks());
-      engineHSSlots.setVisible(true);
-      engineHSSlots.setText("Heat sink slots: " + anEngine.getNumHeatsinkSlots());
-   }
+	private void showEngineInfo(Engine anEngine) {
+		engineInternalHS.setVisible(true);
+		engineInternalHS.setText("Internal heat sinks: " + anEngine.getNumInternalHeatsinks());
+		engineHSSlots.setVisible(true);
+		engineHSSlots.setText("Heat sink slots: " + anEngine.getNumHeatsinkSlots());
+	}
 
-   private void showAmmoInfo(Ammunition anAmmo){
-      ammoperton.setVisible(true);
-      ammoperton.setText("Shots: " + anAmmo.getNumShots());
-   }
+	private void showAmmoInfo(Ammunition anAmmo) {
+		ammoperton.setVisible(true);
+		ammoperton.setText("Shots: " + anAmmo.getNumShots());
+	}
 
-   private void showWeaponInfo(Weapon aWeapon, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
-      DecimalFormat df0 = new DecimalFormat("###");
-      DecimalFormat df1 = new DecimalFormat("###.#");
-      DecimalFormat df2 = new DecimalFormat("###.##");
+	private void showWeaponInfo(Weapon aWeapon, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
+		DecimalFormat df0 = new DecimalFormat("###");
+		DecimalFormat df1 = new DecimalFormat("###.#");
+		DecimalFormat df2 = new DecimalFormat("###.##");
 
-      damage.setVisible(true);
-      damage.setText("Damage: " + aWeapon.getDamagePerShot());
-      heat.setVisible(true);
-      heat.setText("Heat: " + aWeapon.getHeat(aModifiers));
-      gh_MaxFreeAlpha.setVisible(true);
-      gh_MaxFreeAlpha.setText("Max free alpha: "
-                              + df0.format((aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha() : Double.POSITIVE_INFINITY));
+		damage.setVisible(true);
+		damage.setText("Damage: " + aWeapon.getDamagePerShot());
+		heat.setVisible(true);
+		heat.setText("Heat: " + aWeapon.getHeat(aModifiers));
+		gh_MaxFreeAlpha.setVisible(true);
+		gh_MaxFreeAlpha.setText("Max free alpha: "
+				+ df0.format((aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha()
+						: Double.POSITIVE_INFINITY));
 
-      cycleTime.setVisible(true);
-      cycleTime.setText("Cycle time: " + df2.format(aWeapon.getCoolDown(aEfficiencies, aModifiers)));
-      if( aWeapon instanceof EnergyWeapon ){
-         burntime.setVisible(true);
-         burntime.setText("Burn time: " + df1.format(((EnergyWeapon)aWeapon).getDuration()));
-      }
-      secondsPerShot.setVisible(true);
-      secondsPerShot.setText("RoF: " + df2.format(aWeapon.getSecondsPerShot(aEfficiencies, aModifiers)) + " s/shot");
+		cycleTime.setVisible(true);
+		cycleTime.setText("Cycle time: " + df2.format(aWeapon.getCoolDown(aEfficiencies, aModifiers)));
+		if (aWeapon instanceof EnergyWeapon) {
+			burntime.setVisible(true);
+			burntime.setText("Burn time: " + df1.format(((EnergyWeapon) aWeapon).getDuration()));
+		}
+		secondsPerShot.setVisible(true);
+		secondsPerShot.setText("RoF: " + df2.format(aWeapon.getSecondsPerShot(aEfficiencies, aModifiers)) + " s/shot");
 
-      heatPerSecond.setVisible(true);
-      heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", aEfficiencies, aModifiers)));
+		heatPerSecond.setVisible(true);
+		heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", aEfficiencies, aModifiers)));
 
-      dps.setVisible(true);
-      dps.setText("DPS: " + df1.format(aWeapon.getStat("d/s", aEfficiencies, aModifiers)));
+		dps.setVisible(true);
+		dps.setText("DPS: " + df1.format(aWeapon.getStat("d/s", aEfficiencies, aModifiers)));
 
-      dph.setVisible(true);
-      dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", aEfficiencies, aModifiers)));
+		dph.setVisible(true);
+		dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", aEfficiencies, aModifiers)));
 
-      range.setVisible(true);
-      range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "")
-                    + df0.format(aWeapon.getRangeLong(aModifiers)) + " / " + df0.format(aWeapon.getRangeMax(aModifiers)));
+		range.setVisible(true);
+		range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "")
+				+ df0.format(aWeapon.getRangeLong(aModifiers)) + " / " + df0.format(aWeapon.getRangeMax(aModifiers)));
 
-      ammoperton.setVisible(false);
-   }
+		ammoperton.setVisible(false);
+	}
 
-   private void clearDisplay(){
-      engineInternalHS.setVisible(false);
-      engineHSSlots.setVisible(false);
+	private void clearDisplay() {
+		engineInternalHS.setVisible(false);
+		engineHSSlots.setVisible(false);
 
-      damage.setVisible(false);
-      burntime.setVisible(false);
-      heat.setVisible(false);
-      heatPerSecond.setVisible(false);
-      cycleTime.setVisible(false);
-      gh_MaxFreeAlpha.setVisible(false);
-      range.setVisible(false);
-      dps.setVisible(false);
-      dph.setVisible(false);
-      secondsPerShot.setVisible(false);
+		damage.setVisible(false);
+		burntime.setVisible(false);
+		heat.setVisible(false);
+		heatPerSecond.setVisible(false);
+		cycleTime.setVisible(false);
+		gh_MaxFreeAlpha.setVisible(false);
+		range.setVisible(false);
+		dps.setVisible(false);
+		dph.setVisible(false);
+		secondsPerShot.setVisible(false);
 
-      ammoperton.setVisible(false);
-   }
+		ammoperton.setVisible(false);
+	}
 
-   public void showItem(Item anItem, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
-      clearDisplay();
-      showBasicInfo(anItem);
+	public void showItem(Item anItem, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
+		clearDisplay();
+		showBasicInfo(anItem);
 
-      if( anItem instanceof Weapon ){
-         showWeaponInfo((Weapon)anItem, aEfficiencies, aModifiers);
-      }
-      else if( anItem instanceof Ammunition ){
-         showAmmoInfo((Ammunition)anItem);
-      }
-      else if( anItem instanceof Engine ){
-         showEngineInfo((Engine)anItem);
-      }
-   }
+		if (anItem instanceof Weapon) {
+			showWeaponInfo((Weapon) anItem, aEfficiencies, aModifiers);
+		} else if (anItem instanceof Ammunition) {
+			showAmmoInfo((Ammunition) anItem);
+		} else if (anItem instanceof Engine) {
+			showEngineInfo((Engine) anItem);
+		}
+	}
 }

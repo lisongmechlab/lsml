@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data;
 
@@ -33,100 +33,100 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 /**
  * @author Li Song
  */
-public class XMLLoadout{
+public class XMLLoadout {
 
-   public class Upgrades{
-      public class Armor{
-         @XStreamAsAttribute
-         public int ItemID;
-      }
+	public class Upgrades {
+		public class Armor {
+			@XStreamAsAttribute
+			public int ItemID;
+		}
 
-      public class Structure{
-         @XStreamAsAttribute
-         public int ItemID;
-      }
+		public class Structure {
+			@XStreamAsAttribute
+			public int ItemID;
+		}
 
-      public class HeatSinks{
-         @XStreamAlias("ItemId")
-         // Typo in VTR-9SC
-         @XStreamAsAttribute
-         public int ItemID;
-      }
+		public class HeatSinks {
+			@XStreamAlias("ItemId")
+			// Typo in VTR-9SC
+			@XStreamAsAttribute
+			public int ItemID;
+		}
 
-      public class Artemis{
-         @XStreamAsAttribute
-         public int Equipped;
-      }
+		public class Artemis {
+			@XStreamAsAttribute
+			public int Equipped;
+		}
 
-      @XStreamAlias("Armor")
-      public Armor     armor;
-      @XStreamAlias("Structure")
-      public Structure structure;
-      @XStreamAlias("HeatSinks")
-      public HeatSinks heatsinks;
-      @XStreamAlias("Artemis")
-      public Artemis   artemis;
-   }
+		@XStreamAlias("Armor")
+		public Armor armor;
+		@XStreamAlias("Structure")
+		public Structure structure;
+		@XStreamAlias("HeatSinks")
+		public HeatSinks heatsinks;
+		@XStreamAlias("Artemis")
+		public Artemis artemis;
+	}
 
-   @XStreamAlias("Upgrades")
-   public Upgrades upgrades;
+	@XStreamAlias("Upgrades")
+	public Upgrades upgrades;
 
-   @XStreamAlias("component")
-   public class Component{
-      @XStreamAlias("Name")
-      @XStreamAsAttribute
-      public String ComponentName;
-      @XStreamAsAttribute
-      public int    Armor;
+	@XStreamAlias("component")
+	public class Component {
+		@XStreamAlias("Name")
+		@XStreamAsAttribute
+		public String ComponentName;
+		@XStreamAsAttribute
+		public int Armor;
 
-      public class Weapon{
-         @XStreamAsAttribute
-         public int ItemID;
-         @XStreamAsAttribute
-         public int WeaponGroup;
-      }
+		public class Weapon {
+			@XStreamAsAttribute
+			public int ItemID;
+			@XStreamAsAttribute
+			public int WeaponGroup;
+		}
 
-      public class Item{
-         @XStreamAsAttribute
-         public int ItemID;
-      }
+		public class Item {
+			@XStreamAsAttribute
+			public int ItemID;
+		}
 
-      @XStreamImplicit
-      public List<Weapon> Weapon;
+		@XStreamImplicit
+		public List<Weapon> Weapon;
 
-      @XStreamImplicit
-      public List<Item>   Module;
+		@XStreamImplicit
+		public List<Item> Module;
 
-      @XStreamImplicit
-      public List<Item>   Ammo;
-   }
+		@XStreamImplicit
+		public List<Item> Ammo;
+	}
 
-   public List<Component> ComponentList;
+	public List<Component> ComponentList;
 
-   @XStreamAsAttribute
-   int                    MechID;
+	@XStreamAsAttribute
+	int MechID;
 
-   @XStreamAsAttribute
-   String                 Name;
+	@XStreamAsAttribute
+	String Name;
 
-   public static XMLLoadout fromXml(InputStream is){
-      XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
-         @Override
-         protected MapperWrapper wrapMapper(MapperWrapper next){
-            return new MapperWrapper(next){
-               @Override
-               public boolean shouldSerializeMember(Class definedIn, String fieldName){
-                  if( definedIn == Object.class ){
-                     return false;
-                  }
-                  return super.shouldSerializeMember(definedIn, fieldName);
-               }
-            };
-         }
-      };
-      xstream.autodetectAnnotations(true);
-      xstream.alias("Loadout", XMLLoadout.class);
+	public static XMLLoadout fromXml(InputStream is) {
+		XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
+			@Override
+			protected MapperWrapper wrapMapper(MapperWrapper next) {
+				return new MapperWrapper(next) {
+					@Override
+					public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+						if (definedIn == Object.class) {
+							return false;
+						}
+						return super.shouldSerializeMember(definedIn, fieldName);
+					}
+				};
+			}
+		};
+		xstream.autodetectAnnotations(true);
+		xstream.alias("Loadout", XMLLoadout.class);
 
-      return (XMLLoadout)xstream.fromXML(is);
-   }
+		return (XMLLoadout) xstream.fromXML(is);
+	}
 }

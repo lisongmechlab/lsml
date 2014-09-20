@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
@@ -38,106 +38,104 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * 
  * @author Li Song
  */
-public class UpgradesConverter implements Converter{
-   @Override
-   public boolean canConvert(Class aClass){
-      return Upgrades.class.isAssignableFrom(aClass);
-   }
+public class UpgradesConverter implements Converter {
+	@Override
+	public boolean canConvert(Class aClass) {
+		return Upgrades.class.isAssignableFrom(aClass);
+	}
 
-   @Override
-   public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      Upgrades upgrades = (Upgrades)anObject;
+	@Override
+	public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+		Upgrades upgrades = (Upgrades) anObject;
 
-      aWriter.addAttribute("version", "2");
+		aWriter.addAttribute("version", "2");
 
-      aWriter.startNode("armor");
-      aContext.convertAnother(upgrades.getArmor());
-      aWriter.endNode();
+		aWriter.startNode("armor");
+		aContext.convertAnother(upgrades.getArmor());
+		aWriter.endNode();
 
-      aWriter.startNode("structure");
-      aContext.convertAnother(upgrades.getStructure());
-      aWriter.endNode();
+		aWriter.startNode("structure");
+		aContext.convertAnother(upgrades.getStructure());
+		aWriter.endNode();
 
-      aWriter.startNode("guidance");
-      aContext.convertAnother(upgrades.getGuidance());
-      aWriter.endNode();
+		aWriter.startNode("guidance");
+		aContext.convertAnother(upgrades.getGuidance());
+		aWriter.endNode();
 
-      aWriter.startNode("heatsinks");
-      aContext.convertAnother(upgrades.getHeatSink());
-      aWriter.endNode();
-   }
+		aWriter.startNode("heatsinks");
+		aContext.convertAnother(upgrades.getHeatSink());
+		aWriter.endNode();
+	}
 
-   @Override
-   public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
-      final String versionString = aReader.getAttribute("version");
-      final int version;
-      if( versionString == null )
-         version = 1;
-      else
-         version = Integer.parseInt(versionString);
+	@Override
+	public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+		final String versionString = aReader.getAttribute("version");
+		final int version;
+		if (versionString == null)
+			version = 1;
+		else
+			version = Integer.parseInt(versionString);
 
-      GuidanceUpgrade guidance = UpgradeDB.STANDARD_GUIDANCE;
-      ArmorUpgrade armor = UpgradeDB.STANDARD_ARMOR;
-      StructureUpgrade structure = UpgradeDB.STANDARD_STRUCTURE;
-      HeatSinkUpgrade heatSinks = UpgradeDB.STANDARD_HEATSINKS;
+		GuidanceUpgrade guidance = UpgradeDB.STANDARD_GUIDANCE;
+		ArmorUpgrade armor = UpgradeDB.STANDARD_ARMOR;
+		StructureUpgrade structure = UpgradeDB.STANDARD_STRUCTURE;
+		HeatSinkUpgrade heatSinks = UpgradeDB.STANDARD_HEATSINKS;
 
-      if( version == 1 ){
-         // <artemis>bool</artemis><ferroFibrous>bool</ferroFibrous><endoSteel>bool</endoSteel><dhs>bool</dhs>
-         while( aReader.hasMoreChildren() ){
-            aReader.moveDown();
-            switch( aReader.getNodeName() ){
-               case "artemis":
-                  if( Boolean.parseBoolean(aReader.getValue()) ){
-                     guidance = UpgradeDB.ARTEMIS_IV;
-                  }
-                  break;
-               case "ferroFibrous":
-                  if( Boolean.parseBoolean(aReader.getValue()) ){
-                     armor = UpgradeDB.FERRO_FIBROUS_ARMOR;
-                  }
-                  break;
-               case "endoSteel":
-                  if( Boolean.parseBoolean(aReader.getValue()) ){
-                     structure = UpgradeDB.ENDO_STEEL_STRUCTURE;
-                  }
-                  break;
-               case "dhs":
-                  if( Boolean.parseBoolean(aReader.getValue()) ){
-                     heatSinks = UpgradeDB.DOUBLE_HEATSINKS;
-                  }
-                  break;
-               default:
-                  throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());
-            }
-            aReader.moveUp();
-         }
-      }
-      else if( version == 2 ){
-         // <armor>mwoId</armor><structure>mwoId</structure><guidance>mwoId</guidance><heatsinks>mwoId</heatsinks>
-         while( aReader.hasMoreChildren() ){
-            aReader.moveDown();
-            switch( aReader.getNodeName() ){
-               case "guidance":
-                  guidance = (GuidanceUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
-                  break;
-               case "armor":
-                  armor = (ArmorUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
-                  break;
-               case "structure":
-                  structure = (StructureUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
-                  break;
-               case "heatsinks":
-                  heatSinks = (HeatSinkUpgrade)UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
-                  break;
-               default:
-                  throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());
-            }
-            aReader.moveUp();
-         }
-      }
-      else
-         throw new ConversionException("Unsupported version number on upgrades tag! :" + versionString);
+		if (version == 1) {
+			// <artemis>bool</artemis><ferroFibrous>bool</ferroFibrous><endoSteel>bool</endoSteel><dhs>bool</dhs>
+			while (aReader.hasMoreChildren()) {
+				aReader.moveDown();
+				switch (aReader.getNodeName()) {
+					case "artemis":
+						if (Boolean.parseBoolean(aReader.getValue())) {
+							guidance = UpgradeDB.ARTEMIS_IV;
+						}
+						break;
+					case "ferroFibrous":
+						if (Boolean.parseBoolean(aReader.getValue())) {
+							armor = UpgradeDB.FERRO_FIBROUS_ARMOR;
+						}
+						break;
+					case "endoSteel":
+						if (Boolean.parseBoolean(aReader.getValue())) {
+							structure = UpgradeDB.ENDO_STEEL_STRUCTURE;
+						}
+						break;
+					case "dhs":
+						if (Boolean.parseBoolean(aReader.getValue())) {
+							heatSinks = UpgradeDB.DOUBLE_HEATSINKS;
+						}
+						break;
+					default:
+						throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());
+				}
+				aReader.moveUp();
+			}
+		} else if (version == 2) {
+			// <armor>mwoId</armor><structure>mwoId</structure><guidance>mwoId</guidance><heatsinks>mwoId</heatsinks>
+			while (aReader.hasMoreChildren()) {
+				aReader.moveDown();
+				switch (aReader.getNodeName()) {
+					case "guidance":
+						guidance = (GuidanceUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+						break;
+					case "armor":
+						armor = (ArmorUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+						break;
+					case "structure":
+						structure = (StructureUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+						break;
+					case "heatsinks":
+						heatSinks = (HeatSinkUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+						break;
+					default:
+						throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());
+				}
+				aReader.moveUp();
+			}
+		} else
+			throw new ConversionException("Unsupported version number on upgrades tag! :" + versionString);
 
-      return new Upgrades(armor, structure, guidance, heatSinks);
-   }
+		return new Upgrades(armor, structure, guidance, heatSinks);
+	}
 }

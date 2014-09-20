@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -24,23 +24,23 @@ package lisong_mechlab.model.item;
  * 
  * @author Li Song
  */
-public enum Faction{
-   Any, InnerSphere, Clan;
+public enum Faction {
+	Any, InnerSphere, Clan;
 
-   public boolean isCompatible(Faction aFaction){
-      if( this == Any || aFaction == Any )
-         return true;
-      return this == aFaction;
-   }
+	public boolean isCompatible(Faction aFaction) {
+		if (this == Any || aFaction == Any)
+			return true;
+		return this == aFaction;
+	}
 
-   /**
-    * @param aFaction
-    *           The value found in MWO data files.
-    * @return The {@link Faction} matching the MWO string value.
-    */
-   public static Faction fromMwo(String aFaction){
-      if( null == aFaction || "clan,innersphere".equals(aFaction.toLowerCase()) )
-         return Any;
-      return valueOf(aFaction);
-   }
+	/**
+	 * @param aFaction
+	 *            The value found in MWO data files.
+	 * @return The {@link Faction} matching the MWO string value.
+	 */
+	public static Faction fromMwo(String aFaction) {
+		if (null == aFaction || "clan,innersphere".equals(aFaction.toLowerCase()))
+			return Any;
+		return valueOf(aFaction);
+	}
 }

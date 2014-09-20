@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
@@ -33,41 +33,40 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-public class OpStripComponent extends CompositeOperation{
-   /**
-    * @param aLoadoutPart
-    *           The {@link ConfiguredComponentBase} to strip.
-    * @param anXBar
-    *           Where to announce changes from this operation.
-    * @param aLoadout
-    *           The {@link LoadoutBase} to operate on.
-    */
-   public OpStripComponent(MessageXBar anXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart){
-      super("strip part");
-      // Engine heat sinks are removed together with the engine.
-      int hsSkipp = aLoadoutPart.getEngineHeatsinks();
-      for(Item item : aLoadoutPart.getItemsEquipped()){
-         if( !(item instanceof Internal) ){
-            if( item instanceof HeatSink ){
-               if( hsSkipp > 0 ){
-                  hsSkipp--;
-                  continue;
-               }
-            }
-            addOp(new OpRemoveItem(anXBar, aLoadout, aLoadoutPart, item));
-         }
-      }
-      if( aLoadoutPart.getInternalComponent().getLocation().isTwoSided() ){
-         addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.FRONT, 0, false));
-         addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.BACK, 0, false));
-      }
-      else{
-         addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.ONLY, 0, false));
-      }
-   }
+public class OpStripComponent extends CompositeOperation {
+	/**
+	 * @param aLoadoutPart
+	 *            The {@link ConfiguredComponentBase} to strip.
+	 * @param anXBar
+	 *            Where to announce changes from this operation.
+	 * @param aLoadout
+	 *            The {@link LoadoutBase} to operate on.
+	 */
+	public OpStripComponent(MessageXBar anXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart) {
+		super("strip part");
+		// Engine heat sinks are removed together with the engine.
+		int hsSkipp = aLoadoutPart.getEngineHeatsinks();
+		for (Item item : aLoadoutPart.getItemsEquipped()) {
+			if (!(item instanceof Internal)) {
+				if (item instanceof HeatSink) {
+					if (hsSkipp > 0) {
+						hsSkipp--;
+						continue;
+					}
+				}
+				addOp(new OpRemoveItem(anXBar, aLoadout, aLoadoutPart, item));
+			}
+		}
+		if (aLoadoutPart.getInternalComponent().getLocation().isTwoSided()) {
+			addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.FRONT, 0, false));
+			addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.BACK, 0, false));
+		} else {
+			addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.ONLY, 0, false));
+		}
+	}
 
-   @Override
-   public void buildOperation(){
-      // No-op The preparation is invariant of time and performed in constructor
-   }
+	@Override
+	public void buildOperation() {
+		// No-op The preparation is invariant of time and performed in constructor
+	}
 }

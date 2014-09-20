@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.export;
 
@@ -29,36 +29,36 @@ import lisong_mechlab.util.EncodingException;
  * 
  * @author Li Song
  */
-public interface LoadoutCoder{
-   /**
-    * Encodes the given {@link LoadoutBase} to a raw bit stream.
-    * 
-    * @param aLoadout
-    *           The {@link LoadoutBase} to encode.
-    * @return A raw bit stream representing the {@link LoadoutStandard}.
-    * @throws EncodingException
-    *            If the bit stream couldn't be written.
-    */
-   public byte[] encode(LoadoutBase<?> aLoadout) throws EncodingException;
+public interface LoadoutCoder {
+	/**
+	 * Encodes the given {@link LoadoutBase} to a raw bit stream.
+	 * 
+	 * @param aLoadout
+	 *            The {@link LoadoutBase} to encode.
+	 * @return A raw bit stream representing the {@link LoadoutStandard}.
+	 * @throws EncodingException
+	 *             If the bit stream couldn't be written.
+	 */
+	public byte[] encode(LoadoutBase<?> aLoadout) throws EncodingException;
 
-   /**
-    * Decodes a given bit stream into a {@link LoadoutStandard}.
-    * 
-    * @param aBitStream
-    *           The bit stream to decode.
-    * @return A {@link LoadoutBase} that has been decoded.
-    * @throws DecodingException
-    *            If the bit stream is broken.
-    */
-   public LoadoutBase<?> decode(byte[] aBitStream) throws DecodingException;
+	/**
+	 * Decodes a given bit stream into a {@link LoadoutStandard}.
+	 * 
+	 * @param aBitStream
+	 *            The bit stream to decode.
+	 * @return A {@link LoadoutBase} that has been decoded.
+	 * @throws DecodingException
+	 *             If the bit stream is broken.
+	 */
+	public LoadoutBase<?> decode(byte[] aBitStream) throws DecodingException;
 
-   /**
-    * Determines if this {@link LoadoutCoder} is capable of decoding the given bit stream. Usually implemented by
-    * checking headers of the stream.
-    * 
-    * @param aBitStream
-    *           The stream to test for.
-    * @return Returns <code>true</code> if this coder is able to decode the stream, <code>false</code> otherwise.
-    */
-   public boolean canDecode(byte[] aBitStream);
+	/**
+	 * Determines if this {@link LoadoutCoder} is capable of decoding the given bit stream. Usually implemented by
+	 * checking headers of the stream.
+	 * 
+	 * @param aBitStream
+	 *            The stream to test for.
+	 * @return Returns <code>true</code> if this coder is able to decode the stream, <code>false</code> otherwise.
+	 */
+	public boolean canDecode(byte[] aBitStream);
 }

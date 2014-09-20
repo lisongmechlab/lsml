@@ -13,3 +13,5 @@ build/launch4j.xml
 .gradle
 build/gradle
 *~
+.project
+.classpath

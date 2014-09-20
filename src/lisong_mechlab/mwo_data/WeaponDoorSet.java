@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data;
 
@@ -31,24 +31,24 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * 
  * @author Li Song
  */
-public class WeaponDoorSet{
-   @XStreamAsAttribute
-   public int id;
+public class WeaponDoorSet {
+	@XStreamAsAttribute
+	public int id;
 
-   public class WeaponDoor{
-      @XStreamAsAttribute
-      double                  closedDamageFactor;
+	public class WeaponDoor {
+		@XStreamAsAttribute
+		double closedDamageFactor;
 
-      @XStreamAsAttribute
-      public String           AName;
+		@XStreamAsAttribute
+		public String AName;
 
-      @XStreamAsAttribute
-      double                  firingdelay;
+		@XStreamAsAttribute
+		double firingdelay;
 
-      @XStreamImplicit(itemFieldName = "Attachment")
-      public List<Attachment> attachments;
-   }
+		@XStreamImplicit(itemFieldName = "Attachment")
+		public List<Attachment> attachments;
+	}
 
-   @XStreamImplicit(itemFieldName = "WeaponDoor")
-   public List<WeaponDoor> weaponDoors;
+	@XStreamImplicit(itemFieldName = "WeaponDoor")
+	public List<WeaponDoor> weaponDoors;
 }

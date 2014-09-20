@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
@@ -34,28 +34,28 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
  * 
  * @author Li Song
  */
-public class OpStripLoadout extends CompositeOperation{
-   protected final MessageXBar    xBar;
-   protected final LoadoutBase<?> loadout;
+public class OpStripLoadout extends CompositeOperation {
+	protected final MessageXBar xBar;
+	protected final LoadoutBase<?> loadout;
 
-   public OpStripLoadout(LoadoutBase<?> aLoadout, MessageXBar aXBar){
-      super("strip mech");
-      loadout = aLoadout;
-      xBar = aXBar;
-   }
+	public OpStripLoadout(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+		super("strip mech");
+		loadout = aLoadout;
+		xBar = aXBar;
+	}
 
-   @Override
-   public void buildOperation(){
-      for(ConfiguredComponentBase component : loadout.getComponents()){
-         addOp(new OpStripComponent(xBar, loadout, component));
-      }
+	@Override
+	public void buildOperation() {
+		for (ConfiguredComponentBase component : loadout.getComponents()) {
+			addOp(new OpStripComponent(xBar, loadout, component));
+		}
 
-      if( loadout instanceof LoadoutStandard ){
-         LoadoutStandard loadoutStandard = (LoadoutStandard)loadout;
-         addOp(new OpSetStructureType(xBar, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
-         addOp(new OpSetGuidanceType(xBar, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
-         addOp(new OpSetArmorType(xBar, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
-         addOp(new OpSetHeatSinkType(xBar, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
-      }
-   }
+		if (loadout instanceof LoadoutStandard) {
+			LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+			addOp(new OpSetStructureType(xBar, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
+			addOp(new OpSetGuidanceType(xBar, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
+			addOp(new OpSetArmorType(xBar, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
+			addOp(new OpSetHeatSinkType(xBar, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
+		}
+	}
 }

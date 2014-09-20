@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -24,14 +24,14 @@ package lisong_mechlab.util;
  * 
  * @author Li Song
  */
-public class DecodingException extends Exception{
-   private static final long serialVersionUID = 8948178136779804692L;
+public class DecodingException extends Exception {
+	private static final long serialVersionUID = 8948178136779804692L;
 
-   public DecodingException(String aString){
-      super(aString);
-   }
+	public DecodingException(String aString) {
+		super(aString);
+	}
 
-   public DecodingException(Throwable aThrowable){
-      super(aThrowable);
-   }
+	public DecodingException(Throwable aThrowable) {
+		super(aThrowable);
+	}
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -39,33 +39,32 @@ import javax.swing.SwingUtilities;
  * 
  * @author Li Song
  */
-public class SwingHelpers{
-   public static void bindAction(JComponent aComponent, String aCommand, Action anAction){
-      Object o = anAction.getValue(Action.ACCELERATOR_KEY);
-      if( o instanceof KeyStroke )
-         bindAction(aComponent, aCommand, anAction, (KeyStroke)o);
-      else
-         throw new IllegalArgumentException("Can not bind action, it has no keystroke assigned.");
-   }
+public class SwingHelpers {
+	public static void bindAction(JComponent aComponent, String aCommand, Action anAction) {
+		Object o = anAction.getValue(Action.ACCELERATOR_KEY);
+		if (o instanceof KeyStroke)
+			bindAction(aComponent, aCommand, anAction, (KeyStroke) o);
+		else
+			throw new IllegalArgumentException("Can not bind action, it has no keystroke assigned.");
+	}
 
-   public static void bindAction(JComponent aComponent, String aCommand, Action anAction, KeyStroke aKeyStroke){
-      aComponent.getInputMap(JComponent.WHEN_FOCUSED).put(aKeyStroke, aCommand);
-      aComponent.getActionMap().put(aCommand, anAction);
-   }
+	public static void bindAction(JComponent aComponent, String aCommand, Action anAction, KeyStroke aKeyStroke) {
+		aComponent.getInputMap(JComponent.WHEN_FOCUSED).put(aKeyStroke, aCommand);
+		aComponent.getActionMap().put(aCommand, anAction);
+	}
 
-   public static void hypertextLink(final JLabel aLabel, final String aUrl, String aText){
-      aLabel.setText("<html><a href=\"" + aUrl + "\">" + aText + "</a></html>");
-      aLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-      aLabel.addMouseListener(new MouseAdapter(){
-         @Override
-         public void mouseClicked(MouseEvent e){
-            try{
-               Desktop.getDesktop().browse(new URI(aUrl));
-            }
-            catch( URISyntaxException | IOException ex ){
-               JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor(aLabel), "Unable to open link!");
-            }
-         }
-      });
-   }
+	public static void hypertextLink(final JLabel aLabel, final String aUrl, String aText) {
+		aLabel.setText("<html><a href=\"" + aUrl + "\">" + aText + "</a></html>");
+		aLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		aLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					Desktop.getDesktop().browse(new URI(aUrl));
+				} catch (URISyntaxException | IOException ex) {
+					JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor(aLabel), "Unable to open link!");
+				}
+			}
+		});
+	}
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
@@ -33,58 +33,58 @@ import org.junit.Test;
  * 
  * @author Li Song
  */
-public class StructureUpgradeTest{
-   /**
-    * Test properties of standard structure
-    */
-   @Test
-   public void testStandardStructure(){
-      final int ss_id = 3100;
-      StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(ss_id);
+public class StructureUpgradeTest {
+	/**
+	 * Test properties of standard structure
+	 */
+	@Test
+	public void testStandardStructure() {
+		final int ss_id = 3100;
+		StructureUpgrade cut = (StructureUpgrade) UpgradeDB.lookup(ss_id);
 
-      ChassisStandard chassi = mock(ChassisStandard.class);
-      final int chassiMass = 35;
-      when(chassi.getMassMax()).thenReturn(chassiMass);
+		ChassisStandard chassi = mock(ChassisStandard.class);
+		final int chassiMass = 35;
+		when(chassi.getMassMax()).thenReturn(chassiMass);
 
-      assertNotNull(cut);
-      assertEquals(ss_id, cut.getMwoId());
-      assertEquals("STANDARD STRUCTURE", cut.getName());
-      assertFalse(cut.getDescription().equals(""));
-      assertEquals(0, cut.getExtraSlots());
-      assertEquals(chassiMass * 0.1, cut.getStructureMass(chassi), 0.0);
-   }
+		assertNotNull(cut);
+		assertEquals(ss_id, cut.getMwoId());
+		assertEquals("STANDARD STRUCTURE", cut.getName());
+		assertFalse(cut.getDescription().equals(""));
+		assertEquals(0, cut.getExtraSlots());
+		assertEquals(chassiMass * 0.1, cut.getStructureMass(chassi), 0.0);
+	}
 
-   /**
-    * Test properties of endo-steel structure
-    */
-   @Test
-   public void testEndoSteelStructure(){
-      final int es_id = 3101;
-      StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(es_id);
+	/**
+	 * Test properties of endo-steel structure
+	 */
+	@Test
+	public void testEndoSteelStructure() {
+		final int es_id = 3101;
+		StructureUpgrade cut = (StructureUpgrade) UpgradeDB.lookup(es_id);
 
-      ChassisStandard chassi = mock(ChassisStandard.class);
-      final int chassiMass = 35;
-      when(chassi.getMassMax()).thenReturn(chassiMass);
+		ChassisStandard chassi = mock(ChassisStandard.class);
+		final int chassiMass = 35;
+		when(chassi.getMassMax()).thenReturn(chassiMass);
 
-      assertNotNull(cut);
-      assertEquals(es_id, cut.getMwoId());
-      assertEquals("ENDO-STEEL STRUCTURE", cut.getName());
-      assertFalse(cut.getDescription().equals(""));
-      assertEquals(14, cut.getExtraSlots());
-      assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
-   }
+		assertNotNull(cut);
+		assertEquals(es_id, cut.getMwoId());
+		assertEquals("ENDO-STEEL STRUCTURE", cut.getName());
+		assertFalse(cut.getDescription().equals(""));
+		assertEquals(14, cut.getExtraSlots());
+		assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
+	}
 
-   /**
-    * Test the rounding of endo-steel structure (all tonnage amounts are rounded up to the closest half ton)
-    */
-   @Test
-   public void testEndoSteelStructure_rounding(){
-      final int es_id = 3101;
-      StructureUpgrade cut = (StructureUpgrade)UpgradeDB.lookup(es_id);
+	/**
+	 * Test the rounding of endo-steel structure (all tonnage amounts are rounded up to the closest half ton)
+	 */
+	@Test
+	public void testEndoSteelStructure_rounding() {
+		final int es_id = 3101;
+		StructureUpgrade cut = (StructureUpgrade) UpgradeDB.lookup(es_id);
 
-      ChassisStandard chassi = mock(ChassisStandard.class);
-      final int chassiMass = 35;
-      when(chassi.getMassMax()).thenReturn(chassiMass);
-      assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
-   }
+		ChassisStandard chassi = mock(ChassisStandard.class);
+		final int chassiMass = 35;
+		when(chassi.getMassMax()).thenReturn(chassiMass);
+		assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
+	}
 }

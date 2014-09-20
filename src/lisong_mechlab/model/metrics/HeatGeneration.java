@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -33,31 +33,30 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * 
  * @author Li Song
  */
-public class HeatGeneration implements Metric{
-   private final LoadoutBase<?> loadout;
+public class HeatGeneration implements Metric {
+	private final LoadoutBase<?> loadout;
 
-   public HeatGeneration(final LoadoutBase<?> aLoadout){
-      loadout = aLoadout;
-   }
+	public HeatGeneration(final LoadoutBase<?> aLoadout) {
+		loadout = aLoadout;
+	}
 
-   @Override
-   public double calculate(){
-      double heat = 0;
-      for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon ){
-            heat += ((Weapon)item).getStat("h/s", loadout.getEfficiencies(), loadout.getWeaponModifiers());
-         }
-         else if( item instanceof Engine ){
-            heat += ((Engine)item).getHeat(loadout.getWeaponModifiers());
-         }
-      }
-      
-      double extra = 0;
-      for(HeatModifier heatModifier : loadout.getHeatModifiers()){
-         // XXX: No modifiers of this kind have been seen in the game yet so we do not know if this is correct.
-         extra += heatModifier.extraHeatGeneration(heat);
-      }
-      
-      return heat+extra;
-   }
+	@Override
+	public double calculate() {
+		double heat = 0;
+		for (Item item : loadout.getAllItems()) {
+			if (item instanceof Weapon) {
+				heat += ((Weapon) item).getStat("h/s", loadout.getEfficiencies(), loadout.getWeaponModifiers());
+			} else if (item instanceof Engine) {
+				heat += ((Engine) item).getHeat(loadout.getWeaponModifiers());
+			}
+		}
+
+		double extra = 0;
+		for (HeatModifier heatModifier : loadout.getHeatModifiers()) {
+			// XXX: No modifiers of this kind have been seen in the game yet so we do not know if this is correct.
+			extra += heatModifier.extraHeatGeneration(heat);
+		}
+
+		return heat + extra;
+	}
 }

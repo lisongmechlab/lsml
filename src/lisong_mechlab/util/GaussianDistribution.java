@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -24,37 +24,36 @@ package lisong_mechlab.util;
  * 
  * @author Li Song
  */
-public class GaussianDistribution implements Distribution{
+public class GaussianDistribution implements Distribution {
 
-   private static final double PRECISION = 0.00001;
+	private static final double PRECISION = 0.00001;
 
-   @Override
-   public double pdf(double x){
-      return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
-   }
+	@Override
+	public double pdf(double x) {
+		return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
+	}
 
-   @Override
-   public double cdf(double x){
-      final double pdf = pdf(x);
-      if( pdf < PRECISION )
-         return x < 0 ? 0 : 1.0;
+	@Override
+	public double cdf(double x) {
+		final double pdf = pdf(x);
+		if (pdf < PRECISION)
+			return x < 0 ? 0 : 1.0;
 
-      int i = 0;
-      double sum = 0;
-      double denom = 1;
-      double term = 0;
-      do{
-         denom *= (2 * i + 1);
-         double denomPower = Math.log(denom) / Math.log(x);
-         term = pdf * Math.pow(x, 2 * i + 1 - denomPower);
-         sum += term;
-         i++;
-      }
-      while( term > PRECISION );
+		int i = 0;
+		double sum = 0;
+		double denom = 1;
+		double term = 0;
+		do {
+			denom *= (2 * i + 1);
+			double denomPower = Math.log(denom) / Math.log(x);
+			term = pdf * Math.pow(x, 2 * i + 1 - denomPower);
+			sum += term;
+			i++;
+		} while (term > PRECISION);
 
-      double r = 0.5 + sum;
-      assert (r <= 1.0);
-      return r;
-   }
+		double r = 0.5 + sum;
+		assert (r <= 1.0);
+		return r;
+	}
 
 }

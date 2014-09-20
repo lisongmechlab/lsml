@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.render;
 
@@ -39,67 +39,65 @@ import lisong_mechlab.model.item.ItemDB;
  * 
  * @author Li Song
  */
-public class OmniPodRenderer implements ListCellRenderer<OmniPod>{
+public class OmniPodRenderer implements ListCellRenderer<OmniPod> {
 
-   private final JLabel       active     = new JLabel();
+	private final JLabel active = new JLabel();
 
-   private final JPanel       panel      = new JPanel();
-   private final JPanel       hardpoints = new JPanel();
-   private final JLabel       quirks     = new JLabel();
-   private final TitledBorder border     = BorderFactory.createTitledBorder("");
+	private final JPanel panel = new JPanel();
+	private final JPanel hardpoints = new JPanel();
+	private final JLabel quirks = new JLabel();
+	private final TitledBorder border = BorderFactory.createTitledBorder("");
 
-   private final JLabel       hpJJ       = new JLabel();
+	private final JLabel hpJJ = new JLabel();
 
-   public OmniPodRenderer(){
-      panel.setLayout(new BorderLayout());
-      panel.add(hardpoints, BorderLayout.NORTH);
-      panel.add(quirks, BorderLayout.CENTER);
-      panel.setBorder(border);
+	public OmniPodRenderer() {
+		panel.setLayout(new BorderLayout());
+		panel.add(hardpoints, BorderLayout.NORTH);
+		panel.add(quirks, BorderLayout.CENTER);
+		panel.setBorder(border);
 
-      quirks.setHorizontalAlignment(SwingConstants.LEFT);
+		quirks.setHorizontalAlignment(SwingConstants.LEFT);
 
-      StyleManager.styleThinItem(hpJJ, ItemDB.lookup("JUMP JETS - CLASS V"));
-   }
+		StyleManager.styleThinItem(hpJJ, ItemDB.lookup("JUMP JETS - CLASS V"));
+	}
 
-   @Override
-   public Component getListCellRendererComponent(JList<? extends OmniPod> aList, OmniPod aValue, int aIndex, boolean aIsSelected,
-                                                 boolean aCellHasFocus){
+	@Override
+	public Component getListCellRendererComponent(JList<? extends OmniPod> aList, OmniPod aValue, int aIndex,
+			boolean aIsSelected, boolean aCellHasFocus) {
 
-      if( aIndex < 0 ){
-         // The preview in the box
-         active.setText(aValue.toString());
-         return active;
-      }
+		if (aIndex < 0) {
+			// The preview in the box
+			active.setText(aValue.toString());
+			return active;
+		}
 
-      // Render item in list
-      border.setTitle(aValue.toString());
+		// Render item in list
+		border.setTitle(aValue.toString());
 
-      if( !aValue.getHardPoints().isEmpty() || 0 != aValue.getJumpJetsMax()){
-         hardpoints.setVisible(true);
-         hardpoints.removeAll();
-         for(HardPointType hp : HardPointType.values()){
-            JLabel label = new JLabel();
-            StyleManager.styleHardpointLabel(label, hp, aValue.getHardPoints());
-            hardpoints.add(label);
-         }
+		if (!aValue.getHardPoints().isEmpty() || 0 != aValue.getJumpJetsMax()) {
+			hardpoints.setVisible(true);
+			hardpoints.removeAll();
+			for (HardPointType hp : HardPointType.values()) {
+				JLabel label = new JLabel();
+				StyleManager.styleHardpointLabel(label, hp, aValue.getHardPoints());
+				hardpoints.add(label);
+			}
 
-         if( aValue.getJumpJetsMax() > 0 ){
-            hpJJ.setVisible(true);
-            hpJJ.setText(Integer.toString(aValue.getJumpJetsMax()) + " JJ");
-            hardpoints.add(hpJJ);
-         }
-         else{
-            hpJJ.setVisible(false);
-         }
+			if (aValue.getJumpJetsMax() > 0) {
+				hpJJ.setVisible(true);
+				hpJJ.setText(Integer.toString(aValue.getJumpJetsMax()) + " JJ");
+				hardpoints.add(hpJJ);
+			} else {
+				hpJJ.setVisible(false);
+			}
 
-         // TODO: Draw pilot modules once we have decided a style for them.
-      }
-      else{
-         hardpoints.setVisible(false);
-      }
+			// TODO: Draw pilot modules once we have decided a style for them.
+		} else {
+			hardpoints.setVisible(false);
+		}
 
-      quirks.setVisible(true);
-      quirks.setText(aValue.getQuirks().describeAsHtml());
-      return panel;
-   }
+		quirks.setVisible(true);
+		quirks.setText(aValue.getQuirks().describeAsHtml());
+		return panel;
+	}
 }

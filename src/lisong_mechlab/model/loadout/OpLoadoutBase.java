@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
@@ -27,22 +27,22 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
  * 
  * @author Li Song
  */
-public abstract class OpLoadoutBase extends CompositeOperation{
+public abstract class OpLoadoutBase extends CompositeOperation {
 
-   protected final MessageXBar    xBar;
-   protected final LoadoutBase<?> loadout;
+	protected final MessageXBar xBar;
+	protected final LoadoutBase<?> loadout;
 
-   /**
-    * @param aLoadout
-    *           The {@link LoadoutStandard} to operate on.
-    * @param aXBar
-    *           The {@link MessageXBar} to announce changes on the loadout to.
-    * @param aDescription
-    *           A human readable description of the operation.
-    */
-   public OpLoadoutBase(LoadoutBase<?> aLoadout, MessageXBar aXBar, String aDescription){
-      super(aDescription);
-      loadout = aLoadout;
-      xBar = aXBar;
-   }
+	/**
+	 * @param aLoadout
+	 *            The {@link LoadoutStandard} to operate on.
+	 * @param aXBar
+	 *            The {@link MessageXBar} to announce changes on the loadout to.
+	 * @param aDescription
+	 *            A human readable description of the operation.
+	 */
+	public OpLoadoutBase(LoadoutBase<?> aLoadout, MessageXBar aXBar, String aDescription) {
+		super(aDescription);
+		loadout = aLoadout;
+		xBar = aXBar;
+	}
 }

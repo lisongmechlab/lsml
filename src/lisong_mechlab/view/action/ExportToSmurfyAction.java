@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.action;
 
@@ -39,35 +39,35 @@ import lisong_mechlab.view.mechlab.LoadoutFrame;
  * 
  * @author Li Song
  */
-public class ExportToSmurfyAction extends AbstractAction{
-   private static final long  serialVersionUID = -2600531408508841174L;
-   private final LoadoutFrame loadoutFrame;
+public class ExportToSmurfyAction extends AbstractAction {
+	private static final long serialVersionUID = -2600531408508841174L;
+	private final LoadoutFrame loadoutFrame;
 
-   public ExportToSmurfyAction(LoadoutFrame aLoadoutFrame){
-      super("Export to smurfy...");
-      loadoutFrame = aLoadoutFrame;
-   }
+	public ExportToSmurfyAction(LoadoutFrame aLoadoutFrame) {
+		super("Export to smurfy...");
+		loadoutFrame = aLoadoutFrame;
+	}
 
-   @Override
-   public void actionPerformed(ActionEvent aArg0){
-      LoadoutBase<?> loadout = loadoutFrame.getLoadout();
+	@Override
+	public void actionPerformed(ActionEvent aArg0) {
+		LoadoutBase<?> loadout = loadoutFrame.getLoadout();
 
-      SmurfyImportExport export = new SmurfyImportExport(null, ProgramInit.lsml().loadoutCoder);
+		SmurfyImportExport export = new SmurfyImportExport(null, ProgramInit.lsml().loadoutCoder);
 
-      try{
-         String url = export.sendLoadout(loadout);
+		try {
+			String url = export.sendLoadout(loadout);
 
-         JPanel panel = new JPanel(new BorderLayout());
-         panel.add(new JLabel("Your loadout is available at:"), BorderLayout.NORTH);
-         JLabel link = new JLabel();
-         panel.add(link);
-         SwingHelpers.hypertextLink(link, url, url);
+			JPanel panel = new JPanel(new BorderLayout());
+			panel.add(new JLabel("Your loadout is available at:"), BorderLayout.NORTH);
+			JLabel link = new JLabel();
+			panel.add(link);
+			SwingHelpers.hypertextLink(link, url, url);
 
-         JOptionPane.showMessageDialog(loadoutFrame, panel, "Export complete", JOptionPane.INFORMATION_MESSAGE);
-      }
-      catch( IOException e ){
-         JOptionPane.showMessageDialog(loadoutFrame, "Error: " + e.getMessage(), "Unable to export to smurfy!", JOptionPane.ERROR_MESSAGE);
-      }
-   }
+			JOptionPane.showMessageDialog(loadoutFrame, panel, "Export complete", JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(loadoutFrame, "Error: " + e.getMessage(), "Unable to export to smurfy!",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
 }

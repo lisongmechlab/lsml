@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
@@ -29,53 +29,53 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-public class OpRemoveItem extends OpItemBase{
-   /**
-    * Creates a new operation.
-    * 
-    * @param aXBar
-    *           The {@link MessageXBar} to send messages on when items are removed.
-    * @param aLoadout
-    *           The {@link LoadoutBase} to remove the item from.
-    * @param aComponent
-    *           The {@link ConfiguredComponentBase} to remove from.
-    * @param aItem
-    *           The {@link Item} to remove.
-    */
-   public OpRemoveItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
-      super(aXBar, aLoadout, aComponent, aItem);
-   }
+public class OpRemoveItem extends OpItemBase {
+	/**
+	 * Creates a new operation.
+	 * 
+	 * @param aXBar
+	 *            The {@link MessageXBar} to send messages on when items are removed.
+	 * @param aLoadout
+	 *            The {@link LoadoutBase} to remove the item from.
+	 * @param aComponent
+	 *            The {@link ConfiguredComponentBase} to remove from.
+	 * @param aItem
+	 *            The {@link Item} to remove.
+	 */
+	public OpRemoveItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem) {
+		super(aXBar, aLoadout, aComponent, aItem);
+	}
 
-   @Override
-   public int hashCode(){
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((item == null) ? 0 : item.hashCode());
-      return result;
-   }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((item == null) ? 0 : item.hashCode());
+		return result;
+	}
 
-   @Override
-   public boolean equals(Object obj){
-      if( !(obj instanceof OpRemoveItem) )
-         return false;
-      OpRemoveItem other = (OpRemoveItem)obj;
-      return item == other.item && super.equals(other);
-   }
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof OpRemoveItem))
+			return false;
+		OpRemoveItem other = (OpRemoveItem) obj;
+		return item == other.item && super.equals(other);
+	}
 
-   @Override
-   public String describe(){
-      return "remove " + item.getName() + " from " + component.getInternalComponent().getLocation();
-   }
+	@Override
+	public String describe() {
+		return "remove " + item.getName() + " from " + component.getInternalComponent().getLocation();
+	}
 
-   @Override
-   public void undo(){
-      addItem(item);
-   }
+	@Override
+	public void undo() {
+		addItem(item);
+	}
 
-   @Override
-   public void apply(){
-      if( !component.canRemoveItem(item) )
-         throw new IllegalArgumentException("Can not remove item: " + item + " from " + component);
-      removeItem(item);
-   }
+	@Override
+	public void apply() {
+		if (!component.canRemoveItem(item))
+			throw new IllegalArgumentException("Can not remove item: " + item + " from " + component);
+		removeItem(item);
+	}
 }

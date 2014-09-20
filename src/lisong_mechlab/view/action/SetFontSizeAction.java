@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.action;
 
@@ -34,19 +34,19 @@ import lisong_mechlab.view.preferences.FontPreferences.FontSize;
  * 
  * @author Li Song
  */
-public class SetFontSizeAction extends AbstractAction{
-   private static final long        serialVersionUID = -8145859026953437134L;
-   private FontPreferences.FontSize fontSize;
+public class SetFontSizeAction extends AbstractAction {
+	private static final long serialVersionUID = -8145859026953437134L;
+	private FontPreferences.FontSize fontSize;
 
-   public SetFontSizeAction(String aTitle, KeyStroke aKeyStroke, FontSize aFontSize){
-      super(aTitle);
-      putValue(Action.ACCELERATOR_KEY, aKeyStroke);
-      fontSize = aFontSize;
-   }
+	public SetFontSizeAction(String aTitle, KeyStroke aKeyStroke, FontSize aFontSize) {
+		super(aTitle);
+		putValue(Action.ACCELERATOR_KEY, aKeyStroke);
+		fontSize = aFontSize;
+	}
 
-   @Override
-   public void actionPerformed(ActionEvent aArg0){
-      ProgramInit.lsml().preferences.fontPreferences.setFontSize(fontSize);
-   }
+	@Override
+	public void actionPerformed(ActionEvent aArg0) {
+		ProgramInit.lsml().preferences.fontPreferences.setFontSize(fontSize);
+	}
 
 }
