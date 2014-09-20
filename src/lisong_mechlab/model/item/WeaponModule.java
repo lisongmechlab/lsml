@@ -90,7 +90,7 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
       if( aCooldownModifier.length != maxRank ){
          throw new IllegalArgumentException("Length of aCooldownModifier must match aMaxRank!");
       }
-      
+
       longRangeModifier = aLongRangeModifier;
       maxRangeModifier = aMaxRangeModifier;
       heatModifier = aHeatModifier;
@@ -103,6 +103,11 @@ public class WeaponModule extends PilotModule implements WeaponModifier{
 
    @Override
    public boolean affectsWeapon(Weapon aWeapon){
+      if( aWeapon instanceof MissileWeapon ){
+         MissileWeapon baseWeapon = ((MissileWeapon)aWeapon).getBaseVariant();
+         if( null != baseWeapon )
+            return affectedWeapon.contains(baseWeapon);
+      }
       return affectedWeapon.contains(aWeapon);
    }
 
