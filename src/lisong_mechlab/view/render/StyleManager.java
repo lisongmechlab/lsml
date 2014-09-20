@@ -36,6 +36,7 @@ import javax.swing.border.Border;
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.Ammunition;
+import lisong_mechlab.model.item.ECM;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
@@ -312,6 +313,9 @@ public class StyleManager{
       else if( anItem instanceof JumpJet ){
          return COLOR_BG_JJ;
       }
+      else if( anItem instanceof ECM ){
+         return COLOR_BG_ECM;
+      }
       else if( anItem.getName().contains("TAG") ){
          return COLOR_BG_ENERGY_ALT;
       }
@@ -370,6 +374,9 @@ public class StyleManager{
       }
       else if( anItem instanceof JumpJet ){
          return COLOR_FG_JJ;
+      }
+      else if( anItem instanceof ECM ){
+         return COLOR_FG_ECM;
       }
       else if( anItem.getName().contains("TAG") ){
          return COLOR_FG_ENERGY_ALT;
