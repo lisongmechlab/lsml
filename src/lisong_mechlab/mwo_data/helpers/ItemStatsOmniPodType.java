@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
@@ -24,16 +24,16 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 /**
  * @author Emily Björk
  */
-public class ItemStatsOmniPodType{
-   @XStreamAsAttribute
-   public int    id;
+public class ItemStatsOmniPodType {
+	@XStreamAsAttribute
+	public int id;
 
-   @XStreamAsAttribute
-   public String chassis;
+	@XStreamAsAttribute
+	public String chassis;
 
-   @XStreamAsAttribute
-   public String set;
+	@XStreamAsAttribute
+	public String set;
 
-   @XStreamAsAttribute
-   public String component;
+	@XStreamAsAttribute
+	public String component;
 }

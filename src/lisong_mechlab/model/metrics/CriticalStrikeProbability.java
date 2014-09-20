@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -31,39 +31,39 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
  * 
  * @author Emily Björk
  */
-public class CriticalStrikeProbability implements ItemMetric{
-   public final static double            CRIT_CHANCE[] = {0.25, 0.14, 0.03}; // 25% risk of 1 hit, 15% risk of 2 hits,
-                                                                             // 3%
-                                                                             // risk of 3
-                                                                             // hits
-   private final ConfiguredComponentBase loadoutPart;
+public class CriticalStrikeProbability implements ItemMetric {
+	public final static double CRIT_CHANCE[] = { 0.25, 0.14, 0.03 }; // 25% risk of 1 hit, 15% risk of 2 hits,
+																		// 3%
+																		// risk of 3
+																		// hits
+	private final ConfiguredComponentBase loadoutPart;
 
-   public CriticalStrikeProbability(ConfiguredComponentBase aLoadoutPart){
-      loadoutPart = aLoadoutPart;
-   }
+	public CriticalStrikeProbability(ConfiguredComponentBase aLoadoutPart) {
+		loadoutPart = aLoadoutPart;
+	}
 
-   @Override
-   public double calculate(Item aItem){
-      int slots = 0;
-      for(Item it : loadoutPart.getItemsEquipped()){
-         if( it.isCrittable() )
-            slots += it.getNumCriticalSlots();
-      }
-      for(Item it : loadoutPart.getItemsFixed()){
-         if( it.isCrittable() )
-            slots += it.getNumCriticalSlots();
-      }
+	@Override
+	public double calculate(Item aItem) {
+		int slots = 0;
+		for (Item it : loadoutPart.getItemsEquipped()) {
+			if (it.isCrittable())
+				slots += it.getNumCriticalSlots();
+		}
+		for (Item it : loadoutPart.getItemsFixed()) {
+			if (it.isCrittable())
+				slots += it.getNumCriticalSlots();
+		}
 
-      // The probability that this item will be hit at any one event
-      double p_hit = (double)aItem.getNumCriticalSlots() / slots;
-      return calculate(p_hit);
-   }
+		// The probability that this item will be hit at any one event
+		double p_hit = (double) aItem.getNumCriticalSlots() / slots;
+		return calculate(p_hit);
+	}
 
-   public static double calculate(double aP_hit){
-      double ans = 0;
-      for(int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i){
-         ans += (1 - Math.pow(1 - aP_hit, i + 1)) * CriticalStrikeProbability.CRIT_CHANCE[i];
-      }
-      return ans;
-   }
+	public static double calculate(double aP_hit) {
+		double ans = 0;
+		for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
+			ans += (1 - Math.pow(1 - aP_hit, i + 1)) * CriticalStrikeProbability.CRIT_CHANCE[i];
+		}
+		return ans;
+	}
 }

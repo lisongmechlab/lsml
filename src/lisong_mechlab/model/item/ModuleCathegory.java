@@ -15,40 +15,40 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
 /**
  * @author Emily Björk
  */
-public enum ModuleCathegory{
-   Support, Consumable, Vision, Sensor, Targeting, WeaponModule, WeaponRange, UNKOWN, Miscelaneous, WeaponCooldown;
+public enum ModuleCathegory {
+	Support, Consumable, Vision, Sensor, Targeting, WeaponModule, WeaponRange, UNKOWN, Miscelaneous, WeaponCooldown;
 
-   public static ModuleCathegory fromMwo(String aMwoValue){
-      if(null == aMwoValue)
-         return UNKOWN;
-      switch( aMwoValue ){
-         case "ePTModule_Support":
-            return Support;
-         case "ePTModule_Vision":
-            return Vision;
-         case "ePTModule_Sensor":
-            return Sensor;
-         case "ePTModule_Target":
-            return Targeting;
-         case "ePTModule_Consumable":
-            return Consumable;
-         case "ePTModule_WeaponMod":
-            return WeaponModule;
-         case "ePTModule_Range":
-            return WeaponRange;
-         case "ePTModule_Misc":
-            return Miscelaneous;
-         case "ePTModule_Cooldown":
-            return WeaponCooldown;
-         default:
-            throw new IllegalArgumentException("Unknown module type: " + aMwoValue);
-      }
-   }
+	public static ModuleCathegory fromMwo(String aMwoValue) {
+		if (null == aMwoValue)
+			return UNKOWN;
+		switch (aMwoValue) {
+			case "ePTModule_Support":
+				return Support;
+			case "ePTModule_Vision":
+				return Vision;
+			case "ePTModule_Sensor":
+				return Sensor;
+			case "ePTModule_Target":
+				return Targeting;
+			case "ePTModule_Consumable":
+				return Consumable;
+			case "ePTModule_WeaponMod":
+				return WeaponModule;
+			case "ePTModule_Range":
+				return WeaponRange;
+			case "ePTModule_Misc":
+				return Miscelaneous;
+			case "ePTModule_Cooldown":
+				return WeaponCooldown;
+			default:
+				throw new IllegalArgumentException("Unknown module type: " + aMwoValue);
+		}
+	}
 }

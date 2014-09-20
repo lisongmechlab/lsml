@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.garage;
 
@@ -28,33 +28,34 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class OpRemoveFromGarage extends Operation{
-   private final MechGarage     garage;
-   private final LoadoutBase<?> loadout;
+public class OpRemoveFromGarage extends Operation {
+	private final MechGarage garage;
+	private final LoadoutBase<?> loadout;
 
-   public OpRemoveFromGarage(MechGarage aGarage, LoadoutBase<?> aLoadout){
-      garage = aGarage;
-      loadout = aLoadout;
-   }
+	public OpRemoveFromGarage(MechGarage aGarage, LoadoutBase<?> aLoadout) {
+		garage = aGarage;
+		loadout = aLoadout;
+	}
 
-   @Override
-   public String describe(){
-      return "remove mech from garage";
-   }
+	@Override
+	public String describe() {
+		return "remove mech from garage";
+	}
 
-   @Override
-   protected void apply(){
-      if( !garage.getMechs().contains(loadout) ){
-         throw new IllegalArgumentException("The loadout \"" + loadout.getName() + "\" is not in the garage!");
-      }
-      garage.remove(loadout);
-   }
+	@Override
+	protected void apply() {
+		if (!garage.getMechs().contains(loadout)) {
+			throw new IllegalArgumentException("The loadout \"" + loadout.getName() + "\" is not in the garage!");
+		}
+		garage.remove(loadout);
+	}
 
-   @Override
-   protected void undo(){
-      if( garage.getMechs().contains(loadout) ){
-         throw new IllegalArgumentException("The loadout \"" + loadout.getName() + "\" is already saved to the garage!");
-      }
-      garage.add(loadout);
-   }
+	@Override
+	protected void undo() {
+		if (garage.getMechs().contains(loadout)) {
+			throw new IllegalArgumentException("The loadout \"" + loadout.getName()
+					+ "\" is already saved to the garage!");
+		}
+		garage.add(loadout);
+	}
 }

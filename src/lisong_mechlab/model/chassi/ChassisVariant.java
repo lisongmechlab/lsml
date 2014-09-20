@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -24,24 +24,24 @@ package lisong_mechlab.model.chassi;
  * 
  * @author Emily Björk
  */
-public enum ChassisVariant{
-   HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX;
+public enum ChassisVariant {
+	HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX;
 
-   public static ChassisVariant fromString(String aString){
-      if( null == aString )
-         return NORMAL;
-      String s = aString.toLowerCase();
-      for(ChassisVariant variant : values()){
-         if( s.equals(variant.toString().toLowerCase()) )
-            return variant;
-      }
-      return NORMAL;
-   }
+	public static ChassisVariant fromString(String aString) {
+		if (null == aString)
+			return NORMAL;
+		String s = aString.toLowerCase();
+		for (ChassisVariant variant : values()) {
+			if (s.equals(variant.toString().toLowerCase()))
+				return variant;
+		}
+		return NORMAL;
+	}
 
-   /**
-    * @return <code>true</code> if this is a special variant (not hero or normal mech).
-    */
-   public boolean isVariation(){
-      return !(this == HERO || this == NORMAL);
-   }
+	/**
+	 * @return <code>true</code> if this is a special variant (not hero or normal mech).
+	 */
+	public boolean isVariation() {
+		return !(this == HERO || this == NORMAL);
+	}
 }

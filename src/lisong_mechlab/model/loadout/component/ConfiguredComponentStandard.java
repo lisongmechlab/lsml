@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
@@ -34,46 +34,46 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * 
  * @author Emily Björk
  */
-public class ConfiguredComponentStandard extends ConfiguredComponentBase{
+public class ConfiguredComponentStandard extends ConfiguredComponentBase {
 
-   public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aAutoArmor){
-      super(aInternalPart, aAutoArmor);
-   }
+	public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aAutoArmor) {
+		super(aInternalPart, aAutoArmor);
+	}
 
-   public ConfiguredComponentStandard(ConfiguredComponentStandard aComponent){
-      super(aComponent);
-   }
+	public ConfiguredComponentStandard(ConfiguredComponentStandard aComponent) {
+		super(aComponent);
+	}
 
-   @Override
-   public boolean canAddItem(Item aItem){
-      if( aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax() ){
-         return true;
-      }
-      return super.canAddItem(aItem);
-   }
+	@Override
+	public boolean canAddItem(Item aItem) {
+		if (aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax()) {
+			return true;
+		}
+		return super.canAddItem(aItem);
+	}
 
-   @Override
-   public int getHardPointCount(HardPointType aHardpointType){
-      return getInternalComponent().getHardPointCount(aHardpointType);
-   }
+	@Override
+	public int getHardPointCount(HardPointType aHardpointType) {
+		return getInternalComponent().getHardPointCount(aHardpointType);
+	}
 
-   @Override
-   public Collection<HardPoint> getHardPoints(){
-      return getInternalComponent().getHardPoints();
-   }
+	@Override
+	public Collection<HardPoint> getHardPoints() {
+		return getInternalComponent().getHardPoints();
+	}
 
-   @Override
-   public List<Item> getItemsFixed(){
-      return getInternalComponent().getFixedItems();
-   }
+	@Override
+	public List<Item> getItemsFixed() {
+		return getInternalComponent().getFixedItems();
+	}
 
-   @Override
-   public ComponentStandard getInternalComponent(){
-      return (ComponentStandard)super.getInternalComponent();
-   }
+	@Override
+	public ComponentStandard getInternalComponent() {
+		return (ComponentStandard) super.getInternalComponent();
+	}
 
-   @Override
-   public boolean hasMissileBayDoors(){
-      return getInternalComponent().hasMissileBayDoors();
-   }
+	@Override
+	public boolean hasMissileBayDoors() {
+		return getInternalComponent().hasMissileBayDoors();
+	}
 }

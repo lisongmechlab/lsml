@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
@@ -30,51 +30,51 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Emily Björk
  */
-public class StructureUpgrade extends Upgrade{
-   @XStreamAsAttribute
-   private final double internalStructurePct;
-   @XStreamAsAttribute
-   private final int    extraSlots;
+public class StructureUpgrade extends Upgrade {
+	@XStreamAsAttribute
+	private final double internalStructurePct;
+	@XStreamAsAttribute
+	private final int extraSlots;
 
-   public StructureUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots, double aStructurePct){
-      super(aName, aDescription, aMwoId, aFaction);
-      extraSlots = aExtraSlots;
-      internalStructurePct = aStructurePct;
-   }
+	public StructureUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots,
+			double aStructurePct) {
+		super(aName, aDescription, aMwoId, aFaction);
+		extraSlots = aExtraSlots;
+		internalStructurePct = aStructurePct;
+	}
 
-   public StructureUpgrade(ItemStatsUpgradeType aUpgradeType){
-      super(aUpgradeType);
+	public StructureUpgrade(ItemStatsUpgradeType aUpgradeType) {
+		super(aUpgradeType);
 
-      internalStructurePct = aUpgradeType.StructureTypeStats.weightPerTon;
-      if( aUpgradeType.SlotUsage != null ){
-         extraSlots = aUpgradeType.SlotUsage.slots;
-      }
-      else{
-         extraSlots = 0;
-      }
-   }
+		internalStructurePct = aUpgradeType.StructureTypeStats.weightPerTon;
+		if (aUpgradeType.SlotUsage != null) {
+			extraSlots = aUpgradeType.SlotUsage.slots;
+		} else {
+			extraSlots = 0;
+		}
+	}
 
-   /**
-    * @return The number of extra slots that this upgrade requires to be applied.
-    */
-   public int getExtraSlots(){
-      return extraSlots;
-   }
+	/**
+	 * @return The number of extra slots that this upgrade requires to be applied.
+	 */
+	public int getExtraSlots() {
+		return extraSlots;
+	}
 
-   /**
-    * Calculates the mass of the internal structure of a mech of the given chassis.
-    * 
-    * @param aChassis
-    *           The chassis to calculate the internal structure mass for.
-    * @return The mass of the internal structure.
-    */
-   public double getStructureMass(ChassisBase aChassis){
-      double ans = aChassis.getMassMax() * internalStructurePct;
-      return Math.round(10 * ans / 5) * 0.5;
-   }
+	/**
+	 * Calculates the mass of the internal structure of a mech of the given chassis.
+	 * 
+	 * @param aChassis
+	 *            The chassis to calculate the internal structure mass for.
+	 * @return The mass of the internal structure.
+	 */
+	public double getStructureMass(ChassisBase aChassis) {
+		double ans = aChassis.getMassMax() * internalStructurePct;
+		return Math.round(10 * ans / 5) * 0.5;
+	}
 
-   @Override
-   public UpgradeType getType(){
-      return UpgradeType.STRUCTURE;
-   }
+	@Override
+	public UpgradeType getType() {
+		return UpgradeType.STRUCTURE;
+	}
 }

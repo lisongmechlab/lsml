@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
@@ -30,72 +30,71 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class OpSetArmorType extends OpUpgradeBase{
-   private final ArmorUpgrade    oldValue;
-   private final ArmorUpgrade    newValue;
-   private final UpgradesMutable upgrades;
-   private final LoadoutStandard loadout;
+public class OpSetArmorType extends OpUpgradeBase {
+	private final ArmorUpgrade oldValue;
+	private final ArmorUpgrade newValue;
+	private final UpgradesMutable upgrades;
+	private final LoadoutStandard loadout;
 
-   /**
-    * Creates a {@link OpSetArmorType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
-    * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
-    * 
-    * @param aUpgrades
-    *           The {@link UpgradesMutable} object to alter with this {@link Operation}.
-    * @param aArmorUpgrade
-    *           The new armor type when this upgrades has been applied.
-    */
-   public OpSetArmorType(UpgradesMutable aUpgrades, ArmorUpgrade aArmorUpgrade){
-      super(null, aArmorUpgrade.getName());
-      upgrades = aUpgrades;
-      loadout = null;
-      oldValue = upgrades.getArmor();
-      newValue = aArmorUpgrade;
-   }
+	/**
+	 * Creates a {@link OpSetArmorType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
+	 * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
+	 * 
+	 * @param aUpgrades
+	 *            The {@link UpgradesMutable} object to alter with this {@link Operation}.
+	 * @param aArmorUpgrade
+	 *            The new armor type when this upgrades has been applied.
+	 */
+	public OpSetArmorType(UpgradesMutable aUpgrades, ArmorUpgrade aArmorUpgrade) {
+		super(null, aArmorUpgrade.getName());
+		upgrades = aUpgrades;
+		loadout = null;
+		oldValue = upgrades.getArmor();
+		newValue = aArmorUpgrade;
+	}
 
-   /**
-    * Creates a new {@link OpSetStructureType} that will change the armor type of a {@link LoadoutStandard}.
-    * 
-    * @param aXBar
-    *           A {@link MessageXBar} to signal changes in internal structure on.
-    * @param aLoadout
-    *           The {@link LoadoutStandard} to alter.
-    * @param aArmorUpgrade
-    *           The new armor type this upgrades is applied.
-    */
-   public OpSetArmorType(MessageXBar aXBar, LoadoutStandard aLoadout, ArmorUpgrade aArmorUpgrade){
-      super(aXBar, aArmorUpgrade.getName());
-      upgrades = aLoadout.getUpgrades();
-      loadout = aLoadout;
-      oldValue = upgrades.getArmor();
-      newValue = aArmorUpgrade;
-   }
+	/**
+	 * Creates a new {@link OpSetStructureType} that will change the armor type of a {@link LoadoutStandard}.
+	 * 
+	 * @param aXBar
+	 *            A {@link MessageXBar} to signal changes in internal structure on.
+	 * @param aLoadout
+	 *            The {@link LoadoutStandard} to alter.
+	 * @param aArmorUpgrade
+	 *            The new armor type this upgrades is applied.
+	 */
+	public OpSetArmorType(MessageXBar aXBar, LoadoutStandard aLoadout, ArmorUpgrade aArmorUpgrade) {
+		super(aXBar, aArmorUpgrade.getName());
+		upgrades = aLoadout.getUpgrades();
+		loadout = aLoadout;
+		oldValue = upgrades.getArmor();
+		newValue = aArmorUpgrade;
+	}
 
-   @Override
-   protected void apply(){
-      set(newValue);
-   }
+	@Override
+	protected void apply() {
+		set(newValue);
+	}
 
-   @Override
-   protected void undo(){
-      set(oldValue);
-   }
+	@Override
+	protected void undo() {
+		set(oldValue);
+	}
 
-   protected void set(ArmorUpgrade aValue){
-      if( aValue != upgrades.getArmor() ){
-         ArmorUpgrade old = upgrades.getArmor();
-         upgrades.setArmor(aValue);
+	protected void set(ArmorUpgrade aValue) {
+		if (aValue != upgrades.getArmor()) {
+			ArmorUpgrade old = upgrades.getArmor();
+			upgrades.setArmor(aValue);
 
-         try{
-            verifyLoadoutInvariant(loadout);
-         }
-         catch( Exception e ){
-            upgrades.setArmor(old);
-            throw new IllegalArgumentException("Couldn't change armour type: ", e);
-         }
+			try {
+				verifyLoadoutInvariant(loadout);
+			} catch (Exception e) {
+				upgrades.setArmor(old);
+				throw new IllegalArgumentException("Couldn't change armour type: ", e);
+			}
 
-         if( xBar != null )
-            xBar.post(new Message(ChangeMsg.ARMOR, upgrades));
-      }
-   }
+			if (xBar != null)
+				xBar.post(new Message(ChangeMsg.ARMOR, upgrades));
+		}
+	}
 }

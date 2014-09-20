@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
@@ -45,60 +45,60 @@ import lisong_mechlab.view.ProgramInit;
  * 
  * @author Emily Björk
  */
-public class StatusBar extends JPanel implements Reader{
-   private static final long  serialVersionUID = -4434467429002792379L;
-   private final LoadoutFrame frame;
-   private final JLabel       statusLabel;
+public class StatusBar extends JPanel implements Reader {
+	private static final long serialVersionUID = -4434467429002792379L;
+	private final LoadoutFrame frame;
+	private final JLabel statusLabel;
 
-   public StatusBar(LoadoutFrame aLoadoutFrame, MessageXBar aXBar){
-      frame = aLoadoutFrame;
-      aXBar.attach(this);
+	public StatusBar(LoadoutFrame aLoadoutFrame, MessageXBar aXBar) {
+		frame = aLoadoutFrame;
+		aXBar.attach(this);
 
-      setBorder(new BevelBorder(BevelBorder.LOWERED));
-      setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-      statusLabel = new JLabel();
-      statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		setBorder(new BevelBorder(BevelBorder.LOWERED));
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		statusLabel = new JLabel();
+		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
-      add(statusLabel);
-      add(Box.createHorizontalGlue());
-      add(new JButton(new AbstractAction("Clear"){
-         private static final long serialVersionUID = 5577168900405120406L;
+		add(statusLabel);
+		add(Box.createHorizontalGlue());
+		add(new JButton(new AbstractAction("Clear") {
+			private static final long serialVersionUID = 5577168900405120406L;
 
-         @Override
-         public void actionPerformed(ActionEvent aArg0){
-            clear();
-         }
-      }));
-      clear();
-   }
+			@Override
+			public void actionPerformed(ActionEvent aArg0) {
+				clear();
+			}
+		}));
+		clear();
+	}
 
-   public void clear(){
-      statusLabel.setText("No warnings.");
-      statusLabel.setForeground(Color.BLACK);
-   }
+	public void clear() {
+		statusLabel.setText("No warnings.");
+		statusLabel.setForeground(Color.BLACK);
+	}
 
-   @Override
-   public void receive(Message aMsg){
-      if( aMsg instanceof NotificationMessage && aMsg.isForMe(frame.getLoadout()) ){
-         NotificationMessage notice = (NotificationMessage)aMsg;
-         String message = notice.severity.toString() + ": " + notice.message;
-         switch( notice.severity ){
-            case ERROR:
-               JOptionPane.showMessageDialog(ProgramInit.lsml(), message);
-               break;
-            case NOTICE:
-               statusLabel.setText(notice.severity.toString() + ": " + notice.message);
-               statusLabel.setForeground(Color.BLACK);
-               break;
-            case WARNING:
-               statusLabel.setText(notice.severity.toString() + ": " + notice.message);
-               statusLabel.setForeground(Color.ORANGE.darker());
-               break;
-            default:
-               break;
-         }
-         Toolkit.getDefaultToolkit().beep();
-      }
-   }
+	@Override
+	public void receive(Message aMsg) {
+		if (aMsg instanceof NotificationMessage && aMsg.isForMe(frame.getLoadout())) {
+			NotificationMessage notice = (NotificationMessage) aMsg;
+			String message = notice.severity.toString() + ": " + notice.message;
+			switch (notice.severity) {
+				case ERROR:
+					JOptionPane.showMessageDialog(ProgramInit.lsml(), message);
+					break;
+				case NOTICE:
+					statusLabel.setText(notice.severity.toString() + ": " + notice.message);
+					statusLabel.setForeground(Color.BLACK);
+					break;
+				case WARNING:
+					statusLabel.setText(notice.severity.toString() + ": " + notice.message);
+					statusLabel.setForeground(Color.ORANGE.darker());
+					break;
+				default:
+					break;
+			}
+			Toolkit.getDefaultToolkit().beep();
+		}
+	}
 
 }

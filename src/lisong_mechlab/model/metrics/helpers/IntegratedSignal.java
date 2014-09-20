@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics.helpers;
 
@@ -24,13 +24,13 @@ package lisong_mechlab.model.metrics.helpers;
  * 
  * @author Emily Björk
  */
-public interface IntegratedSignal{
-   /**
-    * Calculate the integral from zero to the given time.
-    * 
-    * @param aTime
-    *           The time to integrate to.
-    * @return The integral value.
-    */
-   public double integrateFromZeroTo(double aTime);
+public interface IntegratedSignal {
+	/**
+	 * Calculate the integral from zero to the given time.
+	 * 
+	 * @param aTime
+	 *            The time to integrate to.
+	 * @return The integral value.
+	 */
+	public double integrateFromZeroTo(double aTime);
 }

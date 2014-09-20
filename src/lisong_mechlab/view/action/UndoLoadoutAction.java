@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.action;
 
@@ -39,47 +39,47 @@ import lisong_mechlab.view.mechlab.LoadoutFrame;
  * 
  * @author Emily Björk
  */
-public class UndoLoadoutAction extends AbstractAction implements Reader{
-   private static final String SHORTCUT_STROKE  = "control Z";
-   private static final long   serialVersionUID = 665074705972425989L;
-   private final LoadoutFrame  loadoutFrame;
+public class UndoLoadoutAction extends AbstractAction implements Reader {
+	private static final String SHORTCUT_STROKE = "control Z";
+	private static final long serialVersionUID = 665074705972425989L;
+	private final LoadoutFrame loadoutFrame;
 
-   public UndoLoadoutAction(MessageXBar anXBar, LoadoutFrame aLoadoutFrame){
-      putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
-      anXBar.attach(this);
-      setEnabled(false); // Initially
-      loadoutFrame = aLoadoutFrame;
-   }
+	public UndoLoadoutAction(MessageXBar anXBar, LoadoutFrame aLoadoutFrame) {
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
+		anXBar.attach(this);
+		setEnabled(false); // Initially
+		loadoutFrame = aLoadoutFrame;
+	}
 
-   @Override
-   public Object getValue(String key){
-      if( key == Action.NAME ){
-         if( isEnabled() ){
-            return "Undo " + loadoutFrame.getOpStack().nextUndo().describe();
-         }
-         return "Undo";
-      }
-      return super.getValue(key);
-   }
+	@Override
+	public Object getValue(String key) {
+		if (key == Action.NAME) {
+			if (isEnabled()) {
+				return "Undo " + loadoutFrame.getOpStack().nextUndo().describe();
+			}
+			return "Undo";
+		}
+		return super.getValue(key);
+	}
 
-   @Override
-   public void actionPerformed(ActionEvent aArg0){
-      loadoutFrame.getOpStack().undo();
-   }
+	@Override
+	public void actionPerformed(ActionEvent aArg0) {
+		loadoutFrame.getOpStack().undo();
+	}
 
-   @Override
-   public void receive(final Message aMsg){
-      SwingUtilities.invokeLater(new Runnable(){
-         @Override
-         public void run(){
-            if( aMsg instanceof ConfiguredComponentBase.Message || aMsg instanceof Upgrades.Message ){
-               if( ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null )
-                  setEnabled(false);
-               else
-                  setEnabled(null != loadoutFrame.getOpStack().nextUndo());
-               firePropertyChange(NAME, "", getValue(NAME));
-            }
-         }
-      });
-   }
+	@Override
+	public void receive(final Message aMsg) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (aMsg instanceof ConfiguredComponentBase.Message || aMsg instanceof Upgrades.Message) {
+					if (ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null)
+						setEnabled(false);
+					else
+						setEnabled(null != loadoutFrame.getOpStack().nextUndo());
+					firePropertyChange(NAME, "", getValue(NAME));
+				}
+			}
+		});
+	}
 }

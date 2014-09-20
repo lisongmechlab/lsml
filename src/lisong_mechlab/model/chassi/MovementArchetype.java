@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -27,46 +27,44 @@ package lisong_mechlab.model.chassi;
  * 
  * @author Emily Björk
  */
-public enum MovementArchetype{
-   Tiny(40.0), Small(35.0), Medium(30.0), Large(25.0), Huge(20.0);
+public enum MovementArchetype {
+	Tiny(40.0), Small(35.0), Medium(30.0), Large(25.0), Huge(20.0);
 
-   private MovementArchetype(double aSlowDownAngle){
-      slowDownDeg = aSlowDownAngle;
-   }
+	private MovementArchetype(double aSlowDownAngle) {
+		slowDownDeg = aSlowDownAngle;
+	}
 
-   private final double slowDownDeg;
+	private final double slowDownDeg;
 
-   /**
-    * @return The maximal slope angle (in degrees) this archetype can climb.
-    */
-   public static double getMaxSlope(){
-      return 45.0;
-   }
+	/**
+	 * @return The maximal slope angle (in degrees) this archetype can climb.
+	 */
+	public static double getMaxSlope() {
+		return 45.0;
+	}
 
-   /**
-    * @return The maximal slope angle (in degrees) after which the mech starts to slow down.
-    */
-   public double getSlowDownSlope(){
-      return slowDownDeg;
-   }
+	/**
+	 * @return The maximal slope angle (in degrees) after which the mech starts to slow down.
+	 */
+	public double getSlowDownSlope() {
+		return slowDownDeg;
+	}
 
-   /**
-    * Calculates the slow down factor at any angle for this movement archetype.
-    * 
-    * @param aAngle
-    *           The angle (in degrees) at which to get the slow down.
-    * @return A factor where 1.0 means full speed and 0.0 means standstill.
-    */
-   public double getSlowDownFactor(double aAngle){
-      if( aAngle < slowDownDeg ){
-         return 1.0;
-      }
-      else if( aAngle > getMaxSlope() ){
-         return 0.0;
-      }
-      else{
-         return (getMaxSlope() - aAngle) / (getMaxSlope() - getSlowDownSlope());
-      }
-   }
+	/**
+	 * Calculates the slow down factor at any angle for this movement archetype.
+	 * 
+	 * @param aAngle
+	 *            The angle (in degrees) at which to get the slow down.
+	 * @return A factor where 1.0 means full speed and 0.0 means standstill.
+	 */
+	public double getSlowDownFactor(double aAngle) {
+		if (aAngle < slowDownDeg) {
+			return 1.0;
+		} else if (aAngle > getMaxSlope()) {
+			return 0.0;
+		} else {
+			return (getMaxSlope() - aAngle) / (getMaxSlope() - getSlowDownSlope());
+		}
+	}
 
 }

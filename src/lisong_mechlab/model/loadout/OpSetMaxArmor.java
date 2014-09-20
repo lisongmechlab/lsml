@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
@@ -29,36 +29,35 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Emily Björk
  */
-public class OpSetMaxArmor extends OpLoadoutBase{
-   private final boolean manualSet;
-   private double        ratio;
+public class OpSetMaxArmor extends OpLoadoutBase {
+	private final boolean manualSet;
+	private double ratio;
 
-   public OpSetMaxArmor(LoadoutBase<?> aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet){
-      super(aLoadout, anXBar, "set max armor");
-      manualSet = aManualSet;
-      ratio = aRatio;
-   }
+	public OpSetMaxArmor(LoadoutBase<?> aLoadout, MessageXBar anXBar, double aRatio, boolean aManualSet) {
+		super(aLoadout, anXBar, "set max armor");
+		manualSet = aManualSet;
+		ratio = aRatio;
+	}
 
-   @Override
-   public void buildOperation(){
-      for(ConfiguredComponentBase component : loadout.getComponents()){
-         final int max = component.getInternalComponent().getArmorMax();
-         if( component.getInternalComponent().getLocation().isTwoSided() ){
-            // 1) front + back = max
-            // 2) front / back = ratio
-            // front = back * ratio
-            // front = max - back
-            // = > back * ratio = max - back
-            int back = (int)(max / (ratio + 1));
-            int front = max - back;
+	@Override
+	public void buildOperation() {
+		for (ConfiguredComponentBase component : loadout.getComponents()) {
+			final int max = component.getInternalComponent().getArmorMax();
+			if (component.getInternalComponent().getLocation().isTwoSided()) {
+				// 1) front + back = max
+				// 2) front / back = ratio
+				// front = back * ratio
+				// front = max - back
+				// = > back * ratio = max - back
+				int back = (int) (max / (ratio + 1));
+				int front = max - back;
 
-            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.BACK, 0, manualSet));
-            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.FRONT, front, manualSet));
-            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.BACK, back, manualSet));
-         }
-         else{
-            addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.ONLY, max, manualSet));
-         }
-      }
-   }
+				addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.BACK, 0, manualSet));
+				addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.FRONT, front, manualSet));
+				addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.BACK, back, manualSet));
+			} else {
+				addOp(new OpSetArmor(xBar, loadout, component, ArmorSide.ONLY, max, manualSet));
+			}
+		}
+	}
 }

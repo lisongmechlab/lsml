@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -25,30 +25,27 @@ package lisong_mechlab.model.chassi;
  * 
  * @author Emily Björk
  */
-public enum ChassisClass{
-   LIGHT, MEDIUM, HEAVY, ASSAULT;
+public enum ChassisClass {
+	LIGHT, MEDIUM, HEAVY, ASSAULT;
 
-   private final static double TONNAGE_EPSILON = Math.ulp(100) * 5.0;
+	private final static double TONNAGE_EPSILON = Math.ulp(100) * 5.0;
 
-   /**
-    * Determines the {@link ChassisClass} from a tonnage amount.
-    * 
-    * @param tons
-    *           The tonnage to calculate from.
-    * @return The {@link ChassisClass} matching the argument.
-    */
-   public static ChassisClass fromMaxTons(double tons){
-      if( tons < 40 - TONNAGE_EPSILON ){
-         return ChassisClass.LIGHT;
-      }
-      else if( tons < 60 - TONNAGE_EPSILON ){
-         return ChassisClass.MEDIUM;
-      }
-      else if( tons < 80 - TONNAGE_EPSILON ){
-         return ChassisClass.HEAVY;
-      }
-      else{
-         return ChassisClass.ASSAULT;
-      }
-   }
+	/**
+	 * Determines the {@link ChassisClass} from a tonnage amount.
+	 * 
+	 * @param tons
+	 *            The tonnage to calculate from.
+	 * @return The {@link ChassisClass} matching the argument.
+	 */
+	public static ChassisClass fromMaxTons(double tons) {
+		if (tons < 40 - TONNAGE_EPSILON) {
+			return ChassisClass.LIGHT;
+		} else if (tons < 60 - TONNAGE_EPSILON) {
+			return ChassisClass.MEDIUM;
+		} else if (tons < 80 - TONNAGE_EPSILON) {
+			return ChassisClass.HEAVY;
+		} else {
+			return ChassisClass.ASSAULT;
+		}
+	}
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.action;
 
@@ -32,16 +32,18 @@ import lisong_mechlab.view.preferences.PreferencesDialog;
  * 
  * @author Emily Björk
  */
-public class OpenPreferences extends AbstractAction{
-   private static final long serialVersionUID = -2615543435137494754L;
+public class OpenPreferences extends AbstractAction {
+	private static final long serialVersionUID = -2615543435137494754L;
 
-   public OpenPreferences(String aString, KeyStroke aKeyStroke){
-      super(aString);
-      putValue(Action.ACCELERATOR_KEY, aKeyStroke);
-   }
+	public OpenPreferences(String aString, KeyStroke aKeyStroke) {
+		super(aString);
+		putValue(Action.ACCELERATOR_KEY, aKeyStroke);
+	}
 
-   @Override
-   public void actionPerformed(ActionEvent aArg0){
-      new PreferencesDialog();
-   }
+	@SuppressWarnings("unused")
+	// Constructor has desired side effects
+	@Override
+	public void actionPerformed(ActionEvent aArg0) {
+		new PreferencesDialog();
+	}
 }

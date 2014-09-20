@@ -15,16 +15,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
-public class ECM extends Module{
+public class ECM extends Module {
 
-   public ECM(ItemStatsModule aModule){
-      super(aModule, HardPointType.ECM);
-   }
+	public ECM(ItemStatsModule aModule) {
+		super(aModule, HardPointType.ECM);
+	}
 }

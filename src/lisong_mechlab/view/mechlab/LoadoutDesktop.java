@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
@@ -44,155 +44,153 @@ import lisong_mechlab.view.ItemTransferHandler;
  * 
  * @author Emily Björk
  */
-public class LoadoutDesktop extends JDesktopPane implements InternalFrameListener{
-   private static final long                 serialVersionUID = -3967290040803547940L;
-   private static final int                  MAX_OPEN_WINDOWS = 10;
-   private final List<InternalFrameListener> listeners        = new ArrayList<InternalFrameListener>();
-   private final MessageXBar                 xBar;
-   private transient int                     opened_windows;
+public class LoadoutDesktop extends JDesktopPane implements InternalFrameListener {
+	private static final long serialVersionUID = -3967290040803547940L;
+	private static final int MAX_OPEN_WINDOWS = 10;
+	private final List<InternalFrameListener> listeners = new ArrayList<InternalFrameListener>();
+	private final MessageXBar xBar;
+	private transient int opened_windows;
 
-   /**
-    * Creates a new {@link LoadoutDesktop}.
-    * 
-    * @param anXBar
-    *           A {@link MessageXBar} to send messages to when a new loadout is opened.
-    */
-   public LoadoutDesktop(MessageXBar anXBar){
-      assert (SwingUtilities.isEventDispatchThread());
+	/**
+	 * Creates a new {@link LoadoutDesktop}.
+	 * 
+	 * @param anXBar
+	 *            A {@link MessageXBar} to send messages to when a new loadout is opened.
+	 */
+	public LoadoutDesktop(MessageXBar anXBar) {
+		assert (SwingUtilities.isEventDispatchThread());
 
-      xBar = anXBar;
-      setBorder(BorderFactory.createLoweredSoftBevelBorder());
-      setBackground(Color.GRAY.brighter());
-      setTransferHandler(new ItemTransferHandler());
-      setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-   }
+		xBar = anXBar;
+		setBorder(BorderFactory.createLoweredSoftBevelBorder());
+		setBackground(Color.GRAY.brighter());
+		setTransferHandler(new ItemTransferHandler());
+		setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+	}
 
-   /**
-    * Will open the given {@link LoadoutStandard} into the desktop pane by creating a new {@link LoadoutFrame}.
-    * 
-    * @param aLoadout
-    *           The {@link LoadoutStandard} to create the frame for.
-    */
-   public void openLoadout(LoadoutBase<?> aLoadout){
-      assert (SwingUtilities.isEventDispatchThread());
+	/**
+	 * Will open the given {@link LoadoutStandard} into the desktop pane by creating a new {@link LoadoutFrame}.
+	 * 
+	 * @param aLoadout
+	 *            The {@link LoadoutStandard} to create the frame for.
+	 */
+	public void openLoadout(LoadoutBase<?> aLoadout) {
+		assert (SwingUtilities.isEventDispatchThread());
 
-      LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar);
-      frame.addInternalFrameListener(this); // The desktop acts as forwarder of frame events from the frames.
-      add(frame);
+		LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar);
+		frame.addInternalFrameListener(this); // The desktop acts as forwarder of frame events from the frames.
+		add(frame);
 
-      frame.setLocation(20 * (opened_windows % MAX_OPEN_WINDOWS), 20 * (opened_windows % MAX_OPEN_WINDOWS));
-      opened_windows++;
+		frame.setLocation(20 * (opened_windows % MAX_OPEN_WINDOWS), 20 * (opened_windows % MAX_OPEN_WINDOWS));
+		opened_windows++;
 
-      try{
-         frame.setVisible(true);
-         frame.setFocusable(true);
-         frame.setSelected(true);
-      }
-      catch( PropertyVetoException e ){
-         // No-Op
-      }
-   }
+		try {
+			frame.setVisible(true);
+			frame.setFocusable(true);
+			frame.setSelected(true);
+		} catch (PropertyVetoException e) {
+			// No-Op
+		}
+	}
 
-   /**
-    * Closes all open {@link LoadoutFrame}s. Exceptions from the frames are swallowed.
-    * 
-    * @return <code>true</code> if all {@link LoadoutFrame}s were closed with the user's permssion.
-    */
-   boolean closeAll(){
-      assert (SwingUtilities.isEventDispatchThread());
+	/**
+	 * Closes all open {@link LoadoutFrame}s. Exceptions from the frames are swallowed.
+	 * 
+	 * @return <code>true</code> if all {@link LoadoutFrame}s were closed with the user's permssion.
+	 */
+	boolean closeAll() {
+		assert (SwingUtilities.isEventDispatchThread());
 
-      for(JInternalFrame frame : getAllFrames()){
-         try{
-            frame.setClosed(true);
-            frame.dispose();
-         }
-         catch( PropertyVetoException e ){
-            return false;
-         }
-      }
-      return true;
-   }
+		for (JInternalFrame frame : getAllFrames()) {
+			try {
+				frame.setClosed(true);
+				frame.dispose();
+			} catch (PropertyVetoException e) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-   /**
-    * Allows the given {@link InternalFrameListener} to receive {@link InternalFrameEvent}s from any subwindow of this
-    * {@link LoadoutDesktop}.
-    * 
-    * @param aListener
-    *           The listener to send messages to. A <code>null</code> argument will cause a {@link NullPointerException}
-    *           .
-    */
-   public void addInternalFrameListener(InternalFrameListener aListener){
-      assert (SwingUtilities.isEventDispatchThread());
-      if( null == aListener )
-         throw new NullPointerException("Received a null listener to addInternalFrameListener()!");
-      listeners.add(aListener);
-   }
+	/**
+	 * Allows the given {@link InternalFrameListener} to receive {@link InternalFrameEvent}s from any subwindow of this
+	 * {@link LoadoutDesktop}.
+	 * 
+	 * @param aListener
+	 *            The listener to send messages to. A <code>null</code> argument will cause a
+	 *            {@link NullPointerException} .
+	 */
+	public void addInternalFrameListener(InternalFrameListener aListener) {
+		assert (SwingUtilities.isEventDispatchThread());
+		if (null == aListener)
+			throw new NullPointerException("Received a null listener to addInternalFrameListener()!");
+		listeners.add(aListener);
+	}
 
-   /**
-    * Removes the given {@link InternalFrameListener} from this {@link LoadoutDesktop}. No further messages will be
-    * sent. No exception is thrown on a <code>null</code> argument or if the argument is not a listener of this
-    * {@link LoadoutDesktop}.
-    * 
-    * @param aListener
-    *           The listener to remove.
-    */
-   public void removeInternalFrameListener(InternalFrameListener aListener){
-      listeners.remove(aListener);
-   }
+	/**
+	 * Removes the given {@link InternalFrameListener} from this {@link LoadoutDesktop}. No further messages will be
+	 * sent. No exception is thrown on a <code>null</code> argument or if the argument is not a listener of this
+	 * {@link LoadoutDesktop}.
+	 * 
+	 * @param aListener
+	 *            The listener to remove.
+	 */
+	public void removeInternalFrameListener(InternalFrameListener aListener) {
+		listeners.remove(aListener);
+	}
 
-   @Override
-   public void internalFrameActivated(InternalFrameEvent aE){
-      assert (SwingUtilities.isEventDispatchThread());
-      for(InternalFrameListener frameListener : listeners){
-         frameListener.internalFrameActivated(aE);
-      }
-   }
+	@Override
+	public void internalFrameActivated(InternalFrameEvent aE) {
+		assert (SwingUtilities.isEventDispatchThread());
+		for (InternalFrameListener frameListener : listeners) {
+			frameListener.internalFrameActivated(aE);
+		}
+	}
 
-   @Override
-   public void internalFrameClosed(InternalFrameEvent aE){
-      assert (SwingUtilities.isEventDispatchThread());
-      for(InternalFrameListener frameListener : listeners){
-         frameListener.internalFrameClosed(aE);
-      }
-   }
+	@Override
+	public void internalFrameClosed(InternalFrameEvent aE) {
+		assert (SwingUtilities.isEventDispatchThread());
+		for (InternalFrameListener frameListener : listeners) {
+			frameListener.internalFrameClosed(aE);
+		}
+	}
 
-   @Override
-   public void internalFrameClosing(InternalFrameEvent aE){
-      assert (SwingUtilities.isEventDispatchThread());
-      for(InternalFrameListener frameListener : listeners){
-         frameListener.internalFrameClosing(aE);
-      }
-   }
+	@Override
+	public void internalFrameClosing(InternalFrameEvent aE) {
+		assert (SwingUtilities.isEventDispatchThread());
+		for (InternalFrameListener frameListener : listeners) {
+			frameListener.internalFrameClosing(aE);
+		}
+	}
 
-   @Override
-   public void internalFrameDeactivated(InternalFrameEvent aE){
-      assert (SwingUtilities.isEventDispatchThread());
-      for(InternalFrameListener frameListener : listeners){
-         frameListener.internalFrameDeactivated(aE);
-      }
-   }
+	@Override
+	public void internalFrameDeactivated(InternalFrameEvent aE) {
+		assert (SwingUtilities.isEventDispatchThread());
+		for (InternalFrameListener frameListener : listeners) {
+			frameListener.internalFrameDeactivated(aE);
+		}
+	}
 
-   @Override
-   public void internalFrameDeiconified(InternalFrameEvent aE){
-      assert (SwingUtilities.isEventDispatchThread());
-      for(InternalFrameListener frameListener : listeners){
-         frameListener.internalFrameDeiconified(aE);
-      }
-   }
+	@Override
+	public void internalFrameDeiconified(InternalFrameEvent aE) {
+		assert (SwingUtilities.isEventDispatchThread());
+		for (InternalFrameListener frameListener : listeners) {
+			frameListener.internalFrameDeiconified(aE);
+		}
+	}
 
-   @Override
-   public void internalFrameIconified(InternalFrameEvent aE){
-      assert (SwingUtilities.isEventDispatchThread());
-      for(InternalFrameListener frameListener : listeners){
-         frameListener.internalFrameIconified(aE);
-      }
-   }
+	@Override
+	public void internalFrameIconified(InternalFrameEvent aE) {
+		assert (SwingUtilities.isEventDispatchThread());
+		for (InternalFrameListener frameListener : listeners) {
+			frameListener.internalFrameIconified(aE);
+		}
+	}
 
-   @Override
-   public void internalFrameOpened(InternalFrameEvent aE){
-      assert (SwingUtilities.isEventDispatchThread());
-      for(InternalFrameListener frameListener : listeners){
-         frameListener.internalFrameOpened(aE);
-      }
-   }
+	@Override
+	public void internalFrameOpened(InternalFrameEvent aE) {
+		assert (SwingUtilities.isEventDispatchThread());
+		for (InternalFrameListener frameListener : listeners) {
+			frameListener.internalFrameOpened(aE);
+		}
+	}
 }

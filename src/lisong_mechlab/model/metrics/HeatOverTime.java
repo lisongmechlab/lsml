@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -40,59 +40,61 @@ import lisong_mechlab.util.MessageXBar.Message;
  * 
  * @author Emily Björk
  */
-public class HeatOverTime implements TimeMetric, MessageXBar.Reader{
+public class HeatOverTime implements TimeMetric, MessageXBar.Reader {
 
-   private final LoadoutBase<?>         loadout;
-   private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
+	private final LoadoutBase<?> loadout;
+	private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
 
-   /**
-    * Creates a new calculator object
-    * 
-    * @param aLoadout
-    * @param aXBar
-    */
-   public HeatOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar){
-      loadout = aLoadout;
-      updateEvents();
-      aXBar.attach(this);
-   }
+	/**
+	 * Creates a new calculator object
+	 * 
+	 * @param aLoadout
+	 * @param aXBar
+	 */
+	public HeatOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+		loadout = aLoadout;
+		updateEvents();
+		aXBar.attach(this);
+	}
 
-   @Override
-   public double calculate(double aTime){
-      double ans = 0;
-      for(IntegratedSignal event : heatIntegrals){
-         ans += event.integrateFromZeroTo(aTime);
-      }
-      return ans;
-   }
+	@Override
+	public double calculate(double aTime) {
+		double ans = 0;
+		for (IntegratedSignal event : heatIntegrals) {
+			ans += event.integrateFromZeroTo(aTime);
+		}
+		return ans;
+	}
 
-   @Override
-   public void receive(Message aMsg){
-      if( aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage() ){
-         updateEvents();
-      }
-   }
+	@Override
+	public void receive(Message aMsg) {
+		if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
+			updateEvents();
+		}
+	}
 
-   private void updateEvents(){
-      heatIntegrals.clear();
-      for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon ){
-            Weapon weapon = (Weapon)item;
+	private void updateEvents() {
+		heatIntegrals.clear();
+		for (Item item : loadout.getAllItems()) {
+			if (item instanceof Weapon) {
+				Weapon weapon = (Weapon) item;
 
-            if( weapon instanceof EnergyWeapon ){
-               EnergyWeapon energyWeapon = (EnergyWeapon)weapon;
-               if( energyWeapon.getDuration() > 0 ){
-                  heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(loadout.getEfficiencies(), loadout.getWeaponModifiers()), energyWeapon.getDuration(),
-                                                             energyWeapon.getHeat(loadout.getWeaponModifiers()) / energyWeapon.getDuration()));
-                  continue;
-               }
-            }
-            heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies(), loadout.getWeaponModifiers()),
-                                                         weapon.getHeat(loadout.getWeaponModifiers())));
-         }
-         if( item instanceof Engine ){
-            heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine)item).getHeat(loadout.getWeaponModifiers())));
-         }
-      }
-   }
+				if (weapon instanceof EnergyWeapon) {
+					EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
+					if (energyWeapon.getDuration() > 0) {
+						heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(
+								loadout.getEfficiencies(), loadout.getWeaponModifiers()), energyWeapon.getDuration(),
+								energyWeapon.getHeat(loadout.getWeaponModifiers()) / energyWeapon.getDuration()));
+						continue;
+					}
+				}
+				heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies(),
+						loadout.getWeaponModifiers()), weapon.getHeat(loadout.getWeaponModifiers())));
+			}
+			if (item instanceof Engine) {
+				heatIntegrals.add(new IntegratedPulseTrain(10, 10,
+						((Engine) item).getHeat(loadout.getWeaponModifiers())));
+			}
+		}
+	}
 }

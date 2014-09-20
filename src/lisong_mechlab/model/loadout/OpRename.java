@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
@@ -28,47 +28,47 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class OpRename extends Operation{
-   private String                 oldName;
-   private final String           newName;
+public class OpRename extends Operation {
+	private String oldName;
+	private final String newName;
 
-   protected final MessageXBar    xBar;
-   protected final LoadoutBase<?> loadout;
+	protected final MessageXBar xBar;
+	protected final LoadoutBase<?> loadout;
 
-   /**
-    * @param aLoadout
-    *           The {@link LoadoutStandard} to rename.
-    * @param anXBar
-    *           A {@link MessageXBar} to announce the change on.
-    * @param aName
-    *           The new name of the loadout.
-    */
-   public OpRename(LoadoutBase<?> aLoadout, MessageXBar anXBar, String aName){
-      loadout = aLoadout;
-      xBar = anXBar;
-      newName = aName;
-   }
+	/**
+	 * @param aLoadout
+	 *            The {@link LoadoutStandard} to rename.
+	 * @param anXBar
+	 *            A {@link MessageXBar} to announce the change on.
+	 * @param aName
+	 *            The new name of the loadout.
+	 */
+	public OpRename(LoadoutBase<?> aLoadout, MessageXBar anXBar, String aName) {
+		loadout = aLoadout;
+		xBar = anXBar;
+		newName = aName;
+	}
 
-   @Override
-   public void undo(){
-      if( oldName == loadout.getName() )
-         return;
-      loadout.rename(oldName);
-      xBar.post(new LoadoutMessage(loadout, Type.RENAME));
-   }
+	@Override
+	public void undo() {
+		if (oldName == loadout.getName())
+			return;
+		loadout.rename(oldName);
+		xBar.post(new LoadoutMessage(loadout, Type.RENAME));
+	}
 
-   @Override
-   public void apply(){
-      oldName = loadout.getName();
-      if( oldName == newName )
-         return;
-      loadout.rename(newName);
-      if( xBar != null )
-         xBar.post(new LoadoutMessage(loadout, Type.RENAME));
-   }
+	@Override
+	public void apply() {
+		oldName = loadout.getName();
+		if (oldName == newName)
+			return;
+		loadout.rename(newName);
+		if (xBar != null)
+			xBar.post(new LoadoutMessage(loadout, Type.RENAME));
+	}
 
-   @Override
-   public String describe(){
-      return "rename loadout";
-   }
+	@Override
+	public String describe() {
+		return "rename loadout";
+	}
 }

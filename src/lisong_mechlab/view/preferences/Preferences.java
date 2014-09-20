@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.preferences;
 
@@ -26,18 +26,18 @@ import lisong_mechlab.util.MessageXBar;
  * 
  * @author Emily Björk
  */
-public class Preferences{
-   public final FontPreferences   fontPreferences   = new FontPreferences();
-   public final SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
-   public final UiPreferences     uiPreferences;
+public class Preferences {
+	public final FontPreferences fontPreferences = new FontPreferences();
+	public final SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
+	public final UiPreferences uiPreferences;
 
-   /**
-    * Creates a new preferences object.
-    * 
-    * @param aXBar
-    *           The {@link MessageXBar} to send notifications of preference changes on.
-    */
-   public Preferences(MessageXBar aXBar){
-      uiPreferences = new UiPreferences(aXBar);
-   }
+	/**
+	 * Creates a new preferences object.
+	 * 
+	 * @param aXBar
+	 *            The {@link MessageXBar} to send notifications of preference changes on.
+	 */
+	public Preferences(MessageXBar aXBar) {
+		uiPreferences = new UiPreferences(aXBar);
+	}
 }

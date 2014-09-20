@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
@@ -30,72 +30,72 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class OpSetStructureType extends OpUpgradeBase{
-   private final StructureUpgrade oldValue;
-   private final StructureUpgrade newValue;
-   private final UpgradesMutable  upgrades;
-   private final LoadoutStandard  loadout;
+public class OpSetStructureType extends OpUpgradeBase {
+	private final StructureUpgrade oldValue;
+	private final StructureUpgrade newValue;
+	private final UpgradesMutable upgrades;
+	private final LoadoutStandard loadout;
 
-   /**
-    * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
-    * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
-    * 
-    * @param anUpgrades
-    *           The {@link UpgradesMutable} object to alter with this {@link Operation}.
-    * @param aStructureUpgrade
-    *           The new internal structure when this upgrades has been applied.
-    */
-   public OpSetStructureType(UpgradesMutable anUpgrades, StructureUpgrade aStructureUpgrade){
-      super(null, aStructureUpgrade.getName());
-      upgrades = anUpgrades;
-      loadout = null;
-      oldValue = anUpgrades.getStructure();
-      newValue = aStructureUpgrade;
-   }
+	/**
+	 * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link UpgradesMutable} object This is
+	 * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in
+	 * any way.
+	 * 
+	 * @param anUpgrades
+	 *            The {@link UpgradesMutable} object to alter with this {@link Operation}.
+	 * @param aStructureUpgrade
+	 *            The new internal structure when this upgrades has been applied.
+	 */
+	public OpSetStructureType(UpgradesMutable anUpgrades, StructureUpgrade aStructureUpgrade) {
+		super(null, aStructureUpgrade.getName());
+		upgrades = anUpgrades;
+		loadout = null;
+		oldValue = anUpgrades.getStructure();
+		newValue = aStructureUpgrade;
+	}
 
-   /**
-    * Creates a new {@link OpSetStructureType} that will change the internal structure of a {@link LoadoutStandard}.
-    * 
-    * @param anXBar
-    *           A {@link MessageXBar} to signal changes in internal structure on.
-    * @param aLoadout
-    *           The {@link LoadoutStandard} to alter.
-    * @param aStructureUpgrade
-    *           The new internal structure this upgrades is applied.
-    */
-   public OpSetStructureType(MessageXBar anXBar, LoadoutStandard aLoadout, StructureUpgrade aStructureUpgrade){
-      super(anXBar, aStructureUpgrade.getName());
-      upgrades = aLoadout.getUpgrades();
-      loadout = aLoadout;
-      oldValue = upgrades.getStructure();
-      newValue = aStructureUpgrade;
-   }
+	/**
+	 * Creates a new {@link OpSetStructureType} that will change the internal structure of a {@link LoadoutStandard}.
+	 * 
+	 * @param anXBar
+	 *            A {@link MessageXBar} to signal changes in internal structure on.
+	 * @param aLoadout
+	 *            The {@link LoadoutStandard} to alter.
+	 * @param aStructureUpgrade
+	 *            The new internal structure this upgrades is applied.
+	 */
+	public OpSetStructureType(MessageXBar anXBar, LoadoutStandard aLoadout, StructureUpgrade aStructureUpgrade) {
+		super(anXBar, aStructureUpgrade.getName());
+		upgrades = aLoadout.getUpgrades();
+		loadout = aLoadout;
+		oldValue = upgrades.getStructure();
+		newValue = aStructureUpgrade;
+	}
 
-   @Override
-   protected void apply(){
-      set(newValue);
-   }
+	@Override
+	protected void apply() {
+		set(newValue);
+	}
 
-   @Override
-   protected void undo(){
-      set(oldValue);
-   }
+	@Override
+	protected void undo() {
+		set(oldValue);
+	}
 
-   protected void set(StructureUpgrade aValue){
-      if( aValue != upgrades.getStructure() ){
-         StructureUpgrade old = upgrades.getStructure();
-         upgrades.setStructure(aValue);
+	protected void set(StructureUpgrade aValue) {
+		if (aValue != upgrades.getStructure()) {
+			StructureUpgrade old = upgrades.getStructure();
+			upgrades.setStructure(aValue);
 
-         try{
-            verifyLoadoutInvariant(loadout);
-         }
-         catch( Exception e ){
-            upgrades.setStructure(old);
-            throw new IllegalArgumentException("Couldn't change internal structure: ", e);
-         }
+			try {
+				verifyLoadoutInvariant(loadout);
+			} catch (Exception e) {
+				upgrades.setStructure(old);
+				throw new IllegalArgumentException("Couldn't change internal structure: ", e);
+			}
 
-         if( xBar != null )
-            xBar.post(new Message(ChangeMsg.STRUCTURE, upgrades));
-      }
-   }
+			if (xBar != null)
+				xBar.post(new Message(ChangeMsg.STRUCTURE, upgrades));
+		}
+	}
 }

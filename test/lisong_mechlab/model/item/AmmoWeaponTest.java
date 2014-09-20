@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -28,17 +28,17 @@ import org.junit.Test;
  * 
  * @author Emily Björk
  */
-public class AmmoWeaponTest{
+public class AmmoWeaponTest {
 
-   @Test
-   public final void testIsCompatibleAmmo() throws Exception{
-      BallisticWeapon ac20 = (BallisticWeapon)ItemDB.lookup("AC/20");
-      
-      Ammunition ac20ammo = (Ammunition)ItemDB.lookup("AC/20 AMMO");
-      Ammunition ac20ammoHalf = (Ammunition)ItemDB.lookup("AC/20 AMMO (1/2)");
-      
-      assertTrue(ac20.isCompatibleAmmo(ac20ammoHalf));
-      assertTrue(ac20.isCompatibleAmmo(ac20ammo));
-   }
+	@Test
+	public final void testIsCompatibleAmmo() throws Exception {
+		BallisticWeapon ac20 = (BallisticWeapon) ItemDB.lookup("AC/20");
+
+		Ammunition ac20ammo = (Ammunition) ItemDB.lookup("AC/20 AMMO");
+		Ammunition ac20ammoHalf = (Ammunition) ItemDB.lookup("AC/20 AMMO (1/2)");
+
+		assertTrue(ac20.isCompatibleAmmo(ac20ammoHalf));
+		assertTrue(ac20.isCompatibleAmmo(ac20ammo));
+	}
 
 }

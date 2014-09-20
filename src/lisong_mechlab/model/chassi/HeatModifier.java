@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -24,43 +24,43 @@ package lisong_mechlab.model.chassi;
  * 
  * @author Emily Björk
  */
-public interface HeatModifier{
-   /**
-    * Calculates how much additional heat (or cooling) should be added to the environmental factor of a map.
-    * 
-    * @param aEnvironmentHeat
-    *           The current heat from the environment.
-    * @return An additional heat that should be added to the environmental effect (may be negative or positive).
-    */
-   public double extraEnvironmentHeat(double aEnvironmentHeat);
+public interface HeatModifier {
+	/**
+	 * Calculates how much additional heat (or cooling) should be added to the environmental factor of a map.
+	 * 
+	 * @param aEnvironmentHeat
+	 *            The current heat from the environment.
+	 * @return An additional heat that should be added to the environmental effect (may be negative or positive).
+	 */
+	public double extraEnvironmentHeat(double aEnvironmentHeat);
 
-   /**
-    * Calculates how much extra heat dissipation should be given to the mech.
-    * 
-    * @param aHeat
-    *           The base (unmodified) heat dissipation.
-    * @return An additional heat dissipation that should be added to the current heat dissipation (may be negative or
-    *         positive).
-    */
-   public double extraHeatDissipation(double aHeat);
+	/**
+	 * Calculates how much extra heat dissipation should be given to the mech.
+	 * 
+	 * @param aHeat
+	 *            The base (unmodified) heat dissipation.
+	 * @return An additional heat dissipation that should be added to the current heat dissipation (may be negative or
+	 *         positive).
+	 */
+	public double extraHeatDissipation(double aHeat);
 
-   /**
-    * Calculates how much extra heat generation should be given to the mech.
-    * 
-    * @param aHeat
-    *           The base (unmodified) heat generation.
-    * @return An additional heat generation that should be added to the current heat generation (may be negative or
-    *         positive).
-    */
-   public double extraHeatGeneration(double aHeat);
+	/**
+	 * Calculates how much extra heat generation should be given to the mech.
+	 * 
+	 * @param aHeat
+	 *            The base (unmodified) heat generation.
+	 * @return An additional heat generation that should be added to the current heat generation (may be negative or
+	 *         positive).
+	 */
+	public double extraHeatGeneration(double aHeat);
 
-   /**
-    * Calculates how much extra heat capacity should be given to the mech.
-    * 
-    * @param aHeat
-    *           The base (unmodified) heat capacity.
-    * @return An additional heat capacity that should be added to the current heat capacity (may be negative or
-    *         positive).
-    */
-   public double extraHeatCapacity(double aHeat);
+	/**
+	 * Calculates how much extra heat capacity should be given to the mech.
+	 * 
+	 * @param aHeat
+	 *            The base (unmodified) heat capacity.
+	 * @return An additional heat capacity that should be added to the current heat capacity (may be negative or
+	 *         positive).
+	 */
+	public double extraHeatCapacity(double aHeat);
 }

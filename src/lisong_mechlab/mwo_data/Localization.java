@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data;
 
@@ -37,110 +37,110 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * 
  * @author Emily
  */
-public class Localization{
-   private static Map<String, String> key2string = null;
+public class Localization {
+	private static Map<String, String> key2string = null;
 
-   public static String key2string(String aKey){
-      String canon = canonize(aKey);
-      if( !key2string.containsKey(canon) ){
-         if( aKey.contains("_desc") )
-            return "Empty Description";
+	public static String key2string(String aKey) {
+		String canon = canonize(aKey);
+		if (!key2string.containsKey(canon)) {
+			if (aKey.contains("_desc"))
+				return "Empty Description";
 
-         throw new IllegalArgumentException("No such key found!: " + canon);
-      }
-      return key2string.get(canon);
-   }
+			throw new IllegalArgumentException("No such key found!: " + canon);
+		}
+		return key2string.get(canon);
+	}
 
-   private static String canonize(String aKey){
-      // We need to normalize MKII -> MK2 etc
-      aKey = aKey.toLowerCase();
-      if( aKey.contains("_mk") ){
-         aKey = aKey.replaceAll("_mkvi", "_mk6");
-         aKey = aKey.replaceAll("_mkv", "_mk5");
-         aKey = aKey.replaceAll("_mkiv", "_mk4");
-         aKey = aKey.replaceAll("_mkiii", "_mk3");
-         aKey = aKey.replaceAll("_mkii", "_mk2");
-         aKey = aKey.replaceAll("_mki", "_mk1");
-         aKey = aKey.replaceAll("_mkl", "_mk1"); // They've mistaken an l (ell) for an 1 (one)
-      }
+	private static String canonize(String aKey) {
+		String canonized = aKey;
+		// We need to normalize MKII -> MK2 etc
+		canonized = canonized.toLowerCase();
+		if (aKey.contains("_mk")) {
+			canonized = aKey.replaceAll("_mkvi", "_mk6");
+			canonized = aKey.replaceAll("_mkv", "_mk5");
+			canonized = aKey.replaceAll("_mkiv", "_mk4");
+			canonized = aKey.replaceAll("_mkiii", "_mk3");
+			canonized = aKey.replaceAll("_mkii", "_mk2");
+			canonized = aKey.replaceAll("_mki", "_mk1");
+			canonized = aKey.replaceAll("_mkl", "_mk1"); // They've mistaken an l (ell) for an 1 (one)
+		}
 
-      if( !aKey.startsWith("@") ){
-         aKey = "@" + aKey;
-      }
+		if (!canonized.startsWith("@")) {
+			canonized = "@" + canonized;
+		}
 
-      return aKey;
-   }
+		return canonized;
+	}
 
-   public static void initialize(GameVFS aGameVFS) throws IOException{
-      key2string = new HashMap<String, String>();
+	public static void initialize(GameVFS aGameVFS) throws IOException {
+		key2string = new HashMap<String, String>();
 
-      File[] files = new File[] {new File("Game/Localized/Languages/TheRealLoc.xml")};
-      /*
-       * , new File("Game/Localized/Languages/ui_Mech_Loc.xml"), new File("Game/Localized/Languages/General.xml"), new
-       * File("Game/Localized/Languages/Mechlab.xml"), new File("Game/Localized/Languages/text_ui_menus.xml")};
-       */
-      /*
-       * for(File file : files){ try{ XmlReader reader = new XmlReader(dataFile.openGameFile(file)); for(Element row :
-       * reader.getElementsByTagName("Row")){ List<Element> cells = reader.getElementsByTagName("Cell", row); if(
-       * cells.size() < 3 || !cells.get(0).getAttribute("ss:Index").equals("2") ){ continue; } List<Element> data0 =
-       * reader.getElementsByTagName("Data", cells.get(0)); List<Element> data2 = reader.getElementsByTagName("Data",
-       * cells.get(2)); if( data0.size() != 1 || data2.size() != 1 ){ continue; } String tag0 =
-       * canonize(reader.getTagValue("Data", cells.get(0))); String tag2 = reader.getTagValue("Data", cells.get(2));
-       * key2string.put(tag0, tag2); System.out.println(file + " ## " + tag0 + " = " + tag2); } } catch( Exception e ){
-       * throw new RuntimeException(e); } }
-       */
+		File[] files = new File[] { new File("Game/Localized/Languages/TheRealLoc.xml") };
+		/*
+		 * , new File("Game/Localized/Languages/ui_Mech_Loc.xml"), new File("Game/Localized/Languages/General.xml"), new
+		 * File("Game/Localized/Languages/Mechlab.xml"), new File("Game/Localized/Languages/text_ui_menus.xml")};
+		 */
+		/*
+		 * for(File file : files){ try{ XmlReader reader = new XmlReader(dataFile.openGameFile(file)); for(Element row :
+		 * reader.getElementsByTagName("Row")){ List<Element> cells = reader.getElementsByTagName("Cell", row); if(
+		 * cells.size() < 3 || !cells.get(0).getAttribute("ss:Index").equals("2") ){ continue; } List<Element> data0 =
+		 * reader.getElementsByTagName("Data", cells.get(0)); List<Element> data2 = reader.getElementsByTagName("Data",
+		 * cells.get(2)); if( data0.size() != 1 || data2.size() != 1 ){ continue; } String tag0 =
+		 * canonize(reader.getTagValue("Data", cells.get(0))); String tag2 = reader.getTagValue("Data", cells.get(2));
+		 * key2string.put(tag0, tag2); System.out.println(file + " ## " + tag0 + " = " + tag2); } } catch( Exception e
+		 * ){ throw new RuntimeException(e); } }
+		 */
 
-      XStream xstream = new XStream(){
-         @Override
-         protected MapperWrapper wrapMapper(MapperWrapper next){
-            return new MapperWrapper(next){
-               @Override
-               public boolean shouldSerializeMember(Class definedIn, String fieldName){
-                  if( definedIn == Object.class ){
-                     return false;
-                  }
-                  return super.shouldSerializeMember(definedIn, fieldName);
-               }
-            };
-         }
-      };
-      xstream.alias("Workbook", Workbook.class);
-      xstream.autodetectAnnotations(true);
-      for(File file : files){
-         Workbook workbook = (Workbook)xstream.fromXML(aGameVFS.openGameFile(file).stream);
-         for(Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows){ // Skip past junk
-            if( row.cells == null || row.cells.size() < 1 ){
-               // debugprintrow(row);
-               continue;
-            }
-            if( row.cells.get(0).Data == null ){
-               // debugprintrow(row);
-               continue;
-            }
-            if( row.cells.size() >= 2 ){
-               String key = row.cells.get(0).Data;
-               String data = row.cells.get(1).Data;
-               if( data == null || data.length() < 2 ){
-                  debugprintrow(row);
-               }
-               key2string.put(canonize(key), data);
-            }
-            else{
-               debugprintrow(row); // Debug Breakpoint
-            }
-         }
-      }
+		XStream xstream = new XStream() {
+			@Override
+			protected MapperWrapper wrapMapper(MapperWrapper next) {
+				return new MapperWrapper(next) {
+					@Override
+					public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+						if (definedIn == Object.class) {
+							return false;
+						}
+						return super.shouldSerializeMember(definedIn, fieldName);
+					}
+				};
+			}
+		};
+		xstream.alias("Workbook", Workbook.class);
+		xstream.autodetectAnnotations(true);
+		for (File file : files) {
+			Workbook workbook = (Workbook) xstream.fromXML(aGameVFS.openGameFile(file).stream);
+			for (Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows) { // Skip past junk
+				if (row.cells == null || row.cells.size() < 1) {
+					// debugprintrow(row);
+					continue;
+				}
+				if (row.cells.get(0).Data == null) {
+					// debugprintrow(row);
+					continue;
+				}
+				if (row.cells.size() >= 2) {
+					String key = row.cells.get(0).Data;
+					String data = row.cells.get(1).Data;
+					if (data == null || data.length() < 2) {
+						debugprintrow(row);
+					}
+					key2string.put(canonize(key), data);
+				} else {
+					debugprintrow(row); // Debug Breakpoint
+				}
+			}
+		}
 
-   }
+	}
 
-   @SuppressWarnings("unused")
-   static private void debugprintrow(Workbook.Worksheet.Table.Row row){
-      // if( row.cells != null ){
-      // System.out.print("{");
-      // for(Workbook.Worksheet.Table.Row.Cell cell : row.cells){
-      // System.out.print(cell.Data + "##");
-      // }
-      // System.out.println("}");
-      // }
-   }
+	@SuppressWarnings("unused")
+	static private void debugprintrow(Workbook.Worksheet.Table.Row row) {
+		// if( row.cells != null ){
+		// System.out.print("{");
+		// for(Workbook.Worksheet.Table.Row.Cell cell : row.cells){
+		// System.out.print(cell.Data + "##");
+		// }
+		// System.out.println("}");
+		// }
+	}
 }

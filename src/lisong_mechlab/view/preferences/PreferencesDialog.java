@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.preferences;
 
@@ -41,142 +41,151 @@ import lisong_mechlab.view.render.StyleManager;
  * 
  * @author Emily Björk
  */
-public class PreferencesDialog extends JDialog{
-   private static final long serialVersionUID = -7028706949151487418L;
+public class PreferencesDialog extends JDialog {
+	private static final long serialVersionUID = -7028706949151487418L;
 
-   public PreferencesDialog(){
-      super(ProgramInit.lsml(), "Settings", ModalityType.APPLICATION_MODAL);
+	public PreferencesDialog() {
+		super(ProgramInit.lsml(), "Settings", ModalityType.APPLICATION_MODAL);
 
-      JPanel root = new JPanel();
-      root.setLayout(new BoxLayout(root, BoxLayout.PAGE_AXIS));
-      addAppearancePane(root);
-      addUiPane(root);
-      addCorePane(root);
+		JPanel root = new JPanel();
+		root.setLayout(new BoxLayout(root, BoxLayout.PAGE_AXIS));
+		addAppearancePane(root);
+		addUiPane(root);
+		addCorePane(root);
 
-      setContentPane(root);
-      pack();
-      setLocationRelativeTo(ProgramInit.lsml());
-      setVisible(true);
-   }
+		setContentPane(root);
+		pack();
+		setLocationRelativeTo(ProgramInit.lsml());
+		setVisible(true);
+	}
 
-   private void addCorePane(JPanel aRoot){
-      JPanel panel = new JPanel();
-      panel.setBorder(StyleManager.sectionBorder("LSML Core Settings"));
+	private void addCorePane(JPanel aRoot) {
+		JPanel panel = new JPanel();
+		panel.setBorder(StyleManager.sectionBorder("LSML Core Settings"));
 
-      final JCheckBox useBundledData = new JCheckBox("Use bundled data",
-                                                     Boolean.parseBoolean(PreferenceStore.getString(PreferenceStore.USEBUNDLED_DATA, "false")));
-      useBundledData.setToolTipText("<html>If checked, LSML will quietly fallback to bundled data files if no game install is available.<br/>"
-                                    + "Otherwise it will prompt you to locate the game install on next startup.</html>");
-      useBundledData.addActionListener(new AbstractAction(){
-         private static final long serialVersionUID = -8136020916897237506L;
+		final JCheckBox useBundledData = new JCheckBox("Use bundled data", Boolean.parseBoolean(PreferenceStore
+				.getString(PreferenceStore.USEBUNDLED_DATA, "false")));
+		useBundledData
+				.setToolTipText("<html>If checked, LSML will quietly fallback to bundled data files if no game install is available.<br/>"
+						+ "Otherwise it will prompt you to locate the game install on next startup.</html>");
+		useBundledData.addActionListener(new AbstractAction() {
+			private static final long serialVersionUID = -8136020916897237506L;
 
-         @Override
-         public void actionPerformed(ActionEvent aArg0){
-            PreferenceStore.setString(PreferenceStore.USEBUNDLED_DATA, Boolean.toString(useBundledData.isSelected()));
-         }
-      });
-      panel.add(useBundledData);
+			@Override
+			public void actionPerformed(ActionEvent aArg0) {
+				PreferenceStore.setString(PreferenceStore.USEBUNDLED_DATA,
+						Boolean.toString(useBundledData.isSelected()));
+			}
+		});
+		panel.add(useBundledData);
 
-      aRoot.add(panel);
-   }
+		aRoot.add(panel);
+	}
 
-   private void addUiPane(JPanel aRoot){
-      JPanel panel = new JPanel();
-      panel.setBorder(StyleManager.sectionBorder("UI Behavior"));
+	private void addUiPane(JPanel aRoot) {
+		JPanel panel = new JPanel();
+		panel.setBorder(StyleManager.sectionBorder("UI Behavior"));
 
-      final JCheckBox smartPlace = new JCheckBox("Use SmartPlace", ProgramInit.lsml().preferences.uiPreferences.getUseSmartPlace());
-      smartPlace.setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
-      smartPlace.addActionListener(new AbstractAction(){
-         private static final long serialVersionUID = -8136020916897237506L;
+		final JCheckBox smartPlace = new JCheckBox("Use SmartPlace",
+				ProgramInit.lsml().preferences.uiPreferences.getUseSmartPlace());
+		smartPlace
+				.setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
+		smartPlace.addActionListener(new AbstractAction() {
+			private static final long serialVersionUID = -8136020916897237506L;
 
-         @Override
-         public void actionPerformed(ActionEvent aArg0){
-            ProgramInit.lsml().preferences.uiPreferences.setUseSmartPlace(smartPlace.isSelected());
-         }
-      });
-      panel.add(smartPlace);
+			@Override
+			public void actionPerformed(ActionEvent aArg0) {
+				ProgramInit.lsml().preferences.uiPreferences.setUseSmartPlace(smartPlace.isSelected());
+			}
+		});
+		panel.add(smartPlace);
 
-      final JCheckBox compactMode = new JCheckBox("Use Compact UI", ProgramInit.lsml().preferences.uiPreferences.getCompactMode());
-      compactMode.setToolTipText("Tries to compact the UI to make it useful on smaller screens.");
-      compactMode.addActionListener(new AbstractAction(){
-         private static final long serialVersionUID = -8136020916897237506L;
+		final JCheckBox compactMode = new JCheckBox("Use Compact UI",
+				ProgramInit.lsml().preferences.uiPreferences.getCompactMode());
+		compactMode.setToolTipText("Tries to compact the UI to make it useful on smaller screens.");
+		compactMode.addActionListener(new AbstractAction() {
+			private static final long serialVersionUID = -8136020916897237506L;
 
-         @Override
-         public void actionPerformed(ActionEvent aArg0){
-            ProgramInit.lsml().preferences.uiPreferences.setCompactMode(compactMode.isSelected());
-         }
-      });
-      panel.add(compactMode);
+			@Override
+			public void actionPerformed(ActionEvent aArg0) {
+				ProgramInit.lsml().preferences.uiPreferences.setCompactMode(compactMode.isSelected());
+			}
+		});
+		panel.add(compactMode);
 
-      final JCheckBox hideSpecials = new JCheckBox("Hide mech variations", ProgramInit.lsml().preferences.uiPreferences.getHideSpecialMechs());
-      hideSpecials.setToolTipText("<html>Will hide mech variations (champion, founders, phoenix, sarah, etc) from chassis lists.<br/>"
-                                  + "Stock loadouts are still available on the \"Load stock\" menu action on relevant loadouts</html>");
-      hideSpecials.addActionListener(new AbstractAction(){
-         private static final long serialVersionUID = -8136020916897237506L;
+		final JCheckBox hideSpecials = new JCheckBox("Hide mech variations",
+				ProgramInit.lsml().preferences.uiPreferences.getHideSpecialMechs());
+		hideSpecials
+				.setToolTipText("<html>Will hide mech variations (champion, founders, phoenix, sarah, etc) from chassis lists.<br/>"
+						+ "Stock loadouts are still available on the \"Load stock\" menu action on relevant loadouts</html>");
+		hideSpecials.addActionListener(new AbstractAction() {
+			private static final long serialVersionUID = -8136020916897237506L;
 
-         @Override
-         public void actionPerformed(ActionEvent aArg0){
-            ProgramInit.lsml().preferences.uiPreferences.setHideSpecialMechs(hideSpecials.isSelected());
-         }
-      });
-      panel.add(hideSpecials);
+			@Override
+			public void actionPerformed(ActionEvent aArg0) {
+				ProgramInit.lsml().preferences.uiPreferences.setHideSpecialMechs(hideSpecials.isSelected());
+			}
+		});
+		panel.add(hideSpecials);
 
-      aRoot.add(panel);
-   }
+		aRoot.add(panel);
+	}
 
-   private void addAppearancePane(JPanel aRoot){
-      JPanel panel = new JPanel();
-      panel.setBorder(StyleManager.sectionBorder("Appearance"));
+	private void addAppearancePane(JPanel aRoot) {
+		JPanel panel = new JPanel();
+		panel.setBorder(StyleManager.sectionBorder("Appearance"));
 
-      JRadioButton fontVerySmall = new JRadioButton();
-      JRadioButton fontSmall = new JRadioButton();
-      JRadioButton fontNormal = new JRadioButton();
-      JRadioButton fontLarge = new JRadioButton();
-      JRadioButton fontVeryLarge = new JRadioButton();
+		JRadioButton fontVerySmall = new JRadioButton();
+		JRadioButton fontSmall = new JRadioButton();
+		JRadioButton fontNormal = new JRadioButton();
+		JRadioButton fontLarge = new JRadioButton();
+		JRadioButton fontVeryLarge = new JRadioButton();
 
-      fontVerySmall.setAction(new SetFontSizeAction("Very Small", null, FontSize.VerySmall));
-      fontSmall.setAction(new SetFontSizeAction("Small", null, FontSize.Small));
-      fontNormal.setAction(new SetFontSizeAction("Normal", null, FontSize.Normal));
-      fontLarge.setAction(new SetFontSizeAction("Large", null, FontSize.Large));
-      fontVeryLarge.setAction(new SetFontSizeAction("Very Large", null, FontSize.VeryLarge));
+		fontVerySmall.setAction(new SetFontSizeAction("Very Small", null, FontSize.VerySmall));
+		fontSmall.setAction(new SetFontSizeAction("Small", null, FontSize.Small));
+		fontNormal.setAction(new SetFontSizeAction("Normal", null, FontSize.Normal));
+		fontLarge.setAction(new SetFontSizeAction("Large", null, FontSize.Large));
+		fontVeryLarge.setAction(new SetFontSizeAction("Very Large", null, FontSize.VeryLarge));
 
-      ButtonGroup fontSize = new ButtonGroup();
-      fontSize.add(fontVerySmall);
-      fontSize.add(fontSmall);
-      fontSize.add(fontNormal);
-      fontSize.add(fontLarge);
-      fontSize.add(fontVeryLarge);
+		ButtonGroup fontSize = new ButtonGroup();
+		fontSize.add(fontVerySmall);
+		fontSize.add(fontSmall);
+		fontSize.add(fontNormal);
+		fontSize.add(fontLarge);
+		fontSize.add(fontVeryLarge);
 
-      switch( ProgramInit.lsml().preferences.fontPreferences.getFontSize() ){
-         case Normal:
-            fontNormal.setSelected(true);
-            break;
-         case Small:
-            fontSmall.setSelected(true);
-            break;
-         case VerySmall:
-            fontVerySmall.setSelected(true);
-            break;
-         case Large:
-            fontLarge.setSelected(true);
-            break;
-         case VeryLarge:
-            fontVeryLarge.setSelected(true);
-            break;
-      }
+		switch (ProgramInit.lsml().preferences.fontPreferences.getFontSize()) {
+			case Normal:
+				fontNormal.setSelected(true);
+				break;
+			case Small:
+				fontSmall.setSelected(true);
+				break;
+			case VerySmall:
+				fontVerySmall.setSelected(true);
+				break;
+			case Large:
+				fontLarge.setSelected(true);
+				break;
+			case VeryLarge:
+				fontVeryLarge.setSelected(true);
+				break;
+			default:
+				throw new IllegalStateException("Unknonwn font size!");
+		}
 
-      JPanel buttons = new JPanel(new GridLayout(1, 0));
-      buttons.add(fontVerySmall);
-      buttons.add(fontSmall);
-      buttons.add(fontNormal);
-      buttons.add(fontLarge);
-      buttons.add(fontVeryLarge);
+		JPanel buttons = new JPanel(new GridLayout(1, 0));
+		buttons.add(fontVerySmall);
+		buttons.add(fontSmall);
+		buttons.add(fontNormal);
+		buttons.add(fontLarge);
+		buttons.add(fontVeryLarge);
 
-      JLabel fontSizeLabel = new JLabel("Default Font Size:");
-      fontSizeLabel.setLabelFor(buttons);
+		JLabel fontSizeLabel = new JLabel("Default Font Size:");
+		fontSizeLabel.setLabelFor(buttons);
 
-      panel.add(fontSizeLabel);
-      panel.add(buttons);
-      aRoot.add(panel);
-   }
+		panel.add(fontSizeLabel);
+		panel.add(buttons);
+		aRoot.add(panel);
+	}
 }

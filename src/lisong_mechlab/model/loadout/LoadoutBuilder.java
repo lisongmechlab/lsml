@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
@@ -46,70 +46,72 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class LoadoutBuilder{
-   private static class OperationComparator implements Comparator<Operation>{
-      private final static Map<Class<? extends Operation>, Integer> CLASS_PRIORITY_ORDER;
+public class LoadoutBuilder {
+	private static class OperationComparator implements Comparator<Operation> {
+		private final static Map<Class<? extends Operation>, Integer> CLASS_PRIORITY_ORDER;
 
-      static{
-         CLASS_PRIORITY_ORDER = new HashMap<>();
+		static {
+			CLASS_PRIORITY_ORDER = new HashMap<>();
 
-         // Omnipods, upgrades, modules and renaming are independent and cannot fail on an empty loadout
-         CLASS_PRIORITY_ORDER.put(OpRename.class, 0);
-         CLASS_PRIORITY_ORDER.put(OpChangeOmniPod.class, 1);
-         CLASS_PRIORITY_ORDER.put(OpSetGuidanceType.class, 2);
-         CLASS_PRIORITY_ORDER.put(OpSetHeatSinkType.class, 2);
-         CLASS_PRIORITY_ORDER.put(OpSetArmorType.class, 2);
-         CLASS_PRIORITY_ORDER.put(OpSetStructureType.class, 2);
-         CLASS_PRIORITY_ORDER.put(OpSetArmor.class, 3);
-         CLASS_PRIORITY_ORDER.put(OpAddModule.class, 4);
+			// Omnipods, upgrades, modules and renaming are independent and cannot fail on an empty loadout
+			CLASS_PRIORITY_ORDER.put(OpRename.class, 0);
+			CLASS_PRIORITY_ORDER.put(OpChangeOmniPod.class, 1);
+			CLASS_PRIORITY_ORDER.put(OpSetGuidanceType.class, 2);
+			CLASS_PRIORITY_ORDER.put(OpSetHeatSinkType.class, 2);
+			CLASS_PRIORITY_ORDER.put(OpSetArmorType.class, 2);
+			CLASS_PRIORITY_ORDER.put(OpSetStructureType.class, 2);
+			CLASS_PRIORITY_ORDER.put(OpSetArmor.class, 3);
+			CLASS_PRIORITY_ORDER.put(OpAddModule.class, 4);
 
-         // Toggleables have to be set before items are added
-         CLASS_PRIORITY_ORDER.put(OpToggleItem.class, 10);
+			// Toggleables have to be set before items are added
+			CLASS_PRIORITY_ORDER.put(OpToggleItem.class, 10);
 
-         // Item operations last
-         CLASS_PRIORITY_ORDER.put(OpAddItem.class, 100);
-      }
+			// Item operations last
+			CLASS_PRIORITY_ORDER.put(OpAddItem.class, 100);
+		}
 
-      @Override
-      public int compare(Operation aLHS, Operation aRHS){
-         if(aLHS instanceof OpAddItem && aRHS instanceof OpAddItem){
-            boolean lhsHeatSink = ((OpAddItem)aLHS).getItem() instanceof HeatSink;
-            boolean rhsHeatSink = ((OpAddItem)aRHS).getItem() instanceof HeatSink;
-           
-            if(lhsHeatSink == rhsHeatSink)
-               return 0;
-            else if(lhsHeatSink)
-               return  1;
-            else 
-               return -1;
-         }
-         
-         Integer priorityLHS = CLASS_PRIORITY_ORDER.get(aLHS.getClass());
-         Integer priorityRHS = CLASS_PRIORITY_ORDER.get(aRHS.getClass());
+		@Override
+		public int compare(Operation aLHS, Operation aRHS) {
+			if (aLHS instanceof OpAddItem && aRHS instanceof OpAddItem) {
+				boolean lhsHeatSink = ((OpAddItem) aLHS).getItem() instanceof HeatSink;
+				boolean rhsHeatSink = ((OpAddItem) aRHS).getItem() instanceof HeatSink;
 
-         if( null == priorityLHS ){
-            throw new IllegalArgumentException("Class missing from priority map: " + aLHS.getClass().getSimpleName());
-         }
+				if (lhsHeatSink == rhsHeatSink)
+					return 0;
+				else if (lhsHeatSink)
+					return 1;
+				else
+					return -1;
+			}
 
-         if( null == priorityRHS ){
-            throw new IllegalArgumentException("Class missing from priority map: " + aRHS.getClass().getSimpleName());
-         }
-         return priorityLHS.compareTo(priorityRHS);
-      }
-   }
+			Integer priorityLHS = CLASS_PRIORITY_ORDER.get(aLHS.getClass());
+			Integer priorityRHS = CLASS_PRIORITY_ORDER.get(aRHS.getClass());
 
-   final private PriorityQueue<Operation> operations = new PriorityQueue<>(20, new OperationComparator());
+			if (null == priorityLHS) {
+				throw new IllegalArgumentException("Class missing from priority map: "
+						+ aLHS.getClass().getSimpleName());
+			}
 
-   public void push(final Operation aOperation){
-      operations.add(aOperation);
-   }
+			if (null == priorityRHS) {
+				throw new IllegalArgumentException("Class missing from priority map: "
+						+ aRHS.getClass().getSimpleName());
+			}
+			return priorityLHS.compareTo(priorityRHS);
+		}
+	}
 
-   public void apply(){
-      OperationStack operationStack = new OperationStack(0);
-      
-      Operation operation;
-      while(null != (operation = operations.poll())){
-         operationStack.pushAndApply(operation);
-      }
-   }
+	final private PriorityQueue<Operation> operations = new PriorityQueue<>(20, new OperationComparator());
+
+	public void push(final Operation aOperation) {
+		operations.add(aOperation);
+	}
+
+	public void apply() {
+		OperationStack operationStack = new OperationStack(0);
+
+		Operation operation;
+		while (null != (operation = operations.poll())) {
+			operationStack.pushAndApply(operation);
+		}
+	}
 }

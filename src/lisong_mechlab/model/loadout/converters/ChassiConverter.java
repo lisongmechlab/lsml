@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
@@ -28,23 +28,23 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class ChassiConverter implements Converter{
+public class ChassiConverter implements Converter {
 
-   @Override
-   public boolean canConvert(Class aClass){
-      return ChassisStandard.class == aClass;
-   }
+	@Override
+	public boolean canConvert(Class aClass) {
+		return ChassisStandard.class == aClass;
+	}
 
-   @Override
-   public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      ChassisStandard chassi = (ChassisStandard)anObject;
-      aWriter.setValue(chassi.getNameShort());
-   }
+	@Override
+	public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+		ChassisStandard chassi = (ChassisStandard) anObject;
+		aWriter.setValue(chassi.getNameShort());
+	}
 
-   @Override
-   public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
-      String variation = aReader.getValue();
-      return ChassisDB.lookup(variation);
-   }
+	@Override
+	public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+		String variation = aReader.getValue();
+		return ChassisDB.lookup(variation);
+	}
 
 }

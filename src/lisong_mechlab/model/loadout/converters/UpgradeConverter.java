@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
@@ -28,24 +28,24 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class UpgradeConverter implements Converter{
+public class UpgradeConverter implements Converter {
 
-   @Override
-   public boolean canConvert(Class aClass){
-      return Upgrade.class.isAssignableFrom(aClass);
-   }
+	@Override
+	public boolean canConvert(Class aClass) {
+		return Upgrade.class.isAssignableFrom(aClass);
+	}
 
-   @Override
-   public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      Upgrade item = (Upgrade)anObject;
-      int mwoIdx = item.getMwoId();
-      aWriter.setValue(Integer.valueOf(mwoIdx).toString());
-   }
+	@Override
+	public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+		Upgrade item = (Upgrade) anObject;
+		int mwoIdx = item.getMwoId();
+		aWriter.setValue(Integer.valueOf(mwoIdx).toString());
+	}
 
-   @Override
-   public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
-      int mwoidx = Integer.parseInt(aReader.getValue());
-      return UpgradeDB.lookup(mwoidx);
-   }
+	@Override
+	public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+		int mwoidx = Integer.parseInt(aReader.getValue());
+		return UpgradeDB.lookup(mwoidx);
+	}
 
 }

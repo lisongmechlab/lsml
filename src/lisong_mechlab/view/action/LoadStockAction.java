@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.action;
 
@@ -42,58 +42,56 @@ import lisong_mechlab.view.ProgramInit;
  * 
  * @author Emily Björk
  */
-public class LoadStockAction extends AbstractAction{
-   private static final long    serialVersionUID = 4350731510583942480L;
-   private final LoadoutBase<?> loadout;
-   private final OperationStack stack;
-   private final MessageXBar    xBar;
-   private final Component      component;
+public class LoadStockAction extends AbstractAction {
+	private static final long serialVersionUID = 4350731510583942480L;
+	private final LoadoutBase<?> loadout;
+	private final OperationStack stack;
+	private final MessageXBar xBar;
+	private final Component component;
 
-   /**
-    * Creates a new {@link LoadStockAction}.
-    * 
-    * @param aLoadout
-    *           The {@link LoadoutStandard} to load stock for.
-    * @param aStack
-    *           The {@link OperationStack} stack that shall be used for undo information.
-    * @param aXBar
-    *           The {@link MessageXBar} that shall be used for signaling changes to the {@link LoadoutStandard}.
-    * @param aComponent
-    *           The {@link Component} on which any dialogs will be centered.
-    */
-   public LoadStockAction(LoadoutBase<?> aLoadout, OperationStack aStack, MessageXBar aXBar, Component aComponent){
-      super(getActionName(aLoadout.getChassis()));
-      loadout = aLoadout;
-      stack = aStack;
-      xBar = aXBar;
-      component = aComponent;
-   }
+	/**
+	 * Creates a new {@link LoadStockAction}.
+	 * 
+	 * @param aLoadout
+	 *            The {@link LoadoutStandard} to load stock for.
+	 * @param aStack
+	 *            The {@link OperationStack} stack that shall be used for undo information.
+	 * @param aXBar
+	 *            The {@link MessageXBar} that shall be used for signaling changes to the {@link LoadoutStandard}.
+	 * @param aComponent
+	 *            The {@link Component} on which any dialogs will be centered.
+	 */
+	public LoadStockAction(LoadoutBase<?> aLoadout, OperationStack aStack, MessageXBar aXBar, Component aComponent) {
+		super(getActionName(aLoadout.getChassis()));
+		loadout = aLoadout;
+		stack = aStack;
+		xBar = aXBar;
+		component = aComponent;
+	}
 
-   @Override
-   public void actionPerformed(ActionEvent aArg0){
-      final Collection<? extends ChassisBase> variations = ChassisDB.lookupVariations(loadout.getChassis());
+	@Override
+	public void actionPerformed(ActionEvent aArg0) {
+		final Collection<? extends ChassisBase> variations = ChassisDB.lookupVariations(loadout.getChassis());
 
-      try{
-         if( variations.size() == 1 ){
-            stack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
-         }
-         else{
-            JList<ChassisBase> list = new JList<>(variations.toArray(new ChassisBase[variations.size()]));
-            JOptionPane.showConfirmDialog(component, list, "Which stock loadout?", JOptionPane.OK_CANCEL_OPTION);
-            if( list.getSelectedValue() != null ){
-               stack.pushAndApply(new OpLoadStock(list.getSelectedValue(), loadout, xBar));
-            }
-         }
-      }
-      catch( Exception e ){
-         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't load stock loadout! Error: " + e.getMessage());
-      }
-   }
+		try {
+			if (variations.size() == 1) {
+				stack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
+			} else {
+				JList<ChassisBase> list = new JList<>(variations.toArray(new ChassisBase[variations.size()]));
+				JOptionPane.showConfirmDialog(component, list, "Which stock loadout?", JOptionPane.OK_CANCEL_OPTION);
+				if (list.getSelectedValue() != null) {
+					stack.pushAndApply(new OpLoadStock(list.getSelectedValue(), loadout, xBar));
+				}
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't load stock loadout! Error: " + e.getMessage());
+		}
+	}
 
-   private static String getActionName(ChassisBase aChassis){
-      if( ChassisDB.lookupVariations(aChassis).size() > 1 ){
-         return "Load stock...";
-      }
-      return "Load stock";
-   }
+	private static String getActionName(ChassisBase aChassis) {
+		if (ChassisDB.lookupVariations(aChassis).size() > 1) {
+			return "Load stock...";
+		}
+		return "Load stock";
+	}
 }

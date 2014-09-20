@@ -15,13 +15,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.pilot;
 
 /**
  * @author Emily Björk
  */
-public class PilotSkillTree{
-   // TODO: TBD
+public class PilotSkillTree {
+	// TODO: TBD
 }

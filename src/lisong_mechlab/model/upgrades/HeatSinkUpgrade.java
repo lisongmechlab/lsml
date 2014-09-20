@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
@@ -26,36 +26,37 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class HeatSinkUpgrade extends Upgrade{
-   @XStreamAsAttribute
-   private final HeatSink heatSinkType;
+public class HeatSinkUpgrade extends Upgrade {
+	@XStreamAsAttribute
+	private final HeatSink heatSinkType;
 
-   public HeatSinkUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, HeatSink aHeatSink){
-      super(aName, aDescription, aMwoId, aFaction);
-      heatSinkType = aHeatSink;
-   }
+	public HeatSinkUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, HeatSink aHeatSink) {
+		super(aName, aDescription, aMwoId, aFaction);
+		heatSinkType = aHeatSink;
+	}
 
-   public HeatSinkUpgrade(ItemStatsUpgradeType aUpgradeType, DataCache aDataCache){
-      super(aUpgradeType);
-      heatSinkType = (HeatSink)DataCache.findItem(aUpgradeType.HeatSinkTypeStats.compatibleHeatSink, aDataCache.getItems());
-   }
+	public HeatSinkUpgrade(ItemStatsUpgradeType aUpgradeType, DataCache aDataCache) {
+		super(aUpgradeType);
+		heatSinkType = (HeatSink) DataCache.findItem(aUpgradeType.HeatSinkTypeStats.compatibleHeatSink,
+				aDataCache.getItems());
+	}
 
-   /**
-    * @return The type of {@link HeatSink}s associated with this upgrade.
-    */
-   public HeatSink getHeatSinkType(){
-      return heatSinkType;
-   }
+	/**
+	 * @return The type of {@link HeatSink}s associated with this upgrade.
+	 */
+	public HeatSink getHeatSinkType() {
+		return heatSinkType;
+	}
 
-   /**
-    * @return <code>true</code> if this heat sink is a double type.
-    */
-   public boolean isDouble(){
-      return getHeatSinkType().getNumCriticalSlots() > 1;
-   }
+	/**
+	 * @return <code>true</code> if this heat sink is a double type.
+	 */
+	public boolean isDouble() {
+		return getHeatSinkType().getNumCriticalSlots() > 1;
+	}
 
-   @Override
-   public UpgradeType getType(){
-      return UpgradeType.HEATSINK;
-   }
+	@Override
+	public UpgradeType getType() {
+		return UpgradeType.HEATSINK;
+	}
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -24,30 +24,30 @@ package lisong_mechlab.model.item;
  * 
  * @author Emily Björk
  */
-public enum ModuleSlot{
-   CONSUMABLE("Consumable"), WEAPON("Weapon"), MECH("Mech"), HYBRID("Hybrid");
+public enum ModuleSlot {
+	CONSUMABLE("Consumable"), WEAPON("Weapon"), MECH("Mech"), HYBRID("Hybrid");
 
-   public static ModuleSlot fromMwo(String aString){
-      switch( aString ){
-         case "WeaponMod":
-            return WEAPON;
-         case "Consumable":
-            return CONSUMABLE;
-         case "Pilot":
-            return MECH;
-         default:
-            throw new IllegalArgumentException("Unknown module type!: " + aString);
-      }
-   }
+	public static ModuleSlot fromMwo(String aString) {
+		switch (aString) {
+			case "WeaponMod":
+				return WEAPON;
+			case "Consumable":
+				return CONSUMABLE;
+			case "Pilot":
+				return MECH;
+			default:
+				throw new IllegalArgumentException("Unknown module type!: " + aString);
+		}
+	}
 
-   private final String name;
+	private final String name;
 
-   private ModuleSlot(String aName){
-      name = aName;
-   }
+	private ModuleSlot(String aName) {
+		name = aName;
+	}
 
-   @Override
-   public String toString(){
-      return name;
-   }
+	@Override
+	public String toString() {
+		return name;
+	}
 }

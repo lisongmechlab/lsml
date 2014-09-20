@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
@@ -30,33 +30,33 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public abstract class OpUpgradeBase extends Operation{
-   protected final transient MessageXBar xBar;
-   private final String                  description;
+public abstract class OpUpgradeBase extends Operation {
+	protected final transient MessageXBar xBar;
+	private final String description;
 
-   protected OpUpgradeBase(MessageXBar anXBar, String aDescription){
-      description = aDescription;
-      xBar = anXBar;
-   }
+	protected OpUpgradeBase(MessageXBar anXBar, String aDescription) {
+		description = aDescription;
+		xBar = anXBar;
+	}
 
-   @Override
-   public String describe(){
-      return description;
-   }
+	@Override
+	public String describe() {
+		return description;
+	}
 
-   protected void verifyLoadoutInvariant(LoadoutBase<?> aLoadout){
-      if( aLoadout == null )
-         return;
-      if( aLoadout.getFreeMass() < 0 ){
-         throw new IllegalArgumentException("Not enough tonnage!");
-      }
-      if( aLoadout.getNumCriticalSlotsFree() < 0 ){
-         throw new IllegalArgumentException("Not enough free slots!");
-      }
-      for(ConfiguredComponentBase loadoutPart : aLoadout.getComponents()){
-         if( loadoutPart.getSlotsFree() < 0 ){
-            throw new IllegalArgumentException("Not enough free slots!");
-         }
-      }
-   }
+	protected void verifyLoadoutInvariant(LoadoutBase<?> aLoadout) {
+		if (aLoadout == null)
+			return;
+		if (aLoadout.getFreeMass() < 0) {
+			throw new IllegalArgumentException("Not enough tonnage!");
+		}
+		if (aLoadout.getNumCriticalSlotsFree() < 0) {
+			throw new IllegalArgumentException("Not enough free slots!");
+		}
+		for (ConfiguredComponentBase loadoutPart : aLoadout.getComponents()) {
+			if (loadoutPart.getSlotsFree() < 0) {
+				throw new IllegalArgumentException("Not enough free slots!");
+			}
+		}
+	}
 }

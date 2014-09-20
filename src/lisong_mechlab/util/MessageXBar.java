@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -37,156 +37,154 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * 
  * @author Emily Björk
  */
-public class MessageXBar{
-   private static final boolean                                  debug         = false;
-   private transient final Map<Class<? extends Reader>, Double>  perf_walltime = debug ? new HashMap<Class<? extends Reader>, Double>() : null;
-   private transient final Map<Class<? extends Reader>, Integer> perf_calls    = debug ? new HashMap<Class<? extends Reader>, Integer>() : null;
-   private transient final List<WeakReference<Reader>>           readers       = new ArrayList<WeakReference<MessageXBar.Reader>>();
-   private boolean                                               dispatching   = false;
-   private transient final Queue<Message>                        messages      = new ArrayDeque<>();
+public class MessageXBar {
+	private static final boolean debug = false;
+	private transient final Map<Class<? extends Reader>, Double> perf_walltime = debug ? new HashMap<Class<? extends Reader>, Double>()
+			: null;
+	private transient final Map<Class<? extends Reader>, Integer> perf_calls = debug ? new HashMap<Class<? extends Reader>, Integer>()
+			: null;
+	private transient final List<WeakReference<Reader>> readers = new ArrayList<WeakReference<MessageXBar.Reader>>();
+	private boolean dispatching = false;
+	private transient final Queue<Message> messages = new ArrayDeque<>();
 
-   /**
-    * Classes that need to be able to listen in on the {@link MessageXBar} should implement this interface.
-    * 
-    * @author Emily Björk
-    */
-   public static interface Reader{
-      void receive(Message aMsg);
-   }
+	/**
+	 * Classes that need to be able to listen in on the {@link MessageXBar} should implement this interface.
+	 * 
+	 * @author Emily Björk
+	 */
+	public static interface Reader {
+		void receive(Message aMsg);
+	}
 
-   /**
-    * A base interface for all messages sent on the {@link MessageXBar}.
-    * 
-    * @author Emily Björk
-    */
-   public static interface Message{
-      /**
-       * Checks if this message is related to a specific {@link LoadoutStandard}.
-       * 
-       * @param aLoadout
-       *           The {@link LoadoutStandard} to check.
-       * @return <code>true</code> if this message affects the given {@link LoadoutStandard}.
-       */
-      public boolean isForMe(LoadoutBase<?> aLoadout);
+	/**
+	 * A base interface for all messages sent on the {@link MessageXBar}.
+	 * 
+	 * @author Emily Björk
+	 */
+	public static interface Message {
+		/**
+		 * Checks if this message is related to a specific {@link LoadoutStandard}.
+		 * 
+		 * @param aLoadout
+		 *            The {@link LoadoutStandard} to check.
+		 * @return <code>true</code> if this message affects the given {@link LoadoutStandard}.
+		 */
+		public boolean isForMe(LoadoutBase<?> aLoadout);
 
-      /**
-       * @return <code>true</code> if this message can affect the damage or heat output of the related
-       *         {@link LoadoutStandard}.
-       */
-      public boolean affectsHeatOrDamage();
-   }
+		/**
+		 * @return <code>true</code> if this message can affect the damage or heat output of the related
+		 *         {@link LoadoutStandard}.
+		 */
+		public boolean affectsHeatOrDamage();
+	}
 
-   /**
-    * Sends a message to all listeners on the {@link MessageXBar}. Those listeners which have been disposed of since the
-    * last call to {@link #post(Message)} will be automatically disposed of.
-    * 
-    * @param aMessage
-    *           The message to send.
-    */
-   public void post(Message aMessage){
-      if( dispatching ){
-         messages.add(aMessage);
-      }
-      else{
-         dispatchMessage(aMessage);
-         while( !messages.isEmpty() ){
-            dispatchMessage(messages.remove());
-         }
-      }
-   }
+	/**
+	 * Sends a message to all listeners on the {@link MessageXBar}. Those listeners which have been disposed of since
+	 * the last call to {@link #post(Message)} will be automatically disposed of.
+	 * 
+	 * @param aMessage
+	 *            The message to send.
+	 */
+	public void post(Message aMessage) {
+		if (dispatching) {
+			messages.add(aMessage);
+		} else {
+			dispatchMessage(aMessage);
+			while (!messages.isEmpty()) {
+				dispatchMessage(messages.remove());
+			}
+		}
+	}
 
-   private void dispatchMessage(Message aMessage){
-      if( dispatching )
-         throw new IllegalStateException("Recursive dispatch!");
-      dispatching = true;
-      try{
-         Iterator<WeakReference<Reader>> it = readers.iterator();
-         while( it.hasNext() ){
-            WeakReference<Reader> ref = it.next();
-            Reader reader = ref.get();
-            if( reader == null ){
-               it.remove();
-               continue;
-            }
-            if( debug ){
-               long startNs = System.nanoTime();
-               reader.receive(aMessage);
-               long endNs = System.nanoTime();
-               Double v = perf_walltime.get(reader.getClass());
-               Integer u = perf_calls.get(reader.getClass());
-               if( v == null ){
-                  v = 0.0;
-                  u = 0;
-               }
-               v += (endNs - startNs) / 1E9;
-               u += 1;
-               perf_walltime.put(reader.getClass(), v);
-               perf_calls.put(reader.getClass(), u);
-            }
-            else{
-               reader.receive(aMessage);
-            }
-         }
-      }
-      catch( Throwable t ){
-         t.printStackTrace();
-      }
-      finally{
-         dispatching = false;
-      }
-   }
+	private void dispatchMessage(Message aMessage) {
+		if (dispatching)
+			throw new IllegalStateException("Recursive dispatch!");
+		dispatching = true;
+		try {
+			Iterator<WeakReference<Reader>> it = readers.iterator();
+			while (it.hasNext()) {
+				WeakReference<Reader> ref = it.next();
+				Reader reader = ref.get();
+				if (reader == null) {
+					it.remove();
+					continue;
+				}
+				if (debug) {
+					long startNs = System.nanoTime();
+					reader.receive(aMessage);
+					long endNs = System.nanoTime();
+					Double v = perf_walltime.get(reader.getClass());
+					Integer u = perf_calls.get(reader.getClass());
+					if (v == null) {
+						v = 0.0;
+						u = 0;
+					}
+					v += (endNs - startNs) / 1E9;
+					u += 1;
+					perf_walltime.put(reader.getClass(), v);
+					perf_calls.put(reader.getClass(), u);
+				} else {
+					reader.receive(aMessage);
+				}
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		} finally {
+			dispatching = false;
+		}
+	}
 
-   /**
-    * Attaches a new {@link Reader} to this {@link MessageXBar}. The {@link Reader} is automatically converted to a weak
-    * reference.
-    * 
-    * @see #attach(Reader)
-    * @param aReader
-    *           The {@link Reader} to add.
-    */
-   public void attach(Reader aReader){
-      attach(new WeakReference<MessageXBar.Reader>(aReader));
-   }
+	/**
+	 * Attaches a new {@link Reader} to this {@link MessageXBar}. The {@link Reader} is automatically converted to a
+	 * weak reference.
+	 * 
+	 * @see #attach(Reader)
+	 * @param aReader
+	 *            The {@link Reader} to add.
+	 */
+	public void attach(Reader aReader) {
+		attach(new WeakReference<MessageXBar.Reader>(aReader));
+	}
 
-   /**
-    * Attaches a new {@link Reader} to this {@link MessageXBar}. The {@link MessageXBar} only keeps weak references so
-    * this won't prevent objects from being garbage collected.
-    * 
-    * @param aWeakReference
-    *           The object that shall receive messages.
-    */
-   public void attach(WeakReference<Reader> aWeakReference){
-      if( dispatching )
-         throw new IllegalStateException("Attach from call to post!");
+	/**
+	 * Attaches a new {@link Reader} to this {@link MessageXBar}. The {@link MessageXBar} only keeps weak references so
+	 * this won't prevent objects from being garbage collected.
+	 * 
+	 * @param aWeakReference
+	 *            The object that shall receive messages.
+	 */
+	public void attach(WeakReference<Reader> aWeakReference) {
+		if (dispatching)
+			throw new IllegalStateException("Attach from call to post!");
 
-      if( debug ){
-         for(WeakReference<Reader> reader : readers){
-            if( reader.get() == aWeakReference.get() ){
-               throw new RuntimeException("Double registration of reader!");
-            }
-         }
-      }
+		if (debug) {
+			for (WeakReference<Reader> reader : readers) {
+				if (reader.get() == aWeakReference.get()) {
+					throw new RuntimeException("Double registration of reader!");
+				}
+			}
+		}
 
-      readers.add(aWeakReference);
-   }
+		readers.add(aWeakReference);
+	}
 
-   /**
-    * Detaches a {@link Reader} from the {@link MessageXBar}.
-    * 
-    * @param aReader
-    *           The object that shall be removed messages.
-    */
-   public void detach(Reader aReader){
-      if( dispatching )
-         throw new IllegalStateException("Detach from call to post!");
-      dispatching = true;
-      Iterator<WeakReference<Reader>> it = readers.iterator();
-      while( it.hasNext() ){
-         WeakReference<Reader> ref = it.next();
-         if( ref.get() == aReader ){
-            it.remove();
-         }
-      }
-      dispatching = false;
-   }
+	/**
+	 * Detaches a {@link Reader} from the {@link MessageXBar}.
+	 * 
+	 * @param aReader
+	 *            The object that shall be removed messages.
+	 */
+	public void detach(Reader aReader) {
+		if (dispatching)
+			throw new IllegalStateException("Detach from call to post!");
+		dispatching = true;
+		Iterator<WeakReference<Reader>> it = readers.iterator();
+		while (it.hasNext()) {
+			WeakReference<Reader> ref = it.next();
+			if (ref.get() == aReader) {
+				it.remove();
+			}
+		}
+		dispatching = false;
+	}
 }

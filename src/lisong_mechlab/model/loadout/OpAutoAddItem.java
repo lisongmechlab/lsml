@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
@@ -43,253 +43,259 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class OpAutoAddItem extends OpLoadoutBase{
-   private class Node implements Comparable<Node>{
-      final LoadoutBase<?> data;
-      final Location       source;
-      final Location       target;
-      final Item           item;
-      final Node           parent;
-      final int            score;
+public class OpAutoAddItem extends OpLoadoutBase {
+	private class Node implements Comparable<Node> {
+		final LoadoutBase<?> data;
+		final Location source;
+		final Location target;
+		final Item item;
+		final Node parent;
+		final int score;
 
-      final Item           targetItem;
+		final Item targetItem;
 
-      Node(LoadoutBase<?> aRoot, Item aItem){
-         parent = null;
-         item = aItem;
-         source = null;
-         target = null;
-         targetItem = null;
-         data = aRoot;
-         score = score();
-      }
+		Node(LoadoutBase<?> aRoot, Item aItem) {
+			parent = null;
+			item = aItem;
+			source = null;
+			target = null;
+			targetItem = null;
+			data = aRoot;
+			score = score();
+		}
 
-      Node(Node aParent, Location aSource, Location aTarget, Item aItem){
-         data = aParent.data.clone(null);
-         parent = aParent;
-         source = aSource;
-         target = aTarget;
-         targetItem = null;
-         item = aItem;
-         stack.pushAndApply(new OpRemoveItem(null, data, data.getComponent(source), item));
-         stack.pushAndApply(new OpAddItem(null, data, data.getComponent(target), item));
-         score = score();
-      }
+		Node(Node aParent, Location aSource, Location aTarget, Item aItem) {
+			data = aParent.data.clone(null);
+			parent = aParent;
+			source = aSource;
+			target = aTarget;
+			targetItem = null;
+			item = aItem;
+			stack.pushAndApply(new OpRemoveItem(null, data, data.getComponent(source), item));
+			stack.pushAndApply(new OpAddItem(null, data, data.getComponent(target), item));
+			score = score();
+		}
 
-      /**
-       * @param aParent
-       * @param aSourcePart
-       * @param aTargetPart
-       * @param aSourceItem
-       * @param aTargetItem
-       */
-      Node(Node aParent, Location aSourcePart, Location aTargetPart, Item aSourceItem, Item aTargetItem){
-         data = aParent.data.clone(null);
-         parent = aParent;
-         source = aSourcePart;
-         target = aTargetPart;
-         targetItem = aTargetItem;
-         item = aSourceItem;
+		/**
+		 * @param aParent
+		 * @param aSourcePart
+		 * @param aTargetPart
+		 * @param aSourceItem
+		 * @param aTargetItem
+		 */
+		Node(Node aParent, Location aSourcePart, Location aTargetPart, Item aSourceItem, Item aTargetItem) {
+			data = aParent.data.clone(null);
+			parent = aParent;
+			source = aSourcePart;
+			target = aTargetPart;
+			targetItem = aTargetItem;
+			item = aSourceItem;
 
-         stack.pushAndApply(new OpRemoveItem(null, data, data.getComponent(target), aTargetItem));
-         stack.pushAndApply(new OpRemoveItem(null, data, data.getComponent(source), aSourceItem));
-         stack.pushAndApply(new OpAddItem(null, data, data.getComponent(target), aSourceItem));
-         stack.pushAndApply(new OpAddItem(null, data, data.getComponent(source), aTargetItem));
-         score = score();
-      }
+			stack.pushAndApply(new OpRemoveItem(null, data, data.getComponent(target), aTargetItem));
+			stack.pushAndApply(new OpRemoveItem(null, data, data.getComponent(source), aSourceItem));
+			stack.pushAndApply(new OpAddItem(null, data, data.getComponent(target), aSourceItem));
+			stack.pushAndApply(new OpAddItem(null, data, data.getComponent(source), aTargetItem));
+			score = score();
+		}
 
-      @Override
-      public boolean equals(Object aObject){
-         if( aObject == null || !(aObject instanceof Node) )
-            return false;
-         return data.equals(((Node)aObject).data);
-      }
+		@Override
+		public boolean equals(Object aObject) {
+			if (aObject == null || !(aObject instanceof Node))
+				return false;
+			return data.equals(((Node) aObject).data);
+		}
 
-      @Override
-      public int compareTo(Node aRhs){
-         return -Integer.compare(score, aRhs.score);
-      }
+		@Override
+		public int compareTo(Node aRhs) {
+			return -Integer.compare(score, aRhs.score);
+		}
 
-      private int score(){
-         if( itemToPlace instanceof Engine && ((Engine)itemToPlace).getType() == EngineType.XL ){
-            int slotsFreeCt = Math.min(itemToPlace.getNumCriticalSlots(), data.getComponent(Location.CenterTorso).getSlotsFree());
-            int slotsFreeLt = Math.min(3, data.getComponent(Location.LeftTorso).getSlotsFree());
-            int slotsFreeRt = Math.min(3, data.getComponent(Location.RightTorso).getSlotsFree());
-            return (slotsFreeCt + slotsFreeLt + slotsFreeRt);
-         }
-         int maxFree = 0;
-         for(Location location : validLocations){
-            maxFree = Math.max(maxFree, data.getComponent(location).getSlotsFree()
-                                        * (data.getComponent(location).getInternalComponent().isAllowed(item, data.getEngine()) ? 1 : 0));
-         }
-         return maxFree;
+		private int score() {
+			if (itemToPlace instanceof Engine && ((Engine) itemToPlace).getType() == EngineType.XL) {
+				int slotsFreeCt = Math.min(itemToPlace.getNumCriticalSlots(), data.getComponent(Location.CenterTorso)
+						.getSlotsFree());
+				int slotsFreeLt = Math.min(3, data.getComponent(Location.LeftTorso).getSlotsFree());
+				int slotsFreeRt = Math.min(3, data.getComponent(Location.RightTorso).getSlotsFree());
+				return (slotsFreeCt + slotsFreeLt + slotsFreeRt);
+			}
+			int maxFree = 0;
+			for (Location location : validLocations) {
+				maxFree = Math
+						.max(maxFree,
+								data.getComponent(location).getSlotsFree()
+										* (data.getComponent(location).getInternalComponent()
+												.isAllowed(item, data.getEngine()) ? 1 : 0));
+			}
+			return maxFree;
 
-      }
-   }
+		}
+	}
 
-   private final Item           itemToPlace;
-   private final List<Location> validLocations = new ArrayList<>();
-   private final List<Location> partTraversalOrder;
-   private final OperationStack stack          = new OperationStack(0);
+	private final Item itemToPlace;
+	private final List<Location> validLocations = new ArrayList<>();
+	private final List<Location> partTraversalOrder;
+	private final OperationStack stack = new OperationStack(0);
 
-   public OpAutoAddItem(LoadoutBase<?> aLoadout, MessageXBar anXBar, Item anItem){
-      super(aLoadout, anXBar, "auto place item");
-      itemToPlace = anItem;
-      for(ConfiguredComponentBase part : aLoadout.getCandidateLocationsForItem(itemToPlace)){
-         validLocations.add(part.getInternalComponent().getLocation());
-      }
-      partTraversalOrder = getPartTraversalOrder();
-   }
+	public OpAutoAddItem(LoadoutBase<?> aLoadout, MessageXBar anXBar, Item anItem) {
+		super(aLoadout, anXBar, "auto place item");
+		itemToPlace = anItem;
+		for (ConfiguredComponentBase part : aLoadout.getCandidateLocationsForItem(itemToPlace)) {
+			validLocations.add(part.getInternalComponent().getLocation());
+		}
+		partTraversalOrder = getPartTraversalOrder();
+	}
 
-   @Override
-   protected void buildOperation(){
-      // If it can go into the engine, put it there.
-      ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
-      if( itemToPlace instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax() && ct.canAddItem(itemToPlace) ){
-         addOp(new OpAddItem(xBar, loadout, ct, itemToPlace));
-         return;
-      }
+	@Override
+	protected void buildOperation() {
+		// If it can go into the engine, put it there.
+		ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
+		if (itemToPlace instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax()
+				&& ct.canAddItem(itemToPlace)) {
+			addOp(new OpAddItem(xBar, loadout, ct, itemToPlace));
+			return;
+		}
 
-      List<Node> closed = new ArrayList<>();
-      List<Node> open = new ArrayList<>();
+		List<Node> closed = new ArrayList<>();
+		List<Node> open = new ArrayList<>();
 
-      // Initial node
-      open.add(new Node(loadout, itemToPlace));
-      while( !open.isEmpty() ){
-         Node node = open.remove(0);
-         closed.add(node);
+		// Initial node
+		open.add(new Node(loadout, itemToPlace));
+		while (!open.isEmpty()) {
+			Node node = open.remove(0);
+			closed.add(node);
 
-         // Are we there yet?
-         if( node.data.canEquip(itemToPlace) ){
-            applySolution(node);
-            return; // Yes we are!
-         }
+			// Are we there yet?
+			if (node.data.canEquip(itemToPlace)) {
+				applySolution(node);
+				return; // Yes we are!
+			}
 
-         // Not yet sweetie
-         for(Location part : partTraversalOrder){
-            ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
-            for(Item i : loadoutPart.getItemsEquipped()){
-               if( i instanceof Internal )
-                  continue;
-               List<Node> branches = getBranches(node, part, i);
-               for(Node branch : branches){
-                  if( !closed.contains(branch) && !open.contains(branch) )
-                     open.add(branch);
-               }
-            }
-         }
-         Collections.sort(open); // Greedy search, I need *a* solution, not the best one.
-      }
+			// Not yet sweetie
+			for (Location part : partTraversalOrder) {
+				ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
+				for (Item i : loadoutPart.getItemsEquipped()) {
+					if (i instanceof Internal)
+						continue;
+					List<Node> branches = getBranches(node, part, i);
+					for (Node branch : branches) {
+						if (!closed.contains(branch) && !open.contains(branch))
+							open.add(branch);
+					}
+				}
+			}
+			Collections.sort(open); // Greedy search, I need *a* solution, not the best one.
+		}
 
-      throw new IllegalArgumentException("Not possible");
-   }
+		throw new IllegalArgumentException("Not possible");
+	}
 
-   private void applySolution(Node node){
-      List<Operation> ops = new LinkedList<>();
-      Node n = node;
-      while( n.parent != null ){
-         if( n.targetItem != null ){
-            ops.add(0, new OpAddItem(xBar, loadout, loadout.getComponent(n.target), n.item));
-            ops.add(0, new OpAddItem(xBar, loadout, loadout.getComponent(n.source), n.targetItem));
-            ops.add(0, new OpRemoveItem(xBar, loadout, loadout.getComponent(n.target), n.targetItem));
-            ops.add(0, new OpRemoveItem(xBar, loadout, loadout.getComponent(n.source), n.item));
-         }
-         else{
-            ops.add(0, new OpAddItem(xBar, loadout, loadout.getComponent(n.target), n.item));
-            ops.add(0, new OpRemoveItem(xBar, loadout, loadout.getComponent(n.source), n.item));
-         }
-         n = n.parent;
-      }
-      // Look at the solution node to find which part in the original loadout the item should
-      // be added to.
-      for(Location part : partTraversalOrder){
-         ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
-         if( loadoutPart.canAddItem(itemToPlace) ){
-            ops.add(new OpAddItem(xBar, loadout, loadout.getComponent(part), itemToPlace));
-            break;
-         }
-      }
-      while( !ops.isEmpty() )
-         addOp(ops.remove(0));
-   }
+	private void applySolution(Node node) {
+		List<Operation> ops = new LinkedList<>();
+		Node n = node;
+		while (n.parent != null) {
+			if (n.targetItem != null) {
+				ops.add(0, new OpAddItem(xBar, loadout, loadout.getComponent(n.target), n.item));
+				ops.add(0, new OpAddItem(xBar, loadout, loadout.getComponent(n.source), n.targetItem));
+				ops.add(0, new OpRemoveItem(xBar, loadout, loadout.getComponent(n.target), n.targetItem));
+				ops.add(0, new OpRemoveItem(xBar, loadout, loadout.getComponent(n.source), n.item));
+			} else {
+				ops.add(0, new OpAddItem(xBar, loadout, loadout.getComponent(n.target), n.item));
+				ops.add(0, new OpRemoveItem(xBar, loadout, loadout.getComponent(n.source), n.item));
+			}
+			n = n.parent;
+		}
+		// Look at the solution node to find which part in the original loadout the item should
+		// be added to.
+		for (Location part : partTraversalOrder) {
+			ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
+			if (loadoutPart.canAddItem(itemToPlace)) {
+				ops.add(new OpAddItem(xBar, loadout, loadout.getComponent(part), itemToPlace));
+				break;
+			}
+		}
+		while (!ops.isEmpty())
+			addOp(ops.remove(0));
+	}
 
-   /**
-    * Get all possible ways to move the given item out of the source part on the node.
-    * 
-    * @param aParent
-    *           The parent {@link Node} that we're branching from.
-    * @param aSourcePart
-    *           The source part that we shall remove the {@link Item} from.
-    * @param aItem
-    *           The {@link Item} to be removed.
-    * @return A {@link List} of {@link Node}s with all possible ways to move the item out of the given node.
-    */
-   private List<Node> getBranches(Node aParent, Location aSourcePart, Item aItem){
-      List<Node> ans = new ArrayList<>();
+	/**
+	 * Get all possible ways to move the given item out of the source part on the node.
+	 * 
+	 * @param aParent
+	 *            The parent {@link Node} that we're branching from.
+	 * @param aSourcePart
+	 *            The source part that we shall remove the {@link Item} from.
+	 * @param aItem
+	 *            The {@link Item} to be removed.
+	 * @return A {@link List} of {@link Node}s with all possible ways to move the item out of the given node.
+	 */
+	private List<Node> getBranches(Node aParent, Location aSourcePart, Item aItem) {
+		List<Node> ans = new ArrayList<>();
 
-      // Create a temporary loadout where the item has been removed and find all
-      // ways it can be placed on another part.
-      LoadoutBase<?> tempLoadout = aParent.data.clone(null);
-      stack.pushAndApply(new OpRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
+		// Create a temporary loadout where the item has been removed and find all
+		// ways it can be placed on another part.
+		LoadoutBase<?> tempLoadout = aParent.data.clone(null);
+		stack.pushAndApply(new OpRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
 
-      ConfiguredComponentBase srcPart = tempLoadout.getComponent(aSourcePart);
-      for(Location targetPart : Location.values()){
-         if( aSourcePart == targetPart )
-            continue;
+		ConfiguredComponentBase srcPart = tempLoadout.getComponent(aSourcePart);
+		for (Location targetPart : Location.values()) {
+			if (aSourcePart == targetPart)
+				continue;
 
-         ConfiguredComponentBase dstPart = tempLoadout.getComponent(targetPart);
-         if( dstPart.canAddItem(aItem) ){
-            // Don't consider swaps if the item can be directly moved. A swap will be generated in another point
-            // of the search tree anyway when we move an item from that component back to this.
-            ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
-         }
-         else if( dstPart.getInternalComponent().isAllowed(aItem, tempLoadout.getEngine()) ){
-            // The part couldn't take the item directly, see if we can swap with some item in the part.
-            final int minItemSize = aItem.getNumCriticalSlots() - dstPart.getSlotsFree();
-            HardPointType requiredType = aItem.getHardpointType();
-            if( requiredType != HardPointType.NONE && dstPart.getItemsOfHardpointType(requiredType) < dstPart.getHardPointCount(requiredType) ){
-               requiredType = HardPointType.NONE; // There is at least one free hard point, we don't need to swap with a
-                                                  // item of the required type.
-            }
-            for(Item item : dstPart.getItemsEquipped()){
-               // The item has to clear enough room to make our item fit.
-               if( item instanceof HeatSink && dstPart.getEngineHeatsinks() > 0 )
-                  continue; // Engine HS will not clear slots...
-               if( item.getNumCriticalSlots() < minItemSize )
-                  continue;
+			ConfiguredComponentBase dstPart = tempLoadout.getComponent(targetPart);
+			if (dstPart.canAddItem(aItem)) {
+				// Don't consider swaps if the item can be directly moved. A swap will be generated in another point
+				// of the search tree anyway when we move an item from that component back to this.
+				ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
+			} else if (dstPart.getInternalComponent().isAllowed(aItem, tempLoadout.getEngine())) {
+				// The part couldn't take the item directly, see if we can swap with some item in the part.
+				final int minItemSize = aItem.getNumCriticalSlots() - dstPart.getSlotsFree();
+				HardPointType requiredType = aItem.getHardpointType();
+				if (requiredType != HardPointType.NONE
+						&& dstPart.getItemsOfHardpointType(requiredType) < dstPart.getHardPointCount(requiredType)) {
+					requiredType = HardPointType.NONE; // There is at least one free hard point, we don't need to swap
+														// with a
+														// item of the required type.
+				}
+				for (Item item : dstPart.getItemsEquipped()) {
+					// The item has to clear enough room to make our item fit.
+					if (item instanceof HeatSink && dstPart.getEngineHeatsinks() > 0)
+						continue; // Engine HS will not clear slots...
+					if (item.getNumCriticalSlots() < minItemSize)
+						continue;
 
-               // The item has to free a hard point of the required type if applicable.
-               if( requiredType != HardPointType.NONE && item.getHardpointType() != requiredType )
-                  continue;
-               // Skip NOPs
-               if( item == aItem )
-                  continue;
+					// The item has to free a hard point of the required type if applicable.
+					if (requiredType != HardPointType.NONE && item.getHardpointType() != requiredType)
+						continue;
+					// Skip NOPs
+					if (item == aItem)
+						continue;
 
-               // We can't move engine internals
-               if( item == ConfiguredComponentBase.ENGINE_INTERNAL || item == ConfiguredComponentBase.ENGINE_INTERNAL_CLAN )
-                  continue;
+					// We can't move engine internals
+					if (item == ConfiguredComponentBase.ENGINE_INTERNAL
+							|| item == ConfiguredComponentBase.ENGINE_INTERNAL_CLAN)
+						continue;
 
-               if( srcPart.canAddItem(item) )
-                  ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
-            }
-         }
-      }
-      return ans;
-   }
+					if (srcPart.canAddItem(item))
+						ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
+				}
+			}
+		}
+		return ans;
+	}
 
-   private List<Location> getPartTraversalOrder(){
-      Location[] partOrder = new Location[] {Location.RightArm, Location.RightTorso, Location.RightLeg, Location.Head, Location.CenterTorso,
-            Location.LeftTorso, Location.LeftLeg, Location.LeftArm};
+	private List<Location> getPartTraversalOrder() {
+		Location[] partOrder = new Location[] { Location.RightArm, Location.RightTorso, Location.RightLeg,
+				Location.Head, Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm };
 
-      List<Location> order = new ArrayList<>();
-      for(Location part : partOrder){
-         if( validLocations.contains(part) )
-            order.add(part);
-      }
-      for(Location part : partOrder){
-         if( !order.contains(part) )
-            order.add(part);
-      }
-      return Collections.unmodifiableList(order);
-   }
+		List<Location> order = new ArrayList<>();
+		for (Location part : partOrder) {
+			if (validLocations.contains(part))
+				order.add(part);
+		}
+		for (Location part : partOrder) {
+			if (!order.contains(part))
+				order.add(part);
+		}
+		return Collections.unmodifiableList(order);
+	}
 }

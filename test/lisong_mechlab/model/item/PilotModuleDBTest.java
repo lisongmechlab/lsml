@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -30,20 +30,20 @@ import org.junit.Test;
  * 
  * @author Emily Björk
  */
-public class PilotModuleDBTest{
+public class PilotModuleDBTest {
 
-   @Test
-   public void testLookup_ByID(){
-      WeaponModule module = (WeaponModule)PilotModuleDB.lookup(4234);
+	@Test
+	public void testLookup_ByID() {
+		WeaponModule module = (WeaponModule) PilotModuleDB.lookup(4234);
 
-      MissileWeapon srm2 = (MissileWeapon)ItemDB.lookup("SRM2");
-      MissileWeapon srm2artemis = (MissileWeapon)ItemDB.lookup("SRM2_Artemis");
+		MissileWeapon srm2 = (MissileWeapon) ItemDB.lookup("SRM2");
+		MissileWeapon srm2artemis = (MissileWeapon) ItemDB.lookup("SRM2_Artemis");
 
-      assertTrue(module.affectsWeapon(srm2));
-      assertTrue(module.affectsWeapon(srm2artemis));
+		assertTrue(module.affectsWeapon(srm2));
+		assertTrue(module.affectsWeapon(srm2artemis));
 
-      assertEquals(30, module.extraLongRange(srm2, 0, null), 0.0);
-      assertEquals(30, module.extraMaxRange(srm2artemis, 0, null), 0.0);
-      assertEquals(0.0, module.extraWeaponHeat(srm2artemis, 0, null), 0.0);
-   }
+		assertEquals(30, module.extraLongRange(srm2, 0, null), 0.0);
+		assertEquals(30, module.extraMaxRange(srm2artemis, 0, null), 0.0);
+		assertEquals(0.0, module.extraWeaponHeat(srm2artemis, 0, null), 0.0);
+	}
 }

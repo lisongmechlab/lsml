@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view;
 
@@ -34,106 +34,107 @@ import lisong_mechlab.view.action.ImportMechAction;
 import lisong_mechlab.view.action.OpenHelp;
 import lisong_mechlab.view.action.OpenPreferences;
 
-public class MenuBar extends JMenuBar{
-   private static final long serialVersionUID = -8841283911101837906L;
+public class MenuBar extends JMenuBar {
+	private static final long serialVersionUID = -8841283911101837906L;
 
-   public MenuBar(final LSML application){
-      super();
+	public MenuBar(final LSML application) {
+		super();
 
-      {
-         JMenu menu = new JMenu("Program");
-         menu.setMnemonic(KeyEvent.VK_P);
-         menu.getAccessibleContext().setAccessibleDescription("Actions relating to the program");
-         add(menu);
+		{
+			JMenu menu = new JMenu("Program");
+			menu.setMnemonic(KeyEvent.VK_P);
+			menu.getAccessibleContext().setAccessibleDescription("Actions relating to the program");
+			add(menu);
 
-         menu.add(new JMenuItem(new OpenPreferences("Preferences", KeyStroke.getKeyStroke('p'))));
-         menu.add(new JMenuItem(new OpenHelp("About", "About", KeyStroke.getKeyStroke('a'))));
-         menu.add(new JMenuItem(new OpenHelp("User Manual", "User-Manual", KeyStroke.getKeyStroke('m'))));
-         menu.add(new JMenuItem(new OpenHelp("Legal", "Legal", KeyStroke.getKeyStroke('m'))));
+			menu.add(new JMenuItem(new OpenPreferences("Preferences", KeyStroke.getKeyStroke('p'))));
+			menu.add(new JMenuItem(new OpenHelp("About", "About", KeyStroke.getKeyStroke('a'))));
+			menu.add(new JMenuItem(new OpenHelp("User Manual", "User-Manual", KeyStroke.getKeyStroke('m'))));
+			menu.add(new JMenuItem(new OpenHelp("Legal", "Legal", KeyStroke.getKeyStroke('m'))));
 
-         {
-            JMenuItem item = new JMenuItem("Quit", KeyEvent.VK_Q);
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent arg0){
-                  // TODO: make an action out of this
-                  application.shutdown();
-               }
-            });
-            menu.add(item);
-         }
-      }
+			{
+				JMenuItem item = new JMenuItem("Quit", KeyEvent.VK_Q);
+				item.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						// TODO: make an action out of this
+						application.shutdown();
+					}
+				});
+				menu.add(item);
+			}
+		}
 
-      {
-         JMenu menu = new JMenu("Mech");
-         menu.setMnemonic(KeyEvent.VK_M);
-         menu.getAccessibleContext().setAccessibleDescription("Actions relating to mech configurations");
-         add(menu);
+		{
+			JMenu menu = new JMenu("Mech");
+			menu.setMnemonic(KeyEvent.VK_M);
+			menu.getAccessibleContext().setAccessibleDescription("Actions relating to mech configurations");
+			add(menu);
 
-         menu.add(new JMenuItem(new ImportMechAction("Import...", KeyStroke.getKeyStroke('i'))));
-      }
+			menu.add(new JMenuItem(new ImportMechAction("Import...", KeyStroke.getKeyStroke('i'))));
+		}
 
-      {
-         JMenu menu = new JMenu("Garage");
-         menu.setMnemonic(KeyEvent.VK_G);
-         menu.getAccessibleContext().setAccessibleDescription("Actions relating to the garage");
-         add(menu);
+		{
+			JMenu menu = new JMenu("Garage");
+			menu.setMnemonic(KeyEvent.VK_G);
+			menu.getAccessibleContext().setAccessibleDescription("Actions relating to the garage");
+			add(menu);
 
-         {
-            JMenuItem item = new JMenuItem("New", KeyEvent.VK_N);
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent aArg0){
-                  // TODO: make an action out of this
-                  application.newGarage();
-               }
-            });
+			{
+				JMenuItem item = new JMenuItem("New", KeyEvent.VK_N);
+				item.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent aArg0) {
+						// TODO: make an action out of this
+						application.newGarage();
+					}
+				});
 
-            menu.add(item);
-         }
-         menu.add(new JMenuItem(application.undoGarageAction));
-         menu.add(new JMenuItem(application.redoGarageAction));
-         {
-            JMenuItem item = new JMenuItem("Open", KeyEvent.VK_O);
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent aArg0){
-                  // TODO: make an action out of this
-                  application.openGarage();
-               }
-            });
+				menu.add(item);
+			}
+			menu.add(new JMenuItem(application.undoGarageAction));
+			menu.add(new JMenuItem(application.redoGarageAction));
+			{
+				JMenuItem item = new JMenuItem("Open", KeyEvent.VK_O);
+				item.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent aArg0) {
+						// TODO: make an action out of this
+						application.openGarage();
+					}
+				});
 
-            menu.add(item);
-         }
+				menu.add(item);
+			}
 
-         {
-            JMenuItem item = new JMenuItem("Save", KeyEvent.VK_S);
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent aArg0){
-                  // TODO: make an action out of this
-                  application.saveGarage();
-               }
-            });
+			{
+				JMenuItem item = new JMenuItem("Save", KeyEvent.VK_S);
+				item.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent aArg0) {
+						// TODO: make an action out of this
+						application.saveGarage();
+					}
+				});
 
-            menu.add(item);
-         }
-         {
-            JMenuItem item = new JMenuItem("Save as...", KeyEvent.VK_A);
-            item.addActionListener(new ActionListener(){
-               @Override
-               public void actionPerformed(ActionEvent aArg0){
-                  // TODO: make an action out of this
-                  application.saveGarageAs();
-               }
-            });
+				menu.add(item);
+			}
+			{
+				JMenuItem item = new JMenuItem("Save as...", KeyEvent.VK_A);
+				item.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent aArg0) {
+						// TODO: make an action out of this
+						application.saveGarageAs();
+					}
+				});
 
-            menu.add(item);
-         }
+				menu.add(item);
+			}
 
-         menu.add(new JMenuItem(new ImportFromSmurfyAction(SwingUtilities.getWindowAncestor(this), application.loadoutCoder)));
-      }
+			menu.add(new JMenuItem(new ImportFromSmurfyAction(SwingUtilities.getWindowAncestor(this),
+					application.loadoutCoder)));
+		}
 
-      setEnabled(true);
-   }
+		setEnabled(true);
+	}
 }

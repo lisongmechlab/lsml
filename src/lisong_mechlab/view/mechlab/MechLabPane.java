@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.mechlab;
 
@@ -50,98 +50,98 @@ import lisong_mechlab.view.render.StyleManager;
  * 
  * @author Emily Björk
  */
-public class MechLabPane extends JSplitPane{
-   private static final long    serialVersionUID = 1079910953509846928L;
-   private final LoadoutDesktop desktop;
-   private final MessageXBar    xBar;
+public class MechLabPane extends JSplitPane {
+	private static final long serialVersionUID = 1079910953509846928L;
+	private final LoadoutDesktop desktop;
+	private final MessageXBar xBar;
 
-   public MechLabPane(MessageXBar anXBar, Preferences aPreferences){
-      super(JSplitPane.HORIZONTAL_SPLIT, true);
-      xBar = anXBar;
-      desktop = new LoadoutDesktop(xBar);
+	public MechLabPane(MessageXBar anXBar, Preferences aPreferences) {
+		super(JSplitPane.HORIZONTAL_SPLIT, true);
+		xBar = anXBar;
+		desktop = new LoadoutDesktop(xBar);
 
-      JTextField filterBar = new JTextField();
-      JPanel filterPanel = new JPanel(new BorderLayout(5, 5));
-      filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-      filterPanel.add(new JLabel("Filter:"), BorderLayout.LINE_START);
-      filterPanel.add(filterBar, BorderLayout.CENTER);
+		JTextField filterBar = new JTextField();
+		JPanel filterPanel = new JPanel(new BorderLayout(5, 5));
+		filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		filterPanel.add(new JLabel("Filter:"), BorderLayout.LINE_START);
+		filterPanel.add(filterBar, BorderLayout.CENTER);
 
-      JPanel garagePanel = new JPanel(new BorderLayout());
-      garagePanel.add(filterPanel, BorderLayout.PAGE_START);
-      garagePanel.add(new JScrollPane(new GarageTree(desktop, xBar, filterBar, aPreferences)), BorderLayout.CENTER);
+		JPanel garagePanel = new JPanel(new BorderLayout());
+		garagePanel.add(filterPanel, BorderLayout.PAGE_START);
+		garagePanel.add(new JScrollPane(new GarageTree(desktop, xBar, filterBar, aPreferences)), BorderLayout.CENTER);
 
-      JTabbedPane tabbedPane = new JTabbedPane();
-      tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
-      tabbedPane.addTab("Garage", garagePanel);
-      
-      JPanel modulesPanel = new ScrollablePanel();
-      modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.PAGE_AXIS));
-      
-      for(ModuleSlot slotType : ModuleSlot.values()){
-         JPanel panel = new JPanel();
-         panel.setLayout(new BorderLayout());
-         panel.setBorder(StyleManager.sectionBorder(slotType.toString()));
-         panel.add(new ModuleSeletionList(desktop, anXBar, slotType), BorderLayout.CENTER);
-         modulesPanel.add(panel);
-      }
-      
-      tabbedPane.addTab("Modules", new JScrollPane(modulesPanel));
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
+		tabbedPane.addTab("Garage", garagePanel);
 
-      setLeftComponent(tabbedPane);
-      setRightComponent(desktop);
-      setDividerLocation(getLeftComponent().getMinimumSize().width);
-   }
+		JPanel modulesPanel = new ScrollablePanel();
+		modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.PAGE_AXIS));
 
-   /**
-    * Will open the given {@link LoadoutBase} into the desktop pane by creating a new {@link LoadoutFrame}.
-    * 
-    * @param aLoadout
-    *           The {@link LoadoutBase} to create the frame for.
-    */
-   public void openLoadout(LoadoutBase<?> aLoadout){
-      desktop.openLoadout(aLoadout);
-   }
+		for (ModuleSlot slotType : ModuleSlot.values()) {
+			JPanel panel = new JPanel();
+			panel.setLayout(new BorderLayout());
+			panel.setBorder(StyleManager.sectionBorder(slotType.toString()));
+			panel.add(new ModuleSeletionList(desktop, anXBar, slotType), BorderLayout.CENTER);
+			modulesPanel.add(panel);
+		}
 
-   /**
-    * @return The currently selected loadout.
-    */
-   public LoadoutBase<?> getCurrentLoadout(){
-      if( null != getActiveLoadoutFrame() )
-         return getActiveLoadoutFrame().getLoadout();
-      return null;
-   }
+		tabbedPane.addTab("Modules", new JScrollPane(modulesPanel));
 
-   /**
-    * @return The currently selected {@link LoadoutFrame}.
-    */
-   public LoadoutFrame getActiveLoadoutFrame(){
-      return (LoadoutFrame)desktop.getSelectedFrame();
-   }
+		setLeftComponent(tabbedPane);
+		setRightComponent(desktop);
+		setDividerLocation(getLeftComponent().getMinimumSize().width);
+	}
 
-   /**
-    * Will open the given {@link LoadoutStandard} into the desktop pane by creating a new {@link LoadoutFrame}.
-    * 
-    * @param aLSMLUrl
-    *           The LSML link to open.
-    */
-   public void openLoadout(String aLSMLUrl){
-      assert (SwingUtilities.isEventDispatchThread());
-      try{
-         openLoadout(ProgramInit.lsml().loadoutCoder.parse(aLSMLUrl));
-      }
-      catch( DecodingException e ){
-         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to import loadout from \"" + aLSMLUrl + "\"!\n\nError:\n" + e);
-      }
-      catch( Throwable e ){
-         JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to decode: " + aLSMLUrl + "\n\n" + "The link is malformed.\nError:" + e);
-      }
-   }
+	/**
+	 * Will open the given {@link LoadoutBase} into the desktop pane by creating a new {@link LoadoutFrame}.
+	 * 
+	 * @param aLoadout
+	 *            The {@link LoadoutBase} to create the frame for.
+	 */
+	public void openLoadout(LoadoutBase<?> aLoadout) {
+		desktop.openLoadout(aLoadout);
+	}
 
-   /**
-    * @return <code>true</code> if the pane was closed, <code>false</code> otherwise.
-    */
-   public boolean close(){
-      return desktop.closeAll();
-   }
+	/**
+	 * @return The currently selected loadout.
+	 */
+	public LoadoutBase<?> getCurrentLoadout() {
+		if (null != getActiveLoadoutFrame())
+			return getActiveLoadoutFrame().getLoadout();
+		return null;
+	}
+
+	/**
+	 * @return The currently selected {@link LoadoutFrame}.
+	 */
+	public LoadoutFrame getActiveLoadoutFrame() {
+		return (LoadoutFrame) desktop.getSelectedFrame();
+	}
+
+	/**
+	 * Will open the given {@link LoadoutStandard} into the desktop pane by creating a new {@link LoadoutFrame}.
+	 * 
+	 * @param aLSMLUrl
+	 *            The LSML link to open.
+	 */
+	public void openLoadout(String aLSMLUrl) {
+		assert (SwingUtilities.isEventDispatchThread());
+		try {
+			openLoadout(ProgramInit.lsml().loadoutCoder.parse(aLSMLUrl));
+		} catch (DecodingException e) {
+			JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to import loadout from \"" + aLSMLUrl
+					+ "\"!\n\nError:\n" + e);
+		} catch (Throwable e) {
+			JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to decode: " + aLSMLUrl + "\n\n"
+					+ "The link is malformed.\nError:" + e);
+		}
+	}
+
+	/**
+	 * @return <code>true</code> if the pane was closed, <code>false</code> otherwise.
+	 */
+	public boolean close() {
+		return desktop.closeAll();
+	}
 
 }

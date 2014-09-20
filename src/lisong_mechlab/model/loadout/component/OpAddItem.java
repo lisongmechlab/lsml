@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
@@ -29,55 +29,56 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Emily Björk
  */
-public class OpAddItem extends OpItemBase{
-   /**
-    * Creates a new operation.
-    * 
-    * @param aXBar
-    *           The {@link MessageXBar} to send messages on when items are added.
-    * @param aLoadout
-    *           The {@link LoadoutBase} to remove the item from.
-    * @param aComponent
-    *           The {@link ConfiguredComponentBase} to add to.
-    * @param aItem
-    *           The {@link Item} to add.
-    */
-   public OpAddItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem){
-      super(aXBar, aLoadout, aComponent, aItem);
-   }
+public class OpAddItem extends OpItemBase {
+	/**
+	 * Creates a new operation.
+	 * 
+	 * @param aXBar
+	 *            The {@link MessageXBar} to send messages on when items are added.
+	 * @param aLoadout
+	 *            The {@link LoadoutBase} to remove the item from.
+	 * @param aComponent
+	 *            The {@link ConfiguredComponentBase} to add to.
+	 * @param aItem
+	 *            The {@link Item} to add.
+	 */
+	public OpAddItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem) {
+		super(aXBar, aLoadout, aComponent, aItem);
+	}
 
-   @Override
-   public int hashCode(){
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((item == null) ? 0 : item.hashCode());
-      return result;
-   }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((item == null) ? 0 : item.hashCode());
+		return result;
+	}
 
-   @Override
-   public boolean equals(Object obj){
-      if( !(obj instanceof OpRemoveItem) )
-         return false;
-      OpAddItem other = (OpAddItem)obj;
-      return item == other.item && super.equals(other);
-   }
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof OpRemoveItem))
+			return false;
+		OpAddItem other = (OpAddItem) obj;
+		return item == other.item && super.equals(other);
+	}
 
-   @Override
-   public String describe(){
-      return "add " + item.getName() + " to " + component.getInternalComponent().getLocation();
-   }
+	@Override
+	public String describe() {
+		return "add " + item.getName() + " to " + component.getInternalComponent().getLocation();
+	}
 
-   @Override
-   public void undo(){
-      removeItem(item);
-   }
+	@Override
+	public void undo() {
+		removeItem(item);
+	}
 
-   @Override
-   public void apply(){
-      if( !loadout.canEquip(item) )
-         throw new IllegalArgumentException("Can't add " + item + " to " + loadout.getName() + "!");
-      if( !component.canAddItem(item) )
-         throw new IllegalArgumentException("Can't add " + item + " to " + component.getInternalComponent().getLocation() + "!");
-      addItem(item);
-   }
+	@Override
+	public void apply() {
+		if (!loadout.canEquip(item))
+			throw new IllegalArgumentException("Can't add " + item + " to " + loadout.getName() + "!");
+		if (!component.canAddItem(item))
+			throw new IllegalArgumentException("Can't add " + item + " to "
+					+ component.getInternalComponent().getLocation() + "!");
+		addItem(item);
+	}
 }

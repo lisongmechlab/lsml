@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -24,6 +24,6 @@ package lisong_mechlab.util;
  * 
  * @author Emily Björk
  */
-public class MutableInt{
-   public int v;
+public class MutableInt {
+	public int v;
 }

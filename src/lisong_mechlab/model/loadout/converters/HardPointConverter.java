@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
@@ -28,40 +28,40 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class HardPointConverter implements Converter{
+public class HardPointConverter implements Converter {
 
-   @Override
-   public boolean canConvert(Class aClass){
-      return HardPoint.class.isAssignableFrom(aClass);
-   }
+	@Override
+	public boolean canConvert(Class aClass) {
+		return HardPoint.class.isAssignableFrom(aClass);
+	}
 
-   @Override
-   public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      HardPoint hp = (HardPoint)anObject;
+	@Override
+	public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+		HardPoint hp = (HardPoint) anObject;
 
-      aWriter.addAttribute("type", hp.getType().toString());
-      if( hp.getNumMissileTubes() > 0 ){
-         aWriter.addAttribute("tubes", Integer.toString(hp.getNumMissileTubes()));
-      }
-      if( hp.hasMissileBayDoor() != false ){
-         aWriter.addAttribute("bayDoor", Boolean.toString(hp.hasMissileBayDoor()));
-      }
-   }
+		aWriter.addAttribute("type", hp.getType().toString());
+		if (hp.getNumMissileTubes() > 0) {
+			aWriter.addAttribute("tubes", Integer.toString(hp.getNumMissileTubes()));
+		}
+		if (hp.hasMissileBayDoor() != false) {
+			aWriter.addAttribute("bayDoor", Boolean.toString(hp.hasMissileBayDoor()));
+		}
+	}
 
-   @Override
-   public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
-      HardPointType type = HardPointType.valueOf(aReader.getAttribute("type"));
-      int numTubes = 0;
-      boolean hasDoors = false;
+	@Override
+	public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+		HardPointType type = HardPointType.valueOf(aReader.getAttribute("type"));
+		int numTubes = 0;
+		boolean hasDoors = false;
 
-      String tubes = aReader.getAttribute("tubes");
-      String doors = aReader.getAttribute("bayDoor");
+		String tubes = aReader.getAttribute("tubes");
+		String doors = aReader.getAttribute("bayDoor");
 
-      if( null != tubes && !tubes.isEmpty() )
-         numTubes = Integer.parseInt(tubes);
-      if( null != doors && !doors.isEmpty() )
-         hasDoors = Boolean.parseBoolean(doors);
-      return new HardPoint(type, numTubes, hasDoors);
-   }
+		if (null != tubes && !tubes.isEmpty())
+			numTubes = Integer.parseInt(tubes);
+		if (null != doors && !doors.isEmpty())
+			hasDoors = Boolean.parseBoolean(doors);
+		return new HardPoint(type, numTubes, hasDoors);
+	}
 
 }

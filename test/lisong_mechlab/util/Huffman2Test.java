@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -33,48 +33,49 @@ import org.junit.Test;
  * 
  * @author Emily Björk
  */
-public class Huffman2Test extends Huffman1Test{
+public class Huffman2Test extends Huffman1Test {
 
-   /**
-    * Shall produce the correct output for the example given <a href="https://github.com/EmilyBjoerk/lsml/issues/317">
-    * here</a>.
-    * <p>
-    * <code>e = 2, b = 4, a = 1, c = 2, d = 1, STOP = 0</code> shall produce:
-    * <code>c = 00, e = 01, b = 11, d = 100, a = 1011, STOP = 1010</code>
-    * @throws EncodingException 
-    */
-   @Test
-   public void testGithubExample() throws EncodingException{
-      
-      Map<Character, Integer> aSymbolFrequencyTable = new HashMap<Character, Integer>();
-      
-      aSymbolFrequencyTable.put('e', 2);
-      aSymbolFrequencyTable.put('b', 4);
-      aSymbolFrequencyTable.put('a', 1);
-      aSymbolFrequencyTable.put('c', 2);
-      aSymbolFrequencyTable.put('d', 1);
-      
-      Huffman2<Character> cut = new Huffman2<Character>(aSymbolFrequencyTable, null);
+	/**
+	 * Shall produce the correct output for the example given <a href="https://github.com/EmilyBjoerk/lsml/issues/317">
+	 * here</a>.
+	 * <p>
+	 * <code>e = 2, b = 4, a = 1, c = 2, d = 1, STOP = 0</code> shall produce:
+	 * <code>c = 00, e = 01, b = 11, d = 100, a = 1011, STOP = 1010</code>
+	 * 
+	 * @throws EncodingException
+	 */
+	@Test
+	public void testGithubExample() throws EncodingException {
 
-      byte[] e = cut.encode(Arrays.asList(Character.valueOf('e')));
-      byte[] b = cut.encode(Arrays.asList(Character.valueOf('b')));
-      byte[] a = cut.encode(Arrays.asList(Character.valueOf('a')));
-      byte[] c = cut.encode(Arrays.asList(Character.valueOf('c')));
-      byte[] d = cut.encode(Arrays.asList(Character.valueOf('d')));
-            
-      assertEquals(1, e.length);
-      assertEquals((byte)0x68, e[0]& ~0x3); // 0b0110 10xx = 0x68 (with xx=00) 
-      
-      assertEquals(1, b.length);
-      assertEquals((byte)0xe8, b[0]& ~0x3); // 0b1110 10xx = 0xe8 (with xx=00)
-      
-      assertEquals(1, a.length);
-      assertEquals((byte)0xba, a[0]); // 0b1011 1010 = 0xba
-      
-      assertEquals(1, c.length);
-      assertEquals((byte)0x28, c[0]& ~0x3); // 0b0010 10xx = 0x28 (with xx=00)
-      
-      assertEquals(1, d.length);
-      assertEquals((byte)0x94, d[0]& ~0x1); // 0b1001 010x = 0x94 (with x=0)
-   }
+		Map<Character, Integer> aSymbolFrequencyTable = new HashMap<Character, Integer>();
+
+		aSymbolFrequencyTable.put('e', 2);
+		aSymbolFrequencyTable.put('b', 4);
+		aSymbolFrequencyTable.put('a', 1);
+		aSymbolFrequencyTable.put('c', 2);
+		aSymbolFrequencyTable.put('d', 1);
+
+		Huffman2<Character> cut = new Huffman2<Character>(aSymbolFrequencyTable, null);
+
+		byte[] e = cut.encode(Arrays.asList(Character.valueOf('e')));
+		byte[] b = cut.encode(Arrays.asList(Character.valueOf('b')));
+		byte[] a = cut.encode(Arrays.asList(Character.valueOf('a')));
+		byte[] c = cut.encode(Arrays.asList(Character.valueOf('c')));
+		byte[] d = cut.encode(Arrays.asList(Character.valueOf('d')));
+
+		assertEquals(1, e.length);
+		assertEquals((byte) 0x68, e[0] & ~0x3); // 0b0110 10xx = 0x68 (with xx=00)
+
+		assertEquals(1, b.length);
+		assertEquals((byte) 0xe8, b[0] & ~0x3); // 0b1110 10xx = 0xe8 (with xx=00)
+
+		assertEquals(1, a.length);
+		assertEquals((byte) 0xba, a[0]); // 0b1011 1010 = 0xba
+
+		assertEquals(1, c.length);
+		assertEquals((byte) 0x28, c[0] & ~0x3); // 0b0010 10xx = 0x28 (with xx=00)
+
+		assertEquals(1, d.length);
+		assertEquals((byte) 0x94, d[0] & ~0x1); // 0b1001 010x = 0x94 (with x=0)
+	}
 }

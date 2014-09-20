@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
@@ -29,57 +29,56 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Emily Björk
  */
-public class ArmorUpgrade extends Upgrade{
-   @XStreamAsAttribute
-   private final int    slots;
-   @XStreamAsAttribute
-   private final double armorPerTon;
+public class ArmorUpgrade extends Upgrade {
+	@XStreamAsAttribute
+	private final int slots;
+	@XStreamAsAttribute
+	private final double armorPerTon;
 
-   public ArmorUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots, double aArmorPerTon){
-      super(aName, aDescription, aMwoId, aFaction);
-      slots = aExtraSlots;
-      armorPerTon = aArmorPerTon;
-   }
+	public ArmorUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots,
+			double aArmorPerTon) {
+		super(aName, aDescription, aMwoId, aFaction);
+		slots = aExtraSlots;
+		armorPerTon = aArmorPerTon;
+	}
 
-   public ArmorUpgrade(ItemStatsUpgradeType aUpgradeType){
-      super(aUpgradeType);
-      if( aUpgradeType.SlotUsage != null ){
-         slots = aUpgradeType.SlotUsage.slots;
-      }
-      else{
-         slots = 0;
-      }
-      armorPerTon = aUpgradeType.ArmorTypeStats.armorPerTon;
-   }
+	public ArmorUpgrade(ItemStatsUpgradeType aUpgradeType) {
+		super(aUpgradeType);
+		if (aUpgradeType.SlotUsage != null) {
+			slots = aUpgradeType.SlotUsage.slots;
+		} else {
+			slots = 0;
+		}
+		armorPerTon = aUpgradeType.ArmorTypeStats.armorPerTon;
+	}
 
-   /**
-    * @return The number of extra slots required by this upgrade.
-    */
-   public int getExtraSlots(){
-      return slots;
-   }
+	/**
+	 * @return The number of extra slots required by this upgrade.
+	 */
+	public int getExtraSlots() {
+		return slots;
+	}
 
-   /**
-    * @return The number of points of armor per ton from this armor type.
-    */
-   public double getArmorPerTon(){
-      return armorPerTon;
-   }
+	/**
+	 * @return The number of points of armor per ton from this armor type.
+	 */
+	public double getArmorPerTon() {
+		return armorPerTon;
+	}
 
-   /**
-    * Calculates the mass of the given amount of armor points.
-    * 
-    * @param aArmor
-    *           The amount of armor.
-    * @return The mass of the given armor amount.
-    */
-   public double getArmorMass(int aArmor){
-      return aArmor / armorPerTon;
-   }
-   
+	/**
+	 * Calculates the mass of the given amount of armor points.
+	 * 
+	 * @param aArmor
+	 *            The amount of armor.
+	 * @return The mass of the given armor amount.
+	 */
+	public double getArmorMass(int aArmor) {
+		return aArmor / armorPerTon;
+	}
 
-   @Override
-   public UpgradeType getType(){
-      return UpgradeType.ARMOR;
-   }
+	@Override
+	public UpgradeType getType() {
+		return UpgradeType.ARMOR;
+	}
 }

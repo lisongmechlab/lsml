@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
@@ -37,46 +37,46 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class OpRenameTest{
+public class OpRenameTest {
 
-   @Mock
-   private MessageXBar xBar;
+	@Mock
+	private MessageXBar xBar;
 
-   /**
-    * We can rename {@link LoadoutStandard}s.
-    */
-   @Test
-   public void testApply(){
-      // Setup
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"));
-      assertEquals("HBK-4J", loadout.getName());
+	/**
+	 * We can rename {@link LoadoutStandard}s.
+	 */
+	@Test
+	public void testApply() {
+		// Setup
+		LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("HBK-4J"));
+		assertEquals("HBK-4J", loadout.getName());
 
-      // Execute
-      OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new OpRename(loadout, xBar, "Test"));
+		// Execute
+		OperationStack stack = new OperationStack(0);
+		stack.pushAndApply(new OpRename(loadout, xBar, "Test"));
 
-      // Verify
-      assertEquals("Test", loadout.getName());
-      assertEquals("Test (HBK-4J)", loadout.toString());
-      verify(xBar).post(new LoadoutMessage(loadout, LoadoutMessage.Type.RENAME));
-   }
+		// Verify
+		assertEquals("Test", loadout.getName());
+		assertEquals("Test (HBK-4J)", loadout.toString());
+		verify(xBar).post(new LoadoutMessage(loadout, LoadoutMessage.Type.RENAME));
+	}
 
-   /**
-    * A <code>null</code> xbar doesn't cause an error.
-    */
-   @Test
-   public void testApply_nullXbar(){
-      // Setup
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"));
-      assertEquals("HBK-4J", loadout.getName());
+	/**
+	 * A <code>null</code> xbar doesn't cause an error.
+	 */
+	@Test
+	public void testApply_nullXbar() {
+		// Setup
+		LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("HBK-4J"));
+		assertEquals("HBK-4J", loadout.getName());
 
-      // Execute
-      OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new OpRename(loadout, null, "Test"));
+		// Execute
+		OperationStack stack = new OperationStack(0);
+		stack.pushAndApply(new OpRename(loadout, null, "Test"));
 
-      // Verify
-      assertEquals("Test", loadout.getName());
-      assertEquals("Test (HBK-4J)", loadout.toString());
-   }
+		// Verify
+		assertEquals("Test", loadout.getName());
+		assertEquals("Test (HBK-4J)", loadout.toString());
+	}
 
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
@@ -49,97 +49,102 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class OpAddItemTest{
-   @Mock
-   private ConfiguredComponentBase loadoutPart;
-   @Mock
-   private LoadoutBase<?>          loadout;
-   @Mock
-   private Upgrades                upgrades;
-   @Mock
-   private MessageXBar             xBar;
-   @Mock
-   private ComponentBase           internalPart;
+public class OpAddItemTest {
+	@Mock
+	private ConfiguredComponentBase loadoutPart;
+	@Mock
+	private LoadoutBase<?> loadout;
+	@Mock
+	private Upgrades upgrades;
+	@Mock
+	private MessageXBar xBar;
+	@Mock
+	private ComponentBase internalPart;
 
-   @Before
-   public void setup(){
-      Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-      Mockito.when(loadoutPart.getInternalComponent()).thenReturn(internalPart);
-      Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
-   }
+	@Before
+	public void setup() {
+		Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+		Mockito.when(loadoutPart.getInternalComponent()).thenReturn(internalPart);
+		Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
+	}
 
-   @Test
-   public void testDescription(){
-      Item item = ItemDB.ECM;
+	@Test
+	public void testDescription() {
+		Item item = ItemDB.ECM;
 
-      OpAddItem cut = new OpAddItem(xBar, loadout, loadoutPart, item);
+		OpAddItem cut = new OpAddItem(xBar, loadout, loadoutPart, item);
 
-      assertTrue(cut.describe().contains("add"));
-      assertTrue(cut.describe().contains("to"));
-      assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
-      assertTrue(cut.describe().contains(item.getName()));
-   }
+		assertTrue(cut.describe().contains("add"));
+		assertTrue(cut.describe().contains("to"));
+		assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
+		assertTrue(cut.describe().contains(item.getName()));
+	}
 
-   @Test
-   public void testDescription_artemis(){
-      Item item = ItemDB.lookup("LRM 20");
-      Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
+	@Test
+	public void testDescription_artemis() {
+		Item item = ItemDB.lookup("LRM 20");
+		Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
 
-      OpAddItem cut = new OpAddItem(xBar, loadout, loadoutPart, item);
+		OpAddItem cut = new OpAddItem(xBar, loadout, loadoutPart, item);
 
-      assertTrue(cut.describe().contains("add"));
-      assertTrue(cut.describe().contains("to"));
-      assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
-      assertTrue(cut.describe().contains(item.getName()));
-   }
+		assertTrue(cut.describe().contains("add"));
+		assertTrue(cut.describe().contains("to"));
+		assertTrue(cut.describe().contains(loadoutPart.getInternalComponent().getLocation().toString()));
+		assertTrue(cut.describe().contains(item.getName()));
+	}
 
-   /**
-    * If an item can't be added, an exception shall be thrown when the operation is applied.
-    */
-   @Test(expected = IllegalArgumentException.class)
-   public void testCantAddItem(){
-      OpAddItem cut = null;
-      try{
-         Item item = ItemDB.lookup("LRM 20");
-         Mockito.when(loadout.canEquip(item)).thenReturn(true);
-         Mockito.when(loadoutPart.canAddItem(item)).thenReturn(false);
-         cut = new OpAddItem(xBar, loadout, loadoutPart, item);
-      }
-      catch( Throwable t ){
-         fail("Setup failed");
-         return;
-      }
+	/**
+	 * If an item can't be added, an exception shall be thrown when the operation is applied.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testCantAddItem() {
+		OpAddItem cut = null;
+		try {
+			Item item = ItemDB.lookup("LRM 20");
+			Mockito.when(loadout.canEquip(item)).thenReturn(true);
+			Mockito.when(loadoutPart.canAddItem(item)).thenReturn(false);
+			cut = new OpAddItem(xBar, loadout, loadoutPart, item);
+		} catch (Throwable t) {
+			fail("Setup failed");
+			return;
+		}
 
-      cut.apply();
-   }
+		cut.apply();
+	}
 
-   /**
-    * C.A.S.E. together with an XL engine should generate a warning notice
-    */
-   @Test
-   public void testAddItem_XLCaseLeft(){
-      LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
-      OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
+	/**
+	 * C.A.S.E. together with an XL engine should generate a warning notice
+	 */
+	@Test
+	public void testAddItem_XLCaseLeft() {
+		LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("AS7-D-DC"));
+		OperationStack stack = new OperationStack(0);
+		stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB
+				.lookup("XL ENGINE 300")));
 
-      OpAddItem cut = new OpAddItem(xBar, testLoadout, testLoadout.getComponent(Location.LeftTorso), ItemDB.CASE);
-      cut.apply();
+		OpAddItem cut = new OpAddItem(xBar, testLoadout, testLoadout.getComponent(Location.LeftTorso), ItemDB.CASE);
+		cut.apply();
 
-      Mockito.verify(xBar).post(new NotificationMessage(Severity.WARNING, testLoadout, "C.A.S.E. together with XL engine has no effect."));
-   }
+		Mockito.verify(xBar).post(
+				new NotificationMessage(Severity.WARNING, testLoadout,
+						"C.A.S.E. together with XL engine has no effect."));
+	}
 
-   /**
-    * C.A.S.E. together with an XL engine should generate a warning notice
-    */
-   @Test
-   public void testAddItem_XLCaseRight(){
-      LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("AS7-D-DC"));
-      OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB.lookup("XL ENGINE 300")));
+	/**
+	 * C.A.S.E. together with an XL engine should generate a warning notice
+	 */
+	@Test
+	public void testAddItem_XLCaseRight() {
+		LoadoutStandard testLoadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("AS7-D-DC"));
+		OperationStack stack = new OperationStack(0);
+		stack.pushAndApply(new OpAddItem(null, testLoadout, testLoadout.getComponent(Location.CenterTorso), ItemDB
+				.lookup("XL ENGINE 300")));
 
-      OpAddItem cut = new OpAddItem(xBar, testLoadout, testLoadout.getComponent(Location.RightTorso), ItemDB.CASE);
-      cut.apply();
+		OpAddItem cut = new OpAddItem(xBar, testLoadout, testLoadout.getComponent(Location.RightTorso), ItemDB.CASE);
+		cut.apply();
 
-      Mockito.verify(xBar).post(new NotificationMessage(Severity.WARNING, testLoadout, "C.A.S.E. together with XL engine has no effect."));
-   }
+		Mockito.verify(xBar).post(
+				new NotificationMessage(Severity.WARNING, testLoadout,
+						"C.A.S.E. together with XL engine has no effect."));
+	}
 }

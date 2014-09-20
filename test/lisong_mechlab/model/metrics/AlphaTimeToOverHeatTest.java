@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -33,79 +33,80 @@ import org.mockito.stubbing.Answer;
  * 
  * @author Emily Björk
  */
-public class AlphaTimeToOverHeatTest{
+public class AlphaTimeToOverHeatTest {
 
-   @Test
-   public void testCalculate(){
-      HeatCapacity capacity = Mockito.mock(HeatCapacity.class);
-      HeatOverTime generation = Mockito.mock(HeatOverTime.class);
-      HeatDissipation dissipation = Mockito.mock(HeatDissipation.class);
+	@Test
+	public void testCalculate() {
+		HeatCapacity capacity = Mockito.mock(HeatCapacity.class);
+		HeatOverTime generation = Mockito.mock(HeatOverTime.class);
+		HeatDissipation dissipation = Mockito.mock(HeatDissipation.class);
 
-      Mockito.when(capacity.calculate()).thenReturn(60.0);
-      Mockito.when(dissipation.calculate()).thenReturn(4.0);
-      Mockito.when(generation.calculate(Matchers.anyDouble())).then(new Answer<Double>(){
-         @Override
-         public Double answer(InvocationOnMock aInvocation) throws Throwable{
-            double time = (Double)aInvocation.getArguments()[0];
-            return 5 * time; // 5 heat per second generated
-         }
-      });
+		Mockito.when(capacity.calculate()).thenReturn(60.0);
+		Mockito.when(dissipation.calculate()).thenReturn(4.0);
+		Mockito.when(generation.calculate(Matchers.anyDouble())).then(new Answer<Double>() {
+			@Override
+			public Double answer(InvocationOnMock aInvocation) throws Throwable {
+				double time = (Double) aInvocation.getArguments()[0];
+				return 5 * time; // 5 heat per second generated
+			}
+		});
 
-      AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
-      assertEquals(60.0, cut.calculate(), 0.6); // 1% tolerance
-   }
+		AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
+		assertEquals(60.0, cut.calculate(), 0.6); // 1% tolerance
+	}
 
-   /**
-    * Anything longer than 15 minutes is rounded up to infinity. As matches are only 15 minutes.
-    */
-   @Test
-   public void testCalculate_longerThan15min(){
-      HeatCapacity capacity = Mockito.mock(HeatCapacity.class);
-      HeatOverTime generation = Mockito.mock(HeatOverTime.class);
-      HeatDissipation dissipation = Mockito.mock(HeatDissipation.class);
+	/**
+	 * Anything longer than 15 minutes is rounded up to infinity. As matches are only 15 minutes.
+	 */
+	@Test
+	public void testCalculate_longerThan15min() {
+		HeatCapacity capacity = Mockito.mock(HeatCapacity.class);
+		HeatOverTime generation = Mockito.mock(HeatOverTime.class);
+		HeatDissipation dissipation = Mockito.mock(HeatDissipation.class);
 
-      Mockito.when(capacity.calculate()).thenReturn(60.0);
-      Mockito.when(dissipation.calculate()).thenReturn(4.0);
-      Mockito.when(generation.calculate(Matchers.anyDouble())).then(new Answer<Double>(){
-         @Override
-         public Double answer(InvocationOnMock aInvocation) throws Throwable{
-            double time = (Double)aInvocation.getArguments()[0];
-            return 4.05 * time; // 4.05 heat per second generated -> 20min to overheat
-         }
-      });
+		Mockito.when(capacity.calculate()).thenReturn(60.0);
+		Mockito.when(dissipation.calculate()).thenReturn(4.0);
+		Mockito.when(generation.calculate(Matchers.anyDouble())).then(new Answer<Double>() {
+			@Override
+			public Double answer(InvocationOnMock aInvocation) throws Throwable {
+				double time = (Double) aInvocation.getArguments()[0];
+				return 4.05 * time; // 4.05 heat per second generated -> 20min to overheat
+			}
+		});
 
-      AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
-      assertTrue(Double.isInfinite(cut.calculate()));
-   }
+		AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
+		assertTrue(Double.isInfinite(cut.calculate()));
+	}
 
-   /**
-    * When heat is given as pulses the mech can cool down between pulses. But not to negative heat.
-    */
-   @Test
-   public void testCalculate_Pulses(){
-      HeatCapacity capacity = Mockito.mock(HeatCapacity.class);
-      HeatOverTime generation = Mockito.mock(HeatOverTime.class);
-      HeatDissipation dissipation = Mockito.mock(HeatDissipation.class);
+	/**
+	 * When heat is given as pulses the mech can cool down between pulses. But not to negative heat.
+	 */
+	@Test
+	public void testCalculate_Pulses() {
+		HeatCapacity capacity = Mockito.mock(HeatCapacity.class);
+		HeatOverTime generation = Mockito.mock(HeatOverTime.class);
+		HeatDissipation dissipation = Mockito.mock(HeatDissipation.class);
 
-      Mockito.when(capacity.calculate()).thenReturn(60.0);
-      Mockito.when(dissipation.calculate()).thenReturn(4.0);
-      Mockito.when(generation.calculate(Matchers.anyDouble())).then(new Answer<Double>(){
-         @Override
-         public Double answer(InvocationOnMock aInvocation) throws Throwable{
-            double time = (Double)aInvocation.getArguments()[0];
-            int integerTime = (int)time;
-            if( time <= 100 ){
-               return (integerTime / 5) * 5.0; // 5 heat pulse every 5 seconds.
-               // The cooling capacity is 20 in the same period which would cool the mech to negative temperature
-               // acting as a cooling buffer which is not allowed. If this happens, the impulse after 100s will not
-               // be enough to cause an over heat as expected.
-            }
-            return 100 + 61.0; // The above will have generated 100 heat in total, add an impulse of 61 to trigger over
-                               // heat.
-         }
-      });
+		Mockito.when(capacity.calculate()).thenReturn(60.0);
+		Mockito.when(dissipation.calculate()).thenReturn(4.0);
+		Mockito.when(generation.calculate(Matchers.anyDouble())).then(new Answer<Double>() {
+			@Override
+			public Double answer(InvocationOnMock aInvocation) throws Throwable {
+				double time = (Double) aInvocation.getArguments()[0];
+				int integerTime = (int) time;
+				if (time <= 100) {
+					return (integerTime / 5) * 5.0; // 5 heat pulse every 5 seconds.
+					// The cooling capacity is 20 in the same period which would cool the mech to negative temperature
+					// acting as a cooling buffer which is not allowed. If this happens, the impulse after 100s will not
+					// be enough to cause an over heat as expected.
+				}
+				return 100 + 61.0; // The above will have generated 100 heat in total, add an impulse of 61 to trigger
+									// over
+									// heat.
+			}
+		});
 
-      AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
-      assertEquals(100.0, cut.calculate(), 1.0); // 1% tolerance
-   }
+		AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
+		assertEquals(100.0, cut.calculate(), 1.0); // 1% tolerance
+	}
 }
