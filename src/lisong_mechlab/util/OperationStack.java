@@ -24,6 +24,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import lisong_mechlab.util.message.MessageBuffer;
+import lisong_mechlab.util.message.MessageDelivery;
+import lisong_mechlab.util.message.MessageXBar;
+
 /**
  * This class models an operation stack that can be used for undo etc. It will automatically reset the stack if a new
  * garage is loaded.
@@ -77,12 +81,15 @@ public class OperationStack {
 	 * @author Li Song
 	 */
 	public abstract static class CompositeOperation extends Operation {
-		private final List<Operation>	operations	= new ArrayList<>();
+		private final List<Operation>	operations		= new ArrayList<>();
 		private final String			desciption;
-		private transient boolean		isPerpared	= false;
+		private transient boolean		isPerpared		= false;
+		protected final MessageBuffer	messageBuffer	= new MessageBuffer();
+		private final MessageDelivery	messageTarget;
 
-		public CompositeOperation(String aDescription) {
+		public CompositeOperation(String aDescription, MessageDelivery aMessageTarget) {
 			desciption = aDescription;
+			messageTarget = aMessageTarget;
 		}
 
 		public void addOp(Operation anOperation) {
@@ -103,8 +110,19 @@ public class OperationStack {
 
 			ListIterator<Operation> it = operations.listIterator();
 			while (it.hasNext()) {
-				it.next().apply();
+				try {
+					it.next().apply();
+				} catch (Throwable t) {
+					// Rollback the transaction
+					it.previous();
+					while (it.hasPrevious()) {
+						it.previous().undo();
+					}
+					throw t;
+				}
 			}
+			
+			messageBuffer.deliverTo(messageTarget);
 		}
 
 		@Override
@@ -118,6 +136,8 @@ public class OperationStack {
 			while (it.hasPrevious()) {
 				it.previous().undo();
 			}
+			
+			messageBuffer.deliverTo(messageTarget);
 		}
 
 		@Override

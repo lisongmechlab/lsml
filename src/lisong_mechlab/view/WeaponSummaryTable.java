@@ -40,18 +40,17 @@ import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
-import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This class displays a summary of weapons and ammo for a loadout in a JTable.
  * 
  * @author Li Song
  */
-public class WeaponSummaryTable extends JTable implements Reader {
+public class WeaponSummaryTable extends JTable implements Message.Recipient {
 	private static final long		serialVersionUID	= 868861599143353045L;
 	private final LoadoutBase<?>	loadout;
 	private final DecimalFormat		decimalFormat		= new DecimalFormat("####");
@@ -357,13 +356,13 @@ public class WeaponSummaryTable extends JTable implements Reader {
 	@Override
 	public void receive(Message aMsg) {
 		if (aMsg.isForMe(loadout)) {
-			if (aMsg instanceof ConfiguredComponentBase.Message) {
-				ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message) aMsg;
+			if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
+				ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
 				if (message.type == Type.ItemAdded || message.type == Type.ItemRemoved
 						|| message.type == Type.ItemsChanged) {
 					((WeaponModel) getModel()).update(loadout);
 				}
-			} else if ((aMsg instanceof Upgrades.Message) || (aMsg instanceof Efficiencies.Message)) {
+			} else if ((aMsg instanceof Upgrades.UpgradesMessage) || (aMsg instanceof Efficiencies.EfficienciesMessage)) {
 				((WeaponModel) getModel()).update(loadout);
 			}
 		}

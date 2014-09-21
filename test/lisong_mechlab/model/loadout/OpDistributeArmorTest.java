@@ -27,13 +27,13 @@ import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.util.DecodingException;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -93,7 +93,7 @@ public class OpDistributeArmorTest {
 		assertEquals(9.0 + 10, loadout.getMass(), 0.0);
 		assertEquals(320, loadout.getArmor());
 		Mockito.verify(xBar, Mockito.atLeastOnce())
-				.post(new ConfiguredComponentBase.Message(loadout.getComponent(Location.CenterTorso),
+				.post(new ConfiguredComponentBase.ComponentMessage(loadout.getComponent(Location.CenterTorso),
 						Type.ArmorChanged, true));
 	}
 

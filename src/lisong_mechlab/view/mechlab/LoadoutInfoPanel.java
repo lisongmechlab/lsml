@@ -85,16 +85,16 @@ import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.MetricDisplay;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.WeaponSummaryTable;
 import lisong_mechlab.view.render.ProgressBarRenderer;
 import lisong_mechlab.view.render.StyleManager;
 
-public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader {
+public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Recipient {
 	private static final long				serialVersionUID	= 4720126200474042446L;
 
 	private final static DecimalFormat		df2_floor			= new DecimalFormat("###.##");

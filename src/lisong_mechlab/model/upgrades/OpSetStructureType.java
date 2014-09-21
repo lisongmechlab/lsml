@@ -20,10 +20,10 @@
 package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.upgrades.Upgrades.Message;
-import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.upgrades.Upgrades.UpgradesMessage;
+import lisong_mechlab.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This {@link Operation} can alter the internal structure of a {@link LoadoutStandard}.
@@ -57,15 +57,15 @@ public class OpSetStructureType extends OpUpgradeBase {
 	/**
 	 * Creates a new {@link OpSetStructureType} that will change the internal structure of a {@link LoadoutStandard}.
 	 * 
-	 * @param anXBar
-	 *            A {@link MessageXBar} to signal changes in internal structure on.
+	 * @param aMessageDelivery
+	 *            A {@link MessageDelivery} to signal changes in internal structure on.
 	 * @param aLoadout
 	 *            The {@link LoadoutStandard} to alter.
 	 * @param aStructureUpgrade
 	 *            The new internal structure this upgrades is applied.
 	 */
-	public OpSetStructureType(MessageXBar anXBar, LoadoutStandard aLoadout, StructureUpgrade aStructureUpgrade) {
-		super(anXBar, aStructureUpgrade.getName());
+	public OpSetStructureType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout, StructureUpgrade aStructureUpgrade) {
+		super(aMessageDelivery, aStructureUpgrade.getName());
 		upgrades = aLoadout.getUpgrades();
 		loadout = aLoadout;
 		oldValue = upgrades.getStructure();
@@ -94,8 +94,8 @@ public class OpSetStructureType extends OpUpgradeBase {
 				throw new IllegalArgumentException("Couldn't change internal structure: ", e);
 			}
 
-			if (xBar != null)
-				xBar.post(new Message(ChangeMsg.STRUCTURE, upgrades));
+			if (messageDelivery != null)
+				messageDelivery.post(new UpgradesMessage(ChangeMsg.STRUCTURE, upgrades));
 		}
 	}
 }

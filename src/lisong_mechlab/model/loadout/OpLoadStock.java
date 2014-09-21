@@ -33,7 +33,7 @@ import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This operation loads a 'mechs stock {@link LoadoutStandard}.
@@ -43,8 +43,8 @@ import lisong_mechlab.util.MessageXBar;
 public class OpLoadStock extends OpLoadoutBase {
 	private final ChassisBase	chassiVariation;
 
-	public OpLoadStock(ChassisBase aChassiVariation, LoadoutBase<?> aLoadout, MessageXBar anXBar) {
-		super(aLoadout, anXBar, "load stock");
+	public OpLoadStock(ChassisBase aChassiVariation, LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
+		super(aLoadout, aMessageDelivery, "load stock");
 		chassiVariation = aChassiVariation;
 	}
 
@@ -52,36 +52,36 @@ public class OpLoadStock extends OpLoadoutBase {
 	public void buildOperation() {
 		StockLoadout stockLoadout = StockLoadoutDB.lookup(chassiVariation);
 
-		addOp(new OpStripLoadout(loadout, xBar));
+		addOp(new OpStripLoadout(loadout, messageBuffer));
 
 		if (loadout instanceof LoadoutStandard) {
 			LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-			addOp(new OpSetStructureType(xBar, loadoutStandard, stockLoadout.getStructureType()));
-			addOp(new OpSetArmorType(xBar, loadoutStandard, stockLoadout.getArmorType()));
-			addOp(new OpSetHeatSinkType(xBar, loadoutStandard, stockLoadout.getHeatSinkType()));
+			addOp(new OpSetStructureType(messageBuffer, loadoutStandard, stockLoadout.getStructureType()));
+			addOp(new OpSetArmorType(messageBuffer, loadoutStandard, stockLoadout.getArmorType()));
+			addOp(new OpSetHeatSinkType(messageBuffer, loadoutStandard, stockLoadout.getHeatSinkType()));
 		} else if (loadout instanceof LoadoutOmniMech) {
 			LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
 			for (Location location : Location.values()) {
-				addOp(new OpChangeOmniPod(xBar, loadoutOmniMech, loadoutOmniMech.getComponent(location),
+				addOp(new OpChangeOmniPod(messageBuffer, loadoutOmniMech, loadoutOmniMech.getComponent(location),
 						OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(), location)));
 			}
 		}
-		addOp(new OpSetGuidanceType(xBar, loadout, stockLoadout.getGuidanceType()));
+		addOp(new OpSetGuidanceType(messageBuffer, loadout, stockLoadout.getGuidanceType()));
 
 		for (StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()) {
 			Location location = stockComponent.getPart();
 			ConfiguredComponentBase configured = loadout.getComponent(location);
 
 			if (location.isTwoSided()) {
-				addOp(new OpSetArmor(xBar, loadout, configured, ArmorSide.FRONT, 0, true));
-				addOp(new OpSetArmor(xBar, loadout, configured, ArmorSide.BACK, stockComponent.getArmorBack(), true));
-				addOp(new OpSetArmor(xBar, loadout, configured, ArmorSide.FRONT, stockComponent.getArmorFront(), true));
+				addOp(new OpSetArmor(messageBuffer, loadout, configured, ArmorSide.FRONT, 0, true));
+				addOp(new OpSetArmor(messageBuffer, loadout, configured, ArmorSide.BACK, stockComponent.getArmorBack(), true));
+				addOp(new OpSetArmor(messageBuffer, loadout, configured, ArmorSide.FRONT, stockComponent.getArmorFront(), true));
 			} else {
-				addOp(new OpSetArmor(xBar, loadout, configured, ArmorSide.ONLY, stockComponent.getArmorFront(), true));
+				addOp(new OpSetArmor(messageBuffer, loadout, configured, ArmorSide.ONLY, stockComponent.getArmorFront(), true));
 			}
 
 			for (Integer item : stockComponent.getItems()) {
-				addOp(new OpAddItem(xBar, loadout, configured, ItemDB.lookup(item)));
+				addOp(new OpAddItem(messageBuffer, loadout, configured, ItemDB.lookup(item)));
 			}
 		}
 	}

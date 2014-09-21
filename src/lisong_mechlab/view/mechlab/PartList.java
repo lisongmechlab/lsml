@@ -52,9 +52,9 @@ import lisong_mechlab.model.metrics.CriticalStrikeProbability;
 import lisong_mechlab.model.metrics.ItemEffectiveHP;
 import lisong_mechlab.model.metrics.helpers.ComponentDestructionSimulator;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.render.ComponentRenderer;
@@ -221,7 +221,7 @@ public class PartList extends JList<Item> {
 		}
 	}
 
-	private class Model extends AbstractListModel<Item> implements MessageXBar.Reader {
+	private class Model extends AbstractListModel<Item> implements Message.Recipient {
 		private static final String	HEATSINKS_STRING			= "HEAT SINKS: ";
 		private static final String	HEATSINKS_COMPACT_STRING	= "HS: ";
 		private static final String	EMPTY						= "EMPTY";
@@ -253,7 +253,7 @@ public class PartList extends JList<Item> {
 			}
 
 			// Only update on item changes or upgrades
-			if (aMsg instanceof ConfiguredComponentBase.Message || aMsg instanceof Upgrades.Message) {
+			if (aMsg instanceof ConfiguredComponentBase.ComponentMessage || aMsg instanceof Upgrades.UpgradesMessage) {
 				fireContentsChanged(this, 0, component.getInternalComponent().getSlots());
 			}
 		}

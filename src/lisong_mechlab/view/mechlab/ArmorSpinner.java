@@ -28,14 +28,14 @@ import javax.swing.SwingUtilities;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.loadout.component.OpSetArmorSymmetric;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
-public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Reader {
+public class ArmorSpinner extends SpinnerNumberModel implements Message.Recipient {
 	private static final long				serialVersionUID	= 2130487332299251881L;
 	private final ConfiguredComponentBase	part;
 	private final ArmorSide					side;
@@ -100,8 +100,8 @@ public class ArmorSpinner extends SpinnerNumberModel implements MessageXBar.Read
 
 	@Override
 	public void receive(Message aMsg) {
-		if (aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.Message) {
-			ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message) aMsg;
+		if (aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
+			ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
 			if (message.component != part)
 				return;
 			if (message.type == Type.ArmorChanged) {

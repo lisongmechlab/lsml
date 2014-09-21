@@ -21,8 +21,8 @@ package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This {@link Operation} removes an {@link Item} from a {@link ConfiguredComponentBase}.
@@ -33,8 +33,8 @@ public class OpRemoveItem extends OpItemBase {
 	/**
 	 * Creates a new operation.
 	 * 
-	 * @param aXBar
-	 *            The {@link MessageXBar} to send messages on when items are removed.
+	 * @param aMessageDelivery
+	 *            The {@link MessageDelivery} to send messages on when items are removed.
 	 * @param aLoadout
 	 *            The {@link LoadoutBase} to remove the item from.
 	 * @param aComponent
@@ -42,8 +42,9 @@ public class OpRemoveItem extends OpItemBase {
 	 * @param aItem
 	 *            The {@link Item} to remove.
 	 */
-	public OpRemoveItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem) {
-		super(aXBar, aLoadout, aComponent, aItem);
+	public OpRemoveItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
+			Item aItem) {
+		super(aMessageDelivery, aLoadout, aComponent, aItem);
 	}
 
 	@Override

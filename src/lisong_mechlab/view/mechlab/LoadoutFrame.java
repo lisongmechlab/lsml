@@ -59,10 +59,10 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.OpStripArmor;
 import lisong_mechlab.model.loadout.OpStripLoadout;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.SwingHelpers;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.AddToGarageAction;
 import lisong_mechlab.view.action.CloneLoadoutAction;
@@ -77,7 +77,7 @@ import lisong_mechlab.view.action.UndoLoadoutAction;
 import lisong_mechlab.view.graphs.DamageGraph;
 import lisong_mechlab.view.render.StyleManager;
 
-public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader {
+public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
 	private static final String		CMD_UNDO_LOADOUT		= "undo loadout";
 	private static final String		CMD_REDO_LOADOUT		= "redo loadout";
 	private static final String		CMD_RENAME_LOADOUT		= "rename loadout";

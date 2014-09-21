@@ -31,9 +31,10 @@ import java.util.List;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -44,12 +45,12 @@ import com.thoughtworks.xstream.XStream;
  */
 public class MechGarage {
 	/**
-	 * This class implements {@link lisong_mechlab.util.MessageXBar.Message}s for the {@link MechGarage} so that other
+	 * This class implements {@link lisong_mechlab.util.message.Message}s for the {@link MechGarage} so that other
 	 * components can react to changes in the garage.
 	 * 
 	 * @author Li Song
 	 */
-	public static class Message implements MessageXBar.Message {
+	public static class GarageMessage implements Message {
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -62,8 +63,8 @@ public class MechGarage {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof Message) {
-				Message that = (Message) obj;
+			if (obj instanceof GarageMessage) {
+				GarageMessage that = (GarageMessage) obj;
 				return this.garage == that.garage && this.type == that.type && this.loadout == that.loadout;
 			}
 			return false;
@@ -77,13 +78,13 @@ public class MechGarage {
 		public final MechGarage			garage;
 		private final LoadoutBase<?>	loadout;
 
-		public Message(Type aType, MechGarage aGarage, LoadoutBase<?> aLoadout) {
+		public GarageMessage(Type aType, MechGarage aGarage, LoadoutBase<?> aLoadout) {
 			type = aType;
 			garage = aGarage;
 			loadout = aLoadout;
 		}
 
-		public Message(Type aType, MechGarage aGarage) {
+		public GarageMessage(Type aType, MechGarage aGarage) {
 			this(aType, aGarage, null);
 		}
 
@@ -110,7 +111,7 @@ public class MechGarage {
 	 */
 	public MechGarage(MessageXBar aXBar) {
 		xBar = aXBar;
-		xBar.post(new Message(Message.Type.NewGarage, this));
+		xBar.post(new GarageMessage(GarageMessage.Type.NewGarage, this));
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class MechGarage {
 		}
 		mg.file = aFile;
 		mg.xBar = aXBar;
-		mg.xBar.post(new Message(Message.Type.NewGarage, mg));
+		mg.xBar.post(new GarageMessage(GarageMessage.Type.NewGarage, mg));
 		return mg;
 	}
 
@@ -195,7 +196,7 @@ public class MechGarage {
 				fileWriter.close();
 			}
 		}
-		xBar.post(new Message(Message.Type.Saved, this));
+		xBar.post(new GarageMessage(GarageMessage.Type.Saved, this));
 	}
 
 	/**
@@ -221,7 +222,7 @@ public class MechGarage {
 	 */
 	void add(LoadoutBase<?> aLoadout) {
 		mechs.add(aLoadout);
-		xBar.post(new Message(Message.Type.LoadoutAdded, MechGarage.this, aLoadout));
+		xBar.post(new GarageMessage(GarageMessage.Type.LoadoutAdded, MechGarage.this, aLoadout));
 	}
 
 	/**
@@ -233,7 +234,7 @@ public class MechGarage {
 	 */
 	void remove(LoadoutBase<?> aLoadout) {
 		if (mechs.remove(aLoadout)) {
-			xBar.post(new Message(Message.Type.LoadoutRemoved, MechGarage.this, aLoadout));
+			xBar.post(new GarageMessage(GarageMessage.Type.LoadoutRemoved, MechGarage.this, aLoadout));
 		}
 	}
 

@@ -25,16 +25,16 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This class is a helper class to map a display list index to an item and associated render state.
  * 
  * @author Li Song
  */
-public class ComponentRenderer implements MessageXBar.Reader {
+public class ComponentRenderer implements Message.Recipient {
 	public enum RenderType {
 		Empty, MultiSlot, Item, EngineHeatSink, LastSlot
 	}
@@ -161,8 +161,8 @@ public class ComponentRenderer implements MessageXBar.Reader {
 
 	@Override
 	public void receive(Message aMsg) {
-		if (aMsg instanceof ConfiguredComponentBase.Message) {
-			ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message) aMsg;
+		if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
+			ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
 
 			if (message.component == component) {
 				if (message.type == Type.ArmorChanged || message.type == Type.ArmorDistributionUpdateRequest)

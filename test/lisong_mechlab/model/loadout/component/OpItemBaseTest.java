@@ -23,11 +23,11 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -91,7 +91,7 @@ public class OpItemBaseTest {
 		cut.removeItem(ecm);
 
 		Mockito.verify(configuredComponent).removeItem(ecm);
-		Mockito.verify(xBar).post(new Message(configuredComponent, Type.ItemRemoved));
+		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class OpItemBaseTest {
 		cut.addItem(ecm);
 
 		Mockito.verify(configuredComponent).addItem(ecm);
-		Mockito.verify(xBar).post(new Message(configuredComponent, Type.ItemAdded));
+		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemAdded));
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class OpItemBaseTest {
 		cut.addItem(item);
 
 		Mockito.verify(configuredComponent).addItem(item);
-		Mockito.verify(xBar).post(new Message(configuredComponent, Type.ItemAdded));
+		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemAdded));
 	}
 
 	/**
@@ -140,9 +140,9 @@ public class OpItemBaseTest {
 		Mockito.verify(configuredComponent).removeItem(engine);
 		Mockito.verify(lt).removeItem(ConfiguredComponentBase.ENGINE_INTERNAL);
 		Mockito.verify(rt).removeItem(ConfiguredComponentBase.ENGINE_INTERNAL);
-		Mockito.verify(xBar).post(new Message(configuredComponent, Type.ItemRemoved));
-		Mockito.verify(xBar).post(new Message(lt, Type.ItemRemoved));
-		Mockito.verify(xBar).post(new Message(rt, Type.ItemRemoved));
+		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
+		Mockito.verify(xBar).post(new ComponentMessage(lt, Type.ItemRemoved));
+		Mockito.verify(xBar).post(new ComponentMessage(rt, Type.ItemRemoved));
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class OpItemBaseTest {
 
 		Mockito.verify(configuredComponent).removeItem(engine);
 		Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).removeItem(ItemDB.DHS);
-		Mockito.verify(xBar).post(new Message(configuredComponent, Type.ItemRemoved));
+		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class OpItemBaseTest {
 
 		Mockito.verify(configuredComponent).removeItem(engine);
 		Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).removeItem(ItemDB.SHS);
-		Mockito.verify(xBar).post(new Message(configuredComponent, Type.ItemRemoved));
+		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
 	}
 
 	/**
@@ -201,9 +201,9 @@ public class OpItemBaseTest {
 		Mockito.verify(configuredComponent).addItem(item);
 		Mockito.verify(lt).addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
 		Mockito.verify(rt).addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
-		Mockito.verify(xBar).post(new Message(configuredComponent, Type.ItemAdded));
-		Mockito.verify(xBar).post(new Message(lt, Type.ItemAdded));
-		Mockito.verify(xBar).post(new Message(rt, Type.ItemAdded));
+		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemAdded));
+		Mockito.verify(xBar).post(new ComponentMessage(lt, Type.ItemAdded));
+		Mockito.verify(xBar).post(new ComponentMessage(rt, Type.ItemAdded));
 	}
 
 	/**

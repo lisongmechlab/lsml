@@ -21,7 +21,7 @@ package lisong_mechlab.model;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.message.Message;
 
 /**
  * This class carries notifications from the model to the UI.

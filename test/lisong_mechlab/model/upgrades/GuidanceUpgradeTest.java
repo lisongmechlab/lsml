@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.ItemDB;
 

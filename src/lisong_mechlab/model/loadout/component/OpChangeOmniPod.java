@@ -24,10 +24,11 @@ import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This operation changes an {@link OmniPod} on a {@link ConfiguredComponentOmniMech}.
@@ -39,13 +40,12 @@ public class OpChangeOmniPod extends CompositeOperation {
 	private final ConfiguredComponentOmniMech	component;
 	private final OmniPod						newOmniPod;
 	private final LoadoutOmniMech				loadout;
-	private final MessageXBar					xBar;
 	private OmniPod								oldOmniPod;
 
 	/**
 	 * Creates a new {@link OmniPod} change {@link Operation}.
 	 * 
-	 * @param aXBar
+	 * @param aMessageDelivery
 	 *            A {@link MessageXBar} to send messages on.
 	 * @param aLoadout
 	 *            The {@link LoadoutOmniMech} that the component is a part on.
@@ -54,16 +54,15 @@ public class OpChangeOmniPod extends CompositeOperation {
 	 * @param aOmniPod
 	 *            The new {@link OmniPod} to change to.
 	 */
-	public OpChangeOmniPod(MessageXBar aXBar, LoadoutOmniMech aLoadout, ConfiguredComponentOmniMech aComponentOmniMech,
-			OmniPod aOmniPod) {
-		super("change omnipod on " + aComponentOmniMech.getInternalComponent().getLocation());
+	public OpChangeOmniPod(MessageDelivery aMessageDelivery, LoadoutOmniMech aLoadout,
+			ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod) {
+		super("change omnipod on " + aComponentOmniMech.getInternalComponent().getLocation(), aMessageDelivery);
 		if (aOmniPod == null)
 			throw new IllegalArgumentException("Omnipod must not be null!");
 
 		component = aComponentOmniMech;
 		newOmniPod = aOmniPod;
 		loadout = aLoadout;
-		xBar = aXBar;
 	}
 
 	@Override
@@ -73,7 +72,7 @@ public class OpChangeOmniPod extends CompositeOperation {
 		// Remove any items that has a hard point requirement other than none.
 		for (Item item : component.getItemsEquipped()) {
 			if (item.getHardpointType() != HardPointType.NONE) {
-				addOp(new OpRemoveItem(xBar, loadout, component, item));
+				addOp(new OpRemoveItem(messageBuffer, loadout, component, item));
 			}
 		}
 
@@ -85,7 +84,7 @@ public class OpChangeOmniPod extends CompositeOperation {
 					if (jjLeft > 0) {
 						jjLeft--;
 					} else {
-						addOp(new OpRemoveItem(xBar, loadout, componentOmniMech, item));
+						addOp(new OpRemoveItem(messageBuffer, loadout, componentOmniMech, item));
 					}
 				}
 			}
@@ -97,17 +96,13 @@ public class OpChangeOmniPod extends CompositeOperation {
 		super.apply();
 
 		loadout.setOmniPod(newOmniPod);
-		if (null != xBar) {
-			xBar.post(new ConfiguredComponentBase.Message(component, Type.OmniPodChanged));
-		}
+		messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
 	}
 
 	@Override
 	protected void undo() {
 		loadout.setOmniPod(oldOmniPod);
-		if (null != xBar) {
-			xBar.post(new ConfiguredComponentBase.Message(component, Type.OmniPodChanged));
-		}
+		messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
 
 		super.undo();
 	}

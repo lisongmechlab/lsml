@@ -44,8 +44,8 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.LoadoutMessage.Type;
 import lisong_mechlab.model.loadout.OpAddModule;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ModuleTransferHandler;
 import lisong_mechlab.view.mechlab.LoadoutDesktop;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
@@ -55,7 +55,7 @@ import lisong_mechlab.view.mechlab.LoadoutFrame;
  * 
  * @author Li Song
  */
-public class ModuleSeletionList extends JList<PilotModule> implements InternalFrameListener, MessageXBar.Reader {
+public class ModuleSeletionList extends JList<PilotModule> implements InternalFrameListener, Message.Recipient {
 	private static final long					serialVersionUID	= -5162141596342256532L;
 	private final DefaultListModel<PilotModule>	model;
 	private LoadoutBase<?>						currentLoadout;

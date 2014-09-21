@@ -24,9 +24,9 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This {@link Operation} will remove all items and armor on this component.
@@ -37,13 +37,13 @@ public class OpStripComponent extends CompositeOperation {
 	/**
 	 * @param aLoadoutPart
 	 *            The {@link ConfiguredComponentBase} to strip.
-	 * @param anXBar
+	 * @param aMessageDelivery
 	 *            Where to announce changes from this operation.
 	 * @param aLoadout
 	 *            The {@link LoadoutBase} to operate on.
 	 */
-	public OpStripComponent(MessageXBar anXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart) {
-		super("strip part");
+	public OpStripComponent(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart) {
+		super("strip part", aMessageDelivery);
 		// Engine heat sinks are removed together with the engine.
 		int hsSkipp = aLoadoutPart.getEngineHeatsinks();
 		for (Item item : aLoadoutPart.getItemsEquipped()) {
@@ -54,14 +54,14 @@ public class OpStripComponent extends CompositeOperation {
 						continue;
 					}
 				}
-				addOp(new OpRemoveItem(anXBar, aLoadout, aLoadoutPart, item));
+				addOp(new OpRemoveItem(messageBuffer, aLoadout, aLoadoutPart, item));
 			}
 		}
 		if (aLoadoutPart.getInternalComponent().getLocation().isTwoSided()) {
-			addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.FRONT, 0, false));
-			addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.BACK, 0, false));
+			addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, ArmorSide.FRONT, 0, false));
+			addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, ArmorSide.BACK, 0, false));
 		} else {
-			addOp(new OpSetArmor(anXBar, aLoadout, aLoadoutPart, ArmorSide.ONLY, 0, false));
+			addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, ArmorSide.ONLY, 0, false));
 		}
 	}
 

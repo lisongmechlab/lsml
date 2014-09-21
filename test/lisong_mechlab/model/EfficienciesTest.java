@@ -23,8 +23,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import lisong_mechlab.model.Efficiencies.Message.Type;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.Efficiencies.EfficienciesMessage.Type;
+import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class EfficienciesTest {
 		for (boolean b : new boolean[] { true, false }) {
 			cut.setSpeedTweak(b, xBar);
 			assertEquals(b, cut.hasSpeedTweak());
-			verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
+			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
 			reset(xBar);
 		}
 
@@ -93,7 +93,7 @@ public class EfficienciesTest {
 		for (boolean b : new boolean[] { true, false }) {
 			cut.setCoolRun(b, xBar);
 			assertEquals(b, cut.hasCoolRun());
-			verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
+			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
 			reset(xBar);
 		}
 
@@ -137,7 +137,7 @@ public class EfficienciesTest {
 		for (boolean b : new boolean[] { true, false }) {
 			cut.setHeatContainment(b, xBar);
 			assertEquals(b, cut.hasHeatContainment());
-			verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
+			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
 			reset(xBar);
 		}
 
@@ -181,7 +181,7 @@ public class EfficienciesTest {
 		for (boolean b : new boolean[] { true, false }) {
 			cut.setDoubleBasics(b, xBar);
 			assertEquals(b, cut.hasDoubleBasics());
-			verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
+			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
 			reset(xBar);
 		}
 
@@ -204,7 +204,7 @@ public class EfficienciesTest {
 		for (boolean b : new boolean[] { true, false }) {
 			cut.setFastFire(b, xBar);
 			assertEquals(b, cut.hasFastFire());
-			verify(xBar).post(new Efficiencies.Message(cut, Type.Changed));
+			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
 			reset(xBar);
 		}
 

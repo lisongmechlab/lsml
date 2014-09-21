@@ -21,8 +21,8 @@ package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * An abstract package local class that facilitates implementing {@link Operation}s that relate to
@@ -31,12 +31,12 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public abstract class OpUpgradeBase extends Operation {
-	protected final transient MessageXBar	xBar;
-	private final String					description;
+	protected final transient MessageDelivery	messageDelivery;
+	private final String						description;
 
-	protected OpUpgradeBase(MessageXBar anXBar, String aDescription) {
+	protected OpUpgradeBase(MessageDelivery aMessageDelivery, String aDescription) {
 		description = aDescription;
-		xBar = anXBar;
+		messageDelivery = aMessageDelivery;
 	}
 
 	@Override

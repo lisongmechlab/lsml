@@ -22,9 +22,9 @@ package lisong_mechlab.model.loadout.component;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This operation toggles the state of toggleable items, for now HA/LAA.
@@ -81,7 +81,7 @@ public class OpToggleItem extends Operation {
 		}
 
 		if (xBar != null) {
-			xBar.post(new ConfiguredComponentBase.Message(component, Type.ItemsChanged));
+			xBar.post(new ConfiguredComponentBase.ComponentMessage(component, Type.ItemsChanged));
 		}
 	}
 
@@ -94,7 +94,7 @@ public class OpToggleItem extends Operation {
 			component.setToggleState(ItemDB.HA, true);
 		}
 		if (xBar != null) {
-			xBar.post(new ConfiguredComponentBase.Message(component, Type.ItemsChanged));
+			xBar.post(new ConfiguredComponentBase.ComponentMessage(component, Type.ItemsChanged));
 		}
 	}
 }

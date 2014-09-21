@@ -42,9 +42,8 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
-import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.mechlab.ItemInfoPanel;
 import lisong_mechlab.view.mechlab.ItemLabel;
 import lisong_mechlab.view.mechlab.LoadoutDesktop;
@@ -57,7 +56,7 @@ import lisong_mechlab.view.render.ScrollablePanel;
  * 
  * @author Li Song
  */
-public class EquipmentPanel extends JPanel implements Reader, InternalFrameListener {
+public class EquipmentPanel extends JPanel implements Message.Recipient, InternalFrameListener {
 	private static final long		serialVersionUID	= -8126726006921797207L;
 	private final ItemInfoPanel		infoPanel			= new ItemInfoPanel();
 	private final List<ItemLabel>	itemLabels			= new ArrayList<>();
@@ -143,6 +142,20 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
 	}
 
 	@Override
+	public void internalFrameClosed(InternalFrameEvent aArg0) {/* NO-OP */
+		if(currentLoadout == null) // Was this the last open loadout?
+			changeLoadout(null);
+	}
+
+	@Override
+	public void internalFrameClosing(InternalFrameEvent aArg0) {/* NO-OP */
+	}
+
+	@Override
+	public void internalFrameOpened(InternalFrameEvent aArg0) {/* NO-OP */
+	}
+
+	@Override
 	public void internalFrameActivated(InternalFrameEvent aArg0) {
 		LoadoutFrame frame = (LoadoutFrame) aArg0.getInternalFrame();
 		changeLoadout(frame.getLoadout());
@@ -150,12 +163,13 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
 
 	@Override
 	public void internalFrameDeactivated(InternalFrameEvent aE) {
-		changeLoadout(null);
+		currentLoadout = null;
 	}
 
 	@Override
 	public void internalFrameIconified(InternalFrameEvent aE) {
-		changeLoadout(null);
+		if(currentLoadout == null) // Was this the last visible loadout?
+			changeLoadout(null);
 	}
 
 	@Override
@@ -185,18 +199,6 @@ public class EquipmentPanel extends JPanel implements Reader, InternalFrameListe
 		if (currentLoadout == null || aMsg.isForMe(currentLoadout)) {
 			changeLoadout(currentLoadout);
 		}
-	}
-
-	@Override
-	public void internalFrameClosed(InternalFrameEvent aArg0) {/* NO-OP */
-	}
-
-	@Override
-	public void internalFrameClosing(InternalFrameEvent aArg0) {/* NO-OP */
-	}
-
-	@Override
-	public void internalFrameOpened(InternalFrameEvent aArg0) {/* NO-OP */
 	}
 
 	public LoadoutBase<?> getCurrentLoadout() {

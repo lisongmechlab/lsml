@@ -28,9 +28,8 @@ import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
-import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
@@ -39,7 +38,7 @@ import lisong_mechlab.view.mechlab.LoadoutFrame;
  * 
  * @author Li Song
  */
-public class UndoLoadoutAction extends AbstractAction implements Reader {
+public class UndoLoadoutAction extends AbstractAction implements Message.Recipient {
 	private static final String	SHORTCUT_STROKE		= "control Z";
 	private static final long	serialVersionUID	= 665074705972425989L;
 	private final LoadoutFrame	loadoutFrame;
@@ -72,7 +71,7 @@ public class UndoLoadoutAction extends AbstractAction implements Reader {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				if (aMsg instanceof ConfiguredComponentBase.Message || aMsg instanceof Upgrades.Message) {
+				if (aMsg instanceof ConfiguredComponentBase.ComponentMessage || aMsg instanceof Upgrades.UpgradesMessage) {
 					if (ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null)
 						setEnabled(false);
 					else

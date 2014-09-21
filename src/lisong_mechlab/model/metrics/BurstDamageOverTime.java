@@ -33,15 +33,15 @@ import lisong_mechlab.model.metrics.helpers.DoubleFireBurstSignal;
 import lisong_mechlab.model.metrics.helpers.IntegratedImpulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedPulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedSignal;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This metric calculates how much damage a loadout can dish out in a given time interval ignoring heat.
  * 
  * @author Li Song
  */
-public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.Reader {
+public class BurstDamageOverTime extends RangeTimeMetric implements Message.Recipient {
 	private final List<IntegratedSignal>	damageIntegrals	= new ArrayList<>();
 	private double							cachedRange		= -1;
 

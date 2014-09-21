@@ -28,16 +28,15 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.metrics.Metric;
 import lisong_mechlab.model.metrics.RangeMetric;
 import lisong_mechlab.model.metrics.RangeTimeMetric;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
-import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This class is a convenience for showing the results of a metric in a JLabel.
  * 
  * @author Li Song
  */
-public class MetricDisplay extends JLabel implements Reader {
+public class MetricDisplay extends JLabel implements Message.Recipient {
 	private static final long		serialVersionUID	= 4947119462839900984L;
 	private final LoadoutBase<?>	loadout;
 	private final Formatter			formatter;

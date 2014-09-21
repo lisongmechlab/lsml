@@ -37,12 +37,12 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
 import lisong_mechlab.util.OperationStack;
-import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -123,12 +123,12 @@ public class OpLoadStockTest {
 		// armor?!)
 		assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
 		for (ConfiguredComponentBase part : loadout.getComponents()) {
-			Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponentBase.Message(part, Type.ArmorChanged));
+			Mockito.verify(xBar, Mockito.atLeast(1)).post(new ConfiguredComponentBase.ComponentMessage(part, Type.ArmorChanged));
 		}
 		Mockito.verify(xBar, Mockito.atLeast(1)).post(
-				new ConfiguredComponentBase.Message(Matchers.any(ConfiguredComponentBase.class), Type.ItemAdded));
+				new ConfiguredComponentBase.ComponentMessage(Matchers.any(ConfiguredComponentBase.class), Type.ItemAdded));
 		Mockito.verify(xBar, Mockito.atLeast(1)).post(
-				new Upgrades.Message(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
+				new Upgrades.UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
 	}
 
 	/**
@@ -185,15 +185,15 @@ public class OpLoadStockTest {
 			@Override
 			public Void answer(InvocationOnMock aInvocation) throws Throwable {
 				Message aMsg = (Message) aInvocation.getArguments()[0];
-				if (aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.Message) {
-					ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message) aMsg;
+				if (aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
+					ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
 					if (message.automatic)
 						return null;
 					stack.pushAndApply(new OpDistributeArmor(loadout, loadout.getChassis().getArmorMax(), 10, xBar));
 				}
 				return null;
 			}
-		}).when(xBar).post(Matchers.any(ConfiguredComponentBase.Message.class));
+		}).when(xBar).post(Matchers.any(ConfiguredComponentBase.ComponentMessage.class));
 
 		// Execute
 		OpLoadStock cut = new OpLoadStock(loadout.getChassis(), loadout, xBar);

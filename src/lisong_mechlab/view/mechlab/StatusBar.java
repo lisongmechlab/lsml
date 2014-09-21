@@ -34,9 +34,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
 import lisong_mechlab.model.NotificationMessage;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
-import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 
 /**
@@ -45,7 +44,7 @@ import lisong_mechlab.view.ProgramInit;
  * 
  * @author Li Song
  */
-public class StatusBar extends JPanel implements Reader {
+public class StatusBar extends JPanel implements Message.Recipient {
 	private static final long	serialVersionUID	= -4434467429002792379L;
 	private final LoadoutFrame	frame;
 	private final JLabel		statusLabel;
