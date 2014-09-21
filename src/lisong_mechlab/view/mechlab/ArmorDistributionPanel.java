@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -57,13 +58,14 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
 	private final MessageXBar		xBar;
 	private final JSlider			ratioSlider;
 	private final JSlider			armorSlider;
+	private final OperationStack	privateStack		= new OperationStack(0);
 
+	private boolean					disableSliderAction	= false;
+	private boolean					armorOpInProgress	= false;
 	private int						lastRatio			= 0;
 	private int						lastAmount			= 0;
 
-	boolean							disableSliderAction	= false;
-
-	class ResetManualArmorOperation extends CompositeOperation {
+	private class ResetManualArmorOperation extends CompositeOperation {
 		private final LoadoutBase<?>	opLoadout	= loadout;
 
 		public ResetManualArmorOperation() {
@@ -107,7 +109,7 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
 		}
 	}
 
-	class ArmorSliderOperation extends CompositeOperation {
+	private class ArmorSliderOperation extends CompositeOperation {
 		private final JSlider	slider;
 		private final int		newValue;
 		private final int		oldValue;
@@ -232,8 +234,6 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
 		add(sliderPanel, BorderLayout.CENTER);
 	}
 
-	OperationStack	privateStack	= new OperationStack(0);
-
 	@Override
 	public void stateChanged(ChangeEvent aEvent) {
 		if (disableSliderAction)
@@ -250,7 +250,17 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
 	}
 
 	public void updateArmorDistribution() {
-		privateStack.pushAndApply(new OpDistributeArmor(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+		if(armorOpInProgress)
+			return;
+		armorOpInProgress = true;
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				privateStack.pushAndApply(new OpDistributeArmor(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+				armorOpInProgress = false;	
+			}
+		});
 	}
 
 	/**
