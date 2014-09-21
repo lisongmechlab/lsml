@@ -28,7 +28,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 class DefaultTreeCathegory<T> extends AbstractTreeCathegory {
-	final protected List<T> children = new ArrayList<>();
+	final protected List<T>	children	= new ArrayList<>();
 
 	public DefaultTreeCathegory(String aName, GarageTreeModel aModel) {
 		super(aName, aModel);

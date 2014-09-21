@@ -95,13 +95,13 @@ import lisong_mechlab.view.render.ProgressBarRenderer;
 import lisong_mechlab.view.render.StyleManager;
 
 public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBar.Reader {
-	private static final long serialVersionUID = 4720126200474042446L;
+	private static final long				serialVersionUID	= 4720126200474042446L;
 
-	private final static DecimalFormat df2_floor = new DecimalFormat("###.##");
-	private final static DecimalFormat df2 = new DecimalFormat("###.##");
-	private final static DecimalFormat df1_floor = new DecimalFormat("###.#");
-	private final static DecimalFormat df1 = new DecimalFormat("###.#");
-	private final static DecimalFormat df0 = new DecimalFormat("###");
+	private final static DecimalFormat		df2_floor			= new DecimalFormat("###.##");
+	private final static DecimalFormat		df2					= new DecimalFormat("###.##");
+	private final static DecimalFormat		df1_floor			= new DecimalFormat("###.#");
+	private final static DecimalFormat		df1					= new DecimalFormat("###.#");
+	private final static DecimalFormat		df0					= new DecimalFormat("###");
 
 	static {
 		df2_floor.setMinimumFractionDigits(2);
@@ -112,54 +112,54 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 		df1.setMinimumFractionDigits(1);
 	}
 
-	private final LoadoutBase<?> loadout;
+	private final LoadoutBase<?>			loadout;
 
 	// General pane
-	private final JProgressBar massBar;
-	private final JLabel massValue = new JLabel("xxx");
-	private final JProgressBar armorBar;
-	private final JLabel armorValue = new JLabel("xxx");
-	private final JProgressBar critslotsBar = new JProgressBar(0, 5 * 12 + 3 * 6);
-	private final JLabel critslotsValue = new JLabel("xxx");
-	private final JCheckBox ferroFibros = new JCheckBox();
-	private final JCheckBox endoSteel = new JCheckBox();
-	private final JCheckBox artemis = new JCheckBox();
+	private final JProgressBar				massBar;
+	private final JLabel					massValue			= new JLabel("xxx");
+	private final JProgressBar				armorBar;
+	private final JLabel					armorValue			= new JLabel("xxx");
+	private final JProgressBar				critslotsBar		= new JProgressBar(0, 5 * 12 + 3 * 6);
+	private final JLabel					critslotsValue		= new JLabel("xxx");
+	private final JCheckBox					ferroFibros			= new JCheckBox();
+	private final JCheckBox					endoSteel			= new JCheckBox();
+	private final JCheckBox					artemis				= new JCheckBox();
 
 	// Movement pane
-	private final MetricDisplay topSpeed;
-	private final MetricDisplay turnSpeed;
-	private final MetricDisplay twistSpeed;
-	private final JCheckBox speedTweak = new JCheckBox("Speed Tweak");
-	private final JCheckBox anchorTurn = new JCheckBox("Anchor Turn");
-	private final JLabel jumpJets = new JLabel("xxx");
+	private final MetricDisplay				topSpeed;
+	private final MetricDisplay				turnSpeed;
+	private final MetricDisplay				twistSpeed;
+	private final JCheckBox					speedTweak			= new JCheckBox("Speed Tweak");
+	private final JCheckBox					anchorTurn			= new JCheckBox("Anchor Turn");
+	private final JLabel					jumpJets			= new JLabel("xxx");
 
 	// Heat pane
-	private final JLabel heatsinks = new JLabel("xxx");
-	private final MetricDisplay effectiveHS;
-	private final MetricDisplay timeToOverheat;
-	private final MetricDisplay coolingRatio;
-	private final MetricDisplay timeToCool;
-	private final JCheckBox doubleHeatSinks = new JCheckBox("Double Heatsinks");
-	private final JCheckBox coolRun = new JCheckBox("Cool Run");
-	private final JCheckBox heatContainment = new JCheckBox("Heat Containment");
-	private final JCheckBox doubleBasics = new JCheckBox("Double Basics");
-	private final JComboBox<Environment> environemnts;
+	private final JLabel					heatsinks			= new JLabel("xxx");
+	private final MetricDisplay				effectiveHS;
+	private final MetricDisplay				timeToOverheat;
+	private final MetricDisplay				coolingRatio;
+	private final MetricDisplay				timeToCool;
+	private final JCheckBox					doubleHeatSinks		= new JCheckBox("Double Heatsinks");
+	private final JCheckBox					coolRun				= new JCheckBox("Cool Run");
+	private final JCheckBox					heatContainment		= new JCheckBox("Heat Containment");
+	private final JCheckBox					doubleBasics		= new JCheckBox("Double Basics");
+	private final JComboBox<Environment>	environemnts;
 
 	// Offense pane
-	private final JComboBox<String> range;
-	private final MetricDisplay alphaStrike;
-	private final MetricDisplay dpsMax;
-	private final MetricDisplay dpsSustained;
-	private final MetricDisplay burstDamage;
-	private final JCheckBox fastFire = new JCheckBox("F. Fire");
-	private final MetricDisplay ghostHeat;
-	private final JTable weaponTable;
+	private final JComboBox<String>			range;
+	private final MetricDisplay				alphaStrike;
+	private final MetricDisplay				dpsMax;
+	private final MetricDisplay				dpsSustained;
+	private final MetricDisplay				burstDamage;
+	private final JCheckBox					fastFire			= new JCheckBox("F. Fire");
+	private final MetricDisplay				ghostHeat;
+	private final JTable					weaponTable;
 
-	private final JumpDistance metricJumpDistance;
-	private transient Boolean inhibitChanges = false;
-	private final MaxSustainedDPS metricSustainedDps;
-	private final OperationStack opStack;
-	private final transient MessageXBar xBar;
+	private final JumpDistance				metricJumpDistance;
+	private transient Boolean				inhibitChanges		= false;
+	private final MaxSustainedDPS			metricSustainedDps;
+	private final OperationStack			opStack;
+	private final transient MessageXBar		xBar;
 
 	public LoadoutInfoPanel(LoadoutFrame aLoadoutFrame, MessageXBar anXBar) {
 		loadout = aLoadoutFrame.getLoadout();
@@ -373,7 +373,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 				ghostHeat = new MetricDisplay(new GhostHeat(loadout), "Ghost heat: %.1f",
 						"The amount of extra heat you receive on an alpha strike due to the ghost heat mechanic.",
 						anXBar, loadout) {
-					private static final long serialVersionUID = 1L;
+					private static final long	serialVersionUID	= 1L;
 
 					@Override
 					protected void updateText() {
@@ -682,7 +682,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 		} else if (loadout instanceof LoadoutStandard) {
 			final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
 			endoSteel.setAction(new AbstractAction() {
-				private static final long serialVersionUID = 1L;
+				private static final long	serialVersionUID	= 1L;
 
 				@Override
 				public void actionPerformed(ActionEvent aE) {
@@ -704,7 +704,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 			});
 
 			ferroFibros.setAction(new AbstractAction() {
-				private static final long serialVersionUID = 1L;
+				private static final long	serialVersionUID	= 1L;
 
 				@Override
 				public void actionPerformed(ActionEvent aE) {
@@ -725,7 +725,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 			});
 
 			doubleHeatSinks.setAction(new AbstractAction("Double Heat Sinks") {
-				private static final long serialVersionUID = 1L;
+				private static final long	serialVersionUID	= 1L;
 
 				@Override
 				public void actionPerformed(ActionEvent aE) {
@@ -748,7 +748,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, MessageXBa
 		}
 
 		artemis.setAction(new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+			private static final long	serialVersionUID	= 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent aE) {

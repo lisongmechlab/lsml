@@ -33,8 +33,8 @@ import lisong_mechlab.model.DataCache;
  * @author Li Song
  */
 public class PilotModuleDB {
-	private final static Map<Integer, PilotModule> mwoidx2module;
-	private final static Map<String, PilotModule> name2module;
+	private final static Map<Integer, PilotModule>	mwoidx2module;
+	private final static Map<String, PilotModule>	name2module;
 
 	public static PilotModule lookup(int aId) {
 		return mwoidx2module.get(aId);

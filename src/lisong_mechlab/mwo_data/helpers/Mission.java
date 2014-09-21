@@ -27,13 +27,13 @@ public class Mission {
 	public class Entity {
 		public class EntityProperties {
 			@XStreamAsAttribute
-			public double temperature;
+			public double	temperature;
 		}
 
-		public EntityProperties Properties;
+		public EntityProperties	Properties;
 		@XStreamAsAttribute
-		public String EntityClass;
+		public String			EntityClass;
 	}
 
-	public List<Entity> Objects;
+	public List<Entity>	Objects;
 }

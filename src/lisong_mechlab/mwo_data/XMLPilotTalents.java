@@ -44,35 +44,35 @@ public class XMLPilotTalents {
 
 	public class XMLTalent {
 		@XStreamAsAttribute
-		public int id;
+		public int		id;
 
 		@XStreamAsAttribute
-		public String ename;
+		public String	ename;
 
 		@XStreamAsAttribute
-		public int ranks;
+		public int		ranks;
 
 		public class XMLRank {
 			@SuppressWarnings("hiding")
 			@XStreamAsAttribute
-			public int id;
+			public int		id;
 
 			@XStreamAsAttribute
-			public String title;
+			public String	title;
 
 			@XStreamAsAttribute
-			public String description;
+			public String	description;
 		}
 
 		@XStreamImplicit
-		public List<XMLRank> rankEntries;
+		public List<XMLRank>	rankEntries;
 
 		@XStreamAsAttribute
-		public String category;
+		public String			category;
 	}
 
 	@XStreamImplicit
-	public List<XMLTalent> talents;
+	public List<XMLTalent>	talents;
 
 	public static XMLPilotTalents read(GameVFS aGameVfs) throws IOException {
 		GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"));

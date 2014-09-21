@@ -40,8 +40,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OpAddToGarageTest {
 	@Mock
-	private MechGarage garage;
-	private OperationStack opStack = new OperationStack(0);
+	private MechGarage		garage;
+	private OperationStack	opStack	= new OperationStack(0);
 
 	/**
 	 * Adding the same {@link LoadoutStandard} twice is an error and shall throw an {@link IllegalArgumentException}.

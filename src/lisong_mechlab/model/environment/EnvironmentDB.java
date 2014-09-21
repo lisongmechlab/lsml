@@ -33,7 +33,7 @@ import lisong_mechlab.model.DataCache;
  * @author Li Song
  */
 public class EnvironmentDB {
-	private static List<Environment> environments = new ArrayList<>();
+	private static List<Environment>	environments	= new ArrayList<>();
 
 	/**
 	 * Looks up an {@link Environment} by name.

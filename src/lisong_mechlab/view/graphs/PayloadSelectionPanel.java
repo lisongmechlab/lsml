@@ -61,17 +61,17 @@ import lisong_mechlab.view.graphs.PayloadGraphPanel.Entry;
  */
 public class PayloadSelectionPanel extends JPanel {
 	private static class PayloadSettingsPanel extends JPanel {
-		private static final long serialVersionUID = 4965116372512246203L;
-		private final JRadioButton xlEngine = new JRadioButton("XL engine", false);
-		private final JRadioButton stdEngine = new JRadioButton("STD engine", true);
-		private final ButtonGroup engineGroup = new ButtonGroup();
-		private final JRadioButton noArmor = new JRadioButton("0% armor", false);
-		private final JRadioButton maxArmor = new JRadioButton("100% armor", true);
-		private final ButtonGroup armorGroup = new ButtonGroup();
-		private final JCheckBox endoSteel = new JCheckBox("Endo-Steel");
-		private final JCheckBox ferroFibrous = new JCheckBox("Ferro-Fibrous");
-		private final JCheckBox speedTweak = new JCheckBox("Speed Tweak");
-		private final JList<PayloadGraphPanel.Entry> graphEntries;
+		private static final long						serialVersionUID	= 4965116372512246203L;
+		private final JRadioButton						xlEngine			= new JRadioButton("XL engine", false);
+		private final JRadioButton						stdEngine			= new JRadioButton("STD engine", true);
+		private final ButtonGroup						engineGroup			= new ButtonGroup();
+		private final JRadioButton						noArmor				= new JRadioButton("0% armor", false);
+		private final JRadioButton						maxArmor			= new JRadioButton("100% armor", true);
+		private final ButtonGroup						armorGroup			= new ButtonGroup();
+		private final JCheckBox							endoSteel			= new JCheckBox("Endo-Steel");
+		private final JCheckBox							ferroFibrous		= new JCheckBox("Ferro-Fibrous");
+		private final JCheckBox							speedTweak			= new JCheckBox("Speed Tweak");
+		private final JList<PayloadGraphPanel.Entry>	graphEntries;
 
 		public PayloadSettingsPanel(Collection<Entry> aChassis) {
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -168,12 +168,12 @@ public class PayloadSelectionPanel extends JPanel {
 		}
 	}
 
-	private static final long serialVersionUID = 1L;
+	private static final long					serialVersionUID	= 1L;
 
-	private final UpgradesMutable upgrades;
-	private final PayloadGraphPanel graphPanel;
-	private final PayloadStatistics payloadStatistics;
-	private Collection<PayloadGraphPanel.Entry> chassis;
+	private final UpgradesMutable				upgrades;
+	private final PayloadGraphPanel				graphPanel;
+	private final PayloadStatistics				payloadStatistics;
+	private Collection<PayloadGraphPanel.Entry>	chassis;
 
 	public PayloadSelectionPanel() {
 		setLayout(new BorderLayout());

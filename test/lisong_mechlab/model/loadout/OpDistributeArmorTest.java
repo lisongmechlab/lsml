@@ -50,9 +50,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OpDistributeArmorTest {
 	@Mock
-	MessageXBar xBar;
+	MessageXBar		xBar;
 
-	OperationStack stack = new OperationStack(0);
+	OperationStack	stack	= new OperationStack(0);
 
 	private LoadoutBase<?> loadLink(String aLsml) throws DecodingException {
 		Base64LoadoutCoder coder = new Base64LoadoutCoder();

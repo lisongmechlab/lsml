@@ -36,7 +36,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class HeatSource extends Item {
 	@XStreamAsAttribute
-	private final double heat;
+	private final double	heat;
 
 	protected HeatSource(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
 			HardPointType aHardPointType, int aHP, Faction aFaction, double aHeat) {

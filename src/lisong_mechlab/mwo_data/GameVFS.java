@@ -59,17 +59,17 @@ import lisong_mechlab.view.preferences.PreferenceStore;
  * @author Li Song
  */
 public class GameVFS {
-	public static final File ITEM_STATS_XML = new File("Game/Libs/Items/ItemStats.xml");
-	public static final File MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
-	public static final File MDF_ROOT = new File("Game/Objects/mechs/");
+	public static final File		ITEM_STATS_XML	= new File("Game/Libs/Items/ItemStats.xml");
+	public static final File		MECH_ID_MAP_XML	= new File("Game/Libs/Items/MechIDMap.xml");
+	public static final File		MDF_ROOT		= new File("Game/Objects/mechs/");
 
-	private final Map<File, File> entryCache = new HashMap<File, File>();
-	private static Path gamePath;
+	private final Map<File, File>	entryCache		= new HashMap<File, File>();
+	private static Path				gamePath;
 
 	public static class GameFile {
-		public final InputStream stream;
-		public final long crc32;
-		public final String path;
+		public final InputStream	stream;
+		public final long			crc32;
+		public final String			path;
 
 		GameFile(InputStream aStream, long aCrc32, String aPath) {
 			stream = aStream;
@@ -233,8 +233,8 @@ public class GameVFS {
 	}
 
 	static private class GameFinder extends SimpleFileVisitor<Path> {
-		public Path gameRoot = null;
-		Set<String> skipList = new HashSet<>();
+		public Path	gameRoot	= null;
+		Set<String>	skipList	= new HashSet<>();
 
 		GameFinder() {
 

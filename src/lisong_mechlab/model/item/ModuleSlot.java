@@ -40,7 +40,7 @@ public enum ModuleSlot {
 		}
 	}
 
-	private final String name;
+	private final String	name;
 
 	private ModuleSlot(String aName) {
 		name = aName;

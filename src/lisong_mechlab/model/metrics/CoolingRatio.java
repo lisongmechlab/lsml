@@ -29,8 +29,8 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class CoolingRatio implements Metric {
-	private final HeatDissipation dissipation;
-	private final HeatGeneration generation;
+	private final HeatDissipation	dissipation;
+	private final HeatGeneration	generation;
 
 	public CoolingRatio(final HeatDissipation aDissipation, final HeatGeneration aHeatGeneration) {
 		dissipation = aDissipation;

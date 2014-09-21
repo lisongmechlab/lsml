@@ -35,7 +35,7 @@ import lisong_mechlab.view.action.OpenHelp;
 import lisong_mechlab.view.action.OpenPreferences;
 
 public class MenuBar extends JMenuBar {
-	private static final long serialVersionUID = -8841283911101837906L;
+	private static final long	serialVersionUID	= -8841283911101837906L;
 
 	public MenuBar(final LSML application) {
 		super();

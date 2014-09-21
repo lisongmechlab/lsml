@@ -59,10 +59,10 @@ import com.thoughtworks.xstream.XStream;
 public class LoadoutStandardTest {
 	// FIXME inherit from LoadoutBaseTest
 	@Spy
-	MessageXBar xBar;
+	MessageXBar		xBar;
 
 	@Mock
-	OperationStack undoStack;
+	OperationStack	undoStack;
 
 	@Before
 	public void setup() {

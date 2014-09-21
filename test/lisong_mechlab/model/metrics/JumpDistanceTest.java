@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -38,8 +38,14 @@ import org.junit.Test;
  * @author Li Song
  */
 public class JumpDistanceTest {
-	private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-	private final JumpDistance cut = new JumpDistance(mlc.loadout);
+	private final MockLoadoutContainer	mlc		= new MockLoadoutContainer();
+	private final JumpDistance			cut		= new JumpDistance(mlc.loadout);
+	private final List<JumpJet>			items	= new ArrayList<>();
+
+	@Before
+	public void setup() {
+		when(mlc.loadout.items(JumpJet.class)).thenReturn(items);
+	}
 
 	/**
 	 * The jump jet definitions in the xml list forces in kilo Newton. When weights are taken as tons, the calculations
@@ -56,11 +62,9 @@ public class JumpDistanceTest {
 		final double F = jj.getForce();
 		final double h = F * t * t / (2 * mass) * num_jj;
 
-		List<Item> items = new ArrayList<>();
 		items.add(jj);
 		when(mlc.chassi.getMassMax()).thenReturn(mass);
 		when(mlc.loadout.getJumpJetCount()).thenReturn(num_jj);
-		when(mlc.loadout.getAllItems()).thenReturn(items);
 		assertEquals(h, cut.calculate(), 0.5);
 	}
 

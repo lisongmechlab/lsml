@@ -29,7 +29,7 @@ import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 public class EnergyWeapon extends Weapon {
-	protected final double burnTime;
+	protected final double	burnTime;
 
 	public EnergyWeapon(ItemStatsWeapon aStatsWeapon) {
 		super(aStatsWeapon, HardPointType.ENERGY);
@@ -61,10 +61,10 @@ public class EnergyWeapon extends Weapon {
 		return name;
 	}
 
-	public final static Comparator<EnergyWeapon> DEFAULT_ORDERING;
+	public final static Comparator<EnergyWeapon>	DEFAULT_ORDERING;
 	static {
 		DEFAULT_ORDERING = new Comparator<EnergyWeapon>() {
-			Pattern p = Pattern.compile("(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
+			Pattern	p	= Pattern.compile("(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
 
 			@Override
 			public int compare(EnergyWeapon aLhs, EnergyWeapon aRhs) {

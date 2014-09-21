@@ -20,6 +20,7 @@
 package lisong_mechlab.model.metrics;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import lisong_mechlab.model.Efficiencies;
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 
@@ -38,7 +39,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class MaxSustainedDPS extends RangeMetric {
-	private final HeatDissipation dissipation;
+	private final HeatDissipation	dissipation;
 
 	public MaxSustainedDPS(final LoadoutBase<?> aLoadout, final HeatDissipation aHeatDissipation) {
 		super(aLoadout);
@@ -49,12 +50,12 @@ public class MaxSustainedDPS extends RangeMetric {
 	public double calculate(double aRange) {
 		double ans = 0.0;
 		Map<Weapon, Double> dd = getWeaponRatios(aRange);
+		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
 		for (Map.Entry<Weapon, Double> entry : dd.entrySet()) {
 			Weapon weapon = entry.getKey();
 			double ratio = entry.getValue();
-			double rangeEffectivity = weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers());
-			ans += rangeEffectivity * weapon.getStat("d/s", loadout.getEfficiencies(), loadout.getWeaponModifiers())
-					* ratio;
+			double rangeEffectivity = weapon.getRangeEffectivity(aRange, modifiers);
+			ans += rangeEffectivity * weapon.getStat("d/s", loadout.getEfficiencies(), modifiers) * ratio;
 		}
 		return ans;
 	}
@@ -71,12 +72,13 @@ public class MaxSustainedDPS extends RangeMetric {
 	 */
 	public Map<Weapon, Double> getWeaponRatios(final double aRange) {
 		final Efficiencies efficiencies = loadout.getEfficiencies();
+		final Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
 
 		double heatleft = dissipation.calculate();
 		List<Weapon> weapons = new ArrayList<>(15);
-		for (Item item : loadout.getAllItems()) {
-			if (item instanceof Weapon && ((Weapon) item).isOffensive()) {
-				weapons.add((Weapon) item);
+		for (Weapon weapon : loadout.items(Weapon.class)) {
+			if (weapon.isOffensive()) {
+				weapons.add(weapon);
 			}
 		}
 		if (aRange >= 0) {
@@ -84,13 +86,13 @@ public class MaxSustainedDPS extends RangeMetric {
 				@Override
 				public int compare(Weapon aO1, Weapon aO2) {
 					// Note: D/H == DPS / HPS so we're ordering by highest dps per hps.
-					double dps2 = aO2.getRangeEffectivity(aRange, loadout.getWeaponModifiers())
-							* aO2.getStat("d/h", efficiencies, loadout.getWeaponModifiers());
-					double dps1 = aO1.getRangeEffectivity(aRange, loadout.getWeaponModifiers())
-							* aO1.getStat("d/h", efficiencies, loadout.getWeaponModifiers());
-					if (aO1.getRangeMax(loadout.getWeaponModifiers()) < aRange)
+					double dps2 = aO2.getRangeEffectivity(aRange, modifiers)
+							* aO2.getStat("d/h", efficiencies, modifiers);
+					double dps1 = aO1.getRangeEffectivity(aRange, modifiers)
+							* aO1.getStat("d/h", efficiencies, modifiers);
+					if (aO1.getRangeMax(modifiers) < aRange)
 						dps1 = 0;
-					if (aO2.getRangeMax(loadout.getWeaponModifiers()) < aRange)
+					if (aO2.getRangeMax(modifiers) < aRange)
 						dps2 = 0;
 					return Double.compare(dps2, dps1);
 				}
@@ -99,8 +101,8 @@ public class MaxSustainedDPS extends RangeMetric {
 			Collections.sort(weapons, new Comparator<Weapon>() {
 				@Override
 				public int compare(Weapon aO1, Weapon aO2) {
-					return Double.compare(aO2.getStat("d/h", efficiencies, loadout.getWeaponModifiers()),
-							aO1.getStat("d/h", efficiencies, loadout.getWeaponModifiers()));
+					return Double.compare(aO2.getStat("d/h", efficiencies, modifiers),
+							aO1.getStat("d/h", efficiencies, modifiers));
 				}
 			});
 		}
@@ -108,7 +110,7 @@ public class MaxSustainedDPS extends RangeMetric {
 		Map<Weapon, Double> ans = new HashMap<>();
 		while (!weapons.isEmpty()) {
 			Weapon weapon = weapons.remove(0);
-			final double heat = weapon.getStat("h/s", efficiencies, loadout.getWeaponModifiers());
+			final double heat = weapon.getStat("h/s", efficiencies, modifiers);
 			final double ratio;
 
 			if (heatleft == 0) {

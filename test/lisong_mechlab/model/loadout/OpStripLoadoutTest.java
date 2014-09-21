@@ -44,7 +44,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class OpStripLoadoutTest {
 
 	@Mock
-	private MessageXBar xBar;
+	private MessageXBar	xBar;
 
 	/**
 	 * Stripping a loadout shall remove all upgrades, items and armor.

@@ -25,7 +25,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutStandard;
@@ -45,14 +44,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class MaxDPSTest {
 	@Mock
-	private LoadoutStandard loadout;
+	private LoadoutStandard	loadout;
 	@InjectMocks
-	private MaxDPS cut;
-	private List<Item> items = new ArrayList<>();
+	private MaxDPS			cut;
+	private List<Weapon>	items	= new ArrayList<>();
 
 	@Before
 	public void setup() {
-		when(loadout.getAllItems()).thenReturn(items);
+		when(loadout.items(Weapon.class)).thenReturn(items);
 	}
 
 	/**
@@ -65,12 +64,10 @@ public class MaxDPSTest {
 	}
 
 	/**
-	 * Non-Weapon types do not cause exceptions or affect the result.
+	 * No weapons should return 0.
 	 */
 	@Test
-	public void testCalculate_otherItems() {
-		items.add(ItemDB.ECM);
-		items.add(ItemDB.BAP);
+	public void testCalculate_NoItems() {
 		assertEquals(0.0, cut.calculate(0), 0.0);
 	}
 

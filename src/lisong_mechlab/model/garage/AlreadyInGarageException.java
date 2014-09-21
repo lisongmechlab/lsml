@@ -35,5 +35,5 @@ public class AlreadyInGarageException extends Exception {
 		super("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
 	}
 
-	private static final long serialVersionUID = 4597113571327421920L;
+	private static final long	serialVersionUID	= 4597113571327421920L;
 }

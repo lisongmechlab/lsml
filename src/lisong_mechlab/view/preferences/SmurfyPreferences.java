@@ -25,8 +25,8 @@ package lisong_mechlab.view.preferences;
  * @author Li Song
  */
 public class SmurfyPreferences {
-	private static final String SMURFY_REMEMBER_KEY = "smurfyRememberKey";
-	private static final String SMURFY_KEY = "smurfyKey";
+	private static final String	SMURFY_REMEMBER_KEY	= "smurfyRememberKey";
+	private static final String	SMURFY_KEY			= "smurfyKey";
 
 	public boolean shouldRememberAPIKey() {
 		return Boolean.parseBoolean(PreferenceStore.getString(SMURFY_REMEMBER_KEY, "false"));

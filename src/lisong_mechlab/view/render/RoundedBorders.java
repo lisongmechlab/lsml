@@ -31,14 +31,14 @@ import java.awt.geom.Ellipse2D;
 import javax.swing.border.AbstractBorder;
 
 public class RoundedBorders extends AbstractBorder {
-	private static final long serialVersionUID = -4151946534484412709L;
-	private final Insets insets;
-	private final RenderingHints hints;
-	private final int radii;
-	private final Insets margin;
-	private final boolean noBottomBevel;
-	private final boolean noTopBevel;
-	private final Area clipFull;
+	private static final long		serialVersionUID	= -4151946534484412709L;
+	private final Insets			insets;
+	private final RenderingHints	hints;
+	private final int				radii;
+	private final Insets			margin;
+	private final boolean			noBottomBevel;
+	private final boolean			noTopBevel;
+	private final Area				clipFull;
 
 	public RoundedBorders(Insets aMargin, Insets aPadding, int aRadii, boolean aNoTopBevel, boolean aNoBottomBevel) {
 		radii = aRadii;

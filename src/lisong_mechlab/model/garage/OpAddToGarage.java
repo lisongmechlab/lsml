@@ -29,8 +29,8 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class OpAddToGarage extends Operation {
-	private final MechGarage garage;
-	private final LoadoutBase<?> loadout;
+	private final MechGarage		garage;
+	private final LoadoutBase<?>	loadout;
 
 	public OpAddToGarage(MechGarage aGarage, LoadoutBase<?> aLoadout) {
 		garage = aGarage;

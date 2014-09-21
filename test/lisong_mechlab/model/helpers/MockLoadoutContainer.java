@@ -44,26 +44,26 @@ import lisong_mechlab.model.upgrades.Upgrades;
  * @author Li Song
  */
 public class MockLoadoutContainer {
-	final public ChassisBase chassi;
-	final public LoadoutBase<ConfiguredComponentBase> loadout;
-	final public Upgrades upgrades;
-	final public Efficiencies efficiencies;
-	final public ComponentBase ira;
-	final public ComponentBase irt;
-	final public ComponentBase irl;
-	final public ComponentBase ihd;
-	final public ComponentBase ict;
-	final public ComponentBase ilt;
-	final public ComponentBase ill;
-	final public ComponentBase ila;
-	final public ConfiguredComponentBase ra;
-	final public ConfiguredComponentBase rt;
-	final public ConfiguredComponentBase rl;
-	final public ConfiguredComponentBase hd;
-	final public ConfiguredComponentBase ct;
-	final public ConfiguredComponentBase lt;
-	final public ConfiguredComponentBase ll;
-	final public ConfiguredComponentBase la;
+	final public ChassisBase							chassi;
+	final public LoadoutBase<ConfiguredComponentBase>	loadout;
+	final public Upgrades								upgrades;
+	final public Efficiencies							efficiencies;
+	final public ComponentBase							ira;
+	final public ComponentBase							irt;
+	final public ComponentBase							irl;
+	final public ComponentBase							ihd;
+	final public ComponentBase							ict;
+	final public ComponentBase							ilt;
+	final public ComponentBase							ill;
+	final public ComponentBase							ila;
+	final public ConfiguredComponentBase				ra;
+	final public ConfiguredComponentBase				rt;
+	final public ConfiguredComponentBase				rl;
+	final public ConfiguredComponentBase				hd;
+	final public ConfiguredComponentBase				ct;
+	final public ConfiguredComponentBase				lt;
+	final public ConfiguredComponentBase				ll;
+	final public ConfiguredComponentBase				la;
 
 	public MockLoadoutContainer() {
 		chassi = mock(ChassisBase.class);

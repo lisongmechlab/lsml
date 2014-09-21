@@ -52,9 +52,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class LoadoutCoderV1Test {
 	@Mock
-	private MessageXBar xBar;
+	private MessageXBar		xBar;
 	@InjectMocks
-	private LoadoutCoderV1 cut;
+	private LoadoutCoderV1	cut;
 
 	/**
 	 * The coder shall handle the artemis change.

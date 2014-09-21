@@ -29,12 +29,12 @@ import lisong_mechlab.model.pilot.PilotSkillTree;
  * @author Li Song
  */
 public class WeaponModule extends PilotModule implements WeaponModifier {
-	private final List<Weapon> affectedWeapon;
-	private final double[] longRangeModifier;
-	private final double[] maxRangeModifier;
-	private final double[] heatModifier;
-	private final double[] cooldownModifier;
-	private final int maxRank;
+	private final List<Weapon>	affectedWeapon;
+	private final double[]		longRangeModifier;
+	private final double[]		maxRangeModifier;
+	private final double[]		heatModifier;
+	private final double[]		cooldownModifier;
+	private final int			maxRank;
 
 	/**
 	 * @param aMwoName

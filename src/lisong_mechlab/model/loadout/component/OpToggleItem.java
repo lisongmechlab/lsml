@@ -32,13 +32,13 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class OpToggleItem extends Operation {
-	private final Item item;
-	private final MessageXBar xBar;
-	private final LoadoutBase<?> loadout;
-	private final ConfiguredComponentOmniMech component;
-	private final boolean newState;
-	private boolean oldState;
-	private boolean oldHAState;
+	private final Item							item;
+	private final MessageXBar					xBar;
+	private final LoadoutBase<?>				loadout;
+	private final ConfiguredComponentOmniMech	component;
+	private final boolean						newState;
+	private boolean								oldState;
+	private boolean								oldHAState;
 
 	public OpToggleItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentOmniMech aComponent, Item aItem,
 			boolean aNewState) {

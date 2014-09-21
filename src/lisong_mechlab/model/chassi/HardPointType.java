@@ -68,5 +68,5 @@ public enum HardPointType {
 		}
 	}
 
-	private final String shortName;
+	private final String	shortName;
 }

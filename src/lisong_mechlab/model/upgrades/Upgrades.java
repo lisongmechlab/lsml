@@ -28,14 +28,14 @@ import lisong_mechlab.util.MessageXBar;
  * @author Li Song
  */
 public class Upgrades {
-	protected ArmorUpgrade armorType = UpgradeDB.STANDARD_ARMOR;
-	protected StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
-	protected GuidanceUpgrade guidanceType = UpgradeDB.STANDARD_GUIDANCE;
-	protected HeatSinkUpgrade heatSinkType = UpgradeDB.STANDARD_HEATSINKS;
+	protected ArmorUpgrade		armorType		= UpgradeDB.STANDARD_ARMOR;
+	protected StructureUpgrade	structureType	= UpgradeDB.STANDARD_STRUCTURE;
+	protected GuidanceUpgrade	guidanceType	= UpgradeDB.STANDARD_GUIDANCE;
+	protected HeatSinkUpgrade	heatSinkType	= UpgradeDB.STANDARD_HEATSINKS;
 
 	public static class Message implements MessageXBar.Message {
-		public final ChangeMsg msg;
-		private final Upgrades source;
+		public final ChangeMsg	msg;
+		private final Upgrades	source;
 
 		public enum ChangeMsg {
 			GUIDANCE, STRUCTURE, ARMOR, HEATSINKS

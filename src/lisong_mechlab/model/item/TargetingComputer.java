@@ -38,12 +38,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class TargetingComputer extends Module implements WeaponModifier {
 	private static class Filter implements WeaponModifier {
-		private final List<String> compatibleWeapons;
+		private final List<String>	compatibleWeapons;
 
 		@XStreamAsAttribute
-		public double longRange;
+		public double				longRange;
 		@XStreamAsAttribute
-		public double maxRange;
+		public double				maxRange;
 
 		Filter(XMLTargetingComputerStats.XMLWeaponStatsFilter aFilter) {
 			compatibleWeapons = Arrays.asList(aFilter.compatibleWeapons.split("\\s*,\\s*"));
@@ -96,7 +96,7 @@ public class TargetingComputer extends Module implements WeaponModifier {
 		}
 	}
 
-	private final List<Filter> filters = new ArrayList<>();
+	private final List<Filter>	filters	= new ArrayList<>();
 
 	public TargetingComputer(ItemStatsModule aModule) {
 		super(aModule);

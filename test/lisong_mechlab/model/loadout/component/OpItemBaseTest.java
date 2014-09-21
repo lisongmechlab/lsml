@@ -67,13 +67,13 @@ public class OpItemBaseTest {
 	}
 
 	@Mock
-	private LoadoutBase<ConfiguredComponentBase> loadout;
+	private LoadoutBase<ConfiguredComponentBase>	loadout;
 	@Mock
-	private ConfiguredComponentBase configuredComponent;
+	private ConfiguredComponentBase					configuredComponent;
 	@Mock
-	private MessageXBar xBar;
+	private MessageXBar								xBar;
 
-	private CutClass cut;
+	private CutClass								cut;
 
 	@Before
 	public void setup() {

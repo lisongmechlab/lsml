@@ -38,8 +38,8 @@ import lisong_mechlab.view.ProgramInit;
  * @author Li Song
  */
 public class UndoGarageAction extends AbstractAction implements Reader {
-	private static final long serialVersionUID = 665074705972425989L;
-	private static final String SHORTCUT_STROKE = "control shift Z";
+	private static final long	serialVersionUID	= 665074705972425989L;
+	private static final String	SHORTCUT_STROKE		= "control shift Z";
 
 	public UndoGarageAction(MessageXBar anXBar) {
 		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));

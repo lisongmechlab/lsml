@@ -49,20 +49,20 @@ import org.mockito.Mockito;
  */
 @RunWith(JUnitParamsRunner.class)
 public abstract class ChassisBaseTest {
-	protected int baseVariant = 12;
-	protected Faction faction = Faction.Clan;
-	protected int maxTons = 75;
-	protected MovementProfile movementProfile;
-	protected int mwoID = 300;
-	protected String mwoName = "tbw-p";
-	protected String name = "Timber Wolf Primal";
-	protected String series = "Timber Wolf";
-	protected String shortName = "tbw primal";
-	protected ChassisVariant variant = ChassisVariant.FOUNDER;
-	protected int maxPilotModules = 3;
-	protected int maxConsumableModules = 2;
-	protected int maxWeaponModules = 1;
-	protected ComponentBase[] componentBases;
+	protected int				baseVariant				= 12;
+	protected Faction			faction					= Faction.Clan;
+	protected int				maxTons					= 75;
+	protected MovementProfile	movementProfile;
+	protected int				mwoID					= 300;
+	protected String			mwoName					= "tbw-p";
+	protected String			name					= "Timber Wolf Primal";
+	protected String			series					= "Timber Wolf";
+	protected String			shortName				= "tbw primal";
+	protected ChassisVariant	variant					= ChassisVariant.FOUNDER;
+	protected int				maxPilotModules			= 3;
+	protected int				maxConsumableModules	= 2;
+	protected int				maxWeaponModules		= 1;
+	protected ComponentBase[]	componentBases;
 
 	protected abstract ChassisBase makeDefaultCUT();
 

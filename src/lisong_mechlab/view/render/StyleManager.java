@@ -47,65 +47,66 @@ import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 
 public class StyleManager {
-	private static final Insets PADDING = new Insets(2, 5, 2, 5);
-	private static final Insets THIN_PADDING = new Insets(1, 2, 1, 2);
-	private static final int RADII = ItemRenderer.RADII;
-	private static final int MARGIN = 1;
-	private static final Border thinItemBorder = new RoundedBorders(new Insets(0, MARGIN, 0, MARGIN), THIN_PADDING,
-			RADII, false, false);
-	private static final Border topBorder = new RoundedBorders(new Insets(MARGIN, MARGIN, 0, MARGIN), PADDING, RADII,
-			false, true);
-	private static final Border middleBorder = new RoundedBorders(new Insets(0, MARGIN, 0, MARGIN), PADDING, RADII,
-			true, true);
-	private static final Border bottomBorder = new RoundedBorders(new Insets(0, MARGIN, MARGIN, MARGIN), PADDING,
-			RADII, true, false);
-	private static final Border singleBorder = new RoundedBorders(new Insets(MARGIN, MARGIN, MARGIN, MARGIN), PADDING,
-			RADII, false, false);
+	private static final Insets	PADDING					= new Insets(2, 5, 2, 5);
+	private static final Insets	THIN_PADDING			= new Insets(1, 2, 1, 2);
+	private static final int	RADII					= ItemRenderer.RADII;
+	private static final int	MARGIN					= 1;
+	private static final Border	thinItemBorder			= new RoundedBorders(new Insets(0, MARGIN, 0, MARGIN),
+																THIN_PADDING, RADII, false, false);
+	private static final Border	topBorder				= new RoundedBorders(new Insets(MARGIN, MARGIN, 0, MARGIN),
+																PADDING, RADII, false, true);
+	private static final Border	middleBorder			= new RoundedBorders(new Insets(0, MARGIN, 0, MARGIN), PADDING,
+																RADII, true, true);
+	private static final Border	bottomBorder			= new RoundedBorders(new Insets(0, MARGIN, MARGIN, MARGIN),
+																PADDING, RADII, true, false);
+	private static final Border	singleBorder			= new RoundedBorders(
+																new Insets(MARGIN, MARGIN, MARGIN, MARGIN), PADDING,
+																RADII, false, false);
 
 	// Weapons
-	private static final Color COLOR_FG_ENERGY = Color.WHITE;
-	private static final Color COLOR_BG_ENERGY = new Color(0xa40000);
-	private static final Color COLOR_FG_ENERGY_ALT = Color.WHITE;
-	private static final Color COLOR_BG_ENERGY_ALT = new Color(0xd40000);
-	private static final Color COLOR_FG_MISSILE = Color.WHITE;
-	private static final Color COLOR_BG_MISSILE = new Color(0x4e9a06);
-	private static final Color COLOR_FG_MISSILE_AMMO = Color.BLACK;
-	private static final Color COLOR_BG_MISSILE_AMMO = new Color(0x8ae234);
-	private static final Color COLOR_FG_BALLISTIC = Color.WHITE;
-	private static final Color COLOR_BG_BALLISTIC = new Color(0xc4a000);
-	private static final Color COLOR_FG_BALLISTIC_AMMO = Color.BLACK;
-	private static final Color COLOR_BG_BALLISTIC_AMMO = new Color(0xfce94f);
+	private static final Color	COLOR_FG_ENERGY			= Color.WHITE;
+	private static final Color	COLOR_BG_ENERGY			= new Color(0xa40000);
+	private static final Color	COLOR_FG_ENERGY_ALT		= Color.WHITE;
+	private static final Color	COLOR_BG_ENERGY_ALT		= new Color(0xd40000);
+	private static final Color	COLOR_FG_MISSILE		= Color.WHITE;
+	private static final Color	COLOR_BG_MISSILE		= new Color(0x4e9a06);
+	private static final Color	COLOR_FG_MISSILE_AMMO	= Color.BLACK;
+	private static final Color	COLOR_BG_MISSILE_AMMO	= new Color(0x8ae234);
+	private static final Color	COLOR_FG_BALLISTIC		= Color.WHITE;
+	private static final Color	COLOR_BG_BALLISTIC		= new Color(0xc4a000);
+	private static final Color	COLOR_FG_BALLISTIC_AMMO	= Color.BLACK;
+	private static final Color	COLOR_BG_BALLISTIC_AMMO	= new Color(0xfce94f);
 
 	// Engine/Propulsion
-	private static final Color COLOR_FG_JJ = Color.WHITE;
-	private static final Color COLOR_BG_JJ = new Color(0x8d6094);
-	private static final Color COLOR_FG_ENGINE = Color.WHITE;
-	private static final Color COLOR_BG_ENGINE = new Color(0x5c3566);
-	private static final Color COLOR_FG_HS = Color.WHITE;
-	private static final Color COLOR_BG_HS = new Color(0xad7fa8);
+	private static final Color	COLOR_FG_JJ				= Color.WHITE;
+	private static final Color	COLOR_BG_JJ				= new Color(0x8d6094);
+	private static final Color	COLOR_FG_ENGINE			= Color.WHITE;
+	private static final Color	COLOR_BG_ENGINE			= new Color(0x5c3566);
+	private static final Color	COLOR_FG_HS				= Color.WHITE;
+	private static final Color	COLOR_BG_HS				= new Color(0xad7fa8);
 
 	// Structure/Internal
-	private static final Color COLOR_FG_DYNAMIC = (new Color(0xe1e6dd)).darker();
-	private static final Color COLOR_BG_DYNAMIC = new Color(0xe1e6dd);
-	private static final Color COLOR_FG_INTERNAL = Color.GRAY.darker();
-	private static final Color COLOR_BG_INTERNAL = new Color(0xd3d7cf);
+	private static final Color	COLOR_FG_DYNAMIC		= (new Color(0xe1e6dd)).darker();
+	private static final Color	COLOR_BG_DYNAMIC		= new Color(0xe1e6dd);
+	private static final Color	COLOR_FG_INTERNAL		= Color.GRAY.darker();
+	private static final Color	COLOR_BG_INTERNAL		= new Color(0xd3d7cf);
 
 	// Counter measures
-	private static final Color COLOR_FG_AMS = Color.WHITE;
-	private static final Color COLOR_BG_AMS = new Color(0x2e3436);
-	private static final Color COLOR_FG_AMS_AMMO = Color.WHITE;
-	private static final Color COLOR_BG_AMS_AMMO = new Color(0x65676b);
-	private static final Color COLOR_FG_ECM = Color.WHITE;
-	private static final Color COLOR_BG_ECM = new Color(0x204a87);
+	private static final Color	COLOR_FG_AMS			= Color.WHITE;
+	private static final Color	COLOR_BG_AMS			= new Color(0x2e3436);
+	private static final Color	COLOR_FG_AMS_AMMO		= Color.WHITE;
+	private static final Color	COLOR_BG_AMS_AMMO		= new Color(0x65676b);
+	private static final Color	COLOR_FG_ECM			= Color.WHITE;
+	private static final Color	COLOR_BG_ECM			= new Color(0x204a87);
 
 	// Others
-	private static final Color COLOR_BG_MISC = new Color(0x729fcf);
+	private static final Color	COLOR_BG_MISC			= new Color(0x729fcf);
 
-	private static final Icon MISSILE_BAY_DOOR_ICON = new ImageIcon(
-			StyleManager.class.getResource("/resources/mbd.png"),
-			"This hard point has missile bay doors. While closed the component receives 10% less damage");
+	private static final Icon	MISSILE_BAY_DOOR_ICON	= new ImageIcon(
+																StyleManager.class.getResource("/resources/mbd.png"),
+																"This hard point has missile bay doors. While closed the component receives 10% less damage");
 
-	private static final Border INNER_BORDER = BorderFactory.createEmptyBorder(0, 4, 4, 4);
+	private static final Border	INNER_BORDER			= BorderFactory.createEmptyBorder(0, 4, 4, 4);
 
 	public static Border sectionBorder(String sectionTitle) {
 		return BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(sectionTitle), INNER_BORDER);

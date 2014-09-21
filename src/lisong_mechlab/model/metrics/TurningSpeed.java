@@ -31,7 +31,7 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  */
 public class TurningSpeed implements Metric {
 
-	private final LoadoutBase<?> loadout;
+	private final LoadoutBase<?>	loadout;
 
 	public TurningSpeed(LoadoutBase<?> aLoadout) {
 		loadout = aLoadout;

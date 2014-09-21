@@ -17,34 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.view.action;
+package lisong_mechlab.model.loadout;
 
-import java.awt.event.ActionEvent;
+import java.util.Iterator;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.KeyStroke;
-
-import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.view.ProgramInit;
+import lisong_mechlab.model.item.Item;
 
 /**
- * Clones an existing loadout under a new name.
+ * This is a glue class to get {@link Iterable}s for different types of {@link Item}s on a loadout.
  * 
  * @author Li Song
+ * @param <T>
+ *            A type that any {@link Item} iterated over must implement.
+ *
  */
-public class CloneLoadoutAction extends AbstractAction {
-	private static final long		serialVersionUID	= 2146995440483341395L;
+public class LoadoutIterable<T> implements Iterable<T> {
 	private final LoadoutBase<?>	loadout;
+	private final Class<T>			filter;
 
-	public CloneLoadoutAction(String aTitle, LoadoutBase<?> aLoadout, KeyStroke aKeyStroke) {
-		super(aTitle);
+	public LoadoutIterable(LoadoutBase<?> aLoadout, Class<T> aFilter) {
 		loadout = aLoadout;
-		putValue(Action.ACCELERATOR_KEY, aKeyStroke);
+		filter = aFilter;
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent aArg0) {
-		ProgramInit.lsml().mechLabPane.openLoadout(loadout.clone(ProgramInit.lsml().xBar));
+	public Iterator<T> iterator() {
+		return new LoadoutIterator<T>(loadout, filter);
 	}
 }

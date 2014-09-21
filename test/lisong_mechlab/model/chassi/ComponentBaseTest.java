@@ -41,10 +41,10 @@ import org.mockito.Mockito;
  */
 public abstract class ComponentBaseTest {
 
-	protected int criticalSlots = 5;
-	protected double hp = 15;
-	protected Location location = Location.Head;
-	protected List<Item> fixedItems = new ArrayList<>();
+	protected int			criticalSlots	= 5;
+	protected double		hp				= 15;
+	protected Location		location		= Location.Head;
+	protected List<Item>	fixedItems		= new ArrayList<>();
 
 	protected abstract ComponentBase makeDefaultCUT();
 

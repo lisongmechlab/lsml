@@ -27,9 +27,10 @@ import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
  * @author Li Song
  */
 public class BaseMovementProfile implements MovementProfile {
-	private final MdfMovementTuning mdf; // TODO: Do not use the parsing classes, even though this is essentially a
-											// wrapper.
-	private final MovementArchetype archetype;
+	private final MdfMovementTuning	mdf;		// TODO: Do not use the parsing classes, even though this is essentially
+												// a
+												// wrapper.
+	private final MovementArchetype	archetype;
 
 	public BaseMovementProfile(MdfMovementTuning aMdf) {
 		mdf = aMdf;

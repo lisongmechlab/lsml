@@ -28,13 +28,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class XMLWeaponStats {
 	@XStreamAsAttribute
-	public double longRange;
+	public double	longRange;
 	@XStreamAsAttribute
-	public String maxRange;
+	public String	maxRange;
 	@XStreamAsAttribute
-	public double heat;
+	public double	heat;
 	@XStreamAsAttribute
-	public int rank;
+	public int		rank;
 	@XStreamAsAttribute
-	public double cooldown;
+	public double	cooldown;
 }

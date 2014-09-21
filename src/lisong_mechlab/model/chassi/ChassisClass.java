@@ -28,7 +28,7 @@ package lisong_mechlab.model.chassi;
 public enum ChassisClass {
 	LIGHT, MEDIUM, HEAVY, ASSAULT;
 
-	private final static double TONNAGE_EPSILON = Math.ulp(100) * 5.0;
+	private final static double	TONNAGE_EPSILON	= Math.ulp(100) * 5.0;
 
 	/**
 	 * Determines the {@link ChassisClass} from a tonnage amount.

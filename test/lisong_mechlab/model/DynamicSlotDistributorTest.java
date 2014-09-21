@@ -50,9 +50,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicSlotDistributorTest {
-	MockLoadoutContainer mlc = new MockLoadoutContainer();
-	List<ConfiguredComponentBase> priorityOrder;
-	DynamicSlotDistributor cut;
+	MockLoadoutContainer			mlc	= new MockLoadoutContainer();
+	List<ConfiguredComponentBase>	priorityOrder;
+	DynamicSlotDistributor			cut;
 
 	@Before
 	public void setup() {

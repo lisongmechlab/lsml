@@ -42,10 +42,10 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class LsmlProtocolIPC implements Runnable {
 	// In the private (ephemeral) ports
-	private static final int PORT = 63782;
-	private final ServerSocket serverSocket;
-	private final Thread thread;
-	private transient boolean done = false;
+	private static final int	PORT	= 63782;
+	private final ServerSocket	serverSocket;
+	private final Thread		thread;
+	private transient boolean	done	= false;
 
 	/**
 	 * Creates a new IPC server that can receive messages on the local loopback.

@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -49,28 +49,29 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class MaxSustainedDPSTest {
 	@Mock
-	private HeatDissipation heatDissipation;
-
+	private HeatDissipation		heatDissipation;
 	@Mock
-	private LoadoutStandard loadout;
+	private LoadoutStandard		loadout;
 	@InjectMocks
-	private MaxSustainedDPS cut;
+	private MaxSustainedDPS		cut;
+	private final List<Weapon>	items	= new ArrayList<>();
+
+	@Before
+	public void setup() {
+		when(loadout.items(Weapon.class)).thenReturn(items);
+	}
 
 	@Test
 	public void testGetWeaponRatios() throws Exception {
 		// Setup
-		List<Item> items = new ArrayList<>();
-		when(loadout.getAllItems()).thenReturn(items);
-		items.add(ItemDB.lookup("MACHINE GUN"));
-		items.add(ItemDB.lookup("MACHINE GUN"));
-		items.add(ItemDB.lookup("GAUSS RIFLE"));
+		items.add((Weapon) ItemDB.lookup("MACHINE GUN"));
+		items.add((Weapon) ItemDB.lookup("MACHINE GUN"));
+		items.add((Weapon) ItemDB.lookup("GAUSS RIFLE"));
 		items.add(ItemDB.AMS);
-		items.add(ItemDB.lookup("STD ENGINE 245"));
-		items.add(ItemDB.DHS);
-		items.add(ItemDB.lookup("STREAK SRM 2"));
-		items.add(ItemDB.lookup("LRM 20"));
-		items.add(ItemDB.lookup("ER PPC"));
-		items.add(ItemDB.lookup("ER PPC"));
+		items.add((Weapon) ItemDB.lookup("STREAK SRM 2"));
+		items.add((Weapon) ItemDB.lookup("LRM 20"));
+		items.add((Weapon) ItemDB.lookup("ER PPC"));
+		items.add((Weapon) ItemDB.lookup("ER PPC"));
 
 		when(heatDissipation.calculate()).thenReturn(1.0);
 
@@ -97,11 +98,9 @@ public class MaxSustainedDPSTest {
 	@Test
 	public void testGetWeaponRatios_ppc() {
 		// Setup
-		List<Item> items = new ArrayList<>();
 		Weapon ppc = (Weapon) ItemDB.lookup("PPC");
 		items.add(ppc);
 
-		when(loadout.getAllItems()).thenReturn(items);
 		when(heatDissipation.calculate()).thenReturn(10.0);
 
 		assertEquals(ppc.getStat("d/s", null, null), cut.calculate(90.0 + 0.001), 0.0);
@@ -114,11 +113,9 @@ public class MaxSustainedDPSTest {
 	@Test
 	public void testGetWeaponRatios_machineGun() {
 		// Setup
-		List<Item> items = new ArrayList<>();
 		Weapon mg = (Weapon) ItemDB.lookup("MACHINE GUN");
 		items.add(mg);
 
-		when(loadout.getAllItems()).thenReturn(items);
 		when(heatDissipation.calculate()).thenReturn(0.0);
 
 		Map<Weapon, Double> result_0 = cut.getWeaponRatios(-1);
@@ -134,7 +131,6 @@ public class MaxSustainedDPSTest {
 	@Test
 	public void testCalculate() {
 		// Setup
-		List<Item> items = new ArrayList<>();
 		Weapon gauss = (Weapon) ItemDB.lookup("GAUSS RIFLE");
 		Weapon erppc = (Weapon) ItemDB.lookup("ER PPC");
 		Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
@@ -151,7 +147,6 @@ public class MaxSustainedDPSTest {
 		double heat = gauss.getStat("h/s", null, null) + erppc.getStat("h/s", null, null) * 1.5
 				+ llas.getStat("h/s", null, null);
 
-		when(loadout.getAllItems()).thenReturn(items);
 		when(heatDissipation.calculate()).thenReturn(heat);
 
 		// Execute
@@ -169,12 +164,10 @@ public class MaxSustainedDPSTest {
 	@Test
 	public void testCalculate_ams() {
 		// Setup
-		List<Item> items = new ArrayList<>();
 		Weapon gauss = (Weapon) ItemDB.lookup("GAUSS RIFLE");
 		items.add(gauss);
 		items.add(ItemDB.AMS);
 
-		when(loadout.getAllItems()).thenReturn(items);
 		when(heatDissipation.calculate()).thenReturn(1.0);
 
 		double result = cut.calculate(0.0);

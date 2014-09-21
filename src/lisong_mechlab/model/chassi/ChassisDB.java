@@ -35,10 +35,10 @@ import lisong_mechlab.model.DataCache;
  * @author Li Song
  */
 public class ChassisDB {
-	static private final Map<String, ChassisBase> name2chassis;
-	static private final Map<String, List<ChassisBase>> series2chassis;
-	static private final Map<Integer, ChassisBase> id2chassis;
-	static private final Map<Integer, List<ChassisBase>> chassis2variant;
+	static private final Map<String, ChassisBase>			name2chassis;
+	static private final Map<String, List<ChassisBase>>		series2chassis;
+	static private final Map<Integer, ChassisBase>			id2chassis;
+	static private final Map<Integer, List<ChassisBase>>	chassis2variant;
 
 	/**
 	 * Looks up a chassis by a name such as "AS7-D-DC" or "DAISHI PRIME"

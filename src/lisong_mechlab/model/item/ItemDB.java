@@ -39,20 +39,20 @@ public class ItemDB {
 	// ItemDB.lookup() with constant strings.
 
 	// AMS
-	static public final AmmoWeapon AMS;
-	static public final AmmoWeapon C_AMS;
-	static public final HeatSink SHS;
-	static public final HeatSink DHS;
-	static public final Item ECM;
-	static public final Item BAP;
-	static public final Item CASE;
+	static public final AmmoWeapon			AMS;
+	static public final AmmoWeapon			C_AMS;
+	static public final HeatSink			SHS;
+	static public final HeatSink			DHS;
+	static public final Item				ECM;
+	static public final Item				BAP;
+	static public final Item				CASE;
 
-	static public final Internal UAA;
-	static public final Internal LAA;
-	static public final Internal HA;
-	static private final Map<String, Item> locname2item;
-	static private final Map<String, Item> mwoname2item;
-	static private final Map<Integer, Item> mwoidx2item;
+	static public final Internal			UAA;
+	static public final Internal			LAA;
+	static public final Internal			HA;
+	static private final Map<String, Item>	locname2item;
+	static private final Map<String, Item>	mwoname2item;
+	static private final Map<Integer, Item>	mwoidx2item;
 
 	public static Item lookup(final String anItemName) {
 		String key = canonize(anItemName);

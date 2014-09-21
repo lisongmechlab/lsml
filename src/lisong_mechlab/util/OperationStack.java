@@ -77,9 +77,9 @@ public class OperationStack {
 	 * @author Li Song
 	 */
 	public abstract static class CompositeOperation extends Operation {
-		private final List<Operation> operations = new ArrayList<>();
-		private final String desciption;
-		private transient boolean isPerpared = false;
+		private final List<Operation>	operations	= new ArrayList<>();
+		private final String			desciption;
+		private transient boolean		isPerpared	= false;
 
 		public CompositeOperation(String aDescription) {
 			desciption = aDescription;
@@ -165,9 +165,9 @@ public class OperationStack {
 		}
 	}
 
-	private final List<Operation> actions = new LinkedList<>();
-	private final int depth;
-	private int currentOp = -1;
+	private final List<Operation>	actions		= new LinkedList<>();
+	private final int				depth;
+	private int						currentOp	= -1;
 
 	/**
 	 * Creates a new {@link OperationStack} that listens on the given {@link MessageXBar} for garage resets and has the

@@ -46,9 +46,9 @@ import lisong_mechlab.view.ProgramInit;
  * @author Li Song
  */
 public class StatusBar extends JPanel implements Reader {
-	private static final long serialVersionUID = -4434467429002792379L;
-	private final LoadoutFrame frame;
-	private final JLabel statusLabel;
+	private static final long	serialVersionUID	= -4434467429002792379L;
+	private final LoadoutFrame	frame;
+	private final JLabel		statusLabel;
 
 	public StatusBar(LoadoutFrame aLoadoutFrame, MessageXBar aXBar) {
 		frame = aLoadoutFrame;
@@ -62,7 +62,7 @@ public class StatusBar extends JPanel implements Reader {
 		add(statusLabel);
 		add(Box.createHorizontalGlue());
 		add(new JButton(new AbstractAction("Clear") {
-			private static final long serialVersionUID = 5577168900405120406L;
+			private static final long	serialVersionUID	= 5577168900405120406L;
 
 			@Override
 			public void actionPerformed(ActionEvent aArg0) {

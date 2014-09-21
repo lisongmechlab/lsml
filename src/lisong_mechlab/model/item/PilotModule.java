@@ -28,18 +28,18 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class PilotModule {
 
-	private final String locName;
-	private final String locDesc;
+	private final String			locName;
+	private final String			locDesc;
 	@XStreamAsAttribute
-	private final String mwoName;
+	private final String			mwoName;
 	@XStreamAsAttribute
-	private final int mwoIdx;
+	private final int				mwoIdx;
 	@XStreamAsAttribute
-	private final Faction faction;
+	private final Faction			faction;
 	@XStreamAsAttribute
-	private final ModuleCathegory cathegory;
+	private final ModuleCathegory	cathegory;
 	@XStreamAsAttribute
-	private final ModuleSlot slotType;
+	private final ModuleSlot		slotType;
 
 	/**
 	 * Creates a new {@link PilotModule}.

@@ -39,13 +39,13 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 public class XMLMechIdMap {
 	public class Mech {
 		@XStreamAsAttribute
-		public int baseID;
+		public int	baseID;
 		@XStreamAsAttribute
-		public int variantID;
+		public int	variantID;
 	}
 
 	@XStreamImplicit(itemFieldName = "Mech")
-	public List<Mech> MechIdMap;
+	public List<Mech>	MechIdMap;
 
 	private XMLMechIdMap() {
 	}

@@ -35,8 +35,8 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
  * @author Li Song
  */
 public class OpStripLoadout extends CompositeOperation {
-	protected final MessageXBar xBar;
-	protected final LoadoutBase<?> loadout;
+	protected final MessageXBar		xBar;
+	protected final LoadoutBase<?>	loadout;
 
 	public OpStripLoadout(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
 		super("strip mech");

@@ -23,9 +23,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class AmmoTypeStats {
 	@XStreamAsAttribute
-	public String type;
+	public String	type;
 	@XStreamAsAttribute
-	public int numShots;
+	public int		numShots;
 	@XStreamAsAttribute
-	public double internalDamage;
+	public double	internalDamage;
 }

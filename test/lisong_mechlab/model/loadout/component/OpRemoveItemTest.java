@@ -25,15 +25,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OpRemoveItemTest {
 	@Mock
-	private ConfiguredComponentBase loadoutPart;
+	private ConfiguredComponentBase	loadoutPart;
 	@Mock
-	private LoadoutBase<?> loadout;
+	private LoadoutBase<?>			loadout;
 	@Mock
-	private Upgrades upgrades;
+	private Upgrades				upgrades;
 	@Mock
-	private MessageXBar xBar;
+	private MessageXBar				xBar;
 	@Mock
-	private ComponentBase internalPart;
+	private ComponentBase			internalPart;
 
 	@Before
 	public void setup() {
@@ -88,7 +88,8 @@ public class OpRemoveItemTest {
 	/**
 	 * Internal items can't be removed. Shall throw directly on creation.
 	 */
-	@SuppressWarnings("unused") // Expecting exception
+	@SuppressWarnings("unused")
+	// Expecting exception
 	@Test(expected = IllegalArgumentException.class)
 	public void testCantRemoveInternal() {
 		Internal item = Mockito.mock(Internal.class);

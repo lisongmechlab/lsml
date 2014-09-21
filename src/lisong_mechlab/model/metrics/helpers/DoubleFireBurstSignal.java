@@ -32,10 +32,10 @@ import lisong_mechlab.model.item.WeaponModifier;
  */
 public class DoubleFireBurstSignal implements IntegratedSignal {
 
-	private final BallisticWeapon weapon;
-	private final Efficiencies efficiencies;
-	private final double range;
-	private final Collection<WeaponModifier> pilotModules;
+	private final BallisticWeapon				weapon;
+	private final Efficiencies					efficiencies;
+	private final double						range;
+	private final Collection<WeaponModifier>	pilotModules;
 
 	/**
 	 * @param aWeapon

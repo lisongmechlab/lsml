@@ -22,6 +22,7 @@ package lisong_mechlab.view.graphs;
 import java.awt.Component;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import javax.swing.WindowConstants;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
@@ -73,10 +75,10 @@ import org.jfree.ui.VerticalAlignment;
  * @author Li Song
  */
 public class DamageGraph extends JFrame implements MessageXBar.Reader {
-	private static final long serialVersionUID = -8812749194029184861L;
-	private final LoadoutBase<?> loadout;
-	private final MaxSustainedDPS maxSustainedDPS;
-	private final ChartPanel chartPanel;
+	private static final long		serialVersionUID	= -8812749194029184861L;
+	private final LoadoutBase<?>	loadout;
+	private final MaxSustainedDPS	maxSustainedDPS;
+	private final ChartPanel		chartPanel;
 
 	JFreeChart makechart() {
 		return ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout, "range [m]",
@@ -127,12 +129,13 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader {
 	}
 
 	private TableXYDataset getSeries() {
+		final Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
 		SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
 				new Comparator<Weapon>() {
 					@Override
 					public int compare(Weapon aO1, Weapon aO2) {
-						int comp = Double.compare(aO2.getRangeMax(loadout.getWeaponModifiers()),
-								aO1.getRangeMax(loadout.getWeaponModifiers()));
+						int comp = Double.compare(aO2.getRangeMax(modifiers),
+								aO1.getRangeMax(modifiers));
 						if (comp == 0)
 							return aO1.compareTo(aO2);
 						return comp;
@@ -145,8 +148,8 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader {
 			for (Map.Entry<Weapon, Double> entry : damageDistributio) {
 				final Weapon weapon = entry.getKey();
 				final double ratio = entry.getValue();
-				final double dps = weapon.getStat("d/s", loadout.getEfficiencies(), loadout.getWeaponModifiers());
-				final double rangeEff = weapon.getRangeEffectivity(range, loadout.getWeaponModifiers());
+				final double dps = weapon.getStat("d/s", loadout.getEfficiencies(), modifiers);
+				final double rangeEff = weapon.getRangeEffectivity(range, modifiers);
 
 				if (!data.containsKey(weapon)) {
 					data.put(weapon, new ArrayList<Pair<Double, Double>>());

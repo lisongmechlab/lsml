@@ -42,11 +42,11 @@ import org.mockito.Mockito;
 @RunWith(JUnitParamsRunner.class)
 public class ChassisStandardTest extends ChassisBaseTest {
 
-	private int engineMin;
-	private int engineMax;
-	private int maxJumpJets;
-	private ComponentStandard[] components;
-	private Quirks quirks;
+	private int					engineMin;
+	private int					engineMax;
+	private int					maxJumpJets;
+	private ComponentStandard[]	components;
+	private Quirks				quirks;
 
 	@Override
 	@Before

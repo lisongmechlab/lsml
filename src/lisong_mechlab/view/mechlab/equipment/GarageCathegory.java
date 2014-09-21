@@ -33,9 +33,9 @@ import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.util.MessageXBar;
 
 class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?>> {
-	private MechGarage garage = null;
-	private final ChassisClass chassiClass;
-	private final Faction faction;
+	private MechGarage			garage	= null;
+	private final ChassisClass	chassiClass;
+	private final Faction		faction;
 
 	public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar,
 			ChassisClass aChassiClass, JTextField aFilterBar, GarageTree aGarageTree, Faction aFaction) {

@@ -30,9 +30,9 @@ import lisong_mechlab.model.item.Item;
  * @author Li Song
  */
 public class ComponentOmniMech extends ComponentBase {
-	private final OmniPod fixedOmniPod;
-	private final int dynamicArmor;
-	private final int dynamicStructure;
+	private final OmniPod	fixedOmniPod;
+	private final int		dynamicArmor;
+	private final int		dynamicStructure;
 
 	/**
 	 * Creates a new {@link ComponentOmniMech}.

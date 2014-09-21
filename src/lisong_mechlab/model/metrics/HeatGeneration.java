@@ -19,10 +19,13 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
+import java.util.Collection;
+
 import lisong_mechlab.model.chassi.HeatModifier;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.HeatSource;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 
@@ -34,7 +37,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class HeatGeneration implements Metric {
-	private final LoadoutBase<?> loadout;
+	private final LoadoutBase<?>	loadout;
 
 	public HeatGeneration(final LoadoutBase<?> aLoadout) {
 		loadout = aLoadout;
@@ -43,16 +46,17 @@ public class HeatGeneration implements Metric {
 	@Override
 	public double calculate() {
 		double heat = 0;
-		for (Item item : loadout.getAllItems()) {
+		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+		for (HeatSource item : loadout.items(HeatSource.class)) {
 			if (item instanceof Weapon) {
-				heat += ((Weapon) item).getStat("h/s", loadout.getEfficiencies(), loadout.getWeaponModifiers());
+				heat += ((Weapon) item).getStat("h/s", loadout.getEfficiencies(), modifiers);
 			} else if (item instanceof Engine) {
-				heat += ((Engine) item).getHeat(loadout.getWeaponModifiers());
+				heat += ((Engine) item).getHeat(modifiers);
 			}
 		}
 
 		double extra = 0;
-		for (HeatModifier heatModifier : loadout.getHeatModifiers()) {
+		for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
 			// XXX: No modifiers of this kind have been seen in the game yet so we do not know if this is correct.
 			extra += heatModifier.extraHeatGeneration(heat);
 		}

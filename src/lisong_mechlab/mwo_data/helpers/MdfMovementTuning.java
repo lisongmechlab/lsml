@@ -23,38 +23,38 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class MdfMovementTuning {
 	@XStreamAsAttribute
-	public String MovementArchetype = "Huge";
+	public String	MovementArchetype	= "Huge";
 	@XStreamAsAttribute
-	public double MaxMovementSpeed;
+	public double	MaxMovementSpeed;
 	@XStreamAsAttribute
-	public double TorsoTurnSpeedYaw;
+	public double	TorsoTurnSpeedYaw;
 	@XStreamAsAttribute
-	public double TorsoTurnSpeedPitch;
+	public double	TorsoTurnSpeedPitch;
 	@XStreamAsAttribute
-	public double ArmTurnSpeedYaw;
+	public double	ArmTurnSpeedYaw;
 	@XStreamAsAttribute
-	public double ArmTurnSpeedPitch;
+	public double	ArmTurnSpeedPitch;
 	@XStreamAsAttribute
-	public double MaxTorsoAngleYaw;
+	public double	MaxTorsoAngleYaw;
 	@XStreamAsAttribute
-	public double MaxTorsoAnglePitch;
+	public double	MaxTorsoAnglePitch;
 	@XStreamAsAttribute
-	public double MaxArmRotationYaw;
+	public double	MaxArmRotationYaw;
 	@XStreamAsAttribute
-	public double MaxArmRotationPitch;
+	public double	MaxArmRotationPitch;
 	@XStreamAsAttribute
-	public double ReverseSpeedMultiplier;
+	public double	ReverseSpeedMultiplier;
 
 	@XStreamAsAttribute
-	public double TurnLerpLowSpeed;
+	public double	TurnLerpLowSpeed;
 	@XStreamAsAttribute
-	public double TurnLerpMidSpeed;
+	public double	TurnLerpMidSpeed;
 	@XStreamAsAttribute
-	public double TurnLerpHighSpeed;
+	public double	TurnLerpHighSpeed;
 	@XStreamAsAttribute
-	public double TurnLerpLowRate;
+	public double	TurnLerpLowRate;
 	@XStreamAsAttribute
-	public double TurnLerpMidRate;
+	public double	TurnLerpMidRate;
 	@XStreamAsAttribute
-	public double TurnLerpHighRate;
+	public double	TurnLerpHighRate;
 }

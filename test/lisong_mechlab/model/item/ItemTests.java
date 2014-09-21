@@ -41,7 +41,7 @@ import org.mockito.MockitoAnnotations;
 
 public class ItemTests {
 	@Mock
-	MessageXBar xBar;
+	MessageXBar	xBar;
 
 	@Before
 	public void setup() {

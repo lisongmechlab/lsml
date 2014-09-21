@@ -58,8 +58,8 @@ import lisong_mechlab.util.OperationStack;
  * @author Li Song
  */
 public class LoadoutCoderV1 implements LoadoutCoder {
-	private static final int HEADER_MAGIC = 0xAC;
-	private final Huffman1<Integer> huff;
+	private static final int		HEADER_MAGIC	= 0xAC;
+	private final Huffman1<Integer>	huff;
 
 	public LoadoutCoderV1() {
 		ObjectInputStream in = null;

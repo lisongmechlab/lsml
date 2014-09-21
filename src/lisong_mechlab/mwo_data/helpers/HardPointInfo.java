@@ -26,11 +26,11 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 public class HardPointInfo {
 	@XStreamAsAttribute
-	public int id;
+	public int							id;
 
 	@XStreamAsAttribute
-	public String NoWeaponAName;
+	public String						NoWeaponAName;
 
 	@XStreamImplicit(itemFieldName = "WeaponSlot")
-	public List<HardPointWeaponSlot> weaponslots;
+	public List<HardPointWeaponSlot>	weaponslots;
 }

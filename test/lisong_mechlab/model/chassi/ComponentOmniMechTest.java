@@ -36,9 +36,9 @@ import org.mockito.Mockito;
  */
 public class ComponentOmniMechTest extends ComponentBaseTest {
 
-	private OmniPod omniPod;
-	private int dynamicArmorSlots;
-	private int dynamicStructureSlots;
+	private OmniPod	omniPod;
+	private int		dynamicArmorSlots;
+	private int		dynamicStructureSlots;
 
 	@Override
 	protected ComponentOmniMech makeDefaultCUT() {

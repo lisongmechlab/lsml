@@ -35,13 +35,13 @@ import lisong_mechlab.util.EncodingException;
  * @author Li Song
  */
 public class Base64LoadoutCoder {
-	private static final String LSML_PROTOCOL = "lsml://";
-	private static final String LSML_TRAMPOLINE = "http://t.li-soft.org/?l=";
-	private final transient LoadoutCoderV1 coderV1;
-	private final transient LoadoutCoderV2 coderV2;
-	private final transient LoadoutCoderV3 coderV3;
-	private final transient LoadoutCoder preferredEncoder;
-	private final transient Base64 base64;
+	private static final String				LSML_PROTOCOL	= "lsml://";
+	private static final String				LSML_TRAMPOLINE	= "http://t.li-soft.org/?l=";
+	private final transient LoadoutCoderV1	coderV1;
+	private final transient LoadoutCoderV2	coderV2;
+	private final transient LoadoutCoderV3	coderV3;
+	private final transient LoadoutCoder	preferredEncoder;
+	private final transient Base64			base64;
 
 	public Base64LoadoutCoder() {
 		coderV1 = new LoadoutCoderV1();

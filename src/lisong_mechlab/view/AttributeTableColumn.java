@@ -36,8 +36,8 @@ import javax.swing.table.TableColumn;
  * @author Li Song
  */
 abstract public class AttributeTableColumn extends TableColumn {
-	private static final long serialVersionUID = 7314642485571311021L;
-	private final JLabel renderer = new JLabel();
+	private static final long	serialVersionUID	= 7314642485571311021L;
+	private final JLabel		renderer			= new JLabel();
 
 	public AttributeTableColumn(Object aHeader, int aModelIndex) {
 		this(aHeader, aModelIndex, null);

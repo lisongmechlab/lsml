@@ -32,7 +32,7 @@ import javax.swing.plaf.ProgressBarUI;
 
 public class ProgressBarRenderer extends ProgressBarUI {
 
-	final RenderingHints hints;
+	final RenderingHints	hints;
 
 	public ProgressBarRenderer() {
 		Toolkit tk = Toolkit.getDefaultToolkit();

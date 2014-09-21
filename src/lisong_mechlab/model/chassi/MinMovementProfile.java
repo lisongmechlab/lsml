@@ -34,8 +34,8 @@ import java.util.List;
  */
 public class MinMovementProfile extends ModifiedProfileBase {
 
-	private MovementProfile base;
-	private List<List<Quirks>> groups;
+	private MovementProfile		base;
+	private List<List<Quirks>>	groups;
 
 	public MinMovementProfile(MovementProfile aBase, List<List<Quirks>> aGroups) {
 		base = aBase;

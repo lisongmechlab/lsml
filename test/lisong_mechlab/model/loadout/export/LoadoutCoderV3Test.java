@@ -54,7 +54,7 @@ import org.junit.Test;
  */
 public class LoadoutCoderV3Test {
 
-	private LoadoutCoderV3 cut = new LoadoutCoderV3();
+	private LoadoutCoderV3	cut	= new LoadoutCoderV3();
 
 	/**
 	 * The coder shall be able to decode all stock mechs.

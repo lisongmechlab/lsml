@@ -32,12 +32,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public abstract class Upgrade {
 	@XStreamAsAttribute
-	private final String name;
+	private final String	name;
 	@XStreamAsAttribute
-	private final int mwoId;
+	private final int		mwoId;
 	@XStreamAsAttribute
-	private final Faction faction;
-	private final String description;
+	private final Faction	faction;
+	private final String	description;
 
 	protected Upgrade(String aName, String aDescription, int aMwoId, Faction aFaction) {
 		name = aName;

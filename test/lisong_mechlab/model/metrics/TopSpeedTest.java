@@ -33,8 +33,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TopSpeedTest {
-	MockLoadoutContainer mlc = new MockLoadoutContainer();
-	TopSpeed cut = new TopSpeed(mlc.loadout);
+	MockLoadoutContainer	mlc	= new MockLoadoutContainer();
+	TopSpeed				cut	= new TopSpeed(mlc.loadout);
 
 	@Test
 	public void testCalculate_noengine() throws Exception {

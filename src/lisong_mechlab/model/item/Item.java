@@ -27,23 +27,23 @@ import lisong_mechlab.mwo_data.helpers.ItemStats;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Item implements Comparable<Item> {
-	private final String locName;
-	private final String locDesc;
+	private final String		locName;
+	private final String		locDesc;
 	@XStreamAsAttribute
-	private final String mwoName;
+	private final String		mwoName;
 	@XStreamAsAttribute
-	private final int mwoIdx;
+	private final int			mwoIdx;
 
 	@XStreamAsAttribute
-	private final int slots;
+	private final int			slots;
 	@XStreamAsAttribute
-	private final double tons;
+	private final double		tons;
 	@XStreamAsAttribute
-	private final HardPointType hardpointType;
+	private final HardPointType	hardpointType;
 	@XStreamAsAttribute
-	private final int health;
+	private final int			health;
 	@XStreamAsAttribute
-	private final Faction faction;
+	private final Faction		faction;
 
 	public Item(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
 			HardPointType aHardpointType, int aHP, Faction aFaction) {

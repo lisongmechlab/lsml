@@ -29,8 +29,8 @@ import lisong_mechlab.model.item.Engine;
  */
 public class TimeToCool implements Metric {
 
-	private final HeatCapacity capacity;
-	private final HeatDissipation dissipation;
+	private final HeatCapacity		capacity;
+	private final HeatDissipation	dissipation;
 
 	/**
 	 * @param aHeatCapacity

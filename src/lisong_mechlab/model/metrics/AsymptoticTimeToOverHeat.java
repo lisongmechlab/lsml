@@ -26,9 +26,9 @@ package lisong_mechlab.model.metrics;
  * @author Li Song
  */
 public class AsymptoticTimeToOverHeat implements Metric {
-	private final HeatCapacity capacity;
-	private final HeatDissipation dissipation;
-	private final HeatGeneration generation;
+	private final HeatCapacity		capacity;
+	private final HeatDissipation	dissipation;
+	private final HeatGeneration	generation;
 
 	public AsymptoticTimeToOverHeat(final HeatCapacity aCapacity, final HeatDissipation aDissipation,
 			final HeatGeneration aHeatGeneration) {

@@ -56,15 +56,15 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * @author Li Song
  */
 public class MdfMechDefinition {
-	public MdfMech Mech;
-	public List<MdfComponent> ComponentList;
+	public MdfMech					Mech;
+	public List<MdfComponent>		ComponentList;
 	@XStreamAsAttribute
-	public String Version;
-	public MdfCockpit Cockpit;
+	public String					Version;
+	public MdfCockpit				Cockpit;
 
-	public MdfMovementTuning MovementTuningConfiguration;
+	public MdfMovementTuning		MovementTuningConfiguration;
 
-	public List<XMLOmniPodsQuirk> QuirkList;
+	public List<XMLOmniPodsQuirk>	QuirkList;
 
 	public boolean isOmniMech() {
 		for (MdfComponent component : ComponentList) {

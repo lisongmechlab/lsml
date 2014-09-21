@@ -52,12 +52,12 @@ import org.mockito.Mockito;
  * @author Li Song
  */
 public class ChassisOmniMechTest extends ChassisBaseTest {
-	private ArmorUpgrade armorType;
-	private ComponentOmniMech[] components;
-	private Engine engine;
-	private HeatSinkUpgrade heatSinkType;
-	private Map<Location, List<Item>> items;
-	private StructureUpgrade structureType;
+	private ArmorUpgrade				armorType;
+	private ComponentOmniMech[]			components;
+	private Engine						engine;
+	private HeatSinkUpgrade				heatSinkType;
+	private Map<Location, List<Item>>	items;
+	private StructureUpgrade			structureType;
 
 	@Override
 	@Before
@@ -112,7 +112,8 @@ public class ChassisOmniMechTest extends ChassisBaseTest {
 		Mockito.when(armorType.getExtraSlots()).thenReturn(7);
 	}
 
-	@SuppressWarnings("unused") // Expecting exception
+	@SuppressWarnings("unused")
+	// Expecting exception
 	@Test(expected = IllegalArgumentException.class)
 	public final void testCtor_BadDynArmor() {
 		Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(13);
@@ -121,7 +122,8 @@ public class ChassisOmniMechTest extends ChassisBaseTest {
 				heatSinkType);
 	}
 
-	@SuppressWarnings("unused") // Expecting exception
+	@SuppressWarnings("unused")
+	// Expecting exception
 	@Test(expected = IllegalArgumentException.class)
 	public final void testCtor_BadDynStructure() {
 		Mockito.when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);

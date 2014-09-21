@@ -24,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.WeaponRanges;
 
@@ -56,13 +56,13 @@ public class RangeTimeMetricTest {
 	}
 
 	@Mock
-	private LoadoutStandard loadout;
-	private ConcreteAbstractCut cut;
-	private List<Item> items = new ArrayList<>();
+	private LoadoutStandard		loadout;
+	private ConcreteAbstractCut	cut;
+	private List<Weapon>		items	= new ArrayList<>();
 
 	@Before
 	public void startup() {
-		Mockito.when(loadout.getAllItems()).thenReturn(items);
+		Mockito.when(loadout.items(Weapon.class)).thenReturn(items);
 		cut = Mockito.spy(new ConcreteAbstractCut(loadout));
 	}
 
@@ -74,8 +74,8 @@ public class RangeTimeMetricTest {
 	@Test
 	public final void testGetRange() {
 		// Should give ranges: 0, 270, 450, 540, 900
-		items.add(ItemDB.lookup("MEDIUM LASER"));
-		items.add(ItemDB.lookup("LARGE LASER"));
+		items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
+		items.add((Weapon) ItemDB.lookup("LARGE LASER"));
 
 		cut.changeTime(10.0); // Perform test for time 10.0
 
@@ -111,8 +111,8 @@ public class RangeTimeMetricTest {
 	@Test
 	public final void testCalculate_noChangeRange() {
 		// Should give ranges: 0, 270, 450, 540, 900
-		items.add(ItemDB.lookup("MEDIUM LASER"));
-		items.add(ItemDB.lookup("LARGE LASER"));
+		items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
+		items.add((Weapon) ItemDB.lookup("LARGE LASER"));
 
 		cut.changeTime(10.0); // Perform test for time 10.0
 

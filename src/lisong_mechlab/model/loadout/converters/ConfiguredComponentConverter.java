@@ -47,8 +47,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class ConfiguredComponentConverter implements Converter {
-	private final LoadoutBuilder builder;
-	private final LoadoutBase<?> loadout;
+	private final LoadoutBuilder	builder;
+	private final LoadoutBase<?>	loadout;
 
 	public ConfiguredComponentConverter(LoadoutBase<?> aLoadoutBase, LoadoutBuilder aBuilder) {
 		loadout = aLoadoutBase;

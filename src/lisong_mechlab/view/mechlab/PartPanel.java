@@ -70,8 +70,8 @@ import lisong_mechlab.view.render.StyledComboBox;
 
 public class PartPanel extends JPanel implements MessageXBar.Reader {
 	class ArmorPopupAdapter extends MouseAdapter {
-		private final MessageXBar xBar;
-		private final OperationStack stack;
+		private final MessageXBar		xBar;
+		private final OperationStack	stack;
 
 		public ArmorPopupAdapter(OperationStack aStack, MessageXBar aXBar) {
 			stack = aStack;
@@ -93,7 +93,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader {
 		private void doPop(MouseEvent e) {
 			JPopupMenu menu = new JPopupMenu("Armor Options");
 			menu.add(new JMenuItem(new AbstractAction("Allow automatic adjustment") {
-				private static final long serialVersionUID = 7539044187157207692L;
+				private static final long	serialVersionUID	= 7539044187157207692L;
 
 				@Override
 				public void actionPerformed(ActionEvent aE) {
@@ -111,29 +111,29 @@ public class PartPanel extends JPanel implements MessageXBar.Reader {
 		}
 	}
 
-	private static final int ARMOR_LABEL_WIDTH = 30;
-	private static final int ARMOR_SPINNER_WIDTH = 20;
+	private static final int				ARMOR_LABEL_WIDTH	= 30;
+	private static final int				ARMOR_SPINNER_WIDTH	= 20;
 
-	private static final long serialVersionUID = -4399442572295284661L;
+	private static final long				serialVersionUID	= -4399442572295284661L;
 
-	private final JLabel frontArmorLabel;
-	private final JLabel backArmorLabel;
-	private final JLabel armorLabel;
+	private final JLabel					frontArmorLabel;
+	private final JLabel					backArmorLabel;
+	private final JLabel					armorLabel;
 
-	private final LoadoutBase<?> loadout;
-	private final ConfiguredComponentBase component;
+	private final LoadoutBase<?>			loadout;
+	private final ConfiguredComponentBase	component;
 
-	private final boolean canHaveHardpoints;
-	private final ArmorPopupAdapter armorPopupAdapter;
-	private JSpinner frontSpinner;
-	private JSpinner backSpinner;
-	private JSpinner spinner;
+	private final boolean					canHaveHardpoints;
+	private final ArmorPopupAdapter			armorPopupAdapter;
+	private JSpinner						frontSpinner;
+	private JSpinner						backSpinner;
+	private JSpinner						spinner;
 
-	private final JComboBox<OmniPod> omnipodSelection;
-	private JPanel hardPointsPanel;
+	private final JComboBox<OmniPod>		omnipodSelection;
+	private JPanel							hardPointsPanel;
 
-	private final JCheckBox toggleHA;
-	private final JCheckBox toggleLAA;
+	private final JCheckBox					toggleHA;
+	private final JCheckBox					toggleLAA;
 
 	PartPanel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, final MessageXBar aXBar,
 			boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,

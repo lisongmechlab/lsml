@@ -42,11 +42,11 @@ public enum Location {
 		mwoNameRear = mwoName + "_rear";
 	}
 
-	private final String mwoName;
-	private final String mwoNameRear;
-	private final String shortName;
-	private final String longName;
-	private final boolean twosided;
+	private final String	mwoName;
+	private final String	mwoNameRear;
+	private final String	shortName;
+	private final String	longName;
+	private final boolean	twosided;
 
 	public String longName() {
 		return longName;
@@ -60,9 +60,9 @@ public enum Location {
 		return twosided;
 	}
 
-	private final static Location[] right2left = new Location[] { Location.RightArm, Location.RightTorso,
+	private final static Location[]	right2left	= new Location[] { Location.RightArm, Location.RightTorso,
 			Location.RightLeg, Location.Head, Location.CenterTorso, Location.LeftTorso, Location.LeftLeg,
-			Location.LeftArm };
+			Location.LeftArm					};
 
 	public static Location[] right2Left() {
 		return right2left;

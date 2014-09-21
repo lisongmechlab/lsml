@@ -48,8 +48,8 @@ public class Efficiencies {
 			Changed
 		}
 
-		private final Efficiencies efficiencies;
-		public final Type type;
+		private final Efficiencies	efficiencies;
+		public final Type			type;
 
 		@Override
 		public boolean isForMe(LoadoutBase<?> aLoadout) {
@@ -63,17 +63,17 @@ public class Efficiencies {
 	}
 
 	// Elite
-	private boolean speedTweak;
+	private boolean	speedTweak;
 
 	// Basic
-	private boolean coolRun;
-	private boolean heatContainment;
-	private boolean anchorTurn;
+	private boolean	coolRun;
+	private boolean	heatContainment;
+	private boolean	anchorTurn;
 
 	// Meta
-	private boolean doubleBasics;
+	private boolean	doubleBasics;
 
-	private boolean fastfire;
+	private boolean	fastfire;
 
 	/**
 	 * Creates a new efficiencies object.

@@ -30,8 +30,8 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class HeatDissipation implements Metric {
-	private final LoadoutBase<?> loadout;
-	private Environment environment;
+	private final LoadoutBase<?>	loadout;
+	private Environment				environment;
 
 	public HeatDissipation(final LoadoutBase<?> aLoadout, final Environment anEnvironment) {
 		loadout = aLoadout;
@@ -59,7 +59,7 @@ public class HeatDissipation implements Metric {
 
 		double extra = 0;
 		double extraExternal = 0;
-		for (HeatModifier heatModifier : loadout.getHeatModifiers()) {
+		for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
 			extra += heatModifier.extraHeatDissipation(ans);
 			extraExternal += heatModifier.extraEnvironmentHeat(externalHeat);
 		}

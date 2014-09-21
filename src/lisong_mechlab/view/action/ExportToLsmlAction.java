@@ -41,8 +41,8 @@ import lisong_mechlab.view.mechlab.LoadoutFrame;
  * @author Li Song
  */
 public class ExportToLsmlAction extends AbstractAction {
-	private static final long serialVersionUID = 6535485629587481198L;
-	private final LoadoutFrame loadoutFrame;
+	private static final long	serialVersionUID	= 6535485629587481198L;
+	private final LoadoutFrame	loadoutFrame;
 
 	public ExportToLsmlAction(LoadoutFrame aLoadoutFrame) {
 		super("Export to LSML link...");

@@ -37,8 +37,8 @@ import lisong_mechlab.model.chassi.HardPointType;
  * @author Li Song
  */
 public class WeaponsListView extends JPanel {
-	private static final float FONT_FACTOR = 2.0f;
-	private static final long serialVersionUID = 1L;
+	private static final float	FONT_FACTOR			= 2.0f;
+	private static final long	serialVersionUID	= 1L;
 
 	public WeaponsListView() {
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));

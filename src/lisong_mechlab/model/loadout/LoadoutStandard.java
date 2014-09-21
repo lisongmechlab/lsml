@@ -20,11 +20,13 @@
 package lisong_mechlab.model.loadout;
 
 import java.io.File;
+import java.util.Collection;
 
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
+import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ModuleSlot;
@@ -43,7 +45,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Li Song
  */
 public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
-	private final UpgradesMutable upgrades;
+	private final UpgradesMutable	upgrades;
 
 	public static LoadoutStandard load(File aFile) {
 		XStream stream = loadoutXstream();
@@ -167,6 +169,16 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
 		} else {
 			throw new IllegalArgumentException("Unknown module slot type!");
 		}
+	}
+
+	@Override
+	public <U> Collection<U> getModifiers(Class<U> aClass) {
+		Collection<U> ans = super.getModifiers(aClass);
+		Quirks quirks = getChassis().getQuirks();
+		if (aClass.isInstance(quirks)) {
+			ans.add(aClass.cast(quirks));
+		}
+		return ans;
 	}
 
 	@Override

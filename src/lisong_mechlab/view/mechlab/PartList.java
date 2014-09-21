@@ -62,24 +62,25 @@ import lisong_mechlab.view.render.ComponentRenderer.RenderState;
 import lisong_mechlab.view.render.StyleManager;
 
 public class PartList extends JList<Item> {
-	private static final long serialVersionUID = 5995694414450060827L;
-	private final ConfiguredComponentBase component;
-	private final DynamicSlotDistributor slotDistributor;
-	private OperationStack opStack;
+	private static final long					serialVersionUID	= 5995694414450060827L;
+	private final ConfiguredComponentBase		component;
+	private final DynamicSlotDistributor		slotDistributor;
+	private OperationStack						opStack;
 
-	private final DecimalFormat df = new DecimalFormat("###.#");
-	private final DecimalFormat df2 = new DecimalFormat("###.##");
-	private final ItemEffectiveHP effectiveHP;
-	private final CriticalStrikeProbability criticalStrikeProbability;
-	private final LoadoutBase<?> loadout;
+	private final DecimalFormat					df					= new DecimalFormat("###.#");
+	private final DecimalFormat					df2					= new DecimalFormat("###.##");
+	private final ItemEffectiveHP				effectiveHP;
+	private final CriticalStrikeProbability		criticalStrikeProbability;
+	private final LoadoutBase<?>				loadout;
 
-	private final ComponentRenderer componentRenderer;
-	private final MessageXBar xBar;
-	private final ComponentDestructionSimulator cds;
-	private final boolean isCompact = ProgramInit.lsml().preferences.uiPreferences.getCompactMode();
+	private final ComponentRenderer				componentRenderer;
+	private final MessageXBar					xBar;
+	private final ComponentDestructionSimulator	cds;
+	private final boolean						isCompact			= ProgramInit.lsml().preferences.uiPreferences
+																			.getCompactMode();
 
 	private class Renderer extends JLabel implements ListCellRenderer<Object> {
-		private static final long serialVersionUID = -8157859670319431469L;
+		private static final long	serialVersionUID	= -8157859670319431469L;
 
 		void setTooltipForItem(Item aItem) {
 			if (aItem == null || aItem instanceof Internal) {
@@ -221,15 +222,15 @@ public class PartList extends JList<Item> {
 	}
 
 	private class Model extends AbstractListModel<Item> implements MessageXBar.Reader {
-		private static final String HEATSINKS_STRING = "HEAT SINKS: ";
-		private static final String HEATSINKS_COMPACT_STRING = "HS: ";
-		private static final String EMPTY = "EMPTY";
-		private static final String MULTISLOT = "";
-		private static final String DYN_ARMOR = "DYNAMIC ARMOR";
-		private static final String DYN_STRUCT = "DYNAMIC STRUCTURE";
-		private static final String FIX_ARMOR = "FIXED ARMOR";
-		private static final String FIX_STRUCT = "FIXED STRUCTURE";
-		private static final long serialVersionUID = 2438473891359444131L;
+		private static final String	HEATSINKS_STRING			= "HEAT SINKS: ";
+		private static final String	HEATSINKS_COMPACT_STRING	= "HS: ";
+		private static final String	EMPTY						= "EMPTY";
+		private static final String	MULTISLOT					= "";
+		private static final String	DYN_ARMOR					= "DYNAMIC ARMOR";
+		private static final String	DYN_STRUCT					= "DYNAMIC STRUCTURE";
+		private static final String	FIX_ARMOR					= "FIXED ARMOR";
+		private static final String	FIX_STRUCT					= "FIXED STRUCTURE";
+		private static final long	serialVersionUID			= 2438473891359444131L;
 
 		Model(MessageXBar aXBar) {
 			aXBar.attach(this);

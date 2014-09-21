@@ -38,76 +38,76 @@ public class XMLLoadout {
 	public class Upgrades {
 		public class Armor {
 			@XStreamAsAttribute
-			public int ItemID;
+			public int	ItemID;
 		}
 
 		public class Structure {
 			@XStreamAsAttribute
-			public int ItemID;
+			public int	ItemID;
 		}
 
 		public class HeatSinks {
 			@XStreamAlias("ItemId")
 			// Typo in VTR-9SC
 			@XStreamAsAttribute
-			public int ItemID;
+			public int	ItemID;
 		}
 
 		public class Artemis {
 			@XStreamAsAttribute
-			public int Equipped;
+			public int	Equipped;
 		}
 
 		@XStreamAlias("Armor")
-		public Armor armor;
+		public Armor		armor;
 		@XStreamAlias("Structure")
-		public Structure structure;
+		public Structure	structure;
 		@XStreamAlias("HeatSinks")
-		public HeatSinks heatsinks;
+		public HeatSinks	heatsinks;
 		@XStreamAlias("Artemis")
-		public Artemis artemis;
+		public Artemis		artemis;
 	}
 
 	@XStreamAlias("Upgrades")
-	public Upgrades upgrades;
+	public Upgrades	upgrades;
 
 	@XStreamAlias("component")
 	public class Component {
 		@XStreamAlias("Name")
 		@XStreamAsAttribute
-		public String ComponentName;
+		public String	ComponentName;
 		@XStreamAsAttribute
-		public int Armor;
+		public int		Armor;
 
 		public class Weapon {
 			@XStreamAsAttribute
-			public int ItemID;
+			public int	ItemID;
 			@XStreamAsAttribute
-			public int WeaponGroup;
+			public int	WeaponGroup;
 		}
 
 		public class Item {
 			@XStreamAsAttribute
-			public int ItemID;
+			public int	ItemID;
 		}
 
 		@XStreamImplicit
-		public List<Weapon> Weapon;
+		public List<Weapon>	Weapon;
 
 		@XStreamImplicit
-		public List<Item> Module;
+		public List<Item>	Module;
 
 		@XStreamImplicit
-		public List<Item> Ammo;
+		public List<Item>	Ammo;
 	}
 
-	public List<Component> ComponentList;
+	public List<Component>	ComponentList;
 
 	@XStreamAsAttribute
-	int MechID;
+	int						MechID;
 
 	@XStreamAsAttribute
-	String Name;
+	String					Name;
 
 	public static XMLLoadout fromXml(InputStream is) {
 		XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {

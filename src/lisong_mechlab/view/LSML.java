@@ -62,36 +62,38 @@ import lisong_mechlab.view.preferences.Preferences;
  * @author Li Song
  */
 public class LSML extends JFrame implements MessageXBar.Reader {
-	public static final String PROGRAM_FNAME = "Li Song Mechlab ";
-	private static final String GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
-	private static final FileFilter GARAGE_FILE_FILTER = new FileFilter() {
-		@Override
-		public String getDescription() {
-			return GARAGE_FILEDESCRIPTION;
-		}
+	public static final String		PROGRAM_FNAME			= "Li Song Mechlab ";
+	private static final String		GARAGE_FILEDESCRIPTION	= PROGRAM_FNAME + " Garage File (.xml)";
+	private static final FileFilter	GARAGE_FILE_FILTER		= new FileFilter() {
+																@Override
+																public String getDescription() {
+																	return GARAGE_FILEDESCRIPTION;
+																}
 
-		@Override
-		public boolean accept(File aArg0) {
-			return aArg0.isDirectory() || (aArg0.isFile() && aArg0.getName().toLowerCase().endsWith(".xml"));
-		}
-	};
-	private static final long serialVersionUID = -2463321343234141728L;
-	private static final String CMD_UNDO_GARAGE = "undo garage action";
-	private static final String CMD_REDO_GARAGE = "redo garage action";
+																@Override
+																public boolean accept(File aArg0) {
+																	return aArg0.isDirectory()
+																			|| (aArg0.isFile() && aArg0.getName()
+																					.toLowerCase().endsWith(".xml"));
+																}
+															};
+	private static final long		serialVersionUID		= -2463321343234141728L;
+	private static final String		CMD_UNDO_GARAGE			= "undo garage action";
+	private static final String		CMD_REDO_GARAGE			= "redo garage action";
 
 	// Order of definition matters here !
-	public final MessageXBar xBar = new MessageXBar();
-	public final Preferences preferences = new Preferences(xBar);
-	public final OperationStack garageOperationStack = new OperationStack(256);
+	public final MessageXBar		xBar					= new MessageXBar();
+	public final Preferences		preferences				= new Preferences(xBar);
+	public final OperationStack		garageOperationStack	= new OperationStack(256);
 
-	public final Base64LoadoutCoder loadoutCoder = new Base64LoadoutCoder();
-	public final MechLabPane mechLabPane = new MechLabPane(xBar, preferences);
-	public final JTabbedPane tabbedPane = new JTabbedPane();
-	final Action undoGarageAction = new UndoGarageAction(xBar);
-	final Action redoGarageAction = new RedoGarageAction(xBar);
+	public final Base64LoadoutCoder	loadoutCoder			= new Base64LoadoutCoder();
+	public final MechLabPane		mechLabPane				= new MechLabPane(xBar, preferences);
+	public final JTabbedPane		tabbedPane				= new JTabbedPane();
+	final Action					undoGarageAction		= new UndoGarageAction(xBar);
+	final Action					redoGarageAction		= new RedoGarageAction(xBar);
 
-	private LsmlProtocolIPC lsmlProtocolIPC;
-	private MechGarage garage;
+	private LsmlProtocolIPC			lsmlProtocolIPC;
+	private MechGarage				garage;
 
 	public static String getVersion() {
 		Class<?> clazz = LSML.class;

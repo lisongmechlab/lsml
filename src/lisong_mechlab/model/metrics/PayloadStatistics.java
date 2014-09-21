@@ -33,9 +33,9 @@ import lisong_mechlab.model.upgrades.Upgrades;
  */
 public class PayloadStatistics {
 
-	private boolean xlEngine;
-	private boolean maxArmor;
-	private Upgrades upgrades;
+	private boolean		xlEngine;
+	private boolean		maxArmor;
+	private Upgrades	upgrades;
 
 	public PayloadStatistics(boolean aUseXlEngine, boolean aUseMaxArmor, Upgrades anUpgrades) {
 		xlEngine = aUseXlEngine;

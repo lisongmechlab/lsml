@@ -31,9 +31,10 @@ import org.junit.Test;
  * @author Li Song
  */
 public class DoubleFireBurstSignalTest {
-	final BallisticWeapon uac5 = (BallisticWeapon) ItemDB.lookup("ULTRA AC/5");
+	final BallisticWeapon	uac5	= (BallisticWeapon) ItemDB.lookup("ULTRA AC/5");
 
-	@SuppressWarnings("unused") // Expecting exception
+	@SuppressWarnings("unused")
+	// Expecting exception
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidWeapon() {
 		new DoubleFireBurstSignal((BallisticWeapon) ItemDB.lookup("AC/20"), null, null, 0);

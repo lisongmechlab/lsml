@@ -46,9 +46,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OpSetArmorSymmetricTest {
 	@Mock
-	MessageXBar xBar;
+	MessageXBar		xBar;
 
-	OperationStack stack = new OperationStack(2);
+	OperationStack	stack	= new OperationStack(2);
 
 	/**
 	 * Two operations can coalescele if they refer to the same (equality is not enough) component or the opposing

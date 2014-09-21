@@ -23,19 +23,19 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class MdfMech {
 	@XStreamAsAttribute
-	public String Variant;
+	public String	Variant;
 	@XStreamAsAttribute
-	public int MaxTons;
+	public int		MaxTons;
 	@XStreamAsAttribute
-	public double BaseTons;
+	public double	BaseTons;
 	@XStreamAsAttribute
-	public int MaxJumpJets;
+	public int		MaxJumpJets;
 	@XStreamAsAttribute
-	public int MinEngineRating;
+	public int		MinEngineRating;
 	@XStreamAsAttribute
-	public int MaxEngineRating;
+	public int		MaxEngineRating;
 	@XStreamAsAttribute
-	public String VariantType;
+	public String	VariantType;
 	@XStreamAsAttribute
-	public int VariantParent;
+	public int		VariantParent;
 }

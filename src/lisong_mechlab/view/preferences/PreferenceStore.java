@@ -40,13 +40,13 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class PreferenceStore {
 
-	public static final String GAMEDIRECTORY_KEY = "gamedir";
-	public static final String GARAGEFILE_KEY = "garagefile";
-	public static final String GARAGEFILE_DEFAULT = "garage.xml";
-	private static final File propertiesFile;
-	private static final Properties properties;
-	public static final String GAME_DATA_CACHE = "gameDataCache";
-	public static final String USEBUNDLED_DATA = "gameDataBundled";
+	public static final String		GAMEDIRECTORY_KEY	= "gamedir";
+	public static final String		GARAGEFILE_KEY		= "garagefile";
+	public static final String		GARAGEFILE_DEFAULT	= "garage.xml";
+	private static final File		propertiesFile;
+	private static final Properties	properties;
+	public static final String		GAME_DATA_CACHE		= "gameDataCache";
+	public static final String		USEBUNDLED_DATA		= "gameDataBundled";
 
 	static public String getString(String key) {
 		return properties.getProperty(key, "");

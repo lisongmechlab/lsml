@@ -49,16 +49,16 @@ import lisong_mechlab.util.MessageXBar.Message;
  * @author Li Song
  */
 public class ComponentDestructionSimulator implements MessageXBar.Reader {
-	private final ConfiguredComponentBase loadoutPart;
-	private final double P_miss;
-	private final double weaponAlpha;
-	private final int numShots;
-	private final double partHp;
+	private final ConfiguredComponentBase	loadoutPart;
+	private final double					P_miss;
+	private final double					weaponAlpha;
+	private final int						numShots;
+	private final double					partHp;
 
 	class ItemState {
-		int multiplicity;
-		double hpLeft;
-		double P_destroyed;
+		int		multiplicity;
+		double	hpLeft;
+		double	P_destroyed;
 
 		ItemState(int aMulti, Item aItem) {
 			multiplicity = aMulti;
@@ -74,7 +74,7 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader {
 	}
 
 	// Key: Item - Value: <multiplicity, total probability>
-	private Map<Item, ItemState> state;
+	private Map<Item, ItemState>	state;
 
 	private Map<Item, ItemState> cloneState(Map<Item, ItemState> aMap) {
 		Map<Item, ItemState> ans = new HashMap<>(aMap.size());

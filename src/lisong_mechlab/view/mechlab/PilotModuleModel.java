@@ -42,12 +42,12 @@ import lisong_mechlab.util.MessageXBar.Message;
  * @author Li Song
  */
 public class PilotModuleModel implements ListModel<String>, MessageXBar.Reader {
-	private final LoadoutBase<?> loadout;
-	private final Set<ListDataListener> listeners = new HashSet<>();
-	private final List<PilotModule> modules = new ArrayList<>();
-	private final ModuleSlot moduleSlot;
+	private final LoadoutBase<?>		loadout;
+	private final Set<ListDataListener>	listeners	= new HashSet<>();
+	private final List<PilotModule>		modules		= new ArrayList<>();
+	private final ModuleSlot			moduleSlot;
 
-	public final static String EMPTY = "EMPTY";
+	public final static String			EMPTY		= "EMPTY";
 
 	public PilotModuleModel(LoadoutBase<?> aLoadout, MessageXBar aXBar, ModuleSlot aModuleSlot) {
 		loadout = aLoadout;

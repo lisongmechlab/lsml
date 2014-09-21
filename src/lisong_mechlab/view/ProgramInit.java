@@ -56,18 +56,18 @@ import com.sun.jna.WString;
  * @author Li Song
  */
 public class ProgramInit extends JFrame {
-	private static final long serialVersionUID = -2877785947094537320L;
-	private static final long MIN_SPLASH_TIME_MS = 20;
-	private static ProgramInit instance;
-	private static LSML instanceL;
-	public static Image programIcon;
+	private static final long	serialVersionUID	= -2877785947094537320L;
+	private static final long	MIN_SPLASH_TIME_MS	= 20;
+	private static ProgramInit	instance;
+	private static LSML			instanceL;
+	public static Image			programIcon;
 
-	private String progressSubText = "";
-	private String progressText = "";
+	private String				progressSubText		= "";
+	private String				progressText		= "";
 
 	private class BackgroundImage extends JComponent {
-		private static final long serialVersionUID = 2294812231919303690L;
-		private Image image;
+		private static final long	serialVersionUID	= 2294812231919303690L;
+		private Image				image;
 
 		public BackgroundImage(Image anImage) {
 			image = anImage;
