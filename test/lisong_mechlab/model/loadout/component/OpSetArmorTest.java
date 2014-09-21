@@ -12,11 +12,11 @@ import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -244,7 +244,7 @@ public class OpSetArmorTest {
 
 		// Verify
 		Mockito.verify(loadoutPart).setArmor(armorSide, newArmor, false);
-		Mockito.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
+		Mockito.verify(xBar).post(new ConfiguredComponentBase.ComponentMessage(loadoutPart, Type.ArmorChanged));
 	}
 
 	/**
@@ -299,7 +299,7 @@ public class OpSetArmorTest {
 
 		// Verify
 		Mockito.verify(loadoutPart).setArmor(armorSide, 1, false);
-		Mockito.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
+		Mockito.verify(xBar).post(new ConfiguredComponentBase.ComponentMessage(loadoutPart, Type.ArmorChanged));
 	}
 
 	/**
@@ -383,8 +383,8 @@ public class OpSetArmorTest {
 
 		InOrder inOrder = Mockito.inOrder(xBar, loadoutPart);
 		inOrder.verify(loadoutPart).setArmor(armorSide, newArmor, newAuto);
-		inOrder.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
+		inOrder.verify(xBar).post(new ConfiguredComponentBase.ComponentMessage(loadoutPart, Type.ArmorChanged));
 		inOrder.verify(loadoutPart).setArmor(armorSide, oldArmor, oldAuto);
-		inOrder.verify(xBar).post(new ConfiguredComponentBase.Message(loadoutPart, Type.ArmorChanged));
+		inOrder.verify(xBar).post(new ConfiguredComponentBase.ComponentMessage(loadoutPart, Type.ArmorChanged));
 	}
 }

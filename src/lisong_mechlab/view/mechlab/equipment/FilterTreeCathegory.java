@@ -8,12 +8,11 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.TreeModelEvent;
 
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.preferences.UiPreferences;
-import lisong_mechlab.view.preferences.UiPreferences.Message;
 
-public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> implements Reader {
+public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> implements Message.Recipient {
 	protected final GarageTree	garageTree;
 	private String				nameFilter			= "";
 	private boolean				wasExpandedBeforeFilter;
@@ -96,9 +95,9 @@ public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> imp
 	}
 
 	@Override
-	public void receive(MessageXBar.Message aMsg) {
-		if (aMsg instanceof UiPreferences.Message) {
-			UiPreferences.Message msg = (Message) aMsg;
+	public void receive(Message aMsg) {
+		if (aMsg instanceof UiPreferences.PreferencesMessage) {
+			UiPreferences.PreferencesMessage msg = (UiPreferences.PreferencesMessage) aMsg;
 			if (msg.attribute == UiPreferences.UI_HIDE_SPECIAL_MECHS) {
 				filterDirty = true;
 				getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));

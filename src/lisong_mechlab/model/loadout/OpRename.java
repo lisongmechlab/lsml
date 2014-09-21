@@ -20,8 +20,8 @@
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.loadout.LoadoutMessage.Type;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This operation renames a loadout.

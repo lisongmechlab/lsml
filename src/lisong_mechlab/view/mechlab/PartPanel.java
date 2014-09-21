@@ -54,21 +54,21 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.OpChangeOmniPod;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.loadout.component.OpToggleItem;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.render.ItemRenderer;
 import lisong_mechlab.view.render.OmniPodRenderer;
 import lisong_mechlab.view.render.StyleManager;
 import lisong_mechlab.view.render.StyledComboBox;
 
-public class PartPanel extends JPanel implements MessageXBar.Reader {
+public class PartPanel extends JPanel implements Message.Recipient {
 	class ArmorPopupAdapter extends MouseAdapter {
 		private final MessageXBar		xBar;
 		private final OperationStack	stack;
@@ -104,7 +104,7 @@ public class PartPanel extends JPanel implements MessageXBar.Reader {
 						stack.pushAndApply(new OpSetArmor(xBar, loadout, component, ArmorSide.ONLY, component
 								.getArmorTotal(), false));
 					}
-					xBar.post(new ConfiguredComponentBase.Message(component, Type.ArmorDistributionUpdateRequest));
+					xBar.post(new ConfiguredComponentBase.ComponentMessage(component, Type.ArmorDistributionUpdateRequest));
 				}
 			}));
 			menu.show(e.getComponent(), e.getX(), e.getY());
@@ -383,9 +383,9 @@ public class PartPanel extends JPanel implements MessageXBar.Reader {
 	@Override
 	public void receive(Message aMsg) {
 		if (aMsg.isForMe(loadout)) {
-			if (aMsg instanceof ConfiguredComponentBase.Message) {
+			if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
 
-				ConfiguredComponentBase.Message msg = (ConfiguredComponentBase.Message) aMsg;
+				ConfiguredComponentBase.ComponentMessage msg = (ConfiguredComponentBase.ComponentMessage) aMsg;
 				if (msg.type == Type.ArmorChanged) {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override

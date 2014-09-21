@@ -15,7 +15,7 @@ import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -133,7 +133,7 @@ public class HeatOverTimeTest {
 		Collection<ConfiguredComponentStandard> partLoadouts = Mockito.mock(Collection.class);
 		Mockito.when(partLoadouts.contains(null)).thenReturn(true);
 		Mockito.when(loadout.getComponents()).thenReturn(partLoadouts);
-		cut.receive(new ConfiguredComponentBase.Message(null, ConfiguredComponentBase.Message.Type.ItemAdded));
+		cut.receive(new ConfiguredComponentBase.ComponentMessage(null, ConfiguredComponentBase.ComponentMessage.Type.ItemAdded));
 		assertTrue(old != cut.calculate(20));
 	}
 }

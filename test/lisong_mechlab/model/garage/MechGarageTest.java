@@ -19,7 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.garage;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -30,16 +35,16 @@ import java.io.IOException;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.garage.MechGarage.Message;
-import lisong_mechlab.model.garage.MechGarage.Message.Type;
+import lisong_mechlab.model.garage.MechGarage.GarageMessage;
+import lisong_mechlab.model.garage.MechGarage.GarageMessage.Type;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.After;
 import org.junit.Before;
@@ -74,7 +79,7 @@ public class MechGarageTest {
 		MechGarage cut = new MechGarage(xBar);
 
 		// Verify
-		verify(xBar).post(new Message(MechGarage.Message.Type.NewGarage, cut));
+		verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.NewGarage, cut));
 
 		assertTrue(cut.getMechs().isEmpty());
 		assertNull(cut.getFile());
@@ -96,7 +101,7 @@ public class MechGarageTest {
 		MechGarage c = MechGarage.open(testFile, xBar);
 
 		// Verify
-		verify(xBar).post(new Message(MechGarage.Message.Type.NewGarage, c));
+		verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.NewGarage, c));
 
 		assertTrue(c.getMechs().isEmpty());
 		assertSame(testFile, c.getFile());
@@ -186,8 +191,8 @@ public class MechGarageTest {
 		MechGarage loadedGarage = MechGarage.open(testFile, xBar);
 
 		// Verify
-		verify(xBar).post(new MechGarage.Message(Type.Saved, cut));
-		verify(xBar).post(new MechGarage.Message(Type.NewGarage, loadedGarage));
+		verify(xBar).post(new MechGarage.GarageMessage(Type.Saved, cut));
+		verify(xBar).post(new MechGarage.GarageMessage(Type.NewGarage, loadedGarage));
 		assertEquals(4, loadedGarage.getMechs().size());
 		assertEquals(lo1, loadedGarage.getMechs().get(0));
 		assertEquals(lo2, loadedGarage.getMechs().get(1));
@@ -217,7 +222,7 @@ public class MechGarageTest {
 		cut.save();
 
 		// Open the garage to verify.
-		verify(xBar).post(new MechGarage.Message(Type.Saved, cut));
+		verify(xBar).post(new MechGarage.GarageMessage(Type.Saved, cut));
 
 		cut = MechGarage.open(testFile, xBar);
 		assertEquals(2, cut.getMechs().size());
@@ -244,14 +249,14 @@ public class MechGarageTest {
 		// Verify
 		assertEquals(1, cut.getMechs().size());
 		assertSame(loadout, cut.getMechs().get(0));
-		verify(xBar).post(new Message(MechGarage.Message.Type.LoadoutAdded, cut, loadout));
+		verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.LoadoutAdded, cut, loadout));
 
 		// Execute
 		cut.remove(loadout);
 
 		// Verify
 		assertTrue(cut.getMechs().isEmpty());
-		verify(xBar).post(new Message(MechGarage.Message.Type.LoadoutRemoved, cut, loadout));
+		verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.LoadoutRemoved, cut, loadout));
 	}
 
 	/**

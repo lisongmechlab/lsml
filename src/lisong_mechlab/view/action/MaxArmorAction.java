@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpSetMaxArmor;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 /**

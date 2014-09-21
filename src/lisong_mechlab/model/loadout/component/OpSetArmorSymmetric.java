@@ -23,9 +23,10 @@ import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This {@link Operation} sets armor symmetrically on both sides of a {@link LoadoutStandard}.
@@ -41,7 +42,7 @@ public class OpSetArmorSymmetric extends CompositeOperation {
 	/**
 	 * Creates a new {@link OpSetArmorSymmetric}.
 	 * 
-	 * @param aXBar
+	 * @param aMessageDelivery
 	 *            The {@link MessageXBar} to announce changes to.
 	 * @param aLoadout
 	 *            The {@link LoadoutBase} to operate on.
@@ -58,9 +59,9 @@ public class OpSetArmorSymmetric extends CompositeOperation {
 	 *             Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage
 	 *             to support the armor.
 	 */
-	public OpSetArmorSymmetric(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart,
+	public OpSetArmorSymmetric(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart,
 			ArmorSide aArmorSide, int aArmorAmount, boolean aManualSet) {
-		super("change armor");
+		super("change armor", aMessageDelivery);
 		loadout = aLoadout;
 		component = aLoadoutPart;
 		side = aArmorSide;
@@ -71,8 +72,8 @@ public class OpSetArmorSymmetric extends CompositeOperation {
 			throw new IllegalArgumentException(
 					"Symmetric armor operation is only usable with comoponents that have an opposing side.");
 
-		addOp(new OpSetArmor(aXBar, aLoadout, aLoadoutPart, aArmorSide, aArmorAmount, aManualSet));
-		addOp(new OpSetArmor(aXBar, aLoadout, aLoadout.getComponent(otherSide), aArmorSide, aArmorAmount, aManualSet));
+		addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, aArmorSide, aArmorAmount, aManualSet));
+		addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadout.getComponent(otherSide), aArmorSide, aArmorAmount, aManualSet));
 	}
 
 	/**

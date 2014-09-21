@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.view.preferences;
 
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This class is a container class for all the individual preferences classes.

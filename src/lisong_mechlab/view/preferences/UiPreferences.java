@@ -20,7 +20,8 @@
 package lisong_mechlab.view.preferences;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This class contains preferences related to the UI behavior.
@@ -33,10 +34,10 @@ public class UiPreferences {
 	 * 
 	 * @author Emily Björk
 	 */
-	public class Message implements MessageXBar.Message {
+	public class PreferencesMessage implements Message {
 		public final String	attribute;
 
-		Message(String aAttribute) {
+		PreferencesMessage(String aAttribute) {
 			attribute = aAttribute;
 		}
 
@@ -63,19 +64,19 @@ public class UiPreferences {
 	public void setCompactMode(boolean aValue) {
 		PreferenceStore.setString(UI_COMPACT_MODE, Boolean.toString(aValue));
 		if (xBar != null)
-			xBar.post(new Message(UI_COMPACT_MODE));
+			xBar.post(new PreferencesMessage(UI_COMPACT_MODE));
 	}
 
 	public void setUseSmartPlace(boolean aValue) {
 		PreferenceStore.setString(UI_USE_SMARTPLACE, Boolean.toString(aValue));
 		if (xBar != null)
-			xBar.post(new Message(UI_USE_SMARTPLACE));
+			xBar.post(new PreferencesMessage(UI_USE_SMARTPLACE));
 	}
 
 	public void setHideSpecialMechs(boolean aValue) {
 		PreferenceStore.setString(UI_HIDE_SPECIAL_MECHS, Boolean.toString(aValue));
 		if (xBar != null)
-			xBar.post(new Message(UI_HIDE_SPECIAL_MECHS));
+			xBar.post(new PreferencesMessage(UI_HIDE_SPECIAL_MECHS));
 	}
 
 	/**

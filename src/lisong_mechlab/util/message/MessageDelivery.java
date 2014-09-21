@@ -17,29 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.model.loadout;
+package lisong_mechlab.util.message;
 
-import lisong_mechlab.util.OperationStack.CompositeOperation;
-import lisong_mechlab.util.message.MessageDelivery;
 
 /**
- * Base class for operations operating on a {@link LoadoutStandard}.
+ * This interface specifies an API for delivering messages over a crossbar.
  * 
  * @author Emily Björk
+ *
  */
-public abstract class OpLoadoutBase extends CompositeOperation {
-	protected final LoadoutBase<?>	loadout;
+public interface MessageDelivery {
 
 	/**
-	 * @param aLoadout
-	 *            The {@link LoadoutStandard} to operate on.
-	 * @param aMessageDelivery
-	 *            The {@link MessageDelivery} to announce changes on the loadout to.
-	 * @param aDescription
-	 *            A human readable description of the operation.
+	 * Sends a message to all listeners on the {@link MessageXBar}. Those listeners which have been disposed of since
+	 * the last call to {@link #post(Message)} will be automatically disposed of.
+	 * 
+	 * @param aMessage
+	 *            The message to send.
 	 */
-	public OpLoadoutBase(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, String aDescription) {
-		super(aDescription, aMessageDelivery);
-		loadout = aLoadout;
-	}
+	public void post(Message aMessage);
+
 }

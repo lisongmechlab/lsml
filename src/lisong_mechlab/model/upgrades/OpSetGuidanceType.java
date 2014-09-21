@@ -27,12 +27,12 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
-import lisong_mechlab.model.upgrades.Upgrades.Message;
-import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.upgrades.Upgrades.UpgradesMessage;
+import lisong_mechlab.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This {@link Operation} changes the guidance status of a {@link LoadoutStandard}.
@@ -44,7 +44,6 @@ public class OpSetGuidanceType extends CompositeOperation {
 	private final GuidanceUpgrade	newValue;
 	private final Upgrades			upgrades;
 	private final LoadoutBase<?>	loadout;
-	private final MessageXBar		xBar;
 
 	/**
 	 * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
@@ -56,31 +55,29 @@ public class OpSetGuidanceType extends CompositeOperation {
 	 *            The new upgrade to use.
 	 */
 	public OpSetGuidanceType(Upgrades aUpgrades, GuidanceUpgrade aGuidanceUpgrade) {
-		super(aGuidanceUpgrade.getName());
+		super(aGuidanceUpgrade.getName(), null);
 		upgrades = aUpgrades;
 		loadout = null;
 		oldValue = upgrades.getGuidance();
 		newValue = aGuidanceUpgrade;
-		xBar = null;
 	}
 
 	/**
 	 * Creates a new {@link OpSetGuidanceType} that will change the guidance upgrade of a {@link LoadoutStandard}.
 	 * 
-	 * @param aXBar
-	 *            A {@link MessageXBar} to signal changes in guidance status on.
+	 * @param aMessageDelivery
+	 *            A {@link MessageDelivery} to signal changes in guidance status on.
 	 * @param aLoadout
 	 *            The {@link LoadoutBase} to alter.
 	 * @param aGuidanceUpgrade
 	 *            The new upgrade to use.
 	 */
-	public OpSetGuidanceType(MessageXBar aXBar, LoadoutBase<?> aLoadout, GuidanceUpgrade aGuidanceUpgrade) {
-		super(aGuidanceUpgrade.getName());
+	public OpSetGuidanceType(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, GuidanceUpgrade aGuidanceUpgrade) {
+		super(aGuidanceUpgrade.getName(), aMessageDelivery);
 		upgrades = aLoadout.getUpgrades();
 		loadout = aLoadout;
 		oldValue = upgrades.getGuidance();
 		newValue = aGuidanceUpgrade;
-		xBar = aXBar;
 	}
 
 	@Override
@@ -103,8 +100,7 @@ public class OpSetGuidanceType extends CompositeOperation {
 				private void set(GuidanceUpgrade aValue) {
 					if (aValue != upgrades.getGuidance()) {
 						upgrades.setGuidance(aValue);
-						if (xBar != null)
-							xBar.post(new Message(ChangeMsg.GUIDANCE, upgrades));
+						messageBuffer.post(new UpgradesMessage(ChangeMsg.GUIDANCE, upgrades));
 					}
 				}
 
@@ -131,15 +127,15 @@ public class OpSetGuidanceType extends CompositeOperation {
 						MissileWeapon oldWeapon = (MissileWeapon) item;
 						MissileWeapon newWeapon = newValue.upgrade(oldWeapon);
 						if (oldWeapon != newWeapon) {
-							addOp(new OpRemoveItem(xBar, loadout, component, oldWeapon));
-							addOp(new OpAddItem(xBar, loadout, component, newWeapon));
+							addOp(new OpRemoveItem(messageBuffer, loadout, component, oldWeapon));
+							addOp(new OpAddItem(messageBuffer, loadout, component, newWeapon));
 						}
 					} else if (item instanceof Ammunition) {
 						Ammunition oldAmmo = (Ammunition) item;
 						Ammunition newAmmo = newValue.upgrade(oldAmmo);
 						if (oldAmmo != newAmmo) {
-							addOp(new OpRemoveItem(xBar, loadout, component, oldAmmo));
-							addOp(new OpAddItem(xBar, loadout, component, newAmmo));
+							addOp(new OpRemoveItem(messageBuffer, loadout, component, oldAmmo));
+							addOp(new OpAddItem(messageBuffer, loadout, component, newAmmo));
 						}
 					}
 				}

@@ -34,9 +34,9 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This operation automatically places an item at a suitable location on the {@link LoadoutStandard}.
@@ -136,8 +136,8 @@ public class OpAutoAddItem extends OpLoadoutBase {
 	private final List<Location>	partTraversalOrder;
 	private final OperationStack	stack			= new OperationStack(0);
 
-	public OpAutoAddItem(LoadoutBase<?> aLoadout, MessageXBar anXBar, Item anItem) {
-		super(aLoadout, anXBar, "auto place item");
+	public OpAutoAddItem(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, Item anItem) {
+		super(aLoadout, aMessageDelivery, "auto place item");
 		itemToPlace = anItem;
 		for (ConfiguredComponentBase part : aLoadout.getCandidateLocationsForItem(itemToPlace)) {
 			validLocations.add(part.getInternalComponent().getLocation());
@@ -151,7 +151,7 @@ public class OpAutoAddItem extends OpLoadoutBase {
 		ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
 		if (itemToPlace instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax()
 				&& ct.canAddItem(itemToPlace)) {
-			addOp(new OpAddItem(xBar, loadout, ct, itemToPlace));
+			addOp(new OpAddItem(messageBuffer, loadout, ct, itemToPlace));
 			return;
 		}
 
@@ -194,13 +194,13 @@ public class OpAutoAddItem extends OpLoadoutBase {
 		Node n = node;
 		while (n.parent != null) {
 			if (n.targetItem != null) {
-				ops.add(0, new OpAddItem(xBar, loadout, loadout.getComponent(n.target), n.item));
-				ops.add(0, new OpAddItem(xBar, loadout, loadout.getComponent(n.source), n.targetItem));
-				ops.add(0, new OpRemoveItem(xBar, loadout, loadout.getComponent(n.target), n.targetItem));
-				ops.add(0, new OpRemoveItem(xBar, loadout, loadout.getComponent(n.source), n.item));
+				ops.add(0, new OpAddItem(messageBuffer, loadout, loadout.getComponent(n.target), n.item));
+				ops.add(0, new OpAddItem(messageBuffer, loadout, loadout.getComponent(n.source), n.targetItem));
+				ops.add(0, new OpRemoveItem(messageBuffer, loadout, loadout.getComponent(n.target), n.targetItem));
+				ops.add(0, new OpRemoveItem(messageBuffer, loadout, loadout.getComponent(n.source), n.item));
 			} else {
-				ops.add(0, new OpAddItem(xBar, loadout, loadout.getComponent(n.target), n.item));
-				ops.add(0, new OpRemoveItem(xBar, loadout, loadout.getComponent(n.source), n.item));
+				ops.add(0, new OpAddItem(messageBuffer, loadout, loadout.getComponent(n.target), n.item));
+				ops.add(0, new OpRemoveItem(messageBuffer, loadout, loadout.getComponent(n.source), n.item));
 			}
 			n = n.parent;
 		}
@@ -209,7 +209,7 @@ public class OpAutoAddItem extends OpLoadoutBase {
 		for (Location part : partTraversalOrder) {
 			ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
 			if (loadoutPart.canAddItem(itemToPlace)) {
-				ops.add(new OpAddItem(xBar, loadout, loadout.getComponent(part), itemToPlace));
+				ops.add(new OpAddItem(messageBuffer, loadout, loadout.getComponent(part), itemToPlace));
 				break;
 			}
 		}

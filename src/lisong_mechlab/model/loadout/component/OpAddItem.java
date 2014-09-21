@@ -21,8 +21,8 @@ package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This {@link Operation} adds an {@link Item} to a {@link ConfiguredComponentBase}.
@@ -33,8 +33,8 @@ public class OpAddItem extends OpItemBase {
 	/**
 	 * Creates a new operation.
 	 * 
-	 * @param aXBar
-	 *            The {@link MessageXBar} to send messages on when items are added.
+	 * @param aMessageDelivery
+	 *            The {@link MessageDelivery} to send messages on when items are added.
 	 * @param aLoadout
 	 *            The {@link LoadoutBase} to remove the item from.
 	 * @param aComponent
@@ -42,8 +42,8 @@ public class OpAddItem extends OpItemBase {
 	 * @param aItem
 	 *            The {@link Item} to add.
 	 */
-	public OpAddItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem) {
-		super(aXBar, aLoadout, aComponent, aItem);
+	public OpAddItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem) {
+		super(aMessageDelivery, aLoadout, aComponent, aItem);
 	}
 
 	@Override

@@ -58,11 +58,11 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.metrics.TopSpeed;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.preferences.Preferences;
 import lisong_mechlab.view.preferences.UiPreferences;
-import lisong_mechlab.view.preferences.UiPreferences.Message;
 import lisong_mechlab.view.render.ScrollablePanel;
 import lisong_mechlab.view.render.StyleManager;
 
@@ -71,7 +71,7 @@ import lisong_mechlab.view.render.StyleManager;
  * 
  * @author Emily Björk
  */
-public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader {
+public class ChassiSelectionPane extends JPanel implements Message.Recipient {
 	static class NameColumn extends AttributeTableColumn {
 		private static final long	serialVersionUID	= -816217603635882304L;
 
@@ -361,9 +361,9 @@ public class ChassiSelectionPane extends JPanel implements MessageXBar.Reader {
 	}
 
 	@Override
-	public void receive(MessageXBar.Message aMsg) {
-		if (aMsg instanceof UiPreferences.Message) {
-			UiPreferences.Message msg = (Message) aMsg;
+	public void receive(Message aMsg) {
+		if (aMsg instanceof UiPreferences.PreferencesMessage) {
+			UiPreferences.PreferencesMessage msg = (UiPreferences.PreferencesMessage) aMsg;
 			if (msg.attribute == UiPreferences.UI_HIDE_SPECIAL_MECHS) {
 				hideSpecials.setSelected(preferences.uiPreferences.getHideSpecialMechs());
 

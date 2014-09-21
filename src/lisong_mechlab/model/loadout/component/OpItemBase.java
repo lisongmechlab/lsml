@@ -37,10 +37,10 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * A helper class for implementing {@link Operation}s that affect items on a {@link ConfiguredComponentBase}.
@@ -49,7 +49,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public abstract class OpItemBase extends Operation {
 	private int								numEngineHS		= 0;
-	private final MessageXBar				xBar;
+	private final MessageDelivery			messageDelivery;
 	protected final ConfiguredComponentBase	component;
 	protected final LoadoutBase<?>			loadout;
 	protected final Item					item;
@@ -59,8 +59,8 @@ public abstract class OpItemBase extends Operation {
 	 * Creates a new {@link OpItemBase}. The deriving classes shall throw if the the operation with the given item would
 	 * violate the {@link LoadoutStandard} or {@link ConfiguredComponentBase} invariant.
 	 * 
-	 * @param aXBar
-	 *            The {@link MessageXBar} to send messages to when changes occur.
+	 * @param aMessageDelivery
+	 *            The {@link MessageDelivery} to send messages to when changes occur.
 	 * @param aLoadout
 	 *            The {@link LoadoutBase} to operate on.
 	 * @param aComponent
@@ -68,13 +68,14 @@ public abstract class OpItemBase extends Operation {
 	 * @param aItem
 	 *            The {@link Item} to add or remove.
 	 */
-	protected OpItemBase(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem) {
+	protected OpItemBase(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
+			Item aItem) {
 		if (aItem instanceof Internal)
 			throw new IllegalArgumentException("Can't add/remove internals to/from a loadout!");
 
 		loadout = aLoadout;
 		component = aComponent;
-		xBar = aXBar;
+		messageDelivery = aMessageDelivery;
 		item = aItem;
 	}
 
@@ -121,9 +122,9 @@ public abstract class OpItemBase extends Operation {
 						: ConfiguredComponentBase.ENGINE_INTERNAL;
 				lt.removeItem(xlSide);
 				rt.removeItem(xlSide);
-				if (xBar != null) {
-					xBar.post(new Message(lt, Type.ItemRemoved));
-					xBar.post(new Message(rt, Type.ItemRemoved));
+				if (messageDelivery != null) {
+					messageDelivery.post(new ComponentMessage(lt, Type.ItemRemoved));
+					messageDelivery.post(new ComponentMessage(rt, Type.ItemRemoved));
 				}
 			}
 
@@ -139,8 +140,8 @@ public abstract class OpItemBase extends Operation {
 		restoreForcedToggles(aItem);
 
 		component.removeItem(aItem);
-		if (xBar != null) {
-			xBar.post(new Message(component, Type.ItemRemoved));
+		if (messageDelivery != null) {
+			messageDelivery.post(new ComponentMessage(component, Type.ItemRemoved));
 		}
 	}
 
@@ -161,9 +162,9 @@ public abstract class OpItemBase extends Operation {
 						: ConfiguredComponentBase.ENGINE_INTERNAL;
 				lt.addItem(xlSide);
 				rt.addItem(xlSide);
-				if (xBar != null) {
-					xBar.post(new Message(lt, Type.ItemAdded));
-					xBar.post(new Message(rt, Type.ItemAdded));
+				if (messageDelivery != null) {
+					messageDelivery.post(new ComponentMessage(lt, Type.ItemAdded));
+					messageDelivery.post(new ComponentMessage(rt, Type.ItemAdded));
 				}
 			}
 			while (numEngineHS > 0) {
@@ -178,8 +179,8 @@ public abstract class OpItemBase extends Operation {
 		checkManyGaussWarning(aItem);
 
 		component.addItem(aItem);
-		if (xBar != null) {
-			xBar.post(new Message(component, Type.ItemAdded));
+		if (messageDelivery != null) {
+			messageDelivery.post(new ComponentMessage(component, Type.ItemAdded));
 		}
 	}
 
@@ -245,17 +246,17 @@ public abstract class OpItemBase extends Operation {
 	}
 
 	private void checkCaseXLWarning(Item aItem) {
-		if (null != xBar) {
+		if (null != messageDelivery) {
 			Engine engine = loadout.getEngine();
 			if (aItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL) {
-				xBar.post(new NotificationMessage(Severity.WARNING, loadout,
+				messageDelivery.post(new NotificationMessage(Severity.WARNING, loadout,
 						"C.A.S.E. together with XL engine has no effect."));
 			}
 		}
 	}
 
 	private void checkManyGaussWarning(Item aItem) {
-		if (null != xBar) {
+		if (null != messageDelivery) {
 			if (aItem instanceof BallisticWeapon && aItem.getName().contains("GAUSS")) {
 				int rifles = 0;
 				for (ConfiguredComponentBase componentOmniMech : loadout.getComponents()) {
@@ -266,7 +267,7 @@ public abstract class OpItemBase extends Operation {
 						if (itemToCheck instanceof BallisticWeapon && itemToCheck.getName().contains("GAUSS")) {
 							rifles++;
 							if (rifles >= 2) {
-								xBar.post(new NotificationMessage(Severity.WARNING, loadout,
+								messageDelivery.post(new NotificationMessage(Severity.WARNING, loadout,
 										"Only two gauss rifles can be charged simultaneously."));
 								done = true;
 								break;

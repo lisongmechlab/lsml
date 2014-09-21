@@ -33,15 +33,15 @@ import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.LoadoutMessage.Type;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This class implements a {@link ListModel} for selecting {@link PilotModule}s for a {@link LoadoutBase}.
  * 
  * @author Emily Björk
  */
-public class PilotModuleModel implements ListModel<String>, MessageXBar.Reader {
+public class PilotModuleModel implements ListModel<String>, Message.Recipient {
 	private final LoadoutBase<?>		loadout;
 	private final Set<ListDataListener>	listeners	= new HashSet<>();
 	private final List<PilotModule>		modules		= new ArrayList<>();

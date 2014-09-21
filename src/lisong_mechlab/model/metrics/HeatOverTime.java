@@ -33,8 +33,8 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.helpers.IntegratedImpulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedPulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedSignal;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This class calculates the accurate heat generation over time for a {@link LoadoutStandard} assuming all guns fire as
@@ -42,7 +42,7 @@ import lisong_mechlab.util.MessageXBar.Message;
  * 
  * @author Emily Björk
  */
-public class HeatOverTime implements TimeMetric, MessageXBar.Reader {
+public class HeatOverTime implements TimeMetric, Message.Recipient {
 
 	private final LoadoutBase<?>			loadout;
 	private final List<IntegratedSignal>	heatIntegrals	= new ArrayList<>();

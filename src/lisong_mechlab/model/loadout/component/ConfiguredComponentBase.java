@@ -38,9 +38,9 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.util.ListArrayUtils;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.Message;
 
 /**
  * This class represents a configured {@link ComponentBase}.
@@ -51,7 +51,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public abstract class ConfiguredComponentBase {
-	public static class Message implements MessageXBar.Message {
+	public static class ComponentMessage implements Message {
 		public enum Type {
 			ArmorChanged, ArmorDistributionUpdateRequest, ItemAdded, ItemRemoved, ItemsChanged, OmniPodChanged
 		}
@@ -63,11 +63,11 @@ public abstract class ConfiguredComponentBase {
 		public final ConfiguredComponentBase	component;
 		public final Type						type;
 
-		public Message(ConfiguredComponentBase aComponent, Type aType) {
+		public ComponentMessage(ConfiguredComponentBase aComponent, Type aType) {
 			this(aComponent, aType, false);
 		}
 
-		public Message(ConfiguredComponentBase aComponent, Type aType, boolean aAutomatic) {
+		public ComponentMessage(ConfiguredComponentBase aComponent, Type aType, boolean aAutomatic) {
 			component = aComponent;
 			type = aType;
 			automatic = aAutomatic;
@@ -80,8 +80,8 @@ public abstract class ConfiguredComponentBase {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof Message) {
-				Message other = (Message) obj;
+			if (obj instanceof ComponentMessage) {
+				ComponentMessage other = (ComponentMessage) obj;
 				return component == other.component && type == other.type && automatic == other.automatic;
 			}
 			return false;

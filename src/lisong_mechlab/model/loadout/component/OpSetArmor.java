@@ -21,10 +21,11 @@ package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.Message.Type;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This {@link Operation} will change the armor of a {@link ConfiguredComponentBase}.
@@ -36,7 +37,7 @@ public class OpSetArmor extends Operation {
 	private final int						amount;
 	private int								oldAmount	= -1;
 	private boolean							oldManual;
-	private final MessageXBar				xBar;
+	private final MessageDelivery			messageDelivery;
 	private final LoadoutBase<?>			loadout;
 	private final ConfiguredComponentBase	loadoutPart;
 	private final boolean					manual;
@@ -44,7 +45,7 @@ public class OpSetArmor extends Operation {
 	/**
 	 * Sets the armor for a given side of the component. Throws if the operation will fail.
 	 * 
-	 * @param anXBar
+	 * @param aMessageDelivery
 	 *            The {@link MessageXBar} to announce changes to.
 	 * @param aLoadout
 	 *            The {@link LoadoutBase} to change.
@@ -60,9 +61,9 @@ public class OpSetArmor extends Operation {
 	 *             Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage
 	 *             to support the armor.
 	 */
-	public OpSetArmor(MessageXBar anXBar, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart,
+	public OpSetArmor(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart,
 			ArmorSide anArmorSide, int anArmorAmount, boolean aManualSet) {
-		xBar = anXBar;
+		messageDelivery = aMessageDelivery;
 		loadout = aLoadout;
 		loadoutPart = aLoadoutPart;
 		side = anArmorSide;
@@ -140,8 +141,8 @@ public class OpSetArmor extends Operation {
 				}
 			}
 			loadoutPart.setArmor(side, amount, !manual);
-			if (xBar != null) {
-				xBar.post(new Message(loadoutPart, Type.ArmorChanged, !manual));
+			if (messageDelivery != null) {
+				messageDelivery.post(new ComponentMessage(loadoutPart, Type.ArmorChanged, !manual));
 			}
 		}
 	}
@@ -154,8 +155,8 @@ public class OpSetArmor extends Operation {
 
 		if (amount != oldAmount || oldManual != manual) {
 			loadoutPart.setArmor(side, oldAmount, !oldManual);
-			if (xBar != null) {
-				xBar.post(new Message(loadoutPart, Type.ArmorChanged, !manual));
+			if (messageDelivery != null) {
+				messageDelivery.post(new ComponentMessage(loadoutPart, Type.ArmorChanged, !manual));
 			}
 		}
 		oldAmount = -1;

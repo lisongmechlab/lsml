@@ -44,10 +44,10 @@ import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.model.garage.MechGarage;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.SwingHelpers;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.action.RedoGarageAction;
 import lisong_mechlab.view.action.UndoGarageAction;
 import lisong_mechlab.view.graphs.PayloadSelectionPanel;
@@ -61,7 +61,7 @@ import lisong_mechlab.view.preferences.Preferences;
  * 
  * @author Emily Björk
  */
-public class LSML extends JFrame implements MessageXBar.Reader {
+public class LSML extends JFrame implements Message.Recipient {
 	public static final String		PROGRAM_FNAME			= "Li Song Mechlab ";
 	private static final String		GARAGE_FILEDESCRIPTION	= PROGRAM_FNAME + " Garage File (.xml)";
 	private static final FileFilter	GARAGE_FILE_FILTER		= new FileFilter() {

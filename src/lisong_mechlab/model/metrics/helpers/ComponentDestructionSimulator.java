@@ -28,8 +28,8 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.metrics.CriticalStrikeProbability;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This class performs a simulated destruction of a component by large alphas [1] and for each item calculates the
@@ -48,7 +48,7 @@ import lisong_mechlab.util.MessageXBar.Message;
  * 
  * @author Emily Björk
  */
-public class ComponentDestructionSimulator implements MessageXBar.Reader {
+public class ComponentDestructionSimulator implements Message.Recipient {
 	private final ConfiguredComponentBase	loadoutPart;
 	private final double					P_miss;
 	private final double					weaponAlpha;
@@ -211,8 +211,8 @@ public class ComponentDestructionSimulator implements MessageXBar.Reader {
 
 	@Override
 	public void receive(Message aMsg) {
-		if (aMsg instanceof ConfiguredComponentBase.Message) {
-			ConfiguredComponentBase.Message message = (ConfiguredComponentBase.Message) aMsg;
+		if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
+			ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
 			if (message.component == loadoutPart && message.affectsHeatOrDamage()) {
 				simulate();
 			}

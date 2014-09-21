@@ -35,8 +35,8 @@ import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.OpAddModule;
 import lisong_mechlab.model.loadout.OpRemoveModule;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ModuleTransferHandler;
 import lisong_mechlab.view.render.ItemRenderer;
 

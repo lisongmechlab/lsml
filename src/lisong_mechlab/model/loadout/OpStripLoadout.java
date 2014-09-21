@@ -26,8 +26,8 @@ import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This operation removes all armor, upgrades and items from a {@link LoadoutStandard}.
@@ -35,27 +35,25 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
  * @author Emily Björk
  */
 public class OpStripLoadout extends CompositeOperation {
-	protected final MessageXBar		xBar;
 	protected final LoadoutBase<?>	loadout;
 
-	public OpStripLoadout(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
-		super("strip mech");
+	public OpStripLoadout(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
+		super("strip mech", aMessageDelivery);
 		loadout = aLoadout;
-		xBar = aXBar;
 	}
 
 	@Override
 	public void buildOperation() {
 		for (ConfiguredComponentBase component : loadout.getComponents()) {
-			addOp(new OpStripComponent(xBar, loadout, component));
+			addOp(new OpStripComponent(messageBuffer, loadout, component));
 		}
 
 		if (loadout instanceof LoadoutStandard) {
 			LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-			addOp(new OpSetStructureType(xBar, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
-			addOp(new OpSetGuidanceType(xBar, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
-			addOp(new OpSetArmorType(xBar, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
-			addOp(new OpSetHeatSinkType(xBar, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
+			addOp(new OpSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
+			addOp(new OpSetGuidanceType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
+			addOp(new OpSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
+			addOp(new OpSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
 		}
 	}
 }

@@ -34,9 +34,9 @@ import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This operation will distribute a number of points of armor (rounded down to the closest half ton) on a loadout,
@@ -48,20 +48,23 @@ public class OpDistributeArmor extends CompositeOperation {
 	private final Map<Location, Integer>	armors	= new HashMap<>(Location.values().length);
 	private final LoadoutBase<?>			loadout;
 	private final int						totalPointsOfArmor;
-	private final MessageXBar				xBar;
 	private final double					frontRearRatio;
 
 	/**
 	 * @param aLoadout
+	 *            The {@link LoadoutBase} to distribute armor on.
 	 * @param aPointsOfArmor
+	 *            The wanted amount of total armor.
 	 * @param aFrontRearRatio
-	 * @param aXBar
+	 *            The ratio of front/back on armor.
+	 * @param aMessageDelivery
+	 *            The {@link MessageDelivery} to send messages on.
 	 */
-	public OpDistributeArmor(LoadoutBase<?> aLoadout, int aPointsOfArmor, double aFrontRearRatio, MessageXBar aXBar) {
-		super("distribute armor");
+	public OpDistributeArmor(LoadoutBase<?> aLoadout, int aPointsOfArmor, double aFrontRearRatio,
+			MessageDelivery aMessageDelivery) {
+		super("distribute armor", aMessageDelivery);
 		loadout = aLoadout;
 		totalPointsOfArmor = aPointsOfArmor;
-		xBar = aXBar;
 		frontRearRatio = aFrontRearRatio;
 	}
 
@@ -87,7 +90,7 @@ public class OpDistributeArmor extends CompositeOperation {
 			Map<Location, Integer> prioMap = prioritize(loadout);
 			distribute(loadout, armorLeft, prioMap);
 		}
-		applyArmors(loadout, frontRearRatio, xBar);
+		applyArmors(loadout, frontRearRatio, messageBuffer);
 	}
 
 	private void distribute(final LoadoutBase<?> aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities) {
@@ -188,17 +191,17 @@ public class OpDistributeArmor extends CompositeOperation {
 		armors.put(aPart.getInternalComponent().getLocation(), armor);
 	}
 
-	private void applyArmors(LoadoutBase<?> aLoadout, double aFrontRearRatio, MessageXBar aXBar) {
+	private void applyArmors(LoadoutBase<?> aLoadout, double aFrontRearRatio, MessageDelivery aMessageDelivery) {
 		for (Location part : Location.values()) {
 			final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
 
 			if (!loadoutPart.allowAutomaticArmor())
 				continue;
 			if (loadoutPart.getInternalComponent().getLocation().isTwoSided()) {
-				addOp(new OpSetArmor(aXBar, loadout, loadoutPart, ArmorSide.BACK, 0, false));
-				addOp(new OpSetArmor(aXBar, loadout, loadoutPart, ArmorSide.FRONT, 0, false));
+				addOp(new OpSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.BACK, 0, false));
+				addOp(new OpSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.FRONT, 0, false));
 			} else {
-				addOp(new OpSetArmor(aXBar, loadout, loadoutPart, ArmorSide.ONLY, 0, false));
+				addOp(new OpSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.ONLY, 0, false));
 			}
 		}
 
@@ -218,10 +221,10 @@ public class OpDistributeArmor extends CompositeOperation {
 				int back = (int) (armor / (aFrontRearRatio + 1));
 				int front = armor - back;
 
-				addOp(new OpSetArmor(aXBar, loadout, loadoutPart, ArmorSide.FRONT, front, false));
-				addOp(new OpSetArmor(aXBar, loadout, loadoutPart, ArmorSide.BACK, back, false));
+				addOp(new OpSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.FRONT, front, false));
+				addOp(new OpSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.BACK, back, false));
 			} else {
-				addOp(new OpSetArmor(aXBar, loadout, loadoutPart, ArmorSide.ONLY, armor, false));
+				addOp(new OpSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.ONLY, armor, false));
 			}
 		}
 	}

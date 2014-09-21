@@ -45,10 +45,10 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.util.WeaponRanges;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.action.OpenHelp;
 
@@ -74,7 +74,7 @@ import org.jfree.ui.VerticalAlignment;
  * 
  * @author Emily Björk
  */
-public class DamageGraph extends JFrame implements MessageXBar.Reader {
+public class DamageGraph extends JFrame implements Message.Recipient {
 	private static final long		serialVersionUID	= -8812749194029184861L;
 	private final LoadoutBase<?>	loadout;
 	private final MaxSustainedDPS	maxSustainedDPS;
@@ -174,15 +174,15 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader {
 		if (!aMsg.isForMe(loadout))
 			return;
 
-		if (aMsg instanceof ConfiguredComponentBase.Message) {
-			ConfiguredComponentBase.Message msg = (ConfiguredComponentBase.Message) aMsg;
-			if (msg.type == ConfiguredComponentBase.Message.Type.ArmorChanged)
+		if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
+			ConfiguredComponentBase.ComponentMessage msg = (ConfiguredComponentBase.ComponentMessage) aMsg;
+			if (msg.type == ConfiguredComponentBase.ComponentMessage.Type.ArmorChanged)
 				return;
-		} else if (aMsg instanceof Upgrades.Message) {
-			Upgrades.Message msg = (Upgrades.Message) aMsg;
-			if (msg.msg != Upgrades.Message.ChangeMsg.HEATSINKS)
+		} else if (aMsg instanceof Upgrades.UpgradesMessage) {
+			Upgrades.UpgradesMessage msg = (Upgrades.UpgradesMessage) aMsg;
+			if (msg.msg != Upgrades.UpgradesMessage.ChangeMsg.HEATSINKS)
 				return;
-		} else if (!(aMsg instanceof Efficiencies.Message)) {
+		} else if (!(aMsg instanceof Efficiencies.EfficienciesMessage)) {
 			return;
 		}
 

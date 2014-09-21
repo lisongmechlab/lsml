@@ -20,10 +20,10 @@
 package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.upgrades.Upgrades.Message;
-import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.upgrades.Upgrades.UpgradesMessage;
+import lisong_mechlab.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This {@link Operation} can change the armor type of a {@link LoadoutStandard}.
@@ -56,15 +56,15 @@ public class OpSetArmorType extends OpUpgradeBase {
 	/**
 	 * Creates a new {@link OpSetStructureType} that will change the armor type of a {@link LoadoutStandard}.
 	 * 
-	 * @param aXBar
-	 *            A {@link MessageXBar} to signal changes in internal structure on.
+	 * @param aMessageDelivery
+	 *            A {@link MessageDelivery} to signal changes in internal structure on.
 	 * @param aLoadout
 	 *            The {@link LoadoutStandard} to alter.
 	 * @param aArmorUpgrade
 	 *            The new armor type this upgrades is applied.
 	 */
-	public OpSetArmorType(MessageXBar aXBar, LoadoutStandard aLoadout, ArmorUpgrade aArmorUpgrade) {
-		super(aXBar, aArmorUpgrade.getName());
+	public OpSetArmorType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout, ArmorUpgrade aArmorUpgrade) {
+		super(aMessageDelivery, aArmorUpgrade.getName());
 		upgrades = aLoadout.getUpgrades();
 		loadout = aLoadout;
 		oldValue = upgrades.getArmor();
@@ -93,8 +93,8 @@ public class OpSetArmorType extends OpUpgradeBase {
 				throw new IllegalArgumentException("Couldn't change armour type: ", e);
 			}
 
-			if (xBar != null)
-				xBar.post(new Message(ChangeMsg.ARMOR, upgrades));
+			if (messageDelivery != null)
+				messageDelivery.post(new UpgradesMessage(ChangeMsg.ARMOR, upgrades));
 		}
 	}
 }

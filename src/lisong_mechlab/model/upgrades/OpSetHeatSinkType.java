@@ -25,11 +25,11 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
-import lisong_mechlab.model.upgrades.Upgrades.Message;
-import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.model.upgrades.Upgrades.UpgradesMessage;
+import lisong_mechlab.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This {@link Operation} can alter the heat sink upgrade status of a {@link LoadoutStandard}.
@@ -41,7 +41,6 @@ public class OpSetHeatSinkType extends CompositeOperation {
 	private final HeatSinkUpgrade	newValue;
 	private final UpgradesMutable	upgrades;
 	private final LoadoutStandard	loadout;
-	private final MessageXBar		xBar;
 
 	/**
 	 * Creates a {@link OpSetHeatSinkType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
@@ -53,31 +52,30 @@ public class OpSetHeatSinkType extends CompositeOperation {
 	 *            The new heat sink type.
 	 */
 	public OpSetHeatSinkType(UpgradesMutable aUpgrades, HeatSinkUpgrade aHeatsinkUpgrade) {
-		super(aHeatsinkUpgrade.getName());
+		super(aHeatsinkUpgrade.getName(), null);
 		upgrades = aUpgrades;
 		loadout = null;
 		oldValue = upgrades.getHeatSink();
 		newValue = aHeatsinkUpgrade;
-		xBar = null;
 	}
 
 	/**
 	 * Creates a new {@link OpSetHeatSinkType} that will change the heat sink type of a {@link LoadoutStandard}.
 	 * 
-	 * @param aXBar
-	 *            A {@link MessageXBar} to signal changes in DHS status on.
+	 * @param aMessageDelivery
+	 *            A {@link MessageDelivery} to signal changes in DHS status on.
 	 * @param aLoadout
 	 *            The {@link LoadoutStandard} to alter.
 	 * @param aHeatsinkUpgrade
 	 *            The new heat sink type.
 	 */
-	public OpSetHeatSinkType(MessageXBar aXBar, LoadoutStandard aLoadout, HeatSinkUpgrade aHeatsinkUpgrade) {
-		super(aHeatsinkUpgrade.getName());
+	public OpSetHeatSinkType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout,
+			HeatSinkUpgrade aHeatsinkUpgrade) {
+		super(aHeatsinkUpgrade.getName(), aMessageDelivery);
 		upgrades = aLoadout.getUpgrades();
 		loadout = aLoadout;
 		oldValue = upgrades.getHeatSink();
 		newValue = aHeatsinkUpgrade;
-		xBar = aXBar;
 	}
 
 	@Override
@@ -96,8 +94,7 @@ public class OpSetHeatSinkType extends CompositeOperation {
 		if (aValue != upgrades.getHeatSink()) {
 			upgrades.setHeatSink(aValue);
 
-			if (xBar != null)
-				xBar.post(new Message(ChangeMsg.HEATSINKS, upgrades));
+			messageBuffer.post(new UpgradesMessage(ChangeMsg.HEATSINKS, upgrades));
 		}
 	}
 
@@ -114,7 +111,7 @@ public class OpSetHeatSinkType extends CompositeOperation {
 				int locallyRemoved = 0;
 				for (Item item : component.getItemsEquipped()) {
 					if (item instanceof HeatSink) {
-						addOp(new OpRemoveItem(xBar, loadout, component, item));
+						addOp(new OpRemoveItem(messageBuffer, loadout, component, item));
 						globallyRemoved++;
 						locallyRemoved++;
 					}
@@ -149,7 +146,7 @@ public class OpSetHeatSinkType extends CompositeOperation {
 
 				while (hsToAdd > 0) {
 					hsToAdd--;
-					addOp(new OpAddItem(xBar, loadout, component, newHsType));
+					addOp(new OpAddItem(messageBuffer, loadout, component, newHsType));
 				}
 			}
 		}
