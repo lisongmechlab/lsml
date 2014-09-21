@@ -78,24 +78,24 @@ import lisong_mechlab.view.graphs.DamageGraph;
 import lisong_mechlab.view.render.StyleManager;
 
 public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader {
-	private static final String CMD_UNDO_LOADOUT = "undo loadout";
-	private static final String CMD_REDO_LOADOUT = "redo loadout";
-	private static final String CMD_RENAME_LOADOUT = "rename loadout";
-	private static final String CMD_SAVE_TO_GARAGE = "add to garage";
-	private static final long serialVersionUID = -9181002222136052106L;
-	private static int openFrameCount = 0;
-	private static final int xOffset = 30, yOffset = 30;
-	private static final int ARM_OFFSET = 60;
-	private static final int TORSO_OFFSET = 20;
-	private static final int HEAD_OFFSET = 0;
-	private final LoadoutBase<?> loadout;
-	private final MessageXBar xbar;
-	private final OperationStack loadoutOperationStack = new OperationStack(128);
-	private final Action actionUndoLoadout;
-	private final Action actionRedoLoadout;
-	private final Action actionRename;
-	private final Action actionAddToGarage;
-	private final LoadoutInfoPanel infoPanel;
+	private static final String		CMD_UNDO_LOADOUT		= "undo loadout";
+	private static final String		CMD_REDO_LOADOUT		= "redo loadout";
+	private static final String		CMD_RENAME_LOADOUT		= "rename loadout";
+	private static final String		CMD_SAVE_TO_GARAGE		= "add to garage";
+	private static final long		serialVersionUID		= -9181002222136052106L;
+	private static int				openFrameCount			= 0;
+	private static final int		xOffset					= 30, yOffset = 30;
+	private static final int		ARM_OFFSET				= 60;
+	private static final int		TORSO_OFFSET			= 20;
+	private static final int		HEAD_OFFSET				= 0;
+	private final LoadoutBase<?>	loadout;
+	private final MessageXBar		xbar;
+	private final OperationStack	loadoutOperationStack	= new OperationStack(128);
+	private final Action			actionUndoLoadout;
+	private final Action			actionRedoLoadout;
+	private final Action			actionRename;
+	private final Action			actionAddToGarage;
+	private final LoadoutInfoPanel	infoPanel;
 
 	public LoadoutFrame(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
 		super(aLoadout.toString(), true, // resizable
@@ -194,7 +194,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader {
 
 		if (null != aChild) {
 			JPanel content = new JPanel() {
-				private static final long serialVersionUID = -7026792320508640323L;
+				private static final long	serialVersionUID	= -7026792320508640323L;
 
 				@Override
 				public Dimension getMaximumSize() {
@@ -308,7 +308,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageXBar.Reader {
 
 			final JLabel quirksummary = new JLabel("Quirk summary");
 			quirksummary.addMouseListener(new MouseAdapter() {
-				JWindow window = null;
+				JWindow	window	= null;
 
 				@Override
 				public void mouseEntered(MouseEvent aE) {

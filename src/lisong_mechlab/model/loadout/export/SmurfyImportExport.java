@@ -54,14 +54,14 @@ import lisong_mechlab.view.LSML;
  * @author Emily Björk
  */
 public class SmurfyImportExport {
-	public final static String CREATE_API_KEY_URL = "https://mwo.smurfy-net.de/change-password";
-	private final String apiKey;
-	private final URL userMechbayUrl;
-	private final Base64LoadoutCoder coder;
-	private final static String API_VALID_CHARS = "0123456789abcdefABCDEF";
-	private final static int API_NUM_CHARS = 40;
-	private final transient OperationStack stack = new OperationStack(0);
-	private final SSLSocketFactory sslSocketFactory;
+	public final static String				CREATE_API_KEY_URL	= "https://mwo.smurfy-net.de/change-password";
+	private final String					apiKey;
+	private final URL						userMechbayUrl;
+	private final Base64LoadoutCoder		coder;
+	private final static String				API_VALID_CHARS		= "0123456789abcdefABCDEF";
+	private final static int				API_NUM_CHARS		= 40;
+	private final transient OperationStack	stack				= new OperationStack(0);
+	private final SSLSocketFactory			sslSocketFactory;
 
 	/**
 	 * @param aApiKey

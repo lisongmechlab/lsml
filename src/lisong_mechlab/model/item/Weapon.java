@@ -31,34 +31,34 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Weapon extends HeatSource {
-	public static final int RANGE_ULP_FUZZ = 5;
+	public static final int	RANGE_ULP_FUZZ	= 5;
 
 	@XStreamAsAttribute
-	private final double damagePerProjectile;
+	private final double	damagePerProjectile;
 	@XStreamAsAttribute
-	private final double cycleTime;
+	private final double	cycleTime;
 	@XStreamAsAttribute
-	private final double rangeZero;
+	private final double	rangeZero;
 	@XStreamAsAttribute
-	private final double rangeMin;
+	private final double	rangeMin;
 	@XStreamAsAttribute
-	private final double rangeLong;
+	private final double	rangeLong;
 	@XStreamAsAttribute
-	private final double rangeMax;
+	private final double	rangeMax;
 	@XStreamAsAttribute
-	private final double fallOffExponent;
+	private final double	fallOffExponent;
 	@XStreamAsAttribute
-	private final int projectilesPerRound;
+	private final int		projectilesPerRound;
 	@XStreamAsAttribute
-	private final int roundsPerShot;
+	private final int		roundsPerShot;
 	@XStreamAsAttribute
-	private final int ghostHeatGroupId;
+	private final int		ghostHeatGroupId;
 	@XStreamAsAttribute
-	private final double ghostHeatMultiplier;
+	private final double	ghostHeatMultiplier;
 	@XStreamAsAttribute
-	private final int ghostHeatFreeAlpha;
+	private final int		ghostHeatFreeAlpha;
 	@XStreamAsAttribute
-	private final double projectileSpeed;
+	private final double	projectileSpeed;
 
 	public Weapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType) {
 		super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons,
@@ -294,10 +294,10 @@ public class Weapon extends HeatSource {
 		return false;
 	}
 
-	public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
+	public final static Comparator<Item>	DEFAULT_WEAPON_ORDERING;
 	static {
 		DEFAULT_WEAPON_ORDERING = new Comparator<Item>() {
-			private final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
+			private final Pattern	p	= Pattern.compile("(\\D*)(\\d*)?.*");
 
 			@Override
 			public int compare(Item aLhs, Item aRhs) {

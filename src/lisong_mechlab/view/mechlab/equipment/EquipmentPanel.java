@@ -58,13 +58,13 @@ import lisong_mechlab.view.render.ScrollablePanel;
  * @author Emily Björk
  */
 public class EquipmentPanel extends JPanel implements Reader, InternalFrameListener {
-	private static final long serialVersionUID = -8126726006921797207L;
-	private final ItemInfoPanel infoPanel = new ItemInfoPanel();
-	private final List<ItemLabel> itemLabels = new ArrayList<>();
-	private final JPanel energyItems = new JPanel(new ModifiedFlowLayout());
-	private final JPanel ballisticItems = new JPanel(new ModifiedFlowLayout());
-	private final JPanel missileItems = new JPanel(new ModifiedFlowLayout());
-	private LoadoutBase<?> currentLoadout;
+	private static final long		serialVersionUID	= -8126726006921797207L;
+	private final ItemInfoPanel		infoPanel			= new ItemInfoPanel();
+	private final List<ItemLabel>	itemLabels			= new ArrayList<>();
+	private final JPanel			energyItems			= new JPanel(new ModifiedFlowLayout());
+	private final JPanel			ballisticItems		= new JPanel(new ModifiedFlowLayout());
+	private final JPanel			missileItems		= new JPanel(new ModifiedFlowLayout());
+	private LoadoutBase<?>			currentLoadout;
 
 	public EquipmentPanel(LoadoutDesktop aDesktop, MessageXBar aXBar) {
 		aXBar.attach(this);

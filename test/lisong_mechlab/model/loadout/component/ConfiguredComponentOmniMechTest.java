@@ -45,11 +45,11 @@ import org.mockito.Mockito;
  */
 public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest {
 
-	protected ComponentOmniMech omniInternal;
-	protected OmniPod omniPod;
-	protected boolean missileBayDoors;
-	protected List<HardPoint> hardPoints = new ArrayList<>();
-	protected List<Item> togglables = new ArrayList<>();
+	protected ComponentOmniMech	omniInternal;
+	protected OmniPod			omniPod;
+	protected boolean			missileBayDoors;
+	protected List<HardPoint>	hardPoints	= new ArrayList<>();
+	protected List<Item>		togglables	= new ArrayList<>();
 
 	@Before
 	public void setup() {

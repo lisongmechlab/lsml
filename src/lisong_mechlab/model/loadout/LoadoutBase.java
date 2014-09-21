@@ -23,25 +23,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
-import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.chassi.HeatModifier;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
-import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
@@ -53,7 +50,6 @@ import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.ListArrayUtils;
 import lisong_mechlab.util.MessageXBar;
 
 import com.thoughtworks.xstream.XStream;
@@ -67,11 +63,11 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  *            The type of the {@link ConfiguredComponentBase} in this loadout.
  */
 public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
-	private String name;
-	private final ChassisBase chassisBase;
-	private final T[] components;
-	private final Efficiencies efficiencies;
-	private final List<PilotModule> modules; // TODO: Modules should be handled as separate categories.
+	private String					name;
+	private final ChassisBase		chassisBase;
+	private final T[]				components;
+	private final Efficiencies		efficiencies;
+	private final List<PilotModule>	modules;		// TODO: Modules should be handled as separate categories.
 
 	protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase) {
 		name = aChassisBase.getNameShort();
@@ -144,15 +140,19 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 	}
 
 	/**
-	 * @return A {@link Collection} of all the {@link Item}s on this loadout, including {@link Internal}s.
+	 * @return An {@link Iterable} over all {@link Item}s.
 	 */
-	public Collection<Item> getAllItems() {
-		List<Item> items = new ArrayList<>();
-		for (T component : components) {
-			items.addAll(component.getItemsFixed());
-			items.addAll(component.getItemsEquipped());
-		}
-		return items;
+	public Iterable<Item> items() {
+		return items(null);
+	}
+
+	/**
+	 * @param aClass
+	 *            The type to iterate over.
+	 * @return An {@link Iterable} over all {@link Item}s that implements <code>aClass</code>.
+	 */
+	public <X> Iterable<X> items(Class<X> aClass) {
+		return new LoadoutIterable<X>(this, aClass);
 	}
 
 	/**
@@ -359,22 +359,12 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 		return ans;
 	}
 
-	private <E> Collection<E> getItemsOfType(Class<E> aClass) {
-		List<E> ans = new ArrayList<>();
-
-		for (T component : getComponents()) {
-			ans.addAll(ListArrayUtils.filterByType(component.getItemsEquipped(), aClass));
-			ans.addAll(ListArrayUtils.filterByType(component.getItemsFixed(), aClass));
-		}
-		return ans;
-	}
-
 	private int countItemsOfType(Class<?> aClass) {
 		int ans = 0;
-
-		for (T component : getComponents()) {
-			ans += ListArrayUtils.countByType(component.getItemsEquipped(), aClass);
-			ans += ListArrayUtils.countByType(component.getItemsFixed(), aClass);
+		Iterator<?> it = items(aClass).iterator();
+		while (it.hasNext()) {
+			ans++;
+			it.next();
 		}
 		return ans;
 	}
@@ -565,28 +555,22 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 	public abstract String getQuirkHtmlSummary();
 
 	/**
-	 * @return A {@link List} of all {@link WeaponModifier}s that apply to this loadout.
+	 * Returns a {@link Collection} of all equipment or modules or omnipods or quirks that implements the given class.
+	 * 
+	 * @param aClass
+	 *            The class that should be implemented.
+	 * @return The {@link Collection} of modifiers.
 	 */
-	public Collection<WeaponModifier> getWeaponModifiers() {
-		Collection<WeaponModifier> ans = getItemsOfType(WeaponModifier.class);
-		ans.addAll(ListArrayUtils.filterByType(modules, WeaponModifier.class));
-		ChassisBase chassis = getChassis();
-		if (chassis instanceof ChassisStandard) {
-			ans.add(((ChassisStandard) getChassis()).getQuirks());
+	public <U> Collection<U> getModifiers(Class<U> aClass) {
+		List<U> modifiers = new ArrayList<>();
+		for (U t : items(aClass)) {
+			modifiers.add(t);
 		}
-		return ans;
-	}
-
-	/**
-	 * @return A {@link List} of all {@link WeaponModifier}s that apply to this loadout.
-	 */
-	public Collection<HeatModifier> getHeatModifiers() {
-		Collection<HeatModifier> ans = getItemsOfType(HeatModifier.class);
-		ans.addAll(ListArrayUtils.filterByType(modules, HeatModifier.class));
-		ChassisBase chassis = getChassis();
-		if (chassis instanceof ChassisStandard) {
-			ans.add(((ChassisStandard) getChassis()).getQuirks());
+		for(PilotModule module : getModules()){
+			if(aClass.isInstance(module)){
+				modifiers.add(aClass.cast(module));
+			}
 		}
-		return ans;
+		return modifiers;
 	}
 }

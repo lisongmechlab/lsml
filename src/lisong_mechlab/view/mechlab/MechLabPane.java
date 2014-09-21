@@ -51,9 +51,9 @@ import lisong_mechlab.view.render.StyleManager;
  * @author Emily Björk
  */
 public class MechLabPane extends JSplitPane {
-	private static final long serialVersionUID = 1079910953509846928L;
-	private final LoadoutDesktop desktop;
-	private final MessageXBar xBar;
+	private static final long		serialVersionUID	= 1079910953509846928L;
+	private final LoadoutDesktop	desktop;
+	private final MessageXBar		xBar;
 
 	public MechLabPane(MessageXBar anXBar, Preferences aPreferences) {
 		super(JSplitPane.HORIZONTAL_SPLIT, true);

@@ -35,9 +35,9 @@ import javax.swing.SwingConstants;
  * @author Emily Björk
  */
 public class CollapsiblePanel extends JPanel {
-	private static final long serialVersionUID = 3493431469019201319L;
-	private final JLabel title = new JLabel();
-	private final Component content;
+	private static final long	serialVersionUID	= 3493431469019201319L;
+	private final JLabel		title				= new JLabel();
+	private final Component		content;
 
 	public CollapsiblePanel(String aTitle, Component aComponent, boolean aStartCollapsed) {
 		super(new BorderLayout());

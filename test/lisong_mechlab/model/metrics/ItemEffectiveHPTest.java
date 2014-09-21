@@ -45,15 +45,15 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ItemEffectiveHPTest {
-	List<Item> items = new ArrayList<>();
+	private List<Item>				items	= new ArrayList<>();
 	@Mock
-	ConfiguredComponentBase loadoutPart;
+	private ConfiguredComponentBase	loadoutPart;
 	@Mock
-	LoadoutBase<?> loadout;
+	private LoadoutBase<?>			loadout;
 	@Mock
-	Upgrades upgrades;
+	private Upgrades				upgrades;
 	@InjectMocks
-	ItemEffectiveHP cut;
+	private ItemEffectiveHP			cut;
 
 	@Before
 	public void setup() {

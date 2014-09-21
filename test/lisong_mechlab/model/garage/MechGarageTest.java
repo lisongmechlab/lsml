@@ -49,10 +49,10 @@ import org.mockito.MockitoAnnotations;
 
 public class MechGarageTest {
 
-	File testFile = null;
+	File		testFile	= null;
 
 	@Mock
-	MessageXBar xBar;
+	MessageXBar	xBar;
 
 	@Before
 	public void setup() {

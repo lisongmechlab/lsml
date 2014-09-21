@@ -36,23 +36,23 @@ public class XMLTargetingComputerStats {
 		@XStreamAlias("WeaponStats")
 		public static class XMLWeaponStats {
 			@XStreamAsAttribute
-			public String operation;
+			public String	operation;
 			@XStreamAsAttribute
-			public double longRange;
+			public double	longRange;
 			@XStreamAsAttribute
-			public double maxRange;
+			public double	maxRange;
 			@XStreamAsAttribute
-			public double speed;
+			public double	speed;
 			@XStreamAsAttribute
-			public String critChanceIncrease;
+			public String	critChanceIncrease;
 		}
 
 		@XStreamImplicit
-		public List<XMLWeaponStats> WeaponStats;
+		public List<XMLWeaponStats>	WeaponStats;
 		@XStreamAsAttribute
-		public String compatibleWeapons;
+		public String				compatibleWeapons;
 	}
 
 	@XStreamImplicit
-	public List<XMLWeaponStatsFilter> WeaponStatsFilter;
+	public List<XMLWeaponStatsFilter>	WeaponStatsFilter;
 }

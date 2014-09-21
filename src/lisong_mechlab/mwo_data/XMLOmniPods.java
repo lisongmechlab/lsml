@@ -54,46 +54,46 @@ public class XMLOmniPods {
 	public static class XMLOmniPodsSet {
 		public static class XMLOmniPodsQuirk {
 			@XStreamAsAttribute
-			public String name;
+			public String	name;
 			@XStreamAsAttribute
-			public double value;
+			public double	value;
 		}
 
 		public static class XMLOmniPodsSetBonuses {
 			public static class XMLOmniPodsBonus {
 				@XStreamAsAttribute
-				private int PieceCount;
+				private int						PieceCount;
 				@XStreamImplicit(itemFieldName = "Quirk")
-				private List<XMLOmniPodsQuirk> quirks;
+				private List<XMLOmniPodsQuirk>	quirks;
 			}
 
-			XMLOmniPodsBonus Bonus;
+			XMLOmniPodsBonus	Bonus;
 		}
 
 		public static class XMLOmniPodsComponent {
 			@XStreamAsAttribute
-			private String name;
+			private String					name;
 			@XStreamImplicit(itemFieldName = "Internal")
-			private List<MdfItem> internals;
+			private List<MdfItem>			internals;
 			@XStreamImplicit(itemFieldName = "Hardpoint")
-			private List<MdfHardpoint> hardpoints;
+			private List<MdfHardpoint>		hardpoints;
 			@XStreamImplicit(itemFieldName = "Quirk")
-			private List<XMLOmniPodsQuirk> quirks;
+			private List<XMLOmniPodsQuirk>	quirks;
 			@XStreamAsAttribute
-			private int CanEquipECM;
+			private int						CanEquipECM;
 		}
 
 		@XStreamAsAttribute
-		private String name;
+		private String				name;
 
-		XMLOmniPodsSetBonuses SetBonuses;
+		XMLOmniPodsSetBonuses		SetBonuses;
 
 		@XStreamImplicit(itemFieldName = "component")
-		List<XMLOmniPodsComponent> omniPods;
+		List<XMLOmniPodsComponent>	omniPods;
 	}
 
 	@XStreamImplicit(itemFieldName = "Set")
-	List<XMLOmniPodsSet> sets;
+	List<XMLOmniPodsSet>	sets;
 
 	public List<OmniPod> asOmniPods(XMLItemStats aItemStatsXml, XMLHardpoints aHardPointsXML, DataCache aDataCache) {
 		List<OmniPod> ans = new ArrayList<>();

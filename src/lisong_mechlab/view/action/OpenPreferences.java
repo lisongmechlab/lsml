@@ -33,7 +33,7 @@ import lisong_mechlab.view.preferences.PreferencesDialog;
  * @author Emily Björk
  */
 public class OpenPreferences extends AbstractAction {
-	private static final long serialVersionUID = -2615543435137494754L;
+	private static final long	serialVersionUID	= -2615543435137494754L;
 
 	public OpenPreferences(String aString, KeyStroke aKeyStroke) {
 		super(aString);

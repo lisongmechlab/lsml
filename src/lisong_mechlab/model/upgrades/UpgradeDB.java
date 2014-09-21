@@ -31,21 +31,21 @@ import lisong_mechlab.model.DataCache;
  * @author Emily Björk
  */
 public class UpgradeDB {
-	public static final ArmorUpgrade STANDARD_ARMOR;
-	public static final StructureUpgrade STANDARD_STRUCTURE;
-	public static final GuidanceUpgrade STANDARD_GUIDANCE;
-	public static final HeatSinkUpgrade STANDARD_HEATSINKS;
-	public static final GuidanceUpgrade ARTEMIS_IV;
-	public static final HeatSinkUpgrade DOUBLE_HEATSINKS;
-	public static final ArmorUpgrade FERRO_FIBROUS_ARMOR;
-	public static final StructureUpgrade ENDO_STEEL_STRUCTURE;
-	public static final HeatSinkUpgrade CLAN_DOUBLE_HEATSINKS;
-	public static final ArmorUpgrade CLAN_FERRO_FIBROUS_ARMOR;
-	public static final StructureUpgrade CLAN_ENDO_STEEL_STRUCTURE;
-	public static final HeatSinkUpgrade CLAN_STANDARD_HEATSINKS;
-	public static final ArmorUpgrade CLAN_STANDARD_ARMOR;
-	public static final StructureUpgrade CLAN_STANDARD_STRUCTURE;
-	private static final Map<Integer, Upgrade> id2upgrade;
+	public static final ArmorUpgrade			STANDARD_ARMOR;
+	public static final StructureUpgrade		STANDARD_STRUCTURE;
+	public static final GuidanceUpgrade			STANDARD_GUIDANCE;
+	public static final HeatSinkUpgrade			STANDARD_HEATSINKS;
+	public static final GuidanceUpgrade			ARTEMIS_IV;
+	public static final HeatSinkUpgrade			DOUBLE_HEATSINKS;
+	public static final ArmorUpgrade			FERRO_FIBROUS_ARMOR;
+	public static final StructureUpgrade		ENDO_STEEL_STRUCTURE;
+	public static final HeatSinkUpgrade			CLAN_DOUBLE_HEATSINKS;
+	public static final ArmorUpgrade			CLAN_FERRO_FIBROUS_ARMOR;
+	public static final StructureUpgrade		CLAN_ENDO_STEEL_STRUCTURE;
+	public static final HeatSinkUpgrade			CLAN_STANDARD_HEATSINKS;
+	public static final ArmorUpgrade			CLAN_STANDARD_ARMOR;
+	public static final StructureUpgrade		CLAN_STANDARD_STRUCTURE;
+	private static final Map<Integer, Upgrade>	id2upgrade;
 
 	/**
 	 * Looks up an {@link Upgrade} by its MW:O ID.

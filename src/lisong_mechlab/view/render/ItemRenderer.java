@@ -43,16 +43,18 @@ import lisong_mechlab.view.ProgramInit;
  * @author Emily Björk
  */
 public class ItemRenderer {
-	private static final int ITEM_BASE_HEIGHT = 20; // [px]
-	private static final int ITEM_BASE_WIDTH = 100; // [px]
-	private static final int ITEM_BASE_COMPACT_WIDTH = 80; // [px]
-	public static final int ITEM_BASE_LINE = 13;
+	private static final int					ITEM_BASE_HEIGHT		= 20;								// [px]
+	private static final int					ITEM_BASE_WIDTH			= 100;								// [px]
+	private static final int					ITEM_BASE_COMPACT_WIDTH	= 80;								// [px]
+	public static final int						ITEM_BASE_LINE			= 13;
 
-	private static final GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment()
-			.getDefaultScreenDevice().getDefaultConfiguration();
-	private static final RenderingHints hints;
-	private static final int PADDING = 3;
-	public static final int RADII = 5;
+	private static final GraphicsConfiguration	configuration			= GraphicsEnvironment
+																				.getLocalGraphicsEnvironment()
+																				.getDefaultScreenDevice()
+																				.getDefaultConfiguration();
+	private static final RenderingHints			hints;
+	private static final int					PADDING					= 3;
+	public static final int						RADII					= 5;
 
 	public static int getItemWidth() {
 		return (ProgramInit.lsml().preferences.uiPreferences.getCompactMode() ? ITEM_BASE_COMPACT_WIDTH

@@ -38,8 +38,8 @@ import lisong_mechlab.view.ProgramInit;
  * @author Emily Björk
  */
 public class RedoGarageAction extends AbstractAction implements Reader {
-	private static final long serialVersionUID = 665074705972425989L;
-	private static final String SHORTCUT_STROKE = "shift control Y";
+	private static final long	serialVersionUID	= 665074705972425989L;
+	private static final String	SHORTCUT_STROKE		= "shift control Y";
 
 	public RedoGarageAction(MessageXBar anXBar) {
 		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));

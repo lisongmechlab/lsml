@@ -37,11 +37,11 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class OpSetHeatSinkType extends CompositeOperation {
-	private final HeatSinkUpgrade oldValue;
-	private final HeatSinkUpgrade newValue;
-	private final UpgradesMutable upgrades;
-	private final LoadoutStandard loadout;
-	private final MessageXBar xBar;
+	private final HeatSinkUpgrade	oldValue;
+	private final HeatSinkUpgrade	newValue;
+	private final UpgradesMutable	upgrades;
+	private final LoadoutStandard	loadout;
+	private final MessageXBar		xBar;
 
 	/**
 	 * Creates a {@link OpSetHeatSinkType} that only affects a stand-alone {@link UpgradesMutable} object This is useful

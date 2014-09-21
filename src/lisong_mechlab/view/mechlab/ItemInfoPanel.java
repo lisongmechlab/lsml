@@ -45,31 +45,31 @@ import lisong_mechlab.model.item.WeaponModifier;
  * @author Emily Björk
  */
 public class ItemInfoPanel extends JPanel {
-	private static final long serialVersionUID = -1180217243714551398L;
+	private static final long	serialVersionUID	= -1180217243714551398L;
 
 	// Basic common info
-	private final JLabel slots = new JLabel();
-	private final JLabel mass = new JLabel();
-	private final JLabel health = new JLabel();
-	private final JTextArea description = new JTextArea();
+	private final JLabel		slots				= new JLabel();
+	private final JLabel		mass				= new JLabel();
+	private final JLabel		health				= new JLabel();
+	private final JTextArea		description			= new JTextArea();
 
 	// Engine slots
-	private final JLabel engineInternalHS = new JLabel();
-	private final JLabel engineHSSlots = new JLabel();
+	private final JLabel		engineInternalHS	= new JLabel();
+	private final JLabel		engineHSSlots		= new JLabel();
 
 	// Weapon info
-	private final JLabel damage = new JLabel();
-	private final JLabel heat = new JLabel();
-	private final JLabel heatPerSecond = new JLabel();
-	private final JLabel cycleTime = new JLabel();
-	private final JLabel secondsPerShot = new JLabel();
-	private final JLabel burntime = new JLabel();
-	private final JLabel gh_MaxFreeAlpha = new JLabel();
-	private final JLabel range = new JLabel();
-	private final JLabel dps = new JLabel();
-	private final JLabel dph = new JLabel();
+	private final JLabel		damage				= new JLabel();
+	private final JLabel		heat				= new JLabel();
+	private final JLabel		heatPerSecond		= new JLabel();
+	private final JLabel		cycleTime			= new JLabel();
+	private final JLabel		secondsPerShot		= new JLabel();
+	private final JLabel		burntime			= new JLabel();
+	private final JLabel		gh_MaxFreeAlpha		= new JLabel();
+	private final JLabel		range				= new JLabel();
+	private final JLabel		dps					= new JLabel();
+	private final JLabel		dph					= new JLabel();
 	// Ammo info
-	private final JLabel ammoperton = new JLabel();
+	private final JLabel		ammoperton			= new JLabel();
 
 	public ItemInfoPanel() {
 		// setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

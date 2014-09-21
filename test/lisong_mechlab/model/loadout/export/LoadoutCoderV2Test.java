@@ -44,7 +44,7 @@ import org.junit.Test;
  * @author Emily Björk
  */
 public class LoadoutCoderV2Test {
-	private LoadoutCoderV2 cut = new LoadoutCoderV2();
+	private LoadoutCoderV2	cut	= new LoadoutCoderV2();
 
 	/**
 	 * The coder shall be able to decode all stock mechs.

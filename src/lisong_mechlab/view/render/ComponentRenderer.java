@@ -40,9 +40,9 @@ public class ComponentRenderer implements MessageXBar.Reader {
 	}
 
 	public class RenderState {
-		private RenderType renderType;
-		private Item item;
-		private boolean isFixed;
+		private RenderType	renderType;
+		private Item		item;
+		private boolean		isFixed;
 
 		public RenderType getRenderType() {
 			return renderType;
@@ -57,12 +57,12 @@ public class ComponentRenderer implements MessageXBar.Reader {
 		}
 	}
 
-	private final ConfiguredComponentBase component;
-	private final RenderState[] states;
-	private boolean dirty = true;
-	private int compactOffest;
-	private final boolean isCompact;
-	private int engineHsLeft = 0;
+	private final ConfiguredComponentBase	component;
+	private final RenderState[]				states;
+	private boolean							dirty			= true;
+	private int								compactOffest;
+	private final boolean					isCompact;
+	private int								engineHsLeft	= 0;
 
 	public ComponentRenderer(MessageXBar aXBar, ConfiguredComponentBase aComponent, boolean aCompact) {
 		aXBar.attach(this);

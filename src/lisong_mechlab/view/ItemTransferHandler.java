@@ -43,8 +43,8 @@ import lisong_mechlab.view.mechlab.equipment.GarageTree;
 import lisong_mechlab.view.render.ItemRenderer;
 
 public class ItemTransferHandler extends TransferHandler {
-	private static final long serialVersionUID = -8109855943478269304L;
-	private static ConfiguredComponentBase sourcePart = null;
+	private static final long				serialVersionUID	= -8109855943478269304L;
+	private static ConfiguredComponentBase	sourcePart			= null;
 
 	@Override
 	public int getSourceActions(JComponent aComponent) {

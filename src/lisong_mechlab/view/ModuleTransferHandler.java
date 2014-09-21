@@ -37,7 +37,7 @@ import lisong_mechlab.view.mechlab.equipment.ModuleSeletionList;
  * @author Emily Björk
  */
 public class ModuleTransferHandler extends TransferHandler {
-	private static final long serialVersionUID = -3237485137173997072L;
+	private static final long	serialVersionUID	= -3237485137173997072L;
 
 	@Override
 	protected void exportDone(JComponent c, Transferable t, int action) {

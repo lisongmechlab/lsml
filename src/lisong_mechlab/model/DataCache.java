@@ -126,23 +126,23 @@ public class DataCache {
 		ParseFailed
 	}
 
-	private static transient DataCache instance;
-	private static transient Boolean loading = false;
-	private static transient ParseStatus status = ParseStatus.NotInitialized;
+	private static transient DataCache		instance;
+	private static transient Boolean		loading		= false;
+	private static transient ParseStatus	status		= ParseStatus.NotInitialized;
 
 	@XStreamAsAttribute
-	private String lsmlVersion;
-	private Map<String, Long> checksums = new HashMap<>(); // Filename - CRC
-	private List<Upgrade> upgrades;
-	private List<Environment> environments;
-	private List<Item> items;
-	private List<ChassisBase> chassis;
+	private String							lsmlVersion;
+	private Map<String, Long>				checksums	= new HashMap<>();				// Filename - CRC
+	private List<Upgrade>					upgrades;
+	private List<Environment>				environments;
+	private List<Item>						items;
+	private List<ChassisBase>				chassis;
 
-	private List<PilotModule> modules;
+	private List<PilotModule>				modules;
 
-	private List<OmniPod> omniPods;
+	private List<OmniPod>					omniPods;
 
-	private List<StockLoadout> stockLoadouts;
+	private List<StockLoadout>				stockLoadouts;
 
 	/**
 	 * @return An unmodifiable {@link List} of all inner sphere {@link ChassisStandard}s.

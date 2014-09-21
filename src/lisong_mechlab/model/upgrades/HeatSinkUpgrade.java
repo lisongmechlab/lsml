@@ -28,7 +28,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class HeatSinkUpgrade extends Upgrade {
 	@XStreamAsAttribute
-	private final HeatSink heatSinkType;
+	private final HeatSink	heatSinkType;
 
 	public HeatSinkUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, HeatSink aHeatSink) {
 		super(aName, aDescription, aMwoId, aFaction);

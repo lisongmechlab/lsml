@@ -29,8 +29,8 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
  */
 public abstract class OpLoadoutBase extends CompositeOperation {
 
-	protected final MessageXBar xBar;
-	protected final LoadoutBase<?> loadout;
+	protected final MessageXBar		xBar;
+	protected final LoadoutBase<?>	loadout;
 
 	/**
 	 * @param aLoadout

@@ -23,11 +23,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class XMLItemStatsMech {
 	@XStreamAsAttribute
-	public String chassis;
+	public String	chassis;
 	@XStreamAsAttribute
-	public String faction;
+	public String	faction;
 	@XStreamAsAttribute
-	public String name;
+	public String	name;
 	@XStreamAsAttribute
-	public int id;
+	public int		id;
 }

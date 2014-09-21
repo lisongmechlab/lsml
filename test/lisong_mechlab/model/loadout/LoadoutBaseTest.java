@@ -35,6 +35,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
@@ -53,17 +54,17 @@ import org.mockito.Mockito;
  * @author Emily Björk
  */
 public abstract class LoadoutBaseTest {
-	protected int mass = 75;
-	protected String chassisName = "chassis";
-	protected String chassisShortName = "short chassis";
-	protected MessageXBar xBar;
-	protected ChassisBase chassis;
-	protected ConfiguredComponentBase[] components;
+	protected int						mass				= 75;
+	protected String					chassisName			= "chassis";
+	protected String					chassisShortName	= "short chassis";
+	protected MessageXBar				xBar;
+	protected ChassisBase				chassis;
+	protected ConfiguredComponentBase[]	components;
 
-	protected int slots = 10;
-	protected HeatSinkUpgrade heatSinks;
-	protected StructureUpgrade structure;
-	protected ArmorUpgrade armor;
+	protected int						slots				= 10;
+	protected HeatSinkUpgrade			heatSinks;
+	protected StructureUpgrade			structure;
+	protected ArmorUpgrade				armor;
 
 	@Before
 	public void setup() {
@@ -84,46 +85,208 @@ public abstract class LoadoutBaseTest {
 		assertEquals(name + " (" + chassis.getNameShort() + ")", cut.toString());
 	}
 
+	/**
+	 * items() shall return an {@link Iterable} that will include all {@link Item}s on the loadout.
+	 */
 	@Test
-	public final void testGetAllItems() throws Exception {
-		List<Item> empty = new ArrayList<>();
+	public final void testItems_AllItemsAccounted() {
+		List<Item> fixed0 = new ArrayList<>();
 		List<Item> fixed1 = new ArrayList<>();
 		List<Item> fixed2 = new ArrayList<>();
+		List<Item> fixed3 = new ArrayList<>();
+		List<Item> fixed4 = new ArrayList<>();
+		List<Item> fixed5 = new ArrayList<>();
+		List<Item> fixed6 = new ArrayList<>();
+		List<Item> fixed7 = new ArrayList<>();
+		List<Item> equipped0 = new ArrayList<>();
 		List<Item> equipped1 = new ArrayList<>();
 		List<Item> equipped2 = new ArrayList<>();
+		List<Item> equipped3 = new ArrayList<>();
+		List<Item> equipped4 = new ArrayList<>();
+		List<Item> equipped5 = new ArrayList<>();
+		List<Item> equipped6 = new ArrayList<>();
+		List<Item> equipped7 = new ArrayList<>();
 
-		fixed1.add(ItemDB.BAP);
+		// Non-sense, unique items
+		fixed0.add(ItemDB.BAP);
 		fixed1.add(ItemDB.CASE);
+		fixed2.add(ItemDB.ECM);
+		fixed3.add(ItemDB.AMS);
+		fixed4.add(ItemDB.C_AMS);
+		fixed5.add(ItemDB.DHS);
+		fixed6.add(ItemDB.HA);
+		fixed7.add(ItemDB.LAA);
 
-		fixed2.add(ItemDB.SHS);
+		equipped0.add(ItemDB.SHS);
+		equipped1.add(ItemDB.UAA);
+		equipped2.add(ItemDB.lookup("AC/2"));
+		equipped3.add(ItemDB.lookup("AC/5"));
+		equipped4.add(ItemDB.lookup("AC/10"));
+		equipped5.add(ItemDB.lookup("AC/20"));
+		equipped6.add(ItemDB.lookup("SMALL LASER"));
+		equipped7.add(ItemDB.lookup("MEDIUM LASER"));
+		equipped7.add(ItemDB.lookup("LARGE LASER"));
 
-		equipped1.add(ItemDB.AMS);
-		equipped1.add(ItemDB.DHS);
+		List<Item> expected = new ArrayList<>();
+		expected.addAll(fixed0);
+		expected.addAll(fixed1);
+		expected.addAll(fixed2);
+		expected.addAll(fixed3);
+		expected.addAll(fixed4);
+		expected.addAll(fixed5);
+		expected.addAll(fixed6);
+		expected.addAll(fixed7);
+		expected.addAll(equipped0);
+		expected.addAll(equipped1);
+		expected.addAll(equipped2);
+		expected.addAll(equipped3);
+		expected.addAll(equipped4);
+		expected.addAll(equipped5);
+		expected.addAll(equipped6);
+		expected.addAll(equipped7);
 
-		equipped2.add(ItemDB.DHS);
-		equipped2.add(ItemDB.DHS);
-		equipped2.add(ItemDB.DHS);
-
-		Mockito.when(components[0].getItemsFixed()).thenReturn(fixed1);
-		Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped1);
-		Mockito.when(components[1].getItemsFixed()).thenReturn(empty);
-		Mockito.when(components[1].getItemsEquipped()).thenReturn(empty);
-		Mockito.when(components[2].getItemsFixed()).thenReturn(empty);
+		Mockito.when(components[0].getItemsFixed()).thenReturn(fixed0);
+		Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped0);
+		Mockito.when(components[1].getItemsFixed()).thenReturn(fixed1);
+		Mockito.when(components[1].getItemsEquipped()).thenReturn(equipped1);
+		Mockito.when(components[2].getItemsFixed()).thenReturn(fixed2);
 		Mockito.when(components[2].getItemsEquipped()).thenReturn(equipped2);
-		Mockito.when(components[3].getItemsFixed()).thenReturn(fixed2);
-		Mockito.when(components[3].getItemsEquipped()).thenReturn(empty);
+		Mockito.when(components[3].getItemsFixed()).thenReturn(fixed3);
+		Mockito.when(components[3].getItemsEquipped()).thenReturn(equipped3);
+		Mockito.when(components[4].getItemsFixed()).thenReturn(fixed4);
+		Mockito.when(components[4].getItemsEquipped()).thenReturn(equipped4);
+		Mockito.when(components[5].getItemsFixed()).thenReturn(fixed5);
+		Mockito.when(components[5].getItemsEquipped()).thenReturn(equipped5);
+		Mockito.when(components[6].getItemsFixed()).thenReturn(fixed6);
+		Mockito.when(components[6].getItemsEquipped()).thenReturn(equipped6);
+		Mockito.when(components[7].getItemsFixed()).thenReturn(fixed7);
+		Mockito.when(components[7].getItemsEquipped()).thenReturn(equipped7);
 
-		for (int i = 4; i < Location.values().length; ++i) {
+		List<Item> ans = new ArrayList<>();
+		for (Item item : makeDefaultCUT().items()) {
+			ans.add(item);
+		}
+
+		assertTrue(ListArrayUtils.equalsUnordered(expected, ans));
+	}
+
+	/**
+	 * items() shall function correctly even if there are no items on the loadout.
+	 */
+	@Test
+	public final void testItems_Empty() {
+		List<Item> empty = new ArrayList<>();
+		List<Item> expected = new ArrayList<>();
+
+		for (int i = 0; i < 8; ++i) {
 			Mockito.when(components[i].getItemsFixed()).thenReturn(empty);
 			Mockito.when(components[i].getItemsEquipped()).thenReturn(empty);
 		}
 
-		List<Item> ans = new ArrayList<>(makeDefaultCUT().getAllItems());
+		List<Item> ans = new ArrayList<>();
+		for (Item item : makeDefaultCUT().items()) {
+			ans.add(item);
+		}
+
+		assertTrue(ListArrayUtils.equalsUnordered(expected, ans));
+	}
+
+	/**
+	 * items() shall function correctly even if no item is included in filter.
+	 */
+	@Test
+	public final void testItems_FilterEmpty() {
+		List<Item> empty = new ArrayList<>();
+		empty.add(ItemDB.SHS);
 		List<Item> expected = new ArrayList<>();
-		expected.addAll(fixed1);
-		expected.addAll(fixed2);
-		expected.addAll(equipped1);
-		expected.addAll(equipped2);
+
+		for (int i = 0; i < 8; ++i) {
+			Mockito.when(components[i].getItemsFixed()).thenReturn(empty);
+			Mockito.when(components[i].getItemsEquipped()).thenReturn(empty);
+		}
+
+		List<Item> ans = new ArrayList<>();
+		for (Item item : makeDefaultCUT().items(Weapon.class)) {
+			ans.add(item);
+		}
+
+		assertTrue(ListArrayUtils.equalsUnordered(expected, ans));
+	}
+
+	/**
+	 * items() shall return an {@link Iterable} that will include all {@link Item}s on the loadout.
+	 */
+	@Test
+	public final void testItems_Filter() {
+		List<Item> fixed0 = new ArrayList<>();
+		List<Item> fixed1 = new ArrayList<>();
+		List<Item> fixed2 = new ArrayList<>();
+		List<Item> fixed3 = new ArrayList<>();
+		List<Item> fixed4 = new ArrayList<>();
+		List<Item> fixed5 = new ArrayList<>();
+		List<Item> fixed6 = new ArrayList<>();
+		List<Item> fixed7 = new ArrayList<>();
+		List<Item> equipped0 = new ArrayList<>();
+		List<Item> equipped1 = new ArrayList<>();
+		List<Item> equipped2 = new ArrayList<>();
+		List<Item> equipped3 = new ArrayList<>();
+		List<Item> equipped4 = new ArrayList<>();
+		List<Item> equipped5 = new ArrayList<>();
+		List<Item> equipped6 = new ArrayList<>();
+		List<Item> equipped7 = new ArrayList<>();
+
+		// Non-sense, unique items
+		fixed0.add(ItemDB.BAP);
+		fixed1.add(ItemDB.lookup("AC/2"));
+		fixed2.add(ItemDB.ECM);
+		fixed3.add(ItemDB.AMS);
+		fixed4.add(ItemDB.lookup("SMALL LASER"));
+		fixed5.add(ItemDB.DHS);
+		fixed6.add(ItemDB.HA);
+		fixed7.add(ItemDB.LAA);
+
+		equipped0.add(ItemDB.SHS);
+		equipped1.add(ItemDB.UAA);
+		equipped2.add(ItemDB.CASE);
+		equipped3.add(ItemDB.lookup("AC/5"));
+		equipped4.add(ItemDB.lookup("AC/10"));
+		equipped5.add(ItemDB.lookup("AC/20"));
+		equipped6.add(ItemDB.C_AMS);
+		equipped7.add(ItemDB.lookup("MEDIUM LASER"));
+		equipped7.add(ItemDB.lookup("LARGE LASER"));
+
+		List<Item> expected = new ArrayList<>();
+		expected.add(ItemDB.lookup("AC/2"));
+		expected.add(ItemDB.AMS);
+		expected.add(ItemDB.lookup("SMALL LASER"));
+		expected.add(ItemDB.lookup("AC/5"));
+		expected.add(ItemDB.lookup("AC/10"));
+		expected.add(ItemDB.lookup("AC/20"));
+		expected.add(ItemDB.C_AMS);
+		expected.add(ItemDB.lookup("MEDIUM LASER"));
+		expected.add(ItemDB.lookup("LARGE LASER"));
+
+		Mockito.when(components[0].getItemsFixed()).thenReturn(fixed0);
+		Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped0);
+		Mockito.when(components[1].getItemsFixed()).thenReturn(fixed1);
+		Mockito.when(components[1].getItemsEquipped()).thenReturn(equipped1);
+		Mockito.when(components[2].getItemsFixed()).thenReturn(fixed2);
+		Mockito.when(components[2].getItemsEquipped()).thenReturn(equipped2);
+		Mockito.when(components[3].getItemsFixed()).thenReturn(fixed3);
+		Mockito.when(components[3].getItemsEquipped()).thenReturn(equipped3);
+		Mockito.when(components[4].getItemsFixed()).thenReturn(fixed4);
+		Mockito.when(components[4].getItemsEquipped()).thenReturn(equipped4);
+		Mockito.when(components[5].getItemsFixed()).thenReturn(fixed5);
+		Mockito.when(components[5].getItemsEquipped()).thenReturn(equipped5);
+		Mockito.when(components[6].getItemsFixed()).thenReturn(fixed6);
+		Mockito.when(components[6].getItemsEquipped()).thenReturn(equipped6);
+		Mockito.when(components[7].getItemsFixed()).thenReturn(fixed7);
+		Mockito.when(components[7].getItemsEquipped()).thenReturn(equipped7);
+
+		List<Item> ans = new ArrayList<>();
+		for (Weapon item : makeDefaultCUT().items(Weapon.class)) {
+			ans.add(item);
+		}
 
 		assertTrue(ListArrayUtils.equalsUnordered(expected, ans));
 	}

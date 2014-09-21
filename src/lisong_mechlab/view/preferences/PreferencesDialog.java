@@ -42,7 +42,7 @@ import lisong_mechlab.view.render.StyleManager;
  * @author Emily Björk
  */
 public class PreferencesDialog extends JDialog {
-	private static final long serialVersionUID = -7028706949151487418L;
+	private static final long	serialVersionUID	= -7028706949151487418L;
 
 	public PreferencesDialog() {
 		super(ProgramInit.lsml(), "Settings", ModalityType.APPLICATION_MODAL);
@@ -69,7 +69,7 @@ public class PreferencesDialog extends JDialog {
 				.setToolTipText("<html>If checked, LSML will quietly fallback to bundled data files if no game install is available.<br/>"
 						+ "Otherwise it will prompt you to locate the game install on next startup.</html>");
 		useBundledData.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = -8136020916897237506L;
+			private static final long	serialVersionUID	= -8136020916897237506L;
 
 			@Override
 			public void actionPerformed(ActionEvent aArg0) {
@@ -91,7 +91,7 @@ public class PreferencesDialog extends JDialog {
 		smartPlace
 				.setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
 		smartPlace.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = -8136020916897237506L;
+			private static final long	serialVersionUID	= -8136020916897237506L;
 
 			@Override
 			public void actionPerformed(ActionEvent aArg0) {
@@ -104,7 +104,7 @@ public class PreferencesDialog extends JDialog {
 				ProgramInit.lsml().preferences.uiPreferences.getCompactMode());
 		compactMode.setToolTipText("Tries to compact the UI to make it useful on smaller screens.");
 		compactMode.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = -8136020916897237506L;
+			private static final long	serialVersionUID	= -8136020916897237506L;
 
 			@Override
 			public void actionPerformed(ActionEvent aArg0) {
@@ -119,7 +119,7 @@ public class PreferencesDialog extends JDialog {
 				.setToolTipText("<html>Will hide mech variations (champion, founders, phoenix, sarah, etc) from chassis lists.<br/>"
 						+ "Stock loadouts are still available on the \"Load stock\" menu action on relevant loadouts</html>");
 		hideSpecials.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = -8136020916897237506L;
+			private static final long	serialVersionUID	= -8136020916897237506L;
 
 			@Override
 			public void actionPerformed(ActionEvent aArg0) {

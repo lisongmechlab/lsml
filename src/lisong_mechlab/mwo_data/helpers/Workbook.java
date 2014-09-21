@@ -28,19 +28,19 @@ public class Workbook {
 		static public class Table {
 			static public class Row {
 				static public class Cell {
-					public String Data;
+					public String	Data;
 				}
 
 				@XStreamImplicit(itemFieldName = "Cell")
-				public List<Cell> cells;
+				public List<Cell>	cells;
 			}
 
 			@XStreamImplicit(itemFieldName = "Row")
-			public List<Row> rows;
+			public List<Row>	rows;
 		}
 
-		public Table Table;
+		public Table	Table;
 	}
 
-	public Worksheet Worksheet;
+	public Worksheet	Worksheet;
 }

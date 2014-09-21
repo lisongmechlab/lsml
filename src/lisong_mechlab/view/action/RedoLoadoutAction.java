@@ -40,9 +40,9 @@ import lisong_mechlab.view.mechlab.LoadoutFrame;
  * @author Emily Björk
  */
 public class RedoLoadoutAction extends AbstractAction implements Reader {
-	private static final String SHORTCUT_STROKE = "control Y";
-	private static final long serialVersionUID = 665074705972425989L;
-	private final LoadoutFrame loadoutFrame;
+	private static final String	SHORTCUT_STROKE		= "control Y";
+	private static final long	serialVersionUID	= 665074705972425989L;
+	private final LoadoutFrame	loadoutFrame;
 
 	public RedoLoadoutAction(MessageXBar anXBar, LoadoutFrame aLoadoutFrame) {
 		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));

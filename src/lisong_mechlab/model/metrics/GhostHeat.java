@@ -19,14 +19,15 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 
 /**
@@ -35,9 +36,9 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * @author Emily Björk
  */
 public class GhostHeat implements Metric {
-	private static final double HEAT_SCALE[] = { 0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00, 3.00,
-			5.00, 7.00 };
-	private final LoadoutBase<?> loadout;
+	private static final double		HEAT_SCALE[]	= { 0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00,
+			3.00, 5.00, 7.00						};
+	private final LoadoutBase<?>	loadout;
 
 	public GhostHeat(LoadoutBase<?> aLoadout) {
 		loadout = aLoadout;
@@ -47,18 +48,15 @@ public class GhostHeat implements Metric {
 	public double calculate() {
 		List<Weapon> ungroupedWeapons = new LinkedList<>();
 		Map<Integer, List<Weapon>> groups = new HashMap<Integer, List<Weapon>>();
-		for (Item item : loadout.getAllItems()) {
-			if (item instanceof Weapon) {
-				Weapon weapon = (Weapon) item;
-				int group = weapon.getGhostHeatGroup();
-				if (group == 0) {
-					ungroupedWeapons.add(weapon);
-				} else if (group > 0) {
-					if (!groups.containsKey(group)) {
-						groups.put(group, new LinkedList<Weapon>());
-					}
-					groups.get(group).add(weapon);
+		for (Weapon weapon : loadout.items(Weapon.class)) {
+			int group = weapon.getGhostHeatGroup();
+			if (group == 0) {
+				ungroupedWeapons.add(weapon);
+			} else if (group > 0) {
+				if (!groups.containsKey(group)) {
+					groups.put(group, new LinkedList<Weapon>());
 				}
+				groups.get(group).add(weapon);
 			}
 		}
 
@@ -77,6 +75,7 @@ public class GhostHeat implements Metric {
 			penalty += calculatePenalty(weapon, count);
 		}
 
+		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
 		// XXX: http://mwomercs.com/forums/topic/127904-heat-scale-the-maths/ is not completely
 		// clear on this. We interpret the post to mean that for the purpose of ghost heat, every weapon
 		// in the linked group is equal to the weapon with highest base heat.
@@ -85,8 +84,8 @@ public class GhostHeat implements Metric {
 			Weapon maxweapon = null;
 			for (Weapon w : group) {
 				// XXX: It's not certain that heat applied from modules will affect the base heat value
-				if (w.getHeat(loadout.getWeaponModifiers()) > maxbaseheat) {
-					maxbaseheat = w.getHeat(loadout.getWeaponModifiers());
+				if (w.getHeat(modifiers) > maxbaseheat) {
+					maxbaseheat = w.getHeat(modifiers);
 					maxweapon = w;
 				}
 			}
@@ -98,9 +97,10 @@ public class GhostHeat implements Metric {
 	private double calculatePenalty(Weapon aWeapon, int aCount) {
 		double penalty = 0;
 		int count = aCount;
+		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
 		while (count > aWeapon.getGhostHeatMaxFreeAlpha()) {
 			penalty += HEAT_SCALE[count] * aWeapon.getGhostHeatMultiplier()
-					* aWeapon.getHeat(loadout.getWeaponModifiers());
+					* aWeapon.getHeat(modifiers);
 			count--;
 		}
 		return penalty;

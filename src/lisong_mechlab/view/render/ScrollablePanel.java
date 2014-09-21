@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.Scrollable;
 
 public class ScrollablePanel extends JPanel implements Scrollable {
-	private static final long serialVersionUID = -5231044372862875923L;
+	private static final long	serialVersionUID	= -5231044372862875923L;
 
 	@Override
 	public Dimension getPreferredScrollableViewportSize() {

@@ -24,39 +24,39 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class ItemStatsUpgradeType extends ItemStatsModule {
 	public static class ArmorTypeStatsType {
 		@XStreamAsAttribute
-		public double armorPerTon;
+		public double	armorPerTon;
 		@XStreamAsAttribute
-		public int containerId;
+		public int		containerId;
 	}
 
 	public static class SlotUsageType {
 		@XStreamAsAttribute
-		public int slots;
+		public int	slots;
 		@XStreamAsAttribute
-		public int fixedSlotItem;
+		public int	fixedSlotItem;
 	}
 
 	public static class StructureTypeStatsType {
 		@XStreamAsAttribute
-		public double weightPerTon;
+		public double	weightPerTon;
 	}
 
 	public static class HeatSinkTypeStatsType {
 		@XStreamAsAttribute
-		public int compatibleHeatSink;
+		public int	compatibleHeatSink;
 	}
 
 	public static class ArtemisTypeStatsType {
 		@XStreamAsAttribute
-		public int extraSlots;
+		public int		extraSlots;
 		@XStreamAsAttribute
-		public double extraTons;
+		public double	extraTons;
 	}
 
-	public ArmorTypeStatsType ArmorTypeStats;
-	public StructureTypeStatsType StructureTypeStats;
-	public HeatSinkTypeStatsType HeatSinkTypeStats;
-	public ArtemisTypeStatsType ArtemisTypeStats;
-	public SlotUsageType SlotUsage;
+	public ArmorTypeStatsType		ArmorTypeStats;
+	public StructureTypeStatsType	StructureTypeStats;
+	public HeatSinkTypeStatsType	HeatSinkTypeStats;
+	public ArtemisTypeStatsType		ArtemisTypeStats;
+	public SlotUsageType			SlotUsage;
 
 }

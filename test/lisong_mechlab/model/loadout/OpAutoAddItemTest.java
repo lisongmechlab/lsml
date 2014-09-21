@@ -26,7 +26,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import lisong_mechlab.model.chassi.ChassisDB;
@@ -59,9 +58,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OpAutoAddItemTest {
 	@Mock
-	private MessageXBar xBar;
+	private MessageXBar		xBar;
 
-	private OperationStack stack = new OperationStack(0);
+	private OperationStack	stack	= new OperationStack(0);
 
 	@Test(timeout = 5000)
 	public void testApply_XLEnginePerformance() throws DecodingException {
@@ -85,11 +84,11 @@ public class OpAutoAddItemTest {
 		stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.AMS));
 
 		// Verify
-		List<Item> allItems = new ArrayList<>(loadout.getAllItems());
-		Iterator<Item> it = allItems.iterator();
-		while (it.hasNext()) {
-			if (it.next() instanceof Internal)
-				it.remove();
+		List<Item> allItems = new ArrayList<>();
+		for(Item item : loadout.items()){
+			if(item instanceof Internal)
+				continue;
+			allItems.add(item);
 		}
 		assertTrue(allItems.remove(ItemDB.AMS));
 	}
@@ -160,11 +159,11 @@ public class OpAutoAddItemTest {
 		stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.lookup("ER PPC")));
 
 		// Verify
-		List<Item> allItems = new ArrayList<>(loadout.getAllItems());
-		Iterator<Item> it = allItems.iterator();
-		while (it.hasNext()) {
-			if (it.next() instanceof Internal)
-				it.remove();
+		List<Item> allItems = new ArrayList<>();
+		for(Item item : loadout.items()){
+			if(item instanceof Internal)
+				continue;
+			allItems.add(item);
 		}
 		assertEquals(16, allItems.size());
 		assertTrue(allItems.remove(ItemDB.lookup("ER PPC")));
@@ -192,11 +191,11 @@ public class OpAutoAddItemTest {
 		stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ItemDB.lookup("LRM 5")));
 
 		// Verify
-		List<Item> allItems = new ArrayList<>(loadout.getAllItems());
-		Iterator<Item> it = allItems.iterator();
-		while (it.hasNext()) {
-			if (it.next() instanceof Internal)
-				it.remove();
+		List<Item> allItems = new ArrayList<>();
+		for(Item item : loadout.items()){
+			if(item instanceof Internal)
+				continue;
+			allItems.add(item);
 		}
 		assertEquals(5, allItems.size());
 		assertTrue(allItems.remove(ItemDB.lookup("LRM 10")));
@@ -276,7 +275,12 @@ public class OpAutoAddItemTest {
 		stack.pushAndApply(new OpAutoAddItem(loadout, xBar, gaussRifle));
 
 		// Verify
-		List<Item> allItems = new ArrayList<>(loadout.getAllItems());
+		List<Item> allItems = new ArrayList<>();
+		for(Item item : loadout.items()){
+			if(item instanceof Internal)
+				continue;
+			allItems.add(item);
+		}
 		assertTrue(allItems.remove(ItemDB.DHS));
 		assertTrue(allItems.remove(ItemDB.DHS));
 		assertTrue(allItems.remove(gaussRifle));
@@ -302,11 +306,11 @@ public class OpAutoAddItemTest {
 		stack.pushAndApply(new OpAutoAddItem(loadout, xBar, ac20));
 
 		// Verify
-		List<Item> allItems = new ArrayList<>(loadout.getAllItems());
-		Iterator<Item> it = allItems.iterator();
-		while (it.hasNext()) {
-			if (it.next() instanceof Internal)
-				it.remove();
+		List<Item> allItems = new ArrayList<>();
+		for(Item item : loadout.items()){
+			if(item instanceof Internal)
+				continue;
+			allItems.add(item);
 		}
 		assertEquals(2, allItems.size());
 

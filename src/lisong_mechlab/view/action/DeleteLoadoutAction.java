@@ -37,11 +37,11 @@ import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 public class DeleteLoadoutAction extends AbstractAction implements Reader {
-	private static final long serialVersionUID = -4813215864397617783L;
-	private static final String SHORTCUT_STROKE = "control D";
-	private final LoadoutBase<?> loadout;
-	private final MechGarage garage;
-	private final LoadoutFrame loadoutFrame;
+	private static final long		serialVersionUID	= -4813215864397617783L;
+	private static final String		SHORTCUT_STROKE		= "control D";
+	private final LoadoutBase<?>	loadout;
+	private final MechGarage		garage;
+	private final LoadoutFrame		loadoutFrame;
 
 	public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame) {
 		this(anXBar, aGarage, aLoadoutFrame, aLoadoutFrame.getLoadout());

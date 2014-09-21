@@ -25,8 +25,8 @@ package lisong_mechlab.util;
  * @author Emily Björk
  */
 public class BinomialDistribution implements Distribution {
-	private final double p;
-	private final int n;
+	private final double	p;
+	private final int		n;
 
 	public static long nChooseK(int n, long aK) {
 		long ans = 1;

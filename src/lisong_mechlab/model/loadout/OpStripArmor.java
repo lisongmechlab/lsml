@@ -31,8 +31,8 @@ import lisong_mechlab.util.OperationStack.CompositeOperation;
  * @author Emily Björk
  */
 public class OpStripArmor extends CompositeOperation {
-	protected final MessageXBar xBar;
-	protected final LoadoutBase<?> loadout;
+	protected final MessageXBar		xBar;
+	protected final LoadoutBase<?>	loadout;
 
 	public OpStripArmor(LoadoutBase<?> aLoadout, MessageXBar anXBar) {
 		super("strip armor");

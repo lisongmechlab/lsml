@@ -48,7 +48,7 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class LoadoutBuilder {
 	private static class OperationComparator implements Comparator<Operation> {
-		private final static Map<Class<? extends Operation>, Integer> CLASS_PRIORITY_ORDER;
+		private final static Map<Class<? extends Operation>, Integer>	CLASS_PRIORITY_ORDER;
 
 		static {
 			CLASS_PRIORITY_ORDER = new HashMap<>();
@@ -100,7 +100,7 @@ public class LoadoutBuilder {
 		}
 	}
 
-	final private PriorityQueue<Operation> operations = new PriorityQueue<>(20, new OperationComparator());
+	final private PriorityQueue<Operation>	operations	= new PriorityQueue<>(20, new OperationComparator());
 
 	public void push(final Operation aOperation) {
 		operations.add(aOperation);

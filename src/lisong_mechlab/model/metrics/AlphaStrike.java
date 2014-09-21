@@ -19,8 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.item.Item;
+import java.util.Collection;
+
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 
@@ -38,12 +40,10 @@ public class AlphaStrike extends RangeMetric {
 	@Override
 	public double calculate(double aRange) {
 		double ans = 0;
-		for (Item item : loadout.getAllItems()) {
-			if (item instanceof Weapon) {
-				Weapon weapon = (Weapon) item;
-				if (weapon.isOffensive())
-					ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers());
-			}
+		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+		for (Weapon weapon : loadout.items(Weapon.class)) {
+			if (weapon.isOffensive())
+				ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
 		}
 		return ans;
 	}

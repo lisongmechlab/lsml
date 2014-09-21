@@ -30,8 +30,8 @@ package lisong_mechlab.util;
  *            The type of the <code>second</code> value.
  */
 public class Pair<F, S> {
-	public final F first;
-	public final S second;
+	public final F	first;
+	public final S	second;
 
 	public Pair(F aFirst, S aSecond) {
 		first = aFirst;

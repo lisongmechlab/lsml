@@ -39,13 +39,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Emily Björk
  */
 public class Quirks implements MovementModifier, WeaponModifier, HealthModifier, HeatModifier {
-	private final static DecimalFormat FORMAT = new DecimalFormat("###.#");
+	private final static DecimalFormat	FORMAT	= new DecimalFormat("###.#");
 
 	enum QuirkBenefit {
 		POSITIVE_GOOD, NEGATIVE_GOOD, INDETERMINATE
 	}
 
-	private final static transient Map<String, QuirkBenefit> KNOWN_QUIRKS;
+	private final static transient Map<String, QuirkBenefit>	KNOWN_QUIRKS;
 
 	static {
 		KNOWN_QUIRKS = new HashMap<>();
@@ -96,11 +96,11 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier,
 
 	public static class Quirk {
 		@XStreamAsAttribute
-		public final String name;
+		public final String	name;
 		@XStreamAsAttribute
-		public final String key;
+		public final String	key;
 		@XStreamAsAttribute
-		public final double value;
+		public final double	value;
 
 		public Quirk(String aKey, String aName, double aValue) {
 			key = aKey;
@@ -109,7 +109,7 @@ public class Quirks implements MovementModifier, WeaponModifier, HealthModifier,
 		}
 	}
 
-	private final Map<String, Quirk> quirks;
+	private final Map<String, Quirk>	quirks;
 
 	/**
 	 * Creates a mew {@link Quirks} object.

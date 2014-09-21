@@ -25,82 +25,82 @@ public class ItemStatsWeapon extends ItemStats {
 
 	public static class WeaponStatsTag {
 		@XStreamAsAttribute
-		public double speed;
+		public double	speed;
 		@XStreamAsAttribute
-		public double volleydelay;
+		public double	volleydelay;
 		@XStreamAsAttribute
-		public double duration;
+		public double	duration;
 		@XStreamAsAttribute
-		public double tons;
+		public double	tons;
 		@XStreamAsAttribute
-		public double maxRange;
+		public double	maxRange;
 		@XStreamAsAttribute
-		public double longRange;
+		public double	longRange;
 		@XStreamAsAttribute
-		public double minRange;
+		public double	minRange;
 		@XStreamAsAttribute
-		public double nullRange;
+		public double	nullRange;
 		@XStreamAsAttribute
-		public int ammoPerShot;
+		public int		ammoPerShot;
 		@XStreamAsAttribute
-		public String ammoType;
+		public String	ammoType;
 		@XStreamAsAttribute
-		public double cooldown;
+		public double	cooldown;
 		@XStreamAsAttribute
-		public double heat;
+		public double	heat;
 		@XStreamAsAttribute
-		public double impulse;
+		public double	impulse;
 		@XStreamAsAttribute
-		public double heatdamage;
+		public double	heatdamage;
 		@XStreamAsAttribute
-		public double damage;
+		public double	damage;
 
 		/** The number of ammunition rounds expelled in one shot. */
 		@XStreamAsAttribute
-		public int numFiring;
+		public int		numFiring;
 		@XStreamAsAttribute
-		public String projectileclass;
+		public String	projectileclass;
 		@XStreamAsAttribute
-		public String type;
+		public String	type;
 		@XStreamAsAttribute
-		public int slots;
+		public int		slots;
 		@XStreamAsAttribute
-		public int Health;
+		public int		Health;
 		@XStreamAsAttribute
-		public String artemisAmmoType;
+		public String	artemisAmmoType;
 		/** The number of projectile in one round of ammo. Fired simultaneously (only LB type AC). */
 		@XStreamAsAttribute
-		public int numPerShot;
+		public int		numPerShot;
 		@XStreamAsAttribute
-		public int minheatpenaltylevel;
+		public int		minheatpenaltylevel;
 		@XStreamAsAttribute
-		public double heatpenalty;
+		public double	heatpenalty;
 		@XStreamAsAttribute
-		public int heatPenaltyID;
+		public int		heatPenaltyID;
 		@XStreamAsAttribute
-		public double rof;
+		public double	rof;
 		@XStreamAsAttribute
-		public double spread;
+		public double	spread;
 		@XStreamAsAttribute
-		public double JammingChance;
+		public double	JammingChance;
 		@XStreamAsAttribute
-		public double JammedTime;
+		public double	JammedTime;
 		@XStreamAsAttribute
-		public int ShotsDuringCooldown;
+		public int		ShotsDuringCooldown;
 		@XStreamAsAttribute
-		public double falloffexponent;
+		public double	falloffexponent;
 	}
 
-	public WeaponStatsTag WeaponStats;
+	public WeaponStatsTag	WeaponStats;
 
 	// Special case handling of inherit from
 	@XStreamAsAttribute
-	public int InheritFrom;
+	public int				InheritFrom;
 
 	public static class ArtemisTag {
 		@XStreamAsAttribute
-		public int RestrictedTo;
+		public int	RestrictedTo;
 	}
 
-	public ArtemisTag Artemis;
+	public ArtemisTag	Artemis;
 }

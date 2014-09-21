@@ -43,11 +43,11 @@ import javax.swing.plaf.basic.BasicComboPopup;
  * @author Emily Björk
  */
 public class StyledComboBox implements PopupMenuListener {
-	private boolean scrollBarRequired = true;
-	private boolean popupWider;
-	private int maximumWidth = -1;
-	private boolean popupAbove;
-	private JScrollPane scrollPane;
+	private boolean		scrollBarRequired	= true;
+	private boolean		popupWider;
+	private int			maximumWidth		= -1;
+	private boolean		popupAbove;
+	private JScrollPane	scrollPane;
 
 	/**
 	 * Convenience constructor to allow the display of a horizontal scrollbar when required.

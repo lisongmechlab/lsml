@@ -88,8 +88,8 @@ public class ComponentBuilder {
 		}
 	}
 
-	private static Factory<ConfiguredComponentStandard> is = new StandardFactory();
-	private static Factory<ConfiguredComponentOmniMech> omni = new OmniMechFactory();
+	private static Factory<ConfiguredComponentStandard>	is		= new StandardFactory();
+	private static Factory<ConfiguredComponentOmniMech>	omni	= new OmniMechFactory();
 
 	static public Factory<ConfiguredComponentStandard> getISComponentFactory() {
 		return is;

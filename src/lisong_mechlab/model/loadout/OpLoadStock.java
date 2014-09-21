@@ -41,7 +41,7 @@ import lisong_mechlab.util.MessageXBar;
  * @author Emily Björk
  */
 public class OpLoadStock extends OpLoadoutBase {
-	private final ChassisBase chassiVariation;
+	private final ChassisBase	chassiVariation;
 
 	public OpLoadStock(ChassisBase aChassiVariation, LoadoutBase<?> aLoadout, MessageXBar anXBar) {
 		super(aLoadout, anXBar, "load stock");

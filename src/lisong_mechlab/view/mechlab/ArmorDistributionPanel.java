@@ -50,21 +50,21 @@ import lisong_mechlab.view.render.StyleManager;
  * @author Emily Björk
  */
 public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader, ChangeListener {
-	private static final long serialVersionUID = 6835003047682738947L;
+	private static final long		serialVersionUID	= 6835003047682738947L;
 
-	private final LoadoutBase<?> loadout;
-	private final OperationStack stack;
-	private final MessageXBar xBar;
-	private final JSlider ratioSlider;
-	private final JSlider armorSlider;
+	private final LoadoutBase<?>	loadout;
+	private final OperationStack	stack;
+	private final MessageXBar		xBar;
+	private final JSlider			ratioSlider;
+	private final JSlider			armorSlider;
 
-	private int lastRatio = 0;
-	private int lastAmount = 0;
+	private int						lastRatio			= 0;
+	private int						lastAmount			= 0;
 
-	boolean disableSliderAction = false;
+	boolean							disableSliderAction	= false;
 
 	class ResetManualArmorOperation extends CompositeOperation {
-		private final LoadoutBase<?> opLoadout = loadout;
+		private final LoadoutBase<?>	opLoadout	= loadout;
 
 		public ResetManualArmorOperation() {
 			super("reset manual armor");
@@ -108,9 +108,9 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 	}
 
 	class ArmorSliderOperation extends CompositeOperation {
-		private final JSlider slider;
-		private final int newValue;
-		private final int oldValue;
+		private final JSlider	slider;
+		private final int		newValue;
+		private final int		oldValue;
 
 		public ArmorSliderOperation(JSlider aSlider, int aOldValue) {
 			super("armor adjustment");
@@ -163,7 +163,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 		xBar.attach(this);
 
 		final JButton resetAll = new JButton(new AbstractAction("Reset manually set armor") {
-			private static final long serialVersionUID = -2645636713484404605L;
+			private static final long	serialVersionUID	= -2645636713484404605L;
 
 			@Override
 			public void actionPerformed(ActionEvent aArg0) {
@@ -232,7 +232,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageXBar.Reader
 		add(sliderPanel, BorderLayout.CENTER);
 	}
 
-	OperationStack privateStack = new OperationStack(0);
+	OperationStack	privateStack	= new OperationStack(0);
 
 	@Override
 	public void stateChanged(ChangeEvent aEvent) {

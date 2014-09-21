@@ -40,8 +40,8 @@ import lisong_mechlab.view.mechlab.LoadoutFrame;
  * @author Emily Björk
  */
 public class ExportToSmurfyAction extends AbstractAction {
-	private static final long serialVersionUID = -2600531408508841174L;
-	private final LoadoutFrame loadoutFrame;
+	private static final long	serialVersionUID	= -2600531408508841174L;
+	private final LoadoutFrame	loadoutFrame;
 
 	public ExportToSmurfyAction(LoadoutFrame aLoadoutFrame) {
 		super("Export to smurfy...");

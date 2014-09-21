@@ -32,9 +32,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class StructureUpgrade extends Upgrade {
 	@XStreamAsAttribute
-	private final double internalStructurePct;
+	private final double	internalStructurePct;
 	@XStreamAsAttribute
-	private final int extraSlots;
+	private final int		extraSlots;
 
 	public StructureUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots,
 			double aStructurePct) {

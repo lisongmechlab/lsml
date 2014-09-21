@@ -51,8 +51,8 @@ import org.jfree.data.xy.XYSeries;
  */
 public class PayloadGraphPanel extends ChartPanel {
 	public static class Entry {
-		private final String name;
-		private final ChassisBase representant;
+		private final String		name;
+		private final ChassisBase	representant;
 
 		public Entry(Collection<ChassisBase> aCollection) {
 			Iterator<ChassisBase> iterator = aCollection.iterator();
@@ -72,10 +72,10 @@ public class PayloadGraphPanel extends ChartPanel {
 		}
 	}
 
-	private static final long serialVersionUID = -5907483118809173045L;
-	private final PayloadStatistics payloadStatistics;
-	private final Efficiencies efficiencies = new Efficiencies();
-	private Collection<Entry> chassis;
+	private static final long		serialVersionUID	= -5907483118809173045L;
+	private final PayloadStatistics	payloadStatistics;
+	private final Efficiencies		efficiencies		= new Efficiencies();
+	private Collection<Entry>		chassis;
 
 	public PayloadGraphPanel(PayloadStatistics aPayloadStatistics, final JCheckBox aSpeedTweak) {
 		super(makeChart(new DefaultTableXYDataset()));

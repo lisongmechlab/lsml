@@ -33,7 +33,7 @@ import org.junit.Test;
  * @author Emily Björk
  */
 public class Base64Test {
-	private final Base64 cut = new Base64();
+	private final Base64	cut	= new Base64();
 
 	/**
 	 * Test that {@link Base64#encode(byte[])} produces a standard compatible Base64 string.

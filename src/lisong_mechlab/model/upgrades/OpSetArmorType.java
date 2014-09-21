@@ -31,10 +31,10 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class OpSetArmorType extends OpUpgradeBase {
-	private final ArmorUpgrade oldValue;
-	private final ArmorUpgrade newValue;
-	private final UpgradesMutable upgrades;
-	private final LoadoutStandard loadout;
+	private final ArmorUpgrade		oldValue;
+	private final ArmorUpgrade		newValue;
+	private final UpgradesMutable	upgrades;
+	private final LoadoutStandard	loadout;
 
 	/**
 	 * Creates a {@link OpSetArmorType} that only affects a stand-alone {@link UpgradesMutable} object This is useful

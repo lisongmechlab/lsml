@@ -41,7 +41,7 @@ import org.mockito.Mockito;
  */
 public class ComponentStandardTest extends ComponentBaseTest {
 
-	private List<HardPoint> hardPoints = new ArrayList<>();
+	private List<HardPoint>	hardPoints	= new ArrayList<>();
 
 	@Override
 	protected ComponentStandard makeDefaultCUT() {

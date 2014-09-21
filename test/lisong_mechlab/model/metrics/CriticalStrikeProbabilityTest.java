@@ -45,15 +45,15 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CriticalStrikeProbabilityTest {
-	List<Item> items = new ArrayList<>();
+	List<Item>					items	= new ArrayList<>();
 	@Mock
-	ConfiguredComponentBase loadoutPart;
+	ConfiguredComponentBase		loadoutPart;
 	@Mock
-	LoadoutBase<?> loadout;
+	LoadoutBase<?>				loadout;
 	@Mock
-	Upgrades upgrades;
+	Upgrades					upgrades;
 	@InjectMocks
-	CriticalStrikeProbability cut;
+	CriticalStrikeProbability	cut;
 
 	@Before
 	public void setup() {

@@ -31,9 +31,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ArmorUpgrade extends Upgrade {
 	@XStreamAsAttribute
-	private final int slots;
+	private final int		slots;
 	@XStreamAsAttribute
-	private final double armorPerTon;
+	private final double	armorPerTon;
 
 	public ArmorUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots,
 			double aArmorPerTon) {

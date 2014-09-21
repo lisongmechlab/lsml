@@ -33,7 +33,7 @@ import lisong_mechlab.util.BinomialDistribution;
  * @author Emily Björk
  */
 public class CriticalItemDamage implements ItemMetric {
-	private final ConfiguredComponentBase loadoutPart;
+	private final ConfiguredComponentBase	loadoutPart;
 
 	public CriticalItemDamage(ConfiguredComponentBase aLoadoutPart) {
 		loadoutPart = aLoadoutPart;

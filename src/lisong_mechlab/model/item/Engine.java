@@ -26,17 +26,17 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Engine extends HeatSource {
-	public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
-	public final static double ENGINE_HEAT_66_THROTTLE = 0.1;
+	public final static double	ENGINE_HEAT_FULL_THROTTLE	= 0.2;
+	public final static double	ENGINE_HEAT_66_THROTTLE		= 0.1;
 
 	@XStreamAsAttribute
-	protected final int rating;
+	protected final int			rating;
 	@XStreamAsAttribute
-	protected final EngineType type;
+	protected final EngineType	type;
 	@XStreamAsAttribute
-	final private int internalHs;
+	final private int			internalHs;
 	@XStreamAsAttribute
-	final private int heatSinkSlots;
+	final private int			heatSinkSlots;
 
 	public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
 			HardPointType aHardPointType, int aHP, Faction aFaction, int aRating, EngineType aType, int aInternalHS,

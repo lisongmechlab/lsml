@@ -25,8 +25,8 @@ package lisong_mechlab.model.environment;
  * @author Emily Björk
  */
 public class Environment {
-	private final double heat;
-	private final String name;
+	private final double	heat;
+	private final String	name;
 
 	/**
 	 * Creates a new {@link Environment} with the given name and heat value.

@@ -46,9 +46,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class OpSetMaxArmorTest {
 
 	@Mock
-	private MessageXBar xBar;
+	private MessageXBar				xBar;
 
-	private final OperationStack stack = new OperationStack(0);
+	private final OperationStack	stack	= new OperationStack(0);
 
 	@Test
 	public void testApply() {

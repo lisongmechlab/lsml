@@ -40,11 +40,11 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class OpSetGuidanceType extends CompositeOperation {
-	private final GuidanceUpgrade oldValue;
-	private final GuidanceUpgrade newValue;
-	private final Upgrades upgrades;
-	private final LoadoutBase<?> loadout;
-	private final MessageXBar xBar;
+	private final GuidanceUpgrade	oldValue;
+	private final GuidanceUpgrade	newValue;
+	private final Upgrades			upgrades;
+	private final LoadoutBase<?>	loadout;
+	private final MessageXBar		xBar;
 
 	/**
 	 * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is useful

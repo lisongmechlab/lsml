@@ -31,10 +31,10 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class OpSetStructureType extends OpUpgradeBase {
-	private final StructureUpgrade oldValue;
-	private final StructureUpgrade newValue;
-	private final UpgradesMutable upgrades;
-	private final LoadoutStandard loadout;
+	private final StructureUpgrade	oldValue;
+	private final StructureUpgrade	newValue;
+	private final UpgradesMutable	upgrades;
+	private final LoadoutStandard	loadout;
 
 	/**
 	 * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link UpgradesMutable} object This is

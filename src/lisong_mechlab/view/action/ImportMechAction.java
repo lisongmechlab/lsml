@@ -29,7 +29,7 @@ import javax.swing.KeyStroke;
 import lisong_mechlab.view.ProgramInit;
 
 public class ImportMechAction extends AbstractAction {
-	private static final long serialVersionUID = -9019953619423428349L;
+	private static final long	serialVersionUID	= -9019953619423428349L;
 
 	public ImportMechAction(String aTitle, KeyStroke key) {
 		super(aTitle);

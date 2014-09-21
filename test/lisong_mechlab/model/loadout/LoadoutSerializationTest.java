@@ -57,9 +57,9 @@ import org.mockito.MockitoAnnotations;
 @RunWith(JUnitParamsRunner.class)
 public class LoadoutSerializationTest {
 	@Mock
-	MessageXBar xBar;
+	MessageXBar		xBar;
 	@Mock
-	OperationStack undoStack;
+	OperationStack	undoStack;
 
 	@Before
 	public void setup() {

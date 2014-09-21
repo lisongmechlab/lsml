@@ -28,11 +28,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class HardPoint {
 	@XStreamAsAttribute
-	private final int tubes;
+	private final int			tubes;
 	@XStreamAsAttribute
-	private final HardPointType type;
+	private final HardPointType	type;
 	@XStreamAsAttribute
-	private final boolean hasBayDoor;
+	private final boolean		hasBayDoor;
 
 	public HardPoint(HardPointType aType) {
 		this(aType, 0, false);

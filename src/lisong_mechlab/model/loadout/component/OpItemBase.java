@@ -48,12 +48,12 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public abstract class OpItemBase extends Operation {
-	private int numEngineHS = 0;
-	private final MessageXBar xBar;
-	protected final ConfiguredComponentBase component;
-	protected final LoadoutBase<?> loadout;
-	protected final Item item;
-	protected final Map<Item, Boolean> oldToggleStates = new HashMap<>();
+	private int								numEngineHS		= 0;
+	private final MessageXBar				xBar;
+	protected final ConfiguredComponentBase	component;
+	protected final LoadoutBase<?>			loadout;
+	protected final Item					item;
+	protected final Map<Item, Boolean>		oldToggleStates	= new HashMap<>();
 
 	/**
 	 * Creates a new {@link OpItemBase}. The deriving classes shall throw if the the operation with the given item would

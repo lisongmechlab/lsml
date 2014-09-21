@@ -36,8 +36,8 @@ import org.junit.Test;
  * @author Emily Björk
  */
 public class HeatDissipationTest {
-	private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-	private HeatDissipation cut = new HeatDissipation(mlc.loadout, null);
+	private final MockLoadoutContainer	mlc	= new MockLoadoutContainer();
+	private HeatDissipation				cut	= new HeatDissipation(mlc.loadout, null);
 
 	/**
 	 * The heat dissipation of a 'mech is dependent on the heat sink types. > For single heat sinks it is simply the

@@ -37,33 +37,33 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public abstract class ChassisBase {
 	@XStreamAsAttribute
-	private final int baseVariant;
+	private final int				baseVariant;
 	@XStreamAsAttribute
-	private final ChassisClass chassiclass;
-	private final ComponentBase[] components;
+	private final ChassisClass		chassiclass;
+	private final ComponentBase[]	components;
 	@XStreamAsAttribute
-	private final Faction faction;
+	private final Faction			faction;
 	@XStreamAsAttribute
-	private final int maxTons;
-	private final MovementProfile movementProfile;
+	private final int				maxTons;
+	private final MovementProfile	movementProfile;
 	@XStreamAsAttribute
-	private final int mwoId;
+	private final int				mwoId;
 	@XStreamAsAttribute
-	private final String mwoName;
+	private final String			mwoName;
 	@XStreamAsAttribute
-	private final String name;
+	private final String			name;
 	@XStreamAsAttribute
-	private final int mechModules;
+	private final int				mechModules;
 	@XStreamAsAttribute
-	private final String series;
+	private final String			series;
 	@XStreamAsAttribute
-	private final String shortName;
+	private final String			shortName;
 	@XStreamAsAttribute
-	private final ChassisVariant variant;
+	private final ChassisVariant	variant;
 	@XStreamAsAttribute
-	private final int consumableModules;
+	private final int				consumableModules;
 	@XStreamAsAttribute
-	private final int weaponModules;
+	private final int				weaponModules;
 
 	/**
 	 * @param aMwoID

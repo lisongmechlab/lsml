@@ -23,7 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsHeatSinkStats {
 	@XStreamAsAttribute
-	public double cooling;
+	public double	cooling;
 	@XStreamAsAttribute
-	public double heatbase;
+	public double	heatbase;
 }

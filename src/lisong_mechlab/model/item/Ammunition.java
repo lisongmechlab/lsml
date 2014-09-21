@@ -28,10 +28,10 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
  * @author Emily Björk
  */
 public class Ammunition extends Item {
-	protected final int rounds;
-	protected final double internalDamage;
-	protected final HardPointType type;
-	protected final String ammoType;
+	protected final int				rounds;
+	protected final double			internalDamage;
+	protected final HardPointType	type;
+	protected final String			ammoType;
 
 	public Ammunition(ItemStatsModule aStatsModule) {
 		super(aStatsModule, HardPointType.NONE, aStatsModule.ModuleStats.slots, aStatsModule.ModuleStats.tons,

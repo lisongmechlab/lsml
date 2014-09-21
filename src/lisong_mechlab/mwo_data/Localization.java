@@ -38,7 +38,7 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * @author Emily
  */
 public class Localization {
-	private static Map<String, String> key2string = null;
+	private static Map<String, String>	key2string	= null;
 
 	public static String key2string(String aKey) {
 		String canon = canonize(aKey);

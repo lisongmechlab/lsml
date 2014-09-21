@@ -34,7 +34,7 @@ public class UiPreferences {
 	 * @author Emily Björk
 	 */
 	public class Message implements MessageXBar.Message {
-		public final String attribute;
+		public final String	attribute;
 
 		Message(String aAttribute) {
 			attribute = aAttribute;
@@ -51,10 +51,10 @@ public class UiPreferences {
 		}
 	}
 
-	public static final String UI_USE_SMARTPLACE = "uiUseSmartPlace";
-	public static final String UI_COMPACT_MODE = "uiCompactMode";
-	public static final String UI_HIDE_SPECIAL_MECHS = "uiHideSpecialMechs";
-	private final transient MessageXBar xBar;
+	public static final String			UI_USE_SMARTPLACE		= "uiUseSmartPlace";
+	public static final String			UI_COMPACT_MODE			= "uiCompactMode";
+	public static final String			UI_HIDE_SPECIAL_MECHS	= "uiHideSpecialMechs";
+	private final transient MessageXBar	xBar;
 
 	public UiPreferences(MessageXBar aXBar) {
 		xBar = aXBar;

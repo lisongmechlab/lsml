@@ -25,7 +25,7 @@ package lisong_mechlab.util;
  * @author Emily Björk
  */
 public class DecodingException extends Exception {
-	private static final long serialVersionUID = 8948178136779804692L;
+	private static final long	serialVersionUID	= 8948178136779804692L;
 
 	public DecodingException(String aString) {
 		super(aString);

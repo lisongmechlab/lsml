@@ -45,11 +45,11 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class OpDistributeArmor extends CompositeOperation {
-	private final Map<Location, Integer> armors = new HashMap<>(Location.values().length);
-	private final LoadoutBase<?> loadout;
-	private final int totalPointsOfArmor;
-	private final MessageXBar xBar;
-	private final double frontRearRatio;
+	private final Map<Location, Integer>	armors	= new HashMap<>(Location.values().length);
+	private final LoadoutBase<?>			loadout;
+	private final int						totalPointsOfArmor;
+	private final MessageXBar				xBar;
+	private final double					frontRearRatio;
 
 	/**
 	 * @param aLoadout

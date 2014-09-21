@@ -31,13 +31,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class BallisticWeapon extends AmmoWeapon {
 	@XStreamAsAttribute
-	protected final double spread;
+	protected final double	spread;
 	@XStreamAsAttribute
-	protected final double jammingChance;
+	protected final double	jammingChance;
 	@XStreamAsAttribute
-	protected final int shotsduringcooldown;
+	protected final int		shotsduringcooldown;
 	@XStreamAsAttribute
-	protected final double jammingTime;
+	protected final double	jammingTime;
 
 	public BallisticWeapon(ItemStatsWeapon aStatsWeapon) {
 		super(aStatsWeapon, HardPointType.BALLISTIC);
@@ -135,5 +135,5 @@ public class BallisticWeapon extends AmmoWeapon {
 		return spreadFactor * super.getRangeEffectivity(range, aPilotModules);
 	}
 
-	public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;
+	public final static Comparator<Item>	DEFAULT_ORDERING	= DEFAULT_WEAPON_ORDERING;
 }

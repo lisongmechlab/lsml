@@ -45,15 +45,15 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  */
 public class XMLItemStats {
 	@XStreamImplicit
-	public List<XMLItemStatsMech> MechList = new ArrayList<>();
+	public List<XMLItemStatsMech>		MechList		= new ArrayList<>();
 	@XStreamImplicit
-	public List<ItemStatsWeapon> WeaponList = new ArrayList<>();
+	public List<ItemStatsWeapon>		WeaponList		= new ArrayList<>();
 	@XStreamImplicit
-	public List<ItemStatsModule> ModuleList = new ArrayList<>();
+	public List<ItemStatsModule>		ModuleList		= new ArrayList<>();
 	@XStreamImplicit
-	public List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
+	public List<ItemStatsUpgradeType>	UpgradeTypeList	= new ArrayList<>();
 	@XStreamImplicit
-	public List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
+	public List<ItemStatsOmniPodType>	OmniPodList		= new ArrayList<>();
 
 	public static XMLItemStats fromXml(GameFile aGameFile) {
 		XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {

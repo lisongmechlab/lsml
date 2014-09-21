@@ -14,11 +14,11 @@ import lisong_mechlab.view.preferences.UiPreferences;
 import lisong_mechlab.view.preferences.UiPreferences.Message;
 
 public abstract class FilterTreeCathegory<T> extends DefaultTreeCathegory<T> implements Reader {
-	protected final GarageTree garageTree;
-	private String nameFilter = "";
-	private boolean wasExpandedBeforeFilter;
-	private final List<T> filteredChildren = new ArrayList<>();
-	private boolean filterDirty = true;
+	protected final GarageTree	garageTree;
+	private String				nameFilter			= "";
+	private boolean				wasExpandedBeforeFilter;
+	private final List<T>		filteredChildren	= new ArrayList<>();
+	private boolean				filterDirty			= true;
 
 	public FilterTreeCathegory(MessageXBar aXBar, String aName, TreeCathegory aParent, GarageTreeModel aModel,
 			final JTextField aFilterBar, GarageTree aGarageTree) {

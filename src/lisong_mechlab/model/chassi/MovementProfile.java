@@ -26,7 +26,7 @@ package lisong_mechlab.model.chassi;
  * @author Emily Björk
  */
 public interface MovementProfile {
-	double MAX_LEGGED_SPEED_KPH = 40.0;
+	double	MAX_LEGGED_SPEED_KPH	= 40.0;
 
 	/**
 	 * The movement archetype determines how a mech behaves when going up a slope.

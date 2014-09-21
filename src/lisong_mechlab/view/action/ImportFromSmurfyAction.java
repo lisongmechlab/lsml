@@ -62,26 +62,28 @@ import lisong_mechlab.view.preferences.SmurfyPreferences;
  * @author Emily Björk
  */
 public class ImportFromSmurfyAction extends AbstractAction {
-	private static final long serialVersionUID = -9002912389559075628L;
-	protected static final String EMPTY_API_KEY = "0000000000000000000000000000000000000000";
-	private final Window parent;
-	private final Base64LoadoutCoder decoder;
+	private static final long			serialVersionUID	= -9002912389559075628L;
+	protected static final String		EMPTY_API_KEY		= "0000000000000000000000000000000000000000";
+	private final Window				parent;
+	private final Base64LoadoutCoder	decoder;
 
-	private final DefaultTableModel model = new DefaultTableModel(null, new String[] { "Import", "Loadout" }) {
-		private static final long serialVersionUID = 1L;
+	private final DefaultTableModel		model				= new DefaultTableModel(null, new String[] { "Import",
+			"Loadout"										}) {
+																private static final long	serialVersionUID	= 1L;
 
-		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex == 0;
-		}
+																@Override
+																public boolean isCellEditable(int rowIndex,
+																		int columnIndex) {
+																	return columnIndex == 0;
+																}
 
-		@Override
-		public Class<?> getColumnClass(int c) {
-			if (c == 0)
-				return Boolean.class;
-			return super.getColumnClass(c);
-		}
-	};
+																@Override
+																public Class<?> getColumnClass(int c) {
+																	if (c == 0)
+																		return Boolean.class;
+																	return super.getColumnClass(c);
+																}
+															};
 
 	private void clearModel() {
 		while (model.getRowCount() > 0) {
@@ -150,7 +152,7 @@ public class ImportFromSmurfyAction extends AbstractAction {
 
 		textApiKey.setForeground(Color.GRAY);
 		textApiKey.addCaretListener(new CaretListener() {
-			String lastKey;
+			String	lastKey;
 
 			@Override
 			public void caretUpdate(CaretEvent carret) {

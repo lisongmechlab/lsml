@@ -42,8 +42,8 @@ import lisong_mechlab.model.loadout.LoadoutOmniMech;
  * @author Emily Björk
  */
 public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
-	private OmniPod omniPod;
-	private final Map<Item, Boolean> toggleStates = new HashMap<>();
+	private OmniPod						omniPod;
+	private final Map<Item, Boolean>	toggleStates	= new HashMap<>();
 
 	public ConfiguredComponentOmniMech(ComponentOmniMech aComponentOmniMech, boolean aAutoArmor, OmniPod aOmniPod) {
 		super(aComponentOmniMech, aAutoArmor);

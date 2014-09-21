@@ -40,9 +40,9 @@ import lisong_mechlab.util.ListArrayUtils;
  */
 public class ChassisOmniMech extends ChassisBase {
 
-	private final ArmorUpgrade armorType;
-	private final HeatSinkUpgrade heatSinkType;
-	private final StructureUpgrade structureType;
+	private final ArmorUpgrade		armorType;
+	private final HeatSinkUpgrade	heatSinkType;
+	private final StructureUpgrade	structureType;
 
 	/**
 	 * @param aMwoID

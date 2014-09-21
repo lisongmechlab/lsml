@@ -20,12 +20,13 @@
 package lisong_mechlab.model.metrics;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.EnergyWeapon;
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.helpers.DoubleFireBurstSignal;
@@ -41,8 +42,8 @@ import lisong_mechlab.util.MessageXBar.Message;
  * @author Emily Björk
  */
 public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.Reader {
-	private final List<IntegratedSignal> damageIntegrals = new ArrayList<>();
-	private double cachedRange = -1;
+	private final List<IntegratedSignal>	damageIntegrals	= new ArrayList<>();
+	private double							cachedRange		= -1;
 
 	/**
 	 * Creates a new calculator object
@@ -67,33 +68,32 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageXBar.
 
 	private void updateEvents(double aRange) {
 		damageIntegrals.clear();
-		for (Item item : loadout.getAllItems()) {
-			if (item instanceof Weapon) {
-				Weapon weapon = (Weapon) item;
-				if (!weapon.isOffensive())
+		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+		for (Weapon weapon : loadout.items(Weapon.class)) {
+			if (!weapon.isOffensive())
+				continue;
+
+			double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange, modifiers);
+			double period = weapon.getSecondsPerShot(loadout.getEfficiencies(), modifiers);
+			double damage = factor * weapon.getDamagePerShot();
+
+			if (weapon instanceof EnergyWeapon) {
+				EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
+				if (energyWeapon.getDuration() > 0) {
+					damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(), damage
+							/ energyWeapon.getDuration()));
 					continue;
-
-				double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers());
-				double period = weapon.getSecondsPerShot(loadout.getEfficiencies(), loadout.getWeaponModifiers());
-				double damage = factor * weapon.getDamagePerShot();
-
-				if (weapon instanceof EnergyWeapon) {
-					EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
-					if (energyWeapon.getDuration() > 0) {
-						damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(), damage
-								/ energyWeapon.getDuration()));
-						continue;
-					}
-				} else if (weapon instanceof BallisticWeapon) {
-					BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
-					if (ballisticWeapon.canDoubleFire()) {
-						damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, loadout.getEfficiencies(),
-								loadout.getWeaponModifiers(), aRange));
-						continue;
-					}
 				}
-				damageIntegrals.add(new IntegratedImpulseTrain(period, damage));
+			} else if (weapon instanceof BallisticWeapon) {
+				BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
+				if (ballisticWeapon.canDoubleFire()) {
+					damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, loadout.getEfficiencies(),
+							modifiers, aRange));
+					continue;
+				}
 			}
+			damageIntegrals.add(new IntegratedImpulseTrain(period, damage));
+
 		}
 		cachedRange = getRange();
 	}

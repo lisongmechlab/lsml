@@ -57,11 +57,11 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
 		}
 	}
 
-	protected OmniPod[] pods = new OmniPod[Location.values().length];
+	protected OmniPod[]		pods	= new OmniPod[Location.values().length];
 
-	protected Engine engine;
-	private ChassisOmniMech chassisOmni;
-	private MovementProfile quirkBase;
+	protected Engine		engine;
+	private ChassisOmniMech	chassisOmni;
+	private MovementProfile	quirkBase;
 
 	@Override
 	@Before

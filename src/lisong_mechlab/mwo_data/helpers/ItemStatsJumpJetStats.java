@@ -26,14 +26,14 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class ItemStatsJumpJetStats {
 	@XStreamAlias("boost_z")
 	@XStreamAsAttribute
-	public double boost;
+	public double	boost;
 
 	@XStreamAsAttribute
-	public double duration;
+	public double	duration;
 	@XStreamAsAttribute
-	public String heat;
+	public String	heat;
 	@XStreamAsAttribute
-	public int minTons;
+	public int		minTons;
 	@XStreamAsAttribute
-	public int maxTons;
+	public int		maxTons;
 }

@@ -22,9 +22,9 @@ package lisong_mechlab.view.mechlab.equipment;
 import javax.swing.tree.TreePath;
 
 abstract class AbstractTreeCathegory extends TreeCathegory {
-	private final String name;
-	private final TreePath path;
-	private final GarageTreeModel model;
+	private final String			name;
+	private final TreePath			path;
+	private final GarageTreeModel	model;
 
 	public AbstractTreeCathegory(String aName, GarageTreeModel aModel) {
 		name = aName;

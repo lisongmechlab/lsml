@@ -34,7 +34,7 @@ public enum MovementArchetype {
 		slowDownDeg = aSlowDownAngle;
 	}
 
-	private final double slowDownDeg;
+	private final double	slowDownDeg;
 
 	/**
 	 * @return The maximal slope angle (in degrees) this archetype can climb.

@@ -29,7 +29,7 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * @author Emily Björk
  */
 public class TwistSpeed implements Metric {
-	private final LoadoutBase<?> loadout;
+	private final LoadoutBase<?>	loadout;
 
 	public TwistSpeed(LoadoutBase<?> aLoadout) {
 		loadout = aLoadout;

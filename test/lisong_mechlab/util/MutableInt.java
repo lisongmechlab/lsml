@@ -25,5 +25,5 @@ package lisong_mechlab.util;
  * @author Emily Björk
  */
 public class MutableInt {
-	public int v;
+	public int	v;
 }

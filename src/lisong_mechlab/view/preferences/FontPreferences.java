@@ -42,16 +42,16 @@ public class FontPreferences {
 			factor = aFactor;
 		}
 
-		private double factor;
+		private double	factor;
 
 		public double getSizeFactor() {
 			return factor;
 		}
 	}
 
-	public static final String FONTSIZE_KEY = "fontSize";
-	private FontSize fontSize;
-	private Map<Object, Integer> defaultSizes = new HashMap<>();
+	public static final String		FONTSIZE_KEY	= "fontSize";
+	private FontSize				fontSize;
+	private Map<Object, Integer>	defaultSizes	= new HashMap<>();
 
 	public FontPreferences() {
 		for (Map.Entry<Object, Object> entry : UIManager.getDefaults().entrySet()) {

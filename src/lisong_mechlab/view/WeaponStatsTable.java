@@ -43,16 +43,16 @@ import lisong_mechlab.model.item.Weapon;
  * @author Emily Björk
  */
 public class WeaponStatsTable extends JTable {
-	private static final long serialVersionUID = -5418864783866344614L;
+	private static final long	serialVersionUID	= -5418864783866344614L;
 
 	private static class Model extends AbstractTableModel {
-		private static final long serialVersionUID = 2420773283903826604L;
-		private final List<Weapon> weapons = new ArrayList<>();
-		private final List<Column> columns = new ArrayList<>();
+		private static final long	serialVersionUID	= 2420773283903826604L;
+		private final List<Weapon>	weapons				= new ArrayList<>();
+		private final List<Column>	columns				= new ArrayList<>();
 
 		abstract class Column {
-			private final String header;
-			private final String tooltip;
+			private final String	header;
+			private final String	tooltip;
 
 			public Column(String aHeader, String aTooltip) {
 				header = aHeader;
@@ -73,7 +73,7 @@ public class WeaponStatsTable extends JTable {
 		}
 
 		class StatColumn extends Column {
-			private final String stat;
+			private final String	stat;
 
 			public StatColumn(String aHeader, String aTooltip, String aStat) {
 				super(aHeader, aTooltip);
@@ -193,9 +193,9 @@ public class WeaponStatsTable extends JTable {
 	}
 
 	class ZebraRenderer extends DefaultTableCellRenderer {
-		private static final long serialVersionUID = 291815378407610527L;
-		private final Color fg = new Color(0xf4f6f9);
-		private final Color fg_darker = new Color(0xe3ebf4);
+		private static final long	serialVersionUID	= 291815378407610527L;
+		private final Color			fg					= new Color(0xf4f6f9);
+		private final Color			fg_darker			= new Color(0xe3ebf4);
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
@@ -211,8 +211,8 @@ public class WeaponStatsTable extends JTable {
 	}
 
 	class DecimalFormatRenderer extends ZebraRenderer {
-		private static final long serialVersionUID = 291815378407610527L;
-		private final NumberFormat format;
+		private static final long	serialVersionUID	= 291815378407610527L;
+		private final NumberFormat	format;
 
 		public DecimalFormatRenderer(NumberFormat aNumberFormat) {
 			format = aNumberFormat;
@@ -243,7 +243,7 @@ public class WeaponStatsTable extends JTable {
 	@Override
 	protected JTableHeader createDefaultTableHeader() {
 		return new JTableHeader(columnModel) {
-			private static final long serialVersionUID = 8692956739102109610L;
+			private static final long	serialVersionUID	= 8692956739102109610L;
 
 			@Override
 			public String getToolTipText(MouseEvent e) {

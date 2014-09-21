@@ -35,7 +35,7 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
  * @author Emily Björk
  */
 public class DynamicSlotDistributor {
-	private final LoadoutBase<?> loadout;
+	private final LoadoutBase<?>	loadout;
 
 	/**
 	 * Creates a new {@link DynamicSlotDistributor} for the given {@link LoadoutBase}.

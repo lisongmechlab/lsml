@@ -20,16 +20,15 @@
 package lisong_mechlab.model.loadout;
 
 import java.util.Collection;
-import java.util.List;
 
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.QuirkedMovementProfile;
+import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ModuleSlot;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
@@ -44,8 +43,8 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
-	transient private final QuirkedMovementProfile movementProfile;
-	transient private final Upgrades upgrades;
+	transient private final QuirkedMovementProfile	movementProfile;
+	transient private final Upgrades				upgrades;
 
 	/**
 	 * @param aFactory
@@ -160,14 +159,14 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
 		}
 	}
 
-	/**
-	 * @return A {@link List} of all {@link WeaponModifier}s that apply to this loadout.
-	 */
 	@Override
-	public Collection<WeaponModifier> getWeaponModifiers() {
-		Collection<WeaponModifier> ans = super.getWeaponModifiers();
+	public <U> Collection<U> getModifiers(Class<U> aClass) {
+		Collection<U> ans = super.getModifiers(aClass);
 		for (ConfiguredComponentOmniMech component : getComponents()) {
-			ans.add(component.getOmniPod().getQuirks());
+			Quirks quirks = component.getOmniPod().getQuirks();
+			if (aClass.isInstance(quirks)) {
+				ans.add(aClass.cast(quirks));
+			}
 		}
 		return ans;
 	}

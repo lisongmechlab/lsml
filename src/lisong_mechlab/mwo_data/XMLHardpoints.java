@@ -35,10 +35,10 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 public class XMLHardpoints {
 	@XStreamImplicit(itemFieldName = "WeaponDoorSet")
-	public List<WeaponDoorSet> weapondoors;
+	public List<WeaponDoorSet>	weapondoors;
 
 	@XStreamImplicit(itemFieldName = "Hardpoint")
-	public List<HardPointInfo> hardpoints;
+	public List<HardPointInfo>	hardpoints;
 
 	public static XMLHardpoints fromXml(InputStream is) {
 		XStream xstream = new XStream(new StaxDriver()) {

@@ -17,20 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.mwo_data.helpers;
+package lisong_mechlab.model.loadout;
 
-import java.util.List;
+import java.util.Iterator;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import lisong_mechlab.model.item.Item;
 
-public class HardPointInfo {
-	@XStreamAsAttribute
-	public int							id;
+/**
+ * This is a glue class to get {@link Iterable}s for different types of {@link Item}s on a loadout.
+ * 
+ * @author Emily Björk
+ * @param <T>
+ *            A type that any {@link Item} iterated over must implement.
+ *
+ */
+public class LoadoutIterable<T> implements Iterable<T> {
+	private final LoadoutBase<?>	loadout;
+	private final Class<T>			filter;
 
-	@XStreamAsAttribute
-	public String						NoWeaponAName;
+	public LoadoutIterable(LoadoutBase<?> aLoadout, Class<T> aFilter) {
+		loadout = aLoadout;
+		filter = aFilter;
+	}
 
-	@XStreamImplicit(itemFieldName = "WeaponSlot")
-	public List<HardPointWeaponSlot>	weaponslots;
+	@Override
+	public Iterator<T> iterator() {
+		return new LoadoutIterator<T>(loadout, filter);
+	}
 }

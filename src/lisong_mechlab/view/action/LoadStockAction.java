@@ -43,11 +43,11 @@ import lisong_mechlab.view.ProgramInit;
  * @author Emily Björk
  */
 public class LoadStockAction extends AbstractAction {
-	private static final long serialVersionUID = 4350731510583942480L;
-	private final LoadoutBase<?> loadout;
-	private final OperationStack stack;
-	private final MessageXBar xBar;
-	private final Component component;
+	private static final long		serialVersionUID	= 4350731510583942480L;
+	private final LoadoutBase<?>	loadout;
+	private final OperationStack	stack;
+	private final MessageXBar		xBar;
+	private final Component			component;
 
 	/**
 	 * Creates a new {@link LoadStockAction}.

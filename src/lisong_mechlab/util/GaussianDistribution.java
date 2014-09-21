@@ -26,7 +26,7 @@ package lisong_mechlab.util;
  */
 public class GaussianDistribution implements Distribution {
 
-	private static final double PRECISION = 0.00001;
+	private static final double	PRECISION	= 0.00001;
 
 	@Override
 	public double pdf(double x) {

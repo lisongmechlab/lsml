@@ -26,7 +26,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class AmmoWeapon extends Weapon {
 	@XStreamAsAttribute
-	private final String ammoTypeId;
+	private final String	ammoTypeId;
 
 	public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType) {
 		this(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.ammoType);

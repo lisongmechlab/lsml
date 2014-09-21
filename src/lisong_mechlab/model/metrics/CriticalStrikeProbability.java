@@ -32,11 +32,12 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
  * @author Emily Björk
  */
 public class CriticalStrikeProbability implements ItemMetric {
-	public final static double CRIT_CHANCE[] = { 0.25, 0.14, 0.03 }; // 25% risk of 1 hit, 15% risk of 2 hits,
-																		// 3%
-																		// risk of 3
-																		// hits
-	private final ConfiguredComponentBase loadoutPart;
+	public final static double				CRIT_CHANCE[]	= { 0.25, 0.14, 0.03 }; // 25% risk of 1 hit, 15% risk of 2
+																					// hits,
+																					// 3%
+																					// risk of 3
+																					// hits
+	private final ConfiguredComponentBase	loadoutPart;
 
 	public CriticalStrikeProbability(ConfiguredComponentBase aLoadoutPart) {
 		loadoutPart = aLoadoutPart;

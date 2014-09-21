@@ -30,9 +30,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class XMLPilotModuleStats {
 	@XStreamAlias(value = "talentid")
 	@XStreamAsAttribute
-	public String talentId;
+	public String	talentId;
 	@XStreamAsAttribute
-	public String category;
+	public String	category;
 	@XStreamAsAttribute
-	public String slot;
+	public String	slot;
 }

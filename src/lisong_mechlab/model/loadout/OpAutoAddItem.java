@@ -45,14 +45,14 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpAutoAddItem extends OpLoadoutBase {
 	private class Node implements Comparable<Node> {
-		final LoadoutBase<?> data;
-		final Location source;
-		final Location target;
-		final Item item;
-		final Node parent;
-		final int score;
+		final LoadoutBase<?>	data;
+		final Location			source;
+		final Location			target;
+		final Item				item;
+		final Node				parent;
+		final int				score;
 
-		final Item targetItem;
+		final Item				targetItem;
 
 		Node(LoadoutBase<?> aRoot, Item aItem) {
 			parent = null;
@@ -131,10 +131,10 @@ public class OpAutoAddItem extends OpLoadoutBase {
 		}
 	}
 
-	private final Item itemToPlace;
-	private final List<Location> validLocations = new ArrayList<>();
-	private final List<Location> partTraversalOrder;
-	private final OperationStack stack = new OperationStack(0);
+	private final Item				itemToPlace;
+	private final List<Location>	validLocations	= new ArrayList<>();
+	private final List<Location>	partTraversalOrder;
+	private final OperationStack	stack			= new OperationStack(0);
 
 	public OpAutoAddItem(LoadoutBase<?> aLoadout, MessageXBar anXBar, Item anItem) {
 		super(aLoadout, anXBar, "auto place item");

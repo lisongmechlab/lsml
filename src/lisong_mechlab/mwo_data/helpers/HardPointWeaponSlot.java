@@ -27,12 +27,12 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public class HardPointWeaponSlot {
 	public static class Attachment {
 		@XStreamAsAttribute
-		public String AName;
+		public String	AName;
 
 		@XStreamAsAttribute
-		public String search;
+		public String	search;
 	}
 
 	@XStreamImplicit(itemFieldName = "Attachment")
-	public List<Attachment> attachments;
+	public List<Attachment>	attachments;
 }

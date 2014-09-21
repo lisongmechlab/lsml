@@ -27,11 +27,11 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Emily Björk
  */
 public class AlphaTimeToOverHeat implements Metric {
-	private final HeatDissipation heatDissipation;
-	private final HeatOverTime heatOverTime;
-	private final HeatCapacity heatCapacity;
-	static private final double MAX_TIME = 15 * 60;
-	static private final double TIME_STEP = 0.1; // 9k iterations at worst
+	private final HeatDissipation	heatDissipation;
+	private final HeatOverTime		heatOverTime;
+	private final HeatCapacity		heatCapacity;
+	static private final double		MAX_TIME	= 15 * 60;
+	static private final double		TIME_STEP	= 0.1;		// 9k iterations at worst
 
 	/**
 	 * Creates a new {@link Metric}.

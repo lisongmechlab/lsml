@@ -22,11 +22,11 @@ package lisong_mechlab.model.item;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class JumpJet extends Module {
-	private final double minTons;
-	private final double maxTons;
-	private final double boost_z;
-	private final double duration;
-	private final double heat;
+	private final double	minTons;
+	private final double	maxTons;
+	private final double	boost_z;
+	private final double	duration;
+	private final double	heat;
 
 	public JumpJet(ItemStatsModule aModule) {
 		super(aModule);

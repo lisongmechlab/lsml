@@ -34,22 +34,22 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class OmniPod {
 	@XStreamAsAttribute
-	private final String chassis;
-	private final List<Item> fixedItems;
-	private final List<HardPoint> hardPoints;
+	private final String			chassis;
+	private final List<Item>		fixedItems;
+	private final List<HardPoint>	hardPoints;
 	@XStreamAsAttribute
-	private final Location location;
+	private final Location			location;
 	@XStreamAsAttribute
-	private final int maxJumpJets;
+	private final int				maxJumpJets;
 	@XStreamAsAttribute
-	private final int maxPilotModules;
+	private final int				maxPilotModules;
 	@XStreamAsAttribute
-	private final int mwoID;
+	private final int				mwoID;
 	@XStreamAsAttribute
-	private final Quirks quirks;
+	private final Quirks			quirks;
 	@XStreamAsAttribute
-	private final String series;
-	private final List<Item> toggleableItems;
+	private final String			series;
+	private final List<Item>		toggleableItems;
 
 	/**
 	 * Creates a new {@link OmniPod}.

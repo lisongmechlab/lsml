@@ -29,8 +29,8 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Emily Björk
  */
 public class HeatCapacity implements Metric {
-	private final LoadoutBase<?> loadout;
-	private static final double MECH_BASE_HEAT_CAPACITY = 30;
+	private final LoadoutBase<?>	loadout;
+	private static final double		MECH_BASE_HEAT_CAPACITY	= 30;
 
 	public HeatCapacity(final LoadoutBase<?> aLoadout) {
 		loadout = aLoadout;
@@ -51,7 +51,7 @@ public class HeatCapacity implements Metric {
 		ans = (MECH_BASE_HEAT_CAPACITY + ans) * loadout.getEfficiencies().getHeatCapacityModifier();
 
 		double extra = 0;
-		for (HeatModifier heatModifier : loadout.getHeatModifiers()) {
+		for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
 			extra += heatModifier.extraHeatCapacity(ans);
 		}
 

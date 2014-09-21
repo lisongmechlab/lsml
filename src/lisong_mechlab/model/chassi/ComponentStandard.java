@@ -37,7 +37,7 @@ import lisong_mechlab.model.item.ItemDB;
  * @author Emily Björk
  */
 public class ComponentStandard extends ComponentBase {
-	private final List<HardPoint> hardPoints = new ArrayList<>();
+	private final List<HardPoint>	hardPoints	= new ArrayList<>();
 
 	/**
 	 * Creates a new {@link ComponentStandard} with the given properties.

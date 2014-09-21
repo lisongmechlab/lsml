@@ -38,14 +38,14 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Emily Björk
  */
 public class MessageXBar {
-	private static final boolean debug = false;
-	private transient final Map<Class<? extends Reader>, Double> perf_walltime = debug ? new HashMap<Class<? extends Reader>, Double>()
-			: null;
-	private transient final Map<Class<? extends Reader>, Integer> perf_calls = debug ? new HashMap<Class<? extends Reader>, Integer>()
-			: null;
-	private transient final List<WeakReference<Reader>> readers = new ArrayList<WeakReference<MessageXBar.Reader>>();
-	private boolean dispatching = false;
-	private transient final Queue<Message> messages = new ArrayDeque<>();
+	private static final boolean									debug			= false;
+	private transient final Map<Class<? extends Reader>, Double>	perf_walltime	= debug ? new HashMap<Class<? extends Reader>, Double>()
+																							: null;
+	private transient final Map<Class<? extends Reader>, Integer>	perf_calls		= debug ? new HashMap<Class<? extends Reader>, Integer>()
+																							: null;
+	private transient final List<WeakReference<Reader>>				readers			= new ArrayList<WeakReference<MessageXBar.Reader>>();
+	private boolean													dispatching		= false;
+	private transient final Queue<Message>							messages		= new ArrayDeque<>();
 
 	/**
 	 * Classes that need to be able to listen in on the {@link MessageXBar} should implement this interface.

@@ -59,7 +59,7 @@ import org.mockito.stubbing.Answer;
  */
 @RunWith(JUnitParamsRunner.class)
 public class OpLoadStockTest {
-	private MessageXBar xBar;
+	private MessageXBar	xBar;
 
 	@Before
 	public void setup() {

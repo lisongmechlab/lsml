@@ -29,9 +29,9 @@ import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 public class MissileWeapon extends AmmoWeapon {
-	protected final double flightSpeed;
-	protected final int requiredGuidancetype;
-	private final int baseItemId;
+	protected final double	flightSpeed;
+	protected final int		requiredGuidancetype;
+	private final int		baseItemId;
 
 	public MissileWeapon(ItemStatsWeapon aStatsWeapon, int aBaseItemId) {
 		super(aStatsWeapon, HardPointType.MISSILE, getAmmoType(aStatsWeapon));
@@ -93,7 +93,7 @@ public class MissileWeapon extends AmmoWeapon {
 		return (MissileWeapon) ItemDB.lookup(baseItemId);
 	}
 
-	public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;
+	public final static Comparator<Item>	DEFAULT_ORDERING	= DEFAULT_WEAPON_ORDERING;
 
 	/**
 	 * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns

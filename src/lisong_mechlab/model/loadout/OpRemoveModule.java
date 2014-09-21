@@ -29,9 +29,9 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class OpRemoveModule extends Operation {
-	private final PilotModule module;
-	private final LoadoutBase<?> loadout;
-	private final transient MessageXBar xBar;
+	private final PilotModule			module;
+	private final LoadoutBase<?>		loadout;
+	private final transient MessageXBar	xBar;
 
 	/**
 	 * Creates a new {@link OpRemoveModule}.

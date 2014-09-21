@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
@@ -77,12 +76,9 @@ public class WeaponRanges {
 
 	static public Double[] getRanges(LoadoutBase<?> aLoadout) {
 		List<Weapon> weapons = new ArrayList<>();
-		for (Item item : aLoadout.getAllItems()) {
-			if (item instanceof Weapon) {
-				Weapon weapon = (Weapon) item;
-				weapons.add(weapon);
-			}
+		for (Weapon weapon : aLoadout.items(Weapon.class)) {
+			weapons.add(weapon);
 		}
-		return getRanges(weapons, aLoadout.getWeaponModifiers());
+		return getRanges(weapons, aLoadout.getModifiers(WeaponModifier.class));
 	}
 }

@@ -47,9 +47,9 @@ import org.mockito.Mockito;
  */
 public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest {
 
-	protected boolean baydoors = false;
-	protected ComponentStandard stdInternal;
-	protected List<HardPoint> hardPoints = new ArrayList<>();
+	protected boolean			baydoors	= false;
+	protected ComponentStandard	stdInternal;
+	protected List<HardPoint>	hardPoints	= new ArrayList<>();
 
 	@Before
 	public void setup() {

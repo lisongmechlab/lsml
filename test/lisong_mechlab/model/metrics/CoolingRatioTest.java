@@ -36,11 +36,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CoolingRatioTest {
 	@Mock
-	private HeatDissipation dissipation;
+	private HeatDissipation	dissipation;
 	@Mock
-	private HeatGeneration heatGeneration;
+	private HeatGeneration	heatGeneration;
 	@InjectMocks
-	private CoolingRatio cut;
+	private CoolingRatio	cut;
 
 	@Test
 	public void testCalculate() throws Exception {

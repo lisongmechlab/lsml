@@ -33,7 +33,7 @@ import lisong_mechlab.model.chassi.Location;
  * @author Emily Björk
  */
 public class HardPointCache {
-	static private Map<String, Map<Integer, HardPoint>> map;
+	static private Map<String, Map<Integer, HardPoint>>	map;
 
 	static {
 		map = new TreeMap<>();

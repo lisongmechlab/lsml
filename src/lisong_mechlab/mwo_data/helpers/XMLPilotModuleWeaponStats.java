@@ -26,5 +26,5 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class XMLPilotModuleWeaponStats {
 	@XStreamAsAttribute
-	public String compatibleWeapons;
+	public String	compatibleWeapons;
 }

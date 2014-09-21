@@ -23,9 +23,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsModuleStats {
 	@XStreamAsAttribute
-	public int slots;
+	public int		slots;
 	@XStreamAsAttribute
-	public double tons;
+	public double	tons;
 	@XStreamAsAttribute
-	public int health;
+	public int		health;
 }

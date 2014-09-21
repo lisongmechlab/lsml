@@ -34,8 +34,8 @@ import org.junit.Test;
  * @author Emily Björk
  */
 public class HeatCapacityTest {
-	final private MockLoadoutContainer mlc = new MockLoadoutContainer();
-	final private HeatCapacity cut = new HeatCapacity(mlc.loadout);
+	final private MockLoadoutContainer	mlc	= new MockLoadoutContainer();
+	final private HeatCapacity			cut	= new HeatCapacity(mlc.loadout);
 
 	/**
 	 * Each 'mech has a base heat capacity of 30 heat. Each single heat sink adds 1 capacity. Each double heat sink adds

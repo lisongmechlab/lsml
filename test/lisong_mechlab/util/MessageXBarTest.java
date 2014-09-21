@@ -38,7 +38,7 @@ import org.junit.Test;
  * @author Emily Björk
  */
 public class MessageXBarTest {
-	MessageXBar cut = new MessageXBar();
+	MessageXBar	cut	= new MessageXBar();
 
 	@Test
 	public void testPostMessage() {

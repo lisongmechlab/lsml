@@ -36,12 +36,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public abstract class ComponentBase {
 	@XStreamAsAttribute
-	private final int slots;
+	private final int			slots;
 	@XStreamAsAttribute
-	private final double hitpoints;
+	private final double		hitpoints;
 	@XStreamAsAttribute
-	private final Location location;
-	private final List<Item> fixedItems;
+	private final Location		location;
+	private final List<Item>	fixedItems;
 
 	/**
 	 * Creates a new {@link ComponentBase}.

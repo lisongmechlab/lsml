@@ -28,9 +28,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class MdfCockpit {
 	@XStreamAsAttribute
-	public int TechSlots;
+	public int	TechSlots;
 	@XStreamAsAttribute
-	public int ConsumableSlots;
+	public int	ConsumableSlots;
 	@XStreamAsAttribute
-	public int WeaponModSlots;
+	public int	WeaponModSlots;
 }

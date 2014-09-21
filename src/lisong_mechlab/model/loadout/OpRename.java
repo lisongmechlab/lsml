@@ -29,11 +29,11 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class OpRename extends Operation {
-	private String oldName;
-	private final String newName;
+	private String					oldName;
+	private final String			newName;
 
-	protected final MessageXBar xBar;
-	protected final LoadoutBase<?> loadout;
+	protected final MessageXBar		xBar;
+	protected final LoadoutBase<?>	loadout;
 
 	/**
 	 * @param aLoadout

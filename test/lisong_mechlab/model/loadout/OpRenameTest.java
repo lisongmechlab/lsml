@@ -40,7 +40,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class OpRenameTest {
 
 	@Mock
-	private MessageXBar xBar;
+	private MessageXBar	xBar;
 
 	/**
 	 * We can rename {@link LoadoutStandard}s.

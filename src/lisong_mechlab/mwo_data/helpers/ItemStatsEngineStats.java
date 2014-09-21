@@ -23,15 +23,15 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsEngineStats {
 	@XStreamAsAttribute
-	public int slots;
+	public int		slots;
 	@XStreamAsAttribute
-	public int rating;
+	public int		rating;
 	@XStreamAsAttribute
-	public double weight;
+	public double	weight;
 	@XStreamAsAttribute
-	public int type;
+	public int		type;
 	@XStreamAsAttribute
-	public int heatsinks;
+	public int		heatsinks;
 	@XStreamAsAttribute
-	public int health;
+	public int		health;
 }

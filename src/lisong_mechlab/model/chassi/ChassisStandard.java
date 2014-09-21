@@ -40,12 +40,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ChassisStandard extends ChassisBase {
 	@XStreamAsAttribute
-	private final int engineMin;
+	private final int		engineMin;
 	@XStreamAsAttribute
-	private final int engineMax;
+	private final int		engineMax;
 	@XStreamAsAttribute
-	private final int maxJumpJets;
-	private final Quirks quirks;
+	private final int		maxJumpJets;
+	private final Quirks	quirks;
 
 	/**
 	 * Creates a new {@link ChassisStandard}.

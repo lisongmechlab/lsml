@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class MissileWeaponTest {
 
-	private final List<MissileWeapon> allMissileWeapons = ItemDB.lookup(MissileWeapon.class);
+	private final List<MissileWeapon>	allMissileWeapons	= ItemDB.lookup(MissileWeapon.class);
 
 	/**
 	 * The number of critical slots is affected by Artemis.

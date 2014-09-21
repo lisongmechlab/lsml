@@ -41,14 +41,14 @@ import lisong_mechlab.model.item.ItemDB;
  */
 public class OmniPodRenderer implements ListCellRenderer<OmniPod> {
 
-	private final JLabel active = new JLabel();
+	private final JLabel		active		= new JLabel();
 
-	private final JPanel panel = new JPanel();
-	private final JPanel hardpoints = new JPanel();
-	private final JLabel quirks = new JLabel();
-	private final TitledBorder border = BorderFactory.createTitledBorder("");
+	private final JPanel		panel		= new JPanel();
+	private final JPanel		hardpoints	= new JPanel();
+	private final JLabel		quirks		= new JLabel();
+	private final TitledBorder	border		= BorderFactory.createTitledBorder("");
 
-	private final JLabel hpJJ = new JLabel();
+	private final JLabel		hpJJ		= new JLabel();
 
 	public OmniPodRenderer() {
 		panel.setLayout(new BorderLayout());

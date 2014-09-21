@@ -30,31 +30,31 @@ import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpSetArmorTest {
-	private static final int TEST_MAX_ARMOR = 40;
-	private ArmorSide armorSide = ArmorSide.ONLY;
+	private static final int						TEST_MAX_ARMOR			= 40;
+	private ArmorSide								armorSide				= ArmorSide.ONLY;
 	@Mock
-	private LoadoutBase<ConfiguredComponentBase> loadout;
+	private LoadoutBase<ConfiguredComponentBase>	loadout;
 	@Mock
-	private Upgrades upgrades;
+	private Upgrades								upgrades;
 	@Mock
-	private ConfiguredComponentBase loadoutPart;
+	private ConfiguredComponentBase					loadoutPart;
 	@Mock
-	private MessageXBar xBar;
+	private MessageXBar								xBar;
 	@Mock
-	private ComponentBase internalPart;
-	private double armorPerTon = 32;
+	private ComponentBase							internalPart;
+	private double									armorPerTon				= 32;
 	@Mock
-	private ArmorUpgrade armorUpgrade;
+	private ArmorUpgrade							armorUpgrade;
 	@Mock
-	private ChassisBase chassis;
+	private ChassisBase								chassis;
 
-	private Integer chassisMass = 100;
-	private double itemMass = 50;
-	private int priorArmor = 300;
-	private int oldArmor = 20;
-	private List<ConfiguredComponentBase> parts = new ArrayList<>();
-	private Boolean oldManualArmor = false;
-	private int componentMaxArmorLeft = TEST_MAX_ARMOR;
+	private Integer									chassisMass				= 100;
+	private double									itemMass				= 50;
+	private int										priorArmor				= 300;
+	private int										oldArmor				= 20;
+	private List<ConfiguredComponentBase>			parts					= new ArrayList<>();
+	private Boolean									oldManualArmor			= false;
+	private int										componentMaxArmorLeft	= TEST_MAX_ARMOR;
 
 	public OpSetArmor makeCUT(int armor, boolean isManual) {
 		Mockito.when(chassis.getMassMax()).thenReturn(chassisMass);

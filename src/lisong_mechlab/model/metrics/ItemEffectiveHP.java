@@ -35,10 +35,10 @@ import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
  * @author Emily Björk
  */
 public class ItemEffectiveHP implements ItemMetric {
-	private final ConfiguredComponentBase loadoutPart;
+	private final ConfiguredComponentBase	loadoutPart;
 
 	private class ItemState {
-		final Item item;
+		final Item	item;
 
 		ItemState(Item aItem) {
 			item = aItem;
@@ -48,11 +48,11 @@ public class ItemEffectiveHP implements ItemMetric {
 			ehp = 0;
 		}
 
-		double hpLeft;
-		double ehp;
+		double	hpLeft;
+		double	ehp;
 	}
 
-	final private List<ItemState> cache = new ArrayList<>();
+	final private List<ItemState>	cache	= new ArrayList<>();
 
 	public ItemEffectiveHP(ConfiguredComponentBase aLoadoutPart) {
 		loadoutPart = aLoadoutPart;

@@ -49,9 +49,9 @@ import lisong_mechlab.view.mechlab.LoadoutDesktop;
 import lisong_mechlab.view.preferences.Preferences;
 
 public class GarageTree extends JTree {
-	private static final long serialVersionUID = -8856874024057864775L;
-	GarageTreeModel model = null;
-	private final MessageXBar xBar;
+	private static final long	serialVersionUID	= -8856874024057864775L;
+	GarageTreeModel				model				= null;
+	private final MessageXBar	xBar;
 
 	public GarageTree(final LoadoutDesktop aLoadoutDesktop, MessageXBar anXBar, JTextField aFilterBar,
 			Preferences aPreferences) {

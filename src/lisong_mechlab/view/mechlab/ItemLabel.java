@@ -52,6 +52,7 @@ import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.OpAutoAddItem;
 import lisong_mechlab.model.metrics.TopSpeed;
@@ -67,12 +68,12 @@ import lisong_mechlab.view.render.StyleManager;
  * @author Emily Björk
  */
 public class ItemLabel extends JLabel {
-	private static final long serialVersionUID = 1237952620487557121L;
-	private final Item item;
+	private static final long	serialVersionUID	= 1237952620487557121L;
+	private final Item			item;
 
 	private static class ProgressDialog extends JDialog {
-		private static final long serialVersionUID = -6084430266229568009L;
-		SwingWorker<Void, Void> task;
+		private static final long	serialVersionUID	= -6084430266229568009L;
+		SwingWorker<Void, Void>		task;
 
 		public ProgressDialog() {
 			super(ProgramInit.lsml(), "SmartPlace in progress...", ModalityType.APPLICATION_MODAL);
@@ -85,7 +86,7 @@ public class ItemLabel extends JLabel {
 			panel.add(new JLabel("That's a tricky proposition cap'n but I'll see what I can do..."));
 			panel.add(progressBar);
 			panel.add(new JButton(new AbstractAction("Abort") {
-				private static final long serialVersionUID = 2384981612883023314L;
+				private static final long	serialVersionUID	= 2384981612883023314L;
 
 				@Override
 				public void actionPerformed(ActionEvent aE) {
@@ -104,11 +105,11 @@ public class ItemLabel extends JLabel {
 	}
 
 	private static class AutoPlaceTask extends SwingWorker<Void, Void> {
-		private OpAutoAddItem operation;
-		private JDialog dialog;
-		private LoadoutFrame loadoutFrame;
-		private MessageXBar xBar;
-		private Item itemToPlace;
+		private OpAutoAddItem	operation;
+		private JDialog			dialog;
+		private LoadoutFrame	loadoutFrame;
+		private MessageXBar		xBar;
+		private Item			itemToPlace;
 
 		public AutoPlaceTask(JDialog aDialog, LoadoutFrame aLoadoutFrame, MessageXBar anXBar, Item aItem) {
 			dialog = aDialog;
@@ -159,7 +160,8 @@ public class ItemLabel extends JLabel {
 				Component component = anEvent.getComponent();
 				if (component instanceof ItemLabel) {
 					if (null != loadout) {
-						aInfoPanel.showItem(item, loadout.getEfficiencies(), loadout.getWeaponModifiers());
+						aInfoPanel
+								.showItem(item, loadout.getEfficiencies(), loadout.getModifiers(WeaponModifier.class));
 					} else {
 						aInfoPanel.showItem(item, null, null);
 					}
@@ -247,7 +249,7 @@ public class ItemLabel extends JLabel {
 		return item;
 	}
 
-	private boolean smartPlace = false;
+	private boolean	smartPlace	= false;
 
 	@Override
 	protected void paintComponent(Graphics grphcs) {
@@ -293,12 +295,10 @@ public class ItemLabel extends JLabel {
 						setVisible(false);
 					} else {
 						boolean isUsable = false;
-						for (Item it : aLoadout.getAllItems()) {
-							if (it instanceof AmmoWeapon) {
-								if (((AmmoWeapon) it).isCompatibleAmmo(ammunition)) {
-									isUsable = true;
-									break;
-								}
+						for (AmmoWeapon ammoWeapon : aLoadout.items(AmmoWeapon.class)) {
+							if (ammoWeapon.isCompatibleAmmo(ammunition)) {
+								isUsable = true;
+								break;
 							}
 						}
 						setVisible(isUsable);

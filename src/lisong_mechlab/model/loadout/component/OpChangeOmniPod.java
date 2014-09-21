@@ -36,11 +36,11 @@ import lisong_mechlab.util.OperationStack.Operation;
  */
 public class OpChangeOmniPod extends CompositeOperation {
 
-	private final ConfiguredComponentOmniMech component;
-	private final OmniPod newOmniPod;
-	private final LoadoutOmniMech loadout;
-	private final MessageXBar xBar;
-	private OmniPod oldOmniPod;
+	private final ConfiguredComponentOmniMech	component;
+	private final OmniPod						newOmniPod;
+	private final LoadoutOmniMech				loadout;
+	private final MessageXBar					xBar;
+	private OmniPod								oldOmniPod;
 
 	/**
 	 * Creates a new {@link OmniPod} change {@link Operation}.
