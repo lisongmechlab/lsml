@@ -44,8 +44,8 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
-   transient private final QuirkedMovementProfile movementProfile;
-   transient private final Upgrades               upgrades;
+   private final QuirkedMovementProfile movementProfile;
+   private final Upgrades               upgrades;
 
    /**
     * @param aFactory
@@ -72,6 +72,26 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
          movementProfile.addMovementModifier(component.getOmniPod().getQuirks());
       }
       upgrades = new Upgrades(aLoadoutOmniMech.getUpgrades());
+   }
+
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((upgrades == null) ? 0 : upgrades.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( !super.equals(obj) )
+         return false;
+      LoadoutOmniMech other = (LoadoutOmniMech)obj;
+      if( !upgrades.equals(other.upgrades) )
+         return false;
+      return true;
    }
 
    /**
@@ -156,7 +176,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
       else if( aModuleSlot == ModuleSlot.WEAPON ){
          return getChassis().getWeaponModulesMax();
       }
-      else if (aModuleSlot == ModuleSlot.HYBRID){
+      else if( aModuleSlot == ModuleSlot.HYBRID ){
          return 1; // +1 for mastery
       }
       else{

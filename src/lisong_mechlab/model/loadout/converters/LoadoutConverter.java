@@ -26,10 +26,12 @@ import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisStandard;
+import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutBuilder;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpAddModule;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
@@ -95,6 +97,14 @@ public class LoadoutConverter implements Converter{
          aContext.convertAnother(part);
          aWriter.endNode();
       }
+
+      aWriter.startNode("pilotmodules");
+      for(PilotModule module : loadout.getModules()){
+         aWriter.startNode("module");
+         aContext.convertAnother(module);
+         aWriter.endNode();
+      }
+      aWriter.endNode();
    }
 
    @Override
@@ -165,6 +175,20 @@ public class LoadoutConverter implements Converter{
          else if( "component".equals(aReader.getNodeName()) ){
             aContext.convertAnother(loadoutBase, ConfiguredComponentStandard.class, new ConfiguredComponentConverter(loadoutBase, builder));
          }
+         else if( "pilotmodules".equals(aReader.getNodeName()) ){
+
+            while( aReader.hasMoreChildren() ){
+               aReader.moveDown();
+               if(!"module".equals(aReader.getNodeName())){
+                  throw new RuntimeException("Malformed XML! Expected <module> got: " + aReader.getNodeName());
+               }
+
+               PilotModule module = (PilotModule)aContext.convertAnother(null, PilotModule.class);
+               builder.push(new OpAddModule(null, loadoutBase, module));
+               
+               aReader.moveUp();
+            }
+         }
          aReader.moveUp();
       }
       builder.apply();
@@ -214,7 +238,7 @@ public class LoadoutConverter implements Converter{
       reportErrors(builder, name);
       return loadout;
    }
-   
+
    private void reportErrors(LoadoutBuilder builder, String name){
       String errors = builder.getErrors(name);
       if( null != errors ){

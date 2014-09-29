@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -42,6 +42,39 @@ public class EfficienciesTest{
    public void setup(){
       cut = new Efficiencies();
    }
+   
+   @Test
+   public void testEquals(){
+      Efficiencies cut1 = new Efficiencies();
+      
+      assertEquals(cut,cut);
+      assertEquals(cut,cut1);
+      
+      cut1.setAnchorTurn(true, null);
+      assertNotEquals(cut,cut1);
+      cut1.setAnchorTurn(false, null);
+      
+      cut1.setCoolRun(true, null);
+      assertNotEquals(cut,cut1);
+      cut1.setCoolRun(false, null);
+      
+      cut1.setDoubleBasics(true, null);
+      assertNotEquals(cut,cut1);
+      cut1.setDoubleBasics(false, null);
+      
+      cut1.setFastFire(true, null);
+      assertNotEquals(cut,cut1);
+      cut1.setFastFire(false, null);
+      
+      cut1.setHeatContainment(true, null);
+      assertNotEquals(cut,cut1);
+      cut1.setHeatContainment(false, null);
+      
+      cut1.setSpeedTweak(true, null);
+      assertNotEquals(cut,cut1);
+      cut1.setSpeedTweak(false, null);
+   }
+   
 
    @Test
    public void testSetHasSpeedTweak() throws Exception{

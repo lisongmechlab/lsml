@@ -74,7 +74,7 @@ public abstract class LoadoutBaseTest{
    }
 
    protected abstract LoadoutBase<?> makeDefaultCUT();
-
+   
    @Test
    public final void testToString() throws Exception{
       LoadoutBase<?> cut = makeDefaultCUT();

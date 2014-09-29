@@ -153,6 +153,10 @@ public class Efficiencies{
          return false;
       if( speedTweak != other.speedTweak )
          return false;
+      if( anchorTurn != other.anchorTurn )
+         return false;
+      if( fastfire != other.fastfire )
+         return false;
       return true;
    }
 
@@ -179,7 +183,6 @@ public class Efficiencies{
     *           The value to set.
     * @param xBar
     *           {@link MessageXBar} to signal changes on.
-    *           
     */
    public void setAnchorTurn(boolean aAnchorTurn, MessageXBar xBar){
       if( aAnchorTurn != anchorTurn ){
