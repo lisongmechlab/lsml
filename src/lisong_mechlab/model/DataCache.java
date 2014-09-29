@@ -473,6 +473,11 @@ public class DataCache{
             }
          }
          if( !found ){
+            // TODO: Remove this once PGI fixes data files.
+            if(uiName.equals("THE MINING COLLECTIVE")){
+               ans.add(new Environment(uiName, 0.0));
+               continue;
+            }
             throw new IOException("Unable to find temperature for environment: [" + uiName + "]!");
          }
       }
