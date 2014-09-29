@@ -19,21 +19,27 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
+import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementArchetype;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.chassi.OmniPodDB;
 import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.ModuleSlot;
+import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
+import lisong_mechlab.model.loadout.component.OpChangeOmniPod;
+import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.util.OperationStack;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -95,6 +101,130 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
       return new LoadoutOmniMech(new ComponentFactory(), (ChassisOmniMech)chassis);
    }
 
+   /**
+    * {@link #equals(Object)} shall always return <code>true</code> for the same object.
+    */
+   @Test
+   public final void testEquals_Self(){
+      LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+
+      assertEquals(cut, cut);
+   }
+
+   /**
+    * {@link #equals(Object)} shall return <code>true</code> if the objects are equal.
+    */
+   @Test
+   public final void testEquals_Equal(){
+      ChassisOmniMech dwfa = (ChassisOmniMech)ChassisDB.lookup("DWF-A");
+      LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), dwfa);
+      LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), dwfa);
+
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new OpLoadStock(dwfa, cut, null));
+      stack.pushAndApply(new OpLoadStock(dwfa, cut1, null));
+
+      assertEquals(cut, cut1);
+   }
+
+   /**
+    * {@link #equals(Object)} shall return <code>false</code> if the chassis differ.
+    */
+   @Test
+   public final void testEquals_Chassis(){
+      LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+      LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-B"));
+
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new OpRename(cut, null, "fooba"));
+      stack.pushAndApply(new OpRename(cut1, null, "fooba"));
+
+      assertNotEquals(cut, cut1);
+   }
+
+   /**
+    * {@link #equals(Object)} shall return <code>false</code> if the objects are not of the same loadout type.
+    */
+   @Test
+   public final void testEquals_WrongType(){
+      LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+      LoadoutStandard cut1 = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("JR7-F"));
+
+      assertNotEquals(cut, cut1);
+   }
+
+   /**
+    * {@link #equals(Object)} shall return <code>false</code> if the objects have different upgrades.
+    */
+   @Test
+   public final void testEquals_Upgrades(){
+      LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+      LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new OpSetGuidanceType(null, cut1, UpgradeDB.ARTEMIS_IV));
+
+      assertNotEquals(cut, cut1);
+   }
+
+   /**
+    * {@link #equals(Object)} shall return <code>false</code> if the objects have different names.
+    */
+   @Test
+   public final void testEquals_Name(){
+      LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+      LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new OpRename(cut, null, "fooba"));
+
+      assertNotEquals(cut, cut1);
+   }
+
+   /**
+    * {@link #equals(Object)} shall return <code>true</code> if the objects have different efficiencies. (Efficiens are
+    * not part of the loadout per say)
+    */
+   @Test
+   public final void testEquals_Efficiencies(){
+      LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+      LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+
+      cut.getEfficiencies().setAnchorTurn(true, null);
+      cut1.getEfficiencies().setAnchorTurn(false, null);
+
+      assertEquals(cut, cut1);
+   }
+
+   /**
+    * {@link #equals(Object)} shall return <code>false</code> if the objects have differing components.
+    */
+   @Test
+   public final void testEquals_Components(){
+      LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+      LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new OpChangeOmniPod(null, cut, cut.getComponent(Location.LeftArm),
+                                             OmniPodDB.lookupOriginal((ChassisOmniMech)ChassisDB.lookup("DWF-B"), Location.LeftArm)));
+
+      assertNotEquals(cut, cut1);
+   }
+   
+   /**
+    * {@link #equals(Object)} shall return <code>false</code> if the objects have differing modules.
+    */
+   @Test
+   public final void testEquals_Modules(){
+      LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+      LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)ChassisDB.lookup("DWF-A"));
+
+      OperationStack stack = new OperationStack(0);
+      stack.pushAndApply(new OpAddModule(null, cut, PilotModuleDB.lookup("ADVANCED UAV")));
+
+      assertNotEquals(cut, cut1);
+   }
+
    @Test
    public final void testGetEngine() throws Exception{
       assertSame(engine, makeDefaultCUT().getEngine());
@@ -129,7 +259,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest{
       Mockito.when(pods[7].getPilotModulesMax()).thenReturn(3);
 
       assertEquals(6, makeDefaultCUT().getModulesMax(ModuleSlot.MECH));
-      
+
       assertEquals(1, makeDefaultCUT().getModulesMax(ModuleSlot.HYBRID));
    }
 
