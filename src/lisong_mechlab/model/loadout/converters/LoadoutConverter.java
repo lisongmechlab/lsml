@@ -19,6 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
+import javax.swing.JOptionPane;
+
 import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
@@ -40,6 +42,7 @@ import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -165,6 +168,7 @@ public class LoadoutConverter implements Converter{
          aReader.moveUp();
       }
       builder.apply();
+      reportErrors(builder, name);
       return loadoutBase;
    }
 
@@ -187,12 +191,12 @@ public class LoadoutConverter implements Converter{
             builder.push(new OpSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
             builder.push(new OpSetStructureType(null, loadout, upgrades.getStructure()));
             builder.push(new OpSetArmorType(null, loadout, upgrades.getArmor()));
-            
+
             // We cheat here to preserve backwards compatibility with really old V1 garages.
             // Just make sure that the guidance type is set so that fixes for artemis changes will be applied in
             // v1 parser in ConfiguredComponentConverter.
             (new OperationStack(0)).pushAndApply(new OpSetGuidanceType(null, loadout, upgrades.getGuidance()));
-            
+
          }
          else if( "efficiencies".equals(aReader.getNodeName()) ){
             Efficiencies eff = (Efficiencies)aContext.convertAnother(loadout, Efficiencies.class);
@@ -207,7 +211,14 @@ public class LoadoutConverter implements Converter{
          aReader.moveUp();
       }
       builder.apply();
+      reportErrors(builder, name);
       return loadout;
    }
-
+   
+   private void reportErrors(LoadoutBuilder builder, String name){
+      String errors = builder.getErrors(name);
+      if( null != errors ){
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), errors, "Error parsing loadout: " + name, JOptionPane.WARNING_MESSAGE);
+      }
+   }
 }

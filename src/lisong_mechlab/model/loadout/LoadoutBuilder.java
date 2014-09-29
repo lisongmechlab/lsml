@@ -19,8 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -72,18 +74,18 @@ public class LoadoutBuilder{
 
       @Override
       public int compare(Operation aLHS, Operation aRHS){
-         if(aLHS instanceof OpAddItem && aRHS instanceof OpAddItem){
+         if( aLHS instanceof OpAddItem && aRHS instanceof OpAddItem ){
             boolean lhsHeatSink = ((OpAddItem)aLHS).getItem() instanceof HeatSink;
             boolean rhsHeatSink = ((OpAddItem)aRHS).getItem() instanceof HeatSink;
-           
-            if(lhsHeatSink == rhsHeatSink)
+
+            if( lhsHeatSink == rhsHeatSink )
                return 0;
-            else if(lhsHeatSink)
-               return  1;
-            else 
+            else if( lhsHeatSink )
+               return 1;
+            else
                return -1;
          }
-         
+
          Integer priorityLHS = CLASS_PRIORITY_ORDER.get(aLHS.getClass());
          Integer priorityRHS = CLASS_PRIORITY_ORDER.get(aRHS.getClass());
 
@@ -99,17 +101,44 @@ public class LoadoutBuilder{
    }
 
    final private PriorityQueue<Operation> operations = new PriorityQueue<>(20, new OperationComparator());
+   private List<Throwable>                errors     = null;
 
    public void push(final Operation aOperation){
       operations.add(aOperation);
    }
 
+   /**
+    * Formats a string to describe the errors that occurred while building the loadout.
+    * 
+    * @param name
+    *           The name of the loadout. Used to format the error message.
+    * @return <code>null</code> if there was no error. A string describing the error(s) if there was any.
+    */
+   public String getErrors(String name){
+      if( errors == null )
+         return null;
+
+      StringBuilder message = new StringBuilder();
+      message.append("The following errors occured for loadout: ").append(name).append("\n\n");
+      for(Throwable t : errors){
+         message.append(t.getMessage()).append("\n");
+      }
+      message.append("\nAs much as possible of the loadout has been loaded.");
+      return message.toString();
+   }
+
    public void apply(){
       OperationStack operationStack = new OperationStack(0);
-      
       Operation operation;
-      while(null != (operation = operations.poll())){
-         operationStack.pushAndApply(operation);
+      while( null != (operation = operations.poll()) ){
+         try{
+            operationStack.pushAndApply(operation);
+         }
+         catch( Throwable t ){
+            if( null == errors )
+               errors = new ArrayList<>();
+            errors.add(t);
+         }
       }
    }
 }

@@ -36,6 +36,8 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+import javax.swing.JOptionPane;
+
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
@@ -77,6 +79,7 @@ import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
 import lisong_mechlab.util.Huffman2;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.view.ProgramInit;
 
 /**
  * The Second version of {@link LoadoutCoder} for LSML.
@@ -179,8 +182,12 @@ public class LoadoutCoderV3 implements LoadoutCoder{
             builder.push(new OpAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
          }
       }
-      
+
       builder.apply();
+      String errors = builder.getErrors("<nameless LSML import>");
+      if( null != errors ){
+         JOptionPane.showMessageDialog(ProgramInit.lsml(), errors, "Error parsing loadout: <nameless LSML import>", JOptionPane.WARNING_MESSAGE);
+      }
       return loadout;
    }
 
