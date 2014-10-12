@@ -37,40 +37,40 @@ import lisong_mechlab.model.chassi.HardPointType;
  * @author Emily Björk
  */
 public class WeaponsListView extends JPanel {
-	private static final float	FONT_FACTOR			= 2.0f;
-	private static final long	serialVersionUID	= 1L;
+    private static final float FONT_FACTOR      = 2.0f;
+    private static final long  serialVersionUID = 1L;
 
-	public WeaponsListView() {
-		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+    public WeaponsListView() {
+        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
-		JPanel inner = new JPanel();
-		inner.setLayout(new BoxLayout(inner, BoxLayout.PAGE_AXIS));
-		inner.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		add(inner);
+        JPanel inner = new JPanel();
+        inner.setLayout(new BoxLayout(inner, BoxLayout.PAGE_AXIS));
+        inner.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(inner);
 
-		JLabel missileLabel = new JLabel("Missile Weapons", SwingConstants.CENTER);
-		missileLabel.setFont(missileLabel.getFont().deriveFont(missileLabel.getFont().getSize() * FONT_FACTOR));
-		missileLabel.setAlignmentX(0.5f);
-		inner.add(missileLabel);
-		JScrollPane missilePane = new JScrollPane(new WeaponStatsTable(HardPointType.MISSILE));
-		missilePane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
-		inner.add(missilePane);
+        JLabel missileLabel = new JLabel("Missile Weapons", SwingConstants.CENTER);
+        missileLabel.setFont(missileLabel.getFont().deriveFont(missileLabel.getFont().getSize() * FONT_FACTOR));
+        missileLabel.setAlignmentX(0.5f);
+        inner.add(missileLabel);
+        JScrollPane missilePane = new JScrollPane(new WeaponStatsTable(HardPointType.MISSILE));
+        missilePane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+        inner.add(missilePane);
 
-		JLabel ballisticLabel = new JLabel("Ballistic Weapons", SwingConstants.CENTER);
-		ballisticLabel.setFont(missileLabel.getFont().deriveFont(ballisticLabel.getFont().getSize() * FONT_FACTOR));
-		ballisticLabel.setAlignmentX(0.5f);
-		inner.add(ballisticLabel);
-		JScrollPane ballisticPane = new JScrollPane(new WeaponStatsTable(HardPointType.BALLISTIC));
-		ballisticPane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
-		inner.add(ballisticPane);
+        JLabel ballisticLabel = new JLabel("Ballistic Weapons", SwingConstants.CENTER);
+        ballisticLabel.setFont(missileLabel.getFont().deriveFont(ballisticLabel.getFont().getSize() * FONT_FACTOR));
+        ballisticLabel.setAlignmentX(0.5f);
+        inner.add(ballisticLabel);
+        JScrollPane ballisticPane = new JScrollPane(new WeaponStatsTable(HardPointType.BALLISTIC));
+        ballisticPane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+        inner.add(ballisticPane);
 
-		JLabel energyLabel = new JLabel("Energy Weapons", SwingConstants.CENTER);
-		energyLabel.setFont(missileLabel.getFont().deriveFont(energyLabel.getFont().getSize() * FONT_FACTOR));
-		energyLabel.setAlignmentX(0.5f);
-		inner.add(energyLabel);
-		JScrollPane energyPane = new JScrollPane(new WeaponStatsTable(HardPointType.ENERGY));
-		energyPane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
-		inner.add(energyPane);
-	}
+        JLabel energyLabel = new JLabel("Energy Weapons", SwingConstants.CENTER);
+        energyLabel.setFont(missileLabel.getFont().deriveFont(energyLabel.getFont().getSize() * FONT_FACTOR));
+        energyLabel.setAlignmentX(0.5f);
+        inner.add(energyLabel);
+        JScrollPane energyPane = new JScrollPane(new WeaponStatsTable(HardPointType.ENERGY));
+        energyPane.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+        inner.add(energyPane);
+    }
 
 }

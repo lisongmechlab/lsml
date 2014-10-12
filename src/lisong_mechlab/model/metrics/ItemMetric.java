@@ -27,12 +27,12 @@ import lisong_mechlab.model.item.Item;
  * @author Emily Björk
  */
 public interface ItemMetric {
-	/**
-	 * Calculates the value of the metric. May employ caching but the caching must be transparent.
-	 * 
-	 * @param aItem
-	 *            The {@link Item} to calculate the metric for.
-	 * @return The value of the metric.
-	 */
-	public double calculate(Item aItem);
+    /**
+     * Calculates the value of the metric. May employ caching but the caching must be transparent.
+     * 
+     * @param aItem
+     *            The {@link Item} to calculate the metric for.
+     * @return The value of the metric.
+     */
+    public double calculate(Item aItem);
 }

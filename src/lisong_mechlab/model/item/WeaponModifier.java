@@ -29,66 +29,66 @@ import lisong_mechlab.model.pilot.PilotSkillTree;
  * @author Emily Björk
  */
 public interface WeaponModifier {
-	/**
-	 * @param aWeapon
-	 *            The {@link Weapon} to check if it should be affected.
-	 * @return <code>true</code> if this {@link WeaponModule} affects the given {@link Weapon}.
-	 */
-	public boolean affectsWeapon(Weapon aWeapon);
+    /**
+     * @param aWeapon
+     *            The {@link Weapon} to check if it should be affected.
+     * @return <code>true</code> if this {@link WeaponModule} affects the given {@link Weapon}.
+     */
+    public boolean affectsWeapon(Weapon aWeapon);
 
-	/**
-	 * Applies the effect of this modifier on the given attribute. Must only be called after
-	 * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.
-	 * 
-	 * @param aWeapon
-	 *            The weapon to apply the modifier to.
-	 * @param aRange
-	 *            The attribute to augment.
-	 * @param aPilotSkillTree
-	 *            The skills of the pilot, may affect the results.
-	 * @return The augmented value of the attribute (can be unchanged).
-	 */
-	public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree);
+    /**
+     * Applies the effect of this modifier on the given attribute. Must only be called after
+     * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.
+     * 
+     * @param aWeapon
+     *            The weapon to apply the modifier to.
+     * @param aRange
+     *            The attribute to augment.
+     * @param aPilotSkillTree
+     *            The skills of the pilot, may affect the results.
+     * @return The augmented value of the attribute (can be unchanged).
+     */
+    public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree);
 
-	/**
-	 * Applies the effect of this modifier on the given attribute. Must only be called after
-	 * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.
-	 * 
-	 * @param aWeapon
-	 *            The weapon to apply the modifier to.
-	 * @param aRange
-	 *            The attribute to augment.
-	 * @param aPilotSkillTree
-	 *            The skills of the pilot, may affect the results.
-	 * @return The augmented value of the attribute (can be unchanged).
-	 */
-	public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree);
+    /**
+     * Applies the effect of this modifier on the given attribute. Must only be called after
+     * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.
+     * 
+     * @param aWeapon
+     *            The weapon to apply the modifier to.
+     * @param aRange
+     *            The attribute to augment.
+     * @param aPilotSkillTree
+     *            The skills of the pilot, may affect the results.
+     * @return The augmented value of the attribute (can be unchanged).
+     */
+    public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree);
 
-	/**
-	 * Applies the effect of this modifier on the given attribute. Must only be called after
-	 * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.
-	 * 
-	 * @param aWeapon
-	 *            The weapon to apply the modifier to.
-	 * @param aHeat
-	 *            The attribute to augment.
-	 * @param aPilotSkillTree
-	 *            The skills of the pilot, may affect the results.
-	 * @return The augmented value of the attribute (can be unchanged).
-	 */
-	public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree);
+    /**
+     * Applies the effect of this modifier on the given attribute. Must only be called after
+     * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.
+     * 
+     * @param aWeapon
+     *            The weapon to apply the modifier to.
+     * @param aHeat
+     *            The attribute to augment.
+     * @param aPilotSkillTree
+     *            The skills of the pilot, may affect the results.
+     * @return The augmented value of the attribute (can be unchanged).
+     */
+    public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree);
 
-	/**
-	 * Applies the effect of this modifier on the given attribute. Must only be called after
-	 * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.
-	 * 
-	 * @param aWeapon
-	 *            The weapon to apply the modifier to.
-	 * @param aCooldown
-	 *            The attribute to augment.
-	 * @param aPilotSkillTree
-	 *            The skills of the pilot, may affect the results.
-	 * @return The augmented value of the attribute (can be unchanged).
-	 */
-	public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree);
+    /**
+     * Applies the effect of this modifier on the given attribute. Must only be called after
+     * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.
+     * 
+     * @param aWeapon
+     *            The weapon to apply the modifier to.
+     * @param aCooldown
+     *            The attribute to augment.
+     * @param aPilotSkillTree
+     *            The skills of the pilot, may affect the results.
+     * @return The augmented value of the attribute (can be unchanged).
+     */
+    public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree);
 }

@@ -28,18 +28,18 @@ import lisong_mechlab.util.message.MessageDelivery;
  * @author Emily Björk
  */
 public abstract class OpLoadoutBase extends CompositeOperation {
-	protected final LoadoutBase<?>	loadout;
+    protected final LoadoutBase<?> loadout;
 
-	/**
-	 * @param aLoadout
-	 *            The {@link LoadoutStandard} to operate on.
-	 * @param aMessageDelivery
-	 *            The {@link MessageDelivery} to announce changes on the loadout to.
-	 * @param aDescription
-	 *            A human readable description of the operation.
-	 */
-	public OpLoadoutBase(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, String aDescription) {
-		super(aDescription, aMessageDelivery);
-		loadout = aLoadout;
-	}
+    /**
+     * @param aLoadout
+     *            The {@link LoadoutStandard} to operate on.
+     * @param aMessageDelivery
+     *            The {@link MessageDelivery} to announce changes on the loadout to.
+     * @param aDescription
+     *            A human readable description of the operation.
+     */
+    public OpLoadoutBase(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, String aDescription) {
+        super(aDescription, aMessageDelivery);
+        loadout = aLoadout;
+    }
 }

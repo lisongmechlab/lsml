@@ -37,73 +37,74 @@ import lisong_mechlab.util.message.MessageXBar;
  */
 public class OpChangeOmniPod extends CompositeOperation {
 
-	private final ConfiguredComponentOmniMech	component;
-	private final OmniPod						newOmniPod;
-	private final LoadoutOmniMech				loadout;
-	private OmniPod								oldOmniPod;
+    private final ConfiguredComponentOmniMech component;
+    private final OmniPod                     newOmniPod;
+    private final LoadoutOmniMech             loadout;
+    private OmniPod                           oldOmniPod;
 
-	/**
-	 * Creates a new {@link OmniPod} change {@link Operation}.
-	 * 
-	 * @param aMessageDelivery
-	 *            A {@link MessageXBar} to send messages on.
-	 * @param aLoadout
-	 *            The {@link LoadoutOmniMech} that the component is a part on.
-	 * @param aComponentOmniMech
-	 *            The component to change the {@link OmniPod} on.
-	 * @param aOmniPod
-	 *            The new {@link OmniPod} to change to.
-	 */
-	public OpChangeOmniPod(MessageDelivery aMessageDelivery, LoadoutOmniMech aLoadout,
-			ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod) {
-		super("change omnipod on " + aComponentOmniMech.getInternalComponent().getLocation(), aMessageDelivery);
-		if (aOmniPod == null)
-			throw new IllegalArgumentException("Omnipod must not be null!");
+    /**
+     * Creates a new {@link OmniPod} change {@link Operation}.
+     * 
+     * @param aMessageDelivery
+     *            A {@link MessageXBar} to send messages on.
+     * @param aLoadout
+     *            The {@link LoadoutOmniMech} that the component is a part on.
+     * @param aComponentOmniMech
+     *            The component to change the {@link OmniPod} on.
+     * @param aOmniPod
+     *            The new {@link OmniPod} to change to.
+     */
+    public OpChangeOmniPod(MessageDelivery aMessageDelivery, LoadoutOmniMech aLoadout,
+            ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod) {
+        super("change omnipod on " + aComponentOmniMech.getInternalComponent().getLocation(), aMessageDelivery);
+        if (aOmniPod == null)
+            throw new IllegalArgumentException("Omnipod must not be null!");
 
-		component = aComponentOmniMech;
-		newOmniPod = aOmniPod;
-		loadout = aLoadout;
-	}
+        component = aComponentOmniMech;
+        newOmniPod = aOmniPod;
+        loadout = aLoadout;
+    }
 
-	@Override
-	public void buildOperation() {
-		oldOmniPod = component.getOmniPod();
+    @Override
+    public void buildOperation() {
+        oldOmniPod = component.getOmniPod();
 
-		// Remove any items that has a hard point requirement other than none.
-		for (Item item : component.getItemsEquipped()) {
-			if (item.getHardpointType() != HardPointType.NONE) {
-				addOp(new OpRemoveItem(messageBuffer, loadout, component, item));
-			}
-		}
+        // Remove any items that has a hard point requirement other than none.
+        for (Item item : component.getItemsEquipped()) {
+            if (item.getHardpointType() != HardPointType.NONE) {
+                addOp(new OpRemoveItem(messageBuffer, loadout, component, item));
+            }
+        }
 
-		// Make sure we respect global jump-jet limit
-		int jjLeft = loadout.getJumpJetsMax() + (newOmniPod.getJumpJetsMax() - oldOmniPod.getJumpJetsMax());
-		for (ConfiguredComponentOmniMech componentOmniMech : loadout.getComponents()) {
-			for (Item item : componentOmniMech.getItemsEquipped()) {
-				if (item instanceof JumpJet) {
-					if (jjLeft > 0) {
-						jjLeft--;
-					} else {
-						addOp(new OpRemoveItem(messageBuffer, loadout, componentOmniMech, item));
-					}
-				}
-			}
-		}
-	}
+        // Make sure we respect global jump-jet limit
+        int jjLeft = loadout.getJumpJetsMax() + (newOmniPod.getJumpJetsMax() - oldOmniPod.getJumpJetsMax());
+        for (ConfiguredComponentOmniMech componentOmniMech : loadout.getComponents()) {
+            for (Item item : componentOmniMech.getItemsEquipped()) {
+                if (item instanceof JumpJet) {
+                    if (jjLeft > 0) {
+                        jjLeft--;
+                    }
+                    else {
+                        addOp(new OpRemoveItem(messageBuffer, loadout, componentOmniMech, item));
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	protected void apply() {
-		super.apply();
+    @Override
+    protected void apply() {
+        super.apply();
 
-		loadout.setOmniPod(newOmniPod);
-		messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
-	}
+        loadout.setOmniPod(newOmniPod);
+        messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
+    }
 
-	@Override
-	protected void undo() {
-		loadout.setOmniPod(oldOmniPod);
-		messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
+    @Override
+    protected void undo() {
+        loadout.setOmniPod(oldOmniPod);
+        messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
 
-		super.undo();
-	}
+        super.undo();
+    }
 }

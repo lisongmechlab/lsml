@@ -24,36 +24,36 @@ import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class HeatSink extends Module {
-	private final double	dissapation;
-	private final double	capacity;
+    private final double dissapation;
+    private final double capacity;
 
-	public HeatSink(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-			HardPointType aHardpointType, int aHP, Faction aFaction, double aDissipation, double aCapacity) {
-		super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
-		dissapation = aDissipation;
-		capacity = aCapacity;
-	}
+    public HeatSink(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardpointType, int aHP, Faction aFaction, double aDissipation, double aCapacity) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+        dissapation = aDissipation;
+        capacity = aCapacity;
+    }
 
-	public HeatSink(ItemStatsModule aStatsModule) {
-		super(aStatsModule);
-		dissapation = aStatsModule.HeatSinkStats.cooling;
-		capacity = -aStatsModule.HeatSinkStats.heatbase;
-	}
+    public HeatSink(ItemStatsModule aStatsModule) {
+        super(aStatsModule);
+        dissapation = aStatsModule.HeatSinkStats.cooling;
+        capacity = -aStatsModule.HeatSinkStats.heatbase;
+    }
 
-	public double getDissipation() {
-		return dissapation;
-	}
+    public double getDissipation() {
+        return dissapation;
+    }
 
-	public double getCapacity() {
-		return capacity;
-	}
+    public double getCapacity() {
+        return capacity;
+    }
 
-	public boolean isDouble() {
-		return capacity > 1.00001; // Account for double precision
-	}
+    public boolean isDouble() {
+        return capacity > 1.00001; // Account for double precision
+    }
 
-	@Override
-	public boolean isCompatible(Upgrades aUpgrades) {
-		return aUpgrades.getHeatSink().getHeatSinkType() == this;
-	}
+    @Override
+    public boolean isCompatible(Upgrades aUpgrades) {
+        return aUpgrades.getHeatSink().getHeatSinkType() == this;
+    }
 }

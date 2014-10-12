@@ -28,48 +28,48 @@ import lisong_mechlab.util.WeaponRanges;
  * @author Emily Björk
  */
 public abstract class RangeMetric implements Metric {
-	protected double				range		= -1;
-	protected boolean				fixedRange	= false;
-	protected final LoadoutBase<?>	loadout;
+    protected double               range      = -1;
+    protected boolean              fixedRange = false;
+    protected final LoadoutBase<?> loadout;
 
-	public RangeMetric(LoadoutBase<?> aLoadout) {
-		loadout = aLoadout;
-	}
+    public RangeMetric(LoadoutBase<?> aLoadout) {
+        loadout = aLoadout;
+    }
 
-	/**
-	 * Changes the range for which the damage is calculated. A value of 0 or less will result in the range with maximum
-	 * damage always being selected.
-	 * 
-	 * @param aRange
-	 *            The range to calculate the damage at.
-	 */
-	public void changeRange(double aRange) {
-		fixedRange = aRange > 0;
-		range = aRange;
-	}
+    /**
+     * Changes the range for which the damage is calculated. A value of 0 or less will result in the range with maximum
+     * damage always being selected.
+     * 
+     * @param aRange
+     *            The range to calculate the damage at.
+     */
+    public void changeRange(double aRange) {
+        fixedRange = aRange > 0;
+        range = aRange;
+    }
 
-	/**
-	 * @return The range that the result of the last call to calculate() is for.
-	 */
-	public double getRange() {
-		return range;
-	}
+    /**
+     * @return The range that the result of the last call to calculate() is for.
+     */
+    public double getRange() {
+        return range;
+    }
 
-	@Override
-	public double calculate() {
-		if (fixedRange)
-			return calculate(range);
+    @Override
+    public double calculate() {
+        if (fixedRange)
+            return calculate(range);
 
-		double max = Double.NEGATIVE_INFINITY;
-		for (Double r : WeaponRanges.getRanges(loadout)) {
-			double value = calculate(r);
-			if (value >= max) {
-				max = value;
-				range = r;
-			}
-		}
-		return max;
-	}
+        double max = Double.NEGATIVE_INFINITY;
+        for (Double r : WeaponRanges.getRanges(loadout)) {
+            double value = calculate(r);
+            if (value >= max) {
+                max = value;
+                range = r;
+            }
+        }
+        return max;
+    }
 
-	public abstract double calculate(double aRange);
+    public abstract double calculate(double aRange);
 }

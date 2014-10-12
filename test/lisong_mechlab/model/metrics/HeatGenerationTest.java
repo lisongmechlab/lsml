@@ -39,34 +39,34 @@ import org.junit.Test;
  * @author Emily Björk
  */
 public class HeatGenerationTest {
-	private final MockLoadoutContainer	mlc	= new MockLoadoutContainer();
-	private final HeatGeneration		cut	= new HeatGeneration(mlc.loadout);
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private final HeatGeneration       cut = new HeatGeneration(mlc.loadout);
 
-	/**
-	 * Heat generation shall include heat per second from all weapons as well as the base heat from the engine. But no
-	 * heat from the jump jets.
-	 */
-	@Test
-	public void testCalculate() {
-		List<HeatSource> items = new ArrayList<>();
-		Weapon ppc = (Weapon) ItemDB.lookup("PPC");
-		Weapon ll = (Weapon) ItemDB.lookup("LARGE LASER");
-		Weapon lrm20 = (Weapon) ItemDB.lookup("LRM 20");
-		Weapon lb10x = (Weapon) ItemDB.lookup("LB 10-X AC");
-		Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
-		//JumpJet jj = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS V");
-		items.add(ppc);
-		items.add(ll);
-		items.add(lrm20);
-		items.add(lb10x);
-		items.add(engine);
-		//items.add(jj); // XXX: Should jump jets be included?
-		when(mlc.loadout.items(HeatSource.class)).thenReturn(items);
-		when(mlc.efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
+    /**
+     * Heat generation shall include heat per second from all weapons as well as the base heat from the engine. But no
+     * heat from the jump jets.
+     */
+    @Test
+    public void testCalculate() {
+        List<HeatSource> items = new ArrayList<>();
+        Weapon ppc = (Weapon) ItemDB.lookup("PPC");
+        Weapon ll = (Weapon) ItemDB.lookup("LARGE LASER");
+        Weapon lrm20 = (Weapon) ItemDB.lookup("LRM 20");
+        Weapon lb10x = (Weapon) ItemDB.lookup("LB 10-X AC");
+        Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
+        // JumpJet jj = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS V");
+        items.add(ppc);
+        items.add(ll);
+        items.add(lrm20);
+        items.add(lb10x);
+        items.add(engine);
+        // items.add(jj); // XXX: Should jump jets be included?
+        when(mlc.loadout.items(HeatSource.class)).thenReturn(items);
+        when(mlc.efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
 
-		final double expected = ppc.getStat("h/s", null, null) + ll.getStat("h/s", null, null)
-				+ lrm20.getStat("h/s", null, null) + lb10x.getStat("h/s", null, null) + engine.getHeat(null);
-		assertEquals(expected, cut.calculate(), 0.0);
-	}
+        final double expected = ppc.getStat("h/s", null, null) + ll.getStat("h/s", null, null)
+                + lrm20.getStat("h/s", null, null) + lb10x.getStat("h/s", null, null) + engine.getHeat(null);
+        assertEquals(expected, cut.calculate(), 0.0);
+    }
 
 }

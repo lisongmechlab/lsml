@@ -25,21 +25,21 @@ package lisong_mechlab.model.metrics.helpers;
  * @author Emily Björk
  */
 public class IntegratedPulseTrain implements IntegratedSignal {
-	private final double	period;
-	private final double	pulseWidth;
-	private final double	amplitude;
+    private final double period;
+    private final double pulseWidth;
+    private final double amplitude;
 
-	public IntegratedPulseTrain(double aPeriod, double aPulseWidth, double aAmplitude) {
-		period = aPeriod;
-		pulseWidth = aPulseWidth;
-		amplitude = aAmplitude;
-	}
+    public IntegratedPulseTrain(double aPeriod, double aPulseWidth, double aAmplitude) {
+        period = aPeriod;
+        pulseWidth = aPulseWidth;
+        amplitude = aAmplitude;
+    }
 
-	@Override
-	public double integrateFromZeroTo(double aTime) {
-		int periods = (int) (aTime / period);
-		double sum = amplitude == 0.0 ? 0 : periods * pulseWidth * amplitude; // Whole periods this far
-		double partialTime = Math.min(aTime - periods * period, pulseWidth);
-		return sum + partialTime * amplitude;
-	}
+    @Override
+    public double integrateFromZeroTo(double aTime) {
+        int periods = (int) (aTime / period);
+        double sum = amplitude == 0.0 ? 0 : periods * pulseWidth * amplitude; // Whole periods this far
+        double partialTime = Math.min(aTime - periods * period, pulseWidth);
+        return sum + partialTime * amplitude;
+    }
 }

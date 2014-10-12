@@ -22,20 +22,20 @@ package lisong_mechlab.mwo_data.helpers;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class MdfMech {
-	@XStreamAsAttribute
-	public String	Variant;
-	@XStreamAsAttribute
-	public int		MaxTons;
-	@XStreamAsAttribute
-	public double	BaseTons;
-	@XStreamAsAttribute
-	public int		MaxJumpJets;
-	@XStreamAsAttribute
-	public int		MinEngineRating;
-	@XStreamAsAttribute
-	public int		MaxEngineRating;
-	@XStreamAsAttribute
-	public String	VariantType;
-	@XStreamAsAttribute
-	public int		VariantParent;
+    @XStreamAsAttribute
+    public String Variant;
+    @XStreamAsAttribute
+    public int    MaxTons;
+    @XStreamAsAttribute
+    public double BaseTons;
+    @XStreamAsAttribute
+    public int    MaxJumpJets;
+    @XStreamAsAttribute
+    public int    MinEngineRating;
+    @XStreamAsAttribute
+    public int    MaxEngineRating;
+    @XStreamAsAttribute
+    public String VariantType;
+    @XStreamAsAttribute
+    public int    VariantParent;
 }

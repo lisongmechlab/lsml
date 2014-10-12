@@ -37,30 +37,31 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Emily Björk
  */
 public class HeatGeneration implements Metric {
-	private final LoadoutBase<?>	loadout;
+    private final LoadoutBase<?> loadout;
 
-	public HeatGeneration(final LoadoutBase<?> aLoadout) {
-		loadout = aLoadout;
-	}
+    public HeatGeneration(final LoadoutBase<?> aLoadout) {
+        loadout = aLoadout;
+    }
 
-	@Override
-	public double calculate() {
-		double heat = 0;
-		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
-		for (HeatSource item : loadout.items(HeatSource.class)) {
-			if (item instanceof Weapon) {
-				heat += ((Weapon) item).getStat("h/s", loadout.getEfficiencies(), modifiers);
-			} else if (item instanceof Engine) {
-				heat += ((Engine) item).getHeat(modifiers);
-			}
-		}
+    @Override
+    public double calculate() {
+        double heat = 0;
+        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        for (HeatSource item : loadout.items(HeatSource.class)) {
+            if (item instanceof Weapon) {
+                heat += ((Weapon) item).getStat("h/s", loadout.getEfficiencies(), modifiers);
+            }
+            else if (item instanceof Engine) {
+                heat += ((Engine) item).getHeat(modifiers);
+            }
+        }
 
-		double extra = 0;
-		for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
-			// XXX: No modifiers of this kind have been seen in the game yet so we do not know if this is correct.
-			extra += heatModifier.extraHeatGeneration(heat);
-		}
+        double extra = 0;
+        for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
+            // XXX: No modifiers of this kind have been seen in the game yet so we do not know if this is correct.
+            extra += heatModifier.extraHeatGeneration(heat);
+        }
 
-		return heat + extra;
-	}
+        return heat + extra;
+    }
 }

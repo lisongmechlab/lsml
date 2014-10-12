@@ -28,12 +28,12 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Emily Björk
  */
 public interface TimeMetric {
-	/**
-	 * Calculates the value of the metric. May employ caching but the caching must be transparent.
-	 * 
-	 * @param aTime
-	 *            The time to calculate the metric for.
-	 * @return The value of the metric at the given time.
-	 */
-	public double calculate(double aTime);
+    /**
+     * Calculates the value of the metric. May employ caching but the caching must be transparent.
+     * 
+     * @param aTime
+     *            The time to calculate the metric for.
+     * @return The value of the metric at the given time.
+     */
+    public double calculate(double aTime);
 }

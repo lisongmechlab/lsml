@@ -23,9 +23,9 @@ import org.junit.Test;
 
 public class UpgradeDBTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testLookup_BadId() {
-		UpgradeDB.lookup(0);
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void testLookup_BadId() {
+        UpgradeDB.lookup(0);
+    }
 
 }

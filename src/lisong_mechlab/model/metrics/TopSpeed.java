@@ -30,37 +30,37 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Emily Björk
  */
 public class TopSpeed implements Metric {
-	private final LoadoutBase<?>	loadout;
+    private final LoadoutBase<?> loadout;
 
-	public TopSpeed(final LoadoutBase<?> aLoadout) {
-		loadout = aLoadout;
-	}
+    public TopSpeed(final LoadoutBase<?> aLoadout) {
+        loadout = aLoadout;
+    }
 
-	@Override
-	public double calculate() {
-		Engine engine = loadout.getEngine();
-		if (null == engine)
-			return 0;
-		return calculate(engine.getRating(), loadout.getMovementProfile(), loadout.getChassis().getMassMax(), loadout
-				.getEfficiencies().getSpeedModifier());
-	}
+    @Override
+    public double calculate() {
+        Engine engine = loadout.getEngine();
+        if (null == engine)
+            return 0;
+        return calculate(engine.getRating(), loadout.getMovementProfile(), loadout.getChassis().getMassMax(), loadout
+                .getEfficiencies().getSpeedModifier());
+    }
 
-	/**
-	 * Performs the actual calculation. This has been extracted because there are situations where the maximal speed is
-	 * needed without having a {@link LoadoutStandard} at hand.
-	 * 
-	 * @param aRating
-	 *            The engine rating.
-	 * @param aMovementProfile
-	 *            The movement profile to calculate the speed with.
-	 * @param aMaxMass
-	 *            The mass of the chassis to calculate for.
-	 * @param aModifier
-	 *            A modifier to use, 1.0 for normal and 1.1 for speed tweak.
-	 * @return The speed in [km/h].
-	 */
-	static public double calculate(final int aRating, final MovementProfile aMovementProfile, final double aMaxMass,
-			final double aModifier) {
-		return aMovementProfile.getMaxMovementSpeed() * aRating / aMaxMass * aModifier;
-	}
+    /**
+     * Performs the actual calculation. This has been extracted because there are situations where the maximal speed is
+     * needed without having a {@link LoadoutStandard} at hand.
+     * 
+     * @param aRating
+     *            The engine rating.
+     * @param aMovementProfile
+     *            The movement profile to calculate the speed with.
+     * @param aMaxMass
+     *            The mass of the chassis to calculate for.
+     * @param aModifier
+     *            A modifier to use, 1.0 for normal and 1.1 for speed tweak.
+     * @return The speed in [km/h].
+     */
+    static public double calculate(final int aRating, final MovementProfile aMovementProfile, final double aMaxMass,
+            final double aModifier) {
+        return aMovementProfile.getMaxMovementSpeed() * aRating / aMaxMass * aModifier;
+    }
 }

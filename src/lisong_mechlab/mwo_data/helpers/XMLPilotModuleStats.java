@@ -26,11 +26,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Emily Björk
  */
-public class XMLPilotModuleStats{
-	@XStreamAsAttribute
-   public int talentid;
-	@XStreamAsAttribute
-	public String	category;
-	@XStreamAsAttribute
-	public String	slot;
+public class XMLPilotModuleStats {
+    @XStreamAsAttribute
+    public int    talentid;
+    @XStreamAsAttribute
+    public String category;
+    @XStreamAsAttribute
+    public String slot;
 }

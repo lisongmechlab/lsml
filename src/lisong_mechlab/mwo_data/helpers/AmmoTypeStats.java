@@ -22,10 +22,10 @@ package lisong_mechlab.mwo_data.helpers;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class AmmoTypeStats {
-	@XStreamAsAttribute
-	public String	type;
-	@XStreamAsAttribute
-	public int		numShots;
-	@XStreamAsAttribute
-	public double	internalDamage;
+    @XStreamAsAttribute
+    public String type;
+    @XStreamAsAttribute
+    public int    numShots;
+    @XStreamAsAttribute
+    public double internalDamage;
 }

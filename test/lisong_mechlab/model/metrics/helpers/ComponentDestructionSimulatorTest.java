@@ -41,92 +41,92 @@ import org.mockito.Mockito;
  */
 public class ComponentDestructionSimulatorTest {
 
-	@Test
-	public void testSoloComponent() {
-		double partHp = 42;
-		List<Item> partItems = new ArrayList<>();
-		partItems.add(ItemDB.BAP);
+    @Test
+    public void testSoloComponent() {
+        double partHp = 42;
+        List<Item> partItems = new ArrayList<>();
+        partItems.add(ItemDB.BAP);
 
-		ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
-		Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
+        ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
+        Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
 
-		ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
-		Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
-		Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
+        ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
+        Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
+        Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
-		MessageXBar xBar = Mockito.mock(MessageXBar.class);
+        MessageXBar xBar = Mockito.mock(MessageXBar.class);
 
-		ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part, xBar);
-		cut.simulate();
+        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part, xBar);
+        cut.simulate();
 
-		// There are 5 shots before the item explodes, thus the probability of all of them missing the item is:
-		// 0.58^5, i.e. the probability of the item exploding is: 1 - 0.58^5
-		double P_miss = 1.0;
-		for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
-			P_miss -= CriticalStrikeProbability.CRIT_CHANCE[i];
-		}
+        // There are 5 shots before the item explodes, thus the probability of all of them missing the item is:
+        // 0.58^5, i.e. the probability of the item exploding is: 1 - 0.58^5
+        double P_miss = 1.0;
+        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
+            P_miss -= CriticalStrikeProbability.CRIT_CHANCE[i];
+        }
 
-		double P_hit = 1 - Math.pow(P_miss, 5);
+        double P_hit = 1 - Math.pow(P_miss, 5);
 
-		assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.BAP), 0.0001);
-	}
+        assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.BAP), 0.0001);
+    }
 
-	/**
-	 * The AC20 has 18 health and needs two 10-point alphas to be destroyed
-	 */
-	@Test
-	public void testAC20Health() {
-		double partHp = 2; // Only allow one alpha
-		List<Item> partItems = new ArrayList<>();
-		partItems.add(ItemDB.lookup("AC/20"));
+    /**
+     * The AC20 has 18 health and needs two 10-point alphas to be destroyed
+     */
+    @Test
+    public void testAC20Health() {
+        double partHp = 2; // Only allow one alpha
+        List<Item> partItems = new ArrayList<>();
+        partItems.add(ItemDB.lookup("AC/20"));
 
-		ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
-		Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
+        ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
+        Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
 
-		ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
-		Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
-		Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
+        ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
+        Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
+        Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
-		MessageXBar xBar = Mockito.mock(MessageXBar.class);
+        MessageXBar xBar = Mockito.mock(MessageXBar.class);
 
-		ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part, xBar);
-		cut.simulate();
+        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part, xBar);
+        cut.simulate();
 
-		// The AC/20 will only explode if there is a double or triple critical hit (14+3%)
-		double P_hit = CriticalStrikeProbability.CRIT_CHANCE[1] + CriticalStrikeProbability.CRIT_CHANCE[2];
+        // The AC/20 will only explode if there is a double or triple critical hit (14+3%)
+        double P_hit = CriticalStrikeProbability.CRIT_CHANCE[1] + CriticalStrikeProbability.CRIT_CHANCE[2];
 
-		assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.lookup("AC/20")), 0.0001);
-	}
+        assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.lookup("AC/20")), 0.0001);
+    }
 
-	/**
-	 * The AC20 has 18 health and needs two 10-point alphas to be destroyed.
-	 * <p>
-	 * Test with two shots.
-	 */
-	@Test
-	public void testAC20HealthTwoAlphas() {
-		double partHp = 12; // Allow two alphas
-		List<Item> partItems = new ArrayList<>();
-		partItems.add(ItemDB.lookup("AC/20"));
+    /**
+     * The AC20 has 18 health and needs two 10-point alphas to be destroyed.
+     * <p>
+     * Test with two shots.
+     */
+    @Test
+    public void testAC20HealthTwoAlphas() {
+        double partHp = 12; // Allow two alphas
+        List<Item> partItems = new ArrayList<>();
+        partItems.add(ItemDB.lookup("AC/20"));
 
-		ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
-		Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
+        ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
+        Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
 
-		ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
-		Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
-		Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
+        ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
+        Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
+        Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
-		MessageXBar xBar = Mockito.mock(MessageXBar.class);
+        MessageXBar xBar = Mockito.mock(MessageXBar.class);
 
-		ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part, xBar);
-		cut.simulate();
+        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part, xBar);
+        cut.simulate();
 
-		// The AC/20 will only explode if it is hit twice or more
-		// First shot: 58% chance to miss, 25% chance of one hit and 17% of 2 or more hits.
-		// Second shot, first one missed: Need 2 hits, ie 0.58*0.17 chance
-		// Second shit, first one was a single hit: Need 1 hits, ie 0.25*0.42
-		// Total probability: 0.17*1.0 + 0.25*0.42 + 0.58*0.17
-		double P_hit = 0.17 * 1.0 + 0.25 * 0.42 + 0.58 * 0.17;
-		assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.lookup("AC/20")), 0.0001);
-	}
+        // The AC/20 will only explode if it is hit twice or more
+        // First shot: 58% chance to miss, 25% chance of one hit and 17% of 2 or more hits.
+        // Second shot, first one missed: Need 2 hits, ie 0.58*0.17 chance
+        // Second shit, first one was a single hit: Need 1 hits, ie 0.25*0.42
+        // Total probability: 0.17*1.0 + 0.25*0.42 + 0.58*0.17
+        double P_hit = 0.17 * 1.0 + 0.25 * 0.42 + 0.58 * 0.17;
+        assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.lookup("AC/20")), 0.0001);
+    }
 }

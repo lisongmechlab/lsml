@@ -27,10 +27,10 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Emily Björk
  */
 public class MdfCockpit {
-	@XStreamAsAttribute
-	public int	TechSlots;
-	@XStreamAsAttribute
-	public int	ConsumableSlots;
-	@XStreamAsAttribute
-	public int	WeaponModSlots;
+    @XStreamAsAttribute
+    public int TechSlots;
+    @XStreamAsAttribute
+    public int ConsumableSlots;
+    @XStreamAsAttribute
+    public int WeaponModSlots;
 }

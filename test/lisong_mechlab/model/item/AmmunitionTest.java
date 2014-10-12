@@ -30,13 +30,13 @@ import org.junit.Test;
  */
 public class AmmunitionTest {
 
-	@Test
-	public void testHalfTonAmmo() {
-		Ammunition cut = (Ammunition) ItemDB.lookup(2233);
+    @Test
+    public void testHalfTonAmmo() {
+        Ammunition cut = (Ammunition) ItemDB.lookup(2233);
 
-		assertEquals(0.5, cut.getMass(), 0.0);
-		assertEquals(1, cut.getNumCriticalSlots());
-		assertEquals(10.0, cut.getHealth(), 0.0);
-	}
+        assertEquals(0.5, cut.getMass(), 0.0);
+        assertEquals(1, cut.getNumCriticalSlots());
+        assertEquals(10.0, cut.getHealth(), 0.0);
+    }
 
 }

@@ -22,11 +22,11 @@ package lisong_mechlab.mwo_data.helpers;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStats {
-	@XStreamAsAttribute
-	public String		name;
-	@XStreamAsAttribute
-	public String		id;
-	@XStreamAsAttribute
-	public String		faction;
-	public ItemStatsLoc	Loc;
+    @XStreamAsAttribute
+    public String       name;
+    @XStreamAsAttribute
+    public String       id;
+    @XStreamAsAttribute
+    public String       faction;
+    public ItemStatsLoc Loc;
 }

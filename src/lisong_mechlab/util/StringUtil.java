@@ -26,26 +26,26 @@ package lisong_mechlab.util;
  */
 public class StringUtil {
 
-	public static String longestCommonSubstring(final String a, final String b) {
+    public static String longestCommonSubstring(final String a, final String b) {
 
-		int start = 0;
-		int len = 0;
+        int start = 0;
+        int len = 0;
 
-		for (int i = 0; i < a.length(); ++i) {
-			for (int j = 0; j < b.length(); ++j) {
+        for (int i = 0; i < a.length(); ++i) {
+            for (int j = 0; j < b.length(); ++j) {
 
-				int k = 0;
-				while (i + k < a.length() && j + k < b.length() && a.charAt(i + k) == b.charAt(j + k)) {
-					k++;
-				}
+                int k = 0;
+                while (i + k < a.length() && j + k < b.length() && a.charAt(i + k) == b.charAt(j + k)) {
+                    k++;
+                }
 
-				if (k > len) {
-					len = k;
-					start = i;
-				}
-			}
-		}
-		return a.substring(start, start + len);
-	}
+                if (k > len) {
+                    len = k;
+                    start = i;
+                }
+            }
+        }
+        return a.substring(start, start + len);
+    }
 
 }

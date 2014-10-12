@@ -22,16 +22,16 @@ package lisong_mechlab.mwo_data.helpers;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsEngineStats {
-	@XStreamAsAttribute
-	public int		slots;
-	@XStreamAsAttribute
-	public int		rating;
-	@XStreamAsAttribute
-	public double	weight;
-	@XStreamAsAttribute
-	public int		type;
-	@XStreamAsAttribute
-	public int		heatsinks;
-	@XStreamAsAttribute
-	public int		health;
+    @XStreamAsAttribute
+    public int    slots;
+    @XStreamAsAttribute
+    public int    rating;
+    @XStreamAsAttribute
+    public double weight;
+    @XStreamAsAttribute
+    public int    type;
+    @XStreamAsAttribute
+    public int    heatsinks;
+    @XStreamAsAttribute
+    public int    health;
 }

@@ -28,24 +28,24 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * @author Emily Björk
  */
 public class JumpDistance implements Metric {
-	private final LoadoutBase<?>	loadout;
+    private final LoadoutBase<?> loadout;
 
-	public JumpDistance(final LoadoutBase<?> aLoadout) {
-		loadout = aLoadout;
-	}
+    public JumpDistance(final LoadoutBase<?> aLoadout) {
+        loadout = aLoadout;
+    }
 
-	@Override
-	public double calculate() {
-		JumpJet jj = null;
+    @Override
+    public double calculate() {
+        JumpJet jj = null;
 
-		for (JumpJet item : loadout.items(JumpJet.class)) {
-			jj = item;
-			break;
-		}
+        for (JumpJet item : loadout.items(JumpJet.class)) {
+            jj = item;
+            break;
+        }
 
-		if (jj == null)
-			return 0;
-		return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration()
-				/ (2 * loadout.getChassis().getMassMax());
-	}
+        if (jj == null)
+            return 0;
+        return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration()
+                / (2 * loadout.getChassis().getMassMax());
+    }
 }

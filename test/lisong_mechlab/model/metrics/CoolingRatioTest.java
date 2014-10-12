@@ -35,29 +35,29 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CoolingRatioTest {
-	@Mock
-	private HeatDissipation	dissipation;
-	@Mock
-	private HeatGeneration	heatGeneration;
-	@InjectMocks
-	private CoolingRatio	cut;
+    @Mock
+    private HeatDissipation dissipation;
+    @Mock
+    private HeatGeneration  heatGeneration;
+    @InjectMocks
+    private CoolingRatio    cut;
 
-	@Test
-	public void testCalculate() throws Exception {
-		double heat = 10;
-		double cooling = 5;
-		when(heatGeneration.calculate()).thenReturn(heat);
-		when(dissipation.calculate()).thenReturn(cooling);
-		assertEquals(cooling / heat, cut.calculate(), 0);
-	}
+    @Test
+    public void testCalculate() throws Exception {
+        double heat = 10;
+        double cooling = 5;
+        when(heatGeneration.calculate()).thenReturn(heat);
+        when(dissipation.calculate()).thenReturn(cooling);
+        assertEquals(cooling / heat, cut.calculate(), 0);
+    }
 
-	@Test
-	public void testCalculate_noHeat() throws Exception {
-		double heat = 0;
-		double cooling = 5;
+    @Test
+    public void testCalculate_noHeat() throws Exception {
+        double heat = 0;
+        double cooling = 5;
 
-		when(heatGeneration.calculate()).thenReturn(heat);
-		when(dissipation.calculate()).thenReturn(cooling);
-		assertEquals(1.0, cut.calculate(), 0);
-	}
+        when(heatGeneration.calculate()).thenReturn(heat);
+        when(dissipation.calculate()).thenReturn(cooling);
+        assertEquals(1.0, cut.calculate(), 0);
+    }
 }

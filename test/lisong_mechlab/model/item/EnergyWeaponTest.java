@@ -30,9 +30,9 @@ import org.junit.Test;
  */
 public class EnergyWeaponTest {
 
-	@Test
-	public void testCompare_flamers_flamers() {
-		EnergyWeapon weapon = (EnergyWeapon) ItemDB.lookup("FLAMER");
-		assertEquals(0, weapon.compareTo(weapon));
-	}
+    @Test
+    public void testCompare_flamers_flamers() {
+        EnergyWeapon weapon = (EnergyWeapon) ItemDB.lookup("FLAMER");
+        assertEquals(0, weapon.compareTo(weapon));
+    }
 }

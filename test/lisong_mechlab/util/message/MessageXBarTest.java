@@ -35,67 +35,68 @@ import org.junit.Test;
  * @author Emily Björk
  */
 public class MessageXBarTest {
-	MessageXBar	cut	= new MessageXBar();
+    MessageXBar cut = new MessageXBar();
 
-	@Test
-	public void testPostMessage() {
-		// Setup
-		Message.Recipient reader0 = mock(Message.Recipient.class);
-		Message.Recipient reader1 = mock(Message.Recipient.class);
-		Message msg = mock(Message.class);
+    @Test
+    public void testPostMessage() {
+        // Setup
+        Message.Recipient reader0 = mock(Message.Recipient.class);
+        Message.Recipient reader1 = mock(Message.Recipient.class);
+        Message msg = mock(Message.class);
 
-		// Execute
-		cut.attach(reader0);
-		cut.attach(new WeakReference<Message.Recipient>(reader1));
-		cut.post(msg);
+        // Execute
+        cut.attach(reader0);
+        cut.attach(new WeakReference<Message.Recipient>(reader1));
+        cut.post(msg);
 
-		// Verify
-		verify(reader0).receive(msg);
-		verify(reader1).receive(msg);
-	}
+        // Verify
+        verify(reader0).receive(msg);
+        verify(reader1).receive(msg);
+    }
 
-	@Test
-	public void testDetach() {
-		// Setup
-		Message.Recipient reader0 = mock(Message.Recipient.class);
-		Message.Recipient reader1 = mock(Message.Recipient.class);
-		Message msg = mock(Message.class);
+    @Test
+    public void testDetach() {
+        // Setup
+        Message.Recipient reader0 = mock(Message.Recipient.class);
+        Message.Recipient reader1 = mock(Message.Recipient.class);
+        Message msg = mock(Message.class);
 
-		// Execute
-		cut.attach(new WeakReference<Message.Recipient>(reader0));
-		cut.attach(new WeakReference<Message.Recipient>(reader1));
-		cut.detach(reader0);
-		cut.post(msg);
+        // Execute
+        cut.attach(new WeakReference<Message.Recipient>(reader0));
+        cut.attach(new WeakReference<Message.Recipient>(reader1));
+        cut.detach(reader0);
+        cut.post(msg);
 
-		// Verify
-		verify(reader0, never()).receive(msg);
-		verify(reader1).receive(msg);
-	}
+        // Verify
+        verify(reader0, never()).receive(msg);
+        verify(reader1).receive(msg);
+    }
 
-	@Test
-	public void testWeakReference() {
-		WeakReference<Message.Recipient> ref = mock(WeakReference.class);// new WeakReference<MessageXBar.Reader>(reader0);
-		Message.Recipient reader0 = mock(Message.Recipient.class);
-		Message msg0 = mock(Message.class);
-		Message msg1 = mock(Message.class);
-		Message msg2 = mock(Message.class);
+    @Test
+    public void testWeakReference() {
+        WeakReference<Message.Recipient> ref = mock(WeakReference.class);// new
+                                                                         // WeakReference<MessageXBar.Reader>(reader0);
+        Message.Recipient reader0 = mock(Message.Recipient.class);
+        Message msg0 = mock(Message.class);
+        Message msg1 = mock(Message.class);
+        Message msg2 = mock(Message.class);
 
-		when(ref.get()).thenReturn(reader0, (Message.Recipient) null);
+        when(ref.get()).thenReturn(reader0, (Message.Recipient) null);
 
-		// Execute
-		cut.attach(ref);
-		ref.clear();
+        // Execute
+        cut.attach(ref);
+        ref.clear();
 
-		cut.post(msg0); // Stub will return the reader, it receives the message
-		verify(reader0).receive(msg0);
+        cut.post(msg0); // Stub will return the reader, it receives the message
+        verify(reader0).receive(msg0);
 
-		cut.post(msg1); // Stub will return null, the reader must not receive the message nor be queried again
-		verify(reader0, never()).receive(msg1);
+        cut.post(msg1); // Stub will return null, the reader must not receive the message nor be queried again
+        verify(reader0, never()).receive(msg1);
 
-		cut.post(msg2);
-		verify(reader0, never()).receive(msg2);
+        cut.post(msg2);
+        verify(reader0, never()).receive(msg2);
 
-		// Verify
-		verify(ref, times(2)).get();
-	}
+        // Verify
+        verify(ref, times(2)).get();
+    }
 }

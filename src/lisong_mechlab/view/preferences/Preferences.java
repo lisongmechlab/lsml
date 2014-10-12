@@ -27,17 +27,17 @@ import lisong_mechlab.util.message.MessageXBar;
  * @author Emily Björk
  */
 public class Preferences {
-	public final FontPreferences	fontPreferences		= new FontPreferences();
-	public final SmurfyPreferences	smurfyPreferences	= new SmurfyPreferences();
-	public final UiPreferences		uiPreferences;
+    public final FontPreferences   fontPreferences   = new FontPreferences();
+    public final SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
+    public final UiPreferences     uiPreferences;
 
-	/**
-	 * Creates a new preferences object.
-	 * 
-	 * @param aXBar
-	 *            The {@link MessageXBar} to send notifications of preference changes on.
-	 */
-	public Preferences(MessageXBar aXBar) {
-		uiPreferences = new UiPreferences(aXBar);
-	}
+    /**
+     * Creates a new preferences object.
+     * 
+     * @param aXBar
+     *            The {@link MessageXBar} to send notifications of preference changes on.
+     */
+    public Preferences(MessageXBar aXBar) {
+        uiPreferences = new UiPreferences(aXBar);
+    }
 }

@@ -34,38 +34,39 @@ import lisong_mechlab.model.chassi.ChassisStandard;
  * @author Emily Björk
  */
 public class StockLoadoutDB {
-	private static final Map<ChassisBase, StockLoadout>	stockloadouts;
+    private static final Map<ChassisBase, StockLoadout> stockloadouts;
 
-	/**
-	 * Will find the stock loadout matching the given {@link ChassisStandard}.
-	 * 
-	 * @param aChassis
-	 *            The {@link ChassisStandard} to get the stock loadout for.
-	 * @return A {@link StockLoadout} description of the stock loadout.
-	 */
-	public static StockLoadout lookup(ChassisBase aChassis) {
-		StockLoadout ans = stockloadouts.get(aChassis);
-		if (null == ans) {
-			throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);
-		}
-		return ans;
-	}
+    /**
+     * Will find the stock loadout matching the given {@link ChassisStandard}.
+     * 
+     * @param aChassis
+     *            The {@link ChassisStandard} to get the stock loadout for.
+     * @return A {@link StockLoadout} description of the stock loadout.
+     */
+    public static StockLoadout lookup(ChassisBase aChassis) {
+        StockLoadout ans = stockloadouts.get(aChassis);
+        if (null == ans) {
+            throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);
+        }
+        return ans;
+    }
 
-	/**
-	 * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
-	 * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
-	 */
-	static {
-		DataCache dataCache;
-		try {
-			dataCache = DataCache.getInstance();
-		} catch (IOException e) {
-			throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
-		}
+    /**
+     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
+     * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
+     */
+    static {
+        DataCache dataCache;
+        try {
+            dataCache = DataCache.getInstance();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
+        }
 
-		stockloadouts = new HashMap<>();
-		for (StockLoadout loadout : dataCache.getStockLoadouts()) {
-			stockloadouts.put(loadout.getChassis(), loadout);
-		}
-	}
+        stockloadouts = new HashMap<>();
+        for (StockLoadout loadout : dataCache.getStockLoadouts()) {
+            stockloadouts.put(loadout.getChassis(), loadout);
+        }
+    }
 }

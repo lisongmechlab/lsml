@@ -31,50 +31,51 @@ import java.util.List;
  */
 public class QuirkedMovementProfile extends ModifiedProfileBase {
 
-	private List<MovementModifier>	terms	= new ArrayList<>();
-	MovementProfile					mainProfile;
+    private List<MovementModifier> terms = new ArrayList<>();
+    MovementProfile                mainProfile;
 
-	@Override
-	protected double calc(String aMethodName) {
-		try {
-			double base = (double) mainProfile.getClass().getMethod(aMethodName).invoke(mainProfile);
-			double ans = base;
+    @Override
+    protected double calc(String aMethodName) {
+        try {
+            double base = (double) mainProfile.getClass().getMethod(aMethodName).invoke(mainProfile);
+            double ans = base;
 
-			for (MovementModifier profile : terms) {
-				ans += (double) profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class)
-						.invoke(profile, base);
-			}
-			return ans;
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-				| SecurityException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
+            for (MovementModifier profile : terms) {
+                ans += (double) profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class)
+                        .invoke(profile, base);
+            }
+            return ans;
+        }
+        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
-	public QuirkedMovementProfile(MovementProfile aMainProfile) {
-		mainProfile = aMainProfile;
-	}
+    public QuirkedMovementProfile(MovementProfile aMainProfile) {
+        mainProfile = aMainProfile;
+    }
 
-	public void addMovementModifier(MovementModifier aMovementProfile) {
-		terms.add(aMovementProfile);
-	}
+    public void addMovementModifier(MovementModifier aMovementProfile) {
+        terms.add(aMovementProfile);
+    }
 
-	public void removeMovementModifier(MovementModifier aMovementProfile) {
-		terms.remove(aMovementProfile);
-	}
+    public void removeMovementModifier(MovementModifier aMovementProfile) {
+        terms.remove(aMovementProfile);
+    }
 
-	@Override
-	public MovementArchetype getMovementArchetype() {
-		return mainProfile.getMovementArchetype();
-	}
+    @Override
+    public MovementArchetype getMovementArchetype() {
+        return mainProfile.getMovementArchetype();
+    }
 
-	@Override
-	public double getMaxMovementSpeed() {
-		return mainProfile.getMaxMovementSpeed();
-	}
+    @Override
+    public double getMaxMovementSpeed() {
+        return mainProfile.getMaxMovementSpeed();
+    }
 
-	@Override
-	public double getReverseSpeedMultiplier() {
-		return mainProfile.getReverseSpeedMultiplier();
-	}
+    @Override
+    public double getReverseSpeedMultiplier() {
+        return mainProfile.getReverseSpeedMultiplier();
+    }
 }

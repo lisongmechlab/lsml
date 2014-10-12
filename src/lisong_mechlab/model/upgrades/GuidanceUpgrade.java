@@ -37,160 +37,160 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Emily Björk
  */
 public class GuidanceUpgrade extends Upgrade {
-	@XStreamAsAttribute
-	final private int		slots;
-	@XStreamAsAttribute
-	final private double	tons;
+    @XStreamAsAttribute
+    final private int    slots;
+    @XStreamAsAttribute
+    final private double tons;
 
-	public GuidanceUpgrade(ItemStatsUpgradeType aUpgradeType) {
-		super(aUpgradeType);
-		slots = aUpgradeType.ArtemisTypeStats.extraSlots;
-		tons = aUpgradeType.ArtemisTypeStats.extraTons;
-	}
+    public GuidanceUpgrade(ItemStatsUpgradeType aUpgradeType) {
+        super(aUpgradeType);
+        slots = aUpgradeType.ArtemisTypeStats.extraSlots;
+        tons = aUpgradeType.ArtemisTypeStats.extraTons;
+    }
 
-	public int getSlots() {
-		return slots;
-	}
+    public int getSlots() {
+        return slots;
+    }
 
-	public double getTons() {
-		return tons;
-	}
+    public double getTons() {
+        return tons;
+    }
 
-	/**
-	 * Calculates how many extra slots are needed in total for the given upgrade.
-	 * 
-	 * @param aLoadout
-	 *            The loadout to calculate for.
-	 * @return A number of slots needed.
-	 */
-	public int getExtraSlots(LoadoutBase<?> aLoadout) {
-		int ans = 0;
-		for (ConfiguredComponentBase part : aLoadout.getComponents()) {
-			ans += getExtraSlots(part);
-		}
-		return ans;
-	}
+    /**
+     * Calculates how many extra slots are needed in total for the given upgrade.
+     * 
+     * @param aLoadout
+     *            The loadout to calculate for.
+     * @return A number of slots needed.
+     */
+    public int getExtraSlots(LoadoutBase<?> aLoadout) {
+        int ans = 0;
+        for (ConfiguredComponentBase part : aLoadout.getComponents()) {
+            ans += getExtraSlots(part);
+        }
+        return ans;
+    }
 
-	/**
-	 * Calculates how many extra slots are needed for the given {@link ConfiguredComponentBase} for the given upgrade.
-	 * 
-	 * @param aLoadoutPart
-	 *            The {@link ConfiguredComponentBase} to calculate for.
-	 * @return A number of slots needed.
-	 */
-	public int getExtraSlots(ConfiguredComponentBase aLoadoutPart) {
-		int ans = 0;
-		for (Item item : aLoadoutPart.getItemsFixed()) {
-			if (item instanceof MissileWeapon) {
-				MissileWeapon weapon = (MissileWeapon) item;
-				if (weapon.isArtemisCapable()) {
-					ans += slots;
-				}
-			}
-		}
-		for (Item item : aLoadoutPart.getItemsEquipped()) {
-			if (item instanceof MissileWeapon) {
-				MissileWeapon weapon = (MissileWeapon) item;
-				if (weapon.isArtemisCapable()) {
-					ans += slots;
-				}
-			}
-		}
-		return ans;
-	}
+    /**
+     * Calculates how many extra slots are needed for the given {@link ConfiguredComponentBase} for the given upgrade.
+     * 
+     * @param aLoadoutPart
+     *            The {@link ConfiguredComponentBase} to calculate for.
+     * @return A number of slots needed.
+     */
+    public int getExtraSlots(ConfiguredComponentBase aLoadoutPart) {
+        int ans = 0;
+        for (Item item : aLoadoutPart.getItemsFixed()) {
+            if (item instanceof MissileWeapon) {
+                MissileWeapon weapon = (MissileWeapon) item;
+                if (weapon.isArtemisCapable()) {
+                    ans += slots;
+                }
+            }
+        }
+        for (Item item : aLoadoutPart.getItemsEquipped()) {
+            if (item instanceof MissileWeapon) {
+                MissileWeapon weapon = (MissileWeapon) item;
+                if (weapon.isArtemisCapable()) {
+                    ans += slots;
+                }
+            }
+        }
+        return ans;
+    }
 
-	/**
-	 * Calculates how many extra tons are needed in total for the given upgrade.
-	 * 
-	 * @param aLoadout
-	 *            The {@link LoadoutStandard} to calculate for.
-	 * @return A number of tons needed.
-	 */
-	public double getExtraTons(LoadoutBase<?> aLoadout) {
-		double ans = 0;
-		for (ConfiguredComponentBase part : aLoadout.getComponents()) {
-			ans += getExtraTons(part);
-		}
-		return ans;
-	}
+    /**
+     * Calculates how many extra tons are needed in total for the given upgrade.
+     * 
+     * @param aLoadout
+     *            The {@link LoadoutStandard} to calculate for.
+     * @return A number of tons needed.
+     */
+    public double getExtraTons(LoadoutBase<?> aLoadout) {
+        double ans = 0;
+        for (ConfiguredComponentBase part : aLoadout.getComponents()) {
+            ans += getExtraTons(part);
+        }
+        return ans;
+    }
 
-	/**
-	 * Calculates how many extra tons are needed for the given {@link ConfiguredComponentBase} for the given upgrade.
-	 * 
-	 * @param aLoadoutPart
-	 *            The {@link ConfiguredComponentBase} to calculate for.
-	 * @return A number of tons needed.
-	 */
-	public double getExtraTons(ConfiguredComponentBase aLoadoutPart) {
-		double ans = 0;
-		for (Item item : aLoadoutPart.getItemsEquipped()) {
-			if (item instanceof MissileWeapon) {
-				MissileWeapon weapon = (MissileWeapon) item;
-				if (weapon.isArtemisCapable()) {
-					ans += tons;
-				}
-			}
-		}
-		for (Item item : aLoadoutPart.getItemsFixed()) {
-			if (item instanceof MissileWeapon) {
-				MissileWeapon weapon = (MissileWeapon) item;
-				if (weapon.isArtemisCapable()) {
-					ans += tons;
-				}
-			}
-		}
-		return ans;
-	}
+    /**
+     * Calculates how many extra tons are needed for the given {@link ConfiguredComponentBase} for the given upgrade.
+     * 
+     * @param aLoadoutPart
+     *            The {@link ConfiguredComponentBase} to calculate for.
+     * @return A number of tons needed.
+     */
+    public double getExtraTons(ConfiguredComponentBase aLoadoutPart) {
+        double ans = 0;
+        for (Item item : aLoadoutPart.getItemsEquipped()) {
+            if (item instanceof MissileWeapon) {
+                MissileWeapon weapon = (MissileWeapon) item;
+                if (weapon.isArtemisCapable()) {
+                    ans += tons;
+                }
+            }
+        }
+        for (Item item : aLoadoutPart.getItemsFixed()) {
+            if (item instanceof MissileWeapon) {
+                MissileWeapon weapon = (MissileWeapon) item;
+                if (weapon.isArtemisCapable()) {
+                    ans += tons;
+                }
+            }
+        }
+        return ans;
+    }
 
-	/**
-	 * Upgrades a {@link MissileWeapon} to match this guidance type.
-	 * 
-	 * @param aOldWeapon
-	 *            The {@link MissileWeapon} to upgrade.
-	 * @return A {@link MissileWeapon} which is an appropriate variant for this guidance type.
-	 */
-	public MissileWeapon upgrade(MissileWeapon aOldWeapon) {
-		MissileWeapon baseVariant = aOldWeapon.getBaseVariant();
-		if (null == baseVariant)
-			return aOldWeapon;
+    /**
+     * Upgrades a {@link MissileWeapon} to match this guidance type.
+     * 
+     * @param aOldWeapon
+     *            The {@link MissileWeapon} to upgrade.
+     * @return A {@link MissileWeapon} which is an appropriate variant for this guidance type.
+     */
+    public MissileWeapon upgrade(MissileWeapon aOldWeapon) {
+        MissileWeapon baseVariant = aOldWeapon.getBaseVariant();
+        if (null == baseVariant)
+            return aOldWeapon;
 
-		for (MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)) {
-			if (weapon.getBaseVariant() == baseVariant && weapon.getRequiredUpgrade() == this) {
-				return weapon;
-			}
-		}
-		throw new RuntimeException("Unable to find upgraded version of: " + baseVariant);
-	}
+        for (MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)) {
+            if (weapon.getBaseVariant() == baseVariant && weapon.getRequiredUpgrade() == this) {
+                return weapon;
+            }
+        }
+        throw new RuntimeException("Unable to find upgraded version of: " + baseVariant);
+    }
 
-	/**
-	 * Upgrades a {@link Ammunition} to match this guidance type.
-	 * 
-	 * @param aOldAmmo
-	 *            The {@link Ammunition} to upgrade.
-	 * @return An {@link Ammunition} object of the appropriate type for this guidance.
-	 */
-	public Ammunition upgrade(Ammunition aOldAmmo) {
-		if (aOldAmmo.getWeaponHardpointType() != HardPointType.MISSILE) {
-			return aOldAmmo;
-		}
+    /**
+     * Upgrades a {@link Ammunition} to match this guidance type.
+     * 
+     * @param aOldAmmo
+     *            The {@link Ammunition} to upgrade.
+     * @return An {@link Ammunition} object of the appropriate type for this guidance.
+     */
+    public Ammunition upgrade(Ammunition aOldAmmo) {
+        if (aOldAmmo.getWeaponHardpointType() != HardPointType.MISSILE) {
+            return aOldAmmo;
+        }
 
-		for (MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)) {
-			if (weapon.isCompatibleAmmo(aOldAmmo)) {
-				MissileWeapon representant = upgrade(weapon);
+        for (MissileWeapon weapon : ItemDB.lookup(MissileWeapon.class)) {
+            if (weapon.isCompatibleAmmo(aOldAmmo)) {
+                MissileWeapon representant = upgrade(weapon);
 
-				for (Ammunition ammunition : ItemDB.lookup(Ammunition.class)) {
-					if (representant.isCompatibleAmmo(ammunition) && ammunition.getMass() == aOldAmmo.getMass())
-						return ammunition;
-				}
-				break;
-			}
-		}
+                for (Ammunition ammunition : ItemDB.lookup(Ammunition.class)) {
+                    if (representant.isCompatibleAmmo(ammunition) && ammunition.getMass() == aOldAmmo.getMass())
+                        return ammunition;
+                }
+                break;
+            }
+        }
 
-		throw new RuntimeException("Unable to find upgraded version of: " + aOldAmmo);
-	}
+        throw new RuntimeException("Unable to find upgraded version of: " + aOldAmmo);
+    }
 
-	@Override
-	public UpgradeType getType() {
-		return UpgradeType.ARTEMIS;
-	}
+    @Override
+    public UpgradeType getType() {
+        return UpgradeType.ARTEMIS;
+    }
 }

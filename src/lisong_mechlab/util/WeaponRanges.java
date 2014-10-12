@@ -37,48 +37,49 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  */
 public class WeaponRanges {
 
-	static private void addRange(SortedSet<Double> result, double aStart, double aEnd) {
-		double start = aStart;
-		final double step = 10;
-		while (start + step < aEnd) {
-			start += step;
-			result.add(start);
-		}
-	}
+    static private void addRange(SortedSet<Double> result, double aStart, double aEnd) {
+        double start = aStart;
+        final double step = 10;
+        while (start + step < aEnd) {
+            start += step;
+            result.add(start);
+        }
+    }
 
-	static public Double[] getRanges(Collection<Weapon> aWeaponCollection, Collection<WeaponModifier> aModifiers) {
-		SortedSet<Double> ans = new TreeSet<>();
+    static public Double[] getRanges(Collection<Weapon> aWeaponCollection, Collection<WeaponModifier> aModifiers) {
+        SortedSet<Double> ans = new TreeSet<>();
 
-		ans.add(Double.valueOf(0.0));
-		for (Weapon weapon : aWeaponCollection) {
-			if (!weapon.isOffensive())
-				continue;
+        ans.add(Double.valueOf(0.0));
+        for (Weapon weapon : aWeaponCollection) {
+            if (!weapon.isOffensive())
+                continue;
 
-			ans.add(weapon.getRangeZero());
-			if (weapon.hasNonLinearFalloff()) {
-				addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
-			}
-			ans.add(weapon.getRangeMin());
+            ans.add(weapon.getRangeZero());
+            if (weapon.hasNonLinearFalloff()) {
+                addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
+            }
+            ans.add(weapon.getRangeMin());
 
-			if (weapon.hasSpread()) {
-				addRange(ans, weapon.getRangeMin(), weapon.getRangeMax(aModifiers));
-				ans.add(weapon.getRangeMax(aModifiers));
-			} else {
-				ans.add(weapon.getRangeLong(aModifiers));
-				if (weapon.hasNonLinearFalloff()) {
-					addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
-				}
-				ans.add(weapon.getRangeMax(aModifiers));
-			}
-		}
-		return ans.toArray(new Double[ans.size()]);
-	}
+            if (weapon.hasSpread()) {
+                addRange(ans, weapon.getRangeMin(), weapon.getRangeMax(aModifiers));
+                ans.add(weapon.getRangeMax(aModifiers));
+            }
+            else {
+                ans.add(weapon.getRangeLong(aModifiers));
+                if (weapon.hasNonLinearFalloff()) {
+                    addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
+                }
+                ans.add(weapon.getRangeMax(aModifiers));
+            }
+        }
+        return ans.toArray(new Double[ans.size()]);
+    }
 
-	static public Double[] getRanges(LoadoutBase<?> aLoadout) {
-		List<Weapon> weapons = new ArrayList<>();
-		for (Weapon weapon : aLoadout.items(Weapon.class)) {
-			weapons.add(weapon);
-		}
-		return getRanges(weapons, aLoadout.getModifiers(WeaponModifier.class));
-	}
+    static public Double[] getRanges(LoadoutBase<?> aLoadout) {
+        List<Weapon> weapons = new ArrayList<>();
+        for (Weapon weapon : aLoadout.items(Weapon.class)) {
+            weapons.add(weapon);
+        }
+        return getRanges(weapons, aLoadout.getModifiers(WeaponModifier.class));
+    }
 }

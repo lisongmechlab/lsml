@@ -35,45 +35,45 @@ import org.mockito.Mockito;
  */
 public class TwistSpeedTest {
 
-	@Test
-	public final void testCalculate_NoEngine() throws Exception {
-		MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
-		LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-		ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
+    @Test
+    public final void testCalculate_NoEngine() throws Exception {
+        MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
+        LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
+        ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
 
-		Mockito.when(loadout.getChassis()).thenReturn(chassi);
-		Mockito.when(loadout.getEngine()).thenReturn(null);
-		Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
+        Mockito.when(loadout.getChassis()).thenReturn(chassi);
+        Mockito.when(loadout.getEngine()).thenReturn(null);
+        Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
 
-		double factor = 0.2;
-		int mass = 50;
-		Mockito.when(movementProfile.getTorsoYawSpeed()).thenReturn(factor);
-		Mockito.when(chassi.getMassMax()).thenReturn(mass);
+        double factor = 0.2;
+        int mass = 50;
+        Mockito.when(movementProfile.getTorsoYawSpeed()).thenReturn(factor);
+        Mockito.when(chassi.getMassMax()).thenReturn(mass);
 
-		TwistSpeed cut = new TwistSpeed(loadout);
-		assertEquals(0, cut.calculate(), 0.0);
-	}
+        TwistSpeed cut = new TwistSpeed(loadout);
+        assertEquals(0, cut.calculate(), 0.0);
+    }
 
-	@Test
-	public final void testCalculate() throws Exception {
-		MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
-		LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-		ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
+    @Test
+    public final void testCalculate() throws Exception {
+        MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
+        LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
+        ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
 
-		Engine engine = Mockito.mock(Engine.class);
-		Mockito.when(loadout.getChassis()).thenReturn(chassi);
-		Mockito.when(loadout.getEngine()).thenReturn(engine);
-		Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
+        Engine engine = Mockito.mock(Engine.class);
+        Mockito.when(loadout.getChassis()).thenReturn(chassi);
+        Mockito.when(loadout.getEngine()).thenReturn(engine);
+        Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
 
-		double factor = 0.2;
-		int rating = 300;
-		int mass = 50;
-		Mockito.when(movementProfile.getTorsoYawSpeed()).thenReturn(factor);
-		Mockito.when(chassi.getMassMax()).thenReturn(mass);
-		Mockito.when(engine.getRating()).thenReturn(rating);
+        double factor = 0.2;
+        int rating = 300;
+        int mass = 50;
+        Mockito.when(movementProfile.getTorsoYawSpeed()).thenReturn(factor);
+        Mockito.when(chassi.getMassMax()).thenReturn(mass);
+        Mockito.when(engine.getRating()).thenReturn(rating);
 
-		TwistSpeed cut = new TwistSpeed(loadout);
-		assertEquals(factor * rating / mass, cut.calculate(), 0.0);
-	}
+        TwistSpeed cut = new TwistSpeed(loadout);
+        assertEquals(factor * rating / mass, cut.calculate(), 0.0);
+    }
 
 }

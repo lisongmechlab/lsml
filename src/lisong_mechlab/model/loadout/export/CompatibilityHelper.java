@@ -31,23 +31,24 @@ import lisong_mechlab.model.upgrades.GuidanceUpgrade;
  */
 public class CompatibilityHelper {
 
-	/**
-	 * February 4th patch introduced new weapon IDs for artemis enabled missile launchers. This function canonizes old
-	 * missile launchers to the new types if applicable.
-	 * 
-	 * @param anItem
-	 * @param aGuidanceType
-	 * @return A canonized item.
-	 */
-	public static Item fixArtemis(final Item anItem, GuidanceUpgrade aGuidanceType) {
-		Item ans = anItem;
-		if (anItem instanceof MissileWeapon) {
-			MissileWeapon weapon = (MissileWeapon) anItem;
-			ans = aGuidanceType.upgrade(weapon);
-		} else if (anItem instanceof Ammunition) {
-			Ammunition ammunition = (Ammunition) anItem;
-			ans = aGuidanceType.upgrade(ammunition);
-		}
-		return ans;
-	}
+    /**
+     * February 4th patch introduced new weapon IDs for artemis enabled missile launchers. This function canonizes old
+     * missile launchers to the new types if applicable.
+     * 
+     * @param anItem
+     * @param aGuidanceType
+     * @return A canonized item.
+     */
+    public static Item fixArtemis(final Item anItem, GuidanceUpgrade aGuidanceType) {
+        Item ans = anItem;
+        if (anItem instanceof MissileWeapon) {
+            MissileWeapon weapon = (MissileWeapon) anItem;
+            ans = aGuidanceType.upgrade(weapon);
+        }
+        else if (anItem instanceof Ammunition) {
+            Ammunition ammunition = (Ammunition) anItem;
+            ans = aGuidanceType.upgrade(ammunition);
+        }
+        return ans;
+    }
 }

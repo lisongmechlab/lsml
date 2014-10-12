@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.util.message;
 
-
 /**
  * This interface specifies an API for delivering messages over a crossbar.
  * 
@@ -28,13 +27,13 @@ package lisong_mechlab.util.message;
  */
 public interface MessageDelivery {
 
-	/**
-	 * Sends a message to all listeners on the {@link MessageXBar}. Those listeners which have been disposed of since
-	 * the last call to {@link #post(Message)} will be automatically disposed of.
-	 * 
-	 * @param aMessage
-	 *            The message to send.
-	 */
-	public void post(Message aMessage);
+    /**
+     * Sends a message to all listeners on the {@link MessageXBar}. Those listeners which have been disposed of since
+     * the last call to {@link #post(Message)} will be automatically disposed of.
+     * 
+     * @param aMessage
+     *            The message to send.
+     */
+    public void post(Message aMessage);
 
 }

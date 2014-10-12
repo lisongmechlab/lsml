@@ -33,25 +33,25 @@ import org.junit.Test;
  */
 public class OmniPodDBTest {
 
-	@Test
-	public void testLoadOmniPod_ECM() {
-		OmniPod kfx_c_ra = OmniPodDB.lookup(30192);
+    @Test
+    public void testLoadOmniPod_ECM() {
+        OmniPod kfx_c_ra = OmniPodDB.lookup(30192);
 
-		assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ENERGY));
-		assertEquals(3, kfx_c_ra.getHardPointCount(HardPointType.AMS));
-		assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ECM));
-	}
+        assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ENERGY));
+        assertEquals(3, kfx_c_ra.getHardPointCount(HardPointType.AMS));
+        assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ECM));
+    }
 
-	@Test
-	public void testLoadOmniPod_Togglables() {
-		OmniPod ans = OmniPodDB.lookup(30077); // Kitfox Prime Right Arm
+    @Test
+    public void testLoadOmniPod_Togglables() {
+        OmniPod ans = OmniPodDB.lookup(30077); // Kitfox Prime Right Arm
 
-		assertEquals(2, ans.getToggleableItems().size());
-	}
+        assertEquals(2, ans.getToggleableItems().size());
+    }
 
-	@Test
-	public void testLookup_BySeries() {
-		Collection<OmniPod> ans = OmniPodDB.lookup("kItFox", Location.RightArm);
-		assertTrue(ans.size() >= 4);
-	}
+    @Test
+    public void testLookup_BySeries() {
+        Collection<OmniPod> ans = OmniPodDB.lookup("kItFox", Location.RightArm);
+        assertTrue(ans.size() >= 4);
+    }
 }

@@ -35,18 +35,18 @@ import lisong_mechlab.view.preferences.FontPreferences.FontSize;
  * @author Emily Björk
  */
 public class SetFontSizeAction extends AbstractAction {
-	private static final long			serialVersionUID	= -8145859026953437134L;
-	private FontPreferences.FontSize	fontSize;
+    private static final long        serialVersionUID = -8145859026953437134L;
+    private FontPreferences.FontSize fontSize;
 
-	public SetFontSizeAction(String aTitle, KeyStroke aKeyStroke, FontSize aFontSize) {
-		super(aTitle);
-		putValue(Action.ACCELERATOR_KEY, aKeyStroke);
-		fontSize = aFontSize;
-	}
+    public SetFontSizeAction(String aTitle, KeyStroke aKeyStroke, FontSize aFontSize) {
+        super(aTitle);
+        putValue(Action.ACCELERATOR_KEY, aKeyStroke);
+        fontSize = aFontSize;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent aArg0) {
-		ProgramInit.lsml().preferences.fontPreferences.setFontSize(fontSize);
-	}
+    @Override
+    public void actionPerformed(ActionEvent aArg0) {
+        ProgramInit.lsml().preferences.fontPreferences.setFontSize(fontSize);
+    }
 
 }

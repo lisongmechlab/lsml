@@ -30,15 +30,15 @@ import org.junit.Test;
  */
 public class AmmoWeaponTest {
 
-	@Test
-	public final void testIsCompatibleAmmo() throws Exception {
-		BallisticWeapon ac20 = (BallisticWeapon) ItemDB.lookup("AC/20");
+    @Test
+    public final void testIsCompatibleAmmo() throws Exception {
+        BallisticWeapon ac20 = (BallisticWeapon) ItemDB.lookup("AC/20");
 
-		Ammunition ac20ammo = (Ammunition) ItemDB.lookup("AC/20 AMMO");
-		Ammunition ac20ammoHalf = (Ammunition) ItemDB.lookup("AC/20 AMMO (1/2)");
+        Ammunition ac20ammo = (Ammunition) ItemDB.lookup("AC/20 AMMO");
+        Ammunition ac20ammoHalf = (Ammunition) ItemDB.lookup("AC/20 AMMO (1/2)");
 
-		assertTrue(ac20.isCompatibleAmmo(ac20ammoHalf));
-		assertTrue(ac20.isCompatibleAmmo(ac20ammo));
-	}
+        assertTrue(ac20.isCompatibleAmmo(ac20ammoHalf));
+        assertTrue(ac20.isCompatibleAmmo(ac20ammo));
+    }
 
 }

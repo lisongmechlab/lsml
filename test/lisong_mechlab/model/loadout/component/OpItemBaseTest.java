@@ -44,206 +44,206 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OpItemBaseTest {
 
-	class CutClass extends OpItemBase {
-		public CutClass(MessageXBar anXBar, LoadoutBase<ConfiguredComponentBase> aLoadout,
-				ConfiguredComponentBase aLoadoutPart, Item aItem) {
-			super(anXBar, aLoadout, aLoadoutPart, aItem);
-		}
+    class CutClass extends OpItemBase {
+        public CutClass(MessageXBar anXBar, LoadoutBase<ConfiguredComponentBase> aLoadout,
+                ConfiguredComponentBase aLoadoutPart, Item aItem) {
+            super(anXBar, aLoadout, aLoadoutPart, aItem);
+        }
 
-		// @formatter:off
-		@Override
-		public String describe() {
-			return null;
-		}
+        // @formatter:off
+        @Override
+        public String describe() {
+            return null;
+        }
 
-		@Override
-		protected void apply() {/* NO-OP */
-		}
+        @Override
+        protected void apply() {/* NO-OP */
+        }
 
-		@Override
-		protected void undo() {/* NO-OP */
-		}
-		// @formatter:on
-	}
+        @Override
+        protected void undo() {/* NO-OP */
+        }
+        // @formatter:on
+    }
 
-	@Mock
-	private LoadoutBase<ConfiguredComponentBase>	loadout;
-	@Mock
-	private ConfiguredComponentBase					configuredComponent;
-	@Mock
-	private MessageXBar								xBar;
+    @Mock
+    private LoadoutBase<ConfiguredComponentBase> loadout;
+    @Mock
+    private ConfiguredComponentBase              configuredComponent;
+    @Mock
+    private MessageXBar                          xBar;
 
-	private CutClass								cut;
+    private CutClass                             cut;
 
-	@Before
-	public void setup() {
-		cut = new CutClass(xBar, loadout, configuredComponent, null);
-	}
+    @Before
+    public void setup() {
+        cut = new CutClass(xBar, loadout, configuredComponent, null);
+    }
 
-	/**
-	 * removeItem() shall remove the item without qeustinos.
-	 */
-	@Test
-	public final void testRemoveItem() {
-		Item ecm = ItemDB.ECM;
-		Mockito.when(configuredComponent.canRemoveItem(ecm)).thenReturn(true);
+    /**
+     * removeItem() shall remove the item without qeustinos.
+     */
+    @Test
+    public final void testRemoveItem() {
+        Item ecm = ItemDB.ECM;
+        Mockito.when(configuredComponent.canRemoveItem(ecm)).thenReturn(true);
 
-		cut.removeItem(ecm);
+        cut.removeItem(ecm);
 
-		Mockito.verify(configuredComponent).removeItem(ecm);
-		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
-	}
+        Mockito.verify(configuredComponent).removeItem(ecm);
+        Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
+    }
 
-	/**
-	 * addItem() shall add an item without performing any checks.
-	 */
-	@Test
-	public final void testAddItem() {
-		Item ecm = ItemDB.ECM;
+    /**
+     * addItem() shall add an item without performing any checks.
+     */
+    @Test
+    public final void testAddItem() {
+        Item ecm = ItemDB.ECM;
 
-		cut.addItem(ecm);
+        cut.addItem(ecm);
 
-		Mockito.verify(configuredComponent).addItem(ecm);
-		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemAdded));
-	}
+        Mockito.verify(configuredComponent).addItem(ecm);
+        Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemAdded));
+    }
 
-	/**
-	 * Adding a standard engine shall not cause a stir.
-	 */
-	@Test
-	public final void testAddItem_StdEngine() {
-		Item item = ItemDB.lookup("STD ENGINE 300");
+    /**
+     * Adding a standard engine shall not cause a stir.
+     */
+    @Test
+    public final void testAddItem_StdEngine() {
+        Item item = ItemDB.lookup("STD ENGINE 300");
 
-		cut.addItem(item);
+        cut.addItem(item);
 
-		Mockito.verify(configuredComponent).addItem(item);
-		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemAdded));
-	}
+        Mockito.verify(configuredComponent).addItem(item);
+        Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemAdded));
+    }
 
-	/**
-	 * Removing an XL engine shall also remove ENGINE_INTERNAL from side torsos
-	 */
-	@Test
-	public final void testRemoveItem_XLEngine() {
-		Item engine = ItemDB.lookup("XL ENGINE 300");
-		ConfiguredComponentBase lt = Mockito.mock(ConfiguredComponentBase.class);
-		ConfiguredComponentBase rt = Mockito.mock(ConfiguredComponentBase.class);
-		Mockito.when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
-		Mockito.when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
-		Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
-		Upgrades upgrades = Mockito.mock(Upgrades.class);
-		Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
-		Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+    /**
+     * Removing an XL engine shall also remove ENGINE_INTERNAL from side torsos
+     */
+    @Test
+    public final void testRemoveItem_XLEngine() {
+        Item engine = ItemDB.lookup("XL ENGINE 300");
+        ConfiguredComponentBase lt = Mockito.mock(ConfiguredComponentBase.class);
+        ConfiguredComponentBase rt = Mockito.mock(ConfiguredComponentBase.class);
+        Mockito.when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
+        Mockito.when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
+        Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
+        Upgrades upgrades = Mockito.mock(Upgrades.class);
+        Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
+        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
 
-		cut.removeItem(engine);
+        cut.removeItem(engine);
 
-		Mockito.verify(configuredComponent).removeItem(engine);
-		Mockito.verify(lt).removeItem(ConfiguredComponentBase.ENGINE_INTERNAL);
-		Mockito.verify(rt).removeItem(ConfiguredComponentBase.ENGINE_INTERNAL);
-		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
-		Mockito.verify(xBar).post(new ComponentMessage(lt, Type.ItemRemoved));
-		Mockito.verify(xBar).post(new ComponentMessage(rt, Type.ItemRemoved));
-	}
+        Mockito.verify(configuredComponent).removeItem(engine);
+        Mockito.verify(lt).removeItem(ConfiguredComponentBase.ENGINE_INTERNAL);
+        Mockito.verify(rt).removeItem(ConfiguredComponentBase.ENGINE_INTERNAL);
+        Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
+        Mockito.verify(xBar).post(new ComponentMessage(lt, Type.ItemRemoved));
+        Mockito.verify(xBar).post(new ComponentMessage(rt, Type.ItemRemoved));
+    }
 
-	/**
-	 * Removing a standard engine shall also remove engine heat sinks (SHS).
-	 */
-	@Test
-	public final void testRemoveItem_StdEngine_DHS() {
-		int numEngineHs = 2;
-		Item engine = ItemDB.lookup("STD ENGINE 300");
-		Upgrades upgrades = Mockito.mock(Upgrades.class);
-		Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
-		Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-		Mockito.when(configuredComponent.getEngineHeatsinks()).thenReturn(numEngineHs);
-		Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
+    /**
+     * Removing a standard engine shall also remove engine heat sinks (SHS).
+     */
+    @Test
+    public final void testRemoveItem_StdEngine_DHS() {
+        int numEngineHs = 2;
+        Item engine = ItemDB.lookup("STD ENGINE 300");
+        Upgrades upgrades = Mockito.mock(Upgrades.class);
+        Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
+        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+        Mockito.when(configuredComponent.getEngineHeatsinks()).thenReturn(numEngineHs);
+        Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
 
-		cut.removeItem(engine);
+        cut.removeItem(engine);
 
-		Mockito.verify(configuredComponent).removeItem(engine);
-		Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).removeItem(ItemDB.DHS);
-		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
-	}
+        Mockito.verify(configuredComponent).removeItem(engine);
+        Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).removeItem(ItemDB.DHS);
+        Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
+    }
 
-	/**
-	 * Removing a standard engine shall also remove engine heat sinks (DHS).
-	 */
-	@Test
-	public final void testRemoveItem_StdEngine_SHS() {
-		int numEngineHs = 2;
-		Item engine = ItemDB.lookup("STD ENGINE 300");
-		Upgrades upgrades = Mockito.mock(Upgrades.class);
-		Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.STANDARD_HEATSINKS);
-		Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-		Mockito.when(configuredComponent.getEngineHeatsinks()).thenReturn(numEngineHs);
-		Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
+    /**
+     * Removing a standard engine shall also remove engine heat sinks (DHS).
+     */
+    @Test
+    public final void testRemoveItem_StdEngine_SHS() {
+        int numEngineHs = 2;
+        Item engine = ItemDB.lookup("STD ENGINE 300");
+        Upgrades upgrades = Mockito.mock(Upgrades.class);
+        Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.STANDARD_HEATSINKS);
+        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+        Mockito.when(configuredComponent.getEngineHeatsinks()).thenReturn(numEngineHs);
+        Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
 
-		cut.removeItem(engine);
+        cut.removeItem(engine);
 
-		Mockito.verify(configuredComponent).removeItem(engine);
-		Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).removeItem(ItemDB.SHS);
-		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
-	}
+        Mockito.verify(configuredComponent).removeItem(engine);
+        Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).removeItem(ItemDB.SHS);
+        Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemRemoved));
+    }
 
-	/**
-	 * Adding an XL engine shall add LoadoutPart.ENGINE_INTERNAL to both side torsii.
-	 */
-	@Test
-	public final void testAddItem_XLEngine() {
-		ConfiguredComponentBase lt = Mockito.mock(ConfiguredComponentBase.class);
-		ConfiguredComponentBase rt = Mockito.mock(ConfiguredComponentBase.class);
-		Mockito.when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
-		Mockito.when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
-		Item item = ItemDB.lookup("XL ENGINE 300");
+    /**
+     * Adding an XL engine shall add LoadoutPart.ENGINE_INTERNAL to both side torsii.
+     */
+    @Test
+    public final void testAddItem_XLEngine() {
+        ConfiguredComponentBase lt = Mockito.mock(ConfiguredComponentBase.class);
+        ConfiguredComponentBase rt = Mockito.mock(ConfiguredComponentBase.class);
+        Mockito.when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
+        Mockito.when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
+        Item item = ItemDB.lookup("XL ENGINE 300");
 
-		cut.addItem(item);
+        cut.addItem(item);
 
-		Mockito.verify(configuredComponent).addItem(item);
-		Mockito.verify(lt).addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
-		Mockito.verify(rt).addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
-		Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemAdded));
-		Mockito.verify(xBar).post(new ComponentMessage(lt, Type.ItemAdded));
-		Mockito.verify(xBar).post(new ComponentMessage(rt, Type.ItemAdded));
-	}
+        Mockito.verify(configuredComponent).addItem(item);
+        Mockito.verify(lt).addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
+        Mockito.verify(rt).addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
+        Mockito.verify(xBar).post(new ComponentMessage(configuredComponent, Type.ItemAdded));
+        Mockito.verify(xBar).post(new ComponentMessage(lt, Type.ItemAdded));
+        Mockito.verify(xBar).post(new ComponentMessage(rt, Type.ItemAdded));
+    }
 
-	/**
-	 * addItem() has a special case where it shall re-add engine heat sinks that were removed in a previous call to
-	 * removeItem(). This is to facilitate undo behavior on engines to include heat sinks (SHS)
-	 */
-	@Test
-	public final void testAddItem_addEngineAfterRemoveSHS() {
-		final int numEngineHs = 2;
-		Upgrades upgrades = Mockito.mock(Upgrades.class);
-		Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
-		Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-		Mockito.when(configuredComponent.getEngineHeatsinks()).thenReturn(numEngineHs);
-		Item engine = ItemDB.lookup("STD ENGINE 300");
-		Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
+    /**
+     * addItem() has a special case where it shall re-add engine heat sinks that were removed in a previous call to
+     * removeItem(). This is to facilitate undo behavior on engines to include heat sinks (SHS)
+     */
+    @Test
+    public final void testAddItem_addEngineAfterRemoveSHS() {
+        final int numEngineHs = 2;
+        Upgrades upgrades = Mockito.mock(Upgrades.class);
+        Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
+        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+        Mockito.when(configuredComponent.getEngineHeatsinks()).thenReturn(numEngineHs);
+        Item engine = ItemDB.lookup("STD ENGINE 300");
+        Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
 
-		cut.removeItem(engine);
-		cut.addItem(engine);
+        cut.removeItem(engine);
+        cut.addItem(engine);
 
-		Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).addItem(ItemDB.DHS);
-	}
+        Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).addItem(ItemDB.DHS);
+    }
 
-	/**
-	 * addItem() has a special case where it shall re-add engine heat sinks that were removed in a previous call to
-	 * removeItem(). This is to facilitate undo behavior on engines to include heat sinks (DHS)
-	 */
-	@Test
-	public final void testAddItem_addEngineAfterRemoveDHS() {
-		final int numEngineHs = 2;
-		Upgrades upgrades = Mockito.mock(Upgrades.class);
-		Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
-		Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-		Mockito.when(configuredComponent.getEngineHeatsinks()).thenReturn(numEngineHs);
-		Item engine = ItemDB.lookup("STD ENGINE 300");
-		Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
+    /**
+     * addItem() has a special case where it shall re-add engine heat sinks that were removed in a previous call to
+     * removeItem(). This is to facilitate undo behavior on engines to include heat sinks (DHS)
+     */
+    @Test
+    public final void testAddItem_addEngineAfterRemoveDHS() {
+        final int numEngineHs = 2;
+        Upgrades upgrades = Mockito.mock(Upgrades.class);
+        Mockito.when(upgrades.getHeatSink()).thenReturn(UpgradeDB.DOUBLE_HEATSINKS);
+        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+        Mockito.when(configuredComponent.getEngineHeatsinks()).thenReturn(numEngineHs);
+        Item engine = ItemDB.lookup("STD ENGINE 300");
+        Mockito.when(configuredComponent.canRemoveItem(engine)).thenReturn(true);
 
-		cut.removeItem(engine);
-		cut.addItem(engine);
+        cut.removeItem(engine);
+        cut.addItem(engine);
 
-		Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).addItem(ItemDB.DHS);
-	}
+        Mockito.verify(configuredComponent, Mockito.times(numEngineHs)).addItem(ItemDB.DHS);
+    }
 
 }

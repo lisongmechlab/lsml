@@ -29,24 +29,24 @@ import lisong_mechlab.model.item.Engine;
  */
 public class TimeToCool implements Metric {
 
-	private final HeatCapacity		capacity;
-	private final HeatDissipation	dissipation;
+    private final HeatCapacity    capacity;
+    private final HeatDissipation dissipation;
 
-	/**
-	 * @param aHeatCapacity
-	 * @param aHeatDissipation
-	 */
-	public TimeToCool(HeatCapacity aHeatCapacity, HeatDissipation aHeatDissipation) {
-		capacity = aHeatCapacity;
-		dissipation = aHeatDissipation;
-	}
+    /**
+     * @param aHeatCapacity
+     * @param aHeatDissipation
+     */
+    public TimeToCool(HeatCapacity aHeatCapacity, HeatDissipation aHeatDissipation) {
+        capacity = aHeatCapacity;
+        dissipation = aHeatDissipation;
+    }
 
-	/**
-	 * @see lisong_mechlab.model.metrics.Metric#calculate()
-	 */
-	@Override
-	public double calculate() {
-		return capacity.calculate() / (dissipation.calculate() - Engine.ENGINE_HEAT_FULL_THROTTLE);
-	}
+    /**
+     * @see lisong_mechlab.model.metrics.Metric#calculate()
+     */
+    @Override
+    public double calculate() {
+        return capacity.calculate() / (dissipation.calculate() - Engine.ENGINE_HEAT_FULL_THROTTLE);
+    }
 
 }

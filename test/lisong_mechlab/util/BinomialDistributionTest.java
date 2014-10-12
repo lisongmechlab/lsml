@@ -29,38 +29,38 @@ import org.junit.Test;
  * @author Emily Björk
  */
 public class BinomialDistributionTest {
-	@Test
-	public void testPdf() {
-		BinomialDistribution cut = new BinomialDistribution(0.3, 6);
+    @Test
+    public void testPdf() {
+        BinomialDistribution cut = new BinomialDistribution(0.3, 6);
 
-		assertEquals(0.1176, cut.pdf(0), 0.00006);
-		assertEquals(0.3025, cut.pdf(1), 0.00006);
-		assertEquals(0.3241, cut.pdf(2), 0.00006);
-		assertEquals(0.1852, cut.pdf(3), 0.00006);
-		assertEquals(0.0595, cut.pdf(4), 0.00006);
-		assertEquals(0.0102, cut.pdf(5), 0.00006);
-		assertEquals(0.0007, cut.pdf(6), 0.00006);
-	}
+        assertEquals(0.1176, cut.pdf(0), 0.00006);
+        assertEquals(0.3025, cut.pdf(1), 0.00006);
+        assertEquals(0.3241, cut.pdf(2), 0.00006);
+        assertEquals(0.1852, cut.pdf(3), 0.00006);
+        assertEquals(0.0595, cut.pdf(4), 0.00006);
+        assertEquals(0.0102, cut.pdf(5), 0.00006);
+        assertEquals(0.0007, cut.pdf(6), 0.00006);
+    }
 
-	@Test
-	public void testCdf() {
-		BinomialDistribution cut = new BinomialDistribution(0.3, 6);
+    @Test
+    public void testCdf() {
+        BinomialDistribution cut = new BinomialDistribution(0.3, 6);
 
-		double ansAccError = 0.00006;
-		double ans = 0.1176;
-		assertEquals(ans, cut.cdf(0), 1 * ansAccError);
-		ans += 0.3025;
-		assertEquals(ans, cut.cdf(1), 2 * ansAccError);
-		ans += 0.3241;
-		assertEquals(ans, cut.cdf(2), 3 * ansAccError);
-		ans += 0.1852;
-		assertEquals(ans, cut.cdf(3), 4 * ansAccError);
-		ans += 0.0595;
-		assertEquals(ans, cut.cdf(4), 5 * ansAccError);
-		ans += 0.0102;
-		assertEquals(ans, cut.cdf(5), 6 * ansAccError);
-		ans += 0.0007;
-		assertEquals(ans, cut.cdf(6), 7 * ansAccError);
-		assertEquals(1.0, ans, 8 * ansAccError);
-	}
+        double ansAccError = 0.00006;
+        double ans = 0.1176;
+        assertEquals(ans, cut.cdf(0), 1 * ansAccError);
+        ans += 0.3025;
+        assertEquals(ans, cut.cdf(1), 2 * ansAccError);
+        ans += 0.3241;
+        assertEquals(ans, cut.cdf(2), 3 * ansAccError);
+        ans += 0.1852;
+        assertEquals(ans, cut.cdf(3), 4 * ansAccError);
+        ans += 0.0595;
+        assertEquals(ans, cut.cdf(4), 5 * ansAccError);
+        ans += 0.0102;
+        assertEquals(ans, cut.cdf(5), 6 * ansAccError);
+        ans += 0.0007;
+        assertEquals(ans, cut.cdf(6), 7 * ansAccError);
+        assertEquals(1.0, ans, 8 * ansAccError);
+    }
 }

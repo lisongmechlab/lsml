@@ -30,21 +30,21 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class ChassiConverter implements Converter {
 
-	@Override
-	public boolean canConvert(Class aClass) {
-		return ChassisStandard.class == aClass;
-	}
+    @Override
+    public boolean canConvert(Class aClass) {
+        return ChassisStandard.class == aClass;
+    }
 
-	@Override
-	public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-		ChassisStandard chassi = (ChassisStandard) anObject;
-		aWriter.setValue(chassi.getNameShort());
-	}
+    @Override
+    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+        ChassisStandard chassi = (ChassisStandard) anObject;
+        aWriter.setValue(chassi.getNameShort());
+    }
 
-	@Override
-	public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-		String variation = aReader.getValue();
-		return ChassisDB.lookup(variation);
-	}
+    @Override
+    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+        String variation = aReader.getValue();
+        return ChassisDB.lookup(variation);
+    }
 
 }

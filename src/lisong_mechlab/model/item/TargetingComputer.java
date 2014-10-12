@@ -37,128 +37,129 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Emily Björk
  */
 public class TargetingComputer extends Module implements WeaponModifier {
-	private static class Filter implements WeaponModifier {
-		private final List<String>	compatibleWeapons;
+    private static class Filter implements WeaponModifier {
+        private final List<String> compatibleWeapons;
 
-		@XStreamAsAttribute
-		public double				longRange;
-		@XStreamAsAttribute
-		public double				maxRange;
+        @XStreamAsAttribute
+        public double              longRange;
+        @XStreamAsAttribute
+        public double              maxRange;
 
-		Filter(XMLTargetingComputerStats.XMLWeaponStatsFilter aFilter) {
-			compatibleWeapons = Arrays.asList(aFilter.compatibleWeapons.split("\\s*,\\s*"));
+        Filter(XMLTargetingComputerStats.XMLWeaponStatsFilter aFilter) {
+            compatibleWeapons = Arrays.asList(aFilter.compatibleWeapons.split("\\s*,\\s*"));
 
-			boolean ok = false;
-			for (XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : aFilter.WeaponStats) {
-				if (stats.longRange != 0.0 || stats.maxRange != 0.0) {
-					longRange = stats.longRange - 1;
-					maxRange = stats.maxRange - 1;
-					ok = true;
-					break;
-				}
-			}
+            boolean ok = false;
+            for (XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : aFilter.WeaponStats) {
+                if (stats.longRange != 0.0 || stats.maxRange != 0.0) {
+                    longRange = stats.longRange - 1;
+                    maxRange = stats.maxRange - 1;
+                    ok = true;
+                    break;
+                }
+            }
 
-			if (!ok)
-				throw new UnsupportedOperationException();
-		}
+            if (!ok)
+                throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public boolean affectsWeapon(Weapon aWeapon) {
-			for (String name : compatibleWeapons) {
-				if (name.equals(aWeapon.getKey()))
-					return true;
-			}
-			return false;
-		}
+        @Override
+        public boolean affectsWeapon(Weapon aWeapon) {
+            for (String name : compatibleWeapons) {
+                if (name.equals(aWeapon.getKey()))
+                    return true;
+            }
+            return false;
+        }
 
-		@Override
-		public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
-			if (affectsWeapon(aWeapon))
-				return maxRange * aRange;
-			return 0;
-		}
+        @Override
+        public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
+            if (affectsWeapon(aWeapon))
+                return maxRange * aRange;
+            return 0;
+        }
 
-		@Override
-		public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
-			if (affectsWeapon(aWeapon))
-				return longRange * aRange;
-			return 0;
-		}
+        @Override
+        public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
+            if (affectsWeapon(aWeapon))
+                return longRange * aRange;
+            return 0;
+        }
 
-		@Override
-		public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree) {
-			return 0;
-		}
+        @Override
+        public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree) {
+            return 0;
+        }
 
-		@Override
-		public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree) {
-			return 0;
-		}
-	}
+        @Override
+        public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree) {
+            return 0;
+        }
+    }
 
-	private final List<Filter>	filters	= new ArrayList<>();
+    private final List<Filter> filters = new ArrayList<>();
 
-	public TargetingComputer(ItemStatsModule aModule) {
-		super(aModule);
+    public TargetingComputer(ItemStatsModule aModule) {
+        super(aModule);
 
-		if (null != aModule.TargetingComputerStats.WeaponStatsFilter) {
-			for (XMLTargetingComputerStats.XMLWeaponStatsFilter filter : aModule.TargetingComputerStats.WeaponStatsFilter) {
-				try {
-					filters.add(new Filter(filter));
-				} catch (UnsupportedOperationException e) {
-					// Keep calm and carry on.
-				}
-			}
-		}
-	}
+        if (null != aModule.TargetingComputerStats.WeaponStatsFilter) {
+            for (XMLTargetingComputerStats.XMLWeaponStatsFilter filter : aModule.TargetingComputerStats.WeaponStatsFilter) {
+                try {
+                    filters.add(new Filter(filter));
+                }
+                catch (UnsupportedOperationException e) {
+                    // Keep calm and carry on.
+                }
+            }
+        }
+    }
 
-	@Override
-	public boolean affectsWeapon(Weapon aWeapon) {
-		for (Filter filter : filters) {
-			if (filter.affectsWeapon(aWeapon))
-				return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean affectsWeapon(Weapon aWeapon) {
+        for (Filter filter : filters) {
+            if (filter.affectsWeapon(aWeapon))
+                return true;
+        }
+        return false;
+    }
 
-	@Override
-	public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
-		for (Filter filter : filters) {
-			if (filter.affectsWeapon(aWeapon)) {
-				return filter.extraMaxRange(aWeapon, aRange, aPilotSkillTree);
-			}
-		}
-		return 0;
-	}
+    @Override
+    public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
+        for (Filter filter : filters) {
+            if (filter.affectsWeapon(aWeapon)) {
+                return filter.extraMaxRange(aWeapon, aRange, aPilotSkillTree);
+            }
+        }
+        return 0;
+    }
 
-	@Override
-	public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
-		for (Filter filter : filters) {
-			if (filter.affectsWeapon(aWeapon)) {
-				return filter.extraLongRange(aWeapon, aRange, aPilotSkillTree);
-			}
-		}
-		return 0;
-	}
+    @Override
+    public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
+        for (Filter filter : filters) {
+            if (filter.affectsWeapon(aWeapon)) {
+                return filter.extraLongRange(aWeapon, aRange, aPilotSkillTree);
+            }
+        }
+        return 0;
+    }
 
-	@Override
-	public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree) {
-		for (Filter filter : filters) {
-			if (filter.affectsWeapon(aWeapon)) {
-				return filter.extraWeaponHeat(aWeapon, aHeat, aPilotSkillTree);
-			}
-		}
-		return 0;
-	}
+    @Override
+    public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree) {
+        for (Filter filter : filters) {
+            if (filter.affectsWeapon(aWeapon)) {
+                return filter.extraWeaponHeat(aWeapon, aHeat, aPilotSkillTree);
+            }
+        }
+        return 0;
+    }
 
-	@Override
-	public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree) {
-		for (Filter filter : filters) {
-			if (filter.affectsWeapon(aWeapon)) {
-				return filter.extraCooldown(aWeapon, aCooldown, aPilotSkillTree);
-			}
-		}
-		return 0;
-	}
+    @Override
+    public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree) {
+        for (Filter filter : filters) {
+            if (filter.affectsWeapon(aWeapon)) {
+                return filter.extraCooldown(aWeapon, aCooldown, aPilotSkillTree);
+            }
+        }
+        return 0;
+    }
 
 }

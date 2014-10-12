@@ -29,18 +29,18 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * @author Emily Björk
  */
 public class TwistSpeed implements Metric {
-	private final LoadoutBase<?>	loadout;
+    private final LoadoutBase<?> loadout;
 
-	public TwistSpeed(LoadoutBase<?> aLoadout) {
-		loadout = aLoadout;
-	}
+    public TwistSpeed(LoadoutBase<?> aLoadout) {
+        loadout = aLoadout;
+    }
 
-	@Override
-	public double calculate() {
-		ChassisBase chassi = loadout.getChassis();
-		Engine engine = loadout.getEngine();
-		if (engine == null)
-			return 0.0;
-		return loadout.getMovementProfile().getTorsoYawSpeed() * loadout.getEngine().getRating() / chassi.getMassMax();
-	}
+    @Override
+    public double calculate() {
+        ChassisBase chassi = loadout.getChassis();
+        Engine engine = loadout.getEngine();
+        if (engine == null)
+            return 0.0;
+        return loadout.getMovementProfile().getTorsoYawSpeed() * loadout.getEngine().getRating() / chassi.getMassMax();
+    }
 }

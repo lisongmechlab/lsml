@@ -25,7 +25,7 @@ package lisong_mechlab.util;
  * @author Emily Björk
  */
 public interface Distribution {
-	public double pdf(double x);
+    public double pdf(double x);
 
-	public double cdf(double x);
+    public double cdf(double x);
 }

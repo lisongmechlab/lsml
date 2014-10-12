@@ -30,22 +30,22 @@ import org.junit.Test;
  */
 public class ByteUtilTest {
 
-	@Test
-	public void testLsr() {
-		byte input = (byte) 0xFF;
-		int shift = 2;
-		byte expected = 0x3F;
+    @Test
+    public void testLsr() {
+        byte input = (byte) 0xFF;
+        int shift = 2;
+        byte expected = 0x3F;
 
-		assertEquals(expected, ByteUtil.lsr(input, shift));
-	}
+        assertEquals(expected, ByteUtil.lsr(input, shift));
+    }
 
-	@Test
-	public void testLsl() {
-		byte input = (byte) 0xFF;
-		int shift = 2;
-		byte expected = (byte) 0xFC;
+    @Test
+    public void testLsl() {
+        byte input = (byte) 0xFF;
+        int shift = 2;
+        byte expected = (byte) 0xFC;
 
-		assertEquals(expected, ByteUtil.lsl(input, shift));
-	}
+        assertEquals(expected, ByteUtil.lsl(input, shift));
+    }
 
 }

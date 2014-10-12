@@ -28,28 +28,28 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
  * @author Emily
  */
 public class Internal extends Module {
-	public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-			HardPointType aHardpointType, int aHP, Faction aFaction) {
-		super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
-	}
+    public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardpointType, int aHP, Faction aFaction) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+    }
 
-	public Internal(String aNameTag, String aDescTag, int aSlots, Faction aFaction) {
-		super(aNameTag, aDescTag, aSlots, 0, aFaction);
-	}
+    public Internal(String aNameTag, String aDescTag, int aSlots, Faction aFaction) {
+        super(aNameTag, aDescTag, aSlots, 0, aFaction);
+    }
 
-	public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth, Faction aFaction) {
-		super(aNameTag, aDescTag, aSlots, aHealth, aFaction);
-	}
+    public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth, Faction aFaction) {
+        super(aNameTag, aDescTag, aSlots, aHealth, aFaction);
+    }
 
-	public Internal(ItemStatsModule aStatsModule) {
-		super(aStatsModule);
-	}
+    public Internal(ItemStatsModule aStatsModule) {
+        super(aStatsModule);
+    }
 
-	@Override
-	public String getShortName() {
-		String ans = getName().replace("UPPER ", "U-");
-		ans = ans.replace("LOWER ", "L-");
-		ans = ans.replace("ACTUATOR", "");
-		return ans;
-	}
+    @Override
+    public String getShortName() {
+        String ans = getName().replace("UPPER ", "U-");
+        ans = ans.replace("LOWER ", "L-");
+        ans = ans.replace("ACTUATOR", "");
+        return ans;
+    }
 }

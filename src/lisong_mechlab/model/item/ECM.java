@@ -24,7 +24,7 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class ECM extends Module {
 
-	public ECM(ItemStatsModule aModule) {
-		super(aModule, HardPointType.ECM);
-	}
+    public ECM(ItemStatsModule aModule) {
+        super(aModule, HardPointType.ECM);
+    }
 }

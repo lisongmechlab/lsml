@@ -26,137 +26,137 @@ package lisong_mechlab.model.chassi;
  */
 public interface MovementModifier {
 
-	/**
-	 * Determines how much should be added to the torso max yaw angle.
-	 * 
-	 * @param aBase
-	 *            The base value of the torso yaw angle.
-	 * @see lisong_mechlab.model.chassi.MovementProfile#getTorsoYawMax()
-	 * @return The additive bonus to yaw angle.
-	 */
-	double extraTorsoYawMax(double aBase);
+    /**
+     * Determines how much should be added to the torso max yaw angle.
+     * 
+     * @param aBase
+     *            The base value of the torso yaw angle.
+     * @see lisong_mechlab.model.chassi.MovementProfile#getTorsoYawMax()
+     * @return The additive bonus to yaw angle.
+     */
+    double extraTorsoYawMax(double aBase);
 
-	/**
-	 * Determines how much should be added to the torso yaw speed.
-	 * 
-	 * @param aBase
-	 *            The base value of the torso yaw speed.
-	 * @see lisong_mechlab.model.chassi.MovementProfile#getTorsoYawSpeed()
-	 * @return The additive bonus to yaw speed.
-	 */
-	double extraTorsoYawSpeed(double aBase);
+    /**
+     * Determines how much should be added to the torso yaw speed.
+     * 
+     * @param aBase
+     *            The base value of the torso yaw speed.
+     * @see lisong_mechlab.model.chassi.MovementProfile#getTorsoYawSpeed()
+     * @return The additive bonus to yaw speed.
+     */
+    double extraTorsoYawSpeed(double aBase);
 
-	/**
-	 * Determines how much should be added to the torso max pitch angle.
-	 * 
-	 * @param aBase
-	 *            The base value of the torso pitch angle.
-	 * @see lisong_mechlab.model.chassi.MovementProfile#getTorsoPitchMax()
-	 * @return The additive bonus to pitch angle.
-	 */
-	double extraTorsoPitchMax(double aBase);
+    /**
+     * Determines how much should be added to the torso max pitch angle.
+     * 
+     * @param aBase
+     *            The base value of the torso pitch angle.
+     * @see lisong_mechlab.model.chassi.MovementProfile#getTorsoPitchMax()
+     * @return The additive bonus to pitch angle.
+     */
+    double extraTorsoPitchMax(double aBase);
 
-	/**
-	 * Determines how much should be added to the torso pitch speed.
-	 * 
-	 * @param aBase
-	 *            The base value of the torso pitch speed.
-	 * @see lisong_mechlab.model.chassi.MovementProfile#getTorsoPitchSpeed()
-	 * @return The additive bonus to pitch speed.
-	 */
-	double extraTorsoPitchSpeed(double aBase);
+    /**
+     * Determines how much should be added to the torso pitch speed.
+     * 
+     * @param aBase
+     *            The base value of the torso pitch speed.
+     * @see lisong_mechlab.model.chassi.MovementProfile#getTorsoPitchSpeed()
+     * @return The additive bonus to pitch speed.
+     */
+    double extraTorsoPitchSpeed(double aBase);
 
-	/**
-	 * Determines how much should be added to the arm max yaw angle.
-	 * 
-	 * @param aBase
-	 *            The base value of the arm yaw angle.
-	 * @see lisong_mechlab.model.chassi.MovementProfile#getArmYawMax()
-	 * @return The additive bonus to yaw angle.
-	 */
-	double extraArmYawMax(double aBase);
+    /**
+     * Determines how much should be added to the arm max yaw angle.
+     * 
+     * @param aBase
+     *            The base value of the arm yaw angle.
+     * @see lisong_mechlab.model.chassi.MovementProfile#getArmYawMax()
+     * @return The additive bonus to yaw angle.
+     */
+    double extraArmYawMax(double aBase);
 
-	/**
-	 * Determines how much should be added to the arm max yaw speed.
-	 * 
-	 * @param aBase
-	 *            The base value of the arm yaw speed.
-	 * @see lisong_mechlab.model.chassi.MovementProfile#getArmYawSpeed()
-	 * @return The additive bonus to yaw speed.
-	 */
-	double extraArmYawSpeed(double aBase);
+    /**
+     * Determines how much should be added to the arm max yaw speed.
+     * 
+     * @param aBase
+     *            The base value of the arm yaw speed.
+     * @see lisong_mechlab.model.chassi.MovementProfile#getArmYawSpeed()
+     * @return The additive bonus to yaw speed.
+     */
+    double extraArmYawSpeed(double aBase);
 
-	/**
-	 * Determines how much should be added to the arm max pitch angle.
-	 * 
-	 * @param aBase
-	 *            The base value of the arm pitch angle.
-	 * @see lisong_mechlab.model.chassi.MovementProfile#getArmPitchMax()
-	 * @return The additive bonus to pitch angle.
-	 */
-	double extraArmPitchMax(double aBase);
+    /**
+     * Determines how much should be added to the arm max pitch angle.
+     * 
+     * @param aBase
+     *            The base value of the arm pitch angle.
+     * @see lisong_mechlab.model.chassi.MovementProfile#getArmPitchMax()
+     * @return The additive bonus to pitch angle.
+     */
+    double extraArmPitchMax(double aBase);
 
-	/**
-	 * Determines how much should be added to the arm max pitch speed.
-	 * 
-	 * @param aBase
-	 *            The base value of the arm pitch speed.
-	 * @see lisong_mechlab.model.chassi.MovementProfile#getArmPitchSpeed()
-	 * @return The additive bonus to pitch speed.
-	 */
-	double extraArmPitchSpeed(double aBase);
+    /**
+     * Determines how much should be added to the arm max pitch speed.
+     * 
+     * @param aBase
+     *            The base value of the arm pitch speed.
+     * @see lisong_mechlab.model.chassi.MovementProfile#getArmPitchSpeed()
+     * @return The additive bonus to pitch speed.
+     */
+    double extraArmPitchSpeed(double aBase);
 
-	/**
-	 * Determines how much should be added to the attribute.
-	 * 
-	 * @param aBase
-	 *            The base value of the attribute.
-	 * @return The additive bonus to the attribute.
-	 */
-	double extraTurnLerpLowSpeed(double aBase);
+    /**
+     * Determines how much should be added to the attribute.
+     * 
+     * @param aBase
+     *            The base value of the attribute.
+     * @return The additive bonus to the attribute.
+     */
+    double extraTurnLerpLowSpeed(double aBase);
 
-	/**
-	 * Determines how much should be added to the attribute.
-	 * 
-	 * @param aBase
-	 *            The base value of the attribute.
-	 * @return The additive bonus to the attribute.
-	 */
-	double extraTurnLerpMidSpeed(double aBase);
+    /**
+     * Determines how much should be added to the attribute.
+     * 
+     * @param aBase
+     *            The base value of the attribute.
+     * @return The additive bonus to the attribute.
+     */
+    double extraTurnLerpMidSpeed(double aBase);
 
-	/**
-	 * Determines how much should be added to the attribute.
-	 * 
-	 * @param aBase
-	 *            The base value of the attribute.
-	 * @return The additive bonus to the attribute.
-	 */
-	double extraTurnLerpHighSpeed(double aBase);
+    /**
+     * Determines how much should be added to the attribute.
+     * 
+     * @param aBase
+     *            The base value of the attribute.
+     * @return The additive bonus to the attribute.
+     */
+    double extraTurnLerpHighSpeed(double aBase);
 
-	/**
-	 * Determines how much should be added to the attribute.
-	 * 
-	 * @param aBase
-	 *            The base value of the attribute.
-	 * @return The additive bonus to the attribute.
-	 */
-	double extraTurnLerpLowRate(double aBase);
+    /**
+     * Determines how much should be added to the attribute.
+     * 
+     * @param aBase
+     *            The base value of the attribute.
+     * @return The additive bonus to the attribute.
+     */
+    double extraTurnLerpLowRate(double aBase);
 
-	/**
-	 * Determines how much should be added to the attribute.
-	 * 
-	 * @param aBase
-	 *            The base value of the attribute.
-	 * @return The additive bonus to the attribute.
-	 */
-	double extraTurnLerpMidRate(double aBase);
+    /**
+     * Determines how much should be added to the attribute.
+     * 
+     * @param aBase
+     *            The base value of the attribute.
+     * @return The additive bonus to the attribute.
+     */
+    double extraTurnLerpMidRate(double aBase);
 
-	/**
-	 * Determines how much should be added to the attribute.
-	 * 
-	 * @param aBase
-	 *            The base value of the attribute.
-	 * @return The additive bonus to the attribute.
-	 */
-	double extraTurnLerpHighRate(double aBase);
+    /**
+     * Determines how much should be added to the attribute.
+     * 
+     * @param aBase
+     *            The base value of the attribute.
+     * @return The additive bonus to the attribute.
+     */
+    double extraTurnLerpHighRate(double aBase);
 }

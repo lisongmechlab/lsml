@@ -25,5 +25,5 @@ package lisong_mechlab.model.loadout.export;
  * @author Emily Björk
  */
 public class Base64LoadoutCoderTest {
-	/* no tests at the moment */
+    /* no tests at the moment */
 }

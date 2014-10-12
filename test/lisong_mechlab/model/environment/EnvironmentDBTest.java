@@ -34,32 +34,32 @@ import org.junit.Test;
  */
 public class EnvironmentDBTest {
 
-	/**
-	 * {@link EnvironmentDB#lookup(String)} shall return an {@link Environment} with matching name if found in the DB.
-	 */
-	@Test
-	public void testLookup() {
-		Environment caustic = EnvironmentDB.lookup("caustic valley");
+    /**
+     * {@link EnvironmentDB#lookup(String)} shall return an {@link Environment} with matching name if found in the DB.
+     */
+    @Test
+    public void testLookup() {
+        Environment caustic = EnvironmentDB.lookup("caustic valley");
 
-		assertEquals(0.3, caustic.getHeat(), 0.0);
-		assertEquals("CAUSTIC VALLEY", caustic.getName());
-	}
+        assertEquals(0.3, caustic.getHeat(), 0.0);
+        assertEquals("CAUSTIC VALLEY", caustic.getName());
+    }
 
-	/**
-	 * {@link EnvironmentDB#lookup(String)} shall return null if the map was not found.
-	 */
-	@Test
-	public void testLookupNull() {
-		assertNull(EnvironmentDB.lookup("Mumbo jumbo therma"));
-	}
+    /**
+     * {@link EnvironmentDB#lookup(String)} shall return null if the map was not found.
+     */
+    @Test
+    public void testLookupNull() {
+        assertNull(EnvironmentDB.lookup("Mumbo jumbo therma"));
+    }
 
-	/**
-	 * {@link EnvironmentDB#lookupAll()} shall return all maps in the game.
-	 */
-	@Test
-	public void testLookupAll() {
-		List<Environment> environments = EnvironmentDB.lookupAll();
+    /**
+     * {@link EnvironmentDB#lookupAll()} shall return all maps in the game.
+     */
+    @Test
+    public void testLookupAll() {
+        List<Environment> environments = EnvironmentDB.lookupAll();
 
-		assertEquals(13, environments.size()); // To date 13 known maps.
-	}
+        assertEquals(13, environments.size()); // To date 13 known maps.
+    }
 }

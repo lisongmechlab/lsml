@@ -37,25 +37,26 @@ import lisong_mechlab.view.ProgramInit;
  * @author Emily Björk
  */
 public class AddToGarageAction extends AbstractAction {
-	private static final long		serialVersionUID	= -1720149730950545006L;
-	private static final String		SHORTCUT_STROKE		= "control S";
-	private final LoadoutBase<?>	loadout;
+    private static final long    serialVersionUID = -1720149730950545006L;
+    private static final String  SHORTCUT_STROKE  = "control S";
+    private final LoadoutBase<?> loadout;
 
-	public AddToGarageAction(LoadoutBase<?> aLoadout) {
-		super("Add to garage");
-		loadout = aLoadout;
-		setEnabled(!ProgramInit.lsml().getGarage().getMechs().contains(aLoadout));
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
-	}
+    public AddToGarageAction(LoadoutBase<?> aLoadout) {
+        super("Add to garage");
+        loadout = aLoadout;
+        setEnabled(!ProgramInit.lsml().getGarage().getMechs().contains(aLoadout));
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent aArg0) {
-		try {
-			LSML lsml = ProgramInit.lsml();
-			lsml.garageOperationStack.pushAndApply(new OpAddToGarage(lsml.getGarage(), loadout));
-			setEnabled(false);
-		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't add to garage! Error: " + e.getMessage());
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent aArg0) {
+        try {
+            LSML lsml = ProgramInit.lsml();
+            lsml.garageOperationStack.pushAndApply(new OpAddToGarage(lsml.getGarage(), loadout));
+            setEnabled(false);
+        }
+        catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't add to garage! Error: " + e.getMessage());
+        }
+    }
 }

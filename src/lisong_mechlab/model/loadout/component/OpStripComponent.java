@@ -34,39 +34,41 @@ import lisong_mechlab.util.message.MessageDelivery;
  * @author Emily Björk
  */
 public class OpStripComponent extends CompositeOperation {
-	/**
-	 * @param aLoadoutPart
-	 *            The {@link ConfiguredComponentBase} to strip.
-	 * @param aMessageDelivery
-	 *            Where to announce changes from this operation.
-	 * @param aLoadout
-	 *            The {@link LoadoutBase} to operate on.
-	 */
-	public OpStripComponent(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart) {
-		super("strip part", aMessageDelivery);
-		// Engine heat sinks are removed together with the engine.
-		int hsSkipp = aLoadoutPart.getEngineHeatsinks();
-		for (Item item : aLoadoutPart.getItemsEquipped()) {
-			if (!(item instanceof Internal)) {
-				if (item instanceof HeatSink) {
-					if (hsSkipp > 0) {
-						hsSkipp--;
-						continue;
-					}
-				}
-				addOp(new OpRemoveItem(messageBuffer, aLoadout, aLoadoutPart, item));
-			}
-		}
-		if (aLoadoutPart.getInternalComponent().getLocation().isTwoSided()) {
-			addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, ArmorSide.FRONT, 0, false));
-			addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, ArmorSide.BACK, 0, false));
-		} else {
-			addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, ArmorSide.ONLY, 0, false));
-		}
-	}
+    /**
+     * @param aLoadoutPart
+     *            The {@link ConfiguredComponentBase} to strip.
+     * @param aMessageDelivery
+     *            Where to announce changes from this operation.
+     * @param aLoadout
+     *            The {@link LoadoutBase} to operate on.
+     */
+    public OpStripComponent(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
+            ConfiguredComponentBase aLoadoutPart) {
+        super("strip part", aMessageDelivery);
+        // Engine heat sinks are removed together with the engine.
+        int hsSkipp = aLoadoutPart.getEngineHeatsinks();
+        for (Item item : aLoadoutPart.getItemsEquipped()) {
+            if (!(item instanceof Internal)) {
+                if (item instanceof HeatSink) {
+                    if (hsSkipp > 0) {
+                        hsSkipp--;
+                        continue;
+                    }
+                }
+                addOp(new OpRemoveItem(messageBuffer, aLoadout, aLoadoutPart, item));
+            }
+        }
+        if (aLoadoutPart.getInternalComponent().getLocation().isTwoSided()) {
+            addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, ArmorSide.FRONT, 0, false));
+            addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, ArmorSide.BACK, 0, false));
+        }
+        else {
+            addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, ArmorSide.ONLY, 0, false));
+        }
+    }
 
-	@Override
-	public void buildOperation() {
-		// No-op The preparation is invariant of time and performed in constructor
-	}
+    @Override
+    public void buildOperation() {
+        // No-op The preparation is invariant of time and performed in constructor
+    }
 }

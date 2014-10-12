@@ -30,55 +30,56 @@ import lisong_mechlab.util.message.MessageDelivery;
  * @author Emily Björk
  */
 public class OpAddItem extends OpItemBase {
-	/**
-	 * Creates a new operation.
-	 * 
-	 * @param aMessageDelivery
-	 *            The {@link MessageDelivery} to send messages on when items are added.
-	 * @param aLoadout
-	 *            The {@link LoadoutBase} to remove the item from.
-	 * @param aComponent
-	 *            The {@link ConfiguredComponentBase} to add to.
-	 * @param aItem
-	 *            The {@link Item} to add.
-	 */
-	public OpAddItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent, Item aItem) {
-		super(aMessageDelivery, aLoadout, aComponent, aItem);
-	}
+    /**
+     * Creates a new operation.
+     * 
+     * @param aMessageDelivery
+     *            The {@link MessageDelivery} to send messages on when items are added.
+     * @param aLoadout
+     *            The {@link LoadoutBase} to remove the item from.
+     * @param aComponent
+     *            The {@link ConfiguredComponentBase} to add to.
+     * @param aItem
+     *            The {@link Item} to add.
+     */
+    public OpAddItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
+            Item aItem) {
+        super(aMessageDelivery, aLoadout, aComponent, aItem);
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((item == null) ? 0 : item.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((item == null) ? 0 : item.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof OpRemoveItem))
-			return false;
-		OpAddItem other = (OpAddItem) obj;
-		return item == other.item && super.equals(other);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof OpRemoveItem))
+            return false;
+        OpAddItem other = (OpAddItem) obj;
+        return item == other.item && super.equals(other);
+    }
 
-	@Override
-	public String describe() {
-		return "add " + item.getName() + " to " + component.getInternalComponent().getLocation();
-	}
+    @Override
+    public String describe() {
+        return "add " + item.getName() + " to " + component.getInternalComponent().getLocation();
+    }
 
-	@Override
-	public void undo() {
-		removeItem(item);
-	}
+    @Override
+    public void undo() {
+        removeItem(item);
+    }
 
-	@Override
-	public void apply() {
-		if (!loadout.canEquip(item))
-			throw new IllegalArgumentException("Can't add " + item + " to " + loadout.getName() + "!");
-		if (!component.canAddItem(item))
-			throw new IllegalArgumentException("Can't add " + item + " to "
-					+ component.getInternalComponent().getLocation() + "!");
-		addItem(item);
-	}
+    @Override
+    public void apply() {
+        if (!loadout.canEquip(item))
+            throw new IllegalArgumentException("Can't add " + item + " to " + loadout.getName() + "!");
+        if (!component.canAddItem(item))
+            throw new IllegalArgumentException("Can't add " + item + " to "
+                    + component.getInternalComponent().getLocation() + "!");
+        addItem(item);
+    }
 }

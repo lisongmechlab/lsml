@@ -34,17 +34,17 @@ import lisong_mechlab.view.ProgramInit;
  * @author Emily Björk
  */
 public class CloneLoadoutAction extends AbstractAction {
-	private static final long		serialVersionUID	= 2146995440483341395L;
-	private final LoadoutBase<?>	loadout;
+    private static final long    serialVersionUID = 2146995440483341395L;
+    private final LoadoutBase<?> loadout;
 
-	public CloneLoadoutAction(String aTitle, LoadoutBase<?> aLoadout, KeyStroke aKeyStroke) {
-		super(aTitle);
-		loadout = aLoadout;
-		putValue(Action.ACCELERATOR_KEY, aKeyStroke);
-	}
+    public CloneLoadoutAction(String aTitle, LoadoutBase<?> aLoadout, KeyStroke aKeyStroke) {
+        super(aTitle);
+        loadout = aLoadout;
+        putValue(Action.ACCELERATOR_KEY, aKeyStroke);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent aArg0) {
-		ProgramInit.lsml().mechLabPane.openLoadout(loadout.clone(ProgramInit.lsml().xBar));
-	}
+    @Override
+    public void actionPerformed(ActionEvent aArg0) {
+        ProgramInit.lsml().mechLabPane.openLoadout(loadout.clone(ProgramInit.lsml().xBar));
+    }
 }

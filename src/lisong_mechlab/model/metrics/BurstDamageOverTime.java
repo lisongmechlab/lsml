@@ -42,71 +42,72 @@ import lisong_mechlab.util.message.MessageXBar;
  * @author Emily Björk
  */
 public class BurstDamageOverTime extends RangeTimeMetric implements Message.Recipient {
-	private final List<IntegratedSignal>	damageIntegrals	= new ArrayList<>();
-	private double							cachedRange		= -1;
+    private final List<IntegratedSignal> damageIntegrals = new ArrayList<>();
+    private double                       cachedRange     = -1;
 
-	/**
-	 * Creates a new calculator object
-	 * 
-	 * @param aLoadout
-	 *            The {@link LoadoutStandard} to calculate for.
-	 * @param aXBar
-	 *            The {@link MessageXBar} to listen for changes to 'aLoadout' on.
-	 */
-	public BurstDamageOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
-		super(aLoadout);
-		updateEvents(getRange());
-		aXBar.attach(this);
-	}
+    /**
+     * Creates a new calculator object
+     * 
+     * @param aLoadout
+     *            The {@link LoadoutStandard} to calculate for.
+     * @param aXBar
+     *            The {@link MessageXBar} to listen for changes to 'aLoadout' on.
+     */
+    public BurstDamageOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+        super(aLoadout);
+        updateEvents(getRange());
+        aXBar.attach(this);
+    }
 
-	@Override
-	public void receive(Message aMsg) {
-		if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
-			updateEvents(getRange());
-		}
-	}
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
+            updateEvents(getRange());
+        }
+    }
 
-	private void updateEvents(double aRange) {
-		damageIntegrals.clear();
-		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
-		for (Weapon weapon : loadout.items(Weapon.class)) {
-			if (!weapon.isOffensive())
-				continue;
+    private void updateEvents(double aRange) {
+        damageIntegrals.clear();
+        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        for (Weapon weapon : loadout.items(Weapon.class)) {
+            if (!weapon.isOffensive())
+                continue;
 
-			double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange, modifiers);
-			double period = weapon.getSecondsPerShot(loadout.getEfficiencies(), modifiers);
-			double damage = factor * weapon.getDamagePerShot();
+            double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange, modifiers);
+            double period = weapon.getSecondsPerShot(loadout.getEfficiencies(), modifiers);
+            double damage = factor * weapon.getDamagePerShot();
 
-			if (weapon instanceof EnergyWeapon) {
-				EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
-				if (energyWeapon.getDuration() > 0) {
-					damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(), damage
-							/ energyWeapon.getDuration()));
-					continue;
-				}
-			} else if (weapon instanceof BallisticWeapon) {
-				BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
-				if (ballisticWeapon.canDoubleFire()) {
-					damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, loadout.getEfficiencies(),
-							modifiers, aRange));
-					continue;
-				}
-			}
-			damageIntegrals.add(new IntegratedImpulseTrain(period, damage));
+            if (weapon instanceof EnergyWeapon) {
+                EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
+                if (energyWeapon.getDuration() > 0) {
+                    damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(), damage
+                            / energyWeapon.getDuration()));
+                    continue;
+                }
+            }
+            else if (weapon instanceof BallisticWeapon) {
+                BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
+                if (ballisticWeapon.canDoubleFire()) {
+                    damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, loadout.getEfficiencies(),
+                            modifiers, aRange));
+                    continue;
+                }
+            }
+            damageIntegrals.add(new IntegratedImpulseTrain(period, damage));
 
-		}
-		cachedRange = getRange();
-	}
+        }
+        cachedRange = getRange();
+    }
 
-	@Override
-	public double calculate(double aRange, double aTime) {
-		if (aRange != cachedRange) {
-			updateEvents(aRange);
-		}
-		double ans = 0;
-		for (IntegratedSignal event : damageIntegrals) {
-			ans += event.integrateFromZeroTo(aTime);
-		}
-		return ans;
-	}
+    @Override
+    public double calculate(double aRange, double aTime) {
+        if (aRange != cachedRange) {
+            updateEvents(aRange);
+        }
+        double ans = 0;
+        for (IntegratedSignal event : damageIntegrals) {
+            ans += event.integrateFromZeroTo(aTime);
+        }
+        return ans;
+    }
 }

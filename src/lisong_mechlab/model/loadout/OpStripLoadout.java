@@ -35,25 +35,25 @@ import lisong_mechlab.util.message.MessageDelivery;
  * @author Emily Björk
  */
 public class OpStripLoadout extends CompositeOperation {
-	protected final LoadoutBase<?>	loadout;
+    protected final LoadoutBase<?> loadout;
 
-	public OpStripLoadout(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
-		super("strip mech", aMessageDelivery);
-		loadout = aLoadout;
-	}
+    public OpStripLoadout(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
+        super("strip mech", aMessageDelivery);
+        loadout = aLoadout;
+    }
 
-	@Override
-	public void buildOperation() {
-		for (ConfiguredComponentBase component : loadout.getComponents()) {
-			addOp(new OpStripComponent(messageBuffer, loadout, component));
-		}
+    @Override
+    public void buildOperation() {
+        for (ConfiguredComponentBase component : loadout.getComponents()) {
+            addOp(new OpStripComponent(messageBuffer, loadout, component));
+        }
 
-		if (loadout instanceof LoadoutStandard) {
-			LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-			addOp(new OpSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
-			addOp(new OpSetGuidanceType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
-			addOp(new OpSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
-			addOp(new OpSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
-		}
-	}
+        if (loadout instanceof LoadoutStandard) {
+            LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+            addOp(new OpSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
+            addOp(new OpSetGuidanceType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
+            addOp(new OpSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
+            addOp(new OpSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
+        }
+    }
 }

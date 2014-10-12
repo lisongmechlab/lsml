@@ -33,33 +33,33 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TopSpeedTest {
-	MockLoadoutContainer	mlc	= new MockLoadoutContainer();
-	TopSpeed				cut	= new TopSpeed(mlc.loadout);
+    MockLoadoutContainer mlc = new MockLoadoutContainer();
+    TopSpeed             cut = new TopSpeed(mlc.loadout);
 
-	@Test
-	public void testCalculate_noengine() throws Exception {
-		when(mlc.loadout.getEngine()).thenReturn(null);
-		assertEquals(0, cut.calculate(), 0.0);
-	}
+    @Test
+    public void testCalculate_noengine() throws Exception {
+        when(mlc.loadout.getEngine()).thenReturn(null);
+        assertEquals(0, cut.calculate(), 0.0);
+    }
 
-	@Test
-	public void testCalculate() throws Exception {
-		int rating = 300;
-		double factor = 4;
-		int tonnage = 30;
+    @Test
+    public void testCalculate() throws Exception {
+        int rating = 300;
+        double factor = 4;
+        int tonnage = 30;
 
-		MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
-		Mockito.when(movementProfile.getMaxMovementSpeed()).thenReturn(factor);
+        MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
+        Mockito.when(movementProfile.getMaxMovementSpeed()).thenReturn(factor);
 
-		for (double speedtweak : new double[] { 1.0, 1.1 }) {
-			when(mlc.loadout.getEngine()).thenReturn((Engine) ItemDB.lookup("STD ENGINE " + rating));
-			when(mlc.loadout.getMovementProfile()).thenReturn(movementProfile);
-			when(mlc.chassi.getMassMax()).thenReturn(tonnage);
-			when(mlc.efficiencies.hasSpeedTweak()).thenReturn(speedtweak > 1.0);
-			when(mlc.efficiencies.getSpeedModifier()).thenReturn(speedtweak);
+        for (double speedtweak : new double[] { 1.0, 1.1 }) {
+            when(mlc.loadout.getEngine()).thenReturn((Engine) ItemDB.lookup("STD ENGINE " + rating));
+            when(mlc.loadout.getMovementProfile()).thenReturn(movementProfile);
+            when(mlc.chassi.getMassMax()).thenReturn(tonnage);
+            when(mlc.efficiencies.hasSpeedTweak()).thenReturn(speedtweak > 1.0);
+            when(mlc.efficiencies.getSpeedModifier()).thenReturn(speedtweak);
 
-			double expected = rating * factor / tonnage * speedtweak;
-			assertEquals(expected, cut.calculate(), 0.0);
-		}
-	}
+            double expected = rating * factor / tonnage * speedtweak;
+            assertEquals(expected, cut.calculate(), 0.0);
+        }
+    }
 }

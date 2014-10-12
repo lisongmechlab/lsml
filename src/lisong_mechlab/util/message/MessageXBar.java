@@ -35,98 +35,102 @@ import java.util.Queue;
  * @author Emily Björk
  */
 public class MessageXBar implements MessageReception, MessageDelivery {
-	private static final boolean												debug			= false;
-	private transient final Map<Class<? extends Message.Recipient>, Double>		perf_walltime	= debug ? new HashMap<Class<? extends Message.Recipient>, Double>()
-																										: null;
-	private transient final Map<Class<? extends Message.Recipient>, Integer>	perf_calls		= debug ? new HashMap<Class<? extends Message.Recipient>, Integer>()
-																										: null;
-	private transient final List<WeakReference<Message.Recipient>>				readers			= new ArrayList<WeakReference<Message.Recipient>>();
-	private boolean																dispatching		= false;
-	private transient final Queue<Message>										messages		= new ArrayDeque<>();
+    private static final boolean                                             debug         = false;
+    private transient final Map<Class<? extends Message.Recipient>, Double>  perf_walltime = debug ? new HashMap<Class<? extends Message.Recipient>, Double>()
+                                                                                                   : null;
+    private transient final Map<Class<? extends Message.Recipient>, Integer> perf_calls    = debug ? new HashMap<Class<? extends Message.Recipient>, Integer>()
+                                                                                                   : null;
+    private transient final List<WeakReference<Message.Recipient>>           readers       = new ArrayList<WeakReference<Message.Recipient>>();
+    private boolean                                                          dispatching   = false;
+    private transient final Queue<Message>                                   messages      = new ArrayDeque<>();
 
-	@Override
-	public void post(Message aMessage) {
-		if (dispatching) {
-			messages.add(aMessage);
-		} else {
-			dispatchMessage(aMessage);
-			while (!messages.isEmpty()) {
-				dispatchMessage(messages.remove());
-			}
-		}
-	}
+    @Override
+    public void post(Message aMessage) {
+        if (dispatching) {
+            messages.add(aMessage);
+        }
+        else {
+            dispatchMessage(aMessage);
+            while (!messages.isEmpty()) {
+                dispatchMessage(messages.remove());
+            }
+        }
+    }
 
-	private void dispatchMessage(Message aMessage) {
-		if (dispatching)
-			throw new IllegalStateException("Recursive dispatch!");
-		dispatching = true;
-		try {
-			Iterator<WeakReference<Message.Recipient>> it = readers.iterator();
-			while (it.hasNext()) {
-				WeakReference<Message.Recipient> ref = it.next();
-				Message.Recipient reader = ref.get();
-				if (reader == null) {
-					it.remove();
-					continue;
-				}
-				if (debug) {
-					long startNs = System.nanoTime();
-					reader.receive(aMessage);
-					long endNs = System.nanoTime();
-					Double v = perf_walltime.get(reader.getClass());
-					Integer u = perf_calls.get(reader.getClass());
-					if (v == null) {
-						v = 0.0;
-						u = 0;
-					}
-					v += (endNs - startNs) / 1E9;
-					u += 1;
-					perf_walltime.put(reader.getClass(), v);
-					perf_calls.put(reader.getClass(), u);
-				} else {
-					reader.receive(aMessage);
-				}
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-		} finally {
-			dispatching = false;
-		}
-	}
+    private void dispatchMessage(Message aMessage) {
+        if (dispatching)
+            throw new IllegalStateException("Recursive dispatch!");
+        dispatching = true;
+        try {
+            Iterator<WeakReference<Message.Recipient>> it = readers.iterator();
+            while (it.hasNext()) {
+                WeakReference<Message.Recipient> ref = it.next();
+                Message.Recipient reader = ref.get();
+                if (reader == null) {
+                    it.remove();
+                    continue;
+                }
+                if (debug) {
+                    long startNs = System.nanoTime();
+                    reader.receive(aMessage);
+                    long endNs = System.nanoTime();
+                    Double v = perf_walltime.get(reader.getClass());
+                    Integer u = perf_calls.get(reader.getClass());
+                    if (v == null) {
+                        v = 0.0;
+                        u = 0;
+                    }
+                    v += (endNs - startNs) / 1E9;
+                    u += 1;
+                    perf_walltime.put(reader.getClass(), v);
+                    perf_calls.put(reader.getClass(), u);
+                }
+                else {
+                    reader.receive(aMessage);
+                }
+            }
+        }
+        catch (Throwable t) {
+            t.printStackTrace();
+        }
+        finally {
+            dispatching = false;
+        }
+    }
 
-	@Override
-	public void attach(Message.Recipient aReader) {
-		attach(new WeakReference<Message.Recipient>(aReader));
-	}
+    @Override
+    public void attach(Message.Recipient aReader) {
+        attach(new WeakReference<Message.Recipient>(aReader));
+    }
 
-	@Override
-	public void attach(WeakReference<Message.Recipient> aWeakReference) {
-		if (dispatching)
-			throw new IllegalStateException("Attach from call to post!");
+    @Override
+    public void attach(WeakReference<Message.Recipient> aWeakReference) {
+        if (dispatching)
+            throw new IllegalStateException("Attach from call to post!");
 
-		if (debug) {
-			for (WeakReference<Message.Recipient> reader : readers) {
-				if (reader.get() == aWeakReference.get()) {
-					throw new RuntimeException("Double registration of reader!");
-				}
-			}
-		}
+        if (debug) {
+            for (WeakReference<Message.Recipient> reader : readers) {
+                if (reader.get() == aWeakReference.get()) {
+                    throw new RuntimeException("Double registration of reader!");
+                }
+            }
+        }
 
-		readers.add(aWeakReference);
-	}
+        readers.add(aWeakReference);
+    }
 
-	@Override
-	public void detach(Message.Recipient aReader) {
-		if (dispatching)
-			throw new IllegalStateException("Detach from call to post!");
-		dispatching = true;
-		Iterator<WeakReference<Message.Recipient>> it = readers.iterator();
-		while (it.hasNext()) {
-			WeakReference<Message.Recipient> ref = it.next();
-			if (ref.get() == aReader) {
-				it.remove();
-			}
-		}
-		dispatching = false;
-	}
+    @Override
+    public void detach(Message.Recipient aReader) {
+        if (dispatching)
+            throw new IllegalStateException("Detach from call to post!");
+        dispatching = true;
+        Iterator<WeakReference<Message.Recipient>> it = readers.iterator();
+        while (it.hasNext()) {
+            WeakReference<Message.Recipient> ref = it.next();
+            if (ref.get() == aReader) {
+                it.remove();
+            }
+        }
+        dispatching = false;
+    }
 }

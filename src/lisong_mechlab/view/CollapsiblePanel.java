@@ -35,37 +35,37 @@ import javax.swing.SwingConstants;
  * @author Emily Björk
  */
 public class CollapsiblePanel extends JPanel {
-	private static final long	serialVersionUID	= 3493431469019201319L;
-	private final JLabel		title				= new JLabel();
-	private final Component		content;
+    private static final long serialVersionUID = 3493431469019201319L;
+    private final JLabel      title            = new JLabel();
+    private final Component   content;
 
-	public CollapsiblePanel(String aTitle, Component aComponent, boolean aStartCollapsed) {
-		super(new BorderLayout());
-		content = aComponent;
-		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5),
-				BorderFactory.createEtchedBorder()));
+    public CollapsiblePanel(String aTitle, Component aComponent, boolean aStartCollapsed) {
+        super(new BorderLayout());
+        content = aComponent;
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5),
+                BorderFactory.createEtchedBorder()));
 
-		title.setHorizontalAlignment(SwingConstants.CENTER);
-		title.setFont(title.getFont().deriveFont(18.0f));
-		add(title, BorderLayout.NORTH);
-		add(content, BorderLayout.CENTER);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        title.setFont(title.getFont().deriveFont(18.0f));
+        add(title, BorderLayout.NORTH);
+        add(content, BorderLayout.CENTER);
 
-		title.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent aE) {
-				if (aE.getClickCount() == 1) {
-					content.setVisible(!content.isVisible());
-				}
-			}
-		});
+        title.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent aE) {
+                if (aE.getClickCount() == 1) {
+                    content.setVisible(!content.isVisible());
+                }
+            }
+        });
 
-		if (aStartCollapsed)
-			content.setVisible(false);
+        if (aStartCollapsed)
+            content.setVisible(false);
 
-		setTitle(aTitle);
-	}
+        setTitle(aTitle);
+    }
 
-	public void setTitle(String aTitle) {
-		title.setText(aTitle);
-	}
+    public void setTitle(String aTitle) {
+        title.setText(aTitle);
+    }
 }

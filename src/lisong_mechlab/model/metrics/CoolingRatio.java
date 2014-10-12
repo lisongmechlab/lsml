@@ -29,20 +29,20 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Emily Björk
  */
 public class CoolingRatio implements Metric {
-	private final HeatDissipation	dissipation;
-	private final HeatGeneration	generation;
+    private final HeatDissipation dissipation;
+    private final HeatGeneration  generation;
 
-	public CoolingRatio(final HeatDissipation aDissipation, final HeatGeneration aHeatGeneration) {
-		dissipation = aDissipation;
-		generation = aHeatGeneration;
-	}
+    public CoolingRatio(final HeatDissipation aDissipation, final HeatGeneration aHeatGeneration) {
+        dissipation = aDissipation;
+        generation = aHeatGeneration;
+    }
 
-	@Override
-	public double calculate() {
-		final double generatedHeat = generation.calculate();
-		if (generatedHeat <= 0) {
-			return 1.0;
-		}
-		return dissipation.calculate() / generatedHeat;
-	}
+    @Override
+    public double calculate() {
+        final double generatedHeat = generation.calculate();
+        if (generatedHeat <= 0) {
+            return 1.0;
+        }
+        return dissipation.calculate() / generatedHeat;
+    }
 }

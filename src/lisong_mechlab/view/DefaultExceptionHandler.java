@@ -39,44 +39,47 @@ import javax.swing.SwingUtilities;
  */
 public class DefaultExceptionHandler implements UncaughtExceptionHandler {
 
-	@Override
-	public void uncaughtException(final Thread aThread, final Throwable aThrowable) {
-		if (SwingUtilities.isEventDispatchThread()) {
-			informUser(aThrowable);
-		} else {
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						informUser(aThrowable);
-					}
-				});
-			} catch (InterruptedException ie) {
-				Thread.currentThread().interrupt();
-			} catch (InvocationTargetException ite) {
-				ite.getCause().printStackTrace();
-			}
-		}
-	}
+    @Override
+    public void uncaughtException(final Thread aThread, final Throwable aThrowable) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            informUser(aThrowable);
+        }
+        else {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        informUser(aThrowable);
+                    }
+                });
+            }
+            catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+            catch (InvocationTargetException ite) {
+                ite.getCause().printStackTrace();
+            }
+        }
+    }
 
-	protected void informUser(Throwable aThrowable) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<html><p>An error has been encountered, in most cases LSML can still continue to function normally.</p>");
-		builder.append("<br><p>However as a safety precaution it is recommended to \"save as\" your garage manually from the garage menu.</p>");
-		builder.append("<br><p>Please copy the following and send it to <a href=\"lisongmechlab@gmail.com\">lisongmechlab@gmail.com</a> together with an explanation of what you were doing to make us aware of the problem.</p><br>");
+    protected void informUser(Throwable aThrowable) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<html><p>An error has been encountered, in most cases LSML can still continue to function normally.</p>");
+        builder.append("<br><p>However as a safety precaution it is recommended to \"save as\" your garage manually from the garage menu.</p>");
+        builder.append("<br><p>Please copy the following and send it to <a href=\"lisongmechlab@gmail.com\">lisongmechlab@gmail.com</a> together with an explanation of what you were doing to make us aware of the problem.</p><br>");
 
-		StringWriter sw = new StringWriter();
-		aThrowable.printStackTrace(new PrintWriter(sw));
+        StringWriter sw = new StringWriter();
+        aThrowable.printStackTrace(new PrintWriter(sw));
 
-		JPanel p = new JPanel();
-		p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
-		p.add(new JLabel(builder.toString()));
-		JTextArea text = new JTextArea(sw.toString());
-		text.setAlignmentX(Component.LEFT_ALIGNMENT);
-		text.setEditable(false);
-		p.add(text);
-		JOptionPane.showMessageDialog(ProgramInit.lsml(), p, "LSML has encountered an error.",
-				JOptionPane.ERROR_MESSAGE);
-	}
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
+        p.add(new JLabel(builder.toString()));
+        JTextArea text = new JTextArea(sw.toString());
+        text.setAlignmentX(Component.LEFT_ALIGNMENT);
+        text.setEditable(false);
+        p.add(text);
+        JOptionPane.showMessageDialog(ProgramInit.lsml(), p, "LSML has encountered an error.",
+                JOptionPane.ERROR_MESSAGE);
+    }
 
 }

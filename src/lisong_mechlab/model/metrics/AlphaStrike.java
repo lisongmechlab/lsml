@@ -33,18 +33,18 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  */
 public class AlphaStrike extends RangeMetric {
 
-	public AlphaStrike(final LoadoutBase<?> aLoadout) {
-		super(aLoadout);
-	}
+    public AlphaStrike(final LoadoutBase<?> aLoadout) {
+        super(aLoadout);
+    }
 
-	@Override
-	public double calculate(double aRange) {
-		double ans = 0;
-		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
-		for (Weapon weapon : loadout.items(Weapon.class)) {
-			if (weapon.isOffensive())
-				ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
-		}
-		return ans;
-	}
+    @Override
+    public double calculate(double aRange) {
+        double ans = 0;
+        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        for (Weapon weapon : loadout.items(Weapon.class)) {
+            if (weapon.isOffensive())
+                ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
+        }
+        return ans;
+    }
 }

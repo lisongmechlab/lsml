@@ -30,37 +30,37 @@ import org.junit.Test;
  */
 public class StringUtilTest {
 
-	@Test
-	public final void testLongestCommonSubstring() throws Exception {
-		String a = "abcdefgh";
-		String b = "xkcdefasdef";
+    @Test
+    public final void testLongestCommonSubstring() throws Exception {
+        String a = "abcdefgh";
+        String b = "xkcdefasdef";
 
-		assertEquals("cdef", StringUtil.longestCommonSubstring(a, b));
-		assertEquals("cdef", StringUtil.longestCommonSubstring(b, a));
-	}
+        assertEquals("cdef", StringUtil.longestCommonSubstring(a, b));
+        assertEquals("cdef", StringUtil.longestCommonSubstring(b, a));
+    }
 
-	@Test
-	public final void testLongestCommonSubstring_lowEdge() throws Exception {
-		String a = "abcdefgh";
-		String b = "abcdexkcdefasdef";
+    @Test
+    public final void testLongestCommonSubstring_lowEdge() throws Exception {
+        String a = "abcdefgh";
+        String b = "abcdexkcdefasdef";
 
-		assertEquals("abcde", StringUtil.longestCommonSubstring(a, b));
-		assertEquals("abcde", StringUtil.longestCommonSubstring(b, a));
-	}
+        assertEquals("abcde", StringUtil.longestCommonSubstring(a, b));
+        assertEquals("abcde", StringUtil.longestCommonSubstring(b, a));
+    }
 
-	@Test
-	public final void testLongestCommonSubstring_highEdge() throws Exception {
-		String a = "abcdefgh1234567";
-		String b = "abcdexkcdefasdf1234567";
+    @Test
+    public final void testLongestCommonSubstring_highEdge() throws Exception {
+        String a = "abcdefgh1234567";
+        String b = "abcdexkcdefasdf1234567";
 
-		assertEquals("1234567", StringUtil.longestCommonSubstring(a, b));
-		assertEquals("1234567", StringUtil.longestCommonSubstring(b, a));
-	}
+        assertEquals("1234567", StringUtil.longestCommonSubstring(a, b));
+        assertEquals("1234567", StringUtil.longestCommonSubstring(b, a));
+    }
 
-	@Test
-	public final void testLongestCommonSubstring_automorphism() throws Exception {
-		String str = "xkcdefasdef";
-		assertEquals(str, StringUtil.longestCommonSubstring(str, str));
-	}
+    @Test
+    public final void testLongestCommonSubstring_automorphism() throws Exception {
+        String str = "xkcdefasdef";
+        assertEquals(str, StringUtil.longestCommonSubstring(str, str));
+    }
 
 }
