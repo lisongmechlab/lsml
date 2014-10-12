@@ -3,6 +3,45 @@ apply plugin: 'application'
 apply plugin: 'launch4j'
 apply plugin: 'eclipse'
 
+class ConcatFiles extends DefaultTask {
+    @InputFiles
+    FileCollection files
+    @OutputFile
+    File target
+    @TaskAction
+    void concat() {
+        target.withWriter { writer ->
+            files.each { file ->
+                file.withReader { reader ->
+                    writer << reader << '\n'
+                }
+            }
+        }
+    }
+}
+
+/* ----------------------------------------------------------------------------
+ * Eclipse project configuration
+ * --------------------------------------------------------------------------*/
+eclipse {
+	jdt {
+		file {
+			withProperties { properties ->
+				
+				Properties formatter = new Properties()
+				new File("eclipse_settings").withInputStream { is -> 
+					formatter.load(is)
+				}
+					
+				for( String propertyName : formatter.propertyNames()){
+					properties.setProperty(propertyName, formatter.getProperty(propertyName));
+				}
+			}
+		}
+	}
+}
+
+
 gradle.taskGraph.whenReady { taskGraph ->
   if (!taskGraph.hasTask(release)) {
     version = '(develop)'
