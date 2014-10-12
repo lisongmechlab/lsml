@@ -77,4 +77,11 @@ public class LoadoutMessage implements Message {
 	public boolean isForMe(LoadoutBase<?> aLoadout) {
 		return loadout == aLoadout;
 	}
+
+   /**
+    * @return <code>true</code> if this message affects weapon ranges.
+    */
+   public boolean affectsRange(){
+      return type == Type.MODULES_CHANGED;
+   }
 }

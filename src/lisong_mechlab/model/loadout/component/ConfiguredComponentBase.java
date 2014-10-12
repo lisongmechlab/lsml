@@ -92,6 +92,10 @@ public abstract class ConfiguredComponentBase {
 			return aLoadout.getComponents().contains(component);
 		}
 
+      public boolean isItemsChanged(){
+         return type == Type.ItemAdded || type == Type.ItemRemoved || type == Type.ItemsChanged;
+      }
+
 		@Override
 		public String toString() {
 			return type.toString() + " for " + component.getInternalComponent().getLocation().toString();

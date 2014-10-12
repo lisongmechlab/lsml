@@ -300,16 +300,9 @@ public class DataCache {
 					GameVFS gameVfs = new GameVFS(gameDir);
 					Collection<GameFile> filesToParse = filesToParse(gameVfs);
 
-					if (null == dataCache || dataCache.shouldUpdate(filesToParse)) {
-						dataCache = updateCache(gameVfs, filesToParse); // If
-																		// this
-																		// throws,
-																		// the
-																		// old
-																		// cache
-																		// is
-																		// un-touched.
-						if (null != aLog) {
+               if( null == dataCache || dataCache.shouldUpdate(filesToParse) ){
+                  dataCache = updateCache(gameVfs, filesToParse, aLog); // If this throws, the old cache is un-touched.
+                  if( null != aLog ){
 							aLog.append("Cache updated...").append(System.lineSeparator());
 							aLog.flush();
 						}
@@ -442,7 +435,7 @@ public class DataCache {
 	 *            A {@link GameVFS} to parse data from.
 	 * @return A List of all {@link Environment} found in the game files.
 	 */
-	private static List<Environment> parseEnvironments(GameVFS aGameVfs) throws IOException {
+   private static List<Environment> parseEnvironments(GameVFS aGameVfs, Writer aLog) throws IOException{
 		List<Environment> ans = new ArrayList<>();
 
 		File[] levels = aGameVfs.listGameDir(new File("Game/Levels"));
@@ -488,8 +481,12 @@ public class DataCache {
 					break;
 				}
 			}
-			if (!found) {
-				throw new IOException("Unable to find temperature for environment: [" + uiName + "]!");
+         if( !found ){
+            // TODO: Remove this once PGI fixes data files.
+            ans.add(new Environment(uiName, 0.0));
+            if( aLog != null ){
+               aLog.append("Unable to load temprature for level: ").append(uiName).append("! Assuming 0.0.").append(System.getProperty("line.separator"));
+            }
 			}
 		}
 		return ans;
@@ -634,8 +631,9 @@ public class DataCache {
 					final String desc;
 
 					final ModuleCathegory cathegory;
-					if (null != pms.talentId && !"".equals(pms.talentId)) {
-						XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentId);
+
+               if( 0 != pms.talentid ){
+                  XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
 						name = Localization.key2string(talent.rankEntries.get(talent.rankEntries.size() - 1).title);
 						desc = Localization
 								.key2string(talent.rankEntries.get(talent.rankEntries.size() - 1).description);
@@ -692,10 +690,10 @@ public class DataCache {
 					final String desc;
 					final ModuleCathegory cathegory;
 
-					// XXX: This should be cleaned up
-					if (statsModule.PilotModuleStats.talentId != null
-							&& !statsModule.PilotModuleStats.talentId.isEmpty()) {
-						XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentId);
+
+               // TODO: This should be cleaned up
+               if( statsModule.PilotModuleStats.talentid != 0 ){
+                  XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
 						name = Localization.key2string(talent.rankEntries.get(0).title);
 						desc = Localization.key2string(talent.rankEntries.get(0).description);
 						cathegory = ModuleCathegory.fromMwo(talent.category);
@@ -909,10 +907,11 @@ public class DataCache {
 	 * Reads the latest data from the game files and creates a new cache.
 	 * 
 	 * @param aGameVfs
+    * @param aLog
 	 * @param aItemStatsXmlFile
 	 * @throws IOException
 	 */
-	private static DataCache updateCache(GameVFS aGameVfs, Collection<GameFile> aGameFiles) throws IOException {
+   private static DataCache updateCache(GameVFS aGameVfs, Collection<GameFile> aGameFiles, Writer aLog) throws IOException{
 		File cacheLocation = getNewCacheLocation();
 
 		Localization.initialize(aGameVfs);
@@ -931,7 +930,7 @@ public class DataCache {
 		dataCache.omniPods = Collections.unmodifiableList(parseOmniPods(aGameVfs, itemStatsXml, dataCache));
 		dataCache.chassis = Collections.unmodifiableList(parseChassis(aGameVfs, itemStatsXml, dataCache));
 
-		dataCache.environments = Collections.unmodifiableList(parseEnvironments(aGameVfs));
+      dataCache.environments = Collections.unmodifiableList(parseEnvironments(aGameVfs, aLog));
 		dataCache.stockLoadouts = Collections.unmodifiableList(parseStockLoadouts(aGameVfs, dataCache.chassis));
 
 		XStream stream = stream();

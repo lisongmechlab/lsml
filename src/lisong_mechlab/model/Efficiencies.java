@@ -155,6 +155,10 @@ public class Efficiencies {
 			return false;
 		if (speedTweak != other.speedTweak)
 			return false;
+      if( anchorTurn != other.anchorTurn )
+         return false;
+      if( fastfire != other.fastfire )
+         return false;
 		return true;
 	}
 

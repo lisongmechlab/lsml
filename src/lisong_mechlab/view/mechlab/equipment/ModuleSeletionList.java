@@ -40,10 +40,13 @@ import javax.swing.event.InternalFrameListener;
 import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.PilotModuleDB;
+import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.item.WeaponModule;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.LoadoutMessage.Type;
 import lisong_mechlab.model.loadout.OpAddModule;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ModuleTransferHandler;
@@ -51,17 +54,20 @@ import lisong_mechlab.view.mechlab.LoadoutDesktop;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
 /**
- * This {@link JPanel} shows all the available pilot modules on the equipment panel.
+ * This {@link JPanel} shows all the available pilot modules on the equipment
+ * panel.
  * 
  * @author Emily Björk
  */
-public class ModuleSeletionList extends JList<PilotModule> implements InternalFrameListener, Message.Recipient {
-	private static final long					serialVersionUID	= -5162141596342256532L;
-	private final DefaultListModel<PilotModule>	model;
-	private LoadoutBase<?>						currentLoadout;
-	private ModuleSlot							slotType;
+public class ModuleSeletionList extends JList<PilotModule> implements
+		InternalFrameListener, Message.Recipient {
+	private static final long serialVersionUID = -5162141596342256532L;
+	private final DefaultListModel<PilotModule> model;
+	private LoadoutBase<?> currentLoadout;
+	private ModuleSlot slotType;
 
-	public ModuleSeletionList(final LoadoutDesktop aDesktop, final MessageXBar aXBar, ModuleSlot aCathegory) {
+	public ModuleSeletionList(final LoadoutDesktop aDesktop,
+			final MessageXBar aXBar, ModuleSlot aCathegory) {
 		model = new DefaultListModel<>();
 		slotType = aCathegory;
 		changeLoadout(null);
@@ -69,12 +75,14 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
 		setModel(model);
 
 		setCellRenderer(new ListCellRenderer<PilotModule>() {
-			JLabel	label	= new JLabel();
+			JLabel label = new JLabel();
 
 			@Override
-			public Component getListCellRendererComponent(JList<? extends PilotModule> aList, PilotModule aValue,
+			public Component getListCellRendererComponent(
+					JList<? extends PilotModule> aList, PilotModule aValue,
 					int aIndex, boolean aIsSelected, boolean aCellHasFocus) {
-				if (currentLoadout != null && !currentLoadout.canAddModule(aValue)) {
+				if (currentLoadout != null
+						&& !currentLoadout.canAddModule(aValue)) {
 					label.setForeground(Color.RED);
 				} else {
 					label.setForeground(Color.BLACK);
@@ -94,7 +102,9 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
 						JInternalFrame frame = aDesktop.getSelectedFrame();
 						if (frame != null) {
 							LoadoutFrame loadoutFrame = (LoadoutFrame) frame;
-							loadoutFrame.getOpStack().pushAndApply(new OpAddModule(aXBar, currentLoadout, module));
+							loadoutFrame.getOpStack().pushAndApply(
+									new OpAddModule(aXBar, currentLoadout,
+											module));
 						}
 					}
 				}
@@ -118,8 +128,25 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
 			if (aLoadout == null) {
 				modules.add(pilotModule);
 			} else {
-				if (aLoadout.getChassis().getFaction().isCompatible(pilotModule.getFaction()))
+				if (aLoadout.getChassis().getFaction()
+						.isCompatible(pilotModule.getFaction())) {
+					if (pilotModule instanceof WeaponModule) {
+						WeaponModule weaponModule = (WeaponModule) pilotModule;
+						boolean affectsAtLeastOne = false;
+						for (Weapon weapon : aLoadout.items(Weapon.class)) {
+							if (weaponModule.affectsWeapon(weapon)) {
+								affectsAtLeastOne = true;
+								break;
+							}
+						}
+
+						if (!affectsAtLeastOne) {
+							continue;
+						}
+					}
+
 					modules.add(pilotModule);
+				}
 			}
 		}
 
@@ -158,6 +185,11 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
 		if (aMsg instanceof LoadoutMessage) {
 			LoadoutMessage message = (LoadoutMessage) aMsg;
 			if (message.type == Type.MODULES_CHANGED) {
+				changeLoadout(currentLoadout);
+			}
+		} else if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
+			ConfiguredComponentBase.ComponentMessage msg = (ConfiguredComponentBase.ComponentMessage) aMsg;
+			if (msg.isForMe(currentLoadout) && msg.isItemsChanged()) {
 				changeLoadout(currentLoadout);
 			}
 		}

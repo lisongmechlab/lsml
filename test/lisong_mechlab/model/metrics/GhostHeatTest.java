@@ -120,4 +120,26 @@ public class GhostHeatTest {
 		double result = cut.calculate();
 		assertEquals(0.0, result, 0.0);
 	}
+
+   @Test
+   public void testCalculate_13FrickenLasers() throws Exception{
+      // Acording to personal conversation with Karl Berg:
+      // "Hi Li Song! I'll go bug Paul again right now. I didn't get a response to my earlier email.
+      // Ok, the last number simply caps and repeats for any weapons past 13."
+      Weapon slas = (Weapon)ItemDB.lookup("SMALL LASER");
+      final int lasers = 12;
+      for(int i = 0; i < lasers; ++i){
+         weapons.add(slas);
+      }
+      final double result12 = cut.calculate();
+      weapons.add(slas);
+      final double maxHeatScale = 5.0;
+
+      // Execute
+      final double result13 = cut.calculate();
+
+      // Verify
+      final double expected = result12 + slas.getHeat(null) * maxHeatScale * slas.getGhostHeatMultiplier();
+      assertEquals(expected, result13, 0.0);
+   }
 }
