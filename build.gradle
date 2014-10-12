@@ -3,21 +3,48 @@ apply plugin: 'application'
 apply plugin: 'launch4j'
 apply plugin: 'eclipse'
 
-class ConcatFiles extends DefaultTask {
-    @InputFiles
-    FileCollection files
-    @OutputFile
-    File target
-    @TaskAction
-    void concat() {
-        target.withWriter { writer ->
-            files.each { file ->
-                file.withReader { reader ->
-                    writer << reader << '\n'
-                }
-            }
-        }
+/* ----------------------------------------------------------------------------
+ * Build configuration
+ * --------------------------------------------------------------------------*/
+buildDir = 'build/gradle'
+libsDirName = project.rootDir.toString() + '/lib'
+
+/* ----------------------------------------------------------------------------
+ * General project configuration
+ * --------------------------------------------------------------------------*/
+applicationName = 'Li Song Mechlab'
+archivesBaseName = 'lsml'
+mainClassName = 'lisong_mechlab.view.ProgramInit'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceSets {
+  main {
+    java {
+      srcDir 'src'
     }
+    resources {
+      srcDir 'resources'
+    }
+  }
+  test{
+    java {
+      srcDir 'test'
+    }
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * Dependencies
+ * --------------------------------------------------------------------------*/
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'com.thoughtworks.xstream:xstream:1.4.7+', 'org.jfree:jfreechart:1.+', 'net.java.dev.jna:jna:4.0.0+'
+  testCompile 'junit:junit:4+', 'org.mockito:mockito-all:1.9.5+', 'pl.pragmatists:JUnitParams:1.0.2+'
 }
 
 /* ----------------------------------------------------------------------------
@@ -48,39 +75,14 @@ gradle.taskGraph.whenReady { taskGraph ->
   }
 }
 
-applicationName = 'Li Song Mechlab'
-archivesBaseName = 'lsml'
-libsDirName = project.rootDir.toString() + '/lib'
-mainClassName = 'lisong_mechlab.view.ProgramInit'
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
 
-buildDir = 'build/gradle'
-
-sourceSets {
-  main {
-    java {
-      srcDir 'src'
-    }
-    resources {
-      srcDir 'resources'
-    }
-  }
-  test{
-    java {
-      srcDir 'test'
-    }
-  }
+/* ----------------------------------------------------------------------------
+ * Release Management
+ * --------------------------------------------------------------------------*/
+task release << {
+  println "Building release: " + version
 }
 
-repositories {
-  mavenCentral()
-}
-
-dependencies {
-  compile 'com.thoughtworks.xstream:xstream:1.4.7+', 'org.jfree:jfreechart:1.+', 'net.java.dev.jna:jna:4.0.0+'
-  testCompile 'junit:junit:4+', 'org.mockito:mockito-all:1.9.5+', 'pl.pragmatists:JUnitParams:1.0.2+'
-}
 
 jar {
   destinationDir = file('build')
@@ -118,9 +120,6 @@ buildscript {
   }
 }
 
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
-
 task wixCandle64(type: Exec) {
   workingDir 'build'
   executable 'candle'
@@ -132,8 +131,6 @@ task wixLight64(type: Exec) {
   executable 'light'
   args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_64bit.msi'
 }
-
-wixLight64.dependsOn(wixCandle64);
 
 task wixCandle32(type: Exec) {
   workingDir 'build'
@@ -147,12 +144,8 @@ task wixLight32(type: Exec) {
   args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_32bit.msi'
 }
 
+wixLight64.dependsOn(wixCandle64);
 wixLight32.dependsOn(wixCandle32);
-    
-task release() {
-  println "Building release: " + version
-}
-
 release.dependsOn(jar)
 release.dependsOn('launch4j')
 release.dependsOn(wixLight32)
