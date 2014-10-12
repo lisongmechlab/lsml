@@ -44,16 +44,15 @@ public class XMLPilotTalents{
 
    public class XMLTalent{
       @XStreamAsAttribute
-      public int    id;
+      public int    talentid;
 
       @XStreamAsAttribute
-      public String ename;
+      public String name;
 
       @XStreamAsAttribute
       public int    ranks;
 
       public class XMLRank{
-         @SuppressWarnings("hiding")
          @XStreamAsAttribute
          public int    id;
 
@@ -98,9 +97,9 @@ public class XMLPilotTalents{
       return (XMLPilotTalents)xstream.fromXML(gameFile.stream);
    }
 
-   public XMLTalent getTalent(String aTalentid){
+   public XMLTalent getTalent(int aTalentId){
       for(XMLTalent talent : talents){
-         if( talent.ename.toLowerCase().equals(aTalentid.toLowerCase()) ){
+         if( talent.talentid == aTalentId){
             return talent;
          }
       }
