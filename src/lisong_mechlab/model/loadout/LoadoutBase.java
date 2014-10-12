@@ -50,6 +50,7 @@ import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ConfiguredComponentConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutConverter;
+import lisong_mechlab.model.loadout.converters.ModuleConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -71,7 +72,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
    private final ChassisBase       chassisBase;
    private final T[]               components;
    private final Efficiencies      efficiencies;
-   private final List<PilotModule> modules; // TODO: Modules should be handled as separate categories.
+   private final List<PilotModule> modules;     // TODO: Modules should be handled as separate categories.
 
    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase){
       name = aChassisBase.getNameShort();
@@ -95,6 +96,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
       stream.setMode(XStream.NO_REFERENCES);
       stream.registerConverter(new ChassiConverter());
       stream.registerConverter(new ItemConverter());
+      stream.registerConverter(new ModuleConverter());
       stream.registerConverter(new ConfiguredComponentConverter(null, null));
       stream.registerConverter(new LoadoutConverter());
       stream.registerConverter(new UpgradeConverter());
@@ -107,18 +109,14 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
    @Override
    public boolean equals(Object obj){
-      if( this == obj )
-         return true;
-      if( !this.getClass().isAssignableFrom(obj.getClass()) )
+      if( !getClass().isAssignableFrom(obj.getClass()) )
          return false;
-      @SuppressWarnings("unchecked")
-      // I just checked it above...
-      LoadoutBase<T> that = (LoadoutBase<T>)obj;
+      LoadoutBase<T> that = getClass().cast(obj);
+      if( !name.equals(that.name) )
+         return false;
       if( chassisBase != that.chassisBase )
          return false;
-      if( !efficiencies.equals(that.efficiencies) )
-         return false;
-      if( !name.equals(that.name) )
+      if( !ListArrayUtils.equalsUnordered(modules, that.modules) )
          return false;
       if( !Arrays.equals(components, that.components) )
          return false;
@@ -258,9 +256,8 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
          return false;
 
       final boolean canUseHybridSlot = aModule.getSlot() == ModuleSlot.WEAPON || aModule.getSlot() == ModuleSlot.MECH;
-      
-      final boolean isHybridSlotFree = !(getModulesOfType(ModuleSlot.MECH) > getModulesMax(ModuleSlot.MECH)
-                                       || getModulesOfType(ModuleSlot.WEAPON) > getModulesMax(ModuleSlot.WEAPON));
+
+      final boolean isHybridSlotFree = !(getModulesOfType(ModuleSlot.MECH) > getModulesMax(ModuleSlot.MECH) || getModulesOfType(ModuleSlot.WEAPON) > getModulesMax(ModuleSlot.WEAPON));
 
       if( getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot()) && (!canUseHybridSlot || !isHybridSlotFree) )
          return false;

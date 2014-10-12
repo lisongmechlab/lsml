@@ -99,7 +99,7 @@ public class GhostHeat implements Metric{
       double penalty = 0;
       int count = aCount;
       while( count > aWeapon.getGhostHeatMaxFreeAlpha() ){
-         penalty += HEAT_SCALE[count] * aWeapon.getGhostHeatMultiplier() * aWeapon.getHeat(loadout.getWeaponModifiers());
+         penalty += HEAT_SCALE[Math.min(count, HEAT_SCALE.length - 1)] * aWeapon.getGhostHeatMultiplier() * aWeapon.getHeat(loadout.getWeaponModifiers());
          count--;
       }
       return penalty;

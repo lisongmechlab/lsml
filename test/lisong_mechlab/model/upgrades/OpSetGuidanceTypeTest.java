@@ -59,8 +59,8 @@ public class OpSetGuidanceTypeTest{
    MessageXBar          xBar;
 
    /**
-    * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link LoadoutStandard} given as
-    * argument.
+    * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link LoadoutStandard}
+    * given as argument.
     */
    @Test
    public void testApply(){
@@ -72,6 +72,25 @@ public class OpSetGuidanceTypeTest{
       stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
       Mockito.verify(mlc.upgrades).setGuidance(newGuidance);
+   }
+
+   /**
+    * If apply fails, the changes shall have been rolled back completely.
+    */
+   @Test
+   public void testApply_FailRollback(){
+      Mockito.when(mlc.loadout.getFreeMass()).thenReturn(0.0);
+      Mockito.when(newGuidance.getExtraTons(mlc.loadout)).thenReturn(1.0);
+      Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
+
+      try{
+         (new OperationStack(0)).pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
+      }
+      catch( Throwable t ){
+         /* No-Op */
+      }
+
+      Mockito.verify(mlc.upgrades, Mockito.never()).setGuidance(Matchers.any(GuidanceUpgrade.class));
    }
 
    /**

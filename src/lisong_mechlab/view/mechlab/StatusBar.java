@@ -28,6 +28,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
@@ -36,6 +37,7 @@ import lisong_mechlab.model.NotificationMessage;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.view.ProgramInit;
 
 /**
  * This class implements a simple status bar that listens to messages on the message XBar and displays notify messages
@@ -79,15 +81,17 @@ public class StatusBar extends JPanel implements Reader{
    public void receive(Message aMsg){
       if( aMsg instanceof NotificationMessage && aMsg.isForMe(frame.getLoadout()) ){
          NotificationMessage notice = (NotificationMessage)aMsg;
-         statusLabel.setText(notice.severity.toString() + ": " + notice.message);
+         String message = notice.severity.toString() + ": " + notice.message;
          switch( notice.severity ){
             case ERROR:
-               statusLabel.setForeground(Color.RED);
+               JOptionPane.showMessageDialog(ProgramInit.lsml(), message);
                break;
             case NOTICE:
+               statusLabel.setText(notice.severity.toString() + ": " + notice.message);
                statusLabel.setForeground(Color.BLACK);
                break;
             case WARNING:
+               statusLabel.setText(notice.severity.toString() + ": " + notice.message);
                statusLabel.setForeground(Color.ORANGE.darker());
                break;
             default:

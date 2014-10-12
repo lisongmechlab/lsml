@@ -30,6 +30,7 @@ import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.upgrades.Upgrades.Message;
 import lisong_mechlab.model.upgrades.Upgrades.Message.ChangeMsg;
 import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
 
@@ -83,26 +84,6 @@ public class OpSetGuidanceType extends CompositeOperation{
    }
 
    @Override
-   protected void apply(){
-      set(newValue);
-      super.apply();
-   }
-
-   @Override
-   protected void undo(){
-      set(oldValue);
-      super.undo();
-   }
-
-   protected void set(GuidanceUpgrade aValue){
-      if( aValue != upgrades.getGuidance() ){
-         upgrades.setGuidance(aValue);
-         if( xBar != null )
-            xBar.post(new Message(ChangeMsg.GUIDANCE, upgrades));
-      }
-   }
-
-   @Override
    public void buildOperation(){
       if( loadout != null ){
          if( newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree() )
@@ -117,6 +98,31 @@ public class OpSetGuidanceType extends CompositeOperation{
             throw new IllegalArgumentException("Too heavy to add artmemis!");
          }
 
+         addOp(new OperationStack.Operation(){
+            private void set(GuidanceUpgrade aValue){
+               if( aValue != upgrades.getGuidance() ){
+                  upgrades.setGuidance(aValue);
+                  if( xBar != null )
+                     xBar.post(new Message(ChangeMsg.GUIDANCE, upgrades));
+               }
+            }
+            
+            @Override
+            protected void undo(){
+               set(oldValue);
+            }
+            
+            @Override
+            public String describe(){
+               return "Set guidance (internal)";
+            }
+            
+            @Override
+            protected void apply(){
+               set(newValue);
+            }
+         });
+         
          for(ConfiguredComponentBase component : loadout.getComponents()){
             for(Item item : component.getItemsEquipped()){
                // FIXME: What about fixed missile launchers?
