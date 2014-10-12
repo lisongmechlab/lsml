@@ -89,7 +89,7 @@ public class XMLItemStats{
 
       // Fixes for broken XML from PGI
       xstream.aliasAttribute("Ctype", "CType");
-      xstream.aliasAttribute("talentid", "talentId");
+      //xstream.aliasAttribute("talentid", "talentId");
 
       return (XMLItemStats)xstream.fromXML(aGameFile.stream);
    }
