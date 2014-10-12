@@ -91,6 +91,10 @@ public abstract class ConfiguredComponentBase{
       public boolean isForMe(LoadoutBase<?> aLoadout){
          return aLoadout.getComponents().contains(component);
       }
+      
+      public boolean isItemsChanged(){
+         return type == Type.ItemAdded || type == Type.ItemRemoved || type == Type.ItemsChanged;
+      }
 
       @Override
       public String toString(){

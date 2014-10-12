@@ -37,13 +37,17 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.PilotModuleDB;
+import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.item.WeaponModule;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.loadout.LoadoutMessage.Type;
 import lisong_mechlab.model.loadout.OpAddModule;
+import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.view.ModuleTransferHandler;
@@ -115,13 +119,38 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
       model.removeAllElements();
       List<PilotModule> modules = new ArrayList<>();
 
+      List<Weapon> weapons = new ArrayList<>();
+      if( aLoadout != null ){
+         for(Item item : aLoadout.getAllItems()){
+            if( item instanceof Weapon ){
+               weapons.add((Weapon)item);
+            }
+         }
+      }
+
       for(PilotModule pilotModule : PilotModuleDB.lookup(slotType)){
          if( aLoadout == null ){
             modules.add(pilotModule);
          }
          else{
-            if( aLoadout.getChassis().getFaction().isCompatible(pilotModule.getFaction()) )
+            if( aLoadout.getChassis().getFaction().isCompatible(pilotModule.getFaction()) ){
+               if( pilotModule instanceof WeaponModule ){
+                  WeaponModule weaponModule = (WeaponModule)pilotModule;
+                  boolean affectsAtLeastOne = false;
+                  for(Weapon weapon : weapons){
+                     if( weaponModule.affectsWeapon(weapon) ){
+                        affectsAtLeastOne = true;
+                        break;
+                     }
+                  }
+
+                  if( !affectsAtLeastOne ){
+                     continue;
+                  }
+               }
+
                modules.add(pilotModule);
+            }
          }
       }
 
@@ -160,6 +189,12 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
       if( aMsg instanceof LoadoutMessage ){
          LoadoutMessage message = (LoadoutMessage)aMsg;
          if( message.type == Type.MODULES_CHANGED ){
+            changeLoadout(currentLoadout);
+         }
+      }
+      else if( aMsg instanceof ConfiguredComponentBase.Message ){
+         ConfiguredComponentBase.Message msg = (ConfiguredComponentBase.Message)aMsg;
+         if( msg.isForMe(currentLoadout) && msg.isItemsChanged() ){
             changeLoadout(currentLoadout);
          }
       }
