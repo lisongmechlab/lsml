@@ -37,12 +37,10 @@ import javax.swing.OverlayLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.MessageXBar.Message;
 import lisong_mechlab.util.Pair;
@@ -168,25 +166,20 @@ public class DamageGraph extends JFrame implements MessageXBar.Reader{
       if( !aMsg.isForMe(loadout) )
          return;
 
-      if( aMsg instanceof ConfiguredComponentBase.Message ){
-         ConfiguredComponentBase.Message msg = (ConfiguredComponentBase.Message)aMsg;
-         if( msg.type == ConfiguredComponentBase.Message.Type.ArmorChanged )
-            return;
-      }
-      else if( aMsg instanceof Upgrades.Message ){
-         Upgrades.Message msg = (Upgrades.Message)aMsg;
-         if( msg.msg != Upgrades.Message.ChangeMsg.HEATSINKS )
-            return;
-      }
-      else if( !(aMsg instanceof Efficiencies.Message) ){
-         return;
+      boolean needsUpdate = aMsg.affectsHeatOrDamage();
+
+      if( aMsg instanceof LoadoutMessage ){
+         LoadoutMessage msg = (LoadoutMessage)aMsg;
+         needsUpdate |= msg.affectsRange();
       }
 
-      SwingUtilities.invokeLater(new Runnable(){
-         @Override
-         public void run(){
-            chartPanel.setChart(makechart());
-         }
-      });
+      if( needsUpdate ){
+         SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+               chartPanel.setChart(makechart());
+            }
+         });
+      }
    }
 }
