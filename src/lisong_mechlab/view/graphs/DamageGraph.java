@@ -73,119 +73,118 @@ import org.jfree.ui.VerticalAlignment;
  * @author Li Song
  */
 public class DamageGraph extends JFrame implements Message.Recipient {
-	private static final long		serialVersionUID	= -8812749194029184861L;
-	private final LoadoutBase<?>	loadout;
-	private final MaxSustainedDPS	maxSustainedDPS;
-	private final ChartPanel		chartPanel;
+    private static final long     serialVersionUID = -8812749194029184861L;
+    private final LoadoutBase<?>  loadout;
+    private final MaxSustainedDPS maxSustainedDPS;
+    private final ChartPanel      chartPanel;
 
-	JFreeChart makechart() {
-		return ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout, "range [m]",
-				"damage / second", getSeries(), PlotOrientation.VERTICAL, true, true, false);
-	}
+    JFreeChart makechart() {
+        return ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout, "range [m]",
+                "damage / second", getSeries(), PlotOrientation.VERTICAL, true, true, false);
+    }
 
-	/**
-	 * Creates and displays the {@link DamageGraph}.
-	 * 
-	 * @param aLoadout
-	 *            Which load out the diagram is for.
-	 * @param anXbar
-	 *            A {@link MessageXBar} to listen for changes to the loadout on.
-	 * @param aMaxSustainedDpsMetric
-	 *            A {@link MaxSustainedDPS} instance to use in calculation.
-	 */
-	public DamageGraph(LoadoutBase<?> aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric) {
-		super("Max Sustained DPS over range for " + aLoadout);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    /**
+     * Creates and displays the {@link DamageGraph}.
+     * 
+     * @param aLoadout
+     *            Which load out the diagram is for.
+     * @param anXbar
+     *            A {@link MessageXBar} to listen for changes to the loadout on.
+     * @param aMaxSustainedDpsMetric
+     *            A {@link MaxSustainedDPS} instance to use in calculation.
+     */
+    public DamageGraph(LoadoutBase<?> aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric) {
+        super("Max Sustained DPS over range for " + aLoadout);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-		anXbar.attach(this);
+        anXbar.attach(this);
 
-		loadout = aLoadout;
-		maxSustainedDPS = aMaxSustainedDpsMetric;
-		chartPanel = new ChartPanel(makechart());
-		setContentPane(chartPanel);
-		chartPanel.getChart().getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
-		chartPanel.getChart().getLegend().setVerticalAlignment(VerticalAlignment.TOP);
+        loadout = aLoadout;
+        maxSustainedDPS = aMaxSustainedDpsMetric;
+        chartPanel = new ChartPanel(makechart());
+        setContentPane(chartPanel);
+        chartPanel.getChart().getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
+        chartPanel.getChart().getLegend().setVerticalAlignment(VerticalAlignment.TOP);
 
-		LegendTitle legendTitle = chartPanel.getChart().getLegend();
-		XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
-		titleAnnotation.setMaxWidth(0.4);
-		((XYPlot) (chartPanel.getChart().getPlot())).addAnnotation(titleAnnotation);
-		chartPanel.getChart().removeLegend();
+        LegendTitle legendTitle = chartPanel.getChart().getLegend();
+        XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
+        titleAnnotation.setMaxWidth(0.4);
+        ((XYPlot) (chartPanel.getChart().getPlot())).addAnnotation(titleAnnotation);
+        chartPanel.getChart().removeLegend();
 
-		chartPanel.setLayout(new OverlayLayout(chartPanel));
-		JButton button = new JButton(new OpenHelp("What is this?", "Max-sustained-dps-graph",
-				KeyStroke.getKeyStroke('w')));
-		button.setMargin(new Insets(10, 10, 10, 10));
-		button.setFocusable(false);
-		button.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-		chartPanel.add(button);
+        chartPanel.setLayout(new OverlayLayout(chartPanel));
+        JButton button = new JButton(new OpenHelp("What is this?", "Max-sustained-dps-graph",
+                KeyStroke.getKeyStroke('w')));
+        button.setMargin(new Insets(10, 10, 10, 10));
+        button.setFocusable(false);
+        button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+        chartPanel.add(button);
 
-		setIconImage(ProgramInit.programIcon);
-		setSize(800, 600);
-		setVisible(true);
-	}
+        setIconImage(ProgramInit.programIcon);
+        setSize(800, 600);
+        setVisible(true);
+    }
 
-	private TableXYDataset getSeries() {
-		final Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
-		SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
-				new Comparator<Weapon>() {
-					@Override
-					public int compare(Weapon aO1, Weapon aO2) {
-						int comp = Double.compare(aO2.getRangeMax(modifiers),
-								aO1.getRangeMax(modifiers));
-						if (comp == 0)
-							return aO1.compareTo(aO2);
-						return comp;
-					}
-				});
+    private TableXYDataset getSeries() {
+        final Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
+                new Comparator<Weapon>() {
+                    @Override
+                    public int compare(Weapon aO1, Weapon aO2) {
+                        int comp = Double.compare(aO2.getRangeMax(modifiers), aO1.getRangeMax(modifiers));
+                        if (comp == 0)
+                            return aO1.compareTo(aO2);
+                        return comp;
+                    }
+                });
 
-		Double[] ranges = WeaponRanges.getRanges(loadout);
-		for (double range : ranges) {
-			Set<Entry<Weapon, Double>> damageDistributio = maxSustainedDPS.getWeaponRatios(range).entrySet();
-			for (Map.Entry<Weapon, Double> entry : damageDistributio) {
-				final Weapon weapon = entry.getKey();
-				final double ratio = entry.getValue();
-				final double dps = weapon.getStat("d/s", loadout.getEfficiencies(), modifiers);
-				final double rangeEff = weapon.getRangeEffectivity(range, modifiers);
+        Double[] ranges = WeaponRanges.getRanges(loadout);
+        for (double range : ranges) {
+            Set<Entry<Weapon, Double>> damageDistributio = maxSustainedDPS.getWeaponRatios(range).entrySet();
+            for (Map.Entry<Weapon, Double> entry : damageDistributio) {
+                final Weapon weapon = entry.getKey();
+                final double ratio = entry.getValue();
+                final double dps = weapon.getStat("d/s", loadout.getEfficiencies(), modifiers);
+                final double rangeEff = weapon.getRangeEffectivity(range, modifiers);
 
-				if (!data.containsKey(weapon)) {
-					data.put(weapon, new ArrayList<Pair<Double, Double>>());
-				}
-				data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio * rangeEff));
-			}
-		}
+                if (!data.containsKey(weapon)) {
+                    data.put(weapon, new ArrayList<Pair<Double, Double>>());
+                }
+                data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio * rangeEff));
+            }
+        }
 
-		DefaultTableXYDataset dataset = new DefaultTableXYDataset();
-		for (Map.Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
-			XYSeries series = new XYSeries(entry.getKey().getName(), true, false);
-			for (Pair<Double, Double> pair : entry.getValue()) {
-				series.add(pair.first, pair.second);
-			}
-			dataset.addSeries(series);
-		}
-		return dataset;
-	}
+        DefaultTableXYDataset dataset = new DefaultTableXYDataset();
+        for (Map.Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
+            XYSeries series = new XYSeries(entry.getKey().getName(), true, false);
+            for (Pair<Double, Double> pair : entry.getValue()) {
+                series.add(pair.first, pair.second);
+            }
+            dataset.addSeries(series);
+        }
+        return dataset;
+    }
 
-	@Override
-	public void receive(Message aMsg) {
-		if (!aMsg.isForMe(loadout))
-			return;
+    @Override
+    public void receive(Message aMsg) {
+        if (!aMsg.isForMe(loadout))
+            return;
 
-      boolean needsUpdate = aMsg.affectsHeatOrDamage();
+        boolean needsUpdate = aMsg.affectsHeatOrDamage();
 
-      if( aMsg instanceof LoadoutMessage ){
-         LoadoutMessage msg = (LoadoutMessage)aMsg;
-         needsUpdate |= msg.affectsRange();
-      }
+        if (aMsg instanceof LoadoutMessage) {
+            LoadoutMessage msg = (LoadoutMessage) aMsg;
+            needsUpdate |= msg.affectsRange();
+        }
 
-      if( needsUpdate ){
-         SwingUtilities.invokeLater(new Runnable(){
-			@Override
-			public void run() {
-				chartPanel.setChart(makechart());
-			}
-		});
-	}
-   }
+        if (needsUpdate) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    chartPanel.setChart(makechart());
+                }
+            });
+        }
+    }
 }

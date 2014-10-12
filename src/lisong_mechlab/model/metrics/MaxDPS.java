@@ -32,20 +32,20 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class MaxDPS extends RangeMetric {
-	public MaxDPS(LoadoutBase<?> aLoadout) {
-		super(aLoadout);
-	}
+    public MaxDPS(LoadoutBase<?> aLoadout) {
+        super(aLoadout);
+    }
 
-	@Override
-	public double calculate(double aRange) {
-		double ans = 0;
-		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
-		for (Weapon weapon : loadout.items(Weapon.class)) {
-			if (weapon.isOffensive())
-				ans += weapon.getRangeEffectivity(aRange, modifiers)
-						* weapon.getStat("d/s", loadout.getEfficiencies(), modifiers);
+    @Override
+    public double calculate(double aRange) {
+        double ans = 0;
+        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        for (Weapon weapon : loadout.items(Weapon.class)) {
+            if (weapon.isOffensive())
+                ans += weapon.getRangeEffectivity(aRange, modifiers)
+                        * weapon.getStat("d/s", loadout.getEfficiencies(), modifiers);
 
-		}
-		return ans;
-	}
+        }
+        return ans;
+    }
 }

@@ -25,33 +25,33 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class AmmoWeapon extends Weapon {
-	@XStreamAsAttribute
-	private final String	ammoTypeId;
+    @XStreamAsAttribute
+    private final String ammoTypeId;
 
-	public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType) {
-		this(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.ammoType);
-	}
+    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType) {
+        this(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.ammoType);
+    }
 
-	public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType, String aAmmoType) {
-		super(aStatsWeapon, aHardpointType);
-		ammoTypeId = aAmmoType;
-	}
+    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType, String aAmmoType) {
+        super(aStatsWeapon, aHardpointType);
+        ammoTypeId = aAmmoType;
+    }
 
-	public boolean isCompatibleAmmo(Ammunition aAmmunition) {
-		return ammoTypeId.equals(aAmmunition.getAmmoType());
-	}
+    public boolean isCompatibleAmmo(Ammunition aAmmunition) {
+        return ammoTypeId.equals(aAmmunition.getAmmoType());
+    }
 
-	@Override
-	public String getShortName() {
-		String name = getName();
-		name = name.replace("ANTI-MISSILE SYSTEM", "AMS");
-		return name;
-	}
+    @Override
+    public String getShortName() {
+        String name = getName();
+        name = name.replace("ANTI-MISSILE SYSTEM", "AMS");
+        return name;
+    }
 
-	/**
-	 * @return The {@link String} name of the ammo type required for this weapon.
-	 */
-	public String getAmmoType() {
-		return ammoTypeId;
-	}
+    /**
+     * @return The {@link String} name of the ammo type required for this weapon.
+     */
+    public String getAmmoType() {
+        return ammoTypeId;
+    }
 }

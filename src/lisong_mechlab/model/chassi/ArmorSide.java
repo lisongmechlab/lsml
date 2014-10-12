@@ -25,5 +25,5 @@ package lisong_mechlab.model.chassi;
  * @author Li Song
  */
 public enum ArmorSide {
-	ONLY, FRONT, BACK
+    ONLY, FRONT, BACK
 }

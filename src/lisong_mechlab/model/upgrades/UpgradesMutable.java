@@ -26,66 +26,66 @@ package lisong_mechlab.model.upgrades;
  */
 public class UpgradesMutable extends Upgrades {
 
-	/**
-	 * Creates a new {@link UpgradesMutable}.
-	 * 
-	 * @param aArmor
-	 *            The initial {@link ArmorUpgrade}.
-	 * @param aStructure
-	 *            The initial {@link StructureUpgrade}.
-	 * @param aGuidance
-	 *            The initial {@link GuidanceUpgrade}.
-	 * @param aHeatSinks
-	 *            The initial {@link HeatSinkUpgrade}.
-	 */
-	public UpgradesMutable(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
-			HeatSinkUpgrade aHeatSinks) {
-		super(aArmor, aStructure, aGuidance, aHeatSinks);
-	}
+    /**
+     * Creates a new {@link UpgradesMutable}.
+     * 
+     * @param aArmor
+     *            The initial {@link ArmorUpgrade}.
+     * @param aStructure
+     *            The initial {@link StructureUpgrade}.
+     * @param aGuidance
+     *            The initial {@link GuidanceUpgrade}.
+     * @param aHeatSinks
+     *            The initial {@link HeatSinkUpgrade}.
+     */
+    public UpgradesMutable(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
+            HeatSinkUpgrade aHeatSinks) {
+        super(aArmor, aStructure, aGuidance, aHeatSinks);
+    }
 
-	/**
-	 * Copy constructor, performs a deep copy.
-	 * 
-	 * @param aUpgrades
-	 *            An {@link UpgradesMutable} object to copy.
-	 */
-	public UpgradesMutable(UpgradesMutable aUpgrades) {
-		super(aUpgrades);
-	}
+    /**
+     * Copy constructor, performs a deep copy.
+     * 
+     * @param aUpgrades
+     *            An {@link UpgradesMutable} object to copy.
+     */
+    public UpgradesMutable(UpgradesMutable aUpgrades) {
+        super(aUpgrades);
+    }
 
-	/**
-	 * Changes the heat sink type.
-	 * <p>
-	 * This is package visibility as it is only intended to be modified by the Op* classes.
-	 * 
-	 * @param aHeatsinkUpgrade
-	 *            The new {@link HeatSinkUpgrade}.
-	 */
-	void setHeatSink(HeatSinkUpgrade aHeatsinkUpgrade) {
-		heatSinkType = aHeatsinkUpgrade;
-	}
+    /**
+     * Changes the heat sink type.
+     * <p>
+     * This is package visibility as it is only intended to be modified by the Op* classes.
+     * 
+     * @param aHeatsinkUpgrade
+     *            The new {@link HeatSinkUpgrade}.
+     */
+    void setHeatSink(HeatSinkUpgrade aHeatsinkUpgrade) {
+        heatSinkType = aHeatsinkUpgrade;
+    }
 
-	/**
-	 * Changes the internal structure type.
-	 * <p>
-	 * This is package visibility as it is only intended to be modified by the Op* classes.
-	 * 
-	 * @param aStructureUpgrade
-	 *            The new {@link StructureUpgrade}.
-	 */
-	void setStructure(StructureUpgrade aStructureUpgrade) {
-		structureType = aStructureUpgrade;
-	}
+    /**
+     * Changes the internal structure type.
+     * <p>
+     * This is package visibility as it is only intended to be modified by the Op* classes.
+     * 
+     * @param aStructureUpgrade
+     *            The new {@link StructureUpgrade}.
+     */
+    void setStructure(StructureUpgrade aStructureUpgrade) {
+        structureType = aStructureUpgrade;
+    }
 
-	/**
-	 * Changes the armor type.
-	 * <p>
-	 * This is package visibility as it is only intended to be modified by the Op* classes.
-	 * 
-	 * @param anArmorUpgrade
-	 *            The new {@link ArmorUpgrade}.
-	 */
-	void setArmor(ArmorUpgrade anArmorUpgrade) {
-		armorType = anArmorUpgrade;
-	}
+    /**
+     * Changes the armor type.
+     * <p>
+     * This is package visibility as it is only intended to be modified by the Op* classes.
+     * 
+     * @param anArmorUpgrade
+     *            The new {@link ArmorUpgrade}.
+     */
+    void setArmor(ArmorUpgrade anArmorUpgrade) {
+        armorType = anArmorUpgrade;
+    }
 }

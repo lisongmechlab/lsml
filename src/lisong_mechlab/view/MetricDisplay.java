@@ -37,56 +37,58 @@ import lisong_mechlab.util.message.MessageXBar;
  * @author Li Song
  */
 public class MetricDisplay extends JLabel implements Message.Recipient {
-	private static final long		serialVersionUID	= 4947119462839900984L;
-	private final LoadoutBase<?>	loadout;
-	private final Formatter			formatter;
-	private final StringBuilder		sb					= new StringBuilder();
-	private final String			format;
-	private final boolean			percent;
-	protected final Metric			metric;
+    private static final long    serialVersionUID = 4947119462839900984L;
+    private final LoadoutBase<?> loadout;
+    private final Formatter      formatter;
+    private final StringBuilder  sb               = new StringBuilder();
+    private final String         format;
+    private final boolean        percent;
+    protected final Metric       metric;
 
-	public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?> aLoadout) {
-		this(aMetric, aFormat, aTooltip, anXBar, aLoadout, false);
-	}
+    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?> aLoadout) {
+        this(aMetric, aFormat, aTooltip, anXBar, aLoadout, false);
+    }
 
-	public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?> aLoadout,
-			boolean aPercent) {
-		loadout = aLoadout;
-		anXBar.attach(this);
-		setToolTipText(aTooltip);
-		formatter = new Formatter(sb);
-		format = aFormat;
-		metric = aMetric;
-		percent = aPercent;
+    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?> aLoadout,
+            boolean aPercent) {
+        loadout = aLoadout;
+        anXBar.attach(this);
+        setToolTipText(aTooltip);
+        formatter = new Formatter(sb);
+        format = aFormat;
+        metric = aMetric;
+        percent = aPercent;
 
-		updateText();
-	}
+        updateText();
+    }
 
-	@Override
-	public void receive(Message aMsg) {
-		if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
-			updateText();
-		}
-	}
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
+            updateText();
+        }
+    }
 
-	protected void updateText() {
-		assert (SwingUtilities.isEventDispatchThread());
-		sb.setLength(0);
-		double value = metric.calculate();
-		if (percent)
-			value *= 100.0;
-		if (metric instanceof RangeTimeMetric) {
-			formatter
-					.format(format, ((RangeTimeMetric) metric).getTime(), value, ((RangeTimeMetric) metric).getRange());
-		} else if (metric instanceof RangeMetric) {
-			formatter.format(format, value, ((RangeMetric) metric).getRange());
-		} else {
-			formatter.format(format, value);
-		}
-		if (Double.isInfinite(value)) {
-			int i = sb.indexOf("Infinity");
-			sb.replace(i, i + "Infinity".length(), "∞");
-		}
-		setText(sb.toString());
-	}
+    protected void updateText() {
+        assert (SwingUtilities.isEventDispatchThread());
+        sb.setLength(0);
+        double value = metric.calculate();
+        if (percent)
+            value *= 100.0;
+        if (metric instanceof RangeTimeMetric) {
+            formatter
+                    .format(format, ((RangeTimeMetric) metric).getTime(), value, ((RangeTimeMetric) metric).getRange());
+        }
+        else if (metric instanceof RangeMetric) {
+            formatter.format(format, value, ((RangeMetric) metric).getRange());
+        }
+        else {
+            formatter.format(format, value);
+        }
+        if (Double.isInfinite(value)) {
+            int i = sb.indexOf("Infinity");
+            sb.replace(i, i + "Infinity".length(), "∞");
+        }
+        setText(sb.toString());
+    }
 }

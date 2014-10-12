@@ -56,273 +56,273 @@ import org.mockito.MockitoAnnotations;
 
 public class MechGarageTest {
 
-	File		testFile	= null;
+    File        testFile = null;
 
-	@Mock
-	MessageXBar	xBar;
+    @Mock
+    MessageXBar xBar;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		testFile = new File("test_mechgarage_" + Math.random() + ".xml");
-	}
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        testFile = new File("test_mechgarage_" + Math.random() + ".xml");
+    }
 
-	@After
-	public void teardown() {
-		testFile.delete();
-	}
+    @After
+    public void teardown() {
+        testFile.delete();
+    }
 
-	/**
-	 * Default constructing a mech garage gives an unnamed, empty garage.
-	 */
-	@Test
-	public void testMechGarage() {
-		// Execute
-		MechGarage cut = new MechGarage(xBar);
+    /**
+     * Default constructing a mech garage gives an unnamed, empty garage.
+     */
+    @Test
+    public void testMechGarage() {
+        // Execute
+        MechGarage cut = new MechGarage(xBar);
 
-		// Verify
-		verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.NewGarage, cut));
+        // Verify
+        verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.NewGarage, cut));
 
-		assertTrue(cut.getMechs().isEmpty());
-		assertNull(cut.getFile());
-	}
+        assertTrue(cut.getMechs().isEmpty());
+        assertNull(cut.getFile());
+    }
 
-	/**
-	 * Loading an empty garage shall produce an empty garage with the correct file path set.
-	 * 
-	 * @throws IOException
-	 */
-	@Test
-	public void testOpen() throws IOException {
-		// Setup
-		MechGarage savedGarage = new MechGarage(xBar);
-		savedGarage.saveas(testFile);
-		reset(xBar);
+    /**
+     * Loading an empty garage shall produce an empty garage with the correct file path set.
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void testOpen() throws IOException {
+        // Setup
+        MechGarage savedGarage = new MechGarage(xBar);
+        savedGarage.saveas(testFile);
+        reset(xBar);
 
-		// Execute
-		MechGarage c = MechGarage.open(testFile, xBar);
+        // Execute
+        MechGarage c = MechGarage.open(testFile, xBar);
 
-		// Verify
-		verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.NewGarage, c));
+        // Verify
+        verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.NewGarage, c));
 
-		assertTrue(c.getMechs().isEmpty());
-		assertSame(testFile, c.getFile());
-	}
+        assertTrue(c.getMechs().isEmpty());
+        assertSame(testFile, c.getFile());
+    }
 
-	/**
-	 * Saving a mech garage that has not been loaded or saveas-ed before shall throw an error as it has no associated
-	 * file name.
-	 */
-	@Test
-	public void testSaveWithoutName() {
-		// Setup
-		MechGarage cut = new MechGarage(xBar);
-		reset(xBar);
+    /**
+     * Saving a mech garage that has not been loaded or saveas-ed before shall throw an error as it has no associated
+     * file name.
+     */
+    @Test
+    public void testSaveWithoutName() {
+        // Setup
+        MechGarage cut = new MechGarage(xBar);
+        reset(xBar);
 
-		// Execute
-		try {
-			cut.save();
-			fail();
-		}
+        // Execute
+        try {
+            cut.save();
+            fail();
+        }
 
-		// Verify
-		catch (IOException exception) {/* Expected exception */
-		}
-		verifyZeroInteractions(xBar);
-	}
+        // Verify
+        catch (IOException exception) {/* Expected exception */
+        }
+        verifyZeroInteractions(xBar);
+    }
 
-	/**
-	 * Attempting to use {@link MechGarage#saveas(File)} on a file that already exist shall throw without editing the
-	 * file.
-	 * 
-	 * @throws IOException
-	 *             Shouldn't be thrown.
-	 */
-	@Test
-	public void testSaveOverwrite() throws IOException {
-		// Setup
-		MechGarage cut = new MechGarage(xBar);
-		cut.saveas(testFile);
-		testFile.setLastModified(0);
-		reset(xBar);
+    /**
+     * Attempting to use {@link MechGarage#saveas(File)} on a file that already exist shall throw without editing the
+     * file.
+     * 
+     * @throws IOException
+     *             Shouldn't be thrown.
+     */
+    @Test
+    public void testSaveOverwrite() throws IOException {
+        // Setup
+        MechGarage cut = new MechGarage(xBar);
+        cut.saveas(testFile);
+        testFile.setLastModified(0);
+        reset(xBar);
 
-		// Execute
-		try {
-			cut.saveas(testFile); // File already exists
-			fail(); // Must throw!
-		}
+        // Execute
+        try {
+            cut.saveas(testFile); // File already exists
+            fail(); // Must throw!
+        }
 
-		// Verify
-		catch (IOException e) {
-			assertEquals(0, testFile.lastModified()); // Must not have been modified
-		}
-		verifyZeroInteractions(xBar);
-	}
+        // Verify
+        catch (IOException e) {
+            assertEquals(0, testFile.lastModified()); // Must not have been modified
+        }
+        verifyZeroInteractions(xBar);
+    }
 
-	/**
-	 * {@link MechGarage#saveas(File)} shall produce a file that can be subsequently
-	 * {@link MechGarage#open(File, MessageXBar)}ed to restore the contents of the garage before the call to
-	 * {@link MechGarage#saveas(File)}
-	 * 
-	 * @throws Exception
-	 *             Shouldn't be thrown.
-	 */
-	@Test
-	public void testSaveAsOpen() throws Exception {
-		// Setup
-		LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
-		LoadoutStandard lo2 = new LoadoutStandard("as7-k");
-		LoadoutOmniMech lo3 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
-				(ChassisOmniMech) ChassisDB.lookup("nva-prime"));
-		LoadoutOmniMech lo4 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
-				(ChassisOmniMech) ChassisDB.lookup("tbr-c"));
+    /**
+     * {@link MechGarage#saveas(File)} shall produce a file that can be subsequently
+     * {@link MechGarage#open(File, MessageXBar)}ed to restore the contents of the garage before the call to
+     * {@link MechGarage#saveas(File)}
+     * 
+     * @throws Exception
+     *             Shouldn't be thrown.
+     */
+    @Test
+    public void testSaveAsOpen() throws Exception {
+        // Setup
+        LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
+        LoadoutStandard lo2 = new LoadoutStandard("as7-k");
+        LoadoutOmniMech lo3 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+                (ChassisOmniMech) ChassisDB.lookup("nva-prime"));
+        LoadoutOmniMech lo4 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+                (ChassisOmniMech) ChassisDB.lookup("tbr-c"));
 
-		OperationStack stack = new OperationStack(0);
-		stack.pushAndApply(new OpLoadStock(lo3.getChassis(), lo3, xBar));
-		stack.pushAndApply(new OpLoadStock(lo4.getChassis(), lo4, xBar));
+        OperationStack stack = new OperationStack(0);
+        stack.pushAndApply(new OpLoadStock(lo3.getChassis(), lo3, xBar));
+        stack.pushAndApply(new OpLoadStock(lo4.getChassis(), lo4, xBar));
 
-      stack.pushAndApply(new OpAddModule(null, lo1, PilotModuleDB.lookup("ADVANCED UAV")));
-      stack.pushAndApply(new OpAddModule(null, lo4, PilotModuleDB.lookup("COOL SHOT 6")));
-      
-		MechGarage cut = new MechGarage(xBar);
-		cut.add(lo1);
-		cut.add(lo2);
-		cut.add(lo3);
-		cut.add(lo4);
-		reset(xBar);
+        stack.pushAndApply(new OpAddModule(null, lo1, PilotModuleDB.lookup("ADVANCED UAV")));
+        stack.pushAndApply(new OpAddModule(null, lo4, PilotModuleDB.lookup("COOL SHOT 6")));
 
-		// Execute
-		cut.saveas(testFile);
-		MechGarage loadedGarage = MechGarage.open(testFile, xBar);
+        MechGarage cut = new MechGarage(xBar);
+        cut.add(lo1);
+        cut.add(lo2);
+        cut.add(lo3);
+        cut.add(lo4);
+        reset(xBar);
 
-		// Verify
-		verify(xBar).post(new MechGarage.GarageMessage(Type.Saved, cut));
-		verify(xBar).post(new MechGarage.GarageMessage(Type.NewGarage, loadedGarage));
-		assertEquals(4, loadedGarage.getMechs().size());
-		assertEquals(lo1, loadedGarage.getMechs().get(0));
-		assertEquals(lo2, loadedGarage.getMechs().get(1));
-		assertEquals(lo3, loadedGarage.getMechs().get(2));
-		assertEquals(lo4, loadedGarage.getMechs().get(3));
-	}
+        // Execute
+        cut.saveas(testFile);
+        MechGarage loadedGarage = MechGarage.open(testFile, xBar);
 
-	/**
-	 * {@link MechGarage#save()} shall overwrite previously saved garage.
-	 * 
-	 * @throws Exception
-	 *             Shouldn't be thrown.
-	 */
-	@Test
-	public void testSave() throws Exception {
-		// Setup
-		LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
-		LoadoutStandard lo2 = new LoadoutStandard("as7-k");
-		MechGarage cut = new MechGarage(xBar);
-		cut.add(lo1);
-		cut.saveas(testFile); // Create garage with one mech and save it.
-		cut = MechGarage.open(testFile, xBar);
-		cut.add(lo2); // Add a mech and use the save() function. The same file should be overwritten.
-		reset(xBar);
+        // Verify
+        verify(xBar).post(new MechGarage.GarageMessage(Type.Saved, cut));
+        verify(xBar).post(new MechGarage.GarageMessage(Type.NewGarage, loadedGarage));
+        assertEquals(4, loadedGarage.getMechs().size());
+        assertEquals(lo1, loadedGarage.getMechs().get(0));
+        assertEquals(lo2, loadedGarage.getMechs().get(1));
+        assertEquals(lo3, loadedGarage.getMechs().get(2));
+        assertEquals(lo4, loadedGarage.getMechs().get(3));
+    }
 
-		// Execute
-		cut.save();
+    /**
+     * {@link MechGarage#save()} shall overwrite previously saved garage.
+     * 
+     * @throws Exception
+     *             Shouldn't be thrown.
+     */
+    @Test
+    public void testSave() throws Exception {
+        // Setup
+        LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
+        LoadoutStandard lo2 = new LoadoutStandard("as7-k");
+        MechGarage cut = new MechGarage(xBar);
+        cut.add(lo1);
+        cut.saveas(testFile); // Create garage with one mech and save it.
+        cut = MechGarage.open(testFile, xBar);
+        cut.add(lo2); // Add a mech and use the save() function. The same file should be overwritten.
+        reset(xBar);
 
-		// Open the garage to verify.
-		verify(xBar).post(new MechGarage.GarageMessage(Type.Saved, cut));
+        // Execute
+        cut.save();
 
-		cut = MechGarage.open(testFile, xBar);
-		assertEquals(2, cut.getMechs().size());
-		assertEquals(lo1, cut.getMechs().get(0));
-		assertEquals(lo2, cut.getMechs().get(1));
-	}
+        // Open the garage to verify.
+        verify(xBar).post(new MechGarage.GarageMessage(Type.Saved, cut));
 
-	/**
-	 * add(Loadout, boolean) shall add a loadout to the garage that can subsequently be removed with remove(Loadout,
-	 * boolean).
-	 * 
-	 * @throws Exception
-	 *             Shouldn't be thrown.
-	 */
-	@Test
-	public void testAddRemoveLoadout() throws Exception {
-		// Setup
-		LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
-		MechGarage cut = new MechGarage(xBar);
+        cut = MechGarage.open(testFile, xBar);
+        assertEquals(2, cut.getMechs().size());
+        assertEquals(lo1, cut.getMechs().get(0));
+        assertEquals(lo2, cut.getMechs().get(1));
+    }
 
-		// Execute
-		cut.add(loadout);
+    /**
+     * add(Loadout, boolean) shall add a loadout to the garage that can subsequently be removed with remove(Loadout,
+     * boolean).
+     * 
+     * @throws Exception
+     *             Shouldn't be thrown.
+     */
+    @Test
+    public void testAddRemoveLoadout() throws Exception {
+        // Setup
+        LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
+        MechGarage cut = new MechGarage(xBar);
 
-		// Verify
-		assertEquals(1, cut.getMechs().size());
-		assertSame(loadout, cut.getMechs().get(0));
-		verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.LoadoutAdded, cut, loadout));
+        // Execute
+        cut.add(loadout);
 
-		// Execute
-		cut.remove(loadout);
+        // Verify
+        assertEquals(1, cut.getMechs().size());
+        assertSame(loadout, cut.getMechs().get(0));
+        verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.LoadoutAdded, cut, loadout));
 
-		// Verify
-		assertTrue(cut.getMechs().isEmpty());
-		verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.LoadoutRemoved, cut, loadout));
-	}
+        // Execute
+        cut.remove(loadout);
 
-	/**
-	 * Removing an nonexistent loadout is a no-op.
-	 * 
-	 * @throws Exception
-	 *             Shouldn't be thrown.
-	 */
-	@Test
-	public void testRemoveLoadoutNonexistent() throws Exception {
-		// Setup
-		LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
-		MechGarage cut = new MechGarage(xBar);
-		reset(xBar);
-		cut.remove(loadout);
+        // Verify
+        assertTrue(cut.getMechs().isEmpty());
+        verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.LoadoutRemoved, cut, loadout));
+    }
 
-		verifyZeroInteractions(xBar);
-	}
+    /**
+     * Removing an nonexistent loadout is a no-op.
+     * 
+     * @throws Exception
+     *             Shouldn't be thrown.
+     */
+    @Test
+    public void testRemoveLoadoutNonexistent() throws Exception {
+        // Setup
+        LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
+        MechGarage cut = new MechGarage(xBar);
+        reset(xBar);
+        cut.remove(loadout);
 
-	/**
-	 * Make sure that we can load many of the stock builds saved from 1.5.0.
-	 * <p>
-	 * Note, this is a backwards compatibility test.
-	 * 
-	 * @throws IOException
-	 */
-	@Test
-	public void testLoadStockBuilds_150() throws IOException {
-		MechGarage garage = MechGarage.open(new File("resources/resources/stock1.5.0.xml"), xBar);
-		OperationStack stack = new OperationStack(0);
-		assertEquals(64, garage.getMechs().size());
+        verifyZeroInteractions(xBar);
+    }
 
-		for (LoadoutBase<?> loadout : garage.getMechs()) {
-			LoadoutBase<?> clone = loadout.clone(xBar);
-			stack.pushAndApply(new OpLoadStock(clone.getChassis(), clone, xBar));
+    /**
+     * Make sure that we can load many of the stock builds saved from 1.5.0.
+     * <p>
+     * Note, this is a backwards compatibility test.
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void testLoadStockBuilds_150() throws IOException {
+        MechGarage garage = MechGarage.open(new File("resources/resources/stock1.5.0.xml"), xBar);
+        OperationStack stack = new OperationStack(0);
+        assertEquals(64, garage.getMechs().size());
 
-			assertEquals(clone, loadout);
-		}
-	}
+        for (LoadoutBase<?> loadout : garage.getMechs()) {
+            LoadoutBase<?> clone = loadout.clone(xBar);
+            stack.pushAndApply(new OpLoadStock(clone.getChassis(), clone, xBar));
 
-	/**
-	 * Issue #337. Actuator state is not saved properly.
-	 * 
-	 * @throws IOException
-	 */
-	@Test
-	public void testActuatorStateSaved() throws IOException {
-		ChassisOmniMech chassi = (ChassisOmniMech) ChassisDB.lookup("WHK-B");
-		LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi);
+            assertEquals(clone, loadout);
+        }
+    }
 
-		loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, false);
+    /**
+     * Issue #337. Actuator state is not saved properly.
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void testActuatorStateSaved() throws IOException {
+        ChassisOmniMech chassi = (ChassisOmniMech) ChassisDB.lookup("WHK-B");
+        LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi);
 
-		MechGarage garage = new MechGarage(xBar);
-		garage.add(loadout);
-		garage.saveas(testFile);
-		garage = null;
-		garage = MechGarage.open(testFile, xBar);
+        loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, false);
 
-		LoadoutOmniMech loaded = (LoadoutOmniMech) garage.getMechs().get(0);
+        MechGarage garage = new MechGarage(xBar);
+        garage.add(loadout);
+        garage.saveas(testFile);
+        garage = null;
+        garage = MechGarage.open(testFile, xBar);
 
-		assertFalse(loaded.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));
-	}
+        LoadoutOmniMech loaded = (LoadoutOmniMech) garage.getMechs().get(0);
+
+        assertFalse(loaded.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));
+    }
 
 }

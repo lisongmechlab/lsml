@@ -37,44 +37,44 @@ import lisong_mechlab.view.ProgramInit;
  * @author Li Song
  */
 public class RedoGarageAction extends AbstractAction implements Message.Recipient {
-	private static final long	serialVersionUID	= 665074705972425989L;
-	private static final String	SHORTCUT_STROKE		= "shift control Y";
+    private static final long   serialVersionUID = 665074705972425989L;
+    private static final String SHORTCUT_STROKE  = "shift control Y";
 
-	public RedoGarageAction(MessageXBar anXBar) {
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
-		anXBar.attach(this);
-		setEnabled(false); // Initially
-	}
+    public RedoGarageAction(MessageXBar anXBar) {
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
+        anXBar.attach(this);
+        setEnabled(false); // Initially
+    }
 
-	@Override
-	public Object getValue(String key) {
-		if (key == Action.NAME) {
-			if (isEnabled()) {
-				return "Redo " + ProgramInit.lsml().garageOperationStack.nextRedo().describe();
-			}
-			return "Redo Garage";
-		}
-		return super.getValue(key);
-	}
+    @Override
+    public Object getValue(String key) {
+        if (key == Action.NAME) {
+            if (isEnabled()) {
+                return "Redo " + ProgramInit.lsml().garageOperationStack.nextRedo().describe();
+            }
+            return "Redo Garage";
+        }
+        return super.getValue(key);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent aArg0) {
-		ProgramInit.lsml().garageOperationStack.redo();
-	}
+    @Override
+    public void actionPerformed(ActionEvent aArg0) {
+        ProgramInit.lsml().garageOperationStack.redo();
+    }
 
-	@Override
-	public void receive(final Message aMsg) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				if (aMsg instanceof MechGarage.GarageMessage) {
-					if (ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null)
-						setEnabled(false);
-					else
-						setEnabled(null != ProgramInit.lsml().garageOperationStack.nextRedo());
-					firePropertyChange(NAME, "", getValue(NAME));
-				}
-			}
-		});
-	}
+    @Override
+    public void receive(final Message aMsg) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (aMsg instanceof MechGarage.GarageMessage) {
+                    if (ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null)
+                        setEnabled(false);
+                    else
+                        setEnabled(null != ProgramInit.lsml().garageOperationStack.nextRedo());
+                    firePropertyChange(NAME, "", getValue(NAME));
+                }
+            }
+        });
+    }
 }

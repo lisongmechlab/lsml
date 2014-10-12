@@ -27,10 +27,10 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public interface Metric {
-	/**
-	 * Calculates the value of the metric. May employ caching but the caching must be transparent.
-	 * 
-	 * @return The value of the metric.
-	 */
-	public double calculate();
+    /**
+     * Calculates the value of the metric. May employ caching but the caching must be transparent.
+     * 
+     * @return The value of the metric.
+     */
+    public double calculate();
 }

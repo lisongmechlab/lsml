@@ -32,16 +32,16 @@ import lisong_mechlab.model.item.Item;
  *
  */
 public class LoadoutIterable<T> implements Iterable<T> {
-	private final LoadoutBase<?>	loadout;
-	private final Class<T>			filter;
+    private final LoadoutBase<?> loadout;
+    private final Class<T>       filter;
 
-	public LoadoutIterable(LoadoutBase<?> aLoadout, Class<T> aFilter) {
-		loadout = aLoadout;
-		filter = aFilter;
-	}
+    public LoadoutIterable(LoadoutBase<?> aLoadout, Class<T> aFilter) {
+        loadout = aLoadout;
+        filter = aFilter;
+    }
 
-	@Override
-	public Iterator<T> iterator() {
-		return new LoadoutIterator<T>(loadout, filter);
-	}
+    @Override
+    public Iterator<T> iterator() {
+        return new LoadoutIterator<T>(loadout, filter);
+    }
 }

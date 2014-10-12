@@ -29,33 +29,33 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class OpAddToGarage extends Operation {
-	private final MechGarage		garage;
-	private final LoadoutBase<?>	loadout;
+    private final MechGarage     garage;
+    private final LoadoutBase<?> loadout;
 
-	public OpAddToGarage(MechGarage aGarage, LoadoutBase<?> aLoadout) {
-		garage = aGarage;
-		loadout = aLoadout;
-	}
+    public OpAddToGarage(MechGarage aGarage, LoadoutBase<?> aLoadout) {
+        garage = aGarage;
+        loadout = aLoadout;
+    }
 
-	@Override
-	public String describe() {
-		return "add " + loadout.getName() + " to garage";
-	}
+    @Override
+    public String describe() {
+        return "add " + loadout.getName() + " to garage";
+    }
 
-	@Override
-	protected void apply() {
-		if (garage.getMechs().contains(loadout)) {
-			throw new IllegalArgumentException("The loadout \"" + loadout.getName()
-					+ "\" is already saved to the garage!");
-		}
-		garage.add(loadout);
-	}
+    @Override
+    protected void apply() {
+        if (garage.getMechs().contains(loadout)) {
+            throw new IllegalArgumentException("The loadout \"" + loadout.getName()
+                    + "\" is already saved to the garage!");
+        }
+        garage.add(loadout);
+    }
 
-	@Override
-	protected void undo() {
-		if (!garage.getMechs().contains(loadout)) {
-			throw new IllegalArgumentException("The loadout \"" + loadout.getName() + "\" is not in the garage!");
-		}
-		garage.remove(loadout);
-	}
+    @Override
+    protected void undo() {
+        if (!garage.getMechs().contains(loadout)) {
+            throw new IllegalArgumentException("The loadout \"" + loadout.getName() + "\" is not in the garage!");
+        }
+        garage.remove(loadout);
+    }
 }

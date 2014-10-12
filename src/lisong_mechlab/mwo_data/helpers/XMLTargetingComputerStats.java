@@ -31,28 +31,28 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @author Li Song
  */
 public class XMLTargetingComputerStats {
-	@XStreamAlias("WeaponStatsFilter")
-	public static class XMLWeaponStatsFilter {
-		@XStreamAlias("WeaponStats")
-		public static class XMLWeaponStats {
-			@XStreamAsAttribute
-			public String	operation;
-			@XStreamAsAttribute
-			public double	longRange;
-			@XStreamAsAttribute
-			public double	maxRange;
-			@XStreamAsAttribute
-			public double	speed;
-			@XStreamAsAttribute
-			public String	critChanceIncrease;
-		}
+    @XStreamAlias("WeaponStatsFilter")
+    public static class XMLWeaponStatsFilter {
+        @XStreamAlias("WeaponStats")
+        public static class XMLWeaponStats {
+            @XStreamAsAttribute
+            public String operation;
+            @XStreamAsAttribute
+            public double longRange;
+            @XStreamAsAttribute
+            public double maxRange;
+            @XStreamAsAttribute
+            public double speed;
+            @XStreamAsAttribute
+            public String critChanceIncrease;
+        }
 
-		@XStreamImplicit
-		public List<XMLWeaponStats>	WeaponStats;
-		@XStreamAsAttribute
-		public String				compatibleWeapons;
-	}
+        @XStreamImplicit
+        public List<XMLWeaponStats> WeaponStats;
+        @XStreamAsAttribute
+        public String               compatibleWeapons;
+    }
 
-	@XStreamImplicit
-	public List<XMLWeaponStatsFilter>	WeaponStatsFilter;
+    @XStreamImplicit
+    public List<XMLWeaponStatsFilter> WeaponStatsFilter;
 }

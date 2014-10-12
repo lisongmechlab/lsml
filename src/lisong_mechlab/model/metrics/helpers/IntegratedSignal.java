@@ -25,12 +25,12 @@ package lisong_mechlab.model.metrics.helpers;
  * @author Li Song
  */
 public interface IntegratedSignal {
-	/**
-	 * Calculate the integral from zero to the given time.
-	 * 
-	 * @param aTime
-	 *            The time to integrate to.
-	 * @return The integral value.
-	 */
-	public double integrateFromZeroTo(double aTime);
+    /**
+     * Calculate the integral from zero to the given time.
+     * 
+     * @param aTime
+     *            The time to integrate to.
+     * @return The integral value.
+     */
+    public double integrateFromZeroTo(double aTime);
 }

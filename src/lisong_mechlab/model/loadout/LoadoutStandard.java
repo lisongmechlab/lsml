@@ -45,153 +45,157 @@ import com.thoughtworks.xstream.XStream;
  * @author Li Song
  */
 public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
-	private final UpgradesMutable	upgrades;
+    private final UpgradesMutable upgrades;
 
-	public static LoadoutStandard load(File aFile) {
-		XStream stream = loadoutXstream();
-		return (LoadoutStandard) stream.fromXML(aFile);
-	}
+    public static LoadoutStandard load(File aFile) {
+        XStream stream = loadoutXstream();
+        return (LoadoutStandard) stream.fromXML(aFile);
+    }
 
-	/**
-	 * Will create a new, empty load out based on the given chassis. TODO: Is anXBar really needed?
-	 * 
-	 * @param aChassi
-	 *            The chassis to base the load out on.
-	 */
-	public LoadoutStandard(ChassisStandard aChassi) {
-		super(ComponentBuilder.getISComponentFactory(), aChassi);
+    /**
+     * Will create a new, empty load out based on the given chassis. TODO: Is anXBar really needed?
+     * 
+     * @param aChassi
+     *            The chassis to base the load out on.
+     */
+    public LoadoutStandard(ChassisStandard aChassi) {
+        super(ComponentBuilder.getISComponentFactory(), aChassi);
 
-		upgrades = new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE,
-				UpgradeDB.STANDARD_GUIDANCE, UpgradeDB.STANDARD_HEATSINKS);
-	}
+        upgrades = new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE,
+                UpgradeDB.STANDARD_GUIDANCE, UpgradeDB.STANDARD_HEATSINKS);
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + upgrades.hashCode();
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + upgrades.hashCode();
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (!(obj instanceof LoadoutStandard))
-			return false;
-		LoadoutStandard other = (LoadoutStandard) obj;
-		if (!upgrades.equals(other.upgrades))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (!(obj instanceof LoadoutStandard))
+            return false;
+        LoadoutStandard other = (LoadoutStandard) obj;
+        if (!upgrades.equals(other.upgrades))
+            return false;
+        return true;
+    }
 
-	/**
-	 * Will load a stock load out for the given variation name.
-	 * 
-	 * @param aString
-	 *            The name of the stock variation to load.
-	 * @throws Exception
-	 */
-	public LoadoutStandard(String aString) throws Exception {
-		this((ChassisStandard) ChassisDB.lookup(aString));
-		OperationStack operationStack = new OperationStack(0);
-		operationStack.pushAndApply(new OpLoadStock(getChassis(), this, null));
-	}
+    /**
+     * Will load a stock load out for the given variation name.
+     * 
+     * @param aString
+     *            The name of the stock variation to load.
+     * @throws Exception
+     */
+    public LoadoutStandard(String aString) throws Exception {
+        this((ChassisStandard) ChassisDB.lookup(aString));
+        OperationStack operationStack = new OperationStack(0);
+        operationStack.pushAndApply(new OpLoadStock(getChassis(), this, null));
+    }
 
-	public LoadoutStandard(LoadoutStandard aLoadout, MessageXBar aXBar) {
-		super(ComponentBuilder.getISComponentFactory(), aLoadout);
-		upgrades = new UpgradesMutable(aLoadout.upgrades);
-		if (aXBar != null) {
-			aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
-		}
-	}
+    public LoadoutStandard(LoadoutStandard aLoadout, MessageXBar aXBar) {
+        super(ComponentBuilder.getISComponentFactory(), aLoadout);
+        upgrades = new UpgradesMutable(aLoadout.upgrades);
+        if (aXBar != null) {
+            aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
+        }
+    }
 
-	@Override
-	public ChassisStandard getChassis() {
-		return (ChassisStandard) super.getChassis();
-	}
+    @Override
+    public ChassisStandard getChassis() {
+        return (ChassisStandard) super.getChassis();
+    }
 
-	/**
-	 * @return The {@link Engine} equipped on this loadout, or <code>null</code> if no engine is equipped.
-	 */
-	@Override
-	public Engine getEngine() {
-		// The engine is not among the fixed items for a standard loadout.
-		for (Item item : getComponent(Location.CenterTorso).getItemsEquipped()) {
-			if (item instanceof Engine) {
-				return (Engine) item;
-			}
-		}
-		return null;
-	}
+    /**
+     * @return The {@link Engine} equipped on this loadout, or <code>null</code> if no engine is equipped.
+     */
+    @Override
+    public Engine getEngine() {
+        // The engine is not among the fixed items for a standard loadout.
+        for (Item item : getComponent(Location.CenterTorso).getItemsEquipped()) {
+            if (item instanceof Engine) {
+                return (Engine) item;
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public int getNumCriticalSlotsUsed() {
-		int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmor().getExtraSlots();
-		for (ConfiguredComponentStandard component : getComponents()) {
-			ans += component.getSlotsUsed();
-		}
-		return ans;
-	}
+    @Override
+    public int getNumCriticalSlotsUsed() {
+        int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmor().getExtraSlots();
+        for (ConfiguredComponentStandard component : getComponents()) {
+            ans += component.getSlotsUsed();
+        }
+        return ans;
+    }
 
-	@Override
-	public MovementProfile getMovementProfile() {
-		return getChassis().getMovementProfileBase();
-	}
+    @Override
+    public MovementProfile getMovementProfile() {
+        return getChassis().getMovementProfileBase();
+    }
 
-	@Override
-	public LoadoutStandard clone(MessageXBar aXBar) {
-		return new LoadoutStandard(this, aXBar);
-	}
+    @Override
+    public LoadoutStandard clone(MessageXBar aXBar) {
+        return new LoadoutStandard(this, aXBar);
+    }
 
-	@Override
-	public int getJumpJetsMax() {
-		return getChassis().getJumpJetsMax();
-	}
+    @Override
+    public int getJumpJetsMax() {
+        return getChassis().getJumpJetsMax();
+    }
 
-	@Override
-	public UpgradesMutable getUpgrades() {
-		return upgrades;
-	}
+    @Override
+    public UpgradesMutable getUpgrades() {
+        return upgrades;
+    }
 
-	@Override
-	public int getModulesMax(ModuleSlot aModuleSlot) {
-		if (aModuleSlot == ModuleSlot.MECH) {
-			return getChassis().getMechModulesMax();
-		} else if (aModuleSlot == ModuleSlot.CONSUMABLE) {
-			return getChassis().getConsumableModulesMax();
-		} else if (aModuleSlot == ModuleSlot.WEAPON) {
-			return getChassis().getWeaponModulesMax();
-		} else if (aModuleSlot == ModuleSlot.HYBRID) {
-			return 1;// 1 from mastery
-		} else {
-			throw new IllegalArgumentException("Unknown module slot type!");
-		}
-	}
+    @Override
+    public int getModulesMax(ModuleSlot aModuleSlot) {
+        if (aModuleSlot == ModuleSlot.MECH) {
+            return getChassis().getMechModulesMax();
+        }
+        else if (aModuleSlot == ModuleSlot.CONSUMABLE) {
+            return getChassis().getConsumableModulesMax();
+        }
+        else if (aModuleSlot == ModuleSlot.WEAPON) {
+            return getChassis().getWeaponModulesMax();
+        }
+        else if (aModuleSlot == ModuleSlot.HYBRID) {
+            return 1;// 1 from mastery
+        }
+        else {
+            throw new IllegalArgumentException("Unknown module slot type!");
+        }
+    }
 
-	@Override
-	public <U> Collection<U> getModifiers(Class<U> aClass) {
-		Collection<U> ans = super.getModifiers(aClass);
-		Quirks quirks = getChassis().getQuirks();
-		if (aClass.isInstance(quirks)) {
-			ans.add(aClass.cast(quirks));
-		}
-		return ans;
-	}
+    @Override
+    public <U> Collection<U> getModifiers(Class<U> aClass) {
+        Collection<U> ans = super.getModifiers(aClass);
+        Quirks quirks = getChassis().getQuirks();
+        if (aClass.isInstance(quirks)) {
+            ans.add(aClass.cast(quirks));
+        }
+        return ans;
+    }
 
-	@Override
-	public String getQuirkHtmlSummary() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<html>");
-		sb.append("<body>");
+    @Override
+    public String getQuirkHtmlSummary() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append("<body>");
 
-		sb.append("<p>Quirks:</p>");
-		getChassis().getQuirks().describeAsHtmlWithoutHeaders(sb);
+        sb.append("<p>Quirks:</p>");
+        getChassis().getQuirks().describeAsHtmlWithoutHeaders(sb);
 
-		sb.append("</body>");
-		sb.append("</html>");
-		return sb.toString();
-	}
+        sb.append("</body>");
+        sb.append("</html>");
+        return sb.toString();
+    }
 }

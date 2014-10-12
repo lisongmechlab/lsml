@@ -33,17 +33,17 @@ import lisong_mechlab.view.preferences.PreferencesDialog;
  * @author Li Song
  */
 public class OpenPreferences extends AbstractAction {
-	private static final long	serialVersionUID	= -2615543435137494754L;
+    private static final long serialVersionUID = -2615543435137494754L;
 
-	public OpenPreferences(String aString, KeyStroke aKeyStroke) {
-		super(aString);
-		putValue(Action.ACCELERATOR_KEY, aKeyStroke);
-	}
+    public OpenPreferences(String aString, KeyStroke aKeyStroke) {
+        super(aString);
+        putValue(Action.ACCELERATOR_KEY, aKeyStroke);
+    }
 
-	@SuppressWarnings("unused")
-	// Constructor has desired side effects
-	@Override
-	public void actionPerformed(ActionEvent aArg0) {
-		new PreferencesDialog();
-	}
+    @SuppressWarnings("unused")
+    // Constructor has desired side effects
+    @Override
+    public void actionPerformed(ActionEvent aArg0) {
+        new PreferencesDialog();
+    }
 }

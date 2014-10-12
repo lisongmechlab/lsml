@@ -27,13 +27,13 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * @author Li Song
  */
 public class AlreadyInGarageException extends Exception {
-	/**
-	 * @param aLoadout
-	 *            The loadout that the error occurred for.
-	 */
-	public AlreadyInGarageException(LoadoutBase<?> aLoadout) {
-		super("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
-	}
+    /**
+     * @param aLoadout
+     *            The loadout that the error occurred for.
+     */
+    public AlreadyInGarageException(LoadoutBase<?> aLoadout) {
+        super("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
+    }
 
-	private static final long	serialVersionUID	= 4597113571327421920L;
+    private static final long serialVersionUID = 4597113571327421920L;
 }

@@ -26,25 +26,25 @@ package lisong_mechlab.model.metrics;
  * @author Li Song
  */
 public class AsymptoticTimeToOverHeat implements Metric {
-	private final HeatCapacity		capacity;
-	private final HeatDissipation	dissipation;
-	private final HeatGeneration	generation;
+    private final HeatCapacity    capacity;
+    private final HeatDissipation dissipation;
+    private final HeatGeneration  generation;
 
-	public AsymptoticTimeToOverHeat(final HeatCapacity aCapacity, final HeatDissipation aDissipation,
-			final HeatGeneration aHeatGeneration) {
-		capacity = aCapacity;
-		dissipation = aDissipation;
-		generation = aHeatGeneration;
-	}
+    public AsymptoticTimeToOverHeat(final HeatCapacity aCapacity, final HeatDissipation aDissipation,
+            final HeatGeneration aHeatGeneration) {
+        capacity = aCapacity;
+        dissipation = aDissipation;
+        generation = aHeatGeneration;
+    }
 
-	@Override
-	public double calculate() {
-		final double heatDifferential = generation.calculate() - dissipation.calculate();
-		final double heatCapacity = capacity.calculate();
-		if (heatDifferential <= 0 || heatCapacity / heatDifferential >= 15 * 60) { // 15min = infinity in MWO
-			return Double.POSITIVE_INFINITY;
-		}
-		return heatCapacity / heatDifferential;
-	}
+    @Override
+    public double calculate() {
+        final double heatDifferential = generation.calculate() - dissipation.calculate();
+        final double heatCapacity = capacity.calculate();
+        if (heatDifferential <= 0 || heatCapacity / heatDifferential >= 15 * 60) { // 15min = infinity in MWO
+            return Double.POSITIVE_INFINITY;
+        }
+        return heatCapacity / heatDifferential;
+    }
 
 }

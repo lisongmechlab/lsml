@@ -35,32 +35,33 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  */
 public class ItemConverter implements Converter {
 
-	@Override
-	public boolean canConvert(Class aClass) {
-		return Item.class.isAssignableFrom(aClass);
-	}
+    @Override
+    public boolean canConvert(Class aClass) {
+        return Item.class.isAssignableFrom(aClass);
+    }
 
-	@Override
-	public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-		Item item = (Item) anObject;
-		int mwoIdx = item.getMwoId();
-		if (mwoIdx > 0) {
-			aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
-		} else {
-			aWriter.addAttribute("key", item.getKey());
-		}
-	}
+    @Override
+    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+        Item item = (Item) anObject;
+        int mwoIdx = item.getMwoId();
+        if (mwoIdx > 0) {
+            aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
+        }
+        else {
+            aWriter.addAttribute("key", item.getKey());
+        }
+    }
 
-	@Override
-	public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-		String id = aReader.getAttribute("id");
-		if (id == null || id.isEmpty()) {
-			id = aReader.getValue();
-		}
-		if (id != null && !id.isEmpty()) {
-			int mwoidx = Integer.parseInt(id);
-			return ItemDB.lookup(mwoidx);
-		}
-		return ItemDB.lookup(aReader.getAttribute("key"));
-	}
+    @Override
+    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+        String id = aReader.getAttribute("id");
+        if (id == null || id.isEmpty()) {
+            id = aReader.getValue();
+        }
+        if (id != null && !id.isEmpty()) {
+            int mwoidx = Integer.parseInt(id);
+            return ItemDB.lookup(mwoidx);
+        }
+        return ItemDB.lookup(aReader.getAttribute("key"));
+    }
 }

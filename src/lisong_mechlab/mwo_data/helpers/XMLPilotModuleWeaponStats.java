@@ -25,6 +25,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class XMLPilotModuleWeaponStats {
-	@XStreamAsAttribute
-	public String	compatibleWeapons;
+    @XStreamAsAttribute
+    public String compatibleWeapons;
 }

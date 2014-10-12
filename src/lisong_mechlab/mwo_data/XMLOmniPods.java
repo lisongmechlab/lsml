@@ -51,118 +51,119 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * @author Li Song
  */
 public class XMLOmniPods {
-	public static class XMLOmniPodsSet {
-		public static class XMLOmniPodsQuirk {
-			@XStreamAsAttribute
-			public String	name;
-			@XStreamAsAttribute
-			public double	value;
-		}
+    public static class XMLOmniPodsSet {
+        public static class XMLOmniPodsQuirk {
+            @XStreamAsAttribute
+            public String name;
+            @XStreamAsAttribute
+            public double value;
+        }
 
-		public static class XMLOmniPodsSetBonuses {
-			public static class XMLOmniPodsBonus {
-				@XStreamAsAttribute
-				private int						PieceCount;
-				@XStreamImplicit(itemFieldName = "Quirk")
-				private List<XMLOmniPodsQuirk>	quirks;
-			}
+        public static class XMLOmniPodsSetBonuses {
+            public static class XMLOmniPodsBonus {
+                @XStreamAsAttribute
+                private int                    PieceCount;
+                @XStreamImplicit(itemFieldName = "Quirk")
+                private List<XMLOmniPodsQuirk> quirks;
+            }
 
-			XMLOmniPodsBonus	Bonus;
-		}
+            XMLOmniPodsBonus Bonus;
+        }
 
-		public static class XMLOmniPodsComponent {
-			@XStreamAsAttribute
-			private String					name;
-			@XStreamImplicit(itemFieldName = "Internal")
-			private List<MdfItem>			internals;
-			@XStreamImplicit(itemFieldName = "Hardpoint")
-			private List<MdfHardpoint>		hardpoints;
-			@XStreamImplicit(itemFieldName = "Quirk")
-			private List<XMLOmniPodsQuirk>	quirks;
-			@XStreamAsAttribute
-			private int						CanEquipECM;
-		}
+        public static class XMLOmniPodsComponent {
+            @XStreamAsAttribute
+            private String                 name;
+            @XStreamImplicit(itemFieldName = "Internal")
+            private List<MdfItem>          internals;
+            @XStreamImplicit(itemFieldName = "Hardpoint")
+            private List<MdfHardpoint>     hardpoints;
+            @XStreamImplicit(itemFieldName = "Quirk")
+            private List<XMLOmniPodsQuirk> quirks;
+            @XStreamAsAttribute
+            private int                    CanEquipECM;
+        }
 
-		@XStreamAsAttribute
-		private String				name;
+        @XStreamAsAttribute
+        private String             name;
 
-		XMLOmniPodsSetBonuses		SetBonuses;
+        XMLOmniPodsSetBonuses      SetBonuses;
 
-		@XStreamImplicit(itemFieldName = "component")
-		List<XMLOmniPodsComponent>	omniPods;
-	}
+        @XStreamImplicit(itemFieldName = "component")
+        List<XMLOmniPodsComponent> omniPods;
+    }
 
-	@XStreamImplicit(itemFieldName = "Set")
-	List<XMLOmniPodsSet>	sets;
+    @XStreamImplicit(itemFieldName = "Set")
+    List<XMLOmniPodsSet> sets;
 
-	public List<OmniPod> asOmniPods(XMLItemStats aItemStatsXml, XMLHardpoints aHardPointsXML, DataCache aDataCache) {
-		List<OmniPod> ans = new ArrayList<>();
+    public List<OmniPod> asOmniPods(XMLItemStats aItemStatsXml, XMLHardpoints aHardPointsXML, DataCache aDataCache) {
+        List<OmniPod> ans = new ArrayList<>();
 
-		for (XMLOmniPodsSet set : sets) {
-			for (XMLOmniPodsComponent component : set.omniPods) {
+        for (XMLOmniPodsSet set : sets) {
+            for (XMLOmniPodsComponent component : set.omniPods) {
 
-				ItemStatsOmniPodType type = null;
-				for (ItemStatsOmniPodType omniPodType : aItemStatsXml.OmniPodList) {
-					if (omniPodType.set.equals(set.name) && omniPodType.component.equals(component.name)) {
-						type = omniPodType;
-						break;
-					}
-				}
-				if (type == null) {
-					throw new IllegalArgumentException("No matching omnipod in itemstats.xml");
-				}
+                ItemStatsOmniPodType type = null;
+                for (ItemStatsOmniPodType omniPodType : aItemStatsXml.OmniPodList) {
+                    if (omniPodType.set.equals(set.name) && omniPodType.component.equals(component.name)) {
+                        type = omniPodType;
+                        break;
+                    }
+                }
+                if (type == null) {
+                    throw new IllegalArgumentException("No matching omnipod in itemstats.xml");
+                }
 
-				int maxJumpjets = 0;
-				int maxPilotModules = 0;
-				Map<String, Quirk> quirksMap = new HashMap<>();
-				if (null != component.quirks) {
-					for (XMLOmniPodsQuirk quirk : component.quirks) {
-						if ("jump_jet_slots_additive".equals(quirk.name.toLowerCase())) {
-							maxJumpjets = (int) quirk.value;
-						} else {
-							quirksMap.put(quirk.name, makeQuirk(quirk));
-						}
-						// TODO: check for pilot modules as soon as we know what they're called.
-					}
-				}
+                int maxJumpjets = 0;
+                int maxPilotModules = 0;
+                Map<String, Quirk> quirksMap = new HashMap<>();
+                if (null != component.quirks) {
+                    for (XMLOmniPodsQuirk quirk : component.quirks) {
+                        if ("jump_jet_slots_additive".equals(quirk.name.toLowerCase())) {
+                            maxJumpjets = (int) quirk.value;
+                        }
+                        else {
+                            quirksMap.put(quirk.name, makeQuirk(quirk));
+                        }
+                        // TODO: check for pilot modules as soon as we know what they're called.
+                    }
+                }
 
-				Location location = Location.fromMwoName(component.name);
-				List<HardPoint> hardPoints = MdfComponent.getHardPoints(location, aHardPointsXML, component.hardpoints,
-						component.CanEquipECM, set.name);
-				Quirks quirks = new Quirks(quirksMap);
+                Location location = Location.fromMwoName(component.name);
+                List<HardPoint> hardPoints = MdfComponent.getHardPoints(location, aHardPointsXML, component.hardpoints,
+                        component.CanEquipECM, set.name);
+                Quirks quirks = new Quirks(quirksMap);
 
-				List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals, null);
-				List<Item> toggleableItems = MdfComponent.getToggleableItems(aDataCache, component.internals, null);
+                List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals, null);
+                List<Item> toggleableItems = MdfComponent.getToggleableItems(aDataCache, component.internals, null);
 
-				ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, fixedItems,
-						toggleableItems, maxJumpjets, maxPilotModules));
-			}
-		}
+                ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, fixedItems,
+                        toggleableItems, maxJumpjets, maxPilotModules));
+            }
+        }
 
-		return ans;
-	}
+        return ans;
+    }
 
-	static public Quirk makeQuirk(XMLOmniPodsQuirk aQuirk) {
-		return new Quirk(aQuirk.name, Localization.key2string("ui_quirk_" + aQuirk.name), aQuirk.value);
-	}
+    static public Quirk makeQuirk(XMLOmniPodsQuirk aQuirk) {
+        return new Quirk(aQuirk.name, Localization.key2string("ui_quirk_" + aQuirk.name), aQuirk.value);
+    }
 
-	public static XMLOmniPods fromXml(InputStream is) {
-		XStream xstream = new XStream(new StaxDriver()) {
-			@Override
-			protected MapperWrapper wrapMapper(MapperWrapper next) {
-				return new MapperWrapper(next) {
-					@Override
-					public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-						if (definedIn == Object.class) {
-							return false;
-						}
-						return super.shouldSerializeMember(definedIn, fieldName);
-					}
-				};
-			}
-		};
-		xstream.autodetectAnnotations(true);
-		xstream.alias("OmniPods", XMLOmniPods.class);
-		return (XMLOmniPods) xstream.fromXML(is);
-	}
+    public static XMLOmniPods fromXml(InputStream is) {
+        XStream xstream = new XStream(new StaxDriver()) {
+            @Override
+            protected MapperWrapper wrapMapper(MapperWrapper next) {
+                return new MapperWrapper(next) {
+                    @Override
+                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+                        if (definedIn == Object.class) {
+                            return false;
+                        }
+                        return super.shouldSerializeMember(definedIn, fieldName);
+                    }
+                };
+            }
+        };
+        xstream.autodetectAnnotations(true);
+        xstream.alias("OmniPods", XMLOmniPods.class);
+        return (XMLOmniPods) xstream.fromXML(is);
+    }
 }

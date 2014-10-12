@@ -43,52 +43,52 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class AlphaStrikeTest {
-	@Mock
-	LoadoutStandard		loadout;
-	@InjectMocks
-	private AlphaStrike	cut;
-	private List<Weapon>	items	= new ArrayList<>();
+    @Mock
+    LoadoutStandard      loadout;
+    @InjectMocks
+    private AlphaStrike  cut;
+    private List<Weapon> items = new ArrayList<>();
 
-	@Before
-	public void setup() {
-		when(loadout.items(Weapon.class)).thenReturn(items);
-	}
+    @Before
+    public void setup() {
+        when(loadout.items(Weapon.class)).thenReturn(items);
+    }
 
-	/**
-	 * AMS is not counted into the result.
-	 */
-	@Test
-	public void testCalculate_AMS() {
-		items.add(ItemDB.AMS);
-		assertEquals(0.0, cut.calculate(0), 0.0);
-	}
+    /**
+     * AMS is not counted into the result.
+     */
+    @Test
+    public void testCalculate_AMS() {
+        items.add(ItemDB.AMS);
+        assertEquals(0.0, cut.calculate(0), 0.0);
+    }
 
-	/**
-	 * No weapons should return zero.
-	 */
-	@Test
-	public void testCalculate_noItems() {
-		assertEquals(0.0, cut.calculate(0), 0.0);
-	}
+    /**
+     * No weapons should return zero.
+     */
+    @Test
+    public void testCalculate_noItems() {
+        assertEquals(0.0, cut.calculate(0), 0.0);
+    }
 
-	/**
-	 * Calculate shall sum up the per volley damage of all weapons at the given range.
-	 */
-	@Test
-	public void testCalculate() {
-		Weapon ac5 = (Weapon) ItemDB.lookup("AC/5");
-		Weapon lrm20 = (Weapon) ItemDB.lookup("LRM20");
-		Weapon slas = (Weapon) ItemDB.lookup("SMALL LASER");
-		items.add(ac5);
-		items.add(lrm20);
-		items.add(slas);
+    /**
+     * Calculate shall sum up the per volley damage of all weapons at the given range.
+     */
+    @Test
+    public void testCalculate() {
+        Weapon ac5 = (Weapon) ItemDB.lookup("AC/5");
+        Weapon lrm20 = (Weapon) ItemDB.lookup("LRM20");
+        Weapon slas = (Weapon) ItemDB.lookup("SMALL LASER");
+        items.add(ac5);
+        items.add(lrm20);
+        items.add(slas);
 
-		double alpha_ac5 = ac5.getDamagePerShot();
-		double alpha_lrm20 = lrm20.getDamagePerShot();
-		double alpha_slas = slas.getDamagePerShot();
+        double alpha_ac5 = ac5.getDamagePerShot();
+        double alpha_lrm20 = lrm20.getDamagePerShot();
+        double alpha_slas = slas.getDamagePerShot();
 
-		assertEquals(alpha_ac5 + alpha_slas, cut.calculate(0), 0.0);
-		assertEquals(alpha_ac5 + alpha_slas, cut.calculate(90), 0.0);
-		assertEquals(alpha_ac5 + alpha_lrm20, cut.calculate(200), 0.0);
-	}
+        assertEquals(alpha_ac5 + alpha_slas, cut.calculate(0), 0.0);
+        assertEquals(alpha_ac5 + alpha_slas, cut.calculate(90), 0.0);
+        assertEquals(alpha_ac5 + alpha_lrm20, cut.calculate(200), 0.0);
+    }
 }

@@ -43,53 +43,53 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class MaxDPSTest {
-	@Mock
-	private LoadoutStandard	loadout;
-	@InjectMocks
-	private MaxDPS			cut;
-	private List<Weapon>	items	= new ArrayList<>();
+    @Mock
+    private LoadoutStandard loadout;
+    @InjectMocks
+    private MaxDPS          cut;
+    private List<Weapon>    items = new ArrayList<>();
 
-	@Before
-	public void setup() {
-		when(loadout.items(Weapon.class)).thenReturn(items);
-	}
+    @Before
+    public void setup() {
+        when(loadout.items(Weapon.class)).thenReturn(items);
+    }
 
-	/**
-	 * AMS is not counted into DPS.
-	 */
-	@Test
-	public void testCalculate_AMS() {
-		items.add(ItemDB.AMS);
-		assertEquals(0.0, cut.calculate(0), 0.0);
-	}
+    /**
+     * AMS is not counted into DPS.
+     */
+    @Test
+    public void testCalculate_AMS() {
+        items.add(ItemDB.AMS);
+        assertEquals(0.0, cut.calculate(0), 0.0);
+    }
 
-	/**
-	 * No weapons should return 0.
-	 */
-	@Test
-	public void testCalculate_NoItems() {
-		assertEquals(0.0, cut.calculate(0), 0.0);
-	}
+    /**
+     * No weapons should return 0.
+     */
+    @Test
+    public void testCalculate_NoItems() {
+        assertEquals(0.0, cut.calculate(0), 0.0);
+    }
 
-	/**
-	 * {@link MaxDPS#calculate(double)} shall calculate the maximal DPS at a given range.
-	 */
-	@Test
-	public void testCalculate() {
-		Weapon ac5 = (Weapon) ItemDB.lookup("AC/5");
-		Weapon lrm20 = (Weapon) ItemDB.lookup("LRM20");
-		Weapon slas = (Weapon) ItemDB.lookup("SMALL LASER");
-		items.add(ac5);
-		items.add(lrm20);
-		items.add(slas);
+    /**
+     * {@link MaxDPS#calculate(double)} shall calculate the maximal DPS at a given range.
+     */
+    @Test
+    public void testCalculate() {
+        Weapon ac5 = (Weapon) ItemDB.lookup("AC/5");
+        Weapon lrm20 = (Weapon) ItemDB.lookup("LRM20");
+        Weapon slas = (Weapon) ItemDB.lookup("SMALL LASER");
+        items.add(ac5);
+        items.add(lrm20);
+        items.add(slas);
 
-		double dps_ac5 = ac5.getStat("d/s", null, null);
-		double dps_lrm20 = lrm20.getStat("d/s", null, null);
-		double dps_slas = slas.getStat("d/s", null, null);
+        double dps_ac5 = ac5.getStat("d/s", null, null);
+        double dps_lrm20 = lrm20.getStat("d/s", null, null);
+        double dps_slas = slas.getStat("d/s", null, null);
 
-		assertEquals(dps_ac5 + dps_slas, cut.calculate(0), 0.0);
-		assertEquals(dps_ac5 + dps_slas, cut.calculate(90), 0.0);
-		assertEquals(dps_ac5 + dps_lrm20, cut.calculate(200), 0.0);
-	}
+        assertEquals(dps_ac5 + dps_slas, cut.calculate(0), 0.0);
+        assertEquals(dps_ac5 + dps_slas, cut.calculate(90), 0.0);
+        assertEquals(dps_ac5 + dps_lrm20, cut.calculate(200), 0.0);
+    }
 
 }

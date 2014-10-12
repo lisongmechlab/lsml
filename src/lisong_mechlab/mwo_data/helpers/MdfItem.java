@@ -22,9 +22,9 @@ package lisong_mechlab.mwo_data.helpers;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class MdfItem {
-	@XStreamAsAttribute
-	public int	ItemID;
+    @XStreamAsAttribute
+    public int ItemID;
 
-	@XStreamAsAttribute
-	public int	Toggleable;
+    @XStreamAsAttribute
+    public int Toggleable;
 }

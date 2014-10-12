@@ -44,55 +44,55 @@ import org.junit.Test;
  * @author Li Song
  */
 public class LoadoutCoderV2Test {
-	private LoadoutCoderV2	cut	= new LoadoutCoderV2();
+    private LoadoutCoderV2 cut = new LoadoutCoderV2();
 
-	/**
-	 * The coder shall be able to decode all stock mechs.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testDecodeAllStock() throws Exception {
-		try (InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv2stock.txt");
-				Scanner sc = new Scanner(is);) {
+    /**
+     * The coder shall be able to decode all stock mechs.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDecodeAllStock() throws Exception {
+        try (InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv2stock.txt");
+                Scanner sc = new Scanner(is);) {
 
-			Base64 base64 = new Base64();
+            Base64 base64 = new Base64();
 
-			// [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
-			while (sc.hasNextLine()) {
-				String line = sc.nextLine();
-				Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
-				Matcher m = pat.matcher(line);
-				m.matches();
-				ChassisBase chassi = ChassisDB.lookup(m.group(1));
-				String lsml = m.group(2);
-				LoadoutStandard reference = new LoadoutStandard(chassi.getName());
-				LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
+            // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
+                Matcher m = pat.matcher(line);
+                m.matches();
+                ChassisBase chassi = ChassisDB.lookup(m.group(1));
+                String lsml = m.group(2);
+                LoadoutStandard reference = new LoadoutStandard(chassi.getName());
+                LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
-				// Name is not encoded
-				OperationStack stack = new OperationStack(0);
-				stack.pushAndApply(new OpRename(decoded, null, reference.getName()));
+                // Name is not encoded
+                OperationStack stack = new OperationStack(0);
+                stack.pushAndApply(new OpRename(decoded, null, reference.getName()));
 
-				// Verify
-				assertEquals(reference, decoded);
-			}
-		}
-	}
+                // Verify
+                assertEquals(reference, decoded);
+            }
+        }
+    }
 
-	/**
-	 * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
-	 * sinks.
-	 * 
-	 * @throws DecodingException
-	 */
-	@Test
-	public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
-		Base64 base64 = new Base64();
+    /**
+     * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
+     * sinks.
+     * 
+     * @throws DecodingException
+     */
+    @Test
+    public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
+        Base64 base64 = new Base64();
 
-		LoadoutStandard l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ=="
-				.toCharArray()));
+        LoadoutStandard l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ=="
+                .toCharArray()));
 
-		assertTrue(l.getFreeMass() < 0.005);
-		assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
-	}
+        assertTrue(l.getFreeMass() < 0.005);
+        assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
+    }
 }

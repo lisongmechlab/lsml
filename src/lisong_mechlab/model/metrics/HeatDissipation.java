@@ -30,45 +30,45 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class HeatDissipation implements Metric {
-	private final LoadoutBase<?>	loadout;
-	private Environment				environment;
+    private final LoadoutBase<?> loadout;
+    private Environment          environment;
 
-	public HeatDissipation(final LoadoutBase<?> aLoadout, final Environment anEnvironment) {
-		loadout = aLoadout;
-		environment = anEnvironment;
-	}
+    public HeatDissipation(final LoadoutBase<?> aLoadout, final Environment anEnvironment) {
+        loadout = aLoadout;
+        environment = anEnvironment;
+    }
 
-	@Override
-	public double calculate() {
-		double ans = 0;
-		int enginehs = 0;
-		if (loadout.getEngine() != null) {
-			enginehs = loadout.getEngine().getNumInternalHeatsinks();
-		}
+    @Override
+    public double calculate() {
+        double ans = 0;
+        int enginehs = 0;
+        if (loadout.getEngine() != null) {
+            enginehs = loadout.getEngine().getNumInternalHeatsinks();
+        }
 
-		// Engine internal HS count as true doubles
-		ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 0.2 : 0.1);
-		ans += (loadout.getHeatsinksCount() - enginehs)
-				* loadout.getUpgrades().getHeatSink().getHeatSinkType().getDissipation();
-		ans *= loadout.getEfficiencies().getHeatDissipationModifier();
+        // Engine internal HS count as true doubles
+        ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 0.2 : 0.1);
+        ans += (loadout.getHeatsinksCount() - enginehs)
+                * loadout.getUpgrades().getHeatSink().getHeatSinkType().getDissipation();
+        ans *= loadout.getEfficiencies().getHeatDissipationModifier();
 
-		double externalHeat = 0;
-		if (environment != null) {
-			externalHeat = (environment.getHeat());
-		}
+        double externalHeat = 0;
+        if (environment != null) {
+            externalHeat = (environment.getHeat());
+        }
 
-		double extra = 0;
-		double extraExternal = 0;
-		for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
-			extra += heatModifier.extraHeatDissipation(ans);
-			extraExternal += heatModifier.extraEnvironmentHeat(externalHeat);
-		}
+        double extra = 0;
+        double extraExternal = 0;
+        for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
+            extra += heatModifier.extraHeatDissipation(ans);
+            extraExternal += heatModifier.extraEnvironmentHeat(externalHeat);
+        }
 
-		ans = (ans + extra) - (externalHeat + extraExternal);
-		return ans;
-	}
+        ans = (ans + extra) - (externalHeat + extraExternal);
+        return ans;
+    }
 
-	public void changeEnvironment(Environment anEnvironment) {
-		environment = anEnvironment;
-	}
+    public void changeEnvironment(Environment anEnvironment) {
+        environment = anEnvironment;
+    }
 }

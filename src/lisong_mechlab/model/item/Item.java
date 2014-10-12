@@ -27,175 +27,177 @@ import lisong_mechlab.mwo_data.helpers.ItemStats;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Item implements Comparable<Item> {
-	private final String		locName;
-	private final String		locDesc;
-	@XStreamAsAttribute
-	private final String		mwoName;
-	@XStreamAsAttribute
-	private final int			mwoIdx;
+    private final String        locName;
+    private final String        locDesc;
+    @XStreamAsAttribute
+    private final String        mwoName;
+    @XStreamAsAttribute
+    private final int           mwoIdx;
 
-	@XStreamAsAttribute
-	private final int			slots;
-	@XStreamAsAttribute
-	private final double		tons;
-	@XStreamAsAttribute
-	private final HardPointType	hardpointType;
-	@XStreamAsAttribute
-	private final int			health;
-	@XStreamAsAttribute
-	private final Faction		faction;
+    @XStreamAsAttribute
+    private final int           slots;
+    @XStreamAsAttribute
+    private final double        tons;
+    @XStreamAsAttribute
+    private final HardPointType hardpointType;
+    @XStreamAsAttribute
+    private final int           health;
+    @XStreamAsAttribute
+    private final Faction       faction;
 
-	public Item(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-			HardPointType aHardpointType, int aHP, Faction aFaction) {
-		locName = aName;
-		locDesc = aDesc;
-		mwoName = aMwoName;
-		mwoIdx = aMwoId;
-		slots = aSlots;
-		tons = aTons;
-		hardpointType = aHardpointType;
-		health = aHP;
-		faction = aFaction;
-	}
+    public Item(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardpointType, int aHP, Faction aFaction) {
+        locName = aName;
+        locDesc = aDesc;
+        mwoName = aMwoName;
+        mwoIdx = aMwoId;
+        slots = aSlots;
+        tons = aTons;
+        hardpointType = aHardpointType;
+        health = aHP;
+        faction = aFaction;
+    }
 
-	// TODO: Add a maximum allowed attribute here
+    // TODO: Add a maximum allowed attribute here
 
-	public Item(ItemStats anItemStats, HardPointType aHardpointType, int aNumSlots, double aNumTons, int aHealth) {
-		this(Localization.key2string(anItemStats.Loc.nameTag), Localization.key2string(anItemStats.Loc.descTag),
-				anItemStats.name, Integer.parseInt(anItemStats.id), aNumSlots, aNumTons, aHardpointType, aHealth,
-				Faction.fromMwo(anItemStats.faction));
-	}
+    public Item(ItemStats anItemStats, HardPointType aHardpointType, int aNumSlots, double aNumTons, int aHealth) {
+        this(Localization.key2string(anItemStats.Loc.nameTag), Localization.key2string(anItemStats.Loc.descTag),
+                anItemStats.name, Integer.parseInt(anItemStats.id), aNumSlots, aNumTons, aHardpointType, aHealth,
+                Faction.fromMwo(anItemStats.faction));
+    }
 
-	public Item(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {
-		this(Localization.key2string(aNameTag), Localization.key2string(aDesc), aNameTag, -1, aSlots, 0.0,
-				HardPointType.NONE, aHealth, aFaction);
-	}
+    public Item(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {
+        this(Localization.key2string(aNameTag), Localization.key2string(aDesc), aNameTag, -1, aSlots, 0.0,
+                HardPointType.NONE, aHealth, aFaction);
+    }
 
-	public String getKey() {
-		return mwoName;
-	}
+    public String getKey() {
+        return mwoName;
+    }
 
-	public boolean isCrittable() {
-		return health > 0;
-	}
+    public boolean isCrittable() {
+        return health > 0;
+    }
 
-	@Override
-	public String toString() {
-		return getName();
-	}
+    @Override
+    public String toString() {
+        return getName();
+    }
 
-	public String getName() {
-		return locName;
-	}
+    public String getName() {
+        return locName;
+    }
 
-	public int getNumCriticalSlots() {
-		return slots;
-	}
+    public int getNumCriticalSlots() {
+        return slots;
+    }
 
-	public HardPointType getHardpointType() {
-		return hardpointType;
-	}
+    public HardPointType getHardpointType() {
+        return hardpointType;
+    }
 
-	public double getMass() {
-		return tons;
-	}
+    public double getMass() {
+        return tons;
+    }
 
-	public int getMwoId() {
-		return mwoIdx;
-	}
+    public int getMwoId() {
+        return mwoIdx;
+    }
 
-	public String getShortName() {
-		return getName();
-	}
+    public String getShortName() {
+        return getName();
+    }
 
-	public String getDescription() {
-		return locDesc;
-	}
+    public String getDescription() {
+        return locDesc;
+    }
 
-	/**
-	 * This method checks if this {@link Item} can be equipped in combination with the given {@link Upgrades}.
-	 * 
-	 * @param aUpgrades
-	 *            The {@link Upgrades} to check against.
-	 * @return <code>true</code> if this {@link Item} is compatible with the given upgrades.
-	 */
-	@SuppressWarnings("unused")
-	// Interface
-	public boolean isCompatible(Upgrades aUpgrades) {
-		return true;
-	}
+    /**
+     * This method checks if this {@link Item} can be equipped in combination with the given {@link Upgrades}.
+     * 
+     * @param aUpgrades
+     *            The {@link Upgrades} to check against.
+     * @return <code>true</code> if this {@link Item} is compatible with the given upgrades.
+     */
+    @SuppressWarnings("unused")
+    // Interface
+    public boolean isCompatible(Upgrades aUpgrades) {
+        return true;
+    }
 
-	/**
-	 * Defines the default sorting order of arbitrary items.
-	 * <p>
-	 * The sorting order is as follows:
-	 * <ol>
-	 * <li>Energy weapons</li>
-	 * <li>Ballistic weapons + ammo</li>
-	 * <li>Missile weapons + ammo</li>
-	 * <li>AMS + ammo</li>
-	 * <li>ECM</li>
-	 * <li>Other items except engines</li>
-	 * <li>Engines</li>
-	 * </ol>.
-	 */
-	@Override
-	public int compareTo(Item rhs) {
-		// Engines last
-		if (this instanceof Engine && !(rhs instanceof Engine))
-			return 1;
-		else if (!(this instanceof Engine) && rhs instanceof Engine)
-			return -1;
+    /**
+     * Defines the default sorting order of arbitrary items.
+     * <p>
+     * The sorting order is as follows:
+     * <ol>
+     * <li>Energy weapons</li>
+     * <li>Ballistic weapons + ammo</li>
+     * <li>Missile weapons + ammo</li>
+     * <li>AMS + ammo</li>
+     * <li>ECM</li>
+     * <li>Other items except engines</li>
+     * <li>Engines</li>
+     * </ol>.
+     */
+    @Override
+    public int compareTo(Item rhs) {
+        // Engines last
+        if (this instanceof Engine && !(rhs instanceof Engine))
+            return 1;
+        else if (!(this instanceof Engine) && rhs instanceof Engine)
+            return -1;
 
-		// Count ammunition types together with their parent weapon type.
-		HardPointType lhsHp = this instanceof Ammunition ? ((Ammunition) this).getWeaponHardpointType() : this
-				.getHardpointType();
-		HardPointType rhsHp = rhs instanceof Ammunition ? ((Ammunition) rhs).getWeaponHardpointType() : rhs
-				.getHardpointType();
+        // Count ammunition types together with their parent weapon type.
+        HardPointType lhsHp = this instanceof Ammunition ? ((Ammunition) this).getWeaponHardpointType() : this
+                .getHardpointType();
+        HardPointType rhsHp = rhs instanceof Ammunition ? ((Ammunition) rhs).getWeaponHardpointType() : rhs
+                .getHardpointType();
 
-		// Sort by hard point type (order they appear in the enumeration declaration)
-		// This gives the main order of items as given in the java doc.
-		int hp = lhsHp.compareTo(rhsHp);
+        // Sort by hard point type (order they appear in the enumeration declaration)
+        // This gives the main order of items as given in the java doc.
+        int hp = lhsHp.compareTo(rhsHp);
 
-		// Resolve ties
-		if (hp == 0) {
+        // Resolve ties
+        if (hp == 0) {
 
-			// Ammunition after weapons in same hard point.
-			if (this instanceof Ammunition && !(rhs instanceof Ammunition))
-				return 1;
-			else if (!(this instanceof Ammunition) && rhs instanceof Ammunition)
-				return -1;
+            // Ammunition after weapons in same hard point.
+            if (this instanceof Ammunition && !(rhs instanceof Ammunition))
+                return 1;
+            else if (!(this instanceof Ammunition) && rhs instanceof Ammunition)
+                return -1;
 
-			// Let weapon groups sort internally
-			if (this instanceof EnergyWeapon && rhs instanceof EnergyWeapon) {
-				return EnergyWeapon.DEFAULT_ORDERING.compare((EnergyWeapon) this, (EnergyWeapon) rhs);
-			} else if (lhsHp == HardPointType.BALLISTIC) {
-				return BallisticWeapon.DEFAULT_ORDERING.compare(this, rhs);
-			} else if (lhsHp == HardPointType.MISSILE) {
-				return MissileWeapon.DEFAULT_ORDERING.compare(this, rhs);
-			}
+            // Let weapon groups sort internally
+            if (this instanceof EnergyWeapon && rhs instanceof EnergyWeapon) {
+                return EnergyWeapon.DEFAULT_ORDERING.compare((EnergyWeapon) this, (EnergyWeapon) rhs);
+            }
+            else if (lhsHp == HardPointType.BALLISTIC) {
+                return BallisticWeapon.DEFAULT_ORDERING.compare(this, rhs);
+            }
+            else if (lhsHp == HardPointType.MISSILE) {
+                return MissileWeapon.DEFAULT_ORDERING.compare(this, rhs);
+            }
 
-			// Sort by class name, this groups single/double heat sinks together
-			int classCompare = this.getClass().getName().compareTo(rhs.getClass().getName());
+            // Sort by class name, this groups single/double heat sinks together
+            int classCompare = this.getClass().getName().compareTo(rhs.getClass().getName());
 
-			// Resolve ties
-			if (classCompare == 0) {
-				// Last resort: Lexicographical ordering
-				return toString().compareTo(rhs.toString());
-			}
-			return classCompare;
-		}
-		return hp;
-	}
+            // Resolve ties
+            if (classCompare == 0) {
+                // Last resort: Lexicographical ordering
+                return toString().compareTo(rhs.toString());
+            }
+            return classCompare;
+        }
+        return hp;
+    }
 
-	public int getHealth() {
-		return health;
-	}
+    public int getHealth() {
+        return health;
+    }
 
-	/**
-	 * @return The faction requirement of this {@link Item}.
-	 */
-	public Faction getFaction() {
-		return faction;
-	}
+    /**
+     * @return The faction requirement of this {@link Item}.
+     */
+    public Faction getFaction() {
+        return faction;
+    }
 }

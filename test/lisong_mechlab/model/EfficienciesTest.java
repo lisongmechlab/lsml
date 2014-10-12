@@ -35,233 +35,232 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EfficienciesTest {
-	@Mock
-	private MessageXBar		xBar;
-	private Efficiencies	cut;
+    @Mock
+    private MessageXBar  xBar;
+    private Efficiencies cut;
 
-	@Before
-	public void setup() {
-		cut = new Efficiencies();
-	}
+    @Before
+    public void setup() {
+        cut = new Efficiencies();
+    }
 
-	@Test
-   public void testEquals(){
-      Efficiencies cut1 = new Efficiencies();
-      
-      assertEquals(cut,cut);
-      assertEquals(cut,cut1);
-      
-      cut1.setAnchorTurn(true, null);
-      assertNotEquals(cut,cut1);
-      cut1.setAnchorTurn(false, null);
-      
-      cut1.setCoolRun(true, null);
-      assertNotEquals(cut,cut1);
-      cut1.setCoolRun(false, null);
-      
-      cut1.setDoubleBasics(true, null);
-      assertNotEquals(cut,cut1);
-      cut1.setDoubleBasics(false, null);
-      
-      cut1.setFastFire(true, null);
-      assertNotEquals(cut,cut1);
-      cut1.setFastFire(false, null);
-      
-      cut1.setHeatContainment(true, null);
-      assertNotEquals(cut,cut1);
-      cut1.setHeatContainment(false, null);
-      
-      cut1.setSpeedTweak(true, null);
-      assertNotEquals(cut,cut1);
-      cut1.setSpeedTweak(false, null);
-   }
-   
+    @Test
+    public void testEquals() {
+        Efficiencies cut1 = new Efficiencies();
 
-   @Test
-   public void testSetHasSpeedTweak() throws Exception{
-		// Default false
-		assertEquals(false, cut.hasSpeedTweak());
-		verifyZeroInteractions(xBar);
+        assertEquals(cut, cut);
+        assertEquals(cut, cut1);
 
-		// We want messages too!
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setSpeedTweak(b, xBar);
-			assertEquals(b, cut.hasSpeedTweak());
-			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
-			reset(xBar);
-		}
+        cut1.setAnchorTurn(true, null);
+        assertNotEquals(cut, cut1);
+        cut1.setAnchorTurn(false, null);
 
-		// No messages if there was no change.
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setSpeedTweak(b, xBar);
-			reset(xBar);
-			cut.setSpeedTweak(b, xBar);
-			verifyZeroInteractions(xBar);
-		}
-	}
+        cut1.setCoolRun(true, null);
+        assertNotEquals(cut, cut1);
+        cut1.setCoolRun(false, null);
 
-	@Test
-	public void testGetSpeedModifier() throws Exception {
-		assertEquals(1.0, cut.getSpeedModifier(), 0.0);
+        cut1.setDoubleBasics(true, null);
+        assertNotEquals(cut, cut1);
+        cut1.setDoubleBasics(false, null);
 
-		// These don't affect heat capacity
-		cut.setHeatContainment(true, xBar);
-		cut.setCoolRun(true, xBar);
-		cut.setDoubleBasics(true, xBar);
-		assertEquals(1.0, cut.getSpeedModifier(), 0.0);
+        cut1.setFastFire(true, null);
+        assertNotEquals(cut, cut1);
+        cut1.setFastFire(false, null);
 
-		// These do
-		cut.setSpeedTweak(true, xBar);
-		assertEquals(1.1, cut.getSpeedModifier(), 0.0);
-		cut.setDoubleBasics(false, xBar);
-		assertEquals(1.1, cut.getSpeedModifier(), 0.0);
-	}
+        cut1.setHeatContainment(true, null);
+        assertNotEquals(cut, cut1);
+        cut1.setHeatContainment(false, null);
 
-	@Test
-	public void testSetHasCoolRun() throws Exception {
-		// Default false
-		assertEquals(false, cut.hasCoolRun());
-		verifyZeroInteractions(xBar);
+        cut1.setSpeedTweak(true, null);
+        assertNotEquals(cut, cut1);
+        cut1.setSpeedTweak(false, null);
+    }
 
-		// We want messages too!
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setCoolRun(b, xBar);
-			assertEquals(b, cut.hasCoolRun());
-			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
-			reset(xBar);
-		}
+    @Test
+    public void testSetHasSpeedTweak() throws Exception {
+        // Default false
+        assertEquals(false, cut.hasSpeedTweak());
+        verifyZeroInteractions(xBar);
 
-		// No messages if there was no change.
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setCoolRun(b, xBar);
-			reset(xBar);
-			cut.setCoolRun(b, xBar);
-			verifyZeroInteractions(xBar);
-		}
-	}
+        // We want messages too!
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setSpeedTweak(b, xBar);
+            assertEquals(b, cut.hasSpeedTweak());
+            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
+            reset(xBar);
+        }
 
-	@Test
-	public void testGetHeatDissipationModifier() throws Exception {
-		assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
+        // No messages if there was no change.
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setSpeedTweak(b, xBar);
+            reset(xBar);
+            cut.setSpeedTweak(b, xBar);
+            verifyZeroInteractions(xBar);
+        }
+    }
 
-		// These don't affect heat capacity
-		cut.setHeatContainment(true, xBar);
-		cut.setSpeedTweak(true, xBar);
-		cut.setDoubleBasics(true, xBar); // Only if we have heat containment
-		assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
+    @Test
+    public void testGetSpeedModifier() throws Exception {
+        assertEquals(1.0, cut.getSpeedModifier(), 0.0);
 
-		cut.setHeatContainment(false, xBar);
-		cut.setSpeedTweak(false, xBar);
-		cut.setDoubleBasics(false, xBar);
+        // These don't affect heat capacity
+        cut.setHeatContainment(true, xBar);
+        cut.setCoolRun(true, xBar);
+        cut.setDoubleBasics(true, xBar);
+        assertEquals(1.0, cut.getSpeedModifier(), 0.0);
 
-		// These do
-		cut.setCoolRun(true, xBar);
-		assertEquals(1.075, cut.getHeatDissipationModifier(), 0.0);
-		cut.setDoubleBasics(true, xBar);
-		assertEquals(1.15, cut.getHeatDissipationModifier(), 0.0);
-	}
+        // These do
+        cut.setSpeedTweak(true, xBar);
+        assertEquals(1.1, cut.getSpeedModifier(), 0.0);
+        cut.setDoubleBasics(false, xBar);
+        assertEquals(1.1, cut.getSpeedModifier(), 0.0);
+    }
 
-	@Test
-	public void testSetHasHeatContainment() throws Exception {
-		// Default false
-		assertEquals(false, cut.hasHeatContainment());
-		verifyZeroInteractions(xBar);
+    @Test
+    public void testSetHasCoolRun() throws Exception {
+        // Default false
+        assertEquals(false, cut.hasCoolRun());
+        verifyZeroInteractions(xBar);
 
-		// We want messages too!
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setHeatContainment(b, xBar);
-			assertEquals(b, cut.hasHeatContainment());
-			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
-			reset(xBar);
-		}
+        // We want messages too!
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setCoolRun(b, xBar);
+            assertEquals(b, cut.hasCoolRun());
+            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
+            reset(xBar);
+        }
 
-		// No messages if there was no change.
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setHeatContainment(b, xBar);
-			reset(xBar);
-			cut.setHeatContainment(b, xBar);
-			verifyZeroInteractions(xBar);
-		}
-	}
+        // No messages if there was no change.
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setCoolRun(b, xBar);
+            reset(xBar);
+            cut.setCoolRun(b, xBar);
+            verifyZeroInteractions(xBar);
+        }
+    }
 
-	@Test
-	public void testGetHeatCapacityModifier() throws Exception {
-		assertEquals(1.0, cut.getHeatCapacityModifier(), 0.0);
+    @Test
+    public void testGetHeatDissipationModifier() throws Exception {
+        assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
 
-		// These don't affect heat capacity
-		cut.setCoolRun(true, xBar);
-		cut.setSpeedTweak(true, xBar);
-		cut.setDoubleBasics(true, xBar); // Only if we have heat containment
-		assertEquals(1.0, cut.getHeatCapacityModifier(), 0.0);
+        // These don't affect heat capacity
+        cut.setHeatContainment(true, xBar);
+        cut.setSpeedTweak(true, xBar);
+        cut.setDoubleBasics(true, xBar); // Only if we have heat containment
+        assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
 
-		cut.setCoolRun(false, xBar);
-		cut.setSpeedTweak(false, xBar);
-		cut.setDoubleBasics(false, xBar);
+        cut.setHeatContainment(false, xBar);
+        cut.setSpeedTweak(false, xBar);
+        cut.setDoubleBasics(false, xBar);
 
-		// These do
-		cut.setHeatContainment(true, xBar);
-		assertEquals(1.1, cut.getHeatCapacityModifier(), 0.0);
-		cut.setDoubleBasics(true, xBar);
-		assertEquals(1.2, cut.getHeatCapacityModifier(), 0.0);
-	}
+        // These do
+        cut.setCoolRun(true, xBar);
+        assertEquals(1.075, cut.getHeatDissipationModifier(), 0.0);
+        cut.setDoubleBasics(true, xBar);
+        assertEquals(1.15, cut.getHeatDissipationModifier(), 0.0);
+    }
 
-	@Test
-	public void testSetHasDoubleBasics() throws Exception {
-		// Default false
-		assertEquals(false, cut.hasDoubleBasics());
-		verifyZeroInteractions(xBar);
+    @Test
+    public void testSetHasHeatContainment() throws Exception {
+        // Default false
+        assertEquals(false, cut.hasHeatContainment());
+        verifyZeroInteractions(xBar);
 
-		// We want messages too!
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setDoubleBasics(b, xBar);
-			assertEquals(b, cut.hasDoubleBasics());
-			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
-			reset(xBar);
-		}
+        // We want messages too!
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setHeatContainment(b, xBar);
+            assertEquals(b, cut.hasHeatContainment());
+            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
+            reset(xBar);
+        }
 
-		// No messages if there was no change.
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setDoubleBasics(b, xBar);
-			reset(xBar);
-			cut.setDoubleBasics(b, xBar);
-			verifyZeroInteractions(xBar);
-		}
-	}
+        // No messages if there was no change.
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setHeatContainment(b, xBar);
+            reset(xBar);
+            cut.setHeatContainment(b, xBar);
+            verifyZeroInteractions(xBar);
+        }
+    }
 
-	@Test
-	public void testSetHasFastFire() throws Exception {
-		// Default false
-		assertEquals(false, cut.hasFastFire());
-		verifyZeroInteractions(xBar);
+    @Test
+    public void testGetHeatCapacityModifier() throws Exception {
+        assertEquals(1.0, cut.getHeatCapacityModifier(), 0.0);
 
-		// We want messages too!
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setFastFire(b, xBar);
-			assertEquals(b, cut.hasFastFire());
-			verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
-			reset(xBar);
-		}
+        // These don't affect heat capacity
+        cut.setCoolRun(true, xBar);
+        cut.setSpeedTweak(true, xBar);
+        cut.setDoubleBasics(true, xBar); // Only if we have heat containment
+        assertEquals(1.0, cut.getHeatCapacityModifier(), 0.0);
 
-		// No messages if there was no change.
-		for (boolean b : new boolean[] { true, false }) {
-			cut.setFastFire(b, xBar);
-			reset(xBar);
-			cut.setFastFire(b, xBar);
-			verifyZeroInteractions(xBar);
-		}
-	}
+        cut.setCoolRun(false, xBar);
+        cut.setSpeedTweak(false, xBar);
+        cut.setDoubleBasics(false, xBar);
 
-	@Test
-	public void testGetWeaponCycletimeModifier() throws Exception {
-		assertEquals(1.0, cut.getWeaponCycleTimeModifier(), 0.0);
+        // These do
+        cut.setHeatContainment(true, xBar);
+        assertEquals(1.1, cut.getHeatCapacityModifier(), 0.0);
+        cut.setDoubleBasics(true, xBar);
+        assertEquals(1.2, cut.getHeatCapacityModifier(), 0.0);
+    }
 
-		cut.setFastFire(true, xBar);
+    @Test
+    public void testSetHasDoubleBasics() throws Exception {
+        // Default false
+        assertEquals(false, cut.hasDoubleBasics());
+        verifyZeroInteractions(xBar);
 
-		assertEquals(0.95, cut.getWeaponCycleTimeModifier(), 0.0);
+        // We want messages too!
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setDoubleBasics(b, xBar);
+            assertEquals(b, cut.hasDoubleBasics());
+            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
+            reset(xBar);
+        }
 
-		// Double basics doesn't affect cycle time
-		cut.setDoubleBasics(true, xBar);
-		assertEquals(0.95, cut.getWeaponCycleTimeModifier(), 0.0);
-	}
+        // No messages if there was no change.
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setDoubleBasics(b, xBar);
+            reset(xBar);
+            cut.setDoubleBasics(b, xBar);
+            verifyZeroInteractions(xBar);
+        }
+    }
+
+    @Test
+    public void testSetHasFastFire() throws Exception {
+        // Default false
+        assertEquals(false, cut.hasFastFire());
+        verifyZeroInteractions(xBar);
+
+        // We want messages too!
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setFastFire(b, xBar);
+            assertEquals(b, cut.hasFastFire());
+            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed));
+            reset(xBar);
+        }
+
+        // No messages if there was no change.
+        for (boolean b : new boolean[] { true, false }) {
+            cut.setFastFire(b, xBar);
+            reset(xBar);
+            cut.setFastFire(b, xBar);
+            verifyZeroInteractions(xBar);
+        }
+    }
+
+    @Test
+    public void testGetWeaponCycletimeModifier() throws Exception {
+        assertEquals(1.0, cut.getWeaponCycleTimeModifier(), 0.0);
+
+        cut.setFastFire(true, xBar);
+
+        assertEquals(0.95, cut.getWeaponCycleTimeModifier(), 0.0);
+
+        // Double basics doesn't affect cycle time
+        cut.setDoubleBasics(true, xBar);
+        assertEquals(0.95, cut.getWeaponCycleTimeModifier(), 0.0);
+    }
 
 }

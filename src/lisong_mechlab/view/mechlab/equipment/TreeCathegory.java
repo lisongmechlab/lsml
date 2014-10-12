@@ -24,13 +24,13 @@ import javax.swing.tree.TreePath;
 
 abstract class TreeCathegory extends InternalFrameAdapter {
 
-	public abstract int getChildCount();
+    public abstract int getChildCount();
 
-	public abstract int getIndex(Object aChild);
+    public abstract int getIndex(Object aChild);
 
-	public abstract Object getChild(int aIndex);
+    public abstract Object getChild(int aIndex);
 
-	public abstract TreePath getPath();
+    public abstract TreePath getPath();
 
-	public abstract GarageTreeModel getModel();
+    public abstract GarageTreeModel getModel();
 }

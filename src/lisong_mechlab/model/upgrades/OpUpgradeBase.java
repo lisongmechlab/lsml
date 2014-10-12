@@ -31,32 +31,32 @@ import lisong_mechlab.util.message.MessageDelivery;
  * @author Li Song
  */
 public abstract class OpUpgradeBase extends Operation {
-	protected final transient MessageDelivery	messageDelivery;
-	private final String						description;
+    protected final transient MessageDelivery messageDelivery;
+    private final String                      description;
 
-	protected OpUpgradeBase(MessageDelivery aMessageDelivery, String aDescription) {
-		description = aDescription;
-		messageDelivery = aMessageDelivery;
-	}
+    protected OpUpgradeBase(MessageDelivery aMessageDelivery, String aDescription) {
+        description = aDescription;
+        messageDelivery = aMessageDelivery;
+    }
 
-	@Override
-	public String describe() {
-		return description;
-	}
+    @Override
+    public String describe() {
+        return description;
+    }
 
-	protected void verifyLoadoutInvariant(LoadoutBase<?> aLoadout) {
-		if (aLoadout == null)
-			return;
-		if (aLoadout.getFreeMass() < 0) {
-			throw new IllegalArgumentException("Not enough tonnage!");
-		}
-		if (aLoadout.getNumCriticalSlotsFree() < 0) {
-			throw new IllegalArgumentException("Not enough free slots!");
-		}
-		for (ConfiguredComponentBase loadoutPart : aLoadout.getComponents()) {
-			if (loadoutPart.getSlotsFree() < 0) {
-				throw new IllegalArgumentException("Not enough free slots!");
-			}
-		}
-	}
+    protected void verifyLoadoutInvariant(LoadoutBase<?> aLoadout) {
+        if (aLoadout == null)
+            return;
+        if (aLoadout.getFreeMass() < 0) {
+            throw new IllegalArgumentException("Not enough tonnage!");
+        }
+        if (aLoadout.getNumCriticalSlotsFree() < 0) {
+            throw new IllegalArgumentException("Not enough free slots!");
+        }
+        for (ConfiguredComponentBase loadoutPart : aLoadout.getComponents()) {
+            if (loadoutPart.getSlotsFree() < 0) {
+                throw new IllegalArgumentException("Not enough free slots!");
+            }
+        }
+    }
 }

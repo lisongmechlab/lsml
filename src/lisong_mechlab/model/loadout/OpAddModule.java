@@ -29,47 +29,47 @@ import lisong_mechlab.util.message.MessageXBar;
  * @author Li Song
  */
 public class OpAddModule extends Operation {
-	private final PilotModule			module;
-	private final LoadoutBase<?>		loadout;
-	private final transient MessageXBar	xBar;
+    private final PilotModule           module;
+    private final LoadoutBase<?>        loadout;
+    private final transient MessageXBar xBar;
 
-	/**
-	 * Creates a new {@link OpAddModule}.
-	 * 
-	 * @param aXBar
-	 *            The {@link MessageXBar} to signal changes to the loadout on.
-	 * @param aLoadout
-	 *            The {@link LoadoutBase} to add the module to.
-	 * @param aLookup
-	 *            The {@link PilotModule} to add.
-	 */
-	public OpAddModule(MessageXBar aXBar, LoadoutBase<?> aLoadout, PilotModule aLookup) {
-		module = aLookup;
-		loadout = aLoadout;
-		xBar = aXBar;
-	}
+    /**
+     * Creates a new {@link OpAddModule}.
+     * 
+     * @param aXBar
+     *            The {@link MessageXBar} to signal changes to the loadout on.
+     * @param aLoadout
+     *            The {@link LoadoutBase} to add the module to.
+     * @param aLookup
+     *            The {@link PilotModule} to add.
+     */
+    public OpAddModule(MessageXBar aXBar, LoadoutBase<?> aLoadout, PilotModule aLookup) {
+        module = aLookup;
+        loadout = aLoadout;
+        xBar = aXBar;
+    }
 
-	@Override
-	public String describe() {
-		return "add " + module + " to " + loadout;
-	}
+    @Override
+    public String describe() {
+        return "add " + module + " to " + loadout;
+    }
 
-	@Override
-	protected void apply() {
-		if (!loadout.canAddModule(module))
-			throw new IllegalArgumentException("Can't add module to loadout!");
-		loadout.addModule(module);
+    @Override
+    protected void apply() {
+        if (!loadout.canAddModule(module))
+            throw new IllegalArgumentException("Can't add module to loadout!");
+        loadout.addModule(module);
 
-		if (xBar != null) {
-			xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
-		}
-	}
+        if (xBar != null) {
+            xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
+        }
+    }
 
-	@Override
-	protected void undo() {
-		loadout.removeModule(module);
-		if (xBar != null) {
-			xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
-		}
-	}
+    @Override
+    protected void undo() {
+        loadout.removeModule(module);
+        if (xBar != null) {
+            xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
+        }
+    }
 }

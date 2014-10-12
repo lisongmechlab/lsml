@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.converters;
 
@@ -33,35 +33,35 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * 
  * @author Li Song
  */
-public class ModuleConverter implements Converter{
+public class ModuleConverter implements Converter {
 
-   @Override
-   public boolean canConvert(Class aClass){
-      return PilotModule.class.isAssignableFrom(aClass);
-   }
+    @Override
+    public boolean canConvert(Class aClass) {
+        return PilotModule.class.isAssignableFrom(aClass);
+    }
 
-   @Override
-   public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext){
-      PilotModule item = (PilotModule)anObject;
-      int mwoIdx = item.getMwoId();
-      if( mwoIdx > 0 ){
-         aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
-      }
-      else{
-         aWriter.addAttribute("key", item.getKey());
-      }
-   }
+    @Override
+    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+        PilotModule item = (PilotModule) anObject;
+        int mwoIdx = item.getMwoId();
+        if (mwoIdx > 0) {
+            aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
+        }
+        else {
+            aWriter.addAttribute("key", item.getKey());
+        }
+    }
 
-   @Override
-   public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext){
-      String id = aReader.getAttribute("id");
-      if( id == null || id.isEmpty() ){
-         id = aReader.getValue();
-      }
-      if( id != null && !id.isEmpty() ){
-         int mwoidx = Integer.parseInt(id);
-         return PilotModuleDB.lookup(mwoidx);
-      }
-      return PilotModuleDB.lookup(aReader.getAttribute("key"));
-   }
+    @Override
+    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+        String id = aReader.getAttribute("id");
+        if (id == null || id.isEmpty()) {
+            id = aReader.getValue();
+        }
+        if (id != null && !id.isEmpty()) {
+            int mwoidx = Integer.parseInt(id);
+            return PilotModuleDB.lookup(mwoidx);
+        }
+        return PilotModuleDB.lookup(aReader.getAttribute("key"));
+    }
 }

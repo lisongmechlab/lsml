@@ -28,28 +28,28 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public interface Message {
-	/**
-	 * Classes that need to be able to listen for messages have to implement this interface. And find a
-	 * {@link MessageReception} object to attach to.
-	 * 
-	 * @author Li Song
-	 */
-	public static interface Recipient {
-		void receive(Message aMsg);
-	}
+    /**
+     * Classes that need to be able to listen for messages have to implement this interface. And find a
+     * {@link MessageReception} object to attach to.
+     * 
+     * @author Li Song
+     */
+    public static interface Recipient {
+        void receive(Message aMsg);
+    }
 
-	/**
-	 * Checks if this message is related to a specific {@link LoadoutStandard}.
-	 * 
-	 * @param aLoadout
-	 *            The {@link LoadoutStandard} to check.
-	 * @return <code>true</code> if this message affects the given {@link LoadoutStandard}.
-	 */
-	public boolean isForMe(LoadoutBase<?> aLoadout);
+    /**
+     * Checks if this message is related to a specific {@link LoadoutStandard}.
+     * 
+     * @param aLoadout
+     *            The {@link LoadoutStandard} to check.
+     * @return <code>true</code> if this message affects the given {@link LoadoutStandard}.
+     */
+    public boolean isForMe(LoadoutBase<?> aLoadout);
 
-	/**
-	 * @return <code>true</code> if this message can affect the damage or heat output of the related
-	 *         {@link LoadoutStandard}.
-	 */
-	public boolean affectsHeatOrDamage();
+    /**
+     * @return <code>true</code> if this message can affect the damage or heat output of the related
+     *         {@link LoadoutStandard}.
+     */
+    public boolean affectsHeatOrDamage();
 }

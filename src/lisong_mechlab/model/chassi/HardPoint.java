@@ -27,44 +27,44 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class HardPoint {
-	@XStreamAsAttribute
-	private final int			tubes;
-	@XStreamAsAttribute
-	private final HardPointType	type;
-	@XStreamAsAttribute
-	private final boolean		hasBayDoor;
+    @XStreamAsAttribute
+    private final int           tubes;
+    @XStreamAsAttribute
+    private final HardPointType type;
+    @XStreamAsAttribute
+    private final boolean       hasBayDoor;
 
-	public HardPoint(HardPointType aType) {
-		this(aType, 0, false);
-	}
+    public HardPoint(HardPointType aType) {
+        this(aType, 0, false);
+    }
 
-	public HardPoint(HardPointType aType, int aNumTubes, boolean aHasBayDoor) {
-		if (aType == HardPointType.MISSILE && aNumTubes < 1) {
-			throw new IllegalArgumentException("Missile hard points must have a positive, non-zero number of tubes");
-		}
-		type = aType;
-		tubes = aNumTubes;
-		hasBayDoor = aHasBayDoor;
-	}
+    public HardPoint(HardPointType aType, int aNumTubes, boolean aHasBayDoor) {
+        if (aType == HardPointType.MISSILE && aNumTubes < 1) {
+            throw new IllegalArgumentException("Missile hard points must have a positive, non-zero number of tubes");
+        }
+        type = aType;
+        tubes = aNumTubes;
+        hasBayDoor = aHasBayDoor;
+    }
 
-	/**
-	 * @return The type of this hard point.
-	 */
-	public HardPointType getType() {
-		return type;
-	}
+    /**
+     * @return The type of this hard point.
+     */
+    public HardPointType getType() {
+        return type;
+    }
 
-	/**
-	 * @return The number of missile tubes this hard point has.
-	 */
-	public int getNumMissileTubes() {
-		return tubes;
-	}
+    /**
+     * @return The number of missile tubes this hard point has.
+     */
+    public int getNumMissileTubes() {
+        return tubes;
+    }
 
-	/**
-	 * @return <code>true</code> if this hard point has missile bay doors.
-	 */
-	public boolean hasMissileBayDoor() {
-		return hasBayDoor;
-	}
+    /**
+     * @return <code>true</code> if this hard point has missile bay doors.
+     */
+    public boolean hasMissileBayDoor() {
+        return hasBayDoor;
+    }
 }

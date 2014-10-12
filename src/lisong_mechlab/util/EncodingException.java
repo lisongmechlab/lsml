@@ -27,13 +27,13 @@ import java.io.IOException;
  * @author Li Song
  */
 public class EncodingException extends IOException {
-	private static final long	serialVersionUID	= -5553686746846136977L;
+    private static final long serialVersionUID = -5553686746846136977L;
 
-	public EncodingException(String aMessage) {
-		super(aMessage);
-	}
+    public EncodingException(String aMessage) {
+        super(aMessage);
+    }
 
-	public EncodingException(Throwable aThrowable) {
-		super(aThrowable);
-	}
+    public EncodingException(Throwable aThrowable) {
+        super(aThrowable);
+    }
 }

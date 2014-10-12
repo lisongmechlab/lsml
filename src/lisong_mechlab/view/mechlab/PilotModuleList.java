@@ -48,78 +48,78 @@ import lisong_mechlab.view.render.ItemRenderer;
  * @author Li Song
  */
 public class PilotModuleList extends JList<String> {
-	private static final long		serialVersionUID	= -3812414074800032146L;
-	private final MessageXBar		xBar;
-	private final LoadoutBase<?>	loadout;
-	private final OperationStack	stack;
-	private final ModuleSlot		moduleSlot;
+    private static final long    serialVersionUID = -3812414074800032146L;
+    private final MessageXBar    xBar;
+    private final LoadoutBase<?> loadout;
+    private final OperationStack stack;
+    private final ModuleSlot     moduleSlot;
 
-	public PilotModuleList(MessageXBar aXBar, OperationStack aOperationStack, LoadoutBase<?> aLoadout,
-			ModuleSlot aModuleSlot) {
-		super(new PilotModuleModel(aLoadout, aXBar, aModuleSlot));
-		xBar = aXBar;
-		stack = aOperationStack;
-		loadout = aLoadout;
-		moduleSlot = aModuleSlot;
-		setVisible(true);
-		setFocusable(false);
-		setVisibleRowCount(aLoadout.getModulesMax(aModuleSlot));
-		setFixedCellWidth(ItemRenderer.getItemWidth());
-		setFixedCellHeight(ItemRenderer.getItemHeight());
-		setDragEnabled(true);
-		setTransferHandler(new ModuleTransferHandler());
-		setCellRenderer(new ListCellRenderer<String>() {
-			private final JLabel	label	= new JLabel();
+    public PilotModuleList(MessageXBar aXBar, OperationStack aOperationStack, LoadoutBase<?> aLoadout,
+            ModuleSlot aModuleSlot) {
+        super(new PilotModuleModel(aLoadout, aXBar, aModuleSlot));
+        xBar = aXBar;
+        stack = aOperationStack;
+        loadout = aLoadout;
+        moduleSlot = aModuleSlot;
+        setVisible(true);
+        setFocusable(false);
+        setVisibleRowCount(aLoadout.getModulesMax(aModuleSlot));
+        setFixedCellWidth(ItemRenderer.getItemWidth());
+        setFixedCellHeight(ItemRenderer.getItemHeight());
+        setDragEnabled(true);
+        setTransferHandler(new ModuleTransferHandler());
+        setCellRenderer(new ListCellRenderer<String>() {
+            private final JLabel label = new JLabel();
 
-			@Override
-			public Component getListCellRendererComponent(JList<? extends String> aList, String aValue, int aIndex,
-					boolean aIsSelected, boolean aCellHasFocus) {
-				label.setText(aValue);
+            @Override
+            public Component getListCellRendererComponent(JList<? extends String> aList, String aValue, int aIndex,
+                    boolean aIsSelected, boolean aCellHasFocus) {
+                label.setText(aValue);
 
-				if (moduleSlot == ModuleSlot.HYBRID) {
-					label.setBackground(new Color(0xb8aa81));
-					label.setOpaque(true);
-				}
-				return label;
-			}
-		});
+                if (moduleSlot == ModuleSlot.HYBRID) {
+                    label.setBackground(new Color(0xb8aa81));
+                    label.setOpaque(true);
+                }
+                return label;
+            }
+        });
 
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent e) {
-				if (e.getClickCount() >= 2) {
-					takeCurrent();
-				}
-			}
-		});
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() >= 2) {
+                    takeCurrent();
+                }
+            }
+        });
 
-		addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent aE) {
-				if (aE.getKeyCode() == KeyEvent.VK_DELETE) {
-					takeCurrent();
-				}
-			}
-		});
-	}
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent aE) {
+                if (aE.getKeyCode() == KeyEvent.VK_DELETE) {
+                    takeCurrent();
+                }
+            }
+        });
+    }
 
-	public LoadoutBase<?> getLoadout() {
-		return loadout;
-	}
+    public LoadoutBase<?> getLoadout() {
+        return loadout;
+    }
 
-	public void putElement(PilotModule aModule) {
-		stack.pushAndApply(new OpAddModule(xBar, loadout, aModule));
-	}
+    public void putElement(PilotModule aModule) {
+        stack.pushAndApply(new OpAddModule(xBar, loadout, aModule));
+    }
 
-	public PilotModule takeCurrent() {
-		String sel = getSelectedValue();
-		if (sel.equals(PilotModuleModel.EMPTY))
-			return null;
+    public PilotModule takeCurrent() {
+        String sel = getSelectedValue();
+        if (sel.equals(PilotModuleModel.EMPTY))
+            return null;
 
-		PilotModule module = PilotModuleDB.lookup(getSelectedValue());
-		if (module != null) {
-			stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
-		}
-		return module;
-	}
+        PilotModule module = PilotModuleDB.lookup(getSelectedValue());
+        if (module != null) {
+            stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
+        }
+        return module;
+    }
 }

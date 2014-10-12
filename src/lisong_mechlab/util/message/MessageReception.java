@@ -31,31 +31,31 @@ import lisong_mechlab.util.message.Message.Recipient;
  */
 public interface MessageReception {
 
-	/**
-	 * Attaches a new {@link Message.Recipient} to this {@link MessageXBar}. The {@link Message.Recipient} is
-	 * automatically converted to a weak reference.
-	 * 
-	 * @see #attach(Recipient)
-	 * @param aReader
-	 *            The {@link Message.Recipient} to add.
-	 */
-	public void attach(Message.Recipient aReader);
+    /**
+     * Attaches a new {@link Message.Recipient} to this {@link MessageXBar}. The {@link Message.Recipient} is
+     * automatically converted to a weak reference.
+     * 
+     * @see #attach(Recipient)
+     * @param aReader
+     *            The {@link Message.Recipient} to add.
+     */
+    public void attach(Message.Recipient aReader);
 
-	/**
-	 * Attaches a new {@link Message.Recipient} to this {@link MessageXBar}. The {@link MessageXBar} only keeps weak
-	 * references so this won't prevent objects from being garbage collected.
-	 * 
-	 * @param aWeakReference
-	 *            The object that shall receive messages.
-	 */
-	public void attach(WeakReference<Message.Recipient> aWeakReference);
+    /**
+     * Attaches a new {@link Message.Recipient} to this {@link MessageXBar}. The {@link MessageXBar} only keeps weak
+     * references so this won't prevent objects from being garbage collected.
+     * 
+     * @param aWeakReference
+     *            The object that shall receive messages.
+     */
+    public void attach(WeakReference<Message.Recipient> aWeakReference);
 
-	/**
-	 * Detaches a {@link Message.Recipient} from the {@link MessageXBar}.
-	 * 
-	 * @param aReader
-	 *            The object that shall be removed messages.
-	 */
-	public void detach(Message.Recipient aReader);
+    /**
+     * Detaches a {@link Message.Recipient} from the {@link MessageXBar}.
+     * 
+     * @param aReader
+     *            The object that shall be removed messages.
+     */
+    public void detach(Message.Recipient aReader);
 
 }

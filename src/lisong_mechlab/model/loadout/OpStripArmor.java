@@ -31,22 +31,23 @@ import lisong_mechlab.util.message.MessageDelivery;
  * @author Li Song
  */
 public class OpStripArmor extends CompositeOperation {
-	protected final LoadoutBase<?>	loadout;
+    protected final LoadoutBase<?> loadout;
 
-	public OpStripArmor(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
-		super("strip armor", aMessageDelivery);
-		loadout = aLoadout;
-	}
+    public OpStripArmor(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
+        super("strip armor", aMessageDelivery);
+        loadout = aLoadout;
+    }
 
-	@Override
-	public void buildOperation() {
-		for (ConfiguredComponentBase component : loadout.getComponents()) {
-			if (component.getInternalComponent().getLocation().isTwoSided()) {
-				addOp(new OpSetArmor(messageBuffer, loadout, component, ArmorSide.FRONT, 0, true));
-				addOp(new OpSetArmor(messageBuffer, loadout, component, ArmorSide.BACK, 0, true));
-			} else {
-				addOp(new OpSetArmor(messageBuffer, loadout, component, ArmorSide.ONLY, 0, true));
-			}
-		}
-	}
+    @Override
+    public void buildOperation() {
+        for (ConfiguredComponentBase component : loadout.getComponents()) {
+            if (component.getInternalComponent().getLocation().isTwoSided()) {
+                addOp(new OpSetArmor(messageBuffer, loadout, component, ArmorSide.FRONT, 0, true));
+                addOp(new OpSetArmor(messageBuffer, loadout, component, ArmorSide.BACK, 0, true));
+            }
+            else {
+                addOp(new OpSetArmor(messageBuffer, loadout, component, ArmorSide.ONLY, 0, true));
+            }
+        }
+    }
 }

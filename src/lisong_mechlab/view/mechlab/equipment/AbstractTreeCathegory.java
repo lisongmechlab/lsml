@@ -22,34 +22,34 @@ package lisong_mechlab.view.mechlab.equipment;
 import javax.swing.tree.TreePath;
 
 abstract class AbstractTreeCathegory extends TreeCathegory {
-	private final String			name;
-	private final TreePath			path;
-	private final GarageTreeModel	model;
+    private final String          name;
+    private final TreePath        path;
+    private final GarageTreeModel model;
 
-	public AbstractTreeCathegory(String aName, GarageTreeModel aModel) {
-		name = aName;
-		path = new TreePath(this);
-		model = aModel;
-	}
+    public AbstractTreeCathegory(String aName, GarageTreeModel aModel) {
+        name = aName;
+        path = new TreePath(this);
+        model = aModel;
+    }
 
-	public AbstractTreeCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel) {
-		name = aName;
-		path = aParent.getPath().pathByAddingChild(this);
-		model = aModel;
-	}
+    public AbstractTreeCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel) {
+        name = aName;
+        path = aParent.getPath().pathByAddingChild(this);
+        model = aModel;
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 
-	@Override
-	public TreePath getPath() {
-		return path;
-	}
+    @Override
+    public TreePath getPath() {
+        return path;
+    }
 
-	@Override
-	public GarageTreeModel getModel() {
-		return model;
-	}
+    @Override
+    public GarageTreeModel getModel() {
+        return model;
+    }
 }

@@ -26,30 +26,30 @@ import javax.swing.JPanel;
 import javax.swing.Scrollable;
 
 public class ScrollablePanel extends JPanel implements Scrollable {
-	private static final long	serialVersionUID	= -5231044372862875923L;
+    private static final long serialVersionUID = -5231044372862875923L;
 
-	@Override
-	public Dimension getPreferredScrollableViewportSize() {
-		return null;
-	}
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return null;
+    }
 
-	@Override
-	public int getScrollableBlockIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection) {
-		return 150; // Arbitrary number, works well enough.
-	}
+    @Override
+    public int getScrollableBlockIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection) {
+        return 150; // Arbitrary number, works well enough.
+    }
 
-	@Override
-	public boolean getScrollableTracksViewportHeight() {
-		return false;
-	}
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
+    }
 
-	@Override
-	public boolean getScrollableTracksViewportWidth() {
-		return true;
-	}
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return true;
+    }
 
-	@Override
-	public int getScrollableUnitIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection) {
-		return 50; // Arbitrary number, works well enough.
-	}
+    @Override
+    public int getScrollableUnitIncrement(Rectangle aVisibleRect, int aOrientation, int aDirection) {
+        return 50; // Arbitrary number, works well enough.
+    }
 }

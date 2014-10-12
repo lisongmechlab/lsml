@@ -44,59 +44,59 @@ import lisong_mechlab.util.message.MessageXBar;
  */
 public class HeatOverTime implements TimeMetric, Message.Recipient {
 
-	private final LoadoutBase<?>			loadout;
-	private final List<IntegratedSignal>	heatIntegrals	= new ArrayList<>();
+    private final LoadoutBase<?>         loadout;
+    private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
 
-	/**
-	 * Creates a new calculator object
-	 * 
-	 * @param aLoadout
-	 * @param aXBar
-	 */
-	public HeatOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
-		loadout = aLoadout;
-		updateEvents();
-		aXBar.attach(this);
-	}
+    /**
+     * Creates a new calculator object
+     * 
+     * @param aLoadout
+     * @param aXBar
+     */
+    public HeatOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+        loadout = aLoadout;
+        updateEvents();
+        aXBar.attach(this);
+    }
 
-	@Override
-	public double calculate(double aTime) {
-		double ans = 0;
-		for (IntegratedSignal event : heatIntegrals) {
-			ans += event.integrateFromZeroTo(aTime);
-		}
-		return ans;
-	}
+    @Override
+    public double calculate(double aTime) {
+        double ans = 0;
+        for (IntegratedSignal event : heatIntegrals) {
+            ans += event.integrateFromZeroTo(aTime);
+        }
+        return ans;
+    }
 
-	@Override
-	public void receive(Message aMsg) {
-		if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
-			updateEvents();
-		}
-	}
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
+            updateEvents();
+        }
+    }
 
-	private void updateEvents() {
-		heatIntegrals.clear();
-		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
-		for (HeatSource item : loadout.items(HeatSource.class)) {
-			if (item instanceof Weapon) {
-				Weapon weapon = (Weapon) item;
+    private void updateEvents() {
+        heatIntegrals.clear();
+        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        for (HeatSource item : loadout.items(HeatSource.class)) {
+            if (item instanceof Weapon) {
+                Weapon weapon = (Weapon) item;
 
-				if (weapon instanceof EnergyWeapon) {
-					EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
-					if (energyWeapon.getDuration() > 0) {
-						heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(
-								loadout.getEfficiencies(), modifiers), energyWeapon.getDuration(), energyWeapon
-								.getHeat(modifiers) / energyWeapon.getDuration()));
-						continue;
-					}
-				}
-				heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies(),
-						modifiers), weapon.getHeat(modifiers)));
-			}
-			if (item instanceof Engine) {
-				heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine) item).getHeat(modifiers)));
-			}
-		}
-	}
+                if (weapon instanceof EnergyWeapon) {
+                    EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
+                    if (energyWeapon.getDuration() > 0) {
+                        heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(
+                                loadout.getEfficiencies(), modifiers), energyWeapon.getDuration(), energyWeapon
+                                .getHeat(modifiers) / energyWeapon.getDuration()));
+                        continue;
+                    }
+                }
+                heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies(),
+                        modifiers), weapon.getHeat(modifiers)));
+            }
+            if (item instanceof Engine) {
+                heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine) item).getHeat(modifiers)));
+            }
+        }
+    }
 }

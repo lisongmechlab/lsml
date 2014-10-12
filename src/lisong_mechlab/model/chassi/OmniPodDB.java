@@ -35,115 +35,116 @@ import lisong_mechlab.model.DataCache;
  * @author Li Song
  */
 public class OmniPodDB {
-	private static final Map<String, List<OmniPod>>	series2pod;
-	private static final Map<Integer, OmniPod>		id2pod;
+    private static final Map<String, List<OmniPod>> series2pod;
+    private static final Map<Integer, OmniPod>      id2pod;
 
-	/**
-	 * @param aChassis
-	 *            The chassis to get the pods for.
-	 * @return A {@List} of the {@link OmniPod}s that are "original" to the given chassis.
-	 */
-	public static List<OmniPod> lookupOriginal(ChassisOmniMech aChassis) {
-		List<OmniPod> ans = new ArrayList<>();
-		for (Location location : Location.values()) {
-			ans.add(OmniPodDB.lookupOriginal(aChassis, location));
-		}
-		return ans;
-	}
+    /**
+     * @param aChassis
+     *            The chassis to get the pods for.
+     * @return A {@List} of the {@link OmniPod}s that are "original" to the given chassis.
+     */
+    public static List<OmniPod> lookupOriginal(ChassisOmniMech aChassis) {
+        List<OmniPod> ans = new ArrayList<>();
+        for (Location location : Location.values()) {
+            ans.add(OmniPodDB.lookupOriginal(aChassis, location));
+        }
+        return ans;
+    }
 
-	/**
-	 * @param aChassis
-	 *            The chassis to get the pod for.
-	 * @param aLocation
-	 *            The location to get the pod for.
-	 * @return The {@link OmniPod}s that is "original" to the given chassis and {@link Location}.
-	 */
-	public static OmniPod lookupOriginal(ChassisOmniMech aChassis, Location aLocation) {
-		for (OmniPod omniPod : lookup(aChassis.getSeriesName(), aLocation)) {
-			if (omniPod.isOriginalForChassis(aChassis)) {
-				return omniPod;
-			}
-		}
-		throw new IllegalArgumentException("There exists no original omnipod for " + aChassis + " at " + aLocation);
-	}
+    /**
+     * @param aChassis
+     *            The chassis to get the pod for.
+     * @param aLocation
+     *            The location to get the pod for.
+     * @return The {@link OmniPod}s that is "original" to the given chassis and {@link Location}.
+     */
+    public static OmniPod lookupOriginal(ChassisOmniMech aChassis, Location aLocation) {
+        for (OmniPod omniPod : lookup(aChassis.getSeriesName(), aLocation)) {
+            if (omniPod.isOriginalForChassis(aChassis)) {
+                return omniPod;
+            }
+        }
+        throw new IllegalArgumentException("There exists no original omnipod for " + aChassis + " at " + aLocation);
+    }
 
-	/**
-	 * @param aSeries
-	 *            A chassis series to get all compatible pods for.
-	 * @param aLocation
-	 *            A location on the chassis to get all compatible pods for.
-	 * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
-	 */
-	public static Collection<OmniPod> lookup(String aSeries, Location aLocation) {
-		List<OmniPod> ans = new ArrayList<>();
-		for (OmniPod omniPod : series2pod.get(canonize(aSeries))) {
-			if (omniPod.getLocation() == aLocation)
-				ans.add(omniPod);
-		}
-		return ans;
-	}
+    /**
+     * @param aSeries
+     *            A chassis series to get all compatible pods for.
+     * @param aLocation
+     *            A location on the chassis to get all compatible pods for.
+     * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
+     */
+    public static Collection<OmniPod> lookup(String aSeries, Location aLocation) {
+        List<OmniPod> ans = new ArrayList<>();
+        for (OmniPod omniPod : series2pod.get(canonize(aSeries))) {
+            if (omniPod.getLocation() == aLocation)
+                ans.add(omniPod);
+        }
+        return ans;
+    }
 
-	/**
-	 * @param aChassisSeries
-	 *            A chassis series to get all compatible pods for.
-	 * @param aLocation
-	 *            A location on the chassis to get all compatible pods for.
-	 * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
-	 */
-	public static Collection<OmniPod> lookup(ChassisOmniMech aChassisSeries, Location aLocation) {
-		return lookup(aChassisSeries.getSeriesName(), aLocation);
-	}
+    /**
+     * @param aChassisSeries
+     *            A chassis series to get all compatible pods for.
+     * @param aLocation
+     *            A location on the chassis to get all compatible pods for.
+     * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
+     */
+    public static Collection<OmniPod> lookup(ChassisOmniMech aChassisSeries, Location aLocation) {
+        return lookup(aChassisSeries.getSeriesName(), aLocation);
+    }
 
-	private static String canonize(String aKey) {
-		return aKey.toUpperCase();
-	}
+    private static String canonize(String aKey) {
+        return aKey.toUpperCase();
+    }
 
-	/**
-	 * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
-	 * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
-	 */
-	static {
-		DataCache dataCache;
-		try {
-			dataCache = DataCache.getInstance();
-		} catch (IOException e) {
-			throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
-		}
+    /**
+     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
+     * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
+     */
+    static {
+        DataCache dataCache;
+        try {
+            dataCache = DataCache.getInstance();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
+        }
 
-		series2pod = new HashMap<String, List<OmniPod>>();
-		id2pod = new TreeMap<>();
+        series2pod = new HashMap<String, List<OmniPod>>();
+        id2pod = new TreeMap<>();
 
-		for (OmniPod omniPod : dataCache.getOmniPods()) {
+        for (OmniPod omniPod : dataCache.getOmniPods()) {
 
-			String series = omniPod.getChassisSeries();
+            String series = omniPod.getChassisSeries();
 
-			List<OmniPod> list = series2pod.get(canonize(series));
-			if (list == null) {
-				list = new ArrayList<>();
-				series2pod.put(canonize(series), list);
-			}
-			list.add(omniPod);
+            List<OmniPod> list = series2pod.get(canonize(series));
+            if (list == null) {
+                list = new ArrayList<>();
+                series2pod.put(canonize(series), list);
+            }
+            list.add(omniPod);
 
-			id2pod.put(omniPod.getMwoId(), omniPod);
-		}
-	}
+            id2pod.put(omniPod.getMwoId(), omniPod);
+        }
+    }
 
-	/**
-	 * @param aId
-	 *            The id of the pod to look up.
-	 * @return An {@link OmniPod} with the correct ID.
-	 */
-	public static OmniPod lookup(int aId) {
-		OmniPod omnipod = id2pod.get(aId);
-		if (omnipod == null)
-			throw new IllegalArgumentException("No omnipod with ID: " + aId);
-		return omnipod;
-	}
+    /**
+     * @param aId
+     *            The id of the pod to look up.
+     * @return An {@link OmniPod} with the correct ID.
+     */
+    public static OmniPod lookup(int aId) {
+        OmniPod omnipod = id2pod.get(aId);
+        if (omnipod == null)
+            throw new IllegalArgumentException("No omnipod with ID: " + aId);
+        return omnipod;
+    }
 
-	/**
-	 * @return A {@link Collection} of all {@link OmniPod}s.
-	 */
-	public static Collection<OmniPod> all() {
-		return id2pod.values();
-	}
+    /**
+     * @return A {@link Collection} of all {@link OmniPod}s.
+     */
+    public static Collection<OmniPod> all() {
+        return id2pod.values();
+    }
 }

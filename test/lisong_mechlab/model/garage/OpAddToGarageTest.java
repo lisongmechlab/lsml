@@ -39,24 +39,24 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class OpAddToGarageTest {
-	@Mock
-	private MechGarage		garage;
-	private OperationStack	opStack	= new OperationStack(0);
+    @Mock
+    private MechGarage     garage;
+    private OperationStack opStack = new OperationStack(0);
 
-	/**
-	 * Adding the same {@link LoadoutStandard} twice is an error and shall throw an {@link IllegalArgumentException}.
-	 * 
-	 * @throws Exception
-	 *             Shouldn't be thrown.
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testAddLoadoutTwice() throws Exception {
-		// Setup
-		LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-		List<LoadoutBase<?>> loadouts = new ArrayList<>();
-		loadouts.add(loadout);
-		Mockito.when(garage.getMechs()).thenReturn(loadouts);
+    /**
+     * Adding the same {@link LoadoutStandard} twice is an error and shall throw an {@link IllegalArgumentException}.
+     * 
+     * @throws Exception
+     *             Shouldn't be thrown.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddLoadoutTwice() throws Exception {
+        // Setup
+        LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
+        List<LoadoutBase<?>> loadouts = new ArrayList<>();
+        loadouts.add(loadout);
+        Mockito.when(garage.getMechs()).thenReturn(loadouts);
 
-		opStack.pushAndApply(new OpAddToGarage(garage, loadout));
-	}
+        opStack.pushAndApply(new OpAddToGarage(garage, loadout));
+    }
 }

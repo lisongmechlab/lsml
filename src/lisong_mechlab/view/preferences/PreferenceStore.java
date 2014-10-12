@@ -40,53 +40,59 @@ import lisong_mechlab.view.ProgramInit;
  */
 public class PreferenceStore {
 
-	public static final String		GAMEDIRECTORY_KEY	= "gamedir";
-	public static final String		GARAGEFILE_KEY		= "garagefile";
-	public static final String		GARAGEFILE_DEFAULT	= "garage.xml";
-	private static final File		propertiesFile;
-	private static final Properties	properties;
-	public static final String		GAME_DATA_CACHE		= "gameDataCache";
-	public static final String		USEBUNDLED_DATA		= "gameDataBundled";
+    public static final String      GAMEDIRECTORY_KEY  = "gamedir";
+    public static final String      GARAGEFILE_KEY     = "garagefile";
+    public static final String      GARAGEFILE_DEFAULT = "garage.xml";
+    private static final File       propertiesFile;
+    private static final Properties properties;
+    public static final String      GAME_DATA_CACHE    = "gameDataCache";
+    public static final String      USEBUNDLED_DATA    = "gameDataBundled";
 
-	static public String getString(String key) {
-		return properties.getProperty(key, "");
-	}
+    static public String getString(String key) {
+        return properties.getProperty(key, "");
+    }
 
-	static public String getString(String key, String aDefault) {
-		return properties.getProperty(key, aDefault);
-	}
+    static public String getString(String key, String aDefault) {
+        return properties.getProperty(key, aDefault);
+    }
 
-	static public void setString(String key, String value) {
-		properties.setProperty(key, value);
+    static public void setString(String key, String value) {
+        properties.setProperty(key, value);
 
-		try (FileOutputStream outputStream = new FileOutputStream(propertiesFile)) {
-			properties.storeToXML(outputStream, "Written by LSML");
-		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(ProgramInit.lsml(), "Program settings file not found! :" + e);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(ProgramInit.lsml(), "IO error while writing program settings file! :" + e);
-		}
-	}
+        try (FileOutputStream outputStream = new FileOutputStream(propertiesFile)) {
+            properties.storeToXML(outputStream, "Written by LSML");
+        }
+        catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(ProgramInit.lsml(), "Program settings file not found! :" + e);
+        }
+        catch (IOException e) {
+            JOptionPane.showMessageDialog(ProgramInit.lsml(), "IO error while writing program settings file! :" + e);
+        }
+    }
 
-	static {
-		if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
-			propertiesFile = new File(System.getenv("AppData") + "/lsml_settings.xml");
-		} else {
-			propertiesFile = new File(System.getProperty("user.home") + "/.lsml.xml");
-		}
+    static {
+        if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
+            propertiesFile = new File(System.getenv("AppData") + "/lsml_settings.xml");
+        }
+        else {
+            propertiesFile = new File(System.getProperty("user.home") + "/.lsml.xml");
+        }
 
-		properties = new Properties();
-		if (propertiesFile.exists()) {
-			try (FileInputStream inputStream = new FileInputStream(propertiesFile)) {
-				properties.loadFromXML(inputStream);
-			} catch (FileNotFoundException e) {
-				JOptionPane.showMessageDialog(ProgramInit.lsml(), "Program settings file not found! :" + e);
-			} catch (InvalidPropertiesFormatException e) {
-				JOptionPane.showMessageDialog(ProgramInit.lsml(), "Program settings file is corrupt! :" + e);
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(ProgramInit.lsml(),
-						"Unspecified IO error while reading program settings file! :" + e);
-			}
-		}
-	}
+        properties = new Properties();
+        if (propertiesFile.exists()) {
+            try (FileInputStream inputStream = new FileInputStream(propertiesFile)) {
+                properties.loadFromXML(inputStream);
+            }
+            catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(ProgramInit.lsml(), "Program settings file not found! :" + e);
+            }
+            catch (InvalidPropertiesFormatException e) {
+                JOptionPane.showMessageDialog(ProgramInit.lsml(), "Program settings file is corrupt! :" + e);
+            }
+            catch (IOException e) {
+                JOptionPane.showMessageDialog(ProgramInit.lsml(),
+                        "Unspecified IO error while reading program settings file! :" + e);
+            }
+        }
+    }
 }

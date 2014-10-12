@@ -34,74 +34,75 @@ import lisong_mechlab.util.message.MessageXBar;
  * @author Li Song
  */
 public class OpSetArmorSymmetric extends CompositeOperation {
-	private final ConfiguredComponentBase	component;
-	private final ArmorSide					side;
-	private final boolean					manual;
-	private final LoadoutBase<?>			loadout;
+    private final ConfiguredComponentBase component;
+    private final ArmorSide               side;
+    private final boolean                 manual;
+    private final LoadoutBase<?>          loadout;
 
-	/**
-	 * Creates a new {@link OpSetArmorSymmetric}.
-	 * 
-	 * @param aMessageDelivery
-	 *            The {@link MessageXBar} to announce changes to.
-	 * @param aLoadout
-	 *            The {@link LoadoutBase} to operate on.
-	 * @param aLoadoutPart
-	 *            The primary side {@link ConfiguredComponentBase} to change (the opposite side will be changed
-	 *            automatically).
-	 * @param aArmorSide
-	 *            The side to set the armor for.
-	 * @param aArmorAmount
-	 *            The amount to set the armor to.
-	 * @param aManualSet
-	 *            True if this set operation is done manually. Will disable automatic armor assignments.
-	 * @throws IllegalArgumentException
-	 *             Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage
-	 *             to support the armor.
-	 */
-	public OpSetArmorSymmetric(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart,
-			ArmorSide aArmorSide, int aArmorAmount, boolean aManualSet) {
-		super("change armor", aMessageDelivery);
-		loadout = aLoadout;
-		component = aLoadoutPart;
-		side = aArmorSide;
-		manual = aManualSet;
+    /**
+     * Creates a new {@link OpSetArmorSymmetric}.
+     * 
+     * @param aMessageDelivery
+     *            The {@link MessageXBar} to announce changes to.
+     * @param aLoadout
+     *            The {@link LoadoutBase} to operate on.
+     * @param aLoadoutPart
+     *            The primary side {@link ConfiguredComponentBase} to change (the opposite side will be changed
+     *            automatically).
+     * @param aArmorSide
+     *            The side to set the armor for.
+     * @param aArmorAmount
+     *            The amount to set the armor to.
+     * @param aManualSet
+     *            True if this set operation is done manually. Will disable automatic armor assignments.
+     * @throws IllegalArgumentException
+     *             Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage
+     *             to support the armor.
+     */
+    public OpSetArmorSymmetric(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
+            ConfiguredComponentBase aLoadoutPart, ArmorSide aArmorSide, int aArmorAmount, boolean aManualSet) {
+        super("change armor", aMessageDelivery);
+        loadout = aLoadout;
+        component = aLoadoutPart;
+        side = aArmorSide;
+        manual = aManualSet;
 
-		Location otherSide = aLoadoutPart.getInternalComponent().getLocation().oppositeSide();
-		if (otherSide == null)
-			throw new IllegalArgumentException(
-					"Symmetric armor operation is only usable with comoponents that have an opposing side.");
+        Location otherSide = aLoadoutPart.getInternalComponent().getLocation().oppositeSide();
+        if (otherSide == null)
+            throw new IllegalArgumentException(
+                    "Symmetric armor operation is only usable with comoponents that have an opposing side.");
 
-		addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, aArmorSide, aArmorAmount, aManualSet));
-		addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadout.getComponent(otherSide), aArmorSide, aArmorAmount, aManualSet));
-	}
+        addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadoutPart, aArmorSide, aArmorAmount, aManualSet));
+        addOp(new OpSetArmor(messageBuffer, aLoadout, aLoadout.getComponent(otherSide), aArmorSide, aArmorAmount,
+                aManualSet));
+    }
 
-	/**
-	 * @see lisong_mechlab.util.OperationStack.Operation#canCoalescele(lisong_mechlab.util.OperationStack.Operation)
-	 */
-	@Override
-	public boolean canCoalescele(Operation aOperation) {
-		if (this == aOperation)
-			return false;
-		if (aOperation == null)
-			return false;
-		if (!(aOperation instanceof OpSetArmorSymmetric))
-			return false;
-		OpSetArmorSymmetric that = (OpSetArmorSymmetric) aOperation;
-		if (that.manual != manual)
-			return false;
-		if (that.component != component
-				&& that.component != loadout
-						.getComponent(component.getInternalComponent().getLocation().oppositeSide()))
-			return false;
-		if (that.side != side)
-			return false;
-		return true;
-	}
+    /**
+     * @see lisong_mechlab.util.OperationStack.Operation#canCoalescele(lisong_mechlab.util.OperationStack.Operation)
+     */
+    @Override
+    public boolean canCoalescele(Operation aOperation) {
+        if (this == aOperation)
+            return false;
+        if (aOperation == null)
+            return false;
+        if (!(aOperation instanceof OpSetArmorSymmetric))
+            return false;
+        OpSetArmorSymmetric that = (OpSetArmorSymmetric) aOperation;
+        if (that.manual != manual)
+            return false;
+        if (that.component != component
+                && that.component != loadout
+                        .getComponent(component.getInternalComponent().getLocation().oppositeSide()))
+            return false;
+        if (that.side != side)
+            return false;
+        return true;
+    }
 
-	@Override
-	public void buildOperation() {
-		// No-op The preparation is invariant of time and performed in constructor
-	}
+    @Override
+    public void buildOperation() {
+        // No-op The preparation is invariant of time and performed in constructor
+    }
 
 }

@@ -22,48 +22,48 @@ package lisong_mechlab.model.item;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class JumpJet extends Module {
-	private final double	minTons;
-	private final double	maxTons;
-	private final double	boost_z;
-	private final double	duration;
-	private final double	heat;
+    private final double minTons;
+    private final double maxTons;
+    private final double boost_z;
+    private final double duration;
+    private final double heat;
 
-	public JumpJet(ItemStatsModule aModule) {
-		super(aModule);
-		minTons = aModule.JumpJetStats.minTons;
-		maxTons = aModule.JumpJetStats.maxTons;
-		boost_z = aModule.JumpJetStats.boost;
-		duration = aModule.JumpJetStats.duration;
-		heat = Double.parseDouble(aModule.JumpJetStats.heat.split(",")[0]); // Two values, first is heat for one JJ,
-																			// second is heat for every additional JJ
-		// TODO: Parse extra heat and make use of it somethow.
-	}
+    public JumpJet(ItemStatsModule aModule) {
+        super(aModule);
+        minTons = aModule.JumpJetStats.minTons;
+        maxTons = aModule.JumpJetStats.maxTons;
+        boost_z = aModule.JumpJetStats.boost;
+        duration = aModule.JumpJetStats.duration;
+        heat = Double.parseDouble(aModule.JumpJetStats.heat.split(",")[0]); // Two values, first is heat for one JJ,
+                                                                            // second is heat for every additional JJ
+        // TODO: Parse extra heat and make use of it somethow.
+    }
 
-	public double getForce() {
-		return boost_z;
-	}
+    public double getForce() {
+        return boost_z;
+    }
 
-	public double getDuration() {
-		return duration;
-	}
+    public double getDuration() {
+        return duration;
+    }
 
-	public double getJumpHeat() {
-		return heat;
-	}
+    public double getJumpHeat() {
+        return heat;
+    }
 
-	@Override
-	public String getShortName() {
-		String name = getName();
-		name = name.replace("JUMP JETS", "JJ");
-		name = name.replace("CLASS ", "");
-		return name;
-	}
+    @Override
+    public String getShortName() {
+        String name = getName();
+        name = name.replace("JUMP JETS", "JJ");
+        name = name.replace("CLASS ", "");
+        return name;
+    }
 
-	public double getMaxTons() {
-		return maxTons;
-	}
+    public double getMaxTons() {
+        return maxTons;
+    }
 
-	public double getMinTons() {
-		return minTons;
-	}
+    public double getMinTons() {
+        return minTons;
+    }
 }

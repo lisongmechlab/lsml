@@ -49,99 +49,99 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Li Song
  */
 public class LoadoutBuilder {
-	private static class OperationComparator implements Comparator<Operation> {
-		private final static Map<Class<? extends Operation>, Integer>	CLASS_PRIORITY_ORDER;
+    private static class OperationComparator implements Comparator<Operation> {
+        private final static Map<Class<? extends Operation>, Integer> CLASS_PRIORITY_ORDER;
 
-		static {
-			CLASS_PRIORITY_ORDER = new HashMap<>();
+        static {
+            CLASS_PRIORITY_ORDER = new HashMap<>();
 
-			// Omnipods, upgrades, modules and renaming are independent and cannot fail on an empty loadout
-			CLASS_PRIORITY_ORDER.put(OpRename.class, 0);
-			CLASS_PRIORITY_ORDER.put(OpChangeOmniPod.class, 1);
-			CLASS_PRIORITY_ORDER.put(OpSetGuidanceType.class, 2);
-			CLASS_PRIORITY_ORDER.put(OpSetHeatSinkType.class, 2);
-			CLASS_PRIORITY_ORDER.put(OpSetArmorType.class, 2);
-			CLASS_PRIORITY_ORDER.put(OpSetStructureType.class, 2);
-			CLASS_PRIORITY_ORDER.put(OpSetArmor.class, 3);
-			CLASS_PRIORITY_ORDER.put(OpAddModule.class, 4);
+            // Omnipods, upgrades, modules and renaming are independent and cannot fail on an empty loadout
+            CLASS_PRIORITY_ORDER.put(OpRename.class, 0);
+            CLASS_PRIORITY_ORDER.put(OpChangeOmniPod.class, 1);
+            CLASS_PRIORITY_ORDER.put(OpSetGuidanceType.class, 2);
+            CLASS_PRIORITY_ORDER.put(OpSetHeatSinkType.class, 2);
+            CLASS_PRIORITY_ORDER.put(OpSetArmorType.class, 2);
+            CLASS_PRIORITY_ORDER.put(OpSetStructureType.class, 2);
+            CLASS_PRIORITY_ORDER.put(OpSetArmor.class, 3);
+            CLASS_PRIORITY_ORDER.put(OpAddModule.class, 4);
 
-			// Toggleables have to be set before items are added
-			CLASS_PRIORITY_ORDER.put(OpToggleItem.class, 10);
+            // Toggleables have to be set before items are added
+            CLASS_PRIORITY_ORDER.put(OpToggleItem.class, 10);
 
-			// Item operations last
-			CLASS_PRIORITY_ORDER.put(OpAddItem.class, 100);
-		}
+            // Item operations last
+            CLASS_PRIORITY_ORDER.put(OpAddItem.class, 100);
+        }
 
-		@Override
-		public int compare(Operation aLHS, Operation aRHS) {
-			if (aLHS instanceof OpAddItem && aRHS instanceof OpAddItem) {
-				boolean lhsHeatSink = ((OpAddItem) aLHS).getItem() instanceof HeatSink;
-				boolean rhsHeatSink = ((OpAddItem) aRHS).getItem() instanceof HeatSink;
+        @Override
+        public int compare(Operation aLHS, Operation aRHS) {
+            if (aLHS instanceof OpAddItem && aRHS instanceof OpAddItem) {
+                boolean lhsHeatSink = ((OpAddItem) aLHS).getItem() instanceof HeatSink;
+                boolean rhsHeatSink = ((OpAddItem) aRHS).getItem() instanceof HeatSink;
 
-				if (lhsHeatSink == rhsHeatSink)
-					return 0;
-				else if (lhsHeatSink)
-					return 1;
-				else
-					return -1;
-			}
+                if (lhsHeatSink == rhsHeatSink)
+                    return 0;
+                else if (lhsHeatSink)
+                    return 1;
+                else
+                    return -1;
+            }
 
-			Integer priorityLHS = CLASS_PRIORITY_ORDER.get(aLHS.getClass());
-			Integer priorityRHS = CLASS_PRIORITY_ORDER.get(aRHS.getClass());
+            Integer priorityLHS = CLASS_PRIORITY_ORDER.get(aLHS.getClass());
+            Integer priorityRHS = CLASS_PRIORITY_ORDER.get(aRHS.getClass());
 
-			if (null == priorityLHS) {
-				throw new IllegalArgumentException("Class missing from priority map: "
-						+ aLHS.getClass().getSimpleName());
-			}
+            if (null == priorityLHS) {
+                throw new IllegalArgumentException("Class missing from priority map: "
+                        + aLHS.getClass().getSimpleName());
+            }
 
-			if (null == priorityRHS) {
-				throw new IllegalArgumentException("Class missing from priority map: "
-						+ aRHS.getClass().getSimpleName());
-			}
-			return priorityLHS.compareTo(priorityRHS);
-		}
-	}
+            if (null == priorityRHS) {
+                throw new IllegalArgumentException("Class missing from priority map: "
+                        + aRHS.getClass().getSimpleName());
+            }
+            return priorityLHS.compareTo(priorityRHS);
+        }
+    }
 
-	final private PriorityQueue<Operation>	operations	= new PriorityQueue<>(20, new OperationComparator());
-   private List<Throwable>                errors     = null;
+    final private PriorityQueue<Operation> operations = new PriorityQueue<>(20, new OperationComparator());
+    private List<Throwable>                errors     = null;
 
-	public void push(final Operation aOperation) {
-		operations.add(aOperation);
-	}
+    public void push(final Operation aOperation) {
+        operations.add(aOperation);
+    }
 
-   /**
-    * Formats a string to describe the errors that occurred while building the loadout.
-    * 
-    * @param name
-    *           The name of the loadout. Used to format the error message.
-    * @return <code>null</code> if there was no error. A string describing the error(s) if there was any.
-    */
-   public String getErrors(String name){
-      if( errors == null )
-         return null;
+    /**
+     * Formats a string to describe the errors that occurred while building the loadout.
+     * 
+     * @param name
+     *            The name of the loadout. Used to format the error message.
+     * @return <code>null</code> if there was no error. A string describing the error(s) if there was any.
+     */
+    public String getErrors(String name) {
+        if (errors == null)
+            return null;
 
-      StringBuilder message = new StringBuilder();
-      message.append("The following errors occured for loadout: ").append(name).append("\n\n");
-      for(Throwable t : errors){
-         message.append(t.getMessage()).append("\n");
-      }
-      message.append("\nAs much as possible of the loadout has been loaded.");
-      return message.toString();
-   }
+        StringBuilder message = new StringBuilder();
+        message.append("The following errors occured for loadout: ").append(name).append("\n\n");
+        for (Throwable t : errors) {
+            message.append(t.getMessage()).append("\n");
+        }
+        message.append("\nAs much as possible of the loadout has been loaded.");
+        return message.toString();
+    }
 
-   public void apply(){
-		OperationStack operationStack = new OperationStack(0);
-		Operation operation;
+    public void apply() {
+        OperationStack operationStack = new OperationStack(0);
+        Operation operation;
 
-      while( null != (operation = operations.poll()) ){
-         try{
-			operationStack.pushAndApply(operation);
-		}
-         catch( Throwable t ){
-            if( null == errors )
-               errors = new ArrayList<>();
-            errors.add(t);
-         }
-      }
-	}
+        while (null != (operation = operations.poll())) {
+            try {
+                operationStack.pushAndApply(operation);
+            }
+            catch (Throwable t) {
+                if (null == errors)
+                    errors = new ArrayList<>();
+                errors.add(t);
+            }
+        }
+    }
 }

@@ -27,16 +27,16 @@ package lisong_mechlab.model.metrics.helpers;
  * @author Li Song
  */
 public class IntegratedImpulseTrain implements IntegratedSignal {
-	private final double	period;
-	private final double	amplitude;
+    private final double period;
+    private final double amplitude;
 
-	public IntegratedImpulseTrain(double aPeriod, double aAmplitude) {
-		period = aPeriod;
-		amplitude = aAmplitude;
-	}
+    public IntegratedImpulseTrain(double aPeriod, double aAmplitude) {
+        period = aPeriod;
+        amplitude = aAmplitude;
+    }
 
-	@Override
-	public double integrateFromZeroTo(double aTime) {
-		return (int) (aTime / period + 1) * amplitude;
-	}
+    @Override
+    public double integrateFromZeroTo(double aTime) {
+        return (int) (aTime / period + 1) * amplitude;
+    }
 }

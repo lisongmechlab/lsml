@@ -48,130 +48,130 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class MaxSustainedDPSTest {
-	@Mock
-	private HeatDissipation		heatDissipation;
-	@Mock
-	private LoadoutStandard		loadout;
-	@InjectMocks
-	private MaxSustainedDPS		cut;
-	private final List<Weapon>	items	= new ArrayList<>();
+    @Mock
+    private HeatDissipation    heatDissipation;
+    @Mock
+    private LoadoutStandard    loadout;
+    @InjectMocks
+    private MaxSustainedDPS    cut;
+    private final List<Weapon> items = new ArrayList<>();
 
-	@Before
-	public void setup() {
-		when(loadout.items(Weapon.class)).thenReturn(items);
-	}
+    @Before
+    public void setup() {
+        when(loadout.items(Weapon.class)).thenReturn(items);
+    }
 
-	@Test
-	public void testGetWeaponRatios() throws Exception {
-		// Setup
-		items.add((Weapon) ItemDB.lookup("MACHINE GUN"));
-		items.add((Weapon) ItemDB.lookup("MACHINE GUN"));
-		items.add((Weapon) ItemDB.lookup("GAUSS RIFLE"));
-		items.add(ItemDB.AMS);
-		items.add((Weapon) ItemDB.lookup("STREAK SRM 2"));
-		items.add((Weapon) ItemDB.lookup("LRM 20"));
-		items.add((Weapon) ItemDB.lookup("ER PPC"));
-		items.add((Weapon) ItemDB.lookup("ER PPC"));
+    @Test
+    public void testGetWeaponRatios() throws Exception {
+        // Setup
+        items.add((Weapon) ItemDB.lookup("MACHINE GUN"));
+        items.add((Weapon) ItemDB.lookup("MACHINE GUN"));
+        items.add((Weapon) ItemDB.lookup("GAUSS RIFLE"));
+        items.add(ItemDB.AMS);
+        items.add((Weapon) ItemDB.lookup("STREAK SRM 2"));
+        items.add((Weapon) ItemDB.lookup("LRM 20"));
+        items.add((Weapon) ItemDB.lookup("ER PPC"));
+        items.add((Weapon) ItemDB.lookup("ER PPC"));
 
-		when(heatDissipation.calculate()).thenReturn(1.0);
+        when(heatDissipation.calculate()).thenReturn(1.0);
 
-		// Execute & Verify Range = 0
-		Map<Weapon, Double> range0 = cut.getWeaponRatios(0);
-		assertEquals(2.0, range0.remove(ItemDB.lookup("MACHINE GUN")), 0.0); // Two of them!
-		assertEquals(1.0, range0.remove(ItemDB.lookup("GAUSS RIFLE")), 0.0);
-		assertTrue(range0.remove(ItemDB.lookup("STREAK SRM 2")) > 0.0);
-		assertEquals(0.0, range0.remove(ItemDB.lookup("LRM 20")), 0.0);
-		assertFalse(range0.containsKey(ItemDB.AMS));
+        // Execute & Verify Range = 0
+        Map<Weapon, Double> range0 = cut.getWeaponRatios(0);
+        assertEquals(2.0, range0.remove(ItemDB.lookup("MACHINE GUN")), 0.0); // Two of them!
+        assertEquals(1.0, range0.remove(ItemDB.lookup("GAUSS RIFLE")), 0.0);
+        assertTrue(range0.remove(ItemDB.lookup("STREAK SRM 2")) > 0.0);
+        assertEquals(0.0, range0.remove(ItemDB.lookup("LRM 20")), 0.0);
+        assertFalse(range0.containsKey(ItemDB.AMS));
 
-		// Execute & Verify Range = 750
-		Map<Weapon, Double> range750 = cut.getWeaponRatios(750);
-		assertEquals(0.0, range750.remove(ItemDB.lookup("MACHINE GUN")), 0.0); // Two of them!
-		assertEquals(1.0, range750.remove(ItemDB.lookup("GAUSS RIFLE")), 0.00001);
-		assertEquals(0.0, range750.remove(ItemDB.lookup("STREAK SRM 2")), 0.0);
-		assertTrue(range750.remove(ItemDB.lookup("LRM 20")) > 0.0);
-		assertFalse(range750.containsKey(ItemDB.AMS));
-	}
+        // Execute & Verify Range = 750
+        Map<Weapon, Double> range750 = cut.getWeaponRatios(750);
+        assertEquals(0.0, range750.remove(ItemDB.lookup("MACHINE GUN")), 0.0); // Two of them!
+        assertEquals(1.0, range750.remove(ItemDB.lookup("GAUSS RIFLE")), 0.00001);
+        assertEquals(0.0, range750.remove(ItemDB.lookup("STREAK SRM 2")), 0.0);
+        assertTrue(range750.remove(ItemDB.lookup("LRM 20")) > 0.0);
+        assertFalse(range750.containsKey(ItemDB.AMS));
+    }
 
-	/**
-	 * PPC shall have an instant fall off (patch 2013-09-03)
-	 */
-	@Test
-	public void testGetWeaponRatios_ppc() {
-		// Setup
-		Weapon ppc = (Weapon) ItemDB.lookup("PPC");
-		items.add(ppc);
+    /**
+     * PPC shall have an instant fall off (patch 2013-09-03)
+     */
+    @Test
+    public void testGetWeaponRatios_ppc() {
+        // Setup
+        Weapon ppc = (Weapon) ItemDB.lookup("PPC");
+        items.add(ppc);
 
-		when(heatDissipation.calculate()).thenReturn(10.0);
+        when(heatDissipation.calculate()).thenReturn(10.0);
 
-		assertEquals(ppc.getStat("d/s", null, null), cut.calculate(90.0 + 0.001), 0.0);
-		assertEquals(0.0, cut.calculate(90.0 - 0.001), 0.0);
-	}
+        assertEquals(ppc.getStat("d/s", null, null), cut.calculate(90.0 + 0.001), 0.0);
+        assertEquals(0.0, cut.calculate(90.0 - 0.001), 0.0);
+    }
 
-	/**
-	 * Tests that getWeaponRatios correctly handles the machine guns zero heat production.
-	 */
-	@Test
-	public void testGetWeaponRatios_machineGun() {
-		// Setup
-		Weapon mg = (Weapon) ItemDB.lookup("MACHINE GUN");
-		items.add(mg);
+    /**
+     * Tests that getWeaponRatios correctly handles the machine guns zero heat production.
+     */
+    @Test
+    public void testGetWeaponRatios_machineGun() {
+        // Setup
+        Weapon mg = (Weapon) ItemDB.lookup("MACHINE GUN");
+        items.add(mg);
 
-		when(heatDissipation.calculate()).thenReturn(0.0);
+        when(heatDissipation.calculate()).thenReturn(0.0);
 
-		Map<Weapon, Double> result_0 = cut.getWeaponRatios(-1);
+        Map<Weapon, Double> result_0 = cut.getWeaponRatios(-1);
 
-		assertTrue(result_0.containsKey(mg));
-		assertEquals(0.0, result_0.get(mg).doubleValue(), 0.0);
-	}
+        assertTrue(result_0.containsKey(mg));
+        assertEquals(0.0, result_0.get(mg).doubleValue(), 0.0);
+    }
 
-	/**
-	 * Damage shall be correctly calculated, taking high DpH weapons into account first regardless of order they are
-	 * found.
-	 */
-	@Test
-	public void testCalculate() {
-		// Setup
-		Weapon gauss = (Weapon) ItemDB.lookup("GAUSS RIFLE");
-		Weapon erppc = (Weapon) ItemDB.lookup("ER PPC");
-		Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
+    /**
+     * Damage shall be correctly calculated, taking high DpH weapons into account first regardless of order they are
+     * found.
+     */
+    @Test
+    public void testCalculate() {
+        // Setup
+        Weapon gauss = (Weapon) ItemDB.lookup("GAUSS RIFLE");
+        Weapon erppc = (Weapon) ItemDB.lookup("ER PPC");
+        Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
 
-		final long seed = 1;
-		Random rng = new Random(seed);
-		items.add(gauss);
-		items.add(erppc);
-		items.add(erppc);
-		items.add(llas);
-		Collections.shuffle(items, rng); // "Deterministically random" shuffle
+        final long seed = 1;
+        Random rng = new Random(seed);
+        items.add(gauss);
+        items.add(erppc);
+        items.add(erppc);
+        items.add(llas);
+        Collections.shuffle(items, rng); // "Deterministically random" shuffle
 
-		// There is enough heat to dissipate the GAUSS, LLaser and 1.5 ER PPCs
-		double heat = gauss.getStat("h/s", null, null) + erppc.getStat("h/s", null, null) * 1.5
-				+ llas.getStat("h/s", null, null);
+        // There is enough heat to dissipate the GAUSS, LLaser and 1.5 ER PPCs
+        double heat = gauss.getStat("h/s", null, null) + erppc.getStat("h/s", null, null) * 1.5
+                + llas.getStat("h/s", null, null);
 
-		when(heatDissipation.calculate()).thenReturn(heat);
+        when(heatDissipation.calculate()).thenReturn(heat);
 
-		// Execute
-		double result = cut.calculate(300.0); // 300.0 is inside LLAS optimal
+        // Execute
+        double result = cut.calculate(300.0); // 300.0 is inside LLAS optimal
 
-		// Verify
-		double expected = gauss.getStat("d/s", null, null) + erppc.getStat("d/s", null, null) * 1.5
-				+ llas.getStat("d/s", null, null);
-		assertEquals(expected, result, 0.0);
-	}
+        // Verify
+        double expected = gauss.getStat("d/s", null, null) + erppc.getStat("d/s", null, null) * 1.5
+                + llas.getStat("d/s", null, null);
+        assertEquals(expected, result, 0.0);
+    }
 
-	/**
-	 * AMS shall not be added to DPS
-	 */
-	@Test
-	public void testCalculate_ams() {
-		// Setup
-		Weapon gauss = (Weapon) ItemDB.lookup("GAUSS RIFLE");
-		items.add(gauss);
-		items.add(ItemDB.AMS);
+    /**
+     * AMS shall not be added to DPS
+     */
+    @Test
+    public void testCalculate_ams() {
+        // Setup
+        Weapon gauss = (Weapon) ItemDB.lookup("GAUSS RIFLE");
+        items.add(gauss);
+        items.add(ItemDB.AMS);
 
-		when(heatDissipation.calculate()).thenReturn(1.0);
+        when(heatDissipation.calculate()).thenReturn(1.0);
 
-		double result = cut.calculate(0.0);
+        double result = cut.calculate(0.0);
 
-		assertEquals(gauss.getStat("d/s", null, null), result, 0.0);
-	}
+        assertEquals(gauss.getStat("d/s", null, null), result, 0.0);
+    }
 }

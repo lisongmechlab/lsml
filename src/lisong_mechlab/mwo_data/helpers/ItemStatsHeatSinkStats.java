@@ -22,8 +22,8 @@ package lisong_mechlab.mwo_data.helpers;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsHeatSinkStats {
-	@XStreamAsAttribute
-	public double	cooling;
-	@XStreamAsAttribute
-	public double	heatbase;
+    @XStreamAsAttribute
+    public double cooling;
+    @XStreamAsAttribute
+    public double heatbase;
 }

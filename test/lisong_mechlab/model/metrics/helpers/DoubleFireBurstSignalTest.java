@@ -31,21 +31,21 @@ import org.junit.Test;
  * @author Li Song
  */
 public class DoubleFireBurstSignalTest {
-	final BallisticWeapon	uac5	= (BallisticWeapon) ItemDB.lookup("ULTRA AC/5");
+    final BallisticWeapon uac5 = (BallisticWeapon) ItemDB.lookup("ULTRA AC/5");
 
-	@SuppressWarnings("unused")
-	// Expecting exception
-	@Test(expected = IllegalArgumentException.class)
-	public void testInvalidWeapon() {
-		new DoubleFireBurstSignal((BallisticWeapon) ItemDB.lookup("AC/20"), null, null, 0);
-	}
+    @SuppressWarnings("unused")
+    // Expecting exception
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidWeapon() {
+        new DoubleFireBurstSignal((BallisticWeapon) ItemDB.lookup("AC/20"), null, null, 0);
+    }
 
-	@Test
-	public void testOneCooldown() {
-		DoubleFireBurstSignal cut = new DoubleFireBurstSignal(uac5, null, null, 0);
+    @Test
+    public void testOneCooldown() {
+        DoubleFireBurstSignal cut = new DoubleFireBurstSignal(uac5, null, null, 0);
 
-		double p_jam = uac5.getJamProbability();
-		double expected = (p_jam + (1 - p_jam) * 2) * uac5.getDamagePerShot();
-		assertEquals(expected, cut.integrateFromZeroTo(uac5.getRawSecondsPerShot(null, null) / 2), 0.0);
-	}
+        double p_jam = uac5.getJamProbability();
+        double expected = (p_jam + (1 - p_jam) * 2) * uac5.getDamagePerShot();
+        assertEquals(expected, cut.integrateFromZeroTo(uac5.getRawSecondsPerShot(null, null) / 2), 0.0);
+    }
 }

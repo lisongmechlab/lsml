@@ -50,95 +50,96 @@ import org.jfree.data.xy.XYSeries;
  * @author Li Song
  */
 public class PayloadGraphPanel extends ChartPanel {
-	public static class Entry {
-		private final String		name;
-		private final ChassisBase	representant;
+    public static class Entry {
+        private final String      name;
+        private final ChassisBase representant;
 
-		public Entry(Collection<ChassisBase> aCollection) {
-			Iterator<ChassisBase> iterator = aCollection.iterator();
-			String series = iterator.next().getNameShort();
-			while (iterator.hasNext()) {
-				series += ",";
-				ChassisBase chassi = iterator.next();
-				series += chassi.getNameShort().split("-")[1];
-			}
-			name = series;
-			representant = aCollection.iterator().next();
-		}
+        public Entry(Collection<ChassisBase> aCollection) {
+            Iterator<ChassisBase> iterator = aCollection.iterator();
+            String series = iterator.next().getNameShort();
+            while (iterator.hasNext()) {
+                series += ",";
+                ChassisBase chassi = iterator.next();
+                series += chassi.getNameShort().split("-")[1];
+            }
+            name = series;
+            representant = aCollection.iterator().next();
+        }
 
-		@Override
-		public String toString() {
-			return name;
-		}
-	}
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
 
-	private static final long		serialVersionUID	= -5907483118809173045L;
-	private final PayloadStatistics	payloadStatistics;
-	private final Efficiencies		efficiencies		= new Efficiencies();
-	private Collection<Entry>		chassis;
+    private static final long       serialVersionUID = -5907483118809173045L;
+    private final PayloadStatistics payloadStatistics;
+    private final Efficiencies      efficiencies     = new Efficiencies();
+    private Collection<Entry>       chassis;
 
-	public PayloadGraphPanel(PayloadStatistics aPayloadStatistics, final JCheckBox aSpeedTweak) {
-		super(makeChart(new DefaultTableXYDataset()));
-		aSpeedTweak.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent aArg0) {
-				efficiencies.setSpeedTweak(aSpeedTweak.isSelected(), null);
-				updateGraph();
-			}
-		});
-		payloadStatistics = aPayloadStatistics;
-	}
+    public PayloadGraphPanel(PayloadStatistics aPayloadStatistics, final JCheckBox aSpeedTweak) {
+        super(makeChart(new DefaultTableXYDataset()));
+        aSpeedTweak.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent aArg0) {
+                efficiencies.setSpeedTweak(aSpeedTweak.isSelected(), null);
+                updateGraph();
+            }
+        });
+        payloadStatistics = aPayloadStatistics;
+    }
 
-	public void selectChassis(Collection<Entry> aChassisCollection) {
-		chassis = aChassisCollection;
-	}
+    public void selectChassis(Collection<Entry> aChassisCollection) {
+        chassis = aChassisCollection;
+    }
 
-	public void updateGraph() {
-		DefaultTableXYDataset dataset = new DefaultTableXYDataset();
-		for (Entry entry : chassis) {
-			XYSeries series = new XYSeries(entry.name, false, false);
-			if (entry.representant instanceof ChassisStandard) {
-				ChassisStandard chassisStandard = (ChassisStandard) entry.representant;
-				for (int rating = chassisStandard.getEngineMin(); rating <= chassisStandard.getEngineMax(); rating += 5) {
-					if (rating < 100) {
-						continue; // TODO: Remove this when they remove the engine limit.
-					}
-					double speed = TopSpeed.calculate(rating, chassisStandard.getMovementProfileBase(),
-							chassisStandard.getMassMax(), efficiencies.getSpeedModifier());
-					series.add(speed, payloadStatistics.calculate(chassisStandard, rating));
-				}
-			} else {
-				// Omnimech
-				ChassisOmniMech chassisOmniMech = (ChassisOmniMech) entry.representant;
-				Engine engine = chassisOmniMech.getFixedEngine();
+    public void updateGraph() {
+        DefaultTableXYDataset dataset = new DefaultTableXYDataset();
+        for (Entry entry : chassis) {
+            XYSeries series = new XYSeries(entry.name, false, false);
+            if (entry.representant instanceof ChassisStandard) {
+                ChassisStandard chassisStandard = (ChassisStandard) entry.representant;
+                for (int rating = chassisStandard.getEngineMin(); rating <= chassisStandard.getEngineMax(); rating += 5) {
+                    if (rating < 100) {
+                        continue; // TODO: Remove this when they remove the engine limit.
+                    }
+                    double speed = TopSpeed.calculate(rating, chassisStandard.getMovementProfileBase(),
+                            chassisStandard.getMassMax(), efficiencies.getSpeedModifier());
+                    series.add(speed, payloadStatistics.calculate(chassisStandard, rating));
+                }
+            }
+            else {
+                // Omnimech
+                ChassisOmniMech chassisOmniMech = (ChassisOmniMech) entry.representant;
+                Engine engine = chassisOmniMech.getFixedEngine();
 
-				double minSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileMin(),
-						chassisOmniMech.getMassMax(), efficiencies.getSpeedModifier());
-				double stockSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileStock(),
-						chassisOmniMech.getMassMax(), efficiencies.getSpeedModifier());
-				double maxSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileMax(),
-						chassisOmniMech.getMassMax(), efficiencies.getSpeedModifier());
+                double minSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileMin(),
+                        chassisOmniMech.getMassMax(), efficiencies.getSpeedModifier());
+                double stockSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileStock(),
+                        chassisOmniMech.getMassMax(), efficiencies.getSpeedModifier());
+                double maxSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileMax(),
+                        chassisOmniMech.getMassMax(), efficiencies.getSpeedModifier());
 
-				double payload = payloadStatistics.calculate(chassisOmniMech);
-				if (minSpeed != stockSpeed) {
-					series.add(minSpeed, payload);
-				}
-				series.add(stockSpeed, payload);
-				if (maxSpeed != stockSpeed) {
-					series.add(maxSpeed, payload);
-				}
-			}
-			dataset.addSeries(series);
-		}
-		setChart(makeChart(dataset));
-		XYPlot plot = (XYPlot) getChart().getPlot();
-		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, true);
-		renderer.setBaseShapesFilled(false);
-		plot.setRenderer(renderer);
-	}
+                double payload = payloadStatistics.calculate(chassisOmniMech);
+                if (minSpeed != stockSpeed) {
+                    series.add(minSpeed, payload);
+                }
+                series.add(stockSpeed, payload);
+                if (maxSpeed != stockSpeed) {
+                    series.add(maxSpeed, payload);
+                }
+            }
+            dataset.addSeries(series);
+        }
+        setChart(makeChart(dataset));
+        XYPlot plot = (XYPlot) getChart().getPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, true);
+        renderer.setBaseShapesFilled(false);
+        plot.setRenderer(renderer);
+    }
 
-	private static JFreeChart makeChart(XYDataset aDataset) {
-		return ChartFactory.createXYLineChart("Comparing payload tonnage for given speeds", "km/h", "payload tons",
-				aDataset, PlotOrientation.VERTICAL, true, false, false);
-	}
+    private static JFreeChart makeChart(XYDataset aDataset) {
+        return ChartFactory.createXYLineChart("Comparing payload tonnage for given speeds", "km/h", "payload tons",
+                aDataset, PlotOrientation.VERTICAL, true, false, false);
+    }
 }
