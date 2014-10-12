@@ -38,9 +38,11 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.garage.MechGarage.GarageMessage;
 import lisong_mechlab.model.garage.MechGarage.GarageMessage.Type;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.item.PilotModuleDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.OpAddModule;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.util.OperationStack;
@@ -179,6 +181,9 @@ public class MechGarageTest {
 		stack.pushAndApply(new OpLoadStock(lo3.getChassis(), lo3, xBar));
 		stack.pushAndApply(new OpLoadStock(lo4.getChassis(), lo4, xBar));
 
+      stack.pushAndApply(new OpAddModule(null, lo1, PilotModuleDB.lookup("ADVANCED UAV")));
+      stack.pushAndApply(new OpAddModule(null, lo4, PilotModuleDB.lookup("COOL SHOT 6")));
+      
 		MechGarage cut = new MechGarage(xBar);
 		cut.add(lo1);
 		cut.add(lo2);

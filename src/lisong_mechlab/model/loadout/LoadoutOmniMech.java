@@ -73,6 +73,26 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
 		upgrades = new Upgrades(aLoadoutOmniMech.getUpgrades());
 	}
 
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((upgrades == null) ? 0 : upgrades.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj){
+      if( this == obj )
+         return true;
+      if( !super.equals(obj) )
+         return false;
+      LoadoutOmniMech other = (LoadoutOmniMech)obj;
+      if( !upgrades.equals(other.upgrades) )
+         return false;
+      return true;
+   }
+
 	/**
 	 * This setter method is only intended to be used from package local {@link Operation}s. It's a raw, unchecked
 	 * accessor.
@@ -152,7 +172,8 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
 			return getChassis().getConsumableModulesMax();
 		} else if (aModuleSlot == ModuleSlot.WEAPON) {
 			return getChassis().getWeaponModulesMax();
-		} else if (aModuleSlot == ModuleSlot.HYBRID) {
+      }
+      else if( aModuleSlot == ModuleSlot.HYBRID ){
 			return 1; // +1 for mastery
 		} else {
 			throw new IllegalArgumentException("Unknown module slot type!");

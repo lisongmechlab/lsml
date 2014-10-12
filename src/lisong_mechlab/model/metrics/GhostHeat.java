@@ -35,9 +35,8 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * 
  * @author Li Song
  */
-public class GhostHeat implements Metric {
-	private static final double		HEAT_SCALE[]	= { 0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00,
-			3.00, 5.00, 7.00						};
+public class GhostHeat implements Metric{
+   private static final double  HEAT_SCALE[] = {0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00, 3.00, 5.00};
 	private final LoadoutBase<?>	loadout;
 
 	public GhostHeat(LoadoutBase<?> aLoadout) {
@@ -99,7 +98,7 @@ public class GhostHeat implements Metric {
 		int count = aCount;
 		Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
 		while (count > aWeapon.getGhostHeatMaxFreeAlpha()) {
-			penalty += HEAT_SCALE[count] * aWeapon.getGhostHeatMultiplier()
+			penalty += HEAT_SCALE[Math.min(count, HEAT_SCALE.length - 1)] * aWeapon.getGhostHeatMultiplier()
 					* aWeapon.getHeat(modifiers);
 			count--;
 		}

@@ -47,9 +47,11 @@ import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ConfiguredComponentConverter;
 import lisong_mechlab.model.loadout.converters.ItemConverter;
 import lisong_mechlab.model.loadout.converters.LoadoutConverter;
+import lisong_mechlab.model.loadout.converters.ModuleConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.util.ListArrayUtils;
 import lisong_mechlab.util.message.MessageXBar;
 
 import com.thoughtworks.xstream.XStream;
@@ -91,6 +93,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 		stream.setMode(XStream.NO_REFERENCES);
 		stream.registerConverter(new ChassiConverter());
 		stream.registerConverter(new ItemConverter());
+      stream.registerConverter(new ModuleConverter());
 		stream.registerConverter(new ConfiguredComponentConverter(null, null));
 		stream.registerConverter(new LoadoutConverter());
 		stream.registerConverter(new UpgradeConverter());
@@ -102,19 +105,15 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!this.getClass().isAssignableFrom(obj.getClass()))
-			return false;
-		@SuppressWarnings("unchecked")
-		// I just checked it above...
-		LoadoutBase<T> that = (LoadoutBase<T>) obj;
-		if (chassisBase != that.chassisBase)
-			return false;
-		if (!efficiencies.equals(that.efficiencies))
-			return false;
-		if (!name.equals(that.name))
+   public boolean equals(Object obj){
+      if( !getClass().isAssignableFrom(obj.getClass()) )
+         return false;
+      LoadoutBase<T> that = getClass().cast(obj);
+      if( !name.equals(that.name) )
+         return false;
+      if( chassisBase != that.chassisBase )
+         return false;
+      if( !ListArrayUtils.equalsUnordered(modules, that.modules) )
 			return false;
 		if (!Arrays.equals(components, that.components))
 			return false;
