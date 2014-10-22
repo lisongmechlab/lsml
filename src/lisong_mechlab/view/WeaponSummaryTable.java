@@ -31,7 +31,6 @@ import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
@@ -39,9 +38,6 @@ import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
-import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
 
@@ -360,17 +356,8 @@ public class WeaponSummaryTable extends JTable implements Message.Recipient {
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg.isForMe(loadout)) {
-            if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
-                ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
-                if (message.type == Type.ItemAdded || message.type == Type.ItemRemoved
-                        || message.type == Type.ItemsChanged) {
-                    ((WeaponModel) getModel()).update(loadout);
-                }
-            }
-            else if ((aMsg instanceof Upgrades.UpgradesMessage) || (aMsg instanceof Efficiencies.EfficienciesMessage)) {
-                ((WeaponModel) getModel()).update(loadout);
-            }
+        if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
+            ((WeaponModel) getModel()).update(loadout);
         }
     }
 }
