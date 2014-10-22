@@ -102,8 +102,10 @@ public abstract class ConfiguredComponentBase {
         }
     }
 
-    public final static Internal              ENGINE_INTERNAL      = (Internal) ItemDB.lookup(60000);
-    public final static Internal              ENGINE_INTERNAL_CLAN = (Internal) ItemDB.lookup(60001);
+    public final static Internal              ENGINE_INTERNAL      = (Internal) ItemDB
+                                                                           .lookup(ItemDB.ENGINE_INTERNAL_ID);
+    public final static Internal              ENGINE_INTERNAL_CLAN = (Internal) ItemDB
+                                                                           .lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
     private final TreeMap<ArmorSide, Integer> armor                = new TreeMap<ArmorSide, Integer>();
     private final ComponentBase               internalComponent;
     private final List<Item>                  items                = new ArrayList<Item>();

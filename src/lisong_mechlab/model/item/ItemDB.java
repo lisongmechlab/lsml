@@ -38,7 +38,9 @@ public class ItemDB {
     // Feel free to populate if you find yourself consistently using
     // ItemDB.lookup() with constant strings.
 
-    // AMS
+    static public final int                 ENGINE_INTERNAL_ID      = 60000;
+    static public final int                 ENGINE_INTERNAL_CLAN_ID = 60001;
+
     static public final AmmoWeapon          AMS;
     static public final AmmoWeapon          C_AMS;
     static public final HeatSink            SHS;

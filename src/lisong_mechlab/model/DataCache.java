@@ -57,6 +57,7 @@ import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Module;
@@ -510,8 +511,10 @@ public class DataCache {
         List<Item> ans = new ArrayList<>();
 
         // Special items
-        ans.add(new Internal("ENGINE", "", "mdf_Engine", 60000, 3, 0, HardPointType.NONE, 15, Faction.InnerSphere));
-        ans.add(new Internal("C-ENGINE", "", "mdf_CEngine", 60001, 2, 0, HardPointType.NONE, 15, Faction.Clan));
+        ans.add(new Internal("ENGINE", "", "mdf_Engine", ItemDB.ENGINE_INTERNAL_ID, 3, 0, HardPointType.NONE, 15,
+                Faction.InnerSphere));
+        ans.add(new Internal("C-ENGINE", "", "mdf_CEngine", ItemDB.ENGINE_INTERNAL_CLAN_ID, 2, 0, HardPointType.NONE,
+                15, Faction.Clan));
         // ans.add(new Internal("mdf_Engine", "mdf_EngineDesc", 3, 15,
         // Faction.InnerSphere));
 
