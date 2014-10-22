@@ -99,6 +99,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
     @Override
     public List<Item> getItemsFixed() {
         List<Item> fixed = new ArrayList<>(getInternalComponent().getFixedItems());
+        fixed.addAll(getOmniPod().getFixedItems());
 
         Boolean laa = toggleStates.get(ItemDB.LAA);
         if (laa != null && laa == true)

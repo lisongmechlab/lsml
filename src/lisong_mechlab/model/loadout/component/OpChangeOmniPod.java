@@ -19,12 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
-import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
+import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
 import lisong_mechlab.util.OperationStack.Operation;
 import lisong_mechlab.util.message.MessageDelivery;
@@ -69,11 +69,9 @@ public class OpChangeOmniPod extends CompositeOperation {
     public void buildOperation() {
         oldOmniPod = component.getOmniPod();
 
-        // Remove any items that has a hard point requirement other than none.
+        // Remove all items
         for (Item item : component.getItemsEquipped()) {
-            if (item.getHardpointType() != HardPointType.NONE) {
-                addOp(new OpRemoveItem(messageBuffer, loadout, component, item));
-            }
+            addOp(new OpRemoveItem(messageBuffer, loadout, component, item));
         }
 
         // Make sure we respect global jump-jet limit
@@ -90,21 +88,26 @@ public class OpChangeOmniPod extends CompositeOperation {
                 }
             }
         }
-    }
 
-    @Override
-    protected void apply() {
-        super.apply();
+        addOp(new OperationStack.Operation() {
+            @Override
+            protected void undo() {
+                loadout.setOmniPod(oldOmniPod);
+                messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
+                messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.ItemsChanged));
+            }
 
-        loadout.setOmniPod(newOmniPod);
-        messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
-    }
+            @Override
+            public String describe() {
+                return "internal omnipod change";
+            }
 
-    @Override
-    protected void undo() {
-        loadout.setOmniPod(oldOmniPod);
-        messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
-
-        super.undo();
+            @Override
+            protected void apply() {
+                loadout.setOmniPod(newOmniPod);
+                messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
+                messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.ItemsChanged));
+            }
+        });
     }
 }
