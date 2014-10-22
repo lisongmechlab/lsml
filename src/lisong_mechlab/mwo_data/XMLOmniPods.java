@@ -73,6 +73,8 @@ public class XMLOmniPods {
         public static class XMLOmniPodsComponent {
             @XStreamAsAttribute
             private String                 name;
+            @XStreamImplicit(itemFieldName = "Fixed")
+            private List<MdfItem>          fixedItems;
             @XStreamImplicit(itemFieldName = "Internal")
             private List<MdfItem>          internals;
             @XStreamImplicit(itemFieldName = "Hardpoint")
@@ -132,8 +134,10 @@ public class XMLOmniPods {
                         component.CanEquipECM, set.name);
                 Quirks quirks = new Quirks(quirksMap);
 
-                List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals, null);
-                List<Item> toggleableItems = MdfComponent.getToggleableItems(aDataCache, component.internals, null);
+                List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals,
+                        component.fixedItems);
+                List<Item> toggleableItems = MdfComponent.getToggleableItems(aDataCache, component.internals,
+                        component.fixedItems);
 
                 ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, fixedItems,
                         toggleableItems, maxJumpjets, maxPilotModules));

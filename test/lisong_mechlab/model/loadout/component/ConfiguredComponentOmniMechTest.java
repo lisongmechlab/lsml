@@ -52,8 +52,9 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
     protected ComponentOmniMech omniInternal;
     protected OmniPod           omniPod;
     protected boolean           missileBayDoors;
-    protected List<HardPoint>   hardPoints = new ArrayList<>();
-    protected List<Item>        togglables = new ArrayList<>();
+    protected List<HardPoint>   hardPoints   = new ArrayList<>();
+    protected List<Item>        togglables   = new ArrayList<>();
+    protected List<Item>        omniPodFixed = new ArrayList<>();
 
     @Before
     public void setup() {
@@ -74,6 +75,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
             Mockito.when(omniPod.hasMissileBayDoors()).thenReturn(missileBayDoors);
             Mockito.when(omniPod.getHardPoints()).thenReturn(hardPoints);
             Mockito.when(omniPod.getToggleableItems()).thenReturn(togglables);
+            Mockito.when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
         }
         return new ConfiguredComponentOmniMech(omniInternal, autoArmor, omniPod);
     }
@@ -233,6 +235,27 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
     public final void testGetOmniPod() throws Exception {
         assertSame(omniPod, makeDefaultCUT().getOmniPod());
     }
+
+    @Test
+    public final void testGetItemsFixed_OmniPod() throws Exception {
+        Item fixed1 = Mockito.mock(Item.class);
+        Mockito.when(fixed1.getMass()).thenReturn(2.0);
+        omniPodFixed.add(fixed1);
+
+        Item fixed2 = Mockito.mock(Item.class);
+        Mockito.when(fixed2.getMass()).thenReturn(3.0);
+        omniPodFixed.add(fixed2);
+
+        ConfiguredComponentOmniMech cut = makeDefaultCUT();
+
+        List<Item> ans = new ArrayList<>();
+        ans.add(fixed1);
+        ans.add(fixed2);
+
+        assertTrue(ListArrayUtils.equalsUnordered(ans, new ArrayList<>(cut.getItemsFixed())));
+    }
+
+    // TODO: Test togglestate handling and fixeditems
 
     @Test
     public final void testGetSlotsUsedFree_DynamicSlots() {
