@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.mwo_data;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,9 @@ import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.Quirks;
+import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Faction;
+import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -107,19 +110,43 @@ public class MdfMechDefinition {
     }
 
     public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, DataCache aDataCache, XMLMechIdMap aMechIdMap,
-            XMLLoadout aLoadout) {
+            XMLLoadout aLoadout) throws IOException {
         int baseVariant = getBaseVariant(aMechIdMap, aMech);
         String name = Localization.key2string("@" + aMech.name);
         String shortName = Localization.key2string("@" + aMech.name + "_short");
         Faction faction = Faction.fromMwo(aMech.faction);
 
         ComponentOmniMech[] components = new ComponentOmniMech[Location.values().length];
+
+        // Determine engine type first
+        Engine engine = null;
         for (MdfComponent component : ComponentList) {
-            if (component.isRear()) {
-                continue;
+            if (component.getLocation() == Location.CenterTorso) {
+                if (component.isRear()) {
+                    continue;
+                }
+                ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache, null);
+                for (Item item : componentStandard.getFixedItems()) {
+                    if (item instanceof Engine) {
+                        engine = (Engine) item;
+                    }
+                }
+                components[componentStandard.getLocation().ordinal()] = componentStandard;
             }
-            ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache);
-            components[componentStandard.getLocation().ordinal()] = componentStandard;
+        }
+
+        if (null == engine) {
+            throw new IOException("Unable to find engine for " + name);
+        }
+
+        for (MdfComponent component : ComponentList) {
+            if (component.getLocation() != Location.CenterTorso) {
+                if (component.isRear()) {
+                    continue;
+                }
+                ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache, engine);
+                components[componentStandard.getLocation().ordinal()] = componentStandard;
+            }
         }
 
         StructureUpgrade structure = (StructureUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.structure.ItemID);

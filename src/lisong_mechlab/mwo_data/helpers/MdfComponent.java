@@ -30,7 +30,10 @@ import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.mwo_data.HardPointCache;
 import lisong_mechlab.mwo_data.WeaponDoorSet;
 import lisong_mechlab.mwo_data.WeaponDoorSet.WeaponDoor;
@@ -80,15 +83,15 @@ public class MdfComponent {
 
     public ComponentStandard asComponentStandard(DataCache aDataCache, XMLHardpoints aHardPointsXML,
             String aChassiMwoName) {
-        Location location = Location.fromMwoName(Name);
+        Location location = getLocation();
         List<Item> fixedItems = getFixedItems(aDataCache, internals, fixed);
         List<HardPoint> hardPoints = getHardPoints(location, aHardPointsXML, hardpoints, CanEquipECM, aChassiMwoName);
 
         return new ComponentStandard(location, Slots, HP, fixedItems, hardPoints);
     }
 
-    public ComponentOmniMech asComponentOmniMech(DataCache aDataCache) {
-        Location location = Location.fromMwoName(Name);
+    public ComponentOmniMech asComponentOmniMech(DataCache aDataCache, Engine aEngine) {
+        Location location = getLocation();
         List<Item> fixedItems = getFixedItems(aDataCache, internals, fixed);
         OmniPod fixedOmniPod = (omniPod > 0) ? aDataCache.findOmniPod(omniPod) : null;
 
@@ -104,6 +107,13 @@ public class MdfComponent {
             else if (item.getMwoId() == 1913) {
                 it.remove();
                 dynStructure++;
+            }
+        }
+
+        if (location == Location.LeftTorso || location == Location.RightTorso) {
+            if (aEngine.getType() == EngineType.XL) {
+                Item xlSide = DataCache.findItem(ItemDB.ENGINE_INTERNAL_CLAN_ID, aDataCache.getItems());
+                fixedItems.add(xlSide);
             }
         }
 
@@ -224,5 +234,12 @@ public class MdfComponent {
             ans.add(new HardPoint(HardPointType.ECM));
 
         return ans;
+    }
+
+    /**
+     * @return The location of this MdfComponent
+     */
+    public Location getLocation() {
+        return Location.fromMwoName(Name);
     }
 }
