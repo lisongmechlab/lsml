@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -56,7 +57,7 @@ public class LsmlProtocolIPC implements Runnable {
     public LsmlProtocolIPC() throws IOException {
         serverSocket = new ServerSocket();
         serverSocket.setReuseAddress(true);
-        serverSocket.bind(new InetSocketAddress(PORT));
+        serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
 
         thread = new Thread(this);
         thread.setName("IPC THREAD");
@@ -93,7 +94,7 @@ public class LsmlProtocolIPC implements Runnable {
      *         message couldn't be sent.
      */
     static public boolean sendLoadout(String aLsmlUrl) {
-        try (Socket socket = new Socket((String) null, PORT);
+        try (Socket socket = new Socket(InetAddress.getLocalHost(), PORT);
                 Writer writer = new OutputStreamWriter(socket.getOutputStream());
                 BufferedWriter bw = new BufferedWriter(writer)) {
             bw.write(aLsmlUrl);
