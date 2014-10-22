@@ -71,7 +71,7 @@ public class ItemTests {
     public void testJumpJets() {
         JumpJet jj = (JumpJet) ItemDB.lookup(1503); // Class IV JJ
 
-        assertEquals(3.75, jj.getDuration(), 0);
+        assertTrue(jj.getDuration() > 1);
         assertTrue(jj.getJumpHeat() != 0.0);
         assertTrue(jj.getForce() > 1);
 
