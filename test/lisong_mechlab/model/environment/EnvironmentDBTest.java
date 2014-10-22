@@ -60,6 +60,6 @@ public class EnvironmentDBTest {
     public void testLookupAll() {
         List<Environment> environments = EnvironmentDB.lookupAll();
 
-        assertEquals(13, environments.size()); // To date 13 known maps.
+        assertEquals(14, environments.size()); // To date 13 known maps.
     }
 }
