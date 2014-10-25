@@ -34,7 +34,9 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 
 /**
  * This class models a configured {@link OmniPod} on an {@link LoadoutOmniMech}.
@@ -118,10 +120,11 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
     }
 
     @Override
-    public boolean canAddItem(Item aItem) {
-        // TODO: This is copy pasted from ConfiguredComponentBase and then modified.
-        if (!getInternalComponent().isAllowed(aItem))
-            return false;
+    public EquipResult canAddItem(Item aItem) {
+        EquipResult superResult = super.canAddItem(aItem);
+        if (superResult != EquipResult.SUCCESS) {
+            return superResult;
+        }
 
         int slotComp = 0;
         if (aItem instanceof Weapon && ((Weapon) aItem).isLargeBore()) {
@@ -132,15 +135,9 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
         }
 
         if (getSlotsFree() + slotComp < aItem.getNumCriticalSlots()) {
-            return false;
+            return EquipResult.make(getInternalComponent().getLocation(), Type.NotEnoughSlots);
         }
-
-        // Check enough free hard points
-        if (aItem.getHardpointType() != HardPointType.NONE
-                && getItemsOfHardpointType(aItem.getHardpointType()) >= getHardPointCount(aItem.getHardpointType())) {
-            return false; // Not enough hard points!
-        }
-        return true;
+        return EquipResult.SUCCESS;
     }
 
     @Override

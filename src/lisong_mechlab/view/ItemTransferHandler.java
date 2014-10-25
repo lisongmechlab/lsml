@@ -35,6 +35,7 @@ import javax.swing.TransferHandler;
 
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.view.mechlab.ItemLabel;
@@ -119,7 +120,7 @@ public class ItemTransferHandler extends TransferHandler {
             LoadoutBase<?> loadout = ((PartList) uiComponent).getLoadout();
             ConfiguredComponentBase component = ((PartList) uiComponent).getPart();
             for (Item item : items) {
-                if (loadout.canEquip(item) && !component.canAddItem(item))
+                if (EquipResult.SUCCESS == loadout.canEquip(item) && EquipResult.SUCCESS != component.canAddItem(item))
                     return false;
             }
             return true;

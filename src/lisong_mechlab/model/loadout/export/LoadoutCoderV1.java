@@ -62,26 +62,13 @@ public class LoadoutCoderV1 implements LoadoutCoder {
     private final Huffman1<Integer> huff;
 
     public LoadoutCoderV1() {
-        ObjectInputStream in = null;
-        try {
-            InputStream is = LoadoutCoderV1.class.getResourceAsStream("/resources/coderstats.bin");
-            in = new ObjectInputStream(is);
+        try (InputStream is = LoadoutCoderV1.class.getResourceAsStream("/resources/coderstats.bin"); ObjectInputStream in = new ObjectInputStream(is);){
             @SuppressWarnings("unchecked")
             Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
             huff = new Huffman1<Integer>(freqs, null);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
-        }
-        finally {
-            if (in != null) {
-                try {
-                    in.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 

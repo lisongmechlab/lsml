@@ -20,6 +20,7 @@
 package lisong_mechlab.model.loadout.component;
 
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.OperationStack.Operation;
 import lisong_mechlab.util.message.MessageDelivery;
@@ -75,11 +76,15 @@ public class OpAddItem extends OpItemBase {
 
     @Override
     public void apply() {
-        if (!loadout.canEquip(item))
-            throw new IllegalArgumentException("Can't add " + item + " to " + loadout.getName() + "!");
-        if (!component.canAddItem(item))
+        EquipResult result = loadout.canEquip(item);
+        if (result != EquipResult.SUCCESS)
+            throw new IllegalArgumentException("Can't add " + item + " to " + loadout.getName() + "! Reason:"
+                    + result.toString());
+
+        result = component.canAddItem(item);
+        if (result != EquipResult.SUCCESS)
             throw new IllegalArgumentException("Can't add " + item + " to "
-                    + component.getInternalComponent().getLocation() + "!");
+                    + component.getInternalComponent().getLocation() + "! Reason: " + result.toString());
         addItem(item);
     }
 }

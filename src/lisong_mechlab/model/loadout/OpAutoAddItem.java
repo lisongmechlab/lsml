@@ -150,7 +150,7 @@ public class OpAutoAddItem extends OpLoadoutBase {
         // If it can go into the engine, put it there.
         ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
         if (itemToPlace instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax()
-                && ct.canAddItem(itemToPlace)) {
+                && EquipResult.SUCCESS == ct.canAddItem(itemToPlace)) {
             addOp(new OpAddItem(messageBuffer, loadout, ct, itemToPlace));
             return;
         }
@@ -165,7 +165,7 @@ public class OpAutoAddItem extends OpLoadoutBase {
             closed.add(node);
 
             // Are we there yet?
-            if (node.data.canEquip(itemToPlace)) {
+            if (EquipResult.SUCCESS == node.data.canEquip(itemToPlace)) {
                 applySolution(node);
                 return; // Yes we are!
             }
@@ -209,7 +209,7 @@ public class OpAutoAddItem extends OpLoadoutBase {
         // be added to.
         for (Location part : partTraversalOrder) {
             ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
-            if (loadoutPart.canAddItem(itemToPlace)) {
+            if (EquipResult.SUCCESS == loadoutPart.canAddItem(itemToPlace)) {
                 ops.add(new OpAddItem(messageBuffer, loadout, loadout.getComponent(part), itemToPlace));
                 break;
             }
@@ -243,7 +243,7 @@ public class OpAutoAddItem extends OpLoadoutBase {
                 continue;
 
             ConfiguredComponentBase dstPart = tempLoadout.getComponent(targetPart);
-            if (dstPart.canAddItem(aItem)) {
+            if (EquipResult.SUCCESS == dstPart.canAddItem(aItem)) {
                 // Don't consider swaps if the item can be directly moved. A swap will be generated in another point
                 // of the search tree anyway when we move an item from that component back to this.
                 ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
@@ -277,7 +277,7 @@ public class OpAutoAddItem extends OpLoadoutBase {
                             || item == ConfiguredComponentBase.ENGINE_INTERNAL_CLAN)
                         continue;
 
-                    if (srcPart.canAddItem(item))
+                    if (EquipResult.SUCCESS == srcPart.canAddItem(item))
                         ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
                 }
             }

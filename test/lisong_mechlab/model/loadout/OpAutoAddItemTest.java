@@ -98,15 +98,15 @@ public class OpAutoAddItemTest {
     public void testMoveItem_Bug_345() throws DecodingException {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        LoadoutBase<?> loadout = coder.parse("lsml://rgCkLzsFLw9VBzsFLy4A6zGmSpSSkyq1vElShF9atWn3ErScSVKlVqtahiYkqVKs");
+        LoadoutBase<?> loadout = coder.parse("lsml://rgCkLzsFLw9VBzsFLy4A6zGmJKTKlSq1vEEXyq1atPuJWk4kqVKrVa1DExJUqVY=");
         Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
 
         // Execute
         stack.pushAndApply(new OpAutoAddItem(loadout, xBar, item));
 
         // Verify
-        assertEquals(27, loadout.getHeatsinksCount()); // Heat sink is added
-        assertEquals(72.4, loadout.getMass(), 0.1); // Mass is as is expected
+        assertEquals(26, loadout.getHeatsinksCount()); // Heat sink is added
+        assertEquals(73.4, loadout.getMass(), 0.1); // Mass is as is expected
     }
 
     // Bug #349

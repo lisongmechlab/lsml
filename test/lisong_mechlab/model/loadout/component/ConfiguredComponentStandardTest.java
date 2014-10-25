@@ -20,7 +20,6 @@
 package lisong_mechlab.model.loadout.component;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -33,6 +32,8 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.util.ListArrayUtils;
 
 import org.junit.Before;
@@ -77,7 +78,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
     public final void testCanAddItem_TwoCASE() {
         ConfiguredComponentBase cut = makeDefaultCUT();
         cut.addItem(ItemDB.CASE);
-        assertFalse(cut.canAddItem(ItemDB.CASE));
+        assertEquals(EquipResult.make(location, Type.ComponentAlreadyHasCase), cut.canAddItem(ItemDB.CASE));
     }
 
     /**
@@ -92,7 +93,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
         Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
 
-        assertTrue(cut.canAddItem(item));
+        assertEquals(EquipResult.SUCCESS, cut.canAddItem(item));
     }
 
     /**
@@ -100,7 +101,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
      */
     @Test
     public final void testCanAddItem_CASEAllowed() {
-        assertTrue(makeDefaultCUT().canAddItem(ItemDB.CASE));
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canAddItem(ItemDB.CASE));
     }
 
     @Test
@@ -137,18 +138,20 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
         Engine engine = Mockito.mock(Engine.class);
         Mockito.when(engine.getNumCriticalSlots()).thenReturn(slots);
         Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(2);
-
+        Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+        
         HeatSink heatSink = Mockito.mock(HeatSink.class);
         Mockito.when(heatSink.getNumCriticalSlots()).thenReturn(3);
+        Mockito.when(heatSink.getHardpointType()).thenReturn(HardPointType.NONE);
 
         ConfiguredComponentStandard cut = makeDefaultCUT();
         cut.addItem(engine);
 
-        assertTrue(cut.canAddItem(heatSink));
+        assertEquals(EquipResult.SUCCESS, cut.canAddItem(heatSink));
         cut.addItem(heatSink);
-        assertTrue(cut.canAddItem(heatSink));
+        assertEquals(EquipResult.SUCCESS, cut.canAddItem(heatSink));
         cut.addItem(heatSink);
-        assertFalse(cut.canAddItem(heatSink));
+        assertEquals(EquipResult.make(location, Type.NotEnoughSlots), cut.canAddItem(heatSink));
     }
 
     @Test
@@ -157,7 +160,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
         Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
-        assertFalse(makeDefaultCUT().canAddItem(item));
+        assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), makeDefaultCUT().canAddItem(item));
     }
 
     @Test
@@ -169,7 +172,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
         Mockito.when(stdInternal.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
         hardPoints.add(new HardPoint(HardPointType.ENERGY));
 
-        assertTrue(makeDefaultCUT().canAddItem(item));
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canAddItem(item));
     }
 
     @Test
@@ -183,7 +186,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
         ConfiguredComponentStandard cut = makeDefaultCUT();
         cut.addItem(item);
 
-        assertFalse(cut.canAddItem(item));
+        assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), cut.canAddItem(item));
     }
 
 }

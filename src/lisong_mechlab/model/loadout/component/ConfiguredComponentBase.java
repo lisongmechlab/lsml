@@ -35,8 +35,10 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.util.ListArrayUtils;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -165,27 +167,16 @@ public abstract class ConfiguredComponentBase {
      *            The item to check with.
      * @return <code>true</code> if local constraints allow the item to be equipped here.
      */
-    public boolean canAddItem(Item aItem) {
+    public EquipResult canAddItem(Item aItem) {
         if (!getInternalComponent().isAllowed(aItem))
-            return false;
-
-        if (aItem == ItemDB.CASE && items.contains(ItemDB.CASE))
-            return false;
-
-        if (getSlotsFree() < aItem.getNumCriticalSlots()) {
-            return false;
-        }
+            return EquipResult.make(getInternalComponent().getLocation(), Type.NotSupported);
 
         // Check enough free hard points
         if (aItem.getHardpointType() != HardPointType.NONE
                 && getItemsOfHardpointType(aItem.getHardpointType()) >= getHardPointCount(aItem.getHardpointType())) {
-            return false; // Not enough hard points!
+            return EquipResult.make(getInternalComponent().getLocation(), Type.NoFreeHardPoints);
         }
-        return true;
-    }
-
-    public boolean isValidLoadout() {
-        return true;
+        return EquipResult.SUCCESS;
     }
 
     /**

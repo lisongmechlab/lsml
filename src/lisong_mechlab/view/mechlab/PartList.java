@@ -43,6 +43,7 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
@@ -330,7 +331,7 @@ public class PartList extends JList<Item> {
 
         switch (state.getRenderType()) {
             case EngineHeatSink: {
-                if (aItem instanceof HeatSink && loadout.canEquip(aItem) && component.canAddItem(aItem)) {
+                if (aItem instanceof HeatSink && EquipResult.SUCCESS == loadout.canEquip(aItem) && EquipResult.SUCCESS == component.canAddItem(aItem)) {
                     opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
                 }
             }
@@ -345,7 +346,7 @@ public class PartList extends JList<Item> {
                 // Fall through
             }
             case Empty: {
-                if (loadout.canEquip(aItem) && component.canAddItem(aItem)) {
+                if (EquipResult.SUCCESS == loadout.canEquip(aItem) && EquipResult.SUCCESS == component.canAddItem(aItem)) {
                     opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
                 }
             }

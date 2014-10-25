@@ -29,6 +29,7 @@ import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ModuleSlot;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
@@ -127,9 +128,9 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     }
 
     @Override
-    protected boolean canEquipGlobal(Item aItem) {
+    protected EquipResult canEquipGlobal(Item aItem) {
         if (aItem instanceof Engine)
-            return false;
+            return EquipResult.make(Type.EngineAlreadyEquipped);
         return super.canEquipGlobal(aItem);
     }
 

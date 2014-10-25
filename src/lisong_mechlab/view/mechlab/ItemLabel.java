@@ -53,6 +53,7 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.WeaponModifier;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.OpAutoAddItem;
 import lisong_mechlab.model.metrics.TopSpeed;
@@ -223,7 +224,7 @@ public class ItemLabel extends JLabel {
                                 dialog.setVisible(true); // Show progress meter if it's taking time and resume EDT
                             }
                         }
-                        else if (loadout.canEquip(item)) {
+                        else if (EquipResult.SUCCESS == loadout.canEquip(item)) {
                             frame.getOpStack().pushAndApply(new OpAutoAddItem(loadout, anXBar, item));
                         }
                     }
@@ -287,7 +288,7 @@ public class ItemLabel extends JLabel {
                 setVisible(false);
             }
             else {
-                if (!aLoadout.canEquip(item)) {
+                if (EquipResult.SUCCESS != aLoadout.canEquip(item)) {
                     if (!aLoadout.getCandidateLocationsForItem(item).isEmpty()) {
                         StyleManager.styleItem(this, item);
                         smartPlace = true;

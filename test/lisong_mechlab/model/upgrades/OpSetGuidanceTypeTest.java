@@ -28,6 +28,7 @@ import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.MissileWeapon;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
@@ -102,7 +103,7 @@ public class OpSetGuidanceTypeTest {
         OperationStack stack = new OperationStack(0);
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
         Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
-        Mockito.when(mlc.loadout.canEquip(Matchers.any(Item.class))).thenReturn(true);
+        Mockito.when(mlc.loadout.canEquip(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
 
         MissileWeapon lrm5 = Mockito.mock(MissileWeapon.class);
         MissileWeapon lrm5Artemis = Mockito.mock(MissileWeapon.class);
@@ -118,8 +119,8 @@ public class OpSetGuidanceTypeTest {
         Mockito.when(newGuidance.upgrade(narc)).thenReturn(narc);
         Mockito.when(newGuidance.upgrade(lrmAmmo)).thenReturn(lrmAmmoArtemis);
         Mockito.when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
-        Mockito.when(mlc.rl.canAddItem(Matchers.any(Item.class))).thenReturn(true);
-        Mockito.when(mlc.lt.canAddItem(Matchers.any(Item.class))).thenReturn(true);
+        Mockito.when(mlc.rl.canAddItem(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
+        Mockito.when(mlc.lt.canAddItem(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
         Mockito.when(mlc.rl.getItemsEquipped()).thenReturn(rlItems);
         Mockito.when(mlc.lt.getItemsEquipped()).thenReturn(ltItems);
         Mockito.when(mlc.rl.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
