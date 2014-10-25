@@ -105,7 +105,7 @@ public class ItemTransferHandler extends TransferHandler {
     @Override
     protected void exportDone(JComponent c, Transferable t, int action) {
         // NO-OP
-        // The items are removed during the eport, otherwise the drop
+        // The items are removed during the export, otherwise the drop
         // may fail because of loadout tonnage limits etc.
     }
 
@@ -120,7 +120,7 @@ public class ItemTransferHandler extends TransferHandler {
             LoadoutBase<?> loadout = ((PartList) uiComponent).getLoadout();
             ConfiguredComponentBase component = ((PartList) uiComponent).getPart();
             for (Item item : items) {
-                if (EquipResult.SUCCESS == loadout.canEquip(item) && EquipResult.SUCCESS != component.canAddItem(item))
+                if (EquipResult.SUCCESS != loadout.canEquip(item) || EquipResult.SUCCESS != component.canAddItem(item))
                     return false;
             }
             return true;
