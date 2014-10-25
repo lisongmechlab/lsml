@@ -159,6 +159,9 @@ public abstract class ComponentBase {
                     return false;
             }
         }
+        else if (aItem instanceof Engine) {
+            return getLocation() == Location.CenterTorso;
+        }
         return true;
     }
 

@@ -28,7 +28,9 @@ import java.util.List;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.util.DecodingException;
@@ -78,10 +80,13 @@ public class OpSetHeatSinkTypeTest {
                 return null;
             }
         }).when(component).addItem(newType);
-        Mockito.when(component.canAddItem(newType)).then(new Answer<Boolean>() {
+        Mockito.when(component.canAddItem(newType)).then(new Answer<EquipResult>() {
             @Override
-            public Boolean answer(InvocationOnMock aInvocation) throws Throwable {
-                return equippedHs < maxEquippableNewType;
+            public EquipResult answer(InvocationOnMock aInvocation) throws Throwable {
+                if( equippedHs < maxEquippableNewType){
+                    return EquipResult.SUCCESS;
+                }
+                return EquipResult.make(Type.NotEnoughSlots);
             }
         });
         Mockito.doAnswer(new Answer<Void>() {
@@ -103,10 +108,13 @@ public class OpSetHeatSinkTypeTest {
         Mockito.when(loadout.getName()).thenReturn("Mock Loadout");
         Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
         Mockito.when(loadout.getComponents()).thenReturn(Arrays.asList(component));
-        Mockito.when(loadout.canEquip(newType)).then(new Answer<Boolean>() {
+        Mockito.when(loadout.canEquip(newType)).then(new Answer<EquipResult>() {
             @Override
-            public Boolean answer(InvocationOnMock aInvocation) throws Throwable {
-                return equippedHs < maxGloballyEquippableNewType;
+            public EquipResult answer(InvocationOnMock aInvocation) throws Throwable {
+                if( equippedHs < maxGloballyEquippableNewType){
+                    return EquipResult.SUCCESS;
+                }
+                return EquipResult.make(Type.NotEnoughSlots);
             }
         });
     }

@@ -115,7 +115,8 @@ public class MechGarage {
     }
 
     /**
-     * Creates a new {@link MechGarage} from an XML file with existing garage contents.
+     * Creates a new {@link MechGarage} from an XML file with existing garage contents. In the case of corrupt loadouts
+     * as much as possible is loaded and errors are passed along as the second parameter to the pair.
      * 
      * @param aFile
      *            The {@link File} to read from.

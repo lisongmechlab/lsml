@@ -29,8 +29,10 @@ import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.OperationStack;
@@ -101,8 +103,8 @@ public class OpAddItemTest {
         OpAddItem cut = null;
         try {
             Item item = ItemDB.lookup("LRM 20");
-            Mockito.when(loadout.canEquip(item)).thenReturn(true);
-            Mockito.when(loadoutPart.canAddItem(item)).thenReturn(false);
+            Mockito.when(loadout.canEquip(item)).thenReturn(EquipResult.SUCCESS);
+            Mockito.when(loadoutPart.canAddItem(item)).thenReturn(EquipResult.make(Type.NotEnoughSlots));
             cut = new OpAddItem(xBar, loadout, loadoutPart, item);
         }
         catch (Throwable t) {

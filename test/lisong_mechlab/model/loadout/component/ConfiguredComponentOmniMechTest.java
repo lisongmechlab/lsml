@@ -20,7 +20,6 @@
 package lisong_mechlab.model.loadout.component;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -35,6 +34,8 @@ import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.util.ListArrayUtils;
 
 import org.junit.Before;
@@ -169,10 +170,10 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
 
         Mockito.when(item.getNumCriticalSlots()).thenReturn(size);
-        assertTrue(makeDefaultCUT().canAddItem(item));
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canAddItem(item));
 
         Mockito.when(item.getNumCriticalSlots()).thenReturn(size + 1);
-        assertFalse(makeDefaultCUT().canAddItem(item));
+        assertEquals(EquipResult.make(location, Type.NotEnoughSlots), makeDefaultCUT().canAddItem(item));
     }
 
     @Test
@@ -181,7 +182,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
         Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
-        assertFalse(makeDefaultCUT().canAddItem(item));
+        assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), makeDefaultCUT().canAddItem(item));
     }
 
     @Test
@@ -193,7 +194,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
         Mockito.when(omniPod.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
         hardPoints.add(new HardPoint(HardPointType.ENERGY));
 
-        assertTrue(makeDefaultCUT().canAddItem(item));
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canAddItem(item));
     }
 
     @Test
@@ -207,7 +208,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
         ConfiguredComponentOmniMech cut = makeDefaultCUT();
         cut.addItem(item);
 
-        assertFalse(cut.canAddItem(item));
+        assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), cut.canAddItem(item));
     }
 
     @Test

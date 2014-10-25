@@ -244,6 +244,7 @@ public class LoadoutConverter implements Converter {
         return loadout;
     }
 
+    // FIXME: Get rid of this in the model! It should be reported to the library user somehow.
     private void reportErrors(LoadoutBuilder builder, String name) {
         String errors = builder.getErrors(name);
         if (null != errors) {

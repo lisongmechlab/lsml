@@ -27,7 +27,10 @@ import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 
 /**
  * This class implements {@link ConfiguredComponentBase} for {@link LoadoutStandard}.
@@ -45,11 +48,23 @@ public class ConfiguredComponentStandard extends ConfiguredComponentBase {
     }
 
     @Override
-    public boolean canAddItem(Item aItem) {
-        if (aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax()) {
-            return true;
+    public EquipResult canAddItem(Item aItem) {
+        EquipResult superResult = super.canAddItem(aItem);
+        if(superResult != EquipResult.SUCCESS){
+            return superResult;
         }
-        return super.canAddItem(aItem);
+        
+        if (aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax()) {
+            return EquipResult.SUCCESS;
+        }
+        
+        if (aItem == ItemDB.CASE && getItemsEquipped().contains(ItemDB.CASE))
+            return EquipResult.make(getInternalComponent().getLocation(), Type.ComponentAlreadyHasCase);
+
+        if (getSlotsFree() < aItem.getNumCriticalSlots()) {
+            return EquipResult.make(getInternalComponent().getLocation(), Type.NotEnoughSlots);
+        }
+        return EquipResult.SUCCESS;
     }
 
     @Override

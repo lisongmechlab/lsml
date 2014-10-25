@@ -31,6 +31,7 @@ import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
@@ -106,7 +107,7 @@ public class LoadoutStandardTest {
         LoadoutStandard cut = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("LCT-3M"));
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ConfiguredComponentBase.ENGINE_INTERNAL));
+        assertEquals(EquipResult.make(Type.NotSupported), cut.canEquip(ConfiguredComponentBase.ENGINE_INTERNAL));
     }
 
     @Test
@@ -120,7 +121,7 @@ public class LoadoutStandardTest {
         assertTrue(cut.getFreeMass() < 2.0); // Should be 1.5 tons free
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.lookup("PPC")));
+        assertEquals(EquipResult.make(Type.TooHeavy), cut.canEquip(ItemDB.lookup("PPC")));
     }
 
     @Test
@@ -129,7 +130,7 @@ public class LoadoutStandardTest {
         LoadoutStandard cut = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("LCT-3M"));
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.ECM));
+        assertEquals(EquipResult.make(Type.NotSupported), cut.canEquip(ItemDB.ECM));
     }
 
     @Test
@@ -140,7 +141,7 @@ public class LoadoutStandardTest {
         stack.pushAndApply(new OpSetHeatSinkType(null, cut, UpgradeDB.DOUBLE_HEATSINKS));
 
         // Execute + Verify
-        assertTrue(cut.canEquip(ItemDB.DHS));
+        assertEquals(EquipResult.SUCCESS, cut.canEquip(ItemDB.DHS));
     }
 
     @Test
@@ -149,7 +150,7 @@ public class LoadoutStandardTest {
         LoadoutStandard cut = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("LCT-3M"));
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.DHS));
+        assertEquals(EquipResult.make(Type.IncompatibleUpgrades), cut.canEquip(ItemDB.DHS));
     }
 
     @Test
@@ -171,7 +172,7 @@ public class LoadoutStandardTest {
         assertTrue(cut.getFreeMass() > 1.5); // Should be 13.5 tons free
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.DHS));
+        assertEquals(EquipResult.make(Type.NotEnoughSlots), cut.canEquip(ItemDB.DHS));
     }
 
     @Test
@@ -181,7 +182,7 @@ public class LoadoutStandardTest {
         Item jj = ItemDB.lookup("JUMP JETS - CLASS V");
 
         // Execute + Verify
-        assertTrue(cut.canEquip(jj));
+        assertEquals(EquipResult.SUCCESS, cut.canEquip(jj));
     }
 
     @Test
@@ -205,7 +206,7 @@ public class LoadoutStandardTest {
         assertTrue(cut.getChassis().isAllowed(jj));
 
         // Execute + Verify
-        assertFalse(cut.canEquip(jj));
+        assertEquals(EquipResult.make(Type.JumpJetCapacityReached), cut.canEquip(jj));
     }
 
     @Test
@@ -217,7 +218,7 @@ public class LoadoutStandardTest {
                 .lookup("XL ENGINE 100")));
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+        assertEquals(EquipResult.make(Type.EngineAlreadyEquipped), cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
     }
 
     @Test
@@ -232,7 +233,7 @@ public class LoadoutStandardTest {
         stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.LeftTorso), ItemDB.DHS));
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+        assertEquals(EquipResult.make(Location.LeftTorso, Type.NotEnoughSlotsForXLSide), cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
     }
 
     @Test
@@ -247,7 +248,7 @@ public class LoadoutStandardTest {
         stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.RightTorso), ItemDB.DHS));
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+        assertEquals(EquipResult.make(Location.RightTorso, Type.NotEnoughSlotsForXLSide), cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
     }
 
     @Test
@@ -260,7 +261,7 @@ public class LoadoutStandardTest {
         cut.getComponent(Location.CenterTorso).addItem(ItemDB.DHS);
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+        assertEquals(EquipResult.make(Location.CenterTorso, Type.NotEnoughSlots), cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
     }
 
     @Test
@@ -279,7 +280,7 @@ public class LoadoutStandardTest {
         assertEquals(12, cut.getNumCriticalSlotsFree());
 
         // Execute + Verify
-        assertTrue(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+        assertEquals(EquipResult.SUCCESS, cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
     }
 
     @Test
@@ -298,7 +299,7 @@ public class LoadoutStandardTest {
         assertEquals(11, cut.getNumCriticalSlotsFree());
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
+        assertEquals(EquipResult.make(Type.NotEnoughSlots), cut.canEquip(ItemDB.lookup("XL ENGINE 100")));
     }
 
     @Test
@@ -307,7 +308,7 @@ public class LoadoutStandardTest {
         LoadoutStandard cut = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("SDR-5V"));
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.ECM));
+        assertEquals(EquipResult.make(Type.NotSupported), cut.canEquip(ItemDB.ECM));
     }
 
     @Test
@@ -318,7 +319,7 @@ public class LoadoutStandardTest {
         stack.pushAndApply(new OpAddItem(null, cut, cut.getComponent(Location.LeftTorso), ItemDB.ECM));
 
         // Execute + Verify
-        assertFalse(cut.canEquip(ItemDB.ECM));
+        assertEquals(EquipResult.make(Location.LeftTorso, Type.NoFreeHardPoints), cut.canEquip(ItemDB.ECM));
     }
 
     @Test
@@ -372,7 +373,7 @@ public class LoadoutStandardTest {
 
         // Execute + Verify
         List<ConfiguredComponentBase> candidates = cut.getCandidateLocationsForItem(ItemDB.DHS);
-        assertEquals(4, candidates.size()); // 2x arms + 2x torso (CT has to have engine so it can't contain the DHS)
+        assertEquals(5, candidates.size()); // 2x arms + 2x torso + CT (engine can hold dhs)
         assertTrue(candidates.remove(cut.getComponent(Location.LeftArm)));
         assertTrue(candidates.remove(cut.getComponent(Location.RightArm)));
         assertTrue(candidates.remove(cut.getComponent(Location.RightTorso)));

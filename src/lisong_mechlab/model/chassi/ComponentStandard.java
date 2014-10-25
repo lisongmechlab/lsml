@@ -26,6 +26,7 @@ import java.util.List;
 
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 
@@ -98,13 +99,14 @@ public class ComponentStandard extends ComponentBase {
         }
 
         int extraslots = 0;
-        if (getLocation() == Location.CenterTorso) {
-            extraslots += 6; // There has to be an engine and they always have 6 slots.
+        if (!(aItem instanceof HeatSink)) {
+            if (getLocation() == Location.CenterTorso) {
+                extraslots += 6; // There has to be an engine and they always have 6 slots.
+            }
+            else if (getLocation().isSideTorso() && aEngine != null && aEngine.getType() == EngineType.XL) {
+                extraslots += aEngine.getSide().getNumCriticalSlots();
+            }
         }
-        else if (getLocation().isSideTorso() && aEngine != null && aEngine.getType() == EngineType.XL) {
-            extraslots += aEngine.getSide().getNumCriticalSlots();
-        }
-
         if (aItem.getNumCriticalSlots() > getSlots() - getFixedItemSlots() - extraslots) {
             return false;
         }

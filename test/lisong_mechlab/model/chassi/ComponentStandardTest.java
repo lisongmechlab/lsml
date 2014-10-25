@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
@@ -93,6 +94,19 @@ public class ComponentStandardTest extends ComponentBaseTest {
                 assertFalse(makeDefaultCUT().isAllowed(engine));
             }
         }
+    }
+    
+    /**
+     * Double HS allowed in CT
+     */
+    @Test
+    public void testIsAllowed_DhsInCt() {
+        HeatSink heatsink = Mockito.mock(HeatSink.class);
+        Mockito.when(heatsink.getHardpointType()).thenReturn(HardPointType.NONE);
+        Mockito.when(heatsink.getNumCriticalSlots()).thenReturn(3);
+
+        location = Location.CenterTorso;
+        assertTrue(makeDefaultCUT().isAllowed(heatsink));
     }
 
     /**

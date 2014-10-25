@@ -39,6 +39,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
@@ -58,7 +59,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
- * This base class right 'ere models contains the common functionality needed for both clan and inner sphere mechs.
+ * This class acts as a common base for loadouts for both Omni- and Standard- Battle 'Mechs.
  * 
  * @author Emily Björk
  * @param <T>
@@ -390,7 +391,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      */
     public List<ConfiguredComponentBase> getCandidateLocationsForItem(Item aItem) {
         List<ConfiguredComponentBase> candidates = new ArrayList<>();
-        if (!canEquipGlobal(aItem))
+        if (EquipResult.SUCCESS != canEquipGlobal(aItem))
             return candidates;
 
         int globalFreeHardPoints = 0;
@@ -444,99 +445,82 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      * <li>Enough globally free hard points of applicable type.</li>
      * </ul>
      * 
-     * @param anItem
+     * @param aItem
      *            The {@link Item} to check for.
      * @return <code>true</code> if the given {@link Item} is globally feasible on this loadout.
      */
-    public boolean canEquip(Item anItem) {
-        if (!canEquipGlobal(anItem)) {
+    public EquipResult canEquip(Item aItem) {
+        EquipResult globalResult = canEquipGlobal(aItem);
+
+        if (globalResult != EquipResult.SUCCESS) {
             // The case where adding a weapon that would cause LAA/HA to be removed will not cause an issue as omnimechs
             // where this can occur, have fixed armor and structure slots.
-            return false;
+            return globalResult;
         }
 
-        if (anItem instanceof Engine) {
-            Engine engine = (Engine) anItem;
+        if (aItem instanceof Engine) {
+            Engine engine = (Engine) aItem;
             if (engine.getType() == EngineType.XL) {
-                if (getComponent(Location.LeftTorso).getSlotsFree() < 3) {
-                    return false;
+                final int sideSlots = engine.getSide().getNumCriticalSlots();
+                if (getComponent(Location.LeftTorso).getSlotsFree() < sideSlots) {
+                    return EquipResult.make(Location.LeftTorso, Type.NotEnoughSlotsForXLSide);
                 }
-                if (getComponent(Location.RightTorso).getSlotsFree() < 3) {
-                    return false;
-                }
-                if (getNumCriticalSlotsFree() < 3 * 2 + engine.getNumCriticalSlots()) {
-                    // XL engines return same number of slots as standard engine, check enough slots to cover the
-                    // side torsii.
-                    return false;
+                if (getComponent(Location.RightTorso).getSlotsFree() < sideSlots) {
+                    return EquipResult.make(Location.RightTorso, Type.NotEnoughSlotsForXLSide);
                 }
             }
         }
 
+        EquipResult reason = EquipResult.SUCCESS;
         for (ConfiguredComponentBase part : getComponents()) {
-            if (part.canAddItem(anItem))
-                return true;
+            EquipResult componentResult = part.canAddItem(aItem);
+            if (componentResult == EquipResult.SUCCESS)
+                return componentResult;
+            if(componentResult.isMoreSpecificThan(reason)){
+                reason = componentResult;
+            }
         }
-        return false;
-    }
-
-    public boolean isValidLoadout() {
-        if (getFreeMass() < 0)
-            return false;
-
-        if (getNumCriticalSlotsFree() < 0)
-            return false;
-
-        if (getJumpJetCount() > getJumpJetsMax())
-            return false;
-
-        for (ModuleSlot moduleSlot : ModuleSlot.values()) {
-            if (getModulesOfType(moduleSlot) > getModulesMax(moduleSlot))
-                return false;
-        }
-
-        if (getArmor() > getChassis().getArmorMax())
-            return false;
-
-        for (T component : getComponents()) {
-            if (!component.isValidLoadout())
-                return false;
-        }
-        return true;
+        return reason;
     }
 
     /**
      * Checks only global constraints against the {@link Item}. These are necessary but not sufficient conditions. Local
      * conditions are needed to be sufficient.
      * 
-     * @param anItem
+     * @param aItem
      *            The {@link Item} to check.
      * @return <code>true</code> if the necessary checks are passed.
      */
-    protected boolean canEquipGlobal(Item anItem) {
-        if (anItem.getMass() > getFreeMass())
-            return false;
-        if (!getChassis().isAllowed(anItem))
-            return false;
-        if (!anItem.isCompatible(getUpgrades()))
-            return false;
+    protected EquipResult canEquipGlobal(Item aItem) {
+        if (aItem.getMass() > getFreeMass())
+            return EquipResult.make(Type.TooHeavy);
+        if (!getChassis().isAllowed(aItem))
+            return EquipResult.make(Type.NotSupported);
+        if (!aItem.isCompatible(getUpgrades()))
+            return EquipResult.make(Type.IncompatibleUpgrades);
 
-        if (anItem instanceof JumpJet && getJumpJetsMax() - getJumpJetCount() < 1)
-            return false;
+        if (aItem instanceof JumpJet && getJumpJetsMax() - getJumpJetCount() < 1)
+            return EquipResult.make(Type.JumpJetCapacityReached);
 
         // Allow engine slot heat sinks as long as there is enough free mass.
-        if (anItem instanceof HeatSink
+        if (aItem instanceof HeatSink
                 && getComponent(Location.CenterTorso).getEngineHeatsinks() < getComponent(Location.CenterTorso)
                         .getEngineHeatsinksMax())
-            return true;
+            return EquipResult.SUCCESS;
 
         // FIXME: The case where adding a weapon that would cause LAA/HA to be removed
         // while at max global slots fails even if it might succeed.
 
-        if (anItem.getNumCriticalSlots() > getNumCriticalSlotsFree())
-            return false;
-        if (anItem instanceof Engine && getEngine() != null)
-            return false;
-        return true;
+        int requiredSlots = aItem.getNumCriticalSlots();
+        if (aItem instanceof Engine && ((Engine)aItem).getType() == EngineType.XL) {
+            requiredSlots += 2 * ((Engine) aItem).getSide().getNumCriticalSlots();
+        }
+
+        if (requiredSlots > getNumCriticalSlotsFree())
+            return EquipResult.make(Type.NotEnoughSlots);
+        if (aItem instanceof Engine && getEngine() != null)
+            return EquipResult.make(Type.EngineAlreadyEquipped);
+        return EquipResult.SUCCESS;
     }
 
     public abstract MovementProfile getMovementProfile();

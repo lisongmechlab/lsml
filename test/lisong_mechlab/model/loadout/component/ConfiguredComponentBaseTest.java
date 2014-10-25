@@ -35,6 +35,8 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.util.ListArrayUtils;
 
 import org.junit.Test;
@@ -65,7 +67,7 @@ public abstract class ConfiguredComponentBaseTest {
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
         Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
 
-        assertTrue(makeDefaultCUT().canAddItem(item));
+        assertSame(EquipResult.SUCCESS, makeDefaultCUT().canAddItem(item));
     }
 
     /**
@@ -78,7 +80,7 @@ public abstract class ConfiguredComponentBaseTest {
         Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
 
         Mockito.when(internal.isAllowed(item)).thenReturn(false);
-        assertFalse(makeDefaultCUT().canAddItem(item));
+        assertEquals(EquipResult.make(location, Type.NotSupported) ,makeDefaultCUT().canAddItem(item));
     }
 
     /**
@@ -112,11 +114,11 @@ public abstract class ConfiguredComponentBaseTest {
 
         // Test tight fit.
         Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
-        assertTrue(cut.canAddItem(item));
+        assertEquals(EquipResult.SUCCESS, cut.canAddItem(item));
 
         // Test too big
         Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
-        assertFalse(cut.canAddItem(item));
+        assertEquals(EquipResult.make(location, Type.NotEnoughSlots), cut.canAddItem(item));
     }
 
     @Test
