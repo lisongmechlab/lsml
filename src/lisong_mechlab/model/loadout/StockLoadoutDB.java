@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lisong_mechlab.model.DataCache;
-import lisong_mechlab.model.StockLoadout;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisStandard;
 

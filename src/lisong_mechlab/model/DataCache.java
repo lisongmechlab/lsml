@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lisong_mechlab.model.StockLoadout.StockComponent;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.ComponentStandard;
@@ -67,6 +66,8 @@ import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.item.TargetingComputer;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.item.WeaponModule;
+import lisong_mechlab.model.loadout.StockLoadout;
+import lisong_mechlab.model.loadout.StockLoadout.StockComponent;
 import lisong_mechlab.model.loadout.converters.HardPointConverter;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;

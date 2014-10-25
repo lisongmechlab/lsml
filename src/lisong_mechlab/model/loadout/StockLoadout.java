@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.model;
+package lisong_mechlab.model.loadout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +27,6 @@ import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;

@@ -19,7 +19,6 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import lisong_mechlab.model.StockLoadout;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.Location;
