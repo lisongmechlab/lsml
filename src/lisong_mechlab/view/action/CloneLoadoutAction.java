@@ -45,6 +45,6 @@ public class CloneLoadoutAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        ProgramInit.lsml().mechLabPane.openLoadout(loadout.clone(ProgramInit.lsml().xBar));
+        ProgramInit.lsml().mechLabPane.openLoadout(loadout.copy());
     }
 }

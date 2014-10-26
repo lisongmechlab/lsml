@@ -35,8 +35,8 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.EquipResult;
-import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.EquipResult.Type;
+import lisong_mechlab.model.loadout.LoadoutOmniMech;
 
 /**
  * This class models a configured {@link OmniPod} on an {@link LoadoutOmniMech}.
@@ -120,8 +120,8 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
     }
 
     @Override
-    public EquipResult canAddItem(Item aItem) {
-        EquipResult superResult = super.canAddItem(aItem);
+    public EquipResult canEquip(Item aItem) {
+        EquipResult superResult = super.canEquip(aItem);
         if (superResult != EquipResult.SUCCESS) {
             return superResult;
         }

@@ -41,6 +41,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.OperationStack;
@@ -73,9 +74,9 @@ public class LoadoutCoderV3Test {
         for (ChassisBase chassis : chassii) {
             LoadoutBase<?> loadout;
             if (chassis instanceof ChassisOmniMech)
-                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech) chassis);
+                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
             else
-                loadout = new LoadoutStandard((ChassisStandard) chassis);
+                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
             stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
 
             byte[] result = cut.encode(loadout);
@@ -108,15 +109,15 @@ public class LoadoutCoderV3Test {
                 Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
                 Matcher m = pat.matcher(line);
                 m.matches();
-                ChassisBase chassi = ChassisDB.lookup(m.group(1));
+                ChassisBase chassis = ChassisDB.lookup(m.group(1));
                 String lsml = m.group(2);
 
                 LoadoutBase<?> reference;
-                if (chassi instanceof ChassisOmniMech)
-                    reference = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech) chassi);
+                if (chassis instanceof ChassisOmniMech)
+                    reference = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
                 else
-                    reference = new LoadoutStandard((ChassisStandard) chassi);
-                stack.pushAndApply(new OpLoadStock(chassi, reference, null));
+                    reference = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+                stack.pushAndApply(new OpLoadStock(chassis, reference, null));
 
                 LoadoutBase<?> decoded = cut.decode(base64.decode(lsml.toCharArray()));
 

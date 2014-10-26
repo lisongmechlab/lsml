@@ -36,9 +36,9 @@ import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.EquipResult;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.util.ListArrayUtils;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -150,7 +150,7 @@ public abstract class ConfiguredComponentBase {
      * <p>
      * This is intended for use only from {@link OpAddItem}, {@link OpRemoveItem} and relatives.
      * <p>
-     * Please note that {@link #canAddItem(Item)} must return true prior to a call to {@link #addItem(Item)}.
+     * Please note that {@link #canEquip(Item)} must return true prior to a call to {@link #addItem(Item)}.
      * 
      * @param aItem
      *            The item to add.
@@ -167,7 +167,7 @@ public abstract class ConfiguredComponentBase {
      *            The item to check with.
      * @return <code>true</code> if local constraints allow the item to be equipped here.
      */
-    public EquipResult canAddItem(Item aItem) {
+    public EquipResult canEquip(Item aItem) {
         if (!getInternalComponent().isAllowed(aItem))
             return EquipResult.make(getInternalComponent().getLocation(), Type.NotSupported);
 

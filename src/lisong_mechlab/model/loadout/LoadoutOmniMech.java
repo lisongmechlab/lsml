@@ -27,16 +27,13 @@ import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.QuirkedMovementProfile;
 import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ModuleSlot;
-import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.OperationStack.Operation;
-import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This class represents a configured loadout for an omnimech.
@@ -48,8 +45,12 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     transient private final Upgrades               upgrades;
 
     /**
+     * Creates a new, empty loadout.
+     * 
      * @param aFactory
+     *            The {@link Factory} used to construct the components.
      * @param aChassis
+     *            The chassis to base this loadout on.
      */
     public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis) {
         super(aFactory, aChassis);
@@ -62,11 +63,15 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     }
 
     /**
-     * @param aOmniPodFactory
+     * Copy constructor.
+     * 
+     * @param aFactory
+     *            The {@link Factory} used to construct the components.
      * @param aLoadoutOmniMech
+     *            The {@link LoadoutOmniMech} to copy.
      */
-    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aOmniPodFactory, LoadoutOmniMech aLoadoutOmniMech) {
-        super(aOmniPodFactory, aLoadoutOmniMech);
+    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, LoadoutOmniMech aLoadoutOmniMech) {
+        super(aFactory, aLoadoutOmniMech);
         movementProfile = new QuirkedMovementProfile(getChassis().getMovementProfileBase());
         for (ConfiguredComponentOmniMech component : getComponents()) {
             movementProfile.addMovementModifier(component.getOmniPod().getQuirks());
@@ -128,15 +133,9 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     }
 
     @Override
-    protected EquipResult canEquipGlobal(Item aItem) {
-        if (aItem instanceof Engine)
-            return EquipResult.make(Type.EngineAlreadyEquipped);
-        return super.canEquipGlobal(aItem);
-    }
-
-    @Override
-    public LoadoutOmniMech clone(MessageXBar aXBar) {
-        return new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), this);
+    public LoadoutOmniMech copy() {
+        // TODO: Remove hard-coded factory
+        return new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), this);
     }
 
     @Override

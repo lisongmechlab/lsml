@@ -80,7 +80,7 @@ public class OpSetHeatSinkTypeTest {
                 return null;
             }
         }).when(component).addItem(newType);
-        Mockito.when(component.canAddItem(newType)).then(new Answer<EquipResult>() {
+        Mockito.when(component.canEquip(newType)).then(new Answer<EquipResult>() {
             @Override
             public EquipResult answer(InvocationOnMock aInvocation) throws Throwable {
                 if( equippedHs < maxEquippableNewType){

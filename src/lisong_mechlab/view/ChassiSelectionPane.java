@@ -58,6 +58,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.metrics.TopSpeed;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
@@ -252,17 +253,17 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
                 @Override
                 public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected,
                         boolean aHasFocus, int aRow, int aColumn) {
-                    ChassisBase chassi = (ChassisBase) aValue;
+                    ChassisBase chassis = (ChassisBase) aValue;
                     LoadoutBase<?> stock;
                     if (aValue instanceof ChassisStandard) {
-                        stock = new LoadoutStandard((ChassisStandard) chassi);
+                        stock = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
                         OperationStack stack = new OperationStack(0);
-                        stack.pushAndApply(new OpLoadStock(chassi, stock, null));
+                        stack.pushAndApply(new OpLoadStock(chassis, stock, null));
                     }
                     else if (aValue instanceof ChassisOmniMech) {
-                        stock = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech) chassi);
+                        stock = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
                         OperationStack stack = new OperationStack(0);
-                        stack.pushAndApply(new OpLoadStock(chassi, stock, null));
+                        stack.pushAndApply(new OpLoadStock(chassis, stock, null));
                     }
                     else {
                         throw new IllegalArgumentException("Expected a chassis type as value!");
@@ -322,15 +323,15 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
                             final int column = target.getSelectedColumn();
                             final Object cell = target.getValueAt(row, column);
                             if (cell instanceof ChassisStandard) {
-                                ChassisStandard chassi = (ChassisStandard) cell;
+                                ChassisStandard chassis = (ChassisStandard) cell;
                                 ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                                ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(chassi));
+                                ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis, UpgradesMutable.standardUpgrades()));
                             }
                             else if (cell instanceof ChassisOmniMech) {
                                 ChassisOmniMech chassi = (ChassisOmniMech) cell;
                                 ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
                                 ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutOmniMech(ComponentBuilder
-                                        .getOmniPodFactory(), chassi));
+                                        .getOmniComponentFactory(), chassi));
 
                             }
                         }

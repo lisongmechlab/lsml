@@ -119,8 +119,8 @@ public class OpSetGuidanceTypeTest {
         Mockito.when(newGuidance.upgrade(narc)).thenReturn(narc);
         Mockito.when(newGuidance.upgrade(lrmAmmo)).thenReturn(lrmAmmoArtemis);
         Mockito.when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
-        Mockito.when(mlc.rl.canAddItem(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
-        Mockito.when(mlc.lt.canAddItem(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
+        Mockito.when(mlc.rl.canEquip(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
+        Mockito.when(mlc.lt.canEquip(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
         Mockito.when(mlc.rl.getItemsEquipped()).thenReturn(rlItems);
         Mockito.when(mlc.lt.getItemsEquipped()).thenReturn(ltItems);
         Mockito.when(mlc.rl.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);

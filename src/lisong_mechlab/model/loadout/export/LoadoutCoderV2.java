@@ -45,6 +45,7 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpAddModule;
 import lisong_mechlab.model.loadout.OpLoadStock;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
@@ -56,6 +57,7 @@ import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
@@ -118,11 +120,11 @@ public class LoadoutCoderV2 implements LoadoutCoder {
             // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
             short chassiId = (short) (((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF));
 
-            ChassisBase chassi = ChassisDB.lookup(chassiId);
-            if (!(chassi instanceof ChassisStandard)) {
+            ChassisBase chassis = ChassisDB.lookup(chassiId);
+            if (!(chassis instanceof ChassisStandard)) {
                 throw new DecodingException("LSML link format v2 does not support omni mechs.");
             }
-            loadout = new LoadoutStandard((ChassisStandard) chassi);
+            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
             loadout.getEfficiencies().setCoolRun((upeff & (1 << 4)) != 0, null);
             loadout.getEfficiencies().setHeatContainment((upeff & (1 << 3)) != 0, null);
             loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 2)) != 0, null);
@@ -222,7 +224,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
         for (ChassisBase chassis : chassii) {
             if (!(chassis instanceof ChassisStandard))
                 continue;
-            LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) chassis);
+            LoadoutStandard loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
             stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
             System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
         }

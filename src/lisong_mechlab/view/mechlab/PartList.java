@@ -331,7 +331,7 @@ public class PartList extends JList<Item> {
 
         switch (state.getRenderType()) {
             case EngineHeatSink: {
-                if (aItem instanceof HeatSink && EquipResult.SUCCESS == loadout.canEquip(aItem) && EquipResult.SUCCESS == component.canAddItem(aItem)) {
+                if (aItem instanceof HeatSink && EquipResult.SUCCESS == loadout.canEquip(aItem) && EquipResult.SUCCESS == component.canEquip(aItem)) {
                     opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
                 }
             }
@@ -346,7 +346,7 @@ public class PartList extends JList<Item> {
                 // Fall through
             }
             case Empty: {
-                if (EquipResult.SUCCESS == loadout.canEquip(aItem) && EquipResult.SUCCESS == component.canAddItem(aItem)) {
+                if (EquipResult.SUCCESS == loadout.canEquip(aItem) && EquipResult.SUCCESS == component.canEquip(aItem)) {
                     opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
                 }
             }
