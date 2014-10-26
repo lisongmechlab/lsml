@@ -81,7 +81,7 @@ public class OpAddItem extends OpItemBase {
             throw new IllegalArgumentException("Can't add " + item + " to " + loadout.getName() + "! Reason:"
                     + result.toString());
 
-        result = component.canAddItem(item);
+        result = component.canEquip(item);
         if (result != EquipResult.SUCCESS)
             throw new IllegalArgumentException("Can't add " + item + " to "
                     + component.getInternalComponent().getLocation() + "! Reason: " + result.toString());

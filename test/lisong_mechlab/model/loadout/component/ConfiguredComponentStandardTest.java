@@ -52,13 +52,6 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
     protected ComponentStandard stdInternal;
     protected List<HardPoint>   hardPoints = new ArrayList<>();
 
-    @Before
-    public void setup() {
-        stdInternal = Mockito.mock(ComponentStandard.class);
-        internal = stdInternal;
-        Mockito.when(internal.isAllowed(Matchers.any(Item.class))).thenReturn(true);
-    }
-
     @Override
     protected ConfiguredComponentStandard makeDefaultCUT() {
         Mockito.when(internal.getLocation()).thenReturn(location);
@@ -71,38 +64,101 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
         return new ConfiguredComponentStandard(stdInternal, autoArmor);
     }
 
-    /**
-     * We do not allow two C.A.S.E. in the same component as that is just bonkers.
-     */
-    @Test
-    public final void testCanAddItem_TwoCASE() {
-        ConfiguredComponentBase cut = makeDefaultCUT();
-        cut.addItem(ItemDB.CASE);
-        assertEquals(EquipResult.make(location, Type.ComponentAlreadyHasCase), cut.canAddItem(ItemDB.CASE));
+    @Before
+    public void setup() {
+        stdInternal = Mockito.mock(ComponentStandard.class);
+        internal = stdInternal;
+        Mockito.when(internal.isAllowed(Matchers.any(Item.class))).thenReturn(true);
     }
 
-    /**
-     * Having C.A.S.E. does not prohibit other items.
-     */
     @Test
-    public final void testCanAddItem_OneCASE() {
-        ConfiguredComponentBase cut = makeDefaultCUT();
-        cut.addItem(ItemDB.CASE);
-
-        Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
-
-        assertEquals(EquipResult.SUCCESS, cut.canAddItem(item));
-    }
+        public void testCanEquip_AllHardpointsTaken() {
+            Item item = Mockito.mock(Item.class);
+            Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
+    
+            Mockito.when(stdInternal.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
+            hardPoints.add(new HardPoint(HardPointType.ENERGY));
+            ConfiguredComponentStandard cut = makeDefaultCUT();
+            cut.addItem(item);
+    
+            assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), cut.canEquip(item));
+        }
 
     /**
-     * C.A.S.E. is allowed (provided internal component allows it).
-     */
+         * C.A.S.E. is allowed (provided internal component allows it).
+         */
+        @Test
+        public final void testCanEquip_CASEAllowed() {
+            assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(ItemDB.CASE));
+        }
+
     @Test
-    public final void testCanAddItem_CASEAllowed() {
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canAddItem(ItemDB.CASE));
-    }
+        public void testCanEquip_EngineHS() {
+            Engine engine = Mockito.mock(Engine.class);
+            Mockito.when(engine.getNumCriticalSlots()).thenReturn(slots);
+            Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(2);
+            Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+            
+            HeatSink heatSink = Mockito.mock(HeatSink.class);
+            Mockito.when(heatSink.getNumCriticalSlots()).thenReturn(3);
+            Mockito.when(heatSink.getHardpointType()).thenReturn(HardPointType.NONE);
+    
+            ConfiguredComponentStandard cut = makeDefaultCUT();
+            cut.addItem(engine);
+    
+            assertEquals(EquipResult.SUCCESS, cut.canEquip(heatSink));
+            cut.addItem(heatSink);
+            assertEquals(EquipResult.SUCCESS, cut.canEquip(heatSink));
+            cut.addItem(heatSink);
+            assertEquals(EquipResult.make(location, Type.NotEnoughSlots), cut.canEquip(heatSink));
+        }
+
+    @Test
+        public void testCanEquip_HasHardpoint() {
+            Item item = Mockito.mock(Item.class);
+            Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
+    
+            Mockito.when(stdInternal.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
+            hardPoints.add(new HardPoint(HardPointType.ENERGY));
+    
+            assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
+        }
+
+    @Test
+        public void testCanEquip_NoHardpoint() {
+            Item item = Mockito.mock(Item.class);
+            Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
+    
+            assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), makeDefaultCUT().canEquip(item));
+        }
+
+    /**
+         * Having C.A.S.E. does not prohibit other items.
+         */
+        @Test
+        public final void testCanEquip_OneCASE() {
+            ConfiguredComponentBase cut = makeDefaultCUT();
+            cut.addItem(ItemDB.CASE);
+    
+            Item item = Mockito.mock(Item.class);
+            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+            Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+    
+            assertEquals(EquipResult.SUCCESS, cut.canEquip(item));
+        }
+
+    /**
+         * We do not allow two C.A.S.E. in the same component as that is just bonkers.
+         */
+        @Test
+        public final void testCanEquip_TwoCASE() {
+            ConfiguredComponentBase cut = makeDefaultCUT();
+            cut.addItem(ItemDB.CASE);
+            assertEquals(EquipResult.make(location, Type.ComponentAlreadyHasCase), cut.canEquip(ItemDB.CASE));
+        }
 
     @Test
     public void testCopyCtorEquals() {
@@ -131,62 +187,6 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
         assertEquals(baydoors, makeDefaultCUT().hasMissileBayDoors());
         baydoors = !baydoors;
         assertEquals(baydoors, makeDefaultCUT().hasMissileBayDoors());
-    }
-
-    @Test
-    public void testIsAllowed_EngineHS() {
-        Engine engine = Mockito.mock(Engine.class);
-        Mockito.when(engine.getNumCriticalSlots()).thenReturn(slots);
-        Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(2);
-        Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
-        
-        HeatSink heatSink = Mockito.mock(HeatSink.class);
-        Mockito.when(heatSink.getNumCriticalSlots()).thenReturn(3);
-        Mockito.when(heatSink.getHardpointType()).thenReturn(HardPointType.NONE);
-
-        ConfiguredComponentStandard cut = makeDefaultCUT();
-        cut.addItem(engine);
-
-        assertEquals(EquipResult.SUCCESS, cut.canAddItem(heatSink));
-        cut.addItem(heatSink);
-        assertEquals(EquipResult.SUCCESS, cut.canAddItem(heatSink));
-        cut.addItem(heatSink);
-        assertEquals(EquipResult.make(location, Type.NotEnoughSlots), cut.canAddItem(heatSink));
-    }
-
-    @Test
-    public void testIsAllowed_NoHardpoint() {
-        Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
-
-        assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), makeDefaultCUT().canAddItem(item));
-    }
-
-    @Test
-    public void testIsAllowed_HasHardpoint() {
-        Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
-
-        Mockito.when(stdInternal.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
-        hardPoints.add(new HardPoint(HardPointType.ENERGY));
-
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canAddItem(item));
-    }
-
-    @Test
-    public void testIsAllowed_AllHardpointsTaken() {
-        Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
-
-        Mockito.when(stdInternal.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
-        hardPoints.add(new HardPoint(HardPointType.ENERGY));
-        ConfiguredComponentStandard cut = makeDefaultCUT();
-        cut.addItem(item);
-
-        assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), cut.canAddItem(item));
     }
 
 }

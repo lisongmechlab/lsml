@@ -38,8 +38,10 @@ import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.message.MessageXBar;
 
@@ -48,6 +50,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * Tests for verifying save-load behaviour of Loadouts.
@@ -80,14 +84,14 @@ public class LoadoutSerializationTest {
      */
     @Test
     public void testEmptyLoadout() {
-        ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("CPLT-K2");
-        LoadoutStandard cut = new LoadoutStandard(chassi);
+        ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("CPLT-K2");
+        LoadoutStandard cut = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis, UpgradesMutable.standardUpgrades());
 
         assertEquals(0, cut.getArmor());
-        assertSame(chassi, cut.getChassis());
+        assertSame(chassis, cut.getChassis());
         assertNull(cut.getEngine());
         assertEquals(0, cut.getHeatsinksCount());
-        assertEquals(chassi.getNameShort(), cut.getName());
+        assertEquals(chassis.getNameShort(), cut.getName());
         assertEquals(21, cut.getNumCriticalSlotsUsed()); // 21 for empty K2
         assertEquals(57, cut.getNumCriticalSlotsFree()); // 57 for empty K2
         assertEquals(8, cut.getComponents().size());
@@ -387,6 +391,12 @@ public class LoadoutSerializationTest {
         assertFalse(efficiencies.hasHeatContainment());
         assertFalse(efficiencies.hasSpeedTweak());
     }
+    
+    @Test
+    public void testGetJumpJetCount_noJJCapability() throws Exception {
+        LoadoutStandard cut = new LoadoutStandard("HBK-4J");
+        assertEquals(0, cut.getJumpJetCount());
+    }
 
     // TODO: Move these to statistics test!
     /*
@@ -444,4 +454,16 @@ public class LoadoutSerializationTest {
      * }
      */
 
+    /**
+     * Even if DHS are serialized before the Engine, they should be added as engine heat sinks.
+     */
+    @Test
+    public void testUnMarshalDhsBeforeEngine() {
+        String xml = "<?xml version=\"1.0\" ?><loadout name=\"AS7-BH\" chassi=\"AS7-BH\"><upgrades version=\"2\"><armor>2810</armor><structure>3100</structure><guidance>3051</guidance><heatsinks>3002</heatsinks></upgrades><efficiencies><speedTweak>false</speedTweak><coolRun>false</coolRun><heatContainment>false</heatContainment><anchorTurn>false</anchorTurn><doubleBasics>false</doubleBasics><fastfire>false</fastfire></efficiencies><component part=\"Head\" armor=\"0\" /><component part=\"LeftArm\" armor=\"0\" /><component part=\"LeftLeg\" armor=\"0\" /><component part=\"LeftTorso\" armor=\"0/0\" /><component part=\"CenterTorso\" armor=\"0/0\"><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3278</item></component><component part=\"RightTorso\" armor=\"0/0\" /><component part=\"RightLeg\" armor=\"0\" /><component part=\"RightArm\" armor=\"0\" /></loadout>";
+
+        XStream stream = LoadoutBase.loadoutXstream();
+        LoadoutStandard loadout = (LoadoutStandard) stream.fromXML(xml);
+
+        assertEquals(6, loadout.getComponent(Location.CenterTorso).getEngineHeatsinks());
+    }
 }

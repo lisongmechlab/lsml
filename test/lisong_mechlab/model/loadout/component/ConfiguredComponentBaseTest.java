@@ -59,67 +59,67 @@ public abstract class ConfiguredComponentBaseTest {
     protected abstract ConfiguredComponentBase makeDefaultCUT();
 
     /**
-     * Simple items without any requirements are equippable.
-     */
-    @Test
-    public final void testCanAddItem_Simple() {
-        Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
-
-        assertSame(EquipResult.SUCCESS, makeDefaultCUT().canAddItem(item));
-    }
-
-    /**
-     * No item is equippable if the internal component can't support it.
-     */
-    @Test
-    public final void testCanAddItem_NoInternalSupport() {
-        Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
-
-        Mockito.when(internal.isAllowed(item)).thenReturn(false);
-        assertEquals(EquipResult.make(location, Type.NotSupported) ,makeDefaultCUT().canAddItem(item));
-    }
+         * Simple items without any requirements are equippable.
+         */
+        @Test
+        public final void testCanEquip_Simple() {
+            Item item = Mockito.mock(Item.class);
+            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+            Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+    
+            assertSame(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
+        }
 
     /**
-     * Item's are not equippable if there is no space for them
-     */
-    @Test
-    public final void testCanAddItem_NoSpace() {
-        // Fixed items setup
-        internalFixedSlots = 2;
-        Item fixed1 = Mockito.mock(Item.class);
-        Mockito.when(fixed1.getNumCriticalSlots()).thenReturn(internalFixedSlots);
-        internalFixedItems.add(fixed1);
+         * No item is equippable if the internal component can't support it.
+         */
+        @Test
+        public final void testCanEquip_NoInternalSupport() {
+            Item item = Mockito.mock(Item.class);
+            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+            Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+    
+            Mockito.when(internal.isAllowed(item)).thenReturn(false);
+            assertEquals(EquipResult.make(location, Type.NotSupported) ,makeDefaultCUT().canEquip(item));
+        }
 
-        // Setup existing items in the component
-        Item item1 = Mockito.mock(Item.class);
-        Mockito.when(item1.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item1.getNumCriticalSlots()).thenReturn(slots / 4);
-
-        int freeSlots = 2;
-        Item item2 = Mockito.mock(Item.class);
-        Mockito.when(item2.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item2.getNumCriticalSlots()).thenReturn(slots - slots / 4 - freeSlots - internalFixedSlots);
-
-        ConfiguredComponentBase cut = makeDefaultCUT();
-        cut.addItem(item1);
-        cut.addItem(item2);
-
-        // Item to add
-        Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-
-        // Test tight fit.
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
-        assertEquals(EquipResult.SUCCESS, cut.canAddItem(item));
-
-        // Test too big
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
-        assertEquals(EquipResult.make(location, Type.NotEnoughSlots), cut.canAddItem(item));
-    }
+    /**
+         * Item's are not equippable if there is no space for them
+         */
+        @Test
+        public final void testCanEquip_NoSpace() {
+            // Fixed items setup
+            internalFixedSlots = 2;
+            Item fixed1 = Mockito.mock(Item.class);
+            Mockito.when(fixed1.getNumCriticalSlots()).thenReturn(internalFixedSlots);
+            internalFixedItems.add(fixed1);
+    
+            // Setup existing items in the component
+            Item item1 = Mockito.mock(Item.class);
+            Mockito.when(item1.getHardpointType()).thenReturn(HardPointType.NONE);
+            Mockito.when(item1.getNumCriticalSlots()).thenReturn(slots / 4);
+    
+            int freeSlots = 2;
+            Item item2 = Mockito.mock(Item.class);
+            Mockito.when(item2.getHardpointType()).thenReturn(HardPointType.NONE);
+            Mockito.when(item2.getNumCriticalSlots()).thenReturn(slots - slots / 4 - freeSlots - internalFixedSlots);
+    
+            ConfiguredComponentBase cut = makeDefaultCUT();
+            cut.addItem(item1);
+            cut.addItem(item2);
+    
+            // Item to add
+            Item item = Mockito.mock(Item.class);
+            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+    
+            // Test tight fit.
+            Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
+            assertEquals(EquipResult.SUCCESS, cut.canEquip(item));
+    
+            // Test too big
+            Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
+            assertEquals(EquipResult.make(location, Type.NotEnoughSlots), cut.canEquip(item));
+        }
 
     @Test
     public final void testAddRemoveCanRemoveItem() throws Exception {

@@ -110,7 +110,7 @@ public class OpLoadStockTest {
             loadout = new LoadoutStandard((ChassisStandard) aChassis);
         }
         else if (aChassis instanceof ChassisOmniMech) {
-            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech) aChassis);
+            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) aChassis);
         }
         else {
             fail("Unknown chassis type");

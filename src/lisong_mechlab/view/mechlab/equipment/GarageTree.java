@@ -39,6 +39,7 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ItemTransferHandler;
 import lisong_mechlab.view.ProgramInit;
@@ -97,13 +98,13 @@ public class GarageTree extends JTree {
                     if (clicked instanceof ChassisBase) {
                         LoadoutBase<?> loadout = null;
                         if (clicked instanceof ChassisStandard) {
-                            ChassisStandard chassi = (ChassisStandard) clicked;
-                            loadout = new LoadoutStandard(chassi);
+                            ChassisStandard chassis = (ChassisStandard) clicked;
+                            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis, UpgradesMutable.standardUpgrades());
 
                         }
                         else if (clicked instanceof ChassisOmniMech) {
                             ChassisOmniMech chassi = (ChassisOmniMech) clicked;
-                            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi);
+                            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), chassi);
                         }
                         else {
                             throw new RuntimeException("Unknown chassis type!");

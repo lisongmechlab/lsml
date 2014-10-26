@@ -172,9 +172,9 @@ public class MechGarageTest {
         // Setup
         LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
         LoadoutStandard lo2 = new LoadoutStandard("as7-k");
-        LoadoutOmniMech lo3 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech lo3 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("nva-prime"));
-        LoadoutOmniMech lo4 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech lo4 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("tbr-c"));
 
         OperationStack stack = new OperationStack(0);
@@ -295,7 +295,9 @@ public class MechGarageTest {
         assertEquals(64, garage.getMechs().size());
 
         for (LoadoutBase<?> loadout : garage.getMechs()) {
-            LoadoutBase<?> clone = loadout.clone(xBar);
+            LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+            
+            LoadoutStandard clone = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), loadoutStandard);
             stack.pushAndApply(new OpLoadStock(clone.getChassis(), clone, xBar));
 
             assertEquals(clone, loadout);
@@ -310,7 +312,7 @@ public class MechGarageTest {
     @Test
     public void testActuatorStateSaved() throws IOException {
         ChassisOmniMech chassi = (ChassisOmniMech) ChassisDB.lookup("WHK-B");
-        LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), chassi);
+        LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), chassi);
 
         loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, false);
 

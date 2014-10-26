@@ -53,7 +53,6 @@ import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.ListArrayUtils;
-import lisong_mechlab.util.message.MessageXBar;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
@@ -400,10 +399,8 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         for (ConfiguredComponentBase part : components) {
             ComponentBase internal = part.getInternalComponent();
             if (internal.isAllowed(aItem, getEngine())) {
-                if (aItem.getHardpointType() != HardPointType.NONE && part instanceof ConfiguredComponentOmniMech) {
-                    ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) part;
-                    if (componentOmniMech.getOmniPod().getHardPointCount(aItem.getHardpointType()) < 1)
-                        continue;
+                if (aItem.getHardpointType() != HardPointType.NONE && part.getHardPointCount(hardpointType) < 1) {
+                    continue;
                 }
                 candidates.add(part);
             }
@@ -469,14 +466,15 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
                     return EquipResult.make(Location.RightTorso, Type.NotEnoughSlotsForXLSide);
                 }
             }
+            return getComponent(Location.CenterTorso).canEquip(engine);
         }
 
         EquipResult reason = EquipResult.SUCCESS;
         for (ConfiguredComponentBase part : getComponents()) {
-            EquipResult componentResult = part.canAddItem(aItem);
+            EquipResult componentResult = part.canEquip(aItem);
             if (componentResult == EquipResult.SUCCESS)
                 return componentResult;
-            if(componentResult.isMoreSpecificThan(reason)){
+            if (componentResult.isMoreSpecificThan(reason)) {
                 reason = componentResult;
             }
         }
@@ -492,10 +490,10 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      * @return <code>true</code> if the necessary checks are passed.
      */
     protected EquipResult canEquipGlobal(Item aItem) {
-        if (aItem.getMass() > getFreeMass())
-            return EquipResult.make(Type.TooHeavy);
         if (!getChassis().isAllowed(aItem))
             return EquipResult.make(Type.NotSupported);
+        if (aItem.getMass() > getFreeMass())
+            return EquipResult.make(Type.TooHeavy);
         if (!aItem.isCompatible(getUpgrades()))
             return EquipResult.make(Type.IncompatibleUpgrades);
 
@@ -503,34 +501,36 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
             return EquipResult.make(Type.JumpJetCapacityReached);
 
         // Allow engine slot heat sinks as long as there is enough free mass.
-        if (aItem instanceof HeatSink
-                && getComponent(Location.CenterTorso).getEngineHeatsinks() < getComponent(Location.CenterTorso)
-                        .getEngineHeatsinksMax())
+        ConfiguredComponentBase ct = getComponent(Location.CenterTorso);
+        if (aItem instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax())
             return EquipResult.SUCCESS;
 
         // FIXME: The case where adding a weapon that would cause LAA/HA to be removed
         // while at max global slots fails even if it might succeed.
 
         int requiredSlots = aItem.getNumCriticalSlots();
-        if (aItem instanceof Engine && ((Engine)aItem).getType() == EngineType.XL) {
-            requiredSlots += 2 * ((Engine) aItem).getSide().getNumCriticalSlots();
+        if (aItem instanceof Engine) {
+            if (getEngine() != null) {
+                return EquipResult.make(Type.EngineAlreadyEquipped);
+            }
+
+            Engine engine = (Engine) aItem;
+            if (engine.getType() == EngineType.XL) {
+                requiredSlots += 2 * engine.getSide().getNumCriticalSlots();
+            }
         }
 
         if (requiredSlots > getNumCriticalSlotsFree())
             return EquipResult.make(Type.NotEnoughSlots);
-        if (aItem instanceof Engine && getEngine() != null)
-            return EquipResult.make(Type.EngineAlreadyEquipped);
         return EquipResult.SUCCESS;
     }
 
     public abstract MovementProfile getMovementProfile();
 
     /**
-     * @param aXBar
-     *            A {@link MessageXBar} to send messages on.
      * @return A deep copy of <code>this</code>.
      */
-    public abstract LoadoutBase<?> clone(MessageXBar aXBar);
+    public abstract LoadoutBase<?> copy();
 
     /**
      * @return A String containing a HTML formatted summary of the quirks for this loadout.

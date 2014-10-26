@@ -43,6 +43,7 @@ import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.view.ProgramInit;
 
@@ -123,21 +124,22 @@ public class LoadoutConverter implements Converter {
 
     private LoadoutBase<?> parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         String name = aReader.getAttribute("name");
-        ChassisBase chassi = ChassisDB.lookup(aReader.getAttribute("chassis"));
+        ChassisBase chassis = ChassisDB.lookup(aReader.getAttribute("chassis"));
         LoadoutBase<?> loadoutBase;
         LoadoutBuilder builder = new LoadoutBuilder();
 
-        if (chassi instanceof ChassisStandard) {
-            LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) chassi);
+        if (chassis instanceof ChassisStandard) {
+            LoadoutStandard loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(),
+                    (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
             loadoutBase = loadout;
         }
-        else if (chassi instanceof ChassisOmniMech) {
-            LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
-                    (ChassisOmniMech) chassi);
+        else if (chassis instanceof ChassisOmniMech) {
+            LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
+                    (ChassisOmniMech) chassis);
             loadoutBase = loadout;
         }
         else {
-            throw new RuntimeException("Unsupported chassis class: " + chassi.getClass());
+            throw new RuntimeException("Unsupported chassis class: " + chassis.getClass());
         }
 
         builder.push(new OpRename(loadoutBase, null, name));
@@ -200,14 +202,15 @@ public class LoadoutConverter implements Converter {
     }
 
     private LoadoutBase<?> parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        String chassiVariation = aReader.getAttribute("chassi");
+        String chassisVariation = aReader.getAttribute("chassi"); // XXX: Fix typo
         String name = aReader.getAttribute("name");
-        ChassisBase chassi = ChassisDB.lookup(chassiVariation);
-        if (!(chassi instanceof ChassisStandard))
+        ChassisBase chassis = ChassisDB.lookup(chassisVariation);
+        if (!(chassis instanceof ChassisStandard))
             throw new RuntimeException("Error parsing loadout: " + name
                     + " expected standard mech but found an omni mech chassis.");
 
-        LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) chassi);
+        LoadoutStandard loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(),
+                (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
         LoadoutBuilder builder = new LoadoutBuilder();
         builder.push(new OpRename(loadout, null, name));
 

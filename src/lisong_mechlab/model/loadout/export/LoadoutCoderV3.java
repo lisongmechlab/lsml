@@ -74,6 +74,7 @@ import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
@@ -403,9 +404,9 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         ChassisBase chassis = ChassisDB.lookup(chassisId);
 
         if (chassis instanceof ChassisOmniMech) {
-            return new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech) chassis);
+            return new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
         }
-        return new LoadoutStandard((ChassisStandard) chassis);
+        return new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
     }
 
     private void writeChassis(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout) {
@@ -440,9 +441,9 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         for (ChassisBase chassis : chassii) {
             LoadoutBase<?> loadout;
             if (chassis instanceof ChassisStandard)
-                loadout = new LoadoutStandard((ChassisStandard) chassis);
+                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
             else
-                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech) chassis);
+                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
 
             stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
             System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
@@ -504,10 +505,10 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         for (ChassisBase chassis : chassii) {
             final LoadoutBase<?> loadout;
             if (chassis instanceof ChassisStandard) {
-                loadout = new LoadoutStandard((ChassisStandard) chassis);
+                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
             }
             else if (chassis instanceof ChassisOmniMech) {
-                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech) chassis);
+                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
             }
             else {
                 throw new RuntimeException("Unknown chassis type!");

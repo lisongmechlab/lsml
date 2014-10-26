@@ -36,6 +36,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
@@ -47,6 +48,7 @@ import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.EncodingException;
 import lisong_mechlab.util.Huffman1;
@@ -95,8 +97,8 @@ public class LoadoutCoderV1 implements LoadoutCoder {
                                                                                                // RFC
                                                                                                // 1700
 
-            ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup(chassiId);
-            loadout = new LoadoutStandard(chassi);
+            ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup(chassiId);
+            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis, UpgradesMutable.standardUpgrades());
 
             boolean artemisIv = (upeff & (1 << 7)) != 0;
             boolean endoSteel = (upeff & (1 << 4)) != 0;

@@ -19,16 +19,13 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
-import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.ChassisStandard;
-import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -47,17 +44,13 @@ public class OpRenameTest {
      */
     @Test
     public void testApply() {
-        // Setup
-        LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("HBK-4J"));
-        assertEquals("HBK-4J", loadout.getName());
+        LoadoutBase<?> loadout = Mockito.mock(LoadoutBase.class);
 
         // Execute
-        OperationStack stack = new OperationStack(0);
-        stack.pushAndApply(new OpRename(loadout, xBar, "Test"));
+        new OpRename(loadout, xBar, "Test").apply();
 
         // Verify
-        assertEquals("Test", loadout.getName());
-        assertEquals("Test (HBK-4J)", loadout.toString());
+        verify(loadout).rename("Test");
         verify(xBar).post(new LoadoutMessage(loadout, LoadoutMessage.Type.RENAME));
     }
 
@@ -66,17 +59,13 @@ public class OpRenameTest {
      */
     @Test
     public void testApply_nullXbar() {
-        // Setup
-        LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("HBK-4J"));
-        assertEquals("HBK-4J", loadout.getName());
+        LoadoutBase<?> loadout = Mockito.mock(LoadoutBase.class);
 
         // Execute
-        OperationStack stack = new OperationStack(0);
-        stack.pushAndApply(new OpRename(loadout, null, "Test"));
+        new OpRename(loadout, xBar, "Test").apply();
 
         // Verify
-        assertEquals("Test", loadout.getName());
-        assertEquals("Test (HBK-4J)", loadout.toString());
+        verify(loadout).rename("Test");
     }
 
 }

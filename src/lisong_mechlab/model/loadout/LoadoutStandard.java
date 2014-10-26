@@ -31,11 +31,10 @@ import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
+import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
-import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
-import lisong_mechlab.util.message.MessageXBar;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -53,16 +52,59 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
     }
 
     /**
-     * Will create a new, empty load out based on the given chassis. TODO: Is anXBar really needed?
+     * Will create a new, empty load out based on the given chassis.
      * 
      * @param aChassi
      *            The chassis to base the load out on.
      */
+    @Deprecated
     public LoadoutStandard(ChassisStandard aChassi) {
-        super(ComponentBuilder.getISComponentFactory(), aChassi);
+        this(ComponentBuilder.getStandardComponentFactory(), aChassi, UpgradesMutable.standardUpgrades());
+    }
 
-        upgrades = new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE,
-                UpgradeDB.STANDARD_GUIDANCE, UpgradeDB.STANDARD_HEATSINKS);
+    /**
+     * Will create a new, empty load out based on the given chassis.
+     * 
+     * @param aFactory
+     *            The {@link Factory} used to construct the components.
+     * 
+     * @param aChassi
+     *            The chassis to base the load out on.
+     * @param aUpgradesMutable
+     *            The {@link UpgradesMutable} that will be used for this chassis.
+     */
+    public LoadoutStandard(Factory<ConfiguredComponentStandard> aFactory, ChassisStandard aChassi,
+            UpgradesMutable aUpgradesMutable) {
+        super(aFactory, aChassi);
+
+        upgrades = aUpgradesMutable;
+    }
+
+    /**
+     * Will load a stock load out for the given variation name.
+     * 
+     * @param aString
+     *            The name of the stock variation to load.
+     * @throws Exception
+     */
+    public LoadoutStandard(String aString) throws Exception {
+        this(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) ChassisDB.lookup(aString),
+                UpgradesMutable.standardUpgrades());
+        OperationStack operationStack = new OperationStack(0);
+        operationStack.pushAndApply(new OpLoadStock(getChassis(), this, null));
+    }
+
+    /**
+     * Copy constructor.
+     * 
+     * @param aFactory
+     *            The {@link Factory} used to construct the components.
+     * @param aLoadout
+     *            The {@link LoadoutStandard} to copy.
+     */
+    public LoadoutStandard(Factory<ConfiguredComponentStandard> aFactory, LoadoutStandard aLoadout) {
+        super(aFactory, aLoadout);
+        upgrades = new UpgradesMutable(aLoadout.upgrades);
     }
 
     @Override
@@ -85,27 +127,6 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
         if (!upgrades.equals(other.upgrades))
             return false;
         return true;
-    }
-
-    /**
-     * Will load a stock load out for the given variation name.
-     * 
-     * @param aString
-     *            The name of the stock variation to load.
-     * @throws Exception
-     */
-    public LoadoutStandard(String aString) throws Exception {
-        this((ChassisStandard) ChassisDB.lookup(aString));
-        OperationStack operationStack = new OperationStack(0);
-        operationStack.pushAndApply(new OpLoadStock(getChassis(), this, null));
-    }
-
-    public LoadoutStandard(LoadoutStandard aLoadout, MessageXBar aXBar) {
-        super(ComponentBuilder.getISComponentFactory(), aLoadout);
-        upgrades = new UpgradesMutable(aLoadout.upgrades);
-        if (aXBar != null) {
-            aXBar.post(new LoadoutMessage(this, LoadoutMessage.Type.CREATE));
-        }
     }
 
     @Override
@@ -142,8 +163,9 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
     }
 
     @Override
-    public LoadoutStandard clone(MessageXBar aXBar) {
-        return new LoadoutStandard(this, aXBar);
+    public LoadoutStandard copy() {
+        // TODO: Remove hard-coded factory
+        return new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), this);
     }
 
     @Override

@@ -26,6 +26,8 @@ import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisStandard;
+import lisong_mechlab.model.chassi.ComponentOmniMech;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementArchetype;
 import lisong_mechlab.model.chassi.MovementProfile;
@@ -35,12 +37,14 @@ import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModuleDB;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.OpChangeOmniPod;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 
 import org.junit.Before;
@@ -80,12 +84,16 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         engine = Mockito.mock(Engine.class);
         quirkBase = Mockito.mock(MovementProfile.class);
 
+        internals = new ComponentOmniMech[Location.values().length];
         components = new ConfiguredComponentOmniMech[Location.values().length];
         for (Location location : Location.values()) {
-            pods[location.ordinal()] = Mockito.mock(OmniPod.class);
-            components[location.ordinal()] = Mockito.mock(ConfiguredComponentOmniMech.class);
+            int loc = location.ordinal();
+            pods[loc] = Mockito.mock(OmniPod.class);
+            internals[loc] = Mockito.mock(ComponentOmniMech.class);
+            components[loc] = Mockito.mock(ConfiguredComponentOmniMech.class);
 
-            Mockito.when(getComponent(location).getOmniPod()).thenReturn(pods[location.ordinal()]);
+            Mockito.when(components[loc].getInternalComponent()).thenReturn(internals[loc]);
+            Mockito.when(getComponent(location).getOmniPod()).thenReturn(pods[loc]);
         }
     }
 
@@ -94,7 +102,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         Mockito.when(chassis.getName()).thenReturn(chassisName);
         Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
-        Mockito.when(chassis.getCriticalSlotsTotal()).thenReturn(slots);
+        Mockito.when(chassis.getCriticalSlotsTotal()).thenReturn(chassisSlots);
         Mockito.when(chassisOmni.getFixedArmorType()).thenReturn(armor);
         Mockito.when(chassisOmni.getFixedStructureType()).thenReturn(structure);
         Mockito.when(chassisOmni.getFixedHeatSinkType()).thenReturn(heatSinks);
@@ -103,12 +111,18 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         return new LoadoutOmniMech(new ComponentFactory(), (ChassisOmniMech) chassis);
     }
 
+    @Test
+    public void testCanEquip_NoEngine() throws Exception {
+        Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
+        assertEquals(EquipResult.make(Type.EngineAlreadyEquipped), makeDefaultCUT().canEquip(item));
+    }
+
     /**
      * {@link #equals(Object)} shall always return <code>true</code> for the same object.
      */
     @Test
     public final void testEquals_Self() {
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
 
         assertEquals(cut, cut);
@@ -120,8 +134,8 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
     @Test
     public final void testEquals_Equal() {
         ChassisOmniMech dwfa = (ChassisOmniMech) ChassisDB.lookup("DWF-A");
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), dwfa);
-        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), dwfa);
+        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), dwfa);
+        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), dwfa);
 
         OperationStack stack = new OperationStack(0);
         stack.pushAndApply(new OpLoadStock(dwfa, cut, null));
@@ -135,9 +149,9 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
      */
     @Test
     public final void testEquals_Chassis() {
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
-        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-B"));
 
         OperationStack stack = new OperationStack(0);
@@ -152,9 +166,10 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
      */
     @Test
     public final void testEquals_WrongType() {
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
-        LoadoutStandard cut1 = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("JR7-F"));
+        LoadoutStandard cut1 = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(),
+                (ChassisStandard) ChassisDB.lookup("JR7-F"), new UpgradesMutable(null, null, null, null));
 
         assertNotEquals(cut, cut1);
     }
@@ -164,9 +179,9 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
      */
     @Test
     public final void testEquals_Upgrades() {
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
-        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
 
         OperationStack stack = new OperationStack(0);
@@ -180,9 +195,9 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
      */
     @Test
     public final void testEquals_Name() {
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
-        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
 
         OperationStack stack = new OperationStack(0);
@@ -197,9 +212,9 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
      */
     @Test
     public final void testEquals_Efficiencies() {
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
-        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
 
         cut.getEfficiencies().setAnchorTurn(true, null);
@@ -213,9 +228,9 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
      */
     @Test
     public final void testEquals_Components() {
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
-        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
 
         OperationStack stack = new OperationStack(0);
@@ -230,9 +245,9 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
      */
     @Test
     public final void testEquals_Modules() {
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
-        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(),
+        LoadoutOmniMech cut1 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"));
 
         OperationStack stack = new OperationStack(0);
@@ -288,7 +303,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         Mockito.when(getComponent(Location.RightLeg).getSlotsUsed()).thenReturn(3);
 
         assertEquals(8, makeDefaultCUT().getNumCriticalSlotsUsed());
-        assertEquals(slots - 8, makeDefaultCUT().getNumCriticalSlotsFree());
+        assertEquals(chassisSlots - 8, makeDefaultCUT().getNumCriticalSlotsFree());
     }
 
     @Test

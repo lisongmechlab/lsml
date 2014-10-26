@@ -29,8 +29,8 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.loadout.EquipResult;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.EquipResult.Type;
+import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
  * This class implements {@link ConfiguredComponentBase} for {@link LoadoutStandard}.
@@ -48,8 +48,8 @@ public class ConfiguredComponentStandard extends ConfiguredComponentBase {
     }
 
     @Override
-    public EquipResult canAddItem(Item aItem) {
-        EquipResult superResult = super.canAddItem(aItem);
+    public EquipResult canEquip(Item aItem) {
+        EquipResult superResult = super.canEquip(aItem);
         if(superResult != EquipResult.SUCCESS){
             return superResult;
         }
