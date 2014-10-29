@@ -98,7 +98,7 @@ public class ModifiedFlowLayout extends FlowLayout {
      */
     @Override
     public Dimension minimumLayoutSize(Container target) {
-        Dimension minimum = layoutSize(target, false);
+        Dimension minimum = layoutSize(target, true);
         minimum.width -= (getHgap() + 1);
         return minimum;
     }
@@ -114,10 +114,10 @@ public class ModifiedFlowLayout extends FlowLayout {
      */
     private Dimension layoutSize(Container target, boolean preferred) {
         synchronized (target.getTreeLock()) {
-            // Each row must fit with the width allocated to the containter.
+            // Each row must fit with the width allocated to the container.
             // When the container width = 0, the preferred width of the container
             // has not yet been calculated so lets ask for the maximum.
-
+            
             int targetWidth = target.getSize().width;
 
             if (targetWidth == 0)
@@ -169,7 +169,7 @@ public class ModifiedFlowLayout extends FlowLayout {
 
             // When using a scroll pane or the DecoratedLookAndFeel we need to
             // make sure the preferred size is less than the size of the
-            // target containter so shrinking the container size works
+            // target container so shrinking the container size works
             // correctly. Removing the horizontal gap is an easy way to do this.
 
             Container scrollPane = SwingUtilities.getAncestorOfClass(JScrollPane.class, target);

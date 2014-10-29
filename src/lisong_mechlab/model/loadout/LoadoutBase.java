@@ -42,7 +42,6 @@ import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
 import lisong_mechlab.model.loadout.converters.ChassiConverter;
 import lisong_mechlab.model.loadout.converters.ConfiguredComponentConverter;
