@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.quirks.Quirks;
 
 import org.junit.Test;
 import org.mockito.Mockito;

@@ -44,7 +44,7 @@ public class EnergyWeapon extends Weapon {
         if (burnTime == Double.POSITIVE_INFINITY) {
             return getCoolDown(aEfficiencies, aModifiers);
         }
-        return getCoolDown(aEfficiencies, aModifiers) + getDuration();
+        return getCoolDown(aEfficiencies, aModifiers) + getDuration(aModifiers);
     }
 
     @Override
@@ -117,7 +117,15 @@ public class EnergyWeapon extends Weapon {
         };
     }
 
-    public double getDuration() {
-        return burnTime;
+    public double getDuration(Collection<WeaponModifier> aModifiers) {
+        double a = 0;
+        if (aModifiers != null) {
+            for (WeaponModifier mod : aModifiers) {
+                if (mod.affectsWeapon(this)) {
+                    a += mod.extraDuration(this, burnTime, null);
+                }
+            }
+        }
+        return burnTime + a;
     }
 }

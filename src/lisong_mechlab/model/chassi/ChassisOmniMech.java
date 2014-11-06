@@ -28,6 +28,7 @@ import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.quirks.Quirks;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -211,7 +212,7 @@ public class ChassisOmniMech extends ChassisBase {
         QuirkedMovementProfile ans = new QuirkedMovementProfile(getMovementProfileBase());
         for (Location location : Location.values()) {
             OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
-            ans.addMovementModifier(omniPod.getQuirks());
+            ans.addMovementModifiers(omniPod.getQuirks().getQuirksByType(MovementModifier.class));
         }
         return ans;
     }

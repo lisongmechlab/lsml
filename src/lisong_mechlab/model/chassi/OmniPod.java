@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.quirks.Quirks;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

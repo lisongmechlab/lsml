@@ -84,10 +84,10 @@ public class HeatOverTime implements TimeMetric, Message.Recipient {
 
                 if (weapon instanceof EnergyWeapon) {
                     EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
-                    if (energyWeapon.getDuration() > 0) {
+                    if (energyWeapon.getDuration(modifiers) > 0) {
                         heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(
-                                loadout.getEfficiencies(), modifiers), energyWeapon.getDuration(), energyWeapon
-                                .getHeat(modifiers) / energyWeapon.getDuration()));
+                                loadout.getEfficiencies(), modifiers), energyWeapon.getDuration(modifiers), energyWeapon
+                                .getHeat(modifiers) / energyWeapon.getDuration(modifiers)));
                         continue;
                     }
                 }

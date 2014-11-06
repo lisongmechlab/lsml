@@ -26,7 +26,6 @@ import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
-import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ModuleSlot;
@@ -200,10 +199,7 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
     @Override
     public <U> Collection<U> getModifiers(Class<U> aClass) {
         Collection<U> ans = super.getModifiers(aClass);
-        Quirks quirks = getChassis().getQuirks();
-        if (aClass.isInstance(quirks)) {
-            ans.add(aClass.cast(quirks));
-        }
+        ans.addAll(getChassis().getQuirks().getQuirksByType(aClass));
         return ans;
     }
 

@@ -79,7 +79,7 @@ public class BurstDamageOverTimeTest {
         items.add(erllas);
         items.add(erppc);
         Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
-        final double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration() / 2; // 3.5 ER LLAS
+        final double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
 
         // Execute
         BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
@@ -148,7 +148,7 @@ public class BurstDamageOverTimeTest {
         BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
         cut.calculate(123, 321); // Dummy just make sure it's different from below
 
-        double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration() / 2; // 3.5 ER LLAS
+        double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
         double burst = cut.calculate(500, time);
 
         // Verify

@@ -44,7 +44,6 @@ import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
-import lisong_mechlab.model.chassi.Quirks.Quirk;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
@@ -69,6 +68,7 @@ import lisong_mechlab.model.item.WeaponModule;
 import lisong_mechlab.model.loadout.StockLoadout;
 import lisong_mechlab.model.loadout.StockLoadout.StockComponent;
 import lisong_mechlab.model.loadout.converters.HardPointConverter;
+import lisong_mechlab.model.quirks.Quirk;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
@@ -227,7 +227,7 @@ public class DataCache {
 
     public static Item findItem(String aKey, List<? extends Item> aItems) {
         for (Item item : aItems) {
-            if (aKey.equals(item.getKey()) || aKey.equals(item.getName()))
+            if (aKey.equalsIgnoreCase(item.getKey()) || aKey.equalsIgnoreCase(item.getName()))
                 return item;
         }
         throw new IllegalArgumentException("Unknown item: " + aKey);
@@ -666,6 +666,7 @@ public class DataCache {
                     double heat[] = new double[maxRank];
                     double cooldown[] = new double[maxRank];
 
+                    // FIXME: Use the "operator" field to do the right thing
                     for (int i = 0; i < maxRank; ++i) {
                         int rank = weaponStats.get(i).rank;
                         longRange[rank - 1] = weaponStats.get(i).longRange;
@@ -771,7 +772,7 @@ public class DataCache {
 
             }
             catch (Exception e) {
-                throw new IOException("Unable to load chassi configuration!", e);
+                throw new IOException("Unable to load chassi configuration! Chassis: " + chassis, e);
             }
         }
 
