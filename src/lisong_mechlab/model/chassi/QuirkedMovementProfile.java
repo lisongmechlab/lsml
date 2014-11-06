@@ -60,8 +60,18 @@ public class QuirkedMovementProfile extends ModifiedProfileBase {
         terms.add(aMovementProfile);
     }
 
+    public void addMovementModifiers(List<MovementModifier> aMovementProfiles) {
+        for (MovementModifier mm : aMovementProfiles)
+            addMovementModifier(mm);
+    }
+
     public void removeMovementModifier(MovementModifier aMovementProfile) {
         terms.remove(aMovementProfile);
+    }
+
+    public void removeMovementModifiers(List<MovementModifier> aMovementProfiles) {
+        for (MovementModifier mm : aMovementProfiles)
+            removeMovementModifier(mm);
     }
 
     @Override

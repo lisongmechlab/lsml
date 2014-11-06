@@ -22,12 +22,13 @@ package lisong_mechlab.model.chassi;
 import java.util.Collection;
 import java.util.List;
 
-import lisong_mechlab.model.chassi.Quirks.Quirk;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.quirks.Quirk;
+import lisong_mechlab.model.quirks.Quirks;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

@@ -94,6 +94,11 @@ public class TargetingComputer extends Module implements WeaponModifier {
         public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree) {
             return 0;
         }
+
+        @Override
+        public double extraDuration(Weapon aWeapon, double aDuration, PilotSkillTree aPilotSkillTree) {
+            return 0;
+        }
     }
 
     private final List<Filter> filters = new ArrayList<>();
@@ -157,6 +162,16 @@ public class TargetingComputer extends Module implements WeaponModifier {
         for (Filter filter : filters) {
             if (filter.affectsWeapon(aWeapon)) {
                 return filter.extraCooldown(aWeapon, aCooldown, aPilotSkillTree);
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public double extraDuration(Weapon aWeapon, double aDuration, PilotSkillTree aPilotSkillTree) {
+        for (Filter filter : filters) {
+            if (filter.affectsWeapon(aWeapon)) {
+                return filter.extraDuration(aWeapon, aDuration, aPilotSkillTree);
             }
         }
         return 0;

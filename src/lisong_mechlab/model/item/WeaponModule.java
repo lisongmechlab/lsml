@@ -111,14 +111,19 @@ public class WeaponModule extends PilotModule implements WeaponModifier {
         return affectedWeapon.contains(aWeapon);
     }
 
+    // FIXME: Parse the AMS feed modules to correctly calculate the ammo time for AMS
     @Override
     public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
-        return maxRangeModifier[maxRank - 1];
+        if (maxRangeModifier[maxRank - 1] > 0.0)
+            return (maxRangeModifier[maxRank - 1] - 1.0) * aRange;
+        return 0;
     }
 
     @Override
     public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
-        return longRangeModifier[maxRank - 1];
+        if (longRangeModifier[maxRank - 1] > 0.0)
+            return (longRangeModifier[maxRank - 1] - 1.0) * aRange;
+        return 0;
     }
 
     @Override
@@ -128,6 +133,13 @@ public class WeaponModule extends PilotModule implements WeaponModifier {
 
     @Override
     public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree) {
-        return cooldownModifier[maxRank - 1];
+        if (cooldownModifier[maxRank - 1] > 0.0)
+            return (cooldownModifier[maxRank - 1] - 1.0) * aCooldown;
+        return 0;
+    }
+
+    @Override
+    public double extraDuration(Weapon aWeapon, double aDuration, PilotSkillTree aPilotSkillTree) {
+        return 0;
     }
 }

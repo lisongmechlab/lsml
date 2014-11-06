@@ -79,9 +79,9 @@ public class BurstDamageOverTime extends RangeTimeMetric implements Message.Reci
 
             if (weapon instanceof EnergyWeapon) {
                 EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
-                if (energyWeapon.getDuration() > 0) {
-                    damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(), damage
-                            / energyWeapon.getDuration()));
+                if (energyWeapon.getDuration(modifiers) > 0) {
+                    damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(modifiers), damage
+                            / energyWeapon.getDuration(modifiers)));
                     continue;
                 }
             }

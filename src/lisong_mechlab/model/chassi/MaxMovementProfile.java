@@ -22,6 +22,8 @@ package lisong_mechlab.model.chassi;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import lisong_mechlab.model.quirks.Quirks;
+
 /**
  * This movement profile gives the maximum possible value of a combination of different movement profiles.
  * <p>
@@ -49,10 +51,14 @@ public class MaxMovementProfile extends ModifiedProfileBase {
             double ans = baseValue;
             for (List<Quirks> group : groups) {
                 double max = Double.NEGATIVE_INFINITY;
-                for (MovementModifier profile : group) {
-                    max = Math.max(max,
-                            (double) profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class)
-                                    .invoke(profile, baseValue));
+                for (Quirks quirks : group) {
+                    for (MovementModifier profile : quirks.getQuirksByType(MovementModifier.class)) {
+                        max = Math.max(
+                                max,
+                                (double) profile.getClass()
+                                        .getMethod(aMethodName.replace("get", "extra"), double.class)
+                                        .invoke(profile, baseValue));
+                    }
                 }
                 if (max != Double.NEGATIVE_INFINITY)
                     ans += max;

@@ -21,19 +21,16 @@ package lisong_mechlab.mwo_data;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import lisong_mechlab.model.DataCache;
 import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
-import lisong_mechlab.model.chassi.Quirks;
-import lisong_mechlab.model.chassi.Quirks.Quirk;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.quirks.Quirk;
+import lisong_mechlab.model.quirks.Quirks;
 import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsComponent;
-import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsQuirk;
 import lisong_mechlab.mwo_data.helpers.ItemStatsOmniPodType;
 import lisong_mechlab.mwo_data.helpers.MdfComponent;
 import lisong_mechlab.mwo_data.helpers.MdfComponent.MdfHardpoint;
@@ -52,19 +49,12 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  */
 public class XMLOmniPods {
     public static class XMLOmniPodsSet {
-        public static class XMLOmniPodsQuirk {
-            @XStreamAsAttribute
-            public String name;
-            @XStreamAsAttribute
-            public double value;
-        }
-
         public static class XMLOmniPodsSetBonuses {
             public static class XMLOmniPodsBonus {
                 @XStreamAsAttribute
                 private int                    PieceCount;
                 @XStreamImplicit(itemFieldName = "Quirk")
-                private List<XMLOmniPodsQuirk> quirks;
+                private List<XMLQuirk> quirks;
             }
 
             XMLOmniPodsBonus Bonus;
@@ -80,7 +70,7 @@ public class XMLOmniPods {
             @XStreamImplicit(itemFieldName = "Hardpoint")
             private List<MdfHardpoint>     hardpoints;
             @XStreamImplicit(itemFieldName = "Quirk")
-            private List<XMLOmniPodsQuirk> quirks;
+            private List<XMLQuirk> quirks;
             @XStreamAsAttribute
             private int                    CanEquipECM;
         }
@@ -116,14 +106,14 @@ public class XMLOmniPods {
 
                 int maxJumpjets = 0;
                 int maxPilotModules = 0;
-                Map<String, Quirk> quirksMap = new HashMap<>();
+                List<Quirk> quirksList = new ArrayList<>();
                 if (null != component.quirks) {
-                    for (XMLOmniPodsQuirk quirk : component.quirks) {
-                        if ("jump_jet_slots_additive".equals(quirk.name.toLowerCase())) {
+                    for (XMLQuirk quirk : component.quirks) {
+                        if ("jumpjetslots_additive".equals(quirk.name.toLowerCase())) {
                             maxJumpjets = (int) quirk.value;
                         }
                         else {
-                            quirksMap.put(quirk.name, makeQuirk(quirk));
+                            quirksList.add(quirk.toQuirk(aDataCache));
                         }
                         // TODO: check for pilot modules as soon as we know what they're called.
                     }
@@ -132,7 +122,7 @@ public class XMLOmniPods {
                 Location location = Location.fromMwoName(component.name);
                 List<HardPoint> hardPoints = MdfComponent.getHardPoints(location, aHardPointsXML, component.hardpoints,
                         component.CanEquipECM, set.name);
-                Quirks quirks = new Quirks(quirksMap);
+                Quirks quirks = new Quirks(quirksList);
 
                 List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals,
                         component.fixedItems);
@@ -145,10 +135,6 @@ public class XMLOmniPods {
         }
 
         return ans;
-    }
-
-    static public Quirk makeQuirk(XMLOmniPodsQuirk aQuirk) {
-        return new Quirk(aQuirk.name, Localization.key2string("ui_quirk_" + aQuirk.name), aQuirk.value);
     }
 
     public static XMLOmniPods fromXml(InputStream is) {

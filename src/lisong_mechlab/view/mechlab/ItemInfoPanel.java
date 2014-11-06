@@ -205,7 +205,7 @@ public class ItemInfoPanel extends JPanel {
         cycleTime.setText("Cycle time: " + df2.format(aWeapon.getCoolDown(aEfficiencies, aModifiers)));
         if (aWeapon instanceof EnergyWeapon) {
             burntime.setVisible(true);
-            burntime.setText("Burn time: " + df1.format(((EnergyWeapon) aWeapon).getDuration()));
+            burntime.setText("Burn time: " + df1.format(((EnergyWeapon) aWeapon).getDuration(aModifiers)));
         }
         secondsPerShot.setVisible(true);
         secondsPerShot.setText("RoF: " + df2.format(aWeapon.getSecondsPerShot(aEfficiencies, aModifiers)) + " s/shot");

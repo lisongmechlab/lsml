@@ -159,11 +159,20 @@ public class GameVFS {
             ZipEntry entry = zipFile.getEntry(archivePath);
             if (null == entry) {
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                // Apparently PGI is still as lousy as ever at being consistent with case so, manually check if we can
+                // find a case-insensitive match before giving up
                 while (entries.hasMoreElements()) {
-                    System.err.println(entries.nextElement());
+                    ZipEntry nextEntry = entries.nextElement();
+                    String next = nextEntry.getName();
+                    if (archivePath.equalsIgnoreCase(next)) {
+                        entry = nextEntry;
+                        break;
+                    }
                 }
-                throw new IOException("Failed to find sought for file (" + aPath
-                        + ") in the game files, this is most likely a bug!");
+                if (null == entry){
+                    throw new IOException("Failed to find sought for file (" + aPath
+                            + ") in the game files, this is most likely a bug!");
+                }
             }
             int size = (int) entry.getSize();
             buffer = new byte[size];

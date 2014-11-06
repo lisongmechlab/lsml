@@ -91,4 +91,18 @@ public interface WeaponModifier {
      * @return The augmented value of the attribute (can be unchanged).
      */
     public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree);
+    
+    /**
+     * Applies the effect of this modifier on the given attribute. Must only be called after
+     * {@link #affectsWeapon(Weapon)} returns true for <code>aWeapon</code>.
+     * 
+     * @param aWeapon
+     *            The weapon to apply the modifier to.
+     * @param aDuration
+     *            The attribute to augment.
+     * @param aPilotSkillTree
+     *            The skills of the pilot, may affect the results.
+     * @return The augmented value of the attribute (can be unchanged).
+     */
+    public double extraDuration(Weapon aWeapon, double aDuration, PilotSkillTree aPilotSkillTree);
 }

@@ -60,9 +60,9 @@ public class HeatOverTimeTest {
         HeatOverTime cut = new HeatOverTime(loadout, xBar);
 
         assertEquals(0, cut.calculate(0), 0.0);
-        assertEquals(erllas.getHeat(null) / 2, cut.calculate(erllas.getDuration() / 2), 0.0);
+        assertEquals(erllas.getHeat(null) / 2, cut.calculate(erllas.getDuration(null) / 2), 0.0);
         assertEquals(erllas.getHeat(null) * 10.5,
-                cut.calculate(erllas.getSecondsPerShot(null, null) * 10 + erllas.getDuration() / 2), 0.0);
+                cut.calculate(erllas.getSecondsPerShot(null, null) * 10 + erllas.getDuration(null) / 2), 0.0);
     }
 
     @Test

@@ -21,9 +21,8 @@ package lisong_mechlab.mwo_data;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import lisong_mechlab.model.DataCache;
 import lisong_mechlab.model.chassi.BaseMovementProfile;
@@ -33,14 +32,14 @@ import lisong_mechlab.model.chassi.ChassisVariant;
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.chassi.Quirks;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.quirks.Quirk;
+import lisong_mechlab.model.quirks.Quirks;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
-import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsQuirk;
 import lisong_mechlab.mwo_data.helpers.MdfCockpit;
 import lisong_mechlab.mwo_data.helpers.MdfComponent;
 import lisong_mechlab.mwo_data.helpers.MdfItem;
@@ -59,15 +58,15 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * @author Li Song
  */
 public class MdfMechDefinition {
-    public MdfMech                Mech;
-    public List<MdfComponent>     ComponentList;
+    public MdfMech            Mech;
+    public List<MdfComponent> ComponentList;
     @XStreamAsAttribute
-    public String                 Version;
-    public MdfCockpit             Cockpit;
+    public String             Version;
+    public MdfCockpit         Cockpit;
 
-    public MdfMovementTuning      MovementTuningConfiguration;
+    public MdfMovementTuning  MovementTuningConfiguration;
 
-    public List<XMLOmniPodsQuirk> QuirkList;
+    public List<XMLQuirk>     QuirkList;
 
     public boolean isOmniMech() {
         for (MdfComponent component : ComponentList) {
@@ -93,14 +92,14 @@ public class MdfMechDefinition {
             components[componentStandard.getLocation().ordinal()] = componentStandard;
         }
 
-        Map<String, Quirks.Quirk> quirksMap = new HashMap<>();
+        List<Quirk> quirkList = new ArrayList<>();
         if (null != QuirkList) {
-            for (XMLOmniPodsQuirk quirk : QuirkList) {
-                quirksMap.put(quirk.name, XMLOmniPods.makeQuirk(quirk));
+            for (XMLQuirk quirk : QuirkList) {
+                quirkList.add(quirk.toQuirk(aDataCache));
             }
         }
 
-        Quirks quirks = new Quirks(quirksMap);
+        Quirks quirks = new Quirks(quirkList);
 
         return new ChassisStandard(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
                 ChassisVariant.fromString(Mech.VariantType), baseVariant, new BaseMovementProfile(
@@ -201,7 +200,7 @@ public class MdfMechDefinition {
         xstream.alias("Internal", MdfItem.class);
         xstream.alias("Fixed", MdfItem.class);
         xstream.alias("MovementTuningConfiguration", MdfMovementTuning.class);
-        xstream.alias("Quirk", XMLOmniPodsQuirk.class);
+        xstream.alias("Quirk", XMLQuirk.class);
         return (MdfMechDefinition) xstream.fromXML(is);
     }
 }

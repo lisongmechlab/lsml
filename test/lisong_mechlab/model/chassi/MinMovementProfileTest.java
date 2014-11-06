@@ -24,6 +24,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import lisong_mechlab.model.quirks.Quirks;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
