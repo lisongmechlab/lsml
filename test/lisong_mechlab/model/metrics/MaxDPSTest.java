@@ -89,7 +89,7 @@ public class MaxDPSTest {
 
         assertEquals(dps_ac5 + dps_slas, cut.calculate(0), 0.0);
         assertEquals(dps_ac5 + dps_slas, cut.calculate(90), 0.0);
-        assertEquals(dps_ac5 + dps_lrm20, cut.calculate(200), 0.0);
+        assertEquals(dps_ac5 + dps_lrm20, cut.calculate(slas.getRangeMax(null)), 0.0);
     }
 
 }

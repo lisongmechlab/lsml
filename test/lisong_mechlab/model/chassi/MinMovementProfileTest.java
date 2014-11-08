@@ -22,8 +22,10 @@ package lisong_mechlab.model.chassi;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import lisong_mechlab.model.quirks.MovementQuirk;
 import lisong_mechlab.model.quirks.Quirks;
 
 import org.junit.Test;
@@ -68,6 +70,10 @@ public class MinMovementProfileTest {
         Quirks arm2 = Mockito.mock(Quirks.class);
         Quirks leg1 = Mockito.mock(Quirks.class);
         Quirks leg2 = Mockito.mock(Quirks.class);
+        
+        MovementQuirk q1 = Mockito.mock(MovementQuirk.class);
+        MovementQuirk q2 = Mockito.mock(MovementQuirk.class);
+        MovementQuirk q3 = Mockito.mock(MovementQuirk.class);
 
         List<Quirks> arm = new ArrayList<>();
         List<Quirks> leg = new ArrayList<>();
@@ -84,11 +90,15 @@ public class MinMovementProfileTest {
         MinMovementProfile cut = new MinMovementProfile(base, groups);
 
         Mockito.when(base.getTorsoPitchSpeed()).thenReturn(3.0);
-        Mockito.when(arm1.extraTorsoPitchSpeed(3.0)).thenReturn(-0.1);
-        Mockito.when(arm2.extraTorsoPitchSpeed(3.0)).thenReturn(0.2);
-        Mockito.when(leg1.extraTorsoPitchSpeed(3.0)).thenReturn(-0.4);
-        Mockito.when(leg2.extraTorsoPitchSpeed(3.0)).thenReturn(-0.2);
+        Mockito.when(arm1.getQuirksByType(MovementModifier.class)).thenReturn(Arrays.asList((MovementModifier)q1, (MovementModifier)q3));
+        Mockito.when(arm2.getQuirksByType(MovementModifier.class)).thenReturn(Arrays.asList((MovementModifier)q2));
+        Mockito.when(leg1.getQuirksByType(MovementModifier.class)).thenReturn(Arrays.asList((MovementModifier)q2));
+        Mockito.when(leg2.getQuirksByType(MovementModifier.class)).thenReturn(Arrays.asList((MovementModifier)q3));
+        Mockito.when(q1.extraTorsoPitchSpeed(3.0)).thenReturn(-0.5);
+        Mockito.when(q2.extraTorsoPitchSpeed(3.0)).thenReturn(0.2);
+        Mockito.when(q3.extraTorsoPitchSpeed(3.0)).thenReturn(0.4);
 
-        assertEquals(2.5, cut.getTorsoPitchSpeed(), 0.0);
+        // Arm 1 and leg1 will give min of 3.1
+        assertEquals(3.1, cut.getTorsoPitchSpeed(), 0.0);
     }
 }

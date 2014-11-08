@@ -330,6 +330,8 @@ public class DataCache {
                 }
                 try (InputStream is = DataCache.class.getResourceAsStream("/resources/bundleDataCache.xml")) {
                     dataCache = (DataCache) stream().fromXML(is); // Let this throw as this is fatal.
+                }catch(Throwable t){
+                    throw new RuntimeException("Oops! Li forgot to update the bundled data cache!");
                 }
 
                 if (status == ParseStatus.NotInitialized)
