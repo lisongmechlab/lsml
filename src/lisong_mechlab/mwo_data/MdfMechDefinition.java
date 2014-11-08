@@ -102,7 +102,7 @@ public class MdfMechDefinition {
         Quirks quirks = new Quirks(quirkList);
 
         return new ChassisStandard(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
-                ChassisVariant.fromString(Mech.VariantType), baseVariant, new BaseMovementProfile(
+                ChassisVariant.fromString(name, Mech.VariantType), baseVariant, new BaseMovementProfile(
                         MovementTuningConfiguration), faction, Mech.MinEngineRating, Mech.MaxEngineRating,
                 Mech.MaxJumpJets, components, Cockpit.TechSlots, Cockpit.ConsumableSlots, Cockpit.WeaponModSlots,
                 quirks);
@@ -153,7 +153,7 @@ public class MdfMechDefinition {
         HeatSinkUpgrade heatSink = (HeatSinkUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.heatsinks.ItemID);
 
         return new ChassisOmniMech(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
-                ChassisVariant.fromString(Mech.VariantType), baseVariant, new BaseMovementProfile(
+                ChassisVariant.fromString(name, Mech.VariantType), baseVariant, new BaseMovementProfile(
                         MovementTuningConfiguration), faction, components, Cockpit.TechSlots, Cockpit.ConsumableSlots,
                 Cockpit.WeaponModSlots, structure, armor, heatSink);
     }
