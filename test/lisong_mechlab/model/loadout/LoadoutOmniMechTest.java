@@ -22,6 +22,11 @@ package lisong_mechlab.model.loadout;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
@@ -30,6 +35,7 @@ import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementArchetype;
+import lisong_mechlab.model.chassi.MovementModifier;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.OmniPodDB;
@@ -40,6 +46,7 @@ import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.OpChangeOmniPod;
+import lisong_mechlab.model.quirks.MovementQuirk;
 import lisong_mechlab.model.quirks.Quirks;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -69,11 +76,13 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         }
     }
 
-    protected OmniPod[]     pods = new OmniPod[Location.values().length];
+    protected List<List<MovementModifier>> movementModifiers;
+    protected Quirks[]          podQuirks = new Quirks[Location.values().length];
+    protected OmniPod[]         pods      = new OmniPod[Location.values().length];
 
-    protected Engine        engine;
-    private ChassisOmniMech chassisOmni;
-    private MovementProfile quirkBase;
+    protected Engine            engine;
+    private ChassisOmniMech     chassisOmni;
+    private MovementProfile     quirkBase;
 
     @Override
     @Before
@@ -86,12 +95,17 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
 
         internals = new ComponentOmniMech[Location.values().length];
         components = new ConfiguredComponentOmniMech[Location.values().length];
+        movementModifiers = new ArrayList<>(Location.values().length);
         for (Location location : Location.values()) {
             int loc = location.ordinal();
+            movementModifiers.add(new ArrayList<MovementModifier>());
+            podQuirks[loc] = Mockito.mock(Quirks.class);
             pods[loc] = Mockito.mock(OmniPod.class);
             internals[loc] = Mockito.mock(ComponentOmniMech.class);
             components[loc] = Mockito.mock(ConfiguredComponentOmniMech.class);
 
+            Mockito.when(podQuirks[loc].getQuirksByType(MovementModifier.class)).thenReturn(movementModifiers.get(loc));
+            Mockito.when(pods[loc].getQuirks()).thenReturn(podQuirks[loc]);
             Mockito.when(components[loc].getInternalComponent()).thenReturn(internals[loc]);
             Mockito.when(getComponent(location).getOmniPod()).thenReturn(pods[loc]);
         }
@@ -309,22 +323,31 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
     @Test
     public final void testGetMovementProfile_() throws Exception {
         Quirks quirkEmpty = Mockito.mock(Quirks.class);
-        Quirks quirk1 = Mockito.mock(Quirks.class);
-        Quirks quirk2 = Mockito.mock(Quirks.class);
+        Quirks quirks1 = Mockito.mock(Quirks.class);
+        Quirks quirks2 = Mockito.mock(Quirks.class);
+        MovementQuirk q1 = Mockito.mock(MovementQuirk.class);
+        MovementQuirk q2 = Mockito.mock(MovementQuirk.class);
+        MovementQuirk q3 = Mockito.mock(MovementQuirk.class);
 
         for (Location location : Location.values()) {
             if (location.ordinal() >= 2)
                 Mockito.when(pods[location.ordinal()].getQuirks()).thenReturn(quirkEmpty);
         }
-        Mockito.when(pods[0].getQuirks()).thenReturn(quirk1);
-        Mockito.when(pods[1].getQuirks()).thenReturn(quirk2);
+        Mockito.when(pods[0].getQuirks()).thenReturn(quirks1);
+        Mockito.when(pods[1].getQuirks()).thenReturn(quirks2);
 
         Mockito.when(quirkBase.getMovementArchetype()).thenReturn(MovementArchetype.Huge);
         Mockito.when(quirkBase.getArmYawMax()).thenReturn(14.0);
-        Mockito.when(quirk1.extraArmYawMax(14.0)).thenReturn(4.0);
-        Mockito.when(quirk2.extraArmYawMax(14.0)).thenReturn(-1.0);
 
-        assertEquals(17.0, makeDefaultCUT().getMovementProfile().getArmYawMax(), 0.0);
+        Mockito.when(quirks1.getQuirksByType(MovementModifier.class)).thenReturn(
+                Arrays.asList((MovementModifier) q1, (MovementModifier) q2));
+        Mockito.when(quirks2.getQuirksByType(MovementModifier.class)).thenReturn(Arrays.asList((MovementModifier) q3));
+        Mockito.when(q1.extraArmYawMax(14.0)).thenReturn(-1.0);
+        Mockito.when(q2.extraArmYawMax(14.0)).thenReturn(4.0);
+        Mockito.when(q3.extraArmYawMax(14.0)).thenReturn(0.5);
+
+        // 14 -1 + 4 + 0.5 = 17.5
+        assertEquals(17.5, makeDefaultCUT().getMovementProfile().getArmYawMax(), 0.0);
         assertSame(MovementArchetype.Huge, makeDefaultCUT().getMovementProfile().getMovementArchetype());
     }
 

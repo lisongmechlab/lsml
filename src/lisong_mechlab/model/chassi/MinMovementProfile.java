@@ -52,13 +52,12 @@ public class MinMovementProfile extends ModifiedProfileBase {
             for (List<Quirks> group : groups) {
                 double min = Double.POSITIVE_INFINITY;
                 for (Quirks quirks : group) {
+                    double sum = 0.0;
                     for (MovementModifier profile : quirks.getQuirksByType(MovementModifier.class)) {
-                        min = Math.min(
-                                min,
-                                (double) profile.getClass()
-                                        .getMethod(aMethodName.replace("get", "extra"), double.class)
-                                        .invoke(profile, baseValue));
+                        sum += (double) profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class)
+                                .invoke(profile, baseValue);
                     }
+                    min = Math.min(sum, min);
                 }
                 if (min != Double.POSITIVE_INFINITY)
                     ans += min;

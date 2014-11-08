@@ -32,7 +32,7 @@ import java.util.List;
 public class QuirkedMovementProfile extends ModifiedProfileBase {
 
     private List<MovementModifier> terms = new ArrayList<>();
-    MovementProfile                mainProfile;
+    private final MovementProfile  mainProfile;
 
     @Override
     protected double calc(String aMethodName) {

@@ -33,6 +33,7 @@ import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
+import lisong_mechlab.model.chassi.MovementModifier;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Internal;
@@ -75,15 +76,16 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         }
     }
 
-    private int             engineMin   = 0;
-    private int             engineMax   = 400;
-    private int             maxJumpJets = 0;
-    private Quirks          quirks;
-    private ChassisStandard chassisStandard;
-    private UpgradesMutable upgradesMutable;
+    private int                    engineMin         = 0;
+    private int                    engineMax         = 400;
+    private int                    maxJumpJets       = 0;
+    private Quirks                 quirks;
+    private List<MovementModifier> movementModifiers = new ArrayList<>();
+    private ChassisStandard        chassisStandard;
+    private UpgradesMutable        upgradesMutable;
 
     @Override
-    protected LoadoutBase<?> makeDefaultCUT() {
+    protected LoadoutBase<?> makeDefaultCUT() {       
         Mockito.when(chassis.getName()).thenReturn(chassisName);
         Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
@@ -105,6 +107,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
     public void setup() {
         super.setup();
         quirks = Mockito.mock(Quirks.class);
+        Mockito.when(quirks.getQuirksByType(MovementModifier.class)).thenReturn(movementModifiers);
         chassisStandard = Mockito.mock(ChassisStandard.class);
         upgradesMutable = Mockito.mock(UpgradesMutable.class);
         chassis = chassisStandard;
@@ -112,7 +115,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         components = new ConfiguredComponentStandard[Location.values().length];
         for (Location location : Location.values()) {
             int loc = location.ordinal();
-            internals[loc] = Mockito.mock(ComponentOmniMech.class);
+            internals[loc] = Mockito.mock(ComponentStandard.class);
             components[loc] = Mockito.mock(ConfiguredComponentStandard.class);
 
             Mockito.when(components[loc].getInternalComponent()).thenReturn(internals[loc]);

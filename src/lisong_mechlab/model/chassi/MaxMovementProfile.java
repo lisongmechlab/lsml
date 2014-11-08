@@ -52,13 +52,12 @@ public class MaxMovementProfile extends ModifiedProfileBase {
             for (List<Quirks> group : groups) {
                 double max = Double.NEGATIVE_INFINITY;
                 for (Quirks quirks : group) {
+                    double sum = 0.0;
                     for (MovementModifier profile : quirks.getQuirksByType(MovementModifier.class)) {
-                        max = Math.max(
-                                max,
-                                (double) profile.getClass()
-                                        .getMethod(aMethodName.replace("get", "extra"), double.class)
-                                        .invoke(profile, baseValue));
+                        sum += (double) profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class)
+                                .invoke(profile, baseValue);
                     }
+                    max = Math.max(max, sum);
                 }
                 if (max != Double.NEGATIVE_INFINITY)
                     ans += max;

@@ -89,6 +89,6 @@ public class AlphaStrikeTest {
 
         assertEquals(alpha_ac5 + alpha_slas, cut.calculate(0), 0.0);
         assertEquals(alpha_ac5 + alpha_slas, cut.calculate(90), 0.0);
-        assertEquals(alpha_ac5 + alpha_lrm20, cut.calculate(200), 0.0);
+        assertEquals(alpha_ac5 + alpha_lrm20, cut.calculate(slas.getRangeMax(null)), 0.0);
     }
 }

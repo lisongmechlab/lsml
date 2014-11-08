@@ -42,8 +42,8 @@ public class PilotModuleDBTest {
         assertTrue(module.affectsWeapon(srm2));
         assertTrue(module.affectsWeapon(srm2artemis));
 
-        assertEquals(30, module.extraLongRange(srm2, 0, null), 0.0);
-        assertEquals(30, module.extraMaxRange(srm2artemis, 0, null), 0.0);
+        assertEquals(1.0, module.extraLongRange(srm2, 10, null), Math.ulp(10.0));
+        assertEquals(2.0, module.extraMaxRange(srm2artemis, 20, null), Math.ulp(20.0));
         assertEquals(0.0, module.extraWeaponHeat(srm2artemis, 0, null), 0.0);
     }
 }
