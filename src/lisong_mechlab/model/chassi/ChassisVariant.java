@@ -27,10 +27,17 @@ package lisong_mechlab.model.chassi;
 public enum ChassisVariant {
     HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX;
 
-    public static ChassisVariant fromString(String aString) {
-        if (null == aString)
+    public static ChassisVariant fromString(String aChassis, String aVariant) {
+        if (null == aVariant)
             return NORMAL;
-        String s = aString.toLowerCase();
+        
+        // Some chassis are marked as champion even though they don't have a base version just to give
+        // them a C-bill bonus. We treat these as normal mechs.
+        if(!aChassis.contains("(")){
+            return NORMAL;
+        }
+        
+        String s = aVariant.toLowerCase();
         for (ChassisVariant variant : values()) {
             if (s.equals(variant.toString().toLowerCase()))
                 return variant;
