@@ -32,7 +32,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.helpers.IntegratedImpulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedPulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedSignal;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
 

@@ -44,7 +44,7 @@ import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.OpChangeOmniPod;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;

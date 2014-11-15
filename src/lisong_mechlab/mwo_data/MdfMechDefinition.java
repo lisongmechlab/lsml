@@ -34,7 +34,7 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;

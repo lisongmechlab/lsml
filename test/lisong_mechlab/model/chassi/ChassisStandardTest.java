@@ -30,7 +30,7 @@ import junitparams.JUnitParamsRunner;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;

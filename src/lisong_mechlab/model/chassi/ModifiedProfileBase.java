@@ -21,7 +21,7 @@ package lisong_mechlab.model.chassi;
 
 import java.util.Collection;
 
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * This {@link MovementProfile} provides an abstract base for a composite {@link MovementProfile} where the value of

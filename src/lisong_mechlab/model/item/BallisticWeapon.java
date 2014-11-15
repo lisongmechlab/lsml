@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.quirks.Attribute;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.util.GaussianDistribution;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

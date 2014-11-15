@@ -34,7 +34,7 @@ import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 

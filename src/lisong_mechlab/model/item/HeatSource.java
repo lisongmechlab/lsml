@@ -22,8 +22,8 @@ package lisong_mechlab.model.item;
 import java.util.Collection;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.quirks.Attribute;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * This is a base class for all items that can generate heat.

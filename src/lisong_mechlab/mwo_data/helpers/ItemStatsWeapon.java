@@ -30,7 +30,7 @@ import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.modifiers.Attribute;
 import lisong_mechlab.mwo_data.Localization;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

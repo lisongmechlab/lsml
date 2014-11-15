@@ -20,7 +20,7 @@
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertTrue;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 
 import org.junit.Test;
 

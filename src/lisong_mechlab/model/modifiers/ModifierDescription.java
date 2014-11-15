@@ -17,13 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.model.quirks;
+package lisong_mechlab.model.modifiers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class describes a template for a generic modifier that can be applied to an {@link Attribute}.
@@ -99,12 +101,16 @@ public class ModifierDescription {
             }
         }
     }
-
+    @XStreamAsAttribute
     private final Operation          op;
     private final Collection<String> selectors;
+    @XStreamAsAttribute
     private final String             attribute; // Can be null
+    @XStreamAsAttribute
     private final ValueType          valueType;
+    @XStreamAsAttribute
     private final String             uiName;
+    @XStreamAsAttribute
     private final String             mwoKey;
 
     /**
@@ -130,11 +136,10 @@ public class ModifierDescription {
         uiName = aUiName;
         mwoKey = canonizeName(aKeyName);
         op = aOperation;
-        List<String> tmpSelectors = new ArrayList<>();
+        selectors = new ArrayList<>();
         for (String selector : aSelectors) {
-            tmpSelectors.add(canonizeName(selector));
+            selectors.add(canonizeName(selector));
         }
-        selectors = Collections.unmodifiableList(tmpSelectors);
         attribute = canonizeName(aAttribute);
 
         if (attribute != null && attribute.equals(ModifiersDB.SEL_WEAPON_COOLDOWN)) {
@@ -215,7 +220,7 @@ public class ModifierDescription {
      * @return A {@link Collection} if {@link String}s with all the selectors of this modifier.
      */
     public Collection<String> getSelectors() {
-        return selectors;
+        return Collections.unmodifiableCollection(selectors);
     }
 
     /**

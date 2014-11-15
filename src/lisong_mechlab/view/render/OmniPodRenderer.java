@@ -33,7 +33,7 @@ import javax.swing.border.TitledBorder;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.ItemDB;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * A renderer that can show a preview of {@link OmniPod}s.

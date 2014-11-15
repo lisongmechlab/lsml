@@ -24,10 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import lisong_mechlab.model.quirks.Modifier;
-import lisong_mechlab.model.quirks.ModifierDescription;
-import lisong_mechlab.model.quirks.ModifierDescription.Operation;
-import lisong_mechlab.model.quirks.ModifierDescription.ValueType;
+import lisong_mechlab.model.modifiers.ModifierDescription;
+import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
+import lisong_mechlab.model.modifiers.ModifierDescription.ValueType;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -51,10 +50,12 @@ public class XMLQuirkDef {
                 public String operation;
                 @XStreamAsAttribute
                 public String context;
+                @SuppressWarnings("hiding")
                 @XStreamAsAttribute
                 public String loc;
             }
 
+            @SuppressWarnings("hiding")
             @XStreamAsAttribute
             public String       name;
             @XStreamAsAttribute

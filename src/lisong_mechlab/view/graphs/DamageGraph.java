@@ -42,7 +42,7 @@ import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.util.WeaponRanges;
 import lisong_mechlab.util.message.Message;

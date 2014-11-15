@@ -28,7 +28,7 @@ import java.util.Map;
 
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * This {@link Metric} calculates the total ghost heat penalty for an alpha strike from a loadout.

@@ -41,7 +41,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
@@ -58,7 +57,8 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.metrics.TopSpeed;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Efficiencies;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.message.Message;

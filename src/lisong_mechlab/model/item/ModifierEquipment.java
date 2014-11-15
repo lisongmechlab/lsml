@@ -21,7 +21,7 @@ package lisong_mechlab.model.item;
 
 import java.util.Collection;
 
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * An interface for items that can have {@link Modifier}s that affect the loadout.

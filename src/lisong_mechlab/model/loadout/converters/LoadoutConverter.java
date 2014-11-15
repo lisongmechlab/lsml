@@ -21,7 +21,6 @@ package lisong_mechlab.model.loadout.converters;
 
 import javax.swing.JOptionPane;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisDB;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
@@ -36,6 +35,7 @@ import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
+import lisong_mechlab.model.modifiers.Efficiencies;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;

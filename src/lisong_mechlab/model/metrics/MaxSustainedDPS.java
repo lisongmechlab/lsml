@@ -30,7 +30,7 @@ import java.util.Map;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * This {@link Metric} calculates the maximal DPS that a {@link LoadoutStandard} can sustain indefinitely.

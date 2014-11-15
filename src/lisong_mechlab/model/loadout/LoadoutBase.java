@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.HardPointType;
@@ -51,7 +50,8 @@ import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.ModuleConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Efficiencies;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.ListArrayUtils;
 
@@ -553,6 +553,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
                 modifiers.addAll(((ModifierEquipment) module).getModifiers());
             }
         }
+        modifiers.addAll(getEfficiencies().getModifiers());
         return modifiers;
     }
 }

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.model.quirks;
+package lisong_mechlab.model.modifiers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +25,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.quirks.ModifierDescription.Operation;
+import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * A generic attribute of "some thing" that can be affected by {@link Modifier}s.
@@ -33,7 +35,9 @@ import lisong_mechlab.model.quirks.ModifierDescription.Operation;
  * @author Li Song
  */
 public class Attribute {
+    @XStreamAsAttribute
     private final String             name;
+    @XStreamAsAttribute
     private final double             baseValue;
     private final Collection<String> selectors;
 
@@ -51,11 +55,10 @@ public class Attribute {
     public Attribute(double aBaseValue, Collection<String> aSelectors, String aAttributeName) {
         name = ModifierDescription.canonizeName(aAttributeName);
         baseValue = aBaseValue;
-        List<String> tmpSelectors = new ArrayList<>();
+        selectors = new ArrayList<>();
         for (String selector : aSelectors) {
-            tmpSelectors.add(ModifierDescription.canonizeName(selector));
+            selectors.add(ModifierDescription.canonizeName(selector));
         }
-        selectors = Collections.unmodifiableList(tmpSelectors);
     }
 
     /**
@@ -89,7 +92,7 @@ public class Attribute {
      * @return The {@link List} of selectors for this attribute.
      */
     public Collection<String> getSelectors() {
-        return selectors;
+        return Collections.unmodifiableCollection(selectors);
     }
 
     /**

@@ -19,11 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import java.util.Arrays;
-
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.modifiers.Attribute;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -47,9 +45,8 @@ public class Engine extends HeatSource {
     final private int          heatSinkSlots;
 
     public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
-            Faction aFaction, int aRating, EngineType aType, int aInternalHS, int aHSSlots) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, new Attribute(
-                ENGINE_HEAT_FULL_THROTTLE, Arrays.asList("engineheat"), null));
+            Faction aFaction, Attribute aHeat, int aRating, EngineType aType, int aInternalHS, int aHSSlots) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, aHeat);
         rating = aRating;
         type = aType;
         internalHs = aInternalHS;

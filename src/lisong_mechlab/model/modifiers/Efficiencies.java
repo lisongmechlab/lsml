@@ -17,14 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.model;
+package lisong_mechlab.model.modifiers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.quirks.Modifier;
-import lisong_mechlab.model.quirks.ModifiersDB;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
 
@@ -263,38 +261,31 @@ public class Efficiencies {
     public List<Modifier> getModifiers() {
         List<Modifier> ans = new ArrayList<>();
 
-        if (hasDoubleBasics()) {
-            ans.add(HEAT_CONTAINMENT_2X);
-            ans.add(COOL_RUN_2X);
+        if (hasFastFire())
             ans.add(FAST_FIRE);
+        if (hasSpeedTweak())
             ans.add(SPEED_TWEAK);
-            ans.add(ANCHOR_TURN_LOW_2X);
-            ans.add(ANCHOR_TURN_MID_2X);
-            ans.add(ANCHOR_TURN_HIGH_2X);
-        }
-        else {
-            if (hasFastFire() || hasSpeedTweak()) {
-                ans.add(COOL_RUN);
-                ans.add(HEAT_CONTAINMENT);
-                ans.add(HEAT_CONTAINMENT);
-
-                if (hasFastFire())
-                    ans.add(FAST_FIRE);
-                if (hasSpeedTweak())
-                    ans.add(SPEED_TWEAK);
+        
+        if (hasDoubleBasics()) {
+            if (hasCoolRun())
+                ans.add(COOL_RUN_2X);
+            if (hasHeatContainment())
+                ans.add(HEAT_CONTAINMENT_2X);
+            if (hasAnchorTurn()) {
+                ans.add(ANCHOR_TURN_LOW_2X);
+                ans.add(ANCHOR_TURN_MID_2X);
+                ans.add(ANCHOR_TURN_HIGH_2X);
             }
-            else {
-                if (hasCoolRun())
-                    ans.add(COOL_RUN);
-                if (hasHeatContainment())
-                    ans.add(HEAT_CONTAINMENT);
-                if (hasHeatContainment())
-                    ans.add(HEAT_CONTAINMENT);
-                if (hasAnchorTurn()) {
-                    ans.add(ANCHOR_TURN_LOW);
-                    ans.add(ANCHOR_TURN_MID);
-                    ans.add(ANCHOR_TURN_HIGH);
-                }
+        }
+        else{
+            if (hasCoolRun())
+                ans.add(COOL_RUN);
+            if (hasHeatContainment())
+                ans.add(HEAT_CONTAINMENT);
+            if (hasAnchorTurn()) {
+                ans.add(ANCHOR_TURN_LOW);
+                ans.add(ANCHOR_TURN_MID);
+                ans.add(ANCHOR_TURN_HIGH);
             }
         }
 

@@ -20,7 +20,7 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.modifiers.Attribute;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

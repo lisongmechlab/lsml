@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.model;
+package lisong_mechlab.model.modifiers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import lisong_mechlab.model.Efficiencies.EfficienciesMessage.Type;
+import lisong_mechlab.model.modifiers.Efficiencies.EfficienciesMessage.Type;
 import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.Before;
