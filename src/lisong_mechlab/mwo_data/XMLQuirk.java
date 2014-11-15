@@ -20,8 +20,8 @@
 package lisong_mechlab.mwo_data;
 
 import lisong_mechlab.model.DataCache;
-import lisong_mechlab.model.quirks.Modifier;
-import lisong_mechlab.model.quirks.ModifierDescription;
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifierDescription;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

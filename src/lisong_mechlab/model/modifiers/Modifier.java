@@ -17,12 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.model.quirks;
+package lisong_mechlab.model.modifiers;
 
 import java.text.DecimalFormat;
 
-import lisong_mechlab.model.quirks.ModifierDescription.Operation;
-import lisong_mechlab.model.quirks.ModifierDescription.ValueType;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
 
 /**
  * This class is a concrete instance of a {@link ModifierDescription} with a value.
@@ -32,6 +33,7 @@ import lisong_mechlab.model.quirks.ModifierDescription.ValueType;
  */
 public class Modifier {
     protected final static DecimalFormat FORMAT = new DecimalFormat("###.#");
+    @XStreamAsAttribute
     private final double                 value;
     private final ModifierDescription    description;
 

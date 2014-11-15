@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.model.quirks;
+package lisong_mechlab.model.modifiers;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import lisong_mechlab.model.DataCache;
-import lisong_mechlab.model.quirks.ModifierDescription.Operation;
-import lisong_mechlab.model.quirks.ModifierDescription.ValueType;
+import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
+import lisong_mechlab.model.modifiers.ModifierDescription.ValueType;
 
 /**
  * A database of all the quirks in the game.
@@ -38,8 +38,8 @@ import lisong_mechlab.model.quirks.ModifierDescription.ValueType;
  *
  */
 public class ModifiersDB {
-    public final static String                            SEL_MOVEMENT_MAX_SPEED    = "MaxMovementSpeed";
-    public final static String                            SEL_MOVEMENT_REVERSE_MUL  = "ReverseSpeedMultiplier";
+    public final static String                            SEL_MOVEMENT_MAX_SPEED    = "speed";
+    public final static String                            SEL_MOVEMENT_REVERSE_MUL  = "reversespeed";
     public final static String                            SEL_MOVEMENT_TORSO_SPEED  = "torsospeed";
     public final static String                            SEL_MOVEMENT_ARM_SPEED    = "armspeed";
     public final static String                            SEL_MOVEMENT_TORSO_ANGLE  = "torsoangle";
@@ -49,7 +49,7 @@ public class ModifiersDB {
 
     public final static String                            SEL_HEAT_DISSIPATION      = "heatloss";
     public final static String                            SEL_HEAT_LIMIT            = "heatlimit";
-    public final static String                            SEL_HEAT_EXTERNALTRANSFER = "ExternalHeat";
+    public final static String                            SEL_HEAT_EXTERNALTRANSFER = "externalheat";
 
     public final static String                            SEL_WEAPON_LONGRANGE      = "longrange";
     public final static String                            SEL_WEAPON_MAXRANGE       = "maxrange";

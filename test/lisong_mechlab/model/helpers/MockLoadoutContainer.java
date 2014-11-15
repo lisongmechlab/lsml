@@ -25,7 +25,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ComponentBase;
 import lisong_mechlab.model.chassi.HardPointType;
@@ -35,6 +34,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
+import lisong_mechlab.model.modifiers.Efficiencies;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 /**

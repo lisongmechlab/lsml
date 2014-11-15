@@ -21,8 +21,8 @@ package lisong_mechlab.model.metrics;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.quirks.Attribute;
-import lisong_mechlab.model.quirks.ModifiersDB;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 
 /**
  * This {@link Metric} calculates the total heat capacity of a {@link LoadoutStandard}.

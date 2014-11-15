@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collection;
 
 import lisong_mechlab.model.item.BallisticWeapon;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 
 import org.junit.Test;
 import org.mockito.Mockito;

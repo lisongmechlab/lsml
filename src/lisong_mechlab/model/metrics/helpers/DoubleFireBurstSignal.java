@@ -22,7 +22,7 @@ package lisong_mechlab.model.metrics.helpers;
 import java.util.Collection;
 
 import lisong_mechlab.model.item.BallisticWeapon;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * This class calculates the burst damage to a time for a weapon that is capable of double fire, such as the Ultra AC/5.

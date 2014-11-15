@@ -26,8 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.quirks.Attribute;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

@@ -59,14 +59,14 @@ public abstract class ComponentBase {
         slots = aCriticalSlots;
         hitpoints = aHitPoints;
         location = aLocation;
-        fixedItems = Collections.unmodifiableList(aFixedItems);
+        fixedItems = aFixedItems;
     }
 
     /**
      * @return An unmodifiable collection of all {@link Item}s this {@link ComponentOmniMech} has.
      */
     public List<Item> getFixedItems() {
-        return fixedItems;
+        return Collections.unmodifiableList(fixedItems);
     }
 
     /**

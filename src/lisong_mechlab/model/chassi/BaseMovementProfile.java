@@ -21,9 +21,9 @@ package lisong_mechlab.model.chassi;
 
 import java.util.Collection;
 
-import lisong_mechlab.model.quirks.Attribute;
-import lisong_mechlab.model.quirks.Modifier;
-import lisong_mechlab.model.quirks.ModifiersDB;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 
 /**
  * This class contains the movement parameters for a chassis.

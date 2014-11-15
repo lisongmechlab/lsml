@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import java.util.Arrays;
 import java.util.List;
 
 import lisong_mechlab.model.item.Ammunition;
@@ -32,6 +33,7 @@ import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.Module;
 import lisong_mechlab.model.item.TargetingComputer;
+import lisong_mechlab.model.modifiers.Attribute;
 import lisong_mechlab.mwo_data.Localization;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -53,8 +55,11 @@ public class ItemStatsModule extends ItemStats {
 
     @XStreamImplicit
     public List<XMLWeaponStats>      WeaponStats;
-    
-    public Item asItem(){
+
+    static Attribute                 ENGINE_HEAT = new Attribute(Engine.ENGINE_HEAT_FULL_THROTTLE,
+                                                         Arrays.asList("engineheat"), null);
+
+    public Item asItem() {
         switch (CType) {
             case "CAmmoTypeStats":
                 return new Ammunition(this);
@@ -63,14 +68,14 @@ public class ItemStatsModule extends ItemStats {
                 String uiDesc = Localization.key2string(Loc.descTag);
                 String mwoName = name;
                 int mwoId = Integer.parseInt(id);
-                Faction itemFaction = Faction.fromMwo(faction);    
-                
+                Faction itemFaction = Faction.fromMwo(faction);
+
                 int hs = EngineStats.heatsinks;
                 int internalHs = Math.min(10, hs);
                 int heatSinkSlots = hs - internalHs;
                 EngineType engineType = (uiName.toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
-                return new Engine(uiName, uiDesc, mwoName, mwoId, EngineStats.slots, EngineStats.weight, EngineStats.health, 
-                        itemFaction, EngineStats.rating, engineType, internalHs, heatSinkSlots);
+                return new Engine(uiName, uiDesc, mwoName, mwoId, EngineStats.slots, EngineStats.weight,
+                        EngineStats.health, itemFaction, ENGINE_HEAT, EngineStats.rating, engineType, internalHs, heatSinkSlots);
             case "CHeatSinkStats":
                 return new HeatSink(this);
             case "CJumpJetStats":

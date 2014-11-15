@@ -28,17 +28,15 @@ import java.util.List;
 
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.environment.Environment;
-import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.quirks.Attribute;
-import lisong_mechlab.model.quirks.Modifier;
-import lisong_mechlab.model.quirks.ModifierDescription;
-import lisong_mechlab.model.quirks.ModifiersDB;
-import lisong_mechlab.model.quirks.ModifierDescription.Operation;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifierDescription;
+import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
-import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;

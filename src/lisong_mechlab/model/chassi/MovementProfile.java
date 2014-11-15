@@ -21,7 +21,7 @@ package lisong_mechlab.model.chassi;
 
 import java.util.Collection;
 
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * This interface models the movement profile of any 'mech, clan or inner sphere. The values provided are base values

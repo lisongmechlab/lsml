@@ -19,6 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
@@ -28,9 +30,13 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
  * @author Emily Björk
  */
 public class Ammunition extends Item {
+    @XStreamAsAttribute
     protected final int           rounds;
+    @XStreamAsAttribute
     protected final double        internalDamage;
+    @XStreamAsAttribute
     protected final HardPointType type;
+    @XStreamAsAttribute
     protected final String        ammoType;
 
     public Ammunition(ItemStatsModule aStatsModule) {

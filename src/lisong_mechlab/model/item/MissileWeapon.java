@@ -22,7 +22,7 @@ package lisong_mechlab.model.item;
 import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.modifiers.Attribute;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;

@@ -24,11 +24,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import lisong_mechlab.model.quirks.Modifier;
-import lisong_mechlab.model.quirks.ModifierDescription;
-import lisong_mechlab.model.quirks.ModifiersDB;
-import lisong_mechlab.model.quirks.ModifierDescription.Operation;
-import lisong_mechlab.model.quirks.ModifierDescription.ValueType;
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifierDescription;
+import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
+import lisong_mechlab.model.modifiers.ModifierDescription.ValueType;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 import lisong_mechlab.mwo_data.helpers.XMLTargetingComputerStats;
 

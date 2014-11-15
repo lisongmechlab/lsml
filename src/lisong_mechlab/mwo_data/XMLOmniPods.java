@@ -28,7 +28,7 @@ import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsComponent;
 import lisong_mechlab.mwo_data.helpers.ItemStatsOmniPodType;
 import lisong_mechlab.mwo_data.helpers.MdfComponent;

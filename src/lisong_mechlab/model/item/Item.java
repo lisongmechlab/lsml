@@ -27,7 +27,9 @@ import lisong_mechlab.mwo_data.helpers.ItemStats;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Item implements Comparable<Item> {
+    @XStreamAsAttribute
     private final String        locName;
+    @XStreamAsAttribute
     private final String        locDesc;
     @XStreamAsAttribute
     private final String        mwoName;

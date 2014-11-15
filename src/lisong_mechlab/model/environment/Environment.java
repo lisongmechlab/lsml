@@ -21,9 +21,11 @@ package lisong_mechlab.model.environment;
 
 import java.util.Collection;
 
-import lisong_mechlab.model.quirks.Attribute;
-import lisong_mechlab.model.quirks.Modifier;
-import lisong_mechlab.model.quirks.ModifiersDB;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifiersDB;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class represents the model of an environment for mechs. The environment can affect a mech's behavior.
@@ -32,6 +34,7 @@ import lisong_mechlab.model.quirks.ModifiersDB;
  */
 public class Environment {
     private final Attribute heat;
+    @XStreamAsAttribute
     private final String    name;
 
     /**
@@ -46,6 +49,7 @@ public class Environment {
         name = aName;
         heat = new Attribute(aHeat, ModifiersDB.SEL_HEAT_EXTERNALTRANSFER);
     }
+
 
     /**
      * Will return the base heat penalty for an environment.
