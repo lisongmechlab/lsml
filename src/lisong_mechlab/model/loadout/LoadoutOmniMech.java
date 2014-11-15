@@ -22,15 +22,16 @@ package lisong_mechlab.model.loadout;
 import java.util.Collection;
 
 import lisong_mechlab.model.chassi.ChassisOmniMech;
-import lisong_mechlab.model.chassi.MovementModifier;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
-import lisong_mechlab.model.chassi.QuirkedMovementProfile;
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.ModifierEquipment;
 import lisong_mechlab.model.item.ModuleSlot;
+import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.OperationStack.Operation;
@@ -41,7 +42,6 @@ import lisong_mechlab.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
-    transient private final QuirkedMovementProfile movementProfile;
     transient private final Upgrades               upgrades;
 
     /**
@@ -54,12 +54,8 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
      */
     public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis) {
         super(aFactory, aChassis);
-        movementProfile = new QuirkedMovementProfile(aChassis.getMovementProfileBase());
         upgrades = new Upgrades(aChassis.getFixedArmorType(), aChassis.getFixedStructureType(),
                 UpgradeDB.STANDARD_GUIDANCE, aChassis.getFixedHeatSinkType());
-        for (ConfiguredComponentOmniMech component : getComponents()) {
-            movementProfile.addMovementModifiers(component.getOmniPod().getQuirks().getQuirksByType(MovementModifier.class));
-        }
     }
 
     /**
@@ -72,10 +68,6 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
      */
     public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, LoadoutOmniMech aLoadoutOmniMech) {
         super(aFactory, aLoadoutOmniMech);
-        movementProfile = new QuirkedMovementProfile(getChassis().getMovementProfileBase());
-        for (ConfiguredComponentOmniMech component : getComponents()) {
-            movementProfile.addMovementModifiers(component.getOmniPod().getQuirks().getQuirksByType(MovementModifier.class));
-        }
         upgrades = new Upgrades(aLoadoutOmniMech.getUpgrades());
     }
 
@@ -108,14 +100,12 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
      */
     public void setOmniPod(OmniPod aOmniPod) {
         ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
-        movementProfile.removeMovementModifiers(component.getOmniPod().getQuirks().getQuirksByType(MovementModifier.class));
-        movementProfile.addMovementModifiers(aOmniPod.getQuirks().getQuirksByType(MovementModifier.class));
         component.setOmniPod(aOmniPod);
     }
 
     @Override
     public MovementProfile getMovementProfile() {
-        return movementProfile;
+        return getChassis().getMovementProfileBase();
     }
 
     @Override
@@ -184,10 +174,10 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     }
 
     @Override
-    public <U> Collection<U> getModifiers(Class<U> aClass) {
-        Collection<U> ans = super.getModifiers(aClass);
+    public Collection<Modifier> getModifiers() {
+        Collection<Modifier> ans = super.getModifiers();
         for (ConfiguredComponentOmniMech component : getComponents()) {
-            ans.addAll(component.getOmniPod().getQuirks().getQuirksByType(aClass));
+            ans.addAll(component.getOmniPod().getQuirks());
         }
         return ans;
     }
@@ -198,10 +188,29 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
         sb.append("<html>");
         sb.append("<body>");
 
-        sb.append("<p>Quirks:</p>");
+        sb.append("<p>Omnipod Quirks:</p>");
         for (ConfiguredComponentOmniMech component : getComponents()) {
-            component.getOmniPod().getQuirks().describeAsHtmlWithoutHeaders(sb);
+            for (Modifier modifier : component.getOmniPod().getQuirks()) {
+                modifier.describeToHtml(sb);
+            }
         }
+
+        sb.append("<p>Equipment Bonuses:</p>");
+        for (ModifierEquipment me : items(ModifierEquipment.class)) {
+            for (Modifier modifier : me.getModifiers()) {
+                modifier.describeToHtml(sb);
+            }
+        }
+
+        sb.append("<p>Module Bonuses:</p>");
+        for (PilotModule me : getModules()) {
+            if (me instanceof ModifierEquipment) {
+                for (Modifier modifier : ((ModifierEquipment) me).getModifiers()) {
+                    modifier.describeToHtml(sb);
+                }
+            }
+        }
+
         sb.append("</body>");
         sb.append("</html>");
         return sb.toString();

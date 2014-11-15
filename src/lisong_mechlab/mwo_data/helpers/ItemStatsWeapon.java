@@ -19,6 +19,20 @@
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.item.AmmoWeapon;
+import lisong_mechlab.model.item.BallisticWeapon;
+import lisong_mechlab.model.item.EnergyWeapon;
+import lisong_mechlab.model.item.Faction;
+import lisong_mechlab.model.item.MissileWeapon;
+import lisong_mechlab.model.item.Weapon;
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.mwo_data.Localization;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsWeapon extends ItemStats {
@@ -91,16 +105,166 @@ public class ItemStatsWeapon extends ItemStats {
         public double falloffexponent;
     }
 
-    public WeaponStatsTag WeaponStats;
-
-    // Special case handling of inherit from
-    @XStreamAsAttribute
-    public int            InheritFrom;
-
     public static class ArtemisTag {
         @XStreamAsAttribute
         public int RestrictedTo;
     }
 
-    public ArtemisTag Artemis;
+    @XStreamAsAttribute
+    public int            InheritFrom;     // Special case handling of inherit from
+    @XStreamAsAttribute
+    public String         HardpointAliases;
+    public WeaponStatsTag WeaponStats;
+    public ArtemisTag     Artemis;
+
+    public Weapon asWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
+        int baseType = -1;
+        if (InheritFrom > 0) {
+            baseType = InheritFrom;
+            for (ItemStatsWeapon w : aWeaponList) {
+                try {
+                    if (Integer.parseInt(w.id) == InheritFrom) {
+                        WeaponStats = w.WeaponStats;
+                        if (Loc.descTag == null) {
+                            Loc.descTag = w.Loc.descTag;
+                        }
+                        break;
+                    }
+                }
+                catch (NumberFormatException e) {
+                    continue;
+                }
+            }
+            if (WeaponStats == null) {
+                throw new IOException("Unable to find referenced item in \"inherit statement from clause\" for: "
+                        + name);
+            }
+        }
+
+        final double cooldownValue;
+        if (WeaponStats.cooldown <= 0.0) {
+            // Some weapons are troublesome in that they have zero cooldown in the data files.
+            // These include: Machine Gun, Flamer, TAG
+            if (WeaponStats.rof > 0.0) {
+                cooldownValue = 1.0 / WeaponStats.rof;
+            }
+            else if (WeaponStats.type.toLowerCase().equals("energy")) {
+                cooldownValue = 1.0;
+            }
+            else {
+                cooldownValue = 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 =
+                // 0.10375
+            }
+        }
+        else {
+            cooldownValue = WeaponStats.cooldown;
+        }
+
+        String uiName = Localization.key2string(Loc.nameTag);
+        String uiDesc = Localization.key2string(Loc.descTag);
+        String mwoName = name;
+        int mwoId = Integer.parseInt(id);
+        int slots = WeaponStats.slots;
+        double mass = WeaponStats.tons;
+        int hp = WeaponStats.Health;
+        Faction itemFaction = Faction.fromMwo(faction);
+
+        double damagePerProjectile = WeaponStats.damage;
+
+        double fallOffExponent = WeaponStats.falloffexponent != 0 ? WeaponStats.falloffexponent : 1.0;
+
+        int roundsPerShot = WeaponStats.numFiring;
+        int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
+        double projectileSpeed = WeaponStats.speed;
+
+        int ghostHeatGroupId;
+        double ghostHeatMultiplier;
+        int ghostHeatFreeAlpha;
+        if (WeaponStats.minheatpenaltylevel != 0) {
+            ghostHeatGroupId = WeaponStats.heatPenaltyID;
+            ghostHeatMultiplier = WeaponStats.heatpenalty;
+            ghostHeatFreeAlpha = WeaponStats.minheatpenaltylevel - 1;
+        }
+        else {
+            ghostHeatGroupId = -1;
+            ghostHeatMultiplier = 0;
+            ghostHeatFreeAlpha = -1;
+        }
+
+        List<String> selectors = Arrays.asList(HardpointAliases.split(","));
+        Attribute cooldown = new Attribute(cooldownValue, selectors, "cooldown");
+        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors, "nullrange");
+        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, "minrange");
+        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors, "longrange");
+        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, "maxrange");
+        Attribute heat = new Attribute(WeaponStats.heat, selectors, "heat");
+
+        switch (HardPointType.fromMwoType(WeaponStats.type)) {
+            case AMS:
+                return new AmmoWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, HardPointType.AMS, hp, itemFaction,
+                        heat, cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
+                        damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
+                        ghostHeatMultiplier, ghostHeatFreeAlpha, getAmmoType());
+            case BALLISTIC:
+                final double spread;
+                if (WeaponStats.spread > 0)
+                    spread = WeaponStats.spread;
+                else
+                    spread = 0;
+
+                final double jammingChance;
+                final int shotsDuringCooldown;
+                final double jammingTime;
+                if (WeaponStats.JammingChance >= 0) {
+                    jammingChance = WeaponStats.JammingChance;
+                    shotsDuringCooldown = WeaponStats.ShotsDuringCooldown;
+                    jammingTime = WeaponStats.JammedTime;
+                }
+                else {
+                    jammingChance = 0.0;
+                    shotsDuringCooldown = 0;
+                    jammingTime = 0.0;
+                }
+                return new BallisticWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction, heat,
+                        cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
+                        damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
+                        ghostHeatMultiplier, ghostHeatFreeAlpha, getAmmoType(), spread, jammingChance, jammingTime,
+                        shotsDuringCooldown);
+            case ENERGY:
+                Attribute burntime = new Attribute((WeaponStats.duration < 0) ? Double.POSITIVE_INFINITY
+                        : WeaponStats.duration, selectors, "duration");
+                return new EnergyWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction, heat, cooldown,
+                        rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot, damagePerProjectile,
+                        projectilesPerRound, projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier,
+                        ghostHeatFreeAlpha, burntime);
+            case MISSILE:
+                final int requiredGuidance;
+                if (null != Artemis)
+                    requiredGuidance = Artemis.RestrictedTo;
+                else
+                    requiredGuidance = -1;
+
+                int baseItemId = baseType == -1 ? (requiredGuidance != -1 ? mwoId : -1) : baseType;
+                return new MissileWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction, heat, cooldown,
+                        rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot, damagePerProjectile,
+                        projectilesPerRound, projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier,
+                        ghostHeatFreeAlpha, getAmmoType(), requiredGuidance, baseItemId);
+
+            default:
+                throw new IOException("Unknown value for type field in ItemStatsXML. Please update the program!");
+        }
+    }
+
+    private String getAmmoType() {
+        String regularAmmo = WeaponStats.ammoType;
+        if (WeaponStats.artemisAmmoType == null)
+            return regularAmmo;
+
+        if (Artemis == null)
+            return regularAmmo;
+
+        if (Artemis.RestrictedTo == 3051) // No artemis
+            return regularAmmo;
+        return WeaponStats.artemisAmmoType;
+    }
 }

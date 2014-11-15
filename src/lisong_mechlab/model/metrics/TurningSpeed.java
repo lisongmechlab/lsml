@@ -20,9 +20,12 @@
 
 package lisong_mechlab.model.metrics;
 
+import java.util.Collection;
+
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * This {@link Metric} calculates how fast a mech will turn (degrees per second).
@@ -42,29 +45,29 @@ public class TurningSpeed implements Metric {
         Engine engine = loadout.getEngine();
         if (engine == null)
             return 0.0;
-        return getTurnRateAtThrottle(0.0, engine.getRating()) * loadout.getEfficiencies().getTurnSpeedModifier();
+        return getTurnRateAtThrottle(0.0, engine.getRating());
     }
 
     public double getTurnRateAtThrottle(double aThrottle, int aEngineRating) {
         final double k = (double) aEngineRating / loadout.getChassis().getMassMax() * 180.0 / Math.PI;
-
+        Collection<Modifier> modifiers = loadout.getModifiers();        
         MovementProfile mp = loadout.getMovementProfile();
 
-        if (aThrottle <= mp.getTurnLerpLowSpeed()) {
-            return k * mp.getTurnLerpLowRate();
+        if (aThrottle <= mp.getTurnLerpLowSpeed(modifiers)) {
+            return k * mp.getTurnLerpLowRate(modifiers);
         }
-        else if (aThrottle <= mp.getTurnLerpMidSpeed()) {
-            final double f = (aThrottle - mp.getTurnLerpLowSpeed())
-                    / (mp.getTurnLerpMidSpeed() - mp.getTurnLerpLowSpeed());
-            return k * (mp.getTurnLerpLowRate() + (mp.getTurnLerpMidRate() - mp.getTurnLerpLowRate()) * f);
+        else if (aThrottle <= mp.getTurnLerpMidSpeed(modifiers)) {
+            final double f = (aThrottle - mp.getTurnLerpLowSpeed(modifiers))
+                    / (mp.getTurnLerpMidSpeed(modifiers) - mp.getTurnLerpLowSpeed(modifiers));
+            return k * (mp.getTurnLerpLowRate(modifiers) + (mp.getTurnLerpMidRate(modifiers) - mp.getTurnLerpLowRate(modifiers)) * f);
         }
-        else if (aThrottle < mp.getTurnLerpHighSpeed()) {
-            final double f = (aThrottle - mp.getTurnLerpMidSpeed())
-                    / (mp.getTurnLerpHighSpeed() - mp.getTurnLerpMidSpeed());
-            return k * (mp.getTurnLerpMidRate() + (mp.getTurnLerpHighRate() - mp.getTurnLerpMidRate()) * f);
+        else if (aThrottle < mp.getTurnLerpHighSpeed(modifiers)) {
+            final double f = (aThrottle - mp.getTurnLerpMidSpeed(modifiers))
+                    / (mp.getTurnLerpHighSpeed(modifiers) - mp.getTurnLerpMidSpeed(modifiers));
+            return k * (mp.getTurnLerpMidRate(modifiers) + (mp.getTurnLerpHighRate(modifiers) - mp.getTurnLerpMidRate(modifiers)) * f);
         }
         else {
-            return k * mp.getTurnLerpHighRate();
+            return k * mp.getTurnLerpHighRate(modifiers);
         }
     }
 }

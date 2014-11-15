@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -46,12 +46,12 @@ public class OmniPodTest {
     private int             maxJumpJets     = 2;
     private int             maxPilotModules = 1;
     private int             mwoID           = 30012;
-    private Quirks          quirks          = Mockito.mock(Quirks.class);
+    private List<Modifier>  quirks          = new ArrayList<>();
     private String          series          = "timber wolf";
     private List<Item>      toggleableItems = new ArrayList<>();
 
     /**
-     * Omnipods have unique MWO ids so they are equal if the id is equal.
+     * Omnipods have unique MWO IDs so they are equal if the id is equal.
      */
     @Test
     public void testEquals() {

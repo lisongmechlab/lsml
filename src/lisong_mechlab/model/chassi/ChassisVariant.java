@@ -31,16 +31,16 @@ public enum ChassisVariant {
         if (null == aVariant)
             return NORMAL;
         
-        // Some chassis are marked as champion even though they don't have a base version just to give
-        // them a C-bill bonus. We treat these as normal mechs.
-        if(!aChassis.contains("(")){
-            return NORMAL;
-        }
-        
         String s = aVariant.toLowerCase();
         for (ChassisVariant variant : values()) {
-            if (s.equals(variant.toString().toLowerCase()))
+            if (s.equals(variant.toString().toLowerCase())){
+                if(variant == CHAMPION && !aChassis.contains("(")){
+                    // Some chassis are marked as champion even though they don't have a base version just to give
+                    // them a C-bill bonus. We treat these as normal mechs.
+                    return NORMAL;
+                }
                 return variant;
+            }
         }
         return NORMAL;
     }

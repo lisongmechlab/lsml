@@ -20,20 +20,29 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.quirks.Attribute;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+/**
+ * Base class for weapons that consume ammunition.
+ * 
+ * @author Emily Björk
+ *
+ */
 public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final String ammoTypeId;
 
-    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType) {
-        this(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.ammoType);
-    }
-
-    public AmmoWeapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType, String aAmmoType) {
-        super(aStatsWeapon, aHardpointType);
+    public AmmoWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardPointType, int aHP, Faction aFaction, Attribute aHeat, Attribute aCooldown,
+            Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
+            double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
+            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
+            String aAmmoType) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCooldown,
+                aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
+                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha);
         ammoTypeId = aAmmoType;
     }
 

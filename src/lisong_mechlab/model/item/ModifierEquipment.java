@@ -17,30 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package lisong_mechlab.model.quirks;
+package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.pilot.PilotSkillTree;
-import lisong_mechlab.model.quirks.Quirks.QuirkBenefit;
+import java.util.Collection;
+
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
- * A quirk that affects the beam duration of laser weapons.
+ * An interface for items that can have {@link Modifier}s that affect the loadout.
  * 
  * @author Emily Björk
- *
  */
-public class WeaponDurationQuirk extends WeaponQuirk {
-    public WeaponDurationQuirk(String aName, double aValue, Weapon aAffectedWeapon) {
-        super(aName, aValue, aAffectedWeapon);
-    }
+public interface ModifierEquipment {
 
-    @Override
-    public QuirkBenefit isPositiveGood() {
-        return QuirkBenefit.NEGATIVE_GOOD;
-    }
-
-    @Override
-    public double extraDuration(Weapon aWeapon, double aDuration, PilotSkillTree aPilotSkillTree) {
-        return aDuration * value;
-    }
+    /**
+     * @return A {@link Collection} of the {@link Modifier}s on this equipment.
+     */
+    public Collection<Modifier> getModifiers();
 }

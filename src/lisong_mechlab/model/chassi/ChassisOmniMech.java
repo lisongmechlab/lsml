@@ -28,7 +28,7 @@ import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -206,13 +206,13 @@ public class ChassisOmniMech extends ChassisBase {
     }
 
     /**
-     * @return The {@link MovementProfile} for the stock selection of {@link OmniPod}s.
+     * @return The set of {@link Modifier} for the stock selection of {@link OmniPod}s.
      */
-    public MovementProfile getMovementProfileStock() {
-        QuirkedMovementProfile ans = new QuirkedMovementProfile(getMovementProfileBase());
+    public Collection<Modifier> getStockModifiers() {
+        List<Modifier> ans = new ArrayList<>();
         for (Location location : Location.values()) {
             OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
-            ans.addMovementModifiers(omniPod.getQuirks().getQuirksByType(MovementModifier.class));
+            ans.addAll(omniPod.getQuirks());
         }
         return ans;
     }
@@ -225,11 +225,12 @@ public class ChassisOmniMech extends ChassisBase {
         return super.isAllowed(aItem); // Anything else depends on the actual combination of omnipods equipped
     }
 
-    private List<List<Quirks>> getQuirkGroups() {
-        List<List<Quirks>> groups = new ArrayList<>();
+    // {Location{OmniPod{Modifier}}}
+    private List<List<Collection<Modifier>>> getQuirkGroups() {
+        List<List<Collection<Modifier>>> groups = new ArrayList<>();
 
         for (Location location : Location.values()) {
-            List<Quirks> group = new ArrayList<>();
+            List<Collection<Modifier>> group = new ArrayList<>();
 
             if (getComponent(location).hasFixedOmniPod()) {
                 group.add(OmniPodDB.lookupOriginal(this, location).getQuirks());

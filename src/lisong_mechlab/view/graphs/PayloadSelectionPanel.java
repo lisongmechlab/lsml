@@ -221,8 +221,8 @@ public class PayloadSelectionPanel extends JPanel {
                     if (stdChassis.getMassMax() == currentStdChassis.getMassMax()
                             && stdChassis.getEngineMin() == currentStdChassis.getEngineMin()
                             && stdChassis.getEngineMax() == currentStdChassis.getEngineMax()
-                            && stdChassis.getMovementProfileBase().getMaxMovementSpeed() == currentStdChassis
-                                    .getMovementProfileBase().getMaxMovementSpeed()
+                            && stdChassis.getMovementProfileBase().getMaxMovementSpeed(null) == currentStdChassis
+                                    .getMovementProfileBase().getMaxMovementSpeed(null)
                             && stdChassis.isSameSeries(currentStdChassis)) {
                         chassiGroup.add(currentStdChassis);
                         skip = true;
@@ -234,8 +234,8 @@ public class PayloadSelectionPanel extends JPanel {
                     ChassisOmniMech omniChassis = (ChassisOmniMech) aChassi;
                     if (omniChassis.getMassMax() == currentOmniChassis.getMassMax()
                             && omniChassis.getFixedEngine() == currentOmniChassis.getFixedEngine()
-                            && omniChassis.getMovementProfileBase().getMaxMovementSpeed() == currentOmniChassis
-                                    .getMovementProfileBase().getMaxMovementSpeed()
+                            && omniChassis.getMovementProfileBase().getMaxMovementSpeed(null) == currentOmniChassis
+                                    .getMovementProfileBase().getMaxMovementSpeed(null)
                             && omniChassis.isSameSeries(currentOmniChassis)) {
                         chassiGroup.add(currentOmniChassis);
                         skip = true;

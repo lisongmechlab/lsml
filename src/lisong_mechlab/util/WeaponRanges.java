@@ -26,8 +26,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * This class will calculate the set of ranges at which weapons change damage. In essence, it calculates the ordered
@@ -46,7 +46,7 @@ public class WeaponRanges {
         }
     }
 
-    static public Double[] getRanges(Collection<Weapon> aWeaponCollection, Collection<WeaponModifier> aModifiers) {
+    static public Double[] getRanges(Collection<Weapon> aWeaponCollection, Collection<Modifier> aModifiers) {
         SortedSet<Double> ans = new TreeSet<>();
 
         ans.add(Double.valueOf(0.0));
@@ -54,20 +54,20 @@ public class WeaponRanges {
             if (!weapon.isOffensive())
                 continue;
 
-            ans.add(weapon.getRangeZero());
+            ans.add(weapon.getRangeZero(aModifiers));
             if (weapon.hasNonLinearFalloff()) {
-                addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
+                addRange(ans, weapon.getRangeZero(aModifiers), weapon.getRangeMin(aModifiers));
             }
-            ans.add(weapon.getRangeMin());
+            ans.add(weapon.getRangeMin(aModifiers));
 
             if (weapon.hasSpread()) {
-                addRange(ans, weapon.getRangeMin(), weapon.getRangeMax(aModifiers));
+                addRange(ans, weapon.getRangeMin(aModifiers), weapon.getRangeMax(aModifiers));
                 ans.add(weapon.getRangeMax(aModifiers));
             }
             else {
                 ans.add(weapon.getRangeLong(aModifiers));
                 if (weapon.hasNonLinearFalloff()) {
-                    addRange(ans, weapon.getRangeZero(), weapon.getRangeMin());
+                    addRange(ans, weapon.getRangeZero(aModifiers), weapon.getRangeMin(aModifiers));
                 }
                 ans.add(weapon.getRangeMax(aModifiers));
             }
@@ -80,6 +80,6 @@ public class WeaponRanges {
         for (Weapon weapon : aLoadout.items(Weapon.class)) {
             weapons.add(weapon);
         }
-        return getRanges(weapons, aLoadout.getModifiers(WeaponModifier.class));
+        return getRanges(weapons, aLoadout.getModifiers());
     }
 }

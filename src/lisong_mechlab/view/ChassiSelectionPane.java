@@ -58,6 +58,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.metrics.TopSpeed;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 import lisong_mechlab.util.message.Message;
@@ -186,32 +187,34 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
 
         @Override
         public String valueOf(Object aSourceRowObject) {
+            List<Modifier> modifiers = new ArrayList<>();
+            
             if (aSourceRowObject instanceof ChassisStandard) {
                 ChassisStandard chassis = (ChassisStandard) aSourceRowObject;
-
-                Efficiencies efficiencies = new Efficiencies();
-                efficiencies.setSpeedTweak(false, null);
+                modifiers.addAll(chassis.getQuirks());
 
                 final double maxSpeed = TopSpeed.calculate(chassis.getEngineMax(), chassis.getMovementProfileBase(),
-                        chassis.getMassMax(), efficiencies.getSpeedModifier());
+                        chassis.getMassMax(), modifiers);
 
+                Efficiencies efficiencies = new Efficiencies();
                 efficiencies.setSpeedTweak(true, null);
+                modifiers.addAll(efficiencies.getModifiers());
                 final double maxSpeedTweak = TopSpeed.calculate(chassis.getEngineMax(),
-                        chassis.getMovementProfileBase(), chassis.getMassMax(), efficiencies.getSpeedModifier());
+                        chassis.getMovementProfileBase(), chassis.getMassMax(), modifiers);
                 return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
             }
             else if (aSourceRowObject instanceof ChassisOmniMech) {
                 ChassisOmniMech chassis = (ChassisOmniMech) aSourceRowObject;
-
-                Efficiencies efficiencies = new Efficiencies();
-                efficiencies.setSpeedTweak(false, null);
+                modifiers.addAll(chassis.getStockModifiers());
 
                 final double maxSpeed = TopSpeed.calculate(chassis.getFixedEngine().getRating(),
-                        chassis.getMovementProfileStock(), chassis.getMassMax(), efficiencies.getSpeedModifier());
+                        chassis.getMovementProfileBase(), chassis.getMassMax(), modifiers);
 
+                Efficiencies efficiencies = new Efficiencies();
                 efficiencies.setSpeedTweak(true, null);
+                modifiers.addAll(efficiencies.getModifiers());
                 final double maxSpeedTweak = TopSpeed.calculate(chassis.getFixedEngine().getRating(),
-                        chassis.getMovementProfileStock(), chassis.getMassMax(), efficiencies.getSpeedModifier());
+                        chassis.getMovementProfileBase(), chassis.getMassMax(), modifiers);
                 return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
             }
             else {

@@ -22,11 +22,15 @@ package lisong_mechlab.model.chassi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import junitparams.JUnitParamsRunner;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.Upgrades;
 
 import org.junit.Before;
@@ -47,7 +51,7 @@ public class ChassisStandardTest extends ChassisBaseTest {
     private int                 engineMax;
     private int                 maxJumpJets;
     private ComponentStandard[] components;
-    private Quirks              quirks;
+    private List<Modifier>      quirks = new ArrayList<>();
 
     @Override
     @Before
@@ -64,7 +68,6 @@ public class ChassisStandardTest extends ChassisBaseTest {
                     .thenReturn(true);
         }
         componentBases = components;
-        quirks = Mockito.mock(Quirks.class);
     }
 
     @Override

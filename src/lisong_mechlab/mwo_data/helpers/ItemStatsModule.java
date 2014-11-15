@@ -21,6 +21,19 @@ package lisong_mechlab.mwo_data.helpers;
 
 import java.util.List;
 
+import lisong_mechlab.model.item.Ammunition;
+import lisong_mechlab.model.item.ECM;
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.EngineType;
+import lisong_mechlab.model.item.Faction;
+import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.Internal;
+import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.item.Module;
+import lisong_mechlab.model.item.TargetingComputer;
+import lisong_mechlab.mwo_data.Localization;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -40,4 +53,41 @@ public class ItemStatsModule extends ItemStats {
 
     @XStreamImplicit
     public List<XMLWeaponStats>      WeaponStats;
+    
+    public Item asItem(){
+        switch (CType) {
+            case "CAmmoTypeStats":
+                return new Ammunition(this);
+            case "CEngineStats":
+                String uiName = Localization.key2string(Loc.nameTag);
+                String uiDesc = Localization.key2string(Loc.descTag);
+                String mwoName = name;
+                int mwoId = Integer.parseInt(id);
+                Faction itemFaction = Faction.fromMwo(faction);    
+                
+                int hs = EngineStats.heatsinks;
+                int internalHs = Math.min(10, hs);
+                int heatSinkSlots = hs - internalHs;
+                EngineType engineType = (uiName.toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
+                return new Engine(uiName, uiDesc, mwoName, mwoId, EngineStats.slots, EngineStats.weight, EngineStats.health, 
+                        itemFaction, EngineStats.rating, engineType, internalHs, heatSinkSlots);
+            case "CHeatSinkStats":
+                return new HeatSink(this);
+            case "CJumpJetStats":
+                return new JumpJet(this);
+            case "CGECMStats":
+                return new ECM(this);
+            case "CBAPStats":
+            case "CClanBAPStats":
+            case "CCASEStats":
+                return new Module(this);
+            case "CLowerArmActuatorStats":
+            case "CInternalStats":
+                return new Internal(this);
+            case "CTargetingComputerStats":
+                return new TargetingComputer(this);
+            default:
+                return null;
+        }
+    }
 }

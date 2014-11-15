@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
@@ -45,12 +44,10 @@ public class BurstDamageOverTimeTest {
     private final MessageXBar     aXBar        = Mockito.mock(MessageXBar.class);
     private final List<Weapon>    items        = new ArrayList<>();
     private final LoadoutStandard loadout      = Mockito.mock(LoadoutStandard.class);
-    private final Efficiencies    efficiencies = Mockito.mock(Efficiencies.class);
 
     @Before
     public void setup() {
         Mockito.when(loadout.items(Weapon.class)).thenReturn(items);
-        Mockito.when(loadout.getEfficiencies()).thenReturn(efficiencies);
     }
 
     @Test
@@ -78,8 +75,7 @@ public class BurstDamageOverTimeTest {
         items.add(ac20);
         items.add(erllas);
         items.add(erppc);
-        Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
-        final double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
+        final double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
 
         // Execute
         BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
@@ -87,9 +83,9 @@ public class BurstDamageOverTimeTest {
 
         // Verify
         double expected = erllas.getDamagePerShot() * 3.5;
-        expected += ((int) (time / ac20.getSecondsPerShot(efficiencies, null) + 1)) * ac20.getDamagePerShot()
+        expected += ((int) (time / ac20.getSecondsPerShot(null) + 1)) * ac20.getDamagePerShot()
                 * ac20.getRangeEffectivity(500, null);
-        expected += ((int) (time / erppc.getSecondsPerShot(efficiencies, null) + 1)) * erppc.getDamagePerShot()
+        expected += ((int) (time / erppc.getSecondsPerShot(null) + 1)) * erppc.getDamagePerShot()
                 * erppc.getRangeEffectivity(500, null);
         assertEquals(expected, burst, 0.0);
     }
@@ -101,9 +97,6 @@ public class BurstDamageOverTimeTest {
      */
     @Test
     public final void testCalculate_NoWeapons() throws Exception {
-        // Setup
-        Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
-
         // Execute
         BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
         double burst = cut.calculate(500, 500);
@@ -121,7 +114,6 @@ public class BurstDamageOverTimeTest {
     public final void testCalculate_NoAMS() throws Exception {
         // Setup
         items.add(ItemDB.AMS);
-        Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
 
         // Execute
         BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
@@ -142,13 +134,12 @@ public class BurstDamageOverTimeTest {
         // Setup
         EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
         items.add(erllas);
-        Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
 
         // Execute
         BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
         cut.calculate(123, 321); // Dummy just make sure it's different from below
 
-        double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
+        double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
         double burst = cut.calculate(500, time);
 
         // Verify

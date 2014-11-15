@@ -19,6 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
+import java.util.Collection;
+
+import lisong_mechlab.model.quirks.Modifier;
+
 /**
  * This {@link MovementProfile} provides an abstract base for a composite {@link MovementProfile} where the value of
  * each attribute is the result a function applied to a set of {@link MovementProfile}s.
@@ -37,72 +41,72 @@ public abstract class ModifiedProfileBase implements MovementProfile {
     protected abstract double calc(String aMethodName);
 
     @Override
-    public double getTorsoYawMax() {
+    public double getTorsoYawMax(Collection<Modifier> aModifiers) {
         return calc("getTorsoYawMax");
     }
 
     @Override
-    public double getTorsoYawSpeed() {
+    public double getTorsoYawSpeed(Collection<Modifier> aModifiers) {
         return calc("getTorsoYawSpeed");
     }
 
     @Override
-    public double getTorsoPitchMax() {
+    public double getTorsoPitchMax(Collection<Modifier> aModifiers) {
         return calc("getTorsoPitchMax");
     }
 
     @Override
-    public double getTorsoPitchSpeed() {
+    public double getTorsoPitchSpeed(Collection<Modifier> aModifiers) {
         return calc("getTorsoPitchSpeed");
     }
 
     @Override
-    public double getArmYawMax() {
+    public double getArmYawMax(Collection<Modifier> aModifiers) {
         return calc("getArmYawMax");
     }
 
     @Override
-    public double getArmYawSpeed() {
+    public double getArmYawSpeed(Collection<Modifier> aModifiers) {
         return calc("getArmYawSpeed");
     }
 
     @Override
-    public double getArmPitchMax() {
+    public double getArmPitchMax(Collection<Modifier> aModifiers) {
         return calc("getArmPitchMax");
     }
 
     @Override
-    public double getArmPitchSpeed() {
+    public double getArmPitchSpeed(Collection<Modifier> aModifiers) {
         return calc("getArmPitchSpeed");
     }
 
     @Override
-    public double getTurnLerpLowSpeed() {
+    public double getTurnLerpLowSpeed(Collection<Modifier> aModifiers) {
         return calc("getTurnLerpLowSpeed");
     }
 
     @Override
-    public double getTurnLerpMidSpeed() {
+    public double getTurnLerpMidSpeed(Collection<Modifier> aModifiers) {
         return calc("getTurnLerpMidSpeed");
     }
 
     @Override
-    public double getTurnLerpHighSpeed() {
+    public double getTurnLerpHighSpeed(Collection<Modifier> aModifiers) {
         return calc("getTurnLerpHighSpeed");
     }
 
     @Override
-    public double getTurnLerpLowRate() {
+    public double getTurnLerpLowRate(Collection<Modifier> aModifiers) {
         return calc("getTurnLerpLowRate");
     }
 
     @Override
-    public double getTurnLerpMidRate() {
+    public double getTurnLerpMidRate(Collection<Modifier> aModifiers) {
         return calc("getTurnLerpMidRate");
     }
 
     @Override
-    public double getTurnLerpHighRate() {
+    public double getTurnLerpHighRate(Collection<Modifier> aModifiers) {
         return calc("getTurnLerpHighRate");
     }
 

@@ -19,14 +19,20 @@
 //@formatter:on
 package lisong_mechlab.model.environment;
 
+import java.util.Collection;
+
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.quirks.ModifiersDB;
+
 /**
  * This class represents the model of an environment for mechs. The environment can affect a mech's behavior.
  * 
  * @author Emily Björk
  */
 public class Environment {
-    private final double heat;
-    private final String name;
+    private final Attribute heat;
+    private final String    name;
 
     /**
      * Creates a new {@link Environment} with the given name and heat value.
@@ -38,17 +44,20 @@ public class Environment {
      */
     public Environment(String aName, double aHeat) {
         name = aName;
-        heat = aHeat;
+        heat = new Attribute(aHeat, ModifiersDB.SEL_HEAT_EXTERNALTRANSFER);
     }
 
     /**
      * Will return the base heat penalty for an environment.
      * 
+     * @param aModifiers
+     *            The modifiers to apply to the environmental heat.
+     * 
      * @return A <code>double</code> that is a heat dissipation penalty to apply to the mech. A number &lt 0 means the
      *         environment cools the mech.
      */
-    public double getHeat() {
-        return heat;
+    public double getHeat(Collection<Modifier> aModifiers) {
+        return heat.value(aModifiers);
     }
 
     /**

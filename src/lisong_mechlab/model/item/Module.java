@@ -38,11 +38,13 @@ public class Module extends Item {
         super(aNameTag, aDesc, aSlots, aHealth, aFaction);
     }
 
+    @Deprecated
     public Module(ItemStatsModule aModule) {
         super(aModule, HardPointType.NONE, aModule.ModuleStats.slots, aModule.ModuleStats.tons,
                 aModule.ModuleStats.health);
     }
 
+    @Deprecated
     public Module(ItemStatsModule aModule, HardPointType hardpoint) {
         super(aModule, hardpoint, aModule.ModuleStats.slots, aModule.ModuleStats.tons, aModule.ModuleStats.health);
     }

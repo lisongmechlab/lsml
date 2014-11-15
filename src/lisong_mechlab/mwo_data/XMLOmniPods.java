@@ -28,8 +28,7 @@ import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.quirks.Quirk;
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.mwo_data.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsComponent;
 import lisong_mechlab.mwo_data.helpers.ItemStatsOmniPodType;
 import lisong_mechlab.mwo_data.helpers.MdfComponent;
@@ -106,7 +105,7 @@ public class XMLOmniPods {
 
                 int maxJumpjets = 0;
                 int maxPilotModules = 0;
-                List<Quirk> quirksList = new ArrayList<>();
+                List<Modifier> quirksList = new ArrayList<>();
                 if (null != component.quirks) {
                     for (XMLQuirk quirk : component.quirks) {
                         if ("jumpjetslots_additive".equals(quirk.name.toLowerCase())) {
@@ -122,14 +121,13 @@ public class XMLOmniPods {
                 Location location = Location.fromMwoName(component.name);
                 List<HardPoint> hardPoints = MdfComponent.getHardPoints(location, aHardPointsXML, component.hardpoints,
                         component.CanEquipECM, set.name);
-                Quirks quirks = new Quirks(quirksList);
 
                 List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals,
                         component.fixedItems);
                 List<Item> toggleableItems = MdfComponent.getToggleableItems(aDataCache, component.internals,
                         component.fixedItems);
 
-                ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirks, hardPoints, fixedItems,
+                ans.add(new OmniPod(type.id, location, type.chassis, set.name, quirksList, hardPoints, fixedItems,
                         toggleableItems, maxJumpjets, maxPilotModules));
             }
         }

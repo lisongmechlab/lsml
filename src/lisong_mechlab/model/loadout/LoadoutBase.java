@@ -37,6 +37,7 @@ import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.item.ModifierEquipment;
 import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.loadout.EquipResult.Type;
@@ -50,6 +51,7 @@ import lisong_mechlab.model.loadout.converters.LoadoutConverter;
 import lisong_mechlab.model.loadout.converters.ModuleConverter;
 import lisong_mechlab.model.loadout.converters.UpgradeConverter;
 import lisong_mechlab.model.loadout.converters.UpgradesConverter;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.util.ListArrayUtils;
 
@@ -537,20 +539,18 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     public abstract String getQuirkHtmlSummary();
 
     /**
-     * Returns a {@link Collection} of all equipment or modules or omnipods or quirks that implements the given class.
+     * Returns a {@link Collection} of all equipment or modules or omnipods or quirks that are modifiers.
      * 
-     * @param aClass
-     *            The class that should be implemented.
      * @return The {@link Collection} of modifiers.
      */
-    public <U> Collection<U> getModifiers(Class<U> aClass) {
-        List<U> modifiers = new ArrayList<>();
-        for (U t : items(aClass)) {
-            modifiers.add(t);
+    public Collection<Modifier> getModifiers() {
+        List<Modifier> modifiers = new ArrayList<>();
+        for (ModifierEquipment t : items(ModifierEquipment.class)) {
+            modifiers.addAll(t.getModifiers());
         }
         for (PilotModule module : getModules()) {
-            if (aClass.isInstance(module)) {
-                modifiers.add(aClass.cast(module));
+            if (module instanceof ModifierEquipment) {
+                modifiers.addAll(((ModifierEquipment) module).getModifiers());
             }
         }
         return modifiers;

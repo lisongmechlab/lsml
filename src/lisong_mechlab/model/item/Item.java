@@ -45,10 +45,10 @@ public class Item implements Comparable<Item> {
     @XStreamAsAttribute
     private final Faction       faction;
 
-    public Item(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+    public Item(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, int aHP, Faction aFaction) {
-        locName = aName;
-        locDesc = aDesc;
+        locName = aUiName;
+        locDesc = aUiDesc;
         mwoName = aMwoName;
         mwoIdx = aMwoId;
         slots = aSlots;

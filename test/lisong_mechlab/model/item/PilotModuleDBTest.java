@@ -19,8 +19,8 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import lisong_mechlab.model.quirks.Modifier;
 
 import org.junit.Test;
 
@@ -42,8 +42,8 @@ public class PilotModuleDBTest {
         assertTrue(module.affectsWeapon(srm2));
         assertTrue(module.affectsWeapon(srm2artemis));
 
-        assertEquals(1.0, module.extraLongRange(srm2, 10, null), Math.ulp(10.0));
-        assertEquals(2.0, module.extraMaxRange(srm2artemis, 20, null), Math.ulp(20.0));
-        assertEquals(0.0, module.extraWeaponHeat(srm2artemis, 0, null), 0.0);
+        for (Modifier modifier : module.getModifiers()) {
+            assertTrue(modifier.getValue() > 0.0);
+        }
     }
 }

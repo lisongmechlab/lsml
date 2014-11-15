@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -35,22 +35,22 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class OmniPod {
     @XStreamAsAttribute
-    private final String          chassis;
-    private final List<Item>      fixedItems;
-    private final List<HardPoint> hardPoints;
+    private final String               chassis;
+    private final List<Item>           fixedItems;
+    private final List<HardPoint>      hardPoints;
     @XStreamAsAttribute
-    private final Location        location;
+    private final Location             location;
     @XStreamAsAttribute
-    private final int             maxJumpJets;
+    private final int                  maxJumpJets;
     @XStreamAsAttribute
-    private final int             maxPilotModules;
+    private final int                  maxPilotModules;
     @XStreamAsAttribute
-    private final int             mwoID;
+    private final int                  mwoID;
     @XStreamAsAttribute
-    private final Quirks          quirks;
+    private final Collection<Modifier> quirks;
     @XStreamAsAttribute
-    private final String          series;
-    private final List<Item>      toggleableItems;
+    private final String               series;
+    private final List<Item>           toggleableItems;
 
     /**
      * Creates a new {@link OmniPod}.
@@ -65,7 +65,7 @@ public class OmniPod {
      *            The MWO ID of the specific variant that this {@link OmniPod} is part of, for example
      *            "TIMBER WOLF PRIME".
      * @param aQuirks
-     *            A set of {@link Quirks} this {@link OmniPod} will bring to the loadout if equipped.
+     *            A {@link Collection} of {@link Modifier}s this {@link OmniPod} will bring to the loadout if equipped.
      * @param aHardPoints
      *            A {@link List} of {@link HardPoint}s for this {@link OmniPod}.
      * @param aFixedItems
@@ -77,9 +77,9 @@ public class OmniPod {
      * @param aMaxPilotModules
      *            The number of pilot modules that this {@link OmniPod} adds to the loadout.
      */
-    public OmniPod(int aMwoID, Location aLocation, String aSeriesName, String aOriginalChassisID, Quirks aQuirks,
-            List<HardPoint> aHardPoints, List<Item> aFixedItems, List<Item> aToggleableItems, int aMaxJumpJets,
-            int aMaxPilotModules) {
+    public OmniPod(int aMwoID, Location aLocation, String aSeriesName, String aOriginalChassisID,
+            Collection<Modifier> aQuirks, List<HardPoint> aHardPoints, List<Item> aFixedItems,
+            List<Item> aToggleableItems, int aMaxJumpJets, int aMaxPilotModules) {
         mwoID = aMwoID;
         location = aLocation;
         series = aSeriesName.toUpperCase();
@@ -173,7 +173,7 @@ public class OmniPod {
     /**
      * @return The omnipod specific movement quirks.
      */
-    public Quirks getQuirks() {
+    public Collection<Modifier> getQuirks() {
         return quirks;
     }
 

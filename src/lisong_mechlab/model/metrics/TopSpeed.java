@@ -19,10 +19,13 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
+import java.util.Collection;
+
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * This {@link Metric} calculates the maximal speed the loadout can have, taking speed tweak into account.
@@ -41,8 +44,8 @@ public class TopSpeed implements Metric {
         Engine engine = loadout.getEngine();
         if (null == engine)
             return 0;
-        return calculate(engine.getRating(), loadout.getMovementProfile(), loadout.getChassis().getMassMax(), loadout
-                .getEfficiencies().getSpeedModifier());
+        return calculate(engine.getRating(), loadout.getMovementProfile(), loadout.getChassis().getMassMax(),
+                loadout.getModifiers());
     }
 
     /**
@@ -55,12 +58,12 @@ public class TopSpeed implements Metric {
      *            The movement profile to calculate the speed with.
      * @param aMaxMass
      *            The mass of the chassis to calculate for.
-     * @param aModifier
-     *            A modifier to use, 1.0 for normal and 1.1 for speed tweak.
+     * @param aModifiers
+     *            A set of modifiers to use.
      * @return The speed in [km/h].
      */
     static public double calculate(final int aRating, final MovementProfile aMovementProfile, final double aMaxMass,
-            final double aModifier) {
-        return aMovementProfile.getMaxMovementSpeed() * aRating / aMaxMass * aModifier;
+            final Collection<Modifier> aModifiers) {
+        return aMovementProfile.getMaxMovementSpeed(aModifiers) * aRating / aMaxMass;
     }
 }

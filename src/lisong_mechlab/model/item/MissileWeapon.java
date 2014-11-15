@@ -22,46 +22,34 @@ package lisong_mechlab.model.item;
 import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.quirks.Attribute;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 
 public class MissileWeapon extends AmmoWeapon {
-    protected final double flightSpeed;
-    protected final int    requiredGuidancetype;
-    private final int      baseItemId;
+    private final int requiredGuidanceType;
+    private final int baseItemId;
 
-    public MissileWeapon(ItemStatsWeapon aStatsWeapon, int aBaseItemId) {
-        super(aStatsWeapon, HardPointType.MISSILE, getAmmoType(aStatsWeapon));
-        flightSpeed = aStatsWeapon.WeaponStats.speed;
-
-        if (null != aStatsWeapon.Artemis)
-            requiredGuidancetype = aStatsWeapon.Artemis.RestrictedTo;
-        else
-            requiredGuidancetype = -1;
-
-        baseItemId = aBaseItemId == -1 ? (isArtemisCapable() ? getMwoId() : -1) : aBaseItemId;
-    }
-
-    static private String getAmmoType(ItemStatsWeapon aStatsWeapon) {
-        String regularAmmo = aStatsWeapon.WeaponStats.ammoType;
-        if (aStatsWeapon.WeaponStats.artemisAmmoType == null)
-            return regularAmmo;
-
-        if (aStatsWeapon.Artemis == null)
-            return regularAmmo;
-
-        if (aStatsWeapon.Artemis.RestrictedTo == 3051) // No artemis
-            return regularAmmo;
-        return aStatsWeapon.WeaponStats.artemisAmmoType;
+    public MissileWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
+            Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
+            double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
+            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, String aAmmoType, int aRequiredGuidanceId,
+            int aBaseItemId) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.MISSILE, aHP, aFaction, aHeat, aCooldown,
+                aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
+                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
+                aGhostHeatMaxFreeAlpha, aAmmoType);
+        requiredGuidanceType = aRequiredGuidanceId;
+        baseItemId = aBaseItemId;
     }
 
     @Override
     public boolean isCompatible(Upgrades aUpgrades) {
         if (isArtemisCapable()) {
-            return aUpgrades.getGuidance().getMwoId() == requiredGuidancetype;
+            return aUpgrades.getGuidance().getMwoId() == requiredGuidanceType;
         }
         return super.isCompatible(aUpgrades);
     }
@@ -69,7 +57,7 @@ public class MissileWeapon extends AmmoWeapon {
     @Override
     public int getNumCriticalSlots() {
         if (isArtemisCapable()) {
-            return super.getNumCriticalSlots() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidancetype)).getSlots();
+            return super.getNumCriticalSlots() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidanceType)).getSlots();
         }
         return super.getNumCriticalSlots();
     }
@@ -77,13 +65,13 @@ public class MissileWeapon extends AmmoWeapon {
     @Override
     public double getMass() {
         if (isArtemisCapable()) {
-            return super.getMass() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidancetype)).getTons();
+            return super.getMass() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidanceType)).getTons();
         }
         return super.getMass();
     }
 
     public boolean isArtemisCapable() {
-        return requiredGuidancetype != -1;
+        return requiredGuidanceType != -1;
     }
 
     public MissileWeapon getBaseVariant() {
@@ -93,13 +81,13 @@ public class MissileWeapon extends AmmoWeapon {
         return (MissileWeapon) ItemDB.lookup(baseItemId);
     }
 
-    public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;
+    public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING; // XXX: Should this really be here?
 
     /**
      * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns
      *         <code>null</code>.
      */
     public Upgrade getRequiredUpgrade() {
-        return UpgradeDB.lookup(requiredGuidancetype);
+        return UpgradeDB.lookup(requiredGuidanceType);
     }
 }

@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * This {@link Metric} calculates the total ghost heat penalty for an alpha strike from a loadout.
@@ -76,7 +76,7 @@ public class GhostHeat implements Metric {
             penalty += calculatePenalty(weapon, count);
         }
 
-        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        Collection<Modifier> modifiers = loadout.getModifiers();
         // XXX: http://mwomercs.com/forums/topic/127904-heat-scale-the-maths/ is not completely
         // clear on this. We interpret the post to mean that for the purpose of ghost heat, every weapon
         // in the linked group is equal to the weapon with highest base heat.
@@ -98,7 +98,7 @@ public class GhostHeat implements Metric {
     private double calculatePenalty(Weapon aWeapon, int aCount) {
         double penalty = 0;
         int count = aCount;
-        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        Collection<Modifier> modifiers = loadout.getModifiers();
         while (count > aWeapon.getGhostHeatMaxFreeAlpha()) {
             penalty += HEAT_SCALE[Math.min(count, HEAT_SCALE.length - 1)] * aWeapon.getGhostHeatMultiplier()
                     * aWeapon.getHeat(modifiers);

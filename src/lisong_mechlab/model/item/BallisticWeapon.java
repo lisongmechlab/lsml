@@ -22,13 +22,18 @@ package lisong_mechlab.model.item;
 import java.util.Collection;
 import java.util.Comparator;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.util.GaussianDistribution;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+/**
+ * An immutable class that represents a ballistic weapon.
+ * 
+ * @author Emily Björk
+ */
 public class BallisticWeapon extends AmmoWeapon {
     @XStreamAsAttribute
     protected final double spread;
@@ -39,23 +44,20 @@ public class BallisticWeapon extends AmmoWeapon {
     @XStreamAsAttribute
     protected final double jammingTime;
 
-    public BallisticWeapon(ItemStatsWeapon aStatsWeapon) {
-        super(aStatsWeapon, HardPointType.BALLISTIC);
-        if (aStatsWeapon.WeaponStats.spread > 0)
-            spread = aStatsWeapon.WeaponStats.spread;
-        else
-            spread = 0;
-
-        if (aStatsWeapon.WeaponStats.JammingChance >= 0) {
-            jammingChance = aStatsWeapon.WeaponStats.JammingChance;
-            shotsduringcooldown = aStatsWeapon.WeaponStats.ShotsDuringCooldown;
-            jammingTime = aStatsWeapon.WeaponStats.JammedTime;
-        }
-        else {
-            jammingChance = 0.0;
-            shotsduringcooldown = 0;
-            jammingTime = 0.0;
-        }
+    public BallisticWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
+            Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
+            double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
+            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, String aAmmoType, double aSpread,
+            double aJammingChance, double aJammingTime, int aShotsDuringCooldown) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction, aHeat, aCooldown,
+                aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
+                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
+                aGhostHeatMaxFreeAlpha, aAmmoType);
+        spread = aSpread;
+        jammingChance = aJammingChance;
+        jammingTime = aJammingTime;
+        shotsduringcooldown = aShotsDuringCooldown;
     }
 
     @Override
@@ -88,35 +90,33 @@ public class BallisticWeapon extends AmmoWeapon {
     }
 
     @Override
-    public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
+    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
         if (canDoubleFire()) {
-            final double cd = getRawSecondsPerShot(aEfficiencies, aModifiers);
+            final double cd = getRawSecondsPerShot(aModifiers);
             return (jammingTime * jammingChance + cd)
                     / ((1 - jammingChance) * (1 + shotsduringcooldown) + jammingChance);
         }
-        return getRawSecondsPerShot(aEfficiencies, aModifiers);
+        return getRawSecondsPerShot(aModifiers);
     }
 
     /**
      * The unmodified rate of fire for the weapon. Mainly useful for ultra-ac type weapons where
-     * {@link #getSecondsPerShot(Efficiencies, Collection)} returns the statistical value.
+     * {@link #getSecondsPerShot(Collection)} returns the statistical value.
      * 
-     * @param aEfficiencies
-     *            The efficiencies to apply.
      * @param aModifiers
      *            The modifiers to apply from quirks etc.
      * @return The rate of fire [seconds/round]
      */
-    public double getRawSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
-        if (getMwoId() == 1021) { // Gauss rifle
-            return getCoolDown(aEfficiencies, aModifiers) + 0.75; // TODO: Fix this when they add the charge time to the
-                                                                  // itemstats.xml
+    public double getRawSecondsPerShot(Collection<Modifier> aModifiers) {
+        if (getMwoId() == 1021 || getMwoId() == 1208) { // IS/Clan Gauss rifle
+            return getCoolDown(aModifiers) + 0.75; // TODO: Fix this when they add the charge time to the
+                                                   // itemstats.xml
         }
-        return getCoolDown(aEfficiencies, aModifiers);
+        return getCoolDown(aModifiers);
     }
 
     @Override
-    public double getRangeEffectivity(double range, Collection<WeaponModifier> aPilotModules) {
+    public double getRangeEffectivity(double range, Collection<Modifier> aPilotModules) {
         double spreadFactor = 1.0;
         if (hasSpread()) {
             // Assumption:
