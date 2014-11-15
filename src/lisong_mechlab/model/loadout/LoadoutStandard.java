@@ -28,10 +28,13 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ModifierEquipment;
 import lisong_mechlab.model.item.ModuleSlot;
+import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.OperationStack;
 
@@ -197,9 +200,9 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
     }
 
     @Override
-    public <U> Collection<U> getModifiers(Class<U> aClass) {
-        Collection<U> ans = super.getModifiers(aClass);
-        ans.addAll(getChassis().getQuirks().getQuirksByType(aClass));
+    public Collection<Modifier> getModifiers() {
+        Collection<Modifier> ans = super.getModifiers();
+        ans.addAll(getChassis().getQuirks());
         return ans;
     }
 
@@ -209,8 +212,26 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
         sb.append("<html>");
         sb.append("<body>");
 
-        sb.append("<p>Quirks:</p>");
-        getChassis().getQuirks().describeAsHtmlWithoutHeaders(sb);
+        sb.append("<p>Chassis Quirks:</p>");
+        for (Modifier modifier : getChassis().getQuirks()) {
+            modifier.describeToHtml(sb);
+        }
+
+        sb.append("<p>Equipment Bonuses:</p>");
+        for (ModifierEquipment me : items(ModifierEquipment.class)) {
+            for (Modifier modifier : me.getModifiers()) {
+                modifier.describeToHtml(sb);
+            }
+        }
+
+        sb.append("<p>Module Bonuses:</p>");
+        for (PilotModule me : getModules()) {
+            if (me instanceof ModifierEquipment) {
+                for (Modifier modifier : ((ModifierEquipment) me).getModifiers()) {
+                    modifier.describeToHtml(sb);
+                }
+            }
+        }
 
         sb.append("</body>");
         sb.append("</html>");

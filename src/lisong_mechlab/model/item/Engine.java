@@ -19,12 +19,20 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Arrays;
+
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+import lisong_mechlab.model.quirks.Attribute;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+/**
+ * This immutable class represents an engine for a battle mech.
+ * 
+ * @author Li Song
+ *
+ */
 public class Engine extends HeatSource {
     public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
     public final static double ENGINE_HEAT_66_THROTTLE   = 0.1;
@@ -38,26 +46,16 @@ public class Engine extends HeatSource {
     @XStreamAsAttribute
     final private int          heatSinkSlots;
 
-    public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, int aHP, Faction aFaction, int aRating, EngineType aType, int aInternalHS,
-            int aHSSlots) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, ENGINE_HEAT_FULL_THROTTLE);
+    public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            Faction aFaction, int aRating, EngineType aType, int aInternalHS, int aHSSlots) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, new Attribute(
+                ENGINE_HEAT_FULL_THROTTLE, Arrays.asList("engineheat"), null));
         rating = aRating;
         type = aType;
         internalHs = aInternalHS;
         heatSinkSlots = aHSSlots;
     }
-
-    public Engine(ItemStatsModule aStatsModule) {
-        super(aStatsModule, HardPointType.NONE, 6, aStatsModule.EngineStats.weight, ENGINE_HEAT_FULL_THROTTLE,
-                aStatsModule.EngineStats.health);
-        int hs = aStatsModule.EngineStats.heatsinks;
-        internalHs = Math.min(10, hs);
-        heatSinkSlots = hs - internalHs;
-        type = (getName().toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
-        rating = aStatsModule.EngineStats.rating;
-    }
-
+    
     public EngineType getType() {
         return type;
     }

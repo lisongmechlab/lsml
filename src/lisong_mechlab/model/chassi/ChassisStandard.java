@@ -27,8 +27,7 @@ import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.quirks.Quirk;
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -41,12 +40,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ChassisStandard extends ChassisBase {
     @XStreamAsAttribute
-    private final int    engineMin;
+    private final int                  engineMin;
     @XStreamAsAttribute
-    private final int    engineMax;
+    private final int                  engineMax;
     @XStreamAsAttribute
-    private final int    maxJumpJets;
-    private final Quirks quirks;
+    private final int                  maxJumpJets;
+    private final Collection<Modifier> quirks;
 
     /**
      * Creates a new {@link ChassisStandard}.
@@ -91,7 +90,7 @@ public class ChassisStandard extends ChassisBase {
     public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
             int aEngineMin, int aEngineMax, int aMaxJumpJets, ComponentStandard[] aComponents, int aMaxPilotModules,
-            int aMaxConsumableModules, int aMaxWeaponModules, Quirks aQuirks) {
+            int aMaxConsumableModules, int aMaxWeaponModules, Collection<Modifier> aQuirks) {
         super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile,
                 aFaction, aComponents, aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules);
         engineMin = aEngineMin;
@@ -161,9 +160,9 @@ public class ChassisStandard extends ChassisBase {
     }
 
     /**
-     * @return A {@link List} of all the {@link Quirk} on the chassis.
+     * @return A {@link List} of all the {@link Modifier} on the chassis.
      */
-    public Quirks getQuirks() {
+    public Collection<Modifier> getQuirks() {
         return quirks;
     }
 }

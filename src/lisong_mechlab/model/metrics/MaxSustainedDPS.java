@@ -27,11 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * This {@link Metric} calculates the maximal DPS that a {@link LoadoutStandard} can sustain indefinitely.
@@ -50,12 +49,12 @@ public class MaxSustainedDPS extends RangeMetric {
     public double calculate(double aRange) {
         double ans = 0.0;
         Map<Weapon, Double> dd = getWeaponRatios(aRange);
-        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        Collection<Modifier> modifiers = loadout.getModifiers();
         for (Map.Entry<Weapon, Double> entry : dd.entrySet()) {
             Weapon weapon = entry.getKey();
             double ratio = entry.getValue();
             double rangeEffectivity = weapon.getRangeEffectivity(aRange, modifiers);
-            ans += rangeEffectivity * weapon.getStat("d/s", loadout.getEfficiencies(), modifiers) * ratio;
+            ans += rangeEffectivity * weapon.getStat("d/s", modifiers) * ratio;
         }
         return ans;
     }
@@ -71,8 +70,7 @@ public class MaxSustainedDPS extends RangeMetric {
      *         weapon is used.
      */
     public Map<Weapon, Double> getWeaponRatios(final double aRange) {
-        final Efficiencies efficiencies = loadout.getEfficiencies();
-        final Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        final Collection<Modifier> modifiers = loadout.getModifiers();
 
         double heatleft = dissipation.calculate();
         List<Weapon> weapons = new ArrayList<>(15);
@@ -86,10 +84,8 @@ public class MaxSustainedDPS extends RangeMetric {
                 @Override
                 public int compare(Weapon aO1, Weapon aO2) {
                     // Note: D/H == DPS / HPS so we're ordering by highest dps per hps.
-                    double dps2 = aO2.getRangeEffectivity(aRange, modifiers)
-                            * aO2.getStat("d/h", efficiencies, modifiers);
-                    double dps1 = aO1.getRangeEffectivity(aRange, modifiers)
-                            * aO1.getStat("d/h", efficiencies, modifiers);
+                    double dps2 = aO2.getRangeEffectivity(aRange, modifiers) * aO2.getStat("d/h", modifiers);
+                    double dps1 = aO1.getRangeEffectivity(aRange, modifiers) * aO1.getStat("d/h", modifiers);
                     if (aO1.getRangeMax(modifiers) < aRange)
                         dps1 = 0;
                     if (aO2.getRangeMax(modifiers) < aRange)
@@ -102,8 +98,7 @@ public class MaxSustainedDPS extends RangeMetric {
             Collections.sort(weapons, new Comparator<Weapon>() {
                 @Override
                 public int compare(Weapon aO1, Weapon aO2) {
-                    return Double.compare(aO2.getStat("d/h", efficiencies, modifiers),
-                            aO1.getStat("d/h", efficiencies, modifiers));
+                    return Double.compare(aO2.getStat("d/h", modifiers), aO1.getStat("d/h", modifiers));
                 }
             });
         }
@@ -111,7 +106,7 @@ public class MaxSustainedDPS extends RangeMetric {
         Map<Weapon, Double> ans = new HashMap<>();
         while (!weapons.isEmpty()) {
             Weapon weapon = weapons.remove(0);
-            final double heat = weapon.getStat("h/s", efficiencies, modifiers);
+            final double heat = weapon.getStat("h/s", modifiers);
             final double ratio;
 
             if (heatleft == 0) {

@@ -22,9 +22,9 @@ package lisong_mechlab.model.metrics;
 import java.util.Collection;
 
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * This metric calculates the alpha strike for a given {@link LoadoutStandard}.
@@ -40,7 +40,7 @@ public class AlphaStrike extends RangeMetric {
     @Override
     public double calculate(double aRange) {
         double ans = 0;
-        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        Collection<Modifier> modifiers = loadout.getModifiers();
         for (Weapon weapon : loadout.items(Weapon.class)) {
             if (weapon.isOffensive())
                 ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);

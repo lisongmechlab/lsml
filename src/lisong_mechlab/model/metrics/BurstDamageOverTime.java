@@ -26,13 +26,13 @@ import java.util.List;
 import lisong_mechlab.model.item.BallisticWeapon;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.helpers.DoubleFireBurstSignal;
 import lisong_mechlab.model.metrics.helpers.IntegratedImpulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedPulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedSignal;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
 
@@ -68,13 +68,13 @@ public class BurstDamageOverTime extends RangeTimeMetric implements Message.Reci
 
     private void updateEvents(double aRange) {
         damageIntegrals.clear();
-        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        Collection<Modifier> modifiers = loadout.getModifiers();
         for (Weapon weapon : loadout.items(Weapon.class)) {
             if (!weapon.isOffensive())
                 continue;
 
             double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange, modifiers);
-            double period = weapon.getSecondsPerShot(loadout.getEfficiencies(), modifiers);
+            double period = weapon.getSecondsPerShot(modifiers);
             double damage = factor * weapon.getDamagePerShot();
 
             if (weapon instanceof EnergyWeapon) {
@@ -88,8 +88,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements Message.Reci
             else if (weapon instanceof BallisticWeapon) {
                 BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
                 if (ballisticWeapon.canDoubleFire()) {
-                    damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, loadout.getEfficiencies(),
-                            modifiers, aRange));
+                    damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, modifiers, aRange));
                     continue;
                 }
             }

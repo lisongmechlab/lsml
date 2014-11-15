@@ -39,10 +39,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.util.Pair;
 import lisong_mechlab.util.WeaponRanges;
 import lisong_mechlab.util.message.Message;
@@ -127,7 +127,7 @@ public class DamageGraph extends JFrame implements Message.Recipient {
     }
 
     private TableXYDataset getSeries() {
-        final Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        final Collection<Modifier> modifiers = loadout.getModifiers();
         SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
                 new Comparator<Weapon>() {
                     @Override
@@ -145,7 +145,7 @@ public class DamageGraph extends JFrame implements Message.Recipient {
             for (Map.Entry<Weapon, Double> entry : damageDistributio) {
                 final Weapon weapon = entry.getKey();
                 final double ratio = entry.getValue();
-                final double dps = weapon.getStat("d/s", loadout.getEfficiencies(), modifiers);
+                final double dps = weapon.getStat("d/s", modifiers);
                 final double rangeEff = weapon.getRangeEffectivity(range, modifiers);
 
                 if (!data.containsKey(weapon)) {

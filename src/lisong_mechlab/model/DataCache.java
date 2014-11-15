@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,13 +63,17 @@ import lisong_mechlab.model.item.Module;
 import lisong_mechlab.model.item.ModuleCathegory;
 import lisong_mechlab.model.item.ModuleSlot;
 import lisong_mechlab.model.item.PilotModule;
-import lisong_mechlab.model.item.TargetingComputer;
-import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.item.WeaponModule;
 import lisong_mechlab.model.loadout.StockLoadout;
 import lisong_mechlab.model.loadout.StockLoadout.StockComponent;
 import lisong_mechlab.model.loadout.converters.HardPointConverter;
-import lisong_mechlab.model.quirks.Quirk;
+import lisong_mechlab.model.loadout.export.LoadoutCoderV3;
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.quirks.ModifierDescription;
+import lisong_mechlab.model.quirks.ModifiersDB;
+import lisong_mechlab.model.quirks.ModifierDescription.Operation;
+import lisong_mechlab.model.quirks.ModifierDescription.ValueType;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
@@ -86,6 +91,8 @@ import lisong_mechlab.mwo_data.XMLMechIdMap;
 import lisong_mechlab.mwo_data.XMLOmniPods;
 import lisong_mechlab.mwo_data.XMLPilotTalents;
 import lisong_mechlab.mwo_data.XMLPilotTalents.XMLTalent;
+import lisong_mechlab.mwo_data.XMLPilotTalents.XMLTalent.XMLRank;
+import lisong_mechlab.mwo_data.XMLQuirkDef;
 import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 import lisong_mechlab.mwo_data.helpers.ItemStatsOmniPodType;
 import lisong_mechlab.mwo_data.helpers.ItemStatsUpgradeType;
@@ -93,6 +100,7 @@ import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
 import lisong_mechlab.mwo_data.helpers.Mission;
 import lisong_mechlab.mwo_data.helpers.XMLItemStatsMech;
 import lisong_mechlab.mwo_data.helpers.XMLPilotModuleStats;
+import lisong_mechlab.mwo_data.helpers.XMLPilotModuleWeaponStats;
 import lisong_mechlab.mwo_data.helpers.XMLWeaponStats;
 import lisong_mechlab.util.OS;
 import lisong_mechlab.util.OS.WindowsVersion;
@@ -145,6 +153,7 @@ public class DataCache {
     private List<OmniPod>                omniPods;
 
     private List<StockLoadout>           stockLoadouts;
+    private List<ModifierDescription>    modifierDescriptions;
 
     /**
      * @return An unmodifiable {@link List} of all inner sphere {@link ChassisStandard}s.
@@ -330,7 +339,8 @@ public class DataCache {
                 }
                 try (InputStream is = DataCache.class.getResourceAsStream("/resources/bundleDataCache.xml")) {
                     dataCache = (DataCache) stream().fromXML(is); // Let this throw as this is fatal.
-                }catch(Throwable t){
+                }
+                catch (Throwable t) {
                     throw new RuntimeException("Oops! Li forgot to update the bundled data cache!");
                 }
 
@@ -518,95 +528,22 @@ public class DataCache {
                 Faction.InnerSphere));
         ans.add(new Internal("C-ENGINE", "", "mdf_CEngine", ItemDB.ENGINE_INTERNAL_CLAN_ID, 2, 0, HardPointType.NONE,
                 15, Faction.Clan));
-        // ans.add(new Internal("mdf_Engine", "mdf_EngineDesc", 3, 15,
-        // Faction.InnerSphere));
 
         // Modules (they contain ammo now, and weapons need to find their ammo
         // types when parsed)
-        {
-            Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();
-            while (it.hasNext()) {
-                ItemStatsModule statsModule = it.next();
-                boolean processed = true;
-                switch (statsModule.CType) {
-                    case "CAmmoTypeStats":
-                        ans.add(new Ammunition(statsModule));
-                        break;
-                    case "CEngineStats":
-                        ans.add(new Engine(statsModule));
-                        break;
-                    case "CHeatSinkStats":
-                        ans.add(new HeatSink(statsModule));
-                        break;
-                    case "CJumpJetStats":
-                        ans.add(new JumpJet(statsModule));
-                        break;
-                    case "CGECMStats":
-                        ans.add(new ECM(statsModule));
-                        break;
-                    case "CBAPStats":
-                    case "CClanBAPStats":
-                    case "CCASEStats":
-                        ans.add(new Module(statsModule));
-                        break;
-                    case "CLowerArmActuatorStats":
-                    case "CInternalStats":
-                        ans.add(new Internal(statsModule));
-                        break;
-                    case "CTargetingComputerStats":
-                        ans.add(new TargetingComputer(statsModule));
-                        break;
-                    default:
-                        processed = false;
-                        break; // Other modules not yet supported
-                }
-                if (processed) {
-                    it.remove();
-                }
+        Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();
+        while (it.hasNext()) {
+            ItemStatsModule statsModule = it.next();
+            Item item = statsModule.asItem();
+            if (null != item) {
+                ans.add(item);
+                it.remove();
             }
         }
 
         // Weapons next.
         for (ItemStatsWeapon statsWeapon : aItemStatsXml.WeaponList) {
-            int baseType = -1;
-            if (statsWeapon.InheritFrom > 0) {
-                baseType = statsWeapon.InheritFrom;
-                for (ItemStatsWeapon w : aItemStatsXml.WeaponList) {
-                    try {
-                        if (Integer.parseInt(w.id) == statsWeapon.InheritFrom) {
-                            statsWeapon.WeaponStats = w.WeaponStats;
-                            if (statsWeapon.Loc.descTag == null) {
-                                statsWeapon.Loc.descTag = w.Loc.descTag;
-                            }
-                            break;
-                        }
-                    }
-                    catch (NumberFormatException e) {
-                        continue;
-                    }
-                }
-                if (statsWeapon.WeaponStats == null) {
-                    throw new IOException("Unable to find referenced item in \"inherit statement from clause\" for: "
-                            + statsWeapon.name);
-                }
-            }
-
-            switch (HardPointType.fromMwoType(statsWeapon.WeaponStats.type)) {
-                case AMS:
-                    ans.add(new AmmoWeapon(statsWeapon, HardPointType.AMS));
-                    break;
-                case BALLISTIC:
-                    ans.add(new BallisticWeapon(statsWeapon));
-                    break;
-                case ENERGY:
-                    ans.add(new EnergyWeapon(statsWeapon));
-                    break;
-                case MISSILE:
-                    ans.add(new MissileWeapon(statsWeapon, baseType));
-                    break;
-                default:
-                    throw new IOException("Unknown value for type field in ItemStatsXML. Please update the program!");
-            }
+            ans.add(statsWeapon.asWeapon(aItemStatsXml.WeaponList));
         }
         return ans;
     }
@@ -616,12 +553,10 @@ public class DataCache {
      * 
      * @param aGameVfs
      * @param aItemStatsXml
-     * @param aDataCache
      * @return
      * @throws IOException
      */
-    private static List<PilotModule> parseModules(GameVFS aGameVfs, XMLItemStats aItemStatsXml, DataCache aDataCache)
-            throws IOException {
+    private static List<PilotModule> parseModules(GameVFS aGameVfs, XMLItemStats aItemStatsXml) throws IOException {
 
         XMLPilotTalents pt = XMLPilotTalents.read(aGameVfs);
 
@@ -632,43 +567,42 @@ public class DataCache {
             ItemStatsModule statsModule = it.next();
             switch (statsModule.CType) {
                 case "CWeaponModStats": {
-                    XMLPilotModuleStats pms = statsModule.PilotModuleStats;
-                    List<XMLWeaponStats> weaponStats = statsModule.WeaponStats;
-
-                    String[] weaps = statsModule.PilotModuleWeaponStats.compatibleWeapons.split(",");
-                    List<Weapon> affected = new ArrayList<>();
-                    for (int i = 0; i < weaps.length; ++i) {
-                        affected.add((Weapon) findItem(weaps[i].trim(), aDataCache.items));
-                    }
-
+                    final XMLPilotModuleStats pms = statsModule.PilotModuleStats;
+                    final XMLPilotModuleWeaponStats pmws = statsModule.PilotModuleWeaponStats;
+                    final List<XMLWeaponStats> weaponStats = statsModule.WeaponStats;
+                    final List<String> selectors = Arrays.asList(pmws.compatibleWeapons.split(","));
+                    final Faction faction = Faction.fromMwo(statsModule.faction);
+                    final ModuleSlot moduleSlot = ModuleSlot.fromMwo(pms.slot);
+                    final Operation op = Operation.fromString(weaponStats.get(weaponStats.size() - 1).operation);
                     final String name;
                     final String desc;
-
                     final ModuleCathegory cathegory;
 
                     if (0 != pms.talentid) {
                         XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
-                        name = Localization.key2string(talent.rankEntries.get(talent.rankEntries.size() - 1).title);
-                        desc = Localization
-                                .key2string(talent.rankEntries.get(talent.rankEntries.size() - 1).description);
+                        XMLRank rank = talent.rankEntries.get(talent.rankEntries.size() - 1);
+                        name = Localization.key2string(rank.title);
+                        desc = Localization.key2string(rank.description);
                         cathegory = ModuleCathegory.fromMwo(talent.category);
                     }
                     else {
                         name = Localization.key2string(statsModule.Loc.nameTag);
                         desc = Localization.key2string(statsModule.Loc.descTag);
-
                         cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
                     }
 
-                    Faction faction = Faction.fromMwo(statsModule.faction);
+                    ModifierDescription longRangeDesc = new ModifierDescription(name + " (LONG)", null, op,
+                            selectors, ModifiersDB.SEL_WEAPON_LONGRANGE, ValueType.POSITIVE_GOOD);
+                    ModifierDescription maxRangeDesc = new ModifierDescription(name + " (MAX)", null, op,
+                            selectors, ModifiersDB.SEL_WEAPON_MAXRANGE, ValueType.POSITIVE_GOOD);
+                    ModifierDescription cooldownDesc = new ModifierDescription(name, null, op, selectors,
+                            ModifiersDB.SEL_WEAPON_COOLDOWN, ValueType.NEGATIVE_GOOD);
 
                     int maxRank = weaponStats.size();
                     double longRange[] = new double[maxRank];
                     double maxRange[] = new double[maxRank];
-                    double heat[] = new double[maxRank];
                     double cooldown[] = new double[maxRank];
 
-                    // FIXME: Use the "operator" field to do the right thing
                     for (int i = 0; i < maxRank; ++i) {
                         int rank = weaponStats.get(i).rank;
                         longRange[rank - 1] = weaponStats.get(i).longRange;
@@ -678,14 +612,20 @@ public class DataCache {
                         else {
                             maxRange[rank - 1] = 0;
                         }
-                        heat[rank - 1] = weaponStats.get(i).heat;
                         cooldown[rank - 1] = weaponStats.get(i).cooldown;
                     }
 
-                    ModuleSlot moduleSlot = ModuleSlot.fromMwo(pms.slot);
+                    List<Modifier> modifiers = new ArrayList<>();
+                    if (cooldown[maxRank - 1] != 0) {
+                        modifiers.add(new Modifier(cooldownDesc, 1.0 - cooldown[maxRank - 1]));
+                    }
+                    if (maxRange[maxRank - 1] != 0) {
+                        modifiers.add(new Modifier(longRangeDesc, longRange[maxRank - 1] - 1.0));
+                        modifiers.add(new Modifier(maxRangeDesc, maxRange[maxRank - 1] - 1.0));
+                    }
 
                     ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction,
-                            cathegory, moduleSlot, affected, maxRank, longRange, maxRange, heat, cooldown));
+                            cathegory, moduleSlot, modifiers));
                     break;
                 }
                 case "CAdvancedZoomStats":
@@ -911,7 +851,9 @@ public class DataCache {
         stream.alias("pilotmodule", PilotModule.class);
         stream.alias("weaponmodule", WeaponModule.class);
         stream.alias("omnipod", OmniPod.class);
-        stream.alias("quirk", Quirk.class);
+        stream.alias("attribute", Attribute.class);
+        stream.alias("modifierdescription", ModifierDescription.class);
+        stream.alias("modifier", Modifier.class);
         // stream.alias("WeaponStats", XMLWeaponStatsFilter.class);
         // stream.alias("WeaponStatsFilter", XMLWeaponStatsFilter.class);
 
@@ -944,8 +886,9 @@ public class DataCache {
         }
 
         dataCache.lsmlVersion = LSML.getVersion();
+        dataCache.modifierDescriptions = Collections.unmodifiableList(XMLQuirkDef.fromXml(LoadoutCoderV3.class.getResourceAsStream("/resources/Quirks.def.xml")));
         dataCache.items = Collections.unmodifiableList(parseItems(itemStatsXml));
-        dataCache.modules = Collections.unmodifiableList(parseModules(aGameVfs, itemStatsXml, dataCache));
+        dataCache.modules = Collections.unmodifiableList(parseModules(aGameVfs, itemStatsXml));
         dataCache.upgrades = Collections.unmodifiableList(parseUpgrades(itemStatsXml, dataCache));
         dataCache.omniPods = Collections.unmodifiableList(parseOmniPods(aGameVfs, itemStatsXml, dataCache));
         dataCache.chassis = Collections.unmodifiableList(parseChassis(aGameVfs, itemStatsXml, dataCache));
@@ -974,5 +917,12 @@ public class DataCache {
                 return item;
         }
         throw new IllegalArgumentException("Unknown OmniPod: " + aOmniPod);
+    }
+
+    /**
+     * @return A {@link Collection} of all the modifier descriptions.
+     */
+    public Collection<ModifierDescription> getModifierDescriptions() {
+        return modifierDescriptions;
     }
 }

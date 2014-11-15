@@ -33,6 +33,7 @@ import javax.swing.border.TitledBorder;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * A renderer that can show a preview of {@link OmniPod}s.
@@ -98,8 +99,17 @@ public class OmniPodRenderer implements ListCellRenderer<OmniPod> {
             hardpoints.setVisible(false);
         }
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append("<body>");
+        for (Modifier modifier : aValue.getQuirks()) {
+            modifier.describeToHtml(sb);
+        }
+        sb.append("</body>");
+        sb.append("</html>");
+
         quirks.setVisible(true);
-        quirks.setText(aValue.getQuirks().describeAsHtml());
+        quirks.setText(sb.toString());
         return panel;
     }
 }

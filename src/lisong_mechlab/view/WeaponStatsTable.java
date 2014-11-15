@@ -82,7 +82,7 @@ public class WeaponStatsTable extends JTable {
 
             @Override
             public Object valueAt(int aRow) {
-                return weapons.get(aRow).getStat(stat, null, null);
+                return weapons.get(aRow).getStat(stat, null);
             }
 
             @Override

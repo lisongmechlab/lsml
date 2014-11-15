@@ -24,27 +24,35 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.quirks.Modifier;
 
+/**
+ * An immutable class that represents an energy weapon.
+ * 
+ * @author Li Song
+ */
 public class EnergyWeapon extends Weapon {
-    protected final double burnTime;
+    protected final Attribute burnTime;
 
-    public EnergyWeapon(ItemStatsWeapon aStatsWeapon) {
-        super(aStatsWeapon, HardPointType.ENERGY);
-        if (aStatsWeapon.WeaponStats.duration < 0)
-            burnTime = Double.POSITIVE_INFINITY;
-        else
-            burnTime = aStatsWeapon.WeaponStats.duration;
+    public EnergyWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
+            Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
+            double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
+            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, Attribute aBurnTime) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ENERGY, aHP, aFaction, aHeat, aCooldown,
+                aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
+                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha);
+        burnTime = aBurnTime;
     }
 
     @Override
-    public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
-        if (burnTime == Double.POSITIVE_INFINITY) {
-            return getCoolDown(aEfficiencies, aModifiers);
+    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+        if (burnTime.value(null) == Double.POSITIVE_INFINITY) {
+            return getCoolDown(aModifiers);
         }
-        return getCoolDown(aEfficiencies, aModifiers) + getDuration(aModifiers);
+        return getCoolDown(aModifiers) + getDuration(aModifiers);
     }
 
     @Override
@@ -117,15 +125,7 @@ public class EnergyWeapon extends Weapon {
         };
     }
 
-    public double getDuration(Collection<WeaponModifier> aModifiers) {
-        double a = 0;
-        if (aModifiers != null) {
-            for (WeaponModifier mod : aModifiers) {
-                if (mod.affectsWeapon(this)) {
-                    a += mod.extraDuration(this, burnTime, null);
-                }
-            }
-        }
-        return burnTime + a;
+    public double getDuration(Collection<Modifier> aModifiers) {
+        return burnTime.value(aModifiers);
     }
 }

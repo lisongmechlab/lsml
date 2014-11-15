@@ -19,6 +19,8 @@
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import lisong_mechlab.model.chassi.BaseMovementProfile;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class MdfMovementTuning {
@@ -57,4 +59,12 @@ public class MdfMovementTuning {
     public double TurnLerpMidRate;
     @XStreamAsAttribute
     public double TurnLerpHighRate;
+
+    public BaseMovementProfile asMovementProfile() {
+        return new BaseMovementProfile(MaxMovementSpeed, ReverseSpeedMultiplier, TorsoTurnSpeedYaw,
+                TorsoTurnSpeedPitch, ArmTurnSpeedYaw, ArmTurnSpeedPitch, MaxTorsoAngleYaw, MaxTorsoAnglePitch,
+                MaxArmRotationYaw, MaxArmRotationPitch, TurnLerpLowSpeed, TurnLerpMidSpeed, TurnLerpHighSpeed,
+                TurnLerpLowRate, TurnLerpMidRate, TurnLerpHighRate,
+                lisong_mechlab.model.chassi.MovementArchetype.valueOf(MovementArchetype));
+    }
 }

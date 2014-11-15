@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import lisong_mechlab.model.chassi.ChassisBase;
@@ -34,8 +34,6 @@ import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.chassi.MovementArchetype;
-import lisong_mechlab.model.chassi.MovementModifier;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.chassi.OmniPodDB;
@@ -46,8 +44,7 @@ import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
 import lisong_mechlab.model.loadout.component.OpChangeOmniPod;
-import lisong_mechlab.model.quirks.MovementQuirk;
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -76,13 +73,12 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         }
     }
 
-    protected List<List<MovementModifier>> movementModifiers;
-    protected Quirks[]          podQuirks = new Quirks[Location.values().length];
-    protected OmniPod[]         pods      = new OmniPod[Location.values().length];
+    protected List<Collection<Modifier>> podQuirks = new ArrayList<>(Location.values().length);
+    protected OmniPod[]                  pods      = new OmniPod[Location.values().length];
 
-    protected Engine            engine;
-    private ChassisOmniMech     chassisOmni;
-    private MovementProfile     quirkBase;
+    protected Engine                     engine;
+    private ChassisOmniMech              chassisOmni;
+    private MovementProfile              movementProfile;
 
     @Override
     @Before
@@ -91,21 +87,19 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         chassisOmni = Mockito.mock(ChassisOmniMech.class);
         chassis = chassisOmni;
         engine = Mockito.mock(Engine.class);
-        quirkBase = Mockito.mock(MovementProfile.class);
+        movementProfile = Mockito.mock(MovementProfile.class);
 
         internals = new ComponentOmniMech[Location.values().length];
         components = new ConfiguredComponentOmniMech[Location.values().length];
-        movementModifiers = new ArrayList<>(Location.values().length);
+        podQuirks = new ArrayList<>(Location.values().length);
         for (Location location : Location.values()) {
             int loc = location.ordinal();
-            movementModifiers.add(new ArrayList<MovementModifier>());
-            podQuirks[loc] = Mockito.mock(Quirks.class);
+            podQuirks.add(new ArrayList<Modifier>());
             pods[loc] = Mockito.mock(OmniPod.class);
             internals[loc] = Mockito.mock(ComponentOmniMech.class);
             components[loc] = Mockito.mock(ConfiguredComponentOmniMech.class);
 
-            Mockito.when(podQuirks[loc].getQuirksByType(MovementModifier.class)).thenReturn(movementModifiers.get(loc));
-            Mockito.when(pods[loc].getQuirks()).thenReturn(podQuirks[loc]);
+            Mockito.when(pods[loc].getQuirks()).thenReturn(podQuirks.get(loc));
             Mockito.when(components[loc].getInternalComponent()).thenReturn(internals[loc]);
             Mockito.when(getComponent(location).getOmniPod()).thenReturn(pods[loc]);
         }
@@ -121,7 +115,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         Mockito.when(chassisOmni.getFixedStructureType()).thenReturn(structure);
         Mockito.when(chassisOmni.getFixedHeatSinkType()).thenReturn(heatSinks);
         Mockito.when(chassisOmni.getFixedEngine()).thenReturn(engine);
-        Mockito.when(chassisOmni.getMovementProfileBase()).thenReturn(quirkBase);
+        Mockito.when(chassisOmni.getMovementProfileBase()).thenReturn(movementProfile);
         return new LoadoutOmniMech(new ComponentFactory(), (ChassisOmniMech) chassis);
     }
 
@@ -322,33 +316,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
 
     @Test
     public final void testGetMovementProfile_() throws Exception {
-        Quirks quirkEmpty = Mockito.mock(Quirks.class);
-        Quirks quirks1 = Mockito.mock(Quirks.class);
-        Quirks quirks2 = Mockito.mock(Quirks.class);
-        MovementQuirk q1 = Mockito.mock(MovementQuirk.class);
-        MovementQuirk q2 = Mockito.mock(MovementQuirk.class);
-        MovementQuirk q3 = Mockito.mock(MovementQuirk.class);
-
-        for (Location location : Location.values()) {
-            if (location.ordinal() >= 2)
-                Mockito.when(pods[location.ordinal()].getQuirks()).thenReturn(quirkEmpty);
-        }
-        Mockito.when(pods[0].getQuirks()).thenReturn(quirks1);
-        Mockito.when(pods[1].getQuirks()).thenReturn(quirks2);
-
-        Mockito.when(quirkBase.getMovementArchetype()).thenReturn(MovementArchetype.Huge);
-        Mockito.when(quirkBase.getArmYawMax()).thenReturn(14.0);
-
-        Mockito.when(quirks1.getQuirksByType(MovementModifier.class)).thenReturn(
-                Arrays.asList((MovementModifier) q1, (MovementModifier) q2));
-        Mockito.when(quirks2.getQuirksByType(MovementModifier.class)).thenReturn(Arrays.asList((MovementModifier) q3));
-        Mockito.when(q1.extraArmYawMax(14.0)).thenReturn(-1.0);
-        Mockito.when(q2.extraArmYawMax(14.0)).thenReturn(4.0);
-        Mockito.when(q3.extraArmYawMax(14.0)).thenReturn(0.5);
-
-        // 14 -1 + 4 + 0.5 = 17.5
-        assertEquals(17.5, makeDefaultCUT().getMovementProfile().getArmYawMax(), 0.0);
-        assertSame(MovementArchetype.Huge, makeDefaultCUT().getMovementProfile().getMovementArchetype());
+        assertSame(movementProfile, makeDefaultCUT().getMovementProfile());
     }
 
     private ConfiguredComponentOmniMech getComponent(Location aLocation) {

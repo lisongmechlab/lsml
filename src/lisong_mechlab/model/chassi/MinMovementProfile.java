@@ -20,9 +20,10 @@
 package lisong_mechlab.model.chassi;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
 
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * This movement profile gives the minimum possible value of a combination of different movement profiles.
@@ -36,10 +37,10 @@ import lisong_mechlab.model.quirks.Quirks;
  */
 public class MinMovementProfile extends ModifiedProfileBase {
 
-    private MovementProfile    base;
-    private List<List<Quirks>> groups;
+    private MovementProfile                  base;
+    private List<List<Collection<Modifier>>> groups;
 
-    public MinMovementProfile(MovementProfile aBase, List<List<Quirks>> aGroups) {
+    public MinMovementProfile(MovementProfile aBase, List<List<Collection<Modifier>>> aGroups) {
         base = aBase;
         groups = aGroups;
     }
@@ -47,17 +48,14 @@ public class MinMovementProfile extends ModifiedProfileBase {
     @Override
     protected double calc(String aMethodName) {
         try {
-            double baseValue = (double) base.getClass().getMethod(aMethodName).invoke(base);
+            Collection<Modifier> noModifier = null;
+            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base,  noModifier);
             double ans = baseValue;
-            for (List<Quirks> group : groups) {
+            for (List<Collection<Modifier>> group : groups) {
                 double min = Double.POSITIVE_INFINITY;
-                for (Quirks quirks : group) {
-                    double sum = 0.0;
-                    for (MovementModifier profile : quirks.getQuirksByType(MovementModifier.class)) {
-                        sum += (double) profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class)
-                                .invoke(profile, baseValue);
-                    }
-                    min = Math.min(sum, min);
+                for (Collection<Modifier> quirks : group) {
+                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base, quirks);
+                    min = Math.min(value - baseValue, min);
                 }
                 if (min != Double.POSITIVE_INFINITY)
                     ans += min;
@@ -71,13 +69,13 @@ public class MinMovementProfile extends ModifiedProfileBase {
     }
 
     @Override
-    public double getMaxMovementSpeed() {
-        return base.getMaxMovementSpeed();
+    public double getMaxMovementSpeed(Collection<Modifier> aModifiers) {
+        return base.getMaxMovementSpeed(null);
     }
 
     @Override
-    public double getReverseSpeedMultiplier() {
-        return base.getReverseSpeedMultiplier();
+    public double getReverseSpeedMultiplier(Collection<Modifier> aModifiers) {
+        return base.getReverseSpeedMultiplier(null);
     }
 
     @Override

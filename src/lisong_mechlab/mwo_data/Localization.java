@@ -72,9 +72,9 @@ public class Localization {
 //        canonized = canonized.replace("mediumpulselaser", "mpl");
 //        canonized = canonized.replace("smalllaser", "sl");
 //        canonized = canonized.replace("smallpulselaser", "spl");
-        canonized = canonized.replace("autocannon", "ac");
-        canonized = canonized.replace("multiplier", "mult");
-        canonized = canonized.replace("additive", "add");
+//        canonized = canonized.replace("autocannon", "ac");
+//        canonized = canonized.replace("multiplier", "mult");
+//        canonized = canonized.replace("additive", "add");
 
         if (!canonized.startsWith("@")) {
             canonized = "@" + canonized;

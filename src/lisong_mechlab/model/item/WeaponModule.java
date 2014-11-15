@@ -19,22 +19,19 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import lisong_mechlab.model.pilot.PilotSkillTree;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * A {@link PilotModule} that alters weapon attributes.
  * 
  * @author Li Song
  */
-public class WeaponModule extends PilotModule implements WeaponModifier {
-    private final List<Weapon> affectedWeapon;
-    private final double[]     longRangeModifier;
-    private final double[]     maxRangeModifier;
-    private final double[]     heatModifier;
-    private final double[]     cooldownModifier;
-    private final int          maxRank;
+public class WeaponModule extends PilotModule implements ModifierEquipment {
+    private final Collection<Modifier> modifiers;
 
     /**
      * @param aMwoName
@@ -51,95 +48,35 @@ public class WeaponModule extends PilotModule implements WeaponModifier {
      *            The {@link ModuleCathegory} for this {@link Module}.
      * @param aModuleSlot
      *            The {@link ModuleSlot} of this {@link Module}.
-     * @param aAffectedWeapon
-     *            The weapon that this module affects.
-     * @param aMaxRank
-     *            The highest rank this module has.
-     * @param aLongRangeModifier
-     *            An array of <code>aMaxRank</code> length with the amounts to add or subtract from the long range of
-     *            the weapon.
-     * @param aMaxRangeModifier
-     *            An array of <code>aMaxRank</code> length with the amounts to add or subtract from the maximum range of
-     *            the weapon.
-     * @param aHeatModifier
-     *            An array of <code>aMaxRank</code> length with the amounts to add or subtract from the heat attribute
-     *            of the weapon.
-     * @param aCooldownModifier
-     *            An array of <code>aMaxRank</code> length with the amounts to add or subtract from the cooldown
-     *            attribute of the weapon.
+     * @param aModifiers
+     *            The modifiers that this weapon module adds.
      */
     public WeaponModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction,
-            ModuleCathegory aCathegory, ModuleSlot aModuleSlot, List<Weapon> aAffectedWeapon, int aMaxRank,
-            double aLongRangeModifier[], double aMaxRangeModifier[], double aHeatModifier[], double aCooldownModifier[]) {
+            ModuleCathegory aCathegory, ModuleSlot aModuleSlot, List<Modifier> aModifiers) {
         super(aMwoName, aMwoIdx, aName, aDescription, aFaction, aCathegory, aModuleSlot);
-        maxRank = aMaxRank;
-        affectedWeapon = aAffectedWeapon;
-
-        if (aLongRangeModifier.length != maxRank) {
-            throw new IllegalArgumentException("Length of aLongRangeModifier must match aMaxRank!");
-        }
-
-        if (aMaxRangeModifier.length != maxRank) {
-            throw new IllegalArgumentException("Length of aMaxRangeModifier must match aMaxRank!");
-        }
-
-        if (aHeatModifier.length != maxRank) {
-            throw new IllegalArgumentException("Length of aHeatModifier must match aMaxRank!");
-        }
-
-        if (aCooldownModifier.length != maxRank) {
-            throw new IllegalArgumentException("Length of aCooldownModifier must match aMaxRank!");
-        }
-
-        longRangeModifier = aLongRangeModifier;
-        maxRangeModifier = aMaxRangeModifier;
-        heatModifier = aHeatModifier;
-        cooldownModifier = aCooldownModifier;
-    }
-
-    public int getMaxRank() {
-        return maxRank;
+        modifiers = Collections.unmodifiableCollection(aModifiers);
     }
 
     @Override
+    public Collection<Modifier> getModifiers() {
+        return modifiers;
+    }
+
+    /**
+     * @param aWeapon
+     *            The weapon to check.
+     * @return <code>true</code> if this module affects the given weapon.
+     */
     public boolean affectsWeapon(Weapon aWeapon) {
-        if (aWeapon instanceof MissileWeapon) {
-            MissileWeapon baseWeapon = ((MissileWeapon) aWeapon).getBaseVariant();
-            if (null != baseWeapon)
-                return affectedWeapon.contains(baseWeapon);
+        for (Modifier modifier : modifiers) {
+            for (String selector : modifier.getDescription().getSelectors()) {
+                for (String weaponSelector : aWeapon.getAliases()) {
+                    if (selector.equalsIgnoreCase(weaponSelector)) {
+                        return true;
+                    }
+                }
+            }
         }
-        return affectedWeapon.contains(aWeapon);
-    }
-
-    // FIXME: Parse the AMS feed modules to correctly calculate the ammo time for AMS
-    @Override
-    public double extraMaxRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
-        if (maxRangeModifier[maxRank - 1] > 0.0)
-            return (maxRangeModifier[maxRank - 1] - 1.0) * aRange;
-        return 0;
-    }
-
-    @Override
-    public double extraLongRange(Weapon aWeapon, double aRange, PilotSkillTree aPilotSkillTree) {
-        if (longRangeModifier[maxRank - 1] > 0.0)
-            return (longRangeModifier[maxRank - 1] - 1.0) * aRange;
-        return 0;
-    }
-
-    @Override
-    public double extraWeaponHeat(Weapon aWeapon, double aHeat, PilotSkillTree aPilotSkillTree) {
-        return heatModifier[maxRank - 1];
-    }
-
-    @Override
-    public double extraCooldown(Weapon aWeapon, double aCooldown, PilotSkillTree aPilotSkillTree) {
-        if (cooldownModifier[maxRank - 1] > 0.0)
-            return (cooldownModifier[maxRank - 1] - 1.0) * aCooldown;
-        return 0;
-    }
-
-    @Override
-    public double extraDuration(Weapon aWeapon, double aDuration, PilotSkillTree aPilotSkillTree) {
-        return 0;
+        return false;
     }
 }

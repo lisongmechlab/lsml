@@ -36,8 +36,8 @@ import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
 
@@ -215,12 +215,11 @@ public class WeaponSummaryTable extends JTable implements Message.Recipient {
 
             double shots = entry.getNumShots();
             double shotsPerSecond = 0;
-            Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+            Collection<Modifier> modifiers = loadout.getModifiers();
             for (Weapon weapon : entry.getWeapons()) {
                 if (weapon instanceof AmmoWeapon) {
                     AmmoWeapon ammoWeapon = (AmmoWeapon) weapon;
-                    shotsPerSecond += ammoWeapon.getAmmoPerPerShot()
-                            / ammoWeapon.getSecondsPerShot(loadout.getEfficiencies(), modifiers);
+                    shotsPerSecond += ammoWeapon.getAmmoPerPerShot() / ammoWeapon.getSecondsPerShot(modifiers);
                 }
             }
             return decimalFormat.format(shots / shotsPerSecond);

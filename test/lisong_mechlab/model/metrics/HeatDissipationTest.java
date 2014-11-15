@@ -22,22 +22,74 @@ package lisong_mechlab.model.metrics;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.quirks.ModifierDescription;
+import lisong_mechlab.model.quirks.ModifiersDB;
+import lisong_mechlab.model.quirks.ModifierDescription.Operation;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
+import lisong_mechlab.model.upgrades.Upgrades;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 /**
  * Test suite for {@link HeatDissipation}.
  * 
  * @author Li Song
  */
+@RunWith(MockitoJUnitRunner.class)
 public class HeatDissipationTest {
-    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-    private HeatDissipation            cut = new HeatDissipation(mlc.loadout, null);
+    @Mock
+    Engine          engine;
+    @Mock
+    LoadoutBase<?>  loadout;
+    List<Modifier>  modifiers             = new ArrayList<>();
+    @Mock
+    ChassisBase     chassis;
+    @Mock
+    HeatSink        heatSinkType;
+    @Mock
+    HeatSinkUpgrade heatSinkUpgrade;
+    @Mock
+    Upgrades        upgrades;
+
+    final double    dissipationFactor     = 1.3;
+    final int       numExternalHs         = 5;
+    final int       numInternalHs         = 9;
+    final double    internalHsDissipation = 0.2;
+    final double    externalHsDissipation = 0.14;
+
+    @Before
+    public void setup() {
+        Mockito.when(loadout.getHeatsinksCount()).thenReturn(numInternalHs + numExternalHs);
+        Mockito.when(loadout.getModifiers()).thenReturn(modifiers);
+        Mockito.when(loadout.getChassis()).thenReturn(chassis);
+        Mockito.when(loadout.getEngine()).thenReturn(engine);
+        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+        Mockito.when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
+        Mockito.when(heatSinkUpgrade.getHeatSinkType()).thenReturn(heatSinkType);
+        Mockito.when(heatSinkType.getDissipation()).thenReturn(externalHsDissipation);
+        Mockito.when(engine.getNumInternalHeatsinks()).thenReturn(numInternalHs);
+    }
 
     /**
      * The heat dissipation of a 'mech is dependent on the heat sink types. > For single heat sinks it is simply the
@@ -46,38 +98,34 @@ public class HeatDissipationTest {
      */
     @Test
     public void testCalculate() {
-        HeatSinkUpgrade hs = UpgradeDB.DOUBLE_HEATSINKS;
-        final double dissipationFactor = 1.3;
-        final int externalHs = 5;
-        final int internalHs = 9;
-        final double internalHsDissipation = 0.2;
-        final double externalHsDissipation = hs.getHeatSinkType().getDissipation();
-
-        Engine engine = mock(Engine.class);
-        when(engine.getNumInternalHeatsinks()).thenReturn(internalHs);
-        when(mlc.efficiencies.getHeatDissipationModifier()).thenReturn(dissipationFactor);
-        when(mlc.upgrades.getHeatSink()).thenReturn(hs);
-        when(mlc.loadout.getEngine()).thenReturn(engine);
-        when(mlc.loadout.getHeatsinksCount()).thenReturn(externalHs + internalHs);
-
-        double expectedDissipation = (internalHs * internalHsDissipation + externalHs * externalHsDissipation)
+        double expectedDissipation = (numInternalHs * internalHsDissipation + numExternalHs * externalHsDissipation)
                 * dissipationFactor;
-        assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);
-    }
+        
+        ModifierDescription description = Mockito.mock(ModifierDescription.class);
+        Mockito.when(description.getOperation()).thenReturn(Operation.MULTIPLICATIVE);
+        Mockito.when(description.affects(Matchers.any(Attribute.class))).then(new Answer<Boolean>() {
+            @Override
+            public Boolean answer(InvocationOnMock aInvocation) throws Throwable {
+                Attribute a = (Attribute) aInvocation.getArguments()[0];
+                return a.getSelectors().contains(ModifiersDB.SEL_HEAT_DISSIPATION);
+            }
+        });
 
-    @Test
-    public void testCalculateEnvironment() {
+        Modifier heatdissipation = Mockito.mock(Modifier.class);
+        Mockito.when(heatdissipation.getValue()).thenReturn(dissipationFactor - 1.0);
+        Mockito.when(heatdissipation.getDescription()).thenReturn(description);
+        modifiers.add(heatdissipation);
+        Mockito.when(heatSinkUpgrade.isDouble()).thenReturn(true);
+        Mockito.when(heatSinkType.isDouble()).thenReturn(true);
+        
+
         Environment environment = mock(Environment.class);
         final double environmentHeat = 0.3;
-
-        when(mlc.upgrades.getHeatSink()).thenReturn(UpgradeDB.STANDARD_HEATSINKS);
-        when(mlc.efficiencies.getHeatDissipationModifier()).thenReturn(1.0);
-        when(mlc.loadout.getHeatsinksCount()).thenReturn(10);
-        when(environment.getHeat()).thenReturn(environmentHeat);
-
-        cut.changeEnvironment(environment);
-
-        double expectedDissipation = 1.0 - environmentHeat;
+        when(environment.getHeat(modifiers)).thenReturn(environmentHeat);
+        
+        HeatDissipation cut = new HeatDissipation(loadout, environment);
+        expectedDissipation += environmentHeat;
+        
         assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);
     }
 }

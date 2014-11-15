@@ -19,10 +19,14 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.HeatModifier;
+import java.util.Collection;
+
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.quirks.ModifiersDB;
 
 /**
  * This {@link Metric} calculates the heat dissipation for a {@link LoadoutStandard}.
@@ -40,32 +44,24 @@ public class HeatDissipation implements Metric {
 
     @Override
     public double calculate() {
+        Collection<Modifier> modifiers = loadout.getModifiers();
+
         double ans = 0;
         int enginehs = 0;
         if (loadout.getEngine() != null) {
             enginehs = loadout.getEngine().getNumInternalHeatsinks();
         }
 
+        final double dissipation = loadout.getUpgrades().getHeatSink().getHeatSinkType().getDissipation();
+
         // Engine internal HS count as true doubles
         ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 0.2 : 0.1);
-        ans += (loadout.getHeatsinksCount() - enginehs)
-                * loadout.getUpgrades().getHeatSink().getHeatSinkType().getDissipation();
-        ans *= loadout.getEfficiencies().getHeatDissipationModifier();
+        ans += (loadout.getHeatsinksCount() - enginehs) * dissipation;
 
-        double externalHeat = 0;
-        if (environment != null) {
-            externalHeat = (environment.getHeat());
-        }
+        final Attribute heatDissipation = new Attribute(ans, ModifiersDB.SEL_HEAT_DISSIPATION);
+        final double externalHeat = (environment != null) ? environment.getHeat(modifiers) : 0;
 
-        double extra = 0;
-        double extraExternal = 0;
-        for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
-            extra += heatModifier.extraHeatDissipation(ans);
-            extraExternal += heatModifier.extraEnvironmentHeat(externalHeat);
-        }
-
-        ans = (ans + extra) - (externalHeat + extraExternal);
-        return ans;
+        return heatDissipation.value(modifiers) + externalHeat;
     }
 
     public void changeEnvironment(Environment anEnvironment) {

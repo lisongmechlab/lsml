@@ -20,88 +20,65 @@
 package lisong_mechlab.model.item;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.quirks.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Weapon extends HeatSource {
     public static final int RANGE_ULP_FUZZ = 5;
 
-    @XStreamAsAttribute
-    private final double    damagePerProjectile;
-    @XStreamAsAttribute
-    private final double    cycleTime;
-    @XStreamAsAttribute
-    private final double    rangeZero;
-    @XStreamAsAttribute
-    private final double    rangeMin;
-    @XStreamAsAttribute
-    private final double    rangeLong;
-    @XStreamAsAttribute
-    private final double    rangeMax;
+    private final Attribute cooldown;
+    private final Attribute rangeZero;
+    private final Attribute rangeMin;
+    private final Attribute rangeLong;
+    private final Attribute rangeMax;
     @XStreamAsAttribute
     private final double    fallOffExponent;
+
+    /** How many rounds of ammo per shot of the weapon. */
+    @XStreamAsAttribute
+    private final int       roundsPerShot;
+    /** How much damage one projectile does. */
+    @XStreamAsAttribute
+    private final double    damagePerProjectile;
+    /** How many projectile per one round of ammo. */
     @XStreamAsAttribute
     private final int       projectilesPerRound;
     @XStreamAsAttribute
-    private final int       roundsPerShot;
+    private final double    projectileSpeed;
     @XStreamAsAttribute
     private final int       ghostHeatGroupId;
     @XStreamAsAttribute
     private final double    ghostHeatMultiplier;
     @XStreamAsAttribute
     private final int       ghostHeatFreeAlpha;
-    @XStreamAsAttribute
-    private final double    projectileSpeed;
 
-    public Weapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType) {
-        super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons,
-                aStatsWeapon.WeaponStats.heat, aStatsWeapon.WeaponStats.Health);
-        damagePerProjectile = aStatsWeapon.WeaponStats.damage;
-        if (aStatsWeapon.WeaponStats.cooldown <= 0.0) {
-            // Some weapons are troublesome in that they have zero cooldown in the data files.
-            // These include: Machine Gun, Flamer, TAG
-            if (aStatsWeapon.WeaponStats.rof > 0.0) {
-                cycleTime = 1.0 / aStatsWeapon.WeaponStats.rof;
-            }
-            else if (aStatsWeapon.WeaponStats.type.toLowerCase().equals("energy")) {
-                cycleTime = 1;
-            }
-            else {
-                cycleTime = 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 =
-                                     // 0.10375
-            }
-        }
-        else {
-            cycleTime = aStatsWeapon.WeaponStats.cooldown;
-        }
-        rangeZero = aStatsWeapon.WeaponStats.nullRange;
-        rangeMin = aStatsWeapon.WeaponStats.minRange;
-        rangeMax = aStatsWeapon.WeaponStats.maxRange;
-        rangeLong = aStatsWeapon.WeaponStats.longRange;
-        fallOffExponent = aStatsWeapon.WeaponStats.falloffexponent != 0 ? aStatsWeapon.WeaponStats.falloffexponent
-                : 1.0;
-
-        roundsPerShot = aStatsWeapon.WeaponStats.numFiring;
-        projectilesPerRound = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
-        projectileSpeed = aStatsWeapon.WeaponStats.speed;
-
-        if (aStatsWeapon.WeaponStats.minheatpenaltylevel != 0) {
-            ghostHeatGroupId = aStatsWeapon.WeaponStats.heatPenaltyID;
-            ghostHeatMultiplier = aStatsWeapon.WeaponStats.heatpenalty;
-            ghostHeatFreeAlpha = aStatsWeapon.WeaponStats.minheatpenaltylevel - 1;
-        }
-        else {
-            ghostHeatGroupId = -1;
-            ghostHeatMultiplier = 0;
-            ghostHeatFreeAlpha = -1;
-        }
+    public Weapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardPointType, int aHP, Faction aFaction, Attribute aHeat, Attribute aCooldown,
+            Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
+            double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
+            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat);
+        cooldown = aCooldown;
+        rangeZero = aRangeZero;
+        rangeMin = aRangeMin;
+        rangeLong = aRangeLong;
+        rangeMax = aRangeMax;
+        fallOffExponent = aFallOffExponent;
+        roundsPerShot = aRoundsPerShot;
+        damagePerProjectile = aDamagePerProjectile;
+        projectilesPerRound = aProjectilesPerRound;
+        projectileSpeed = aProjectileSpeed;
+        ghostHeatGroupId = aGhostHeatGroupId;
+        ghostHeatMultiplier = aGhostHeatMultiplier;
+        ghostHeatFreeAlpha = aGhostHeatMaxFreeAlpha;
     }
 
     public boolean isOffensive() {
@@ -133,86 +110,45 @@ public class Weapon extends HeatSource {
         return roundsPerShot;
     }
 
-    public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
-        return getCoolDown(aEfficiencies, aModifiers);
+    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+        return getCoolDown(aModifiers);
     }
 
-    public double getCoolDown(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
-        double a = 0;
-        if (aModifiers != null) {
-            for (WeaponModifier mod : aModifiers) {
-                if (mod.affectsWeapon(this)) {
-                    a += mod.extraCooldown(this, cycleTime, null);
-                }
-            }
-        }
-
-        double factor = (null == aEfficiencies) ? 1.0 : aEfficiencies.getWeaponCycleTimeModifier();
-        return (cycleTime + a) * factor;
+    public double getCoolDown(Collection<Modifier> aModifiers) {
+        return cooldown.value(aModifiers);
     }
 
     public double getProjectileSpeed() {
         return projectileSpeed;
     }
 
-    public double getRangeZero() {
-        if (rangeZero == rangeMin)
-            return rangeZero - Math.ulp(rangeMin);
-        return rangeZero;
+    public double getRangeZero(Collection<Modifier> aModifiers) {
+        if (rangeZero.value(null) == rangeMin.value(null))
+            return Math.nextAfter(rangeZero.value(aModifiers), Double.NEGATIVE_INFINITY);
+        return rangeZero.value(aModifiers);
     }
 
-    public double getRangeMin() {
-        return rangeMin;
+    public double getRangeMin(Collection<Modifier> aModifiers) {
+        return rangeMin.value(aModifiers);
     }
 
-    public double getRangeMax(Collection<WeaponModifier> aModifiers) {
-        double a = 0;
-        if (aModifiers != null) {
-            for (WeaponModifier mod : aModifiers) {
-                if (mod.affectsWeapon(this)) {
-                    a += mod.extraMaxRange(this, rangeMax, null);
-                }
-            }
-        }
-
-        if (rangeMax == rangeLong)
-            a += Math.ulp(rangeMax + a);
-
-        return rangeMax + a;
+    public double getRangeMax(Collection<Modifier> aModifiers) {
+        if (rangeMax.value(null) == rangeLong.value(null))
+            return Math.nextUp(rangeMax.value(aModifiers));
+        return rangeMax.value(aModifiers);
     }
 
-    public double getRangeLong(Collection<WeaponModifier> aModifiers) {
-        double a = 0;
-        if (aModifiers != null) {
-            for (WeaponModifier mod : aModifiers) {
-                if (mod.affectsWeapon(this)) {
-                    a += mod.extraLongRange(this, rangeLong, null);
-                }
-            }
-        }
-        return rangeLong + a;
+    public double getRangeLong(Collection<Modifier> aModifiers) {
+        return rangeLong.value(aModifiers);
     }
 
-    @Override
-    public double getHeat(Collection<WeaponModifier> aModifiers) {
-        double a = 0;
-        if (aModifiers != null) {
-            for (WeaponModifier mod : aModifiers) {
-                if (mod.affectsWeapon(this)) {
-                    a += mod.extraWeaponHeat(this, super.getHeat(aModifiers), null);
-                }
-
-            }
-        }
-        return super.getHeat(aModifiers) + a;
-    }
-
-    public double getRangeEffectivity(double range, Collection<WeaponModifier> aModifiers) {
+    public double getRangeEffectivity(double range, Collection<Modifier> aModifiers) {
         // Assume linear fall off
-        if (range < getRangeZero())
+        if (range < getRangeZero(aModifiers))
             return 0;
-        else if (range < getRangeMin())
-            return Math.pow((range - getRangeZero()) / (getRangeMin() - getRangeZero()), fallOffExponent);
+        else if (range < getRangeMin(aModifiers))
+            return Math.pow((range - getRangeZero(aModifiers)) / (getRangeMin(aModifiers) - getRangeZero(aModifiers)),
+                    fallOffExponent);
         else if (range <= getRangeLong(aModifiers))
             return 1.0;
         else if (range < getRangeMax(aModifiers)) {
@@ -231,14 +167,11 @@ public class Weapon extends HeatSource {
      * @param aWeaponStat
      *            A string specifying the statistic to be calculated. Must match the regexp pattern
      *            "[dsthc]+(/[dsthc]+)?".
-     * @param aEfficiencies
-     *            Any {@link Efficiencies} that can affect the stats, can be <code>null</code> to assume no
-     *            {@link Efficiencies}.
      * @param aModifiers
-     *            A list of pilot modules to take into account.
+     *            A list of {@link Modifier}s to take into account.
      * @return The calculated statistic.
      */
-    public double getStat(String aWeaponStat, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
+    public double getStat(String aWeaponStat, Collection<Modifier> aModifiers) {
         double nominator = 1;
         int index = 0;
         while (index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/') {
@@ -247,7 +180,7 @@ public class Weapon extends HeatSource {
                     nominator *= getDamagePerShot();
                     break;
                 case 's':
-                    nominator *= getSecondsPerShot(aEfficiencies, aModifiers);
+                    nominator *= getSecondsPerShot(aModifiers);
                     break;
                 case 't':
                     nominator *= getMass();
@@ -272,7 +205,7 @@ public class Weapon extends HeatSource {
                     denominator *= getDamagePerShot();
                     break;
                 case 's':
-                    denominator *= getSecondsPerShot(aEfficiencies, aModifiers);
+                    denominator *= getSecondsPerShot(aModifiers);
                     break;
                 case 't':
                     denominator *= getMass();
@@ -346,5 +279,13 @@ public class Weapon extends HeatSource {
         isLargeBore |= getName().toLowerCase().contains("x ac");
         isLargeBore |= getName().toLowerCase().contains("10-x");
         return isLargeBore;
+    }
+
+    /**
+     * @return A {@link Collection} of aliases for the weapon.
+     */
+    public Collection<String> getAliases() {
+        // All attributes have the same aliases, just pick one
+        return Collections.unmodifiableCollection(cooldown.getSelectors());
     }
 }

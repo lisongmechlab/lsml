@@ -64,8 +64,8 @@ public class HeatGenerationTest {
         when(mlc.loadout.items(HeatSource.class)).thenReturn(items);
         when(mlc.efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
 
-        final double expected = ppc.getStat("h/s", null, null) + ll.getStat("h/s", null, null)
-                + lrm20.getStat("h/s", null, null) + lb10x.getStat("h/s", null, null) + engine.getHeat(null);
+        final double expected = ppc.getStat("h/s", null) + ll.getStat("h/s", null) + lrm20.getStat("h/s", null)
+                + lb10x.getStat("h/s", null) + engine.getHeat(null);
         assertEquals(expected, cut.calculate(), 0.0);
     }
 

@@ -27,12 +27,12 @@ import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSource;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.helpers.IntegratedImpulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedPulseTrain;
 import lisong_mechlab.model.metrics.helpers.IntegratedSignal;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
 
@@ -77,7 +77,7 @@ public class HeatOverTime implements TimeMetric, Message.Recipient {
 
     private void updateEvents() {
         heatIntegrals.clear();
-        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        Collection<Modifier> modifiers = loadout.getModifiers();
         for (HeatSource item : loadout.items(HeatSource.class)) {
             if (item instanceof Weapon) {
                 Weapon weapon = (Weapon) item;
@@ -85,14 +85,14 @@ public class HeatOverTime implements TimeMetric, Message.Recipient {
                 if (weapon instanceof EnergyWeapon) {
                     EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
                     if (energyWeapon.getDuration(modifiers) > 0) {
-                        heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(
-                                loadout.getEfficiencies(), modifiers), energyWeapon.getDuration(modifiers), energyWeapon
-                                .getHeat(modifiers) / energyWeapon.getDuration(modifiers)));
+                        heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(modifiers),
+                                energyWeapon.getDuration(modifiers), energyWeapon.getHeat(modifiers)
+                                        / energyWeapon.getDuration(modifiers)));
                         continue;
                     }
                 }
-                heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(loadout.getEfficiencies(),
-                        modifiers), weapon.getHeat(modifiers)));
+                heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(modifiers), weapon
+                        .getHeat(modifiers)));
             }
             if (item instanceof Engine) {
                 heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine) item).getHeat(modifiers)));

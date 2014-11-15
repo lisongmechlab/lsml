@@ -19,9 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.HeatModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.quirks.ModifiersDB;
 
 /**
  * This {@link Metric} calculates the total heat capacity of a {@link LoadoutStandard}.
@@ -38,7 +39,7 @@ public class HeatCapacity implements Metric {
 
     @Override
     public double calculate() {
-        double ans = 0;
+        double ans = MECH_BASE_HEAT_CAPACITY;
         int enginehs = 0;
         if (loadout.getEngine() != null) {
             enginehs = loadout.getEngine().getNumInternalHeatsinks();
@@ -48,13 +49,8 @@ public class HeatCapacity implements Metric {
         ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 2 : 1);
         ans += (loadout.getHeatsinksCount() - enginehs)
                 * loadout.getUpgrades().getHeatSink().getHeatSinkType().getCapacity();
-        ans = (MECH_BASE_HEAT_CAPACITY + ans) * loadout.getEfficiencies().getHeatCapacityModifier();
 
-        double extra = 0;
-        for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
-            extra += heatModifier.extraHeatCapacity(ans);
-        }
-
-        return ans + extra;
+        final Attribute heatLimit = new Attribute(ans, ModifiersDB.SEL_HEAT_LIMIT);
+        return heatLimit.value(loadout.getModifiers());
     }
 }

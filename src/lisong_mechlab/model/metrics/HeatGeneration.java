@@ -21,13 +21,12 @@ package lisong_mechlab.model.metrics;
 
 import java.util.Collection;
 
-import lisong_mechlab.model.chassi.HeatModifier;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSource;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * This {@link Metric} calculates the asymptotic heat generation per second for a {@link LoadoutStandard}.
@@ -46,22 +45,15 @@ public class HeatGeneration implements Metric {
     @Override
     public double calculate() {
         double heat = 0;
-        Collection<WeaponModifier> modifiers = loadout.getModifiers(WeaponModifier.class);
+        Collection<Modifier> modifiers = loadout.getModifiers();
         for (HeatSource item : loadout.items(HeatSource.class)) {
             if (item instanceof Weapon) {
-                heat += ((Weapon) item).getStat("h/s", loadout.getEfficiencies(), modifiers);
+                heat += ((Weapon) item).getStat("h/s", modifiers);
             }
             else if (item instanceof Engine) {
                 heat += ((Engine) item).getHeat(modifiers);
             }
         }
-
-        double extra = 0;
-        for (HeatModifier heatModifier : loadout.getModifiers(HeatModifier.class)) {
-            // XXX: No modifiers of this kind have been seen in the game yet so we do not know if this is correct.
-            extra += heatModifier.extraHeatGeneration(heat);
-        }
-
-        return heat + extra;
+        return heat;
     }
 }

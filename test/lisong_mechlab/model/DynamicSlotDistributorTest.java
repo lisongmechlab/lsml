@@ -22,7 +22,6 @@ package lisong_mechlab.model;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +30,6 @@ import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisVariant;
 import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.chassi.MovementModifier;
 import lisong_mechlab.model.chassi.OmniPod;
 import lisong_mechlab.model.helpers.MockLoadoutContainer;
 import lisong_mechlab.model.item.Faction;
@@ -39,7 +37,6 @@ import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
-import lisong_mechlab.model.quirks.Quirks;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -330,10 +327,7 @@ public class DynamicSlotDistributorTest {
         ConfiguredComponentOmniMech[] configuredComponents = new ConfiguredComponentOmniMech[Location.values().length];
         OmniPod[] omniPods = new OmniPod[Location.values().length];
         for (Location location : Location.values()) {
-            Quirks quirks = Mockito.mock(Quirks.class);
             omniPods[location.ordinal()] = Mockito.mock(OmniPod.class);
-            Mockito.when(omniPods[location.ordinal()].getQuirks()).thenReturn(quirks);
-            Mockito.when(quirks.getQuirksByType(MovementModifier.class)).thenReturn(new ArrayList<MovementModifier>());
             
             configuredComponents[location.ordinal()] = Mockito.mock(ConfiguredComponentOmniMech.class);
             Mockito.when(configuredComponents[location.ordinal()].getInternalComponent()).thenReturn(

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lisong_mechlab.model.DataCache;
-import lisong_mechlab.model.chassi.BaseMovementProfile;
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.chassi.ChassisVariant;
@@ -35,8 +34,7 @@ import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.quirks.Quirk;
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -92,20 +90,18 @@ public class MdfMechDefinition {
             components[componentStandard.getLocation().ordinal()] = componentStandard;
         }
 
-        List<Quirk> quirkList = new ArrayList<>();
+        List<Modifier> quirkList = new ArrayList<>();
         if (null != QuirkList) {
             for (XMLQuirk quirk : QuirkList) {
                 quirkList.add(quirk.toQuirk(aDataCache));
             }
         }
 
-        Quirks quirks = new Quirks(quirkList);
-
         return new ChassisStandard(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
-                ChassisVariant.fromString(name, Mech.VariantType), baseVariant, new BaseMovementProfile(
-                        MovementTuningConfiguration), faction, Mech.MinEngineRating, Mech.MaxEngineRating,
+                ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
+                MovementTuningConfiguration.asMovementProfile(), faction, Mech.MinEngineRating, Mech.MaxEngineRating,
                 Mech.MaxJumpJets, components, Cockpit.TechSlots, Cockpit.ConsumableSlots, Cockpit.WeaponModSlots,
-                quirks);
+                quirkList);
     }
 
     public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, DataCache aDataCache, XMLMechIdMap aMechIdMap,
@@ -153,9 +149,9 @@ public class MdfMechDefinition {
         HeatSinkUpgrade heatSink = (HeatSinkUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.heatsinks.ItemID);
 
         return new ChassisOmniMech(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
-                ChassisVariant.fromString(name, Mech.VariantType), baseVariant, new BaseMovementProfile(
-                        MovementTuningConfiguration), faction, components, Cockpit.TechSlots, Cockpit.ConsumableSlots,
-                Cockpit.WeaponModSlots, structure, armor, heatSink);
+                ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
+                MovementTuningConfiguration.asMovementProfile(), faction, components, Cockpit.TechSlots,
+                Cockpit.ConsumableSlots, Cockpit.WeaponModSlots, structure, armor, heatSink);
     }
 
     private int getBaseVariant(XMLMechIdMap aMechIdMap, XMLItemStatsMech aMech) {

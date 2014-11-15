@@ -61,7 +61,7 @@ public class MissileWeaponTest {
         for (MissileWeapon weapon : allMissileWeapons) {
             if (weapon.getName().contains("LRM") && weapon.getFaction() == Faction.Clan)
                 continue;
-            assertTrue(weapon.getRangeMin() - weapon.getRangeZero() < 0.0001);
+            assertTrue(weapon.getRangeMin(null) - weapon.getRangeZero(null) < 0.0001);
         }
     }
 
@@ -118,9 +118,9 @@ public class MissileWeaponTest {
     public void testGetRangeEffectivity_lrm20() throws Exception {
         MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("LRM 20");
         assertEquals(0.0, srm6.getRangeEffectivity(0, null), 0.0);
-        assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMin() - Math.ulp(srm6.getRangeLong(null))
+        assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMin(null) - Math.ulp(srm6.getRangeLong(null))
                 * Weapon.RANGE_ULP_FUZZ, null), 0.0);
-        assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeMin(), null), 0.0);
+        assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeMin(null), null), 0.0);
         assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong(null), null), 0.0);
         assertEquals(
                 0.0,

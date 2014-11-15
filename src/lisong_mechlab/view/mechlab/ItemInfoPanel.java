@@ -31,13 +31,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.EnergyWeapon;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
+import lisong_mechlab.model.quirks.Modifier;
 
 /**
  * This class implements a panel that will show information about an item.
@@ -153,7 +152,7 @@ public class ItemInfoPanel extends JPanel {
 
         add(description, BorderLayout.CENTER);
 
-        showItem(null, null, null);
+        showItem(null, null);
     }
 
     private void showBasicInfo(Item anItem) {
@@ -187,7 +186,7 @@ public class ItemInfoPanel extends JPanel {
         ammoperton.setText("Shots: " + anAmmo.getNumShots());
     }
 
-    private void showWeaponInfo(Weapon aWeapon, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
+    private void showWeaponInfo(Weapon aWeapon, Collection<Modifier> aModifiers) {
         DecimalFormat df0 = new DecimalFormat("###");
         DecimalFormat df1 = new DecimalFormat("###.#");
         DecimalFormat df2 = new DecimalFormat("###.##");
@@ -202,25 +201,25 @@ public class ItemInfoPanel extends JPanel {
                         : Double.POSITIVE_INFINITY));
 
         cycleTime.setVisible(true);
-        cycleTime.setText("Cycle time: " + df2.format(aWeapon.getCoolDown(aEfficiencies, aModifiers)));
+        cycleTime.setText("Cycle time: " + df2.format(aWeapon.getCoolDown(aModifiers)));
         if (aWeapon instanceof EnergyWeapon) {
             burntime.setVisible(true);
             burntime.setText("Burn time: " + df1.format(((EnergyWeapon) aWeapon).getDuration(aModifiers)));
         }
         secondsPerShot.setVisible(true);
-        secondsPerShot.setText("RoF: " + df2.format(aWeapon.getSecondsPerShot(aEfficiencies, aModifiers)) + " s/shot");
+        secondsPerShot.setText("RoF: " + df2.format(aWeapon.getSecondsPerShot(aModifiers)) + " s/shot");
 
         heatPerSecond.setVisible(true);
-        heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", aEfficiencies, aModifiers)));
+        heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", aModifiers)));
 
         dps.setVisible(true);
-        dps.setText("DPS: " + df1.format(aWeapon.getStat("d/s", aEfficiencies, aModifiers)));
+        dps.setText("DPS: " + df1.format(aWeapon.getStat("d/s", aModifiers)));
 
         dph.setVisible(true);
-        dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", aEfficiencies, aModifiers)));
+        dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", aModifiers)));
 
         range.setVisible(true);
-        range.setText("Range: " + ((aWeapon.getRangeMin() > 0.001) ? (df0.format(aWeapon.getRangeMin()) + " / ") : "")
+        range.setText("Range: " + ((aWeapon.getRangeMin(aModifiers) > 0.001) ? (df0.format(aWeapon.getRangeMin(aModifiers)) + " / ") : "")
                 + df0.format(aWeapon.getRangeLong(aModifiers)) + " / " + df0.format(aWeapon.getRangeMax(aModifiers)));
 
         ammoperton.setVisible(false);
@@ -244,12 +243,12 @@ public class ItemInfoPanel extends JPanel {
         ammoperton.setVisible(false);
     }
 
-    public void showItem(Item anItem, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers) {
+    public void showItem(Item anItem, Collection<Modifier> aModifiers) {
         clearDisplay();
         showBasicInfo(anItem);
 
         if (anItem instanceof Weapon) {
-            showWeaponInfo((Weapon) anItem, aEfficiencies, aModifiers);
+            showWeaponInfo((Weapon) anItem, aModifiers);
         }
         else if (anItem instanceof Ammunition) {
             showAmmoInfo((Ammunition) anItem);

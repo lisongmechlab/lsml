@@ -19,7 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.quirks.ModifiersDB;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
 
@@ -29,6 +34,19 @@ import lisong_mechlab.util.message.MessageXBar;
  * @author Li Song
  */
 public class Efficiencies {
+
+    private final static Modifier SPEED_TWEAK         = new Modifier(ModifiersDB.SPEED_TWEAK_DESC, 0.1);
+    private final static Modifier FAST_FIRE           = new Modifier(ModifiersDB.FAST_FIRE_DESC, 0.05);
+    private final static Modifier COOL_RUN            = new Modifier(ModifiersDB.COOL_RUN_DESC, 0.075);
+    private final static Modifier COOL_RUN_2X         = new Modifier(ModifiersDB.COOL_RUN_DESC, 0.075*2.0);
+    private final static Modifier HEAT_CONTAINMENT    = new Modifier(ModifiersDB.HEAT_CONTAINMENT_DESC, 0.1);
+    private final static Modifier HEAT_CONTAINMENT_2X = new Modifier(ModifiersDB.HEAT_CONTAINMENT_DESC, 0.1*2.0);
+    private final static Modifier ANCHOR_TURN_LOW     = new Modifier(ModifiersDB.ANCHOR_TURN_LOW_DESC, 0.1);
+    private final static Modifier ANCHOR_TURN_LOW_2X  = new Modifier(ModifiersDB.ANCHOR_TURN_LOW_DESC, 0.2);
+    private final static Modifier ANCHOR_TURN_MID     = new Modifier(ModifiersDB.ANCHOR_TURN_MID_DESC, 0.1);
+    private final static Modifier ANCHOR_TURN_MID_2X  = new Modifier(ModifiersDB.ANCHOR_TURN_MID_DESC, 0.2);
+    private final static Modifier ANCHOR_TURN_HIGH    = new Modifier(ModifiersDB.ANCHOR_TURN_HIGH_DESC, 0.1);
+    private final static Modifier ANCHOR_TURN_HIGH_2X = new Modifier(ModifiersDB.ANCHOR_TURN_HIGH_DESC, 0.2);
 
     public static class EfficienciesMessage implements Message {
         @Override
@@ -242,9 +260,51 @@ public class Efficiencies {
         }
     }
 
+    public List<Modifier> getModifiers() {
+        List<Modifier> ans = new ArrayList<>();
+
+        if (hasDoubleBasics()) {
+            ans.add(HEAT_CONTAINMENT_2X);
+            ans.add(COOL_RUN_2X);
+            ans.add(FAST_FIRE);
+            ans.add(SPEED_TWEAK);
+            ans.add(ANCHOR_TURN_LOW_2X);
+            ans.add(ANCHOR_TURN_MID_2X);
+            ans.add(ANCHOR_TURN_HIGH_2X);
+        }
+        else {
+            if (hasFastFire() || hasSpeedTweak()) {
+                ans.add(COOL_RUN);
+                ans.add(HEAT_CONTAINMENT);
+                ans.add(HEAT_CONTAINMENT);
+
+                if (hasFastFire())
+                    ans.add(FAST_FIRE);
+                if (hasSpeedTweak())
+                    ans.add(SPEED_TWEAK);
+            }
+            else {
+                if (hasCoolRun())
+                    ans.add(COOL_RUN);
+                if (hasHeatContainment())
+                    ans.add(HEAT_CONTAINMENT);
+                if (hasHeatContainment())
+                    ans.add(HEAT_CONTAINMENT);
+                if (hasAnchorTurn()) {
+                    ans.add(ANCHOR_TURN_LOW);
+                    ans.add(ANCHOR_TURN_MID);
+                    ans.add(ANCHOR_TURN_HIGH);
+                }
+            }
+        }
+
+        return ans;
+    }
+
     /**
      * @return The modifier that should be applied to a 'mechs heat capacity with the current efficiencies.
      */
+    @Deprecated
     public double getHeatCapacityModifier() {
         if (heatContainment) {
             if (doubleBasics)
@@ -257,6 +317,7 @@ public class Efficiencies {
     /**
      * @return The modifier that should be applied to a 'mechs heat dissipation with the current efficiencies.
      */
+    @Deprecated
     public double getHeatDissipationModifier() {
         if (coolRun) {
             if (doubleBasics)
@@ -269,6 +330,7 @@ public class Efficiencies {
     /**
      * @return The modifier that should be applied to a 'mechs top speed with the current efficiencies.
      */
+    @Deprecated
     public double getSpeedModifier() {
         if (speedTweak)
             return 1.1;
@@ -278,6 +340,7 @@ public class Efficiencies {
     /**
      * @return The modifier that should be applied to a 'mechs turn speed with the current efficiencies.
      */
+    @Deprecated
     public double getTurnSpeedModifier() {
         if (anchorTurn) {
             if (doubleBasics) {
@@ -298,6 +361,7 @@ public class Efficiencies {
     /**
      * @return The modifier to be applied to weapon recycle times given the current status of the fast fire efficiency.
      */
+    @Deprecated
     public double getWeaponCycleTimeModifier() {
         if (fastfire)
             return 0.95;

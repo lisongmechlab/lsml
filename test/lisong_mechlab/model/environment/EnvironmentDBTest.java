@@ -41,7 +41,7 @@ public class EnvironmentDBTest {
     public void testLookup() {
         Environment caustic = EnvironmentDB.lookup("caustic valley");
 
-        assertEquals(0.3, caustic.getHeat(), 0.0);
+        assertEquals(0.3, caustic.getHeat(null), 0.0);
         assertEquals("CAUSTIC VALLEY", caustic.getName());
     }
 

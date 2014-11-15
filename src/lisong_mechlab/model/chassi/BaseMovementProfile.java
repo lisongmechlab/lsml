@@ -19,22 +19,61 @@
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import lisong_mechlab.mwo_data.helpers.MdfMovementTuning;
+import java.util.Collection;
+
+import lisong_mechlab.model.quirks.Attribute;
+import lisong_mechlab.model.quirks.Modifier;
+import lisong_mechlab.model.quirks.ModifiersDB;
 
 /**
- * This class contains the static movement parameters for a chassis.
+ * This class contains the movement parameters for a chassis.
  * 
  * @author Li Song
  */
 public class BaseMovementProfile implements MovementProfile {
-    private final MdfMovementTuning mdf;      // TODO: Do not use the parsing classes, even though this is essentially
-                                               // a
-                                               // wrapper.
+    private final Attribute         maxMovementSpeed;
+    private final Attribute         torsoTurnSpeedYaw;
+    private final Attribute         torsoTurnSpeedPitch;
+    private final Attribute         armTurnSpeedYaw;
+    private final Attribute         armTurnSpeedPitch;
+    private final Attribute         maxTorsoAngleYaw;
+    private final Attribute         maxTorsoAnglePitc;
+    private final Attribute         maxArmRotationYaw;
+    private final Attribute         maxArmRotationPitch;
+    private final Attribute         reverseSpeedMultiplier;
+    private final Attribute         turnLerpLowSpeed;
+    private final Attribute         turnLerpMidSpeed;
+    private final Attribute         turnLerpHighSpeed;
+    private final Attribute         turnLerpLowRate;
+    private final Attribute         turnLerpMidRate;
+    private final Attribute         turnLerpHighRate;
     private final MovementArchetype archetype;
 
-    public BaseMovementProfile(MdfMovementTuning aMdf) {
-        mdf = aMdf;
-        archetype = MovementArchetype.valueOf(mdf.MovementArchetype);
+    public BaseMovementProfile(double aMaxMovementSpeed, double aReverseSpeedMult, double aTorsoTurnSpeedYaw,
+            double aTorsoTurnSpeedPitch, double aArmTurnSpeedYaw, double aArmTurnSpeedPitch, double aMaxTorsoAngleYaw,
+            double aMaxTorsoAnglePitch, double aMaxArmRotationYaw, double aMaxArmRotationPitch,
+            double aTurnLerpLowSpeed, double aTurnLerpMidSpeed, double aTurnLerpHighSpeed, double aTurnLerpLowRate,
+            double aTurnLerpMidRate, double aTurnLerpHighRate, MovementArchetype aMovementArchetype) {
+        maxMovementSpeed = new Attribute(aMaxMovementSpeed, ModifiersDB.SEL_MOVEMENT_MAX_SPEED);
+        reverseSpeedMultiplier = new Attribute(aReverseSpeedMult, ModifiersDB.SEL_MOVEMENT_REVERSE_MUL);
+        
+        torsoTurnSpeedYaw = new Attribute(aTorsoTurnSpeedYaw, ModifiersDB.SEL_MOVEMENT_TORSO_SPEED, "yaw");
+        torsoTurnSpeedPitch = new Attribute(aTorsoTurnSpeedPitch, ModifiersDB.SEL_MOVEMENT_TORSO_SPEED, "pitch");
+        armTurnSpeedYaw = new Attribute(aArmTurnSpeedYaw, ModifiersDB.SEL_MOVEMENT_ARM_SPEED, "yaw");
+        armTurnSpeedPitch = new Attribute(aArmTurnSpeedPitch, ModifiersDB.SEL_MOVEMENT_ARM_SPEED, "pitch");
+        maxTorsoAngleYaw = new Attribute(aMaxTorsoAngleYaw, ModifiersDB.SEL_MOVEMENT_TORSO_ANGLE, "yaw");
+        maxTorsoAnglePitc = new Attribute(aMaxTorsoAnglePitch, ModifiersDB.SEL_MOVEMENT_TORSO_ANGLE, "pitch");
+        maxArmRotationYaw = new Attribute(aMaxArmRotationYaw, ModifiersDB.SEL_MOVEMENT_ARM_ANGLE, "yaw");
+        maxArmRotationPitch = new Attribute(aMaxArmRotationPitch, ModifiersDB.SEL_MOVEMENT_ARM_ANGLE, "pitch");
+
+        turnLerpLowSpeed = new Attribute(aTurnLerpLowSpeed, ModifiersDB.SEL_MOVEMENT_TURN_SPEED, "lowrate");
+        turnLerpMidSpeed = new Attribute(aTurnLerpMidSpeed, ModifiersDB.SEL_MOVEMENT_TURN_SPEED, "midrate");
+        turnLerpHighSpeed = new Attribute(aTurnLerpHighSpeed, ModifiersDB.SEL_MOVEMENT_TURN_SPEED, "highrate");
+        turnLerpLowRate = new Attribute(aTurnLerpLowRate, ModifiersDB.SEL_MOVEMENT_TURN_RATE, "lowrate");
+        turnLerpMidRate = new Attribute(aTurnLerpMidRate, ModifiersDB.SEL_MOVEMENT_TURN_RATE, "midrate");
+        turnLerpHighRate = new Attribute(aTurnLerpHighRate, ModifiersDB.SEL_MOVEMENT_TURN_RATE, "highrate");
+
+        archetype = aMovementArchetype;
     }
 
     @Override
@@ -43,82 +82,82 @@ public class BaseMovementProfile implements MovementProfile {
     }
 
     @Override
-    public double getMaxMovementSpeed() {
-        return mdf.MaxMovementSpeed;
+    public double getMaxMovementSpeed(Collection<Modifier> aModifiers) {
+        return maxMovementSpeed.value(aModifiers);
     }
 
     @Override
-    public double getReverseSpeedMultiplier() {
-        return mdf.ReverseSpeedMultiplier;
+    public double getReverseSpeedMultiplier(Collection<Modifier> aModifiers) {
+        return reverseSpeedMultiplier.value(aModifiers);
     }
 
     @Override
-    public double getTorsoYawMax() {
-        return mdf.MaxTorsoAngleYaw;
+    public double getTorsoYawMax(Collection<Modifier> aModifiers) {
+        return maxTorsoAngleYaw.value(aModifiers);
     }
 
     @Override
-    public double getTorsoYawSpeed() {
-        return mdf.TorsoTurnSpeedYaw;
+    public double getTorsoYawSpeed(Collection<Modifier> aModifiers) {
+        return torsoTurnSpeedYaw.value(aModifiers);
     }
 
     @Override
-    public double getTorsoPitchMax() {
-        return mdf.MaxTorsoAnglePitch;
+    public double getTorsoPitchMax(Collection<Modifier> aModifiers) {
+        return maxTorsoAnglePitc.value(aModifiers);
     }
 
     @Override
-    public double getTorsoPitchSpeed() {
-        return mdf.TorsoTurnSpeedPitch;
+    public double getTorsoPitchSpeed(Collection<Modifier> aModifiers) {
+        return torsoTurnSpeedPitch.value(aModifiers);
     }
 
     @Override
-    public double getArmYawMax() {
-        return mdf.MaxArmRotationYaw;
+    public double getArmYawMax(Collection<Modifier> aModifiers) {
+        return maxArmRotationYaw.value(aModifiers);
     }
 
     @Override
-    public double getArmYawSpeed() {
-        return mdf.ArmTurnSpeedYaw;
+    public double getArmYawSpeed(Collection<Modifier> aModifiers) {
+        return armTurnSpeedYaw.value(aModifiers);
     }
 
     @Override
-    public double getArmPitchMax() {
-        return mdf.MaxArmRotationPitch;
+    public double getArmPitchMax(Collection<Modifier> aModifiers) {
+        return maxArmRotationPitch.value(aModifiers);
     }
 
     @Override
-    public double getArmPitchSpeed() {
-        return mdf.ArmTurnSpeedPitch;
+    public double getArmPitchSpeed(Collection<Modifier> aModifiers) {
+        return armTurnSpeedPitch.value(aModifiers);
     }
 
     @Override
-    public double getTurnLerpLowSpeed() {
-        return mdf.TurnLerpLowSpeed;
+    public double getTurnLerpLowSpeed(Collection<Modifier> aModifiers) {
+        return turnLerpLowSpeed.value(aModifiers);
     }
 
     @Override
-    public double getTurnLerpMidSpeed() {
-        return mdf.TurnLerpMidSpeed;
+    public double getTurnLerpMidSpeed(Collection<Modifier> aModifiers) {
+        return turnLerpMidSpeed.value(aModifiers);
     }
 
     @Override
-    public double getTurnLerpHighSpeed() {
-        return mdf.TurnLerpHighSpeed;
+    public double getTurnLerpHighSpeed(Collection<Modifier> aModifiers) {
+        return turnLerpHighSpeed.value(aModifiers);
     }
 
     @Override
-    public double getTurnLerpLowRate() {
-        return mdf.TurnLerpLowRate;
+    public double getTurnLerpLowRate(Collection<Modifier> aModifiers) {
+        return turnLerpLowRate.value(aModifiers);
     }
 
     @Override
-    public double getTurnLerpMidRate() {
-        return mdf.TurnLerpMidRate;
+    public double getTurnLerpMidRate(Collection<Modifier> aModifiers) {
+        return turnLerpMidRate.value(aModifiers);
     }
 
     @Override
-    public double getTurnLerpHighRate() {
-        return mdf.TurnLerpHighRate;
+    public double getTurnLerpHighRate(Collection<Modifier> aModifiers) {
+        return turnLerpHighRate.value(aModifiers);
     }
 }

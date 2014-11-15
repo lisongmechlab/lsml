@@ -21,8 +21,10 @@ package lisong_mechlab.view.graphs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JCheckBox;
 
@@ -33,6 +35,7 @@ import lisong_mechlab.model.chassi.ChassisStandard;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.metrics.PayloadStatistics;
 import lisong_mechlab.model.metrics.TopSpeed;
+import lisong_mechlab.model.quirks.Modifier;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -95,16 +98,19 @@ public class PayloadGraphPanel extends ChartPanel {
 
     public void updateGraph() {
         DefaultTableXYDataset dataset = new DefaultTableXYDataset();
+
         for (Entry entry : chassis) {
             XYSeries series = new XYSeries(entry.name, false, false);
             if (entry.representant instanceof ChassisStandard) {
                 ChassisStandard chassisStandard = (ChassisStandard) entry.representant;
+                List<Modifier> stockModifiers = new ArrayList<>(chassisStandard.getQuirks());
+                stockModifiers.addAll(efficiencies.getModifiers());
                 for (int rating = chassisStandard.getEngineMin(); rating <= chassisStandard.getEngineMax(); rating += 5) {
                     if (rating < 100) {
                         continue; // TODO: Remove this when they remove the engine limit.
                     }
                     double speed = TopSpeed.calculate(rating, chassisStandard.getMovementProfileBase(),
-                            chassisStandard.getMassMax(), efficiencies.getSpeedModifier());
+                            chassisStandard.getMassMax(), stockModifiers);
                     series.add(speed, payloadStatistics.calculate(chassisStandard, rating));
                 }
             }
@@ -113,12 +119,15 @@ public class PayloadGraphPanel extends ChartPanel {
                 ChassisOmniMech chassisOmniMech = (ChassisOmniMech) entry.representant;
                 Engine engine = chassisOmniMech.getFixedEngine();
 
+                List<Modifier> stockModifiers = new ArrayList<>(chassisOmniMech.getStockModifiers());
+                stockModifiers.addAll(efficiencies.getModifiers());
+
                 double minSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileMin(),
-                        chassisOmniMech.getMassMax(), efficiencies.getSpeedModifier());
-                double stockSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileStock(),
-                        chassisOmniMech.getMassMax(), efficiencies.getSpeedModifier());
+                        chassisOmniMech.getMassMax(), efficiencies.getModifiers());
+                double stockSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileBase(),
+                        chassisOmniMech.getMassMax(), stockModifiers);
                 double maxSpeed = TopSpeed.calculate(engine.getRating(), chassisOmniMech.getMovementProfileMax(),
-                        chassisOmniMech.getMassMax(), efficiencies.getSpeedModifier());
+                        chassisOmniMech.getMassMax(), efficiencies.getModifiers());
 
                 double payload = payloadStatistics.calculate(chassisOmniMech);
                 if (minSpeed != stockSpeed) {

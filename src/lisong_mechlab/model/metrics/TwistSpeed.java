@@ -41,6 +41,7 @@ public class TwistSpeed implements Metric {
         Engine engine = loadout.getEngine();
         if (engine == null)
             return 0.0;
-        return loadout.getMovementProfile().getTorsoYawSpeed() * loadout.getEngine().getRating() / chassi.getMassMax();
+        return loadout.getMovementProfile().getTorsoYawSpeed(loadout.getModifiers()) * loadout.getEngine().getRating()
+                / chassi.getMassMax();
     }
 }

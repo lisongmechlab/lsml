@@ -29,11 +29,9 @@ import java.util.List;
 import lisong_mechlab.model.chassi.ArmorSide;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisStandard;
-import lisong_mechlab.model.chassi.ComponentOmniMech;
 import lisong_mechlab.model.chassi.ComponentStandard;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.chassi.Location;
-import lisong_mechlab.model.chassi.MovementModifier;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.EngineType;
 import lisong_mechlab.model.item.Internal;
@@ -45,7 +43,7 @@ import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
 import lisong_mechlab.model.loadout.component.OpRemoveItem;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
-import lisong_mechlab.model.quirks.Quirks;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.OpSetArmorType;
 import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
@@ -76,16 +74,15 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         }
     }
 
-    private int                    engineMin         = 0;
-    private int                    engineMax         = 400;
-    private int                    maxJumpJets       = 0;
-    private Quirks                 quirks;
-    private List<MovementModifier> movementModifiers = new ArrayList<>();
-    private ChassisStandard        chassisStandard;
-    private UpgradesMutable        upgradesMutable;
+    private int             engineMin   = 0;
+    private int             engineMax   = 400;
+    private int             maxJumpJets = 0;
+    private List<Modifier>  quirks      = new ArrayList<>();
+    private ChassisStandard chassisStandard;
+    private UpgradesMutable upgradesMutable;
 
     @Override
-    protected LoadoutBase<?> makeDefaultCUT() {       
+    protected LoadoutBase<?> makeDefaultCUT() {
         Mockito.when(chassis.getName()).thenReturn(chassisName);
         Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
@@ -106,8 +103,6 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
     @Before
     public void setup() {
         super.setup();
-        quirks = Mockito.mock(Quirks.class);
-        Mockito.when(quirks.getQuirksByType(MovementModifier.class)).thenReturn(movementModifiers);
         chassisStandard = Mockito.mock(ChassisStandard.class);
         upgradesMutable = Mockito.mock(UpgradesMutable.class);
         chassis = chassisStandard;

@@ -52,7 +52,6 @@ import lisong_mechlab.model.item.AmmoWeapon;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.EquipResult;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.OpAutoAddItem;
@@ -163,11 +162,10 @@ public class ItemLabel extends JLabel {
                 Component component = anEvent.getComponent();
                 if (component instanceof ItemLabel) {
                     if (null != loadout) {
-                        aInfoPanel
-                                .showItem(item, loadout.getEfficiencies(), loadout.getModifiers(WeaponModifier.class));
+                        aInfoPanel.showItem(item, loadout.getModifiers());
                     }
                     else {
-                        aInfoPanel.showItem(item, null, null);
+                        aInfoPanel.showItem(item, null);
                     }
                 }
 
@@ -245,7 +243,7 @@ public class ItemLabel extends JLabel {
         if (item instanceof Engine && aLoadout != null) {
             Engine engine = (Engine) item;
             double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(), aLoadout.getChassis()
-                    .getMassMax(), aLoadout.getEfficiencies().getSpeedModifier());
+                    .getMassMax(), aLoadout.getModifiers());
             DecimalFormat decimalFormat = new DecimalFormat("###");
             builder.append("<br/>" + decimalFormat.format(speed) + "kph");
         }

@@ -25,6 +25,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.quirks.Modifier;
 import lisong_mechlab.model.upgrades.ArmorUpgrade;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.StructureUpgrade;
@@ -270,13 +272,13 @@ public class ChassisOmniMechTest extends ChassisBaseTest {
 
         MovementProfile max = mech.getMovementProfileMax();
         MovementProfile min = mech.getMovementProfileMin();
-        MovementProfile stock = mech.getMovementProfileStock();
+        Collection<Modifier> stock = mech.getStockModifiers();
 
-        assertEquals(baseProfile.getTorsoYawSpeed() * 1.05, stock.getTorsoYawSpeed(), 0.0);
-        assertEquals(baseProfile.getTorsoYawMax() + 5, stock.getTorsoYawMax(), 0.0);
+        assertEquals(baseProfile.getTorsoYawSpeed(null) * 1.05, baseProfile.getTorsoYawSpeed(stock), 0.0);
+        assertEquals(baseProfile.getTorsoYawMax(null) + 5, baseProfile.getTorsoYawMax(stock), 0.0);
 
-        assertEquals(baseProfile.getTorsoYawSpeed() * 0.95, min.getTorsoYawSpeed(), 0.0);
-        assertEquals(baseProfile.getTorsoYawSpeed() * 1.10, max.getTorsoYawSpeed(), 0.0);
+        assertEquals(baseProfile.getTorsoYawSpeed(null) * 0.95, min.getTorsoYawSpeed(null), 0.0);
+        assertEquals(baseProfile.getTorsoYawSpeed(null) * 1.10, max.getTorsoYawSpeed(null), 0.0);
     }
 
     @Test
