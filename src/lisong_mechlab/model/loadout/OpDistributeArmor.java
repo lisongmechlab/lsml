@@ -244,9 +244,13 @@ public class OpDistributeArmor extends CompositeOperation {
             if (location == Location.CenterTorso) {
                 ans.put(location, 2000);
             }
-            else if (loadout.getEngine() != null && loadout.getEngine().getType() == EngineType.XL
-                    && (location == Location.LeftTorso || location == Location.RightTorso)) {
-                ans.put(location, 1000);
+            else if (location == Location.LeftTorso || location == Location.RightTorso) {
+                if (loadout.getEngine() != null && loadout.getEngine().getType() == EngineType.XL) {
+                    ans.put(location, 1000);
+                }
+                else {
+                    ans.put(location, 20);
+                }
             }
             // Legs and head are high priority too
             else if (location == Location.LeftLeg || location == Location.RightLeg) {
