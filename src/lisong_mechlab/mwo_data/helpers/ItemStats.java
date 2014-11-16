@@ -19,6 +19,9 @@
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import lisong_mechlab.model.item.Faction;
+import lisong_mechlab.mwo_data.Localization;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStats {
@@ -29,4 +32,24 @@ public class ItemStats {
     @XStreamAsAttribute
     public String       faction;
     public ItemStatsLoc Loc;
+    
+    public String getUiName(){
+        return Localization.key2string(Loc.nameTag);
+    }
+    
+    public String getUiDesc(){
+        return Localization.key2string(Loc.descTag);
+    }
+    
+    public String getMwoKey(){
+        return  name;
+    }
+    
+    public int getMwoId(){
+        return Integer.parseInt(id);
+    }
+    
+    public Faction getFaction(){
+        return Faction.fromMwo(faction);
+    }
 }

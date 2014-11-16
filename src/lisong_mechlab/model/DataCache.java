@@ -592,10 +592,8 @@ public class DataCache {
                         cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
                     }
 
-                    ModifierDescription longRangeDesc = new ModifierDescription(name + " (LONG)", null, op,
-                            selectors, ModifiersDB.SEL_WEAPON_LONGRANGE, ValueType.POSITIVE_GOOD);
-                    ModifierDescription maxRangeDesc = new ModifierDescription(name + " (MAX)", null, op,
-                            selectors, ModifiersDB.SEL_WEAPON_MAXRANGE, ValueType.POSITIVE_GOOD);
+                    ModifierDescription rangeDesc = new ModifierDescription(name, null, op, selectors,
+                            ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
                     ModifierDescription cooldownDesc = new ModifierDescription(name, null, op, selectors,
                             ModifiersDB.SEL_WEAPON_COOLDOWN, ValueType.NEGATIVE_GOOD);
 
@@ -621,8 +619,8 @@ public class DataCache {
                         modifiers.add(new Modifier(cooldownDesc, 1.0 - cooldown[maxRank - 1]));
                     }
                     if (maxRange[maxRank - 1] != 0) {
-                        modifiers.add(new Modifier(longRangeDesc, longRange[maxRank - 1] - 1.0));
-                        modifiers.add(new Modifier(maxRangeDesc, maxRange[maxRank - 1] - 1.0));
+                        //modifiers.add(new Modifier(rangeDesc, longRange[maxRank - 1] - 1.0)); // They are always the same.
+                        modifiers.add(new Modifier(rangeDesc, maxRange[maxRank - 1] - 1.0)); 
                     }
 
                     ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction,
@@ -892,7 +890,8 @@ public class DataCache {
         }
 
         dataCache.lsmlVersion = LSML.getVersion();
-        dataCache.modifierDescriptions = Collections.unmodifiableList(XMLQuirkDef.fromXml(LoadoutCoderV3.class.getResourceAsStream("/resources/Quirks.def.xml")));
+        dataCache.modifierDescriptions = Collections.unmodifiableList(XMLQuirkDef.fromXml(LoadoutCoderV3.class
+                .getResourceAsStream("/resources/Quirks.def.xml")));
         dataCache.items = Collections.unmodifiableList(parseItems(itemStatsXml));
         dataCache.modules = Collections.unmodifiableList(parseModules(aGameVfs, itemStatsXml));
         dataCache.upgrades = Collections.unmodifiableList(parseUpgrades(itemStatsXml, dataCache));

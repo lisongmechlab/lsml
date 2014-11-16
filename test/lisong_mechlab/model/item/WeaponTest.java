@@ -23,6 +23,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifierDescription;
+import lisong_mechlab.model.modifiers.ModifiersDB;
+
 import org.junit.Test;
 
 public class WeaponTest {
@@ -150,6 +157,26 @@ public class WeaponTest {
         assertEquals(gauss.getDamagePerShot() / gauss.getHeat(null), gauss.getStat("d/h", null), 0.0);
     }
 
+    @Test
+    public final void testRangeModifiers(){
+        Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
+        WeaponModule rangeModule = (WeaponModule) PilotModuleDB.lookup("LARGE LASER RANGE 5");
+        ModifierDescription rangeQuirk1 = ModifiersDB.lookup("islargelaser_range_multiplier");
+        ModifierDescription rangeQuirk2 = ModifiersDB.lookup("energy_range_multiplier");
+        Modifier range1 = new Modifier(rangeQuirk1, 0.125);
+        Modifier range2 = new Modifier(rangeQuirk2, 0.125);
+        
+        List<Modifier> modifiers = new ArrayList<>();
+        modifiers.addAll(rangeModule.getModifiers());
+        modifiers.add(range1);
+        modifiers.add(range2);
+        
+        double expected_range = (llas.getRangeLong(null)+0.0)*(1.0 + 0.125 + 0.125 + 0.1);
+        
+        assertEquals(expected_range, llas.getRangeLong(modifiers), 0.0);
+        
+    }
+    
     @Test
     public final void testIsLargeBore() {
         assertTrue(((Weapon) ItemDB.lookup("C-ER PPC")).isLargeBore());

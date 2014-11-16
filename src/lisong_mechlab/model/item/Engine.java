@@ -29,16 +29,15 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * This immutable class represents an engine for a battle mech.
  * 
  * @author Li Song
- *
  */
 public class Engine extends HeatSource {
     public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
     public final static double ENGINE_HEAT_66_THROTTLE   = 0.1;
 
     @XStreamAsAttribute
-    protected final int        rating;
+    final private EngineType   type;
     @XStreamAsAttribute
-    protected final EngineType type;
+    final private int          rating;
     @XStreamAsAttribute
     final private int          internalHs;
     @XStreamAsAttribute
@@ -52,19 +51,31 @@ public class Engine extends HeatSource {
         internalHs = aInternalHS;
         heatSinkSlots = aHSSlots;
     }
-    
+
+    /**
+     * @return The type of the engine (XL/STD).
+     */
     public EngineType getType() {
         return type;
     }
 
+    /**
+     * @return The speed rating of this {@link Engine}.
+     */
     public int getRating() {
         return rating;
     }
 
+    /**
+     * @return The number of fixed internal heat sinks that this {@link Engine} has.
+     */
     public int getNumInternalHeatsinks() {
         return internalHs;
     }
 
+    /**
+     * @return The number of slots for external heat sinks that this {@link Engine} has.
+     */
     public int getNumHeatsinkSlots() {
         return heatSinkSlots;
     }

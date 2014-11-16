@@ -31,21 +31,20 @@ import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.MissileWeapon;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 import lisong_mechlab.mwo_data.Localization;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsWeapon extends ItemStats {
 
-    public static class WeaponStatsTag {
+    public static class WeaponStatsTag extends ItemStatsModuleStats {
         @XStreamAsAttribute
         public double speed;
         @XStreamAsAttribute
         public double volleydelay;
         @XStreamAsAttribute
         public double duration;
-        @XStreamAsAttribute
-        public double tons;
         @XStreamAsAttribute
         public double maxRange;
         @XStreamAsAttribute
@@ -76,10 +75,6 @@ public class ItemStatsWeapon extends ItemStats {
         public String projectileclass;
         @XStreamAsAttribute
         public String type;
-        @XStreamAsAttribute
-        public int    slots;
-        @XStreamAsAttribute
-        public int    Health;
         @XStreamAsAttribute
         public String artemisAmmoType;
         /** The number of projectile in one round of ammo. Fired simultaneously (only LB type AC). */
@@ -117,6 +112,24 @@ public class ItemStatsWeapon extends ItemStats {
     public WeaponStatsTag WeaponStats;
     public ArtemisTag     Artemis;
 
+    private double determineCooldown() {
+        if (WeaponStats.cooldown <= 0.0) {
+            // Some weapons are troublesome in that they have zero cooldown in the data files.
+            // These include: Machine Gun, Flamer, TAG
+            if (WeaponStats.rof > 0.0) {
+                return 1.0 / WeaponStats.rof;
+            }
+            else if (WeaponStats.type.toLowerCase().equals("energy")) {
+                return 1.0;
+            }
+            else {
+                return 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 =
+                // 0.10375
+            }
+        }
+        return WeaponStats.cooldown;
+    }
+
     public Weapon asWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
         int baseType = -1;
         if (InheritFrom > 0) {
@@ -141,32 +154,14 @@ public class ItemStatsWeapon extends ItemStats {
             }
         }
 
-        final double cooldownValue;
-        if (WeaponStats.cooldown <= 0.0) {
-            // Some weapons are troublesome in that they have zero cooldown in the data files.
-            // These include: Machine Gun, Flamer, TAG
-            if (WeaponStats.rof > 0.0) {
-                cooldownValue = 1.0 / WeaponStats.rof;
-            }
-            else if (WeaponStats.type.toLowerCase().equals("energy")) {
-                cooldownValue = 1.0;
-            }
-            else {
-                cooldownValue = 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 =
-                // 0.10375
-            }
-        }
-        else {
-            cooldownValue = WeaponStats.cooldown;
-        }
-
+        double cooldownValue = determineCooldown();
         String uiName = Localization.key2string(Loc.nameTag);
         String uiDesc = Localization.key2string(Loc.descTag);
         String mwoName = name;
         int mwoId = Integer.parseInt(id);
         int slots = WeaponStats.slots;
         double mass = WeaponStats.tons;
-        int hp = WeaponStats.Health;
+        int hp = WeaponStats.health;
         Faction itemFaction = Faction.fromMwo(faction);
 
         double damagePerProjectile = WeaponStats.damage;
@@ -191,13 +186,13 @@ public class ItemStatsWeapon extends ItemStats {
             ghostHeatFreeAlpha = -1;
         }
 
-        List<String> selectors = Arrays.asList(HardpointAliases.split(","));
-        Attribute cooldown = new Attribute(cooldownValue, selectors, "cooldown");
-        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors, "nullrange");
-        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, "minrange");
-        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors, "longrange");
-        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, "maxrange");
-        Attribute heat = new Attribute(WeaponStats.heat, selectors, "heat");
+        List<String> selectors = Arrays.asList(HardpointAliases.toLowerCase().split(","));
+        Attribute cooldown = new Attribute(cooldownValue, selectors, ModifiersDB.SEL_WEAPON_COOLDOWN);
+        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors, ModifiersDB.SEL_WEAPON_RANGE);
+        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, ModifiersDB.SEL_WEAPON_RANGE);
+        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors, ModifiersDB.SEL_WEAPON_RANGE);
+        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, ModifiersDB.SEL_WEAPON_RANGE);
+        Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifiersDB.SEL_WEAPON_HEAT);
 
         switch (HardPointType.fromMwoType(WeaponStats.type)) {
             case AMS:

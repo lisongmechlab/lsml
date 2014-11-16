@@ -51,9 +51,10 @@ public class ModifiersDB {
     public final static String                            SEL_HEAT_LIMIT            = "heatlimit";
     public final static String                            SEL_HEAT_EXTERNALTRANSFER = "externalheat";
 
-    public final static String                            SEL_WEAPON_LONGRANGE      = "longrange";
-    public final static String                            SEL_WEAPON_MAXRANGE       = "maxrange";
+    public final static String                            SEL_WEAPON_RANGE          = "range";
     public final static String                            SEL_WEAPON_COOLDOWN       = "cooldown";
+    public final static String                            SEL_WEAPON_HEAT           = "heat";
+    public final static String                            SEL_WEAPON_LARGE_BORE     = "largeweapon";
 
     private final static List<String>                     ALL_WEAPONS;
     public final static ModifierDescription               HEAT_CONTAINMENT_DESC;
@@ -73,7 +74,7 @@ public class ModifiersDB {
      *            The lookup key.
      * @return A {@link ModifierDescription}.
      */
-    static ModifierDescription lookup(String aKey) {
+    public static ModifierDescription lookup(String aKey) {
         ModifierDescription description = mwoname2modifier.get(aKey);
         if (description == null) {
             throw new IllegalArgumentException("Unknown key!");
