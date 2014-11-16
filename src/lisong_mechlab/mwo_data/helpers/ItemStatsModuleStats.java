@@ -19,13 +19,16 @@
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsModuleStats {
     @XStreamAsAttribute
     public int    slots;
+    @XStreamAlias(value="weight")
     @XStreamAsAttribute
     public double tons;
+    @XStreamAlias("Health")
     @XStreamAsAttribute
     public int    health;
 }

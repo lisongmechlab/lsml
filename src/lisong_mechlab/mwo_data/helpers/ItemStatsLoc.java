@@ -24,8 +24,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class ItemStatsLoc {
     @XStreamAsAttribute
     public String shortNameTag;
-    // @XStreamAsAttribute
-    // public int iconTag;
     @XStreamAsAttribute
     public String descTag;
     @XStreamAsAttribute

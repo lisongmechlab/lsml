@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.modifiers.Attribute;
 import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -272,13 +273,7 @@ public class Weapon extends HeatSource {
      *         weapon is equipped.
      */
     public boolean isLargeBore() {
-        boolean isLargeBore = false;
-        isLargeBore |= getName().toLowerCase().contains("ppc");
-        isLargeBore |= getName().toLowerCase().contains("gauss");
-        isLargeBore |= getName().toLowerCase().contains("ac/");
-        isLargeBore |= getName().toLowerCase().contains("x ac");
-        isLargeBore |= getName().toLowerCase().contains("10-x");
-        return isLargeBore;
+        return getAliases().contains(ModifiersDB.SEL_WEAPON_LARGE_BORE);
     }
 
     /**

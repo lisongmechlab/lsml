@@ -55,9 +55,9 @@ public class TargetingComputer extends Module implements ModifierEquipment {
                         // FIXME add the selectors to the modifier description somehow.
                         Operation op = Operation.fromString(stats.operation);
                         ModifierDescription longRangeDesc = new ModifierDescription(getName() + " (LONG RANGE)", null,
-                                op, selectors, ModifiersDB.SEL_WEAPON_LONGRANGE, ValueType.POSITIVE_GOOD);
+                                op, selectors, ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
                         ModifierDescription maxRangeDesc = new ModifierDescription(getName() + " (MAX RANGE)", null, op,
-                                selectors, ModifiersDB.SEL_WEAPON_MAXRANGE, ValueType.POSITIVE_GOOD);
+                                selectors, ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
 
                         Modifier longRange = new Modifier(longRangeDesc, stats.longRange - 1);
                         Modifier maxRange = new Modifier(maxRangeDesc, stats.maxRange - 1);
