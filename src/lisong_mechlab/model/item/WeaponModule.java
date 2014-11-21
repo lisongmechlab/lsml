@@ -70,10 +70,8 @@ public class WeaponModule extends PilotModule implements ModifierEquipment {
     public boolean affectsWeapon(Weapon aWeapon) {
         for (Modifier modifier : modifiers) {
             for (String selector : modifier.getDescription().getSelectors()) {
-                for (String weaponSelector : aWeapon.getAliases()) {
-                    if (selector.equalsIgnoreCase(weaponSelector)) {
-                        return true;
-                    }
+                if (aWeapon.getKey().equalsIgnoreCase(selector)) {
+                    return true;
                 }
             }
         }
