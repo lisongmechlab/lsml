@@ -113,11 +113,11 @@ public class ModifiersDB {
         SPEED_TWEAK_DESC = new ModifierDescription("SPEED TWEAK", null, Operation.MULTIPLICATIVE, Arrays.asList(
                 "speed", "reversespeed"), null, ValueType.POSITIVE_GOOD);
         ANCHOR_TURN_LOW_DESC = new ModifierDescription("ANCHOR TURN (LOW SPEED)", null, Operation.MULTIPLICATIVE,
-                "accellerp", "lowrate", ValueType.POSITIVE_GOOD);
+                SEL_MOVEMENT_TURN_RATE, "lowrate", ValueType.POSITIVE_GOOD);
         ANCHOR_TURN_MID_DESC = new ModifierDescription("ANCHOR TURN (MID SPEED)", null, Operation.MULTIPLICATIVE,
-                "accellerp", "midrate", ValueType.POSITIVE_GOOD);
+                SEL_MOVEMENT_TURN_RATE, "midrate", ValueType.POSITIVE_GOOD);
         ANCHOR_TURN_HIGH_DESC = new ModifierDescription("ANCHOR TURN (HIGH SPEED)", null, Operation.MULTIPLICATIVE,
-                "accellerp", "highrate", ValueType.POSITIVE_GOOD);
+                SEL_MOVEMENT_TURN_RATE, "highrate", ValueType.POSITIVE_GOOD);
 
     }
 }

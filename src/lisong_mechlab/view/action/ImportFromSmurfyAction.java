@@ -240,7 +240,7 @@ public class ImportFromSmurfyAction extends AbstractAction {
                 for (int i = 0; i < model.getRowCount(); ++i) {
                     if ((boolean) model.getValueAt(i, 0)) {
                         ProgramInit.lsml().garageOperationStack.pushAndApply(new OpAddToGarage(ProgramInit.lsml()
-                                .getGarage(), (LoadoutStandard) model.getValueAt(i, 1)));
+                                .getGarage(), (LoadoutBase<?>) model.getValueAt(i, 1)));
                     }
                 }
                 dialog.dispose();
