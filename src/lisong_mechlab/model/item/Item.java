@@ -22,7 +22,6 @@ package lisong_mechlab.model.item;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.Localization;
-import lisong_mechlab.mwo_data.helpers.ItemStats;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -61,13 +60,6 @@ public class Item implements Comparable<Item> {
     }
 
     // TODO: Add a maximum allowed attribute here
-
-    @Deprecated
-    public Item(ItemStats anItemStats, HardPointType aHardpointType, int aNumSlots, double aNumTons, int aHealth) {
-        this(Localization.key2string(anItemStats.Loc.nameTag), Localization.key2string(anItemStats.Loc.descTag),
-                anItemStats.name, Integer.parseInt(anItemStats.id), aNumSlots, aNumTons, aHardpointType, aHealth,
-                Faction.fromMwo(anItemStats.faction));
-    }
 
     public Item(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {
         this(Localization.key2string(aNameTag), Localization.key2string(aDesc), aNameTag, -1, aSlots, 0.0,

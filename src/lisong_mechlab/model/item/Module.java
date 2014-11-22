@@ -20,7 +20,6 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 /**
  * A refinement of {@link Item} for modules.
@@ -36,16 +35,5 @@ public class Module extends Item {
 
     public Module(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {
         super(aNameTag, aDesc, aSlots, aHealth, aFaction);
-    }
-
-    @Deprecated
-    public Module(ItemStatsModule aModule) {
-        super(aModule, HardPointType.NONE, aModule.ModuleStats.slots, aModule.ModuleStats.tons,
-                aModule.ModuleStats.health);
-    }
-
-    @Deprecated
-    public Module(ItemStatsModule aModule, HardPointType hardpoint) {
-        super(aModule, hardpoint, aModule.ModuleStats.slots, aModule.ModuleStats.tons, aModule.ModuleStats.health);
     }
 }
