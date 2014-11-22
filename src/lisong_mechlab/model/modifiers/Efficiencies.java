@@ -296,70 +296,10 @@ public class Efficiencies {
     }
 
     /**
-     * @return The modifier that should be applied to a 'mechs heat capacity with the current efficiencies.
-     */
-    @Deprecated
-    public double getHeatCapacityModifier() {
-        if (heatContainment) {
-            if (doubleBasics)
-                return 1.2;
-            return 1.1;
-        }
-        return 1.0;
-    }
-
-    /**
-     * @return The modifier that should be applied to a 'mechs heat dissipation with the current efficiencies.
-     */
-    @Deprecated
-    public double getHeatDissipationModifier() {
-        if (coolRun) {
-            if (doubleBasics)
-                return 1.15;
-            return 1.075;
-        }
-        return 1.0;
-    }
-
-    /**
-     * @return The modifier that should be applied to a 'mechs top speed with the current efficiencies.
-     */
-    @Deprecated
-    public double getSpeedModifier() {
-        if (speedTweak)
-            return 1.1;
-        return 1.0;
-    }
-
-    /**
-     * @return The modifier that should be applied to a 'mechs turn speed with the current efficiencies.
-     */
-    @Deprecated
-    public double getTurnSpeedModifier() {
-        if (anchorTurn) {
-            if (doubleBasics) {
-                return 1.2;
-            }
-            return 1.1;
-        }
-        return 1.0;
-    }
-
-    /**
      * @return <code>true</code> if the fast fire efficiency is enabled.
      */
     public boolean hasFastFire() {
         return fastfire;
-    }
-
-    /**
-     * @return The modifier to be applied to weapon recycle times given the current status of the fast fire efficiency.
-     */
-    @Deprecated
-    public double getWeaponCycleTimeModifier() {
-        if (fastfire)
-            return 0.95;
-        return 1.0;
     }
 
     /**
