@@ -120,8 +120,6 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
             slider = aSlider;
             oldValue = aOldValue;
             newValue = slider.getValue();
-
-            addOp(new OpDistributeArmor(loadout, armorSlider.getValue(), ratioSlider.getValue(), messageBuffer));
         }
 
         @Override
@@ -151,7 +149,7 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
 
         @Override
         public void buildOperation() {
-            // TODO I think this operation possibly should inherit from OpDistributeArmor
+            addOp(new OpDistributeArmor(loadout, armorSlider.getValue(), ratioSlider.getValue(), messageBuffer));
         }
     }
 
