@@ -21,7 +21,6 @@ package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 public class HeatSink extends Module {
     private final double dissapation;
@@ -32,12 +31,6 @@ public class HeatSink extends Module {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
         dissapation = aDissipation;
         capacity = aCapacity;
-    }
-
-    public HeatSink(ItemStatsModule aStatsModule) {
-        super(aStatsModule);
-        dissapation = aStatsModule.HeatSinkStats.cooling;
-        capacity = -aStatsModule.HeatSinkStats.heatbase;
     }
 
     public double getDissipation() {

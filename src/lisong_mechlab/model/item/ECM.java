@@ -20,11 +20,17 @@
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
+/**
+ * A Module representing ECM
+ * 
+ * @author Emily Björk
+ *
+ */
 public class ECM extends Module {
 
-    public ECM(ItemStatsModule aModule) {
-        super(aModule, HardPointType.ECM);
+    public ECM(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            Faction aFaction) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ECM, aHP, aFaction);
     }
 }

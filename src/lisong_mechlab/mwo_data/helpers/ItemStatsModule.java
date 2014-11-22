@@ -21,14 +21,13 @@ package lisong_mechlab.mwo_data.helpers;
 
 import java.util.List;
 
-import lisong_mechlab.model.item.Ammunition;
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.ECM;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.item.Module;
-import lisong_mechlab.model.item.TargetingComputer;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -50,28 +49,36 @@ public class ItemStatsModule extends ItemStats {
     @XStreamImplicit
     public List<XMLWeaponStats>      WeaponStats;
 
-
     public Item asItem() {
         switch (CType) {
             case "CAmmoTypeStats":
-                return new Ammunition(this);
+                return AmmoTypeStats.asAmmunition(this);
             case "CEngineStats":
                 return EngineStats.asEngine(this);
             case "CHeatSinkStats":
-                return new HeatSink(this);
+                return new HeatSink(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(), HeatSinkStats.cooling,
+                        HeatSinkStats.heatbase);
             case "CJumpJetStats":
-                return new JumpJet(this);
+                // Two values, first is heat for one JJ
+                double heat = Double.parseDouble(JumpJetStats.heat.split(",")[0]);
+                return new JumpJet(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(), JumpJetStats.minTons,
+                        JumpJetStats.maxTons, JumpJetStats.boost, JumpJetStats.duration, heat);
             case "CGECMStats":
-                return new ECM(this);
+                return new ECM(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots, ModuleStats.tons,
+                        ModuleStats.health, getFaction());
             case "CBAPStats":
             case "CClanBAPStats":
             case "CCASEStats":
-                return new Module(this);
+                return new Module(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction());
             case "CLowerArmActuatorStats":
             case "CInternalStats":
-                return new Internal(this);
+                return new Internal(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction());
             case "CTargetingComputerStats":
-                return new TargetingComputer(this);
+                return TargetingComputerStats.asTargetingComputer(this);
             default:
                 return null;
         }

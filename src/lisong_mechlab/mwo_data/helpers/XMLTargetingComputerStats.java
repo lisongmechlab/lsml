@@ -19,7 +19,17 @@
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.item.TargetingComputer;
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifierDescription;
+import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
+import lisong_mechlab.model.modifiers.ModifierDescription.ValueType;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -55,4 +65,36 @@ public class XMLTargetingComputerStats {
 
     @XStreamImplicit
     public List<XMLWeaponStatsFilter> WeaponStatsFilter;
+    
+    public TargetingComputer asTargetingComputer(ItemStatsModule aStats) {
+        final String name = aStats.getUiName();
+        
+        List<Modifier> modifiers = new ArrayList<>();
+        if (null != WeaponStatsFilter) {
+            for (XMLTargetingComputerStats.XMLWeaponStatsFilter filter : WeaponStatsFilter) {
+                List<String> selectors = Arrays.asList(filter.compatibleWeapons.split("\\s*,\\s*"));
+
+                for (XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : filter.WeaponStats) {
+                    if (stats.longRange != 0.0 || stats.maxRange != 0.0) {
+
+                        // FIXME add the selectors to the modifier description somehow.
+                        Operation op = Operation.fromString(stats.operation);
+                        ModifierDescription longRangeDesc = new ModifierDescription(name + " (LONG RANGE)", null,
+                                op, selectors, ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
+                        ModifierDescription maxRangeDesc = new ModifierDescription(name + " (MAX RANGE)", null, op,
+                                selectors, ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
+
+                        Modifier longRange = new Modifier(longRangeDesc, stats.longRange - 1);
+                        Modifier maxRange = new Modifier(maxRangeDesc, stats.maxRange - 1);
+
+                        modifiers.add(longRange);
+                        modifiers.add(maxRange);
+                    }
+                }
+            }
+        }
+        
+        return new TargetingComputer(name, aStats.getUiDesc(), aStats.getMwoKey(), aStats.getMwoId(), aStats.ModuleStats.slots,
+                aStats.ModuleStats.tons, HardPointType.NONE, aStats.ModuleStats.health, aStats.getFaction(), modifiers);
+    }
 }

@@ -49,7 +49,6 @@ import javax.swing.table.DefaultTableModel;
 
 import lisong_mechlab.model.garage.OpAddToGarage;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.export.Base64LoadoutCoder;
 import lisong_mechlab.model.loadout.export.SmurfyImportExport;
 import lisong_mechlab.util.SwingHelpers;

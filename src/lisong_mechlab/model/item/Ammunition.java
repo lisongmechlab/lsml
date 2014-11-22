@@ -19,10 +19,9 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * A generic ammunition item.
@@ -39,22 +38,14 @@ public class Ammunition extends Item {
     @XStreamAsAttribute
     protected final String        ammoType;
 
-    public Ammunition(ItemStatsModule aStatsModule) {
-        super(aStatsModule, HardPointType.NONE, aStatsModule.ModuleStats.slots, aStatsModule.ModuleStats.tons,
-                aStatsModule.ModuleStats.health);
-        internalDamage = aStatsModule.AmmoTypeStats.internalDamage;
-        rounds = aStatsModule.AmmoTypeStats.numShots;
-        ammoType = aStatsModule.AmmoTypeStats.type;
-
-        if (getName().contains("LRM") || getName().contains("SRM") || getName().contains("NARC")) {
-            type = HardPointType.MISSILE;
-        }
-        else if (getName().contains("AMS")) {
-            type = HardPointType.AMS;
-        }
-        else {
-            type = HardPointType.BALLISTIC;
-        }
+    public Ammunition(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardpointType, int aHP, Faction aFaction, int aRounds, String aAmmoType, HardPointType aWeaponType, double aInternalDamage) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+        
+        rounds = aRounds;
+        ammoType = aAmmoType;
+        type = aWeaponType;
+        internalDamage = aInternalDamage;
     }
 
     public int getNumShots() {
