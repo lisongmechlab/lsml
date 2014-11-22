@@ -19,18 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.modifiers.Modifier;
-import lisong_mechlab.model.modifiers.ModifierDescription;
-import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
-import lisong_mechlab.model.modifiers.ModifierDescription.ValueType;
-import lisong_mechlab.model.modifiers.ModifiersDB;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
-import lisong_mechlab.mwo_data.helpers.XMLTargetingComputerStats;
 
 /**
  * Models a targeting computer or command console.
@@ -40,34 +33,12 @@ import lisong_mechlab.mwo_data.helpers.XMLTargetingComputerStats;
  * @author Li Song
  */
 public class TargetingComputer extends Module implements ModifierEquipment {
-    private List<Modifier> modifiers = new ArrayList<>();
+    private final List<Modifier> modifiers;
 
-    public TargetingComputer(ItemStatsModule aModule) {
-        super(aModule);
-
-        if (null != aModule.TargetingComputerStats.WeaponStatsFilter) {
-            for (XMLTargetingComputerStats.XMLWeaponStatsFilter filter : aModule.TargetingComputerStats.WeaponStatsFilter) {
-                List<String> selectors = Arrays.asList(filter.compatibleWeapons.split("\\s*,\\s*"));
-
-                for (XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : filter.WeaponStats) {
-                    if (stats.longRange != 0.0 || stats.maxRange != 0.0) {
-
-                        // FIXME add the selectors to the modifier description somehow.
-                        Operation op = Operation.fromString(stats.operation);
-                        ModifierDescription longRangeDesc = new ModifierDescription(getName() + " (LONG RANGE)", null,
-                                op, selectors, ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
-                        ModifierDescription maxRangeDesc = new ModifierDescription(getName() + " (MAX RANGE)", null, op,
-                                selectors, ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
-
-                        Modifier longRange = new Modifier(longRangeDesc, stats.longRange - 1);
-                        Modifier maxRange = new Modifier(maxRangeDesc, stats.maxRange - 1);
-
-                        modifiers.add(longRange);
-                        modifiers.add(maxRange);
-                    }
-                }
-            }
-        }
+    public TargetingComputer(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardpointType, int aHP, Faction aFaction, List<Modifier> aModifiers) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+        modifiers = aModifiers;
     }
 
     @Override

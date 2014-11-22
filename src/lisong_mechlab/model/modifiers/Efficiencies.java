@@ -36,9 +36,9 @@ public class Efficiencies {
     private final static Modifier SPEED_TWEAK         = new Modifier(ModifiersDB.SPEED_TWEAK_DESC, 0.1);
     private final static Modifier FAST_FIRE           = new Modifier(ModifiersDB.FAST_FIRE_DESC, 0.05);
     private final static Modifier COOL_RUN            = new Modifier(ModifiersDB.COOL_RUN_DESC, 0.075);
-    private final static Modifier COOL_RUN_2X         = new Modifier(ModifiersDB.COOL_RUN_DESC, 0.075*2.0);
+    private final static Modifier COOL_RUN_2X         = new Modifier(ModifiersDB.COOL_RUN_DESC, 0.075 * 2.0);
     private final static Modifier HEAT_CONTAINMENT    = new Modifier(ModifiersDB.HEAT_CONTAINMENT_DESC, 0.1);
-    private final static Modifier HEAT_CONTAINMENT_2X = new Modifier(ModifiersDB.HEAT_CONTAINMENT_DESC, 0.1*2.0);
+    private final static Modifier HEAT_CONTAINMENT_2X = new Modifier(ModifiersDB.HEAT_CONTAINMENT_DESC, 0.1 * 2.0);
     private final static Modifier ANCHOR_TURN_LOW     = new Modifier(ModifiersDB.ANCHOR_TURN_LOW_DESC, 0.1);
     private final static Modifier ANCHOR_TURN_LOW_2X  = new Modifier(ModifiersDB.ANCHOR_TURN_LOW_DESC, 0.2);
     private final static Modifier ANCHOR_TURN_MID     = new Modifier(ModifiersDB.ANCHOR_TURN_MID_DESC, 0.1);
@@ -258,6 +258,9 @@ public class Efficiencies {
         }
     }
 
+    /**
+     * @return A {@link List} of all the modifiers that should be applied for these efficiencies.
+     */
     public List<Modifier> getModifiers() {
         List<Modifier> ans = new ArrayList<>();
 
@@ -265,7 +268,7 @@ public class Efficiencies {
             ans.add(FAST_FIRE);
         if (hasSpeedTweak())
             ans.add(SPEED_TWEAK);
-        
+
         if (hasDoubleBasics()) {
             if (hasCoolRun())
                 ans.add(COOL_RUN_2X);
@@ -277,7 +280,7 @@ public class Efficiencies {
                 ans.add(ANCHOR_TURN_HIGH_2X);
             }
         }
-        else{
+        else {
             if (hasCoolRun())
                 ans.add(COOL_RUN);
             if (hasHeatContainment())

@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+import lisong_mechlab.model.chassi.HardPointType;
 
 public class JumpJet extends Module {
     private final double minTons;
@@ -28,14 +28,18 @@ public class JumpJet extends Module {
     private final double duration;
     private final double heat;
 
-    public JumpJet(ItemStatsModule aModule) {
-        super(aModule);
-        minTons = aModule.JumpJetStats.minTons;
-        maxTons = aModule.JumpJetStats.maxTons;
-        boost_z = aModule.JumpJetStats.boost;
-        duration = aModule.JumpJetStats.duration;
-        heat = Double.parseDouble(aModule.JumpJetStats.heat.split(",")[0]); // Two values, first is heat for one JJ,
-                                                                            // second is heat for every additional JJ
+
+    public JumpJet(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardpointType, int aHP, Faction aFaction, double aMinTons, double aMaxTons, double aBoost,
+            double aDuration, double aHeat) {
+
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+
+        minTons = aMinTons;
+        maxTons = aMaxTons;
+        boost_z = aBoost;
+        duration = aDuration;
+        heat = aHeat;
         // TODO: Parse extra heat and make use of it somethow.
     }
 
