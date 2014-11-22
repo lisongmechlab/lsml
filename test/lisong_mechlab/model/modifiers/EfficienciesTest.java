@@ -100,20 +100,11 @@ public class EfficienciesTest {
     }
 
     @Test
-    public void testGetSpeedModifier() throws Exception {
-        assertEquals(1.0, cut.getSpeedModifier(), 0.0);
-
-        // These don't affect heat capacity
-        cut.setHeatContainment(true, xBar);
-        cut.setCoolRun(true, xBar);
-        cut.setDoubleBasics(true, xBar);
-        assertEquals(1.0, cut.getSpeedModifier(), 0.0);
-
-        // These do
-        cut.setSpeedTweak(true, xBar);
-        assertEquals(1.1, cut.getSpeedModifier(), 0.0);
-        cut.setDoubleBasics(false, xBar);
-        assertEquals(1.1, cut.getSpeedModifier(), 0.0);
+    public void testSpeedModifier() throws Exception {
+        Attribute attribute = new Attribute(1.0, ModifiersDB.SEL_MOVEMENT_MAX_SPEED);
+        cut.setSpeedTweak(true, null);
+                
+        assertEquals(1.1, attribute.value(cut.getModifiers()), 0.0);
     }
 
     @Test
@@ -141,23 +132,13 @@ public class EfficienciesTest {
 
     @Test
     public void testGetHeatDissipationModifier() throws Exception {
-        assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
-
-        // These don't affect heat capacity
-        cut.setHeatContainment(true, xBar);
-        cut.setSpeedTweak(true, xBar);
-        cut.setDoubleBasics(true, xBar); // Only if we have heat containment
-        assertEquals(1.0, cut.getHeatDissipationModifier(), 0.0);
-
-        cut.setHeatContainment(false, xBar);
-        cut.setSpeedTweak(false, xBar);
-        cut.setDoubleBasics(false, xBar);
-
-        // These do
-        cut.setCoolRun(true, xBar);
-        assertEquals(1.075, cut.getHeatDissipationModifier(), 0.0);
-        cut.setDoubleBasics(true, xBar);
-        assertEquals(1.15, cut.getHeatDissipationModifier(), 0.0);
+        Attribute attribute = new Attribute(1.0, ModifiersDB.SEL_HEAT_DISSIPATION);
+        cut.setCoolRun(true, null);
+        
+        assertEquals(1.075, attribute.value(cut.getModifiers()), 0.0);
+        
+        cut.setDoubleBasics(true, null);
+        assertEquals(1.15, attribute.value(cut.getModifiers()), 0.0);
     }
 
     @Test
@@ -185,23 +166,13 @@ public class EfficienciesTest {
 
     @Test
     public void testGetHeatCapacityModifier() throws Exception {
-        assertEquals(1.0, cut.getHeatCapacityModifier(), 0.0);
-
-        // These don't affect heat capacity
-        cut.setCoolRun(true, xBar);
-        cut.setSpeedTweak(true, xBar);
-        cut.setDoubleBasics(true, xBar); // Only if we have heat containment
-        assertEquals(1.0, cut.getHeatCapacityModifier(), 0.0);
-
-        cut.setCoolRun(false, xBar);
-        cut.setSpeedTweak(false, xBar);
-        cut.setDoubleBasics(false, xBar);
-
-        // These do
-        cut.setHeatContainment(true, xBar);
-        assertEquals(1.1, cut.getHeatCapacityModifier(), 0.0);
-        cut.setDoubleBasics(true, xBar);
-        assertEquals(1.2, cut.getHeatCapacityModifier(), 0.0);
+        Attribute attribute = new Attribute(1.0, ModifiersDB.SEL_HEAT_LIMIT);
+        cut.setHeatContainment(true, null);
+        
+        assertEquals(1.1, attribute.value(cut.getModifiers()), 0.0);
+        
+        cut.setDoubleBasics(true, null);
+        assertEquals(1.2, attribute.value(cut.getModifiers()), 0.0);
     }
 
     @Test
@@ -252,15 +223,10 @@ public class EfficienciesTest {
 
     @Test
     public void testGetWeaponCycletimeModifier() throws Exception {
-        assertEquals(1.0, cut.getWeaponCycleTimeModifier(), 0.0);
-
-        cut.setFastFire(true, xBar);
-
-        assertEquals(0.95, cut.getWeaponCycleTimeModifier(), 0.0);
-
-        // Double basics doesn't affect cycle time
-        cut.setDoubleBasics(true, xBar);
-        assertEquals(0.95, cut.getWeaponCycleTimeModifier(), 0.0);
+        Attribute attribute = new Attribute(1.0, ModifiersDB.ALL_WEAPONS , ModifiersDB.SEL_WEAPON_COOLDOWN);
+        cut.setFastFire(true, null);
+                
+        assertEquals(0.95, attribute.value(cut.getModifiers()), 0.0);
     }
 
 }

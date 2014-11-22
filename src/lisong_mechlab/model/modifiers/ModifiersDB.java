@@ -56,7 +56,7 @@ public class ModifiersDB {
     public final static String                            SEL_WEAPON_HEAT           = "heat";
     public final static String                            SEL_WEAPON_LARGE_BORE     = "largeweapon";
 
-    private final static List<String>                     ALL_WEAPONS;
+    public final static List<String>                     ALL_WEAPONS;
     public final static ModifierDescription               HEAT_CONTAINMENT_DESC;
     public final static ModifierDescription               COOL_RUN_DESC;
     public final static ModifierDescription               FAST_FIRE_DESC;
