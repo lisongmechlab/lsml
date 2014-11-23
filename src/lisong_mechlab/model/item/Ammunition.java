@@ -40,7 +40,7 @@ public class Ammunition extends Item {
 
     public Ammunition(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, int aHP, Faction aFaction, int aRounds, String aAmmoType, HardPointType aWeaponType, double aInternalDamage) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
         
         rounds = aRounds;
         ammoType = aAmmoType;

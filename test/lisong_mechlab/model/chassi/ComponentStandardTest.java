@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import lisong_mechlab.model.item.Engine;
@@ -95,7 +96,7 @@ public class ComponentStandardTest extends ComponentBaseTest {
             }
         }
     }
-    
+
     /**
      * Double HS allowed in CT
      */
@@ -116,6 +117,9 @@ public class ComponentStandardTest extends ComponentBaseTest {
     public void testIsAllowed_Jumpjets() {
         JumpJet jj = Mockito.mock(JumpJet.class);
         Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
+        Mockito.when(jj.getAllowedComponents()).thenReturn(
+                Arrays.asList(Location.CenterTorso, Location.RightTorso, Location.LeftTorso, Location.LeftLeg,
+                        Location.RightLeg));
         criticalSlots = 12;
 
         List<Location> allowedLocations = new ArrayList<>();

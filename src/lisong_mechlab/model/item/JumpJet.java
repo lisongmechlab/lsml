@@ -19,7 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.List;
+
+import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.Location;
 
 public class JumpJet extends Module {
     private final double minTons;
@@ -28,12 +32,12 @@ public class JumpJet extends Module {
     private final double duration;
     private final double heat;
 
-
     public JumpJet(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction, double aMinTons, double aMaxTons, double aBoost,
+            HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
+            List<ChassisClass> aAllowedChassisClasses, double aMinTons, double aMaxTons, double aBoost,
             double aDuration, double aHeat) {
-
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
+                aAllowedChassisClasses);
 
         minTons = aMinTons;
         maxTons = aMaxTons;

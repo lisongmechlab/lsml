@@ -19,7 +19,10 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Arrays;
+
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.modifiers.Attribute;
 
@@ -45,7 +48,8 @@ public class Engine extends HeatSource {
 
     public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
             Faction aFaction, Attribute aHeat, int aRating, EngineType aType, int aInternalHS, int aHSSlots) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, aHeat);
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, Arrays
+                .asList(Location.CenterTorso), null, aHeat);
         rating = aRating;
         type = aType;
         internalHs = aInternalHS;

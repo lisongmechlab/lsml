@@ -65,10 +65,10 @@ public class XMLTargetingComputerStats {
 
     @XStreamImplicit
     public List<XMLWeaponStatsFilter> WeaponStatsFilter;
-    
+
     public TargetingComputer asTargetingComputer(ItemStatsModule aStats) {
         final String name = aStats.getUiName();
-        
+
         List<Modifier> modifiers = new ArrayList<>();
         if (null != WeaponStatsFilter) {
             for (XMLTargetingComputerStats.XMLWeaponStatsFilter filter : WeaponStatsFilter) {
@@ -79,8 +79,8 @@ public class XMLTargetingComputerStats {
 
                         // FIXME add the selectors to the modifier description somehow.
                         Operation op = Operation.fromString(stats.operation);
-                        ModifierDescription longRangeDesc = new ModifierDescription(name + " (LONG RANGE)", null,
-                                op, selectors, ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
+                        ModifierDescription longRangeDesc = new ModifierDescription(name + " (LONG RANGE)", null, op,
+                                selectors, ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
                         ModifierDescription maxRangeDesc = new ModifierDescription(name + " (MAX RANGE)", null, op,
                                 selectors, ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
 
@@ -93,8 +93,9 @@ public class XMLTargetingComputerStats {
                 }
             }
         }
-        
-        return new TargetingComputer(name, aStats.getUiDesc(), aStats.getMwoKey(), aStats.getMwoId(), aStats.ModuleStats.slots,
-                aStats.ModuleStats.tons, HardPointType.NONE, aStats.ModuleStats.health, aStats.getFaction(), modifiers);
+
+        return new TargetingComputer(name, aStats.getUiDesc(), aStats.getMwoKey(), aStats.getMwoId(),
+                aStats.ModuleStats.slots, aStats.ModuleStats.tons, HardPointType.NONE, aStats.ModuleStats.health,
+                aStats.getFaction(), aStats.ModuleStats.getLocations(), aStats.ModuleStats.getMechClasses(), modifiers);
     }
 }

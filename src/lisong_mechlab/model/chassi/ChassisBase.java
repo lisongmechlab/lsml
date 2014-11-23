@@ -22,6 +22,7 @@ package lisong_mechlab.model.chassi;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Internal;
@@ -275,6 +276,11 @@ public abstract class ChassisBase {
     public boolean isAllowed(Item aItem) {
         if (!aItem.getFaction().isCompatible(getFaction()))
             return false;
+
+        List<ChassisClass> allowedChassis = aItem.getAllowedChassisClasses();
+        if (!(allowedChassis == null || allowedChassis.isEmpty() || allowedChassis.contains(chassiclass))) {
+            return false;
+        }
 
         if (aItem instanceof Internal)
             return false;

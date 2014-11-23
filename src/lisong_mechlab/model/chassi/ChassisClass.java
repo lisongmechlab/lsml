@@ -26,7 +26,7 @@ package lisong_mechlab.model.chassi;
  * @author Emily Björk
  */
 public enum ChassisClass {
-    LIGHT, MEDIUM, HEAVY, ASSAULT;
+    LIGHT, MEDIUM, HEAVY, ASSAULT, COLOSSAL;
 
     private final static double TONNAGE_EPSILON = Math.ulp(100) * 5.0;
 

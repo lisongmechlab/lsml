@@ -20,8 +20,11 @@
 package lisong_mechlab.model.item;
 
 import java.util.Collection;
+import java.util.List;
 
+import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.modifiers.Attribute;
 import lisong_mechlab.model.modifiers.Modifier;
 
@@ -37,8 +40,10 @@ public class HeatSource extends Item {
     private final Attribute heat;
 
     protected HeatSource(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, int aHP, Faction aFaction, Attribute aHeat) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction);
+            HardPointType aHardPointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
+            List<ChassisClass> aAllowedChassisClasses, Attribute aHeat) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aAllowedLocations,
+                aAllowedChassisClasses);
         heat = aHeat;
     }
 

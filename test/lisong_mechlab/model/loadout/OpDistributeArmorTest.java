@@ -130,8 +130,8 @@ public class OpDistributeArmorTest {
         // Verify
         int raArmor = loadout.getComponent(Location.RightArm).getArmorTotal();
         int rtArmor = loadout.getComponent(Location.RightTorso).getArmorTotal();
-        assertTrue(raArmor > 40);
         assertTrue(rtArmor > 40);
+        assertTrue(raArmor > 20);
     }
 
     /**
