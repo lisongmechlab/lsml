@@ -110,7 +110,7 @@ public class ModifiersDB {
         FAST_FIRE_DESC = new ModifierDescription("FAST FIRE", null, Operation.MULTIPLICATIVE, ALL_WEAPONS,
                 SEL_WEAPON_COOLDOWN, ValueType.NEGATIVE_GOOD);
         SPEED_TWEAK_DESC = new ModifierDescription("SPEED TWEAK", null, Operation.MULTIPLICATIVE, Arrays.asList(
-                SEL_MOVEMENT_TURN_SPEED, SEL_MOVEMENT_REVERSE_MUL), null, ValueType.POSITIVE_GOOD);
+                SEL_MOVEMENT_MAX_SPEED, SEL_MOVEMENT_REVERSE_MUL), null, ValueType.POSITIVE_GOOD);
         ANCHOR_TURN_LOW_DESC = new ModifierDescription("ANCHOR TURN (LOW SPEED)", null, Operation.MULTIPLICATIVE,
                 SEL_MOVEMENT_TURN_RATE, "lowrate", ValueType.POSITIVE_GOOD);
         ANCHOR_TURN_MID_DESC = new ModifierDescription("ANCHOR TURN (MID SPEED)", null, Operation.MULTIPLICATIVE,

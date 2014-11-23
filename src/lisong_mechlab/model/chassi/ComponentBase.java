@@ -25,7 +25,6 @@ import java.util.List;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
-import lisong_mechlab.model.item.JumpJet;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -147,22 +146,8 @@ public abstract class ComponentBase {
      * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
      */
     public boolean isAllowed(Item aItem, @SuppressWarnings("unused") Engine aEngine) {
-        if (aItem instanceof JumpJet) {
-            switch (getLocation()) {
-                case RightTorso:
-                case CenterTorso:
-                case LeftTorso:
-                case RightLeg:
-                case LeftLeg:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        else if (aItem instanceof Engine) {
-            return getLocation() == Location.CenterTorso;
-        }
-        return true;
+        List<Location> components = aItem.getAllowedComponents();
+        return components == null || components.isEmpty() || components.contains(location);
     }
 
     private static int calculateMaxArmor(Location aLocation, double aHP) {

@@ -19,7 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.List;
+
+import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.Location;
 
 /**
  * A refinement of {@link Item} for modules.
@@ -29,8 +33,8 @@ import lisong_mechlab.model.chassi.HardPointType;
 public class Module extends Item {
 
     public Module(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+            HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations, List<ChassisClass> aAllowedChassisClasses) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations, aAllowedChassisClasses);
     }
 
     public Module(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {

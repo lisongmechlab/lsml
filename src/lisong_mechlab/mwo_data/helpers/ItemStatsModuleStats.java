@@ -19,16 +19,53 @@
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.Location;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsModuleStats {
     @XStreamAsAttribute
     public int    slots;
-    @XStreamAlias(value="weight")
+    @XStreamAlias(value = "weight")
     @XStreamAsAttribute
     public double tons;
     @XStreamAlias("Health")
     @XStreamAsAttribute
     public int    health;
+
+    @XStreamAsAttribute
+    public int    amountAllowed;
+    @XStreamAsAttribute
+    public String components;
+    @XStreamAsAttribute
+    public String mechClass;
+
+    public List<Location> getLocations() {
+        if (null != components) {
+            String[] comps = components.split("\\s*,\\s*");
+            List<Location> ans = new ArrayList<>();
+            for (String component : comps) {
+                ans.add(Location.fromMwoName(component));
+            }
+            return ans;
+        }
+        return null;
+    }
+
+    public List<ChassisClass> getMechClasses() {
+        if (null != mechClass) {
+            String[] classes = mechClass.split("\\s*,\\s*");
+            List<ChassisClass> ans = new ArrayList<>();
+            for (String clazz : classes) {
+                ans.add(ChassisClass.valueOf(clazz.toUpperCase()));
+            }
+            return ans;
+        }
+        return null;
+    }
 }

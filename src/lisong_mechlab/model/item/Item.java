@@ -19,7 +19,11 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.List;
+
+import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.Location;
 import lisong_mechlab.model.upgrades.Upgrades;
 import lisong_mechlab.mwo_data.Localization;
 
@@ -27,27 +31,30 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Item implements Comparable<Item> {
     @XStreamAsAttribute
-    private final String        locName;
+    private final String             locName;
     @XStreamAsAttribute
-    private final String        locDesc;
+    private final String             locDesc;
     @XStreamAsAttribute
-    private final String        mwoName;
+    private final String             mwoName;
     @XStreamAsAttribute
-    private final int           mwoIdx;
+    private final int                mwoIdx;
 
     @XStreamAsAttribute
-    private final int           slots;
+    private final int                slots;
     @XStreamAsAttribute
-    private final double        tons;
+    private final double             tons;
     @XStreamAsAttribute
-    private final HardPointType hardpointType;
+    private final HardPointType      hardpointType;
     @XStreamAsAttribute
-    private final int           health;
+    private final int                health;
     @XStreamAsAttribute
-    private final Faction       faction;
+    private final Faction            faction;
+    private final List<Location>     allowedLocations;
+    private final List<ChassisClass> allowedChassisClasses;
 
     public Item(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction) {
+            HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
+            List<ChassisClass> aAllowedClasses) {
         locName = aUiName;
         locDesc = aUiDesc;
         mwoName = aMwoName;
@@ -57,13 +64,15 @@ public class Item implements Comparable<Item> {
         hardpointType = aHardpointType;
         health = aHP;
         faction = aFaction;
+        allowedLocations = aAllowedLocations;
+        allowedChassisClasses = aAllowedClasses;
     }
 
     // TODO: Add a maximum allowed attribute here
 
     public Item(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {
         this(Localization.key2string(aNameTag), Localization.key2string(aDesc), aNameTag, -1, aSlots, 0.0,
-                HardPointType.NONE, aHealth, aFaction);
+                HardPointType.NONE, aHealth, aFaction, null, null);
     }
 
     public String getKey() {
@@ -194,5 +203,19 @@ public class Item implements Comparable<Item> {
      */
     public Faction getFaction() {
         return faction;
+    }
+
+    /**
+     * @return A {@link List} of locations on which this item is allowed.
+     */
+    public List<Location> getAllowedComponents() {
+        return allowedLocations;
+    }
+
+    /**
+     * @return A {@link List} of allowed chassis classes.
+     */
+    public List<ChassisClass> getAllowedChassisClasses() {
+        return allowedChassisClasses;
     }
 }

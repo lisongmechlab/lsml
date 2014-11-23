@@ -58,12 +58,13 @@ public class ItemStatsModule extends ItemStats {
             case "CHeatSinkStats":
                 return new HeatSink(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(), HeatSinkStats.cooling,
-                        HeatSinkStats.heatbase);
+                        -HeatSinkStats.heatbase);
             case "CJumpJetStats":
                 // Two values, first is heat for one JJ
                 double heat = Double.parseDouble(JumpJetStats.heat.split(",")[0]);
                 return new JumpJet(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
-                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(), JumpJetStats.minTons,
+                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
+                        ModuleStats.getLocations(), ModuleStats.getMechClasses(), JumpJetStats.minTons,
                         JumpJetStats.maxTons, JumpJetStats.boost, JumpJetStats.duration, heat);
             case "CGECMStats":
                 return new ECM(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots, ModuleStats.tons,
@@ -72,7 +73,8 @@ public class ItemStatsModule extends ItemStats {
             case "CClanBAPStats":
             case "CCASEStats":
                 return new Module(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
-                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction());
+                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
+                        ModuleStats.getLocations(), ModuleStats.getMechClasses());
             case "CLowerArmActuatorStats":
             case "CInternalStats":
                 return new Internal(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,

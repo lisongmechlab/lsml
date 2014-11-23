@@ -29,7 +29,7 @@ import lisong_mechlab.model.chassi.HardPointType;
 public class Internal extends Module {
     public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, int aHP, Faction aFaction) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
     }
 
     public Internal(String aNameTag, String aDescTag, int aSlots, Faction aFaction) {
