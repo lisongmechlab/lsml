@@ -202,7 +202,7 @@ public class LoadoutConverter implements Converter {
     }
 
     private LoadoutBase<?> parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        String chassisVariation = aReader.getAttribute("chassi"); // XXX: Fix typo
+        String chassisVariation = aReader.getAttribute("chassi");
         String name = aReader.getAttribute("name");
         ChassisBase chassis = ChassisDB.lookup(chassisVariation);
         if (!(chassis instanceof ChassisStandard))

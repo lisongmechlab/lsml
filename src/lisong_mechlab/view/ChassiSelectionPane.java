@@ -188,7 +188,7 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
         @Override
         public String valueOf(Object aSourceRowObject) {
             List<Modifier> modifiers = new ArrayList<>();
-            
+
             if (aSourceRowObject instanceof ChassisStandard) {
                 ChassisStandard chassis = (ChassisStandard) aSourceRowObject;
                 modifiers.addAll(chassis.getQuirks());
@@ -259,12 +259,14 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
                     ChassisBase chassis = (ChassisBase) aValue;
                     LoadoutBase<?> stock;
                     if (aValue instanceof ChassisStandard) {
-                        stock = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+                        stock = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(),
+                                (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
                         OperationStack stack = new OperationStack(0);
                         stack.pushAndApply(new OpLoadStock(chassis, stock, null));
                     }
                     else if (aValue instanceof ChassisOmniMech) {
-                        stock = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
+                        stock = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
+                                (ChassisOmniMech) chassis);
                         OperationStack stack = new OperationStack(0);
                         stack.pushAndApply(new OpLoadStock(chassis, stock, null));
                     }
@@ -313,6 +315,8 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
 
         for (Faction faction : new Faction[] { Faction.InnerSphere, Faction.Clan }) {
             for (ChassisClass chassisClass : ChassisClass.values()) {
+                if (ChassisClass.COLOSSAL == chassisClass)
+                    continue;
 
                 JTable table = new JTable(new ChassiTableModel(faction, chassisClass,
                         aPreferences.uiPreferences.getHideSpecialMechs()));
@@ -328,7 +332,8 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
                             if (cell instanceof ChassisStandard) {
                                 ChassisStandard chassis = (ChassisStandard) cell;
                                 ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                                ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis, UpgradesMutable.standardUpgrades()));
+                                ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(ComponentBuilder
+                                        .getStandardComponentFactory(), chassis, UpgradesMutable.standardUpgrades()));
                             }
                             else if (cell instanceof ChassisOmniMech) {
                                 ChassisOmniMech chassi = (ChassisOmniMech) cell;

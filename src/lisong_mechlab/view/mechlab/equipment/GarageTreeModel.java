@@ -73,6 +73,9 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener {
         DefaultTreeCathegory<AbstractTreeCathegory> chassisClan = new DefaultTreeCathegory<AbstractTreeCathegory>(
                 "Clan", root, this);
         for (final ChassisClass chassiClass : ChassisClass.values()) {
+            if(ChassisClass.COLOSSAL == chassiClass)
+                continue;
+            
             DefaultTreeCathegory<ChassisBase> classIS = new ChassisFilterTreeCathegory(aXBar, chassiClass.toString(),
                     chassisIS, aFilterBar, aGarageTree);
             DefaultTreeCathegory<ChassisBase> classClan = new ChassisFilterTreeCathegory(aXBar, chassiClass.toString(),
@@ -96,6 +99,8 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener {
 
         DefaultTreeCathegory<GarageCathegory> garageIs = new DefaultTreeCathegory<>("Garage - IS", root, this);
         for (ChassisClass chassiClass : ChassisClass.values()) {
+            if(ChassisClass.COLOSSAL == chassiClass)
+                continue;
             GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garageIs, this, aXBar, chassiClass,
                     aFilterBar, aGarageTree, Faction.InnerSphere);
             garageIs.addChild(clazz);
@@ -103,6 +108,8 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener {
 
         DefaultTreeCathegory<GarageCathegory> garageClan = new DefaultTreeCathegory<>("Garage - Clan", root, this);
         for (ChassisClass chassiClass : ChassisClass.values()) {
+            if(ChassisClass.COLOSSAL == chassiClass)
+                continue;
             GarageCathegory clazz = new GarageCathegory(chassiClass.toString(), garageClan, this, aXBar, chassiClass,
                     aFilterBar, aGarageTree, Faction.Clan);
             garageClan.addChild(clazz);
