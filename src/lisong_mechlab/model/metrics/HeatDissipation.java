@@ -61,7 +61,7 @@ public class HeatDissipation implements Metric {
         final Attribute heatDissipation = new Attribute(ans, ModifiersDB.SEL_HEAT_DISSIPATION);
         final double externalHeat = (environment != null) ? environment.getHeat(modifiers) : 0;
 
-        return heatDissipation.value(modifiers) + externalHeat;
+        return heatDissipation.value(modifiers) - externalHeat;
     }
 
     public void changeEnvironment(Environment anEnvironment) {

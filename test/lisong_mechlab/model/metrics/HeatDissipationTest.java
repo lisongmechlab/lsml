@@ -122,7 +122,7 @@ public class HeatDissipationTest {
         when(environment.getHeat(modifiers)).thenReturn(environmentHeat);
         
         HeatDissipation cut = new HeatDissipation(loadout, environment);
-        expectedDissipation += environmentHeat;
+        expectedDissipation -= environmentHeat;
         
         assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);
     }
