@@ -509,12 +509,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                         "The maximum damage you can deal at the displayed range in one volley.", anXBar, loadout);
                 alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                burstDamage = new MetricDisplay(
-                        metricBurstDamage,
-                        "Burst  %.1f s: %.1f @ %.0f m",
-                        "The maximum damage you can deal under the given time frame at the displayed range."
-                                + "This is taken under the assumption that you do not overheat, check time to overheat above.",
-                        anXBar, loadout);
+                burstDamage = new MetricDisplay(metricBurstDamage, "Burst  %.1f s: %.1f @ %.0f m",
+                        "The amount of damage you can deal in a limited time window, under the assumption that heat "
+                                + "can be ignored (see time to overheat above). "
+                                + "For double fire weapons (U-AC) includes the statistically expected damage. "
+                                + "For LB-X type weapons it includes the spread of the weapon.", anXBar, loadout);
                 burstDamage.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 JPanel panel = new JPanel(new BorderLayout());
@@ -525,13 +524,16 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
 
             {
                 dpsMax = new MetricDisplay(metricMaxDPS, "DPS: %.1f @ %.0f m",
-                        "The maximum damage you can deal per second at the displayed range.", anXBar, loadout);
+                        "The maximum damage you can deal per second at the displayed range. "
+                                + "For Ultra-AC type weapons, this caculates the statistically expected DPS. "
+                                + "Also takes spread of LB-X and similar weapons into account.", anXBar, loadout);
                 dpsMax.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 dpsSustained = new MetricDisplay(metricSustainedDps, "Sust. DPS: %.1f @ %.0f m",
-                        "The maximum damage you can deal per second at the displayed range, over a long period"
-                                + " of time. This depends on your heat dissipation and weapon heat generation.",
-                        anXBar, loadout);
+                        "The DPS you can sustain over a prolonged encounter with your current heat dissipation. "
+                                + "For Ultra-AC type weapons, this caculates the statistically expected DPS. "
+                                + "Takes environmental heat and spread of LB-X type weapons into account.", anXBar,
+                        loadout);
                 dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 JPanel panel = new JPanel(new BorderLayout());
