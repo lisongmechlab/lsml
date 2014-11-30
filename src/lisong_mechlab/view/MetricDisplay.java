@@ -53,7 +53,7 @@ public class MetricDisplay extends JLabel implements Message.Recipient {
             boolean aPercent) {
         loadout = aLoadout;
         anXBar.attach(this);
-        setToolTipText(aTooltip);
+        setToolTipText("<html><p width=\"300\">" +aTooltip+"</p></html>");
         formatter = new Formatter(sb);
         format = aFormat;
         metric = aMetric;
