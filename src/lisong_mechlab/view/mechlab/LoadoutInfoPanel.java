@@ -530,7 +530,8 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                 dpsMax.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 dpsSustained = new MetricDisplay(metricSustainedDps, "Sust. DPS: %.1f @ %.0f m",
-                        "The DPS you can sustain over a prolonged encounter with your current heat dissipation. "
+                        "The DPS you can sustain over a prolonged encounter with your current heat dissipation under "
+                                + "assumption that the player will not trigger ghost heat. "
                                 + "For Ultra-AC type weapons, this caculates the statistically expected DPS. "
                                 + "Takes environmental heat and spread of LB-X type weapons into account.", anXBar,
                         loadout);
