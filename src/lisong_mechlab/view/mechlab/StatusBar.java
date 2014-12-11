@@ -34,6 +34,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
 import lisong_mechlab.model.NotificationMessage;
+import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
@@ -45,12 +46,12 @@ import lisong_mechlab.view.ProgramInit;
  * @author Li Song
  */
 public class StatusBar extends JPanel implements Message.Recipient {
-    private static final long  serialVersionUID = -4434467429002792379L;
-    private final LoadoutFrame frame;
-    private final JLabel       statusLabel;
+    private static final long    serialVersionUID = -4434467429002792379L;
+    private final LoadoutBase<?> loadout;
+    private final JLabel         statusLabel;
 
-    public StatusBar(LoadoutFrame aLoadoutFrame, MessageXBar aXBar) {
-        frame = aLoadoutFrame;
+    public StatusBar(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+        loadout = aLoadout;
         aXBar.attach(this);
 
         setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -78,7 +79,7 @@ public class StatusBar extends JPanel implements Message.Recipient {
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof NotificationMessage && aMsg.isForMe(frame.getLoadout())) {
+        if (aMsg instanceof NotificationMessage && aMsg.isForMe(loadout)) {
             NotificationMessage notice = (NotificationMessage) aMsg;
             String message = notice.severity.toString() + ": " + notice.message;
             switch (notice.severity) {
