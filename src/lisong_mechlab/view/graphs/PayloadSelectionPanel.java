@@ -181,13 +181,28 @@ public class PayloadSelectionPanel extends JPanel {
         chassis = calculateUniqueSpeedChassis();
         PayloadSettingsPanel settingsPanel = new PayloadSettingsPanel(chassis);
 
+        boolean xlEngine = false;
+        boolean maxArmor = true;
+
         upgrades = new UpgradesMutable(UpgradeDB.FERRO_FIBROUS_ARMOR, UpgradeDB.ENDO_STEEL_STRUCTURE,
                 UpgradeDB.ARTEMIS_IV, UpgradeDB.DOUBLE_HEATSINKS);
-        payloadStatistics = new PayloadStatistics(false, true, upgrades);
+        payloadStatistics = new PayloadStatistics(xlEngine, maxArmor, upgrades);
         graphPanel = new PayloadGraphPanel(payloadStatistics, settingsPanel.speedTweak);
         graphPanel.selectChassis(chassis);
         graphPanel.updateGraph();
 
+        settingsPanel.endoSteel.setSelected(upgrades.getStructure() != UpgradeDB.STANDARD_STRUCTURE);
+        settingsPanel.ferroFibrous.setSelected(upgrades.getArmor() != UpgradeDB.STANDARD_ARMOR);
+        if (maxArmor)
+            settingsPanel.maxArmor.setSelected(true);
+        else
+            settingsPanel.noArmor.setSelected(true);
+
+        if (xlEngine)
+            settingsPanel.xlEngine.setSelected(true);
+        else
+            settingsPanel.stdEngine.setSelected(true);
+        
         settingsPanel.setupListeners(payloadStatistics, graphPanel, upgrades);
 
         add(settingsPanel, BorderLayout.WEST);
