@@ -20,6 +20,7 @@
 package lisong_mechlab.model.chassi;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,15 +47,16 @@ public class MaxMovementProfile extends ModifiedProfileBase {
     }
 
     @Override
-    protected double calc(String aMethodName) {
+    protected double calc(String aMethodName, Collection<Modifier> aExtraModifiers) {
         try {
-            Collection<Modifier> noModifier = null;
-            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base,  noModifier);
+            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base,  aExtraModifiers);
             double ans = baseValue;
             for (List<Collection<Modifier>> group : groups) {
                 double max = Double.NEGATIVE_INFINITY;
                 for (Collection<Modifier> quirks : group) {
-                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base, quirks);
+                    List<Modifier> fullQuirks = new ArrayList<>(quirks);
+                    fullQuirks.addAll(aExtraModifiers);
+                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base, fullQuirks);
                     max = Math.max(max, value - baseValue);
                 }
                 if (max != Double.NEGATIVE_INFINITY)
@@ -66,16 +68,6 @@ public class MaxMovementProfile extends ModifiedProfileBase {
                 | SecurityException e) {
             throw new IllegalArgumentException();
         }
-    }
-
-    @Override
-    public double getMaxMovementSpeed(Collection<Modifier> aModifiers) {
-        return base.getMaxMovementSpeed(null);
-    }
-
-    @Override
-    public double getReverseSpeedMultiplier(Collection<Modifier> aModifiers) {
-        return base.getReverseSpeedMultiplier(null);
     }
 
     @Override

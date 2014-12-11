@@ -36,78 +36,90 @@ public abstract class ModifiedProfileBase implements MovementProfile {
      * 
      * @param aMethodName
      *            The name of the function to call to get the value.
+     * @param aExtraModifiers
+     *            Modifiers that shall be applied in addition to the base ones.
      * @return The calculated value.
      */
-    protected abstract double calc(String aMethodName);
+    protected abstract double calc(String aMethodName, Collection<Modifier> aExtraModifiers);
 
     @Override
+    public double getMaxMovementSpeed(Collection<Modifier> aModifiers) {
+        return calc("getMaxMovementSpeed", aModifiers);
+    }
+
+    @Override
+    public double getReverseSpeedMultiplier(Collection<Modifier> aModifiers) {
+        return calc("getReverseSpeedMultiplier", aModifiers);
+    }
+    
+    @Override
     public double getTorsoYawMax(Collection<Modifier> aModifiers) {
-        return calc("getTorsoYawMax");
+        return calc("getTorsoYawMax", aModifiers);
     }
 
     @Override
     public double getTorsoYawSpeed(Collection<Modifier> aModifiers) {
-        return calc("getTorsoYawSpeed");
+        return calc("getTorsoYawSpeed", aModifiers);
     }
 
     @Override
     public double getTorsoPitchMax(Collection<Modifier> aModifiers) {
-        return calc("getTorsoPitchMax");
+        return calc("getTorsoPitchMax", aModifiers);
     }
 
     @Override
     public double getTorsoPitchSpeed(Collection<Modifier> aModifiers) {
-        return calc("getTorsoPitchSpeed");
+        return calc("getTorsoPitchSpeed", aModifiers);
     }
 
     @Override
     public double getArmYawMax(Collection<Modifier> aModifiers) {
-        return calc("getArmYawMax");
+        return calc("getArmYawMax", aModifiers);
     }
 
     @Override
     public double getArmYawSpeed(Collection<Modifier> aModifiers) {
-        return calc("getArmYawSpeed");
+        return calc("getArmYawSpeed", aModifiers);
     }
 
     @Override
     public double getArmPitchMax(Collection<Modifier> aModifiers) {
-        return calc("getArmPitchMax");
+        return calc("getArmPitchMax", aModifiers);
     }
 
     @Override
     public double getArmPitchSpeed(Collection<Modifier> aModifiers) {
-        return calc("getArmPitchSpeed");
+        return calc("getArmPitchSpeed", aModifiers);
     }
 
     @Override
     public double getTurnLerpLowSpeed(Collection<Modifier> aModifiers) {
-        return calc("getTurnLerpLowSpeed");
+        return calc("getTurnLerpLowSpeed", aModifiers);
     }
 
     @Override
     public double getTurnLerpMidSpeed(Collection<Modifier> aModifiers) {
-        return calc("getTurnLerpMidSpeed");
+        return calc("getTurnLerpMidSpeed", aModifiers);
     }
 
     @Override
     public double getTurnLerpHighSpeed(Collection<Modifier> aModifiers) {
-        return calc("getTurnLerpHighSpeed");
+        return calc("getTurnLerpHighSpeed", aModifiers);
     }
 
     @Override
     public double getTurnLerpLowRate(Collection<Modifier> aModifiers) {
-        return calc("getTurnLerpLowRate");
+        return calc("getTurnLerpLowRate", aModifiers);
     }
 
     @Override
     public double getTurnLerpMidRate(Collection<Modifier> aModifiers) {
-        return calc("getTurnLerpMidRate");
+        return calc("getTurnLerpMidRate", aModifiers);
     }
 
     @Override
     public double getTurnLerpHighRate(Collection<Modifier> aModifiers) {
-        return calc("getTurnLerpHighRate");
+        return calc("getTurnLerpHighRate", aModifiers);
     }
 
 }
