@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.export;
 
@@ -41,6 +41,7 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpLoadStock;
 import lisong_mechlab.model.loadout.OpRename;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
+import lisong_mechlab.model.upgrades.UpgradesMutable;
 import lisong_mechlab.util.Base64;
 import lisong_mechlab.util.DecodingException;
 import lisong_mechlab.util.OperationStack;
@@ -52,96 +53,96 @@ import org.junit.Test;
  * 
  * @author Li Song
  */
-public class LoadoutCoderV3Test{
+public class LoadoutCoderV3Test {
 
-   private LoadoutCoderV3 cut = new LoadoutCoderV3();
+    private LoadoutCoderV3 cut = new LoadoutCoderV3();
 
-   /**
-    * The coder shall be able to decode all stock mechs.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testEncodeAllStock() throws Exception{
-      List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-      chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-      chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-      chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
+    /**
+     * The coder shall be able to decode all stock mechs.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testEncodeAllStock() throws Exception {
+        List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
-      OperationStack stack = new OperationStack(0);
+        OperationStack stack = new OperationStack(0);
 
-      for(ChassisBase chassis : chassii){
-         LoadoutBase<?> loadout;
-         if( chassis instanceof ChassisOmniMech )
-            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassis);
-         else
-            loadout = new LoadoutStandard((ChassisStandard)chassis);
-         stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
+        for (ChassisBase chassis : chassii) {
+            LoadoutBase<?> loadout;
+            if (chassis instanceof ChassisOmniMech)
+                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
+            else
+                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+            stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
 
-         byte[] result = cut.encode(loadout);
-         LoadoutBase<?> decoded = cut.decode(result);
+            byte[] result = cut.encode(loadout);
+            LoadoutBase<?> decoded = cut.decode(result);
 
-         // Name is not encoded
-         stack.pushAndApply(new OpRename(decoded, null, loadout.getName()));
+            // Name is not encoded
+            stack.pushAndApply(new OpRename(decoded, null, loadout.getName()));
 
-         // Verify
-         assertEquals(loadout, decoded);
-      }
-   }
+            // Verify
+            assertEquals(loadout, decoded);
+        }
+    }
 
-   /**
-    * The coder shall be able to decode all stock mechs.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testDecodeAllStock() throws Exception{
-      InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv3stock.txt");
-      Scanner sc = new Scanner(is);
-      Base64 base64 = new Base64();
+    /**
+     * The coder shall be able to decode all stock mechs.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDecodeAllStock() throws Exception {
+        try (InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv3stock.txt");
+                Scanner sc = new Scanner(is);) {
+            Base64 base64 = new Base64();
 
-      OperationStack stack = new OperationStack(0);
+            OperationStack stack = new OperationStack(0);
 
-      // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
-      while( sc.hasNextLine() ){
-         String line = sc.nextLine();
-         Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
-         Matcher m = pat.matcher(line);
-         m.matches();
-         ChassisBase chassi = ChassisDB.lookup(m.group(1));
-         String lsml = m.group(2);
+            // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
+                Matcher m = pat.matcher(line);
+                m.matches();
+                ChassisBase chassis = ChassisDB.lookup(m.group(1));
+                String lsml = m.group(2);
 
-         LoadoutBase<?> reference;
-         if( chassi instanceof ChassisOmniMech )
-            reference = new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), (ChassisOmniMech)chassi);
-         else
-            reference = new LoadoutStandard((ChassisStandard)chassi);
-         stack.pushAndApply(new OpLoadStock(chassi, reference, null));
+                LoadoutBase<?> reference;
+                if (chassis instanceof ChassisOmniMech)
+                    reference = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
+                else
+                    reference = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+                stack.pushAndApply(new OpLoadStock(chassis, reference, null));
 
-         LoadoutBase<?> decoded = cut.decode(base64.decode(lsml.toCharArray()));
+                LoadoutBase<?> decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
-         // Name is not encoded
-         stack.pushAndApply(new OpRename(decoded, null, reference.getName()));
+                // Name is not encoded
+                stack.pushAndApply(new OpRename(decoded, null, reference.getName()));
 
-         // Verify
-         assertEquals(reference, decoded);
-      }
+                // Verify
+                assertEquals(reference, decoded);
+            }
+        }
+    }
 
-      sc.close();
-   }
+    /**
+     * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
+     * sinks.
+     * 
+     * @throws DecodingException
+     */
+    @Test
+    public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
+        Base64 base64 = new Base64();
+        LoadoutBase<?> l = cut.decode(base64
+                .decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg==".toCharArray()));
 
-   /**
-    * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
-    * sinks.
-    * 
-    * @throws DecodingException
-    */
-   @Test
-   public void testDecodeHeatsinksBeforeEngine() throws DecodingException{
-      Base64 base64 = new Base64();
-      LoadoutBase<?> l = cut.decode(base64.decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg==".toCharArray()));
-
-      assertTrue(l.getFreeMass() < 0.005);
-      assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
-   }
+        assertTrue(l.getFreeMass() < 0.005);
+        assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
+    }
 }

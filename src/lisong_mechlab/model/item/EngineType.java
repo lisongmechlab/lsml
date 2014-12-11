@@ -15,10 +15,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
-public enum EngineType{
-   XL, STD
+public enum EngineType {
+    XL, STD
 }

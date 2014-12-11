@@ -15,65 +15,63 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * A generic ammunition item.
  * 
  * @author Li Song
  */
-public class Ammunition extends Item{
-   protected final int           rounds;
-   protected final double        internalDamage;
-   protected final HardPointType type;
-   protected final String        ammoType;
+public class Ammunition extends Item {
+    @XStreamAsAttribute
+    protected final int           rounds;
+    @XStreamAsAttribute
+    protected final double        internalDamage;
+    @XStreamAsAttribute
+    protected final HardPointType type;
+    @XStreamAsAttribute
+    protected final String        ammoType;
 
-   public Ammunition(ItemStatsModule aStatsModule){
-      super(aStatsModule, HardPointType.NONE, aStatsModule.ModuleStats.slots, aStatsModule.ModuleStats.tons, aStatsModule.ModuleStats.health);
-      internalDamage = aStatsModule.AmmoTypeStats.internalDamage;
-      rounds = aStatsModule.AmmoTypeStats.numShots;
-      ammoType = aStatsModule.AmmoTypeStats.type;
+    public Ammunition(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardpointType, int aHP, Faction aFaction, int aRounds, String aAmmoType, HardPointType aWeaponType, double aInternalDamage) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
+        
+        rounds = aRounds;
+        ammoType = aAmmoType;
+        type = aWeaponType;
+        internalDamage = aInternalDamage;
+    }
 
-      if( getName().contains("LRM") || getName().contains("SRM") || getName().contains("NARC") ){
-         type = HardPointType.MISSILE;
-      }
-      else if( getName().contains("AMS") ){
-         type = HardPointType.AMS;
-      }
-      else{
-         type = HardPointType.BALLISTIC;
-      }
-   }
+    public int getNumShots() {
+        return rounds;
+    }
 
-   public int getNumShots(){
-      return rounds;
-   }
+    /**
+     * @return The {@link HardPointType} that the weapon that uses this ammo is using. Useful for color coding and
+     *         searching.
+     */
+    public HardPointType getWeaponHardpointType() {
+        return type;
+    }
 
-   /**
-    * @return The {@link HardPointType} that the weapon that uses this ammo is using. Useful for color coding and
-    *         searching.
-    */
-   public HardPointType getWeaponHardpointType(){
-      return type;
-   }
+    @Override
+    public String getShortName() {
+        String name = getName();
+        name = name.replace("ULTRA ", "U");
+        name = name.replace("MACHINE GUN", "MG");
+        return name;
+    }
 
-   @Override
-   public String getShortName(){
-      String name = getName();
-      name = name.replace("ULTRA ", "U");
-      name = name.replace("MACHINE GUN", "MG");
-      return name;
-   }
-
-   /**
-    * @return The type name of this {@link Ammunition}. Used to match with {@link Weapon} ammo type.
-    */
-   public String getAmmoType(){
-      return ammoType;
-   }
+    /**
+     * @return The type name of this {@link Ammunition}. Used to match with {@link Weapon} ammo type.
+     */
+    public String getAmmoType() {
+        return ammoType;
+    }
 }

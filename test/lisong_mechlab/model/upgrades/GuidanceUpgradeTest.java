@@ -15,11 +15,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
 import lisong_mechlab.model.item.Ammunition;
 import lisong_mechlab.model.item.ItemDB;
 
@@ -30,55 +30,67 @@ import org.junit.Test;
  * 
  * @author Li Song
  */
-public class GuidanceUpgradeTest{
+public class GuidanceUpgradeTest {
 
-   @Test
-   public void testUpgrade(){
-      GuidanceUpgrade artemis = UpgradeDB.ARTEMIS_IV;
-      GuidanceUpgrade standard = UpgradeDB.STANDARD_GUIDANCE;
-      
-      // Standard -> Artemis
-      assertSame(ItemDB.lookup("C-LRM AMMO + ART. IV"), artemis.upgrade((Ammunition)ItemDB.lookup("C-LRM AMMO")));
-      assertSame(ItemDB.lookup("C-NARC AMMO"), artemis.upgrade((Ammunition)ItemDB.lookup("C-NARC AMMO")));
-      assertSame(ItemDB.lookup("C-STREAK SRM AMMO"), artemis.upgrade((Ammunition)ItemDB.lookup("C-STREAK SRM AMMO")));
-      assertSame(ItemDB.lookup("C-SRM AMMO + ART. IV"), artemis.upgrade((Ammunition)ItemDB.lookup("C-SRM AMMO")));
-      
-      assertSame(ItemDB.lookup("C-LRM AMMO+ART. IV (1/2)"), artemis.upgrade((Ammunition)ItemDB.lookup("C-LRM AMMO (1/2)")));
-      assertSame(ItemDB.lookup("C-NARC AMMO (1/2)"), artemis.upgrade((Ammunition)ItemDB.lookup("C-NARC AMMO (1/2)")));
-      assertSame(ItemDB.lookup("C-S-SRM AMMO (1/2)"), artemis.upgrade((Ammunition)ItemDB.lookup("C-S-SRM AMMO (1/2)")));
-      assertSame(ItemDB.lookup("C-SRM AMMO+ART. IV (1/2)"), artemis.upgrade((Ammunition)ItemDB.lookup("C-SRM AMMO (1/2)")));
+    @Test
+    public void testUpgrade() {
+        GuidanceUpgrade artemis = UpgradeDB.ARTEMIS_IV;
+        GuidanceUpgrade standard = UpgradeDB.STANDARD_GUIDANCE;
 
+        // Standard -> Artemis
+        assertSame(ItemDB.lookup("C-LRM AMMO + ART. IV"), artemis.upgrade((Ammunition) ItemDB.lookup("C-LRM AMMO")));
+        assertSame(ItemDB.lookup("C-NARC AMMO"), artemis.upgrade((Ammunition) ItemDB.lookup("C-NARC AMMO")));
+        assertSame(ItemDB.lookup("C-STREAK SRM AMMO"), artemis.upgrade((Ammunition) ItemDB.lookup("C-STREAK SRM AMMO")));
+        assertSame(ItemDB.lookup("C-SRM AMMO + ART. IV"), artemis.upgrade((Ammunition) ItemDB.lookup("C-SRM AMMO")));
 
-      assertSame(ItemDB.lookup("LRM AMMO + ARTEMIS IV"), artemis.upgrade((Ammunition)ItemDB.lookup("LRM AMMO")));
-      assertSame(ItemDB.lookup("NARC AMMO"), artemis.upgrade((Ammunition)ItemDB.lookup("NARC AMMO")));
-      assertSame(ItemDB.lookup("STREAK SRM AMMO"), artemis.upgrade((Ammunition)ItemDB.lookup("STREAK SRM AMMO")));
-      assertSame(ItemDB.lookup("SRM AMMO + ARTEMIS IV"), artemis.upgrade((Ammunition)ItemDB.lookup("SRM AMMO")));
-      
-      assertSame(ItemDB.lookup("LRM AMMO + ARTEMIS IV (1/2)"), artemis.upgrade((Ammunition)ItemDB.lookup("LRM AMMO (1/2)")));
-      assertSame(ItemDB.lookup("NARC AMMO (1/2)"), artemis.upgrade((Ammunition)ItemDB.lookup("NARC AMMO (1/2)")));
-      assertSame(ItemDB.lookup("STREAK SRM AMMO (1/2)"), artemis.upgrade((Ammunition)ItemDB.lookup("STREAK SRM AMMO (1/2)")));
-      assertSame(ItemDB.lookup("SRM AMMO + ART. IV (1/2)"), artemis.upgrade((Ammunition)ItemDB.lookup("SRM AMMO (1/2)")));
-      
-      // Artemis -> Standard
-      assertSame(ItemDB.lookup("C-LRM AMMO"), standard.upgrade((Ammunition)ItemDB.lookup("C-LRM AMMO + ART. IV")));
-      assertSame(ItemDB.lookup("C-NARC AMMO"), standard.upgrade((Ammunition)ItemDB.lookup("C-NARC AMMO")));
-      assertSame(ItemDB.lookup("C-STREAK SRM AMMO"), standard.upgrade((Ammunition)ItemDB.lookup("C-STREAK SRM AMMO")));
-      assertSame(ItemDB.lookup("C-SRM AMMO"), standard.upgrade((Ammunition)ItemDB.lookup("C-SRM AMMO + ART. IV")));
-      
-      assertSame(ItemDB.lookup("C-LRM AMMO (1/2)"), standard.upgrade((Ammunition)ItemDB.lookup("C-LRM AMMO+ART. IV (1/2)")));
-      assertSame(ItemDB.lookup("C-NARC AMMO (1/2)"), standard.upgrade((Ammunition)ItemDB.lookup("C-NARC AMMO (1/2)")));
-      assertSame(ItemDB.lookup("C-S-SRM AMMO (1/2)"), standard.upgrade((Ammunition)ItemDB.lookup("C-S-SRM AMMO (1/2)")));
-      assertSame(ItemDB.lookup("C-SRM AMMO (1/2)"), standard.upgrade((Ammunition)ItemDB.lookup("C-SRM AMMO+ART. IV (1/2)")));
+        assertSame(ItemDB.lookup("C-LRM AMMO+ART. IV (1/2)"),
+                artemis.upgrade((Ammunition) ItemDB.lookup("C-LRM AMMO (1/2)")));
+        assertSame(ItemDB.lookup("C-NARC AMMO (1/2)"), artemis.upgrade((Ammunition) ItemDB.lookup("C-NARC AMMO (1/2)")));
+        assertSame(ItemDB.lookup("C-S-SRM AMMO (1/2)"),
+                artemis.upgrade((Ammunition) ItemDB.lookup("C-S-SRM AMMO (1/2)")));
+        assertSame(ItemDB.lookup("C-SRM AMMO+ART. IV (1/2)"),
+                artemis.upgrade((Ammunition) ItemDB.lookup("C-SRM AMMO (1/2)")));
 
-      
-      assertSame(ItemDB.lookup("LRM AMMO"), standard.upgrade((Ammunition)ItemDB.lookup("LRM AMMO + ARTEMIS IV")));
-      assertSame(ItemDB.lookup("NARC AMMO"), standard.upgrade((Ammunition)ItemDB.lookup("NARC AMMO")));
-      assertSame(ItemDB.lookup("STREAK SRM AMMO"), standard.upgrade((Ammunition)ItemDB.lookup("STREAK SRM AMMO")));
-      assertSame(ItemDB.lookup("SRM AMMO"), standard.upgrade((Ammunition)ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
-      
-      assertSame(ItemDB.lookup("LRM AMMO (1/2)"), standard.upgrade((Ammunition)ItemDB.lookup("LRM AMMO + ARTEMIS IV (1/2)")));
-      assertSame(ItemDB.lookup("NARC AMMO (1/2)"), standard.upgrade((Ammunition)ItemDB.lookup("NARC AMMO (1/2)")));
-      assertSame(ItemDB.lookup("STREAK SRM AMMO (1/2)"), standard.upgrade((Ammunition)ItemDB.lookup("STREAK SRM AMMO (1/2)")));
-      assertSame(ItemDB.lookup("SRM AMMO (1/2)"), standard.upgrade((Ammunition)ItemDB.lookup("SRM AMMO + ART. IV (1/2)")));
-   }
+        assertSame(ItemDB.lookup("LRM AMMO + ARTEMIS IV"), artemis.upgrade((Ammunition) ItemDB.lookup("LRM AMMO")));
+        assertSame(ItemDB.lookup("NARC AMMO"), artemis.upgrade((Ammunition) ItemDB.lookup("NARC AMMO")));
+        assertSame(ItemDB.lookup("STREAK SRM AMMO"), artemis.upgrade((Ammunition) ItemDB.lookup("STREAK SRM AMMO")));
+        assertSame(ItemDB.lookup("SRM AMMO + ARTEMIS IV"), artemis.upgrade((Ammunition) ItemDB.lookup("SRM AMMO")));
+
+        assertSame(ItemDB.lookup("LRM AMMO + ARTEMIS IV (1/2)"),
+                artemis.upgrade((Ammunition) ItemDB.lookup("LRM AMMO (1/2)")));
+        assertSame(ItemDB.lookup("NARC AMMO (1/2)"), artemis.upgrade((Ammunition) ItemDB.lookup("NARC AMMO (1/2)")));
+        assertSame(ItemDB.lookup("STREAK SRM AMMO (1/2)"),
+                artemis.upgrade((Ammunition) ItemDB.lookup("STREAK SRM AMMO (1/2)")));
+        assertSame(ItemDB.lookup("SRM AMMO + ART. IV (1/2)"),
+                artemis.upgrade((Ammunition) ItemDB.lookup("SRM AMMO (1/2)")));
+
+        // Artemis -> Standard
+        assertSame(ItemDB.lookup("C-LRM AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("C-LRM AMMO + ART. IV")));
+        assertSame(ItemDB.lookup("C-NARC AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("C-NARC AMMO")));
+        assertSame(ItemDB.lookup("C-STREAK SRM AMMO"),
+                standard.upgrade((Ammunition) ItemDB.lookup("C-STREAK SRM AMMO")));
+        assertSame(ItemDB.lookup("C-SRM AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("C-SRM AMMO + ART. IV")));
+
+        assertSame(ItemDB.lookup("C-LRM AMMO (1/2)"),
+                standard.upgrade((Ammunition) ItemDB.lookup("C-LRM AMMO+ART. IV (1/2)")));
+        assertSame(ItemDB.lookup("C-NARC AMMO (1/2)"),
+                standard.upgrade((Ammunition) ItemDB.lookup("C-NARC AMMO (1/2)")));
+        assertSame(ItemDB.lookup("C-S-SRM AMMO (1/2)"),
+                standard.upgrade((Ammunition) ItemDB.lookup("C-S-SRM AMMO (1/2)")));
+        assertSame(ItemDB.lookup("C-SRM AMMO (1/2)"),
+                standard.upgrade((Ammunition) ItemDB.lookup("C-SRM AMMO+ART. IV (1/2)")));
+
+        assertSame(ItemDB.lookup("LRM AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("LRM AMMO + ARTEMIS IV")));
+        assertSame(ItemDB.lookup("NARC AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("NARC AMMO")));
+        assertSame(ItemDB.lookup("STREAK SRM AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("STREAK SRM AMMO")));
+        assertSame(ItemDB.lookup("SRM AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("SRM AMMO + ARTEMIS IV")));
+
+        assertSame(ItemDB.lookup("LRM AMMO (1/2)"),
+                standard.upgrade((Ammunition) ItemDB.lookup("LRM AMMO + ARTEMIS IV (1/2)")));
+        assertSame(ItemDB.lookup("NARC AMMO (1/2)"), standard.upgrade((Ammunition) ItemDB.lookup("NARC AMMO (1/2)")));
+        assertSame(ItemDB.lookup("STREAK SRM AMMO (1/2)"),
+                standard.upgrade((Ammunition) ItemDB.lookup("STREAK SRM AMMO (1/2)")));
+        assertSame(ItemDB.lookup("SRM AMMO (1/2)"),
+                standard.upgrade((Ammunition) ItemDB.lookup("SRM AMMO + ART. IV (1/2)")));
+    }
 }

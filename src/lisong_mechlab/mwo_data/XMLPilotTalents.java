@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data;
 
@@ -40,69 +40,69 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * @author Li Song
  */
 @XStreamAlias("PilotTalents")
-public class XMLPilotTalents{
+public class XMLPilotTalents {
 
-   public class XMLTalent{
-      @XStreamAsAttribute
-      public int    talentid;
+    public class XMLTalent {
+        @XStreamAsAttribute
+        public int    talentid;
 
-      @XStreamAsAttribute
-      public String name;
+        @XStreamAsAttribute
+        public String name;
 
-      @XStreamAsAttribute
-      public int    ranks;
+        @XStreamAsAttribute
+        public int    ranks;
 
-      public class XMLRank{
-         @XStreamAsAttribute
-         public int    id;
+        public class XMLRank {
+            @XStreamAsAttribute
+            public int    id;
 
-         @XStreamAsAttribute
-         public String title;
+            @XStreamAsAttribute
+            public String title;
 
-         @XStreamAsAttribute
-         public String description;
-      }
+            @XStreamAsAttribute
+            public String description;
+        }
 
-      @XStreamImplicit
-      public List<XMLRank> rankEntries;
+        @XStreamImplicit
+        public List<XMLRank> rankEntries;
 
-      @XStreamAsAttribute
-      public String category;
-   }
+        @XStreamAsAttribute
+        public String        category;
+    }
 
-   @XStreamImplicit
-   public List<XMLTalent> talents;
+    @XStreamImplicit
+    public List<XMLTalent> talents;
 
-   public static XMLPilotTalents read(GameVFS aGameVfs) throws IOException{
-      GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"));
-      XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
-         @Override
-         protected MapperWrapper wrapMapper(MapperWrapper next){
-            return new MapperWrapper(next){
-               @Override
-               public boolean shouldSerializeMember(Class definedIn, String fieldName){
-                  if( definedIn == Object.class ){
-                     return false;
-                  }
-                  return super.shouldSerializeMember(definedIn, fieldName);
-               }
-            };
-         }
-      };
-      xstream.autodetectAnnotations(true);
-      xstream.alias("PilotTalents", XMLPilotTalents.class);
-      xstream.alias("Talent", XMLTalent.class);
-      xstream.alias("Rank", XMLRank.class);
+    public static XMLPilotTalents read(GameVFS aGameVfs) throws IOException {
+        GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"));
+        XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
+            @Override
+            protected MapperWrapper wrapMapper(MapperWrapper next) {
+                return new MapperWrapper(next) {
+                    @Override
+                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+                        if (definedIn == Object.class) {
+                            return false;
+                        }
+                        return super.shouldSerializeMember(definedIn, fieldName);
+                    }
+                };
+            }
+        };
+        xstream.autodetectAnnotations(true);
+        xstream.alias("PilotTalents", XMLPilotTalents.class);
+        xstream.alias("Talent", XMLTalent.class);
+        xstream.alias("Rank", XMLRank.class);
 
-      return (XMLPilotTalents)xstream.fromXML(gameFile.stream);
-   }
+        return (XMLPilotTalents) xstream.fromXML(gameFile.stream);
+    }
 
-   public XMLTalent getTalent(int aTalentId){
-      for(XMLTalent talent : talents){
-         if( talent.talentid == aTalentId){
-            return talent;
-         }
-      }
-      throw new IllegalArgumentException("No such talent!");
-   }
+    public XMLTalent getTalent(int aTalentId) {
+        for (XMLTalent talent : talents) {
+            if (talent.talentid == aTalentId) {
+                return talent;
+            }
+        }
+        throw new IllegalArgumentException("No such talent!");
+    }
 }

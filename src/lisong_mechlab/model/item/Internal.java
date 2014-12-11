@@ -15,42 +15,36 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
 /**
  * Internals are special items that do not exist in the ItemDB. Instead they are created and owned by the chassii.
  * 
  * @author Li Song
  */
-public class Internal extends Module{
-   public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardpointType, int aHP,
-                   Faction aFaction){
-      super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction);
-   }
+public class Internal extends Module {
+    public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardpointType, int aHP, Faction aFaction) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
+    }
 
-   public Internal(String aNameTag, String aDescTag, int aSlots, Faction aFaction){
-      super(aNameTag, aDescTag, aSlots, 0, aFaction);
-   }
+    public Internal(String aNameTag, String aDescTag, int aSlots, Faction aFaction) {
+        super(aNameTag, aDescTag, aSlots, 0, aFaction);
+    }
 
-   public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth, Faction aFaction){
-      super(aNameTag, aDescTag, aSlots, aHealth, aFaction);
-   }
+    public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth, Faction aFaction) {
+        super(aNameTag, aDescTag, aSlots, aHealth, aFaction);
+    }
 
-   public Internal(ItemStatsModule aStatsModule){
-      super(aStatsModule);
-   }
-
-   @Override
-   public String getShortName(){
-      String ans = getName().replace("UPPER ", "U-");
-      ans = ans.replace("LOWER ", "L-");
-      ans = ans.replace("ACTUATOR", "");
-      return ans;
-   }
+    @Override
+    public String getShortName() {
+        String ans = getName().replace("UPPER ", "U-");
+        ans = ans.replace("LOWER ", "L-");
+        ans = ans.replace("ACTUATOR", "");
+        return ans;
+    }
 }

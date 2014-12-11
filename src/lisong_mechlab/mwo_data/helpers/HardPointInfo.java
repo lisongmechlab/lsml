@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
@@ -24,13 +24,13 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class HardPointInfo{
-   @XStreamAsAttribute
-   public int                       id;
+public class HardPointInfo {
+    @XStreamAsAttribute
+    public int                       id;
 
-   @XStreamAsAttribute
-   public String                    NoWeaponAName;
+    @XStreamAsAttribute
+    public String                    NoWeaponAName;
 
-   @XStreamImplicit(itemFieldName = "WeaponSlot")
-   public List<HardPointWeaponSlot> weaponslots;
+    @XStreamImplicit(itemFieldName = "WeaponSlot")
+    public List<HardPointWeaponSlot> weaponslots;
 }

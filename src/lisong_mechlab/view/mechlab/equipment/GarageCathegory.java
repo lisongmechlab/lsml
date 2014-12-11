@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.mechlab.equipment;
 
@@ -23,62 +23,65 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.garage.MechGarage;
-import lisong_mechlab.model.garage.MechGarage.Message.Type;
+import lisong_mechlab.model.garage.MechGarage.GarageMessage.Type;
+import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutMessage;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 
-class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?>>{
-   private MechGarage         garage = null;
-   private final ChassisClass chassiClass;
-   private final Faction faction;
+class GarageCathegory extends FilterTreeCathegory<LoadoutBase<?>> {
+    private MechGarage         garage = null;
+    private final ChassisClass chassiClass;
+    private final Faction      faction;
 
-   public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar, ChassisClass aChassiClass,
-                          JTextField aFilterBar, GarageTree aGarageTree, Faction aFaction){
-      super(xbar, aName, aParent, aModel, aFilterBar, aGarageTree);
-      chassiClass = aChassiClass;
-      faction = aFaction;
-   }
+    public GarageCathegory(String aName, TreeCathegory aParent, GarageTreeModel aModel, MessageXBar xbar,
+            ChassisClass aChassiClass, JTextField aFilterBar, GarageTree aGarageTree, Faction aFaction) {
+        super(xbar, aName, aParent, aModel, aFilterBar, aGarageTree);
+        chassiClass = aChassiClass;
+        faction = aFaction;
+    }
 
-   @Override
-   public void receive(MessageXBar.Message aMsg){
-      assert (SwingUtilities.isEventDispatchThread());
-      if( aMsg instanceof MechGarage.Message ){
-         MechGarage.Message msg = (MechGarage.Message)aMsg;
-         if( msg.type == Type.NewGarage ){
-            garage = msg.garage;
-         }
-         garageChanged();
-      }
-      else if( aMsg instanceof LoadoutMessage ){
-         LoadoutMessage message = (LoadoutMessage)aMsg;
-         if( message.type == LoadoutMessage.Type.CREATE || message.type == LoadoutMessage.Type.RENAME ){
+    @Override
+    public void receive(Message aMsg) {
+        assert (SwingUtilities.isEventDispatchThread());
+        if (aMsg instanceof MechGarage.GarageMessage) {
+            MechGarage.GarageMessage msg = (MechGarage.GarageMessage) aMsg;
+            if (msg.type == Type.NewGarage) {
+                garage = msg.garage;
+            }
             garageChanged();
-         }
-      }
-      super.receive(aMsg);
-   }
+        }
+        else if (aMsg instanceof LoadoutMessage) {
+            LoadoutMessage message = (LoadoutMessage) aMsg;
+            if (message.type == LoadoutMessage.Type.CREATE || message.type == LoadoutMessage.Type.RENAME) {
+                garageChanged();
+            }
+        }
+        super.receive(aMsg);
+    }
 
-   @Override
-   protected boolean filter(LoadoutBase<?> aLoadout){
-      ChassisBase chassi = aLoadout.getChassis();
-      return aLoadout.getName().toLowerCase().contains(getFilterString()) || chassi.getName().toLowerCase().contains(getFilterString());
-   }
+    @Override
+    protected boolean filter(LoadoutBase<?> aLoadout) {
+        ChassisBase chassi = aLoadout.getChassis();
+        return aLoadout.getName().toLowerCase().contains(getFilterString())
+                || chassi.getName().toLowerCase().contains(getFilterString());
+    }
 
-   private void garageChanged(){
-      children.clear();
-      if( garage != null ){
-         for(LoadoutBase<?> loadout : garage.getMechs()){
-            if( loadout.getChassis().getChassiClass() == chassiClass && loadout.getChassis().getFaction().isCompatible(faction))
-               children.add(loadout);
-         }
-      }
-      setDirtyBit();
-      getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
-      garageTree.expandPath(getPath());
-   }
+    private void garageChanged() {
+        children.clear();
+        if (garage != null) {
+            for (LoadoutBase<?> loadout : garage.getMechs()) {
+                if (loadout.getChassis().getChassiClass() == chassiClass
+                        && loadout.getChassis().getFaction().isCompatible(faction))
+                    children.add(loadout);
+            }
+        }
+        setDirtyBit();
+        getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));
+        garageTree.expandPath(getPath());
+    }
 }

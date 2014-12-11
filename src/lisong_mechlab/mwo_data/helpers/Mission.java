@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
@@ -23,17 +23,17 @@ import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class Mission{
-   public class Entity{
-      public class EntityProperties{
-         @XStreamAsAttribute
-         public double temperature;
-      }
+public class Mission {
+    public class Entity {
+        public class EntityProperties {
+            @XStreamAsAttribute
+            public double temperature;
+        }
 
-      public EntityProperties Properties;
-      @XStreamAsAttribute
-      public String           EntityClass;
-   }
+        public EntityProperties Properties;
+        @XStreamAsAttribute
+        public String           EntityClass;
+    }
 
-   public List<Entity> Objects;
+    public List<Entity> Objects;
 }

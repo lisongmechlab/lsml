@@ -15,59 +15,56 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.HeatModifier;
+import java.util.Collection;
+
 import lisong_mechlab.model.environment.Environment;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 
 /**
  * This {@link Metric} calculates the heat dissipation for a {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
-public class HeatDissipation implements Metric{
-   private final LoadoutBase<?> loadout;
-   private Environment          environment;
+public class HeatDissipation implements Metric {
+    private final LoadoutBase<?> loadout;
+    private Environment          environment;
 
-   public HeatDissipation(final LoadoutBase<?> aLoadout, final Environment anEnvironment){
-      loadout = aLoadout;
-      environment = anEnvironment;
-   }
+    public HeatDissipation(final LoadoutBase<?> aLoadout, final Environment anEnvironment) {
+        loadout = aLoadout;
+        environment = anEnvironment;
+    }
 
-   @Override
-   public double calculate(){
-      double ans = 0;
-      int enginehs = 0;
-      if( loadout.getEngine() != null ){
-         enginehs = loadout.getEngine().getNumInternalHeatsinks();
-      }
+    @Override
+    public double calculate() {
+        Collection<Modifier> modifiers = loadout.getModifiers();
 
-      // Engine internal HS count as true doubles
-      ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 0.2 : 0.1);
-      ans += (loadout.getHeatsinksCount() - enginehs) * loadout.getUpgrades().getHeatSink().getHeatSinkType().getDissipation();
-      ans *= loadout.getEfficiencies().getHeatDissipationModifier();
-      
-      double externalHeat = 0;
-      if( environment != null ){
-         externalHeat = (environment.getHeat());
-      }
-      
-      double extra = 0;
-      double extraExternal = 0;
-      for(HeatModifier heatModifier : loadout.getHeatModifiers()){
-         extra += heatModifier.extraHeatDissipation(ans);
-         extraExternal += heatModifier.extraEnvironmentHeat(externalHeat);
-      }
-      
-      ans = (ans + extra) - (externalHeat + extraExternal);     
-      return ans;
-   }
+        double ans = 0;
+        int enginehs = 0;
+        if (loadout.getEngine() != null) {
+            enginehs = loadout.getEngine().getNumInternalHeatsinks();
+        }
 
-   public void changeEnvironment(Environment anEnvironment){
-      environment = anEnvironment;
-   }
+        final double dissipation = loadout.getUpgrades().getHeatSink().getHeatSinkType().getDissipation();
+
+        // Engine internal HS count as true doubles
+        ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 0.2 : 0.1);
+        ans += (loadout.getHeatsinksCount() - enginehs) * dissipation;
+
+        final Attribute heatDissipation = new Attribute(ans, ModifiersDB.SEL_HEAT_DISSIPATION);
+        final double externalHeat = (environment != null) ? environment.getHeat(modifiers) : 0;
+
+        return heatDissipation.value(modifiers) - externalHeat;
+    }
+
+    public void changeEnvironment(Environment anEnvironment) {
+        environment = anEnvironment;
+    }
 }

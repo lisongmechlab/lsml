@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
@@ -27,46 +27,46 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Li Song
  */
 @XStreamAlias("Type")
-public enum HardPointType{
-   ENERGY("E"), BALLISTIC("B"), MISSILE("M"), AMS("AMS"), ECM("ECM"), NONE("");
+public enum HardPointType {
+    ENERGY("E"), BALLISTIC("B"), MISSILE("M"), AMS("AMS"), ECM("ECM"), NONE("");
 
-   private HardPointType(String aShortName){
-      shortName = aShortName;
-   }
+    private HardPointType(String aShortName) {
+        shortName = aShortName;
+    }
 
-   public String shortName(){
-      return shortName;
-   }
+    public String shortName() {
+        return shortName;
+    }
 
-   public static HardPointType fromMwoType(String type){
-      switch( type ){
-         case "Energy":
-            return HardPointType.ENERGY;
-         case "AMS":
-            return HardPointType.AMS;
-         case "Ballistic":
-            return HardPointType.BALLISTIC;
-         case "Missile":
-            return HardPointType.MISSILE;
-         default:
-            throw new RuntimeException("Unknown hardpoint type!");
-      }
-   }
+    public static HardPointType fromMwoType(String type) {
+        switch (type) {
+            case "Energy":
+                return HardPointType.ENERGY;
+            case "AMS":
+                return HardPointType.AMS;
+            case "Ballistic":
+                return HardPointType.BALLISTIC;
+            case "Missile":
+                return HardPointType.MISSILE;
+            default:
+                throw new RuntimeException("Unknown hardpoint type!");
+        }
+    }
 
-   public static HardPointType fromMwoType(int type){
-      switch( type ){
-         case 1:
-            return HardPointType.ENERGY;
-         case 4:
-            return HardPointType.AMS;
-         case 0:
-            return HardPointType.BALLISTIC;
-         case 2:
-            return HardPointType.MISSILE;
-         default:
-            throw new RuntimeException("Unknown hardpoint type!");
-      }
-   }
+    public static HardPointType fromMwoType(int type) {
+        switch (type) {
+            case 1:
+                return HardPointType.ENERGY;
+            case 4:
+                return HardPointType.AMS;
+            case 0:
+                return HardPointType.BALLISTIC;
+            case 2:
+                return HardPointType.MISSILE;
+            default:
+                throw new RuntimeException("Unknown hardpoint type!");
+        }
+    }
 
-   private final String shortName;
+    private final String shortName;
 }

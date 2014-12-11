@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.garage;
 
@@ -26,14 +26,14 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * 
  * @author Li Song
  */
-public class AlreadyInGarageException extends Exception{
-   /**
-    * @param aLoadout
-    *           The loadout that the error occurred for.
-    */
-   public AlreadyInGarageException(LoadoutBase<?> aLoadout){
-      super("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
-   }
+public class AlreadyInGarageException extends Exception {
+    /**
+     * @param aLoadout
+     *            The loadout that the error occurred for.
+     */
+    public AlreadyInGarageException(LoadoutBase<?> aLoadout) {
+        super("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
+    }
 
-   private static final long serialVersionUID = 4597113571327421920L;
+    private static final long serialVersionUID = 4597113571327421920L;
 }

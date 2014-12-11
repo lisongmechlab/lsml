@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.export;
 
@@ -24,6 +24,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -38,112 +41,88 @@ import lisong_mechlab.view.ProgramInit;
  * 
  * @author Li Song
  */
-public class LsmlProtocolIPC implements Runnable{
-   // In the private (ephemeral) ports
-   private static final int   PORT = 63782;
-   private final ServerSocket serverSocket;
-   private final Thread       thread;
-   private transient boolean  done = false;
+public class LsmlProtocolIPC implements Runnable {
+    // In the private (ephemeral) ports
+    private static final int   PORT = 63782;
+    private final ServerSocket serverSocket;
+    private final Thread       thread;
+    private transient boolean  done = false;
 
-   /**
-    * Creates a new IPC server that can receive messages on the local loopback.
-    * 
-    * @throws UnknownHostException
-    * @throws IOException
-    */
-   public LsmlProtocolIPC() throws IOException{
-      serverSocket = new ServerSocket();
-      serverSocket.setReuseAddress(true);
-      serverSocket.bind(new InetSocketAddress(PORT));
+    /**
+     * Creates a new IPC server that can receive messages on the local loopback.
+     * 
+     * @throws UnknownHostException
+     * @throws IOException
+     */
+    public LsmlProtocolIPC() throws IOException {
+        serverSocket = new ServerSocket();
+        serverSocket.setReuseAddress(true);
+        serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
 
-      thread = new Thread(this);
-      thread.setName("IPC THREAD");
-      thread.start();
-   }
+        thread = new Thread(this);
+        thread.setName("IPC THREAD");
+        thread.start();
+    }
 
-   public void close(){
-      done = true;
-      if( null != serverSocket ){
-         try{
-            serverSocket.close(); // Will throw an SocketException in the server thread.
-         }
-         catch( IOException e ){
-            System.err.println(e);
-         }
-      }
-
-      if( thread != null ){
-         thread.interrupt();
-         try{
-            thread.join();
-         }
-         catch( InterruptedException e ){
-            System.err.println(e);
-         }
-      }
-   }
-
-   /**
-    * @param url
-    * @return <code>true</code> if the message was sent (some one listened to the socket) <code>false</code> if the
-    *         message couldn't be sent.
-    */
-   static public boolean sendLoadout(String url){
-      Socket socket = null;
-      BufferedWriter bw = null;
-      try{
-         socket = new Socket((String)null, PORT);
-         bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-         bw.write(url);
-      }
-      catch( IOException e ){
-         return false;
-      }
-      finally{
-         try{
-            if( bw != null )
-               bw.close();
-            if( socket != null )
-               socket.close();
-         }
-         catch( IOException e ){
-            // Failed to close socket... whaaaaaat?!
-         }
-      }
-      return true;
-   }
-
-   @Override
-   public void run(){
-      while( !done ){
-         Socket client = null;
-         BufferedReader in = null;
-         try{
-            client = serverSocket.accept();
-            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
-            final String url = in.readLine();
-            SwingUtilities.invokeLater(new Runnable(){
-               @Override
-               public void run(){
-                  ProgramInit.lsml().mechLabPane.openLoadout(url);
-               }
-            });
-         }
-         catch( Exception e ){
-            // Unknown error, probably some random program sending data to us.
-         }
-         finally{
-            try{
-               if( null != client )
-                  client.close();
-               if( null != in )
-                  in.close();
+    public void close() {
+        done = true;
+        if (null != serverSocket) {
+            try {
+                serverSocket.close(); // Will throw an SocketException in the
+                                      // server thread.
             }
-            catch( Exception e ){
-               System.err.println(e);
+            catch (IOException e) {
+                System.err.println(e);
             }
-         }
-      }
-   }
+        }
+
+        if (thread != null) {
+            thread.interrupt();
+            try {
+                thread.join();
+            }
+            catch (InterruptedException e) {
+                System.err.println(e);
+            }
+        }
+    }
+
+    /**
+     * @param aLsmlUrl
+     *            The LSML URL to send.
+     * @return <code>true</code> if the message was sent (some one listened to the socket) <code>false</code> if the
+     *         message couldn't be sent.
+     */
+    static public boolean sendLoadout(String aLsmlUrl) {
+        try (Socket socket = new Socket(InetAddress.getLocalHost(), PORT);
+                Writer writer = new OutputStreamWriter(socket.getOutputStream());
+                BufferedWriter bw = new BufferedWriter(writer)) {
+            bw.write(aLsmlUrl);
+        }
+        catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void run() {
+        while (!done) {
+            try (Socket client = serverSocket.accept();
+                    Reader reader = new InputStreamReader(client.getInputStream());
+                    BufferedReader in = new BufferedReader(reader)) {
+                final String url = in.readLine();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ProgramInit.lsml().mechLabPane.openLoadout(url);
+                    }
+                });
+            }
+            catch (Exception e) {
+                // Unknown error, probably some random program sending data to
+                // us.
+            }
+        }
+    }
 }

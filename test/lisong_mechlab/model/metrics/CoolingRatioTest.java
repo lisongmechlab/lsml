@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -34,30 +34,30 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CoolingRatioTest{
-   @Mock
-   private HeatDissipation dissipation;
-   @Mock
-   private HeatGeneration  heatGeneration;
-   @InjectMocks
-   private CoolingRatio    cut;
+public class CoolingRatioTest {
+    @Mock
+    private HeatDissipation dissipation;
+    @Mock
+    private HeatGeneration  heatGeneration;
+    @InjectMocks
+    private CoolingRatio    cut;
 
-   @Test
-   public void testCalculate() throws Exception{
-      double heat = 10;
-      double cooling = 5;
-      when(heatGeneration.calculate()).thenReturn(heat);
-      when(dissipation.calculate()).thenReturn(cooling);
-      assertEquals(cooling / heat, cut.calculate(), 0);
-   }
+    @Test
+    public void testCalculate() throws Exception {
+        double heat = 10;
+        double cooling = 5;
+        when(heatGeneration.calculate()).thenReturn(heat);
+        when(dissipation.calculate()).thenReturn(cooling);
+        assertEquals(cooling / heat, cut.calculate(), 0);
+    }
 
-   @Test
-   public void testCalculate_noHeat() throws Exception{
-      double heat = 0;
-      double cooling = 5;
+    @Test
+    public void testCalculate_noHeat() throws Exception {
+        double heat = 0;
+        double cooling = 5;
 
-      when(heatGeneration.calculate()).thenReturn(heat);
-      when(dissipation.calculate()).thenReturn(cooling);
-      assertEquals(1.0, cut.calculate(), 0);
-   }
+        when(heatGeneration.calculate()).thenReturn(heat);
+        when(dissipation.calculate()).thenReturn(cooling);
+        assertEquals(1.0, cut.calculate(), 0);
+    }
 }

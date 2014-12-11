@@ -15,45 +15,42 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.chassi.HeatModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 
 /**
  * This {@link Metric} calculates the total heat capacity of a {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
-public class HeatCapacity implements Metric{
-   private final LoadoutBase<?> loadout;
-   private static final double  MECH_BASE_HEAT_CAPACITY = 30;
+public class HeatCapacity implements Metric {
+    private final LoadoutBase<?> loadout;
+    private static final double  MECH_BASE_HEAT_CAPACITY = 30;
 
-   public HeatCapacity(final LoadoutBase<?> aLoadout){
-      loadout = aLoadout;
-   }
+    public HeatCapacity(final LoadoutBase<?> aLoadout) {
+        loadout = aLoadout;
+    }
 
-   @Override
-   public double calculate(){
-      double ans = 0;
-      int enginehs = 0;
-      if( loadout.getEngine() != null ){
-         enginehs = loadout.getEngine().getNumInternalHeatsinks();
-      }
+    @Override
+    public double calculate() {
+        double ans = MECH_BASE_HEAT_CAPACITY;
+        int enginehs = 0;
+        if (loadout.getEngine() != null) {
+            enginehs = loadout.getEngine().getNumInternalHeatsinks();
+        }
 
-      // Engine internal HS count as true doubles
-      ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 2 : 1);
-      ans += (loadout.getHeatsinksCount() - enginehs) * loadout.getUpgrades().getHeatSink().getHeatSinkType().getCapacity();
-      ans = (MECH_BASE_HEAT_CAPACITY + ans) * loadout.getEfficiencies().getHeatCapacityModifier();
-      
-      double extra = 0;
-      for(HeatModifier heatModifier : loadout.getHeatModifiers()){
-         extra += heatModifier.extraHeatCapacity(ans);
-      }
-      
-      return ans+extra;
-   }
+        // Engine internal HS count as true doubles
+        ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 2 : 1);
+        ans += (loadout.getHeatsinksCount() - enginehs)
+                * loadout.getUpgrades().getHeatSink().getHeatSinkType().getCapacity();
+
+        final Attribute heatLimit = new Attribute(ans, ModifiersDB.SEL_HEAT_LIMIT);
+        return heatLimit.value(loadout.getModifiers());
+    }
 }

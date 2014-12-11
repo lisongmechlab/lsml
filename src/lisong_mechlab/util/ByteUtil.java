@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -24,31 +24,31 @@ package lisong_mechlab.util;
  * 
  * @author Li Song
  */
-public class ByteUtil{
+public class ByteUtil {
 
-   /**
-    * Performs a "Logical Shift Left" (lsl) operation on the byte.
-    * 
-    * @param b
-    *           The byte to shift
-    * @param shift
-    *           The number of positions to shift.
-    * @return The shifted byte
-    */
-   static public byte lsl(final int b, final int shift){
-      return (byte)((b & 0xFF) << shift);
-   }
+    /**
+     * Performs a "Logical Shift Left" (lsl) operation on the byte.
+     * 
+     * @param b
+     *            The byte to shift
+     * @param shift
+     *            The number of positions to shift.
+     * @return The shifted byte
+     */
+    static public byte lsl(final int b, final int shift) {
+        return (byte) ((b & 0xFF) << shift);
+    }
 
-   /**
-    * Performs a "Logical Shift Right" (lsr) operation on the byte.
-    * 
-    * @param b
-    *           The byte to shift
-    * @param shift
-    *           The number of positions to shift.
-    * @return The shifted byte
-    */
-   static public byte lsr(final int b, final int shift){
-      return (byte)((b & 0xFF) >>> shift);
-   }
+    /**
+     * Performs a "Logical Shift Right" (lsr) operation on the byte.
+     * 
+     * @param b
+     *            The byte to shift
+     * @param shift
+     *            The number of positions to shift.
+     * @return The shifted byte
+     */
+    static public byte lsr(final int b, final int shift) {
+        return (byte) ((b & 0xFF) >>> shift);
+    }
 }

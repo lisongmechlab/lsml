@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -26,11 +26,11 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * 
  * @author Li Song
  */
-public interface Metric{
-   /**
-    * Calculates the value of the metric. May employ caching but the caching must be transparent.
-    * 
-    * @return The value of the metric.
-    */
-   public double calculate();
+public interface Metric {
+    /**
+     * Calculates the value of the metric. May employ caching but the caching must be transparent.
+     * 
+     * @return The value of the metric.
+     */
+    public double calculate();
 }

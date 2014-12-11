@@ -15,36 +15,36 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.item.Item;
+import java.util.Collection;
+
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * This metric calculates the alpha strike for a given {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
-public class AlphaStrike extends RangeMetric{
+public class AlphaStrike extends RangeMetric {
 
-   public AlphaStrike(final LoadoutBase<?> aLoadout){
-      super(aLoadout);
-   }
+    public AlphaStrike(final LoadoutBase<?> aLoadout) {
+        super(aLoadout);
+    }
 
-   @Override
-   public double calculate(double aRange){
-      double ans = 0;
-      for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon ){
-            Weapon weapon = (Weapon)item;
-            if( weapon.isOffensive() )
-               ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, loadout.getWeaponModifiers());
-         }
-      }
-      return ans;
-   }
+    @Override
+    public double calculate(double aRange) {
+        double ans = 0;
+        Collection<Modifier> modifiers = loadout.getModifiers();
+        for (Weapon weapon : loadout.items(Weapon.class)) {
+            if (weapon.isOffensive())
+                ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
+        }
+        return ans;
+    }
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.export;
 
@@ -29,26 +29,26 @@ import lisong_mechlab.model.upgrades.GuidanceUpgrade;
  * 
  * @author Li Song
  */
-public class CompatibilityHelper{
+public class CompatibilityHelper {
 
-   /**
-    * February 4th patch introduced new weapon IDs for artemis enabled missile launchers. This function canonizes old
-    * missile launchers to the new types if applicable.
-    * 
-    * @param anItem
-    * @param aGuidanceType
-    * @return A canonized item.
-    */
-   public static Item fixArtemis(final Item anItem, GuidanceUpgrade aGuidanceType){
-      Item ans = anItem;
-      if( anItem instanceof MissileWeapon ){
-         MissileWeapon weapon = (MissileWeapon)anItem;
-         ans = aGuidanceType.upgrade(weapon);
-      }
-      else if( anItem instanceof Ammunition ){
-         Ammunition ammunition = (Ammunition)anItem;
-         ans = aGuidanceType.upgrade(ammunition);
-      }
-      return ans;
-   }
+    /**
+     * February 4th patch introduced new weapon IDs for artemis enabled missile launchers. This function canonizes old
+     * missile launchers to the new types if applicable.
+     * 
+     * @param anItem
+     * @param aGuidanceType
+     * @return A canonized item.
+     */
+    public static Item fixArtemis(final Item anItem, GuidanceUpgrade aGuidanceType) {
+        Item ans = anItem;
+        if (anItem instanceof MissileWeapon) {
+            MissileWeapon weapon = (MissileWeapon) anItem;
+            ans = aGuidanceType.upgrade(weapon);
+        }
+        else if (anItem instanceof Ammunition) {
+            Ammunition ammunition = (Ammunition) anItem;
+            ans = aGuidanceType.upgrade(ammunition);
+        }
+        return ans;
+    }
 }

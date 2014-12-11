@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.export;
 
@@ -24,6 +24,6 @@ package lisong_mechlab.model.loadout.export;
  * 
  * @author Li Song
  */
-public class Base64LoadoutCoderTest{
-   /* no tests at the moment */
+public class Base64LoadoutCoderTest {
+    /* no tests at the moment */
 }

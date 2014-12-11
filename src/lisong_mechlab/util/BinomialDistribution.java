@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -24,37 +24,37 @@ package lisong_mechlab.util;
  * 
  * @author Li Song
  */
-public class BinomialDistribution implements Distribution{
-   private final double p;
-   private final int    n;
+public class BinomialDistribution implements Distribution {
+    private final double p;
+    private final int    n;
 
-   public static long nChooseK(int n, long aK){
-      long ans = 1;
-      for(int kk = 0; kk < aK; ++kk){
-         ans = ans * (n - kk) / (kk + 1);
-      }
-      return ans;
-   }
+    public static long nChooseK(int n, long aK) {
+        long ans = 1;
+        for (int kk = 0; kk < aK; ++kk) {
+            ans = ans * (n - kk) / (kk + 1);
+        }
+        return ans;
+    }
 
-   public BinomialDistribution(double aP, int aN){
-      p = aP;
-      n = aN;
-   }
+    public BinomialDistribution(double aP, int aN) {
+        p = aP;
+        n = aN;
+    }
 
-   @Override
-   public double pdf(double aX){
-      long k = Math.round(aX);
-      return nChooseK(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
-   }
+    @Override
+    public double pdf(double aX) {
+        long k = Math.round(aX);
+        return nChooseK(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+    }
 
-   @Override
-   public double cdf(double aX){
-      double ans = 0;
-      final long k = (long)(aX + Math.ulp(aX)); // Accept anything within truncation error of k as k.
-      for(int i = 0; i <= k; ++i){
-         ans += pdf(i);
-      }
-      return ans;
-   }
+    @Override
+    public double cdf(double aX) {
+        double ans = 0;
+        final long k = (long) (aX + Math.ulp(aX)); // Accept anything within truncation error of k as k.
+        for (int i = 0; i <= k; ++i) {
+            ans += pdf(i);
+        }
+        return ans;
+    }
 
 }

@@ -15,11 +15,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
-
-import lisong_mechlab.model.Faction;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -28,80 +26,80 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Li Song
  */
-public class PilotModule{
+public class PilotModule {
 
-   private final String          locName;
-   private final String          locDesc;
-   @XStreamAsAttribute
-   private final String          mwoName;
-   @XStreamAsAttribute
-   private final int             mwoIdx;
-   @XStreamAsAttribute
-   private final Faction         faction;
-   @XStreamAsAttribute
-   private final ModuleCathegory cathegory;
-   @XStreamAsAttribute
-   private final ModuleSlot      slotType;
+    private final String          locName;
+    private final String          locDesc;
+    @XStreamAsAttribute
+    private final String          mwoName;
+    @XStreamAsAttribute
+    private final int             mwoIdx;
+    @XStreamAsAttribute
+    private final Faction         faction;
+    @XStreamAsAttribute
+    private final ModuleCathegory cathegory;
+    @XStreamAsAttribute
+    private final ModuleSlot      slotType;
 
-   /**
-    * Creates a new {@link PilotModule}.
-    * 
-    * @param aMwoName
-    *           The name of the module in the MWO data files.
-    * @param aMwoIdx
-    *           The ID of the module in the MWO data files.
-    * @param aName
-    *           The human readable name of the module.
-    * @param aDescription
-    *           The human readable description of the module.
-    * @param aFaction
-    *           The required faction for this module.
-    * @param aCathegory
-    *           The {@link ModuleCathegory} for this {@link Module}.
-    * @param aSlotType
-    *           The {@link ModuleSlot} of the module.
-    */
-   public PilotModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction, ModuleCathegory aCathegory,
-                      ModuleSlot aSlotType){
-      mwoName = aMwoName;
-      mwoIdx = aMwoIdx;
-      locName = aName;
-      locDesc = aDescription;
-      faction = aFaction;
-      cathegory = aCathegory;
-      slotType = aSlotType;
-   }
+    /**
+     * Creates a new {@link PilotModule}.
+     * 
+     * @param aMwoName
+     *            The name of the module in the MWO data files.
+     * @param aMwoIdx
+     *            The ID of the module in the MWO data files.
+     * @param aName
+     *            The human readable name of the module.
+     * @param aDescription
+     *            The human readable description of the module.
+     * @param aFaction
+     *            The required faction for this module.
+     * @param aCathegory
+     *            The {@link ModuleCathegory} for this {@link Module}.
+     * @param aSlotType
+     *            The {@link ModuleSlot} of the module.
+     */
+    public PilotModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction,
+            ModuleCathegory aCathegory, ModuleSlot aSlotType) {
+        mwoName = aMwoName;
+        mwoIdx = aMwoIdx;
+        locName = aName;
+        locDesc = aDescription;
+        faction = aFaction;
+        cathegory = aCathegory;
+        slotType = aSlotType;
+    }
 
-   public String getKey(){
-      return mwoName;
-   }
+    public String getKey() {
+        return mwoName;
+    }
 
-   @Override
-   public String toString(){
-      return getName();
-   }
+    @Override
+    public String toString() {
+        return getName();
+    }
 
-   public String getName(){
-      return locName;
-   }
+    public String getName() {
+        return locName;
+    }
 
-   public int getMwoId(){
-      return mwoIdx;
-   }
+    public int getMwoId() {
+        return mwoIdx;
+    }
 
-   public String getDescription(){
-      return locDesc;
-   }
+    public String getDescription() {
+        return locDesc;
+    }
 
-   public Faction getFaction(){
-      return faction;
-   }
+    public Faction getFaction() {
+        return faction;
+    }
 
-   public ModuleCathegory getCathegory(){
-      return cathegory;
-   }
+    public ModuleCathegory getCathegory() {
+        return cathegory;
+    }
 
-   public ModuleSlot getSlot(){
-      return slotType;
-   }
+    public ModuleSlot getSlot() {
+        return slotType;
+    }
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data;
 
@@ -36,36 +36,37 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * @author Li Song
  */
 @XStreamAlias("MechIdMap")
-public class XMLMechIdMap{
-   public class Mech{
-      @XStreamAsAttribute
-      public int baseID;
-      @XStreamAsAttribute
-      public int variantID;
-   }
+public class XMLMechIdMap {
+    public class Mech {
+        @XStreamAsAttribute
+        public int baseID;
+        @XStreamAsAttribute
+        public int variantID;
+    }
 
-   @XStreamImplicit(itemFieldName = "Mech")
-   public List<Mech> MechIdMap;
+    @XStreamImplicit(itemFieldName = "Mech")
+    public List<Mech> MechIdMap;
 
-   private XMLMechIdMap(){}
+    private XMLMechIdMap() {
+    }
 
-   public static XMLMechIdMap fromXml(InputStream is){
-      XStream xstream = new XStream(new StaxDriver(new NoNameCoder())){
-         @Override
-         protected MapperWrapper wrapMapper(MapperWrapper next){
-            return new MapperWrapper(next){
-               @Override
-               public boolean shouldSerializeMember(Class definedIn, String fieldName){
-                  if( definedIn == Object.class ){
-                     return false;
-                  }
-                  return super.shouldSerializeMember(definedIn, fieldName);
-               }
-            };
-         }
-      };
-      xstream.autodetectAnnotations(true);
-      xstream.alias("MechIdMap", XMLMechIdMap.class);
-      return (XMLMechIdMap)xstream.fromXML(is);
-   }
+    public static XMLMechIdMap fromXml(InputStream is) {
+        XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
+            @Override
+            protected MapperWrapper wrapMapper(MapperWrapper next) {
+                return new MapperWrapper(next) {
+                    @Override
+                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+                        if (definedIn == Object.class) {
+                            return false;
+                        }
+                        return super.shouldSerializeMember(definedIn, fieldName);
+                    }
+                };
+            }
+        };
+        xstream.autodetectAnnotations(true);
+        xstream.alias("MechIdMap", XMLMechIdMap.class);
+        return (XMLMechIdMap) xstream.fromXML(is);
+    }
 }

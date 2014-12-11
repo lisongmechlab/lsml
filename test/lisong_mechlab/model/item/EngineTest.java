@@ -15,26 +15,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
 import static org.junit.Assert.assertEquals;
-import lisong_mechlab.model.Faction;
 
 import org.junit.Test;
 
-public class EngineTest{
+public class EngineTest {
 
-   @Test
-   public void testGetFaction_Clan(){
-      Engine e = (Engine)ItemDB.lookup("CLAN XL ENGINE 375");
-      assertEquals(Faction.Clan, e.getFaction());
-   }
-   
-   @Test
-   public void testGetFaction_IS(){
-      Engine e = (Engine)ItemDB.lookup("XL ENGINE 375");
-      assertEquals(Faction.InnerSphere, e.getFaction());
-   }
+    @Test
+    public void testGetFaction_Clan() {
+        Engine e = (Engine) ItemDB.lookup("CLAN XL ENGINE 375");
+        assertEquals(Faction.Clan, e.getFaction());
+    }
+
+    @Test
+    public void testGetFaction_IS() {
+        Engine e = (Engine) ItemDB.lookup("XL ENGINE 375");
+        assertEquals(Faction.InnerSphere, e.getFaction());
+    }
 }

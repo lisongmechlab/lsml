@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
@@ -23,17 +23,17 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("JumpJetStats")
-public class ItemStatsJumpJetStats{
-   @XStreamAlias("boost_z")
-   @XStreamAsAttribute
-   public double boost;
+public class ItemStatsJumpJetStats {
+    @XStreamAlias("boost_z")
+    @XStreamAsAttribute
+    public double boost;
 
-   @XStreamAsAttribute
-   public double duration;
-   @XStreamAsAttribute
-   public String heat;
-   @XStreamAsAttribute
-   public int    minTons;
-   @XStreamAsAttribute
-   public int    maxTons;
+    @XStreamAsAttribute
+    public double duration;
+    @XStreamAsAttribute
+    public String heat;
+    @XStreamAsAttribute
+    public int    minTons;
+    @XStreamAsAttribute
+    public int    maxTons;
 }

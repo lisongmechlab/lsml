@@ -15,17 +15,37 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.item.Ammunition;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class AmmoTypeStats{
-   @XStreamAsAttribute
-   public String type;
-   @XStreamAsAttribute
-   public int    numShots;
-   @XStreamAsAttribute
-   public double internalDamage;
+public class AmmoTypeStats {
+    @XStreamAsAttribute
+    public String type;
+    @XStreamAsAttribute
+    public int    numShots;
+    @XStreamAsAttribute
+    public double internalDamage;
+    
+    public Ammunition asAmmunition(ItemStatsModule aStats) {
+        final String name = aStats.getUiName();
+        final HardPointType aWeaponType;
+        if (name.contains("LRM") || name.contains("SRM") || name.contains("NARC")) {
+            aWeaponType = HardPointType.MISSILE;
+        }
+        else if (name.contains("AMS")) {
+            aWeaponType = HardPointType.AMS;
+        }
+        else {
+            aWeaponType = HardPointType.BALLISTIC;
+        }
+        
+        return new Ammunition(name, aStats.getUiDesc(), aStats.getMwoKey(), aStats.getMwoId(), aStats.ModuleStats.slots,
+                aStats.ModuleStats.tons, HardPointType.NONE, aStats.ModuleStats.health, aStats.getFaction(), numShots, type, aWeaponType, internalDamage);
+    }
 }

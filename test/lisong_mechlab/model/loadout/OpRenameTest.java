@@ -15,20 +15,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
-import lisong_mechlab.model.chassi.ChassisDB;
-import lisong_mechlab.model.chassi.ChassisStandard;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.MessageXBar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -37,46 +34,38 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class OpRenameTest{
+public class OpRenameTest {
 
-   @Mock
-   private MessageXBar xBar;
+    @Mock
+    private MessageXBar xBar;
 
-   /**
-    * We can rename {@link LoadoutStandard}s.
-    */
-   @Test
-   public void testApply(){
-      // Setup
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"));
-      assertEquals("HBK-4J", loadout.getName());
+    /**
+     * We can rename {@link LoadoutStandard}s.
+     */
+    @Test
+    public void testApply() {
+        LoadoutBase<?> loadout = Mockito.mock(LoadoutBase.class);
 
-      // Execute
-      OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new OpRename(loadout, xBar, "Test"));
+        // Execute
+        new OpRename(loadout, xBar, "Test").apply();
 
-      // Verify
-      assertEquals("Test", loadout.getName());
-      assertEquals("Test (HBK-4J)", loadout.toString());
-      verify(xBar).post(new LoadoutMessage(loadout, LoadoutMessage.Type.RENAME));
-   }
+        // Verify
+        verify(loadout).rename("Test");
+        verify(xBar).post(new LoadoutMessage(loadout, LoadoutMessage.Type.RENAME));
+    }
 
-   /**
-    * A <code>null</code> xbar doesn't cause an error.
-    */
-   @Test
-   public void testApply_nullXbar(){
-      // Setup
-      LoadoutStandard loadout = new LoadoutStandard((ChassisStandard)ChassisDB.lookup("HBK-4J"));
-      assertEquals("HBK-4J", loadout.getName());
+    /**
+     * A <code>null</code> xbar doesn't cause an error.
+     */
+    @Test
+    public void testApply_nullXbar() {
+        LoadoutBase<?> loadout = Mockito.mock(LoadoutBase.class);
 
-      // Execute
-      OperationStack stack = new OperationStack(0);
-      stack.pushAndApply(new OpRename(loadout, null, "Test"));
+        // Execute
+        new OpRename(loadout, xBar, "Test").apply();
 
-      // Verify
-      assertEquals("Test", loadout.getName());
-      assertEquals("Test (HBK-4J)", loadout.toString());
-   }
+        // Verify
+        verify(loadout).rename("Test");
+    }
 
 }

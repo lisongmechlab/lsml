@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view;
 
@@ -27,61 +27,63 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import lisong_mechlab.model.Faction;
 import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.chassi.ChassisClass;
 import lisong_mechlab.model.chassi.ChassisDB;
+import lisong_mechlab.model.item.Faction;
 
-public class ChassiTableModel extends AbstractTableModel{
-   private static final long             serialVersionUID = -2726840937519789976L;
-   private final List<ChassisBase>       mechs            = new ArrayList<>();
-   private final Comparator<ChassisBase> cmp              = new Comparator<ChassisBase>(){
-                                                             @Override
-                                                             public int compare(ChassisBase aArg0, ChassisBase aArg1){
-                                                                if( aArg0.getMassMax() == aArg1.getMassMax() )
-                                                                   return aArg0.getMwoName().compareTo(aArg1.getMwoName());
-                                                                return Integer.compare(aArg0.getMassMax(), aArg1.getMassMax());
-                                                             }
-                                                          };
-   private final ChassisClass chassiClass;
-   private final Faction faction;
+public class ChassiTableModel extends AbstractTableModel {
+    private static final long             serialVersionUID = -2726840937519789976L;
+    private final List<ChassisBase>       mechs            = new ArrayList<>();
+    private final Comparator<ChassisBase> cmp              = new Comparator<ChassisBase>() {
+                                                               @Override
+                                                               public int compare(ChassisBase aArg0, ChassisBase aArg1) {
+                                                                   if (aArg0.getMassMax() == aArg1.getMassMax())
+                                                                       return aArg0.getMwoName().compareTo(
+                                                                               aArg1.getMwoName());
+                                                                   return Integer.compare(aArg0.getMassMax(),
+                                                                           aArg1.getMassMax());
+                                                               }
+                                                           };
+    private final ChassisClass            chassiClass;
+    private final Faction                 faction;
 
-   public ChassiTableModel(Faction aFaction, ChassisClass aChassiClass, boolean aFilterSpecials){
-      faction = aFaction;
-      chassiClass = aChassiClass;
-      recreate(aFilterSpecials);
-   }
+    public ChassiTableModel(Faction aFaction, ChassisClass aChassiClass, boolean aFilterSpecials) {
+        faction = aFaction;
+        chassiClass = aChassiClass;
+        recreate(aFilterSpecials);
+    }
 
-   public void recreate(boolean aFilterSpecials){
-      Collection<? extends ChassisBase> all = ChassisDB.lookup(chassiClass);
+    public void recreate(boolean aFilterSpecials) {
+        Collection<? extends ChassisBase> all = ChassisDB.lookup(chassiClass);
 
-      mechs.clear();
-      for(ChassisBase base : all){
-         if( aFilterSpecials && base.getVariantType().isVariation() ){
-            continue;
-         }
+        mechs.clear();
+        for (ChassisBase base : all) {
+            if (aFilterSpecials && base.getVariantType().isVariation()) {
+                continue;
+            }
 
-         if( base.getFaction().isCompatible(faction) ){
-            mechs.add(base);
-         }
-      }
+            if (base.getFaction().isCompatible(faction)) {
+                mechs.add(base);
+            }
+        }
 
-      Collections.sort(mechs, cmp);
-      fireTableDataChanged();
-   }
+        Collections.sort(mechs, cmp);
+        fireTableDataChanged();
+    }
 
-   @Override
-   public int getColumnCount(){
-      return 1;
-   }
+    @Override
+    public int getColumnCount() {
+        return 1;
+    }
 
-   @Override
-   public int getRowCount(){
-      return mechs.size();
-   }
+    @Override
+    public int getRowCount() {
+        return mechs.size();
+    }
 
-   @Override
-   public Object getValueAt(int row, int col){
-      return mechs.get(row);
-   }
+    @Override
+    public Object getValueAt(int row, int col) {
+        return mechs.get(row);
+    }
 }

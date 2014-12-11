@@ -15,54 +15,63 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
+import java.util.List;
 
-public class JumpJet extends Module{
-   private final double minTons;
-   private final double maxTons;
-   private final double boost_z;
-   private final double duration;
-   private final double heat;
+import lisong_mechlab.model.chassi.ChassisClass;
+import lisong_mechlab.model.chassi.HardPointType;
+import lisong_mechlab.model.chassi.Location;
 
-   public JumpJet(ItemStatsModule aModule){
-      super(aModule);
-      minTons = aModule.JumpJetStats.minTons;
-      maxTons = aModule.JumpJetStats.maxTons;
-      boost_z = aModule.JumpJetStats.boost;
-      duration = aModule.JumpJetStats.duration;
-      heat = Double.parseDouble(aModule.JumpJetStats.heat.split(",")[0]); // Two values, first is heat for one JJ, second is heat for every additional JJ
-      // TODO: Parse extra heat and make use of it somethow.
-   }
+public class JumpJet extends Module {
+    private final double minTons;
+    private final double maxTons;
+    private final double boost_z;
+    private final double duration;
+    private final double heat;
 
-   public double getForce(){
-      return boost_z;
-   }
+    public JumpJet(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
+            List<ChassisClass> aAllowedChassisClasses, double aMinTons, double aMaxTons, double aBoost,
+            double aDuration, double aHeat) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
+                aAllowedChassisClasses);
 
-   public double getDuration(){
-      return duration;
-   }
+        minTons = aMinTons;
+        maxTons = aMaxTons;
+        boost_z = aBoost;
+        duration = aDuration;
+        heat = aHeat;
+        // TODO: Parse extra heat and make use of it somethow.
+    }
 
-   public double getJumpHeat(){
-      return heat;
-   }
+    public double getForce() {
+        return boost_z;
+    }
 
-   @Override
-   public String getShortName(){
-      String name = getName();
-      name = name.replace("JUMP JETS", "JJ");
-      name = name.replace("CLASS ", "");
-      return name;
-   }
+    public double getDuration() {
+        return duration;
+    }
 
-   public double getMaxTons(){
-      return maxTons;
-   }
+    public double getJumpHeat() {
+        return heat;
+    }
 
-   public double getMinTons(){
-      return minTons;
-   }
+    @Override
+    public String getShortName() {
+        String name = getName();
+        name = name.replace("JUMP JETS", "JJ");
+        name = name.replace("CLASS ", "");
+        return name;
+    }
+
+    public double getMaxTons() {
+        return maxTons;
+    }
+
+    public double getMinTons() {
+        return minTons;
+    }
 }

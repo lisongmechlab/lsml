@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
@@ -26,11 +26,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Li Song
  */
-public class MdfCockpit{
-   @XStreamAsAttribute
-   public int TechSlots;
-   @XStreamAsAttribute
-   public int ConsumableSlots;
-   @XStreamAsAttribute
-   public int WeaponModSlots;
+public class MdfCockpit {
+    @XStreamAsAttribute
+    public int TechSlots;
+    @XStreamAsAttribute
+    public int ConsumableSlots;
+    @XStreamAsAttribute
+    public int WeaponModSlots;
 }

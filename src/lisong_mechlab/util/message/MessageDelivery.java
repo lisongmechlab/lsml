@@ -15,32 +15,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
-package lisong_mechlab.model;
+package lisong_mechlab.util.message;
 
 /**
- * An enumeration of all the available factions.
+ * This interface specifies an API for delivering messages over a crossbar.
  * 
  * @author Li Song
+ *
  */
-public enum Faction{
-   Any, InnerSphere, Clan;
+public interface MessageDelivery {
 
-   public boolean isCompatible(Faction aFaction){
-      if( this == Any || aFaction == Any )
-         return true;
-      return this == aFaction;
-   }
+    /**
+     * Sends a message to all listeners on the {@link MessageXBar}. Those listeners which have been disposed of since
+     * the last call to {@link #post(Message)} will be automatically disposed of.
+     * 
+     * @param aMessage
+     *            The message to send.
+     */
+    public void post(Message aMessage);
 
-   /**
-    * @param aFaction
-    *           The value found in MWO data files.
-    * @return The {@link Faction} matching the MWO string value.
-    */
-   public static Faction fromMwo(String aFaction){
-      if( null == aFaction || "clan,innersphere".equals(aFaction.toLowerCase()) )
-         return Any;
-      return valueOf(aFaction);
-   }
 }

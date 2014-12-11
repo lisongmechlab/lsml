@@ -1,3 +1,22 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+//@formatter:on
 package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
@@ -5,150 +24,126 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.item.EnergyWeapon;
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.ItemDB;
 import lisong_mechlab.model.item.Weapon;
 import lisong_mechlab.model.loadout.LoadoutStandard;
-import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.message.MessageXBar;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class BurstDamageOverTimeTest{
+/**
+ * Test suite for {@link BurstDamageOverTime}.
+ * 
+ * @author Li Song
+ *
+ */
+public class BurstDamageOverTimeTest {
+    private final MessageXBar     aXBar        = Mockito.mock(MessageXBar.class);
+    private final List<Weapon>    items        = new ArrayList<>();
+    private final LoadoutStandard loadout      = Mockito.mock(LoadoutStandard.class);
 
-   @Test
-   public void testBurstDamageOverTime(){
-      // Setup
-      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
-      MessageXBar aXBar = Mockito.mock(MessageXBar.class);
+    @Before
+    public void setup() {
+        Mockito.when(loadout.items(Weapon.class)).thenReturn(items);
+    }
 
-      // Execute
-      BurstDamageOverTime cut = new BurstDamageOverTime(aLoadout, aXBar);
+    @Test
+    public void testBurstDamageOverTime() {
+        // Execute
+        BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
 
-      // Verify
-      Mockito.verify(aXBar).attach(cut);
-      Mockito.verifyNoMoreInteractions(aXBar);
-   }
+        // Verify
+        Mockito.verify(aXBar).attach(cut);
+        Mockito.verifyNoMoreInteractions(aXBar);
+    }
 
-   /**
-    * {@link BurstDamageOverTime#calculate(double, double)} shall calculate the result correctly taking range falloff
-    * and weapon cool downs into account.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public final void testCalculate() throws Exception{
-      // Setup
-      Weapon ac20 = (Weapon)ItemDB.lookup("AC/20");
-      EnergyWeapon erppc = (EnergyWeapon)ItemDB.lookup("ER PPC");
-      EnergyWeapon erllas = (EnergyWeapon)ItemDB.lookup("ER LARGE LASER");
-      List<Item> items = new ArrayList<>();
-      items.add(ac20);
-      items.add(erllas);
-      items.add(erppc);
-      items.add(ConfiguredComponentBase.ENGINE_INTERNAL); // Shouldn't barf on internals or other items
-      items.add(ItemDB.BAP);
-      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
-      Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
-      Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
-      Mockito.when(aLoadout.getAllItems()).thenReturn(items);
-      Mockito.when(aLoadout.getEfficiencies()).thenReturn(efficiencies);
-      MessageXBar aXBar = Mockito.mock(MessageXBar.class);
-      final double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration() / 2; // 3.5 ER LLAS
+    /**
+     * {@link BurstDamageOverTime#calculate(double, double)} shall calculate the result correctly taking range falloff
+     * and weapon cool downs into account.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public final void testCalculate() throws Exception {
+        // Setup
+        Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
+        EnergyWeapon erppc = (EnergyWeapon) ItemDB.lookup("ER PPC");
+        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        items.add(ac20);
+        items.add(erllas);
+        items.add(erppc);
+        final double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
 
-      // Execute
-      BurstDamageOverTime cut = new BurstDamageOverTime(aLoadout, aXBar);
-      double burst = cut.calculate(500, time);
+        // Execute
+        BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
+        double burst = cut.calculate(500, time);
 
-      // Verify
-      double expected = erllas.getDamagePerShot() * 3.5;
-      expected += ((int)(time / ac20.getSecondsPerShot(efficiencies, null) + 1)) * ac20.getDamagePerShot() * ac20.getRangeEffectivity(500, null);
-      expected += ((int)(time / erppc.getSecondsPerShot(efficiencies, null) + 1)) * erppc.getDamagePerShot() * erppc.getRangeEffectivity(500, null);
-      assertEquals(expected, burst, 0.0);
-   }
+        // Verify
+        double expected = erllas.getDamagePerShot() * 3.5;
+        expected += ((int) (time / ac20.getSecondsPerShot(null) + 1)) * ac20.getDamagePerShot()
+                * ac20.getRangeEffectivity(500, null);
+        expected += ((int) (time / erppc.getSecondsPerShot(null) + 1)) * erppc.getDamagePerShot()
+                * erppc.getRangeEffectivity(500, null);
+        assertEquals(expected, burst, 0.0);
+    }
 
-   /**
-    * {@link BurstDamageOverTime#calculate(double, double)} shall not barf on items that are not weapons.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public final void testCalculate_OtherItems() throws Exception{
-      // Setup
-      List<Item> items = new ArrayList<>();
-      items.add(ConfiguredComponentBase.ENGINE_INTERNAL); // Shouldn't barf on internals or other items
-      items.add(ItemDB.BAP);
-      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
-      Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
-      Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
-      Mockito.when(aLoadout.getAllItems()).thenReturn(items);
-      Mockito.when(aLoadout.getEfficiencies()).thenReturn(efficiencies);
-      MessageXBar aXBar = Mockito.mock(MessageXBar.class);
+    /**
+     * {@link BurstDamageOverTime#calculate(double, double)} shall return 0 for no weapons.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public final void testCalculate_NoWeapons() throws Exception {
+        // Execute
+        BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
+        double burst = cut.calculate(500, 500);
 
-      // Execute
-      BurstDamageOverTime cut = new BurstDamageOverTime(aLoadout, aXBar);
-      double burst = cut.calculate(500, 500);
+        // Verify
+        assertEquals(0.0, burst, 0.0);
+    }
 
-      // Verify
-      assertEquals(0.0, burst, 0.0);
-   }
+    /**
+     * {@link BurstDamageOverTime#calculate(double, double)} shall not include AMS!!
+     * 
+     * @throws Exception
+     */
+    @Test
+    public final void testCalculate_NoAMS() throws Exception {
+        // Setup
+        items.add(ItemDB.AMS);
 
-   /**
-    * {@link BurstDamageOverTime#calculate(double, double)} shall not include AMS!!
-    * 
-    * @throws Exception
-    */
-   @Test
-   public final void testCalculate_NoAMS() throws Exception{
-      // Setup
-      List<Item> items = new ArrayList<>();
-      items.add(ItemDB.AMS);
-      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
-      Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
-      Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
-      Mockito.when(aLoadout.getAllItems()).thenReturn(items);
-      Mockito.when(aLoadout.getEfficiencies()).thenReturn(efficiencies);
-      MessageXBar aXBar = Mockito.mock(MessageXBar.class);
+        // Execute
+        BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
+        double burst = cut.calculate(0, 500);
 
-      // Execute
-      BurstDamageOverTime cut = new BurstDamageOverTime(aLoadout, aXBar);
-      double burst = cut.calculate(0, 500);
+        // Verify
+        assertEquals(0.0, burst, 0.0);
+    }
 
-      // Verify
-      assertEquals(0.0, burst, 0.0);
-   }
+    /**
+     * The implementation caches partial results. So even if we change parameters, the result shall be calculated for
+     * the correct parameters.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public final void testCalculate_Cacheupdate() throws Exception {
+        // Setup
+        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        items.add(erllas);
 
-   /**
-    * The implementation caches partial results. So even if we change parameters, the result shall be calculated for the
-    * correct parameters.
-    * 
-    * @throws Exception
-    */
-   @Test
-   public final void testCalculate_Cacheupdate() throws Exception{
-      // Setup
-      EnergyWeapon erllas = (EnergyWeapon)ItemDB.lookup("ER LARGE LASER");
-      List<Item> items = new ArrayList<>();
-      items.add(erllas);
-      LoadoutStandard aLoadout = Mockito.mock(LoadoutStandard.class);
-      Efficiencies efficiencies = Mockito.mock(Efficiencies.class);
-      Mockito.when(efficiencies.getWeaponCycleTimeModifier()).thenReturn(1.0);
-      Mockito.when(aLoadout.getAllItems()).thenReturn(items);
-      Mockito.when(aLoadout.getEfficiencies()).thenReturn(efficiencies);
-      MessageXBar aXBar = Mockito.mock(MessageXBar.class);
+        // Execute
+        BurstDamageOverTime cut = new BurstDamageOverTime(loadout, aXBar);
+        cut.calculate(123, 321); // Dummy just make sure it's different from below
 
-      // Execute
-      BurstDamageOverTime cut = new BurstDamageOverTime(aLoadout, aXBar);
-      cut.calculate(123, 321); // Dummy just make sure it's different from below
+        double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
+        double burst = cut.calculate(500, time);
 
-      double time = erllas.getSecondsPerShot(efficiencies, null) * 3 + erllas.getDuration() / 2; // 3.5 ER LLAS
-      double burst = cut.calculate(500, time);
-
-      // Verify
-      double expected = erllas.getDamagePerShot() * 3.5;
-      assertEquals(expected, burst, 0.0);
-   }
+        // Verify
+        double expected = erllas.getDamagePerShot() * 3.5;
+        assertEquals(expected, burst, 0.0);
+    }
 }

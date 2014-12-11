@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.action;
 
@@ -28,20 +28,21 @@ import javax.swing.KeyStroke;
 
 import lisong_mechlab.view.ProgramInit;
 
-public class ImportMechAction extends AbstractAction{
-   private static final long serialVersionUID = -9019953619423428349L;
+public class ImportMechAction extends AbstractAction {
+    private static final long serialVersionUID = -9019953619423428349L;
 
-   public ImportMechAction(String aTitle, KeyStroke key){
-      super(aTitle);
-      putValue(Action.ACCELERATOR_KEY, key);
-   }
+    public ImportMechAction(String aTitle, KeyStroke key) {
+        super(aTitle);
+        putValue(Action.ACCELERATOR_KEY, key);
+    }
 
-   @Override
-   public void actionPerformed(ActionEvent aArg0){
-      String input = JOptionPane.showInputDialog(ProgramInit.lsml(), "Paste the lsml:// link:", "Import mech...", JOptionPane.PLAIN_MESSAGE);
-      if( null == input )
-         return;
-      ProgramInit.lsml().mechLabPane.openLoadout(input);
-   }
+    @Override
+    public void actionPerformed(ActionEvent aArg0) {
+        String input = JOptionPane.showInputDialog(ProgramInit.lsml(), "Paste the lsml:// link:", "Import mech...",
+                JOptionPane.PLAIN_MESSAGE);
+        if (null == input)
+            return;
+        ProgramInit.lsml().mechLabPane.openLoadout(input);
+    }
 
 }

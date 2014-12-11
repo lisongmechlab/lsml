@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
@@ -24,100 +24,108 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
 
-public class EnergyWeapon extends Weapon{
-   protected final double burnTime;
+/**
+ * An immutable class that represents an energy weapon.
+ * 
+ * @author Li Song
+ */
+public class EnergyWeapon extends Weapon {
+    protected final Attribute burnTime;
 
-   public EnergyWeapon(ItemStatsWeapon aStatsWeapon){
-      super(aStatsWeapon, HardPointType.ENERGY);
-      if( aStatsWeapon.WeaponStats.duration < 0 )
-         burnTime = Double.POSITIVE_INFINITY;
-      else
-         burnTime = aStatsWeapon.WeaponStats.duration;
-   }
+    public EnergyWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
+            Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
+            double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
+            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, Attribute aBurnTime) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ENERGY, aHP, aFaction, aHeat, aCooldown,
+                aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
+                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha);
+        burnTime = aBurnTime;
+    }
 
-   @Override
-   public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
-      if( burnTime == Double.POSITIVE_INFINITY ){
-         return getCoolDown(aEfficiencies, aModifiers);
-      }
-      return getCoolDown(aEfficiencies, aModifiers) + getDuration();
-   }
+    @Override
+    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+        if (burnTime.value(null) == Double.POSITIVE_INFINITY) {
+            return getCoolDown(aModifiers);
+        }
+        return getCoolDown(aModifiers) + getDuration(aModifiers);
+    }
 
-   @Override
-   public String getShortName(){
-      String name = getName();
-      name = name.replace("LASER", "LAS");
-      name = name.replace("LARGE ", "L");
-      name = name.replace("LRG ", "L");
-      name = name.replace("SML ", "S");
-      name = name.replace("SMALL ", "S");
-      name = name.replace("MED ", "M");
-      name = name.replace("MEDIUM ", "M");
-      name = name.replace("PULSE ", "P");
-      return name;
-   }
+    @Override
+    public String getShortName() {
+        String name = getName();
+        name = name.replace("LASER", "LAS");
+        name = name.replace("LARGE ", "L");
+        name = name.replace("LRG ", "L");
+        name = name.replace("SML ", "S");
+        name = name.replace("SMALL ", "S");
+        name = name.replace("MED ", "M");
+        name = name.replace("MEDIUM ", "M");
+        name = name.replace("PULSE ", "P");
+        return name;
+    }
 
-   public final static Comparator<EnergyWeapon> DEFAULT_ORDERING;
-   static{
-      DEFAULT_ORDERING = new Comparator<EnergyWeapon>(){
-         Pattern p = Pattern.compile("(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
+    public final static Comparator<EnergyWeapon> DEFAULT_ORDERING;
+    static {
+        DEFAULT_ORDERING = new Comparator<EnergyWeapon>() {
+            Pattern p = Pattern.compile("(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
 
-         @Override
-         public int compare(EnergyWeapon aLhs, EnergyWeapon aRhs){
-            Matcher mLhs = p.matcher(aLhs.getName());
-            Matcher mRhs = p.matcher(aRhs.getName());
+            @Override
+            public int compare(EnergyWeapon aLhs, EnergyWeapon aRhs) {
+                Matcher mLhs = p.matcher(aLhs.getName());
+                Matcher mRhs = p.matcher(aRhs.getName());
 
-            if( mLhs.matches() && mRhs.matches() ){
-               // Group PPCs and Lasers together
-               int ppcVsLaser = mLhs.group(4).compareTo(mRhs.group(4));
-               if( ppcVsLaser == 0 ){
-                  // Group pulses together.
-                  if( mLhs.group(3) != null && mRhs.group(3) == null )
-                     return -1;
-                  else if( mLhs.group(3) == null && mRhs.group(3) != null )
-                     return 1;
+                if (mLhs.matches() && mRhs.matches()) {
+                    // Group PPCs and Lasers together
+                    int ppcVsLaser = mLhs.group(4).compareTo(mRhs.group(4));
+                    if (ppcVsLaser == 0) {
+                        // Group pulses together.
+                        if (mLhs.group(3) != null && mRhs.group(3) == null)
+                            return -1;
+                        else if (mLhs.group(3) == null && mRhs.group(3) != null)
+                            return 1;
 
-                  // Group ER together
-                  if( mLhs.group(1) != null && mRhs.group(1) == null )
-                     return -1;
-                  else if( mLhs.group(1) == null && mRhs.group(1) != null )
-                     return 1;
+                        // Group ER together
+                        if (mLhs.group(1) != null && mRhs.group(1) == null)
+                            return -1;
+                        else if (mLhs.group(1) == null && mRhs.group(1) != null)
+                            return 1;
 
-                  // Order by size
-                  if( mLhs.group(2) != null && mRhs.group(2) != null ){
-                     return -Integer.compare(sizeOf(mLhs.group(2)), sizeOf(mRhs.group(2)));
-                  }
-               }
-               return -ppcVsLaser;
+                        // Order by size
+                        if (mLhs.group(2) != null && mRhs.group(2) != null) {
+                            return -Integer.compare(sizeOf(mLhs.group(2)), sizeOf(mRhs.group(2)));
+                        }
+                    }
+                    return -ppcVsLaser;
+                }
+                else if (mLhs.matches() && !mRhs.matches()) {
+                    return -1;
+                }
+                else if (!mLhs.matches() && mRhs.matches()) {
+                    return 1;
+                }
+
+                return aLhs.getName().compareTo(aRhs.getName()); // Fall back to lexicographical comparison.
             }
-            else if( mLhs.matches() && !mRhs.matches() ){
-               return -1;
+
+            int sizeOf(String aSize) {
+                if (aSize.equals("LARGE") || aSize.equals("LRG"))
+                    return 3;
+                else if (aSize.equals("MEDIUM") || aSize.equals("MED"))
+                    return 2;
+                else if (aSize.equals("SMALL") || aSize.equals("SML"))
+                    return 1;
+                else
+                    throw new RuntimeException("Unknown laser size!");
             }
-            else if( !mLhs.matches() && mRhs.matches() ){
-               return 1;
-            }
+        };
+    }
 
-            return aLhs.getName().compareTo(aRhs.getName()); // Fall back to lexicographical comparison.
-         }
-
-         int sizeOf(String aSize){
-            if( aSize.equals("LARGE") || aSize.equals("LRG") )
-               return 3;
-            else if( aSize.equals("MEDIUM") || aSize.equals("MED") )
-               return 2;
-            else if( aSize.equals("SMALL") || aSize.equals("SML") )
-               return 1;
-            else
-               throw new RuntimeException("Unknown laser size!");
-         }
-      };
-   }
-
-   public double getDuration(){
-      return burnTime;
-   }
+    public double getDuration(Collection<Modifier> aModifiers) {
+        return burnTime.value(aModifiers);
+    }
 }

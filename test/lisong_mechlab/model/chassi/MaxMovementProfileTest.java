@@ -15,14 +15,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import lisong_mechlab.model.modifiers.Modifier;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -32,61 +35,62 @@ import org.mockito.Mockito;
  * 
  * @author Li Song
  */
-public class MaxMovementProfileTest{
+public class MaxMovementProfileTest {
 
-   @Test 
-   public void testGetMovementArchetype(){
-      MovementProfile base = Mockito.mock(MovementProfile.class);
-      Quirks arm1 = Mockito.mock(Quirks.class);
-      Quirks arm2 = Mockito.mock(Quirks.class);
-      Quirks leg1 = Mockito.mock(Quirks.class);
-      Quirks leg2 = Mockito.mock(Quirks.class);
+    @Test
+    public void testGetMovementArchetype() {
+        MovementProfile base = Mockito.mock(MovementProfile.class);
+        Collection<Modifier> arm1 = new ArrayList<>();
+        Collection<Modifier> arm2 = new ArrayList<>();
+        Collection<Modifier> leg1 = new ArrayList<>();
+        Collection<Modifier> leg2 = new ArrayList<>();
 
-      List<Quirks> arm = new ArrayList<>();
-      List<Quirks> leg = new ArrayList<>();
-      List<List<Quirks>> groups = new ArrayList<>();
-      groups.add(arm);
-      groups.add(leg);
-      arm.add(arm1);
-      arm.add(arm2);
-      leg.add(leg1);
-      leg.add(leg2);
+        List<Collection<Modifier>> arm = new ArrayList<>();
+        List<Collection<Modifier>> leg = new ArrayList<>();
+        List<List<Collection<Modifier>>> groups = new ArrayList<>();
+        groups.add(arm);
+        groups.add(leg);
+        arm.add(arm1);
+        arm.add(arm2);
+        leg.add(leg1);
+        leg.add(leg2);
 
-      MaxMovementProfile cut = new MaxMovementProfile(base, groups);
+        MaxMovementProfile cut = new MaxMovementProfile(base, groups);
 
-      Mockito.when(base.getMovementArchetype()).thenReturn(MovementArchetype.Small);
+        Mockito.when(base.getMovementArchetype()).thenReturn(MovementArchetype.Small);
 
-      assertEquals(MovementArchetype.Small, cut.getMovementArchetype());
-   }
+        assertEquals(MovementArchetype.Small, cut.getMovementArchetype());
+    }
 
-   @Test
-   public void testGetMaxMovementSpeed(){
-      MovementProfile base = Mockito.mock(MovementProfile.class);
-      Quirks arm1 = Mockito.mock(Quirks.class);
-      Quirks arm2 = Mockito.mock(Quirks.class);
-      Quirks leg1 = Mockito.mock(Quirks.class);
-      Quirks leg2 = Mockito.mock(Quirks.class);
+    @Test
+    public void testGetMaxMovementSpeed() {
+        MovementProfile base = Mockito.mock(MovementProfile.class);
+        Collection<Modifier> arm1 = Mockito.mock(Collection.class);
+        Collection<Modifier> arm2 = Mockito.mock(Collection.class);
+        Collection<Modifier> leg1 = Mockito.mock(Collection.class);
+        Collection<Modifier> leg2 = Mockito.mock(Collection.class);
+        
+        List<Collection<Modifier>> arm = new ArrayList<>();
+        List<Collection<Modifier>> leg = new ArrayList<>();
+        List<Collection<Modifier>> torso = new ArrayList<>(); // Empty groups should be handled correctly
+        List<List<Collection<Modifier>>> groups = new ArrayList<>();
+        groups.add(arm);
+        groups.add(leg);
+        groups.add(torso);
+        arm.add(arm1);
+        arm.add(arm2);
+        leg.add(leg1);
+        leg.add(leg2);
 
-      List<Quirks> arm = new ArrayList<>();
-      List<Quirks> leg = new ArrayList<>();
-      List<Quirks> torso = new ArrayList<>(); // Empty groups should be handled correctly
-      List<List<Quirks>> groups = new ArrayList<>();
-      groups.add(arm);
-      groups.add(leg);
-      groups.add(torso);
-      arm.add(arm1);
-      arm.add(arm2);
-      leg.add(leg1);
-      leg.add(leg2);
+        MaxMovementProfile cut = new MaxMovementProfile(base, groups);
 
-      MaxMovementProfile cut = new MaxMovementProfile(base, groups);
+        Mockito.when(base.getTorsoPitchSpeed(null)).thenReturn(3.0); // Base value
+        Mockito.when(base.getTorsoPitchSpeed(arm1)).thenReturn(2.8);
+        Mockito.when(base.getTorsoPitchSpeed(arm2)).thenReturn(3.1);
+        Mockito.when(base.getTorsoPitchSpeed(leg1)).thenReturn(3.3);
+        Mockito.when(base.getTorsoPitchSpeed(leg2)).thenReturn(3.6);
 
-      Mockito.when(base.getTorsoPitchSpeed()).thenReturn(3.0);
-      Mockito.when(arm1.extraTorsoPitchSpeed(3.0)).thenReturn(-0.1);
-      Mockito.when(arm2.extraTorsoPitchSpeed(3.0)).thenReturn(0.2);
-      Mockito.when(leg1.extraTorsoPitchSpeed(3.0)).thenReturn(0.4);
-      Mockito.when(leg2.extraTorsoPitchSpeed(3.0)).thenReturn(0.3);
-
-      assertEquals(3.6, cut.getTorsoPitchSpeed(), 0.0);
-   }
+        // Arm 2 + Leg 2 will give max of 0.1 + 0.6
+        assertEquals(3.7, cut.getTorsoPitchSpeed(null), Math.ulp(4.0));
+    }
 }

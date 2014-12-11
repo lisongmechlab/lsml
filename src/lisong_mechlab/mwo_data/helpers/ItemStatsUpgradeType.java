@@ -15,48 +15,48 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ItemStatsUpgradeType extends ItemStatsModule{
-   public static class ArmorTypeStatsType{
-      @XStreamAsAttribute
-      public double armorPerTon;
-      @XStreamAsAttribute
-      public int    containerId;
-   }
+public class ItemStatsUpgradeType extends ItemStatsModule {
+    public static class ArmorTypeStatsType {
+        @XStreamAsAttribute
+        public double armorPerTon;
+        @XStreamAsAttribute
+        public int    containerId;
+    }
 
-   public static class SlotUsageType{
-      @XStreamAsAttribute
-      public int slots;
-      @XStreamAsAttribute
-      public int fixedSlotItem;
-   }
+    public static class SlotUsageType {
+        @XStreamAsAttribute
+        public int slots;
+        @XStreamAsAttribute
+        public int fixedSlotItem;
+    }
 
-   public static class StructureTypeStatsType{
-      @XStreamAsAttribute
-      public double weightPerTon;
-   }
+    public static class StructureTypeStatsType {
+        @XStreamAsAttribute
+        public double weightPerTon;
+    }
 
-   public static class HeatSinkTypeStatsType{
-      @XStreamAsAttribute
-      public int compatibleHeatSink;
-   }
+    public static class HeatSinkTypeStatsType {
+        @XStreamAsAttribute
+        public int compatibleHeatSink;
+    }
 
-   public static class ArtemisTypeStatsType{
-      @XStreamAsAttribute
-      public int    extraSlots;
-      @XStreamAsAttribute
-      public double extraTons;
-   }
+    public static class ArtemisTypeStatsType {
+        @XStreamAsAttribute
+        public int    extraSlots;
+        @XStreamAsAttribute
+        public double extraTons;
+    }
 
-   public ArmorTypeStatsType     ArmorTypeStats;
-   public StructureTypeStatsType StructureTypeStats;
-   public HeatSinkTypeStatsType  HeatSinkTypeStats;
-   public ArtemisTypeStatsType   ArtemisTypeStats;
-   public SlotUsageType          SlotUsage;
+    public ArmorTypeStatsType     ArmorTypeStats;
+    public StructureTypeStatsType StructureTypeStats;
+    public HeatSinkTypeStatsType  HeatSinkTypeStats;
+    public ArtemisTypeStatsType   ArtemisTypeStats;
+    public SlotUsageType          SlotUsage;
 
 }

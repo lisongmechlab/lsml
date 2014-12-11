@@ -15,11 +15,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
@@ -30,27 +31,27 @@ import org.junit.Test;
  * 
  * @author Li Song
  */
-public class OmniPodDBTest{
+public class OmniPodDBTest {
 
-   @Test
-   public void testLoadOmniPod_ECM(){
-      OmniPod kfx_c_ra = OmniPodDB.lookup(30192);
-      
-      assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ENERGY));
-      assertEquals(3, kfx_c_ra.getHardPointCount(HardPointType.AMS));
-      assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ECM));
-   }
-   
-   @Test
-   public void testLoadOmniPod_Togglables(){
-      OmniPod ans = OmniPodDB.lookup(30077); // Kitfox Prime Right Arm
-      
-      assertEquals(2, ans.getToggleableItems().size());
-   }
-   
-   @Test
-   public void testLookup_BySeries(){
-      Collection<OmniPod> ans = OmniPodDB.lookup("kItFox", Location.RightArm);
-      assertTrue(ans.size() >= 4);
-   }
+    @Test
+    public void testLoadOmniPod_ECM() {
+        OmniPod kfx_c_ra = OmniPodDB.lookup(30192);
+
+        assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ENERGY));
+        assertEquals(3, kfx_c_ra.getHardPointCount(HardPointType.AMS));
+        assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ECM));
+    }
+
+    @Test
+    public void testLoadOmniPod_Togglables() {
+        OmniPod ans = OmniPodDB.lookup(30077); // Kitfox Prime Right Arm
+
+        assertEquals(2, ans.getToggleableItems().size());
+    }
+
+    @Test
+    public void testLookup_BySeries() {
+        Collection<OmniPod> ans = OmniPodDB.lookup("kItFox", Location.RightArm);
+        assertTrue(ans.size() >= 4);
+    }
 }

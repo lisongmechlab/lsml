@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
@@ -26,36 +26,34 @@ import lisong_mechlab.model.upgrades.OpSetGuidanceType;
 import lisong_mechlab.model.upgrades.OpSetHeatSinkType;
 import lisong_mechlab.model.upgrades.OpSetStructureType;
 import lisong_mechlab.model.upgrades.UpgradeDB;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.CompositeOperation;
+import lisong_mechlab.util.message.MessageDelivery;
 
 /**
  * This operation removes all armor, upgrades and items from a {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
-public class OpStripLoadout extends CompositeOperation{
-   protected final MessageXBar    xBar;
-   protected final LoadoutBase<?> loadout;
+public class OpStripLoadout extends CompositeOperation {
+    protected final LoadoutBase<?> loadout;
 
-   public OpStripLoadout(LoadoutBase<?> aLoadout, MessageXBar aXBar){
-      super("strip mech");
-      loadout = aLoadout;
-      xBar = aXBar;
-   }
+    public OpStripLoadout(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
+        super("strip mech", aMessageDelivery);
+        loadout = aLoadout;
+    }
 
-   @Override
-   public void buildOperation(){
-      for(ConfiguredComponentBase component : loadout.getComponents()){
-         addOp(new OpStripComponent(xBar, loadout, component));
-      }
+    @Override
+    public void buildOperation() {
+        for (ConfiguredComponentBase component : loadout.getComponents()) {
+            addOp(new OpStripComponent(messageBuffer, loadout, component));
+        }
 
-      if( loadout instanceof LoadoutStandard ){
-         LoadoutStandard loadoutStandard = (LoadoutStandard)loadout;
-         addOp(new OpSetStructureType(xBar, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
-         addOp(new OpSetGuidanceType(xBar, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
-         addOp(new OpSetArmorType(xBar, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
-         addOp(new OpSetHeatSinkType(xBar, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
-      }
-   }
+        if (loadout instanceof LoadoutStandard) {
+            LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+            addOp(new OpSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
+            addOp(new OpSetGuidanceType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
+            addOp(new OpSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
+            addOp(new OpSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
+        }
+    }
 }

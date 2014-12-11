@@ -3,20 +3,21 @@ apply plugin: 'application'
 apply plugin: 'launch4j'
 apply plugin: 'eclipse'
 
-gradle.taskGraph.whenReady { taskGraph ->
-  if (!taskGraph.hasTask(release)) {
-    version = '(develop)'
-  }
-}
+/* ----------------------------------------------------------------------------
+ * Build configuration
+ * --------------------------------------------------------------------------*/
+buildDir = 'build/gradle'
+libsDirName = project.rootDir.toString() + '/lib'
 
+/* ----------------------------------------------------------------------------
+ * General project configuration
+ * --------------------------------------------------------------------------*/
 applicationName = 'Li Song Mechlab'
 archivesBaseName = 'lsml'
-libsDirName = project.rootDir.toString() + '/lib'
 mainClassName = 'lisong_mechlab.view.ProgramInit'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
-
-buildDir = 'build/gradle'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets {
   main {
@@ -34,6 +35,9 @@ sourceSets {
   }
 }
 
+/* ----------------------------------------------------------------------------
+ * Dependencies
+ * --------------------------------------------------------------------------*/
 repositories {
   mavenCentral()
 }
@@ -42,6 +46,43 @@ dependencies {
   compile 'com.thoughtworks.xstream:xstream:1.4.7+', 'org.jfree:jfreechart:1.+', 'net.java.dev.jna:jna:4.0.0+'
   testCompile 'junit:junit:4+', 'org.mockito:mockito-all:1.9.5+', 'pl.pragmatists:JUnitParams:1.0.2+'
 }
+
+/* ----------------------------------------------------------------------------
+ * Eclipse project configuration
+ * --------------------------------------------------------------------------*/
+eclipse {
+	jdt {
+		file {
+			withProperties { properties ->
+				
+				Properties formatter = new Properties()
+				new File("eclipse_settings").withInputStream { is -> 
+					formatter.load(is)
+				}
+					
+				for( String propertyName : formatter.propertyNames()){
+					properties.setProperty(propertyName, formatter.getProperty(propertyName));
+				}
+			}
+		}
+	}
+}
+
+
+gradle.taskGraph.whenReady { taskGraph ->
+  if (!taskGraph.hasTask(release)) {
+    version = '(develop)'
+  }
+}
+
+
+/* ----------------------------------------------------------------------------
+ * Release Management
+ * --------------------------------------------------------------------------*/
+task release << {
+  println "Building release: " + version
+}
+
 
 jar {
   destinationDir = file('build')
@@ -79,9 +120,6 @@ buildscript {
   }
 }
 
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
-
 task wixCandle64(type: Exec) {
   workingDir 'build'
   executable 'candle'
@@ -93,8 +131,6 @@ task wixLight64(type: Exec) {
   executable 'light'
   args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_64bit.msi'
 }
-
-wixLight64.dependsOn(wixCandle64);
 
 task wixCandle32(type: Exec) {
   workingDir 'build'
@@ -108,12 +144,8 @@ task wixLight32(type: Exec) {
   args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_32bit.msi'
 }
 
+wixLight64.dependsOn(wixCandle64);
 wixLight32.dependsOn(wixCandle32);
-    
-task release() {
-  println "Building release: " + version
-}
-
 release.dependsOn(jar)
 release.dependsOn('launch4j')
 release.dependsOn(wixLight32)

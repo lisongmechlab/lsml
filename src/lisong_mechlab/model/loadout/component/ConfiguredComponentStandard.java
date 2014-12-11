@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout.component;
 
@@ -27,6 +27,9 @@ import lisong_mechlab.model.chassi.HardPoint;
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ItemDB;
+import lisong_mechlab.model.loadout.EquipResult;
+import lisong_mechlab.model.loadout.EquipResult.Type;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 
 /**
@@ -34,46 +37,58 @@ import lisong_mechlab.model.loadout.LoadoutStandard;
  * 
  * @author Li Song
  */
-public class ConfiguredComponentStandard extends ConfiguredComponentBase{
+public class ConfiguredComponentStandard extends ConfiguredComponentBase {
 
-   public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aAutoArmor){
-      super(aInternalPart, aAutoArmor);
-   }
+    public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aAutoArmor) {
+        super(aInternalPart, aAutoArmor);
+    }
 
-   public ConfiguredComponentStandard(ConfiguredComponentStandard aComponent){
-      super(aComponent);
-   }
+    public ConfiguredComponentStandard(ConfiguredComponentStandard aComponent) {
+        super(aComponent);
+    }
 
-   @Override
-   public boolean canAddItem(Item aItem){
-      if( aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax() ){
-         return true;
-      }
-      return super.canAddItem(aItem);
-   }
+    @Override
+    public EquipResult canEquip(Item aItem) {
+        EquipResult superResult = super.canEquip(aItem);
+        if(superResult != EquipResult.SUCCESS){
+            return superResult;
+        }
+        
+        if (aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax()) {
+            return EquipResult.SUCCESS;
+        }
+        
+        if (aItem == ItemDB.CASE && getItemsEquipped().contains(ItemDB.CASE))
+            return EquipResult.make(getInternalComponent().getLocation(), Type.ComponentAlreadyHasCase);
 
-   @Override
-   public int getHardPointCount(HardPointType aHardpointType){
-      return getInternalComponent().getHardPointCount(aHardpointType);
-   }
+        if (getSlotsFree() < aItem.getNumCriticalSlots()) {
+            return EquipResult.make(getInternalComponent().getLocation(), Type.NotEnoughSlots);
+        }
+        return EquipResult.SUCCESS;
+    }
 
-   @Override
-   public Collection<HardPoint> getHardPoints(){
-      return getInternalComponent().getHardPoints();
-   }
+    @Override
+    public int getHardPointCount(HardPointType aHardpointType) {
+        return getInternalComponent().getHardPointCount(aHardpointType);
+    }
 
-   @Override
-   public List<Item> getItemsFixed(){
-      return getInternalComponent().getFixedItems();
-   }
+    @Override
+    public Collection<HardPoint> getHardPoints() {
+        return getInternalComponent().getHardPoints();
+    }
 
-   @Override
-   public ComponentStandard getInternalComponent(){
-      return (ComponentStandard)super.getInternalComponent();
-   }
+    @Override
+    public List<Item> getItemsFixed() {
+        return getInternalComponent().getFixedItems();
+    }
 
-   @Override
-   public boolean hasMissileBayDoors(){
-      return getInternalComponent().hasMissileBayDoors();
-   }
+    @Override
+    public ComponentStandard getInternalComponent() {
+        return (ComponentStandard) super.getInternalComponent();
+    }
+
+    @Override
+    public boolean hasMissileBayDoors() {
+        return getInternalComponent().hasMissileBayDoors();
+    }
 }

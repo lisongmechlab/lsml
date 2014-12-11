@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics.helpers;
 
@@ -26,17 +26,17 @@ package lisong_mechlab.model.metrics.helpers;
  * 
  * @author Li Song
  */
-public class IntegratedImpulseTrain implements IntegratedSignal{
-   private final double period;
-   private final double amplitude;
+public class IntegratedImpulseTrain implements IntegratedSignal {
+    private final double period;
+    private final double amplitude;
 
-   public IntegratedImpulseTrain(double aPeriod, double aAmplitude){
-      period = aPeriod;
-      amplitude = aAmplitude;
-   }
+    public IntegratedImpulseTrain(double aPeriod, double aAmplitude) {
+        period = aPeriod;
+        amplitude = aAmplitude;
+    }
 
-   @Override
-   public double integrateFromZeroTo(double aTime){
-      return (int)(aTime / period + 1) * amplitude;
-   }
+    @Override
+    public double integrateFromZeroTo(double aTime) {
+        return (int) (aTime / period + 1) * amplitude;
+    }
 }

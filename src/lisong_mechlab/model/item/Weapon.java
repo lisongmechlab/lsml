@@ -15,334 +15,272 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lisong_mechlab.model.Efficiencies;
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsWeapon;
+import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class Weapon extends HeatSource{
-   public static final int RANGE_ULP_FUZZ = 5;
+public class Weapon extends HeatSource {
+    public static final int RANGE_ULP_FUZZ = 5;
 
-   @XStreamAsAttribute
-   private final double    damagePerProjectile;
-   @XStreamAsAttribute
-   private final double    cycleTime;
-   @XStreamAsAttribute
-   private final double    rangeZero;
-   @XStreamAsAttribute
-   private final double    rangeMin;
-   @XStreamAsAttribute
-   private final double    rangeLong;
-   @XStreamAsAttribute
-   private final double    rangeMax;
-   @XStreamAsAttribute
-   private final double    fallOffExponent;
-   @XStreamAsAttribute
-   private final int       projectilesPerRound;
-   @XStreamAsAttribute
-   private final int       roundsPerShot;
-   @XStreamAsAttribute
-   private final int       ghostHeatGroupId;
-   @XStreamAsAttribute
-   private final double    ghostHeatMultiplier;
-   @XStreamAsAttribute
-   private final int       ghostHeatFreeAlpha;
-   @XStreamAsAttribute
-   private final double    projectileSpeed;
+    private final Attribute cooldown;
+    private final Attribute rangeZero;
+    private final Attribute rangeMin;
+    private final Attribute rangeLong;
+    private final Attribute rangeMax;
+    @XStreamAsAttribute
+    private final double    fallOffExponent;
 
-   public Weapon(ItemStatsWeapon aStatsWeapon, HardPointType aHardpointType){
-      super(aStatsWeapon, aHardpointType, aStatsWeapon.WeaponStats.slots, aStatsWeapon.WeaponStats.tons, aStatsWeapon.WeaponStats.heat,
-            aStatsWeapon.WeaponStats.Health);
-      damagePerProjectile = aStatsWeapon.WeaponStats.damage;
-      if( aStatsWeapon.WeaponStats.cooldown <= 0.0 ){
-         // Some weapons are troublesome in that they have zero cooldown in the data files.
-         // These include: Machine Gun, Flamer, TAG
-         if( aStatsWeapon.WeaponStats.rof > 0.0 ){
-            cycleTime = 1.0 / aStatsWeapon.WeaponStats.rof;
-         }
-         else if( aStatsWeapon.WeaponStats.type.toLowerCase().equals("energy") ){
-            cycleTime = 1;
-         }
-         else{
-            cycleTime = 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 = 0.10375
-         }
-      }
-      else{
-         cycleTime = aStatsWeapon.WeaponStats.cooldown;
-      }
-      rangeZero = aStatsWeapon.WeaponStats.nullRange;
-      rangeMin = aStatsWeapon.WeaponStats.minRange;
-      rangeMax = aStatsWeapon.WeaponStats.maxRange;
-      rangeLong = aStatsWeapon.WeaponStats.longRange;
-      fallOffExponent = aStatsWeapon.WeaponStats.falloffexponent != 0 ? aStatsWeapon.WeaponStats.falloffexponent : 1.0;
+    /** How many rounds of ammo per shot of the weapon. */
+    @XStreamAsAttribute
+    private final int       roundsPerShot;
+    /** How much damage one projectile does. */
+    @XStreamAsAttribute
+    private final double    damagePerProjectile;
+    /** How many projectile per one round of ammo. */
+    @XStreamAsAttribute
+    private final int       projectilesPerRound;
+    @XStreamAsAttribute
+    private final double    projectileSpeed;
+    @XStreamAsAttribute
+    private final int       ghostHeatGroupId;
+    @XStreamAsAttribute
+    private final double    ghostHeatMultiplier;
+    @XStreamAsAttribute
+    private final int       ghostHeatFreeAlpha;
 
-      roundsPerShot = aStatsWeapon.WeaponStats.numFiring;
-      projectilesPerRound = aStatsWeapon.WeaponStats.numPerShot > 0 ? aStatsWeapon.WeaponStats.numPerShot : 1;
-      projectileSpeed = aStatsWeapon.WeaponStats.speed;
+    public Weapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardPointType, int aHP, Faction aFaction, Attribute aHeat, Attribute aCooldown,
+            Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
+            double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
+            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
+        cooldown = aCooldown;
+        rangeZero = aRangeZero;
+        rangeMin = aRangeMin;
+        rangeLong = aRangeLong;
+        rangeMax = aRangeMax;
+        fallOffExponent = aFallOffExponent;
+        roundsPerShot = aRoundsPerShot;
+        damagePerProjectile = aDamagePerProjectile;
+        projectilesPerRound = aProjectilesPerRound;
+        projectileSpeed = aProjectileSpeed;
+        ghostHeatGroupId = aGhostHeatGroupId;
+        ghostHeatMultiplier = aGhostHeatMultiplier;
+        ghostHeatFreeAlpha = aGhostHeatMaxFreeAlpha;
+    }
 
-      if( aStatsWeapon.WeaponStats.minheatpenaltylevel != 0 ){
-         ghostHeatGroupId = aStatsWeapon.WeaponStats.heatPenaltyID;
-         ghostHeatMultiplier = aStatsWeapon.WeaponStats.heatpenalty;
-         ghostHeatFreeAlpha = aStatsWeapon.WeaponStats.minheatpenaltylevel - 1;
-      }
-      else{
-         ghostHeatGroupId = -1;
-         ghostHeatMultiplier = 0;
-         ghostHeatFreeAlpha = -1;
-      }
-   }
+    public boolean isOffensive() {
+        return this != ItemDB.AMS && this != ItemDB.C_AMS;
+    }
 
-   public boolean isOffensive(){
-      return this != ItemDB.AMS && this != ItemDB.C_AMS;
-   }
+    /**
+     * 0 = ungrouped 1 = PPC, ER PPC 2 = LRM20/15/10 3 = LL, ER LL, LPL 4 = SRM6 SRM4
+     * 
+     * @return The ID of the group this weapon belongs to.
+     */
+    public int getGhostHeatGroup() {
+        return ghostHeatGroupId;
+    }
 
-   /**
-    * 0 = ungrouped 1 = PPC, ER PPC 2 = LRM20/15/10 3 = LL, ER LL, LPL 4 = SRM6 SRM4
-    * 
-    * @return The ID of the group this weapon belongs to.
-    */
-   public int getGhostHeatGroup(){
-      return ghostHeatGroupId;
-   }
+    public double getGhostHeatMultiplier() {
+        return ghostHeatMultiplier;
+    }
 
-   public double getGhostHeatMultiplier(){
-      return ghostHeatMultiplier;
-   }
+    public int getGhostHeatMaxFreeAlpha() {
+        return ghostHeatFreeAlpha;
+    }
 
-   public int getGhostHeatMaxFreeAlpha(){
-      return ghostHeatFreeAlpha;
-   }
+    public double getDamagePerShot() {
+        return damagePerProjectile * projectilesPerRound * roundsPerShot;
+    }
 
-   public double getDamagePerShot(){
-      return damagePerProjectile * projectilesPerRound * roundsPerShot;
-   }
+    public int getAmmoPerPerShot() {
+        return roundsPerShot;
+    }
 
-   public int getAmmoPerPerShot(){
-      return roundsPerShot;
-   }
+    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+        return getCoolDown(aModifiers);
+    }
 
-   public double getSecondsPerShot(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
-      return getCoolDown(aEfficiencies, aModifiers);
-   }
+    public double getCoolDown(Collection<Modifier> aModifiers) {
+        return cooldown.value(aModifiers);
+    }
 
-   public double getCoolDown(Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
-      double a = 0;
-      if( aModifiers != null ){
-         for(WeaponModifier mod : aModifiers){
-            if( mod.affectsWeapon(this) ){
-               a += mod.extraCooldown(this, cycleTime, null);
+    public double getProjectileSpeed() {
+        return projectileSpeed;
+    }
+
+    public double getRangeZero(Collection<Modifier> aModifiers) {
+        if (rangeZero.value(null) == rangeMin.value(null))
+            return Math.nextAfter(rangeZero.value(aModifiers), Double.NEGATIVE_INFINITY);
+        return rangeZero.value(aModifiers);
+    }
+
+    public double getRangeMin(Collection<Modifier> aModifiers) {
+        return rangeMin.value(aModifiers);
+    }
+
+    public double getRangeMax(Collection<Modifier> aModifiers) {
+        if (rangeMax.value(null) == rangeLong.value(null))
+            return Math.nextUp(rangeMax.value(aModifiers));
+        return rangeMax.value(aModifiers);
+    }
+
+    public double getRangeLong(Collection<Modifier> aModifiers) {
+        return rangeLong.value(aModifiers);
+    }
+
+    public double getRangeEffectivity(double range, Collection<Modifier> aModifiers) {
+        // Assume linear fall off
+        if (range < getRangeZero(aModifiers))
+            return 0;
+        else if (range < getRangeMin(aModifiers))
+            return Math.pow((range - getRangeZero(aModifiers)) / (getRangeMin(aModifiers) - getRangeZero(aModifiers)),
+                    fallOffExponent);
+        else if (range <= getRangeLong(aModifiers))
+            return 1.0;
+        else if (range < getRangeMax(aModifiers)) {
+            // Presumably long range fall off can also be exponential, we'll wait until there is evidence of the fact.
+            return 1.0 - (range - getRangeLong(aModifiers)) / (getRangeMax(aModifiers) - getRangeLong(aModifiers));
+        }
+        else
+            return 0;
+    }
+
+    /**
+     * Calculates an arbitrary statistic for the weapon based on the string. The string format is (regexp):
+     * "[dsthc]+(/[dsthc]+)?" where d=damage, s=seconds, t=tons, h=heat, c=criticalslots. For example "d/hhs" is damage
+     * per heat^2 second.
+     * 
+     * @param aWeaponStat
+     *            A string specifying the statistic to be calculated. Must match the regexp pattern
+     *            "[dsthc]+(/[dsthc]+)?".
+     * @param aModifiers
+     *            A list of {@link Modifier}s to take into account.
+     * @return The calculated statistic.
+     */
+    public double getStat(String aWeaponStat, Collection<Modifier> aModifiers) {
+        double nominator = 1;
+        int index = 0;
+        while (index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/') {
+            switch (aWeaponStat.charAt(index)) {
+                case 'd':
+                    nominator *= getDamagePerShot();
+                    break;
+                case 's':
+                    nominator *= getSecondsPerShot(aModifiers);
+                    break;
+                case 't':
+                    nominator *= getMass();
+                    break;
+                case 'h':
+                    nominator *= getHeat(aModifiers);
+                    break;
+                case 'c':
+                    nominator *= getNumCriticalSlots();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
             }
-         }
-      }
+            index++;
+        }
 
-      double factor = (null == aEfficiencies) ? 1.0 : aEfficiencies.getWeaponCycleTimeModifier();
-      return (cycleTime + a) * factor;
-   }
-
-   public double getProjectileSpeed(){
-      return projectileSpeed;
-   }
-
-   public double getRangeZero(){
-      if( rangeZero == rangeMin )
-         return rangeZero - Math.ulp(rangeMin);
-      return rangeZero;
-   }
-
-   public double getRangeMin(){
-      return rangeMin;
-   }
-
-   public double getRangeMax(Collection<WeaponModifier> aModifiers){
-      double a = 0;
-      if( aModifiers != null ){
-         for(WeaponModifier mod : aModifiers){
-            if( mod.affectsWeapon(this) ){
-               a += mod.extraMaxRange(this, rangeMax, null);
+        index++; // Skip past the '/' if we encountered it, otherwise we'll be at the end of the string anyway.
+        double denominator = 1;
+        while (index < aWeaponStat.length()) {
+            switch (aWeaponStat.charAt(index)) {
+                case 'd':
+                    denominator *= getDamagePerShot();
+                    break;
+                case 's':
+                    denominator *= getSecondsPerShot(aModifiers);
+                    break;
+                case 't':
+                    denominator *= getMass();
+                    break;
+                case 'h':
+                    denominator *= getHeat(aModifiers);
+                    break;
+                case 'c':
+                    denominator *= getNumCriticalSlots();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
             }
-         }
-      }
+            index++;
+        }
+        if (nominator == 0.0 && denominator == 0.0) {
+            // We take the Brahmaguptan interpretation of 0/0 to be 0 (year 628).
+            return 0;
+        }
+        return nominator / denominator;
+    }
 
-      if( rangeMax == rangeLong )
-         a += Math.ulp(rangeMax + a);
+    public boolean hasSpread() {
+        return false;
+    }
 
-      return rangeMax + a;
-   }
+    public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
+    static {
+        DEFAULT_WEAPON_ORDERING = new Comparator<Item>() {
+            private final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
 
-   public double getRangeLong(Collection<WeaponModifier> aModifiers){
-      double a = 0;
-      if( aModifiers != null ){
-         for(WeaponModifier mod : aModifiers){
-            if( mod.affectsWeapon(this) ){
-               a += mod.extraLongRange(this, rangeLong, null);
+            @Override
+            public int compare(Item aLhs, Item aRhs) {
+                Matcher mLhs = p.matcher(aLhs.getName());
+                Matcher mRhs = p.matcher(aRhs.getName());
+
+                if (!mLhs.matches())
+                    throw new RuntimeException("LHS didn't match pattern! [" + aLhs.getName() + "]");
+
+                if (!mRhs.matches())
+                    throw new RuntimeException("RHS didn't match pattern! [" + aRhs.getName() + "]");
+
+                if (mLhs.group(1).equals(mRhs.group(1))) {
+                    // Same prefix
+                    String lhsSuffix = mLhs.group(2);
+                    String rhsSuffix = mRhs.group(2);
+                    if (lhsSuffix != null && lhsSuffix.length() > 0 && rhsSuffix != null && rhsSuffix.length() > 0)
+                        return -Integer.compare(Integer.parseInt(lhsSuffix), Integer.parseInt(rhsSuffix));
+                }
+                return mLhs.group(1).compareTo(mRhs.group(1));
             }
-         }
-      }
-      return rangeLong + a;
-   }
+        };
+    }
 
-   @Override
-   public double getHeat(Collection<WeaponModifier> aModifiers){
-      double a = 0;
-      if( aModifiers != null ){
-         for(WeaponModifier mod : aModifiers){
-            if( mod.affectsWeapon(this) ){
-               a += mod.extraWeaponHeat(this, super.getHeat(aModifiers), null);
-            }
+    /**
+     * @return <code>true</code> if this weapon has a non-linear fall off.
+     */
+    public boolean hasNonLinearFalloff() {
+        return 1.0 != fallOffExponent;
+    }
 
-         }
-      }
-      return super.getHeat(aModifiers) + a;
-   }
+    /**
+     * @return <code>true</code> if the Lower Arm Actuator (LAA) and/or Hand Actuator (HA) should be removed if this
+     *         weapon is equipped.
+     */
+    public boolean isLargeBore() {
+        return getAliases().contains(ModifiersDB.SEL_WEAPON_LARGE_BORE);
+    }
 
-   public double getRangeEffectivity(double range, Collection<WeaponModifier> aModifiers){
-      // Assume linear fall off
-      if( range < getRangeZero() )
-         return 0;
-      else if( range < getRangeMin() )
-         return Math.pow((range - getRangeZero()) / (getRangeMin() - getRangeZero()), fallOffExponent);
-      else if( range <= getRangeLong(aModifiers) )
-         return 1.0;
-      else if( range < getRangeMax(aModifiers) ){
-         // Presumably long range fall off can also be exponential, we'll wait until there is evidence of the fact.
-         return 1.0 - (range - getRangeLong(aModifiers)) / (getRangeMax(aModifiers) - getRangeLong(aModifiers));
-      }
-      else
-         return 0;
-   }
-
-   /**
-    * Calculates an arbitrary statistic for the weapon based on the string. The string format is (regexp):
-    * "[dsthc]+(/[dsthc]+)?" where d=damage, s=seconds, t=tons, h=heat, c=criticalslots. For example "d/hhs" is damage
-    * per heat^2 second.
-    * 
-    * @param aWeaponStat
-    *           A string specifying the statistic to be calculated. Must match the regexp pattern
-    *           "[dsthc]+(/[dsthc]+)?".
-    * @param aEfficiencies
-    *           Any {@link Efficiencies} that can affect the stats, can be <code>null</code> to assume no
-    *           {@link Efficiencies}.
-    * @param aModifiers
-    *           A list of pilot modules to take into account.
-    * @return The calculated statistic.
-    */
-   public double getStat(String aWeaponStat, Efficiencies aEfficiencies, Collection<WeaponModifier> aModifiers){
-      double nominator = 1;
-      int index = 0;
-      while( index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/' ){
-         switch( aWeaponStat.charAt(index) ){
-            case 'd':
-               nominator *= getDamagePerShot();
-               break;
-            case 's':
-               nominator *= getSecondsPerShot(aEfficiencies, aModifiers);
-               break;
-            case 't':
-               nominator *= getMass();
-               break;
-            case 'h':
-               nominator *= getHeat(aModifiers);
-               break;
-            case 'c':
-               nominator *= getNumCriticalSlots();
-               break;
-            default:
-               throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
-         }
-         index++;
-      }
-
-      index++; // Skip past the '/' if we encountered it, otherwise we'll be at the end of the string anyway.
-      double denominator = 1;
-      while( index < aWeaponStat.length() ){
-         switch( aWeaponStat.charAt(index) ){
-            case 'd':
-               denominator *= getDamagePerShot();
-               break;
-            case 's':
-               denominator *= getSecondsPerShot(aEfficiencies, aModifiers);
-               break;
-            case 't':
-               denominator *= getMass();
-               break;
-            case 'h':
-               denominator *= getHeat(aModifiers);
-               break;
-            case 'c':
-               denominator *= getNumCriticalSlots();
-               break;
-            default:
-               throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
-         }
-         index++;
-      }
-      if( nominator == 0.0 && denominator == 0.0 ){
-         // We take the Brahmaguptan interpretation of 0/0 to be 0 (year 628).
-         return 0;
-      }
-      return nominator / denominator;
-   }
-
-   public boolean hasSpread(){
-      return false;
-   }
-
-   public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
-   static{
-      DEFAULT_WEAPON_ORDERING = new Comparator<Item>(){
-         private final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
-
-         @Override
-         public int compare(Item aLhs, Item aRhs){
-            Matcher mLhs = p.matcher(aLhs.getName());
-            Matcher mRhs = p.matcher(aRhs.getName());
-
-            if( !mLhs.matches() )
-               throw new RuntimeException("LHS didn't match pattern! [" + aLhs.getName() + "]");
-
-            if( !mRhs.matches() )
-               throw new RuntimeException("RHS didn't match pattern! [" + aRhs.getName() + "]");
-
-            if( mLhs.group(1).equals(mRhs.group(1)) ){
-               // Same prefix
-               String lhsSuffix = mLhs.group(2);
-               String rhsSuffix = mRhs.group(2);
-               if( lhsSuffix != null && lhsSuffix.length() > 0 && rhsSuffix != null && rhsSuffix.length() > 0 )
-                  return -Integer.compare(Integer.parseInt(lhsSuffix), Integer.parseInt(rhsSuffix));
-            }
-            return mLhs.group(1).compareTo(mRhs.group(1));
-         }
-      };
-   }
-
-   /**
-    * @return <code>true</code> if this weapon has a non-linear fall off.
-    */
-   public boolean hasNonLinearFalloff(){
-      return 1.0 != fallOffExponent;
-   }
-
-   /**
-    * @return <code>true</code> if the Lower Arm Actuator (LAA) and/or Hand Actuator (HA) should be removed if this
-    *         weapon is equipped.
-    */
-   public boolean isLargeBore(){
-      boolean isLargeBore = false;
-      isLargeBore |= getName().toLowerCase().contains("ppc");
-      isLargeBore |= getName().toLowerCase().contains("gauss");
-      isLargeBore |= getName().toLowerCase().contains("ac/");
-      isLargeBore |= getName().toLowerCase().contains("x ac");
-      isLargeBore |= getName().toLowerCase().contains("10-x");
-      return isLargeBore;
-   }
+    /**
+     * @return A {@link Collection} of aliases for the weapon.
+     */
+    public Collection<String> getAliases() {
+        // All attributes have the same aliases, just pick one
+        return Collections.unmodifiableCollection(cooldown.getSelectors());
+    }
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics.helpers;
 
@@ -24,22 +24,22 @@ package lisong_mechlab.model.metrics.helpers;
  * 
  * @author Li Song
  */
-public class IntegratedPulseTrain implements IntegratedSignal{
-   private final double period;
-   private final double pulseWidth;
-   private final double amplitude;
+public class IntegratedPulseTrain implements IntegratedSignal {
+    private final double period;
+    private final double pulseWidth;
+    private final double amplitude;
 
-   public IntegratedPulseTrain(double aPeriod, double aPulseWidth, double aAmplitude){
-      period = aPeriod;
-      pulseWidth = aPulseWidth;
-      amplitude = aAmplitude;
-   }
+    public IntegratedPulseTrain(double aPeriod, double aPulseWidth, double aAmplitude) {
+        period = aPeriod;
+        pulseWidth = aPulseWidth;
+        amplitude = aAmplitude;
+    }
 
-   @Override
-   public double integrateFromZeroTo(double aTime){
-      int periods = (int)(aTime / period);
-      double sum = amplitude == 0.0 ? 0 : periods * pulseWidth * amplitude; // Whole periods this far
-      double partialTime = Math.min(aTime - periods * period, pulseWidth);
-      return sum + partialTime * amplitude;
-   }
+    @Override
+    public double integrateFromZeroTo(double aTime) {
+        int periods = (int) (aTime / period);
+        double sum = amplitude == 0.0 ? 0 : periods * pulseWidth * amplitude; // Whole periods this far
+        double partialTime = Math.min(aTime - periods * period, pulseWidth);
+        return sum + partialTime * amplitude;
+    }
 }

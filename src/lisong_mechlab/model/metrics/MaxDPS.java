@@ -15,40 +15,36 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
 import java.util.Collection;
 
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.Weapon;
-import lisong_mechlab.model.item.WeaponModifier;
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * This {@link Metric} calculates the maximal DPS a {@link LoadoutStandard} can output.
  * 
  * @author Li Song
  */
-public class MaxDPS extends RangeMetric{
-   public MaxDPS(LoadoutBase<?> aLoadout){
-      super(aLoadout);
-   }
+public class MaxDPS extends RangeMetric {
+    public MaxDPS(LoadoutBase<?> aLoadout) {
+        super(aLoadout);
+    }
 
-   @Override
-   public double calculate(double aRange){
-      double ans = 0;
-      Collection<WeaponModifier> modifiers = loadout.getWeaponModifiers();
-      for(Item item : loadout.getAllItems()){
-         if( item instanceof Weapon ){
-            Weapon weapon = (Weapon)item;
-            if( weapon.isOffensive() )
-               ans += weapon.getRangeEffectivity(aRange, modifiers)
-                      * weapon.getStat("d/s", loadout.getEfficiencies(), modifiers);
-         }
-      }
-      return ans;
-   }
+    @Override
+    public double calculate(double aRange) {
+        double ans = 0;
+        Collection<Modifier> modifiers = loadout.getModifiers();
+        for (Weapon weapon : loadout.items(Weapon.class)) {
+            if (weapon.isOffensive())
+                ans += weapon.getRangeEffectivity(aRange, modifiers) * weapon.getStat("d/s", modifiers);
+
+        }
+        return ans;
+    }
 }

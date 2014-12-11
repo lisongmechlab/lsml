@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -30,20 +30,20 @@ import org.mockito.Mockito;
  * 
  * @author Li Song
  */
-public class TimeToCoolTest{
+public class TimeToCoolTest {
 
-   @Test
-   public void testCalculate(){
-      HeatDissipation heatDissipation = Mockito.mock(HeatDissipation.class);
-      HeatCapacity heatCapacity = Mockito.mock(HeatCapacity.class);
+    @Test
+    public void testCalculate() {
+        HeatDissipation heatDissipation = Mockito.mock(HeatDissipation.class);
+        HeatCapacity heatCapacity = Mockito.mock(HeatCapacity.class);
 
-      double capacity = 60;
-      double dissipation = 2.4;
-      Mockito.when(heatDissipation.calculate()).thenReturn(dissipation);
-      Mockito.when(heatCapacity.calculate()).thenReturn(capacity);
+        double capacity = 60;
+        double dissipation = 2.4;
+        Mockito.when(heatDissipation.calculate()).thenReturn(dissipation);
+        Mockito.when(heatCapacity.calculate()).thenReturn(capacity);
 
-      TimeToCool cut = new TimeToCool(heatCapacity, heatDissipation);
+        TimeToCool cut = new TimeToCool(heatCapacity, heatDissipation);
 
-      assertEquals(capacity / (dissipation - Engine.ENGINE_HEAT_FULL_THROTTLE), cut.calculate(), 0.0);
-   }
+        assertEquals(capacity / (dissipation - Engine.ENGINE_HEAT_FULL_THROTTLE), cut.calculate(), 0.0);
+    }
 }

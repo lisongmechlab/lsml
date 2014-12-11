@@ -15,51 +15,72 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import lisong_mechlab.model.chassi.MovementProfile;
-import lisong_mechlab.model.helpers.MockLoadoutContainer;
-import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.ItemDB;
 
+import java.util.Collection;
+
+import lisong_mechlab.model.chassi.ChassisBase;
+import lisong_mechlab.model.chassi.MovementProfile;
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.modifiers.Modifier;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+/**
+ * Test suite for {@link TopSpeed}.
+ * 
+ * @author Li Song
+ */
 @RunWith(MockitoJUnitRunner.class)
-public class TopSpeedTest{
-   MockLoadoutContainer mlc        = new MockLoadoutContainer();
-   TopSpeed             cut = new TopSpeed(mlc.loadout);
+public class TopSpeedTest {
+    int                  mass      = 30;
+    int                  rating    = 300;
+    double               moveSpeed = 4.0;
+    @Mock
+    MovementProfile      movementProfile;
+    @Mock
+    Engine               engine;
+    @Mock
+    LoadoutBase<?>       loadout;
+    @Mock
+    Collection<Modifier> modifiers;
+    @Mock
+    ChassisBase          chassis;
 
-   @Test
-   public void testCalculate_noengine() throws Exception{
-      when(mlc.loadout.getEngine()).thenReturn(null);
-      assertEquals(0, cut.calculate(), 0.0);
-   }
+    @Before
+    public void setup() {
+        Mockito.when(engine.getRating()).thenReturn(rating);
+        Mockito.when(chassis.getMassMax()).thenReturn(mass);
+        Mockito.when(movementProfile.getMaxMovementSpeed(modifiers)).thenReturn(moveSpeed);
+        Mockito.when(loadout.getModifiers()).thenReturn(modifiers);
+        Mockito.when(loadout.getChassis()).thenReturn(chassis);
+        Mockito.when(loadout.getEngine()).thenReturn(engine);
+        Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
+    }
 
-   @Test
-   public void testCalculate() throws Exception{
-      int rating = 300;
-      double factor = 4;
-      int tonnage = 30;
-      
-      MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
-      Mockito.when(movementProfile.getMaxMovementSpeed()).thenReturn(factor);
-      
-      for(double speedtweak : new double[] {1.0, 1.1}){
-         when(mlc.loadout.getEngine()).thenReturn((Engine)ItemDB.lookup("STD ENGINE " + rating));
-         when(mlc.loadout.getMovementProfile()).thenReturn(movementProfile);
-         when(mlc.chassi.getMassMax()).thenReturn(tonnage);
-         when(mlc.efficiencies.hasSpeedTweak()).thenReturn(speedtweak > 1.0);
-         when(mlc.efficiencies.getSpeedModifier()).thenReturn(speedtweak);
+    @Test
+    public void testCalculate_noengine() throws Exception {
+        loadout = Mockito.mock(LoadoutBase.class);
 
-         double expected = rating * factor / tonnage * speedtweak;
-         assertEquals(expected, cut.calculate(), 0.0);
-      }
-   }
+        TopSpeed cut = new TopSpeed(loadout);
+
+        assertEquals(0, cut.calculate(), 0.0);
+    }
+
+    @Test
+    public void testCalculate() throws Exception {
+        TopSpeed cut = new TopSpeed(loadout);
+        double expected = rating * moveSpeed / mass;
+        assertEquals(expected, cut.calculate(), 0.0);
+    }
 }

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.action;
 
@@ -28,9 +28,8 @@ import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
-import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
@@ -39,47 +38,48 @@ import lisong_mechlab.view.mechlab.LoadoutFrame;
  * 
  * @author Li Song
  */
-public class RedoLoadoutAction extends AbstractAction implements Reader{
-   private static final String SHORTCUT_STROKE  = "control Y";
-   private static final long   serialVersionUID = 665074705972425989L;
-   private final LoadoutFrame  loadoutFrame;
+public class RedoLoadoutAction extends AbstractAction implements Message.Recipient {
+    private static final String SHORTCUT_STROKE  = "control Y";
+    private static final long   serialVersionUID = 665074705972425989L;
+    private final LoadoutFrame  loadoutFrame;
 
-   public RedoLoadoutAction(MessageXBar anXBar, LoadoutFrame aLoadoutFrame){
-      putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
-      anXBar.attach(this);
-      setEnabled(false); // Initially
-      loadoutFrame = aLoadoutFrame;
-   }
+    public RedoLoadoutAction(MessageXBar anXBar, LoadoutFrame aLoadoutFrame) {
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
+        anXBar.attach(this);
+        setEnabled(false); // Initially
+        loadoutFrame = aLoadoutFrame;
+    }
 
-   @Override
-   public Object getValue(String key){
-      if( key == Action.NAME ){
-         if( isEnabled() ){
-            return "Redo " + loadoutFrame.getOpStack().nextRedo().describe();
-         }
-         return "Redo";
-      }
-      return super.getValue(key);
-   }
-
-   @Override
-   public void actionPerformed(ActionEvent aArg0){
-      loadoutFrame.getOpStack().redo();
-   }
-
-   @Override
-   public void receive(final Message aMsg){
-      SwingUtilities.invokeLater(new Runnable(){
-         @Override
-         public void run(){
-            if( aMsg instanceof ConfiguredComponentBase.Message || aMsg instanceof Upgrades.Message ){
-               if( ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null )
-                  setEnabled(false);
-               else
-                  setEnabled(null != loadoutFrame.getOpStack().nextRedo());
-               firePropertyChange(NAME, "", getValue(NAME));
+    @Override
+    public Object getValue(String key) {
+        if (key == Action.NAME) {
+            if (isEnabled()) {
+                return "Redo " + loadoutFrame.getOpStack().nextRedo().describe();
             }
-         }
-      });
-   }
+            return "Redo";
+        }
+        return super.getValue(key);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent aArg0) {
+        loadoutFrame.getOpStack().redo();
+    }
+
+    @Override
+    public void receive(final Message aMsg) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (aMsg instanceof ConfiguredComponentBase.ComponentMessage
+                        || aMsg instanceof Upgrades.UpgradesMessage) {
+                    if (ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null)
+                        setEnabled(false);
+                    else
+                        setEnabled(null != loadoutFrame.getOpStack().nextRedo());
+                    firePropertyChange(NAME, "", getValue(NAME));
+                }
+            }
+        });
+    }
 }

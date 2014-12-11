@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.action;
 
@@ -27,9 +27,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import lisong_mechlab.model.garage.MechGarage;
-import lisong_mechlab.util.MessageXBar;
-import lisong_mechlab.util.MessageXBar.Message;
-import lisong_mechlab.util.MessageXBar.Reader;
+import lisong_mechlab.util.message.Message;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.ProgramInit;
 
 /**
@@ -37,45 +36,45 @@ import lisong_mechlab.view.ProgramInit;
  * 
  * @author Li Song
  */
-public class UndoGarageAction extends AbstractAction implements Reader{
-   private static final long   serialVersionUID = 665074705972425989L;
-   private static final String SHORTCUT_STROKE  = "control shift Z";
+public class UndoGarageAction extends AbstractAction implements Message.Recipient {
+    private static final long   serialVersionUID = 665074705972425989L;
+    private static final String SHORTCUT_STROKE  = "control shift Z";
 
-   public UndoGarageAction(MessageXBar anXBar){
-      putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
-      anXBar.attach(this);
-      setEnabled(false); // Initially
-   }
+    public UndoGarageAction(MessageXBar anXBar) {
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
+        anXBar.attach(this);
+        setEnabled(false); // Initially
+    }
 
-   @Override
-   public Object getValue(String key){
-      if( key == Action.NAME ){
-         if( isEnabled() ){
-            return "Undo " + ProgramInit.lsml().garageOperationStack.nextUndo().describe();
-         }
-         return "Undo Garage";
-      }
-      return super.getValue(key);
-   }
-
-   @Override
-   public void actionPerformed(ActionEvent aArg0){
-      ProgramInit.lsml().garageOperationStack.undo();
-   }
-
-   @Override
-   public void receive(final Message aMsg){
-      SwingUtilities.invokeLater(new Runnable(){
-         @Override
-         public void run(){
-            if( aMsg instanceof MechGarage.Message ){
-               if( ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null )
-                  setEnabled(false);
-               else
-                  setEnabled(null != ProgramInit.lsml().garageOperationStack.nextUndo());
-               firePropertyChange(NAME, "", getValue(NAME));
+    @Override
+    public Object getValue(String key) {
+        if (key == Action.NAME) {
+            if (isEnabled()) {
+                return "Undo " + ProgramInit.lsml().garageOperationStack.nextUndo().describe();
             }
-         }
-      });
-   }
+            return "Undo Garage";
+        }
+        return super.getValue(key);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent aArg0) {
+        ProgramInit.lsml().garageOperationStack.undo();
+    }
+
+    @Override
+    public void receive(final Message aMsg) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (aMsg instanceof MechGarage.GarageMessage) {
+                    if (ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null)
+                        setEnabled(false);
+                    else
+                        setEnabled(null != ProgramInit.lsml().garageOperationStack.nextUndo());
+                    firePropertyChange(NAME, "", getValue(NAME));
+                }
+            }
+        });
+    }
 }

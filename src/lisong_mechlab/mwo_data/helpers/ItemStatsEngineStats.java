@@ -15,23 +15,41 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
+import java.util.Arrays;
+
+import lisong_mechlab.model.item.Engine;
+import lisong_mechlab.model.item.EngineType;
+import lisong_mechlab.model.item.Faction;
+import lisong_mechlab.model.modifiers.Attribute;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ItemStatsEngineStats{
-   @XStreamAsAttribute
-   public int    slots;
-   @XStreamAsAttribute
-   public int    rating;
-   @XStreamAsAttribute
-   public double weight;
-   @XStreamAsAttribute
-   public int    type;
-   @XStreamAsAttribute
-   public int    heatsinks;
-   @XStreamAsAttribute
-   public int    health;
+public class ItemStatsEngineStats extends ItemStatsModuleStats {
+    @XStreamAsAttribute
+    public int       rating;
+    @XStreamAsAttribute
+    public int       type;
+    @XStreamAsAttribute
+    public int       heatsinks;
+
+    static Attribute ENGINE_HEAT = new Attribute(Engine.ENGINE_HEAT_FULL_THROTTLE, Arrays.asList("engineheat"), null);
+
+    public Engine asEngine(ItemStats aStats) {
+        String uiName = aStats.getUiName();
+        String uiDesc = aStats.getUiDesc();
+        String mwoName = aStats.getMwoKey();
+        int mwoId = aStats.getMwoId();
+        Faction itemFaction = aStats.getFaction();
+
+        int hs = heatsinks;
+        int internalHs = Math.min(10, hs);
+        int heatSinkSlots = hs - internalHs;
+        EngineType engineType = (uiName.toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
+        return new Engine(uiName, uiDesc, mwoName, mwoId, slots, tons, health, itemFaction, ENGINE_HEAT, rating,
+                engineType, internalHs, heatSinkSlots);
+    }
 }

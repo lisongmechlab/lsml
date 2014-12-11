@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.util;
 
@@ -24,28 +24,28 @@ package lisong_mechlab.util;
  * 
  * @author Li Song
  */
-public class StringUtil{
+public class StringUtil {
 
-   public static String longestCommonSubstring(final String a, final String b){
+    public static String longestCommonSubstring(final String a, final String b) {
 
-      int start = 0;
-      int len = 0;
+        int start = 0;
+        int len = 0;
 
-      for(int i = 0; i < a.length(); ++i){
-         for(int j = 0; j < b.length(); ++j){
+        for (int i = 0; i < a.length(); ++i) {
+            for (int j = 0; j < b.length(); ++j) {
 
-            int k = 0;
-            while( i + k < a.length() && j + k < b.length() && a.charAt(i + k) == b.charAt(j + k) ){
-               k++;
+                int k = 0;
+                while (i + k < a.length() && j + k < b.length() && a.charAt(i + k) == b.charAt(j + k)) {
+                    k++;
+                }
+
+                if (k > len) {
+                    len = k;
+                    start = i;
+                }
             }
-
-            if( k > len ){
-               len = k;
-               start = i;
-            }
-         }
-      }
-      return a.substring(start, start + len);
-   }
+        }
+        return a.substring(start, start + len);
+    }
 
 }

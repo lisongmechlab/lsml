@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.mwo_data.helpers;
 
@@ -24,7 +24,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 /**
  * @author Li Song
  */
-public class XMLPilotModuleWeaponStats{
-   @XStreamAsAttribute
-   public String compatibleWeapons;
+public class XMLPilotModuleWeaponStats {
+    @XStreamAsAttribute
+    public String compatibleWeapons;
 }

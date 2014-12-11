@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
@@ -26,13 +26,13 @@ import lisong_mechlab.model.item.Item;
  * 
  * @author Li Song
  */
-public interface ItemMetric{
-   /**
-    * Calculates the value of the metric. May employ caching but the caching must be transparent.
-    * 
-    * @param aItem
-    *           The {@link Item} to calculate the metric for.
-    * @return The value of the metric.
-    */
-   public double calculate(Item aItem);
+public interface ItemMetric {
+    /**
+     * Calculates the value of the metric. May employ caching but the caching must be transparent.
+     * 
+     * @param aItem
+     *            The {@link Item} to calculate the metric for.
+     * @return The value of the metric.
+     */
+    public double calculate(Item aItem);
 }

@@ -15,58 +15,58 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
 import lisong_mechlab.model.item.PilotModule;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
+import lisong_mechlab.util.message.MessageXBar;
 
 /**
  * This {@link Operation} removes a module from a loadout.
  * 
  * @author Li Song
  */
-public class OpRemoveModule extends Operation{
-   private final PilotModule           module;
-   private final LoadoutBase<?>        loadout;
-   private final transient MessageXBar xBar;
+public class OpRemoveModule extends Operation {
+    private final PilotModule           module;
+    private final LoadoutBase<?>        loadout;
+    private final transient MessageXBar xBar;
 
-   /**
-    * Creates a new {@link OpRemoveModule}.
-    * 
-    * @param aXBar
-    *           The {@link MessageXBar} to signal changes to the loadout on.
-    * @param aLoadout
-    *           The {@link LoadoutBase} to remove the module from.
-    * @param aLookup
-    *           The {@link PilotModule} to remove.
-    */
-   public OpRemoveModule(MessageXBar aXBar, LoadoutBase<?> aLoadout, PilotModule aLookup){
-      module = aLookup;
-      loadout = aLoadout;
-      xBar = aXBar;
-   }
+    /**
+     * Creates a new {@link OpRemoveModule}.
+     * 
+     * @param aXBar
+     *            The {@link MessageXBar} to signal changes to the loadout on.
+     * @param aLoadout
+     *            The {@link LoadoutBase} to remove the module from.
+     * @param aLookup
+     *            The {@link PilotModule} to remove.
+     */
+    public OpRemoveModule(MessageXBar aXBar, LoadoutBase<?> aLoadout, PilotModule aLookup) {
+        module = aLookup;
+        loadout = aLoadout;
+        xBar = aXBar;
+    }
 
-   @Override
-   public String describe(){
-      return "remove " + module + " from " + loadout;
-   }
+    @Override
+    public String describe() {
+        return "remove " + module + " from " + loadout;
+    }
 
-   @Override
-   protected void apply(){
-      loadout.removeModule(module);
-      if( xBar != null ){
-         xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
-      }
-   }
+    @Override
+    protected void apply() {
+        loadout.removeModule(module);
+        if (xBar != null) {
+            xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
+        }
+    }
 
-   @Override
-   protected void undo(){
-      loadout.addModule(module);
-      if( xBar != null ){
-         xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
-      }
-   }
+    @Override
+    protected void undo() {
+        loadout.addModule(module);
+        if (xBar != null) {
+            xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
+        }
+    }
 }

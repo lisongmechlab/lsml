@@ -15,12 +15,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.chassi;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import lisong_mechlab.model.modifiers.Modifier;
 
 /**
  * This movement profile gives the maximum possible value of a combination of different movement profiles.
@@ -32,48 +36,42 @@ import java.util.List;
  * 
  * @author Li Song
  */
-public class MaxMovementProfile extends ModifiedProfileBase{
+public class MaxMovementProfile extends ModifiedProfileBase {
 
-   private MovementProfile    base;
-   private List<List<Quirks>> groups;
+    private MovementProfile                  base;
+    private List<List<Collection<Modifier>>> groups;
 
-   public MaxMovementProfile(MovementProfile aBase, List<List<Quirks>> aGroups){
-      base = aBase;
-      groups = aGroups;
-   }
+    public MaxMovementProfile(MovementProfile aBase, List<List<Collection<Modifier>>> aGroups) {
+        base = aBase;
+        groups = aGroups;
+    }
 
-   @Override
-   protected double calc(String aMethodName){
-      try{
-         double baseValue = (double)base.getClass().getMethod(aMethodName).invoke(base);
-         double ans = baseValue;
-         for(List<Quirks> group : groups){
-            double max = Double.NEGATIVE_INFINITY;
-            for(MovementModifier profile : group){
-               max = Math.max(max, (double)profile.getClass().getMethod(aMethodName.replace("get", "extra"), double.class).invoke(profile, baseValue));
+    @Override
+    protected double calc(String aMethodName, Collection<Modifier> aExtraModifiers) {
+        try {
+            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base,  aExtraModifiers);
+            double ans = baseValue;
+            for (List<Collection<Modifier>> group : groups) {
+                double max = Double.NEGATIVE_INFINITY;
+                for (Collection<Modifier> quirks : group) {
+                    List<Modifier> fullQuirks = new ArrayList<>(quirks);
+                    fullQuirks.addAll(aExtraModifiers);
+                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base, fullQuirks);
+                    max = Math.max(max, value - baseValue);
+                }
+                if (max != Double.NEGATIVE_INFINITY)
+                    ans += max;
             }
-            if( max != Double.NEGATIVE_INFINITY )
-               ans += max;
-         }
-         return ans;
-      }
-      catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e ){
-         throw new IllegalArgumentException();
-      }
-   }
+            return ans;
+        }
+        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
+            throw new IllegalArgumentException();
+        }
+    }
 
-   @Override
-   public double getMaxMovementSpeed(){
-      return base.getMaxMovementSpeed();
-   }
-
-   @Override
-   public double getReverseSpeedMultiplier(){
-      return base.getReverseSpeedMultiplier();
-   }
-
-   @Override
-   public MovementArchetype getMovementArchetype(){
-      return base.getMovementArchetype();
-   }
+    @Override
+    public MovementArchetype getMovementArchetype() {
+        return base.getMovementArchetype();
+    }
 }

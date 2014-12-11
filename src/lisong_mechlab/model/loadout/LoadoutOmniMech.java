@@ -15,27 +15,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
 import java.util.Collection;
-import java.util.List;
 
 import lisong_mechlab.model.chassi.ChassisOmniMech;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.chassi.OmniPod;
-import lisong_mechlab.model.chassi.QuirkedMovementProfile;
 import lisong_mechlab.model.item.Engine;
-import lisong_mechlab.model.item.Item;
+import lisong_mechlab.model.item.ModifierEquipment;
 import lisong_mechlab.model.item.ModuleSlot;
-import lisong_mechlab.model.item.WeaponModifier;
+import lisong_mechlab.model.item.PilotModule;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ComponentBuilder.Factory;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentOmniMech;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.model.upgrades.Upgrades;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack.Operation;
 
 /**
@@ -43,171 +41,178 @@ import lisong_mechlab.util.OperationStack.Operation;
  * 
  * @author Li Song
  */
-public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech>{
-   private final QuirkedMovementProfile movementProfile;
-   private final Upgrades               upgrades;
+public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
+    transient private final Upgrades               upgrades;
 
-   /**
-    * @param aFactory
-    * @param aChassis
-    */
-   public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis){
-      super(aFactory, aChassis);
-      movementProfile = new QuirkedMovementProfile(aChassis.getMovementProfileBase());
-      upgrades = new Upgrades(aChassis.getFixedArmorType(), aChassis.getFixedStructureType(), UpgradeDB.STANDARD_GUIDANCE,
-                              aChassis.getFixedHeatSinkType());
-      for(ConfiguredComponentOmniMech component : getComponents()){
-         movementProfile.addMovementModifier(component.getOmniPod().getQuirks());
-      }
-   }
+    /**
+     * Creates a new, empty loadout.
+     * 
+     * @param aFactory
+     *            The {@link Factory} used to construct the components.
+     * @param aChassis
+     *            The chassis to base this loadout on.
+     */
+    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis) {
+        super(aFactory, aChassis);
+        upgrades = new Upgrades(aChassis.getFixedArmorType(), aChassis.getFixedStructureType(),
+                UpgradeDB.STANDARD_GUIDANCE, aChassis.getFixedHeatSinkType());
+    }
 
-   /**
-    * @param aOmniPodFactory
-    * @param aLoadoutOmniMech
-    */
-   public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aOmniPodFactory, LoadoutOmniMech aLoadoutOmniMech){
-      super(aOmniPodFactory, aLoadoutOmniMech);
-      movementProfile = new QuirkedMovementProfile(getChassis().getMovementProfileBase());
-      for(ConfiguredComponentOmniMech component : getComponents()){
-         movementProfile.addMovementModifier(component.getOmniPod().getQuirks());
-      }
-      upgrades = new Upgrades(aLoadoutOmniMech.getUpgrades());
-   }
+    /**
+     * Copy constructor.
+     * 
+     * @param aFactory
+     *            The {@link Factory} used to construct the components.
+     * @param aLoadoutOmniMech
+     *            The {@link LoadoutOmniMech} to copy.
+     */
+    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, LoadoutOmniMech aLoadoutOmniMech) {
+        super(aFactory, aLoadoutOmniMech);
+        upgrades = new Upgrades(aLoadoutOmniMech.getUpgrades());
+    }
 
-   @Override
-   public int hashCode(){
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((upgrades == null) ? 0 : upgrades.hashCode());
-      return result;
-   }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((upgrades == null) ? 0 : upgrades.hashCode());
+        return result;
+    }
 
-   @Override
-   public boolean equals(Object obj){
-      if( this == obj )
-         return true;
-      if( !super.equals(obj) )
-         return false;
-      LoadoutOmniMech other = (LoadoutOmniMech)obj;
-      if( !upgrades.equals(other.upgrades) )
-         return false;
-      return true;
-   }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        LoadoutOmniMech other = (LoadoutOmniMech) obj;
+        if (!upgrades.equals(other.upgrades))
+            return false;
+        return true;
+    }
 
-   /**
-    * This setter method is only intended to be used from package local {@link Operation}s. It's a raw, unchecked
-    * accessor.
-    * 
-    * @param aOmniPod
-    *           The omnipod to set, it's put in it's dedicated slot.
-    */
-   public void setOmniPod(OmniPod aOmniPod){
-      ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
-      movementProfile.removeMovementModifier(component.getOmniPod().getQuirks());
-      movementProfile.addMovementModifier(aOmniPod.getQuirks());
-      component.setOmniPod(aOmniPod);
-   }
+    /**
+     * This setter method is only intended to be used from package local {@link Operation}s. It's a raw, unchecked
+     * accessor.
+     * 
+     * @param aOmniPod
+     *            The omnipod to set, it's put in it's dedicated slot.
+     */
+    public void setOmniPod(OmniPod aOmniPod) {
+        ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
+        component.setOmniPod(aOmniPod);
+    }
 
-   @Override
-   public MovementProfile getMovementProfile(){
-      return movementProfile;
-   }
+    @Override
+    public MovementProfile getMovementProfile() {
+        return getChassis().getMovementProfileBase();
+    }
 
-   @Override
-   public int getJumpJetsMax(){
-      int ans = getChassis().getFixedJumpJets();
-      for(ConfiguredComponentOmniMech component : getComponents()){
-         ans += component.getOmniPod().getJumpJetsMax();
-      }
-      return ans;
-   }
+    @Override
+    public int getJumpJetsMax() {
+        int ans = getChassis().getFixedJumpJets();
+        for (ConfiguredComponentOmniMech component : getComponents()) {
+            ans += component.getOmniPod().getJumpJetsMax();
+        }
+        return ans;
+    }
 
-   @Override
-   public ChassisOmniMech getChassis(){
-      return (ChassisOmniMech)super.getChassis();
-   }
+    @Override
+    public ChassisOmniMech getChassis() {
+        return (ChassisOmniMech) super.getChassis();
+    }
 
-   @Override
-   protected boolean canEquipGlobal(Item aItem){
-      if( aItem instanceof Engine )
-         return false;
-      return super.canEquipGlobal(aItem);
-   }
+    @Override
+    public LoadoutOmniMech copy() {
+        // TODO: Remove hard-coded factory
+        return new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), this);
+    }
 
-   @Override
-   public LoadoutOmniMech clone(MessageXBar aXBar){
-      return new LoadoutOmniMech(ComponentBuilder.getOmniPodFactory(), this);
-   }
+    @Override
+    public Engine getEngine() {
+        return getChassis().getFixedEngine();
+    }
 
-   @Override
-   public Engine getEngine(){
-      return getChassis().getFixedEngine();
-   }
+    /**
+     * @return The number of globally used critical slots.
+     */
+    @Override
+    public int getNumCriticalSlotsUsed() {
+        int ans = 0;
+        for (ConfiguredComponentOmniMech component : getComponents()) {
+            ans += component.getSlotsUsed();
+        }
+        return ans;
+    }
 
-   /**
-    * @return The number of globally used critical slots.
-    */
-   @Override
-   public int getNumCriticalSlotsUsed(){
-      int ans = 0;
-      for(ConfiguredComponentOmniMech component : getComponents()){
-         ans += component.getSlotsUsed();
-      }
-      return ans;
-   }
+    @Override
+    public Upgrades getUpgrades() {
+        return upgrades;
+    }
 
-   @Override
-   public Upgrades getUpgrades(){
-      return upgrades;
-   }
+    @Override
+    public int getModulesMax(ModuleSlot aModuleSlot) {
+        if (aModuleSlot == ModuleSlot.MECH) {
+            int ans = getChassis().getMechModulesMax();
+            for (ConfiguredComponentOmniMech component : getComponents()) {
+                ans += component.getOmniPod().getPilotModulesMax();
+            }
+            return ans;
+        }
+        else if (aModuleSlot == ModuleSlot.CONSUMABLE) {
+            return getChassis().getConsumableModulesMax();
+        }
+        else if (aModuleSlot == ModuleSlot.WEAPON) {
+            return getChassis().getWeaponModulesMax();
+        }
+        else if (aModuleSlot == ModuleSlot.HYBRID) {
+            return 1; // +1 for mastery
+        }
+        else {
+            throw new IllegalArgumentException("Unknown module slot type!");
+        }
+    }
 
-   @Override
-   public int getModulesMax(ModuleSlot aModuleSlot){
-      if( aModuleSlot == ModuleSlot.MECH ){
-         int ans = getChassis().getMechModulesMax();
-         for(ConfiguredComponentOmniMech component : getComponents()){
-            ans += component.getOmniPod().getPilotModulesMax();
-         }
-         return ans;
-      }
-      else if( aModuleSlot == ModuleSlot.CONSUMABLE ){
-         return getChassis().getConsumableModulesMax();
-      }
-      else if( aModuleSlot == ModuleSlot.WEAPON ){
-         return getChassis().getWeaponModulesMax();
-      }
-      else if( aModuleSlot == ModuleSlot.HYBRID ){
-         return 1; // +1 for mastery
-      }
-      else{
-         throw new IllegalArgumentException("Unknown module slot type!");
-      }
-   }
+    @Override
+    public Collection<Modifier> getModifiers() {
+        Collection<Modifier> ans = super.getModifiers();
+        for (ConfiguredComponentOmniMech component : getComponents()) {
+            ans.addAll(component.getOmniPod().getQuirks());
+        }
+        return ans;
+    }
 
-   /**
-    * @return A {@link List} of all {@link WeaponModifier}s that apply to this loadout.
-    */
-   @Override
-   public Collection<WeaponModifier> getWeaponModifiers(){
-      Collection<WeaponModifier> ans = super.getWeaponModifiers();
-      for(ConfiguredComponentOmniMech component : getComponents()){
-         ans.add(component.getOmniPod().getQuirks());
-      }
-      return ans;
-   }
+    @Override
+    public String getQuirkHtmlSummary() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append("<body>");
 
-   @Override
-   public String getQuirkHtmlSummary(){
-      StringBuilder sb = new StringBuilder();
-      sb.append("<html>");
-      sb.append("<body>");
+        sb.append("<p>Omnipod Quirks:</p>");
+        for (ConfiguredComponentOmniMech component : getComponents()) {
+            for (Modifier modifier : component.getOmniPod().getQuirks()) {
+                modifier.describeToHtml(sb);
+            }
+        }
 
-      sb.append("<p>Quirks:</p>");
-      for(ConfiguredComponentOmniMech component : getComponents()){
-         component.getOmniPod().getQuirks().describeAsHtmlWithoutHeaders(sb);
-      }
-      sb.append("</body>");
-      sb.append("</html>");
-      return sb.toString();
-   }
+        sb.append("<p>Equipment Bonuses:</p>");
+        for (ModifierEquipment me : items(ModifierEquipment.class)) {
+            for (Modifier modifier : me.getModifiers()) {
+                modifier.describeToHtml(sb);
+            }
+        }
+
+        sb.append("<p>Module Bonuses:</p>");
+        for (PilotModule me : getModules()) {
+            if (me instanceof ModifierEquipment) {
+                for (Modifier modifier : ((ModifierEquipment) me).getModifiers()) {
+                    modifier.describeToHtml(sb);
+                }
+            }
+        }
+
+        sb.append("</body>");
+        sb.append("</html>");
+        return sb.toString();
+    }
 }

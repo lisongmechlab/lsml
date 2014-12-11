@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.render;
 
@@ -30,49 +30,49 @@ import javax.swing.JComponent;
 import javax.swing.JProgressBar;
 import javax.swing.plaf.ProgressBarUI;
 
-public class ProgressBarRenderer extends ProgressBarUI{
+public class ProgressBarRenderer extends ProgressBarUI {
 
-   final RenderingHints hints;
+    final RenderingHints hints;
 
-   public ProgressBarRenderer(){
-      Toolkit tk = Toolkit.getDefaultToolkit();
-      hints = (RenderingHints)tk.getDesktopProperty("awt.font.desktophints");
-   }
+    public ProgressBarRenderer() {
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        hints = (RenderingHints) tk.getDesktopProperty("awt.font.desktophints");
+    }
 
-   @Override
-   public Dimension getMinimumSize(JComponent c){
-      return new Dimension(0, c.getFontMetrics(c.getFont()).getHeight() + 4);
-   }
+    @Override
+    public Dimension getMinimumSize(JComponent c) {
+        return new Dimension(0, c.getFontMetrics(c.getFont()).getHeight() + 4);
+    }
 
-   @Override
-   public Dimension getMaximumSize(JComponent c){
-      return new Dimension(200, c.getFontMetrics(c.getFont()).getHeight() + 5);
-   }
+    @Override
+    public Dimension getMaximumSize(JComponent c) {
+        return new Dimension(200, c.getFontMetrics(c.getFont()).getHeight() + 5);
+    }
 
-   @Override
-   public void paint(Graphics g, JComponent c){
-      JProgressBar progressBar = (JProgressBar)c;
-      int w = c.getWidth();
-      int h = c.getHeight();
+    @Override
+    public void paint(Graphics g, JComponent c) {
+        JProgressBar progressBar = (JProgressBar) c;
+        int w = c.getWidth();
+        int h = c.getHeight();
 
-      // Draw frame
-      g.setColor(new Color(0x8e8f8f).brighter());
-      g.drawRoundRect(0, 0, w - 1, h - 1, 3, 3);
-      g.setColor(new Color(0xf4f4f4).brighter());
-      g.drawRect(1, 1, w - 3, h - 3);
+        // Draw frame
+        g.setColor(new Color(0x8e8f8f).brighter());
+        g.drawRoundRect(0, 0, w - 1, h - 1, 3, 3);
+        g.setColor(new Color(0xf4f4f4).brighter());
+        g.drawRect(1, 1, w - 3, h - 3);
 
-      // Draw bar
-      g.setColor(new Color(0xb7ceeb));
-      g.fillRect(3, 3, (int)Math.ceil(progressBar.getPercentComplete() * (w - 6)), (h - 6));
+        // Draw bar
+        g.setColor(new Color(0xb7ceeb));
+        g.fillRect(3, 3, (int) Math.ceil(progressBar.getPercentComplete() * (w - 6)), (h - 6));
 
-      // Draw text in bar
-      Graphics2D g2d = (Graphics2D)g;
+        // Draw text in bar
+        Graphics2D g2d = (Graphics2D) g;
 
-      g2d.setRenderingHints(hints);
+        g2d.setRenderingHints(hints);
 
-      g2d.setColor(Color.BLACK);
-      int ascent = c.getFontMetrics(c.getFont()).getAscent();
-      int stringWidth = c.getFontMetrics(c.getFont()).stringWidth(progressBar.getString());
-      g2d.drawString(progressBar.getString(), (w - stringWidth) / 2, (h - 4 + ascent + 1) / 2);
-   }
+        g2d.setColor(Color.BLACK);
+        int ascent = c.getFontMetrics(c.getFont()).getAscent();
+        int stringWidth = c.getFontMetrics(c.getFont()).stringWidth(progressBar.getString());
+        g2d.drawString(progressBar.getString(), (w - stringWidth) / 2, (h - 4 + ascent + 1) / 2);
+    }
 }

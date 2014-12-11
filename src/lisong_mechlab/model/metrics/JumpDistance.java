@@ -15,11 +15,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.metrics;
 
-import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
 import lisong_mechlab.model.loadout.LoadoutBase;
 
@@ -28,26 +27,25 @@ import lisong_mechlab.model.loadout.LoadoutBase;
  * 
  * @author Li Song
  */
-public class JumpDistance implements Metric{
-   private final LoadoutBase<?> loadout;
+public class JumpDistance implements Metric {
+    private final LoadoutBase<?> loadout;
 
-   public JumpDistance(final LoadoutBase<?> aLoadout){
-      loadout = aLoadout;
-   }
+    public JumpDistance(final LoadoutBase<?> aLoadout) {
+        loadout = aLoadout;
+    }
 
-   @Override
-   public double calculate(){
-      JumpJet jj = null;
+    @Override
+    public double calculate() {
+        JumpJet jj = null;
 
-      for(Item item : loadout.getAllItems()){
-         if( item instanceof JumpJet ){
-            jj = (JumpJet)item;
+        for (JumpJet item : loadout.items(JumpJet.class)) {
+            jj = item;
             break;
-         }
-      }
+        }
 
-      if( jj == null )
-         return 0;
-      return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() / (2 * loadout.getChassis().getMassMax());
-   }
+        if (jj == null)
+            return 0;
+        return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration()
+                / (2 * loadout.getChassis().getMassMax());
+    }
 }

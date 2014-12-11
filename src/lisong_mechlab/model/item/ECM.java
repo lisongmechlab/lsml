@@ -15,16 +15,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.item;
 
 import lisong_mechlab.model.chassi.HardPointType;
-import lisong_mechlab.mwo_data.helpers.ItemStatsModule;
 
-public class ECM extends Module{
+/**
+ * A Module representing ECM
+ * 
+ * @author Li Song
+ *
+ */
+public class ECM extends Module {
 
-   public ECM(ItemStatsModule aModule){
-      super(aModule, HardPointType.ECM);
-   }
+    public ECM(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            Faction aFaction) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ECM, aHP, aFaction, null, null);
+    }
 }

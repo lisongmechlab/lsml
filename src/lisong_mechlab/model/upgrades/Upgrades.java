@@ -15,123 +15,124 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.model.upgrades;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.util.MessageXBar;
+import lisong_mechlab.util.message.Message;
 
 /**
  * This class is a simple container that manages upgrades for an loadout.
  * 
  * @author Li Song
  */
-public class Upgrades{
-   protected ArmorUpgrade     armorType     = UpgradeDB.STANDARD_ARMOR;
-   protected StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
-   protected GuidanceUpgrade  guidanceType  = UpgradeDB.STANDARD_GUIDANCE;
-   protected HeatSinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
+public class Upgrades {
+    protected ArmorUpgrade     armorType     = UpgradeDB.STANDARD_ARMOR;
+    protected StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
+    protected GuidanceUpgrade  guidanceType  = UpgradeDB.STANDARD_GUIDANCE;
+    protected HeatSinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
 
-   public static class Message implements MessageXBar.Message{
-      public final ChangeMsg msg;
-      private final Upgrades source;
+    public static class UpgradesMessage implements Message {
+        public final ChangeMsg msg;
+        private final Upgrades source;
 
-      public enum ChangeMsg{
-         GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
-      }
+        public enum ChangeMsg {
+            GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
+        }
 
-      @Override
-      public boolean equals(Object obj){
-         if( obj instanceof Message ){
-            Message other = (Message)obj;
-            return msg == other.msg && source == other.source;
-         }
-         return false;
-      }
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof UpgradesMessage) {
+                UpgradesMessage other = (UpgradesMessage) obj;
+                return msg == other.msg && source == other.source;
+            }
+            return false;
+        }
 
-      public Message(ChangeMsg aChangeMsg, Upgrades anUpgrades){
-         msg = aChangeMsg;
-         source = anUpgrades;
-      }
+        public UpgradesMessage(ChangeMsg aChangeMsg, Upgrades anUpgrades) {
+            msg = aChangeMsg;
+            source = anUpgrades;
+        }
 
-      @Override
-      public boolean isForMe(LoadoutBase<?> aLoadout){
-         return aLoadout.getUpgrades() == source;
-      }
+        @Override
+        public boolean isForMe(LoadoutBase<?> aLoadout) {
+            return aLoadout.getUpgrades() == source;
+        }
 
-      @Override
-      public boolean affectsHeatOrDamage(){
-         if( msg == ChangeMsg.HEATSINKS )
+        @Override
+        public boolean affectsHeatOrDamage() {
+            if (msg == ChangeMsg.HEATSINKS)
+                return true;
+            return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
+                          // messages will trigger that already.
+        }
+    }
+
+    /**
+     * @param aArmor
+     * @param aStructure
+     * @param aGuidance
+     * @param aHeatSinks
+     */
+    public Upgrades(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
+            HeatSinkUpgrade aHeatSinks) {
+        armorType = aArmor;
+        structureType = aStructure;
+        guidanceType = aGuidance;
+        heatSinkType = aHeatSinks;
+    }
+
+    public Upgrades(Upgrades aUpgrades) {
+        this(aUpgrades.armorType, aUpgrades.structureType, aUpgrades.guidanceType, aUpgrades.heatSinkType);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-         return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
-                       // messages will trigger that already.
-      }
-   }
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Upgrades))
+            return false;
+        Upgrades that = (Upgrades) obj;
+        if (this.guidanceType != that.guidanceType)
+            return false;
+        if (this.heatSinkType != that.heatSinkType)
+            return false;
+        if (this.structureType != that.structureType)
+            return false;
+        if (this.armorType != that.armorType)
+            return false;
+        return true;
+    }
 
-   /**
-    * @param aArmor
-    * @param aStructure
-    * @param aGuidance
-    * @param aHeatSinks
-    */
-   public Upgrades(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance, HeatSinkUpgrade aHeatSinks){
-      armorType = aArmor;
-      structureType = aStructure;
-      guidanceType = aGuidance;
-      heatSinkType = aHeatSinks;
-   }
+    public GuidanceUpgrade getGuidance() {
+        return guidanceType;
+    }
 
-   public Upgrades(Upgrades aUpgrades){
-      this(aUpgrades.armorType, aUpgrades.structureType, aUpgrades.guidanceType, aUpgrades.heatSinkType);
-   }
+    public HeatSinkUpgrade getHeatSink() {
+        return heatSinkType;
+    }
 
-   @Override
-   public boolean equals(Object obj){
-      if( this == obj )
-         return true;
-      if( obj == null )
-         return false;
-      if( !(obj instanceof Upgrades) )
-         return false;
-      Upgrades that = (Upgrades)obj;
-      if( this.guidanceType != that.guidanceType )
-         return false;
-      if( this.heatSinkType != that.heatSinkType )
-         return false;
-      if( this.structureType != that.structureType )
-         return false;
-      if( this.armorType != that.armorType )
-         return false;
-      return true;
-   }
+    public StructureUpgrade getStructure() {
+        return structureType;
+    }
 
-   public GuidanceUpgrade getGuidance(){
-      return guidanceType;
-   }
+    public ArmorUpgrade getArmor() {
+        return armorType;
+    }
 
-   public HeatSinkUpgrade getHeatSink(){
-      return heatSinkType;
-   }
-
-   public StructureUpgrade getStructure(){
-      return structureType;
-   }
-
-   public ArmorUpgrade getArmor(){
-      return armorType;
-   }
-
-   /**
-    * Changes the guidance type.
-    * <p>
-    * This is package visibility as it is only intended to be modified by the Op* classes.
-    * 
-    * @param aGuidanceUpgrade
-    *           The new {@link GuidanceUpgrade}.
-    */
-   void setGuidance(GuidanceUpgrade aGuidanceUpgrade){
-      guidanceType = aGuidanceUpgrade;
-   }
+    /**
+     * Changes the guidance type.
+     * <p>
+     * This is package visibility as it is only intended to be modified by the Op* classes.
+     * 
+     * @param aGuidanceUpgrade
+     *            The new {@link GuidanceUpgrade}.
+     */
+    void setGuidance(GuidanceUpgrade aGuidanceUpgrade) {
+        guidanceType = aGuidanceUpgrade;
+    }
 
 }

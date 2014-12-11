@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.action;
 
@@ -28,46 +28,46 @@ import javax.swing.KeyStroke;
 
 import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.OpRename;
-import lisong_mechlab.util.MessageXBar;
 import lisong_mechlab.util.OperationStack;
+import lisong_mechlab.util.message.MessageXBar;
 import lisong_mechlab.view.mechlab.LoadoutFrame;
 
-public class RenameLoadoutAction extends AbstractAction{
-   private static final String  SHORTCUT_STROKE  = "control R";
-   private static final long    serialVersionUID = -673375419929455179L;
-   private final LoadoutFrame   loadoutFrame;
-   private final LoadoutBase<?> loadout;
-   private final MessageXBar    xBar;
-   private final OperationStack stack;
+public class RenameLoadoutAction extends AbstractAction {
+    private static final String  SHORTCUT_STROKE  = "control R";
+    private static final long    serialVersionUID = -673375419929455179L;
+    private final LoadoutFrame   loadoutFrame;
+    private final LoadoutBase<?> loadout;
+    private final MessageXBar    xBar;
+    private final OperationStack stack;
 
-   public RenameLoadoutAction(LoadoutBase<?> aLoadout, MessageXBar aXBar, OperationStack aStack){
-      super("Rename loadout...");
-      loadout = aLoadout;
-      loadoutFrame = null;
-      xBar = aXBar;
-      if( aStack == null )
-         stack = new OperationStack(0); // Not undoable
-      else
-         stack = aStack;
-      putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
-   }
+    public RenameLoadoutAction(LoadoutBase<?> aLoadout, MessageXBar aXBar, OperationStack aStack) {
+        super("Rename loadout...");
+        loadout = aLoadout;
+        loadoutFrame = null;
+        xBar = aXBar;
+        if (aStack == null)
+            stack = new OperationStack(0); // Not undoable
+        else
+            stack = aStack;
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
+    }
 
-   public RenameLoadoutAction(LoadoutFrame aLoadoutFrame, MessageXBar aXBar){
-      super("Rename loadout...");
-      loadout = aLoadoutFrame.getLoadout();
-      loadoutFrame = aLoadoutFrame;
-      xBar = aXBar;
-      stack = loadoutFrame.getOpStack();
-      putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
-   }
+    public RenameLoadoutAction(LoadoutFrame aLoadoutFrame, MessageXBar aXBar) {
+        super("Rename loadout...");
+        loadout = aLoadoutFrame.getLoadout();
+        loadoutFrame = aLoadoutFrame;
+        xBar = aXBar;
+        stack = loadoutFrame.getOpStack();
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
+    }
 
-   @Override
-   public void actionPerformed(ActionEvent aE){
-      String name = JOptionPane.showInputDialog(loadoutFrame, "Give a name", loadout.getName());
-      if( name == null || name.isEmpty() ){
-         JOptionPane.showMessageDialog(loadoutFrame, "No name given!");
-         return;
-      }
-      stack.pushAndApply(new OpRename(loadout, xBar, name));
-   }
+    @Override
+    public void actionPerformed(ActionEvent aE) {
+        String name = JOptionPane.showInputDialog(loadoutFrame, "Give a name", loadout.getName());
+        if (name == null || name.isEmpty()) {
+            JOptionPane.showMessageDialog(loadoutFrame, "No name given!");
+            return;
+        }
+        stack.pushAndApply(new OpRename(loadout, xBar, name));
+    }
 }

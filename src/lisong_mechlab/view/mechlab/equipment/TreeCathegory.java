@@ -15,22 +15,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package lisong_mechlab.view.mechlab.equipment;
 
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.tree.TreePath;
 
-abstract class TreeCathegory extends InternalFrameAdapter{
+abstract class TreeCathegory extends InternalFrameAdapter {
 
-   public abstract int getChildCount();
+    public abstract int getChildCount();
 
-   public abstract int getIndex(Object aChild);
+    public abstract int getIndex(Object aChild);
 
-   public abstract Object getChild(int aIndex);
+    public abstract Object getChild(int aIndex);
 
-   public abstract TreePath getPath();
+    public abstract TreePath getPath();
 
-   public abstract GarageTreeModel getModel();
+    public abstract GarageTreeModel getModel();
 }
