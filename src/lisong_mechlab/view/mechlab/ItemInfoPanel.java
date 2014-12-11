@@ -21,7 +21,6 @@ package lisong_mechlab.view.mechlab;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.text.DecimalFormat;
 import java.util.Collection;
 
 import javax.swing.Box;
@@ -187,9 +186,6 @@ public class ItemInfoPanel extends JPanel {
     }
 
     private void showWeaponInfo(Weapon aWeapon, Collection<Modifier> aModifiers) {
-        DecimalFormat df0 = new DecimalFormat("###");
-        DecimalFormat df1 = new DecimalFormat("###.#");
-        DecimalFormat df2 = new DecimalFormat("###.##");
 
         damage.setVisible(true);
         damage.setText("Damage: " + aWeapon.getDamagePerShot());
@@ -197,30 +193,35 @@ public class ItemInfoPanel extends JPanel {
         heat.setText("Heat: " + aWeapon.getHeat(aModifiers));
         gh_MaxFreeAlpha.setVisible(true);
         gh_MaxFreeAlpha.setText("Max free alpha: "
-                + df0.format((aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha()
+                + LoadoutInfoPanel.df0.format((aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha()
                         : Double.POSITIVE_INFINITY));
 
         cycleTime.setVisible(true);
-        cycleTime.setText("Cycle time: " + df2.format(aWeapon.getCoolDown(aModifiers)));
+        cycleTime.setText("Cycle time: " + LoadoutInfoPanel.df2.format(aWeapon.getCoolDown(aModifiers)));
         if (aWeapon instanceof EnergyWeapon) {
             burntime.setVisible(true);
-            burntime.setText("Burn time: " + df1.format(((EnergyWeapon) aWeapon).getDuration(aModifiers)));
+            burntime.setText("Burn time: "
+                    + LoadoutInfoPanel.df1.format(((EnergyWeapon) aWeapon).getDuration(aModifiers)));
         }
         secondsPerShot.setVisible(true);
-        secondsPerShot.setText("RoF: " + df2.format(aWeapon.getSecondsPerShot(aModifiers)) + " s/shot");
+        secondsPerShot
+                .setText("RoF: " + LoadoutInfoPanel.df2.format(aWeapon.getSecondsPerShot(aModifiers)) + " s/shot");
 
         heatPerSecond.setVisible(true);
-        heatPerSecond.setText("HPS: " + df1.format(aWeapon.getStat("h/s", aModifiers)));
+        heatPerSecond.setText("HPS: " + LoadoutInfoPanel.df1.format(aWeapon.getStat("h/s", aModifiers)));
 
         dps.setVisible(true);
-        dps.setText("DPS: " + df1.format(aWeapon.getStat("d/s", aModifiers)));
+        dps.setText("DPS: " + LoadoutInfoPanel.df1.format(aWeapon.getStat("d/s", aModifiers)));
 
         dph.setVisible(true);
-        dph.setText("DPH: " + df1.format(aWeapon.getStat("d/h", aModifiers)));
+        dph.setText("DPH: " + LoadoutInfoPanel.df1.format(aWeapon.getStat("d/h", aModifiers)));
 
         range.setVisible(true);
-        range.setText("Range: " + ((aWeapon.getRangeMin(aModifiers) > 0.001) ? (df0.format(aWeapon.getRangeMin(aModifiers)) + " / ") : "")
-                + df0.format(aWeapon.getRangeLong(aModifiers)) + " / " + df0.format(aWeapon.getRangeMax(aModifiers)));
+        range.setText("Range: "
+                + ((aWeapon.getRangeMin(aModifiers) > 0.001) ? (LoadoutInfoPanel.df0.format(aWeapon
+                        .getRangeMin(aModifiers)) + " / ") : "")
+                + LoadoutInfoPanel.df0.format(aWeapon.getRangeLong(aModifiers)) + " / "
+                + LoadoutInfoPanel.df0.format(aWeapon.getRangeMax(aModifiers)));
 
         ammoperton.setVisible(false);
     }

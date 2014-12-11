@@ -97,11 +97,11 @@ import lisong_mechlab.view.render.StyleManager;
 public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Recipient {
     private static final long            serialVersionUID = 4720126200474042446L;
 
-    private final static DecimalFormat   df2_floor        = new DecimalFormat("###.##");
-    private final static DecimalFormat   df2              = new DecimalFormat("###.##");
-    private final static DecimalFormat   df1_floor        = new DecimalFormat("###.#");
-    private final static DecimalFormat   df1              = new DecimalFormat("###.#");
-    private final static DecimalFormat   df0              = new DecimalFormat("###");
+    public final static DecimalFormat   df2_floor        = new DecimalFormat("###.##");
+    public final static DecimalFormat   df2              = new DecimalFormat("###.##");
+    public final static DecimalFormat   df1_floor        = new DecimalFormat("###.#");
+    public final static DecimalFormat   df1              = new DecimalFormat("###.#");
+    public final static DecimalFormat   df0              = new DecimalFormat("###");
 
     static {
         df2_floor.setMinimumFractionDigits(2);
@@ -161,9 +161,9 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
     private final OperationStack         opStack;
     private final transient MessageXBar  xBar;
 
-    public LoadoutInfoPanel(LoadoutFrame aLoadoutFrame, MessageXBar anXBar) {
-        loadout = aLoadoutFrame.getLoadout();
-        opStack = aLoadoutFrame.getOpStack();
+    public LoadoutInfoPanel(LoadoutBase<?> aLoadout, OperationStack aOperationStack, MessageXBar anXBar) {
+        loadout = aLoadout;
+        opStack = aOperationStack;
 
         metricJumpDistance = new JumpDistance(loadout);
 
