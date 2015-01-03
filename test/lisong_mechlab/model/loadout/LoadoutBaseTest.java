@@ -19,7 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.loadout;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -105,6 +105,14 @@ public abstract class LoadoutBaseTest {
         heatSinks = Mockito.mock(HeatSinkUpgrade.class);
     }
 
+    @Test
+    public void testGetWeaponGroups(){
+        LoadoutBase<?> cut = makeDefaultCUT();
+        WeaponGroups weaponGroups = cut.getWeaponGroups();
+        
+        assertNotNull(cut);
+    }
+    
     @Test
     public void testGetCandidateLocationsForItem_NoInternalSupport() {
         LoadoutBase<?> cut = makeDefaultCUT();
