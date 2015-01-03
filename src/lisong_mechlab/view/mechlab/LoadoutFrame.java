@@ -92,7 +92,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         openFrameCount++;
 
         LoadoutPage loadoutPage = new LoadoutPage(loadout, loadoutOperationStack, xBar);
-        MobilityPage mobilityPage = new MobilityPage(loadout, xBar);
+        MobilityPane mobilityPage = new MobilityPane(loadout, xBar);
         WeaponLabPage weaponLabPage = new WeaponLabPage();
 
         setJMenuBar(createMenuBar(loadoutPage.getMaxSustainedDPS()));

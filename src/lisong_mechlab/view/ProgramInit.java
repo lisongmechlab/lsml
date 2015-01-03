@@ -203,6 +203,7 @@ public class ProgramInit extends JFrame {
         try {
             // Static global initialization. Stuff that needs to be done before anything else.
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.put("TabbedPane.opaque", true);
             JFrame.setDefaultLookAndFeelDecorated(true);
         }
         catch (Exception e) {

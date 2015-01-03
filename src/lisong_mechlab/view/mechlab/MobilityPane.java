@@ -20,6 +20,7 @@
 package lisong_mechlab.view.mechlab;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Collection;
 
 import javax.swing.BorderFactory;
@@ -30,11 +31,13 @@ import javax.swing.JPanel;
 import lisong_mechlab.model.chassi.MovementProfile;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.LoadoutBase;
+import lisong_mechlab.model.metrics.ReverseSpeed;
 import lisong_mechlab.model.metrics.TopSpeed;
 import lisong_mechlab.model.metrics.TurningSpeed;
 import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.util.message.Message;
 import lisong_mechlab.util.message.MessageXBar;
+import lisong_mechlab.view.render.StyleManager;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -49,26 +52,31 @@ import org.jfree.data.xy.XYSeriesCollection;
  * @author Li Song
  *
  */
-public class MobilityPage extends JPanel implements Message.Recipient {
+public class MobilityPane extends JPanel implements Message.Recipient {
     private static final long    serialVersionUID  = -3878482179163239207L;
 
     private final AngleDisplay   torsoYawDisplay   = new AngleDisplay(90.0);
     private final AngleDisplay   torsoPitchDisplay = new AngleDisplay(0.0);
 
-    private final JLabel         torsoYawAngle     = new JLabel("Torso yaw angle: ");
-    private final JLabel         torsoPitchAngle   = new JLabel("Torso pitch angle: ");
-    private final JLabel         torsoYawSpeed     = new JLabel("Torso yaw speed: ");
-    private final JLabel         torsoPitchSpeed   = new JLabel("Torso pitch speed: ");
+    private final JLabel         torsoYawAngle     = new JLabel();
+    private final JLabel         torsoPitchAngle   = new JLabel();
+    private final JLabel         torsoYawSpeed     = new JLabel();
+    private final JLabel         torsoPitchSpeed   = new JLabel();
 
-    private final JLabel         armYawAngle       = new JLabel("Arm yaw angle: ");
-    private final JLabel         armPitchAngle     = new JLabel("Arm pitch angle: ");
-    private final JLabel         armYawSpeed       = new JLabel("Arm yaw speed: ");
-    private final JLabel         armPitchSpeed     = new JLabel("Arm pitch speed: ");
+    private final JLabel         armYawAngle       = new JLabel();
+    private final JLabel         armPitchAngle     = new JLabel();
+    private final JLabel         armYawSpeed       = new JLabel();
+    private final JLabel         armPitchSpeed     = new JLabel();
+
+    private final JLabel         speedMax          = new JLabel();
+    private final JLabel         speedReverse      = new JLabel();
+    private final JLabel         timeToFullSpeed   = new JLabel();
+    private final JLabel         timeToFullStop    = new JLabel();
 
     private final LoadoutBase<?> loadout;
-    private ChartPanel           chartPanel;
+    private ChartPanel           turnSpeedChartPanel;
 
-    public MobilityPage(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+    public MobilityPane(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
         aXBar.attach(this);
         loadout = aLoadout;
 
@@ -80,20 +88,30 @@ public class MobilityPage extends JPanel implements Message.Recipient {
 
     private JPanel makeMovementPanel() {
         JPanel root = new JPanel(new BorderLayout());
-        root.setBorder(BorderFactory.createTitledBorder("Movement"));
+        root.setBorder(StyleManager.sectionBorder("Movement"));
 
         XYSeriesCollection dataset = new XYSeriesCollection();
         JFreeChart chart = ChartFactory.createXYLineChart("Turn speed", "Speed [km/h]", "Turn rate [°/s]", dataset,
                 PlotOrientation.VERTICAL, true, false, false);
-        chartPanel = new ChartPanel(chart);
+        turnSpeedChartPanel = new ChartPanel(chart);
 
-        root.add(chartPanel, BorderLayout.WEST);
+
+        root.add(turnSpeedChartPanel, BorderLayout.EAST);
+
+        JPanel left = new JPanel();
+        left.setLayout(new BoxLayout(left, BoxLayout.PAGE_AXIS));
+        left.add(speedMax);
+        left.add(speedReverse);
+        left.add(timeToFullSpeed);
+        left.add(timeToFullStop);
+        
+        root.add(left, BorderLayout.WEST);
         return root;
     }
 
     private JPanel makeTorsoPanel() {
         JPanel root = new JPanel(new BorderLayout());
-        root.setBorder(BorderFactory.createTitledBorder("Arms & Torso"));
+        root.setBorder(StyleManager.sectionBorder("Arms & Torso"));
 
         JPanel diagrams = new JPanel();
         diagrams.add(torsoYawDisplay);
@@ -116,22 +134,26 @@ public class MobilityPage extends JPanel implements Message.Recipient {
     }
 
     private void updatePanels() {
-        Engine engine = loadout.getEngine();
+        final MovementProfile mp = loadout.getMovementProfile();
+        final Engine engine = loadout.getEngine();
         int rating = 0;
         if (engine != null)
             rating = engine.getRating();
         double mass = loadout.getChassis().getMassMax();
 
         Collection<Modifier> modifiers = loadout.getModifiers();
-        double torso_pitch = loadout.getMovementProfile().getTorsoPitchMax(modifiers);
-        double torso_yaw = loadout.getMovementProfile().getTorsoYawMax(modifiers);
-        double torso_pitch_speed = loadout.getMovementProfile().getTorsoPitchSpeed(modifiers) * rating / mass;
-        double torso_yaw_speed = loadout.getMovementProfile().getTorsoYawSpeed(modifiers) * rating / mass;
+        double torso_pitch = mp.getTorsoPitchMax(modifiers);
+        double torso_yaw = mp.getTorsoYawMax(modifiers);
+        double torso_pitch_speed = mp.getTorsoPitchSpeed(modifiers) * rating / mass;
+        double torso_yaw_speed = mp.getTorsoYawSpeed(modifiers) * rating / mass;
 
-        double arm_pitch = loadout.getMovementProfile().getArmPitchMax(modifiers);
-        double arm_yaw = loadout.getMovementProfile().getArmYawMax(modifiers);
-        double arm_pitch_speed = loadout.getMovementProfile().getArmPitchSpeed(modifiers) * rating / mass;
-        double arm_yaw_speed = loadout.getMovementProfile().getArmYawSpeed(modifiers) * rating / mass;
+        double arm_pitch = mp.getArmPitchMax(modifiers);
+        double arm_yaw = mp.getArmYawMax(modifiers);
+        double arm_pitch_speed = mp.getArmPitchSpeed(modifiers) * rating / mass;
+        double arm_yaw_speed = mp.getArmYawSpeed(modifiers) * rating / mass;
+
+        double speed_max = TopSpeed.calculate(rating, mp, mass, modifiers);
+        double speed_rev = ReverseSpeed.calculate(rating, mp, mass, modifiers);
 
         torsoYawDisplay.updateAngles(torso_yaw, arm_yaw);
         torsoPitchDisplay.updateAngles(torso_pitch, arm_pitch);
@@ -145,28 +167,32 @@ public class MobilityPage extends JPanel implements Message.Recipient {
         armPitchAngle.setText("Arm pitch angle: " + LoadoutInfoPanel.df1.format(arm_pitch) + "°");
         armYawSpeed.setText("Arm yaw speed: " + LoadoutInfoPanel.df1.format(arm_yaw_speed) + "°/s");
         armPitchSpeed.setText("Arm pitch speed: " + LoadoutInfoPanel.df1.format(arm_pitch_speed) + "°/s");
-        
-        
+
         XYSeriesCollection turnSpeedGraph = new XYSeriesCollection();
         XYSeries turnSpeed = new XYSeries("Turn speed", true, false);
-
-        MovementProfile mp = loadout.getMovementProfile();
 
         if (rating > 0) {
             double topSpeed = TopSpeed.calculate(rating, mp, mass, modifiers);
             double lowSpeed = mp.getTurnLerpLowSpeed(modifiers);
             double midSpeed = mp.getTurnLerpMidSpeed(modifiers);
             double highSpeed = mp.getTurnLerpHighSpeed(modifiers);
-            turnSpeed.add(topSpeed * lowSpeed, TurningSpeed.getTurnRateAtThrottle(lowSpeed, rating, mass, mp, modifiers));
-            turnSpeed.add(topSpeed * midSpeed, TurningSpeed.getTurnRateAtThrottle(midSpeed, rating, mass, mp, modifiers));
-            turnSpeed.add(topSpeed * highSpeed, TurningSpeed.getTurnRateAtThrottle(highSpeed, rating, mass, mp, modifiers));
+            turnSpeed.add(topSpeed * lowSpeed,
+                    TurningSpeed.getTurnRateAtThrottle(lowSpeed, rating, mass, mp, modifiers));
+            turnSpeed.add(topSpeed * midSpeed,
+                    TurningSpeed.getTurnRateAtThrottle(midSpeed, rating, mass, mp, modifiers));
+            turnSpeed.add(topSpeed * highSpeed,
+                    TurningSpeed.getTurnRateAtThrottle(highSpeed, rating, mass, mp, modifiers));
         }
         turnSpeedGraph.addSeries(turnSpeed);
 
-        JFreeChart chart = ChartFactory.createXYLineChart("Turn speed", "Speed [km/h]", "Turn rate [°/s]", turnSpeedGraph,
-                PlotOrientation.VERTICAL, true, false, false);
-        chartPanel.setChart(chart);
+        JFreeChart chart = ChartFactory.createXYLineChart("Turn speed", "Speed [km/h]", "Turn rate [°/s]",
+                turnSpeedGraph, PlotOrientation.VERTICAL, true, false, false);
+        turnSpeedChartPanel.setChart(chart);
 
+        speedMax.setText("Top speed: " + LoadoutInfoPanel.df1.format(speed_max) + "m/s");
+        speedReverse.setText("Rev. speed: " + LoadoutInfoPanel.df1.format(speed_rev) + "m/s");
+        timeToFullSpeed.setText("Time to full speed: TBD" );
+        timeToFullStop.setText("Time to full stop: TBD" );
     }
 
     @Override
