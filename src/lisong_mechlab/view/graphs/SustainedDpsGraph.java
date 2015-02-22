@@ -72,7 +72,7 @@ import org.jfree.ui.VerticalAlignment;
  * 
  * @author Emily Björk
  */
-public class DamageGraph extends JFrame implements Message.Recipient {
+public class SustainedDpsGraph extends JFrame implements Message.Recipient {
     private static final long     serialVersionUID = -8812749194029184861L;
     private final LoadoutBase<?>  loadout;
     private final MaxSustainedDPS maxSustainedDPS;
@@ -84,20 +84,20 @@ public class DamageGraph extends JFrame implements Message.Recipient {
     }
 
     /**
-     * Creates and displays the {@link DamageGraph}.
+     * Creates and displays the {@link SustainedDpsGraph}.
      * 
      * @param aLoadout
      *            Which load out the diagram is for.
-     * @param anXbar
+     * @param aXbar
      *            A {@link MessageXBar} to listen for changes to the loadout on.
      * @param aMaxSustainedDpsMetric
      *            A {@link MaxSustainedDPS} instance to use in calculation.
      */
-    public DamageGraph(LoadoutBase<?> aLoadout, MessageXBar anXbar, MaxSustainedDPS aMaxSustainedDpsMetric) {
+    public SustainedDpsGraph(LoadoutBase<?> aLoadout, MessageXBar aXbar, MaxSustainedDPS aMaxSustainedDpsMetric) {
         super("Max Sustained DPS over range for " + aLoadout);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        anXbar.attach(this);
+        aXbar.attach(this);
 
         loadout = aLoadout;
         maxSustainedDPS = aMaxSustainedDpsMetric;

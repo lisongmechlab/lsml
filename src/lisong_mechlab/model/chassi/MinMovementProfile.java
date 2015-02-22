@@ -56,7 +56,9 @@ public class MinMovementProfile extends ModifiedProfileBase {
                 double min = Double.POSITIVE_INFINITY;
                 for (Collection<Modifier> quirks : group) {
                     List<Modifier> fullQuirks = new ArrayList<>(quirks);
-                    fullQuirks.addAll(aExtraModifiers);
+                    if (aExtraModifiers != null) {
+                        fullQuirks.addAll(aExtraModifiers);
+                    }
                     double value = (double) base.getClass().getMethod(aMethodName, Collection.class)
                             .invoke(base, fullQuirks);
                     min = Math.min(value - baseValue, min);

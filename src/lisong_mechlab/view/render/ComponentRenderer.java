@@ -85,6 +85,8 @@ public class ComponentRenderer implements Message.Recipient {
     private void updateStates() {
         engineHsLeft = component.getEngineHeatsinksMax();
         int offs = updateStates(0, component.getItemsFixed(), true);
+        if(isCompact)
+            compactOffest = offs;
         offs = updateStates(offs, component.getItemsEquipped(), false);
         while (offs < states.length) {
             states[offs].renderType = RenderType.Empty;
@@ -92,14 +94,6 @@ public class ComponentRenderer implements Message.Recipient {
             states[offs].isFixed = false;
             offs++;
         }
-
-        compactOffest = 0;
-        if (isCompact) {
-            for (Item item : component.getInternalComponent().getFixedItems()) {
-                compactOffest += item.getNumCriticalSlots();
-            }
-        }
-
         dirty = false;
     }
 

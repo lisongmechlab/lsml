@@ -27,7 +27,7 @@ import lisong_mechlab.model.loadout.LoadoutBase;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.metrics.MaxSustainedDPS;
 import lisong_mechlab.util.message.MessageXBar;
-import lisong_mechlab.view.graphs.DamageGraph;
+import lisong_mechlab.view.graphs.SustainedDpsGraph;
 
 /**
  * This action sets the armor to max on the given {@link LoadoutStandard}.
@@ -60,6 +60,6 @@ public class ShowDamageGraphAction extends AbstractAction {
     @SuppressWarnings("unused")
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        new DamageGraph(loadout, xBar, maxSustainedDpsMetric);
+        new SustainedDpsGraph(loadout, xBar, maxSustainedDpsMetric);
     }
 }

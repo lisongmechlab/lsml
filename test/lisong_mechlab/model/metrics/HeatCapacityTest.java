@@ -28,10 +28,8 @@ import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.modifiers.Attribute;
 import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.modifiers.ModifierDescription;
-import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
 import lisong_mechlab.model.modifiers.ModifiersDB;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -39,12 +37,9 @@ import lisong_mechlab.model.upgrades.Upgrades;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 /**
  * Test suite for {@link HeatCapacity}
@@ -97,16 +92,8 @@ public class HeatCapacityTest {
         double expectedCapacity = (basecapacity + numInternalHs * internalHsCapacity + numExternalHs
                 * externalHsCapacity)
                 * capacityFactor;
-
-        ModifierDescription description = Mockito.mock(ModifierDescription.class);
-        Mockito.when(description.getOperation()).thenReturn(Operation.MULTIPLICATIVE);
-        Mockito.when(description.affects(Matchers.any(Attribute.class))).then(new Answer<Boolean>() {
-            @Override
-            public Boolean answer(InvocationOnMock aInvocation) throws Throwable {
-                Attribute a = (Attribute) aInvocation.getArguments()[0];
-                return a.getSelectors().contains(ModifiersDB.SEL_HEAT_LIMIT);
-            }
-        });
+        
+        ModifierDescription description = ModifiersDB.HEAT_CONTAINMENT_DESC;
 
         Modifier heatlimit = Mockito.mock(Modifier.class);
         Mockito.when(heatlimit.getValue()).thenReturn(capacityFactor - 1.0);
