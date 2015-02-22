@@ -29,6 +29,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,6 +80,12 @@ public class SmurfyImportExport {
             userMechbayUrl = new URL("https://mwo.smurfy-net.de/api/data/user/mechbay.xml");
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(keyStoreStream, "lsmllsml".toCharArray());
+
+            // Enumeration<String> e = keyStore.aliases();
+            // while(e.hasMoreElements()){
+            // String n = e.nextElement();
+            // System.out.println(n);
+            // }
 
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore);
