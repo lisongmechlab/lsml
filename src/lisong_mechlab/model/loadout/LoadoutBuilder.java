@@ -20,13 +20,13 @@
 package lisong_mechlab.model.loadout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 
-import lisong_mechlab.model.item.HeatSink;
+import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.loadout.component.OpAddItem;
 import lisong_mechlab.model.loadout.component.OpChangeOmniPod;
 import lisong_mechlab.model.loadout.component.OpSetArmor;
@@ -74,16 +74,17 @@ public class LoadoutBuilder {
 
         @Override
         public int compare(Operation aLHS, Operation aRHS) {
+            // This is needed to make sure that engines are added first
             if (aLHS instanceof OpAddItem && aRHS instanceof OpAddItem) {
-                boolean lhsHeatSink = ((OpAddItem) aLHS).getItem() instanceof HeatSink;
-                boolean rhsHeatSink = ((OpAddItem) aRHS).getItem() instanceof HeatSink;
+                boolean lhsEngine = ((OpAddItem) aLHS).getItem() instanceof Engine;
+                boolean rhsEngine = ((OpAddItem) aRHS).getItem() instanceof Engine;
 
-                if (lhsHeatSink == rhsHeatSink)
+                if (lhsEngine == rhsEngine)
                     return 0;
-                else if (lhsHeatSink)
-                    return 1;
-                else
+                else if (lhsEngine)
                     return -1;
+                else
+                    return 1;
             }
 
             Integer priorityLHS = CLASS_PRIORITY_ORDER.get(aLHS.getClass());
@@ -102,7 +103,7 @@ public class LoadoutBuilder {
         }
     }
 
-    final private PriorityQueue<Operation> operations = new PriorityQueue<>(20, new OperationComparator());
+    final private List<Operation> operations = new ArrayList<>(20);
     private List<Throwable>                errors     = null;
 
     public void push(final Operation aOperation) {
@@ -131,11 +132,11 @@ public class LoadoutBuilder {
 
     public void apply() {
         OperationStack operationStack = new OperationStack(0);
-        Operation operation;
-
-        while (null != (operation = operations.poll())) {
+        Collections.sort(operations, new OperationComparator());
+        
+        for(Operation op : operations){
             try {
-                operationStack.pushAndApply(operation);
+                operationStack.pushAndApply(op);
             }
             catch (Throwable t) {
                 if (null == errors)
