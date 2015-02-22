@@ -40,7 +40,7 @@ public class GuidanceUpgradeTest {
         // Standard -> Artemis
         assertSame(ItemDB.lookup("C-LRM AMMO + ART. IV"), artemis.upgrade((Ammunition) ItemDB.lookup("C-LRM AMMO")));
         assertSame(ItemDB.lookup("C-NARC AMMO"), artemis.upgrade((Ammunition) ItemDB.lookup("C-NARC AMMO")));
-        assertSame(ItemDB.lookup("C-STREAK SRM AMMO"), artemis.upgrade((Ammunition) ItemDB.lookup("C-STREAK SRM AMMO")));
+        assertSame(ItemDB.lookup("C-S-SRM AMMO"), artemis.upgrade((Ammunition) ItemDB.lookup("C-S-SRM AMMO")));
         assertSame(ItemDB.lookup("C-SRM AMMO + ART. IV"), artemis.upgrade((Ammunition) ItemDB.lookup("C-SRM AMMO")));
 
         assertSame(ItemDB.lookup("C-LRM AMMO+ART. IV (1/2)"),
@@ -67,8 +67,7 @@ public class GuidanceUpgradeTest {
         // Artemis -> Standard
         assertSame(ItemDB.lookup("C-LRM AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("C-LRM AMMO + ART. IV")));
         assertSame(ItemDB.lookup("C-NARC AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("C-NARC AMMO")));
-        assertSame(ItemDB.lookup("C-STREAK SRM AMMO"),
-                standard.upgrade((Ammunition) ItemDB.lookup("C-STREAK SRM AMMO")));
+        assertSame(ItemDB.lookup("C-S-SRM AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("C-S-SRM AMMO")));
         assertSame(ItemDB.lookup("C-SRM AMMO"), standard.upgrade((Ammunition) ItemDB.lookup("C-SRM AMMO + ART. IV")));
 
         assertSame(ItemDB.lookup("C-LRM AMMO (1/2)"),
