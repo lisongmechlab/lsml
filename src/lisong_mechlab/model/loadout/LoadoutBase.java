@@ -71,6 +71,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     private final T[]               components;
     private final Efficiencies      efficiencies;
     private final List<PilotModule> modules;     // TODO: Modules should be handled as separate categories.
+    private final WeaponGroups      weaponGroups;
 
     protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase) {
         name = aChassisBase.getNameShort();
@@ -78,6 +79,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         efficiencies = new Efficiencies();
         modules = new ArrayList<>();
         components = aFactory.defaultComponents(chassisBase);
+        weaponGroups = new WeaponGroups(this);
     }
 
     protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, LoadoutBase<T> aLoadoutBase) {
@@ -86,6 +88,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         efficiencies = new Efficiencies(aLoadoutBase.efficiencies);
         modules = new ArrayList<>(aLoadoutBase.modules);
         components = aFactory.cloneComponents(aLoadoutBase);
+        weaponGroups = new WeaponGroups(aLoadoutBase.getWeaponGroups(), this);
     }
 
     public static XStream loadoutXstream() {
@@ -555,5 +558,12 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         }
         modifiers.addAll(getEfficiencies().getModifiers());
         return modifiers;
+    }
+
+    /**
+     * @return The {@link WeaponGroups} for this {@link LoadoutBase}.
+     */
+    public WeaponGroups getWeaponGroups() {
+        return weaponGroups;
     }
 }

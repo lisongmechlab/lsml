@@ -110,7 +110,7 @@ public abstract class LoadoutBaseTest {
         LoadoutBase<?> cut = makeDefaultCUT();
         WeaponGroups weaponGroups = cut.getWeaponGroups();
         
-        assertNotNull(cut);
+        assertNotNull(weaponGroups);
     }
     
     @Test

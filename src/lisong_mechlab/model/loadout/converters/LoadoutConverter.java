@@ -32,6 +32,7 @@ import lisong_mechlab.model.loadout.LoadoutOmniMech;
 import lisong_mechlab.model.loadout.LoadoutStandard;
 import lisong_mechlab.model.loadout.OpAddModule;
 import lisong_mechlab.model.loadout.OpRename;
+import lisong_mechlab.model.loadout.WeaponGroups;
 import lisong_mechlab.model.loadout.component.ComponentBuilder;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentBase;
 import lisong_mechlab.model.loadout.component.ConfiguredComponentStandard;
@@ -105,6 +106,10 @@ public class LoadoutConverter implements Converter {
             aContext.convertAnother(module);
             aWriter.endNode();
         }
+        aWriter.endNode();
+        
+        aWriter.startNode("weapongroups");
+        aContext.convertAnother(loadout.getWeaponGroups());
         aWriter.endNode();
     }
 
@@ -193,6 +198,10 @@ public class LoadoutConverter implements Converter {
 
                     aReader.moveUp();
                 }
+            }
+            else if("weapongroups".equals(aReader.getNodeName())){
+                WeaponGroups wg = (WeaponGroups) aContext.convertAnother(loadoutBase, WeaponGroups.class);
+                loadoutBase.getWeaponGroups().assign(wg);
             }
             aReader.moveUp();
         }
