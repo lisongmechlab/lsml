@@ -74,7 +74,8 @@ import lisong_mechlab.view.action.MaxArmorAction;
 import lisong_mechlab.view.action.RedoLoadoutAction;
 import lisong_mechlab.view.action.RenameLoadoutAction;
 import lisong_mechlab.view.action.UndoLoadoutAction;
-import lisong_mechlab.view.graphs.DamageGraph;
+import lisong_mechlab.view.graphs.DpsGraph;
+import lisong_mechlab.view.graphs.SustainedDpsGraph;
 import lisong_mechlab.view.render.StyleManager;
 
 public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
@@ -405,12 +406,20 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
     private JMenu createMenuGraphs() {
         JMenu menu = new JMenu("Graphs");
 
-        menu.add(createMenuItem("Damage", new ActionListener() {
+        menu.add(createMenuItem("Sustained DPS", new ActionListener() {
             @SuppressWarnings("unused")
             // Constructor has intended side effects.
             @Override
             public void actionPerformed(ActionEvent aArg0) {
-                new DamageGraph(loadout, xbar, infoPanel.getMaxSustainedDPSMetric());
+                new SustainedDpsGraph(loadout, xbar, infoPanel.getMaxSustainedDPSMetric());
+            }
+        }));
+        menu.add(createMenuItem("Max DPS", new ActionListener() {
+            @SuppressWarnings("unused")
+            // Constructor has intended side effects.
+            @Override
+            public void actionPerformed(ActionEvent aArg0) {
+                new DpsGraph(loadout, xbar);
             }
         }));
         return menu;
