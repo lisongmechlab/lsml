@@ -28,11 +28,8 @@ import lisong_mechlab.model.chassi.ChassisBase;
 import lisong_mechlab.model.item.Engine;
 import lisong_mechlab.model.item.HeatSink;
 import lisong_mechlab.model.loadout.LoadoutBase;
-import lisong_mechlab.model.modifiers.Attribute;
-import lisong_mechlab.model.modifiers.Efficiencies;
 import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.modifiers.ModifierDescription;
-import lisong_mechlab.model.modifiers.ModifierDescription.Operation;
 import lisong_mechlab.model.modifiers.ModifiersDB;
 import lisong_mechlab.model.upgrades.HeatSinkUpgrade;
 import lisong_mechlab.model.upgrades.Upgrades;
@@ -40,12 +37,9 @@ import lisong_mechlab.model.upgrades.Upgrades;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 /**
  * Test suite for {@link HeatCapacity}
