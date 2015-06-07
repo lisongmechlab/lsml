@@ -26,12 +26,15 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -142,7 +145,25 @@ public class LoadoutPage extends JPanel {
     }
 
     private JPanel createMechView(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+        JPanel outerpannel = new JPanel();
+        outerpannel.setLayout(new BorderLayout());
+        
         final JPanel panel = new JPanel();
+        outerpannel.add(panel, BorderLayout.CENTER);
+        /////// image of the mech
+        String shortname = aLoadout.getChassis().getNameShort();
+        URL resourceurl = LoadoutPage.class.getResource("/resources/"+ shortname.toLowerCase() +  ".png"); 
+        if(resourceurl != null)
+        {
+        Icon   mechicon   = new ImageIcon(
+                resourceurl,
+                shortname);
+        JLabel imagelabel = new JLabel(mechicon);
+        outerpannel.add(imagelabel, BorderLayout.SOUTH);
+        }
+        
+        //////////////
+        
         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 
         Dimension padding = new Dimension(5, 0);
@@ -260,6 +281,6 @@ public class LoadoutPage extends JPanel {
 
             panel.add(createComponentPanel(createComponentPadPanel(ARM_OFFSET, quirksummary), arm, null));
         }
-        return panel;
+        return outerpannel;
     }
 }
