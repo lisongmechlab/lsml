@@ -23,6 +23,8 @@ import org.lisoft.lsml.model.chassi.MovementProfile;
 
 /**
  * This Metric calculates the acceleration for a loadout.
+ * 
+ *  FIXME: Implement this
  * @author Emily Björk
  *
  */

@@ -25,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.metrics.JumpDistance;
 import org.lisoft.lsml.model.metrics.Metric;
 import org.lisoft.lsml.model.metrics.RangeMetric;
 import org.lisoft.lsml.model.metrics.RangeTimeMetric;
@@ -81,6 +82,9 @@ public class MetricDisplay extends JLabel implements Message.Recipient {
         }
         else if (metric instanceof RangeMetric) {
             formatter.format(format, value, ((RangeMetric) metric).getRange());
+        }
+        else if (metric instanceof JumpDistance){
+            formatter.format(format, loadout.getJumpJetCount(), loadout.getJumpJetsMax(), value);
         }
         else {
             formatter.format(format, value);

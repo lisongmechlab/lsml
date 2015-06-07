@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view.mechlab;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -31,12 +33,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 
 import org.lisoft.lsml.command.OpStripLoadout;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
+import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.SwingHelpers;
@@ -66,6 +72,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
     private static final int     xOffset               = 30, yOffset = 30;
     private static int           openFrameCount        = 0;
     private final LoadoutBase<?> loadout;
+    private final LoadoutMetrics metrics;
     private final MessageXBar    xBar;
     private final OperationStack loadoutOperationStack = new OperationStack(128);
     private final Action         actionUndoLoadout;
@@ -81,6 +88,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         xBar = aXBar;
         xBar.attach(this);
         loadout = aLoadout;
+        metrics = new LoadoutMetrics(loadout, null, xBar);
 
         // Actions
         actionUndoLoadout = new UndoLoadoutAction(xBar, this);
@@ -92,18 +100,34 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
         openFrameCount++;
 
-        LoadoutPage loadoutPage = new LoadoutPage(loadout, loadoutOperationStack, xBar);
+        LoadoutPage loadoutPage = new LoadoutPage(loadout, metrics, loadoutOperationStack, xBar);
         MobilityPane mobilityPage = new MobilityPane(loadout, xBar);
-        WeaponLabPage weaponLabPage = new WeaponLabPage(loadout, aXBar, loadoutPage.getHeatDissipation());
+        WeaponLabPage weaponLabPage = new WeaponLabPage(loadout, metrics, aXBar);
 
-        setJMenuBar(createMenuBar(loadoutPage.getMaxSustainedDPS()));
+        LoadoutInfoPanel infoPanel = new LoadoutInfoPanel(loadout, metrics, loadoutOperationStack, aXBar);
+        if (ProgramInit.lsml().preferences.uiPreferences.getCompactMode()) {
+            JScrollPane scrollpane = new JScrollPane(infoPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            Dimension preferredSize = new Dimension();
+            preferredSize.height = (int) (loadoutPage.getPreferredSize().getHeight() + 1);
+            preferredSize.width = (int) (infoPanel.getPreferredSize().getWidth()
+                    + scrollpane.getVerticalScrollBar().getPreferredSize().getWidth() + 1);
+            scrollpane.setPreferredSize(preferredSize);
+            add(scrollpane, BorderLayout.EAST);
+        }
+
+        setJMenuBar(createMenuBar(metrics.maxSustainedDPS));
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Loadout", loadoutPage);
         tabbedPane.addTab("Mobility", mobilityPage);
         tabbedPane.addTab("Weapon Lab.", weaponLabPage);
 
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(tabbedPane, BorderLayout.WEST);
+        mainPanel.add(infoPanel, BorderLayout.EAST);
+
         setFrameIcon(null);
-        setContentPane(tabbedPane);
+        setContentPane(mainPanel);
 
         pack();
         setVisible(true);
@@ -145,6 +169,10 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
 
     public LoadoutBase<?> getLoadout() {
         return loadout;
+    }
+
+    public LoadoutMetrics getMetrics() {
+        return metrics;
     }
 
     public OperationStack getOpStack() {

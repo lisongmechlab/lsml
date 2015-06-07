@@ -37,9 +37,9 @@ public class HeatDissipation implements Metric {
     private final LoadoutBase<?> loadout;
     private Environment          environment;
 
-    public HeatDissipation(final LoadoutBase<?> aLoadout, final Environment anEnvironment) {
+    public HeatDissipation(final LoadoutBase<?> aLoadout, final Environment aEnvironment) {
         loadout = aLoadout;
-        environment = anEnvironment;
+        environment = aEnvironment;
     }
 
     @Override
