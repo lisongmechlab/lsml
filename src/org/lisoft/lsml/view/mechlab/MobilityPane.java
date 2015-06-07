@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view.mechlab;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Collection;
 
 import javax.swing.BoxLayout;
@@ -73,19 +74,19 @@ public class MobilityPane extends JPanel implements Message.Recipient {
     private final LoadoutBase<?> loadout;
     private ChartPanel           turnSpeedChartPanel;
 
-    public MobilityPane(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+    public MobilityPane(LoadoutBase<?> aLoadout, MessageXBar aXBar, int parentWidth) {
         setLayout(new BorderLayout());
 
         aXBar.attach(this);
         loadout = aLoadout;
-
+        
         add(makeTorsoPanel(), BorderLayout.NORTH);
-        add(makeMovementPanel(), BorderLayout.SOUTH);
+        add(makeMovementPanel(parentWidth), BorderLayout.SOUTH);
 
         updatePanels();
     }
 
-    private JPanel makeMovementPanel() {
+    private JPanel makeMovementPanel(int aParentWidth) {
         JPanel root = new JPanel(new BorderLayout());
         root.setBorder(StyleManager.sectionBorder("Movement"));
 
@@ -93,6 +94,7 @@ public class MobilityPane extends JPanel implements Message.Recipient {
         JFreeChart chart = ChartFactory.createXYLineChart("Turn speed", "Speed [km/h]", "Turn rate [°/s]", dataset,
                 PlotOrientation.VERTICAL, true, false, false);
         turnSpeedChartPanel = new ChartPanel(chart);
+        turnSpeedChartPanel.setPreferredSize(new Dimension(aParentWidth/2, 200));        
 
         root.add(turnSpeedChartPanel, BorderLayout.EAST);
 
@@ -185,6 +187,8 @@ public class MobilityPane extends JPanel implements Message.Recipient {
 
         JFreeChart chart = ChartFactory.createXYLineChart("Turn speed", "Speed [km/h]", "Turn rate [°/s]",
                 turnSpeedGraph, PlotOrientation.VERTICAL, true, false, false);
+        //chart.getPlot().setBackgroundPaint(getBackground());
+        chart.setBackgroundPaint(getBackground());
         turnSpeedChartPanel.setChart(chart);
 
         speedMax.setText("Top speed: " + LoadoutInfoPanel.df1.format(speed_max) + "m/s");

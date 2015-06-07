@@ -78,6 +78,11 @@ public class WeaponGroupStats extends JPanel {
 
         coolingRatio = new MetricDisplay(aMetrics.groupCoolingRatio[aGroup], LoadoutInfoPanel.COOLING_RATIO_TEXT,
                 LoadoutInfoPanel.COOLING_RATIO_TOOLTIP, aXBar, aLoadout, true);
+        timeToOverheat = new MetricDisplay(aMetrics.groupAlphaTimeToOverHeat[aGroup],
+                LoadoutInfoPanel.TIME_TO_OVERHEAT_TEXT, LoadoutInfoPanel.TIME_TO_OVERHEAT_TOOLTIP, aXBar, aLoadout);
+        timeToOverheat.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        alphaHeat = new JLabel("Alpha Heat: ");
         ghostHeat = new MetricDisplay(aMetrics.groupGhostHeat[aGroup], LoadoutInfoPanel.GHOST_HEAT_TEXT,
                 LoadoutInfoPanel.GHOST_HEAT_TOOLTIP, aXBar, aLoadout) {
             private static final long serialVersionUID = 1L;
@@ -92,12 +97,7 @@ public class WeaponGroupStats extends JPanel {
             }
         };
         ghostHeat.setHorizontalAlignment(SwingConstants.RIGHT);
-
-        alphaHeat = new JLabel("Alpha Heat: ");
-        timeToOverheat = new MetricDisplay(aMetrics.groupAlphaTimeToOverHeat[aGroup],
-                LoadoutInfoPanel.TIME_TO_OVERHEAT_TEXT, LoadoutInfoPanel.TIME_TO_OVERHEAT_TOOLTIP, aXBar, aLoadout);
-        timeToOverheat.setHorizontalAlignment(SwingConstants.RIGHT);
-
+        
         alphaDamage = new MetricDisplay(aMetrics.groupAlphaStrike[aGroup], LoadoutInfoPanel.ALPHA_DAMAGE_TEXT,
                 LoadoutInfoPanel.ALPHA_DAMAGE_TOOLTIP, aXBar, aLoadout);
         burstDamage = new MetricDisplay(aMetrics.groupBurstDamageOverTime[aGroup], LoadoutInfoPanel.BURST_DAMAGE_TEXT,
@@ -111,9 +111,9 @@ public class WeaponGroupStats extends JPanel {
         sustDPS.setHorizontalAlignment(SwingConstants.RIGHT);
 
         add(coolingRatio);
-        add(ghostHeat);
-        add(alphaHeat);
         add(timeToOverheat);
+        add(alphaHeat);
+        add(ghostHeat);
 
         add(alphaDamage);
         add(burstDamage);

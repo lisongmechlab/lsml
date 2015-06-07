@@ -101,7 +101,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         openFrameCount++;
 
         LoadoutPage loadoutPage = new LoadoutPage(loadout, metrics, loadoutOperationStack, xBar);
-        MobilityPane mobilityPage = new MobilityPane(loadout, xBar);
+        MobilityPane mobilityPage = new MobilityPane(loadout, xBar, (int)loadoutPage.getPreferredSize().getWidth());
         WeaponLabPage weaponLabPage = new WeaponLabPage(loadout, metrics, aXBar);
 
         LoadoutInfoPanel infoPanel = new LoadoutInfoPanel(loadout, metrics, loadoutOperationStack, aXBar);
