@@ -20,25 +20,15 @@
 package org.lisoft.lsml.view.mechlab;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.metrics.AlphaStrike;
-import org.lisoft.lsml.model.metrics.AlphaTimeToOverHeat;
-import org.lisoft.lsml.model.metrics.BurstDamageOverTime;
-import org.lisoft.lsml.model.metrics.CoolingRatio;
-import org.lisoft.lsml.model.metrics.GhostHeat;
-import org.lisoft.lsml.model.metrics.HeatCapacity;
-import org.lisoft.lsml.model.metrics.HeatDissipation;
-import org.lisoft.lsml.model.metrics.HeatGeneration;
-import org.lisoft.lsml.model.metrics.HeatOverTime;
-import org.lisoft.lsml.model.metrics.MaxDPS;
-import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
-import org.lisoft.lsml.model.metrics.RangeMetric;
-import org.lisoft.lsml.model.metrics.RangeTimeMetric;
+import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.MetricDisplay;
 import org.lisoft.lsml.view.render.StyleManager;
@@ -65,35 +55,30 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Li Song
  */
 public class WeaponGroupStats extends JPanel {
-    private static final long     serialVersionUID = 3272942854807490075L;
-    private final JLabel          coolingRatio;
-    private final JLabel          ghostHeat;
-    private final JLabel          alphaHeat;
-    private final JLabel          timeToOverheat;
-    private final JLabel          alphaDamage;
-    private final JLabel          burstDamage;
-    private final JLabel          maxDPS;
-    private final JLabel          sustDPS;
-    private final HeatDissipation heatDissipation;
-    private final HeatGeneration  heatGeneration;
+    private static final long serialVersionUID = 3272942854807490075L;
+    private final JLabel      coolingRatio;
+    private final JLabel      ghostHeat;
+    private final JLabel      alphaHeat;
+    private final JLabel      timeToOverheat;
+    private final JLabel      alphaDamage;
+    private final JLabel      burstDamage;
+    private final JLabel      maxDPS;
+    private final JLabel      sustDPS;
 
     /**
      * @param aLoadout
+     * @param aMetrics
      * @param aXBar
-     * @param aHeatDissipation
      * @param aGroup
      * 
      */
-    public WeaponGroupStats(LoadoutBase<?> aLoadout, MessageXBar aXBar, HeatDissipation aHeatDissipation, int aGroup) {
-        setBorder(StyleManager.sectionBorder("Group " + (aGroup+1)));
+    public WeaponGroupStats(LoadoutBase<?> aLoadout, LoadoutMetrics aMetrics, MessageXBar aXBar, int aGroup) {
+        setBorder(StyleManager.sectionBorder("Group " + (aGroup + 1)));
         setLayout(new GridLayout(0, 2));
 
-        heatDissipation = aHeatDissipation;
-        heatGeneration = new HeatGeneration(aLoadout, aGroup);
-
-        coolingRatio = new MetricDisplay(new CoolingRatio(heatDissipation, heatGeneration),
-                LoadoutInfoPanel.COOLING_RATIO_TEXT, LoadoutInfoPanel.COOLING_RATIO_TOOLTIP, aXBar, aLoadout, true);
-        ghostHeat = new MetricDisplay(new GhostHeat(aLoadout, aGroup), LoadoutInfoPanel.GHOST_HEAT_TEXT,
+        coolingRatio = new MetricDisplay(aMetrics.groupCoolingRatio[aGroup], LoadoutInfoPanel.COOLING_RATIO_TEXT,
+                LoadoutInfoPanel.COOLING_RATIO_TOOLTIP, aXBar, aLoadout, true);
+        ghostHeat = new MetricDisplay(aMetrics.groupGhostHeat[aGroup], LoadoutInfoPanel.GHOST_HEAT_TEXT,
                 LoadoutInfoPanel.GHOST_HEAT_TOOLTIP, aXBar, aLoadout) {
             private static final long serialVersionUID = 1L;
 
@@ -106,27 +91,24 @@ public class WeaponGroupStats extends JPanel {
                 super.updateText();
             }
         };
+        ghostHeat.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        final HeatCapacity heatCapacity = new HeatCapacity(aLoadout); // TODO Consolidate all metrics somewhere so we
-                                                                      // don't get this duplication
-        HeatOverTime heatOverTime = new HeatOverTime(aLoadout, aXBar, aGroup);
         alphaHeat = new JLabel("Alpha Heat: ");
-        timeToOverheat = new MetricDisplay(new AlphaTimeToOverHeat(heatCapacity, heatOverTime, heatDissipation),
+        timeToOverheat = new MetricDisplay(aMetrics.groupAlphaTimeToOverHeat[aGroup],
                 LoadoutInfoPanel.TIME_TO_OVERHEAT_TEXT, LoadoutInfoPanel.TIME_TO_OVERHEAT_TOOLTIP, aXBar, aLoadout);
+        timeToOverheat.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        final RangeTimeMetric metricBurstDamage = new BurstDamageOverTime(aLoadout, aXBar, aGroup);
-        final RangeMetric metricAlphaStrike = new AlphaStrike(aLoadout, aGroup);
-        final RangeMetric metricMaxDPS = new MaxDPS(aLoadout, aGroup);
-        final RangeMetric metricSustainedDps = new MaxSustainedDPS(aLoadout, heatDissipation, aGroup);
-
-        alphaDamage = new MetricDisplay(metricAlphaStrike, LoadoutInfoPanel.ALPHA_DAMAGE_TEXT,
+        alphaDamage = new MetricDisplay(aMetrics.groupAlphaStrike[aGroup], LoadoutInfoPanel.ALPHA_DAMAGE_TEXT,
                 LoadoutInfoPanel.ALPHA_DAMAGE_TOOLTIP, aXBar, aLoadout);
-        burstDamage = new MetricDisplay(metricBurstDamage, LoadoutInfoPanel.BURST_DAMAGE_TEXT,
+        burstDamage = new MetricDisplay(aMetrics.groupBurstDamageOverTime[aGroup], LoadoutInfoPanel.BURST_DAMAGE_TEXT,
                 LoadoutInfoPanel.BURST_DAMAGE_TOOLTIP, aXBar, aLoadout);
-        maxDPS = new MetricDisplay(metricMaxDPS, LoadoutInfoPanel.MAX_DPS_TEXT, LoadoutInfoPanel.MAX_DPS_TOOLTIP,
-                aXBar, aLoadout);
-        sustDPS = new MetricDisplay(metricSustainedDps, LoadoutInfoPanel.SUST_DPS_TEXT,
+        burstDamage.setHorizontalAlignment(SwingConstants.RIGHT);
+        
+        maxDPS = new MetricDisplay(aMetrics.groupMaxDPS[aGroup], LoadoutInfoPanel.MAX_DPS_TEXT,
+                LoadoutInfoPanel.MAX_DPS_TOOLTIP, aXBar, aLoadout);
+        sustDPS = new MetricDisplay(aMetrics.groupMaxSustainedDPS[aGroup], LoadoutInfoPanel.SUST_DPS_TEXT,
                 LoadoutInfoPanel.SUST_DPS_TOOLTIP, aXBar, aLoadout);
+        sustDPS.setHorizontalAlignment(SwingConstants.RIGHT);
 
         add(coolingRatio);
         add(ghostHeat);

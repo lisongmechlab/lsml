@@ -74,11 +74,13 @@ public class MobilityPane extends JPanel implements Message.Recipient {
     private ChartPanel           turnSpeedChartPanel;
 
     public MobilityPane(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+        setLayout(new BorderLayout());
+
         aXBar.attach(this);
         loadout = aLoadout;
 
-        add(makeTorsoPanel());
-        add(makeMovementPanel());
+        add(makeTorsoPanel(), BorderLayout.NORTH);
+        add(makeMovementPanel(), BorderLayout.SOUTH);
 
         updatePanels();
     }
@@ -92,7 +94,6 @@ public class MobilityPane extends JPanel implements Message.Recipient {
                 PlotOrientation.VERTICAL, true, false, false);
         turnSpeedChartPanel = new ChartPanel(chart);
 
-
         root.add(turnSpeedChartPanel, BorderLayout.EAST);
 
         JPanel left = new JPanel();
@@ -101,7 +102,7 @@ public class MobilityPane extends JPanel implements Message.Recipient {
         left.add(speedReverse);
         left.add(timeToFullSpeed);
         left.add(timeToFullStop);
-        
+
         root.add(left, BorderLayout.WEST);
         return root;
     }
@@ -188,8 +189,8 @@ public class MobilityPane extends JPanel implements Message.Recipient {
 
         speedMax.setText("Top speed: " + LoadoutInfoPanel.df1.format(speed_max) + "m/s");
         speedReverse.setText("Rev. speed: " + LoadoutInfoPanel.df1.format(speed_rev) + "m/s");
-        timeToFullSpeed.setText("Time to full speed: TBD" );
-        timeToFullStop.setText("Time to full stop: TBD" );
+        timeToFullSpeed.setText("Time to full speed: TBD");
+        timeToFullStop.setText("Time to full stop: TBD");
     }
 
     @Override

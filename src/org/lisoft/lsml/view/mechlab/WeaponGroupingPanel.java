@@ -27,6 +27,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -62,7 +63,8 @@ public class WeaponGroupingPanel extends JPanel implements Message.Recipient {
 
         // Header
         for (int i = 1; i <= WeaponGroups.MAX_GROUPS; ++i) {
-            groups.add(new JLabel(Integer.toString(i)));
+            JLabel label = new JLabel(Integer.toString(i), SwingConstants.CENTER);
+            groups.add(label);
         }
 
         // Checkboxes

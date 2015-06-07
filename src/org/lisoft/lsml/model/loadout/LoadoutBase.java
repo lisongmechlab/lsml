@@ -425,7 +425,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     }
 
     /**
-     * Package internal function. Use {@link OpRename} to change the name.
+     * Changes the name of the loadout.
      * 
      * @param aNewName
      *            The new name of the loadout.

@@ -26,6 +26,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.metrics.HeatDissipation;
 import org.lisoft.lsml.util.message.Message;
@@ -43,27 +44,28 @@ public class WeaponLabPage extends JPanel implements Message.Recipient {
     private final WeaponGroupStats    weaponGroupStats[] = new WeaponGroupStats[WeaponGroups.MAX_GROUPS];
     private final LoadoutBase<?>      loadout;
 
-    public WeaponLabPage(LoadoutBase<?> aLoadout, MessageXBar aXBar, HeatDissipation aHeatDissipation) {
+    public WeaponLabPage(LoadoutBase<?> aLoadout, LoadoutMetrics aMetrics, MessageXBar aXBar) {
         loadout = aLoadout;
         aXBar.attach(this);
 
         setLayout(new BorderLayout());
-        JPanel weaponsPanel = new JPanel();
-        weaponsPanel.setLayout(new BoxLayout(weaponsPanel, BoxLayout.PAGE_AXIS));
+        JPanel weaponsPanel = new JPanel(new BorderLayout());
         weaponGroups = new WeaponGroupingPanel(aLoadout.getWeaponGroups(), aLoadout, aXBar);
-        weaponsPanel.add(weaponGroups);
-        weaponsPanel.add(Box.createVerticalGlue());
+        weaponsPanel.add(weaponGroups, BorderLayout.NORTH);
         add(weaponsPanel, BorderLayout.WEST);
 
         JPanel groupsPanel = new JPanel();
         groupsPanel.setLayout(new BoxLayout(groupsPanel, BoxLayout.PAGE_AXIS));
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-            WeaponGroupStats wgs = new WeaponGroupStats(aLoadout, aXBar, aHeatDissipation, i);
+            WeaponGroupStats wgs = new WeaponGroupStats(aLoadout, aMetrics, aXBar, i);
             groupsPanel.add(wgs, BorderLayout.EAST);
             weaponGroupStats[i] = wgs;
         }
-        groupsPanel.add(Box.createVerticalGlue());
-        add(groupsPanel, BorderLayout.EAST);
+
+        JPanel groupsCompression = new JPanel(new BorderLayout());
+        groupsCompression.add(groupsPanel, BorderLayout.NORTH);
+
+        add(groupsCompression, BorderLayout.EAST);
         update();
     }
 

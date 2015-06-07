@@ -44,8 +44,7 @@ import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.metrics.HeatDissipation;
-import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
+import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
@@ -57,40 +56,24 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Li Song
  */
 public class LoadoutPage extends JPanel {
-    private static final long      serialVersionUID = -3391845136603220435L;
+    private static final long    serialVersionUID = -3391845136603220435L;
 
-    private static final int       ARM_OFFSET       = 60;
-    private static final int       TORSO_OFFSET     = 20;
-    private static final int       HEAD_OFFSET      = 0;
-    private final LoadoutBase<?>   loadout;
-    private final MessageXBar      xBar;
-    private final OperationStack   loadoutOperationStack;
-    private final LoadoutInfoPanel infoPanel;
+    private static final int     ARM_OFFSET       = 60;
+    private static final int     TORSO_OFFSET     = 20;
+    private static final int     HEAD_OFFSET      = 0;
+    private final LoadoutBase<?> loadout;
+    private final MessageXBar    xBar;
+    private final OperationStack loadoutOperationStack;
 
-    public LoadoutPage(LoadoutBase<?> aLoadout, OperationStack aOpStack, MessageXBar aXBar) {
+    public LoadoutPage(LoadoutBase<?> aLoadout, LoadoutMetrics aMetrics, OperationStack aOpStack, MessageXBar aXBar) {
         xBar = aXBar;
         loadout = aLoadout;
         loadoutOperationStack = aOpStack;
-        
-        setLayout(new BorderLayout());
 
-        infoPanel = new LoadoutInfoPanel(loadout, loadoutOperationStack, xBar);
+        setLayout(new BorderLayout());
 
         JPanel mechview = createMechView(aLoadout, aXBar);
         add(mechview, BorderLayout.WEST);
-        if (ProgramInit.lsml().preferences.uiPreferences.getCompactMode()) {
-            JScrollPane scrollpane = new JScrollPane(infoPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-            Dimension preferredSize = new Dimension();
-            preferredSize.height = (int) (mechview.getPreferredSize().getHeight() + 1);
-            preferredSize.width = (int) (infoPanel.getPreferredSize().getWidth()
-                    + scrollpane.getVerticalScrollBar().getPreferredSize().getWidth() + 1);
-            scrollpane.setPreferredSize(preferredSize);
-            add(scrollpane, BorderLayout.EAST);
-        }
-        else {
-            add(infoPanel, BorderLayout.EAST);
-        }
         add(new StatusBar(loadout, aXBar), BorderLayout.SOUTH);
     }
 
@@ -100,14 +83,6 @@ public class LoadoutPage extends JPanel {
 
     public OperationStack getOpStack() {
         return loadoutOperationStack;
-    }
-    
-    MaxSustainedDPS getMaxSustainedDPS(){
-        return infoPanel.getMaxSustainedDPSMetric();
-    }
-    
-    HeatDissipation getHeatDissipation(){
-        return infoPanel.getHeatDissipationMetric();
     }
 
     private JPanel createComponentPadPanel(final int height, JComponent aChild) {

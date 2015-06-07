@@ -57,23 +57,9 @@ import org.lisoft.lsml.model.environment.EnvironmentDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
+import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.metrics.AlphaStrike;
-import org.lisoft.lsml.model.metrics.AlphaTimeToOverHeat;
-import org.lisoft.lsml.model.metrics.BurstDamageOverTime;
-import org.lisoft.lsml.model.metrics.CoolingRatio;
-import org.lisoft.lsml.model.metrics.GhostHeat;
-import org.lisoft.lsml.model.metrics.HeatCapacity;
-import org.lisoft.lsml.model.metrics.HeatDissipation;
-import org.lisoft.lsml.model.metrics.HeatGeneration;
-import org.lisoft.lsml.model.metrics.HeatOverTime;
-import org.lisoft.lsml.model.metrics.JumpDistance;
-import org.lisoft.lsml.model.metrics.MaxDPS;
-import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
-import org.lisoft.lsml.model.metrics.RangeMetric;
-import org.lisoft.lsml.model.metrics.RangeTimeMetric;
-import org.lisoft.lsml.model.metrics.TimeToCool;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.metrics.TurningSpeed;
 import org.lisoft.lsml.model.metrics.TwistSpeed;
@@ -148,7 +134,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
     private final MetricDisplay          twistSpeed;
     private final JCheckBox              speedTweak               = new JCheckBox("Speed Tweak");
     private final JCheckBox              anchorTurn               = new JCheckBox("Anchor Turn");
-    private final JLabel                 jumpJets                 = new JLabel("xxx");
+    private final MetricDisplay          jumpJets;
 
     // Heat pane
     private final JLabel                 heatsinks                = new JLabel("xxx");
@@ -172,18 +158,14 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
     private final MetricDisplay          ghostHeat;
     private final JTable                 weaponTable;
 
-    private final JumpDistance           metricJumpDistance;
     private transient Boolean            inhibitChanges           = false;
-    private final MaxSustainedDPS        metricSustainedDps;
     private final OperationStack         opStack;
     private final transient MessageXBar  xBar;
-    private final HeatDissipation        metricHeatDissipation;
 
-    public LoadoutInfoPanel(LoadoutBase<?> aLoadout, OperationStack aOperationStack, MessageXBar aXBar) {
+    public LoadoutInfoPanel(LoadoutBase<?> aLoadout, final LoadoutMetrics aMetrics, OperationStack aOperationStack,
+            MessageXBar aXBar) {
         loadout = aLoadout;
         opStack = aOperationStack;
-
-        metricJumpDistance = new JumpDistance(loadout);
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         xBar = aXBar;
@@ -280,9 +262,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
             add(mobility);
 
             {
+                jumpJets = new MetricDisplay(aMetrics.jumpDistance, "Jump Jets: %d/%d (%.1f m)",
+                        "The maximal height your mech will reach at the apex of its jump.", aXBar, loadout);
                 jumpJets.setAlignmentX(Component.CENTER_ALIGNMENT);
                 mobility.add(jumpJets);
-
+                
                 topSpeed = new MetricDisplay(new TopSpeed(loadout), "Top Speed: %.1f km/h",
                         "The maximum speed the mech can move at.", aXBar, loadout);
                 topSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -323,10 +307,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
             anchorTurn.addItemListener(this);
         }
 
-        final HeatCapacity heatCapacity = new HeatCapacity(loadout);
-        metricHeatDissipation = new HeatDissipation(loadout, null);
-        final HeatGeneration heatGeneration = new HeatGeneration(loadout);
-
         // Heat
         // ----------------------------------------------------------------------
         {
@@ -344,7 +324,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                 @Override
                 public void actionPerformed(ActionEvent aArg0) {
                     Environment environment = (Environment) environemnts.getSelectedItem();
-                    metricHeatDissipation.changeEnvironment(environment);
+                    aMetrics.heatDissipation.changeEnvironment(environment);
                     xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.UPDATE));
                 }
             });
@@ -355,7 +335,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
             heat.add(envPanel);
 
             {
-                effectiveHS = new MetricDisplay(heatCapacity, "Heat capacity: %.1f",
+                effectiveHS = new MetricDisplay(aMetrics.heatCapacity, "Heat capacity: %.1f",
                         "The amount of heat your mech can hold without overheating.", aXBar, loadout);
 
                 JPanel panel = new JPanel(new BorderLayout());
@@ -365,12 +345,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
             }
 
             {
-                coolingRatio = new MetricDisplay(new CoolingRatio(metricHeatDissipation, heatGeneration), COOLING_RATIO_TEXT,
-                        COOLING_RATIO_TOOLTIP, aXBar, loadout, true);
+                coolingRatio = new MetricDisplay(aMetrics.coolingRatio, COOLING_RATIO_TEXT, COOLING_RATIO_TOOLTIP,
+                        aXBar, loadout, true);
 
-                HeatOverTime heatOverTime = new HeatOverTime(loadout, xBar);
-                timeToOverheat = new MetricDisplay(
-                        new AlphaTimeToOverHeat(heatCapacity, heatOverTime, metricHeatDissipation), TIME_TO_OVERHEAT_TEXT,
+                timeToOverheat = new MetricDisplay(aMetrics.alphaTimeToOverHeat, TIME_TO_OVERHEAT_TEXT,
                         TIME_TO_OVERHEAT_TOOLTIP, aXBar, loadout);
 
                 JPanel panel = new JPanel(new BorderLayout());
@@ -381,11 +359,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
 
             {
 
-                timeToCool = new MetricDisplay(new TimeToCool(heatCapacity, metricHeatDissipation), TIME_TO_COOL_TEXT,
-                        TIME_TO_COOL_TOOLTIP, aXBar, loadout);
+                timeToCool = new MetricDisplay(aMetrics.timeToCool, TIME_TO_COOL_TEXT, TIME_TO_COOL_TOOLTIP, aXBar,
+                        loadout);
 
-                ghostHeat = new MetricDisplay(new GhostHeat(loadout), GHOST_HEAT_TEXT, GHOST_HEAT_TOOLTIP, aXBar,
-                        loadout) {
+                ghostHeat = new MetricDisplay(aMetrics.ghostHeat, GHOST_HEAT_TEXT, GHOST_HEAT_TOOLTIP, aXBar, loadout) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -429,11 +406,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
             JPanel offenceTop = new JPanel();
             offenceTop.setLayout(new BoxLayout(offenceTop, BoxLayout.PAGE_AXIS));
 
-            final RangeTimeMetric metricBurstDamage = new BurstDamageOverTime(loadout, aXBar);
-            final RangeMetric metricAlphaStrike = new AlphaStrike(loadout);
-            final RangeMetric metricMaxDPS = new MaxDPS(loadout);
-            metricSustainedDps = new MaxSustainedDPS(loadout, metricHeatDissipation);
-
             {
                 JPanel panel = new JPanel();
                 panel.add(new JLabel("Range:"));
@@ -467,10 +439,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                                 return;
                             }
                         }
-                        metricAlphaStrike.changeRange(r);
-                        metricMaxDPS.changeRange(r);
-                        metricSustainedDps.changeRange(r);
-                        metricBurstDamage.changeRange(r);
+                        aMetrics.changeRange(r);
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
@@ -496,7 +465,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                         @Override
                         public void actionPerformed(ActionEvent aArg0) {
                             double time = (Double) timeOfEngagement.getSelectedItem();
-                            metricBurstDamage.changeTime(time);
+                            aMetrics.changeTime(time);
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -505,7 +474,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                             });
                         }
                     });
-                    metricBurstDamage.changeTime(5.0);
+                    aMetrics.changeTime(5.0);
                     pane.add(timeOfEngagement);
                     panel.add(pane);
                 }
@@ -518,12 +487,12 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
             }
 
             {
-                alphaStrike = new MetricDisplay(metricAlphaStrike, ALPHA_DAMAGE_TEXT, ALPHA_DAMAGE_TOOLTIP, aXBar,
+                alphaStrike = new MetricDisplay(aMetrics.alphaStrike, ALPHA_DAMAGE_TEXT, ALPHA_DAMAGE_TOOLTIP, aXBar,
                         loadout);
                 alphaStrike.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                burstDamage = new MetricDisplay(metricBurstDamage, BURST_DAMAGE_TEXT, BURST_DAMAGE_TOOLTIP, aXBar,
-                        loadout);
+                burstDamage = new MetricDisplay(aMetrics.burstDamageOverTime, BURST_DAMAGE_TEXT, BURST_DAMAGE_TOOLTIP,
+                        aXBar, loadout);
                 burstDamage.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 JPanel panel = new JPanel(new BorderLayout());
@@ -533,10 +502,11 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
             }
 
             {
-                dpsMax = new MetricDisplay(metricMaxDPS, MAX_DPS_TEXT, MAX_DPS_TOOLTIP, aXBar, loadout);
+                dpsMax = new MetricDisplay(aMetrics.maxDPS, MAX_DPS_TEXT, MAX_DPS_TOOLTIP, aXBar, loadout);
                 dpsMax.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                dpsSustained = new MetricDisplay(metricSustainedDps, SUST_DPS_TEXT, SUST_DPS_TOOLTIP, aXBar, loadout);
+                dpsSustained = new MetricDisplay(aMetrics.maxSustainedDPS, SUST_DPS_TEXT, SUST_DPS_TOOLTIP, aXBar,
+                        loadout);
                 dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 JPanel panel = new JPanel(new BorderLayout());
@@ -586,8 +556,6 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
 
                     // Mobility
                     // ----------------------------------------------------------------------
-                    jumpJets.setText("Jump Jets: " + loadout.getJumpJetCount() + "/" + loadout.getJumpJetsMax() + " ("
-                            + df2.format(metricJumpDistance.calculate()) + " m)");
                     speedTweak.setSelected(loadout.getEfficiencies().hasSpeedTweak());
                     anchorTurn.setSelected(loadout.getEfficiencies().hasAnchorTurn());
 
@@ -831,13 +799,5 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
         if (aMsg.isForMe(loadout)) {
             updateDisplay();
         }
-    }
-
-    public MaxSustainedDPS getMaxSustainedDPSMetric() {
-        return metricSustainedDps;
-    }
-
-    public HeatDissipation getHeatDissipationMetric() {
-        return metricHeatDissipation;
     }
 }
