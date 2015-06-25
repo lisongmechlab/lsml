@@ -65,25 +65,25 @@ public class StyleManager {
 
     // Weapons
     private static final Color  COLOR_FG_ENERGY         = Color.WHITE;
-    private static final Color  COLOR_BG_ENERGY         = new Color(0xa40000);
+    private static final Color  COLOR_BG_ENERGY         = new Color(0x9b8c16);
     private static final Color  COLOR_FG_ENERGY_ALT     = Color.WHITE;
-    private static final Color  COLOR_BG_ENERGY_ALT     = new Color(0xd40000);
+    private static final Color  COLOR_BG_ENERGY_ALT     = COLOR_BG_ENERGY;
     private static final Color  COLOR_FG_MISSILE        = Color.WHITE;
-    private static final Color  COLOR_BG_MISSILE        = new Color(0x4e9a06);
-    private static final Color  COLOR_FG_MISSILE_AMMO   = Color.BLACK;
-    private static final Color  COLOR_BG_MISSILE_AMMO   = new Color(0x8ae234);
+    private static final Color  COLOR_BG_MISSILE        = new Color(0x008b76);
+    private static final Color  COLOR_FG_MISSILE_AMMO   = Color.WHITE;
+    private static final Color  COLOR_BG_MISSILE_AMMO   = new Color(0x005c4f);
     private static final Color  COLOR_FG_BALLISTIC      = Color.WHITE;
-    private static final Color  COLOR_BG_BALLISTIC      = new Color(0xc4a000);
-    private static final Color  COLOR_FG_BALLISTIC_AMMO = Color.BLACK;
-    private static final Color  COLOR_BG_BALLISTIC_AMMO = new Color(0xfce94f);
+    private static final Color  COLOR_BG_BALLISTIC      = new Color(0x6719cd);
+    private static final Color  COLOR_FG_BALLISTIC_AMMO = Color.WHITE;
+    private static final Color  COLOR_BG_BALLISTIC_AMMO = new Color(0x451189);
 
     // Engine/Propulsion
     private static final Color  COLOR_FG_JJ             = Color.WHITE;
-    private static final Color  COLOR_BG_JJ             = new Color(0x8d6094);
+    private static final Color  COLOR_BG_JJ             = new Color(0x0067a5);
     private static final Color  COLOR_FG_ENGINE         = Color.WHITE;
-    private static final Color  COLOR_BG_ENGINE         = new Color(0x5c3566);
+    private static final Color  COLOR_BG_ENGINE         = new Color(0x0067a5);
     private static final Color  COLOR_FG_HS             = Color.WHITE;
-    private static final Color  COLOR_BG_HS             = new Color(0xad7fa8);
+    private static final Color  COLOR_BG_HS             = new Color(0x004069);
 
     // Structure/Internal
     private static final Color  COLOR_FG_DYNAMIC        = (new Color(0xe1e6dd)).darker();
@@ -93,14 +93,14 @@ public class StyleManager {
 
     // Counter measures
     private static final Color  COLOR_FG_AMS            = Color.WHITE;
-    private static final Color  COLOR_BG_AMS            = new Color(0x2e3436);
+    private static final Color  COLOR_BG_AMS            = new Color(0x78a62d);
     private static final Color  COLOR_FG_AMS_AMMO       = Color.WHITE;
-    private static final Color  COLOR_BG_AMS_AMMO       = new Color(0x65676b);
+    private static final Color  COLOR_BG_AMS_AMMO       = new Color(0x606f1e);
     private static final Color  COLOR_FG_ECM            = Color.WHITE;
-    private static final Color  COLOR_BG_ECM            = new Color(0x204a87);
+    private static final Color  COLOR_BG_ECM            = new Color(0xcb5d01);
 
     // Others
-    private static final Color  COLOR_BG_MISC           = new Color(0x729fcf);
+    private static final Color  COLOR_BG_MISC           = new Color(0x0067a5);
 
     private static final Icon   MISSILE_BAY_DOOR_ICON   = new ImageIcon(
                                                                 StyleManager.class.getResource("/resources/mbd.png"),
@@ -393,7 +393,7 @@ public class StyleManager {
         else if (anItem instanceof Weapon || anItem == ItemDB.ECM) {
             return getFgColorFor(anItem.getHardpointType());
         }
-        return Color.BLACK;
+        return Color.WHITE;
     }
 
     static public Color getFgColorInvalid() {
