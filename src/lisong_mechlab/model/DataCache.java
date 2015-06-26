@@ -378,6 +378,7 @@ public class DataCache {
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/PilotModules.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/WeaponMods.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Consumables.xml")));
+        ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/MASC.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Mechs/Mechs.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/OmniPods.xml")));
         return ans;

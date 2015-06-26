@@ -121,7 +121,7 @@ public class ChassisOmniMechTest extends ChassisBaseTest {
         Mockito.when(components[Location.Head.ordinal()].getDynamicArmorSlots()).thenReturn(13);
         new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile,
                 faction, components, maxPilotModules, maxConsumableModules, maxWeaponModules, structureType, armorType,
-                heatSinkType);
+                heatSinkType, mascCapable);
     }
 
     @SuppressWarnings("unused")
@@ -131,7 +131,7 @@ public class ChassisOmniMechTest extends ChassisBaseTest {
         Mockito.when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);
         new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile,
                 faction, components, maxPilotModules, maxConsumableModules, maxWeaponModules, structureType, armorType,
-                heatSinkType);
+                heatSinkType, mascCapable);
     }
 
     @Test
@@ -315,6 +315,6 @@ public class ChassisOmniMechTest extends ChassisBaseTest {
     protected ChassisOmniMech makeDefaultCUT() {
         return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant,
                 movementProfile, faction, components, maxPilotModules, maxConsumableModules, maxWeaponModules,
-                structureType, armorType, heatSinkType);
+                structureType, armorType, heatSinkType, mascCapable);
     }
 }

@@ -28,6 +28,7 @@ import lisong_mechlab.model.item.Faction;
 import lisong_mechlab.model.item.Internal;
 import lisong_mechlab.model.item.Item;
 import lisong_mechlab.model.item.JumpJet;
+import lisong_mechlab.model.item.MASC;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -65,6 +66,8 @@ public abstract class ChassisBase {
     private final int             consumableModules;
     @XStreamAsAttribute
     private final int             weaponModules;
+    @XStreamAsAttribute
+    private final boolean         mascCapable;
 
     /**
      * @param aMwoID
@@ -95,10 +98,13 @@ public abstract class ChassisBase {
      *            The maximal number of consumable modules this chassis can support.
      * @param aMaxWeaponModules
      *            The maximal number of weapon modules this chassis can support.
+     * @param aMascCapable
+     *            Whether or not this chassis is capable of equipping MASC.
      */
     public ChassisBase(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
-            ComponentBase[] aComponents, int aMaxMechModules, int aMaxConsumables, int aMaxWeaponModules) {
+            ComponentBase[] aComponents, int aMaxMechModules, int aMaxConsumables, int aMaxWeaponModules,
+            boolean aMascCapable) {
         if (aComponents.length != Location.values().length)
             throw new IllegalArgumentException("Components array must contain all components!");
 
@@ -117,6 +123,7 @@ public abstract class ChassisBase {
         mechModules = aMaxMechModules;
         consumableModules = aMaxConsumables;
         weaponModules = aMaxWeaponModules;
+        mascCapable = aMascCapable;
     }
 
     @Override
@@ -288,6 +295,13 @@ public abstract class ChassisBase {
         if (aItem instanceof JumpJet) {
             JumpJet jj = (JumpJet) aItem;
             return jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
+        }
+        
+        if(aItem instanceof MASC){
+            if(!mascCapable)
+                return false;
+            MASC masc = (MASC)aItem;
+            return masc.getMinTons() <= getMassMax() && getMassMax() <= masc.getMaxTons();
         }
 
         for (ComponentBase part : getComponents()) {
