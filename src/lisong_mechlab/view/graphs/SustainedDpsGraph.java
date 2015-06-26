@@ -115,10 +115,10 @@ public class SustainedDpsGraph extends JFrame implements Message.Recipient {
         chartPanel.setLayout(new OverlayLayout(chartPanel));
         JButton button = new JButton(new OpenHelp("What is this?", "Max-sustained-dps-graph",
                 KeyStroke.getKeyStroke('w')));
-        button.setMargin(new Insets(10, 10, 10, 10));
+        button.setMargin(new Insets(5, 5, 5, 5));
         button.setFocusable(false);
         button.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+        button.setAlignmentY(Component.TOP_ALIGNMENT);
         chartPanel.add(button);
 
         setIconImage(ProgramInit.programIcon);
