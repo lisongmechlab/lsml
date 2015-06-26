@@ -23,6 +23,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class MdfMech {
     @XStreamAsAttribute
+    public int    CanEquipMASC;
+    @XStreamAsAttribute
     public String Variant;
     @XStreamAsAttribute
     public int    MaxTons;

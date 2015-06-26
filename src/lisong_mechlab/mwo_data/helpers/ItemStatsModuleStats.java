@@ -45,6 +45,11 @@ public class ItemStatsModuleStats {
     @XStreamAsAttribute
     public String mechClass;
 
+    @XStreamAsAttribute
+    public int    TonsMin; // Currently only used by MASC?
+    @XStreamAsAttribute
+    public int    TonsMax;// Currently only used by MASC?
+
     public List<Location> getLocations() {
         if (null != components) {
             String[] comps = components.split("\\s*,\\s*");
