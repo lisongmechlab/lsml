@@ -168,6 +168,8 @@ public class ItemStatsWeapon extends ItemStats {
 
         double fallOffExponent = WeaponStats.falloffexponent != 0 ? WeaponStats.falloffexponent : 1.0;
 
+        // There are three attributes that affect the projectile and ammo count.
+        // 
         int roundsPerShot = WeaponStats.numFiring;
         int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
         double projectileSpeed = WeaponStats.speed;
@@ -199,7 +201,7 @@ public class ItemStatsWeapon extends ItemStats {
                 return new AmmoWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, HardPointType.AMS, hp, itemFaction,
                         heat, cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
                         damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
-                        ghostHeatMultiplier, ghostHeatFreeAlpha, getAmmoType());
+                        ghostHeatMultiplier, ghostHeatFreeAlpha, getAmmoType(), WeaponStats.volleydelay);
             case BALLISTIC:
                 final double spread;
                 if (WeaponStats.spread > 0)
@@ -224,14 +226,14 @@ public class ItemStatsWeapon extends ItemStats {
                         cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
                         damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
                         ghostHeatMultiplier, ghostHeatFreeAlpha, getAmmoType(), spread, jammingChance, jammingTime,
-                        shotsDuringCooldown);
+                        shotsDuringCooldown, WeaponStats.volleydelay);
             case ENERGY:
                 Attribute burntime = new Attribute((WeaponStats.duration < 0) ? Double.POSITIVE_INFINITY
                         : WeaponStats.duration, selectors, "duration");
                 return new EnergyWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction, heat, cooldown,
                         rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot, damagePerProjectile,
                         projectilesPerRound, projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier,
-                        ghostHeatFreeAlpha, burntime);
+                        ghostHeatFreeAlpha, burntime, WeaponStats.volleydelay);
             case MISSILE:
                 final int requiredGuidance;
                 if (null != Artemis)
@@ -243,7 +245,7 @@ public class ItemStatsWeapon extends ItemStats {
                 return new MissileWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction, heat, cooldown,
                         rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot, damagePerProjectile,
                         projectilesPerRound, projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier,
-                        ghostHeatFreeAlpha, getAmmoType(), requiredGuidance, baseItemId);
+                        ghostHeatFreeAlpha, getAmmoType(), requiredGuidance, baseItemId, WeaponStats.volleydelay);
 
             default:
                 throw new IOException("Unknown value for type field in ItemStatsXML. Please update the program!");

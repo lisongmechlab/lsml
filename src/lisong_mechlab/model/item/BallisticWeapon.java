@@ -43,17 +43,17 @@ public class BallisticWeapon extends AmmoWeapon {
     protected final int    shotsduringcooldown;
     @XStreamAsAttribute
     protected final double jammingTime;
-
+    
     public BallisticWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
             Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
             Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
             double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
             double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, String aAmmoType, double aSpread,
-            double aJammingChance, double aJammingTime, int aShotsDuringCooldown) {
+            double aJammingChance, double aJammingTime, int aShotsDuringCooldown, double aVolleyDelay) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
                 aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                aGhostHeatMaxFreeAlpha, aAmmoType);
+                aGhostHeatMaxFreeAlpha, aAmmoType, aVolleyDelay);
         spread = aSpread;
         jammingChance = aJammingChance;
         jammingTime = aJammingTime;
@@ -109,10 +109,10 @@ public class BallisticWeapon extends AmmoWeapon {
      */
     public double getRawSecondsPerShot(Collection<Modifier> aModifiers) {
         if (getMwoId() == 1021 || getMwoId() == 1208) { // IS/Clan Gauss rifle
-            return getCoolDown(aModifiers) + 0.75; // TODO: Fix this when they add the charge time to the
+            return super.getSecondsPerShot(aModifiers) + 0.75; // TODO: Fix this when they add the charge time to the
                                                    // itemstats.xml
         }
-        return getCoolDown(aModifiers);
+        return super.getSecondsPerShot(aModifiers);
     }
 
     @Override
