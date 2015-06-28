@@ -222,10 +222,14 @@ public class ItemStatsWeapon extends ItemStats {
                     shotsDuringCooldown = 0;
                     jammingTime = 0.0;
                 }
+                
+                Attribute jamChanceAttrib = new Attribute(jammingChance, selectors, ModifiersDB.SEL_WEAPON_JAMMING_CHANCE);
+                Attribute jamTimeAttrib = new Attribute(jammingTime, selectors, ModifiersDB.SEL_WEAPON_JAMMED_TIME);
+                
                 return new BallisticWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction, heat,
                         cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
                         damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
-                        ghostHeatMultiplier, ghostHeatFreeAlpha, getAmmoType(), spread, jammingChance, jammingTime,
+                        ghostHeatMultiplier, ghostHeatFreeAlpha, getAmmoType(), spread, jamChanceAttrib, jamTimeAttrib,
                         shotsDuringCooldown, WeaponStats.volleydelay);
             case ENERGY:
                 Attribute burntime = new Attribute((WeaponStats.duration < 0) ? Double.POSITIVE_INFINITY

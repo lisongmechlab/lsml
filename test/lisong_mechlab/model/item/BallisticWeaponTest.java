@@ -19,7 +19,15 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+
+import lisong_mechlab.model.modifiers.Modifier;
+import lisong_mechlab.model.modifiers.ModifierDescription;
+import lisong_mechlab.model.modifiers.ModifiersDB;
 
 import org.junit.Test;
 
@@ -42,6 +50,42 @@ public class BallisticWeaponTest {
         double expectedSecondsPerShot = cut.getCoolDown(null) + 0.11 * 4;
         
         assertEquals(expectedSecondsPerShot, cut.getRawSecondsPerShot(null), 0.0);
+    }
+    
+    @Test
+    public void testJammingChanceQuirk(){
+        BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
+        
+        ModifierDescription modifierDescription = ModifiersDB.lookup("ultraautocannon_jamchance_multiplier");
+        Modifier modifier = new Modifier(modifierDescription, -0.3);
+        List<Modifier> modifiers = Arrays.asList(modifier);
+        
+        double unmodified = cut.getJamProbability(null);
+        double unmodifiedDps = cut.getStat("d/s", null);
+        
+        double modified = cut.getJamProbability(modifiers);
+        double modifiedDps = cut.getStat("d/s", modifiers);
+        
+        assertEquals(unmodified*0.7, modified, 0.0);        
+        assertTrue(unmodifiedDps*1.05 < modifiedDps);
+    }
+    
+    @Test
+    public void testJammingTimeQuirk(){
+        BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
+        
+        ModifierDescription modifierDescription = ModifiersDB.lookup("ultraautocannon_jamtime_multiplier");
+        Modifier modifier = new Modifier(modifierDescription, -0.3);
+        List<Modifier> modifiers = Arrays.asList(modifier);
+        
+        double unmodified = cut.getJamTime(null);
+        double unmodifiedDps = cut.getStat("d/s", null);
+        
+        double modified = cut.getJamTime(modifiers);
+        double modifiedDps = cut.getStat("d/s", modifiers);
+        
+        assertEquals(unmodified*0.7, modified, 0.0);        
+        assertTrue(unmodifiedDps*1.01 < modifiedDps);
     }
     
     @Test

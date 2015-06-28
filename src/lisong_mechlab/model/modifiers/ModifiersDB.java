@@ -55,6 +55,8 @@ public class ModifiersDB {
     public final static String                            SEL_WEAPON_COOLDOWN       = "cooldown";
     public final static String                            SEL_WEAPON_HEAT           = "heat";
     public final static String                            SEL_WEAPON_LARGE_BORE     = "largeweapon";
+    public final static String                            SEL_WEAPON_JAMMING_CHANCE = "jamchance";
+    public final static String                            SEL_WEAPON_JAMMED_TIME    = "jamtime";
 
     public final static List<String>                      ALL_WEAPONS;
     public final static ModifierDescription               HEAT_CONTAINMENT_DESC;
@@ -103,8 +105,8 @@ public class ModifiersDB {
 
         ALL_WEAPONS = Collections
                 .unmodifiableList(Arrays.asList("energy", "ballistic", "missile", "antimissilesystem"));
-        HEAT_CONTAINMENT_DESC = new ModifierDescription("HEAT CONTAINMENT", null, Operation.MULTIPLICATIVE, SEL_HEAT_LIMIT,
-                null, ValueType.POSITIVE_GOOD);
+        HEAT_CONTAINMENT_DESC = new ModifierDescription("HEAT CONTAINMENT", null, Operation.MULTIPLICATIVE,
+                SEL_HEAT_LIMIT, null, ValueType.POSITIVE_GOOD);
         COOL_RUN_DESC = new ModifierDescription("COOL RUN", null, Operation.MULTIPLICATIVE, "heatloss", null,
                 ValueType.POSITIVE_GOOD);
         FAST_FIRE_DESC = new ModifierDescription("FAST FIRE", null, Operation.MULTIPLICATIVE, ALL_WEAPONS,

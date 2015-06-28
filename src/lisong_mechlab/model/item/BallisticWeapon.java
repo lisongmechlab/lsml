@@ -36,20 +36,20 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class BallisticWeapon extends AmmoWeapon {
     @XStreamAsAttribute
-    protected final double spread;
+    protected final double    spread;
     @XStreamAsAttribute
-    protected final double jammingChance;
+    protected final Attribute jammingChance;
     @XStreamAsAttribute
-    protected final int    shotsduringcooldown;
+    protected final int       shotsduringcooldown;
     @XStreamAsAttribute
-    protected final double jammingTime;
-    
+    protected final Attribute jammingTime;
+
     public BallisticWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
             Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
             Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
             double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
             double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, String aAmmoType, double aSpread,
-            double aJammingChance, double aJammingTime, int aShotsDuringCooldown, double aVolleyDelay) {
+            Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aVolleyDelay) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
                 aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
@@ -74,15 +74,15 @@ public class BallisticWeapon extends AmmoWeapon {
     }
 
     public boolean canDoubleFire() {
-        return jammingChance > 0.0;
+        return jammingChance.value(null) > 0.0;
     }
 
-    public double getJamProbability() {
-        return jammingChance;
+    public double getJamProbability(Collection<Modifier> aModifiers) {
+        return jammingChance.value(aModifiers);
     }
 
-    public double getJamTime() {
-        return jammingTime;
+    public double getJamTime(Collection<Modifier> aModifiers) {
+        return jammingTime.value(aModifiers);
     }
 
     public double getShotsDuringCooldown() {
@@ -93,8 +93,9 @@ public class BallisticWeapon extends AmmoWeapon {
     public double getSecondsPerShot(Collection<Modifier> aModifiers) {
         if (canDoubleFire()) {
             final double cd = getRawSecondsPerShot(aModifiers);
-            return (jammingTime * jammingChance + cd)
-                    / ((1 - jammingChance) * (1 + shotsduringcooldown) + jammingChance);
+            final double jamP = getJamProbability(aModifiers);
+            final double jamT = getJamTime(aModifiers);
+            return (jamT * jamP + cd) / ((1 - jamP) * (1 + shotsduringcooldown) + jamP);
         }
         return getRawSecondsPerShot(aModifiers);
     }
@@ -110,7 +111,7 @@ public class BallisticWeapon extends AmmoWeapon {
     public double getRawSecondsPerShot(Collection<Modifier> aModifiers) {
         if (getMwoId() == 1021 || getMwoId() == 1208) { // IS/Clan Gauss rifle
             return super.getSecondsPerShot(aModifiers) + 0.75; // TODO: Fix this when they add the charge time to the
-                                                   // itemstats.xml
+            // itemstats.xml
         }
         return super.getSecondsPerShot(aModifiers);
     }
