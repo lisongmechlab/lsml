@@ -19,10 +19,12 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.util.Collection;
 import java.util.Comparator;
 
 import lisong_mechlab.model.chassi.HardPointType;
 import lisong_mechlab.model.modifiers.Attribute;
+import lisong_mechlab.model.modifiers.Modifier;
 import lisong_mechlab.model.upgrades.GuidanceUpgrade;
 import lisong_mechlab.model.upgrades.Upgrade;
 import lisong_mechlab.model.upgrades.UpgradeDB;
@@ -37,13 +39,24 @@ public class MissileWeapon extends AmmoWeapon {
             Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
             double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
             double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, String aAmmoType, int aRequiredGuidanceId,
-            int aBaseItemId) {
+            int aBaseItemId, double aVolleyDelay) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.MISSILE, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
                 aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                aGhostHeatMaxFreeAlpha, aAmmoType);
+                aGhostHeatMaxFreeAlpha, aAmmoType, aVolleyDelay);
         requiredGuidanceType = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
+    }
+    
+    @Override
+    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+        if(getFaction() == Faction.InnerSphere  || getAliases().contains("srm")|| getAliases().contains("streaksrm")){
+            // Implicit assumption that:
+            // 1) All missiles can launch simultaneously for IS LRM launchers.
+            // 2) All missiles can launch simultaneously for IS + Clan (S)SRM launchers.
+            return getCoolDown(aModifiers);
+        }
+        return super.getSecondsPerShot(aModifiers);
     }
 
     @Override
