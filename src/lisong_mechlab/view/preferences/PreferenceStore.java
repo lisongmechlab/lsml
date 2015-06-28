@@ -47,6 +47,7 @@ public class PreferenceStore {
     private static final Properties properties;
     public static final String      GAME_DATA_CACHE    = "gameDataCache";
     public static final String      USEBUNDLED_DATA    = "gameDataBundled";
+    public static final String      IPC_PORT           = "localPortForLSMLIPC";
 
     static public String getString(String key) {
         return properties.getProperty(key, "");

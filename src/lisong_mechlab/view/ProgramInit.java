@@ -44,6 +44,7 @@ import lisong_mechlab.model.loadout.export.LsmlProtocolIPC;
 import lisong_mechlab.model.upgrades.UpgradeDB;
 import lisong_mechlab.mwo_data.GameVFS;
 import lisong_mechlab.util.OS;
+import lisong_mechlab.view.preferences.PreferenceStore;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
@@ -196,7 +197,10 @@ public class ProgramInit extends JFrame {
 
         // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
         if (args.length > 0) {
-            if (LsmlProtocolIPC.sendLoadout(args[0]))
+            int port = Integer.parseInt(PreferenceStore.getString(PreferenceStore.IPC_PORT, "0"));
+            if (port < 1024)
+                port = LsmlProtocolIPC.DEFAULT_PORT;
+            if (LsmlProtocolIPC.sendLoadout(args[0], port))
                 return; // Message received we can close this program.
         }
 
