@@ -19,6 +19,7 @@
 //@formatter:on
 package lisong_mechlab.model.item;
 
+import java.nio.channels.IllegalSelectorException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -84,6 +85,9 @@ public class Weapon extends HeatSource {
         ghostHeatMultiplier = aGhostHeatMultiplier;
         ghostHeatFreeAlpha = aGhostHeatMaxFreeAlpha;
         volleyDelay = aVolleyDelay;
+
+        if (roundsPerShot < 1)
+            throw new IllegalArgumentException("All weapons must have Rounds per shot > 0");
     }
 
     public boolean isOffensive() {
@@ -116,7 +120,7 @@ public class Weapon extends HeatSource {
     }
 
     public double getSecondsPerShot(Collection<Modifier> aModifiers) {
-        return getCoolDown(aModifiers) + volleyDelay*roundsPerShot;
+        return getCoolDown(aModifiers) + volleyDelay * (roundsPerShot - 1);
     }
 
     public double getCoolDown(Collection<Modifier> aModifiers) {

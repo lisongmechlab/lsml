@@ -47,7 +47,20 @@ public class BallisticWeaponTest {
         assertEquals(4, cut.getAmmoPerPerShot());
         assertEquals(10.0, cut.getDamagePerShot(), 0.0);
         
-        double expectedSecondsPerShot = cut.getCoolDown(null) + 0.11 * 4;
+        double expectedSecondsPerShot = cut.getCoolDown(null) + 0.11 * 3;
+        
+        assertEquals(expectedSecondsPerShot, cut.getRawSecondsPerShot(null), 0.0);
+    }
+
+    @Test
+    public void testLB10X(){
+        BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup("LB 10-X AC");
+        
+        assertTrue(cut.getName().contains("LB 10-X AC"));
+        assertEquals(1, cut.getAmmoPerPerShot());
+        assertTrue(cut.getDamagePerShot() > 5.0);
+        
+        double expectedSecondsPerShot = cut.getCoolDown(null);
         
         assertEquals(expectedSecondsPerShot, cut.getRawSecondsPerShot(null), 0.0);
     }

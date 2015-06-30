@@ -138,7 +138,7 @@ public class MissileWeaponTest {
     @Test
     public void testGetSecondsPerShot_clrm20() throws Exception {
         Weapon cut = (Weapon) ItemDB.lookup("C-LRM 20");
-        double expected = cut.getCoolDown(null) + 20 * 0.05;
+        double expected = cut.getCoolDown(null) + 19 * 0.05;
         assertEquals(expected, cut.getSecondsPerShot(null), 0.0);
     }
         
