@@ -86,13 +86,15 @@ public class ChassisStandard extends ChassisBase {
      *            The maximal number of weapon modules this chassis can support.
      * @param aQuirks
      *            The chassis quirks for this chassis.
+     * @param aMascCapable
+     *            Whether or not this chassis is MASC capable.
      */
     public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
             int aEngineMin, int aEngineMax, int aMaxJumpJets, ComponentStandard[] aComponents, int aMaxPilotModules,
-            int aMaxConsumableModules, int aMaxWeaponModules, Collection<Modifier> aQuirks) {
+            int aMaxConsumableModules, int aMaxWeaponModules, Collection<Modifier> aQuirks, boolean aMascCapable) {
         super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile,
-                aFaction, aComponents, aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules);
+                aFaction, aComponents, aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules, aMascCapable);
         engineMin = aEngineMin;
         engineMax = aEngineMax;
         maxJumpJets = aMaxJumpJets;

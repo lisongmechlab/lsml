@@ -40,6 +40,7 @@ public class ItemStatsModule extends ItemStats {
     public ItemStatsJumpJetStats     JumpJetStats;
     public ItemStatsHeatSinkStats    HeatSinkStats;
     public ItemStatsEngineStats      EngineStats;
+    public ItemStatsMascStats        MASCStats;
     public AmmoTypeStats             AmmoTypeStats;
     public XMLPilotModuleStats       PilotModuleStats;
     public XMLTargetingComputerStats TargetingComputerStats;
@@ -81,6 +82,8 @@ public class ItemStatsModule extends ItemStats {
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction());
             case "CTargetingComputerStats":
                 return TargetingComputerStats.asTargetingComputer(this);
+            case "CMASCStats":
+                return MASCStats.asMasc(this);
             default:
                 return null;
         }

@@ -97,7 +97,7 @@ public class LoadoutCoderV3Test {
      */
     @Test
     public void testDecodeAllStock() throws Exception {
-        try (InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv3stock.txt");
+        try (InputStream is = LoadoutCoderV3.class.getResourceAsStream("/resources/lsmlv3stock.txt");
                 Scanner sc = new Scanner(is);) {
             Base64 base64 = new Base64();
 
