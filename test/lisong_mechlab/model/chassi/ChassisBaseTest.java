@@ -177,7 +177,7 @@ public abstract class ChassisBaseTest {
         assertFalse(ChassisDB.lookup(aChassis).getVariantType().isVariation());
     }
 
-    @Parameters({ "SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)" })
+    @Parameters({ "SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)", "PNT-10K(R)", "UM-R63(S)", "TBR-PRIME(G)", "MLX-PRIME(I)", "MDD-PRIME(I)"})
     @Test
     public void testGetVariantType_Positive(String aChassis) {
         assertTrue(ChassisDB.lookup(aChassis).getVariantType().isVariation());

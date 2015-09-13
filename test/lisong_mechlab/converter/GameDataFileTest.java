@@ -37,7 +37,7 @@ public class GameDataFileTest {
         File gameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
         GameVFS dataFile = new GameVFS(gameDir);
 
-        InputStream inputStream = dataFile.openGameFile(new File("Game/Objects/mechs/spider/sdr-5k.mdf")).stream;
+        InputStream inputStream = dataFile.openGameFile(new File("Game/mechs/Objects/mechs/spider/sdr-5k.mdf")).stream;
 
         assertTrue(inputStream.available() > 6000);
     }
