@@ -76,7 +76,7 @@ public class GameVFS {
         public final long        crc32;
         public final String      path;
 
-        GameFile(ZipFile aZipFile, ZipEntry aEntry, String aPath) throws IOException{
+        GameFile(ZipFile aZipFile, ZipEntry aEntry, String aPath) throws IOException {
             int size = (int) aEntry.getSize();
             byte[] buffer = new byte[size];
 
@@ -95,11 +95,16 @@ public class GameVFS {
             path = aPath;
             stream = new ByteArrayInputStream(buffer);
         }
-        
+
         GameFile(InputStream aStream, long aCrc32, String aPath) {
             stream = aStream;
             crc32 = aCrc32;
             path = aPath;
+        }
+
+        @Override
+        public String toString() {
+            return path + " [" + crc32 + "]";
         }
     }
 
@@ -155,14 +160,14 @@ public class GameVFS {
      */
     public GameFile openGameFile(File aGameLocalPath) throws ZipException, IOException {
         File sourceArchive = findArchiveForFile(aGameLocalPath, gamePath.toFile());
-        if(null == sourceArchive){
+        if (null == sourceArchive) {
             throw new IOException("Failed to find sought for file (" + aGameLocalPath + ") in the game files!");
         }
 
         try (ZipFile zipFile = new ZipFile(sourceArchive)) {
 
-            String archivePath = gamePath.relativize(sourceArchive.getParentFile().toPath()).relativize(aGameLocalPath.toPath())
-                    .toString();
+            String archivePath = gamePath.relativize(sourceArchive.getParentFile().toPath())
+                    .relativize(aGameLocalPath.toPath()).toString();
             archivePath = archivePath.replaceAll("\\\\", "/"); // Canonicalize to Unix file system separator.
 
             ZipEntry entry = zipFile.getEntry(archivePath);
@@ -198,7 +203,7 @@ public class GameVFS {
         for (File fileOnDisk : aSearchRoot.listFiles()) {
             if (fileOnDisk.isDirectory()) {
                 File file = findArchiveForFile(aGameLocalPath, fileOnDisk);
-                if(null != file){
+                if (null != file) {
                     return file;
                 }
             }
@@ -307,6 +312,24 @@ public class GameVFS {
         }
     }
 
+    public static boolean browseForGameInstall() {
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        while (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(null)) {
+            Path selectedPath = fc.getSelectedFile().toPath();
+            if (isValidGameDirectory(selectedPath.toFile())) {
+                PreferenceStore.setString(PreferenceStore.GAMEDIRECTORY_KEY, selectedPath.toAbsolutePath().toString());
+                return true;
+            }
+            int tryagain = JOptionPane.showConfirmDialog(null,
+                    "The selected folder doesn't contain a valid game install.\nWould you like to try again?",
+                    "Ooops!", JOptionPane.YES_NO_OPTION);
+            if (tryagain != JOptionPane.YES_OPTION)
+                break;
+        }
+        return false;
+    }
+
     public static void checkGameFilesInstalled() {
         File storedGameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
         if (storedGameDir.isDirectory() && isValidGameDirectory(storedGameDir))
@@ -359,21 +382,7 @@ public class GameVFS {
                         "Automatic search failed to find a game install, please use manual browse.");
             }
             else if (answer == 1) {
-                JFileChooser fc = new JFileChooser();
-                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                while (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(null)) {
-                    Path selectedPath = fc.getSelectedFile().toPath();
-                    if (isValidGameDirectory(selectedPath.toFile())) {
-                        PreferenceStore.setString(PreferenceStore.GAMEDIRECTORY_KEY, selectedPath.toAbsolutePath()
-                                .toString());
-                        return;
-                    }
-                    int tryagain = JOptionPane.showConfirmDialog(null,
-                            "The selected folder doesn't contain a valid game install.\nWould you like to try again?",
-                            "Ooops!", JOptionPane.YES_NO_OPTION);
-                    if (tryagain != JOptionPane.YES_OPTION)
-                        break;
-                }
+                browseForGameInstall();
             }
             else if (answer == 2) {
                 PreferenceStore.setString(PreferenceStore.USEBUNDLED_DATA, Boolean.TRUE.toString());
