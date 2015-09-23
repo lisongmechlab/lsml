@@ -212,6 +212,12 @@ public class PartPanel extends JPanel implements Message.Recipient {
                 public Object getSelectedItem() {
                     return omniMech.getComponent(location).getOmniPod();
                 }
+                
+                @Override
+                public void setSelectedItem(Object aAnObject) {
+                    aStack.pushAndApply(new OpChangeOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech) component,
+                            (OmniPod) aAnObject));
+                }
             });
             omnipodSelection.setRenderer(new OmniPodRenderer());
             omnipodSelection.addPopupMenuListener(new StyledComboBox(true, false));
@@ -221,13 +227,6 @@ public class PartPanel extends JPanel implements Message.Recipient {
             max.height = ItemRenderer.getItemHeight();
             omnipodSelection.setMaximumSize(max);
             omnipodSelection.setSelectedItem(((ConfiguredComponentOmniMech) component).getOmniPod());
-            omnipodSelection.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent aE) {
-                    aStack.pushAndApply(new OpChangeOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech) component,
-                            (OmniPod) omnipodSelection.getSelectedItem()));
-                }
-            });
             add(omnipodSelection);
         }
         else {
