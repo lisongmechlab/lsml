@@ -288,7 +288,7 @@ public class ChassiDBTest {
     public void testCanLoadBasicMech2() {
         ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("Jenner JR7-F");
 
-        assertEquals(70, cut.getEngineMin()); // However no such engine exists :)
+        assertEquals(100, cut.getEngineMin()); // However no such engine exists :)
         assertEquals(300, cut.getEngineMax());
 
         assertEquals("JENNER JR7-F", cut.getName());
@@ -368,6 +368,7 @@ public class ChassiDBTest {
         assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-3D")));
         assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-3D(C)")));
         assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-4X")));
+        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-0XP")));
         assertTrue(cataphracts.isEmpty());
     }
 

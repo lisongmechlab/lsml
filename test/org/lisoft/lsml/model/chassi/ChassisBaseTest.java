@@ -38,6 +38,7 @@ import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.model.item.MASC;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -62,6 +63,7 @@ public abstract class ChassisBaseTest {
     protected int             maxPilotModules      = 3;
     protected int             maxConsumableModules = 2;
     protected int             maxWeaponModules     = 1;
+    protected boolean         mascCapable          = false;
     protected ComponentBase[] componentBases;
 
     protected abstract ChassisBase makeDefaultCUT();
@@ -175,7 +177,7 @@ public abstract class ChassisBaseTest {
         assertFalse(ChassisDB.lookup(aChassis).getVariantType().isVariation());
     }
 
-    @Parameters({ "SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)" })
+    @Parameters({ "SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)", "PNT-10K(R)", "UM-R63(S)", "TBR-PRIME(G)", "MLX-PRIME(I)", "MDD-PRIME(I)"})
     @Test
     public void testGetVariantType_Positive(String aChassis) {
         assertTrue(ChassisDB.lookup(aChassis).getVariantType().isVariation());
@@ -197,6 +199,30 @@ public abstract class ChassisBaseTest {
             assertFalse(cut0.isAllowed(clanItem));
             assertTrue(cut0.isAllowed(isItem));
         }
+    }
+
+    @Test
+    public final void testIsAllowed_Masc() {
+        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons-5, maxTons+5, 0, 0, 0, 0);
+        
+        mascCapable = false;
+        assertFalse(makeDefaultCUT().isAllowed(masc));
+        mascCapable = true;
+        assertTrue(makeDefaultCUT().isAllowed(masc));
+    }
+    
+    @Test
+    public final void testIsAllowed_MascTooHeavy() {
+        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons-25, maxTons-5, 0, 0, 0, 0);
+        mascCapable = true;
+        assertFalse(makeDefaultCUT().isAllowed(masc));
+    }
+    
+    @Test
+    public final void testIsAllowed_MascTooLight() {
+        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons+25, maxTons+35, 0, 0, 0, 0);
+        mascCapable = true;
+        assertFalse(makeDefaultCUT().isAllowed(masc));
     }
 
     @Test

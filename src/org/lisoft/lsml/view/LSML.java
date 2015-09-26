@@ -146,13 +146,50 @@ public class LSML extends JFrame implements Message.Recipient {
         });
 
         // Open the IPC socket first after everything else has succeeded.
-        try {
-            lsmlProtocolIPC = new LsmlProtocolIPC();
-        }
-        catch (IOException e) {
-            lsmlProtocolIPC = null;
-            JOptionPane.showMessageDialog(this,
-                    "Unable to startup IPC. Links with builds (lsml://...) will not work.\nError: " + e);
+        boolean keepTrying = true;
+        int port = Integer.parseInt(PreferenceStore.getString(PreferenceStore.IPC_PORT, "0"));
+        if (port < 1024)
+            port = LsmlProtocolIPC.DEFAULT_PORT;
+        while (keepTrying) {
+            try {
+                lsmlProtocolIPC = new LsmlProtocolIPC(port);
+                keepTrying = false;
+            }
+            catch (IOException | IllegalArgumentException e) {
+                lsmlProtocolIPC = null;
+
+                int ans = JOptionPane.showOptionDialog(this, "LSML was unable to open local socket on port: " + port
+                        + " for IPC."
+                        + "\nYou can try again with a new (random) port or disable automatic links for this session. ",
+                        "Unable to start IPC", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                        new String[] { "Try again (random)", "Try again (manual)", "Disable" }, "Try again");
+
+                if (ans == 0) {
+                    // Try again
+                    port = (int) (Math.random() * 60000 + 1025);
+                    PreferenceStore.setString(PreferenceStore.IPC_PORT, Integer.toString(port));
+                }
+                else if (ans == 1) {
+                    // Try again (manual)
+                    boolean hasNewPort = false;
+                    while (!hasNewPort) {
+                        try {
+                            String newPortString = JOptionPane.showInputDialog("Enter a new port:");
+                            if (newPortString != null) {
+                                port = Integer.parseInt(newPortString);
+                                PreferenceStore.setString(PreferenceStore.IPC_PORT, Integer.toString(port));
+                            }
+                            hasNewPort = true;
+                        }
+                        catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(this, "Not a number, or too big number. Please try again.");
+                        }
+                    }
+                }
+                else {
+                    keepTrying = false;
+                }
+            }
         }
         setupKeybindings();
 

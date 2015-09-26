@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -72,14 +73,27 @@ import org.lisoft.lsml.view.action.OpenHelp;
  * @author Emily Björk
  */
 public class SustainedDpsGraph extends JFrame implements Message.Recipient {
-    private static final long     serialVersionUID = -8812749194029184861L;
-    private final LoadoutBase<?>  loadout;
-    private final MaxSustainedDPS maxSustainedDPS;
-    private final ChartPanel      chartPanel;
+    private static final long                   serialVersionUID = -8812749194029184861L;
+    private final LoadoutBase<?>                loadout;
+    private final MaxSustainedDPS               maxSustainedDPS;
+    private final ChartPanel                    chartPanel;
+    private final WeaponColouredDrawingSupplier colours          = new WeaponColouredDrawingSupplier();
 
     JFreeChart makechart() {
-        return ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout, "range [m]",
+        JFreeChart chart =  ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout, "range [m]",
                 "damage / second", getSeries(), PlotOrientation.VERTICAL, true, true, false);
+        chart.getPlot().setDrawingSupplier(colours);
+
+        chart.getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
+        chart.getLegend().setVerticalAlignment(VerticalAlignment.TOP);
+        
+        LegendTitle legendTitle = chart.getLegend();
+        XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
+        titleAnnotation.setMaxWidth(0.4);
+        ((XYPlot) (chart.getPlot())).addAnnotation(titleAnnotation);
+        chart.removeLegend();
+
+        return chart;
     }
 
     /**
@@ -102,22 +116,14 @@ public class SustainedDpsGraph extends JFrame implements Message.Recipient {
         maxSustainedDPS = aMaxSustainedDpsMetric;
         chartPanel = new ChartPanel(makechart());
         setContentPane(chartPanel);
-        chartPanel.getChart().getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
-        chartPanel.getChart().getLegend().setVerticalAlignment(VerticalAlignment.TOP);
-
-        LegendTitle legendTitle = chartPanel.getChart().getLegend();
-        XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
-        titleAnnotation.setMaxWidth(0.4);
-        ((XYPlot) (chartPanel.getChart().getPlot())).addAnnotation(titleAnnotation);
-        chartPanel.getChart().removeLegend();
-
+        
         chartPanel.setLayout(new OverlayLayout(chartPanel));
         JButton button = new JButton(new OpenHelp("What is this?", "Max-sustained-dps-graph",
                 KeyStroke.getKeyStroke('w')));
-        button.setMargin(new Insets(10, 10, 10, 10));
+        button.setMargin(new Insets(5, 5, 5, 5));
         button.setFocusable(false);
         button.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+        button.setAlignmentY(Component.TOP_ALIGNMENT);
         chartPanel.add(button);
 
         setIconImage(ProgramInit.programIcon);
@@ -154,6 +160,7 @@ public class SustainedDpsGraph extends JFrame implements Message.Recipient {
             }
         }
 
+        List<Weapon> orderedWeapons = new ArrayList<>();
         DefaultTableXYDataset dataset = new DefaultTableXYDataset();
         for (Map.Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
             XYSeries series = new XYSeries(entry.getKey().getName(), true, false);
@@ -161,7 +168,11 @@ public class SustainedDpsGraph extends JFrame implements Message.Recipient {
                 series.add(pair.first, pair.second);
             }
             dataset.addSeries(series);
+            orderedWeapons.add(entry.getKey());
         }
+        Collections.reverse(orderedWeapons);        
+        colours.updateColoursToMatch(orderedWeapons);
+        
         return dataset;
     }
 

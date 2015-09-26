@@ -80,13 +80,16 @@ public class ChassisOmniMech extends ChassisBase {
      *            The armor type that is fixed on this chassis.
      * @param aHeatSinkType
      *            The heat sink type that is fixed on this chassis.
+     * @param aMascCapable
+     *            Whether or not this chassis is MASC capable.
      */
     public ChassisOmniMech(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
             ComponentOmniMech[] aComponents, int aMaxPilotModules, int aMaxConsumableModules, int aMaxWeaponModules,
-            StructureUpgrade aStructureType, ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType) {
+            StructureUpgrade aStructureType, ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType,
+            boolean aMascCapable) {
         super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile,
-                aFaction, aComponents, aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules);
+                aFaction, aComponents, aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules, aMascCapable);
         structureType = aStructureType;
         armorType = aArmorType;
         heatSinkType = aHeatSinkType;

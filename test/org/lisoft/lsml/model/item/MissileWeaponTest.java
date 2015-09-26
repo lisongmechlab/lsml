@@ -110,10 +110,38 @@ public class MissileWeaponTest {
 
     @Test
     public void testGetShotsPerVolley_lrm10() throws Exception {
-        Weapon lb10xac = (Weapon) ItemDB.lookup("LRM 10");
-        assertEquals(10, lb10xac.getAmmoPerPerShot());
+        Weapon lrm10 = (Weapon) ItemDB.lookup("LRM 10");
+        assertEquals(10, lrm10.getAmmoPerPerShot());
     }
 
+    @Test
+    public void testGetSecondsPerShot_srm6() throws Exception {
+        Weapon cut = (Weapon) ItemDB.lookup("SRM 6");
+        double expected = cut.getCoolDown(null);
+        assertEquals(expected, cut.getSecondsPerShot(null), 0.0);
+    }
+    
+    @Test
+    public void testGetSecondsPerShot_csrm6() throws Exception {
+        Weapon cut = (Weapon) ItemDB.lookup("C-SRM 6");
+        double expected = cut.getCoolDown(null);
+        assertEquals(expected, cut.getSecondsPerShot(null), 0.0);
+    }
+    
+    @Test
+    public void testGetSecondsPerShot_cssrm6() throws Exception {
+        Weapon cut = (Weapon) ItemDB.lookup("C-STREAK SRM 6");
+        double expected = cut.getCoolDown(null);
+        assertEquals(expected, cut.getSecondsPerShot(null), 0.0);
+    }
+    
+    @Test
+    public void testGetSecondsPerShot_clrm20() throws Exception {
+        Weapon cut = (Weapon) ItemDB.lookup("C-LRM 20");
+        double expected = cut.getCoolDown(null) + 19 * 0.05;
+        assertEquals(expected, cut.getSecondsPerShot(null), 0.0);
+    }
+        
     @Test
     public void testGetRangeEffectivity_lrm20() throws Exception {
         MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("LRM 20");

@@ -74,7 +74,7 @@ public class ChassisStandardTest extends ChassisBaseTest {
     protected ChassisStandard makeDefaultCUT() {
         return new ChassisStandard(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant,
                 movementProfile, faction, engineMin, engineMax, maxJumpJets, components, maxPilotModules,
-                maxConsumableModules, maxWeaponModules, quirks);
+                maxConsumableModules, maxWeaponModules, quirks, mascCapable);
     }
 
     /**

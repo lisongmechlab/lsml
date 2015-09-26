@@ -20,7 +20,6 @@
 package org.lisoft.lsml.view.mechlab;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;

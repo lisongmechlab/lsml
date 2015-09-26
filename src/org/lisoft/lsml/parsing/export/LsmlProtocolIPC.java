@@ -43,21 +43,24 @@ import org.lisoft.lsml.view.ProgramInit;
  */
 public class LsmlProtocolIPC implements Runnable {
     // In the private (ephemeral) ports
-    private static final int   PORT = 63782;
+    public static final int    DEFAULT_PORT = 63782;
     private final ServerSocket serverSocket;
     private final Thread       thread;
-    private transient boolean  done = false;
+    private transient boolean  done         = false;
 
     /**
      * Creates a new IPC server that can receive messages on the local loopback.
      * 
+     * @param aPort
+     *            The port to listen to.
+     * 
      * @throws UnknownHostException
      * @throws IOException
      */
-    public LsmlProtocolIPC() throws IOException {
+    public LsmlProtocolIPC(int aPort) throws IOException {
         serverSocket = new ServerSocket();
         serverSocket.setReuseAddress(true);
-        serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
+        serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), aPort));
 
         thread = new Thread(this);
         thread.setName("IPC THREAD");
@@ -90,11 +93,13 @@ public class LsmlProtocolIPC implements Runnable {
     /**
      * @param aLsmlUrl
      *            The LSML URL to send.
+     * @param aPort
+     *            The port to send on.
      * @return <code>true</code> if the message was sent (some one listened to the socket) <code>false</code> if the
      *         message couldn't be sent.
      */
-    static public boolean sendLoadout(String aLsmlUrl) {
-        try (Socket socket = new Socket(InetAddress.getLocalHost(), PORT);
+    static public boolean sendLoadout(String aLsmlUrl, int aPort) {
+        try (Socket socket = new Socket(InetAddress.getLocalHost(), aPort);
                 Writer writer = new OutputStreamWriter(socket.getOutputStream());
                 BufferedWriter bw = new BufferedWriter(writer)) {
             bw.write(aLsmlUrl);

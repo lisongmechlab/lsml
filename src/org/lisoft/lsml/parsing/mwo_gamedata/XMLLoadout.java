@@ -77,6 +77,8 @@ public class XMLLoadout {
         @XStreamAsAttribute
         public String ComponentName;
         @XStreamAsAttribute
+        public String OmniPod;
+        @XStreamAsAttribute
         public int    Armor;
 
         public class Weapon {

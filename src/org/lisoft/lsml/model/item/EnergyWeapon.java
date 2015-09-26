@@ -40,10 +40,10 @@ public class EnergyWeapon extends Weapon {
             Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
             Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
             double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
-            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, Attribute aBurnTime) {
+            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, Attribute aBurnTime, double aVolleyDelay) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ENERGY, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
-                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha);
+                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay);
         burnTime = aBurnTime;
     }
 

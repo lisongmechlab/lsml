@@ -21,14 +21,12 @@ package org.lisoft.lsml.view.mechlab;
 
 import java.awt.BorderLayout;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.model.metrics.HeatDissipation;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 

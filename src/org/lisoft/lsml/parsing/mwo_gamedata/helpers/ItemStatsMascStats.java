@@ -19,25 +19,46 @@
 //@formatter:on
 package org.lisoft.lsml.parsing.mwo_gamedata.helpers;
 
+import org.lisoft.lsml.model.item.MASC;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class MdfMech {
+/**
+ * A helper class for parsing MASC data from the MWO data files.
+ * 
+ * @author Emily Björk
+ *
+ */
+public class ItemStatsMascStats {
+
     @XStreamAsAttribute
-    public int    CanEquipMASC;
+    public double BoostSpeed;
+
     @XStreamAsAttribute
-    public String Variant;
+    public double BoostAccel;
+
     @XStreamAsAttribute
-    public int    MaxTons;
+    public double BoostDecel;
     @XStreamAsAttribute
-    public double BaseTons;
+    public double BoostTurn;
     @XStreamAsAttribute
-    public int    MaxJumpJets;
+    public double GaugeFill;
     @XStreamAsAttribute
-    public int    MinEngineRating;
+    public double GaugeDrain;
     @XStreamAsAttribute
-    public int    MaxEngineRating;
-    @XStreamAsAttribute
-    public String VariantType;
-    @XStreamAsAttribute
-    public int    VariantParent;
+    public double GaugeDamagePoint;
+
+    /**
+     * Creates a new MASC item using this object.
+     * 
+     * @param aStats
+     *            The stats object to generate the item from.
+     * @return a {@link MASC}.
+     */
+    public MASC asMasc(ItemStatsModule aStats) {
+        return new MASC(aStats.getUiName(), aStats.getUiDesc(), aStats.getMwoKey(), aStats.getMwoId(),
+                aStats.ModuleStats.slots, aStats.ModuleStats.tons, aStats.ModuleStats.health, aStats.getFaction(),
+                aStats.ModuleStats.TonsMin, aStats.ModuleStats.TonsMax, BoostSpeed, BoostAccel, BoostDecel, BoostTurn);
+    }
+
 }
