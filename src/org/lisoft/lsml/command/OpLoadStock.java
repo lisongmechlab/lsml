@@ -22,6 +22,7 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.chassi.OmniPodDB;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -61,19 +62,26 @@ public class OpLoadStock extends OpLoadoutBase {
             addOp(new OpSetArmorType(messageBuffer, loadoutStandard, stockLoadout.getArmorType()));
             addOp(new OpSetHeatSinkType(messageBuffer, loadoutStandard, stockLoadout.getHeatSinkType()));
         }
-        else if (loadout instanceof LoadoutOmniMech) {
-            LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
-            for (Location location : Location.values()) {
-                addOp(new OpChangeOmniPod(messageBuffer, loadoutOmniMech, loadoutOmniMech.getComponent(location),
-                        OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(), location)));
-            }
-        }
         addOp(new OpSetGuidanceType(messageBuffer, loadout, stockLoadout.getGuidanceType()));
 
         for (StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()) {
             Location location = stockComponent.getPart();
             ConfiguredComponentBase configured = loadout.getComponent(location);
 
+            if(loadout instanceof LoadoutOmniMech){
+                LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
+                
+                final OmniPod omnipod;
+                if(stockComponent.getOmniPod() != null){
+                    omnipod = OmniPodDB.lookup(stockComponent.getOmniPod());                    
+                }
+                else{
+                    omnipod = OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(), location);
+                }
+                
+                addOp(new OpChangeOmniPod(messageBuffer, loadoutOmniMech, loadoutOmniMech.getComponent(location), omnipod));
+            }
+            
             if (location.isTwoSided()) {
                 addOp(new OpSetArmor(messageBuffer, loadout, configured, ArmorSide.FRONT, 0, true));
                 addOp(new OpSetArmor(messageBuffer, loadout, configured, ArmorSide.BACK, stockComponent.getArmorBack(),

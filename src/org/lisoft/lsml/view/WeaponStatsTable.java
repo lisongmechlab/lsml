@@ -202,11 +202,22 @@ public class WeaponStatsTable extends JTable {
                 boolean hasFocus, int row, int column) {
             Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             if (row % 2 == 0) {
-                c.setBackground(fg);
+                if (!isSelected) {
+                    c.setBackground(fg);
+                }
+                else {
+                    c.setBackground(fg.darker());
+                }
             }
             else {
-                c.setBackground(fg_darker);
+                if (!isSelected) {
+                    c.setBackground(fg_darker);
+                }
+                else {
+                    c.setBackground(fg_darker.darker());
+                }
             }
+            c.setForeground(Color.BLACK);
             return c;
         }
     }

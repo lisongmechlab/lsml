@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.lisoft.lsml.command.OpRename;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ComponentBase;
 import org.lisoft.lsml.model.chassi.HardPointType;

@@ -57,6 +57,8 @@ public class StockLoadout {
         private final Integer       armorFront;
         @XStreamAsAttribute
         private final Integer       armorBack;
+        @XStreamAsAttribute
+        private final Integer       omniPod;
         @XStreamImplicit
         private final List<Integer> items;
 
@@ -71,8 +73,10 @@ public class StockLoadout {
          *            The back armor (must be zero if one sided).
          * @param aItems
          *            A {@link List} of items in the component.
+         * @param aOmniPod
+         *            The ID of the omnipod to use (or 0 if stock/none)
          */
-        public StockComponent(Location aPart, int aFront, int aBack, List<Integer> aItems) {
+        public StockComponent(Location aPart, int aFront, int aBack, List<Integer> aItems, Integer aOmniPod) {
             part = aPart;
             armorFront = aFront;
             if (part.isTwoSided()) {
@@ -82,6 +86,7 @@ public class StockLoadout {
                 armorBack = null;
             }
             items = Collections.unmodifiableList(aItems);
+            omniPod = aOmniPod;
         }
 
         /**
@@ -113,6 +118,13 @@ public class StockLoadout {
                 return new ArrayList<>();
             }
             return items;
+        }
+
+        /**
+         * @return The omnipod to use for this component or 0 if default/none.
+         */
+        public Integer getOmniPod() {
+            return omniPod;
         }
     }
 

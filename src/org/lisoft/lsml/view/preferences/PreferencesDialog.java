@@ -19,18 +19,24 @@
 //@formatter:on
 package org.lisoft.lsml.view.preferences;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
+import org.lisoft.lsml.parsing.mwo_gamedata.GameVFS;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.action.SetFontSizeAction;
 import org.lisoft.lsml.view.preferences.FontPreferences.FontSize;
@@ -60,25 +66,51 @@ public class PreferencesDialog extends JDialog {
     }
 
     private void addCorePane(JPanel aRoot) {
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(StyleManager.sectionBorder("LSML Core Settings"));
 
-        final JCheckBox useBundledData = new JCheckBox("Use bundled data", Boolean.parseBoolean(PreferenceStore
-                .getString(PreferenceStore.USEBUNDLED_DATA, "false")));
-        useBundledData
-                .setToolTipText("<html>If checked, LSML will quietly fallback to bundled data files if no game install is available.<br/>"
-                        + "Otherwise it will prompt you to locate the game install on next startup.</html>");
-        useBundledData.addActionListener(new AbstractAction() {
-            private static final long serialVersionUID = -8136020916897237506L;
-
-            @Override
-            public void actionPerformed(ActionEvent aArg0) {
-                PreferenceStore.setString(PreferenceStore.USEBUNDLED_DATA,
-                        Boolean.toString(useBundledData.isSelected()));
-            }
-        });
-        panel.add(useBundledData);
-
+        {
+            final JPanel gameInstallPanel = new JPanel(new BorderLayout());
+            final JLabel gameInstallLabel = new JLabel("Game Install: ");
+            final JTextField gameInstallPath = new JTextField(
+                    PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+            final JButton gameInstallBrowse = new JButton(new AbstractAction("Browse...") {
+                @Override
+                public void actionPerformed(ActionEvent aE) {
+                    if (GameVFS.browseForGameInstall()) {
+                        JOptionPane.showMessageDialog(null,
+                                "A restart of LSML is required before the new game files are used."
+                                        + "\n\nPlease restart manually at your convenience.", "Restart required",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        File cacheFile = new File(PreferenceStore.getString(PreferenceStore.GAME_DATA_CACHE));
+                        if (cacheFile.exists()) {
+                            cacheFile.delete();
+                        }
+                    }
+                }
+            });
+            gameInstallPath.setEnabled(false);
+            gameInstallPanel.add(gameInstallLabel, BorderLayout.WEST);
+            gameInstallPanel.add(gameInstallPath, BorderLayout.CENTER);
+            gameInstallPanel.add(gameInstallBrowse, BorderLayout.EAST);
+            panel.add(gameInstallPanel, BorderLayout.SOUTH);
+        }
+        {
+            final String useBundledString = PreferenceStore.getString(PreferenceStore.USEBUNDLED_DATA, "false");
+            final boolean useBundledBool = Boolean.parseBoolean(useBundledString);
+            final JCheckBox useBundledCheckbox = new JCheckBox("Use bundled data", useBundledBool);
+            useBundledCheckbox.setToolTipText("<html>If checked, LSML will quietly fallback to bundled data "
+                    + "files if no game install is available.<br/>"
+                    + "Otherwise it will prompt you to locate the game install on next startup.</html>");
+            useBundledCheckbox.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent aArg0) {
+                    PreferenceStore.setString(PreferenceStore.USEBUNDLED_DATA,
+                            Boolean.toString(useBundledCheckbox.isSelected()));
+                }
+            });
+            panel.add(useBundledCheckbox, BorderLayout.NORTH);
+        }
         aRoot.add(panel);
     }
 

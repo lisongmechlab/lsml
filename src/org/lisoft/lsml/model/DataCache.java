@@ -378,6 +378,7 @@ public class DataCache {
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/PilotModules.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/WeaponMods.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Consumables.xml")));
+        ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/MASC.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Mechs/Mechs.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/OmniPods.xml")));
         return ans;
@@ -755,6 +756,11 @@ public class DataCache {
                     }
                 }
 
+                Integer omniPod = null;
+                if(null != xmlComponent.OmniPod){
+                    omniPod = Integer.parseInt(xmlComponent.OmniPod);
+                }
+
                 Location partType = Location.fromMwoName(xmlComponent.ComponentName);
                 boolean isRear = Location.isRear(xmlComponent.ComponentName);
                 int armorFront = isRear ? 0 : xmlComponent.Armor;
@@ -768,13 +774,14 @@ public class DataCache {
                         items.addAll(stockComponent.getItems());
                         armorFront = isRear ? stockComponent.getArmorFront() : armorFront;
                         armorBack = isRear ? armorBack : stockComponent.getArmorBack();
+                        omniPod = stockComponent.getOmniPod();
                         it.remove();
                         break;
                     }
                 }
 
                 StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(partType, armorFront,
-                        armorBack, items);
+                        armorBack, items, omniPod);
                 components.add(stockComponent);
             }
 

@@ -43,7 +43,6 @@ import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
-import org.lisoft.lsml.parsing.export.LoadoutCoderV2;
 import org.lisoft.lsml.parsing.export.LoadoutCoderV3;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.DecodingException;
@@ -98,7 +97,7 @@ public class LoadoutCoderV3Test {
      */
     @Test
     public void testDecodeAllStock() throws Exception {
-        try (InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv3stock.txt");
+        try (InputStream is = LoadoutCoderV3.class.getResourceAsStream("/resources/lsmlv3stock.txt");
                 Scanner sc = new Scanner(is);) {
             Base64 base64 = new Base64();
 

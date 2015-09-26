@@ -19,8 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view.graphs;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -63,10 +66,23 @@ public class DpsGraph extends JFrame implements Message.Recipient {
     private static final long    serialVersionUID = -8812749194029184861L;
     private final LoadoutBase<?> loadout;
     private final ChartPanel     chartPanel;
+    private final WeaponColouredDrawingSupplier colours          = new WeaponColouredDrawingSupplier();
 
     JFreeChart makechart() {
-        return ChartFactory.createStackedXYAreaChart("Max DPS over range for " + loadout, "range [m]",
+        JFreeChart chart =  ChartFactory.createStackedXYAreaChart("Max DPS over range for " + loadout, "range [m]",
                 "damage / second", getSeries(), PlotOrientation.VERTICAL, true, true, false);
+        chart.getPlot().setDrawingSupplier(colours);
+
+        chart.getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
+        chart.getLegend().setVerticalAlignment(VerticalAlignment.TOP);
+        
+        LegendTitle legendTitle = chart.getLegend();
+        XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
+        titleAnnotation.setMaxWidth(0.4);
+        ((XYPlot) (chart.getPlot())).addAnnotation(titleAnnotation);
+        chart.removeLegend();
+
+        return chart;
     }
 
     /**
@@ -86,14 +102,6 @@ public class DpsGraph extends JFrame implements Message.Recipient {
         loadout = aLoadout;
         chartPanel = new ChartPanel(makechart());
         setContentPane(chartPanel);
-        chartPanel.getChart().getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
-        chartPanel.getChart().getLegend().setVerticalAlignment(VerticalAlignment.TOP);
-
-        LegendTitle legendTitle = chartPanel.getChart().getLegend();
-        XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
-        titleAnnotation.setMaxWidth(0.4);
-        ((XYPlot) (chartPanel.getChart().getPlot())).addAnnotation(titleAnnotation);
-        chartPanel.getChart().removeLegend();
 
         setIconImage(ProgramInit.programIcon);
         setSize(800, 600);
@@ -123,6 +131,7 @@ public class DpsGraph extends JFrame implements Message.Recipient {
             multiplicity.put(weapon, v+1);
         }
 
+        List<Weapon> orderedWeapons = new ArrayList<>();
         Double[] ranges = WeaponRanges.getRanges(multiplicity.keySet(), modifiers);
         DefaultTableXYDataset dataset = new DefaultTableXYDataset();
         for(Map.Entry<Weapon, Integer> e : multiplicity.entrySet()){
@@ -136,7 +145,10 @@ public class DpsGraph extends JFrame implements Message.Recipient {
                 series.add(range, dps * rangeEff*mult);
             }
             dataset.addSeries(series);
+            orderedWeapons.add(e.getKey());
         }
+        Collections.reverse(orderedWeapons);        
+        colours.updateColoursToMatch(orderedWeapons);
         return dataset;
     }
 

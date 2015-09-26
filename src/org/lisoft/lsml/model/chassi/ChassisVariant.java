@@ -25,11 +25,23 @@ package org.lisoft.lsml.model.chassi;
  * @author Li Song
  */
 public enum ChassisVariant {
-    HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX;
+    HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX, INVASION, GOLD, RESISTANCE;
 
     public static ChassisVariant fromString(String aChassis, String aVariant) {
-        if (null == aVariant)
-            return NORMAL;
+       
+        if (null == aVariant){
+            String c = aChassis.toLowerCase();
+            if(c.contains("(i)")){
+                return INVASION;
+            }
+            else if(c.contains("(g)")){
+                return GOLD;
+            }            
+            else if(c.contains("(")){
+                return CHAMPION; // Other unknown variants are assumed champion.
+            }
+            return NORMAL;            
+        }       
         
         String s = aVariant.toLowerCase();
         for (ChassisVariant variant : values()) {

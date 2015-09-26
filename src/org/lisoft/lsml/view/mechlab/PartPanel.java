@@ -33,6 +33,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -158,7 +159,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
             armorLabel = new JLabel();
         }
 
-        Location location = aLoadoutPart.getInternalComponent().getLocation();
+        final Location location = aLoadoutPart.getInternalComponent().getLocation();
         if (aLoadoutPart instanceof ConfiguredComponentOmniMech
                 && (location == Location.LeftArm || location == Location.RightArm)) {
 
@@ -201,13 +202,23 @@ public class PartPanel extends JPanel implements Message.Recipient {
                             + (int) internalPart.getHitPoints() + " hp)"), BorderFactory.createEmptyBorder(0, 2, 2, 4)));
         }
 
-        if (LoadoutOmniMech.class.isAssignableFrom(aLoadout.getClass())
-                && aLoadoutPart.getInternalComponent().getLocation() != Location.CenterTorso) {
+        if (LoadoutOmniMech.class.isAssignableFrom(aLoadout.getClass()) && location != Location.CenterTorso) {
             final LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
             // Omnimech
-            Collection<OmniPod> compatiblePods = OmniPodDB.lookup(omniMech.getChassis(), aLoadoutPart
-                    .getInternalComponent().getLocation());
-            omnipodSelection = new JComboBox<>(new Vector<>(compatiblePods));
+            Collection<OmniPod> compatiblePods = OmniPodDB.lookup(omniMech.getChassis(), location);
+
+            omnipodSelection = new JComboBox<>(new DefaultComboBoxModel<OmniPod>(new Vector<>(compatiblePods)) {
+                @Override
+                public Object getSelectedItem() {
+                    return omniMech.getComponent(location).getOmniPod();
+                }
+                
+                @Override
+                public void setSelectedItem(Object aAnObject) {
+                    aStack.pushAndApply(new OpChangeOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech) component,
+                            (OmniPod) aAnObject));
+                }
+            });
             omnipodSelection.setRenderer(new OmniPodRenderer());
             omnipodSelection.addPopupMenuListener(new StyledComboBox(true, false));
             omnipodSelection.setFocusable(false);
@@ -216,13 +227,6 @@ public class PartPanel extends JPanel implements Message.Recipient {
             max.height = ItemRenderer.getItemHeight();
             omnipodSelection.setMaximumSize(max);
             omnipodSelection.setSelectedItem(((ConfiguredComponentOmniMech) component).getOmniPod());
-            omnipodSelection.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent aE) {
-                    aStack.pushAndApply(new OpChangeOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech) component,
-                            (OmniPod) omnipodSelection.getSelectedItem()));
-                }
-            });
             add(omnipodSelection);
         }
         else {

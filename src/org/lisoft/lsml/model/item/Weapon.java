@@ -60,12 +60,15 @@ public class Weapon extends HeatSource {
     private final double    ghostHeatMultiplier;
     @XStreamAsAttribute
     private final int       ghostHeatFreeAlpha;
+    @XStreamAsAttribute
+    protected final double  volleyDelay;
 
     public Weapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardPointType, int aHP, Faction aFaction, Attribute aHeat, Attribute aCooldown,
             Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha) {
+            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
+            double aVolleyDelay) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
         cooldown = aCooldown;
         rangeZero = aRangeZero;
@@ -80,6 +83,10 @@ public class Weapon extends HeatSource {
         ghostHeatGroupId = aGhostHeatGroupId;
         ghostHeatMultiplier = aGhostHeatMultiplier;
         ghostHeatFreeAlpha = aGhostHeatMaxFreeAlpha;
+        volleyDelay = aVolleyDelay;
+
+        if (roundsPerShot < 1)
+            throw new IllegalArgumentException("All weapons must have Rounds per shot > 0");
     }
 
     public boolean isOffensive() {
@@ -112,7 +119,7 @@ public class Weapon extends HeatSource {
     }
 
     public double getSecondsPerShot(Collection<Modifier> aModifiers) {
-        return getCoolDown(aModifiers);
+        return getCoolDown(aModifiers) + volleyDelay * (roundsPerShot - 1);
     }
 
     public double getCoolDown(Collection<Modifier> aModifiers) {
