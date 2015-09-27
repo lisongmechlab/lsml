@@ -68,7 +68,7 @@ public class GhostHeat implements Metric {
     public double calculate() {
         List<Weapon> ungroupedWeapons = new LinkedList<>();
         Map<Integer, List<Weapon>> groups = new HashMap<Integer, List<Weapon>>();
-        
+
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
             weapons = loadout.items(Weapon.class);
@@ -76,7 +76,7 @@ public class GhostHeat implements Metric {
         else {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup);
         }
-        
+
         for (Weapon weapon : weapons) {
             int group = weapon.getGhostHeatGroup();
             if (group == 0) {

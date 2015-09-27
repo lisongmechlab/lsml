@@ -32,24 +32,24 @@ public class ItemStats {
     @XStreamAsAttribute
     public String       faction;
     public ItemStatsLoc Loc;
-    
-    public String getUiName(){
+
+    public String getUiName() {
         return Localization.key2string(Loc.nameTag);
     }
-    
-    public String getUiDesc(){
+
+    public String getUiDesc() {
         return Localization.key2string(Loc.descTag);
     }
-    
-    public String getMwoKey(){
-        return  name;
+
+    public String getMwoKey() {
+        return name;
     }
-    
-    public int getMwoId(){
+
+    public int getMwoId() {
         return Integer.parseInt(id);
     }
-    
-    public Faction getFaction(){
+
+    public Faction getFaction() {
         return Faction.fromMwo(faction);
     }
 }

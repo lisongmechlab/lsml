@@ -126,35 +126,31 @@ public class DataCache {
         /**
          * No game install was detected and the built-in or cached data was loaded.
          */
-        Builtin,
-        /** A previously created cache was loaded. */
-        Loaded,
-        /** The cache has not yet been initialized. */
-        NotInitialized,
-        /** A game install was detected and successfully parsed. */
-        Parsed,
-        /** A game install was detected but parsing failed. */
+        Builtin, /** A previously created cache was loaded. */
+        Loaded, /** The cache has not yet been initialized. */
+        NotInitialized, /** A game install was detected and successfully parsed. */
+        Parsed, /** A game install was detected but parsing failed. */
         ParseFailed
     }
 
     private static transient DataCache   instance;
-    private static transient Boolean     loading   = false;
-    private static transient ParseStatus status    = ParseStatus.NotInitialized;
+    private static transient Boolean     loading = false;
+    private static transient ParseStatus status  = ParseStatus.NotInitialized;
 
     @XStreamAsAttribute
-    private String                       lsmlVersion;
-    private Map<String, Long>            checksums = new HashMap<>();           // Filename - CRC
-    private List<Upgrade>                upgrades;
-    private List<Environment>            environments;
-    private List<Item>                   items;
-    private List<ChassisBase>            chassis;
+    private String            lsmlVersion;
+    private Map<String, Long> checksums = new HashMap<>(); // Filename - CRC
+    private List<Upgrade>     upgrades;
+    private List<Environment> environments;
+    private List<Item>        items;
+    private List<ChassisBase> chassis;
 
-    private List<PilotModule>            modules;
+    private List<PilotModule> modules;
 
-    private List<OmniPod>                omniPods;
+    private List<OmniPod> omniPods;
 
-    private List<StockLoadout>           stockLoadouts;
-    private List<ModifierDescription>    modifierDescriptions;
+    private List<StockLoadout>        stockLoadouts;
+    private List<ModifierDescription> modifierDescriptions;
 
     /**
      * @return An unmodifiable {@link List} of all inner sphere {@link ChassisStandard}s.
@@ -298,8 +294,8 @@ public class DataCache {
 
                 if (dataCache == null || dataCache.mustUpdate()) {
                     if (null != aLog) {
-                        aLog.append("Found a data cache, but it's from an older LSML version, discarding...").append(
-                                System.lineSeparator());
+                        aLog.append("Found a data cache, but it's from an older LSML version, discarding...")
+                                .append(System.lineSeparator());
                         aLog.flush();
                     }
                     dataCacheFile.delete();
@@ -326,7 +322,9 @@ public class DataCache {
                 catch (Throwable exception) {
                     if (null != aLog) {
                         aLog.append("Parsing of game data failed...").append(System.lineSeparator());
-                        exception.printStackTrace(new PrintWriter(aLog));
+                        try (PrintWriter pw = new PrintWriter(aLog)) {
+                            exception.printStackTrace(pw);
+                        }
                         aLog.flush();
                     }
                     status = ParseStatus.ParseFailed;
@@ -428,8 +426,8 @@ public class DataCache {
         for (XMLItemStatsMech mech : aItemStatsXml.MechList) {
             try {
                 String mdfFile = mech.chassis + "/" + mech.name + ".mdf";
-                MdfMechDefinition mdf = MdfMechDefinition.fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT,
-                        mdfFile)).stream);
+                MdfMechDefinition mdf = MdfMechDefinition
+                        .fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, mdfFile)).stream);
 
                 if (mdf.isOmniMech()) {
                     File loadoutXml = new File("Game/Libs/MechLoadout/" + mech.name + ".xml");
@@ -438,8 +436,8 @@ public class DataCache {
                 }
                 else {
                     String hardPointsXml = mech.chassis + "/" + mech.chassis + "-hardpoints.xml";
-                    XMLHardpoints hardPoints = XMLHardpoints.fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT,
-                            hardPointsXml)).stream);
+                    XMLHardpoints hardPoints = XMLHardpoints
+                            .fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, hardPointsXml)).stream);
                     ans.add(mdf.asChassisStandard(mech, aDataCache, mechIdMap, hardPoints));
                 }
             }
@@ -620,8 +618,9 @@ public class DataCache {
                         modifiers.add(new Modifier(cooldownDesc, 1.0 - cooldown[maxRank - 1]));
                     }
                     if (maxRange[maxRank - 1] != 0) {
-                        //modifiers.add(new Modifier(rangeDesc, longRange[maxRank - 1] - 1.0)); // They are always the same.
-                        modifiers.add(new Modifier(rangeDesc, maxRange[maxRank - 1] - 1.0)); 
+                        // modifiers.add(new Modifier(rangeDesc, longRange[maxRank - 1] - 1.0)); // They are always the
+                        // same.
+                        modifiers.add(new Modifier(rangeDesc, maxRange[maxRank - 1] - 1.0));
                     }
 
                     ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction,
@@ -670,7 +669,8 @@ public class DataCache {
                                 case "CTargetDecayStats":
                                     cathegory = ModuleCathegory.Targeting;
                                 default:
-                                    throw new IllegalArgumentException("Unknown module cathegory: " + statsModule.CType);
+                                    throw new IllegalArgumentException(
+                                            "Unknown module cathegory: " + statsModule.CType);
                             }
                         }
                     }
@@ -703,12 +703,12 @@ public class DataCache {
         for (String chassis : series) {
             try {
                 String omniPodsFile = chassis + "/" + chassis + "-omnipods.xml";
-                XMLOmniPods omniPods = XMLOmniPods.fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT,
-                        omniPodsFile)).stream);
+                XMLOmniPods omniPods = XMLOmniPods
+                        .fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, omniPodsFile)).stream);
 
                 String hardPointsXml = chassis + "/" + chassis + "-hardpoints.xml";
-                XMLHardpoints hardPoints = XMLHardpoints.fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT,
-                        hardPointsXml)).stream);
+                XMLHardpoints hardPoints = XMLHardpoints
+                        .fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, hardPointsXml)).stream);
 
                 ans.addAll(omniPods.asOmniPods(aItemStatsXml, hardPoints, aDataCache));
 
@@ -757,7 +757,7 @@ public class DataCache {
                 }
 
                 Integer omniPod = null;
-                if(null != xmlComponent.OmniPod){
+                if (null != xmlComponent.OmniPod) {
                     omniPod = Integer.parseInt(xmlComponent.OmniPod);
                 }
 
@@ -897,8 +897,8 @@ public class DataCache {
         }
 
         dataCache.lsmlVersion = LSML.getVersion();
-        dataCache.modifierDescriptions = Collections.unmodifiableList(XMLQuirkDef.fromXml(LoadoutCoderV3.class
-                .getResourceAsStream("/resources/Quirks.def.xml")));
+        dataCache.modifierDescriptions = Collections.unmodifiableList(
+                XMLQuirkDef.fromXml(LoadoutCoderV3.class.getResourceAsStream("/resources/Quirks.def.xml")));
         dataCache.items = Collections.unmodifiableList(parseItems(itemStatsXml));
         dataCache.modules = Collections.unmodifiableList(parseModules(aGameVfs, itemStatsXml));
         dataCache.upgrades = Collections.unmodifiableList(parseUpgrades(itemStatsXml, dataCache));

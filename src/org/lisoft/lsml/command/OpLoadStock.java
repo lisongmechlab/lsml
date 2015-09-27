@@ -68,20 +68,21 @@ public class OpLoadStock extends OpLoadoutBase {
             Location location = stockComponent.getPart();
             ConfiguredComponentBase configured = loadout.getComponent(location);
 
-            if(loadout instanceof LoadoutOmniMech){
+            if (loadout instanceof LoadoutOmniMech) {
                 LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
-                
+
                 final OmniPod omnipod;
-                if(stockComponent.getOmniPod() != null){
-                    omnipod = OmniPodDB.lookup(stockComponent.getOmniPod());                    
+                if (stockComponent.getOmniPod() != null) {
+                    omnipod = OmniPodDB.lookup(stockComponent.getOmniPod());
                 }
-                else{
+                else {
                     omnipod = OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(), location);
                 }
-                
-                addOp(new OpChangeOmniPod(messageBuffer, loadoutOmniMech, loadoutOmniMech.getComponent(location), omnipod));
+
+                addOp(new OpChangeOmniPod(messageBuffer, loadoutOmniMech, loadoutOmniMech.getComponent(location),
+                        omnipod));
             }
-            
+
             if (location.isTwoSided()) {
                 addOp(new OpSetArmor(messageBuffer, loadout, configured, ArmorSide.FRONT, 0, true));
                 addOp(new OpSetArmor(messageBuffer, loadout, configured, ArmorSide.BACK, stockComponent.getArmorBack(),

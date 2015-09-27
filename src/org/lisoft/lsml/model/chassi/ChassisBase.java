@@ -296,11 +296,11 @@ public abstract class ChassisBase {
             JumpJet jj = (JumpJet) aItem;
             return jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
         }
-        
-        if(aItem instanceof MASC){
-            if(!mascCapable)
+
+        if (aItem instanceof MASC) {
+            if (!mascCapable)
                 return false;
-            MASC masc = (MASC)aItem;
+            MASC masc = (MASC) aItem;
             return masc.getMinTons() <= getMassMax() && getMassMax() <= masc.getMaxTons();
         }
 

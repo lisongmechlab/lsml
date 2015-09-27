@@ -80,13 +80,13 @@ public class SustainedDpsGraph extends JFrame implements Message.Recipient {
     private final WeaponColouredDrawingSupplier colours          = new WeaponColouredDrawingSupplier();
 
     JFreeChart makechart() {
-        JFreeChart chart =  ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout, "range [m]",
-                "damage / second", getSeries(), PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart chart = ChartFactory.createStackedXYAreaChart("Max Sustained DPS over range for " + loadout,
+                "range [m]", "damage / second", getSeries(), PlotOrientation.VERTICAL, true, true, false);
         chart.getPlot().setDrawingSupplier(colours);
 
         chart.getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
         chart.getLegend().setVerticalAlignment(VerticalAlignment.TOP);
-        
+
         LegendTitle legendTitle = chart.getLegend();
         XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
         titleAnnotation.setMaxWidth(0.4);
@@ -116,7 +116,7 @@ public class SustainedDpsGraph extends JFrame implements Message.Recipient {
         maxSustainedDPS = aMaxSustainedDpsMetric;
         chartPanel = new ChartPanel(makechart());
         setContentPane(chartPanel);
-        
+
         chartPanel.setLayout(new OverlayLayout(chartPanel));
         JButton button = new JButton(new OpenHelp("What is this?", "Max-sustained-dps-graph",
                 KeyStroke.getKeyStroke('w')));
@@ -170,9 +170,9 @@ public class SustainedDpsGraph extends JFrame implements Message.Recipient {
             dataset.addSeries(series);
             orderedWeapons.add(entry.getKey());
         }
-        Collections.reverse(orderedWeapons);        
+        Collections.reverse(orderedWeapons);
         colours.updateColoursToMatch(orderedWeapons);
-        
+
         return dataset;
     }
 

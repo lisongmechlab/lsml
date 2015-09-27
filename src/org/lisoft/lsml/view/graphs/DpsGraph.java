@@ -63,19 +63,19 @@ import org.lisoft.lsml.view.ProgramInit;
  * @author Emily Björk
  */
 public class DpsGraph extends JFrame implements Message.Recipient {
-    private static final long    serialVersionUID = -8812749194029184861L;
-    private final LoadoutBase<?> loadout;
-    private final ChartPanel     chartPanel;
+    private static final long                   serialVersionUID = -8812749194029184861L;
+    private final LoadoutBase<?>                loadout;
+    private final ChartPanel                    chartPanel;
     private final WeaponColouredDrawingSupplier colours          = new WeaponColouredDrawingSupplier();
 
     JFreeChart makechart() {
-        JFreeChart chart =  ChartFactory.createStackedXYAreaChart("Max DPS over range for " + loadout, "range [m]",
+        JFreeChart chart = ChartFactory.createStackedXYAreaChart("Max DPS over range for " + loadout, "range [m]",
                 "damage / second", getSeries(), PlotOrientation.VERTICAL, true, true, false);
         chart.getPlot().setDrawingSupplier(colours);
 
         chart.getLegend().setHorizontalAlignment(HorizontalAlignment.RIGHT);
         chart.getLegend().setVerticalAlignment(VerticalAlignment.TOP);
-        
+
         LegendTitle legendTitle = chart.getLegend();
         XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
         titleAnnotation.setMaxWidth(0.4);
@@ -110,44 +110,43 @@ public class DpsGraph extends JFrame implements Message.Recipient {
 
     private TableXYDataset getSeries() {
         final Collection<Modifier> modifiers = loadout.getModifiers();
-        SortedMap<Weapon, Integer> multiplicity = new TreeMap<Weapon, Integer>(
-                new Comparator<Weapon>() {
-                    @Override
-                    public int compare(Weapon aO1, Weapon aO2) {
-                        int comp = Double.compare(aO2.getRangeMax(modifiers), aO1.getRangeMax(modifiers));
-                        if (comp == 0)
-                            return aO1.compareTo(aO2);
-                        return comp;
-                    }
-                });
-        
-        for(Weapon weapon : loadout.items(Weapon.class)){
-            if(!weapon.isOffensive())
+        SortedMap<Weapon, Integer> multiplicity = new TreeMap<Weapon, Integer>(new Comparator<Weapon>() {
+            @Override
+            public int compare(Weapon aO1, Weapon aO2) {
+                int comp = Double.compare(aO2.getRangeMax(modifiers), aO1.getRangeMax(modifiers));
+                if (comp == 0)
+                    return aO1.compareTo(aO2);
+                return comp;
+            }
+        });
+
+        for (Weapon weapon : loadout.items(Weapon.class)) {
+            if (!weapon.isOffensive())
                 continue;
-            if(!multiplicity.containsKey(weapon)){
+            if (!multiplicity.containsKey(weapon)) {
                 multiplicity.put(weapon, 0);
             }
             int v = multiplicity.get(weapon);
-            multiplicity.put(weapon, v+1);
+            multiplicity.put(weapon, v + 1);
         }
 
         List<Weapon> orderedWeapons = new ArrayList<>();
         Double[] ranges = WeaponRanges.getRanges(multiplicity.keySet(), modifiers);
         DefaultTableXYDataset dataset = new DefaultTableXYDataset();
-        for(Map.Entry<Weapon, Integer> e : multiplicity.entrySet()){
+        for (Map.Entry<Weapon, Integer> e : multiplicity.entrySet()) {
             Weapon weapon = e.getKey();
             int mult = e.getValue();
-            
+
             XYSeries series = new XYSeries(weapon.getName(), true, false);
-            for (double range : ranges) {               
+            for (double range : ranges) {
                 final double dps = weapon.getStat("d/s", modifiers);
                 final double rangeEff = weapon.getRangeEffectivity(range, modifiers);
-                series.add(range, dps * rangeEff*mult);
+                series.add(range, dps * rangeEff * mult);
             }
             dataset.addSeries(series);
             orderedWeapons.add(e.getKey());
         }
-        Collections.reverse(orderedWeapons);        
+        Collections.reverse(orderedWeapons);
         colours.updateColoursToMatch(orderedWeapons);
         return dataset;
     }

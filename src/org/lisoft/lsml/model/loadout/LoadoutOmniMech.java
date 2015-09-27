@@ -42,7 +42,7 @@ import org.lisoft.lsml.util.OperationStack.Operation;
  * @author Emily Björk
  */
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
-    transient private final Upgrades               upgrades;
+    transient private final Upgrades upgrades;
 
     /**
      * Creates a new, empty loadout.

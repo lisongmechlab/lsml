@@ -29,6 +29,7 @@ import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ComponentBase;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -50,6 +51,7 @@ public class MockLoadoutContainer {
     final public Upgrades                             upgrades;
     final public Efficiencies                         efficiencies;
     final public WeaponGroups                         weaponGroups;
+    final public MovementProfile                      movementProfile;
     final public ComponentBase                        ira;
     final public ComponentBase                        irt;
     final public ComponentBase                        irl;
@@ -73,6 +75,7 @@ public class MockLoadoutContainer {
         upgrades = mock(Upgrades.class);
         efficiencies = mock(Efficiencies.class);
         weaponGroups = mock(WeaponGroups.class);
+        movementProfile = mock(MovementProfile.class);
 
         ira = mock(ComponentBase.class);
         irt = mock(ComponentBase.class);
@@ -130,6 +133,7 @@ public class MockLoadoutContainer {
         when(loadout.getEfficiencies()).thenReturn(efficiencies);
         when(loadout.getChassis()).thenReturn(chassi);
         when(loadout.getWeaponGroups()).thenReturn(weaponGroups);
+        when(loadout.getMovementProfile()).thenReturn(movementProfile);
     }
 
     public Internal makeInternal(String aName, int aNumSlots) {

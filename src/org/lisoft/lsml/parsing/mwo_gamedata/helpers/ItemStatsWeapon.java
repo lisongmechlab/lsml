@@ -169,7 +169,7 @@ public class ItemStatsWeapon extends ItemStats {
         double fallOffExponent = WeaponStats.falloffexponent != 0 ? WeaponStats.falloffexponent : 1.0;
 
         // There are three attributes that affect the projectile and ammo count.
-        // 
+        //
         int roundsPerShot = WeaponStats.numFiring;
         int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
         double projectileSpeed = WeaponStats.speed;
@@ -222,10 +222,11 @@ public class ItemStatsWeapon extends ItemStats {
                     shotsDuringCooldown = 0;
                     jammingTime = 0.0;
                 }
-                
-                Attribute jamChanceAttrib = new Attribute(jammingChance, selectors, ModifiersDB.SEL_WEAPON_JAMMING_CHANCE);
+
+                Attribute jamChanceAttrib = new Attribute(jammingChance, selectors,
+                        ModifiersDB.SEL_WEAPON_JAMMING_CHANCE);
                 Attribute jamTimeAttrib = new Attribute(jammingTime, selectors, ModifiersDB.SEL_WEAPON_JAMMED_TIME);
-                
+
                 return new BallisticWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction, heat,
                         cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
                         damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,

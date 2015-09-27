@@ -21,7 +21,6 @@ package org.lisoft.lsml.model.item;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 
-
 /**
  * This class models the MASC item from the data files.
  * 

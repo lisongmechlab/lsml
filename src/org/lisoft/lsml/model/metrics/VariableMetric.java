@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import java.util.List;
+
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
 /**
@@ -27,13 +29,29 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  * 
  * @author Emily Björk
  */
-public interface TimeMetric {
+public interface VariableMetric {
+
     /**
      * Calculates the value of the metric. May employ caching but the caching must be transparent.
      * 
-     * @param aTime
-     *            The time to calculate the metric for.
-     * @return The value of the metric at the given time.
+     * @param aValue
+     *            The value to calculate the metric for.
+     * @return The value of the metric.
      */
-    public double calculate(double aTime);
+    public double calculate(double aValue);
+
+    /**
+     * @return The human readable name of the calculated metric.
+     */
+    public String getMetricName();
+
+    /**
+     * @return The human readable name of the input value.
+     */
+    public String getArgumentName();
+
+    /**
+     * @return A {@link List} of values which if evaluated are usable for plotting the metric.
+     */
+    public List<Double> getArgumentValues();
 }

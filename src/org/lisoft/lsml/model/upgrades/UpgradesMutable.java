@@ -42,10 +42,10 @@ public class UpgradesMutable extends Upgrades {
             HeatSinkUpgrade aHeatSinks) {
         super(aArmor, aStructure, aGuidance, aHeatSinks);
     }
-    
-    public static UpgradesMutable standardUpgrades(){
-        return new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE,
-                UpgradeDB.STANDARD_GUIDANCE, UpgradeDB.STANDARD_HEATSINKS);
+
+    public static UpgradesMutable standardUpgrades() {
+        return new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE, UpgradeDB.STANDARD_GUIDANCE,
+                UpgradeDB.STANDARD_HEATSINKS);
     }
 
     /**

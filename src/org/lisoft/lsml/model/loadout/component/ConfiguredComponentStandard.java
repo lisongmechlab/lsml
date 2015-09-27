@@ -50,14 +50,14 @@ public class ConfiguredComponentStandard extends ConfiguredComponentBase {
     @Override
     public EquipResult canEquip(Item aItem) {
         EquipResult superResult = super.canEquip(aItem);
-        if(superResult != EquipResult.SUCCESS){
+        if (superResult != EquipResult.SUCCESS) {
             return superResult;
         }
-        
+
         if (aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax()) {
             return EquipResult.SUCCESS;
         }
-        
+
         if (aItem == ItemDB.CASE && getItemsEquipped().contains(ItemDB.CASE))
             return EquipResult.make(getInternalComponent().getLocation(), Type.ComponentAlreadyHasCase);
 

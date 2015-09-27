@@ -107,7 +107,7 @@ public class LoadoutConverter implements Converter {
             aWriter.endNode();
         }
         aWriter.endNode();
-        
+
         aWriter.startNode("weapongroups");
         aContext.convertAnother(loadout.getWeaponGroups());
         aWriter.endNode();
@@ -199,7 +199,7 @@ public class LoadoutConverter implements Converter {
                     aReader.moveUp();
                 }
             }
-            else if("weapongroups".equals(aReader.getNodeName())){
+            else if ("weapongroups".equals(aReader.getNodeName())) {
                 WeaponGroups wg = (WeaponGroups) aContext.convertAnother(loadoutBase, WeaponGroups.class);
                 loadoutBase.getWeaponGroups().assign(wg);
             }

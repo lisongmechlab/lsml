@@ -92,34 +92,15 @@ public class LoadoutCoderV3 implements LoadoutCoder {
     private final Huffman2<Integer> huff;
 
     public LoadoutCoderV3() {
-        ObjectInputStream in = null;
-        try {
-            InputStream is = LoadoutCoderV3.class.getResourceAsStream("/resources/coderstats_v3.bin");
-            in = new ObjectInputStream(is);
+        try (InputStream is = LoadoutCoderV3.class.getResourceAsStream("/resources/coderstats_v3.bin");
+                ObjectInputStream in = new ObjectInputStream(is);) {
+
             @SuppressWarnings("unchecked")
             Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
             huff = new Huffman2<Integer>(freqs, null);
-            /*
-             * for(Map.Entry<Integer, Integer> e : freqs.entrySet()) System.out.println("[" + e.getKey() + "] = " +
-             * e.getValue()); List<Integer> tmp = new ArrayList<>(); tmp.add(3051); tmp.add(30077); tmp.add(1233);
-             * tmp.add(1201); tmp.add(2218); tmp.add(2202); tmp.add(-1); tmp.add(30076); tmp.add(-1); tmp.add(30079);
-             * tmp.add(-1); tmp.add(30072); tmp.add(-1); tmp.add(-1); tmp.add(30074); tmp.add(-1); tmp.add(30078);
-             * tmp.add(-1); tmp.add(30073); tmp.add(1213); tmp.add(1214); tmp.add(-1); byte[] out = huff.encode(tmp);
-             * for(byte b : out){ int i; if( b < 0 ){ i = 256 + b; } else i = b; System.out.println(i); }
-             */
         }
         catch (Exception e) {
             throw new RuntimeException(e);
-        }
-        finally {
-            if (in != null) {
-                try {
-                    in.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -161,10 +142,10 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             if (!isOmniMech) {
                 LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
                 builder.push(new OpSetArmorType(null, loadoutStandard, (ArmorUpgrade) UpgradeDB.lookup(ids.remove(0))));
-                builder.push(new OpSetStructureType(null, loadoutStandard, (StructureUpgrade) UpgradeDB.lookup(ids
-                        .remove(0))));
-                builder.push(new OpSetHeatSinkType(null, loadoutStandard, (HeatSinkUpgrade) UpgradeDB.lookup(ids
-                        .remove(0))));
+                builder.push(new OpSetStructureType(null, loadoutStandard,
+                        (StructureUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                builder.push(new OpSetHeatSinkType(null, loadoutStandard,
+                        (HeatSinkUpgrade) UpgradeDB.lookup(ids.remove(0))));
             }
             builder.push(new OpSetGuidanceType(null, loadout, (GuidanceUpgrade) UpgradeDB.lookup(ids.remove(0))));
 
@@ -373,14 +354,14 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         // 1 byte per armor value (2 for RT,CT,LT front first)
         for (Location part : Location.right2Left()) {
             if (part.isTwoSided()) {
-                aBuilder.push(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.FRONT, aBuffer
-                        .read(), true));
-                aBuilder.push(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.BACK, aBuffer
-                        .read(), true));
+                aBuilder.push(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.FRONT,
+                        aBuffer.read(), true));
+                aBuilder.push(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.BACK,
+                        aBuffer.read(), true));
             }
             else {
-                aBuilder.push(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.ONLY, aBuffer
-                        .read(), true));
+                aBuilder.push(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.ONLY,
+                        aBuffer.read(), true));
             }
         }
     }
@@ -406,7 +387,8 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         if (chassis instanceof ChassisOmniMech) {
             return new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
         }
-        return new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+        return new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis,
+                UpgradesMutable.standardUpgrades());
     }
 
     private void writeChassis(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout) {
@@ -441,7 +423,8 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         for (ChassisBase chassis : chassii) {
             LoadoutBase<?> loadout;
             if (chassis instanceof ChassisStandard)
-                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis,
+                        UpgradesMutable.standardUpgrades());
             else
                 loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
 
@@ -505,7 +488,8 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         for (ChassisBase chassis : chassii) {
             final LoadoutBase<?> loadout;
             if (chassis instanceof ChassisStandard) {
-                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis,
+                        UpgradesMutable.standardUpgrades());
             }
             else if (chassis instanceof ChassisOmniMech) {
                 loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);

@@ -51,7 +51,7 @@ public abstract class ModifiedProfileBase implements MovementProfile {
     public double getReverseSpeedMultiplier(Collection<Modifier> aModifiers) {
         return calc("getReverseSpeedMultiplier", aModifiers);
     }
-    
+
     @Override
     public double getTorsoYawMax(Collection<Modifier> aModifiers) {
         return calc("getTorsoYawMax", aModifiers);

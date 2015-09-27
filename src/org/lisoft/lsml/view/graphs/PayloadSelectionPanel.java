@@ -202,7 +202,7 @@ public class PayloadSelectionPanel extends JPanel {
             settingsPanel.xlEngine.setSelected(true);
         else
             settingsPanel.stdEngine.setSelected(true);
-        
+
         settingsPanel.setupListeners(payloadStatistics, graphPanel, upgrades);
 
         add(settingsPanel, BorderLayout.WEST);

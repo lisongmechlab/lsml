@@ -61,7 +61,7 @@ public class Modifier {
     public String toString() {
         return description.toString() + " " + value;
     }
-    
+
     /**
      * @return The {@link ModifierDescription} for this {@link Modifier}.
      */

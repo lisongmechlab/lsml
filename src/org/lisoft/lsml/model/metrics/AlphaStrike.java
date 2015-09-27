@@ -20,6 +20,8 @@
 package org.lisoft.lsml.model.metrics;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -73,6 +75,30 @@ public class AlphaStrike extends RangeMetric {
         for (Weapon weapon : weapons) {
             if (weapon.isOffensive())
                 ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
+        }
+        return ans;
+    }
+    
+
+    public Map<Weapon, Double> getWeaponRatios(final double aRange) {
+        Collection<Modifier> modifiers = loadout.getModifiers();
+        final Iterable<Weapon> weapons;
+        if (weaponGroup < 0) {
+            weapons = loadout.items(Weapon.class);
+        }
+        else {
+            weapons = loadout.getWeaponGroups().getWeapons(weaponGroup);
+        }
+
+        Map<Weapon, Double> ans = new HashMap<>();
+        for (Weapon weapon : weapons) {
+            if (weapon.isOffensive()){
+                double damage = weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
+                if (ans.containsKey(weapon))
+                    ans.put(weapon, Double.valueOf(ans.get(weapon).doubleValue() + damage));
+                else
+                    ans.put(weapon, Double.valueOf(damage));
+            }
         }
         return ans;
     }

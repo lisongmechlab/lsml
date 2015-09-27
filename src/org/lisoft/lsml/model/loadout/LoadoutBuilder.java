@@ -106,7 +106,7 @@ public class LoadoutBuilder {
     }
 
     final private List<Operation> operations = new ArrayList<>(20);
-    private List<Throwable>                errors     = null;
+    private List<Throwable>       errors     = null;
 
     public void push(final Operation aOperation) {
         operations.add(aOperation);
@@ -135,8 +135,8 @@ public class LoadoutBuilder {
     public void apply() {
         OperationStack operationStack = new OperationStack(0);
         Collections.sort(operations, new OperationComparator());
-        
-        for(Operation op : operations){
+
+        for (Operation op : operations) {
             try {
                 operationStack.pushAndApply(op);
             }

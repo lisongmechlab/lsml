@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view.mechlab;
 
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -56,46 +56,57 @@ public class WeaponGroupingPanel extends JPanel implements Message.Recipient {
         aXBar.attach(this);
 
         setBorder(StyleManager.sectionBorder("Weapon Groups"));
-        setLayout(new GridLayout(0, 2));
+        setLayout(new GridBagLayout());
 
-        JPanel weapons = new JPanel(new GridLayout(0, 1));
-        JPanel groups = new JPanel(new GridLayout(0, WeaponGroups.MAX_GROUPS));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.NONE;
 
         // Header
         for (int i = 1; i <= WeaponGroups.MAX_GROUPS; ++i) {
             JLabel label = new JLabel(Integer.toString(i), SwingConstants.CENTER);
-            groups.add(label);
+            gbc.gridx = i;
+            add(label, gbc);
         }
 
         // Checkboxes
-        weapons.add(new JLabel());
         for (int i = 0; i < WeaponGroups.MAX_WEAPONS; ++i) {
-            weaponNames[i] = new JLabel("" + i * i * i * 10000);
-            weapons.add(weaponNames[i]);
+            weaponNames[i] = new JLabel();
+
+            gbc.gridy = i + 1;
+            gbc.gridx = 0;
+
+            gbc.anchor = GridBagConstraints.LINE_START;
+            gbc.weightx = 1.0;
+            add(weaponNames[i], gbc);
+            gbc.weightx = 0.0;
+            gbc.anchor = GridBagConstraints.CENTER;
 
             for (int j = 0; j < WeaponGroups.MAX_GROUPS; ++j) {
-                final int group = j;
-                final int weapon = i;
+                final int group_id = j;
+                final int weapon_id = i;
 
                 final JCheckBox checkbox = new JCheckBox();
-                checkbox.setAction(new AbstractAction() {
-                    private static final long serialVersionUID = 1L;
+                checkbox.setModel(new JCheckBox.ToggleButtonModel() {
+                    @Override
+                    public void setSelected(boolean aB) {
+                        weaponGroups.setGroup(group_id, weapon_id, aB);
+                        aXBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.WEAPON_GROUPS_CHANGED));
+                    }
 
                     @Override
-                    public void actionPerformed(ActionEvent aE) {
-                        weaponGroups.setGroup(group, weapon, checkbox.isSelected());
-                        aXBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED)); // TODO, Make a
-                                                                                                      // proper message
+                    public boolean isSelected() {
+                        return weaponGroups.isInGroup(group_id, weapon_id);
                     }
                 });
 
-                groupSelectors[index(group, weapon)] = checkbox;
-                groups.add(checkbox);
+                groupSelectors[index(group_id, weapon_id)] = checkbox;
+
+                gbc.gridx = j + 1;
+                add(checkbox, gbc);
             }
         }
-
-        add(weapons);
-        add(groups);
         updateTable();
     }
 
@@ -116,6 +127,18 @@ public class WeaponGroupingPanel extends JPanel implements Message.Recipient {
                 groupSelectors[index(group, weapon)].setVisible(weapon < weapons.size());
             }
         }
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension d = super.getMinimumSize();
+        d.width = 300; // Couldn't really find any other solution that worked...
+        return d;
+    }
+
+    @Override
+    public Dimension getMaximumSize() {
+        return getPreferredSize();
     }
 
     @Override

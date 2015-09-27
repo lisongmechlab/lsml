@@ -50,7 +50,6 @@ public class Environment {
         heat = new Attribute(aHeat, ModifiersDB.SEL_HEAT_EXTERNALTRANSFER);
     }
 
-
     /**
      * Will return the base heat penalty for an environment.
      * 

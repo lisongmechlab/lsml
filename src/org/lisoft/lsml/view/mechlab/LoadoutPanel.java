@@ -42,7 +42,6 @@ import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
@@ -53,7 +52,7 @@ import org.lisoft.lsml.view.render.StyleManager;
  * 
  * @author Emily Björk
  */
-public class LoadoutPage extends JPanel {
+public class LoadoutPanel extends JPanel {
     private static final long    serialVersionUID = -3391845136603220435L;
 
     private static final int     ARM_OFFSET       = 60;
@@ -63,7 +62,7 @@ public class LoadoutPage extends JPanel {
     private final MessageXBar    xBar;
     private final OperationStack loadoutOperationStack;
 
-    public LoadoutPage(LoadoutBase<?> aLoadout, LoadoutMetrics aMetrics, OperationStack aOpStack, MessageXBar aXBar) {
+    public LoadoutPanel(LoadoutBase<?> aLoadout, OperationStack aOpStack, MessageXBar aXBar) {
         xBar = aXBar;
         loadout = aLoadout;
         loadoutOperationStack = aOpStack;

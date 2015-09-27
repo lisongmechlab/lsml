@@ -56,7 +56,7 @@ public class BaseMovementProfile implements MovementProfile {
             double aTurnLerpMidRate, double aTurnLerpHighRate, MovementArchetype aMovementArchetype) {
         maxMovementSpeed = new Attribute(aMaxMovementSpeed, ModifiersDB.SEL_MOVEMENT_MAX_SPEED);
         reverseSpeedMultiplier = new Attribute(aReverseSpeedMult, ModifiersDB.SEL_MOVEMENT_REVERSE_MUL);
-        
+
         torsoTurnSpeedYaw = new Attribute(aTorsoTurnSpeedYaw, ModifiersDB.SEL_MOVEMENT_TORSO_SPEED, "yaw");
         torsoTurnSpeedPitch = new Attribute(aTorsoTurnSpeedPitch, ModifiersDB.SEL_MOVEMENT_TORSO_SPEED, "pitch");
         armTurnSpeedYaw = new Attribute(aArmTurnSpeedYaw, ModifiersDB.SEL_MOVEMENT_ARM_SPEED, "yaw");

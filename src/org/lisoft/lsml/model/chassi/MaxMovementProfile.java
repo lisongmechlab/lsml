@@ -49,7 +49,8 @@ public class MaxMovementProfile extends ModifiedProfileBase {
     @Override
     protected double calc(String aMethodName, Collection<Modifier> aExtraModifiers) {
         try {
-            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base,  aExtraModifiers);
+            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class)
+                    .invoke(base, aExtraModifiers);
             double ans = baseValue;
             for (List<Collection<Modifier>> group : groups) {
                 double max = Double.NEGATIVE_INFINITY;
@@ -58,7 +59,8 @@ public class MaxMovementProfile extends ModifiedProfileBase {
                     if (aExtraModifiers != null) {
                         fullQuirks.addAll(aExtraModifiers);
                     }
-                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base, fullQuirks);
+                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class)
+                            .invoke(base, fullQuirks);
                     max = Math.max(max, value - baseValue);
                 }
                 if (max != Double.NEGATIVE_INFINITY)

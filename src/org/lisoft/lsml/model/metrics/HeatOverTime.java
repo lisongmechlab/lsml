@@ -42,7 +42,7 @@ import org.lisoft.lsml.util.message.MessageXBar;
  * 
  * @author Emily Björk
  */
-public class HeatOverTime implements TimeMetric, Message.Recipient {
+public class HeatOverTime implements VariableMetric, Message.Recipient {
 
     private final LoadoutBase<?>         loadout;
     private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
@@ -97,42 +97,64 @@ public class HeatOverTime implements TimeMetric, Message.Recipient {
     private void updateEvents() {
         heatIntegrals.clear();
         Collection<Modifier> modifiers = loadout.getModifiers();
-        
+
         final Collection<Weapon> weaponsInGroup;
-        if(weaponGroup >= 0){
+        if (weaponGroup >= 0) {
             weaponsInGroup = loadout.getWeaponGroups().getWeapons(weaponGroup);
         }
-        else{
+        else {
             weaponsInGroup = null;
         }
-        
+
         for (HeatSource item : loadout.items(HeatSource.class)) {
             if (item instanceof Weapon) {
                 Weapon weapon = (Weapon) item;
-                
-                if(weaponsInGroup != null){
-                    if(weaponsInGroup.contains(weapon)){
+
+                if (weaponsInGroup != null) {
+                    if (weaponsInGroup.contains(weapon)) {
                         weaponsInGroup.remove(weapon);
-                    }else{
+                    }
+                    else {
                         continue;
                     }
-                }                
+                }
 
                 if (weapon instanceof EnergyWeapon) {
                     EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
                     if (energyWeapon.getDuration(modifiers) > 0) {
                         heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getSecondsPerShot(modifiers),
-                                energyWeapon.getDuration(modifiers), energyWeapon.getHeat(modifiers)
-                                        / energyWeapon.getDuration(modifiers)));
+                                energyWeapon.getDuration(modifiers),
+                                energyWeapon.getHeat(modifiers) / energyWeapon.getDuration(modifiers)));
                         continue;
                     }
                 }
-                heatIntegrals.add(new IntegratedImpulseTrain(weapon.getSecondsPerShot(modifiers), weapon
-                        .getHeat(modifiers)));
+                heatIntegrals.add(
+                        new IntegratedImpulseTrain(weapon.getSecondsPerShot(modifiers), weapon.getHeat(modifiers)));
             }
             if (item instanceof Engine) {
                 heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine) item).getHeat(modifiers)));
             }
         }
+    }
+
+    @Override
+    public String getMetricName() {
+        return "Heat";
+    }
+
+    @Override
+    public String getArgumentName() {
+        return "Time [s]";
+    }
+
+    @Override
+    public List<Double> getArgumentValues() {
+        List<Double> ans = new ArrayList<>();
+        final double maxTime = 5 * 60;
+        final double step = 0.5;
+        for (double t = 0.0; t <= maxTime; t += step) {
+            ans.add(t);
+        }
+        return ans;
     }
 }

@@ -32,8 +32,8 @@ public class XMLQuirk {
     public double value;
 
     public Modifier toQuirk(DataCache aDataCache) {
-        for(ModifierDescription description : aDataCache.getModifierDescriptions()){
-            if(description.getKey().equalsIgnoreCase(name)){
+        for (ModifierDescription description : aDataCache.getModifierDescriptions()) {
+            if (description.getKey().equalsIgnoreCase(name)) {
                 return new Modifier(description, value);
             }
         }

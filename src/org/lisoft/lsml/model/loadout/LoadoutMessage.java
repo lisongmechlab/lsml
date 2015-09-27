@@ -28,7 +28,7 @@ import org.lisoft.lsml.util.message.Message;
  */
 public class LoadoutMessage implements Message {
     public enum Type {
-        RENAME, CREATE, UPDATE, MODULES_CHANGED
+        RENAME, CREATE, UPDATE, MODULES_CHANGED, WEAPON_GROUPS_CHANGED
     }
 
     private final LoadoutBase<?> loadout;
@@ -71,7 +71,7 @@ public class LoadoutMessage implements Message {
 
     @Override
     public boolean affectsHeatOrDamage() {
-        return type == Type.UPDATE || type == Type.MODULES_CHANGED;
+        return type == Type.UPDATE || type == Type.MODULES_CHANGED || type == Type.WEAPON_GROUPS_CHANGED;
     }
 
     @Override
