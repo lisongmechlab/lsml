@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.item;
 
 import java.util.Collection;
-import java.util.Comparator;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.modifiers.Attribute;
@@ -52,8 +51,8 @@ public class BallisticWeapon extends AmmoWeapon {
             Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aVolleyDelay) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
-                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                aGhostHeatMaxFreeAlpha, aAmmoType, aVolleyDelay);
+                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
+                aAmmoType, aVolleyDelay);
         spread = aSpread;
         jammingChance = aJammingChance;
         jammingTime = aJammingTime;
@@ -110,8 +109,8 @@ public class BallisticWeapon extends AmmoWeapon {
      */
     public double getRawSecondsPerShot(Collection<Modifier> aModifiers) {
         if (getMwoId() == 1021 || getMwoId() == 1208) { // IS/Clan Gauss rifle
-            return super.getSecondsPerShot(aModifiers) + 0.75; // TODO: Fix this when they add the charge time to the
-            // itemstats.xml
+            // TODO: Fix this when they add the charge time to the itemstats.xml
+            return super.getSecondsPerShot(aModifiers) + 0.75;
         }
         return super.getSecondsPerShot(aModifiers);
     }
@@ -137,5 +136,4 @@ public class BallisticWeapon extends AmmoWeapon {
         return spreadFactor * super.getRangeEffectivity(range, aPilotModules);
     }
 
-    public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING;
 }

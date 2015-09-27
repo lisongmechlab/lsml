@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.item;
 
 import java.util.Collection;
-import java.util.Comparator;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.modifiers.Attribute;
@@ -93,8 +92,6 @@ public class MissileWeapon extends AmmoWeapon {
         }
         return (MissileWeapon) ItemDB.lookup(baseItemId);
     }
-
-    public final static Comparator<Item> DEFAULT_ORDERING = DEFAULT_WEAPON_ORDERING; // XXX: Should this really be here?
 
     /**
      * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns

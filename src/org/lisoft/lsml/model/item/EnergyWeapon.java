@@ -43,8 +43,8 @@ public class EnergyWeapon extends Weapon {
             double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, Attribute aBurnTime, double aVolleyDelay) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ENERGY, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
-                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                aGhostHeatMaxFreeAlpha, aVolleyDelay);
+                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
+                aVolleyDelay);
         burnTime = aBurnTime;
     }
 
@@ -71,6 +71,7 @@ public class EnergyWeapon extends Weapon {
     }
 
     public final static Comparator<EnergyWeapon> DEFAULT_ORDERING;
+
     static {
         DEFAULT_ORDERING = new Comparator<EnergyWeapon>() {
             Pattern p = Pattern.compile("(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
