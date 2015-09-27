@@ -31,7 +31,6 @@ import org.lisoft.lsml.view.ProgramInit;
  * <p>
  * Presents a graph of damage over range for a given load out.
  * <p>
- * TODO: The calculation part should be extracted and unit tested!
  * 
  * @author Emily Björk
  */

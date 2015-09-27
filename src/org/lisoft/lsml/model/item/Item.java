@@ -175,10 +175,10 @@ public class Item implements Comparable<Item> {
                 return EnergyWeapon.DEFAULT_ORDERING.compare((EnergyWeapon) this, (EnergyWeapon) rhs);
             }
             else if (lhsHp == HardPointType.BALLISTIC) {
-                return BallisticWeapon.DEFAULT_ORDERING.compare(this, rhs);
+                return Weapon.DEFAULT_WEAPON_ORDERING.compare(this, rhs);
             }
             else if (lhsHp == HardPointType.MISSILE) {
-                return MissileWeapon.DEFAULT_ORDERING.compare(this, rhs);
+                return Weapon.DEFAULT_WEAPON_ORDERING.compare(this, rhs);
             }
 
             // Sort by class name, this groups single/double heat sinks together

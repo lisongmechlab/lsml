@@ -502,7 +502,6 @@ public class DataCache {
                 }
             }
             if (!found) {
-                // TODO: Remove this once PGI fixes data files.
                 ans.add(new Environment(uiName, 0.0));
                 if (aLog != null) {
                     aLog.append("Unable to load temprature for level: ").append(uiName).append("! Assuming 0.0.")
