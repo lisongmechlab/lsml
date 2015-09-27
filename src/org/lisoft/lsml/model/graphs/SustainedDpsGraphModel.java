@@ -17,11 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view.mechlab;
+package org.lisoft.lsml.model.graphs;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,7 +42,7 @@ import org.lisoft.lsml.view.graphs.DamageGraphPanel;
  * @author Li Song
  *
  */
-public class AlphaStrikeGraphModel implements DamageGraphPanel.GraphModel {
+public class SustainedDpsGraphModel implements DamageGraphModel {
     private final LoadoutMetrics metrics;
     private final LoadoutBase<?> loadout;
 
@@ -55,7 +54,7 @@ public class AlphaStrikeGraphModel implements DamageGraphPanel.GraphModel {
      * @param aLoadout
      *            The loadout to calculate for.
      */
-    public AlphaStrikeGraphModel(LoadoutMetrics aMetrics, LoadoutBase<?> aLoadout) {
+    public SustainedDpsGraphModel(LoadoutMetrics aMetrics, LoadoutBase<?> aLoadout) {
         metrics = aMetrics;
         loadout = aLoadout;
     }
@@ -64,28 +63,39 @@ public class AlphaStrikeGraphModel implements DamageGraphPanel.GraphModel {
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
         final Collection<Modifier> modifiers = loadout.getModifiers();
         SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
-                new Comparator<Weapon>() {
-                    @Override
-                    public int compare(Weapon aO1, Weapon aO2) {
-                        int comp = Double.compare(aO2.getRangeMax(modifiers), aO1.getRangeMax(modifiers));
-                        if (comp == 0)
-                            return aO1.compareTo(aO2);
-                        return comp;
-                    }
-                });
+                Weapon.RANGE_WEAPON_ORDERING);
 
-        
         Double[] ranges = WeaponRanges.getRanges(loadout);
-        for (double range : ranges) {            
-            Set<Entry<Weapon, Double>> dist = metrics.alphaStrike.getWeaponRatios(range).entrySet();
-            for (Map.Entry<Weapon, Double> entry : dist) {
+        for (double range : ranges) {
+
+            Set<Entry<Weapon, Double>> damageDistributio = metrics.maxSustainedDPS.getWeaponRatios(range).entrySet();
+            for (Map.Entry<Weapon, Double> entry : damageDistributio) {
                 final Weapon weapon = entry.getKey();
+                final double ratio = entry.getValue();
+                final double dps = weapon.getStat("d/s", modifiers);
+                final double rangeEff = weapon.getRangeEffectivity(range, modifiers);
+
                 if (!data.containsKey(weapon)) {
                     data.put(weapon, new ArrayList<Pair<Double, Double>>());
                 }
-                data.get(weapon).add(new Pair<Double, Double>(range, entry.getValue()));
+                data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio * rangeEff));
             }
         }
         return data;
+    }
+    
+    @Override
+    public String getXAxisLabel() {
+        return "Range [m]";
+    }
+
+    @Override
+    public String getYAxisLabel() {
+        return "DPS";
+    }
+    
+    @Override
+    public String getTitle() {
+        return "Sustained DPS";
     }
 }

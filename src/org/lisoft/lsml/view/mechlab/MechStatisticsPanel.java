@@ -30,6 +30,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.lisoft.lsml.model.chassi.MovementProfile;
+import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
+import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
@@ -117,9 +119,9 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
         }
 
         DamageGraphPanel sustainedDps = new DamageGraphPanel(aLoadout, aXBar,
-                new SustainedDpsGraphModel(aMetrics, aLoadout), "Sustained DPS", "Range [m]", "DPS");
+                new SustainedDpsGraphModel(aMetrics, aLoadout));
         DamageGraphPanel alphaStrike = new DamageGraphPanel(aLoadout, aXBar,
-                new AlphaStrikeGraphModel(aMetrics, aLoadout), "Alpha Strike", "Range [m]", "Damage");
+                new AlphaStrikeGraphModel(aMetrics, aLoadout));
         panel.add(sustainedDps);
         panel.add(alphaStrike);
         return panel;

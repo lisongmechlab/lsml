@@ -23,43 +23,42 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import org.lisoft.lsml.model.graphs.DamageGraphModel;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
 import org.lisoft.lsml.util.message.MessageXBar;
-import org.lisoft.lsml.view.graphs.SustainedDpsGraph;
+import org.lisoft.lsml.view.graphs.DamageGraphWindow;
 
 /**
- * This action sets the armor to max on the given {@link LoadoutStandard}.
+ * This a damage graph based on a {@link DamageGraphModel} in a separate window.
  * 
  * @author Li Song
  */
 public class ShowDamageGraphAction extends AbstractAction {
-    private static final long     serialVersionUID = -5939335331941199195L;
-    private final LoadoutBase<?>  loadout;
-    private final MessageXBar     xBar;
-    private final MaxSustainedDPS maxSustainedDpsMetric;
+    private static final long      serialVersionUID = -5939335331941199195L;
+    private final LoadoutBase<?>   loadout;
+    private final MessageXBar      xBar;
+    private final DamageGraphModel model;
 
     /**
      * Creates a new {@link ShowDamageGraphAction}.
      * 
      * @param aLoadout
      *            The {@link LoadoutStandard} to set armor for.
-     * @param anXBar
+     * @param aXBar
      *            The {@link MessageXBar} to signal armor changes on.
-     * @param aMaxSustainedDpsMetric
-     *            A metric instance that will be used to calculate the DPS graph.
+     * @param aModel
      */
-    public ShowDamageGraphAction(LoadoutBase<?> aLoadout, MessageXBar anXBar, MaxSustainedDPS aMaxSustainedDpsMetric) {
-        super("Sustained DPS");
+    public ShowDamageGraphAction(LoadoutBase<?> aLoadout, MessageXBar aXBar, DamageGraphModel aModel) {
+        super(aModel.getTitle());
         loadout = aLoadout;
-        xBar = anXBar;
-        maxSustainedDpsMetric = aMaxSustainedDpsMetric;
+        xBar = aXBar;
+        model = aModel;
     }
 
     @SuppressWarnings("unused")
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        new SustainedDpsGraph(loadout, xBar, maxSustainedDpsMetric);
+        new DamageGraphWindow(loadout, xBar, model);
     }
 }
