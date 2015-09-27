@@ -100,7 +100,7 @@ public class MaxSustainedDPS extends RangeMetric {
 
         double heatleft = dissipation.calculate();
         List<Weapon> weapons = new ArrayList<>(15);
-        
+
         final Iterable<Weapon> weaponsToUse;
         if (weaponGroup < 0) {
             weaponsToUse = loadout.items(Weapon.class);

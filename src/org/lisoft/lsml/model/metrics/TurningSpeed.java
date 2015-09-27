@@ -20,7 +20,10 @@
 
 package org.lisoft.lsml.model.metrics;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Engine;
@@ -32,7 +35,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * 
  * @author Li Song
  */
-public class TurningSpeed implements Metric {
+public class TurningSpeed implements Metric, VariableMetric {
 
     private final LoadoutBase<?> loadout;
 
@@ -42,38 +45,89 @@ public class TurningSpeed implements Metric {
 
     @Override
     public double calculate() {
-        Engine engine = loadout.getEngine();
-        if (engine == null)
-            return 0.0;
-        return getTurnRateAtThrottle(0.0, engine.getRating(), loadout.getChassis().getMassMax(),
-                loadout.getMovementProfile(), loadout.getModifiers());
+        return calculate(0.0);
     }
 
-    public static double getTurnRateAtThrottle(double aThrottle, int aEngineRating, double aMassMax,
+    public static double getTurnRateAtSpeed(double aSpeed, int aEngineRating, double aMassMax,
             MovementProfile aMovementProfile, Collection<Modifier> aModifiers) {
+        if (aEngineRating < 1) {
+            return 0.0;
+        }
+
         final double k = aEngineRating / aMassMax * 180.0 / Math.PI;
+        final double topSpeed = TopSpeed.calculate(aEngineRating, aMovementProfile, aMassMax, aModifiers);
+        final double throttle = aSpeed / topSpeed;
 
         MovementProfile mp = aMovementProfile;
 
-        if (aThrottle <= mp.getTurnLerpLowSpeed(aModifiers)) {
+        if (throttle <= mp.getTurnLerpLowSpeed(aModifiers)) {
             return k * mp.getTurnLerpLowRate(aModifiers);
         }
-        else if (aThrottle <= mp.getTurnLerpMidSpeed(aModifiers)) {
-            final double f = (aThrottle - mp.getTurnLerpLowSpeed(aModifiers))
+        else if (throttle <= mp.getTurnLerpMidSpeed(aModifiers)) {
+            final double f = (throttle - mp.getTurnLerpLowSpeed(aModifiers))
                     / (mp.getTurnLerpMidSpeed(aModifiers) - mp.getTurnLerpLowSpeed(aModifiers));
-            return k
-                    * (mp.getTurnLerpLowRate(aModifiers) + (mp.getTurnLerpMidRate(aModifiers) - mp
-                            .getTurnLerpLowRate(aModifiers)) * f);
+            return k * (mp.getTurnLerpLowRate(aModifiers)
+                    + (mp.getTurnLerpMidRate(aModifiers) - mp.getTurnLerpLowRate(aModifiers)) * f);
         }
-        else if (aThrottle < mp.getTurnLerpHighSpeed(aModifiers)) {
-            final double f = (aThrottle - mp.getTurnLerpMidSpeed(aModifiers))
+        else if (throttle < mp.getTurnLerpHighSpeed(aModifiers)) {
+            final double f = (throttle - mp.getTurnLerpMidSpeed(aModifiers))
                     / (mp.getTurnLerpHighSpeed(aModifiers) - mp.getTurnLerpMidSpeed(aModifiers));
-            return k
-                    * (mp.getTurnLerpMidRate(aModifiers) + (mp.getTurnLerpHighRate(aModifiers) - mp
-                            .getTurnLerpMidRate(aModifiers)) * f);
+            return k * (mp.getTurnLerpMidRate(aModifiers)
+                    + (mp.getTurnLerpHighRate(aModifiers) - mp.getTurnLerpMidRate(aModifiers)) * f);
         }
         else {
             return k * mp.getTurnLerpHighRate(aModifiers);
         }
+    }
+
+    @Override
+    public double calculate(double aValue) {
+        Engine engine = loadout.getEngine();
+        if (engine == null)
+            return 0.0;
+        return getTurnRateAtSpeed(aValue, engine.getRating(), loadout.getChassis().getMassMax(),
+                loadout.getMovementProfile(), loadout.getModifiers());
+    }
+
+    @Override
+    public String getMetricName() {
+        return "Turning Speed [°/s]";
+    }
+
+    @Override
+    public String getArgumentName() {
+        return "Speed [km/h]";
+    }
+
+    @Override
+    public List<Double> getArgumentValues() {
+        ArrayList<Double> ans = new ArrayList<>();
+        Engine engine = loadout.getEngine();
+
+        if (engine == null)
+            return ans;
+
+        MovementProfile mp = loadout.getMovementProfile();
+        Collection<Modifier> modifiers = loadout.getModifiers();
+        final int rating = engine.getRating();
+        final double topSpeed = TopSpeed.calculate(rating, mp, loadout.getChassis().getMassMax(), modifiers);
+
+        ans.add(0.0);
+        ans.add(mp.getTurnLerpLowSpeed(modifiers) * topSpeed);
+        ans.add(mp.getTurnLerpMidSpeed(modifiers) * topSpeed);
+        ans.add(mp.getTurnLerpHighSpeed(modifiers) * topSpeed);
+        ans.add(topSpeed);
+
+        double prev = Double.NaN;
+        Iterator<Double> it = ans.iterator();
+        while(it.hasNext()){
+            double curr = it.next();
+            if(curr == prev){
+                it.remove();
+            }
+            prev = curr;
+        }
+        
+        return ans;
     }
 }

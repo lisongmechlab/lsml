@@ -100,9 +100,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
         openFrameCount++;
 
-        LoadoutPage loadoutPage = new LoadoutPage(loadout, metrics, loadoutOperationStack, xBar);
-        MobilityPane mobilityPage = new MobilityPane(loadout, xBar, (int)loadoutPage.getPreferredSize().getWidth());
-        WeaponLabPage weaponLabPage = new WeaponLabPage(loadout, metrics, aXBar);
+        LoadoutPanel loadoutPage = new LoadoutPanel(loadout, loadoutOperationStack, xBar);
 
         LoadoutInfoPanel infoPanel = new LoadoutInfoPanel(loadout, metrics, loadoutOperationStack, aXBar);
         if (ProgramInit.lsml().preferences.uiPreferences.getCompactMode()) {
@@ -119,8 +117,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         setJMenuBar(createMenuBar(metrics.maxSustainedDPS));
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Loadout", loadoutPage);
-        tabbedPane.addTab("Mobility", mobilityPage);
-        tabbedPane.addTab("Weapon Lab.", weaponLabPage);
+        tabbedPane.addTab("Statistics", new MechStatisticsPanel(loadout, xBar, metrics, loadoutPage));
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(tabbedPane, BorderLayout.WEST);

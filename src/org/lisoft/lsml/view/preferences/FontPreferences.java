@@ -36,15 +36,15 @@ import org.lisoft.lsml.view.ProgramInit;
  */
 public class FontPreferences {
     public enum FontSize {
-        VerySmall(0.6), Small(0.8), Normal(1.0), Large(1.2), VeryLarge(1.4);
+        VerySmall(0.6f), Small(0.8f), Normal(1.0f), Large(1.2f), VeryLarge(1.4f);
 
-        private FontSize(double aFactor) {
+        private FontSize(float aFactor) {
             factor = aFactor;
         }
 
-        private double factor;
+        private float factor;
 
-        public double getSizeFactor() {
+        public float getSizeFactor() {
             return factor;
         }
     }

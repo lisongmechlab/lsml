@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class MaxDPS extends RangeMetric {
     private final int weaponGroup;
-    
+
     /**
      * Creates a new {@link MaxDPS} that calculates the maximal DPS for a given loadout using all weapons.
      * 

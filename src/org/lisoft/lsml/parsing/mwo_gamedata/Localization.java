@@ -65,16 +65,16 @@ public class Localization {
             canonized = aKey.replaceAll("_mkl", "_mk1"); // They've mistaken an l (ell) for an 1 (one)
         }
 
-//        canonized = canonized.replace("gaussrifle", "gauss");
-//        canonized = canonized.replace("largelaser", "ll");
-//        canonized = canonized.replace("largepulselaser", "lpl");
-//        canonized = canonized.replace("mediumlaser", "ml");
-//        canonized = canonized.replace("mediumpulselaser", "mpl");
-//        canonized = canonized.replace("smalllaser", "sl");
-//        canonized = canonized.replace("smallpulselaser", "spl");
-//        canonized = canonized.replace("autocannon", "ac");
-//        canonized = canonized.replace("multiplier", "mult");
-//        canonized = canonized.replace("additive", "add");
+        // canonized = canonized.replace("gaussrifle", "gauss");
+        // canonized = canonized.replace("largelaser", "ll");
+        // canonized = canonized.replace("largepulselaser", "lpl");
+        // canonized = canonized.replace("mediumlaser", "ml");
+        // canonized = canonized.replace("mediumpulselaser", "mpl");
+        // canonized = canonized.replace("smalllaser", "sl");
+        // canonized = canonized.replace("smallpulselaser", "spl");
+        // canonized = canonized.replace("autocannon", "ac");
+        // canonized = canonized.replace("multiplier", "mult");
+        // canonized = canonized.replace("additive", "add");
 
         if (!canonized.startsWith("@")) {
             canonized = "@" + canonized;

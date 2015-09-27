@@ -47,10 +47,10 @@ public class MissileWeapon extends AmmoWeapon {
         requiredGuidanceType = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
     }
-    
+
     @Override
     public double getSecondsPerShot(Collection<Modifier> aModifiers) {
-        if(getFaction() == Faction.InnerSphere  || getAliases().contains("srm")|| getAliases().contains("streaksrm")){
+        if (getFaction() == Faction.InnerSphere || getAliases().contains("srm") || getAliases().contains("streaksrm")) {
             // Implicit assumption that:
             // 1) All missiles can launch simultaneously for IS LRM launchers.
             // 2) All missiles can launch simultaneously for IS + Clan (S)SRM launchers.

@@ -101,6 +101,7 @@ public class ModifierDescription {
             }
         }
     }
+
     @XStreamAsAttribute
     private final Operation          op;
     private final Collection<String> selectors;
@@ -155,7 +156,7 @@ public class ModifierDescription {
             String aAttribute, ValueType aValueType) {
         this(aUiName, aKeyName, aOperation, Arrays.asList(aSelector), aAttribute, aValueType);
     }
-    
+
     @Override
     public String toString() {
         return uiName;

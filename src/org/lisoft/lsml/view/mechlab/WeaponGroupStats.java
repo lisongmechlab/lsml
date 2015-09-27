@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view.mechlab;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
@@ -96,13 +97,13 @@ public class WeaponGroupStats extends JPanel {
             }
         };
         ghostHeat.setHorizontalAlignment(SwingConstants.RIGHT);
-        
+
         alphaDamage = new MetricDisplay(aMetrics.groupAlphaStrike[aGroup], LoadoutInfoPanel.ALPHA_DAMAGE_TEXT,
                 LoadoutInfoPanel.ALPHA_DAMAGE_TOOLTIP, aXBar, aLoadout);
         burstDamage = new MetricDisplay(aMetrics.groupBurstDamageOverTime[aGroup], LoadoutInfoPanel.BURST_DAMAGE_TEXT,
                 LoadoutInfoPanel.BURST_DAMAGE_TOOLTIP, aXBar, aLoadout);
         burstDamage.setHorizontalAlignment(SwingConstants.RIGHT);
-        
+
         maxDPS = new MetricDisplay(aMetrics.groupMaxDPS[aGroup], LoadoutInfoPanel.MAX_DPS_TEXT,
                 LoadoutInfoPanel.MAX_DPS_TOOLTIP, aXBar, aLoadout);
         sustDPS = new MetricDisplay(aMetrics.groupMaxSustainedDPS[aGroup], LoadoutInfoPanel.SUST_DPS_TEXT,
@@ -118,6 +119,14 @@ public class WeaponGroupStats extends JPanel {
         add(burstDamage);
         add(maxDPS);
         add(sustDPS);
+    }
+    
+    @Override
+    public void setEnabled(boolean aEnabled) {
+        for(Component c : getComponents()){
+            c.setEnabled(aEnabled);
+        }
+        super.setEnabled(aEnabled);
     }
 
 }

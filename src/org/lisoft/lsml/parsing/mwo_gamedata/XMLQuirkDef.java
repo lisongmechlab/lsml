@@ -81,7 +81,7 @@ public class XMLQuirkDef {
                         String keyName = quirk.name;
                         if (modify.specifier != null && !modify.specifier.isEmpty())
                             keyName += "_" + modify.specifier;
-                        keyName += "_"+modify.operation;
+                        keyName += "_" + modify.operation;
                         keyName = keyName.toLowerCase();
 
                         // qrk_{quirk.loctag||quirk.name}_[modify.specifier]_modify.operation

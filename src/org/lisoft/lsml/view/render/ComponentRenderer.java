@@ -85,7 +85,7 @@ public class ComponentRenderer implements Message.Recipient {
     private void updateStates() {
         engineHsLeft = component.getEngineHeatsinksMax();
         int offs = updateStates(0, component.getItemsFixed(), true);
-        if(isCompact)
+        if (isCompact)
             compactOffest = offs;
         offs = updateStates(offs, component.getItemsEquipped(), false);
         while (offs < states.length) {

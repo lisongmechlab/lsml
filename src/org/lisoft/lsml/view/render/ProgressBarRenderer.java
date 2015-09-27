@@ -62,7 +62,7 @@ public class ProgressBarRenderer extends ProgressBarUI {
         g.drawRect(1, 1, w - 3, h - 3);
 
         // Draw bar
-        g.setColor(new Color(0xb7ceeb));
+        g.setColor(StyleManager.getColourBarPrimary());
         g.fillRect(3, 3, (int) Math.ceil(progressBar.getPercentComplete() * (w - 6)), (h - 6));
 
         // Draw text in bar

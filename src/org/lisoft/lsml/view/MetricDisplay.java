@@ -54,7 +54,7 @@ public class MetricDisplay extends JLabel implements Message.Recipient {
             boolean aPercent) {
         loadout = aLoadout;
         anXBar.attach(this);
-        setToolTipText("<html><p width=\"300\">" +aTooltip+"</p></html>");
+        setToolTipText("<html><p width=\"300\">" + aTooltip + "</p></html>");
         formatter = new Formatter(sb);
         format = aFormat;
         metric = aMetric;
@@ -83,7 +83,7 @@ public class MetricDisplay extends JLabel implements Message.Recipient {
         else if (metric instanceof RangeMetric) {
             formatter.format(format, value, ((RangeMetric) metric).getRange());
         }
-        else if (metric instanceof JumpDistance){
+        else if (metric instanceof JumpDistance) {
             formatter.format(format, loadout.getJumpJetCount(), loadout.getJumpJetsMax(), value);
         }
         else {

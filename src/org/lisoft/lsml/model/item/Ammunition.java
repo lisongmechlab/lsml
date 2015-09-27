@@ -39,9 +39,10 @@ public class Ammunition extends Item {
     protected final String        ammoType;
 
     public Ammunition(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction, int aRounds, String aAmmoType, HardPointType aWeaponType, double aInternalDamage) {
+            HardPointType aHardpointType, int aHP, Faction aFaction, int aRounds, String aAmmoType,
+            HardPointType aWeaponType, double aInternalDamage) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
-        
+
         rounds = aRounds;
         ammoType = aAmmoType;
         type = aWeaponType;

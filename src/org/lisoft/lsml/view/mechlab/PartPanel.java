@@ -212,7 +212,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
                 public Object getSelectedItem() {
                     return omniMech.getComponent(location).getOmniPod();
                 }
-                
+
                 @Override
                 public void setSelectedItem(Object aAnObject) {
                     aStack.pushAndApply(new OpChangeOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech) component,

@@ -51,7 +51,7 @@ public class XMLOmniPods {
         public static class XMLOmniPodsSetBonuses {
             public static class XMLOmniPodsBonus {
                 @XStreamAsAttribute
-                private int                    PieceCount;
+                private int            PieceCount;
                 @XStreamImplicit(itemFieldName = "Quirk")
                 private List<XMLQuirk> quirks;
             }
@@ -61,17 +61,17 @@ public class XMLOmniPods {
 
         public static class XMLOmniPodsComponent {
             @XStreamAsAttribute
-            private String                 name;
+            private String             name;
             @XStreamImplicit(itemFieldName = "Fixed")
-            private List<MdfItem>          fixedItems;
+            private List<MdfItem>      fixedItems;
             @XStreamImplicit(itemFieldName = "Internal")
-            private List<MdfItem>          internals;
+            private List<MdfItem>      internals;
             @XStreamImplicit(itemFieldName = "Hardpoint")
-            private List<MdfHardpoint>     hardpoints;
+            private List<MdfHardpoint> hardpoints;
             @XStreamImplicit(itemFieldName = "Quirk")
-            private List<XMLQuirk> quirks;
+            private List<XMLQuirk>     quirks;
             @XStreamAsAttribute
-            private int                    CanEquipECM;
+            private int                CanEquipECM;
         }
 
         @XStreamAsAttribute

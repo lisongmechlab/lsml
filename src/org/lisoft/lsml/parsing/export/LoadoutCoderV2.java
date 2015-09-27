@@ -124,7 +124,8 @@ public class LoadoutCoderV2 implements LoadoutCoder {
             if (!(chassis instanceof ChassisStandard)) {
                 throw new DecodingException("LSML link format v2 does not support omni mechs.");
             }
-            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis,
+                    UpgradesMutable.standardUpgrades());
             loadout.getEfficiencies().setCoolRun((upeff & (1 << 4)) != 0, null);
             loadout.getEfficiencies().setHeatContainment((upeff & (1 << 3)) != 0, null);
             loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 2)) != 0, null);
@@ -224,7 +225,8 @@ public class LoadoutCoderV2 implements LoadoutCoder {
         for (ChassisBase chassis : chassii) {
             if (!(chassis instanceof ChassisStandard))
                 continue;
-            LoadoutStandard loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+            LoadoutStandard loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(),
+                    (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
             stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
             System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
         }

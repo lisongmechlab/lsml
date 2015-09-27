@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.loadout;
 
 import org.lisoft.lsml.model.environment.Environment;
-import org.lisoft.lsml.model.metrics.Acceleration;
 import org.lisoft.lsml.model.metrics.AlphaStrike;
 import org.lisoft.lsml.model.metrics.AlphaTimeToOverHeat;
 import org.lisoft.lsml.model.metrics.AsymptoticTimeToOverHeat;
@@ -49,7 +48,6 @@ import org.lisoft.lsml.util.message.MessageXBar;
  */
 public class LoadoutMetrics {
     // Mobility
-    public final Acceleration             acceleration;
     public final JumpDistance             jumpDistance;
     public final ReverseSpeed             reverseSpeed;
     public final TopSpeed                 topSpeed;
@@ -93,7 +91,6 @@ public class LoadoutMetrics {
 
     public LoadoutMetrics(LoadoutBase<?> aLoadout, Environment aEnvironment, MessageXBar aXBar) {
         // Mobility
-        acceleration = new Acceleration();
         jumpDistance = new JumpDistance(aLoadout);
         reverseSpeed = new ReverseSpeed(aLoadout);
         topSpeed = new TopSpeed(aLoadout);

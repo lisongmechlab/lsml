@@ -266,7 +266,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                         "The maximal height your mech will reach at the apex of its jump.", aXBar, loadout);
                 jumpJets.setAlignmentX(Component.CENTER_ALIGNMENT);
                 mobility.add(jumpJets);
-                
+
                 topSpeed = new MetricDisplay(new TopSpeed(loadout), "Top Speed: %.1f km/h",
                         "The maximum speed the mech can move at.", aXBar, loadout);
                 topSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);

@@ -28,25 +28,25 @@ public enum ChassisVariant {
     HERO, NORMAL, CHAMPION, SARAH, FOUNDER, PHOENIX, INVASION, GOLD, RESISTANCE;
 
     public static ChassisVariant fromString(String aChassis, String aVariant) {
-       
-        if (null == aVariant){
+
+        if (null == aVariant) {
             String c = aChassis.toLowerCase();
-            if(c.contains("(i)")){
+            if (c.contains("(i)")) {
                 return INVASION;
             }
-            else if(c.contains("(g)")){
+            else if (c.contains("(g)")) {
                 return GOLD;
-            }            
-            else if(c.contains("(")){
+            }
+            else if (c.contains("(")) {
                 return CHAMPION; // Other unknown variants are assumed champion.
             }
-            return NORMAL;            
-        }       
-        
+            return NORMAL;
+        }
+
         String s = aVariant.toLowerCase();
         for (ChassisVariant variant : values()) {
-            if (s.equals(variant.toString().toLowerCase())){
-                if(variant == CHAMPION && !aChassis.contains("(")){
+            if (s.equals(variant.toString().toLowerCase())) {
+                if (variant == CHAMPION && !aChassis.contains("(")) {
                     // Some chassis are marked as champion even though they don't have a base version just to give
                     // them a C-bill bonus. We treat these as normal mechs.
                     return NORMAL;

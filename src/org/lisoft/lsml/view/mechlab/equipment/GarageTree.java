@@ -99,7 +99,8 @@ public class GarageTree extends JTree {
                         LoadoutBase<?> loadout = null;
                         if (clicked instanceof ChassisStandard) {
                             ChassisStandard chassis = (ChassisStandard) clicked;
-                            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis, UpgradesMutable.standardUpgrades());
+                            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis,
+                                    UpgradesMutable.standardUpgrades());
 
                         }
                         else if (clicked instanceof ChassisOmniMech) {

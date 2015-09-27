@@ -35,25 +35,17 @@ import org.lisoft.lsml.model.item.Item;
  */
 public class EquipResult {
     public static enum Type {
-        Success(0), 
-        TooHeavy(1), 
-        NotEnoughSlots(2), 
-        NotEnoughSlotsForXLSide(10), 
-        NotSupported(1), 
-        IncompatibleUpgrades(100),
-        NoComponentSupport(10), 
-        JumpJetCapacityReached(100), 
-        EngineAlreadyEquipped(100), 
-        NoFreeHardPoints(50), 
-        ComponentAlreadyHasCase(20);
-        
+        Success(0), TooHeavy(1), NotEnoughSlots(2), NotEnoughSlotsForXLSide(10), NotSupported(1), IncompatibleUpgrades(
+                100), NoComponentSupport(10), JumpJetCapacityReached(100), EngineAlreadyEquipped(100), NoFreeHardPoints(
+                50), ComponentAlreadyHasCase(20);
+
         private final int specificity;
-        
-        Type(int aSpecificity){
+
+        Type(int aSpecificity) {
             specificity = aSpecificity;
         }
-        
-        boolean isMoreSpecificThan(Type aType){
+
+        boolean isMoreSpecificThan(Type aType) {
             return specificity > aType.specificity;
         }
     }
@@ -88,16 +80,15 @@ public class EquipResult {
 
     @Override
     public String toString() {
-        if(location != null)
+        if (location != null)
             return type.toString() + " on " + location.longName();
         return type.toString();
     }
-    
-    
-    public boolean isMoreSpecificThan(EquipResult aResult){
+
+    public boolean isMoreSpecificThan(EquipResult aResult) {
         return type.isMoreSpecificThan(aResult.type);
     }
-    
+
     static public EquipResult make(Location aLocation, Type aType) {
         List<EquipResult> l = RESULTS.get(aType);
         for (EquipResult equipResult : l) {

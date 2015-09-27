@@ -33,8 +33,10 @@ import org.lisoft.lsml.model.chassi.Location;
 public class Module extends Item {
 
     public Module(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations, List<ChassisClass> aAllowedChassisClasses) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations, aAllowedChassisClasses);
+            HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
+            List<ChassisClass> aAllowedChassisClasses) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
+                aAllowedChassisClasses);
     }
 
     public Module(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {

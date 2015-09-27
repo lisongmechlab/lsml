@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
@@ -65,7 +65,8 @@ public class ReverseSpeed implements Metric {
      */
     static public double calculate(final int aRating, final MovementProfile aMovementProfile, final double aMaxMass,
             final Collection<Modifier> aModifiers) {
-        return TopSpeed.calculate(aRating, aMovementProfile, aMaxMass, aModifiers) * aMovementProfile.getReverseSpeedMultiplier(aModifiers);
-        
+        return TopSpeed.calculate(aRating, aMovementProfile, aMaxMass, aModifiers)
+                * aMovementProfile.getReverseSpeedMultiplier(aModifiers);
+
     }
 }
