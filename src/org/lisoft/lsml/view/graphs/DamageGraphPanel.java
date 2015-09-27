@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -36,6 +35,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.VerticalAlignment;
+import org.lisoft.lsml.model.graphs.DamageGraphModel;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
@@ -52,28 +52,21 @@ import org.lisoft.lsml.view.render.StyleManager;
 public class DamageGraphPanel extends ChartPanel implements Message.Recipient {
     private final LoadoutBase<?>                loadout;
     private final WeaponColouredDrawingSupplier colours = new WeaponColouredDrawingSupplier();
-    private final GraphModel                    model;
-
-    public interface GraphModel {
-        public SortedMap<Weapon, List<Pair<Double, Double>>> getData();
-    }
+    private final DamageGraphModel              model;
 
     /**
-     * Creates and displays the {@link SustainedDpsGraph}.
+     * Creates and displays the {@link DamageGraphWindow}.
      * 
      * @param aLoadout
      *            Which load out the diagram is for.
      * @param aXbar
      *            A {@link MessageXBar} to listen for changes to the loadout on.
      * @param aModel
-     * @param aTitle
-     * @param aXAxisLabel
-     * @param aYAxisLabel
+     *            The model to use for drawing the graph.
      */
-    public DamageGraphPanel(LoadoutBase<?> aLoadout, MessageXBar aXbar, GraphModel aModel, String aTitle,
-            String aXAxisLabel, String aYAxisLabel) {
-        super(ChartFactory.createStackedXYAreaChart(aTitle, aXAxisLabel, aYAxisLabel, new DefaultTableXYDataset(),
-                PlotOrientation.VERTICAL, true, true, false));
+    public DamageGraphPanel(LoadoutBase<?> aLoadout, MessageXBar aXbar, DamageGraphModel aModel) {
+        super(ChartFactory.createStackedXYAreaChart(aModel.getTitle(), aModel.getXAxisLabel(), aModel.getYAxisLabel(),
+                new DefaultTableXYDataset(), PlotOrientation.VERTICAL, true, true, false));
         aXbar.attach(this);
         loadout = aLoadout;
         model = aModel;
@@ -83,7 +76,7 @@ public class DamageGraphPanel extends ChartPanel implements Message.Recipient {
         legendTitle.setVerticalAlignment(VerticalAlignment.TOP);
 
         getChart().getPlot().setDrawingSupplier(colours);
-        
+
         XYTitleAnnotation titleAnnotation = new XYTitleAnnotation(0.98, 0.98, legendTitle, RectangleAnchor.TOP_RIGHT);
         titleAnnotation.setMaxWidth(0.4);
         ((XYPlot) (getChart().getPlot())).addAnnotation(titleAnnotation);
@@ -107,7 +100,7 @@ public class DamageGraphPanel extends ChartPanel implements Message.Recipient {
             dataset.addSeries(series);
             orderedWeapons.add(entry.getKey());
         }
-        
+
         Collections.reverse(orderedWeapons);
         colours.updateColoursToMatch(orderedWeapons);
     }

@@ -45,23 +45,23 @@ public class Weapon extends HeatSource {
 
     /** How many rounds of ammo per shot of the weapon. */
     @XStreamAsAttribute
-    private final int       roundsPerShot;
+    private final int      roundsPerShot;
     /** How much damage one projectile does. */
     @XStreamAsAttribute
-    private final double    damagePerProjectile;
+    private final double   damagePerProjectile;
     /** How many projectile per one round of ammo. */
     @XStreamAsAttribute
-    private final int       projectilesPerRound;
+    private final int      projectilesPerRound;
     @XStreamAsAttribute
-    private final double    projectileSpeed;
+    private final double   projectileSpeed;
     @XStreamAsAttribute
-    private final int       ghostHeatGroupId;
+    private final int      ghostHeatGroupId;
     @XStreamAsAttribute
-    private final double    ghostHeatMultiplier;
+    private final double   ghostHeatMultiplier;
     @XStreamAsAttribute
-    private final int       ghostHeatFreeAlpha;
+    private final int      ghostHeatFreeAlpha;
     @XStreamAsAttribute
-    protected final double  volleyDelay;
+    protected final double volleyDelay;
 
     public Weapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardPointType, int aHP, Faction aFaction, Attribute aHeat, Attribute aCooldown,
@@ -241,6 +241,8 @@ public class Weapon extends HeatSource {
     }
 
     public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
+    public final static Comparator<Weapon> RANGE_WEAPON_ORDERING;
+
     static {
         DEFAULT_WEAPON_ORDERING = new Comparator<Item>() {
             private final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
@@ -264,6 +266,16 @@ public class Weapon extends HeatSource {
                         return -Integer.compare(Integer.parseInt(lhsSuffix), Integer.parseInt(rhsSuffix));
                 }
                 return mLhs.group(1).compareTo(mRhs.group(1));
+            }
+        };
+
+        RANGE_WEAPON_ORDERING = new Comparator<Weapon>() {
+            @Override
+            public int compare(Weapon aO1, Weapon aO2) {
+                int comp = Double.compare(aO2.getRangeMax(null), aO1.getRangeMax(null));
+                if (comp == 0)
+                    return aO1.compareTo(aO2);
+                return comp;
             }
         };
     }

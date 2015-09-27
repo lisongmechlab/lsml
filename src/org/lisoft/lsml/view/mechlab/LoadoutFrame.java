@@ -40,10 +40,12 @@ import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
 import org.lisoft.lsml.command.OpStripLoadout;
+import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
+import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
+import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
-import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.util.message.Message;
@@ -61,7 +63,6 @@ import org.lisoft.lsml.view.action.RenameLoadoutAction;
 import org.lisoft.lsml.view.action.ShowDamageGraphAction;
 import org.lisoft.lsml.view.action.StripArmorAction;
 import org.lisoft.lsml.view.action.UndoLoadoutAction;
-import org.lisoft.lsml.view.graphs.DpsGraph;
 
 public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
     private static final String  CMD_UNDO_LOADOUT      = "undo loadout";
@@ -114,7 +115,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
             add(scrollpane, BorderLayout.EAST);
         }
 
-        setJMenuBar(createMenuBar(metrics.maxSustainedDPS));
+        setJMenuBar(createMenuBar());
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Loadout", loadoutPage);
         tabbedPane.addTab("Statistics", new MechStatisticsPanel(loadout, xBar, metrics, loadoutPage));
@@ -176,18 +177,18 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         return loadoutOperationStack;
     }
 
-    private JMenuBar createMenuBar(MaxSustainedDPS aMaxSustainedDPS) {
+    private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createMenuLoadout());
         menuBar.add(createMenuArmor());
-        menuBar.add(createMenuGraphs(aMaxSustainedDPS));
+        menuBar.add(createMenuGraphs());
         menuBar.add(createMenuShare());
         return menuBar;
     }
 
-    private JMenuItem createMenuItem(String text, ActionListener anActionListener) {
-        JMenuItem item = new JMenuItem(text);
-        item.addActionListener(anActionListener);
+    private JMenuItem createMenuItem(String aText, ActionListener aActionListener) {
+        JMenuItem item = new JMenuItem(aText);
+        item.addActionListener(aActionListener);
         return item;
     }
 
@@ -230,17 +231,11 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         return armorMenu;
     }
 
-    private JMenu createMenuGraphs(MaxSustainedDPS aMaxDPSMetric) {
+    private JMenu createMenuGraphs() {
         JMenu menu = new JMenu("Graphs");
-        menu.add(new JMenuItem(new ShowDamageGraphAction(loadout, xBar, aMaxDPSMetric)));
-        menu.add(createMenuItem("Max DPS", new ActionListener() {
-            @SuppressWarnings("unused")
-            // Constructor has intended side effects.
-            @Override
-            public void actionPerformed(ActionEvent aArg0) {
-                new DpsGraph(loadout, xBar);
-            }
-        }));
+        menu.add(new JMenuItem(new ShowDamageGraphAction(loadout, xBar, new AlphaStrikeGraphModel(metrics, loadout))));
+        menu.add(new JMenuItem(new ShowDamageGraphAction(loadout, xBar, new SustainedDpsGraphModel(metrics, loadout))));
+        menu.add(new JMenuItem(new ShowDamageGraphAction(loadout, xBar, new MaxDpsGraphModel(loadout))));
         return menu;
     }
 

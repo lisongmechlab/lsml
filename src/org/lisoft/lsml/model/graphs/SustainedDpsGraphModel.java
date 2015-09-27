@@ -17,11 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view.mechlab;
+package org.lisoft.lsml.model.graphs;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,7 +42,7 @@ import org.lisoft.lsml.view.graphs.DamageGraphPanel;
  * @author Emily Björk
  *
  */
-public class SustainedDpsGraphModel implements DamageGraphPanel.GraphModel {
+public class SustainedDpsGraphModel implements DamageGraphModel {
     private final LoadoutMetrics metrics;
     private final LoadoutBase<?> loadout;
 
@@ -64,15 +63,7 @@ public class SustainedDpsGraphModel implements DamageGraphPanel.GraphModel {
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
         final Collection<Modifier> modifiers = loadout.getModifiers();
         SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
-                new Comparator<Weapon>() {
-                    @Override
-                    public int compare(Weapon aO1, Weapon aO2) {
-                        int comp = Double.compare(aO2.getRangeMax(modifiers), aO1.getRangeMax(modifiers));
-                        if (comp == 0)
-                            return aO1.compareTo(aO2);
-                        return comp;
-                    }
-                });
+                Weapon.RANGE_WEAPON_ORDERING);
 
         Double[] ranges = WeaponRanges.getRanges(loadout);
         for (double range : ranges) {
@@ -91,5 +82,20 @@ public class SustainedDpsGraphModel implements DamageGraphPanel.GraphModel {
             }
         }
         return data;
+    }
+    
+    @Override
+    public String getXAxisLabel() {
+        return "Range [m]";
+    }
+
+    @Override
+    public String getYAxisLabel() {
+        return "DPS";
+    }
+    
+    @Override
+    public String getTitle() {
+        return "Sustained DPS";
     }
 }
