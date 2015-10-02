@@ -84,13 +84,13 @@ public class Modifier {
      */
     public void describeToHtml(StringBuilder aSB) {
         aSB.append("<div>");
-        aSB.append("<span style=\"color:").append(description.getValueType().getColor(value)).append(";\">");
+        aSB.append("<span style=\"color:").append(description.getModifierType().getColor(value)).append(";\">");
 
         aSB.append(description.getUiName()).append(": ");
         if (value > 0) {
             aSB.append("+");
         }
-        if (description.getOperation() == Operation.MULTIPLICATIVE) {
+        if (description.getOperation() == Operation.MUL) {
             aSB.append(FORMAT.format(value * 100)).append("%");
         }
         else {

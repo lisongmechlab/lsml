@@ -29,13 +29,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
+
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 /**
  * This is a test suite for {@link ChassisDB}. The test verifies that the data is loaded properly from the data files.

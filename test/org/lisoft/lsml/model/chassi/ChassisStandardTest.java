@@ -26,8 +26,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import junitparams.JUnitParamsRunner;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +36,8 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+
+import junitparams.JUnitParamsRunner;
 
 /**
  * Test suite for {@link ChassisStandard}.

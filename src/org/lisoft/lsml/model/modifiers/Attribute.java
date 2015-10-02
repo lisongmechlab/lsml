@@ -99,7 +99,7 @@ public class Attribute {
      * @return The name of this attribute. May be <code>null</code> if the name is implicitly understood from the
      *         selector(s). If it is non-<code>null</code> it is not empty.
      */
-    public String getName() {
+    public String getSpecifier() {
         return name;
     }
 
@@ -117,10 +117,10 @@ public class Attribute {
                 if (modifier.getDescription().affects(this)) {
                     Operation op = modifier.getDescription().getOperation();
                     switch (op) {
-                        case ADDITIVE:
+                        case ADD:
                             additive += modifier.getValue();
                             break;
-                        case MULTIPLICATIVE:
+                        case MUL:
                             multiplicative += modifier.getValue();
                             break;
                         default:

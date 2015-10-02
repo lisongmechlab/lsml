@@ -32,11 +32,11 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mockito;
 
 /**
- * Test suite for {@link TwistSpeed} {@link Metric}.
+ * Test suite for {@link TorsoTwistYawSpeed} {@link Metric}.
  * 
  * @author Li Song
  */
-public class TwistSpeedTest {
+public class TorsoTwistYawSpeedTest {
 
     /**
      * Without an engine, the twist speed shall be zero.
@@ -56,7 +56,7 @@ public class TwistSpeedTest {
         Mockito.when(movementProfile.getTorsoYawSpeed(null)).thenReturn(factor);
         Mockito.when(chassi.getMassMax()).thenReturn(mass);
 
-        TwistSpeed cut = new TwistSpeed(loadout);
+        TorsoTwistYawSpeed cut = new TorsoTwistYawSpeed(loadout);
         assertEquals(0, cut.calculate(), 0.0);
     }
 
@@ -79,7 +79,7 @@ public class TwistSpeedTest {
         Mockito.when(chassi.getMassMax()).thenReturn(mass);
         Mockito.when(engine.getRating()).thenReturn(rating);
 
-        TwistSpeed cut = new TwistSpeed(loadout);
+        TorsoTwistYawSpeed cut = new TorsoTwistYawSpeed(loadout);
         assertEquals(modifiedSpeed * rating / mass, cut.calculate(), 0.0);
     }
 

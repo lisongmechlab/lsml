@@ -28,8 +28,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import junitparams.JUnitParamsRunner;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +50,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.thoughtworks.xstream.XStream;
+
+import junitparams.JUnitParamsRunner;
 
 /**
  * Tests for verifying save-load behaviour of Loadouts.

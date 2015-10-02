@@ -28,21 +28,41 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * This class describes a template for a generic modifier that can be applied to an {@link Attribute}.
+ * This class models a description of how a generic modifier can be applied to an {@link Attribute}. A {@link Modifier}
+ * is a {@link ModifierDescription} together with actual modifier value that modifiers an {@link Attribute}.
+ * 
+ * One {@link ModifierDescription}s can affect many different attributes. To facilitate this,
+ * {@link ModifierDescription}s and {@link Attribute}s have a set of "selector tags". Selector tags can be things such
+ * as "Top Speed", "Laser weapons", "IS Large Laser", "Clan ACs". In addition to selector tags, each {@link Attribute}
+ * and {@link ModifierDescription} can have a specific named specifier within the selector tag that is affected. For
+ * example the selector tag may be "IS Laser Weapons" and the specifier can be "BurnTime". However when the selector
+ * uniquely identifies exactly one attribute, like in the case of "Top Speed" then the specifier is <code>null</code>.
+ * 
+ * All of this conspires to create a powerful system where just about any value can be affected by modifiers coming from
+ * different sources, such as pilot efficiencies, 'Mech quirks, equipped items and modules etc.
  * 
  * @author Li Song
  */
 public class ModifierDescription {
+    /**
+     * This attribute defines how a modifier is applied.
+     * 
+     * The formula to use is: modifiedValue = (baseValue + sum(additive)) * (1.0 + sum(multiplicative)).
+     * 
+     * Source: Email conversation with Brian Buckton @ PGI.
+     * 
+     * @author Li Song
+     */
     public static enum Operation {
-        ADDITIVE, MULTIPLICATIVE;
+        ADD, MUL;
 
         public static Operation fromString(String aString) {
             String canon = aString.toLowerCase();
             if (canon.contains("mult") || aString.contains("*")) {
-                return MULTIPLICATIVE;
+                return MUL;
             }
             else if (canon.contains("add") || aString.contains("+")) {
-                return ADDITIVE;
+                return ADD;
             }
             else {
                 throw new IllegalArgumentException("Unknown operation: " + aString);
@@ -54,9 +74,9 @@ public class ModifierDescription {
          */
         public String uiAbbrev() {
             switch (this) {
-                case ADDITIVE:
+                case ADD:
                     return "add";
-                case MULTIPLICATIVE:
+                case MUL:
                     return "mult";
                 default:
                     throw new RuntimeException("Unknown modifier!");
@@ -64,7 +84,21 @@ public class ModifierDescription {
         }
     }
 
-    public static enum ValueType {
+    /**
+     * Values can be categorized based on how the affect the subjective performance of a mech.
+     * 
+     * There are three classes:
+     * <ul>
+     * <li>Positive Good: A positive value on the quirk is desirable for the pilot.</li>
+     * <li>Negative Good: A negative value on the quirk is desirable for the pilot.</li>
+     * <li>Indeterminate: Value isn't unanimously desirable. For example heat transfer quirk is good for cold maps but
+     * bad on hot maps, so it's indeterminate.</li>
+     * </ul>
+     * 
+     * @author Li Song
+     *
+     */
+    public static enum ModifierType {
         POSITIVE_GOOD, NEGATIVE_GOOD, INDETERMINATE;
 
         public String getColor(double aValue) {
@@ -83,9 +117,9 @@ public class ModifierDescription {
         /**
          * @param aContext
          *            The string to convert.
-         * @return A {@link ValueType}.
+         * @return A {@link ModifierType}.
          */
-        public static ValueType fromMwo(String aContext) {
+        public static ModifierType fromMwo(String aContext) {
             String canon = aContext.toLowerCase();
             if (canon.contains("positive")) {
                 return POSITIVE_GOOD;
@@ -103,12 +137,12 @@ public class ModifierDescription {
     }
 
     @XStreamAsAttribute
-    private final Operation          op;
+    private final Operation          operation;
     private final Collection<String> selectors;
     @XStreamAsAttribute
-    private final String             attribute; // Can be null
+    private final String             specifier; // Can be null
     @XStreamAsAttribute
-    private final ValueType          valueType;
+    private final ModifierType       type;
     @XStreamAsAttribute
     private final String             uiName;
     @XStreamAsAttribute
@@ -133,27 +167,27 @@ public class ModifierDescription {
      *            represents.
      */
     public ModifierDescription(String aUiName, String aKeyName, Operation aOperation, Collection<String> aSelectors,
-            String aAttribute, ValueType aValueType) {
+            String aAttribute, ModifierType aValueType) {
         uiName = aUiName;
         mwoKey = canonizeName(aKeyName);
-        op = aOperation;
+        operation = aOperation;
         selectors = new ArrayList<>();
         for (String selector : aSelectors) {
             selectors.add(canonizeName(selector));
         }
-        attribute = canonizeName(aAttribute);
+        specifier = canonizeName(aAttribute);
 
-        if (attribute != null && attribute.equals(ModifiersDB.SEL_WEAPON_COOLDOWN)) {
+        if (specifier != null && specifier.equals(ModifiersDB.SEL_WEAPON_COOLDOWN)) {
             // Ugh... PGI, PGI... why did you have to make cooldown a positive good?
-            valueType = ValueType.NEGATIVE_GOOD;
+            type = ModifierType.NEGATIVE_GOOD;
         }
         else {
-            valueType = aValueType;
+            type = aValueType;
         }
     }
 
     public ModifierDescription(String aUiName, String aKeyName, Operation aOperation, String aSelector,
-            String aAttribute, ValueType aValueType) {
+            String aAttribute, ModifierType aValueType) {
         this(aUiName, aKeyName, aOperation, Arrays.asList(aSelector), aAttribute, aValueType);
     }
 
@@ -173,7 +207,7 @@ public class ModifierDescription {
      * @return The {@link Operation} that this {@link ModifierDescription} performs.
      */
     public Operation getOperation() {
-        return op;
+        return operation;
     }
 
     /**
@@ -184,12 +218,12 @@ public class ModifierDescription {
      * @return <code>true</code> if the attribute is affected, false otherwise.
      */
     public boolean affects(Attribute aAttribute) {
-        if (attribute == null) {
-            if (aAttribute.getName() != null)
+        if (specifier == null) {
+            if (aAttribute.getSpecifier() != null)
                 return false;
         }
         else {
-            if (aAttribute.getName() == null || !aAttribute.getName().equals(attribute))
+            if (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier))
                 return false;
         }
 
@@ -204,10 +238,10 @@ public class ModifierDescription {
     }
 
     /**
-     * @return The {@link ValueType} of this {@link ModifierDescription}.
+     * @return The {@link ModifierType} of this {@link ModifierDescription}.
      */
-    public ValueType getValueType() {
-        return valueType;
+    public ModifierType getModifierType() {
+        return type;
     }
 
     /**
@@ -235,6 +269,6 @@ public class ModifierDescription {
      * @return The specifier for the modifier.
      */
     public String getSpecifier() {
-        return attribute;
+        return specifier;
     }
 }

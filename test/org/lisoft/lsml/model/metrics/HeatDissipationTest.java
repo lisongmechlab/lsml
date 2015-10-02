@@ -99,7 +99,7 @@ public class HeatDissipationTest {
                 * dissipationFactor;
         
         ModifierDescription description = Mockito.mock(ModifierDescription.class);
-        Mockito.when(description.getOperation()).thenReturn(Operation.MULTIPLICATIVE);
+        Mockito.when(description.getOperation()).thenReturn(Operation.MUL);
         Mockito.when(description.affects(Matchers.any(Attribute.class))).then(new Answer<Boolean>() {
             @Override
             public Boolean answer(InvocationOnMock aInvocation) throws Throwable {

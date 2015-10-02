@@ -22,26 +22,33 @@ package org.lisoft.lsml.view.mechlab;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.Collection;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JLabel;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
 import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
-import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
 import org.lisoft.lsml.model.loadout.LoadoutMessage.Type;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
+import org.lisoft.lsml.model.modifiers.Efficiencies.EfficienciesMessage;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
+import org.lisoft.lsml.view.MetricDisplay;
+import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.graphs.DamageGraphPanel;
+import org.lisoft.lsml.view.render.ScrollablePanel;
 import org.lisoft.lsml.view.render.StyleManager;
 
 /**
@@ -55,16 +62,15 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
     private final WeaponGroupStats    weaponGroupStats[] = new WeaponGroupStats[WeaponGroups.MAX_GROUPS];
     private final LoadoutBase<?>      loadout;
 
-    private final AngleDisplay torsoYawDisplay   = new AngleDisplay(90.0);
-    private final AngleDisplay torsoPitchDisplay = new AngleDisplay(0.0);
-    private final JLabel       torsoYawAngle     = new JLabel();
-    private final JLabel       torsoPitchAngle   = new JLabel();
-    private final JLabel       torsoYawSpeed     = new JLabel();
-    private final JLabel       torsoPitchSpeed   = new JLabel();
-    private final JLabel       armYawAngle       = new JLabel();
-    private final JLabel       armPitchAngle     = new JLabel();
-    private final JLabel       armYawSpeed       = new JLabel();
-    private final JLabel       armPitchSpeed     = new JLabel();
+    private final AngleDisplay  torsoYawDisplay   = new AngleDisplay(90.0);
+    private final AngleDisplay  torsoPitchDisplay = new AngleDisplay(0.0);
+    private final MetricDisplay torsoYawSpeed;
+    private final MetricDisplay torsoPitchSpeed;
+    private final MetricDisplay armYawSpeed;
+    private final MetricDisplay armPitchSpeed;
+    private final JCheckBox     twistX;
+    private final JCheckBox     twistSpeed;
+    private final JCheckBox     armReflex;
 
     /**
      * @param aLoadout
@@ -77,16 +83,74 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
      *            The loadout panel will define the size of the statistics panel.
      * 
      */
-    public MechStatisticsPanel(LoadoutBase<?> aLoadout, MessageXBar aXBar, LoadoutMetrics aMetrics,
+    public MechStatisticsPanel(LoadoutBase<?> aLoadout, final MessageXBar aXBar, LoadoutMetrics aMetrics,
             LoadoutPanel aLoadoutPanel) {
         loadout = aLoadout;
         loadoutPanel = aLoadoutPanel;
         weaponGroups = new WeaponGroupingPanel(aLoadout.getWeaponGroups(), aLoadout, aXBar);
         aXBar.attach(this);
-        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+        torsoYawSpeed = new MetricDisplay(aMetrics.torsoYawSpeed, "Torso yaw speed: %.0f °/s",
+                "How fast the 'Mech can turn its torso sideways.", aXBar, loadout);
+        torsoPitchSpeed = new MetricDisplay(aMetrics.torsoPitchSpeed, "Torso pitch speed: %.0f °/s",
+                "How fast the 'Mech can tilt its torso vertically.", aXBar, loadout);
+        armYawSpeed = new MetricDisplay(aMetrics.armYawSpeed, "Arm yaw speed: %.0f °/s",
+                "How fast the 'Mech can move its arms sideways.", aXBar, loadout);
+        armPitchSpeed = new MetricDisplay(aMetrics.armPitchSpeed, "Arm pitch speed: %.0f °/s",
+                "How fast the 'Mech can move its arms vertically.", aXBar, loadout);
 
-        add(makeLeftPanel(aXBar, aMetrics));
-        add(makeRightPanel(aLoadout, aMetrics, aXBar));
+        twistX = new JCheckBox("Twist X");
+        twistX.setModel(new JToggleButton.ToggleButtonModel() {
+            @Override
+            public void setSelected(boolean aB) {
+                loadout.getEfficiencies().setTwistX(aB, aXBar);
+            }
+
+            @Override
+            public boolean isSelected() {
+                return loadout.getEfficiencies().hasTwistX();
+            }
+        });
+
+        twistSpeed = new JCheckBox("Twist Speed");
+        twistSpeed.setModel(new JToggleButton.ToggleButtonModel() {
+            @Override
+            public void setSelected(boolean aB) {
+                loadout.getEfficiencies().setTwistSpeed(aB, aXBar);
+            }
+
+            @Override
+            public boolean isSelected() {
+                return loadout.getEfficiencies().hasTwistSpeed();
+            }
+        });
+
+        armReflex = new JCheckBox("Arm Reflex");
+        armReflex.setModel(new JToggleButton.ToggleButtonModel() {
+            @Override
+            public void setSelected(boolean aB) {
+                loadout.getEfficiencies().setArmReflex(aB, aXBar);
+            }
+
+            @Override
+            public boolean isSelected() {
+                return loadout.getEfficiencies().hasArmReflex();
+            }
+        });
+
+        if (ProgramInit.lsml().preferences.uiPreferences.getCompactMode()) {
+            setLayout(new BorderLayout());
+            JPanel content = new ScrollablePanel();
+            content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
+            content.add(makeLeftPanel(aXBar, aMetrics));
+            content.add(makeRightPanel(aLoadout, aMetrics, aXBar));
+            JScrollPane scrollPane = new JScrollPane(content);
+            add(scrollPane, BorderLayout.CENTER);
+        }
+        else {
+            setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+            add(makeLeftPanel(aXBar, aMetrics));
+            add(makeRightPanel(aLoadout, aMetrics, aXBar));
+        }
         updateWeaponGroups();
         updateMovement();
     }
@@ -95,26 +159,36 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         {
-            JPanel armsAndTorso = new JPanel(new BorderLayout());
+            JPanel armsAndTorso = new JPanel();
+            armsAndTorso.setLayout(new GridBagLayout());
             armsAndTorso.setBorder(StyleManager.sectionBorder("Arms & Torso"));
-
-            JPanel diagrams = new JPanel();
-            diagrams.add(torsoYawDisplay);
-            diagrams.add(torsoPitchDisplay);
 
             JPanel numbers = new JPanel();
             numbers.setLayout(new BoxLayout(numbers, BoxLayout.PAGE_AXIS));
-            numbers.add(torsoYawAngle);
-            numbers.add(torsoPitchAngle);
             numbers.add(torsoYawSpeed);
             numbers.add(torsoPitchSpeed);
-            numbers.add(armYawAngle);
-            numbers.add(armPitchAngle);
             numbers.add(armYawSpeed);
             numbers.add(armPitchSpeed);
 
-            armsAndTorso.add(numbers, BorderLayout.WEST);
-            armsAndTorso.add(diagrams, BorderLayout.EAST);
+            numbers.add(twistX);
+            numbers.add(twistSpeed);
+            numbers.add(armReflex);
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.ipadx = 10;
+            gbc.anchor = GridBagConstraints.LINE_START;
+            armsAndTorso.add(numbers, gbc);
+
+            gbc.gridx = 1;
+            gbc.weightx = 1.0;
+            gbc.ipadx = 0;
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.anchor = GridBagConstraints.LINE_END;
+            armsAndTorso.add(torsoYawDisplay, gbc);
+
+            gbc.gridx = 2;
+            armsAndTorso.add(torsoPitchDisplay, gbc);
             panel.add(armsAndTorso);
         }
 
@@ -163,6 +237,10 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
             return;
         }
 
+        if (aMsg instanceof EfficienciesMessage) {
+            updateMovement();
+        }
+
         if (aMsg instanceof LoadoutMessage) {
             LoadoutMessage msg = (LoadoutMessage) aMsg;
             if (msg.type == Type.WEAPON_GROUPS_CHANGED) {
@@ -183,35 +261,13 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
 
     private void updateMovement() {
         final MovementProfile mp = loadout.getMovementProfile();
-        final Engine engine = loadout.getEngine();
-        int rating = 0;
-        if (engine != null)
-            rating = engine.getRating();
-        double mass = loadout.getChassis().getMassMax();
 
-        // TODO: These should be metrics
         Collection<Modifier> modifiers = loadout.getModifiers();
         double torso_pitch = mp.getTorsoPitchMax(modifiers);
         double torso_yaw = mp.getTorsoYawMax(modifiers);
-        double torso_pitch_speed = mp.getTorsoPitchSpeed(modifiers) * rating / mass;
-        double torso_yaw_speed = mp.getTorsoYawSpeed(modifiers) * rating / mass;
-
         double arm_pitch = mp.getArmPitchMax(modifiers);
         double arm_yaw = mp.getArmYawMax(modifiers);
-        double arm_pitch_speed = mp.getArmPitchSpeed(modifiers) * rating / mass;
-        double arm_yaw_speed = mp.getArmYawSpeed(modifiers) * rating / mass;
-
         torsoYawDisplay.updateAngles(torso_yaw, arm_yaw);
         torsoPitchDisplay.updateAngles(torso_pitch, arm_pitch);
-
-        torsoYawAngle.setText("Torso yaw angle: " + LoadoutInfoPanel.df1.format(torso_yaw) + "°");
-        torsoPitchAngle.setText("Torso pitch angle: " + LoadoutInfoPanel.df1.format(torso_pitch) + "°");
-        torsoYawSpeed.setText("Torso yaw speed: " + LoadoutInfoPanel.df1.format(torso_yaw_speed) + "°/s");
-        torsoPitchSpeed.setText("Torso pitch speed: " + LoadoutInfoPanel.df1.format(torso_pitch_speed) + "°/s");
-
-        armYawAngle.setText("Arm yaw angle: " + LoadoutInfoPanel.df1.format(arm_yaw) + "°");
-        armPitchAngle.setText("Arm pitch angle: " + LoadoutInfoPanel.df1.format(arm_pitch) + "°");
-        armYawSpeed.setText("Arm yaw speed: " + LoadoutInfoPanel.df1.format(arm_yaw_speed) + "°/s");
-        armPitchSpeed.setText("Arm pitch speed: " + LoadoutInfoPanel.df1.format(arm_pitch_speed) + "°/s");
     }
 }

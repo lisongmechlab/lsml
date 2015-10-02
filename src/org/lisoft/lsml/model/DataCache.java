@@ -70,8 +70,8 @@ import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ValueType;
 import org.lisoft.lsml.model.modifiers.ModifiersDB;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -591,9 +591,9 @@ public class DataCache {
                     }
 
                     ModifierDescription rangeDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifiersDB.SEL_WEAPON_RANGE, ValueType.POSITIVE_GOOD);
+                            ModifiersDB.SEL_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
                     ModifierDescription cooldownDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifiersDB.SEL_WEAPON_COOLDOWN, ValueType.NEGATIVE_GOOD);
+                            ModifiersDB.SEL_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
 
                     int maxRank = weaponStats.size();
                     double longRange[] = new double[maxRank];
