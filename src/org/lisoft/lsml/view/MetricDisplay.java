@@ -29,6 +29,7 @@ import org.lisoft.lsml.model.metrics.JumpDistance;
 import org.lisoft.lsml.model.metrics.Metric;
 import org.lisoft.lsml.model.metrics.RangeMetric;
 import org.lisoft.lsml.model.metrics.RangeTimeMetric;
+import org.lisoft.lsml.model.modifiers.Efficiencies.EfficienciesMessage;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 
@@ -46,14 +47,14 @@ public class MetricDisplay extends JLabel implements Message.Recipient {
     private final boolean        percent;
     protected final Metric       metric;
 
-    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?> aLoadout) {
-        this(aMetric, aFormat, aTooltip, anXBar, aLoadout, false);
+    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar aXBar, LoadoutBase<?> aLoadout) {
+        this(aMetric, aFormat, aTooltip, aXBar, aLoadout, false);
     }
 
-    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar anXBar, LoadoutBase<?> aLoadout,
+    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar aXBar, LoadoutBase<?> aLoadout,
             boolean aPercent) {
         loadout = aLoadout;
-        anXBar.attach(this);
+        aXBar.attach(this);
         setToolTipText("<html><p width=\"300\">" + aTooltip + "</p></html>");
         formatter = new Formatter(sb);
         format = aFormat;
@@ -65,20 +66,20 @@ public class MetricDisplay extends JLabel implements Message.Recipient {
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
+        if (aMsg.isForMe(loadout) && (aMsg.affectsHeatOrDamage() || aMsg instanceof EfficienciesMessage)) {
             updateText();
         }
     }
 
     protected void updateText() {
-        assert (SwingUtilities.isEventDispatchThread());
+        assert(SwingUtilities.isEventDispatchThread());
         sb.setLength(0);
         double value = metric.calculate();
         if (percent)
             value *= 100.0;
         if (metric instanceof RangeTimeMetric) {
-            formatter
-                    .format(format, ((RangeTimeMetric) metric).getTime(), value, ((RangeTimeMetric) metric).getRange());
+            formatter.format(format, ((RangeTimeMetric) metric).getTime(), value,
+                    ((RangeTimeMetric) metric).getRange());
         }
         else if (metric instanceof RangeMetric) {
             formatter.format(format, value, ((RangeMetric) metric).getRange());

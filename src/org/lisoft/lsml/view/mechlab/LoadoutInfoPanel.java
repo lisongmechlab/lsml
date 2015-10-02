@@ -61,8 +61,8 @@ import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.metrics.TopSpeed;
+import org.lisoft.lsml.model.metrics.TorsoTwistYawSpeed;
 import org.lisoft.lsml.model.metrics.TurningSpeed;
-import org.lisoft.lsml.model.metrics.TwistSpeed;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.OpSetArmorType;
@@ -284,7 +284,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                 turnSpeed.setAlignmentX(CENTER_ALIGNMENT);
                 mobility.add(turnSpeed);
 
-                twistSpeed = new MetricDisplay(new TwistSpeed(loadout), "Twist Speed: %.1f °/s",
+                twistSpeed = new MetricDisplay(new TorsoTwistYawSpeed(loadout), "Twist Speed: %.1f °/s",
                         "The rate at which your mech can turn its tors in relation to the legs.", aXBar, loadout);
                 twistSpeed.setAlignmentX(CENTER_ALIGNMENT);
                 mobility.add(twistSpeed);

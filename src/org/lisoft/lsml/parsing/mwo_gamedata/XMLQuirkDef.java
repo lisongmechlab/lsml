@@ -25,8 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ValueType;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -111,7 +111,7 @@ public class XMLQuirkDef {
                         }
 
                         ans.add(new ModifierDescription(uiName, keyName, Operation.fromString(modify.operation), Arrays
-                                .asList(quirk.name), modify.specifier, ValueType.fromMwo(modify.context)));
+                                .asList(quirk.name), modify.specifier, ModifierType.fromMwo(modify.context)));
                     }
                 }
             }

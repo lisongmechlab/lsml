@@ -32,11 +32,11 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mockito;
 
 /**
- * Test suite for {@link TwistSpeed} {@link Metric}.
+ * Test suite for {@link TorsoTwistYawSpeed} {@link Metric}.
  * 
  * @author Emily Björk
  */
-public class TwistSpeedTest {
+public class ArmRotatePitchSpeedTest {
 
     /**
      * Without an engine, the twist speed shall be zero.
@@ -53,10 +53,10 @@ public class TwistSpeedTest {
 
         double factor = 0.2;
         int mass = 50;
-        Mockito.when(movementProfile.getTorsoYawSpeed(null)).thenReturn(factor);
+        Mockito.when(movementProfile.getArmPitchSpeed(null)).thenReturn(factor);
         Mockito.when(chassi.getMassMax()).thenReturn(mass);
 
-        TwistSpeed cut = new TwistSpeed(loadout);
+        ArmRotatePitchSpeed cut = new ArmRotatePitchSpeed(loadout);
         assertEquals(0, cut.calculate(), 0.0);
     }
 
@@ -75,11 +75,11 @@ public class TwistSpeedTest {
         Mockito.when(loadout.getChassis()).thenReturn(chassi);
         Mockito.when(loadout.getEngine()).thenReturn(engine);
         Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
-        Mockito.when(movementProfile.getTorsoYawSpeed(quirks)).thenReturn(modifiedSpeed);
+        Mockito.when(movementProfile.getArmPitchSpeed(quirks)).thenReturn(modifiedSpeed);
         Mockito.when(chassi.getMassMax()).thenReturn(mass);
         Mockito.when(engine.getRating()).thenReturn(rating);
 
-        TwistSpeed cut = new TwistSpeed(loadout);
+        ArmRotatePitchSpeed cut = new ArmRotatePitchSpeed(loadout);
         assertEquals(modifiedSpeed * rating / mass, cut.calculate(), 0.0);
     }
 

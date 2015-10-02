@@ -26,9 +26,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +39,9 @@ import org.lisoft.lsml.model.item.MASC;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 /**
  * An abstract base class for testing {@link ChassisBase} derived objects.

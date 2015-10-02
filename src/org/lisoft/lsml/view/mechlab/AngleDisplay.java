@@ -47,9 +47,10 @@ public class AngleDisplay extends JLabel {
     private Color primaryColor = StyleManager.getColourBarPrimary();
     
     public AngleDisplay(double aBase) {
-        Dimension minimumSize = new Dimension(100, 100);
+        Dimension minimumSize = new Dimension(50, 50);
         setMinimumSize(minimumSize);
-        setPreferredSize(minimumSize);
+        Dimension preferredSize = new Dimension(100, 100);
+        setPreferredSize(preferredSize);
 
         hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         hints.add(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED));
@@ -60,6 +61,7 @@ public class AngleDisplay extends JLabel {
     public void updateAngles(double aPrimary, double aSecondary) {
         primary = aPrimary;
         secondary = aSecondary;
+        repaint();
     }
 
     @Override
@@ -69,7 +71,7 @@ public class AngleDisplay extends JLabel {
         sz.width = sz.height;
         return sz;
     }
-
+    
     @Override
     public Dimension getMaximumSize() {
         Dimension sz = super.getMaximumSize();
@@ -83,7 +85,7 @@ public class AngleDisplay extends JLabel {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHints(hints);
 
-        int width = getWidth() - 1;
+        int width = Math.min(getWidth(), getHeight()) - 1;
         int startAngle = (int) Math.round(base - (primary + secondary));
         int endAngle = (int) Math.round(2 * (primary + secondary));
         g2.setColor(secondaryColor);

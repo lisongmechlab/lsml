@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.modifiers.Efficiencies.EfficienciesMessage.Type;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 
@@ -32,6 +33,9 @@ import org.lisoft.lsml.util.message.MessageXBar;
  * @author Emily Björk
  */
 public class Efficiencies {
+    // TwistX
+    // Arm Reflex
+    // Twist Speed
 
     private final static Modifier SPEED_TWEAK         = new Modifier(ModifiersDB.SPEED_TWEAK_DESC, 0.1);
     private final static Modifier FAST_FIRE           = new Modifier(ModifiersDB.FAST_FIRE_DESC, 0.05);
@@ -46,6 +50,19 @@ public class Efficiencies {
     private final static Modifier ANCHOR_TURN_HIGH    = new Modifier(ModifiersDB.ANCHOR_TURN_HIGH_DESC, 0.1);
     private final static Modifier ANCHOR_TURN_HIGH_2X = new Modifier(ModifiersDB.ANCHOR_TURN_HIGH_DESC, 0.2);
 
+    private final static Modifier TWIST_X_PITCH        = new Modifier(ModifiersDB.TWIST_X_PITCH_DESC, 0.1);
+    private final static Modifier TWIST_X_PITCH_2X     = new Modifier(ModifiersDB.TWIST_X_PITCH_DESC, 0.2);
+    private final static Modifier TWIST_X_YAW          = new Modifier(ModifiersDB.TWIST_X_YAW_DESC, 0.1);
+    private final static Modifier TWIST_X_YAW_2X       = new Modifier(ModifiersDB.TWIST_X_YAW_DESC, 0.2);
+    private final static Modifier ARM_REFLEX_PITCH     = new Modifier(ModifiersDB.ARM_REFLEX_PITCH_DESC, 0.15);
+    private final static Modifier ARM_REFLEX_PITCH_2X  = new Modifier(ModifiersDB.ARM_REFLEX_PITCH_DESC, 0.3);
+    private final static Modifier ARM_REFLEX_YAW       = new Modifier(ModifiersDB.ARM_REFLEX_YAW_DESC, 0.15);
+    private final static Modifier ARM_REFLEX_YAW_2X    = new Modifier(ModifiersDB.ARM_REFLEX_YAW_DESC, 0.30);
+    private final static Modifier TWIST_SPEED_PITCH    = new Modifier(ModifiersDB.TWIST_SPEED_PITCH_DESC, 0.20);
+    private final static Modifier TWIST_SPEED_PITCH_2X = new Modifier(ModifiersDB.TWIST_SPEED_PITCH_DESC, 0.40);
+    private final static Modifier TWIST_SPEED_YAW      = new Modifier(ModifiersDB.TWIST_SPEED_YAW_DESC, 0.20);
+    private final static Modifier TWIST_SPEED_YAW_2X   = new Modifier(ModifiersDB.TWIST_SPEED_YAW_DESC, 0.40);
+
     public static class EfficienciesMessage implements Message {
         @Override
         public boolean equals(Object obj) {
@@ -56,9 +73,10 @@ public class Efficiencies {
             return false;
         }
 
-        public EfficienciesMessage(Efficiencies aEfficiencies, Type aType) {
+        public EfficienciesMessage(Efficiencies aEfficiencies, Type aType, boolean aAffectsHeat) {
             efficiencies = aEfficiencies;
             type = aType;
+            affectsHeat = aAffectsHeat;
         }
 
         enum Type {
@@ -67,6 +85,7 @@ public class Efficiencies {
 
         private final Efficiencies efficiencies;
         public final Type          type;
+        private final boolean      affectsHeat;
 
         @Override
         public boolean isForMe(LoadoutBase<?> aLoadout) {
@@ -75,7 +94,7 @@ public class Efficiencies {
 
         @Override
         public boolean affectsHeatOrDamage() {
-            return true;
+            return affectsHeat;
         }
     }
 
@@ -91,6 +110,9 @@ public class Efficiencies {
     private boolean doubleBasics;
 
     private boolean fastfire;
+    private boolean twistX;
+    private boolean twistSpeed;
+    private boolean armReflex;
 
     /**
      * Creates a new efficiencies object.
@@ -190,7 +212,7 @@ public class Efficiencies {
         if (aSpeedTweak != speedTweak) {
             speedTweak = aSpeedTweak;
             if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed));
+                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
         }
     }
 
@@ -206,7 +228,7 @@ public class Efficiencies {
         if (aAnchorTurn != anchorTurn) {
             anchorTurn = aAnchorTurn;
             if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed));
+                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
         }
     }
 
@@ -222,7 +244,7 @@ public class Efficiencies {
         if (aCoolRun != coolRun) {
             coolRun = aCoolRun;
             if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed));
+                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, true));
         }
     }
 
@@ -238,7 +260,7 @@ public class Efficiencies {
         if (aHeatContainment != heatContainment) {
             heatContainment = aHeatContainment;
             if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed));
+                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, true));
         }
     }
 
@@ -254,7 +276,7 @@ public class Efficiencies {
         if (aDoubleBasics != doubleBasics) {
             doubleBasics = aDoubleBasics;
             if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed));
+                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, true));
         }
     }
 
@@ -279,6 +301,18 @@ public class Efficiencies {
                 ans.add(ANCHOR_TURN_MID_2X);
                 ans.add(ANCHOR_TURN_HIGH_2X);
             }
+            if (hasTwistX()) {
+                ans.add(TWIST_X_YAW_2X);
+                ans.add(TWIST_X_PITCH_2X);
+            }
+            if (hasTwistSpeed()) {
+                ans.add(TWIST_SPEED_PITCH_2X);
+                ans.add(TWIST_SPEED_YAW_2X);
+            }
+            if (hasArmReflex()) {
+                ans.add(ARM_REFLEX_PITCH_2X);
+                ans.add(ARM_REFLEX_YAW_2X);
+            }
         }
         else {
             if (hasCoolRun())
@@ -289,6 +323,18 @@ public class Efficiencies {
                 ans.add(ANCHOR_TURN_LOW);
                 ans.add(ANCHOR_TURN_MID);
                 ans.add(ANCHOR_TURN_HIGH);
+            }
+            if (hasTwistX()) {
+                ans.add(TWIST_X_YAW);
+                ans.add(TWIST_X_PITCH);
+            }
+            if (hasTwistSpeed()) {
+                ans.add(TWIST_SPEED_PITCH);
+                ans.add(TWIST_SPEED_YAW);
+            }
+            if (hasArmReflex()) {
+                ans.add(ARM_REFLEX_PITCH);
+                ans.add(ARM_REFLEX_YAW);
             }
         }
 
@@ -307,14 +353,86 @@ public class Efficiencies {
      * 
      * @param aFastFire
      *            The new status of the fast fire efficiency.
-     * @param xBar
+     * @param aXBar
      *            {@link MessageXBar} to signal changes on.
      */
-    public void setFastFire(boolean aFastFire, MessageXBar xBar) {
+    public void setFastFire(boolean aFastFire, MessageXBar aXBar) {
         if (aFastFire != fastfire) {
             fastfire = aFastFire;
-            if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed));
+            if (aXBar != null)
+                aXBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, true));
         }
     }
+
+    /**
+     * @return <code>true</code> if the Twist X efficiency is enabled.
+     */
+    public boolean hasTwistX() {
+        return twistX;
+    }
+
+    /**
+     * Sets the status of the Twist X efficiency.
+     * 
+     * @param aValue
+     *            New state of the Twist X efficiency.
+     * @param aXBar
+     *            {@link MessageXBar} to signal changes on.
+     */
+    public void setTwistX(boolean aValue, MessageXBar aXBar) {
+        if (twistX != aValue) {
+            twistX = aValue;
+            if (null != aXBar)
+                aXBar.post(new EfficienciesMessage(this, Type.Changed, false));
+        }
+    }
+
+    /**
+     * @return <code>true</code> if the Twist Speed efficiency is enabled.
+     */
+    public boolean hasTwistSpeed() {
+        return twistSpeed;
+    }
+
+    /**
+     * Sets the status of the Twist Speed efficiency.
+     * 
+     * @param aValue
+     *            The new status of the twist speed efficiency.
+     * @param aXBar
+     *            {@link MessageXBar} to signal changes on.
+     */
+    public void setTwistSpeed(boolean aValue, MessageXBar aXBar) {
+        if (twistSpeed != aValue) {
+            twistSpeed = aValue;
+            if (null != aXBar) {
+                aXBar.post(new EfficienciesMessage(this, Type.Changed, false));
+            }
+        }
+    }
+
+    /**
+     * @return <code>true</code> if the Arm Reflex efficiency is enabled.
+     */
+    public boolean hasArmReflex() {
+        return armReflex;
+    }
+
+    /**
+     * Sets the status of the Arm Reflex efficiency.
+     * 
+     * @param aValue
+     *            The new status of the arm reflex efficiency.
+     * @param aXBar
+     *            {@link MessageXBar} to signal changes on.
+     */
+    public void setArmReflex(boolean aValue, MessageXBar aXBar) {
+        if (armReflex != aValue) {
+            armReflex = aValue;
+            if (null != aXBar) {
+                aXBar.post(new EfficienciesMessage(this, Type.Changed, false));
+            }
+        }
+    }
+
 }

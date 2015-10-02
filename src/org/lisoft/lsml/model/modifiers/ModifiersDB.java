@@ -28,44 +28,49 @@ import java.util.List;
 import java.util.Map;
 
 import org.lisoft.lsml.model.DataCache;
+import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ValueType;
 
 /**
  * A database of all the quirks in the game.
  * 
  * @author Emily Björk
- *
  */
 public class ModifiersDB {
-    public final static String                            SEL_MOVEMENT_MAX_SPEED    = "speed";
-    public final static String                            SEL_MOVEMENT_REVERSE_MUL  = "reversespeed";
-    public final static String                            SEL_MOVEMENT_TORSO_SPEED  = "torsospeed";
-    public final static String                            SEL_MOVEMENT_ARM_SPEED    = "armspeed";
-    public final static String                            SEL_MOVEMENT_TORSO_ANGLE  = "torsoangle";
-    public final static String                            SEL_MOVEMENT_ARM_ANGLE    = "armrotate";
-    public final static String                            SEL_MOVEMENT_TURN_SPEED   = "turnlerp_speed";
-    public final static String                            SEL_MOVEMENT_TURN_RATE    = "turnlerp";
+    public final static String SEL_MOVEMENT_MAX_SPEED   = "speed";
+    public final static String SEL_MOVEMENT_REVERSE_MUL = "reversespeed";
+    public final static String SEL_MOVEMENT_TORSO_SPEED = "torsospeed";
+    public final static String SEL_MOVEMENT_ARM_SPEED   = "armspeed";
+    public final static String SEL_MOVEMENT_TORSO_ANGLE = "torsoangle";
+    public final static String SEL_MOVEMENT_ARM_ANGLE   = "armrotate";
+    public final static String SEL_MOVEMENT_TURN_SPEED  = "turnlerp_speed";
+    public final static String SEL_MOVEMENT_TURN_RATE   = "turnlerp";
 
-    public final static String                            SEL_HEAT_DISSIPATION      = "heatloss";
-    public final static String                            SEL_HEAT_LIMIT            = "heatlimit";
-    public final static String                            SEL_HEAT_EXTERNALTRANSFER = "externalheat";
+    public final static String SEL_HEAT_DISSIPATION      = "heatloss";
+    public final static String SEL_HEAT_LIMIT            = "heatlimit";
+    public final static String SEL_HEAT_EXTERNALTRANSFER = "externalheat";
 
-    public final static String                            SEL_WEAPON_RANGE          = "range";
-    public final static String                            SEL_WEAPON_COOLDOWN       = "cooldown";
-    public final static String                            SEL_WEAPON_HEAT           = "heat";
-    public final static String                            SEL_WEAPON_LARGE_BORE     = "largeweapon";
-    public final static String                            SEL_WEAPON_JAMMING_CHANCE = "jamchance";
-    public final static String                            SEL_WEAPON_JAMMED_TIME    = "jamtime";
+    public final static String SEL_WEAPON_RANGE          = "range";
+    public final static String SEL_WEAPON_COOLDOWN       = "cooldown";
+    public final static String SEL_WEAPON_HEAT           = "heat";
+    public final static String SEL_WEAPON_LARGE_BORE     = "largeweapon";
+    public final static String SEL_WEAPON_JAMMING_CHANCE = "jamchance";
+    public final static String SEL_WEAPON_JAMMED_TIME    = "jamtime";
 
-    public final static List<String>                      ALL_WEAPONS;
-    public final static ModifierDescription               HEAT_CONTAINMENT_DESC;
-    public final static ModifierDescription               COOL_RUN_DESC;
-    public final static ModifierDescription               FAST_FIRE_DESC;
-    public final static ModifierDescription               SPEED_TWEAK_DESC;
-    public final static ModifierDescription               ANCHOR_TURN_LOW_DESC;
-    public final static ModifierDescription               ANCHOR_TURN_MID_DESC;
-    public final static ModifierDescription               ANCHOR_TURN_HIGH_DESC;
+    public final static List<String>        ALL_WEAPONS;
+    public final static ModifierDescription HEAT_CONTAINMENT_DESC;
+    public final static ModifierDescription COOL_RUN_DESC;
+    public final static ModifierDescription FAST_FIRE_DESC;
+    public final static ModifierDescription SPEED_TWEAK_DESC;
+    public final static ModifierDescription ANCHOR_TURN_LOW_DESC;
+    public final static ModifierDescription ANCHOR_TURN_MID_DESC;
+    public final static ModifierDescription ANCHOR_TURN_HIGH_DESC;
+    public final static ModifierDescription TWIST_X_PITCH_DESC;
+    public final static ModifierDescription TWIST_X_YAW_DESC;
+    public final static ModifierDescription ARM_REFLEX_PITCH_DESC;
+    public final static ModifierDescription ARM_REFLEX_YAW_DESC;
+    public final static ModifierDescription TWIST_SPEED_PITCH_DESC;
+    public final static ModifierDescription TWIST_SPEED_YAW_DESC;
 
     private final static Map<String, ModifierDescription> mwoname2modifier;
 
@@ -105,20 +110,39 @@ public class ModifiersDB {
 
         ALL_WEAPONS = Collections
                 .unmodifiableList(Arrays.asList("energy", "ballistic", "missile", "antimissilesystem"));
-        HEAT_CONTAINMENT_DESC = new ModifierDescription("HEAT CONTAINMENT", null, Operation.MULTIPLICATIVE,
-                SEL_HEAT_LIMIT, null, ValueType.POSITIVE_GOOD);
-        COOL_RUN_DESC = new ModifierDescription("COOL RUN", null, Operation.MULTIPLICATIVE, "heatloss", null,
-                ValueType.POSITIVE_GOOD);
-        FAST_FIRE_DESC = new ModifierDescription("FAST FIRE", null, Operation.MULTIPLICATIVE, ALL_WEAPONS,
-                SEL_WEAPON_COOLDOWN, ValueType.NEGATIVE_GOOD);
-        SPEED_TWEAK_DESC = new ModifierDescription("SPEED TWEAK", null, Operation.MULTIPLICATIVE, Arrays.asList(
-                SEL_MOVEMENT_MAX_SPEED, SEL_MOVEMENT_REVERSE_MUL), null, ValueType.POSITIVE_GOOD);
-        ANCHOR_TURN_LOW_DESC = new ModifierDescription("ANCHOR TURN (LOW SPEED)", null, Operation.MULTIPLICATIVE,
-                SEL_MOVEMENT_TURN_RATE, "lowrate", ValueType.POSITIVE_GOOD);
-        ANCHOR_TURN_MID_DESC = new ModifierDescription("ANCHOR TURN (MID SPEED)", null, Operation.MULTIPLICATIVE,
-                SEL_MOVEMENT_TURN_RATE, "midrate", ValueType.POSITIVE_GOOD);
-        ANCHOR_TURN_HIGH_DESC = new ModifierDescription("ANCHOR TURN (HIGH SPEED)", null, Operation.MULTIPLICATIVE,
-                SEL_MOVEMENT_TURN_RATE, "highrate", ValueType.POSITIVE_GOOD);
+
+        // Descriptions for Basic Pilot Efficiencies
+        HEAT_CONTAINMENT_DESC = new ModifierDescription("HEAT CONTAINMENT", null, Operation.MUL, SEL_HEAT_LIMIT, null,
+                ModifierType.POSITIVE_GOOD);
+        COOL_RUN_DESC = new ModifierDescription("COOL RUN", null, Operation.MUL, "heatloss", null,
+                ModifierType.POSITIVE_GOOD);
+        ANCHOR_TURN_LOW_DESC = new ModifierDescription("ANCHOR TURN (LOW SPEED)", null, Operation.MUL,
+                SEL_MOVEMENT_TURN_RATE, "lowrate", ModifierType.POSITIVE_GOOD);
+        ANCHOR_TURN_MID_DESC = new ModifierDescription("ANCHOR TURN (MID SPEED)", null, Operation.MUL,
+                SEL_MOVEMENT_TURN_RATE, "midrate", ModifierType.POSITIVE_GOOD);
+        ANCHOR_TURN_HIGH_DESC = new ModifierDescription("ANCHOR TURN (HIGH SPEED)", null, Operation.MUL,
+                SEL_MOVEMENT_TURN_RATE, "highrate", ModifierType.POSITIVE_GOOD);
+        
+        TWIST_X_PITCH_DESC = new ModifierDescription("TORSO TURN ANGLE", null, Operation.MUL, SEL_MOVEMENT_TORSO_ANGLE,
+                "pitch", ModifierType.POSITIVE_GOOD);
+        TWIST_X_YAW_DESC = new ModifierDescription("TORSO TURN ANGLE", null, Operation.MUL, SEL_MOVEMENT_TORSO_ANGLE,
+                "yaw", ModifierType.POSITIVE_GOOD);
+
+        ARM_REFLEX_PITCH_DESC = new ModifierDescription("ARM MOVEMENT RATE", null, Operation.MUL, SEL_MOVEMENT_ARM_SPEED,
+                "pitch", ModifierType.POSITIVE_GOOD);
+        ARM_REFLEX_YAW_DESC = new ModifierDescription("ARM MOVEMENT RATE", null, Operation.MUL, SEL_MOVEMENT_ARM_SPEED,
+                "yaw", ModifierType.POSITIVE_GOOD);
+        
+        TWIST_SPEED_PITCH_DESC = new ModifierDescription("TORSO TURN RATE", null, Operation.MUL, SEL_MOVEMENT_TORSO_SPEED,
+                "pitch", ModifierType.POSITIVE_GOOD);
+        TWIST_SPEED_YAW_DESC = new ModifierDescription("TORSO TURN RATE", null, Operation.MUL, SEL_MOVEMENT_TORSO_SPEED,
+                "yaw", ModifierType.POSITIVE_GOOD);
+        
+        // Descriptions for Elite Pilot Efficiencies
+        FAST_FIRE_DESC = new ModifierDescription("FAST FIRE", null, Operation.MUL, ALL_WEAPONS, SEL_WEAPON_COOLDOWN,
+                ModifierType.NEGATIVE_GOOD);
+        SPEED_TWEAK_DESC = new ModifierDescription("SPEED TWEAK", null, Operation.MUL,
+                Arrays.asList(SEL_MOVEMENT_MAX_SPEED, SEL_MOVEMENT_REVERSE_MUL), null, ModifierType.POSITIVE_GOOD);
 
     }
 }
