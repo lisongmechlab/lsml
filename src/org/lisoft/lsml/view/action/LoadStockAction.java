@@ -27,12 +27,12 @@ import javax.swing.AbstractAction;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import org.lisoft.lsml.command.OpLoadStock;
+import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
 
@@ -45,7 +45,7 @@ import org.lisoft.lsml.view.ProgramInit;
 public class LoadStockAction extends AbstractAction {
     private static final long    serialVersionUID = 4350731510583942480L;
     private final LoadoutBase<?> loadout;
-    private final OperationStack stack;
+    private final CommandStack stack;
     private final MessageXBar    xBar;
     private final Component      component;
 
@@ -55,13 +55,13 @@ public class LoadStockAction extends AbstractAction {
      * @param aLoadout
      *            The {@link LoadoutStandard} to load stock for.
      * @param aStack
-     *            The {@link OperationStack} stack that shall be used for undo information.
+     *            The {@link CommandStack} stack that shall be used for undo information.
      * @param aXBar
      *            The {@link MessageXBar} that shall be used for signaling changes to the {@link LoadoutStandard}.
      * @param aComponent
      *            The {@link Component} on which any dialogs will be centered.
      */
-    public LoadStockAction(LoadoutBase<?> aLoadout, OperationStack aStack, MessageXBar aXBar, Component aComponent) {
+    public LoadStockAction(LoadoutBase<?> aLoadout, CommandStack aStack, MessageXBar aXBar, Component aComponent) {
         super(getActionName(aLoadout.getChassis()));
         loadout = aLoadout;
         stack = aStack;
@@ -75,13 +75,13 @@ public class LoadStockAction extends AbstractAction {
 
         try {
             if (variations.size() == 1) {
-                stack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
+                stack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
             }
             else {
                 JList<ChassisBase> list = new JList<>(variations.toArray(new ChassisBase[variations.size()]));
                 JOptionPane.showConfirmDialog(component, list, "Which stock loadout?", JOptionPane.OK_CANCEL_OPTION);
                 if (list.getSelectedValue() != null) {
-                    stack.pushAndApply(new OpLoadStock(list.getSelectedValue(), loadout, xBar));
+                    stack.pushAndApply(new CmdLoadStock(list.getSelectedValue(), loadout, xBar));
                 }
             }
         }

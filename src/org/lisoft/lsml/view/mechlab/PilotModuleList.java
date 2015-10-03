@@ -29,13 +29,13 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import org.lisoft.lsml.command.OpAddModule;
-import org.lisoft.lsml.command.OpRemoveModule;
+import org.lisoft.lsml.command.CmdAddModule;
+import org.lisoft.lsml.command.CmdRemoveModule;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.PilotModuleDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ModuleTransferHandler;
 import org.lisoft.lsml.view.render.ItemRenderer;
@@ -51,10 +51,10 @@ public class PilotModuleList extends JList<String> {
     private static final long    serialVersionUID = -3812414074800032146L;
     private final MessageXBar    xBar;
     private final LoadoutBase<?> loadout;
-    private final OperationStack stack;
+    private final CommandStack stack;
     private final ModuleSlot     moduleSlot;
 
-    public PilotModuleList(MessageXBar aXBar, OperationStack aOperationStack, LoadoutBase<?> aLoadout,
+    public PilotModuleList(MessageXBar aXBar, CommandStack aOperationStack, LoadoutBase<?> aLoadout,
             ModuleSlot aModuleSlot) {
         super(new PilotModuleModel(aLoadout, aXBar, aModuleSlot));
         xBar = aXBar;
@@ -108,7 +108,7 @@ public class PilotModuleList extends JList<String> {
     }
 
     public void putElement(PilotModule aModule) {
-        stack.pushAndApply(new OpAddModule(xBar, loadout, aModule));
+        stack.pushAndApply(new CmdAddModule(xBar, loadout, aModule));
     }
 
     public PilotModule takeCurrent() {
@@ -118,7 +118,7 @@ public class PilotModuleList extends JList<String> {
 
         PilotModule module = PilotModuleDB.lookup(getSelectedValue());
         if (module != null) {
-            stack.pushAndApply(new OpRemoveModule(xBar, loadout, module));
+            stack.pushAndApply(new CmdRemoveModule(xBar, loadout, module));
         }
         return module;
     }

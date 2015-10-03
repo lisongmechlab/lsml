@@ -21,16 +21,16 @@ package org.lisoft.lsml.model.upgrades;
 
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
- * An abstract package local class that facilitates implementing {@link Operation}s that relate to
+ * An abstract package local class that facilitates implementing {@link Command}s that relate to
  * {@link UpgradesMutable}.
  * 
  * @author Li Song
  */
-public abstract class OpUpgradeBase extends Operation {
+public abstract class OpUpgradeBase extends Command {
     protected final transient MessageDelivery messageDelivery;
     private final String                      description;
 

@@ -42,7 +42,7 @@ import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -61,7 +61,7 @@ public class LoadoutSerializationTest {
     @Mock
     MessageXBar    xBar;
     @Mock
-    OperationStack undoStack;
+    CommandStack undoStack;
 
     @Before
     public void setup() {

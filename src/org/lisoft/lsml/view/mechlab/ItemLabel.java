@@ -48,7 +48,7 @@ import javax.swing.SwingWorker;
 import javax.swing.TransferHandler;
 import javax.swing.WindowConstants;
 
-import org.lisoft.lsml.command.OpAutoAddItem;
+import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
@@ -105,7 +105,7 @@ public class ItemLabel extends JLabel {
     }
 
     private static class AutoPlaceTask extends SwingWorker<Void, Void> {
-        private OpAutoAddItem operation;
+        private CmdAutoAddItem operation;
         private JDialog       dialog;
         private LoadoutFrame  loadoutFrame;
         private MessageXBar   xBar;
@@ -121,8 +121,8 @@ public class ItemLabel extends JLabel {
         @Override
         public Void doInBackground() {
             try {
-                operation = new OpAutoAddItem(loadoutFrame.getLoadout(), xBar, itemToPlace);
-                operation.prepareOperationAheadOfTime();
+                operation = new CmdAutoAddItem(loadoutFrame.getLoadout(), xBar, itemToPlace);
+                operation.prepareCommandAheadOfTime();
             }
             catch (Throwable e) { // Yeah anything thrown is a failure.
                 operation = null;
@@ -223,7 +223,7 @@ public class ItemLabel extends JLabel {
                             }
                         }
                         else if (EquipResult.SUCCESS == loadout.canEquip(item)) {
-                            frame.getOpStack().pushAndApply(new OpAutoAddItem(loadout, anXBar, item));
+                            frame.getOpStack().pushAndApply(new CmdAutoAddItem(loadout, anXBar, item));
                         }
                     }
                 }

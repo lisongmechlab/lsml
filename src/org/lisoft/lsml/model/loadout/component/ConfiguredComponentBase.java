@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.lisoft.lsml.command.OpAddItem;
-import org.lisoft.lsml.command.OpRemoveItem;
+import org.lisoft.lsml.command.CmdAddItem;
+import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ComponentBase;
 import org.lisoft.lsml.model.chassi.HardPoint;
@@ -42,14 +42,14 @@ import org.lisoft.lsml.model.loadout.EquipResult.Type;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.ListArrayUtils;
-import org.lisoft.lsml.util.OperationStack;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This class represents a configured {@link ComponentBase}.
  * <p>
- * This class is immutable. The only way to alter it is by creating instances of the relevant {@link Operation}s and
- * adding them to an {@link OperationStack}.
+ * This class is immutable. The only way to alter it is by creating instances of the relevant {@link Command}s and
+ * adding them to an {@link CommandStack}.
  * 
  * @author Li Song
  */
@@ -98,7 +98,7 @@ public abstract class ConfiguredComponentBase {
      * Adds a new item to this component. This method is unchecked and can put the component into an illegal state. It
      * is the caller's responsibility to make sure local and global conditions are met before adding an item.
      * <p>
-     * This is intended for use only from {@link OpAddItem}, {@link OpRemoveItem} and relatives.
+     * This is intended for use only from {@link CmdAddItem}, {@link CmdRemoveItem} and relatives.
      * <p>
      * Please note that {@link #canEquip(Item)} must return true prior to a call to {@link #addItem(Item)}.
      * 
@@ -153,7 +153,7 @@ public abstract class ConfiguredComponentBase {
     }
 
     /**
-     * This is intended for use only from {@link OpAddItem}, {@link OpRemoveItem} and relatives.
+     * This is intended for use only from {@link CmdAddItem}, {@link CmdRemoveItem} and relatives.
      * 
      * @param aItem
      *            The item to remove.

@@ -37,7 +37,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import org.lisoft.lsml.command.OpAddModule;
+import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.PilotModuleDB;
@@ -98,7 +98,7 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
                         JInternalFrame frame = aDesktop.getSelectedFrame();
                         if (frame != null) {
                             LoadoutFrame loadoutFrame = (LoadoutFrame) frame;
-                            loadoutFrame.getOpStack().pushAndApply(new OpAddModule(aXBar, currentLoadout, module));
+                            loadoutFrame.getOpStack().pushAndApply(new CmdAddModule(aXBar, currentLoadout, module));
                         }
                     }
                 }

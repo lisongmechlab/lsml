@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.lisoft.lsml.command.OpStripArmor;
+import org.lisoft.lsml.command.CmdStripArmor;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -57,6 +57,6 @@ public class StripArmorAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        loadoutFrame.getOpStack().pushAndApply(new OpStripArmor(loadout, xBar));
+        loadoutFrame.getOpStack().pushAndApply(new CmdStripArmor(loadout, xBar));
     }
 }

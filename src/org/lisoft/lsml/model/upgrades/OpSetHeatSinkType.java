@@ -19,24 +19,24 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.command.OpAddItem;
-import org.lisoft.lsml.command.OpRemoveItem;
+import org.lisoft.lsml.command.CmdAddItem;
+import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.util.OperationStack.CompositeOperation;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
- * This {@link Operation} can alter the heat sink upgrade status of a {@link LoadoutStandard}.
+ * This {@link Command} can alter the heat sink upgrade status of a {@link LoadoutStandard}.
  * 
  * @author Li Song
  */
-public class OpSetHeatSinkType extends CompositeOperation {
+public class OpSetHeatSinkType extends CompositeCommand {
     private final HeatSinkUpgrade oldValue;
     private final HeatSinkUpgrade newValue;
     private final UpgradesMutable upgrades;
@@ -47,7 +47,7 @@ public class OpSetHeatSinkType extends CompositeOperation {
      * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
      * 
      * @param aUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Operation}.
+     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
      * @param aHeatsinkUpgrade
      *            The new heat sink type.
      */
@@ -99,7 +99,7 @@ public class OpSetHeatSinkType extends CompositeOperation {
     }
 
     @Override
-    public void buildOperation() {
+    public void buildCommand() {
         if (oldValue != newValue) {
             HeatSink oldHsType = oldValue.getHeatSinkType();
             HeatSink newHsType = newValue.getHeatSinkType();
@@ -111,7 +111,7 @@ public class OpSetHeatSinkType extends CompositeOperation {
                 int locallyRemoved = 0;
                 for (Item item : component.getItemsEquipped()) {
                     if (item instanceof HeatSink) {
-                        addOp(new OpRemoveItem(messageBuffer, loadout, component, item));
+                        addOp(new CmdRemoveItem(messageBuffer, loadout, component, item));
                         globallyRemoved++;
                         locallyRemoved++;
                     }
@@ -146,7 +146,7 @@ public class OpSetHeatSinkType extends CompositeOperation {
 
                 while (hsToAdd > 0) {
                     hsToAdd--;
-                    addOp(new OpAddItem(messageBuffer, loadout, component, newHsType));
+                    addOp(new CmdAddItem(messageBuffer, loadout, component, newHsType));
                 }
             }
         }

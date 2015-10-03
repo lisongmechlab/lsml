@@ -21,8 +21,8 @@ package org.lisoft.lsml.parsing.datacache;
 
 import javax.swing.JOptionPane;
 
-import org.lisoft.lsml.command.OpAddModule;
-import org.lisoft.lsml.command.OpRename;
+import org.lisoft.lsml.command.CmdAddModule;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -43,7 +43,7 @@ import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
 import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -130,7 +130,7 @@ public class LoadoutConverter implements Converter {
         ChassisBase chassis = ChassisDB.lookup(aReader.getAttribute("chassis"));
         LoadoutBase<?> loadoutBase = DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new OpRename(loadoutBase, null, name));
+        builder.push(new CmdRename(loadoutBase, null, name));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
@@ -177,7 +177,7 @@ public class LoadoutConverter implements Converter {
                     }
 
                     PilotModule module = (PilotModule) aContext.convertAnother(null, PilotModule.class);
-                    builder.push(new OpAddModule(null, loadoutBase, module));
+                    builder.push(new CmdAddModule(null, loadoutBase, module));
 
                     aReader.moveUp();
                 }
@@ -203,7 +203,7 @@ public class LoadoutConverter implements Converter {
 
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new OpRename(loadout, null, name));
+        builder.push(new CmdRename(loadout, null, name));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
@@ -217,7 +217,7 @@ public class LoadoutConverter implements Converter {
                 // We cheat here to preserve backwards compatibility with really old V1 garages.
                 // Just make sure that the guidance type is set so that fixes for artemis changes will be applied in
                 // v1 parser in ConfiguredComponentConverter.
-                (new OperationStack(0)).pushAndApply(new OpSetGuidanceType(null, loadout, upgrades.getGuidance()));
+                (new CommandStack(0)).pushAndApply(new OpSetGuidanceType(null, loadout, upgrades.getGuidance()));
 
             }
             else if ("efficiencies".equals(aReader.getNodeName())) {

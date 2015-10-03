@@ -35,7 +35,7 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
 import org.lisoft.lsml.util.DecodingException;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -65,7 +65,7 @@ public class OpSetGuidanceTypeTest {
     @Test
     public void testApply() {
         Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
-        OperationStack stack = new OperationStack(0);
+        CommandStack stack = new CommandStack(0);
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
         Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
 
@@ -84,7 +84,7 @@ public class OpSetGuidanceTypeTest {
         Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
 
         try {
-            (new OperationStack(0)).pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
+            (new CommandStack(0)).pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
         }
         catch (Throwable t) {
             /* No-Op */
@@ -99,7 +99,7 @@ public class OpSetGuidanceTypeTest {
     @Test
     public void testApply_changeMissileLaunchersAndAmmo() {
         Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
-        OperationStack stack = new OperationStack(0);
+        CommandStack stack = new CommandStack(0);
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
         Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
         Mockito.when(mlc.loadout.canEquip(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
@@ -143,7 +143,7 @@ public class OpSetGuidanceTypeTest {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutBase<?> loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         LoadoutBase<?> loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-        OperationStack stack = new OperationStack(1);
+        CommandStack stack = new CommandStack(1);
 
         stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
         stack.undo();

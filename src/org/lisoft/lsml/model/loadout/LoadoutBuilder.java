@@ -26,60 +26,60 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lisoft.lsml.command.OpAddItem;
-import org.lisoft.lsml.command.OpAddModule;
-import org.lisoft.lsml.command.OpChangeOmniPod;
-import org.lisoft.lsml.command.OpRename;
-import org.lisoft.lsml.command.OpSetArmor;
-import org.lisoft.lsml.command.OpToggleItem;
+import org.lisoft.lsml.command.CmdAddItem;
+import org.lisoft.lsml.command.CmdAddModule;
+import org.lisoft.lsml.command.CmdChangeOmniPod;
+import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.upgrades.OpSetArmorType;
 import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
 import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
 import org.lisoft.lsml.model.upgrades.OpSetStructureType;
-import org.lisoft.lsml.util.OperationStack;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This class promises to take care of dependency issues when de-serialising any loadout.
  * <p>
- * One passes the {@link Operation}s that would be used to naively construct the loadout to the {@link #push(Operation)}
+ * One passes the {@link Command}s that would be used to naively construct the loadout to the {@link #push(Command)}
  * method. Once all operations have been pushed, one applies the operations loadout with the {@link #apply()} method.
- * The call to {@link #apply()} will re-order and apply the pushed {@link Operation}s in an order that allows the
+ * The call to {@link #apply()} will re-order and apply the pushed {@link Command}s in an order that allows the
  * loadout to be constructed without violating validity invariants during creation.
  * 
  * @author Li Song
  */
 public class LoadoutBuilder {
-    private static class OperationComparator implements Comparator<Operation> {
-        private final static Map<Class<? extends Operation>, Integer> CLASS_PRIORITY_ORDER;
+    private static class OperationComparator implements Comparator<Command> {
+        private final static Map<Class<? extends Command>, Integer> CLASS_PRIORITY_ORDER;
 
         static {
             CLASS_PRIORITY_ORDER = new HashMap<>();
 
             // Omnipods, upgrades, modules and renaming are independent and cannot fail on an empty loadout
-            CLASS_PRIORITY_ORDER.put(OpRename.class, 0);
-            CLASS_PRIORITY_ORDER.put(OpChangeOmniPod.class, 1);
+            CLASS_PRIORITY_ORDER.put(CmdRename.class, 0);
+            CLASS_PRIORITY_ORDER.put(CmdChangeOmniPod.class, 1);
             CLASS_PRIORITY_ORDER.put(OpSetGuidanceType.class, 2);
             CLASS_PRIORITY_ORDER.put(OpSetHeatSinkType.class, 2);
             CLASS_PRIORITY_ORDER.put(OpSetArmorType.class, 2);
             CLASS_PRIORITY_ORDER.put(OpSetStructureType.class, 2);
-            CLASS_PRIORITY_ORDER.put(OpSetArmor.class, 3);
-            CLASS_PRIORITY_ORDER.put(OpAddModule.class, 4);
+            CLASS_PRIORITY_ORDER.put(CmdSetArmor.class, 3);
+            CLASS_PRIORITY_ORDER.put(CmdAddModule.class, 4);
 
             // Toggleables have to be set before items are added
-            CLASS_PRIORITY_ORDER.put(OpToggleItem.class, 10);
+            CLASS_PRIORITY_ORDER.put(CmdToggleItem.class, 10);
 
             // Item operations last
-            CLASS_PRIORITY_ORDER.put(OpAddItem.class, 100);
+            CLASS_PRIORITY_ORDER.put(CmdAddItem.class, 100);
         }
 
         @Override
-        public int compare(Operation aLHS, Operation aRHS) {
+        public int compare(Command aLHS, Command aRHS) {
             // This is needed to make sure that engines are added first
-            if (aLHS instanceof OpAddItem && aRHS instanceof OpAddItem) {
-                boolean lhsEngine = ((OpAddItem) aLHS).getItem() instanceof Engine;
-                boolean rhsEngine = ((OpAddItem) aRHS).getItem() instanceof Engine;
+            if (aLHS instanceof CmdAddItem && aRHS instanceof CmdAddItem) {
+                boolean lhsEngine = ((CmdAddItem) aLHS).getItem() instanceof Engine;
+                boolean rhsEngine = ((CmdAddItem) aRHS).getItem() instanceof Engine;
 
                 if (lhsEngine == rhsEngine)
                     return 0;
@@ -105,10 +105,10 @@ public class LoadoutBuilder {
         }
     }
 
-    final private List<Operation> operations = new ArrayList<>(20);
+    final private List<Command> operations = new ArrayList<>(20);
     private List<Throwable>       errors     = null;
 
-    public void push(final Operation aOperation) {
+    public void push(final Command aOperation) {
         operations.add(aOperation);
     }
 
@@ -133,10 +133,10 @@ public class LoadoutBuilder {
     }
 
     public void apply() {
-        OperationStack operationStack = new OperationStack(0);
+        CommandStack operationStack = new CommandStack(0);
         Collections.sort(operations, new OperationComparator());
 
-        for (Operation op : operations) {
+        for (Command op : operations) {
             try {
                 operationStack.pushAndApply(op);
             }
