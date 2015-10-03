@@ -47,6 +47,7 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipResult.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -55,6 +56,8 @@ import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import com.sun.java.swing.plaf.motif.resources.motif;
+
 /**
  * Test suite for {@link LoadoutBase}
  * 
@@ -62,17 +65,19 @@ import org.mockito.Mockito;
  */
 public abstract class LoadoutBaseTest {
     protected int                       mass             = 75;
+    protected int                       chassisSlots     = 10;
     protected String                    chassisName      = "chassis";
     protected String                    chassisShortName = "short chassis";
     protected MessageXBar               xBar;
     protected ChassisBase               chassis;
     protected ConfiguredComponentBase[] components;
     protected ComponentBase[]           internals;
-
-    protected int                       chassisSlots     = 10;
     protected HeatSinkUpgrade           heatSinks;
     protected StructureUpgrade          structure;
     protected ArmorUpgrade              armor;
+    protected GuidanceUpgrade           guidance;
+    protected WeaponGroups              weaponGroups;
+    protected Upgrades                  upgrades;
 
     protected abstract LoadoutBase<?> makeDefaultCUT();
 
@@ -104,24 +109,23 @@ public abstract class LoadoutBaseTest {
         structure = Mockito.mock(StructureUpgrade.class);
         armor = Mockito.mock(ArmorUpgrade.class);
         heatSinks = Mockito.mock(HeatSinkUpgrade.class);
+        weaponGroups = Mockito.mock(WeaponGroups.class);
+        guidance = Mockito.mock(GuidanceUpgrade.class);
+        upgrades = Mockito.mock(Upgrades.class);
+
+        Mockito.when(upgrades.getArmor()).thenReturn(armor);
+        Mockito.when(upgrades.getGuidance()).thenReturn(guidance);
+        Mockito.when(upgrades.getHeatSink()).thenReturn(heatSinks);
+        Mockito.when(upgrades.getStructure()).thenReturn(structure);
     }
 
     @Test
-    public void testGetWeaponGroups(){
+    public void testGetWeaponGroups() {
         LoadoutBase<?> cut = makeDefaultCUT();
-        WeaponGroups weaponGroups = cut.getWeaponGroups();
-        
-        assertNotNull(weaponGroups);
-        
-        Weapon weapon = makeTestItem(0, 0, HardPointType.ENERGY, true, true, true, EnergyWeapon.class);
-        List<Weapon> eq = new ArrayList<>();
-        eq.add(weapon);
-        Mockito.when(cut.items(Weapon.class)).thenReturn(eq);
-        
-        assertEquals(1, weaponGroups.getWeaponOrder().size());
-        assertSame(weapon, weaponGroups.getWeaponOrder().get(0));
+        WeaponGroups cut_weaponGroups = cut.getWeaponGroups();
+        assertNotNull(cut_weaponGroups);
     }
-    
+
     @Test
     public void testGetCandidateLocationsForItem_NoInternalSupport() {
         LoadoutBase<?> cut = makeDefaultCUT();
@@ -227,7 +231,6 @@ public abstract class LoadoutBaseTest {
         assertTrue(cut.getCandidateLocationsForItem(item).isEmpty());
     }
 
-
     @Test
     public void testGetCandidateLocationsForItem_AlreadyHasEngine() throws Exception {
         Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
@@ -248,7 +251,7 @@ public abstract class LoadoutBaseTest {
     public void testGetCandidateLocationsForItem_NotGloballyFeasible_TooFewSlots() throws Exception {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
-        Item item = makeTestItem(0.0, chassisSlots-1, HardPointType.NONE, true, true, false);
+        Item item = makeTestItem(0.0, chassisSlots - 1, HardPointType.NONE, true, true, false);
         for (ConfiguredComponentBase component : components) {
             Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
             Mockito.when(component.getSlotsFree()).thenReturn(1);
@@ -258,7 +261,7 @@ public abstract class LoadoutBaseTest {
         // Execute + Verify
         assertTrue(makeDefaultCUT().getCandidateLocationsForItem(item).isEmpty());
     }
-    
+
     @Test
     public void testCanEquip() throws Exception {
         Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true);

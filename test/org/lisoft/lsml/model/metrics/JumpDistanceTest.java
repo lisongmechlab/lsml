@@ -62,7 +62,7 @@ public class JumpDistanceTest {
         final double h = F * t * t / (2 * mass) * num_jj;
 
         items.add(jj);
-        when(mlc.chassi.getMassMax()).thenReturn(mass);
+        when(mlc.chassis.getMassMax()).thenReturn(mass);
         when(mlc.loadout.getJumpJetCount()).thenReturn(num_jj);
         assertEquals(h, cut.calculate(), 0.5);
     }

@@ -21,7 +21,6 @@ package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,16 +31,15 @@ import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisDB;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.util.OperationStack;
@@ -78,10 +76,8 @@ public class OpLoadStockTest {
     public void testNotEmpty() throws Exception {
         // Setup
         ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
-        LoadoutStandard loadout = new LoadoutStandard(chassi);
+        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(chassi);
         OperationStack opstack = new OperationStack(0);
-        opstack.pushAndApply(new OpLoadStock(chassi, loadout, xBar));
-
         assertTrue(loadout.getMass() > 34.9);
 
         // Execute
@@ -108,17 +104,7 @@ public class OpLoadStockTest {
     @Parameters(method = "allChassis")
     public void testApply(ChassisBase aChassis) throws Exception {
         // Setup
-        final LoadoutBase<?> loadout;
-        if (aChassis instanceof ChassisStandard) {
-            loadout = new LoadoutStandard((ChassisStandard) aChassis);
-        }
-        else if (aChassis instanceof ChassisOmniMech) {
-            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) aChassis);
-        }
-        else {
-            fail("Unknown chassis type");
-            return;
-        }
+        final LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(aChassis);
 
         // Execute
         OperationStack opstack = new OperationStack(0);
@@ -128,14 +114,12 @@ public class OpLoadStockTest {
         // armor?!)
         assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
         for (ConfiguredComponentBase part : loadout.getComponents()) {
-            Mockito.verify(xBar, Mockito.atLeast(1)).post(
-                    new ConfiguredComponentBase.ComponentMessage(part, Type.ArmorChanged));
+            Mockito.verify(xBar, Mockito.atLeast(1)).post(new ComponentMessage(part, Type.ArmorChanged, true));
         }
-        Mockito.verify(xBar, Mockito.atLeast(1)).post(
-                new ConfiguredComponentBase.ComponentMessage(Matchers.any(ConfiguredComponentBase.class),
-                        Type.ItemAdded));
-        Mockito.verify(xBar, Mockito.atLeast(1)).post(
-                new Upgrades.UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
+        Mockito.verify(xBar, Mockito.atLeast(1))
+                .post(new ComponentMessage(Matchers.any(ConfiguredComponentBase.class), Type.ItemAdded));
+        Mockito.verify(xBar, Mockito.atLeast(1))
+                .post(new Upgrades.UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
     }
 
     /**
@@ -146,7 +130,7 @@ public class OpLoadStockTest {
     @Test
     public void testApply_artemisFeb4() throws Exception {
         // Setup
-        LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("CN9-D"));
+        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CN9-D"));
 
         // Execute
         OperationStack opstack = new OperationStack(0);
@@ -165,8 +149,8 @@ public class OpLoadStockTest {
     public void testUndo() throws Exception {
         // Setup
         ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
-        LoadoutStandard reference = new LoadoutStandard(chassi);
-        LoadoutStandard loadout = new LoadoutStandard(chassi);
+        LoadoutStandard reference = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassi);
+        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassi);
         OperationStack opstack = new OperationStack(1);
         opstack.pushAndApply(new OpLoadStock(loadout.getChassis(), loadout, xBar));
 
@@ -185,22 +169,22 @@ public class OpLoadStockTest {
     @Test
     public void testApply_InPresenceOfAutomaticArmor() throws Exception {
         // Setup
-        final LoadoutBase<?> loadout = new LoadoutStandard("BNC-3S");
+        final LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("BNC-3S"));
         final OperationStack stack = new OperationStack(0);
 
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock aInvocation) throws Throwable {
                 Message aMsg = (Message) aInvocation.getArguments()[0];
-                if (aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
-                    ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
-                    if (message.automatic)
+                if (aMsg.isForMe(loadout) && aMsg instanceof ComponentMessage) {
+                    ComponentMessage message = (ComponentMessage) aMsg;
+                    if (!message.manualArmor)
                         return null;
                     stack.pushAndApply(new OpDistributeArmor(loadout, loadout.getChassis().getArmorMax(), 10, xBar));
                 }
                 return null;
             }
-        }).when(xBar).post(Matchers.any(ConfiguredComponentBase.ComponentMessage.class));
+        }).when(xBar).post(Matchers.any(ComponentMessage.class));
 
         // Execute
         OpLoadStock cut = new OpLoadStock(loadout.getChassis(), loadout, xBar);

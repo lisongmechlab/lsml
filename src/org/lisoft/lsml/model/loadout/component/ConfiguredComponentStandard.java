@@ -39,8 +39,8 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  */
 public class ConfiguredComponentStandard extends ConfiguredComponentBase {
 
-    public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aAutoArmor) {
-        super(aInternalPart, aAutoArmor);
+    public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aManualArmor) {
+        super(aInternalPart, aManualArmor);
     }
 
     public ConfiguredComponentStandard(ConfiguredComponentStandard aComponent) {

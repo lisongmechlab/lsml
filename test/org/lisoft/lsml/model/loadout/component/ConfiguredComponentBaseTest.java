@@ -50,7 +50,7 @@ public abstract class ConfiguredComponentBaseTest {
     protected int           slots              = 12;
     protected Location      location           = Location.LeftArm;
     protected ComponentBase internal           = null;
-    protected boolean       autoArmor          = false;
+    protected boolean       manualArmor          = false;
     protected int           internalFixedSlots = 0;
     protected List<Item>    internalFixedItems = new ArrayList<>();
     protected int           maxArmor           = 32;
@@ -131,22 +131,22 @@ public abstract class ConfiguredComponentBaseTest {
     }
 
     @Test
-    public final void testAllowAutomaticArmor() throws Exception {
-        assertEquals(autoArmor, makeDefaultCUT().allowAutomaticArmor());
-        autoArmor = !autoArmor;
-        assertEquals(autoArmor, makeDefaultCUT().allowAutomaticArmor());
-    }
+        public final void testHasManualArmor() throws Exception {
+            assertEquals(manualArmor, makeDefaultCUT().hasManualArmor());
+            manualArmor = !manualArmor;
+            assertEquals(manualArmor, makeDefaultCUT().hasManualArmor());
+        }
 
     @Test(expected = IllegalArgumentException.class)
     public final void testSetGetArmor_WrongSide() throws Exception {
         location = Location.LeftArm;
-        makeDefaultCUT().setArmor(ArmorSide.FRONT, maxArmor / 2, !autoArmor);
+        makeDefaultCUT().setArmor(ArmorSide.FRONT, maxArmor / 2, manualArmor);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public final void testSetGetArmor_WrongSide2() throws Exception {
         location = Location.CenterTorso;
-        makeDefaultCUT().setArmor(ArmorSide.ONLY, maxArmor / 2, !autoArmor);
+        makeDefaultCUT().setArmor(ArmorSide.ONLY, maxArmor / 2, manualArmor);
     }
 
     @Test
@@ -155,9 +155,9 @@ public abstract class ConfiguredComponentBaseTest {
 
         ConfiguredComponentBase cut = makeDefaultCUT();
         assertEquals(0, cut.getArmor(ArmorSide.ONLY));
-        cut.setArmor(ArmorSide.ONLY, maxArmor / 2, !autoArmor);
+        cut.setArmor(ArmorSide.ONLY, maxArmor / 2, manualArmor);
 
-        assertEquals(!autoArmor, cut.allowAutomaticArmor());
+        assertEquals(manualArmor, cut.hasManualArmor());
         assertEquals(maxArmor / 2, cut.getArmor(ArmorSide.ONLY));
     }
 
@@ -169,10 +169,10 @@ public abstract class ConfiguredComponentBaseTest {
         ConfiguredComponentBase cut = makeDefaultCUT();
         assertEquals(0, cut.getArmor(ArmorSide.FRONT));
         assertEquals(0, cut.getArmor(ArmorSide.BACK));
-        cut.setArmor(ArmorSide.FRONT, maxArmor / 2, !autoArmor);
-        cut.setArmor(ArmorSide.BACK, maxArmor / 4, !autoArmor);
+        cut.setArmor(ArmorSide.FRONT, maxArmor / 2, manualArmor);
+        cut.setArmor(ArmorSide.BACK, maxArmor / 4, manualArmor);
 
-        assertEquals(!autoArmor, cut.allowAutomaticArmor());
+        assertEquals(manualArmor, cut.hasManualArmor());
         assertEquals(maxArmor / 2, cut.getArmor(ArmorSide.FRONT));
         assertEquals(maxArmor / 4, cut.getArmor(ArmorSide.BACK));
     }
@@ -195,7 +195,7 @@ public abstract class ConfiguredComponentBaseTest {
     public final void testGetArmorMax_SingleSided() throws Exception {
         location = Location.LeftArm;
         ConfiguredComponentBase cut = makeDefaultCUT();
-        cut.setArmor(ArmorSide.ONLY, maxArmor / 2, autoArmor);
+        cut.setArmor(ArmorSide.ONLY, maxArmor / 2, manualArmor);
         assertEquals(maxArmor, cut.getArmorMax(ArmorSide.ONLY));
     }
 
@@ -204,8 +204,8 @@ public abstract class ConfiguredComponentBaseTest {
         location = Location.CenterTorso;
         maxArmor = 2 * 2 * 2 * 2 * 2 * 2;
         ConfiguredComponentBase cut = makeDefaultCUT();
-        cut.setArmor(ArmorSide.FRONT, maxArmor / 8, autoArmor);
-        cut.setArmor(ArmorSide.BACK, maxArmor / 4, autoArmor);
+        cut.setArmor(ArmorSide.FRONT, maxArmor / 8, manualArmor);
+        cut.setArmor(ArmorSide.BACK, maxArmor / 4, manualArmor);
 
         assertEquals(maxArmor - maxArmor / 4, cut.getArmorMax(ArmorSide.FRONT));
         assertEquals(maxArmor - maxArmor / 8, cut.getArmorMax(ArmorSide.BACK));
@@ -215,7 +215,7 @@ public abstract class ConfiguredComponentBaseTest {
     public final void testGetArmorTotal_SingleSided() throws Exception {
         location = Location.LeftArm;
         ConfiguredComponentBase cut = makeDefaultCUT();
-        cut.setArmor(ArmorSide.ONLY, maxArmor / 2, autoArmor);
+        cut.setArmor(ArmorSide.ONLY, maxArmor / 2, manualArmor);
         assertEquals(maxArmor / 2, cut.getArmorTotal());
     }
 
@@ -224,8 +224,8 @@ public abstract class ConfiguredComponentBaseTest {
         location = Location.CenterTorso;
         maxArmor = 4 * 10;
         ConfiguredComponentBase cut = makeDefaultCUT();
-        cut.setArmor(ArmorSide.FRONT, maxArmor / 4, autoArmor);
-        cut.setArmor(ArmorSide.BACK, 2 * maxArmor / 4, autoArmor);
+        cut.setArmor(ArmorSide.FRONT, maxArmor / 4, manualArmor);
+        cut.setArmor(ArmorSide.BACK, 2 * maxArmor / 4, manualArmor);
         assertEquals(maxArmor * 3 / 4, cut.getArmorTotal());
     }
 

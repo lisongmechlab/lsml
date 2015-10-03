@@ -21,21 +21,31 @@ package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ChassisDB;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.chassi.ComponentStandard;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.OperationStack;
-import org.lisoft.lsml.util.message.MessageXBar;
+import org.lisoft.lsml.util.message.MessageDelivery;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
+import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -45,76 +55,71 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class OpSetMaxArmorTest {
+    private MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     @Mock
-    private MessageXBar          xBar;
+    private MessageDelivery xBar;
 
-    private final OperationStack stack = new OperationStack(0);
+    private final OperationStack          stack = new OperationStack(0);
+    private List<ConfiguredComponentBase> components;
+    private Map<Location, Integer>        maxArmor;
 
-    @Test
-    public void testApply() {
-        // Setup
-        LoadoutStandard cut = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("AS7-D-DC"));
-        final double front_back_ratio = 3.0 / 2.0;
-        final int tolerance = 1;
+    public OpSetMaxArmor makeCut(double aRatio, boolean aManual) {
+        Mockito.when(mlc.chassis.getMassMax()).thenReturn(100);
+        Mockito.when(mlc.loadout.getFreeMass()).thenReturn(80.0);
+        Mockito.when(mlc.loadout.getMassStructItems()).thenReturn(0.0);
 
-        // Execute
-        stack.pushAndApply(new OpSetMaxArmor(cut, xBar, front_back_ratio, true));
-
-        // Verify
-        // All parts have max armor
-        for (ComponentStandard part : cut.getChassis().getComponents()) {
-            assertEquals(part.getArmorMax(), cut.getComponent(part.getLocation()).getArmorTotal());
-
-            // Double sided parts have a ratio of 3 : 2 armor between front and back.
-            if (part.getLocation().isTwoSided()) {
-                int front = cut.getComponent(part.getLocation()).getArmor(ArmorSide.FRONT);
-                int back = cut.getComponent(part.getLocation()).getArmor(ArmorSide.BACK);
-
-                double lb = (double) (front - tolerance) / (back + tolerance);
-                double ub = (double) (front + tolerance) / (back - tolerance);
-
-                assertTrue(lb < front_back_ratio);
-                assertTrue(ub > front_back_ratio);
-
-                verify(xBar, atLeast(2)).post(
-                        new ConfiguredComponentBase.ComponentMessage(cut.getComponent(part.getLocation()),
-                                ConfiguredComponentBase.ComponentMessage.Type.ArmorChanged));
-            }
-            else
-                verify(xBar).post(
-                        new ConfiguredComponentBase.ComponentMessage(cut.getComponent(part.getLocation()),
-                                ConfiguredComponentBase.ComponentMessage.Type.ArmorChanged));
+        components = Arrays.asList(mlc.ra, mlc.rt, mlc.rl, mlc.hd, mlc.ct, mlc.lt, mlc.ll, mlc.la);
+        maxArmor = new HashMap<>();
+        int armorMax = 10;
+        for (Location loc : Location.values()) {
+            armorMax += 20;
+            maxArmor.put(loc, armorMax);
+            Mockito.when(mlc.loadout.getComponent(loc).getArmorMax(Matchers.any(ArmorSide.class))).thenReturn(armorMax);
+            Mockito.when(mlc.loadout.getComponent(loc).getInternalComponent().getArmorMax()).thenReturn(armorMax);
         }
+
+        return new OpSetMaxArmor(mlc.loadout, xBar, aRatio, aManual);
     }
 
     @Test
-    public void testApply_alreadyMaxArmor() {
-        // Setup
-        LoadoutStandard cut = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("AS7-D-DC"));
-        final double front_back_ratio = 3.0 / 2.0;
+    public void testApply() {
         final int tolerance = 1;
-        stack.pushAndApply(new OpSetMaxArmor(cut, xBar, 1.0, true));
-        reset(xBar);
+        final double frontBackRatio = 3.0 / 2.0;
+        final boolean manual = true;
+        OpSetMaxArmor cut = makeCut(frontBackRatio, manual);
 
-        // Execute
-        stack.pushAndApply(new OpSetMaxArmor(cut, xBar, front_back_ratio, true));
+        stack.pushAndApply(cut);
 
-        // Verify
-        // All parts have max armor
-        for (ComponentStandard part : cut.getChassis().getComponents()) {
-            assertEquals(part.getArmorMax(), cut.getComponent(part.getLocation()).getArmorTotal());
-
-            // Double sided parts have a ratio of 3 : 2 armor between front and back.
-            if (part.getLocation().isTwoSided()) {
-                int front = cut.getComponent(part.getLocation()).getArmor(ArmorSide.FRONT);
-                int back = cut.getComponent(part.getLocation()).getArmor(ArmorSide.BACK);
+        for (ConfiguredComponentBase component : components) {
+            Location loc = component.getInternalComponent().getLocation();
+            
+            InOrder inOrder = inOrder(component);
+            if (loc.isTwoSided()) {
+                ArgumentCaptor<Integer> frontCaptor = ArgumentCaptor.forClass(Integer.class);
+                ArgumentCaptor<Integer> backCaptor = ArgumentCaptor.forClass(Integer.class);
+                inOrder.verify(component).setArmor(eq(ArmorSide.BACK), eq(0), eq(manual));
+                inOrder.verify(component).setArmor(eq(ArmorSide.FRONT), frontCaptor.capture(), eq(manual));
+                inOrder.verify(component).setArmor(eq(ArmorSide.BACK), backCaptor.capture(), eq(manual));
+                int front = frontCaptor.getValue();
+                int back = backCaptor.getValue();
 
                 double lb = (double) (front - tolerance) / (back + tolerance);
                 double ub = (double) (front + tolerance) / (back - tolerance);
 
-                assertTrue(lb < front_back_ratio);
-                assertTrue(ub > front_back_ratio);
+                assertTrue(lb < frontBackRatio);
+                assertTrue(ub > frontBackRatio);
+                assertEquals(maxArmor.get(loc).intValue(), front + back);
+
+                verify(xBar, atLeast(2))
+                        .post(new ComponentMessage(component, ComponentMessage.Type.ArmorChanged, manual));
+
+            }
+            else {
+                int expected = maxArmor.get(loc).intValue();
+                verify(component).setArmor(ArmorSide.ONLY, expected, manual);
+                verify(xBar, times(1))
+                        .post(new ComponentMessage(component, ComponentMessage.Type.ArmorChanged, manual));
             }
         }
     }

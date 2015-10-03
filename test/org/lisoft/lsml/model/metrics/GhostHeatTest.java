@@ -150,7 +150,7 @@ public class GhostHeatTest {
         groupWeapons.add(ppc);
         groupWeapons.add(ppc);
         groupWeapons.add(ppc);
-        Mockito.when(mlc.weaponGroups.getWeapons(aGroup)).thenReturn(groupWeapons);
+        Mockito.when(mlc.weaponGroups.getWeapons(aGroup, mlc.loadout)).thenReturn(groupWeapons);
 
         weapons.add(ppc);
         weapons.add(ppc);

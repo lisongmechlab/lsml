@@ -32,6 +32,8 @@ import org.lisoft.lsml.command.OpRename;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.parsing.export.LoadoutCoderV2;
 import org.lisoft.lsml.util.Base64;
@@ -66,7 +68,7 @@ public class LoadoutCoderV2Test {
                 m.matches();
                 ChassisBase chassi = ChassisDB.lookup(m.group(1));
                 String lsml = m.group(2);
-                LoadoutStandard reference = new LoadoutStandard(chassi.getName());
+                LoadoutBase<?> reference = DefaultLoadoutFactory.instance.produceStock(chassi);
                 LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded

@@ -39,11 +39,9 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
@@ -84,8 +82,8 @@ public class LoadoutSerializationTest {
      */
     @Test
     public void testEmptyLoadout() {
-        ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("CPLT-K2");
-        LoadoutStandard cut = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis, UpgradesMutable.standardUpgrades());
+        ChassisBase chassis = ChassisDB.lookup("CPLT-K2");
+        LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceEmpty(chassis);
 
         assertEquals(0, cut.getArmor());
         assertSame(chassis, cut.getChassis());
@@ -116,7 +114,7 @@ public class LoadoutSerializationTest {
     @Test
     public void testStockLoadoutAS7D() throws Exception {
         ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("AS7-D");
-        LoadoutStandard cut = new LoadoutStandard("AS7-D");
+        LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceStock(chassi);
 
         assertEquals(608, cut.getArmor());
         assertSame(chassi, cut.getChassis());
@@ -262,15 +260,15 @@ public class LoadoutSerializationTest {
      */
     @Test
     public void testStockLoadoutSDR5V() throws Exception {
-        ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("SDR-5V");
-        LoadoutStandard cut = new LoadoutStandard("SDR-5V");
+        ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("SDR-5V");
+        LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceStock(chassis);
 
         assertEquals(112, cut.getArmor());
-        assertSame(chassi, cut.getChassis());
+        assertSame(chassis, cut.getChassis());
         assertSame(ItemDB.lookup("STD ENGINE 240"), cut.getEngine());
         assertEquals(10, cut.getHeatsinksCount());
         assertEquals(30.0, cut.getMass(), 0.0);
-        assertEquals(chassi.getNameShort(), cut.getName());
+        assertEquals(chassis.getNameShort(), cut.getName());
         assertEquals(5 * 12 + 3 * 6 - 36, cut.getNumCriticalSlotsUsed());
         assertEquals(36, cut.getNumCriticalSlotsFree());
         assertEquals(8, cut.getComponents().size());
@@ -391,10 +389,10 @@ public class LoadoutSerializationTest {
         assertFalse(efficiencies.hasHeatContainment());
         assertFalse(efficiencies.hasSpeedTweak());
     }
-    
+
     @Test
     public void testGetJumpJetCount_noJJCapability() throws Exception {
-        LoadoutStandard cut = new LoadoutStandard("HBK-4J");
+        LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("HBK-4J"));
         assertEquals(0, cut.getJumpJetCount());
     }
 

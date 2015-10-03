@@ -273,11 +273,11 @@ public class ChassisOmniMechTest extends ChassisBaseTest {
         MovementProfile min = mech.getMovementProfileMin();
         Collection<Modifier> stock = mech.getStockModifiers();
 
-        assertEquals(baseProfile.getTorsoYawSpeed(null) * 1.05, baseProfile.getTorsoYawSpeed(stock), 0.0);
-        assertEquals(baseProfile.getTorsoYawMax(null) + 5, baseProfile.getTorsoYawMax(stock), 0.0);
+        assertEquals(baseProfile.getTorsoYawSpeed(null) * 1.2, baseProfile.getTorsoYawSpeed(stock), Math.ulp(30));
+        assertEquals(baseProfile.getTorsoYawMax(null) + 7, baseProfile.getTorsoYawMax(stock), 0.0);
 
-        assertEquals(baseProfile.getTorsoYawSpeed(null) * 0.95, min.getTorsoYawSpeed(null), 0.0);
-        assertEquals(baseProfile.getTorsoYawSpeed(null) * 1.10, max.getTorsoYawSpeed(null), 0.0);
+        assertEquals(baseProfile.getTorsoYawSpeed(null) * 1.10, min.getTorsoYawSpeed(null), 0.0);
+        assertEquals(baseProfile.getTorsoYawSpeed(null) * 1.20, max.getTorsoYawSpeed(null), 0.0);
     }
 
     @Test

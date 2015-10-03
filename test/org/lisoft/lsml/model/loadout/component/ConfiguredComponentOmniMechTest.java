@@ -69,7 +69,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
             Mockito.when(omniPod.getToggleableItems()).thenReturn(togglables);
             Mockito.when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
         }
-        return new ConfiguredComponentOmniMech(omniInternal, autoArmor, omniPod);
+        return new ConfiguredComponentOmniMech(omniInternal, manualArmor, omniPod);
     }
 
     @Before

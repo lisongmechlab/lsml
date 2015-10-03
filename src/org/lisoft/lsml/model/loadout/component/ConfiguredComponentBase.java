@@ -44,7 +44,6 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.ListArrayUtils;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.OperationStack.Operation;
-import org.lisoft.lsml.util.message.Message;
 
 /**
  * This class represents a configured {@link ComponentBase}.
@@ -55,65 +54,14 @@ import org.lisoft.lsml.util.message.Message;
  * @author Li Song
  */
 public abstract class ConfiguredComponentBase {
-    public static class ComponentMessage implements Message {
-        public enum Type {
-            ArmorChanged, ArmorDistributionUpdateRequest, ItemAdded, ItemRemoved, ItemsChanged, OmniPodChanged
-        }
-
-        /**
-         * True if this message was automatically in response to a change.
-         */
-        public final boolean                 automatic;
-        public final ConfiguredComponentBase component;
-        public final Type                    type;
-
-        public ComponentMessage(ConfiguredComponentBase aComponent, Type aType) {
-            this(aComponent, aType, false);
-        }
-
-        public ComponentMessage(ConfiguredComponentBase aComponent, Type aType, boolean aAutomatic) {
-            component = aComponent;
-            type = aType;
-            automatic = aAutomatic;
-        }
-
-        @Override
-        public boolean affectsHeatOrDamage() {
-            return type != Type.ArmorChanged;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof ComponentMessage) {
-                ComponentMessage other = (ComponentMessage) obj;
-                return component == other.component && type == other.type && automatic == other.automatic;
-            }
-            return false;
-        }
-
-        @Override
-        public boolean isForMe(LoadoutBase<?> aLoadout) {
-            return aLoadout.getComponents().contains(component);
-        }
-
-        public boolean isItemsChanged() {
-            return type == Type.ItemAdded || type == Type.ItemRemoved || type == Type.ItemsChanged;
-        }
-
-        @Override
-        public String toString() {
-            return type.toString() + " for " + component.getInternalComponent().getLocation().toString();
-        }
-    }
-
     public final static Internal              ENGINE_INTERNAL      = (Internal) ItemDB
-                                                                           .lookup(ItemDB.ENGINE_INTERNAL_ID);
+            .lookup(ItemDB.ENGINE_INTERNAL_ID);
     public final static Internal              ENGINE_INTERNAL_CLAN = (Internal) ItemDB
-                                                                           .lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
+            .lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
     private final TreeMap<ArmorSide, Integer> armor                = new TreeMap<ArmorSide, Integer>();
     private final ComponentBase               internalComponent;
     private final List<Item>                  items                = new ArrayList<Item>();
-    private boolean                           autoArmor            = false;
+    private boolean                           manualArmor          = false;
 
     /**
      * Copy constructor. Performs a deep copy of the argument with a new {@link LoadoutStandard} value.
@@ -123,7 +71,7 @@ public abstract class ConfiguredComponentBase {
      */
     public ConfiguredComponentBase(ConfiguredComponentBase aLoadoutPart) {
         internalComponent = aLoadoutPart.internalComponent;
-        autoArmor = aLoadoutPart.autoArmor;
+        manualArmor = aLoadoutPart.manualArmor;
 
         for (Map.Entry<ArmorSide, Integer> e : aLoadoutPart.armor.entrySet()) {
             armor.put(e.getKey(), new Integer(e.getValue()));
@@ -134,9 +82,9 @@ public abstract class ConfiguredComponentBase {
         }
     }
 
-    public ConfiguredComponentBase(ComponentBase aInternalPart, boolean aAutoArmor) {
+    public ConfiguredComponentBase(ComponentBase aInternalPart, boolean aManualArmor) {
         internalComponent = aInternalPart;
-        autoArmor = aAutoArmor;
+        manualArmor = aManualArmor;
         if (internalComponent.getLocation().isTwoSided()) {
             armor.put(ArmorSide.FRONT, 0);
             armor.put(ArmorSide.BACK, 0);
@@ -215,10 +163,11 @@ public abstract class ConfiguredComponentBase {
     }
 
     /**
-     * @return <code>true</code> if this component allows armor to be manually adjusted.
+     * @return <code>true</code> if this component's armor has been set manually (otherwise it's been set
+     *         automatically).
      */
-    public boolean allowAutomaticArmor() {
-        return autoArmor;
+    public boolean hasManualArmor() {
+        return manualArmor;
     }
 
     @Override
@@ -235,7 +184,7 @@ public abstract class ConfiguredComponentBase {
             return false;
         if (!armor.equals(that.armor))
             return false;
-        if (autoArmor != that.autoArmor)
+        if (manualArmor != that.manualArmor)
             return false;
         return true;
     }
@@ -402,11 +351,11 @@ public abstract class ConfiguredComponentBase {
         return result;
     }
 
-    public void setArmor(ArmorSide aArmorSide, int aAmount, boolean aAllowAutomaticArmor) {
+    public void setArmor(ArmorSide aArmorSide, int aAmount, boolean aManualArmor) {
         if (!armor.containsKey(aArmorSide))
             throw new IllegalArgumentException("No such armor side!");
         armor.put(aArmorSide, aAmount);
-        autoArmor = aAllowAutomaticArmor;
+        manualArmor = aManualArmor;
     }
 
     @Override

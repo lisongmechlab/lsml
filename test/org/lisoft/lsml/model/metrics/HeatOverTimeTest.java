@@ -15,6 +15,7 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mockito;
@@ -123,7 +124,7 @@ public class HeatOverTimeTest {
         int group = 3;
         Collection<Weapon> weaponsGroup = new ArrayList<>();
         weaponsGroup.add(erllas);
-        Mockito.when(mlc.weaponGroups.getWeapons(group)).thenReturn(weaponsGroup);
+        Mockito.when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(weaponsGroup);
 
         HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar, group);
 
@@ -147,8 +148,8 @@ public class HeatOverTimeTest {
         Collection<ConfiguredComponentBase> partLoadouts = Mockito.mock(Collection.class);
         Mockito.when(partLoadouts.contains(null)).thenReturn(true);
         Mockito.when(mlc.loadout.getComponents()).thenReturn(partLoadouts);
-        cut.receive(new ConfiguredComponentBase.ComponentMessage(null,
-                ConfiguredComponentBase.ComponentMessage.Type.ItemAdded));
+        cut.receive(new ComponentMessage(null,
+                ComponentMessage.Type.ItemAdded));
         assertTrue(old != cut.calculate(20));
     }
 }

@@ -27,11 +27,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisDB;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.OperationStack.Operation;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -57,7 +58,7 @@ public class OpSetArmorSymmetricTest {
      */
     @Test
     public void testCanCoalescele() {
-        LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("AS7-D-DC"));
+        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
         ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
         ConfiguredComponentBase arm = loadout.getComponent(Location.LeftArm);
@@ -83,7 +84,7 @@ public class OpSetArmorSymmetricTest {
 
     @Test
     public void testApply() {
-        LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("AS7-D-DC"));
+        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
         ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
         ArmorSide side = ArmorSide.BACK;
@@ -94,18 +95,18 @@ public class OpSetArmorSymmetricTest {
 
         stack.pushAndApply(cut);
 
-        assertFalse(left.allowAutomaticArmor());
-        assertFalse(right.allowAutomaticArmor());
+        assertTrue(left.hasManualArmor());
+        assertTrue(right.hasManualArmor());
         assertEquals(amount, left.getArmor(side));
         assertEquals(amount, right.getArmor(side));
-        Mockito.verify(xBar).post(new ConfiguredComponentBase.ComponentMessage(left, Type.ArmorChanged));
-        Mockito.verify(xBar).post(new ConfiguredComponentBase.ComponentMessage(right, Type.ArmorChanged));
+        Mockito.verify(xBar).post(new ComponentMessage(left, Type.ArmorChanged, true));
+        Mockito.verify(xBar).post(new ComponentMessage(right, Type.ArmorChanged, true));
     }
 
     @Test
     public void testApply_OnlyOneSideChanges() {
         for (Location setSide : new Location[] { Location.LeftTorso, Location.RightTorso }) {
-            LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("AS7-D-DC"));
+            LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty( ChassisDB.lookup("AS7-D-DC"));
             ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
             ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
             ArmorSide side = ArmorSide.BACK;
@@ -117,18 +118,18 @@ public class OpSetArmorSymmetricTest {
 
             stack.pushAndApply(cut);
 
-            assertFalse(left.allowAutomaticArmor());
-            assertFalse(right.allowAutomaticArmor());
+            assertTrue(left.hasManualArmor());
+            assertTrue(right.hasManualArmor());
             assertEquals(amount, left.getArmor(side));
             assertEquals(amount, right.getArmor(side));
-            Mockito.verify(xBar).post(new ConfiguredComponentBase.ComponentMessage(left, Type.ArmorChanged));
-            Mockito.verify(xBar).post(new ConfiguredComponentBase.ComponentMessage(right, Type.ArmorChanged));
+            Mockito.verify(xBar).post(new ComponentMessage(left, Type.ArmorChanged, true));
+            Mockito.verify(xBar).post(new ComponentMessage(right, Type.ArmorChanged, true));
         }
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testApply_NotSymmetric() {
-        LoadoutStandard loadout = new LoadoutStandard((ChassisStandard) ChassisDB.lookup("AS7-D-DC"));
+        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         ConfiguredComponentBase left = loadout.getComponent(Location.Head);
         ArmorSide side = ArmorSide.BACK;
         int amount = 40;

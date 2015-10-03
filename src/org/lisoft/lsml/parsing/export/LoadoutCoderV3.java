@@ -41,15 +41,12 @@ import javax.swing.JOptionPane;
 import org.lisoft.lsml.command.OpAddItem;
 import org.lisoft.lsml.command.OpAddModule;
 import org.lisoft.lsml.command.OpChangeOmniPod;
-import org.lisoft.lsml.command.OpLoadStock;
 import org.lisoft.lsml.command.OpSetArmor;
 import org.lisoft.lsml.command.OpToggleItem;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisDB;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.chassi.OmniPodDB;
@@ -58,11 +55,11 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.PilotModuleDB;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
@@ -74,12 +71,10 @@ import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
 import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman1;
 import org.lisoft.lsml.util.Huffman2;
-import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.view.ProgramInit;
 
 /**
@@ -383,12 +378,8 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
         short chassisId = (short) (((aBuffer.read() & 0xFF) << 8) | (aBuffer.read() & 0xFF));
         ChassisBase chassis = ChassisDB.lookup(chassisId);
-
-        if (chassis instanceof ChassisOmniMech) {
-            return new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
-        }
-        return new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis,
-                UpgradesMutable.standardUpgrades());
+        
+        return DefaultLoadoutFactory.instance.produceEmpty(chassis);
     }
 
     private void writeChassis(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout) {
@@ -419,16 +410,8 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        OperationStack stack = new OperationStack(0);
         for (ChassisBase chassis : chassii) {
-            LoadoutBase<?> loadout;
-            if (chassis instanceof ChassisStandard)
-                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis,
-                        UpgradesMutable.standardUpgrades());
-            else
-                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
-
-            stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
+            LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
             System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
         }
     }
@@ -480,24 +463,11 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-        OperationStack stack = new OperationStack(0);
-
         List<Integer> idStats = new ArrayList<>();
 
         // Process items from all stock loadouts
         for (ChassisBase chassis : chassii) {
-            final LoadoutBase<?> loadout;
-            if (chassis instanceof ChassisStandard) {
-                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis,
-                        UpgradesMutable.standardUpgrades());
-            }
-            else if (chassis instanceof ChassisOmniMech) {
-                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
-            }
-            else {
-                throw new RuntimeException("Unknown chassis type!");
-            }
-            stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
+            final LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
 
             for (ConfiguredComponentBase component : loadout.getComponents()) {
                 for (Item item : component.getItemsEquipped()) {

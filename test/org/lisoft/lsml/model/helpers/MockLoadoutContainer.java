@@ -37,6 +37,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 /**
@@ -46,7 +47,7 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
  * @author Li Song
  */
 public class MockLoadoutContainer {
-    final public ChassisBase                          chassi;
+    final public ChassisBase                          chassis;
     final public LoadoutBase<ConfiguredComponentBase> loadout;
     final public Upgrades                             upgrades;
     final public Efficiencies                         efficiencies;
@@ -68,15 +69,19 @@ public class MockLoadoutContainer {
     final public ConfiguredComponentBase              lt;
     final public ConfiguredComponentBase              ll;
     final public ConfiguredComponentBase              la;
+    final public ArmorUpgrade armorUpgrade;
 
     public MockLoadoutContainer() {
-        chassi = mock(ChassisBase.class);
+        chassis = mock(ChassisBase.class);
         loadout = mock(LoadoutBase.class);
         upgrades = mock(Upgrades.class);
         efficiencies = mock(Efficiencies.class);
         weaponGroups = mock(WeaponGroups.class);
         movementProfile = mock(MovementProfile.class);
+        armorUpgrade = mock(ArmorUpgrade.class);
 
+        when(upgrades.getArmor()).thenReturn(armorUpgrade);
+        
         ira = mock(ComponentBase.class);
         irt = mock(ComponentBase.class);
         irl = mock(ComponentBase.class);
@@ -131,7 +136,7 @@ public class MockLoadoutContainer {
         when(loadout.getComponents()).thenReturn(Arrays.asList(ra, rt, rl, hd, ct, lt, ll, la));
         when(loadout.getUpgrades()).thenReturn(upgrades);
         when(loadout.getEfficiencies()).thenReturn(efficiencies);
-        when(loadout.getChassis()).thenReturn(chassi);
+        when(loadout.getChassis()).thenReturn(chassis);
         when(loadout.getWeaponGroups()).thenReturn(weaponGroups);
         when(loadout.getMovementProfile()).thenReturn(movementProfile);
     }

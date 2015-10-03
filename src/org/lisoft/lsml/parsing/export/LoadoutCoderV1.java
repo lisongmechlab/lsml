@@ -36,9 +36,9 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -48,7 +48,6 @@ import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
 import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman1;
@@ -99,8 +98,7 @@ public class LoadoutCoderV1 implements LoadoutCoder {
                                                                                                // 1700
 
             ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup(chassiId);
-            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis,
-                    UpgradesMutable.standardUpgrades());
+            loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
 
             boolean artemisIv = (upeff & (1 << 7)) != 0;
             boolean endoSteel = (upeff & (1 << 4)) != 0;

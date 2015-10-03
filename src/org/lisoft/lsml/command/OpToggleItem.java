@@ -22,8 +22,8 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.OperationStack.Operation;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -83,7 +83,7 @@ public class OpToggleItem extends Operation {
         }
 
         if (xBar != null) {
-            xBar.post(new ConfiguredComponentBase.ComponentMessage(component, Type.ItemsChanged));
+            xBar.post(new ComponentMessage(component, Type.ItemsChanged));
         }
     }
 
@@ -96,7 +96,7 @@ public class OpToggleItem extends Operation {
             component.setToggleState(ItemDB.HA, true);
         }
         if (xBar != null) {
-            xBar.post(new ConfiguredComponentBase.ComponentMessage(component, Type.ItemsChanged));
+            xBar.post(new ComponentMessage(component, Type.ItemsChanged));
         }
     }
 }

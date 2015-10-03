@@ -41,7 +41,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.lisoft.lsml.command.OpLoadStock;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -52,15 +51,11 @@ import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.chassi.OmniPodDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
-import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.preferences.Preferences;
@@ -257,22 +252,7 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
                 public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected,
                         boolean aHasFocus, int aRow, int aColumn) {
                     ChassisBase chassis = (ChassisBase) aValue;
-                    LoadoutBase<?> stock;
-                    if (aValue instanceof ChassisStandard) {
-                        stock = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(),
-                                (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
-                        OperationStack stack = new OperationStack(0);
-                        stack.pushAndApply(new OpLoadStock(chassis, stock, null));
-                    }
-                    else if (aValue instanceof ChassisOmniMech) {
-                        stock = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
-                                (ChassisOmniMech) chassis);
-                        OperationStack stack = new OperationStack(0);
-                        stack.pushAndApply(new OpLoadStock(chassis, stock, null));
-                    }
-                    else {
-                        throw new IllegalArgumentException("Expected a chassis type as value!");
-                    }
+                    LoadoutBase<?> stock = DefaultLoadoutFactory.instance.produceStock(chassis);
                     StyleManager.styleHardpointLabel(energy, stock.getComponent(part), HardPointType.ENERGY);
                     StyleManager.styleHardpointLabel(ballistic, stock.getComponent(part), HardPointType.BALLISTIC);
                     StyleManager.styleHardpointLabel(missile, stock.getComponent(part), HardPointType.MISSILE);
@@ -296,8 +276,8 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
         preferences = aPreferences;
         {
             hideSpecials = new JCheckBox("Hide mech variations", preferences.uiPreferences.getHideSpecialMechs());
-            hideSpecials
-                    .setToolTipText("<html>Will hide mech variations (champion, founders, phoenix, sarah, etc) from chassis lists.<br/>"
+            hideSpecials.setToolTipText(
+                    "<html>Will hide mech variations (champion, founders, phoenix, sarah, etc) from chassis lists.<br/>"
                             + "Stock loadouts are still available on the \"Load stock\" menu action on relevant loadouts</html>");
             hideSpecials.addActionListener(new AbstractAction() {
                 private static final long serialVersionUID = -8136020916897237506L;
@@ -318,8 +298,8 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
                 if (ChassisClass.COLOSSAL == chassisClass)
                     continue;
 
-                JTable table = new JTable(new ChassiTableModel(faction, chassisClass,
-                        aPreferences.uiPreferences.getHideSpecialMechs()));
+                JTable table = new JTable(
+                        new ChassiTableModel(faction, chassisClass, aPreferences.uiPreferences.getHideSpecialMechs()));
                 table.setRowHeight(30);
                 table.addMouseListener(new MouseAdapter() {
                     @Override
@@ -329,18 +309,11 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
                             final int row = target.getSelectedRow();
                             final int column = target.getSelectedColumn();
                             final Object cell = target.getValueAt(row, column);
-                            if (cell instanceof ChassisStandard) {
-                                ChassisStandard chassis = (ChassisStandard) cell;
+                            if (cell instanceof ChassisBase) {
+                                LoadoutBase<?> loadout = DefaultLoadoutFactory.instance
+                                        .produceEmpty((ChassisBase) cell);
                                 ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                                ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutStandard(ComponentBuilder
-                                        .getStandardComponentFactory(), chassis, UpgradesMutable.standardUpgrades()));
-                            }
-                            else if (cell instanceof ChassisOmniMech) {
-                                ChassisOmniMech chassi = (ChassisOmniMech) cell;
-                                ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                                ProgramInit.lsml().mechLabPane.openLoadout(new LoadoutOmniMech(ComponentBuilder
-                                        .getOmniComponentFactory(), chassi));
-
+                                ProgramInit.lsml().mechLabPane.openLoadout(loadout);
                             }
                         }
                     }

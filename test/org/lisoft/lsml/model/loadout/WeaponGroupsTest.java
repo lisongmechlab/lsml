@@ -51,7 +51,7 @@ public class WeaponGroupsTest {
     @Before
     public void setup() {
         Mockito.when(loadout.items(Weapon.class)).thenReturn(weapons);
-        cut = new WeaponGroups(loadout);
+        cut = new WeaponGroups();
     }
 
     /**
@@ -67,38 +67,38 @@ public class WeaponGroupsTest {
             }
         }
     }
-    
+
     /**
      * Test the copy constructed state.
      */
     @Test
     public final void testCopyConstructor() {
         LoadoutBase<?> loadout2 = Mockito.mock(LoadoutBase.class);
-        List<Weapon>   weapons2 = new ArrayList<>();
+        List<Weapon> weapons2 = new ArrayList<>();
         Mockito.when(loadout2.items(Weapon.class)).thenReturn(weapons2);
-        
+
         cut.setFiringMode(2, FiringMode.ChainFire);
-        cut.setFiringMode(5, FiringMode.AlphaStrike);        
+        cut.setFiringMode(5, FiringMode.AlphaStrike);
         cut.setGroup(0, 0, true);
         cut.setGroup(5, 15, true);
-        
+
         Weapon w0 = Mockito.mock(Weapon.class);
         Weapon w1 = Mockito.mock(Weapon.class);
         Mockito.when(w0.isOffensive()).thenReturn(true);
         Mockito.when(w1.isOffensive()).thenReturn(true);
         weapons.add(w0);
         weapons2.add(w1);
-        
-        WeaponGroups copy = new WeaponGroups(cut, loadout2);
-        
+
+        WeaponGroups copy = new WeaponGroups(cut);
+
         // Using weapons from new loadout
-        assertEquals(Arrays.asList(w1), copy.getWeaponOrder());
-        
+        assertEquals(Arrays.asList(w1), copy.getWeaponOrder(loadout2));
+
         // Firing mode is copied
         assertEquals(FiringMode.Optimal, copy.getFiringMode(1)); // Implicitly optimal
         assertEquals(FiringMode.ChainFire, copy.getFiringMode(2));
         assertEquals(FiringMode.AlphaStrike, copy.getFiringMode(5));
-        
+
         // Groups are copied
         assertTrue(copy.isInGroup(0, 0));
         assertTrue(copy.isInGroup(5, 15));
@@ -156,11 +156,10 @@ public class WeaponGroupsTest {
         weapons.add(w1);
         weapons.add(w2);
 
-        List<Weapon> ans = cut.getWeaponOrder();
+        List<Weapon> ans = cut.getWeaponOrder(loadout);
 
         assertEquals(Arrays.asList(w0, w2), ans);
     }
-    
 
     /**
      * Test that the correct weapons are returned for each group.
@@ -178,7 +177,7 @@ public class WeaponGroupsTest {
         Mockito.when(w2.toString()).thenReturn("w2");
         Mockito.when(w3.toString()).thenReturn("w3");
         Mockito.when(w4.toString()).thenReturn("w4");
-        
+
         Mockito.when(w0.isOffensive()).thenReturn(true);
         Mockito.when(w2.isOffensive()).thenReturn(true);
         Mockito.when(w3.isOffensive()).thenReturn(true);
@@ -194,11 +193,11 @@ public class WeaponGroupsTest {
         cut.setGroup(0, 1, true); // w1 is not offensive, so it is not enumerated.
         cut.setGroup(5, 2, true);
         cut.setGroup(5, 3, true);
-        
-        List<Weapon> ans0 = (List<Weapon>) cut.getWeapons(0);
+
+        List<Weapon> ans0 = (List<Weapon>) cut.getWeapons(0, loadout);
         assertEquals(Arrays.asList(w0, w2), ans0);
-        
-        List<Weapon> ans1 = (List<Weapon>) cut.getWeapons(5);
+
+        List<Weapon> ans1 = (List<Weapon>) cut.getWeapons(5, loadout);
         assertEquals(Arrays.asList(w3, w4), ans1);
     }
 }

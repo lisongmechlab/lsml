@@ -26,7 +26,7 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -71,7 +71,7 @@ public class RedoLoadoutAction extends AbstractAction implements Message.Recipie
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (aMsg instanceof ConfiguredComponentBase.ComponentMessage
+                if (aMsg instanceof ComponentMessage
                         || aMsg instanceof Upgrades.UpgradesMessage) {
                     if (ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null)
                         setEnabled(false);

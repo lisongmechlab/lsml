@@ -30,19 +30,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.OpLoadStock;
 import org.lisoft.lsml.command.OpRename;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisDB;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.parsing.export.LoadoutCoderV3;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.DecodingException;
@@ -72,13 +66,7 @@ public class LoadoutCoderV3Test {
         OperationStack stack = new OperationStack(0);
 
         for (ChassisBase chassis : chassii) {
-            LoadoutBase<?> loadout;
-            if (chassis instanceof ChassisOmniMech)
-                loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
-            else
-                loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
-            stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
-
+            LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
             byte[] result = cut.encode(loadout);
             LoadoutBase<?> decoded = cut.decode(result);
 
@@ -112,12 +100,7 @@ public class LoadoutCoderV3Test {
                 ChassisBase chassis = ChassisDB.lookup(m.group(1));
                 String lsml = m.group(2);
 
-                LoadoutBase<?> reference;
-                if (chassis instanceof ChassisOmniMech)
-                    reference = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), (ChassisOmniMech) chassis);
-                else
-                    reference = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
-                stack.pushAndApply(new OpLoadStock(chassis, reference, null));
+                LoadoutBase<?> reference = DefaultLoadoutFactory.instance.produceStock(chassis);
 
                 LoadoutBase<?> decoded = cut.decode(base64.decode(lsml.toCharArray()));
 

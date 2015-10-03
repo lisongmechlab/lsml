@@ -94,13 +94,13 @@ public class HeatGenerationTest {
         Collection<Weapon> weaponsGroup1 = new ArrayList<>();
         weaponsGroup1.add(ppc);
         weaponsGroup1.add(ll);
-        Mockito.when(mlc.weaponGroups.getWeapons(group1)).thenReturn(weaponsGroup1);
+        Mockito.when(mlc.weaponGroups.getWeapons(group1, mlc.loadout)).thenReturn(weaponsGroup1);
 
         int group2 = 2;
         Collection<Weapon> weaponsGroup2 = new ArrayList<>();
         weaponsGroup2.add(ppc); // PPC in both
         weaponsGroup2.add(lrm20);
-        Mockito.when(mlc.weaponGroups.getWeapons(group2)).thenReturn(weaponsGroup2);
+        Mockito.when(mlc.weaponGroups.getWeapons(group2, mlc.loadout)).thenReturn(weaponsGroup2);
 
         // Execute
         HeatGeneration cut = new HeatGeneration(mlc.loadout, group1);

@@ -46,7 +46,7 @@ import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
 import org.lisoft.lsml.model.loadout.LoadoutMessage.Type;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ModuleTransferHandler;
@@ -182,8 +182,8 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
                 changeLoadout(currentLoadout);
             }
         }
-        else if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
-            ConfiguredComponentBase.ComponentMessage msg = (ConfiguredComponentBase.ComponentMessage) aMsg;
+        else if (aMsg instanceof ComponentMessage) {
+            ComponentMessage msg = (ComponentMessage) aMsg;
             if (msg.isForMe(currentLoadout) && msg.isItemsChanged()) {
                 changeLoadout(currentLoadout);
             }

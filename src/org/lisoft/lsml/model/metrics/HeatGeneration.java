@@ -75,7 +75,7 @@ public class HeatGeneration implements Metric {
             }
         }
         if (group >= 0) {
-            for (Weapon w : loadout.getWeaponGroups().getWeapons(group)) {
+            for (Weapon w : loadout.getWeaponGroups().getWeapons(group, loadout)) {
                 heat += w.getStat("h/s", modifiers);
             }
         }

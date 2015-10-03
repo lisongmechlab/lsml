@@ -21,9 +21,9 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase.ComponentMessage;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import org.lisoft.lsml.util.OperationStack.Operation;
 import org.lisoft.lsml.util.message.MessageDelivery;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -36,12 +36,12 @@ import org.lisoft.lsml.util.message.MessageXBar;
 public class OpSetArmor extends Operation {
     private final ArmorSide               side;
     private final int                     amount;
+    private final boolean                 manual;
     private int                           oldAmount = -1;
     private boolean                       oldManual;
     private final MessageDelivery         messageDelivery;
     private final LoadoutBase<?>          loadout;
-    private final ConfiguredComponentBase loadoutPart;
-    private final boolean                 manual;
+    private final ConfiguredComponentBase component;
 
     /**
      * Sets the armor for a given side of the component. Throws if the operation will fail.
@@ -50,11 +50,11 @@ public class OpSetArmor extends Operation {
      *            The {@link MessageXBar} to announce changes to.
      * @param aLoadout
      *            The {@link LoadoutBase} to change.
-     * @param aLoadoutPart
+     * @param aComponent
      *            The {@link ConfiguredComponentBase} to change.
-     * @param anArmorSide
+     * @param aArmorSide
      *            The side to set the armor for.
-     * @param anArmorAmount
+     * @param aArmorAmount
      *            The amount to set the armor to.
      * @param aManualSet
      *            True if this set operation is done manually. Will disable automatic armor assignments.
@@ -62,19 +62,19 @@ public class OpSetArmor extends Operation {
      *             Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage
      *             to support the armor.
      */
-    public OpSetArmor(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart,
-            ArmorSide anArmorSide, int anArmorAmount, boolean aManualSet) {
+    public OpSetArmor(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
+            ArmorSide aArmorSide, int aArmorAmount, boolean aManualSet) {
         messageDelivery = aMessageDelivery;
         loadout = aLoadout;
-        loadoutPart = aLoadoutPart;
-        side = anArmorSide;
-        amount = anArmorAmount;
+        component = aComponent;
+        side = aArmorSide;
+        amount = aArmorAmount;
         manual = aManualSet;
 
         if (amount < 0)
             throw new IllegalArgumentException("Armor must be positive!");
 
-        if (amount > loadoutPart.getInternalComponent().getArmorMax())
+        if (amount > component.getInternalComponent().getArmorMax())
             throw new IllegalArgumentException("Armor must be less than components max armor!");
     }
 
@@ -92,7 +92,7 @@ public class OpSetArmor extends Operation {
         OpSetArmor that = (OpSetArmor) aOperation;
         if (that.manual != manual)
             return false;
-        if (that.loadoutPart != loadoutPart)
+        if (that.component != component)
             return false;
         if (that.side != side)
             return false;
@@ -106,46 +106,10 @@ public class OpSetArmor extends Operation {
 
     @Override
     protected void apply() {
-        oldAmount = loadoutPart.getArmor(side);
-        oldManual = !loadoutPart.allowAutomaticArmor();
-        if (amount != oldAmount || oldManual != manual) {
-
-            if (amount > loadoutPart.getArmorMax(side))
-                throw new IllegalArgumentException("Exceeded max armor! Max allowed: " + loadoutPart.getArmorMax(side)
-                        + " Was: " + amount);
-
-            int armorDiff = amount - oldAmount;
-            int totalArmor = armorDiff + loadout.getArmor(); // This is important to prevent numerical stability issues.
-                                                             // Calculate whole armor in integer precision.
-            double armorTons = loadout.getUpgrades().getArmor().getArmorMass(totalArmor);
-            double freeTonnage = loadout.getChassis().getMassMax() - (loadout.getMassStructItems() + armorTons);
-
-            if (freeTonnage < 0) {
-                // See if the armor can be freed from a combination of automatic components. They will be redistributed
-                // afterwards. FIXME: Devise a proper solution, this is ugly.
-                int freed = 0;
-                if (manual == true && freed < armorDiff) {
-                    for (ConfiguredComponentBase otherPart : loadout.getComponents()) {
-                        if (loadoutPart != otherPart && otherPart.allowAutomaticArmor()) {
-                            freed += otherPart.getArmorTotal();
-                            if (otherPart.getInternalComponent().getLocation().isTwoSided()) {
-                                otherPart.setArmor(ArmorSide.FRONT, 0, true);
-                                otherPart.setArmor(ArmorSide.BACK, 0, true);
-                            }
-                            else {
-                                otherPart.setArmor(ArmorSide.ONLY, 0, true);
-                            }
-                        }
-                    }
-                }
-                if (freed < armorDiff) {
-                    throw new IllegalArgumentException("Not enough tonnage to add more armor!");
-                }
-            }
-            loadoutPart.setArmor(side, amount, !manual);
-            if (messageDelivery != null) {
-                messageDelivery.post(new ComponentMessage(loadoutPart, Type.ArmorChanged, !manual));
-            }
+        storePreviousState();
+        if (operationHasEffect()) {
+            operationTryToLegalize();
+            setValue(amount, manual);
         }
     }
 
@@ -155,12 +119,60 @@ public class OpSetArmor extends Operation {
             throw new RuntimeException("Apply was not called before undo!");
         }
 
-        if (amount != oldAmount || oldManual != manual) {
-            loadoutPart.setArmor(side, oldAmount, !oldManual);
-            if (messageDelivery != null) {
-                messageDelivery.post(new ComponentMessage(loadoutPart, Type.ArmorChanged, !manual));
-            }
+        if (operationHasEffect()) {
+            setValue(oldAmount, oldManual);
         }
         oldAmount = -1;
+    }
+
+    private void storePreviousState() {
+        oldAmount = component.getArmor(side);
+        oldManual = component.hasManualArmor();
+    }
+
+    private void operationTryToLegalize() {
+        if (amount > component.getArmorMax(side))
+            throw new IllegalArgumentException(
+                    "Exceeded max armor! Max allowed: " + component.getArmorMax(side) + " Was: " + amount);
+
+        int armorDiff = amount - oldAmount;
+        int totalArmor = armorDiff + loadout.getArmor(); // This is important to prevent numerical stability issues.
+                                                         // Calculate whole armor in integer precision.
+        double armorTons = loadout.getUpgrades().getArmor().getArmorMass(totalArmor);
+        double freeTonnage = loadout.getChassis().getMassMax() - (loadout.getMassStructItems() + armorTons);
+
+        if (freeTonnage < 0) {
+            // See if the armor can be freed from a combination of automatic components. They will be redistributed
+            // afterwards. FIXME: Devise a proper solution, this is ugly.
+            int freed = 0;
+            if (!manual == true && freed < armorDiff) {
+                for (ConfiguredComponentBase otherPart : loadout.getComponents()) {
+                    if (component != otherPart && otherPart.hasManualArmor()) {
+                        freed += otherPart.getArmorTotal();
+                        if (otherPart.getInternalComponent().getLocation().isTwoSided()) {
+                            otherPart.setArmor(ArmorSide.FRONT, 0, true);
+                            otherPart.setArmor(ArmorSide.BACK, 0, true);
+                        }
+                        else {
+                            otherPart.setArmor(ArmorSide.ONLY, 0, true);
+                        }
+                    }
+                }
+            }
+            if (freed < armorDiff) {
+                throw new IllegalArgumentException("Not enough tonnage to add more armor!");
+            }
+        }
+    }
+
+    private boolean operationHasEffect() {
+        return amount != oldAmount || oldManual != manual;
+    }
+
+    private void setValue(int aValue, boolean aManual) {
+        component.setArmor(side, aValue, aManual);
+        if (messageDelivery != null) {
+            messageDelivery.post(new ComponentMessage(component, Type.ArmorChanged, aManual));
+        }
     }
 }
