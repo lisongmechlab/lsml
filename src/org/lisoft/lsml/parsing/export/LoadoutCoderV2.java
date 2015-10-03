@@ -45,9 +45,9 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.PilotModuleDB;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -57,7 +57,6 @@ import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
 import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman1;
@@ -124,8 +123,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
             if (!(chassis instanceof ChassisStandard)) {
                 throw new DecodingException("LSML link format v2 does not support omni mechs.");
             }
-            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) chassis,
-                    UpgradesMutable.standardUpgrades());
+            loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
             loadout.getEfficiencies().setCoolRun((upeff & (1 << 4)) != 0, null);
             loadout.getEfficiencies().setHeatContainment((upeff & (1 << 3)) != 0, null);
             loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 2)) != 0, null);
@@ -225,8 +223,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
         for (ChassisBase chassis : chassii) {
             if (!(chassis instanceof ChassisStandard))
                 continue;
-            LoadoutStandard loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(),
-                    (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+            LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
             stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
             System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
         }

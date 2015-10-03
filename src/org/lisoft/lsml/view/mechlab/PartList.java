@@ -48,6 +48,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.model.metrics.ItemEffectiveHP;
@@ -257,7 +258,7 @@ public class PartList extends JList<Item> {
             }
 
             // Only update on item changes or upgrades
-            if (aMsg instanceof ConfiguredComponentBase.ComponentMessage || aMsg instanceof Upgrades.UpgradesMessage) {
+            if (aMsg instanceof ComponentMessage || aMsg instanceof Upgrades.UpgradesMessage) {
                 fireContentsChanged(this, 0, component.getInternalComponent().getSlots());
             }
         }

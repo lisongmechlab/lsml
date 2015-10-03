@@ -150,7 +150,7 @@ public class MaxSustainedDPSTest {
         double expected = gauss.getStat("d/s", null) + erppc.getStat("d/s", null) * 1.5 + llas.getStat("d/s", null);
         assertEquals(expected, result, 0.0);
     }
-    
+
     /**
      * Damage shall be correctly calculated for only the selected weapon group
      */
@@ -165,12 +165,12 @@ public class MaxSustainedDPSTest {
         items.add(erppc);
         items.add(erppc);
         items.add(llas);
-        
+
         final int group = 0;
         Collection<Weapon> groupWeapons = new ArrayList<>();
         groupWeapons.add(gauss);
         groupWeapons.add(erppc);
-        Mockito.when(mlc.weaponGroups.getWeapons(group)).thenReturn(groupWeapons);
+        Mockito.when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(groupWeapons);
 
         // There is enough heat to dissipate the GAUSS, LLaser and 1.5 ER PPCs
         double heat = gauss.getStat("h/s", null) + erppc.getStat("h/s", null) * 1.5 + llas.getStat("h/s", null);

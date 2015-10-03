@@ -57,8 +57,9 @@ import org.lisoft.lsml.model.chassi.OmniPodDB;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.message.Message;
@@ -106,7 +107,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
                         stack.pushAndApply(new OpSetArmor(xBar, loadout, component, ArmorSide.ONLY, component
                                 .getArmorTotal(), false));
                     }
-                    xBar.post(new ConfiguredComponentBase.ComponentMessage(component,
+                    xBar.post(new ComponentMessage(component,
                             Type.ArmorDistributionUpdateRequest));
                 }
             }));
@@ -340,7 +341,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
             armorLabel.setText(" /" + Integer.valueOf(component.getInternalComponent().getArmorMax()));
             JTextField tf = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
 
-            if (component.allowAutomaticArmor()) {
+            if (component.hasManualArmor()) {
                 armorLabel.setForeground(Color.GRAY);
                 tf.setForeground(Color.GRAY);
             }
@@ -355,7 +356,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
             JTextField tff = ((JSpinner.DefaultEditor) frontSpinner.getEditor()).getTextField();
             JTextField tfb = ((JSpinner.DefaultEditor) backSpinner.getEditor()).getTextField();
 
-            if (component.allowAutomaticArmor()) {
+            if (component.hasManualArmor()) {
                 frontArmorLabel.setForeground(Color.GRAY);
                 backArmorLabel.setForeground(Color.GRAY);
                 tff.setForeground(Color.GRAY);
@@ -397,9 +398,9 @@ public class PartPanel extends JPanel implements Message.Recipient {
     @Override
     public void receive(Message aMsg) {
         if (aMsg.isForMe(loadout)) {
-            if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
+            if (aMsg instanceof ComponentMessage) {
 
-                ConfiguredComponentBase.ComponentMessage msg = (ConfiguredComponentBase.ComponentMessage) aMsg;
+                ComponentMessage msg = (ComponentMessage) aMsg;
                 if (msg.type == Type.ArmorChanged) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override

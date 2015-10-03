@@ -47,8 +47,8 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
     private OmniPod                  omniPod;
     private final Map<Item, Boolean> toggleStates = new HashMap<>();
 
-    public ConfiguredComponentOmniMech(ComponentOmniMech aComponentOmniMech, boolean aAutoArmor, OmniPod aOmniPod) {
-        super(aComponentOmniMech, aAutoArmor);
+    public ConfiguredComponentOmniMech(ComponentOmniMech aComponentOmniMech, boolean aManualArmor, OmniPod aOmniPod) {
+        super(aComponentOmniMech, aManualArmor);
         setOmniPod(aOmniPod);
     }
 

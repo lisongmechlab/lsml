@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.util.message.Message;
@@ -214,8 +215,8 @@ public class ComponentDestructionSimulator implements Message.Recipient {
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
-            ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
+        if (aMsg instanceof ComponentMessage) {
+            ComponentMessage message = (ComponentMessage) aMsg;
             if (message.component == loadoutPart && message.affectsHeatOrDamage()) {
                 simulate();
             }

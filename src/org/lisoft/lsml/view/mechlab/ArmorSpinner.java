@@ -29,8 +29,9 @@ import org.lisoft.lsml.command.OpSetArmor;
 import org.lisoft.lsml.command.OpSetArmorSymmetric;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -103,8 +104,8 @@ public class ArmorSpinner extends SpinnerNumberModel implements Message.Recipien
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
-            ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
+        if (aMsg.isForMe(loadout) && aMsg instanceof ComponentMessage) {
+            ComponentMessage message = (ComponentMessage) aMsg;
             if (message.component != part)
                 return;
             if (message.type == Type.ArmorChanged) {

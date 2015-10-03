@@ -111,7 +111,7 @@ public class WeaponGroupingPanel extends JPanel implements Message.Recipient {
     }
 
     private void updateTable() {
-        List<Weapon> weapons = weaponGroups.getWeaponOrder();
+        List<Weapon> weapons = weaponGroups.getWeaponOrder(loadout);
         for (int i = 0; i < weaponNames.length; ++i) {
             if (i < weapons.size()) {
                 weaponNames[i].setText(weapons.get(i).getName());

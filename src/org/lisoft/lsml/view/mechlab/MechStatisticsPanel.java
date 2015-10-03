@@ -254,7 +254,7 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
 
     private void updateWeaponGroups() {
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-            boolean hasGroup = loadout.getWeaponGroups().getWeapons(i).size() > 0;
+            boolean hasGroup = loadout.getWeaponGroups().getWeapons(i, loadout).size() > 0;
             weaponGroupStats[i].setEnabled(hasGroup);
         }
     }

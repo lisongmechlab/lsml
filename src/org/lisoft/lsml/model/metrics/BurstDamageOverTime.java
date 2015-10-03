@@ -91,7 +91,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements Message.Reci
             weapons = loadout.items(Weapon.class);
         }
         else {
-            weapons = loadout.getWeaponGroups().getWeapons(weaponGroup);
+            weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
         for (Weapon weapon : weapons) {

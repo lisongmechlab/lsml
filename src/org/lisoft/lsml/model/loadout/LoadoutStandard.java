@@ -22,8 +22,6 @@ package org.lisoft.lsml.model.loadout;
 import java.io.File;
 import java.util.Collection;
 
-import org.lisoft.lsml.command.OpLoadStock;
-import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.MovementProfile;
@@ -37,7 +35,6 @@ import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
-import org.lisoft.lsml.util.OperationStack;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -49,20 +46,10 @@ import com.thoughtworks.xstream.XStream;
 public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
     private final UpgradesMutable upgrades;
 
+    @Deprecated
     public static LoadoutStandard load(File aFile) {
         XStream stream = loadoutXstream();
         return (LoadoutStandard) stream.fromXML(aFile);
-    }
-
-    /**
-     * Will create a new, empty load out based on the given chassis.
-     * 
-     * @param aChassi
-     *            The chassis to base the load out on.
-     */
-    @Deprecated
-    public LoadoutStandard(ChassisStandard aChassi) {
-        this(ComponentBuilder.getStandardComponentFactory(), aChassi, UpgradesMutable.standardUpgrades());
     }
 
     /**
@@ -75,27 +62,15 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
      *            The chassis to base the load out on.
      * @param aUpgradesMutable
      *            The {@link UpgradesMutable} that will be used for this chassis.
+     * @param aWeaponGroups
      */
-    public LoadoutStandard(Factory<ConfiguredComponentStandard> aFactory, ChassisStandard aChassi,
-            UpgradesMutable aUpgradesMutable) {
-        super(aFactory, aChassi);
+    LoadoutStandard(Factory<ConfiguredComponentStandard> aFactory, ChassisStandard aChassi,
+            UpgradesMutable aUpgradesMutable, WeaponGroups aWeaponGroups) {
+        super(aFactory, aChassi, aWeaponGroups);
 
         upgrades = aUpgradesMutable;
     }
 
-    /**
-     * Will load a stock load out for the given variation name.
-     * 
-     * @param aString
-     *            The name of the stock variation to load.
-     * @throws Exception
-     */
-    public LoadoutStandard(String aString) throws Exception {
-        this(ComponentBuilder.getStandardComponentFactory(), (ChassisStandard) ChassisDB.lookup(aString),
-                UpgradesMutable.standardUpgrades());
-        OperationStack operationStack = new OperationStack(0);
-        operationStack.pushAndApply(new OpLoadStock(getChassis(), this, null));
-    }
 
     /**
      * Copy constructor.
@@ -105,8 +80,9 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
      * @param aLoadout
      *            The {@link LoadoutStandard} to copy.
      */
+    @Deprecated // Start using factory's copy
     public LoadoutStandard(Factory<ConfiguredComponentStandard> aFactory, LoadoutStandard aLoadout) {
-        super(aFactory, aLoadout);
+        super(aFactory, aLoadout, new WeaponGroups(aLoadout.getWeaponGroups()));
         upgrades = new UpgradesMutable(aLoadout.upgrades);
     }
 

@@ -30,6 +30,8 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 /**
  * This factory object can construct configured components.
  * 
+ * TODO: This class is a bit of a mess, tidy it up.
+ * 
  * @author Emily Björk
  */
 public class ComponentBuilder {
@@ -55,7 +57,7 @@ public class ComponentBuilder {
             ChassisStandard chassis = (ChassisStandard) aChassis;
             ConfiguredComponentStandard[] ans = new ConfiguredComponentStandard[Location.values().length];
             for (ComponentStandard component : chassis.getComponents()) {
-                ans[component.getLocation().ordinal()] = new ConfiguredComponentStandard(component, true);
+                ans[component.getLocation().ordinal()] = new ConfiguredComponentStandard(component, false);
             }
             return ans;
         }
@@ -76,7 +78,7 @@ public class ComponentBuilder {
             ChassisOmniMech omniMech = (ChassisOmniMech) aChassis;
             ConfiguredComponentOmniMech[] ans = new ConfiguredComponentOmniMech[Location.values().length];
             for (Location location : Location.values()) {
-                ans[location.ordinal()] = new ConfiguredComponentOmniMech(omniMech.getComponent(location), true,
+                ans[location.ordinal()] = new ConfiguredComponentOmniMech(omniMech.getComponent(location), false,
                         OmniPodDB.lookupOriginal(omniMech, location));
             }
             return ans;

@@ -32,6 +32,7 @@ import org.lisoft.lsml.command.OpRemoveItem;
 import org.lisoft.lsml.command.OpSetArmor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -95,7 +96,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(upgradesMutable.getArmor()).thenReturn(armor);
         Mockito.when(upgradesMutable.getHeatSink()).thenReturn(heatSinks);
         Mockito.when(upgradesMutable.getStructure()).thenReturn(structure);
-        return new LoadoutStandard(new ComponentFactory(), (ChassisStandard) chassis, upgradesMutable);
+        return new LoadoutStandard(new ComponentFactory(), (ChassisStandard) chassis, upgradesMutable, weaponGroups);
     }
 
     @Override
@@ -242,7 +243,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
     @Test
     public void testLoadout_CopyCtor() throws Exception {
         OperationStack stack = new OperationStack(0);
-        LoadoutStandard cut = new LoadoutStandard("HBK-4J");
+        LoadoutStandard cut = (LoadoutStandard) DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("HBK-4J"));
         LoadoutStandard copy = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), cut);
 
         // A copy must be equal :)

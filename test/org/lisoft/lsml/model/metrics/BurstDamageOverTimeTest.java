@@ -106,7 +106,7 @@ public class BurstDamageOverTimeTest {
         Collection<Weapon> groupWeapons = new ArrayList<>();
         groupWeapons.add(ac20);
         groupWeapons.add(erllas);
-        Mockito.when(mlc.weaponGroups.getWeapons(group)).thenReturn(groupWeapons);
+        Mockito.when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(groupWeapons);
         
         // Execute
         BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar, group);

@@ -31,7 +31,7 @@ import org.lisoft.lsml.util.message.MessageDelivery;
  */
 public class OpSetMaxArmor extends OpLoadoutBase {
     private final boolean manualSet;
-    private double        ratio;
+    private final double  ratio;
 
     public OpSetMaxArmor(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, double aRatio, boolean aManualSet) {
         super(aLoadout, aMessageDelivery, "set max armor");

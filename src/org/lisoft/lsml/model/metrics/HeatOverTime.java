@@ -100,7 +100,7 @@ public class HeatOverTime implements VariableMetric, Message.Recipient {
 
         final Collection<Weapon> weaponsInGroup;
         if (weaponGroup >= 0) {
-            weaponsInGroup = loadout.getWeaponGroups().getWeapons(weaponGroup);
+            weaponsInGroup = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
         else {
             weaponsInGroup = null;

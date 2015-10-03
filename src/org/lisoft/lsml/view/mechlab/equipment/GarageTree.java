@@ -32,14 +32,10 @@ import javax.swing.ToolTipManager;
 import javax.swing.tree.TreePath;
 
 import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ItemTransferHandler;
 import org.lisoft.lsml.view.ProgramInit;
@@ -86,30 +82,17 @@ public class GarageTree extends JTree {
                         label.setEnabled(false);
                         menu.add(label);
                         menu.add(new JMenuItem(new RenameLoadoutAction(clickedLoadout, xBar, null)));
-                        menu.add(new JMenuItem(new DeleteLoadoutAction(xBar, ProgramInit.lsml().getGarage(),
-                                clickedLoadout)));
-                        menu.add(new JMenuItem(new CloneLoadoutAction("Clone", clickedLoadout, KeyStroke
-                                .getKeyStroke("C"))));
+                        menu.add(new JMenuItem(
+                                new DeleteLoadoutAction(xBar, ProgramInit.lsml().getGarage(), clickedLoadout)));
+                        menu.add(new JMenuItem(
+                                new CloneLoadoutAction("Clone", clickedLoadout, KeyStroke.getKeyStroke("C"))));
                         menu.show(GarageTree.this, e.getX(), e.getY());
                     }
                 }
                 if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
                     Object clicked = getClickedObject(e);
                     if (clicked instanceof ChassisBase) {
-                        LoadoutBase<?> loadout = null;
-                        if (clicked instanceof ChassisStandard) {
-                            ChassisStandard chassis = (ChassisStandard) clicked;
-                            loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), chassis,
-                                    UpgradesMutable.standardUpgrades());
-
-                        }
-                        else if (clicked instanceof ChassisOmniMech) {
-                            ChassisOmniMech chassi = (ChassisOmniMech) clicked;
-                            loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), chassi);
-                        }
-                        else {
-                            throw new RuntimeException("Unknown chassis type!");
-                        }
+                        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty((ChassisBase) clicked);
                         aLoadoutDesktop.openLoadout(loadout);
                     }
                     else if (clicked instanceof LoadoutBase<?>) {
@@ -140,9 +123,9 @@ public class GarageTree extends JTree {
                         .append(" - ").append(chassi.getEngineMax()).append("<br>");
                 sb.append("Max Jump Jets: ").append(chassi.getJumpJetsMax()).append(" ECM: ")
                         .append(chassi.getHardPointsCount(HardPointType.ECM) > 0 ? "Yes" : "No").append("<br>");
-                sb.append("Ballistics: ").append(chassi.getHardPointsCount(HardPointType.BALLISTIC))
-                        .append(" Energy: ").append(chassi.getHardPointsCount(HardPointType.ENERGY))
-                        .append(" Missile: ").append(chassi.getHardPointsCount(HardPointType.MISSILE)).append(" AMS: ")
+                sb.append("Ballistics: ").append(chassi.getHardPointsCount(HardPointType.BALLISTIC)).append(" Energy: ")
+                        .append(chassi.getHardPointsCount(HardPointType.ENERGY)).append(" Missile: ")
+                        .append(chassi.getHardPointsCount(HardPointType.MISSILE)).append(" AMS: ")
                         .append(chassi.getHardPointsCount(HardPointType.AMS)).append("<br>");
                 sb.append("</html>");
                 return sb.toString();

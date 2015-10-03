@@ -134,7 +134,7 @@ public class OpDistributeArmor extends CompositeOperation {
             Iterator<ConfiguredComponentBase> it = parts.iterator();
             while (it.hasNext()) {
                 ConfiguredComponentBase part = it.next();
-                if (!part.allowAutomaticArmor() || getArmor(part) == part.getInternalComponent().getArmorMax())
+                if (part.hasManualArmor() || getArmor(part) == part.getInternalComponent().getArmorMax())
                     it.remove();
             }
 
@@ -170,7 +170,7 @@ public class OpDistributeArmor extends CompositeOperation {
         // Discount armor that is manually fixed.
         for (Location part : Location.values()) {
             final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
-            if (!loadoutPart.allowAutomaticArmor()) {
+            if (loadoutPart.hasManualArmor()) {
                 armorLeft -= loadoutPart.getArmorTotal();
             }
             else {
@@ -196,7 +196,7 @@ public class OpDistributeArmor extends CompositeOperation {
         for (Location part : Location.values()) {
             final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
 
-            if (!loadoutPart.allowAutomaticArmor())
+            if (loadoutPart.hasManualArmor())
                 continue;
             if (loadoutPart.getInternalComponent().getLocation().isTwoSided()) {
                 addOp(new OpSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.BACK, 0, false));
@@ -210,7 +210,7 @@ public class OpDistributeArmor extends CompositeOperation {
         for (Location part : Location.values()) {
             final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
 
-            if (!loadoutPart.allowAutomaticArmor())
+            if (loadoutPart.hasManualArmor())
                 continue;
 
             int armor = getArmor(loadoutPart);
@@ -237,7 +237,7 @@ public class OpDistributeArmor extends CompositeOperation {
 
         for (Location location : Location.values()) {
             ConfiguredComponentBase loadoutPart = aLoadout.getComponent(location);
-            if (!loadoutPart.allowAutomaticArmor())
+            if (loadoutPart.hasManualArmor())
                 continue;
 
             // Protect engine at all costs
@@ -265,13 +265,13 @@ public class OpDistributeArmor extends CompositeOperation {
             else {
                 if (location == Location.LeftArm) {
                     ans.put(Location.LeftArm, 10);
-                    if (aLoadout.getComponent(Location.LeftTorso).allowAutomaticArmor()
+                    if (!aLoadout.getComponent(Location.LeftTorso).hasManualArmor()
                             && (!ans.containsKey(Location.LeftTorso) || ans.get(Location.LeftTorso) < 10))
                         ans.put(Location.LeftTorso, 10);
                 }
                 else if (location == Location.RightArm) {
                     ans.put(Location.RightArm, 10);
-                    if (aLoadout.getComponent(Location.RightTorso).allowAutomaticArmor()
+                    if (!aLoadout.getComponent(Location.RightTorso).hasManualArmor()
                             && (!ans.containsKey(Location.RightTorso) || ans.get(Location.RightTorso) < 10))
                         ans.put(Location.RightTorso, 10);
                 }

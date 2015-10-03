@@ -69,7 +69,7 @@ public class AlphaStrike extends RangeMetric {
             weapons = loadout.items(Weapon.class);
         }
         else {
-            weapons = loadout.getWeaponGroups().getWeapons(weaponGroup);
+            weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
         for (Weapon weapon : weapons) {
@@ -87,7 +87,7 @@ public class AlphaStrike extends RangeMetric {
             weapons = loadout.items(Weapon.class);
         }
         else {
-            weapons = loadout.getWeaponGroups().getWeapons(weaponGroup);
+            weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
         Map<Weapon, Double> ans = new HashMap<>();

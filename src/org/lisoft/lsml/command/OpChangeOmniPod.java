@@ -23,8 +23,8 @@ import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase.ComponentMessage.Type;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.OperationStack.CompositeOperation;
@@ -95,8 +95,8 @@ public class OpChangeOmniPod extends CompositeOperation {
             @Override
             protected void undo() {
                 loadout.setOmniPod(oldOmniPod);
-                messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
-                messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.ItemsChanged));
+                messageBuffer.post(new ComponentMessage(component, Type.OmniPodChanged));
+                messageBuffer.post(new ComponentMessage(component, Type.ItemsChanged));
             }
 
             @Override
@@ -107,8 +107,8 @@ public class OpChangeOmniPod extends CompositeOperation {
             @Override
             protected void apply() {
                 loadout.setOmniPod(newOmniPod);
-                messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.OmniPodChanged));
-                messageBuffer.post(new ConfiguredComponentBase.ComponentMessage(component, Type.ItemsChanged));
+                messageBuffer.post(new ComponentMessage(component, Type.OmniPodChanged));
+                messageBuffer.post(new ComponentMessage(component, Type.ItemsChanged));
             }
         });
     }

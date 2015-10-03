@@ -73,22 +73,23 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     private final List<PilotModule> modules;     // TODO: Modules should be handled as separate categories.
     private final WeaponGroups      weaponGroups;
 
-    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase) {
+    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase, WeaponGroups aWeaponGroups) {
         name = aChassisBase.getNameShort();
         chassisBase = aChassisBase;
         efficiencies = new Efficiencies();
         modules = new ArrayList<>();
         components = aFactory.defaultComponents(chassisBase);
-        weaponGroups = new WeaponGroups(this);
+        weaponGroups = aWeaponGroups;
     }
 
-    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, LoadoutBase<T> aLoadoutBase) {
+    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, LoadoutBase<T> aLoadoutBase,
+            WeaponGroups aWeaponGroups) {
         name = aLoadoutBase.name;
         chassisBase = aLoadoutBase.chassisBase;
         efficiencies = new Efficiencies(aLoadoutBase.efficiencies);
         modules = new ArrayList<>(aLoadoutBase.modules);
         components = aFactory.cloneComponents(aLoadoutBase);
-        weaponGroups = new WeaponGroups(aLoadoutBase.getWeaponGroups(), this);
+        weaponGroups = aWeaponGroups;
     }
 
     public static XStream loadoutXstream() {
@@ -262,7 +263,8 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
         final boolean canUseHybridSlot = aModule.getSlot() == ModuleSlot.WEAPON || aModule.getSlot() == ModuleSlot.MECH;
 
-        final boolean isHybridSlotFree = !(getModulesOfType(ModuleSlot.MECH) > getModulesMax(ModuleSlot.MECH) || getModulesOfType(ModuleSlot.WEAPON) > getModulesMax(ModuleSlot.WEAPON));
+        final boolean isHybridSlotFree = !(getModulesOfType(ModuleSlot.MECH) > getModulesMax(ModuleSlot.MECH)
+                || getModulesOfType(ModuleSlot.WEAPON) > getModulesMax(ModuleSlot.WEAPON));
 
         if (getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot())
                 && (!canUseHybridSlot || !isHybridSlotFree))

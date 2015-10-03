@@ -60,7 +60,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
         Mockito.when(internal.getArmorMax()).thenReturn(maxArmor);
         Mockito.when(stdInternal.getHardPoints()).thenReturn(hardPoints);
         Mockito.when(stdInternal.hasMissileBayDoors()).thenReturn(baydoors);
-        return new ConfiguredComponentStandard(stdInternal, autoArmor);
+        return new ConfiguredComponentStandard(stdInternal, manualArmor);
     }
 
     @Before

@@ -25,15 +25,14 @@ import org.lisoft.lsml.command.OpAddModule;
 import org.lisoft.lsml.command.OpRename;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
@@ -44,7 +43,6 @@ import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
 import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.view.ProgramInit;
 
@@ -130,23 +128,8 @@ public class LoadoutConverter implements Converter {
     private LoadoutBase<?> parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         String name = aReader.getAttribute("name");
         ChassisBase chassis = ChassisDB.lookup(aReader.getAttribute("chassis"));
-        LoadoutBase<?> loadoutBase;
+        LoadoutBase<?> loadoutBase = DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-
-        if (chassis instanceof ChassisStandard) {
-            LoadoutStandard loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(),
-                    (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
-            loadoutBase = loadout;
-        }
-        else if (chassis instanceof ChassisOmniMech) {
-            LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
-                    (ChassisOmniMech) chassis);
-            loadoutBase = loadout;
-        }
-        else {
-            throw new RuntimeException("Unsupported chassis class: " + chassis.getClass());
-        }
-
         builder.push(new OpRename(loadoutBase, null, name));
 
         while (aReader.hasMoreChildren()) {
@@ -218,8 +201,7 @@ public class LoadoutConverter implements Converter {
             throw new RuntimeException("Error parsing loadout: " + name
                     + " expected standard mech but found an omni mech chassis.");
 
-        LoadoutStandard loadout = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(),
-                (ChassisStandard) chassis, UpgradesMutable.standardUpgrades());
+        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
         builder.push(new OpRename(loadout, null, name));
 

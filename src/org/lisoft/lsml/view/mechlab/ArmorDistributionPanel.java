@@ -37,6 +37,7 @@ import org.lisoft.lsml.command.OpSetArmor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.OperationStack;
 import org.lisoft.lsml.util.OperationStack.CompositeOperation;
@@ -268,9 +269,9 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
      */
     @Override
     public void receive(Message aMsg) {
-        if (aMsg.isForMe(loadout) && aMsg instanceof ConfiguredComponentBase.ComponentMessage) {
-            ConfiguredComponentBase.ComponentMessage message = (ConfiguredComponentBase.ComponentMessage) aMsg;
-            if (message.automatic)
+        if (aMsg.isForMe(loadout) && aMsg instanceof ComponentMessage) {
+            ComponentMessage message = (ComponentMessage) aMsg;
+            if (!message.manualArmor)
                 return;
             updateArmorDistribution();
         }

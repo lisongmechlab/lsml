@@ -106,7 +106,7 @@ public class MaxSustainedDPS extends RangeMetric {
             weaponsToUse = loadout.items(Weapon.class);
         }
         else {
-            weaponsToUse = loadout.getWeaponGroups().getWeapons(weaponGroup);
+            weaponsToUse = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
         for (Weapon weapon : weaponsToUse) {

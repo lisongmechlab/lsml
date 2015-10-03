@@ -143,7 +143,7 @@ public class AlphaStrikeTest {
         Collection<Weapon> groupWeapons = new ArrayList<>();
         groupWeapons.add(weapon2);
         groupWeapons.add(weapon3);
-        Mockito.when(mlc.weaponGroups.getWeapons(group)).thenReturn(groupWeapons);
+        Mockito.when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(groupWeapons);
         
         cut = new AlphaStrike(mlc.loadout, group);
         

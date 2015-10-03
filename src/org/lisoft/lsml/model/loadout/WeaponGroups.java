@@ -44,33 +44,26 @@ public class WeaponGroups {
          * Assumes that all the weapons in the group are fired in an optimal pattern. Useful for calculating total
          * sustained DPS for example.
          */
-        Optimal,
-        /**
-         * Assumes that all weapons are fired as often as possible.
-         */
-        AlphaStrike,
-        /**
-         * Assumes that all weapons are fired 0.5s after each other. Weapons on cool-down when their turn arrives are
-         * skipped past and the next available weapon fires.
-         */
+        Optimal, /**
+                  * Assumes that all weapons are fired as often as possible.
+                  */
+        AlphaStrike, /**
+                      * Assumes that all weapons are fired 0.5s after each other. Weapons on cool-down when their turn
+                      * arrives are skipped past and the next available weapon fires.
+                      */
         ChainFire
     }
 
-    public final static int                MAX_GROUPS  = 6;
-    public final static int                MAX_WEAPONS = 16;
+    public final static int MAX_GROUPS  = 6;
+    public final static int MAX_WEAPONS = 16;
 
-    private final BitSet                   bs          = new BitSet(MAX_GROUPS * MAX_WEAPONS);
-    private final FiringMode[]             firingMode  = new FiringMode[MAX_GROUPS];
-    private final transient LoadoutBase<?> loadout;
+    private final BitSet       bs         = new BitSet(MAX_GROUPS * MAX_WEAPONS);
+    private final FiringMode[] firingMode = new FiringMode[MAX_GROUPS];
 
     /**
      * Creates a new {@link WeaponGroups}.
-     * 
-     * @param aLoadout
-     *            The {@link LoadoutBase} that this {@link WeaponGroups} is for.
      */
-    public WeaponGroups(LoadoutBase<?> aLoadout) {
-        loadout = aLoadout;
+    public WeaponGroups() {
         for (int i = 0; i < MAX_GROUPS; ++i) {
             setFiringMode(i, FiringMode.Optimal);
         }
@@ -81,11 +74,8 @@ public class WeaponGroups {
      * 
      * @param aThat
      *            The {@link WeaponGroups} to copy.
-     * @param aNewLoadout
-     *            The {@link LoadoutBase} to use for this new {@link WeaponGroups}.
      */
-    public WeaponGroups(WeaponGroups aThat, LoadoutBase<?> aNewLoadout) {
-        loadout = aNewLoadout;
+    public WeaponGroups(WeaponGroups aThat) {
         assign(aThat);
     }
 
@@ -119,11 +109,14 @@ public class WeaponGroups {
     /**
      * Gets the order that weapons are appearing for the groups.
      * 
+     * @param aLoadout
+     *            The loadout to get the weapon order for.
+     * 
      * @return A {@link List} of {@link Weapon}s in an implementation defined, deterministic order.
      */
-    public List<Weapon> getWeaponOrder() {
+    public List<Weapon> getWeaponOrder(LoadoutBase<?> aLoadout) {
         List<Weapon> weapons = new ArrayList<>();
-        for (Weapon w : loadout.items(Weapon.class)) {
+        for (Weapon w : aLoadout.items(Weapon.class)) {
             if (w.isOffensive()) {
                 weapons.add(w);
             }
@@ -136,11 +129,13 @@ public class WeaponGroups {
      * 
      * @param aGroup
      *            The group to get weapons for.
+     * @param aLoadout
+     *            The loadout to get the weapons for.
      * @return A {@link Collection} of {@link Weapon}s.
      */
-    public Collection<Weapon> getWeapons(int aGroup) {
+    public Collection<Weapon> getWeapons(int aGroup, LoadoutBase<?> aLoadout) {
         List<Weapon> ans = new ArrayList<>();
-        List<Weapon> weapons = getWeaponOrder();
+        List<Weapon> weapons = getWeaponOrder(aLoadout);
         for (int i = 0; i < weapons.size(); ++i) {
             if (isInGroup(aGroup, i)) {
                 ans.add(weapons.get(i));

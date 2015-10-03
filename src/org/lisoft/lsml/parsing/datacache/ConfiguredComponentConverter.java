@@ -71,7 +71,7 @@ public class ConfiguredComponentConverter implements Converter {
 
         aWriter.addAttribute("version", "2");
         aWriter.addAttribute("location", component.getInternalComponent().getLocation().toString());
-        aWriter.addAttribute("autoarmor", Boolean.toString(component.allowAutomaticArmor()));
+        aWriter.addAttribute("autoarmor", Boolean.toString(!component.hasManualArmor()));
 
         if (null != omniComponent) {
             if (!omniComponent.getInternalComponent().hasFixedOmniPod()) {

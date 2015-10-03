@@ -26,8 +26,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.ChassisDB;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
@@ -56,9 +56,8 @@ public class OpStripLoadoutTest {
     @Test
     public void testStrip() throws Exception {
         // Setup
-        LoadoutStandard cut = new LoadoutStandard(ChassisDB.lookup("AS7-BH").getName()); // Has Endo-Steel standard
-                                                                                         // and lots of
-        // stuff
+        LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
+        // Has Endo-Steel standard and lots of stuff
 
         assertTrue(cut.getMass() > 99.0);
 

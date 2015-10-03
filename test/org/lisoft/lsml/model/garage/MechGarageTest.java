@@ -38,12 +38,12 @@ import org.junit.Test;
 import org.lisoft.lsml.command.OpAddModule;
 import org.lisoft.lsml.command.OpLoadStock;
 import org.lisoft.lsml.model.chassi.ChassisDB;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.garage.MechGarage.GarageMessage;
 import org.lisoft.lsml.model.garage.MechGarage.GarageMessage.Type;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.PilotModuleDB;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -169,12 +169,10 @@ public class MechGarageTest {
     @Test
     public void testSaveAsOpen() throws Exception {
         // Setup
-        LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
-        LoadoutStandard lo2 = new LoadoutStandard("as7-k");
-        LoadoutOmniMech lo3 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
-                (ChassisOmniMech) ChassisDB.lookup("nva-prime"));
-        LoadoutOmniMech lo4 = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
-                (ChassisOmniMech) ChassisDB.lookup("tbr-c"));
+        LoadoutBase<?> lo1 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("as7-d-dc"));
+        LoadoutBase<?> lo2 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("as7-k"));
+        LoadoutBase<?> lo3 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("nva-prime"));
+        LoadoutBase<?> lo4 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("tbr-c"));
 
         OperationStack stack = new OperationStack(0);
         stack.pushAndApply(new OpLoadStock(lo3.getChassis(), lo3, xBar));
@@ -213,8 +211,8 @@ public class MechGarageTest {
     @Test
     public void testSave() throws Exception {
         // Setup
-        LoadoutStandard lo1 = new LoadoutStandard("as7-d-dc");
-        LoadoutStandard lo2 = new LoadoutStandard("as7-k");
+        LoadoutBase<?> lo1 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("as7-d-dc"));
+        LoadoutBase<?> lo2 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("as7-k"));
         MechGarage cut = new MechGarage(xBar);
         cut.add(lo1);
         cut.saveas(testFile); // Create garage with one mech and save it.
@@ -244,7 +242,7 @@ public class MechGarageTest {
     @Test
     public void testAddRemoveLoadout() throws Exception {
         // Setup
-        LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
+        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("as7-d-dc"));
         MechGarage cut = new MechGarage(xBar);
 
         // Execute
@@ -272,7 +270,7 @@ public class MechGarageTest {
     @Test
     public void testRemoveLoadoutNonexistent() throws Exception {
         // Setup
-        LoadoutStandard loadout = new LoadoutStandard("as7-d-dc");
+        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("as7-d-dc"));
         MechGarage cut = new MechGarage(xBar);
         reset(xBar);
         cut.remove(loadout);
@@ -310,8 +308,8 @@ public class MechGarageTest {
      */
     @Test
     public void testActuatorStateSaved() throws IOException {
-        ChassisOmniMech chassi = (ChassisOmniMech) ChassisDB.lookup("WHK-B");
-        LoadoutOmniMech loadout = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), chassi);
+        LoadoutOmniMech loadout = (LoadoutOmniMech) DefaultLoadoutFactory.instance
+                .produceEmpty(ChassisDB.lookup("WHK-B"));
 
         loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, false);
 

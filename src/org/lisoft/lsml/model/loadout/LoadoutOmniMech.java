@@ -32,7 +32,6 @@ import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.OperationStack.Operation;
 
@@ -51,11 +50,15 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
      *            The {@link Factory} used to construct the components.
      * @param aChassis
      *            The chassis to base this loadout on.
+     * @param aUpgrades
+     *            The upgrades to use.
+     * @param aWeaponGroups
+     *            The weapon groups object for this loadout.
      */
-    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis) {
-        super(aFactory, aChassis);
-        upgrades = new Upgrades(aChassis.getFixedArmorType(), aChassis.getFixedStructureType(),
-                UpgradeDB.STANDARD_GUIDANCE, aChassis.getFixedHeatSinkType());
+    LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis, Upgrades aUpgrades,
+            WeaponGroups aWeaponGroups) {
+        super(aFactory, aChassis, aWeaponGroups);
+        upgrades = aUpgrades;
     }
 
     /**
@@ -65,9 +68,13 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
      *            The {@link Factory} used to construct the components.
      * @param aLoadoutOmniMech
      *            The {@link LoadoutOmniMech} to copy.
+     * @param aWeaponGroups
+     *            The weapon groups object for this loadout.
      */
-    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, LoadoutOmniMech aLoadoutOmniMech) {
-        super(aFactory, aLoadoutOmniMech);
+    @Deprecated // Start using factory's copy
+    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, LoadoutOmniMech aLoadoutOmniMech,
+            WeaponGroups aWeaponGroups) {
+        super(aFactory, aLoadoutOmniMech, aWeaponGroups);
         upgrades = new Upgrades(aLoadoutOmniMech.getUpgrades());
     }
 
@@ -125,7 +132,8 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     @Override
     public LoadoutOmniMech copy() {
         // TODO: Remove hard-coded factory
-        return new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), this);
+        return new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), this,
+                new WeaponGroups(getWeaponGroups()));
     }
 
     @Override
