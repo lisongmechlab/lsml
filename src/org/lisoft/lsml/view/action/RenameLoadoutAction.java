@@ -26,9 +26,9 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.lisoft.lsml.command.OpRename;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.mechlab.LoadoutFrame;
 
@@ -38,15 +38,15 @@ public class RenameLoadoutAction extends AbstractAction {
     private final LoadoutFrame   loadoutFrame;
     private final LoadoutBase<?> loadout;
     private final MessageXBar    xBar;
-    private final OperationStack stack;
+    private final CommandStack stack;
 
-    public RenameLoadoutAction(LoadoutBase<?> aLoadout, MessageXBar aXBar, OperationStack aStack) {
+    public RenameLoadoutAction(LoadoutBase<?> aLoadout, MessageXBar aXBar, CommandStack aStack) {
         super("Rename loadout...");
         loadout = aLoadout;
         loadoutFrame = null;
         xBar = aXBar;
         if (aStack == null)
-            stack = new OperationStack(0); // Not undoable
+            stack = new CommandStack(0); // Not undoable
         else
             stack = aStack;
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
@@ -68,6 +68,6 @@ public class RenameLoadoutAction extends AbstractAction {
             JOptionPane.showMessageDialog(loadoutFrame, "No name given!");
             return;
         }
-        stack.pushAndApply(new OpRename(loadout, xBar, name));
+        stack.pushAndApply(new CmdRename(loadout, xBar, name));
     }
 }

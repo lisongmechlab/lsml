@@ -71,7 +71,7 @@ import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
 import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.MetricDisplay;
@@ -159,10 +159,10 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
     private final JTable                 weaponTable;
 
     private transient Boolean            inhibitChanges           = false;
-    private final OperationStack         opStack;
+    private final CommandStack         opStack;
     private final transient MessageXBar  xBar;
 
-    public LoadoutInfoPanel(LoadoutBase<?> aLoadout, final LoadoutMetrics aMetrics, OperationStack aOperationStack,
+    public LoadoutInfoPanel(LoadoutBase<?> aLoadout, final LoadoutMetrics aMetrics, CommandStack aOperationStack,
             MessageXBar aXBar) {
         loadout = aLoadout;
         opStack = aOperationStack;

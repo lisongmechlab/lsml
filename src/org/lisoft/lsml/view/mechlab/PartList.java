@@ -38,8 +38,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import org.lisoft.lsml.command.OpAddItem;
-import org.lisoft.lsml.command.OpRemoveItem;
+import org.lisoft.lsml.command.CmdAddItem;
+import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
@@ -54,7 +54,7 @@ import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.model.metrics.ItemEffectiveHP;
 import org.lisoft.lsml.model.metrics.helpers.ComponentDestructionSimulator;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ItemTransferHandler;
@@ -67,7 +67,7 @@ public class PartList extends JList<Item> {
     private static final long                   serialVersionUID = 5995694414450060827L;
     private final ConfiguredComponentBase       component;
     private final DynamicSlotDistributor        slotDistributor;
-    private OperationStack                      opStack;
+    private CommandStack                      opStack;
 
     private final DecimalFormat                 df               = new DecimalFormat("###.#");
     private final DecimalFormat                 df2              = new DecimalFormat("###.##");
@@ -264,7 +264,7 @@ public class PartList extends JList<Item> {
         }
     }
 
-    PartList(OperationStack aStack, final LoadoutBase<?> aLoadout, final ConfiguredComponentBase aComponent,
+    PartList(CommandStack aStack, final LoadoutBase<?> aLoadout, final ConfiguredComponentBase aComponent,
             final MessageXBar aXBar, DynamicSlotDistributor aSlotDistributor) {
         slotDistributor = aSlotDistributor;
         opStack = aStack;
@@ -313,7 +313,7 @@ public class PartList extends JList<Item> {
         RenderState state = componentRenderer.getRenderState(getSelectedIndex());
         Item item = state.getItem();
         if (component.canRemoveItem(state.getItem())) {
-            opStack.pushAndApply(new OpRemoveItem(aXBar, loadout, component, state.getItem()));
+            opStack.pushAndApply(new CmdRemoveItem(aXBar, loadout, component, state.getItem()));
             return item;
         }
         return null;
@@ -334,7 +334,7 @@ public class PartList extends JList<Item> {
             case EngineHeatSink: {
                 if (aItem instanceof HeatSink && EquipResult.SUCCESS == loadout.canEquip(aItem)
                         && EquipResult.SUCCESS == component.canEquip(aItem)) {
-                    opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
+                    opStack.pushAndApply(new CmdAddItem(xBar, loadout, component, aItem));
                 }
             }
             case LastSlot: // Fall through
@@ -343,13 +343,13 @@ public class PartList extends JList<Item> {
                 // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
                 if (aShouldReplace && component.canRemoveItem(aItem)
                         && !(aItem instanceof HeatSink && state.getItem() instanceof Engine)) {
-                    opStack.pushAndApply(new OpRemoveItem(xBar, loadout, component, state.getItem()));
+                    opStack.pushAndApply(new CmdRemoveItem(xBar, loadout, component, state.getItem()));
                 }
                 // Fall through
             }
             case Empty: {
                 if (EquipResult.SUCCESS == loadout.canEquip(aItem) && EquipResult.SUCCESS == component.canEquip(aItem)) {
-                    opStack.pushAndApply(new OpAddItem(xBar, loadout, component, aItem));
+                    opStack.pushAndApply(new CmdAddItem(xBar, loadout, component, aItem));
                 }
             }
             default:

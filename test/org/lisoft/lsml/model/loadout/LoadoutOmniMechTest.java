@@ -29,9 +29,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.lsml.command.OpAddModule;
-import org.lisoft.lsml.command.OpChangeOmniPod;
-import org.lisoft.lsml.command.OpRename;
+import org.lisoft.lsml.command.CmdAddModule;
+import org.lisoft.lsml.command.CmdChangeOmniPod;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -51,7 +51,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Mockito;
 
 /**
@@ -156,9 +156,9 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceEmpty(dwfa);
         LoadoutBase<?> cut1 = DefaultLoadoutFactory.instance.produceEmpty(dwfb);
 
-        OperationStack stack = new OperationStack(0);
-        stack.pushAndApply(new OpRename(cut, null, "fooba"));
-        stack.pushAndApply(new OpRename(cut1, null, "fooba"));
+        CommandStack stack = new CommandStack(0);
+        stack.pushAndApply(new CmdRename(cut, null, "fooba"));
+        stack.pushAndApply(new CmdRename(cut1, null, "fooba"));
 
         assertNotEquals(cut, cut1);
     }
@@ -182,7 +182,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
-        OperationStack stack = new OperationStack(0);
+        CommandStack stack = new CommandStack(0);
         stack.pushAndApply(new OpSetGuidanceType(null, cut1, UpgradeDB.ARTEMIS_IV));
         assertNotEquals(cut, cut1);
     }
@@ -195,8 +195,8 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
-        OperationStack stack = new OperationStack(0);
-        stack.pushAndApply(new OpRename(cut, null, "fooba"));
+        CommandStack stack = new CommandStack(0);
+        stack.pushAndApply(new CmdRename(cut, null, "fooba"));
 
         assertNotEquals(cut, cut1);
     }
@@ -224,8 +224,8 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
-        OperationStack stack = new OperationStack(0);
-        stack.pushAndApply(new OpChangeOmniPod(null, cut, cut.getComponent(Location.LeftArm),
+        CommandStack stack = new CommandStack(0);
+        stack.pushAndApply(new CmdChangeOmniPod(null, cut, cut.getComponent(Location.LeftArm),
                 OmniPodDB.lookupOriginal((ChassisOmniMech) ChassisDB.lookup("DWF-B"), Location.LeftArm)));
 
         assertNotEquals(cut, cut1);
@@ -239,8 +239,8 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
-        OperationStack stack = new OperationStack(0);
-        stack.pushAndApply(new OpAddModule(null, cut, PilotModuleDB.lookup("ADVANCED UAV")));
+        CommandStack stack = new CommandStack(0);
+        stack.pushAndApply(new CmdAddModule(null, cut, PilotModuleDB.lookup("ADVANCED UAV")));
 
         assertNotEquals(cut, cut1);
     }

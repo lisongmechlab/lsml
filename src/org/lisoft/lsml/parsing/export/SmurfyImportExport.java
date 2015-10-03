@@ -38,13 +38,13 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.lisoft.lsml.command.OpRename;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.model.NotificationMessage;
 import org.lisoft.lsml.model.NotificationMessage.Severity;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.DecodingException;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.LSML;
 
@@ -60,7 +60,7 @@ public class SmurfyImportExport {
     private final Base64LoadoutCoder       coder;
     private final static String            API_VALID_CHARS    = "0123456789abcdefABCDEF";
     private final static int               API_NUM_CHARS      = 40;
-    private final transient OperationStack stack              = new OperationStack(0);
+    private final transient CommandStack stack              = new CommandStack(0);
     private final SSLSocketFactory         sslSocketFactory;
 
     /**
@@ -154,7 +154,7 @@ public class SmurfyImportExport {
                     String lsml = lsmlMatcher.group(1);
                     try {
                         LoadoutBase<?> loadout = coder.parse(lsml);
-                        stack.pushAndApply(new OpRename(loadout, null, name));
+                        stack.pushAndApply(new CmdRename(loadout, null, name));
                         ans.add(loadout);
                     }
                     catch (DecodingException | IllegalArgumentException e) {

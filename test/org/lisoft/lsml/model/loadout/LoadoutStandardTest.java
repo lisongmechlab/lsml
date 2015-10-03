@@ -28,8 +28,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.lsml.command.OpRemoveItem;
-import org.lisoft.lsml.command.OpSetArmor;
+import org.lisoft.lsml.command.CmdRemoveItem;
+import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
@@ -53,7 +53,7 @@ import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
 import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Mockito;
 
 /**
@@ -242,7 +242,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
      */
     @Test
     public void testLoadout_CopyCtor() throws Exception {
-        OperationStack stack = new OperationStack(0);
+        CommandStack stack = new CommandStack(0);
         LoadoutStandard cut = (LoadoutStandard) DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("HBK-4J"));
         LoadoutStandard copy = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), cut);
 
@@ -254,13 +254,13 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         assertFalse(copy.getName().equals(cut.getName()));
 
         assertTrue(copy.getComponent(Location.RightTorso).equals(cut.getComponent(Location.RightTorso)));
-        stack.pushAndApply(new OpRemoveItem(xBar, copy, copy.getComponent(Location.RightTorso), ItemDB.lookup("LRM 10")));
-        stack.pushAndApply(new OpRemoveItem(xBar, copy, copy.getComponent(Location.RightTorso), ItemDB.lookup("LRM 10")));
+        stack.pushAndApply(new CmdRemoveItem(xBar, copy, copy.getComponent(Location.RightTorso), ItemDB.lookup("LRM 10")));
+        stack.pushAndApply(new CmdRemoveItem(xBar, copy, copy.getComponent(Location.RightTorso), ItemDB.lookup("LRM 10")));
         assertFalse(copy.getComponent(Location.RightTorso).equals(cut.getComponent(Location.RightTorso)));
 
         assertTrue(copy.getComponent(Location.LeftTorso).equals(cut.getComponent(Location.LeftTorso)));
-        stack.pushAndApply(new OpSetArmor(xBar, copy, copy.getComponent(Location.LeftTorso), ArmorSide.FRONT, 3, true));
-        stack.pushAndApply(new OpSetArmor(xBar, copy, copy.getComponent(Location.LeftTorso), ArmorSide.BACK, 3, false));
+        stack.pushAndApply(new CmdSetArmor(xBar, copy, copy.getComponent(Location.LeftTorso), ArmorSide.FRONT, 3, true));
+        stack.pushAndApply(new CmdSetArmor(xBar, copy, copy.getComponent(Location.LeftTorso), ArmorSide.BACK, 3, false));
         assertFalse(copy.getComponent(Location.LeftTorso).equals(cut.getComponent(Location.LeftTorso)));
 
         assertTrue(copy.getUpgrades().equals(cut.getUpgrades()));

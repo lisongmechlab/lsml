@@ -35,8 +35,8 @@ import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.lsml.command.OpAddModule;
-import org.lisoft.lsml.command.OpLoadStock;
+import org.lisoft.lsml.command.CmdAddModule;
+import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.garage.MechGarage.GarageMessage;
@@ -48,7 +48,7 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -174,12 +174,12 @@ public class MechGarageTest {
         LoadoutBase<?> lo3 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("nva-prime"));
         LoadoutBase<?> lo4 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("tbr-c"));
 
-        OperationStack stack = new OperationStack(0);
-        stack.pushAndApply(new OpLoadStock(lo3.getChassis(), lo3, xBar));
-        stack.pushAndApply(new OpLoadStock(lo4.getChassis(), lo4, xBar));
+        CommandStack stack = new CommandStack(0);
+        stack.pushAndApply(new CmdLoadStock(lo3.getChassis(), lo3, xBar));
+        stack.pushAndApply(new CmdLoadStock(lo4.getChassis(), lo4, xBar));
 
-        stack.pushAndApply(new OpAddModule(null, lo1, PilotModuleDB.lookup("ADVANCED UAV")));
-        stack.pushAndApply(new OpAddModule(null, lo4, PilotModuleDB.lookup("COOL SHOT 6")));
+        stack.pushAndApply(new CmdAddModule(null, lo1, PilotModuleDB.lookup("ADVANCED UAV")));
+        stack.pushAndApply(new CmdAddModule(null, lo4, PilotModuleDB.lookup("COOL SHOT 6")));
 
         MechGarage cut = new MechGarage(xBar);
         cut.add(lo1);
@@ -288,14 +288,14 @@ public class MechGarageTest {
     @Test
     public void testLoadStockBuilds_150() throws IOException {
         MechGarage garage = MechGarage.open(new File("resources/resources/stock1.5.0.xml"), xBar);
-        OperationStack stack = new OperationStack(0);
+        CommandStack stack = new CommandStack(0);
         assertEquals(64, garage.getMechs().size());
 
         for (LoadoutBase<?> loadout : garage.getMechs()) {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
             
             LoadoutStandard clone = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), loadoutStandard);
-            stack.pushAndApply(new OpLoadStock(clone.getChassis(), clone, xBar));
+            stack.pushAndApply(new CmdLoadStock(clone.getChassis(), clone, xBar));
 
             assertEquals(clone, loadout);
         }

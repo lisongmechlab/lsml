@@ -31,8 +31,8 @@ import java.util.List;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.OperationStack;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 
@@ -217,8 +217,8 @@ public class MechGarage {
     }
 
     /**
-     * Adds a new {@link LoadoutStandard} to this garage. This will submit an {@link Operation} to the
-     * {@link OperationStack} given in the constructor so that the action can be undone.
+     * Adds a new {@link LoadoutStandard} to this garage. This will submit an {@link Command} to the
+     * {@link CommandStack} given in the constructor so that the action can be undone.
      * 
      * @param aLoadout
      *            The {@link LoadoutStandard} to add.
@@ -229,8 +229,8 @@ public class MechGarage {
     }
 
     /**
-     * Removes the given {@link LoadoutStandard} from the garage. This will submit an {@link Operation} to the
-     * {@link OperationStack} given in the constructor so that the action can be undone.
+     * Removes the given {@link LoadoutStandard} from the garage. This will submit an {@link Command} to the
+     * {@link CommandStack} given in the constructor so that the action can be undone.
      * 
      * @param aLoadout
      *            The {@link LoadoutStandard} to remove.

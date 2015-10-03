@@ -42,7 +42,7 @@ import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.render.StyleManager;
@@ -60,9 +60,9 @@ public class LoadoutPanel extends JPanel {
     private static final int     HEAD_OFFSET      = 0;
     private final LoadoutBase<?> loadout;
     private final MessageXBar    xBar;
-    private final OperationStack loadoutOperationStack;
+    private final CommandStack loadoutOperationStack;
 
-    public LoadoutPanel(LoadoutBase<?> aLoadout, OperationStack aOpStack, MessageXBar aXBar) {
+    public LoadoutPanel(LoadoutBase<?> aLoadout, CommandStack aOpStack, MessageXBar aXBar) {
         xBar = aXBar;
         loadout = aLoadout;
         loadoutOperationStack = aOpStack;
@@ -78,7 +78,7 @@ public class LoadoutPanel extends JPanel {
         return loadout;
     }
 
-    public OperationStack getOpStack() {
+    public CommandStack getOpStack() {
         return loadoutOperationStack;
     }
 

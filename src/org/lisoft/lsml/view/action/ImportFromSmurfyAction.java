@@ -47,7 +47,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
-import org.lisoft.lsml.command.OpAddToGarage;
+import org.lisoft.lsml.command.CmdAddToGarage;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
 import org.lisoft.lsml.parsing.export.SmurfyImportExport;
@@ -238,7 +238,7 @@ public class ImportFromSmurfyAction extends AbstractAction {
             public void actionPerformed(ActionEvent aArg0) {
                 for (int i = 0; i < model.getRowCount(); ++i) {
                     if ((boolean) model.getValueAt(i, 0)) {
-                        ProgramInit.lsml().garageOperationStack.pushAndApply(new OpAddToGarage(ProgramInit.lsml()
+                        ProgramInit.lsml().garageOperationStack.pushAndApply(new CmdAddToGarage(ProgramInit.lsml()
                                 .getGarage(), (LoadoutBase<?>) model.getValueAt(i, 1)));
                     }
                 }

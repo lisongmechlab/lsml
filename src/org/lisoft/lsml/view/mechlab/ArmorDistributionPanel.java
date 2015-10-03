@@ -32,16 +32,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.lisoft.lsml.command.OpDistributeArmor;
-import org.lisoft.lsml.command.OpSetArmor;
+import org.lisoft.lsml.command.CmdDistributeArmor;
+import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.util.OperationStack;
-import org.lisoft.lsml.util.OperationStack.CompositeOperation;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.render.StyleManager;
@@ -55,18 +55,18 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
     private static final long    serialVersionUID    = 6835003047682738947L;
 
     private final LoadoutBase<?> loadout;
-    private final OperationStack stack;
+    private final CommandStack stack;
     private final MessageXBar    xBar;
     private final JSlider        ratioSlider;
     private final JSlider        armorSlider;
-    private final OperationStack privateStack        = new OperationStack(0);
+    private final CommandStack privateStack        = new CommandStack(0);
 
     private boolean              disableSliderAction = false;
     private boolean              armorOpInProgress   = false;
     private int                  lastRatio           = 0;
     private int                  lastAmount          = 0;
 
-    private class ResetManualArmorOperation extends CompositeOperation {
+    private class ResetManualArmorOperation extends CompositeCommand {
         private final LoadoutBase<?> opLoadout = loadout;
 
         public ResetManualArmorOperation() {
@@ -86,7 +86,7 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
         }
 
         @Override
-        public boolean canCoalescele(Operation aOperation) {
+        public boolean canCoalescele(Command aOperation) {
             if (aOperation != this && aOperation != null && aOperation instanceof ResetManualArmorOperation) {
                 ResetManualArmorOperation operation = (ResetManualArmorOperation) aOperation;
                 return operation.opLoadout == opLoadout;
@@ -95,23 +95,23 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
         }
 
         @Override
-        public void buildOperation() {
+        public void buildCommand() {
             for (ConfiguredComponentBase loadoutPart : loadout.getComponents()) {
                 if (loadoutPart.getInternalComponent().getLocation().isTwoSided()) {
-                    addOp(new OpSetArmor(messageBuffer, loadout, loadoutPart, ArmorSide.FRONT,
+                    addOp(new CmdSetArmor(messageBuffer, loadout, loadoutPart, ArmorSide.FRONT,
                             loadoutPart.getArmor(ArmorSide.FRONT), false));
-                    addOp(new OpSetArmor(messageBuffer, loadout, loadoutPart, ArmorSide.BACK,
+                    addOp(new CmdSetArmor(messageBuffer, loadout, loadoutPart, ArmorSide.BACK,
                             loadoutPart.getArmor(ArmorSide.BACK), false));
                 }
                 else {
-                    addOp(new OpSetArmor(messageBuffer, loadout, loadoutPart, ArmorSide.ONLY,
+                    addOp(new CmdSetArmor(messageBuffer, loadout, loadoutPart, ArmorSide.ONLY,
                             loadoutPart.getArmor(ArmorSide.ONLY), false));
                 }
             }
         }
     }
 
-    private class ArmorSliderOperation extends CompositeOperation {
+    private class ArmorSliderOperation extends CompositeCommand {
         private final JSlider slider;
         private final int     newValue;
         private final int     oldValue;
@@ -124,7 +124,7 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
         }
 
         @Override
-        public boolean canCoalescele(Operation aOperation) {
+        public boolean canCoalescele(Command aOperation) {
             if (aOperation != this && aOperation != null && aOperation instanceof ArmorSliderOperation) {
                 ArmorSliderOperation op = (ArmorSliderOperation) aOperation;
                 return slider == op.slider && oldValue == op.oldValue;
@@ -149,12 +149,12 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
         }
 
         @Override
-        public void buildOperation() {
-            addOp(new OpDistributeArmor(loadout, armorSlider.getValue(), ratioSlider.getValue(), messageBuffer));
+        public void buildCommand() {
+            addOp(new CmdDistributeArmor(loadout, armorSlider.getValue(), ratioSlider.getValue(), messageBuffer));
         }
     }
 
-    public ArmorDistributionPanel(final LoadoutBase<?> aLoadout, final OperationStack aStack, final MessageXBar aXBar) {
+    public ArmorDistributionPanel(final LoadoutBase<?> aLoadout, final CommandStack aStack, final MessageXBar aXBar) {
         setBorder(StyleManager.sectionBorder("Automatic Armor distribution"));
         setLayout(new BorderLayout());
 
@@ -257,7 +257,7 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
 
             @Override
             public void run() {
-                privateStack.pushAndApply(new OpDistributeArmor(loadout, armorSlider.getValue(),
+                privateStack.pushAndApply(new CmdDistributeArmor(loadout, armorSlider.getValue(),
                         ratioSlider.getValue(), xBar));
                 armorOpInProgress = false;
             }

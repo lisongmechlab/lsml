@@ -19,8 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.command.OpAddItem;
-import org.lisoft.lsml.command.OpRemoveItem;
+import org.lisoft.lsml.command.CmdAddItem;
+import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
@@ -29,17 +29,17 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.util.OperationStack;
-import org.lisoft.lsml.util.OperationStack.CompositeOperation;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
- * This {@link Operation} changes the guidance status of a {@link LoadoutStandard}.
+ * This {@link Command} changes the guidance status of a {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
-public class OpSetGuidanceType extends CompositeOperation {
+public class OpSetGuidanceType extends CompositeCommand {
     private final GuidanceUpgrade oldValue;
     private final GuidanceUpgrade newValue;
     private final Upgrades        upgrades;
@@ -50,7 +50,7 @@ public class OpSetGuidanceType extends CompositeOperation {
      * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutBase} in any way.
      * 
      * @param aUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Operation}.
+     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
      * @param aGuidanceUpgrade
      *            The new upgrade to use.
      */
@@ -81,7 +81,7 @@ public class OpSetGuidanceType extends CompositeOperation {
     }
 
     @Override
-    public void buildOperation() {
+    public void buildCommand() {
         if (loadout != null) {
             if (newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree())
                 throw new IllegalArgumentException("Too few critical slots available in loadout!");
@@ -96,7 +96,7 @@ public class OpSetGuidanceType extends CompositeOperation {
                 throw new IllegalArgumentException("Too heavy to add artmemis!");
             }
 
-            addOp(new OperationStack.Operation() {
+            addOp(new CommandStack.Command() {
                 private void set(GuidanceUpgrade aValue) {
                     if (aValue != upgrades.getGuidance()) {
                         upgrades.setGuidance(aValue);
@@ -127,16 +127,16 @@ public class OpSetGuidanceType extends CompositeOperation {
                         MissileWeapon oldWeapon = (MissileWeapon) item;
                         MissileWeapon newWeapon = newValue.upgrade(oldWeapon);
                         if (oldWeapon != newWeapon) {
-                            addOp(new OpRemoveItem(messageBuffer, loadout, component, oldWeapon));
-                            addOp(new OpAddItem(messageBuffer, loadout, component, newWeapon));
+                            addOp(new CmdRemoveItem(messageBuffer, loadout, component, oldWeapon));
+                            addOp(new CmdAddItem(messageBuffer, loadout, component, newWeapon));
                         }
                     }
                     else if (item instanceof Ammunition) {
                         Ammunition oldAmmo = (Ammunition) item;
                         Ammunition newAmmo = newValue.upgrade(oldAmmo);
                         if (oldAmmo != newAmmo) {
-                            addOp(new OpRemoveItem(messageBuffer, loadout, component, oldAmmo));
-                            addOp(new OpAddItem(messageBuffer, loadout, component, newAmmo));
+                            addOp(new CmdRemoveItem(messageBuffer, loadout, component, oldAmmo));
+                            addOp(new CmdAddItem(messageBuffer, loadout, component, newAmmo));
                         }
                     }
                 }

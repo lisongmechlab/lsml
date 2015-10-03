@@ -24,7 +24,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import org.lisoft.lsml.command.OpSetMaxArmor;
+import org.lisoft.lsml.command.CmdSetMaxArmor;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -67,7 +67,7 @@ public class MaxArmorAction extends AbstractAction {
     public void actionPerformed(ActionEvent aArg0) {
         try {
             if (ratio > 0) {
-                loadoutFrame.getOpStack().pushAndApply(new OpSetMaxArmor(loadout, xBar, ratio, true));
+                loadoutFrame.getOpStack().pushAndApply(new CmdSetMaxArmor(loadout, xBar, ratio, true));
             }
             else {
                 String input = (String) JOptionPane.showInputDialog(loadoutFrame,
@@ -88,7 +88,7 @@ public class MaxArmorAction extends AbstractAction {
                         JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");
                         return;
                     }
-                    loadoutFrame.getOpStack().pushAndApply(new OpSetMaxArmor(loadout, xBar, front / back, true));
+                    loadoutFrame.getOpStack().pushAndApply(new CmdSetMaxArmor(loadout, xBar, front / back, true));
                 }
                 else
                     JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");

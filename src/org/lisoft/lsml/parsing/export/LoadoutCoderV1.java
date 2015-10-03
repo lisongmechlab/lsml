@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.lisoft.lsml.command.OpAddItem;
-import org.lisoft.lsml.command.OpSetArmor;
+import org.lisoft.lsml.command.CmdAddItem;
+import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -51,7 +51,7 @@ import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman1;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 
 /**
  * The first version of {@link LoadoutCoder} for LSML.
@@ -83,7 +83,7 @@ public class LoadoutCoderV1 implements LoadoutCoder {
     public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException {
         final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
         final LoadoutStandard loadout;
-        final OperationStack stack = new OperationStack(0);
+        final CommandStack stack = new CommandStack(0);
 
         // Read header
         {
@@ -123,13 +123,13 @@ public class LoadoutCoderV1 implements LoadoutCoder {
         // 1 byte per armor value (2 for RT,CT,LT front first)
         for (Location location : Location.right2Left()) {
             if (location.isTwoSided()) {
-                stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.FRONT,
+                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.FRONT,
                         buffer.read(), true));
-                stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.BACK, buffer
+                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.BACK, buffer
                         .read(), true));
             }
             else {
-                stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.ONLY, buffer
+                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.ONLY, buffer
                         .read(), true));
             }
         }
@@ -155,10 +155,10 @@ public class LoadoutCoderV1 implements LoadoutCoder {
                         later.add(item); // Add heat sinks last after engine has been added
                         continue;
                     }
-                    stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), item));
+                    stack.pushAndApply(new CmdAddItem(null, loadout, loadout.getComponent(location), item));
                 }
                 for (Item i : later) {
-                    stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), i));
+                    stack.pushAndApply(new CmdAddItem(null, loadout, loadout.getComponent(location), i));
                 }
             }
         }

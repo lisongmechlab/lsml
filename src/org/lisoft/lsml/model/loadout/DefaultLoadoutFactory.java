@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import org.lisoft.lsml.command.OpLoadStock;
+import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -30,7 +30,7 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 
 /**
  * This class produces loadouts as they are typically used by the application.
@@ -73,8 +73,8 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
     @Override
     public LoadoutBase<?> produceStock(ChassisBase aChassis) {
         LoadoutBase<?> ans = produceEmpty(aChassis);
-        OperationStack operationStack = new OperationStack(0);
-        operationStack.pushAndApply(new OpLoadStock(aChassis, ans, null));
+        CommandStack operationStack = new CommandStack(0);
+        operationStack.pushAndApply(new CmdLoadStock(aChassis, ans, null));
         return ans;
     }
 

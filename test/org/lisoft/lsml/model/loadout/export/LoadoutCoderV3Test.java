@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.OpRename;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisDB;
@@ -40,7 +40,7 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.parsing.export.LoadoutCoderV3;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.DecodingException;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 
 /**
  * Test suite for {@link LoadoutCoderV3}.
@@ -63,7 +63,7 @@ public class LoadoutCoderV3Test {
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
-        OperationStack stack = new OperationStack(0);
+        CommandStack stack = new CommandStack(0);
 
         for (ChassisBase chassis : chassii) {
             LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
@@ -71,7 +71,7 @@ public class LoadoutCoderV3Test {
             LoadoutBase<?> decoded = cut.decode(result);
 
             // Name is not encoded
-            stack.pushAndApply(new OpRename(decoded, null, loadout.getName()));
+            stack.pushAndApply(new CmdRename(decoded, null, loadout.getName()));
 
             // Verify
             assertEquals(loadout, decoded);
@@ -89,7 +89,7 @@ public class LoadoutCoderV3Test {
                 Scanner sc = new Scanner(is);) {
             Base64 base64 = new Base64();
 
-            OperationStack stack = new OperationStack(0);
+            CommandStack stack = new CommandStack(0);
 
             // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
             while (sc.hasNextLine()) {
@@ -105,7 +105,7 @@ public class LoadoutCoderV3Test {
                 LoadoutBase<?> decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded
-                stack.pushAndApply(new OpRename(decoded, null, reference.getName()));
+                stack.pushAndApply(new CmdRename(decoded, null, reference.getName()));
 
                 // Verify
                 assertEquals(reference, decoded);

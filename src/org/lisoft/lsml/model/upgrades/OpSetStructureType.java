@@ -22,11 +22,11 @@ package org.lisoft.lsml.model.upgrades;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
- * This {@link Operation} can alter the internal structure of a {@link LoadoutStandard}.
+ * This {@link Command} can alter the internal structure of a {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
@@ -42,7 +42,7 @@ public class OpSetStructureType extends OpUpgradeBase {
      * any way.
      * 
      * @param anUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Operation}.
+     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
      * @param aStructureUpgrade
      *            The new internal structure when this upgrades has been applied.
      */

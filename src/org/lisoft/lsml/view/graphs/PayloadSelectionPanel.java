@@ -51,7 +51,7 @@ import org.lisoft.lsml.model.upgrades.OpSetArmorType;
 import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.graphs.PayloadGraphPanel.Entry;
 
 /**
@@ -110,7 +110,7 @@ public class PayloadSelectionPanel extends JPanel {
 
         void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel,
                 final UpgradesMutable aUpgrades) {
-            final OperationStack stack = new OperationStack(0);
+            final CommandStack stack = new CommandStack(0);
 
             graphEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 @Override

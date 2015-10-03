@@ -44,9 +44,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import org.lisoft.lsml.command.OpChangeOmniPod;
-import org.lisoft.lsml.command.OpSetArmor;
-import org.lisoft.lsml.command.OpToggleItem;
+import org.lisoft.lsml.command.CmdChangeOmniPod;
+import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ComponentBase;
@@ -61,7 +61,7 @@ import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
@@ -73,9 +73,9 @@ import org.lisoft.lsml.view.render.StyledComboBox;
 public class PartPanel extends JPanel implements Message.Recipient {
     class ArmorPopupAdapter extends MouseAdapter {
         private final MessageXBar    xBar;
-        private final OperationStack stack;
+        private final CommandStack stack;
 
-        public ArmorPopupAdapter(OperationStack aStack, MessageXBar aXBar) {
+        public ArmorPopupAdapter(CommandStack aStack, MessageXBar aXBar) {
             stack = aStack;
             xBar = aXBar;
         }
@@ -100,11 +100,11 @@ public class PartPanel extends JPanel implements Message.Recipient {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
                     if (component.getInternalComponent().getLocation().isTwoSided()) {
-                        stack.pushAndApply(new OpSetArmor(xBar, loadout, component, ArmorSide.FRONT, component
+                        stack.pushAndApply(new CmdSetArmor(xBar, loadout, component, ArmorSide.FRONT, component
                                 .getArmor(ArmorSide.FRONT), false));
                     }
                     else {
-                        stack.pushAndApply(new OpSetArmor(xBar, loadout, component, ArmorSide.ONLY, component
+                        stack.pushAndApply(new CmdSetArmor(xBar, loadout, component, ArmorSide.ONLY, component
                                 .getArmorTotal(), false));
                     }
                     xBar.post(new ComponentMessage(component,
@@ -141,7 +141,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
 
     PartPanel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, final MessageXBar aXBar,
             boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
-            final OperationStack aStack) {
+            final CommandStack aStack) {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         aXBar.attach(this);
         loadout = aLoadout;
@@ -171,7 +171,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
             toggleLAA.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    aStack.pushAndApply(new OpToggleItem(aXBar, loadout, ccom, ItemDB.LAA, toggleLAA.isSelected()));
+                    aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.LAA, toggleLAA.isSelected()));
                 }
             });
             toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA) || ccom.getToggleState(ItemDB.LAA) == true);
@@ -183,7 +183,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
             toggleHA.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    aStack.pushAndApply(new OpToggleItem(aXBar, loadout, ccom, ItemDB.HA, toggleHA.isSelected()));
+                    aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.HA, toggleHA.isSelected()));
                 }
             });
             toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA) || ccom.getToggleState(ItemDB.HA) == true);
@@ -216,7 +216,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
 
                 @Override
                 public void setSelectedItem(Object aAnObject) {
-                    aStack.pushAndApply(new OpChangeOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech) component,
+                    aStack.pushAndApply(new CmdChangeOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech) component,
                             (OmniPod) aAnObject));
                 }
             });
@@ -269,7 +269,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
         updateArmorPanel();
     }
 
-    private JPanel makeArmorPanel(MessageXBar anXBar, JCheckBox aSymmetric, OperationStack aStack) {
+    private JPanel makeArmorPanel(MessageXBar anXBar, JCheckBox aSymmetric, CommandStack aStack) {
         JPanel panel = new JPanel();
         Dimension labelDimension = new Dimension(ARMOR_LABEL_WIDTH, ItemRenderer.getItemHeight());
         Dimension spinnerDimension = new Dimension(ARMOR_SPINNER_WIDTH, 0);

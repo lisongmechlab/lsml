@@ -21,9 +21,9 @@ package org.lisoft.lsml.parsing.datacache;
 
 import javax.swing.JOptionPane;
 
-import org.lisoft.lsml.command.OpAddItem;
-import org.lisoft.lsml.command.OpSetArmor;
-import org.lisoft.lsml.command.OpToggleItem;
+import org.lisoft.lsml.command.CmdAddItem;
+import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
@@ -135,14 +135,14 @@ public class ConfiguredComponentConverter implements Converter {
             if (partType.isTwoSided()) {
                 String[] armors = aReader.getAttribute("armor").split("/");
                 if (armors.length == 2) {
-                    builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT, Integer
+                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT, Integer
                             .parseInt(armors[0]), !autoArmor));
-                    builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.BACK,
+                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.BACK,
                             Integer.parseInt(armors[1]), !autoArmor));
                 }
             }
             else {
-                builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader
+                builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader
                         .getAttribute("armor")), !autoArmor));
             }
         }
@@ -156,7 +156,7 @@ public class ConfiguredComponentConverter implements Converter {
             if ("item".equals(aReader.getNodeName())) {
                 try {
                     Item item = (Item) aContext.convertAnother(null, Item.class);
-                    builder.push(new OpAddItem(null, loadout, loadoutPart, item));
+                    builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                 }
                 catch (IllegalArgumentException exception) {
                     JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
@@ -165,7 +165,7 @@ public class ConfiguredComponentConverter implements Converter {
             }
             else if ("togglestate".equals(aReader.getNodeName())) {
                 Item item = ItemDB.lookup(Integer.parseInt(aReader.getAttribute("item")));
-                builder.push(new OpToggleItem(null, loadout, (ConfiguredComponentOmniMech) loadoutPart, item, Boolean
+                builder.push(new CmdToggleItem(null, loadout, (ConfiguredComponentOmniMech) loadoutPart, item, Boolean
                         .parseBoolean(aReader.getAttribute("enabled"))));
             }
             aReader.moveUp();
@@ -186,14 +186,14 @@ public class ConfiguredComponentConverter implements Converter {
             if (partType.isTwoSided()) {
                 String[] armors = aReader.getAttribute("armor").split("/");
                 if (armors.length == 2) {
-                    builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT, Integer
+                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT, Integer
                             .parseInt(armors[0]), !autoArmor));
-                    builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.BACK,
+                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.BACK,
                             Integer.parseInt(armors[1]), !autoArmor));
                 }
             }
             else {
-                builder.push(new OpSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader
+                builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader
                         .getAttribute("armor")), !autoArmor));
             }
         }
@@ -208,7 +208,7 @@ public class ConfiguredComponentConverter implements Converter {
                 try {
                     Item item = (Item) aContext.convertAnother(null, Item.class);
                     item = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().getGuidance());
-                    builder.push(new OpAddItem(null, loadout, loadoutPart, item));
+                    builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                 }
                 catch (IllegalArgumentException exception) {
                     JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()

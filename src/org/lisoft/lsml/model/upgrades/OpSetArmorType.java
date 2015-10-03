@@ -22,11 +22,11 @@ package org.lisoft.lsml.model.upgrades;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
- * This {@link Operation} can change the armor type of a {@link LoadoutStandard}.
+ * This {@link Command} can change the armor type of a {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
@@ -41,7 +41,7 @@ public class OpSetArmorType extends OpUpgradeBase {
      * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
      * 
      * @param aUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Operation}.
+     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
      * @param aArmorUpgrade
      *            The new armor type when this upgrades has been applied.
      */

@@ -31,10 +31,10 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-import org.lisoft.lsml.command.OpAddItem;
-import org.lisoft.lsml.command.OpAddModule;
-import org.lisoft.lsml.command.OpLoadStock;
-import org.lisoft.lsml.command.OpSetArmor;
+import org.lisoft.lsml.command.CmdAddItem;
+import org.lisoft.lsml.command.CmdAddModule;
+import org.lisoft.lsml.command.CmdLoadStock;
+import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
@@ -60,7 +60,7 @@ import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman1;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 
 /**
  * The Second version of {@link LoadoutCoder} for LSML.
@@ -107,7 +107,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
     public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException {
         final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
         final LoadoutStandard loadout;
-        final OperationStack stack = new OperationStack(0);
+        final CommandStack stack = new CommandStack(0);
 
         // Read header
         {
@@ -135,13 +135,13 @@ public class LoadoutCoderV2 implements LoadoutCoder {
         // 1 byte per armor value (2 for RT,CT,LT front first)
         for (Location location : Location.right2Left()) {
             if (location.isTwoSided()) {
-                stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.FRONT,
+                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.FRONT,
                         buffer.read(), true));
-                stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.BACK, buffer
+                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.BACK, buffer
                         .read(), true));
             }
             else {
-                stack.pushAndApply(new OpSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.ONLY, buffer
+                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.ONLY, buffer
                         .read(), true));
             }
         }
@@ -180,16 +180,16 @@ public class LoadoutCoderV2 implements LoadoutCoder {
                         later.add(item); // Add heat sinks last after engine has been added
                         continue;
                     }
-                    stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
+                    stack.pushAndApply(new CmdAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
                 }
                 for (Item i : later) {
-                    stack.pushAndApply(new OpAddItem(null, loadout, loadout.getComponent(location), i));
+                    stack.pushAndApply(new CmdAddItem(null, loadout, loadout.getComponent(location), i));
                 }
             }
 
             Integer v;
             while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
-                stack.pushAndApply(new OpAddModule(null, loadout, PilotModuleDB.lookup(v.intValue())));
+                stack.pushAndApply(new CmdAddModule(null, loadout, PilotModuleDB.lookup(v.intValue())));
             }
         }
         return loadout;
@@ -219,12 +219,12 @@ public class LoadoutCoderV2 implements LoadoutCoder {
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        OperationStack stack = new OperationStack(0);
+        CommandStack stack = new CommandStack(0);
         for (ChassisBase chassis : chassii) {
             if (!(chassis instanceof ChassisStandard))
                 continue;
             LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
-            stack.pushAndApply(new OpLoadStock(chassis, loadout, null));
+            stack.pushAndApply(new CmdLoadStock(chassis, loadout, null));
             System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
         }
     }

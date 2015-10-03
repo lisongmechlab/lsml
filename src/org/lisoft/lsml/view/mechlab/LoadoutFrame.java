@@ -39,14 +39,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
-import org.lisoft.lsml.command.OpStripLoadout;
+import org.lisoft.lsml.command.CmdStripLoadout;
 import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
 import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
 import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -75,7 +75,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
     private final LoadoutBase<?> loadout;
     private final LoadoutMetrics metrics;
     private final MessageXBar    xBar;
-    private final OperationStack loadoutOperationStack = new OperationStack(128);
+    private final CommandStack loadoutOperationStack = new CommandStack(128);
     private final Action         actionUndoLoadout;
     private final Action         actionRedoLoadout;
     private final Action         actionRename;
@@ -173,7 +173,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         return metrics;
     }
 
-    public OperationStack getOpStack() {
+    public CommandStack getOpStack() {
         return loadoutOperationStack;
     }
 
@@ -210,7 +210,7 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         loadoutMenu.add(createMenuItem("Strip mech", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent aArg0) {
-                loadoutOperationStack.pushAndApply(new OpStripLoadout(loadout, xBar));
+                loadoutOperationStack.pushAndApply(new CmdStripLoadout(loadout, xBar));
             }
         }));
 

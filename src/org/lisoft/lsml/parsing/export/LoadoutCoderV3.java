@@ -38,11 +38,11 @@ import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
-import org.lisoft.lsml.command.OpAddItem;
-import org.lisoft.lsml.command.OpAddModule;
-import org.lisoft.lsml.command.OpChangeOmniPod;
-import org.lisoft.lsml.command.OpSetArmor;
-import org.lisoft.lsml.command.OpToggleItem;
+import org.lisoft.lsml.command.CmdAddItem;
+import org.lisoft.lsml.command.CmdAddModule;
+import org.lisoft.lsml.command.CmdChangeOmniPod;
+import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
@@ -148,17 +148,17 @@ public class LoadoutCoderV3 implements LoadoutCoder {
                 if (isOmniMech && location != Location.CenterTorso) {
                     LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
                     OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
-                    builder.push(new OpChangeOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
+                    builder.push(new CmdChangeOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
                 }
 
                 Integer v;
                 while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
-                    builder.push(new OpAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
+                    builder.push(new CmdAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
                 }
             }
 
             while (!ids.isEmpty()) {
-                builder.push(new OpAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
+                builder.push(new CmdAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
             }
         }
 
@@ -320,10 +320,10 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         boolean LHA = (aActuatorState & (1 << 0)) != 0;
 
         LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
-        aBuilder.push(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.LAA, LLAA));
-        aBuilder.push(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.HA, LHA));
-        aBuilder.push(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.LAA, RLAA));
-        aBuilder.push(new OpToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.HA, RHA));
+        aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.LAA, LLAA));
+        aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.HA, LHA));
+        aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.LAA, RLAA));
+        aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.HA, RHA));
     }
 
     private void writeActuatorState(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout) {
@@ -349,13 +349,13 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         // 1 byte per armor value (2 for RT,CT,LT front first)
         for (Location part : Location.right2Left()) {
             if (part.isTwoSided()) {
-                aBuilder.push(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.FRONT,
+                aBuilder.push(new CmdSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.FRONT,
                         aBuffer.read(), true));
-                aBuilder.push(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.BACK,
+                aBuilder.push(new CmdSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.BACK,
                         aBuffer.read(), true));
             }
             else {
-                aBuilder.push(new OpSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.ONLY,
+                aBuilder.push(new CmdSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.ONLY,
                         aBuffer.read(), true));
             }
         }

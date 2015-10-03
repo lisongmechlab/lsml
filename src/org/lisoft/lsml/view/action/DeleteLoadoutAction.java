@@ -27,7 +27,7 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.lisoft.lsml.command.OpRemoveFromGarage;
+import org.lisoft.lsml.command.CmdRemoveFromGarage;
 import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.message.Message;
@@ -70,7 +70,7 @@ public class DeleteLoadoutAction extends AbstractAction implements Message.Recip
                     + loadout.getName() + "?", "Confirm operation", JOptionPane.YES_NO_OPTION);
             if (JOptionPane.YES_OPTION == result) {
                 try {
-                    ProgramInit.lsml().garageOperationStack.pushAndApply(new OpRemoveFromGarage(garage, loadout));
+                    ProgramInit.lsml().garageOperationStack.pushAndApply(new CmdRemoveFromGarage(garage, loadout));
                 }
                 catch (RuntimeException e) {
                     JOptionPane

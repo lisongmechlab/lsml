@@ -25,14 +25,14 @@ import javax.swing.JCheckBox;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
-import org.lisoft.lsml.command.OpSetArmor;
-import org.lisoft.lsml.command.OpSetArmorSymmetric;
+import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdSetArmorSymmetric;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 
@@ -41,12 +41,12 @@ public class ArmorSpinner extends SpinnerNumberModel implements Message.Recipien
     private final ConfiguredComponentBase part;
     private final ArmorSide               side;
     private final JCheckBox               symmetric;
-    private final OperationStack          opStack;
+    private final CommandStack          opStack;
     private final MessageXBar             xBar;
     private final LoadoutBase<?>          loadout;
 
     public ArmorSpinner(LoadoutBase<?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide,
-            MessageXBar anXBar, JCheckBox aSymmetric, OperationStack anOperationStack) {
+            MessageXBar anXBar, JCheckBox aSymmetric, CommandStack anOperationStack) {
         part = aPart;
         loadout = aLoadout;
         side = anArmorSide;
@@ -87,10 +87,10 @@ public class ArmorSpinner extends SpinnerNumberModel implements Message.Recipien
             final int armor = ((Integer) arg0).intValue();
 
             if (setSymmetric) {
-                opStack.pushAndApply(new OpSetArmorSymmetric(xBar, loadout, part, side, armor, true));
+                opStack.pushAndApply(new CmdSetArmorSymmetric(xBar, loadout, part, side, armor, true));
             }
             else {
-                opStack.pushAndApply(new OpSetArmor(xBar, loadout, part, side, armor, true));
+                opStack.pushAndApply(new CmdSetArmor(xBar, loadout, part, side, armor, true));
             }
         }
         catch (IllegalArgumentException exception) {

@@ -44,7 +44,7 @@ import org.lisoft.lsml.model.NotificationMessage;
 import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
 import org.lisoft.lsml.parsing.export.LsmlProtocolIPC;
-import org.lisoft.lsml.util.OperationStack;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -84,7 +84,7 @@ public class LSML extends JFrame implements Message.Recipient {
     // Order of definition matters here !
     public final MessageXBar        xBar                   = new MessageXBar();
     public final Preferences        preferences            = new Preferences(xBar);
-    public final OperationStack     garageOperationStack   = new OperationStack(256);
+    public final CommandStack     garageOperationStack   = new CommandStack(256);
 
     public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder();
     public final MechLabPane        mechLabPane            = new MechLabPane(xBar, preferences);

@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.util.OperationStack.Operation;
+import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This class represents a configured loadout for an omnimech.
@@ -99,7 +99,7 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     }
 
     /**
-     * This setter method is only intended to be used from package local {@link Operation}s. It's a raw, unchecked
+     * This setter method is only intended to be used from package local {@link Command}s. It's a raw, unchecked
      * accessor.
      * 
      * @param aOmniPod
