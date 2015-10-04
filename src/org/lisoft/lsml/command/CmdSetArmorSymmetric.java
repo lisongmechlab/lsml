@@ -24,8 +24,8 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.message.MessageDelivery;
 import org.lisoft.lsml.util.message.MessageXBar;
 

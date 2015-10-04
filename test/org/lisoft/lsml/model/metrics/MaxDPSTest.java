@@ -134,7 +134,6 @@ public class MaxDPSTest {
         items.add(weapon2);
         items.add(weapon3);
 
-        final double dps1 = 0.8*1.0;
         final double dps2 = 1.0*3.0;
         final double dps3 = 0.9*5.0;
         

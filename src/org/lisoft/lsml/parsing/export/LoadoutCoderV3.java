@@ -43,6 +43,10 @@ import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdChangeOmniPod;
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdToggleItem;
+import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetGuidanceType;
+import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
@@ -65,10 +69,6 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.util.DecodingException;
@@ -136,13 +136,13 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             List<Integer> ids = huff.decode(rest);
             if (!isOmniMech) {
                 LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-                builder.push(new OpSetArmorType(null, loadoutStandard, (ArmorUpgrade) UpgradeDB.lookup(ids.remove(0))));
-                builder.push(new OpSetStructureType(null, loadoutStandard,
+                builder.push(new CmdSetArmorType(null, loadoutStandard, (ArmorUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                builder.push(new CmdSetStructureType(null, loadoutStandard,
                         (StructureUpgrade) UpgradeDB.lookup(ids.remove(0))));
-                builder.push(new OpSetHeatSinkType(null, loadoutStandard,
+                builder.push(new CmdSetHeatSinkType(null, loadoutStandard,
                         (HeatSinkUpgrade) UpgradeDB.lookup(ids.remove(0))));
             }
-            builder.push(new OpSetGuidanceType(null, loadout, (GuidanceUpgrade) UpgradeDB.lookup(ids.remove(0))));
+            builder.push(new CmdSetGuidanceType(null, loadout, (GuidanceUpgrade) UpgradeDB.lookup(ids.remove(0))));
 
             for (Location location : Location.right2Left()) {
                 if (isOmniMech && location != Location.CenterTorso) {

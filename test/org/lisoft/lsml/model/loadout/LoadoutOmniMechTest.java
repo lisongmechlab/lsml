@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdChangeOmniPod;
 import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -48,7 +49,6 @@ import org.lisoft.lsml.model.loadout.EquipResult.Type;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
@@ -183,7 +183,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new OpSetGuidanceType(null, cut1, UpgradeDB.ARTEMIS_IV));
+        stack.pushAndApply(new CmdSetGuidanceType(null, cut1, UpgradeDB.ARTEMIS_IV));
         assertNotEquals(cut, cut1);
     }
 

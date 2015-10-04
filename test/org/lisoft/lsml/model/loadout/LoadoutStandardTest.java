@@ -30,6 +30,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetGuidanceType;
+import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
@@ -47,10 +51,6 @@ import org.lisoft.lsml.model.loadout.EquipResult.Type;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack;
@@ -195,8 +195,8 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, false, Engine.class);
         Mockito.when(engine.getType()).thenReturn(EngineType.STD);
 
-        Mockito.when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(
-                EquipResult.make(Location.CenterTorso, Type.NotEnoughSlots));
+        Mockito.when(components[Location.CenterTorso.ordinal()].canEquip(engine))
+                .thenReturn(EquipResult.make(Location.CenterTorso, Type.NotEnoughSlots));
 
         assertEquals(EquipResult.make(Location.CenterTorso, Type.NotEnoughSlots), makeDefaultCUT().canEquip(engine));
     }
@@ -232,47 +232,4 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
 
         assertEquals(EquipResult.make(Type.NotEnoughSlots), makeDefaultCUT().canEquip(engine));
     }
-
-    /**
-     * Will create a deep copy of the argument.
-     * <p>
-     * Note: This is an integration test.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testLoadout_CopyCtor() throws Exception {
-        CommandStack stack = new CommandStack(0);
-        LoadoutStandard cut = (LoadoutStandard) DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("HBK-4J"));
-        LoadoutStandard copy = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), cut);
-
-        // A copy must be equal :)
-        assertEquals(cut, copy);
-
-        // Must be deep
-        copy.rename("foo");
-        assertFalse(copy.getName().equals(cut.getName()));
-
-        assertTrue(copy.getComponent(Location.RightTorso).equals(cut.getComponent(Location.RightTorso)));
-        stack.pushAndApply(new CmdRemoveItem(xBar, copy, copy.getComponent(Location.RightTorso), ItemDB.lookup("LRM 10")));
-        stack.pushAndApply(new CmdRemoveItem(xBar, copy, copy.getComponent(Location.RightTorso), ItemDB.lookup("LRM 10")));
-        assertFalse(copy.getComponent(Location.RightTorso).equals(cut.getComponent(Location.RightTorso)));
-
-        assertTrue(copy.getComponent(Location.LeftTorso).equals(cut.getComponent(Location.LeftTorso)));
-        stack.pushAndApply(new CmdSetArmor(xBar, copy, copy.getComponent(Location.LeftTorso), ArmorSide.FRONT, 3, true));
-        stack.pushAndApply(new CmdSetArmor(xBar, copy, copy.getComponent(Location.LeftTorso), ArmorSide.BACK, 3, false));
-        assertFalse(copy.getComponent(Location.LeftTorso).equals(cut.getComponent(Location.LeftTorso)));
-
-        assertTrue(copy.getUpgrades().equals(cut.getUpgrades()));
-        stack.pushAndApply(new OpSetArmorType(xBar, copy, UpgradeDB.FERRO_FIBROUS_ARMOR));
-        stack.pushAndApply(new OpSetStructureType(xBar, copy, UpgradeDB.ENDO_STEEL_STRUCTURE));
-        stack.pushAndApply(new OpSetHeatSinkType(xBar, copy, UpgradeDB.DOUBLE_HEATSINKS));
-        stack.pushAndApply(new OpSetGuidanceType(xBar, copy, UpgradeDB.ARTEMIS_IV));
-        assertFalse(copy.getUpgrades().getArmor() == cut.getUpgrades().getArmor());
-        assertFalse(copy.getUpgrades().getStructure() == cut.getUpgrades().getStructure());
-        assertFalse(copy.getUpgrades().getGuidance() == cut.getUpgrades().getGuidance());
-        assertFalse(copy.getUpgrades().getHeatSink() == cut.getUpgrades().getHeatSink());
-        assertFalse(copy.getUpgrades().equals(cut.getUpgrades()));
-    }
-
 }

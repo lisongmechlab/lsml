@@ -32,11 +32,11 @@ import org.lisoft.lsml.command.CmdChangeOmniPod;
 import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdToggleItem;
+import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetGuidanceType;
+import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 
@@ -60,10 +60,10 @@ public class LoadoutBuilder {
             // Omnipods, upgrades, modules and renaming are independent and cannot fail on an empty loadout
             CLASS_PRIORITY_ORDER.put(CmdRename.class, 0);
             CLASS_PRIORITY_ORDER.put(CmdChangeOmniPod.class, 1);
-            CLASS_PRIORITY_ORDER.put(OpSetGuidanceType.class, 2);
-            CLASS_PRIORITY_ORDER.put(OpSetHeatSinkType.class, 2);
-            CLASS_PRIORITY_ORDER.put(OpSetArmorType.class, 2);
-            CLASS_PRIORITY_ORDER.put(OpSetStructureType.class, 2);
+            CLASS_PRIORITY_ORDER.put(CmdSetGuidanceType.class, 2);
+            CLASS_PRIORITY_ORDER.put(CmdSetHeatSinkType.class, 2);
+            CLASS_PRIORITY_ORDER.put(CmdSetArmorType.class, 2);
+            CLASS_PRIORITY_ORDER.put(CmdSetStructureType.class, 2);
             CLASS_PRIORITY_ORDER.put(CmdSetArmor.class, 3);
             CLASS_PRIORITY_ORDER.put(CmdAddModule.class, 4);
 

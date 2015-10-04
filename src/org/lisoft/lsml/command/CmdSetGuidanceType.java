@@ -17,21 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.upgrades;
+package org.lisoft.lsml.command;
 
-import org.lisoft.lsml.command.CmdAddItem;
-import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
+import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
@@ -39,14 +40,14 @@ import org.lisoft.lsml.util.message.MessageDelivery;
  * 
  * @author Emily Björk
  */
-public class OpSetGuidanceType extends CompositeCommand {
+public class CmdSetGuidanceType extends CompositeCommand {
     private final GuidanceUpgrade oldValue;
     private final GuidanceUpgrade newValue;
     private final Upgrades        upgrades;
     private final LoadoutBase<?>  loadout;
 
     /**
-     * Creates a {@link OpSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
+     * Creates a {@link CmdSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
      * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutBase} in any way.
      * 
      * @param aUpgrades
@@ -54,7 +55,7 @@ public class OpSetGuidanceType extends CompositeCommand {
      * @param aGuidanceUpgrade
      *            The new upgrade to use.
      */
-    public OpSetGuidanceType(Upgrades aUpgrades, GuidanceUpgrade aGuidanceUpgrade) {
+    public CmdSetGuidanceType(Upgrades aUpgrades, GuidanceUpgrade aGuidanceUpgrade) {
         super(aGuidanceUpgrade.getName(), null);
         upgrades = aUpgrades;
         loadout = null;
@@ -63,7 +64,7 @@ public class OpSetGuidanceType extends CompositeCommand {
     }
 
     /**
-     * Creates a new {@link OpSetGuidanceType} that will change the guidance upgrade of a {@link LoadoutStandard}.
+     * Creates a new {@link CmdSetGuidanceType} that will change the guidance upgrade of a {@link LoadoutStandard}.
      * 
      * @param aMessageDelivery
      *            A {@link MessageDelivery} to signal changes in guidance status on.
@@ -72,7 +73,7 @@ public class OpSetGuidanceType extends CompositeCommand {
      * @param aGuidanceUpgrade
      *            The new upgrade to use.
      */
-    public OpSetGuidanceType(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, GuidanceUpgrade aGuidanceUpgrade) {
+    public CmdSetGuidanceType(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, GuidanceUpgrade aGuidanceUpgrade) {
         super(aGuidanceUpgrade.getName(), aMessageDelivery);
         upgrades = aLoadout.getUpgrades();
         loadout = aLoadout;

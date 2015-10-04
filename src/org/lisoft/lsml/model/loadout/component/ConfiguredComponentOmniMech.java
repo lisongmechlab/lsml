@@ -252,9 +252,8 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
             throw new NullPointerException("aOmniPod must not be null.");
         omniPod = aOmniPod;
 
-        // Well, I assume that the togglable internals are only ever defined in the omnipods and the only fixed items
-        // ever
-        // defined in the omnipods.
+        // Well, I assume that the toggleable internals are only ever defined in the omnipods and the only fixed items
+        // ever defined in the omnipods.
         toggleStates.clear();
         for (Item item : omniPod.getToggleableItems()) {
             toggleStates.put(item, true); // Default enabled

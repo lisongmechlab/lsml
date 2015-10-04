@@ -79,6 +79,37 @@ public class EfficienciesTest {
         cut1.setSpeedTweak(true, null);
         assertNotEquals(cut, cut1);
         cut1.setSpeedTweak(false, null);
+
+        cut1.setTwistX(true, null);
+        assertNotEquals(cut, cut1);
+        cut1.setTwistX(false, null);
+
+        cut1.setTwistSpeed(true, null);
+        assertNotEquals(cut, cut1);
+        cut1.setTwistSpeed(false, null);
+
+        cut1.setArmReflex(true, null);
+        assertNotEquals(cut, cut1);
+        cut1.setArmReflex(false, null);
+    }
+
+    @Test
+    public void testAssign() {
+        Efficiencies cut0 = new Efficiencies();
+        Efficiencies cut1 = new Efficiencies();
+
+        cut1.setAnchorTurn(!cut0.hasAnchorTurn(), null);
+        cut1.setCoolRun(!cut0.hasCoolRun(), null);
+        cut1.setDoubleBasics(!cut0.hasDoubleBasics(), null);
+        cut1.setFastFire(!cut0.hasFastFire(), null);
+        cut1.setHeatContainment(!cut0.hasHeatContainment(), null);
+        cut1.setSpeedTweak(!cut0.hasSpeedTweak(), null);
+        cut1.setTwistX(!cut0.hasTwistX(), null);
+        cut1.setTwistSpeed(!cut0.hasTwistSpeed(), null);
+        cut1.setArmReflex(!cut0.hasArmReflex(), null);
+
+        cut0.assign(cut1);
+        assertEquals(cut0, cut1);
     }
 
     @Test
@@ -325,7 +356,6 @@ public class EfficienciesTest {
         assertEquals(1.4, mp.getTorsoPitchSpeed(cut.getModifiers()), 0.0);
         assertEquals(1.4, mp.getTorsoYawSpeed(cut.getModifiers()), 0.0);
     }
-    
 
     @Test
     public void testHasArmReflex_Default() {
@@ -371,5 +401,55 @@ public class EfficienciesTest {
 
         assertEquals(1.3, mp.getArmPitchSpeed(cut.getModifiers()), 0.0);
         assertEquals(1.3, mp.getArmYawSpeed(cut.getModifiers()), 0.0);
+    }
+    
+    ///
+
+    @Test
+    public void testHasAnchorTurn_Default() {
+        assertFalse(cut.hasAnchorTurn());
+    }
+
+    @Test
+    public void testSetAnchorTurn() {
+        cut.setAnchorTurn(true, xBar);
+        assertTrue(cut.hasAnchorTurn());
+        verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, false));
+    }
+
+    @Test
+    public void testSetAnchorTurn_NoXBar() {
+        cut.setAnchorTurn(true, null);
+        assertTrue(cut.hasAnchorTurn());
+    }
+
+    @Test
+    public void testSetAnchorTurn_NoUnnecessaryMessages() {
+        cut.setAnchorTurn(true, null);
+        cut.setAnchorTurn(true, xBar);
+        verifyZeroInteractions(xBar);
+    }
+
+    @Test
+    public void testAnchorTurn_Applies() {
+        cut.setAnchorTurn(true, null);
+        MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                MovementArchetype.Medium);
+
+        assertEquals(1.10, mp.getTurnLerpLowRate(cut.getModifiers()), 0.0);
+        assertEquals(1.10, mp.getTurnLerpMidRate(cut.getModifiers()), 0.0);
+        assertEquals(1.10, mp.getTurnLerpHighRate(cut.getModifiers()), 0.0);
+    }
+
+    @Test
+    public void testAnchorTurn_Applies2X() {
+        cut.setAnchorTurn(true, null);
+        cut.setDoubleBasics(true, null);
+        MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                MovementArchetype.Medium);
+        
+        assertEquals(1.2, mp.getTurnLerpLowRate(cut.getModifiers()), 0.0);
+        assertEquals(1.2, mp.getTurnLerpMidRate(cut.getModifiers()), 0.0);
+        assertEquals(1.2, mp.getTurnLerpHighRate(cut.getModifiers()), 0.0);
     }
 }

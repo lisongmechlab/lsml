@@ -41,14 +41,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack;
@@ -151,7 +151,7 @@ public class PayloadSelectionPanel extends JPanel {
             endoSteel.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    stack.pushAndApply(new OpSetStructureType(aUpgrades,
+                    stack.pushAndApply(new CmdSetStructureType(aUpgrades,
                             endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE));
                     aGraphPanel.updateGraph();
                 }
@@ -159,7 +159,7 @@ public class PayloadSelectionPanel extends JPanel {
             ferroFibrous.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    stack.pushAndApply(new OpSetArmorType(aUpgrades,
+                    stack.pushAndApply(new CmdSetArmorType(aUpgrades,
                             ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR));
                     aGraphPanel.updateGraph();
                 }

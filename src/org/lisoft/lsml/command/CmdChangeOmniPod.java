@@ -27,8 +27,8 @@ import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.message.MessageDelivery;
 import org.lisoft.lsml.util.message.MessageXBar;
 

@@ -31,10 +31,6 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadoutDB;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
@@ -58,11 +54,11 @@ public class CmdLoadStock extends CmdLoadoutBase {
 
         if (loadout instanceof LoadoutStandard) {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-            addOp(new OpSetStructureType(messageBuffer, loadoutStandard, stockLoadout.getStructureType()));
-            addOp(new OpSetArmorType(messageBuffer, loadoutStandard, stockLoadout.getArmorType()));
-            addOp(new OpSetHeatSinkType(messageBuffer, loadoutStandard, stockLoadout.getHeatSinkType()));
+            addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, stockLoadout.getStructureType()));
+            addOp(new CmdSetArmorType(messageBuffer, loadoutStandard, stockLoadout.getArmorType()));
+            addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, stockLoadout.getHeatSinkType()));
         }
-        addOp(new OpSetGuidanceType(messageBuffer, loadout, stockLoadout.getGuidanceType()));
+        addOp(new CmdSetGuidanceType(messageBuffer, loadout, stockLoadout.getGuidanceType()));
 
         for (StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()) {
             Location location = stockComponent.getPart();

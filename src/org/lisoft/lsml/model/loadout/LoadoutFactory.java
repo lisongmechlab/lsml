@@ -31,4 +31,6 @@ public interface LoadoutFactory {
     public LoadoutBase<?> produceEmpty(ChassisBase aChassis);
 
     public LoadoutBase<?> produceStock(ChassisBase aChassis);
+
+    public LoadoutBase<?> produceClone(LoadoutBase<?> aLoadout);
 }

@@ -169,10 +169,15 @@ public class Efficiencies {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + (anchorTurn ? 1231 : 1237);
+        result = prime * result + (armReflex ? 1231 : 1237);
         result = prime * result + (coolRun ? 1231 : 1237);
         result = prime * result + (doubleBasics ? 1231 : 1237);
+        result = prime * result + (fastfire ? 1231 : 1237);
         result = prime * result + (heatContainment ? 1231 : 1237);
         result = prime * result + (speedTweak ? 1231 : 1237);
+        result = prime * result + (twistSpeed ? 1231 : 1237);
+        result = prime * result + (twistX ? 1231 : 1237);
         return result;
     }
 
@@ -182,20 +187,26 @@ public class Efficiencies {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof Efficiencies))
+        if (getClass() != obj.getClass())
             return false;
         Efficiencies other = (Efficiencies) obj;
+        if (anchorTurn != other.anchorTurn)
+            return false;
+        if (armReflex != other.armReflex)
+            return false;
         if (coolRun != other.coolRun)
             return false;
         if (doubleBasics != other.doubleBasics)
+            return false;
+        if (fastfire != other.fastfire)
             return false;
         if (heatContainment != other.heatContainment)
             return false;
         if (speedTweak != other.speedTweak)
             return false;
-        if (anchorTurn != other.anchorTurn)
+        if (twistSpeed != other.twistSpeed)
             return false;
-        if (fastfire != other.fastfire)
+        if (twistX != other.twistX)
             return false;
         return true;
     }
@@ -433,6 +444,24 @@ public class Efficiencies {
                 aXBar.post(new EfficienciesMessage(this, Type.Changed, false));
             }
         }
+    }
+
+    /**
+     * Assigns this to be equal to that.
+     * 
+     * @param aEfficiencies
+     *            The {@link Efficiencies} to copy from.
+     */
+    public void assign(Efficiencies aEfficiencies) {
+        speedTweak = aEfficiencies.speedTweak;
+        coolRun = aEfficiencies.coolRun;
+        heatContainment = aEfficiencies.heatContainment;
+        anchorTurn = aEfficiencies.anchorTurn;
+        doubleBasics = aEfficiencies.doubleBasics;
+        fastfire = aEfficiencies.fastfire;
+        twistX = aEfficiencies.twistX;
+        twistSpeed = aEfficiencies.twistSpeed;
+        armReflex = aEfficiencies.armReflex;
     }
 
 }

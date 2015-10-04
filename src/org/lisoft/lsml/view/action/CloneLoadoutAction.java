@@ -25,6 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.view.ProgramInit;
 
@@ -45,6 +46,6 @@ public class CloneLoadoutAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        ProgramInit.lsml().mechLabPane.openLoadout(loadout.copy());
+        ProgramInit.lsml().mechLabPane.openLoadout(DefaultLoadoutFactory.instance.produceClone(loadout));
     }
 }

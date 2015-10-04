@@ -22,10 +22,6 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.message.MessageDelivery;
@@ -51,10 +47,10 @@ public class CmdStripLoadout extends CompositeCommand {
 
         if (loadout instanceof LoadoutStandard) {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-            addOp(new OpSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
-            addOp(new OpSetGuidanceType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
-            addOp(new OpSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
-            addOp(new OpSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
+            addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
+            addOp(new CmdSetGuidanceType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
+            addOp(new CmdSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
+            addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
         }
     }
 }

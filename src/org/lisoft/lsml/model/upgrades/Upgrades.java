@@ -131,8 +131,21 @@ public class Upgrades {
      * @param aGuidanceUpgrade
      *            The new {@link GuidanceUpgrade}.
      */
-    void setGuidance(GuidanceUpgrade aGuidanceUpgrade) {
+    public void setGuidance(GuidanceUpgrade aGuidanceUpgrade) {
         guidanceType = aGuidanceUpgrade;
+    }
+
+    /**
+     * Assigns the upgrades of that to this.
+     * 
+     * @param aUpgrades
+     *            The upgrades to copy.
+     */
+    public void assign(Upgrades aUpgrades) {
+        armorType = aUpgrades.armorType;
+        structureType = aUpgrades.structureType;
+        guidanceType = aUpgrades.guidanceType;
+        heatSinkType = aUpgrades.heatSinkType;
     }
 
 }

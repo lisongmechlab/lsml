@@ -17,11 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.upgrades;
+package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
+import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
@@ -30,14 +32,14 @@ import org.lisoft.lsml.util.message.MessageDelivery;
  * 
  * @author Emily Björk
  */
-public class OpSetArmorType extends OpUpgradeBase {
+public class CmdSetArmorType extends CmdUpgradeBase {
     private final ArmorUpgrade    oldValue;
     private final ArmorUpgrade    newValue;
     private final UpgradesMutable upgrades;
     private final LoadoutStandard loadout;
 
     /**
-     * Creates a {@link OpSetArmorType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
+     * Creates a {@link CmdSetArmorType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
      * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
      * 
      * @param aUpgrades
@@ -45,7 +47,7 @@ public class OpSetArmorType extends OpUpgradeBase {
      * @param aArmorUpgrade
      *            The new armor type when this upgrades has been applied.
      */
-    public OpSetArmorType(UpgradesMutable aUpgrades, ArmorUpgrade aArmorUpgrade) {
+    public CmdSetArmorType(UpgradesMutable aUpgrades, ArmorUpgrade aArmorUpgrade) {
         super(null, aArmorUpgrade.getName());
         upgrades = aUpgrades;
         loadout = null;
@@ -54,7 +56,7 @@ public class OpSetArmorType extends OpUpgradeBase {
     }
 
     /**
-     * Creates a new {@link OpSetStructureType} that will change the armor type of a {@link LoadoutStandard}.
+     * Creates a new {@link CmdSetStructureType} that will change the armor type of a {@link LoadoutStandard}.
      * 
      * @param aMessageDelivery
      *            A {@link MessageDelivery} to signal changes in internal structure on.
@@ -63,7 +65,7 @@ public class OpSetArmorType extends OpUpgradeBase {
      * @param aArmorUpgrade
      *            The new armor type this upgrades is applied.
      */
-    public OpSetArmorType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout, ArmorUpgrade aArmorUpgrade) {
+    public CmdSetArmorType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout, ArmorUpgrade aArmorUpgrade) {
         super(aMessageDelivery, aArmorUpgrade.getName());
         upgrades = aLoadout.getUpgrades();
         loadout = aLoadout;

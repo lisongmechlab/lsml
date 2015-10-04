@@ -23,6 +23,10 @@ import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetGuidanceType;
+import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -37,10 +41,6 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
@@ -138,10 +138,10 @@ public class LoadoutConverter implements Converter {
                 if (loadoutBase instanceof LoadoutStandard) {
                     LoadoutStandard loadout = (LoadoutStandard) loadoutBase;
                     Upgrades upgrades = (Upgrades) aContext.convertAnother(loadout, Upgrades.class);
-                    builder.push(new OpSetGuidanceType(null, loadout, upgrades.getGuidance()));
-                    builder.push(new OpSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
-                    builder.push(new OpSetStructureType(null, loadout, upgrades.getStructure()));
-                    builder.push(new OpSetArmorType(null, loadout, upgrades.getArmor()));
+                    builder.push(new CmdSetGuidanceType(null, loadout, upgrades.getGuidance()));
+                    builder.push(new CmdSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
+                    builder.push(new CmdSetStructureType(null, loadout, upgrades.getStructure()));
+                    builder.push(new CmdSetArmorType(null, loadout, upgrades.getArmor()));
                 }
                 else if (loadoutBase instanceof LoadoutOmniMech) {
                     while (aReader.hasMoreChildren()) {
@@ -149,7 +149,7 @@ public class LoadoutConverter implements Converter {
                         if (aReader.getNodeName().equals("guidance")) {
                             GuidanceUpgrade artemis = (GuidanceUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader
                                     .getValue()));
-                            builder.push(new OpSetGuidanceType(null, loadoutBase, artemis));
+                            builder.push(new CmdSetGuidanceType(null, loadoutBase, artemis));
                         }
                         aReader.moveUp();
                     }
@@ -209,15 +209,15 @@ public class LoadoutConverter implements Converter {
             aReader.moveDown();
             if ("upgrades".equals(aReader.getNodeName())) {
                 Upgrades upgrades = (Upgrades) aContext.convertAnother(loadout, Upgrades.class);
-                builder.push(new OpSetGuidanceType(null, loadout, upgrades.getGuidance()));
-                builder.push(new OpSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
-                builder.push(new OpSetStructureType(null, loadout, upgrades.getStructure()));
-                builder.push(new OpSetArmorType(null, loadout, upgrades.getArmor()));
+                builder.push(new CmdSetGuidanceType(null, loadout, upgrades.getGuidance()));
+                builder.push(new CmdSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
+                builder.push(new CmdSetStructureType(null, loadout, upgrades.getStructure()));
+                builder.push(new CmdSetArmorType(null, loadout, upgrades.getArmor()));
 
                 // We cheat here to preserve backwards compatibility with really old V1 garages.
                 // Just make sure that the guidance type is set so that fixes for artemis changes will be applied in
                 // v1 parser in ConfiguredComponentConverter.
-                (new CommandStack(0)).pushAndApply(new OpSetGuidanceType(null, loadout, upgrades.getGuidance()));
+                (new CommandStack(0)).pushAndApply(new CmdSetGuidanceType(null, loadout, upgrades.getGuidance()));
 
             }
             else if ("efficiencies".equals(aReader.getNodeName())) {

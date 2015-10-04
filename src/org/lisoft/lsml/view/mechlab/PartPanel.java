@@ -341,7 +341,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
             armorLabel.setText(" /" + Integer.valueOf(component.getInternalComponent().getArmorMax()));
             JTextField tf = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
 
-            if (component.hasManualArmor()) {
+            if (!component.hasManualArmor()) {
                 armorLabel.setForeground(Color.GRAY);
                 tf.setForeground(Color.GRAY);
             }
@@ -356,7 +356,7 @@ public class PartPanel extends JPanel implements Message.Recipient {
             JTextField tff = ((JSpinner.DefaultEditor) frontSpinner.getEditor()).getTextField();
             JTextField tfb = ((JSpinner.DefaultEditor) backSpinner.getEditor()).getTextField();
 
-            if (component.hasManualArmor()) {
+            if (!component.hasManualArmor()) {
                 frontArmorLabel.setForeground(Color.GRAY);
                 backArmorLabel.setForeground(Color.GRAY);
                 tff.setForeground(Color.GRAY);
