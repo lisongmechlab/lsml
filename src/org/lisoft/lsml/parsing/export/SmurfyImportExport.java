@@ -43,8 +43,8 @@ import org.lisoft.lsml.model.NotificationMessage;
 import org.lisoft.lsml.model.NotificationMessage.Severity;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.LSML;
 

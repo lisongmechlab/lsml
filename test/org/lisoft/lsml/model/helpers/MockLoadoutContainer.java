@@ -38,6 +38,7 @@ import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 /**
@@ -70,6 +71,7 @@ public class MockLoadoutContainer {
     final public ConfiguredComponentBase              ll;
     final public ConfiguredComponentBase              la;
     final public ArmorUpgrade armorUpgrade;
+    final public HeatSinkUpgrade heatSinkUpgrade;
 
     public MockLoadoutContainer() {
         chassis = mock(ChassisBase.class);
@@ -79,8 +81,10 @@ public class MockLoadoutContainer {
         weaponGroups = mock(WeaponGroups.class);
         movementProfile = mock(MovementProfile.class);
         armorUpgrade = mock(ArmorUpgrade.class);
+        heatSinkUpgrade = mock(HeatSinkUpgrade.class);
 
         when(upgrades.getArmor()).thenReturn(armorUpgrade);
+        when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
         
         ira = mock(ComponentBase.class);
         irt = mock(ComponentBase.class);

@@ -21,8 +21,6 @@ package org.lisoft.lsml.view.mechlab;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
@@ -39,7 +37,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
-import org.lisoft.lsml.command.CmdStripLoadout;
 import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
 import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
 import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
@@ -62,6 +59,7 @@ import org.lisoft.lsml.view.action.RedoLoadoutAction;
 import org.lisoft.lsml.view.action.RenameLoadoutAction;
 import org.lisoft.lsml.view.action.ShowDamageGraphAction;
 import org.lisoft.lsml.view.action.StripArmorAction;
+import org.lisoft.lsml.view.action.StripLoadout;
 import org.lisoft.lsml.view.action.UndoLoadoutAction;
 
 public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
@@ -186,12 +184,6 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         return menuBar;
     }
 
-    private JMenuItem createMenuItem(String aText, ActionListener aActionListener) {
-        JMenuItem item = new JMenuItem(aText);
-        item.addActionListener(aActionListener);
-        return item;
-    }
-
     private JMenu createMenuShare() {
         JMenu menu = new JMenu("Share!");
         menu.add(new JMenuItem(new ExportToLsmlAction(this)));
@@ -207,12 +199,8 @@ public class LoadoutFrame extends JInternalFrame implements Message.Recipient {
         loadoutMenu.add(new JMenuItem(actionRename));
         loadoutMenu.add(new JMenuItem(new DeleteLoadoutAction(xBar, ProgramInit.lsml().getGarage(), this)));
         loadoutMenu.add(new JMenuItem(new LoadStockAction(loadout, loadoutOperationStack, xBar, this)));
-        loadoutMenu.add(createMenuItem("Strip mech", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent aArg0) {
-                loadoutOperationStack.pushAndApply(new CmdStripLoadout(loadout, xBar));
-            }
-        }));
+        loadoutMenu.add(new JMenuItem(new StripLoadout(this, xBar, true)));
+        loadoutMenu.add(new JMenuItem(new StripLoadout(this, xBar, false)));
 
         loadoutMenu.add(new JMenuItem(new CloneLoadoutAction("Clone", loadout, KeyStroke.getKeyStroke("C"))));
         return loadoutMenu;
