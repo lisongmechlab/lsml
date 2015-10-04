@@ -66,7 +66,7 @@ public class UpgradesMutable extends Upgrades {
      * @param aHeatsinkUpgrade
      *            The new {@link HeatSinkUpgrade}.
      */
-    void setHeatSink(HeatSinkUpgrade aHeatsinkUpgrade) {
+    public void setHeatSink(HeatSinkUpgrade aHeatsinkUpgrade) {
         heatSinkType = aHeatsinkUpgrade;
     }
 
@@ -78,7 +78,7 @@ public class UpgradesMutable extends Upgrades {
      * @param aStructureUpgrade
      *            The new {@link StructureUpgrade}.
      */
-    void setStructure(StructureUpgrade aStructureUpgrade) {
+    public void setStructure(StructureUpgrade aStructureUpgrade) {
         structureType = aStructureUpgrade;
     }
 
@@ -90,7 +90,7 @@ public class UpgradesMutable extends Upgrades {
      * @param anArmorUpgrade
      *            The new {@link ArmorUpgrade}.
      */
-    void setArmor(ArmorUpgrade anArmorUpgrade) {
+    public void setArmor(ArmorUpgrade anArmorUpgrade) {
         armorType = anArmorUpgrade;
     }
 }

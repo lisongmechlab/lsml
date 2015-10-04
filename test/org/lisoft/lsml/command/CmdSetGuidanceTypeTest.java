@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.upgrades;
+package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,9 +33,12 @@ import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.model.upgrades.UpgradeDB;
+import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -43,20 +46,20 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test suite for {@link OpSetGuidanceType}.
+ * Test suite for {@link CmdSetGuidanceType}.
  * 
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class OpSetGuidanceTypeTest {
+public class CmdSetGuidanceTypeTest {
     MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     @Mock
-    GuidanceUpgrade      oldGuidance;
+    GuidanceUpgrade oldGuidance;
     @Mock
-    GuidanceUpgrade      newGuidance;
+    GuidanceUpgrade newGuidance;
     @Mock
-    MessageXBar          xBar;
+    MessageXBar     xBar;
 
     /**
      * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link LoadoutStandard}
@@ -69,7 +72,7 @@ public class OpSetGuidanceTypeTest {
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
         Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
 
-        stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
+        stack.pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
         Mockito.verify(mlc.upgrades).setGuidance(newGuidance);
     }
@@ -84,7 +87,7 @@ public class OpSetGuidanceTypeTest {
         Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
 
         try {
-            (new CommandStack(0)).pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
+            (new CommandStack(0)).pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
         }
         catch (Throwable t) {
             /* No-Op */
@@ -125,7 +128,7 @@ public class OpSetGuidanceTypeTest {
         Mockito.when(mlc.rl.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
         Mockito.when(mlc.lt.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
 
-        stack.pushAndApply(new OpSetGuidanceType(xBar, mlc.loadout, newGuidance));
+        stack.pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
         // FIXME: Verify... I can't gain access to verify this in any way...
         // assertEquals(2, rlItems.size());
@@ -145,7 +148,7 @@ public class OpSetGuidanceTypeTest {
         LoadoutBase<?> loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         CommandStack stack = new CommandStack(1);
 
-        stack.pushAndApply(new OpSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
+        stack.pushAndApply(new CmdSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
         stack.undo();
 
         assertEquals(loadoutOriginal, loadout);

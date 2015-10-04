@@ -534,11 +534,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     public abstract MovementProfile getMovementProfile();
 
     /**
-     * @return A deep copy of <code>this</code>.
-     */
-    public abstract LoadoutBase<?> copy();
-
-    /**
      * @return A String containing a HTML formatted summary of the quirks for this loadout.
      */
     public abstract String getQuirkHtmlSummary();

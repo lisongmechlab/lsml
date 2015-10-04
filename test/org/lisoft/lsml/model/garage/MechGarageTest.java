@@ -47,7 +47,6 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
@@ -294,7 +293,7 @@ public class MechGarageTest {
         for (LoadoutBase<?> loadout : garage.getMechs()) {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
             
-            LoadoutStandard clone = new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), loadoutStandard);
+            LoadoutBase<?> clone = DefaultLoadoutFactory.instance.produceClone(loadoutStandard);
             stack.pushAndApply(new CmdLoadStock(clone.getChassis(), clone, xBar));
 
             assertEquals(clone, loadout);

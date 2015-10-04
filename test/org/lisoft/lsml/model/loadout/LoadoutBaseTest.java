@@ -37,7 +37,6 @@ import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ComponentBase;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
@@ -55,8 +54,6 @@ import org.lisoft.lsml.util.ListArrayUtils;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-
-import com.sun.java.swing.plaf.motif.resources.motif;
 
 /**
  * Test suite for {@link LoadoutBase}

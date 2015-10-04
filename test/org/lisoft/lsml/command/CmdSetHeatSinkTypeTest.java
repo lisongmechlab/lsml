@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.upgrades;
+package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertNotEquals;
 
@@ -33,6 +33,9 @@ import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.Type;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
+import org.lisoft.lsml.model.upgrades.UpgradeDB;
+import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
 import org.lisoft.lsml.util.DecodingException;
 import org.mockito.Mockito;
@@ -44,7 +47,7 @@ import org.mockito.stubbing.Answer;
  * 
  * @author Li Song
  */
-public class OpSetHeatSinkTypeTest {
+public class CmdSetHeatSinkTypeTest {
     private int                               maxEquippableNewType;
     private int                               equippedHs;
     private int                               engineHsSlots;
@@ -58,8 +61,8 @@ public class OpSetHeatSinkTypeTest {
     private final ConfiguredComponentStandard component  = Mockito.mock(ConfiguredComponentStandard.class);
     private final LoadoutStandard             loadout    = Mockito.mock(LoadoutStandard.class);
 
-    private HeatSink                          newType;
-    private HeatSink                          oldType;
+    private HeatSink newType;
+    private HeatSink oldType;
 
     private void makeDefaultCut() {
         Mockito.when(shs.getNumCriticalSlots()).thenReturn(1);
@@ -82,7 +85,7 @@ public class OpSetHeatSinkTypeTest {
         Mockito.when(component.canEquip(newType)).then(new Answer<EquipResult>() {
             @Override
             public EquipResult answer(InvocationOnMock aInvocation) throws Throwable {
-                if( equippedHs < maxEquippableNewType){
+                if (equippedHs < maxEquippableNewType) {
                     return EquipResult.SUCCESS;
                 }
                 return EquipResult.make(Type.NotEnoughSlots);
@@ -110,7 +113,7 @@ public class OpSetHeatSinkTypeTest {
         Mockito.when(loadout.canEquip(newType)).then(new Answer<EquipResult>() {
             @Override
             public EquipResult answer(InvocationOnMock aInvocation) throws Throwable {
-                if( equippedHs < maxGloballyEquippableNewType){
+                if (equippedHs < maxGloballyEquippableNewType) {
                     return EquipResult.SUCCESS;
                 }
                 return EquipResult.make(Type.NotEnoughSlots);
@@ -124,7 +127,7 @@ public class OpSetHeatSinkTypeTest {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
 
-        OpSetHeatSinkType cut = new OpSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
         cut.apply();
 
         for (HeatSink item : loaded.items(HeatSink.class)) {
@@ -138,7 +141,7 @@ public class OpSetHeatSinkTypeTest {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
 
-        OpSetHeatSinkType cut = new OpSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
         cut.apply();
 
         for (HeatSink item : loaded.items(HeatSink.class)) {
@@ -152,7 +155,7 @@ public class OpSetHeatSinkTypeTest {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
 
-        OpSetHeatSinkType cut = new OpSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
         cut.apply();
 
         for (HeatSink item : loaded.items(HeatSink.class)) {
@@ -182,7 +185,7 @@ public class OpSetHeatSinkTypeTest {
         Mockito.when(component.getSlotsFree()).thenReturn(10);
 
         // Execute
-        OpSetHeatSinkType cut = new OpSetHeatSinkType(null, loadout, dhsUpgrade);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
         cut.apply();
 
         // Verify
@@ -212,7 +215,7 @@ public class OpSetHeatSinkTypeTest {
         Mockito.when(component.getSlotsFree()).thenReturn(0);
 
         // Execute
-        OpSetHeatSinkType cut = new OpSetHeatSinkType(null, loadout, dhsUpgrade);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
         cut.apply();
 
         // Verify
@@ -242,7 +245,7 @@ public class OpSetHeatSinkTypeTest {
         Mockito.when(component.getSlotsFree()).thenReturn(0);
 
         // Execute
-        OpSetHeatSinkType cut = new OpSetHeatSinkType(null, loadout, dhsUpgrade);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
         cut.apply();
 
         // Verify
@@ -266,7 +269,7 @@ public class OpSetHeatSinkTypeTest {
         Mockito.when(component.getSlotsFree()).thenReturn(8);
 
         // Execute
-        OpSetHeatSinkType cut = new OpSetHeatSinkType(null, loadout, dhsUpgrade);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
         cut.apply();
 
         // Verify

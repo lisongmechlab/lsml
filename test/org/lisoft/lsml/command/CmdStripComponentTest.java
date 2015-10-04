@@ -103,7 +103,7 @@ public class CmdStripComponentTest {
     }
 
     @Test
-    public void testStripComponent() {
+    public void testStripComponent_ItemsRemoved() {
         items.add(ItemDB.ECM);
 
         CmdStripComponent cut = new CmdStripComponent(messages, mlc.loadout, mlc.rt);

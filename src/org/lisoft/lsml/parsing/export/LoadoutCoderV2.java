@@ -35,6 +35,10 @@ import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetGuidanceType;
+import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
@@ -51,10 +55,6 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.util.DecodingException;
@@ -157,10 +157,10 @@ public class LoadoutCoderV2 implements LoadoutCoder {
                 throw new DecodingException(e);
             }
             List<Integer> ids = huff.decode(rest);
-            stack.pushAndApply(new OpSetArmorType(null, loadout, (ArmorUpgrade) UpgradeDB.lookup(ids.get(0))));
-            stack.pushAndApply(new OpSetStructureType(null, loadout, (StructureUpgrade) UpgradeDB.lookup(ids.get(1))));
-            stack.pushAndApply(new OpSetHeatSinkType(null, loadout, (HeatSinkUpgrade) UpgradeDB.lookup(ids.get(2))));
-            stack.pushAndApply(new OpSetGuidanceType(null, loadout, (GuidanceUpgrade) UpgradeDB.lookup(ids.get(3))));
+            stack.pushAndApply(new CmdSetArmorType(null, loadout, (ArmorUpgrade) UpgradeDB.lookup(ids.get(0))));
+            stack.pushAndApply(new CmdSetStructureType(null, loadout, (StructureUpgrade) UpgradeDB.lookup(ids.get(1))));
+            stack.pushAndApply(new CmdSetHeatSinkType(null, loadout, (HeatSinkUpgrade) UpgradeDB.lookup(ids.get(2))));
+            stack.pushAndApply(new CmdSetGuidanceType(null, loadout, (GuidanceUpgrade) UpgradeDB.lookup(ids.get(3))));
 
             if (-1 != ids.get(4)) {
                 throw new DecodingException("Broken LSML link, expected separator got: " + ids.get(4));

@@ -40,7 +40,6 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
 import org.lisoft.lsml.util.DecodingException;
@@ -131,7 +130,7 @@ public class CmdAutoAddItemTest {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("BNC-3M"));
-        stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
@@ -225,7 +224,7 @@ public class CmdAutoAddItemTest {
         try {
             // Setup
             loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-            stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+            stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
 
             // 2 slots in either leg
             // 2 slots left in CT
@@ -267,7 +266,7 @@ public class CmdAutoAddItemTest {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
         Item gaussRifle = ItemDB.lookup("GAUSS RIFLE");
@@ -329,7 +328,7 @@ public class CmdAutoAddItemTest {
     public void testAddItem() {
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        stack.pushAndApply(new OpSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
 
         Item mlas = ItemDB.lookup("MEDIUM LASER");
         Item ac20 = ItemDB.lookup("AC/20");

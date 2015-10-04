@@ -52,6 +52,10 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetGuidanceType;
+import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.environment.EnvironmentDB;
 import org.lisoft.lsml.model.item.Faction;
@@ -65,10 +69,6 @@ import org.lisoft.lsml.model.metrics.TorsoTwistYawSpeed;
 import org.lisoft.lsml.model.metrics.TurningSpeed;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.util.CommandStack;
@@ -677,7 +677,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                                 : UpgradeDB.STANDARD_STRUCTURE;
                     }
                     try {
-                        opStack.pushAndApply(new OpSetStructureType(xBar, loadoutStandard, structure));
+                        opStack.pushAndApply(new CmdSetStructureType(xBar, loadoutStandard, structure));
                     }
                     catch (IllegalArgumentException e) {
                         endoSteel.setSelected(!endoSteel.isSelected());
@@ -700,7 +700,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                         armor = ferroFibros.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
                     }
                     try {
-                        opStack.pushAndApply(new OpSetArmorType(xBar, loadoutStandard, armor));
+                        opStack.pushAndApply(new CmdSetArmorType(xBar, loadoutStandard, armor));
                     }
                     catch (IllegalArgumentException e) {
                         ferroFibros.setSelected(!ferroFibros.isSelected());
@@ -724,7 +724,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
                                 : UpgradeDB.STANDARD_HEATSINKS;
                     }
                     try {
-                        opStack.pushAndApply(new OpSetHeatSinkType(xBar, loadoutStandard, heatSink));
+                        opStack.pushAndApply(new CmdSetHeatSinkType(xBar, loadoutStandard, heatSink));
                     }
                     catch (IllegalArgumentException e) {
                         doubleHeatSinks.setSelected(!doubleHeatSinks.isSelected());
@@ -740,7 +740,7 @@ public class LoadoutInfoPanel extends JPanel implements ItemListener, Message.Re
             @Override
             public void actionPerformed(ActionEvent aE) {
                 try {
-                    opStack.pushAndApply(new OpSetGuidanceType(xBar, loadout,
+                    opStack.pushAndApply(new CmdSetGuidanceType(xBar, loadout,
                             artemis.isSelected() ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE));
                 }
                 catch (IllegalArgumentException e) {

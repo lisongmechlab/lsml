@@ -34,8 +34,8 @@ import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
-import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**

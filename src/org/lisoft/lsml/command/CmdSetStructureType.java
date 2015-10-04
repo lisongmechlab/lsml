@@ -17,11 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.upgrades;
+package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
+import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
@@ -30,14 +32,14 @@ import org.lisoft.lsml.util.message.MessageDelivery;
  * 
  * @author Li Song
  */
-public class OpSetStructureType extends OpUpgradeBase {
+public class CmdSetStructureType extends CmdUpgradeBase {
     private final StructureUpgrade oldValue;
     private final StructureUpgrade newValue;
     private final UpgradesMutable  upgrades;
     private final LoadoutStandard  loadout;
 
     /**
-     * Creates a {@link OpSetStructureType} that only affects a stand-alone {@link UpgradesMutable} object This is
+     * Creates a {@link CmdSetStructureType} that only affects a stand-alone {@link UpgradesMutable} object This is
      * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in
      * any way.
      * 
@@ -46,7 +48,7 @@ public class OpSetStructureType extends OpUpgradeBase {
      * @param aStructureUpgrade
      *            The new internal structure when this upgrades has been applied.
      */
-    public OpSetStructureType(UpgradesMutable anUpgrades, StructureUpgrade aStructureUpgrade) {
+    public CmdSetStructureType(UpgradesMutable anUpgrades, StructureUpgrade aStructureUpgrade) {
         super(null, aStructureUpgrade.getName());
         upgrades = anUpgrades;
         loadout = null;
@@ -55,7 +57,7 @@ public class OpSetStructureType extends OpUpgradeBase {
     }
 
     /**
-     * Creates a new {@link OpSetStructureType} that will change the internal structure of a {@link LoadoutStandard}.
+     * Creates a new {@link CmdSetStructureType} that will change the internal structure of a {@link LoadoutStandard}.
      * 
      * @param aMessageDelivery
      *            A {@link MessageDelivery} to signal changes in internal structure on.
@@ -64,7 +66,7 @@ public class OpSetStructureType extends OpUpgradeBase {
      * @param aStructureUpgrade
      *            The new internal structure this upgrades is applied.
      */
-    public OpSetStructureType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout,
+    public CmdSetStructureType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout,
             StructureUpgrade aStructureUpgrade) {
         super(aMessageDelivery, aStructureUpgrade.getName());
         upgrades = aLoadout.getUpgrades();

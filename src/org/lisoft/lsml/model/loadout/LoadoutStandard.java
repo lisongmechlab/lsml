@@ -30,7 +30,6 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModifierEquipment;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -69,21 +68,6 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
         super(aFactory, aChassi, aWeaponGroups);
 
         upgrades = aUpgradesMutable;
-    }
-
-
-    /**
-     * Copy constructor.
-     * 
-     * @param aFactory
-     *            The {@link Factory} used to construct the components.
-     * @param aLoadout
-     *            The {@link LoadoutStandard} to copy.
-     */
-    @Deprecated // Start using factory's copy
-    public LoadoutStandard(Factory<ConfiguredComponentStandard> aFactory, LoadoutStandard aLoadout) {
-        super(aFactory, aLoadout, new WeaponGroups(aLoadout.getWeaponGroups()));
-        upgrades = new UpgradesMutable(aLoadout.upgrades);
     }
 
     @Override
@@ -139,12 +123,6 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
     @Override
     public MovementProfile getMovementProfile() {
         return getChassis().getMovementProfileBase();
-    }
-
-    @Override
-    public LoadoutStandard copy() {
-        // TODO: Remove hard-coded factory
-        return new LoadoutStandard(ComponentBuilder.getStandardComponentFactory(), this);
     }
 
     @Override

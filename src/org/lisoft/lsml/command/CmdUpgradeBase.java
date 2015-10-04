@@ -17,10 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.upgrades;
+package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.message.MessageDelivery;
 
@@ -30,11 +31,11 @@ import org.lisoft.lsml.util.message.MessageDelivery;
  * 
  * @author Li Song
  */
-public abstract class OpUpgradeBase extends Command {
+public abstract class CmdUpgradeBase extends Command {
     protected final transient MessageDelivery messageDelivery;
     private final String                      description;
 
-    protected OpUpgradeBase(MessageDelivery aMessageDelivery, String aDescription) {
+    protected CmdUpgradeBase(MessageDelivery aMessageDelivery, String aDescription) {
         description = aDescription;
         messageDelivery = aMessageDelivery;
     }

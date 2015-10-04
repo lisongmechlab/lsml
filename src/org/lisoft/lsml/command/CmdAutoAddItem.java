@@ -31,6 +31,7 @@ import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -66,7 +67,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         }
 
         Node(Node aParent, Location aSource, Location aTarget, Item aItem) {
-            data = aParent.data.copy();
+            data = DefaultLoadoutFactory.instance.produceClone(aParent.data);
             parent = aParent;
             source = aSource;
             target = aTarget;
@@ -85,7 +86,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
          * @param aTargetItem
          */
         Node(Node aParent, Location aSourcePart, Location aTargetPart, Item aSourceItem, Item aTargetItem) {
-            data = aParent.data.copy();
+            data = DefaultLoadoutFactory.instance.produceClone(aParent.data);
             parent = aParent;
             source = aSourcePart;
             target = aTargetPart;
@@ -173,8 +174,8 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
 
             // Not yet sweetie
             for (Location part : partTraversalOrder) {
-                ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
-                for (Item i : loadoutPart.getItemsEquipped()) {
+                ConfiguredComponentBase component = node.data.getComponent(part);
+                for (Item i : component.getItemsEquipped()) {
                     if (i instanceof Internal)
                         continue;
                     List<Node> branches = getBranches(node, part, i);
@@ -235,7 +236,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
 
         // Create a temporary loadout where the item has been removed and find all
         // ways it can be placed on another part.
-        LoadoutBase<?> tempLoadout = aParent.data.copy();
+        LoadoutBase<?> tempLoadout = DefaultLoadoutFactory.instance.produceClone(aParent.data);
         stack.pushAndApply(new CmdRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
 
         ConfiguredComponentBase srcPart = tempLoadout.getComponent(aSourcePart);

@@ -29,6 +29,10 @@ import java.util.Map;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetGuidanceType;
+import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -42,10 +46,6 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.OpSetArmorType;
-import org.lisoft.lsml.model.upgrades.OpSetGuidanceType;
-import org.lisoft.lsml.model.upgrades.OpSetHeatSinkType;
-import org.lisoft.lsml.model.upgrades.OpSetStructureType;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.util.DecodingException;
@@ -109,10 +109,10 @@ public class LoadoutCoderV1 implements LoadoutCoder {
             ArmorUpgrade armor = ferroFib ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
             HeatSinkUpgrade heatSinks = dhs ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
 
-            stack.pushAndApply(new OpSetGuidanceType(null, loadout, guidance));
-            stack.pushAndApply(new OpSetHeatSinkType(null, loadout, heatSinks));
-            stack.pushAndApply(new OpSetStructureType(null, loadout, structure));
-            stack.pushAndApply(new OpSetArmorType(null, loadout, armor));
+            stack.pushAndApply(new CmdSetGuidanceType(null, loadout, guidance));
+            stack.pushAndApply(new CmdSetHeatSinkType(null, loadout, heatSinks));
+            stack.pushAndApply(new CmdSetStructureType(null, loadout, structure));
+            stack.pushAndApply(new CmdSetArmorType(null, loadout, armor));
             loadout.getEfficiencies().setCoolRun((upeff & (1 << 3)) != 0, null);
             loadout.getEfficiencies().setHeatContainment((upeff & (1 << 2)) != 0, null);
             loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 1)) != 0, null);

@@ -28,7 +28,6 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.ModifierEquipment;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -59,23 +58,6 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
             WeaponGroups aWeaponGroups) {
         super(aFactory, aChassis, aWeaponGroups);
         upgrades = aUpgrades;
-    }
-
-    /**
-     * Copy constructor.
-     * 
-     * @param aFactory
-     *            The {@link Factory} used to construct the components.
-     * @param aLoadoutOmniMech
-     *            The {@link LoadoutOmniMech} to copy.
-     * @param aWeaponGroups
-     *            The weapon groups object for this loadout.
-     */
-    @Deprecated // Start using factory's copy
-    public LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, LoadoutOmniMech aLoadoutOmniMech,
-            WeaponGroups aWeaponGroups) {
-        super(aFactory, aLoadoutOmniMech, aWeaponGroups);
-        upgrades = new Upgrades(aLoadoutOmniMech.getUpgrades());
     }
 
     @Override
@@ -127,13 +109,6 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     @Override
     public ChassisOmniMech getChassis() {
         return (ChassisOmniMech) super.getChassis();
-    }
-
-    @Override
-    public LoadoutOmniMech copy() {
-        // TODO: Remove hard-coded factory
-        return new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(), this,
-                new WeaponGroups(getWeaponGroups()));
     }
 
     @Override
