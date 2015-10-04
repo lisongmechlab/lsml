@@ -48,10 +48,10 @@ import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman1;
-import org.lisoft.lsml.util.CommandStack;
 
 /**
  * The first version of {@link LoadoutCoder} for LSML.

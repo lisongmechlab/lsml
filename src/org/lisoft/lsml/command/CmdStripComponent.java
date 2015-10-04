@@ -37,6 +37,7 @@ import org.lisoft.lsml.util.message.MessageDelivery;
 public class CmdStripComponent extends CompositeCommand {
     private final ConfiguredComponentBase component;
     private final LoadoutBase<?>          loadout;
+    private final boolean                 removeArmorToo;
 
     /**
      * @param aComponent
@@ -48,10 +49,26 @@ public class CmdStripComponent extends CompositeCommand {
      */
     public CmdStripComponent(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
             ConfiguredComponentBase aComponent) {
+        this(aMessageDelivery, aLoadout, aComponent, true);
+    }
+
+    /**
+     * @param aComponent
+     *            The {@link ConfiguredComponentBase} to strip.
+     * @param aMessageDelivery
+     *            Where to announce changes from this operation.
+     * @param aLoadout
+     *            The {@link LoadoutBase} to operate on.
+     * @param aRemoveArmorToo
+     *            <code>true</code> if armor should be stripped in addition to the equipment.
+     */
+    public CmdStripComponent(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
+            ConfiguredComponentBase aComponent, boolean aRemoveArmorToo) {
         super("strip part", aMessageDelivery);
 
         component = aComponent;
         loadout = aLoadout;
+        removeArmorToo = aRemoveArmorToo;
     }
 
     @Override
@@ -69,12 +86,14 @@ public class CmdStripComponent extends CompositeCommand {
                 addOp(new CmdRemoveItem(messageBuffer, loadout, component, item));
             }
         }
-        if (component.getInternalComponent().getLocation().isTwoSided()) {
-            addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.FRONT, 0, false));
-            addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.BACK, 0, false));
-        }
-        else {
-            addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.ONLY, 0, false));
+        if (removeArmorToo) {
+            if (component.getInternalComponent().getLocation().isTwoSided()) {
+                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.FRONT, 0, false));
+                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.BACK, 0, false));
+            }
+            else {
+                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.ONLY, 0, false));
+            }
         }
     }
 }

@@ -82,16 +82,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         weaponGroups = aWeaponGroups;
     }
 
-    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, LoadoutBase<T> aLoadoutBase,
-            WeaponGroups aWeaponGroups) {
-        name = aLoadoutBase.name;
-        chassisBase = aLoadoutBase.chassisBase;
-        efficiencies = new Efficiencies(aLoadoutBase.efficiencies);
-        modules = new ArrayList<>(aLoadoutBase.modules);
-        components = aFactory.cloneComponents(aLoadoutBase);
-        weaponGroups = aWeaponGroups;
-    }
-
     public static XStream loadoutXstream() {
         XStream stream = new XStream(new StaxDriver());
         stream.autodetectAnnotations(true);

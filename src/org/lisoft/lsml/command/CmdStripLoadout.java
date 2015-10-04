@@ -32,23 +32,48 @@ import org.lisoft.lsml.util.message.MessageDelivery;
  * @author Li Song
  */
 public class CmdStripLoadout extends CompositeCommand {
-    protected final LoadoutBase<?> loadout;
+    private final LoadoutBase<?> loadout;
+    private final boolean        removeArmor;
 
+    /**
+     * Creates a new strip operation that removes armor, equipment and modules.
+     * 
+     * @param aLoadout
+     *            The loadout to strip.
+     * @param aMessageDelivery
+     *            Where to deliver message changes.
+     */
     public CmdStripLoadout(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
+        this(aLoadout, aMessageDelivery, true);
+    }
+
+    /**
+     * Creates a new strip operation that optionally removes armor, and always removes equipment and modules.
+     * 
+     * @param aLoadout
+     *            The loadout to strip.
+     * @param aMessageDelivery
+     *            Where to deliver message changes.
+     * @param aRemoveArmor
+     *            If <code>true</code> armor will be removed too.
+     */
+    public CmdStripLoadout(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, boolean aRemoveArmor) {
         super("strip mech", aMessageDelivery);
         loadout = aLoadout;
+        removeArmor = aRemoveArmor;
     }
 
     @Override
     public void buildCommand() {
         for (ConfiguredComponentBase component : loadout.getComponents()) {
-            addOp(new CmdStripComponent(messageBuffer, loadout, component));
+            addOp(new CmdStripComponent(messageBuffer, loadout, component, removeArmor));
         }
 
+        addOp(new CmdSetGuidanceType(messageBuffer, loadout, UpgradeDB.STANDARD_GUIDANCE));
+        
         if (loadout instanceof LoadoutStandard) {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
             addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
-            addOp(new CmdSetGuidanceType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_GUIDANCE));
             addOp(new CmdSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
             addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
         }
