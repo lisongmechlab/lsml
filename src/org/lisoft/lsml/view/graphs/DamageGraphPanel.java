@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view.graphs;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,15 +60,15 @@ public class DamageGraphPanel extends ChartPanel implements Message.Recipient {
      * 
      * @param aLoadout
      *            Which load out the diagram is for.
-     * @param aXbar
+     * @param aXBar
      *            A {@link MessageXBar} to listen for changes to the loadout on.
      * @param aModel
      *            The model to use for drawing the graph.
      */
-    public DamageGraphPanel(LoadoutBase<?> aLoadout, MessageXBar aXbar, DamageGraphModel aModel) {
+    public DamageGraphPanel(LoadoutBase<?> aLoadout, MessageXBar aXBar, DamageGraphModel aModel) {
         super(ChartFactory.createStackedXYAreaChart(aModel.getTitle(), aModel.getXAxisLabel(), aModel.getYAxisLabel(),
                 new DefaultTableXYDataset(), PlotOrientation.VERTICAL, true, true, false));
-        aXbar.attach(this);
+        aXBar.attach(this);
         loadout = aLoadout;
         model = aModel;
 
@@ -82,9 +83,7 @@ public class DamageGraphPanel extends ChartPanel implements Message.Recipient {
         ((XYPlot) (getChart().getPlot())).addAnnotation(titleAnnotation);
         getChart().removeLegend();
 
-        StyleManager.styleSmallGraph(getChart(), getBackground());
-
-        update();
+        StyleManager.styleSmallGraph(getChart(), getBackground());  
     }
 
     private void update() {
@@ -105,6 +104,17 @@ public class DamageGraphPanel extends ChartPanel implements Message.Recipient {
         colours.updateColoursToMatch(orderedWeapons);
     }
 
+    boolean dirty = true;
+    
+    @Override
+    public void paint(Graphics aG) {
+        if(dirty){
+            update();
+            dirty = false;
+        }
+        super.paint(aG);
+    }
+    
     @Override
     public void receive(Message aMsg) {
         if (!aMsg.isForMe(loadout))
@@ -118,7 +128,8 @@ public class DamageGraphPanel extends ChartPanel implements Message.Recipient {
         }
 
         if (needsUpdate) {
-            update();
+            dirty = true;
+            repaint();
         }
     }
 }

@@ -20,7 +20,7 @@
 package org.lisoft.lsml.view.mechlab.equipment;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
+import java.awt.Component;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,6 +42,8 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
+import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.mechlab.ItemInfoPanel;
@@ -57,13 +59,15 @@ import org.lisoft.lsml.view.render.ScrollablePanel;
  * @author Emily Björk
  */
 public class EquipmentPanel extends JPanel implements Message.Recipient, InternalFrameListener {
-    private static final long     serialVersionUID = -8126726006921797207L;
-    private final ItemInfoPanel   infoPanel        = new ItemInfoPanel();
-    private final List<ItemLabel> itemLabels       = new ArrayList<>();
-    private final JPanel          energyItems      = new JPanel(new ModifiedFlowLayout());
-    private final JPanel          ballisticItems   = new JPanel(new ModifiedFlowLayout());
-    private final JPanel          missileItems     = new JPanel(new ModifiedFlowLayout());
-    private LoadoutBase<?>        currentLoadout;
+    private static final long   serialVersionUID = -8126726006921797207L;
+    private final ItemInfoPanel infoPanel        = new ItemInfoPanel();
+    private final JPanel        energyItems      = new JPanel(new ModifiedFlowLayout());
+    private final JPanel        ballisticItems   = new JPanel(new ModifiedFlowLayout());
+    private final JPanel        missileItems     = new JPanel(new ModifiedFlowLayout());
+    private LoadoutBase<?>      currentLoadout;
+    private JPanel              miscItems        = new JPanel(new ModifiedFlowLayout());
+    private JPanel              engineItems      = new JPanel(new ModifiedFlowLayout());
+    private JPanel              engineXlItems    = new JPanel(new ModifiedFlowLayout());
 
     public EquipmentPanel(LoadoutDesktop aDesktop, MessageXBar aXBar) {
         aXBar.attach(this);
@@ -77,11 +81,8 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
         energyItems.setBorder(BorderFactory.createTitledBorder("Energy"));
         ballisticItems.setBorder(BorderFactory.createTitledBorder("Ballistic"));
         missileItems.setBorder(BorderFactory.createTitledBorder("Missile"));
-        JPanel miscItems = new JPanel(new ModifiedFlowLayout());
         miscItems.setBorder(BorderFactory.createTitledBorder("Misc"));
-        JPanel engineItems = new JPanel(new ModifiedFlowLayout());
         engineItems.setBorder(BorderFactory.createTitledBorder("Engine - STD"));
-        JPanel engineXlItems = new JPanel(new ModifiedFlowLayout());
         engineXlItems.setBorder(BorderFactory.createTitledBorder("Engine - XL"));
         for (Item item : items) {
             if (item instanceof Internal)
@@ -128,7 +129,6 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
             else {
                 miscItems.add(itemLabel);
             }
-            itemLabels.add(itemLabel);
         }
 
         itemFlowPanel.add(energyItems);
@@ -144,13 +144,13 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
         infoPanel.setAlignmentX(LEFT_ALIGNMENT);
         add(itemFlowScrollPanel, BorderLayout.CENTER);
         add(infoPanel, BorderLayout.SOUTH);
-        changeLoadout(null);
+        changeLoadout(null, true);
     }
 
     @Override
     public void internalFrameClosed(InternalFrameEvent aArg0) {/* NO-OP */
         if (currentLoadout == null) // Was this the last open loadout?
-            changeLoadout(null);
+            changeLoadout(null, true);
     }
 
     @Override
@@ -164,7 +164,7 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
     @Override
     public void internalFrameActivated(InternalFrameEvent aArg0) {
         LoadoutFrame frame = (LoadoutFrame) aArg0.getInternalFrame();
-        changeLoadout(frame.getLoadout());
+        changeLoadout(frame.getLoadout(), true);
     }
 
     @Override
@@ -175,36 +175,63 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
     @Override
     public void internalFrameIconified(InternalFrameEvent aE) {
         if (currentLoadout == null) // Was this the last visible loadout?
-            changeLoadout(null);
+            changeLoadout(null, true);
     }
 
     @Override
     public void internalFrameDeiconified(InternalFrameEvent aArg0) {
         LoadoutFrame frame = (LoadoutFrame) aArg0.getInternalFrame();
-        changeLoadout(frame.getLoadout());
+        changeLoadout(frame.getLoadout(), true);
     }
 
-    private void changeLoadout(LoadoutBase<?> aLoadout) {
-        currentLoadout = aLoadout;
-        for (ItemLabel itemLabel : itemLabels) {
-            itemLabel.updateVisibility(aLoadout);
-        }
+    private void changeLoadout(LoadoutBase<?> aLoadout, boolean aShouldUpdateVisibility) {
+
         if (aLoadout != null) {
             energyItems.setVisible(aLoadout.getHardpointsCount(HardPointType.ENERGY) > 0);
             missileItems.setVisible(aLoadout.getHardpointsCount(HardPointType.MISSILE) > 0);
             ballisticItems.setVisible(aLoadout.getHardpointsCount(HardPointType.BALLISTIC) > 0);
+
+            if (aLoadout instanceof LoadoutOmniMech) {
+                engineItems.setVisible(false);
+                engineXlItems.setVisible(false);
+            }
         }
         else {
             energyItems.setVisible(true);
             missileItems.setVisible(true);
             ballisticItems.setVisible(true);
+            engineItems.setVisible(true);
+            engineXlItems.setVisible(true);
+        }
+
+        updateCategory(ballisticItems, aLoadout, aShouldUpdateVisibility);
+        updateCategory(energyItems, aLoadout, aShouldUpdateVisibility);
+        updateCategory(missileItems, aLoadout, aShouldUpdateVisibility);
+        updateCategory(miscItems, aLoadout, aShouldUpdateVisibility);
+        updateCategory(engineXlItems, aLoadout, aShouldUpdateVisibility);
+        updateCategory(engineItems, aLoadout, aShouldUpdateVisibility);
+
+        currentLoadout = aLoadout;
+    }
+
+    private void updateCategory(JPanel aPanel, LoadoutBase<?> aLoadout, boolean aShouldUpdateVisibility) {
+
+        if (aPanel.isVisible()) {
+            for (Component c : aPanel.getComponents()) {
+                ItemLabel l = (ItemLabel) c;
+                if (aShouldUpdateVisibility)
+                    l.updateVisibility(aLoadout);
+                l.updateDisplay(aLoadout);
+            }
         }
     }
 
     @Override
     public void receive(Message aMsg) {
         if (currentLoadout == null || aMsg.isForMe(currentLoadout)) {
-            changeLoadout(currentLoadout);
+            boolean shouldUpdateVisibility = (aMsg == null ? true : aMsg instanceof UpgradesMessage);
+            changeLoadout(currentLoadout, shouldUpdateVisibility);
+
         }
     }
 

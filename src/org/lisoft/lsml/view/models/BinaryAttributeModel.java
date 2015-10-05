@@ -1,0 +1,59 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Emily Björk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+//@formatter:on
+package org.lisoft.lsml.view.models;
+
+import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
+
+import org.lisoft.lsml.util.message.Message.Recipient;
+import org.lisoft.lsml.view.ProgramInit;
+import org.lisoft.lsml.util.message.MessageReception;
+
+/**
+ * This abstract base class allows toggle button models to be created as anonymous inner classes while still being
+ * message recipients.
+ * 
+ * @author Emily Björk
+ *
+ */
+public abstract class BinaryAttributeModel extends JToggleButton.ToggleButtonModel implements Recipient {
+
+    public BinaryAttributeModel(MessageReception aMessageReception) {
+        aMessageReception.attach(this);
+    }
+
+    abstract public void changeValue(boolean aEnabled);
+
+    @Override
+    public void setSelected(boolean aEnabled) {
+        try {
+            changeValue(aEnabled);
+        }
+        catch (final IllegalArgumentException e) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(ProgramInit.lsml(), e.getMessage());
+                }
+            });
+        }
+    }
+}

@@ -68,8 +68,15 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Emily Björk
  */
 public class ItemLabel extends JLabel {
-    private static final long serialVersionUID = 1237952620487557121L;
-    private final Item        item;
+    private static final long   serialVersionUID = 1237952620487557121L;
+    private final String        baseText;
+    private final String        defaultText;
+    private final Item          item;
+    private final DecimalFormat decimalFormat    = new DecimalFormat("###");
+    private final int           gradientOffset   = 60;
+    private final GradientPaint gradientPaint    = new GradientPaint(gradientOffset, 0, getBackground(),
+            gradientOffset + 1, 1, StyleManager.getBgColorInvalid());
+    private boolean             smartPlace       = false;
 
     private static class ProgressDialog extends JDialog {
         private static final long serialVersionUID = -6084430266229568009L;
@@ -106,10 +113,10 @@ public class ItemLabel extends JLabel {
 
     private static class AutoPlaceTask extends SwingWorker<Void, Void> {
         private CmdAutoAddItem operation;
-        private JDialog       dialog;
-        private LoadoutFrame  loadoutFrame;
-        private MessageXBar   xBar;
-        private Item          itemToPlace;
+        private JDialog        dialog;
+        private LoadoutFrame   loadoutFrame;
+        private MessageXBar    xBar;
+        private Item           itemToPlace;
 
         public AutoPlaceTask(JDialog aDialog, LoadoutFrame aLoadoutFrame, MessageXBar anXBar, Item aItem) {
             dialog = aDialog;
@@ -179,17 +186,15 @@ public class ItemLabel extends JLabel {
                             if (!ProgramInit.lsml().preferences.uiPreferences.getUseSmartPlace()) {
                                 Object[] choices = { "Use SmartPlace", "Disable SmartPlace" };
                                 Object defaultChoice = choices[0];
-                                int choice = JOptionPane
-                                        .showOptionDialog(
-                                                ProgramInit.lsml(),
-                                                "SmartPlace can re-arrange items on your loadout to make the item you're trying to equip fit.\n"
-                                                        + "No items will be removed, only moved.\n"
-                                                        + "It is not guaranteed that there exists an arrangement of items that allows the item to be added\n"
-                                                        + "in which case SmartPlace will try all possible combinations which might take time.\n"
-                                                        + "If smart place is taking too long you can safely abort it without changes to your loadout.\n\n"
-                                                        + "You can see if SmartPlace will be used on the item in the equipment pane if it is semi grayed out.\n",
-                                                "Enable SmartPlace?", JOptionPane.YES_NO_OPTION,
-                                                JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
+                                int choice = JOptionPane.showOptionDialog(ProgramInit.lsml(),
+                                        "SmartPlace can re-arrange items on your loadout to make the item you're trying to equip fit.\n"
+                                                + "No items will be removed, only moved.\n"
+                                                + "It is not guaranteed that there exists an arrangement of items that allows the item to be added\n"
+                                                + "in which case SmartPlace will try all possible combinations which might take time.\n"
+                                                + "If smart place is taking too long you can safely abort it without changes to your loadout.\n\n"
+                                                + "You can see if SmartPlace will be used on the item in the equipment pane if it is semi grayed out.\n",
+                                        "Enable SmartPlace?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                                        null, choices, defaultChoice);
                                 if (choice == 0) {
                                     ProgramInit.lsml().preferences.uiPreferences.setUseSmartPlace(true);
                                 }
@@ -230,102 +235,105 @@ public class ItemLabel extends JLabel {
             }
         });
 
-        updateVisibility(null);
-    }
-
-    private void updateText(LoadoutBase<?> aLoadout) {
         StringBuilder builder = new StringBuilder();
         builder.append("<html>");
         builder.append(item.getShortName());
         builder.append("<br/><span style=\"font-size:x-small;\">");
         builder.append("Tons: ").append(item.getMass()).append("<br/>Slots: ").append(item.getNumCriticalSlots());
-
-        if (item instanceof Engine && aLoadout != null) {
-            Engine engine = (Engine) item;
-            double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(), aLoadout.getChassis()
-                    .getMassMax(), aLoadout.getModifiers());
-            DecimalFormat decimalFormat = new DecimalFormat("###");
-            builder.append("<br/>" + decimalFormat.format(speed) + "kph");
-        }
+        baseText = builder.toString();
         builder.append("</span></html>");
+        defaultText = builder.toString();
+        setText(defaultText);
+        updateVisibility(null);
+        updateDisplay(null);
+    }
 
-        setText(builder.toString());
+    private void updateText(LoadoutBase<?> aLoadout) {
+        if (aLoadout != null && item instanceof Engine) {
+            StringBuilder builder = new StringBuilder(baseText);
+            Engine engine = (Engine) item;
+            double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(),
+                    aLoadout.getChassis().getMassMax(), aLoadout.getModifiers());
+            builder.append("<br/>" + decimalFormat.format(speed) + "kph");
+            builder.append("</span></html>");
+            setText(builder.toString());
+        }
     }
 
     public Item getItem() {
         return item;
     }
 
-    private boolean smartPlace = false;
-
     @Override
-    protected void paintComponent(Graphics grphcs) {
+    protected void paintComponent(Graphics aGraphics) {
         if (!isOpaque() || !smartPlace) {
-            super.paintComponent(grphcs);
+            super.paintComponent(aGraphics);
             return;
         }
 
-        Graphics2D g2d = (Graphics2D) grphcs;
+        Graphics2D g2d = (Graphics2D) aGraphics;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        int offset = 60;
-        GradientPaint gp = new GradientPaint(offset, 0, getBackground(), offset + 1, 1,
-                StyleManager.getBgColorInvalid());
-        g2d.setPaint(gp);
+        g2d.setPaint(gradientPaint);
         g2d.fillRect(0, 0, getWidth(), getHeight());
         setOpaque(false);
-        super.paintComponent(grphcs);
+        super.paintComponent(aGraphics);
         setOpaque(true);
     }
 
     public void updateVisibility(LoadoutBase<?> aLoadout) {
-        boolean prevSmartPlace = smartPlace;
-        smartPlace = false;
-        if (aLoadout != null) {
-            updateText(aLoadout);
-            if (!aLoadout.getChassis().isAllowed(item) || !item.isCompatible(aLoadout.getUpgrades())) {
+        if (aLoadout == null) {
+            setVisible(true);
+            return;
+        }
+
+        if (!aLoadout.getChassis().isAllowed(item) || !item.isCompatible(aLoadout.getUpgrades())) {
+            setVisible(false);
+            return;
+        }
+
+        if (item instanceof Ammunition) {
+            Ammunition ammunition = (Ammunition) item;
+            if (aLoadout.getHardpointsCount(ammunition.getWeaponHardpointType()) < 1) {
                 setVisible(false);
             }
             else {
-                if (EquipResult.SUCCESS != aLoadout.canEquip(item)) {
-                    if (!aLoadout.getCandidateLocationsForItem(item).isEmpty()) {
-                        StyleManager.styleItem(this, item);
-                        smartPlace = true;
+                boolean isUsable = false;
+                for (AmmoWeapon ammoWeapon : aLoadout.items(AmmoWeapon.class)) {
+                    if (ammoWeapon.isCompatibleAmmo(ammunition)) {
+                        isUsable = true;
+                        break;
                     }
-                    else {
-                        StyleManager.colourInvalid(this);
-                    }
+                }
+                setVisible(isUsable);
+            }
+        }
+        else
+            setVisible(true);
+
+    }
+
+    public void updateDisplay(LoadoutBase<?> aLoadout) {
+        if (isVisible()) {
+            boolean prevSmartPlace = smartPlace;
+            smartPlace = false;
+
+            updateText(aLoadout);
+
+            if (aLoadout != null && EquipResult.SUCCESS != aLoadout.canEquip(item)) {
+                if (aLoadout.getCandidateLocationsForItem(item).isEmpty()) {
+                    StyleManager.colourInvalid(this);
                 }
                 else {
                     StyleManager.styleItem(this, item);
+                    smartPlace = true;
                 }
-
-                if (item instanceof Ammunition) {
-                    Ammunition ammunition = (Ammunition) item;
-                    if (aLoadout.getHardpointsCount(ammunition.getWeaponHardpointType()) < 1) {
-                        setVisible(false);
-                    }
-                    else {
-                        boolean isUsable = false;
-                        for (AmmoWeapon ammoWeapon : aLoadout.items(AmmoWeapon.class)) {
-                            if (ammoWeapon.isCompatibleAmmo(ammunition)) {
-                                isUsable = true;
-                                break;
-                            }
-                        }
-                        setVisible(isUsable);
-                    }
-                }
-                else
-                    setVisible(true);
             }
-        }
-        else {
-            updateText(null);
-            StyleManager.styleItem(this, item);
-            setVisible(true);
-        }
+            else {
+                StyleManager.styleItem(this, item);
+            }
 
-        if (prevSmartPlace != smartPlace)
-            repaint();
+            if (prevSmartPlace != smartPlace)
+                repaint();
+        }
     }
 }

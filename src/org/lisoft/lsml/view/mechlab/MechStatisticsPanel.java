@@ -22,6 +22,7 @@ package org.lisoft.lsml.view.mechlab;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Collection;
@@ -151,8 +152,6 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
             add(makeLeftPanel(aXBar, aMetrics));
             add(makeRightPanel(aLoadout, aMetrics, aXBar));
         }
-        updateWeaponGroups();
-        updateMovement();
     }
 
     private Component makeRightPanel(LoadoutBase<?> aLoadout, LoadoutMetrics aMetrics, MessageXBar aXBar) {
@@ -216,6 +215,24 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
         return panel;
     }
 
+    boolean movementDirty = true;
+    boolean weaponsDirty  = true;
+
+    @Override
+    public void paint(Graphics aG) {
+        if (movementDirty) {
+            updateMovement();
+            movementDirty = false;
+        }
+
+        if (weaponsDirty) {
+            updateWeaponGroups();
+            weaponsDirty = false;
+        }
+
+        super.paint(aG);
+    }
+
     @Override
     public Dimension getMaximumSize() {
         return loadoutPanel.getMaximumSize();
@@ -238,16 +255,19 @@ public class MechStatisticsPanel extends JPanel implements Message.Recipient {
         }
 
         if (aMsg instanceof EfficienciesMessage) {
-            updateMovement();
+            movementDirty = true;
+            repaint();
         }
 
         if (aMsg instanceof LoadoutMessage) {
             LoadoutMessage msg = (LoadoutMessage) aMsg;
             if (msg.type == Type.WEAPON_GROUPS_CHANGED) {
-                updateWeaponGroups();
+                weaponsDirty = true;
+                repaint();
             }
             else if (msg.type == Type.MODULES_CHANGED || msg.type == Type.UPDATE) {
-                updateMovement();
+                movementDirty = true;
+                repaint();
             }
         }
     }
