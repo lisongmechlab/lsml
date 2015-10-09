@@ -63,8 +63,8 @@ public class ProgramInit extends JFrame {
     private static LSML        instanceL;
     public static Image        programIcon;
 
-    private String             progressSubText    = "";
-    private String             progressText       = "";
+    private String progressSubText = "";
+    private String progressText    = "";
 
     private class BackgroundImage extends JComponent {
         private static final long serialVersionUID = 2294812231919303690L;
@@ -141,13 +141,11 @@ public class ProgramInit extends JFrame {
                 case Builtin:
                     break;
                 case ParseFailed:
-                    JOptionPane
-                            .showMessageDialog(
-                                    null,
-                                    "Reading the game files failed. This is most likely due to changes in the last patch.\n\n"
-                                            + "LSML will still function with data from the last successfull parse.\n"
-                                            + "Please update LSML to the latest version to be sure you have the latest game data.",
-                                    "Game file parse failed", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null,
+                            "Reading the game files failed. This is most likely due to changes in the last patch.\n\n"
+                                    + "LSML will still function with data from the last successfull parse.\n"
+                                    + "Please update LSML to the latest version to be sure you have the latest game data.",
+                            "Game file parse failed", JOptionPane.INFORMATION_MESSAGE);
                     break;
                 default:
                     break;
@@ -189,10 +187,16 @@ public class ProgramInit extends JFrame {
         Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
 
         if (OS.isWindowsOrNewer(OS.WindowsVersion.Win7)) {
-            // Setup AppUserModelID if windows 7 or later.
-            Native.register("shell32");
-            setCurrentProcessExplicitAppUserModelID(LSML.class.getName());
-            Native.unregister();
+            try {
+                // Setup AppUserModelID if windows 7 or later.
+                Native.register("shell32");
+                setCurrentProcessExplicitAppUserModelID(LSML.class.getName());
+                Native.unregister();
+            }
+            catch (Throwable t) {
+                System.out.println("Couldn't call into shell32.dll!");
+                System.out.println(t.getMessage());
+            }
         }
 
         // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
