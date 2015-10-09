@@ -35,8 +35,10 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -58,8 +60,8 @@ public abstract class CmdItemBase extends Command {
     protected final Map<Item, Boolean>      oldToggleStates = new HashMap<>();
 
     /**
-     * Creates a new {@link CmdItemBase}. The deriving classes shall throw if the the operation with the given item would
-     * violate the {@link LoadoutStandard} or {@link ConfiguredComponentBase} invariant.
+     * Creates a new {@link CmdItemBase}. The deriving classes shall throw if the the operation with the given item
+     * would violate the {@link LoadoutStandard} or {@link ConfiguredComponentBase} invariant.
      * 
      * @param aMessageDelivery
      *            The {@link MessageDelivery} to send messages to when changes occur.
@@ -69,11 +71,13 @@ public abstract class CmdItemBase extends Command {
      *            The {@link ConfiguredComponentBase} that this operation will affect.
      * @param aItem
      *            The {@link Item} to add or remove.
+     * @throws EquipResult
+     *             If attempting to use an {@link Internal}.
      */
     protected CmdItemBase(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
-            Item aItem) {
+            Item aItem) throws EquipResult {
         if (aItem instanceof Internal)
-            throw new IllegalArgumentException("Can't add/remove internals to/from a loadout!");
+            throw EquipResult.make(EquipResultType.InternalsNotAllowed);
 
         loadout = aLoadout;
         component = aComponent;
@@ -235,11 +239,11 @@ public abstract class CmdItemBase extends Command {
 
                 component.removeItem(aItem); // Work around, checks would fail on the item to be removed otherwise.
 
-                if (loadout.getNumCriticalSlotsFree() > 0 && ccom.canToggleOn(ItemDB.LAA)) {
+                if (loadout.getNumCriticalSlotsFree() > 0 && EquipResult.SUCCESS == ccom.canToggleOn(ItemDB.LAA)) {
                     oldToggleStates.put(ItemDB.LAA, ccom.getToggleState(ItemDB.LAA));
                     ccom.setToggleState(ItemDB.LAA, true);
                 }
-                if (loadout.getNumCriticalSlotsFree() > 0 && ccom.canToggleOn(ItemDB.HA)) {
+                if (loadout.getNumCriticalSlotsFree() > 0 && EquipResult.SUCCESS == ccom.canToggleOn(ItemDB.HA)) {
                     oldToggleStates.put(ItemDB.HA, ccom.getToggleState(ItemDB.HA));
                     ccom.setToggleState(ItemDB.HA, true);
                 }

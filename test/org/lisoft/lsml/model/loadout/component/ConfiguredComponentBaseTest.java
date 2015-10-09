@@ -37,7 +37,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
 import org.mockito.Mockito;
 
@@ -79,7 +79,7 @@ public abstract class ConfiguredComponentBaseTest {
             Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
     
             Mockito.when(internal.isAllowed(item)).thenReturn(false);
-            assertEquals(EquipResult.make(location, Type.NotSupported) ,makeDefaultCUT().canEquip(item));
+            assertEquals(EquipResult.make(location, EquipResultType.NotSupported) ,makeDefaultCUT().canEquip(item));
         }
 
     /**
@@ -117,7 +117,7 @@ public abstract class ConfiguredComponentBaseTest {
     
             // Test too big
             Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
-            assertEquals(EquipResult.make(location, Type.NotEnoughSlots), cut.canEquip(item));
+            assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), cut.canEquip(item));
         }
 
     @Test

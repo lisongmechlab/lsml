@@ -20,7 +20,7 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
@@ -51,14 +51,14 @@ public abstract class CmdUpgradeBase extends Command {
         if (aLoadout == null)
             return EquipResult.SUCCESS;
         if (aLoadout.getFreeMass() < 0) {
-            return EquipResult.make(Type.TooHeavy);
+            return EquipResult.make(EquipResultType.TooHeavy);
         }
         if (aLoadout.getNumCriticalSlotsFree() < 0) {
-            return EquipResult.make(Type.NotEnoughSlots);
+            return EquipResult.make(EquipResultType.NotEnoughSlots);
         }
         for (ConfiguredComponentBase component : aLoadout.getComponents()) {
             if (component.getSlotsFree() < 0) {
-                return EquipResult.make(component.getInternalComponent().getLocation(), Type.NotEnoughSlots);
+                return EquipResult.make(component.getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
             }
         }
         return EquipResult.SUCCESS;

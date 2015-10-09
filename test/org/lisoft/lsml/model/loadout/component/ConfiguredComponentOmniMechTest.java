@@ -37,7 +37,7 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -91,7 +91,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
             ConfiguredComponentOmniMech cut = makeDefaultCUT();
             cut.addItem(item);
     
-            assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), cut.canEquip(item));
+            assertEquals(EquipResult.make(location, EquipResultType.NoFreeHardPoints), cut.canEquip(item));
         }
 
     @Test
@@ -114,7 +114,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
             assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
     
             Mockito.when(item.getNumCriticalSlots()).thenReturn(size + 1);
-            assertEquals(EquipResult.make(location, Type.NotEnoughSlots), makeDefaultCUT().canEquip(item));
+            assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(item));
         }
 
     @Test
@@ -135,7 +135,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest
             Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
             Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
     
-            assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), makeDefaultCUT().canEquip(item));
+            assertEquals(EquipResult.make(location, EquipResultType.NoFreeHardPoints), makeDefaultCUT().canEquip(item));
         }
 
     @Test

@@ -86,7 +86,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
 
     private void matchToggleState(ConfiguredComponentOmniMech aTarget, ConfiguredComponentOmniMech aSource,
             Item aItem) {
-        if (aTarget.canToggleOn(aItem)) {
+        if (EquipResult.SUCCESS == aTarget.canToggleOn(aItem)) {
             aTarget.setToggleState(aItem, aSource.getToggleState(aItem));
         }
     }

@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -44,19 +45,17 @@ public class CmdRemoveFromGarage extends Command {
     }
 
     @Override
-    protected void apply() {
+    protected void apply() throws GarageException {
         if (!garage.getMechs().contains(loadout)) {
-            throw new IllegalArgumentException("The loadout \"" + loadout.getName() + "\" is not in the garage!");
+            throw new GarageException("The loadout \"" + loadout.getName() + "\" is not in the garage!");
         }
         garage.remove(loadout);
     }
 
     @Override
     protected void undo() {
-        if (garage.getMechs().contains(loadout)) {
-            throw new IllegalArgumentException("The loadout \"" + loadout.getName()
-                    + "\" is already saved to the garage!");
+        if (!garage.getMechs().contains(loadout)) {
+            garage.add(loadout);
         }
-        garage.add(loadout);
     }
 }

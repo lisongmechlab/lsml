@@ -36,7 +36,7 @@ import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -109,7 +109,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         maxJumpJets = 0;
         JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
 
-        assertEquals(EquipResult.make(Type.JumpJetCapacityReached), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquip(item));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         items.add(item);
         Mockito.when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
 
-        assertEquals(EquipResult.make(Type.JumpJetCapacityReached), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquip(item));
     }
 
     @Test
@@ -145,7 +145,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         items.add(item);
         Mockito.when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
 
-        assertEquals(EquipResult.make(Type.EngineAlreadyEquipped), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.EngineAlreadyEquipped), makeDefaultCUT().canEquip(item));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
         Mockito.when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
 
-        assertEquals(EquipResult.make(Location.LeftTorso, Type.NotEnoughSlotsForXLSide),
+        assertEquals(EquipResult.make(Location.LeftTorso, EquipResultType.NotEnoughSlotsForXLSide),
                 makeDefaultCUT().canEquip(engine));
     }
 
@@ -172,7 +172,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
         Mockito.when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
 
-        assertEquals(EquipResult.make(Location.RightTorso, Type.NotEnoughSlotsForXLSide),
+        assertEquals(EquipResult.make(Location.RightTorso, EquipResultType.NotEnoughSlotsForXLSide),
                 makeDefaultCUT().canEquip(engine));
     }
 
@@ -183,9 +183,9 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(engine.getType()).thenReturn(EngineType.STD);
 
         Mockito.when(components[Location.CenterTorso.ordinal()].canEquip(engine))
-                .thenReturn(EquipResult.make(Location.CenterTorso, Type.NotEnoughSlots));
+                .thenReturn(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
 
-        assertEquals(EquipResult.make(Location.CenterTorso, Type.NotEnoughSlots), makeDefaultCUT().canEquip(engine));
+        assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(engine));
     }
 
     @Test
@@ -217,6 +217,6 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
         Mockito.when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
 
-        assertEquals(EquipResult.make(Type.NotEnoughSlots), makeDefaultCUT().canEquip(engine));
+        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(engine));
     }
 }

@@ -23,7 +23,7 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -87,16 +87,15 @@ public class CmdSetGuidanceType extends CompositeCommand {
     public void buildCommand() throws EquipResult {
         if (loadout != null) {
             if (newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree())
-                throw EquipResult.make(Type.NotEnoughSlots);
+                throw EquipResult.make(EquipResultType.NotEnoughSlots);
 
             for (ConfiguredComponentBase part : loadout.getComponents()) {
                 if (newValue.getExtraSlots(part) > part.getSlotsFree())
-                    throw new IllegalArgumentException("Too few critical slots available in "
-                            + part.getInternalComponent().getLocation() + "!");
+                    throw EquipResult.make(part.getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
             }
 
             if (newValue.getExtraTons(loadout) > loadout.getFreeMass()) {
-                throw new IllegalArgumentException("Too heavy to add artmemis!");
+                throw EquipResult.make(EquipResultType.TooHeavy);
             }
 
             addOp(new CommandStack.Command() {

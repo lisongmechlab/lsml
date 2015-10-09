@@ -13,6 +13,7 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
@@ -43,7 +44,7 @@ public class CmdRemoveItemTest {
     }
 
     @Test
-    public void testDescription() {
+    public void testDescription() throws Exception {
         Item item = ItemDB.ECM;
 
         CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, loadoutPart, item);
@@ -55,7 +56,7 @@ public class CmdRemoveItemTest {
     }
 
     @Test
-    public void testDescription_artemis() {
+    public void testDescription_artemis() throws Exception {
         Item item = ItemDB.lookup("LRM 20");
         Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
 
@@ -88,11 +89,13 @@ public class CmdRemoveItemTest {
 
     /**
      * Internal items can't be removed. Shall throw directly on creation.
+     * 
+     * @throws Exception
      */
     @SuppressWarnings("unused")
     // Expecting exception
-    @Test(expected = IllegalArgumentException.class)
-    public void testCantRemoveInternal() {
+    @Test(expected = EquipResult.class)
+    public void testCantRemoveInternal() throws Exception {
         Internal item = Mockito.mock(Internal.class);
         new CmdRemoveItem(xBar, loadout, loadoutPart, item);
     }

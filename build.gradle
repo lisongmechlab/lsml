@@ -19,7 +19,7 @@ libsDirName = project.rootDir.toString() + '/lib'
  * --------------------------------------------------------------------------*/
 applicationName = 'Li Song Mechlab'
 archivesBaseName = 'lsml'
-mainClassName = 'lisong_mechlab.view.ProgramInit'
+mainClassName = 'org.lisoft.lsml.view.ProgramInit'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets {

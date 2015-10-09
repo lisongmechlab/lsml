@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -56,6 +55,7 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.chassi.OmniPodDB;
 import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
@@ -67,6 +67,7 @@ import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.models.ArmorSpinnerModel;
+import org.lisoft.lsml.view.models.BinaryAttributeModel;
 import org.lisoft.lsml.view.render.ItemRenderer;
 import org.lisoft.lsml.view.render.OmniPodRenderer;
 import org.lisoft.lsml.view.render.StyleManager;
@@ -173,37 +174,55 @@ public class PartPanel extends JPanel implements Message.Recipient {
             final ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech) aLoadoutPart;
 
             toggleLAA = new JCheckBox(ItemDB.LAA.getShortName());
-            add(toggleLAA);
-            toggleLAA.addActionListener(new ActionListener() {
+            toggleLAA.setModel(new BinaryAttributeModel(aXBar) {
                 @Override
-                public void actionPerformed(ActionEvent aE) {
-                    try {
-                        aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.LAA, toggleLAA.isSelected()));
-                    }
-                    catch (Exception e) {
-                        JOptionPane.showMessageDialog(null, e);
-                    }
+                public void receive(Message aMsg) {
+                    fireStateChanged();
+                }
+
+                @Override
+                public boolean isSelected() {
+                    return ccom.getToggleState(ItemDB.LAA);
+                }
+
+                @Override
+                public boolean isEnabled() {
+                    return EquipResult.SUCCESS == ccom.canToggleOn(ItemDB.LAA)
+                            || ccom.getToggleState(ItemDB.LAA) == true;
+                }
+
+                @Override
+                public void changeValue(boolean aEnabled) throws Exception {
+                    aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.LAA, aEnabled));
                 }
             });
-            toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA) || ccom.getToggleState(ItemDB.LAA) == true);
-            toggleLAA.setSelected(ccom.getToggleState(ItemDB.LAA));
+            add(toggleLAA);
             toggleLAA.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             toggleHA = new JCheckBox(ItemDB.HA.getShortName());
-            add(toggleHA);
-            toggleHA.addActionListener(new ActionListener() {
+            toggleHA.setModel(new BinaryAttributeModel(aXBar) {
                 @Override
-                public void actionPerformed(ActionEvent aE) {
-                    try {
-                        aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.HA, toggleHA.isSelected()));
-                    }
-                    catch (Exception e) {
-                        JOptionPane.showMessageDialog(null, e);
-                    }
+                public void receive(Message aMsg) {
+                    fireStateChanged();
+                }
+
+                @Override
+                public boolean isSelected() {
+                    return ccom.getToggleState(ItemDB.HA);
+                }
+
+                @Override
+                public boolean isEnabled() {
+                    return EquipResult.SUCCESS == ccom.canToggleOn(ItemDB.HA) || ccom.getToggleState(ItemDB.HA) == true;
+                }
+
+                @Override
+                public void changeValue(boolean aEnabled) throws Exception {
+                    aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.HA, aEnabled));
                 }
             });
-            toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA) || ccom.getToggleState(ItemDB.HA) == true);
-            toggleHA.setSelected(ccom.getToggleState(ItemDB.HA));
+
+            add(toggleHA);
             toggleHA.setAlignmentX(Component.CENTER_ALIGNMENT);
         }
         else {
@@ -395,30 +414,6 @@ public class PartPanel extends JPanel implements Message.Recipient {
         }
     }
 
-    private void updateActuatorToggles() {
-        if (toggleLAA != null) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech) component;
-                    toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA) || ccom.getToggleState(ItemDB.LAA));
-                    toggleLAA.setSelected(ccom.getToggleState(ItemDB.LAA));
-                }
-            });
-        }
-
-        if (toggleHA != null) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech) component;
-                    toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA) || ccom.getToggleState(ItemDB.HA));
-                    toggleHA.setSelected(ccom.getToggleState(ItemDB.HA));
-                }
-            });
-        }
-    }
-
     @Override
     public void receive(Message aMsg) {
         if (aMsg.isForMe(loadout)) {
@@ -437,10 +432,6 @@ public class PartPanel extends JPanel implements Message.Recipient {
                     if (canHaveHardpoints) {
                         updateHardpointsPanel(hardPointsPanel);
                     }
-                    updateActuatorToggles();
-                }
-                else if (msg.type == Type.ItemAdded || msg.type == Type.ItemRemoved || msg.type == Type.ItemsChanged) {
-                    updateActuatorToggles();
                 }
             }
         }

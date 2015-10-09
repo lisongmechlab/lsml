@@ -56,9 +56,6 @@ public class CmdSetArmorSymmetric extends CompositeCommand {
      *            The amount to set the armor to.
      * @param aManualSet
      *            True if this set operation is done manually. Will disable automatic armor assignments.
-     * @throws IllegalArgumentException
-     *             Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage
-     *             to support the armor.
      */
     public CmdSetArmorSymmetric(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
             ConfiguredComponentBase aLoadoutPart, ArmorSide aArmorSide, int aArmorAmount, boolean aManualSet) {
@@ -71,7 +68,7 @@ public class CmdSetArmorSymmetric extends CompositeCommand {
         Location otherSide = aLoadoutPart.getInternalComponent().getLocation().oppositeSide();
         if (otherSide == null)
             throw new IllegalArgumentException(
-                    "Symmetric armor operation is only usable with comoponents that have an opposing side.");
+                    "Symmetric armor operation is only usable with components that have an opposing side.");
 
         addOp(new CmdSetArmor(messageBuffer, aLoadout, aLoadoutPart, aArmorSide, aArmorAmount, aManualSet));
         addOp(new CmdSetArmor(messageBuffer, aLoadout, aLoadout.getComponent(otherSide), aArmorSide, aArmorAmount,

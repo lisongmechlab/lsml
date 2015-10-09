@@ -35,7 +35,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 
 /**
@@ -135,7 +135,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
         }
 
         if (getSlotsFree() + slotComp < aItem.getNumCriticalSlots()) {
-            return EquipResult.make(getInternalComponent().getLocation(), Type.NotEnoughSlots);
+            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
         }
         return EquipResult.SUCCESS;
     }
@@ -166,8 +166,8 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
                 numHs++;
             }
         }
-        return slots + getInternalComponent().getDynamicArmorSlots()
-                + getInternalComponent().getDynamicStructureSlots() - Math.min(engineHsSlots, numHs) * hsSize;
+        return slots + getInternalComponent().getDynamicArmorSlots() + getInternalComponent().getDynamicStructureSlots()
+                - Math.min(engineHsSlots, numHs) * hsSize;
     }
 
     /**
@@ -178,13 +178,13 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
      *            The item to try to enable.
      * @return <code>true</code> if the item can be toggled on.
      */
-    public boolean canToggleOn(Item aItem) {
+    public EquipResult canToggleOn(Item aItem) {
         if (!toggleStates.containsKey(aItem)) {
-            return false;
+            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotToggleable);
         }
 
         if (getSlotsFree() < 1)
-            return false;
+            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
 
         boolean removeHALAA = false;
 
@@ -205,15 +205,15 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
         }
 
         if (removeHALAA) {
-            return false;
+            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.LargeBoreWeaponPresent);
         }
 
         if (aItem == ItemDB.HA) {
-            return toggleStates.get(ItemDB.LAA); // HA can only be enabled if LAA is enabled
+            if (!toggleStates.get(ItemDB.LAA)) // HA can only be enabled if LAA is enabled
+                return EquipResult.make(EquipResultType.LaaBeforeHa);
         }
-        return true; // This can only be LAA, which can always be enabled if there is at least one free slot locally and
-                     // globally
-
+        return EquipResult.SUCCESS; // This can only be LAA, which can always be enabled if there is at least one free
+                                    // slot locally and globally
     }
 
     /**

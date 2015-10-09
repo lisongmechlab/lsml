@@ -43,7 +43,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -279,7 +279,7 @@ public abstract class LoadoutBaseTest {
                 Mockito.when(component.getEngineHeatsinksMax()).thenReturn(1);
             }
             else {
-                Mockito.when(component.canEquip(item)).thenReturn(EquipResult.make(Type.NotEnoughSlots));
+                Mockito.when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
             }
         }
 
@@ -297,7 +297,7 @@ public abstract class LoadoutBaseTest {
             Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
         }
 
-        assertEquals(EquipResult.make(Type.Success), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.Success), makeDefaultCUT().canEquip(item));
     }
 
     @Test
@@ -308,22 +308,22 @@ public abstract class LoadoutBaseTest {
         for (ConfiguredComponentBase component : components) {
             Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots);
             Mockito.when(component.getSlotsFree()).thenReturn(0);
-            Mockito.when(component.canEquip(item)).thenReturn(EquipResult.make(Type.NotEnoughSlots));
+            Mockito.when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
         }
 
-        assertEquals(EquipResult.make(Type.NotEnoughSlots), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(item));
     }
 
     @Test
     public void testCanEquip_NotCompatibleUpgrades() throws Exception {
         Item item = makeTestItem(0.0, 0, HardPointType.NONE, false, true, true);
-        assertEquals(EquipResult.make(Type.IncompatibleUpgrades), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.IncompatibleUpgrades), makeDefaultCUT().canEquip(item));
     }
 
     @Test
     public void testCanEquip_NotSupportedByChassis() throws Exception {
         Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, false, true);
-        assertEquals(EquipResult.make(Type.NotSupported), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.NotSupported), makeDefaultCUT().canEquip(item));
     }
 
     @Test
@@ -344,14 +344,14 @@ public abstract class LoadoutBaseTest {
             Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
         }
 
-        assertEquals(EquipResult.make(Type.NotEnoughSlots), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(item));
     }
 
     @Test
     public void testCanEquip_TooHeavy() throws Exception {
         Item item = makeTestItem(Math.nextAfter((double) mass, Double.POSITIVE_INFINITY), 0, HardPointType.NONE, true,
                 true, true);
-        assertEquals(EquipResult.make(Type.TooHeavy), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.TooHeavy), makeDefaultCUT().canEquip(item));
     }
 
     @Test

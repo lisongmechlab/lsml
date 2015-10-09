@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.item.Item;
  * @author Li Song
  */
 public class EquipResult extends Exception {
-    public static enum Type {
+    public static enum EquipResultType {
         Success(0, "Success"), //
         TooHeavy(1, "Too heavy"), //
         NotEnoughSlots(2, "Not enough slots"), //
@@ -46,17 +46,22 @@ public class EquipResult extends Exception {
         EngineAlreadyEquipped(100, "An engine is already equipped"), //
         NoFreeHardPoints(50, "No free hard points"), //
         ComponentAlreadyHasCase(20, "C.A.S.E. is already equipped"), //
-        ModuleAlreadyEquipped(100, "That module is already equipped");
+        ModuleAlreadyEquipped(100, "That module is already equipped"), //
+        InternalsNotAllowed(100, "Internals cannot be modified"), //
+        ExceededMaxArmor(90, "Exceeded max allowed armor"), //
+        LargeBoreWeaponPresent(90, "Cannot toggle because a large bore weapon is present"), //
+        LaaBeforeHa(90, "Hand actuator can only be enabled if Lower Arm Actuator is enabled"), //
+        NotToggleable(90, "Item is not toggleable");
 
         private final int specificity;
         private final String message;
 
-        Type(int aSpecificity, String aMessage) {
+        EquipResultType(int aSpecificity, String aMessage) {
             specificity = aSpecificity;
             message = aMessage;
         }
 
-        boolean isMoreSpecificThan(Type aType) {
+        boolean isMoreSpecificThan(EquipResultType aType) {
             return specificity > aType.specificity;
         }
 
@@ -66,12 +71,12 @@ public class EquipResult extends Exception {
         }
     }
 
-    static public final EquipResult                   SUCCESS;
-    static private final Map<Type, List<EquipResult>> RESULTS;
+    static public final EquipResult                              SUCCESS;
+    static private final Map<EquipResultType, List<EquipResult>> RESULTS;
 
     static {
         RESULTS = new HashMap<>();
-        for (Type type : Type.values()) {
+        for (EquipResultType type : EquipResultType.values()) {
             List<EquipResult> list = new ArrayList<>();
             list.add(new EquipResult(type));
             for (Location location : Location.values()) {
@@ -79,17 +84,17 @@ public class EquipResult extends Exception {
             }
             RESULTS.put(type, Collections.unmodifiableList(list));
         }
-        SUCCESS = make(Type.Success);
+        SUCCESS = make(EquipResultType.Success);
     }
 
-    private final Type     type;
-    private final Location location;
+    private final EquipResultType type;
+    private final Location        location;
 
-    private EquipResult(Type aType) {
+    private EquipResult(EquipResultType aType) {
         this(null, aType);
     }
 
-    private EquipResult(Location aLocation, Type aType) {
+    private EquipResult(Location aLocation, EquipResultType aType) {
         location = aLocation;
         type = aType;
     }
@@ -110,7 +115,7 @@ public class EquipResult extends Exception {
         return type.isMoreSpecificThan(aResult.type);
     }
 
-    static public EquipResult make(Location aLocation, Type aType) {
+    static public EquipResult make(Location aLocation, EquipResultType aType) {
         List<EquipResult> l = RESULTS.get(aType);
         for (EquipResult equipResult : l) {
             if (equipResult.location == aLocation) {
@@ -120,7 +125,7 @@ public class EquipResult extends Exception {
         throw new RuntimeException("Results map is missing values!");
     }
 
-    static public EquipResult make(Type aType) {
+    static public EquipResult make(EquipResultType aType) {
         return make(null, aType);
     }
 

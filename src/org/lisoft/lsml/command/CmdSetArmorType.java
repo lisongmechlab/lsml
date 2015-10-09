@@ -75,16 +75,21 @@ public class CmdSetArmorType extends CmdUpgradeBase {
     }
 
     @Override
-    protected void apply() {
+    protected void apply() throws EquipResult {
         set(newValue);
     }
 
     @Override
     protected void undo() {
-        set(oldValue);
+        try {
+            set(oldValue);
+        }
+        catch (EquipResult e) {
+            // Undo must not throw
+        }
     }
 
-    protected void set(ArmorUpgrade aValue) {
+    protected void set(ArmorUpgrade aValue) throws EquipResult {
         if (aValue != upgrades.getArmor()) {
             ArmorUpgrade old = upgrades.getArmor();
             upgrades.setArmor(aValue);
@@ -92,7 +97,7 @@ public class CmdSetArmorType extends CmdUpgradeBase {
             EquipResult result = verifyLoadoutInvariant(loadout);
             if(result != EquipResult.SUCCESS){
                 upgrades.setArmor(old);
-                throw new IllegalArgumentException("Couldn't change armour type: " + result.toString());
+                throw result;
             }
 
             if (messageDelivery != null)

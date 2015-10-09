@@ -45,7 +45,7 @@ import org.lisoft.lsml.model.chassi.OmniPodDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModuleDB;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -121,7 +121,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
     @Test
     public void testCanEquip_NoEngine() throws Exception {
         Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
-        assertEquals(EquipResult.make(Type.EngineAlreadyEquipped), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.EngineAlreadyEquipped), makeDefaultCUT().canEquip(item));
     }
 
     /**

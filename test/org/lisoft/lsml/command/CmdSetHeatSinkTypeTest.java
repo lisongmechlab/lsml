@@ -30,7 +30,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -87,7 +87,7 @@ public class CmdSetHeatSinkTypeTest {
                 if (equippedHs < maxEquippableNewType) {
                     return EquipResult.SUCCESS;
                 }
-                return EquipResult.make(Type.NotEnoughSlots);
+                return EquipResult.make(EquipResultType.NotEnoughSlots);
             }
         });
         Mockito.doAnswer(new Answer<Void>() {
@@ -115,7 +115,7 @@ public class CmdSetHeatSinkTypeTest {
                 if (equippedHs < maxGloballyEquippableNewType) {
                     return EquipResult.SUCCESS;
                 }
-                return EquipResult.make(Type.NotEnoughSlots);
+                return EquipResult.make(EquipResultType.NotEnoughSlots);
             }
         });
     }

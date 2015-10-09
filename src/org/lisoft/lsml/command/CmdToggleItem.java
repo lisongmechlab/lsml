@@ -21,12 +21,14 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.message.MessageXBar;
+import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
  * This operation toggles the state of toggleable items, for now HA/LAA.
@@ -35,19 +37,19 @@ import org.lisoft.lsml.util.message.MessageXBar;
  */
 public class CmdToggleItem extends Command {
     private final Item                        item;
-    private final MessageXBar                 xBar;
+    private final MessageDelivery             messageDelivery;
     private final LoadoutBase<?>              loadout;
     private final ConfiguredComponentOmniMech component;
     private final boolean                     newState;
     private boolean                           oldState;
     private boolean                           oldHAState;
 
-    public CmdToggleItem(MessageXBar aXBar, LoadoutBase<?> aLoadout, ConfiguredComponentOmniMech aComponent, Item aItem,
-            boolean aNewState) {
+    public CmdToggleItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
+            ConfiguredComponentOmniMech aComponent, Item aItem, boolean aNewState) {
         if (aItem != ItemDB.HA && aItem != ItemDB.LAA) {
             throw new IllegalArgumentException("Can't toggle anything but HA/LAA");
         }
-        xBar = aXBar;
+        messageDelivery = aMessageDelivery;
         item = aItem;
         loadout = aLoadout;
         component = aComponent;
@@ -60,7 +62,7 @@ public class CmdToggleItem extends Command {
     }
 
     @Override
-    protected void apply() {
+    protected void apply() throws EquipResult {
         oldState = component.getToggleState(item);
         oldHAState = component.getToggleState(ItemDB.HA);
 
@@ -69,10 +71,11 @@ public class CmdToggleItem extends Command {
 
         if (newState == true) {
             if (loadout.getNumCriticalSlotsFree() < 1) {
-                throw new IllegalArgumentException("Not enough globally free slots to toggle " + item);
+                throw EquipResult.make(EquipResultType.NotEnoughSlots);
             }
-            if (!component.canToggleOn(item)) {
-                throw new IllegalArgumentException("Not allowed to toggle " + item);
+            EquipResult e = component.canToggleOn(item);
+            if (e != EquipResult.SUCCESS) {
+                throw e;
             }
         }
 
@@ -82,8 +85,8 @@ public class CmdToggleItem extends Command {
             component.setToggleState(ItemDB.HA, false);
         }
 
-        if (xBar != null) {
-            xBar.post(new ComponentMessage(component, Type.ItemsChanged));
+        if (messageDelivery != null) {
+            messageDelivery.post(new ComponentMessage(component, Type.ItemsChanged));
         }
     }
 
@@ -92,11 +95,11 @@ public class CmdToggleItem extends Command {
         if (newState == oldState)
             return;
         component.setToggleState(item, oldState);
-        if (item == ItemDB.LAA && oldHAState == true && component.canToggleOn(ItemDB.HA)) {
+        if (item == ItemDB.LAA && oldHAState == true && EquipResult.SUCCESS == component.canToggleOn(ItemDB.HA)) {
             component.setToggleState(ItemDB.HA, true);
         }
-        if (xBar != null) {
-            xBar.post(new ComponentMessage(component, Type.ItemsChanged));
+        if (messageDelivery != null) {
+            messageDelivery.post(new ComponentMessage(component, Type.ItemsChanged));
         }
     }
 }
