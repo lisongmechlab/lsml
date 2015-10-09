@@ -28,12 +28,12 @@ import java.util.Map;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdChangeOmniPod;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdSetArmorType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetName;
+import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.item.Engine;
@@ -58,8 +58,8 @@ public class LoadoutBuilder {
             CLASS_PRIORITY_ORDER = new HashMap<>();
 
             // Omnipods, upgrades, modules and renaming are independent and cannot fail on an empty loadout
-            CLASS_PRIORITY_ORDER.put(CmdRename.class, 0);
-            CLASS_PRIORITY_ORDER.put(CmdChangeOmniPod.class, 1);
+            CLASS_PRIORITY_ORDER.put(CmdSetName.class, 0);
+            CLASS_PRIORITY_ORDER.put(CmdSetOmniPod.class, 1);
             CLASS_PRIORITY_ORDER.put(CmdSetGuidanceType.class, 2);
             CLASS_PRIORITY_ORDER.put(CmdSetHeatSinkType.class, 2);
             CLASS_PRIORITY_ORDER.put(CmdSetArmorType.class, 2);

@@ -76,16 +76,12 @@ public class CmdAddItem extends CmdItemBase {
     }
 
     @Override
-    public void apply() {
+    public void apply() throws EquipResult {
         EquipResult result = loadout.canEquip(item);
-        if (result != EquipResult.SUCCESS)
-            throw new IllegalArgumentException("Can't add " + item + " to " + loadout.getName() + "! Reason:"
-                    + result.toString());
+        result.checkFailureAndThrow();
 
         result = component.canEquip(item);
-        if (result != EquipResult.SUCCESS)
-            throw new IllegalArgumentException("Can't add " + item + " to "
-                    + component.getInternalComponent().getLocation() + "! Reason: " + result.toString());
+        result.checkFailureAndThrow();
         addItem(item);
     }
 }

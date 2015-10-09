@@ -32,6 +32,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.InternalFrameEvent;
@@ -43,6 +44,7 @@ import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.PilotModuleDB;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.item.WeaponModule;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
 import org.lisoft.lsml.model.loadout.LoadoutMessage.Type;
@@ -58,7 +60,7 @@ import org.lisoft.lsml.view.mechlab.LoadoutFrame;
  * 
  * @author Li Song
  */
-public class ModuleSeletionList extends JList<PilotModule> implements InternalFrameListener, Message.Recipient {
+public class ModuleSeletionList extends JList<PilotModule>implements InternalFrameListener, Message.Recipient {
     private static final long                   serialVersionUID = -5162141596342256532L;
     private final DefaultListModel<PilotModule> model;
     private LoadoutBase<?>                      currentLoadout;
@@ -77,7 +79,7 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
             @Override
             public Component getListCellRendererComponent(JList<? extends PilotModule> aList, PilotModule aValue,
                     int aIndex, boolean aIsSelected, boolean aCellHasFocus) {
-                if (currentLoadout != null && !currentLoadout.canAddModule(aValue)) {
+                if (currentLoadout != null && EquipResult.SUCCESS != currentLoadout.canAddModule(aValue)) {
                     label.setForeground(Color.RED);
                 }
                 else {
@@ -94,11 +96,16 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
             public void mouseClicked(MouseEvent aE) {
                 if (aE.getClickCount() >= 2 && currentLoadout != null) {
                     PilotModule module = getSelectedValue();
-                    if (module != null && currentLoadout.canAddModule(module)) {
+                    if (module != null && (EquipResult.SUCCESS == currentLoadout.canAddModule(module))) {
                         JInternalFrame frame = aDesktop.getSelectedFrame();
                         if (frame != null) {
                             LoadoutFrame loadoutFrame = (LoadoutFrame) frame;
-                            loadoutFrame.getOpStack().pushAndApply(new CmdAddModule(aXBar, currentLoadout, module));
+                            try {
+                                loadoutFrame.getOpStack().pushAndApply(new CmdAddModule(aXBar, currentLoadout, module));
+                            }
+                            catch (Exception e) {
+                                JOptionPane.showMessageDialog(null, "Add module failed.\nError: " + e.getMessage());
+                            }
                         }
                     }
                 }

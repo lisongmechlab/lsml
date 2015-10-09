@@ -145,7 +145,13 @@ public class ItemLabel extends JLabel {
                     JOptionPane.showMessageDialog(dialog, "No can do cap'n!", "Not possible", JOptionPane.OK_OPTION);
                 }
                 else {
-                    loadoutFrame.getOpStack().pushAndApply(operation);
+                    try {
+                        loadoutFrame.getOpStack().pushAndApply(operation);
+                    }
+                    catch (Exception e) {
+
+                        JOptionPane.showMessageDialog(null, "Failed to add item to loadout.\nError: " + e.getMessage());
+                    }
                 }
             }
             dialog.dispose();
@@ -228,7 +234,13 @@ public class ItemLabel extends JLabel {
                             }
                         }
                         else if (EquipResult.SUCCESS == loadout.canEquip(item)) {
-                            frame.getOpStack().pushAndApply(new CmdAutoAddItem(loadout, anXBar, item));
+                            try {
+                                frame.getOpStack().pushAndApply(new CmdAutoAddItem(loadout, anXBar, item));
+                            }
+                            catch (Exception e) {
+                                JOptionPane.showMessageDialog(null,
+                                        "Failed to add item to loadout.\nError: " + e.getMessage());
+                            }
                         }
                     }
                 }

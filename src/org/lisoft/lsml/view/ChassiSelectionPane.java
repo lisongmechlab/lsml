@@ -34,6 +34,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -252,7 +253,14 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
                 public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected,
                         boolean aHasFocus, int aRow, int aColumn) {
                     ChassisBase chassis = (ChassisBase) aValue;
-                    LoadoutBase<?> stock = DefaultLoadoutFactory.instance.produceStock(chassis);
+                    LoadoutBase<?> stock;
+                    try {
+                        stock = DefaultLoadoutFactory.instance.produceStock(chassis);
+                    }
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, e);
+                        return panel;
+                    }
                     StyleManager.styleHardpointLabel(energy, stock.getComponent(part), HardPointType.ENERGY);
                     StyleManager.styleHardpointLabel(ballistic, stock.getComponent(part), HardPointType.BALLISTIC);
                     StyleManager.styleHardpointLabel(missile, stock.getComponent(part), HardPointType.MISSILE);

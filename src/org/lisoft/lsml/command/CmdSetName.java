@@ -31,7 +31,7 @@ import org.lisoft.lsml.util.message.MessageXBar;
  * 
  * @author Li Song
  */
-public class CmdRename extends Command {
+public class CmdSetName extends Command {
     private String                 oldName;
     private final String           newName;
 
@@ -46,7 +46,7 @@ public class CmdRename extends Command {
      * @param aName
      *            The new name of the loadout.
      */
-    public CmdRename(LoadoutBase<?> aLoadout, MessageXBar anXBar, String aName) {
+    public CmdSetName(LoadoutBase<?> aLoadout, MessageXBar anXBar, String aName) {
         loadout = aLoadout;
         xBar = anXBar;
         newName = aName;

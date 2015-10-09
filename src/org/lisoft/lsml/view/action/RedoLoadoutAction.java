@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
@@ -63,7 +64,12 @@ public class RedoLoadoutAction extends AbstractAction implements Message.Recipie
 
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        loadoutFrame.getOpStack().redo();
+        try {
+            loadoutFrame.getOpStack().redo();
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Redo failed.\nError: " + e.getMessage());
+        }
     }
 
     @Override

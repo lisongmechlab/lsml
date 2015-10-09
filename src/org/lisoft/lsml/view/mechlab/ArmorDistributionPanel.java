@@ -26,6 +26,7 @@ import javax.swing.AbstractAction;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
@@ -52,19 +53,19 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Li Song
  */
 public class ArmorDistributionPanel extends JPanel implements Message.Recipient, ChangeListener {
-    private static final long    serialVersionUID    = 6835003047682738947L;
+    private static final long serialVersionUID = 6835003047682738947L;
 
     private final LoadoutBase<?> loadout;
-    private final CommandStack stack;
+    private final CommandStack   stack;
     private final MessageXBar    xBar;
     private final JSlider        ratioSlider;
     private final JSlider        armorSlider;
-    private final CommandStack privateStack        = new CommandStack(0);
+    private final CommandStack   privateStack = new CommandStack(0);
 
-    private boolean              disableSliderAction = false;
-    private boolean              armorOpInProgress   = false;
-    private int                  lastRatio           = 0;
-    private int                  lastAmount          = 0;
+    private boolean disableSliderAction = false;
+    private boolean armorOpInProgress   = false;
+    private int     lastRatio           = 0;
+    private int     lastAmount          = 0;
 
     private class ResetManualArmorOperation extends CompositeCommand {
         private final LoadoutBase<?> opLoadout = loadout;
@@ -74,7 +75,7 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
         }
 
         @Override
-        protected void apply() {
+        protected void apply() throws Exception {
             super.apply();
             updateArmorDistribution();
         }
@@ -141,7 +142,7 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
         }
 
         @Override
-        protected void apply() {
+        protected void apply() throws Exception {
             disableSliderAction = true;
             slider.setValue(newValue);
             super.apply();
@@ -169,7 +170,12 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
 
             @Override
             public void actionPerformed(ActionEvent aArg0) {
-                stack.pushAndApply(new ResetManualArmorOperation());
+                try {
+                    stack.pushAndApply(new ResetManualArmorOperation());
+                }
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Couldn't reset manual armor.\nError: " + e.getMessage());
+                }
             }
         });
         resetAll.setToolTipText("You can right click on the armor text on individual components.");
@@ -207,23 +213,17 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
         JPanel sliderPanel = new JPanel();
         GroupLayout gl = new GroupLayout(sliderPanel);
         sliderPanel.setLayout(gl);
-        gl.setHorizontalGroup(gl
-                .createSequentialGroup()
-                .addGroup(
-                        gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel)
-                                .addComponent(ratioLabel))
-                .addGroup(
-                        gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorSlider)
-                                .addComponent(ratioSlider)));
+        gl.setHorizontalGroup(gl.createSequentialGroup()
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel)
+                        .addComponent(ratioLabel))
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorSlider)
+                        .addComponent(ratioSlider)));
 
-        gl.setVerticalGroup(gl
-                .createSequentialGroup()
-                .addGroup(
-                        gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel)
-                                .addComponent(armorSlider))
-                .addGroup(
-                        gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(ratioLabel)
-                                .addComponent(ratioSlider)));
+        gl.setVerticalGroup(gl.createSequentialGroup()
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(armorLabel)
+                        .addComponent(armorSlider))
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(ratioLabel)
+                        .addComponent(ratioSlider)));
 
         lastAmount = armorSlider.getValue();
         lastRatio = ratioSlider.getValue();
@@ -238,11 +238,15 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
     public void stateChanged(ChangeEvent aEvent) {
         if (disableSliderAction)
             return;
-        if (aEvent.getSource() == ratioSlider)
-            stack.pushAndApply(new ArmorSliderOperation(ratioSlider, lastRatio));
-        else if (aEvent.getSource() == armorSlider)
-            stack.pushAndApply(new ArmorSliderOperation(armorSlider, lastAmount));
-
+        try {
+            if (aEvent.getSource() == ratioSlider)
+                stack.pushAndApply(new ArmorSliderOperation(ratioSlider, lastRatio));
+            else if (aEvent.getSource() == armorSlider)
+                stack.pushAndApply(new ArmorSliderOperation(armorSlider, lastAmount));
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Armor distribution failed.\nError: " + e.getMessage());
+        }
         if (!armorSlider.getValueIsAdjusting())
             lastAmount = armorSlider.getValue();
         if (!ratioSlider.getValueIsAdjusting())
@@ -257,8 +261,13 @@ public class ArmorDistributionPanel extends JPanel implements Message.Recipient,
 
             @Override
             public void run() {
-                privateStack.pushAndApply(new CmdDistributeArmor(loadout, armorSlider.getValue(),
-                        ratioSlider.getValue(), xBar));
+                try {
+                    privateStack.pushAndApply(
+                            new CmdDistributeArmor(loadout, armorSlider.getValue(), ratioSlider.getValue(), xBar));
+                }
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Armor distribution failed.\nError: " + e.getMessage());
+                }
                 armorOpInProgress = false;
             }
         });

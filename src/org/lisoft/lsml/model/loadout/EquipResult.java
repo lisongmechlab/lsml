@@ -33,20 +33,36 @@ import org.lisoft.lsml.model.item.Item;
  * 
  * @author Li Song
  */
-public class EquipResult {
+public class EquipResult extends Exception {
     public static enum Type {
-        Success(0), TooHeavy(1), NotEnoughSlots(2), NotEnoughSlotsForXLSide(10), NotSupported(1), IncompatibleUpgrades(
-                100), NoComponentSupport(10), JumpJetCapacityReached(100), EngineAlreadyEquipped(100), NoFreeHardPoints(
-                50), ComponentAlreadyHasCase(20);
+        Success(0, "Success"), //
+        TooHeavy(1, "Too heavy"), //
+        NotEnoughSlots(2, "Not enough slots"), //
+        NotEnoughSlotsForXLSide(10, "Not enough slots for XL side engine"), //
+        NotSupported(1, "Not supported by chassis"), //
+        IncompatibleUpgrades(100, "Current upgrades do not admit the item"), //
+        NoComponentSupport(10, "No component can support the item"), //
+        JumpJetCapacityReached(100, "Maximum number of jumpjets already installed"), //
+        EngineAlreadyEquipped(100, "An engine is already equipped"), //
+        NoFreeHardPoints(50, "No free hard points"), //
+        ComponentAlreadyHasCase(20, "C.A.S.E. is already equipped"), //
+        ModuleAlreadyEquipped(100, "That module is already equipped");
 
         private final int specificity;
+        private final String message;
 
-        Type(int aSpecificity) {
+        Type(int aSpecificity, String aMessage) {
             specificity = aSpecificity;
+            message = aMessage;
         }
 
         boolean isMoreSpecificThan(Type aType) {
             return specificity > aType.specificity;
+        }
+
+        @Override
+        public String toString() {
+            return message;
         }
     }
 
@@ -66,8 +82,8 @@ public class EquipResult {
         SUCCESS = make(Type.Success);
     }
 
-    private final Type                                type;
-    private final Location                            location;
+    private final Type     type;
+    private final Location location;
 
     private EquipResult(Type aType) {
         this(null, aType);
@@ -76,6 +92,11 @@ public class EquipResult {
     private EquipResult(Location aLocation, Type aType) {
         location = aLocation;
         type = aType;
+    }
+
+    @Override
+    public String getMessage() {
+        return toString();
     }
 
     @Override
@@ -101,5 +122,16 @@ public class EquipResult {
 
     static public EquipResult make(Type aType) {
         return make(null, aType);
+    }
+
+    /**
+     * Checks if this result is a failure and throw if it is
+     * 
+     * @throws EquipResult
+     *             Thrown if this is a failure result.
+     */
+    public void checkFailureAndThrow() throws EquipResult {
+        if (this != SUCCESS)
+            throw this;
     }
 }

@@ -42,7 +42,6 @@ import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
@@ -62,7 +61,7 @@ public class CmdAutoAddItemTest {
     private CommandStack stack = new CommandStack(0);
 
     @Test(timeout = 5000)
-    public void testApply_XLEnginePerformance() throws DecodingException {
+    public void testApply_XLEnginePerformance() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutBase<?> loadout = coder.parse("lsml://rQAAKCwqCDISSg4qCDEDvqmbFj6wWK9evXsLLAEYCg==");
@@ -73,7 +72,7 @@ public class CmdAutoAddItemTest {
     }
 
     @Test
-    public void testMoveItem_Bug2() throws DecodingException {
+    public void testMoveItem_Bug2() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutBase<?> loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
@@ -94,7 +93,7 @@ public class CmdAutoAddItemTest {
 
     // Bug #345
     @Test
-    public void testMoveItem_Bug_345() throws DecodingException {
+    public void testMoveItem_Bug_345() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutBase<?> loadout = coder.parse("lsml://rgCkLzsFLw9VBzsFLy4A6zGmJKTKlSq1vEEXyq1atPuJWk4kqVKrVa1DExJUqVY=");
@@ -110,7 +109,7 @@ public class CmdAutoAddItemTest {
 
     // Bug #349
     @Test(expected = IllegalArgumentException.class, timeout = 5000)
-    public void testMoveItem_Bug_349() throws DecodingException {
+    public void testMoveItem_Bug_349() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutBase<?> loadout = coder
@@ -124,9 +123,11 @@ public class CmdAutoAddItemTest {
     /**
      * This test is a regression test for a bug where auto-add an ER PPC would fail on
      * lsml://rRoAkQAAAAAAAAAAAAAAuihsbMzMbDCRE22zG2DF where a trivial solution is available.
+     * 
+     * @throws Exception
      */
     @Test
-    public void testMoveItem_Bug1() {
+    public void testMoveItem_Bug1() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("BNC-3M"));
@@ -135,14 +136,14 @@ public class CmdAutoAddItemTest {
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
-        stack.pushAndApply(
-                new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.lookup("MEDIUM LASER")));
-        stack.pushAndApply(
-                new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.lookup("MEDIUM LASER")));
-        stack.pushAndApply(
-                new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.lookup("MEDIUM LASER")));
-        stack.pushAndApply(
-                new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.lookup("MEDIUM LASER")));
+        stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso),
+                ItemDB.lookup("MEDIUM LASER")));
+        stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso),
+                ItemDB.lookup("MEDIUM LASER")));
+        stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso),
+                ItemDB.lookup("MEDIUM LASER")));
+        stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso),
+                ItemDB.lookup("MEDIUM LASER")));
         stack.pushAndApply(
                 new CmdAddItem(xBar, loadout, loadout.getComponent(Location.Head), ItemDB.lookup("MEDIUM LASER")));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso),
@@ -172,9 +173,11 @@ public class CmdAutoAddItemTest {
     /**
      * {@link CmdAutoAddItem} shall be able to swap items in addition to just moving one at a time. Otherwise there we
      * miss some solutions.
+     * 
+     * @throws Exception
      */
     @Test
-    public void testMoveItem_SwapItems() {
+    public void testMoveItem_SwapItems() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("JR7-O"));
@@ -216,9 +219,11 @@ public class CmdAutoAddItemTest {
     /**
      * {@link CmdAutoAddItem} shall throw an {@link IllegalArgumentException} if the item cannot be auto added on any
      * permutation of the loadout.
+     * 
+     * @throws Exception
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testMoveItem_NotPossible() {
+    public void testMoveItem_NotPossible() throws Exception {
         LoadoutStandard loadout = null;
         Item gaussRifle = null;
         try {
@@ -258,11 +263,13 @@ public class CmdAutoAddItemTest {
     }
 
     /**
-     * {@link CmdAutoAddItem} shall try to move items in order to make room for the added item if there is no room in any
-     * component with a hard point but there are items that could be moved to make room.
+     * {@link CmdAutoAddItem} shall try to move items in order to make room for the added item if there is no room in
+     * any component with a hard point but there are items that could be moved to make room.
+     * 
+     * @throws Exception
      */
     @Test
-    public void testMoveItem() {
+    public void testMoveItem() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("AS7-D-DC"));
@@ -291,11 +298,12 @@ public class CmdAutoAddItemTest {
     }
 
     /**
-     * {@link CmdAutoAddItem} shall try to move items in order to make room for the added item if there is no room in any
-     * component with a hard point but there are items that could be moved to make room.
+     * {@link CmdAutoAddItem} shall try to move items in order to make room for the added item if there is no room in
+     * any component with a hard point but there are items that could be moved to make room.
+     * @throws Exception 
      */
     @Test
-    public void testMoveItem_() {
+    public void testMoveItem_()throws Exception  {
         // Setup
         Item ac20 = ItemDB.lookup("AC/20");
         Item ac10 = ItemDB.lookup("AC/10");
@@ -323,9 +331,11 @@ public class CmdAutoAddItemTest {
     /**
      * {@link CmdAutoAddItem} shall add an item to the first applicable slot in this loadout. Order the items are added
      * is: RA, RT, RL, HD, CT, LT, LL, LA
+     * 
+     * @throws Exception
      */
     @Test
-    public void testAddItem() {
+    public void testAddItem() throws Exception {
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
@@ -371,9 +381,10 @@ public class CmdAutoAddItemTest {
 
     /**
      * {@link CmdAutoAddItem}shall prioritize engine slots for heat sinks
+     * @throws Exception 
      */
     @Test
-    public void testAddItem_engineHS() {
+    public void testAddItem_engineHS() throws Exception {
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("AS7-D-DC"));
 

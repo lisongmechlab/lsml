@@ -80,7 +80,7 @@ public class LoadoutCoderV1 implements LoadoutCoder {
     }
 
     @Override
-    public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException {
+    public LoadoutStandard decode(final byte[] aBitStream)throws DecodingException, Exception  {
         final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
         final LoadoutStandard loadout;
         final CommandStack stack = new CommandStack(0);
@@ -108,7 +108,7 @@ public class LoadoutCoderV1 implements LoadoutCoder {
             StructureUpgrade structure = endoSteel ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE;
             ArmorUpgrade armor = ferroFib ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
             HeatSinkUpgrade heatSinks = dhs ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
-
+            
             stack.pushAndApply(new CmdSetGuidanceType(null, loadout, guidance));
             stack.pushAndApply(new CmdSetHeatSinkType(null, loadout, heatSinks));
             stack.pushAndApply(new CmdSetStructureType(null, loadout, structure));

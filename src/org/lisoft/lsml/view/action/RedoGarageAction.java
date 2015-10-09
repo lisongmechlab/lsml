@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
@@ -59,7 +60,13 @@ public class RedoGarageAction extends AbstractAction implements Message.Recipien
 
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        ProgramInit.lsml().garageOperationStack.redo();
+        try {
+            ProgramInit.lsml().garageOperationStack.redo();
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                    "Redo garage failed.\nError: " + e.getMessage());
+        }
     }
 
     @Override

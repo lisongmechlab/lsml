@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.Location;
@@ -38,8 +38,6 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.parsing.export.LoadoutCoderV1;
 import org.lisoft.lsml.util.Base64;
-import org.lisoft.lsml.util.DecodingException;
-import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.InjectMocks;
@@ -80,7 +78,7 @@ public class LoadoutCoderV1Test {
 
         // Name is not encoded
         CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdRename(decoded, xBar, reference.getName()));
+        stack.pushAndApply(new CmdSetName(decoded, xBar, reference.getName()));
 
         // Verify
         assertEquals(reference, decoded);
@@ -111,7 +109,7 @@ public class LoadoutCoderV1Test {
 
                 // Name is not encoded
                 CommandStack stack = new CommandStack(0);
-                stack.pushAndApply(new CmdRename(decoded, xBar, reference.getName()));
+                stack.pushAndApply(new CmdSetName(decoded, xBar, reference.getName()));
 
                 // Verify
                 assertEquals(reference, decoded);
@@ -123,14 +121,14 @@ public class LoadoutCoderV1Test {
      * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
      * sinks.
      * 
-     * @throws DecodingException
-     * @throws EncodingException
+     * @throws Exception
+     * 
      */
     @Test
-    public void testDecodeHeatsinksBeforeEngine() throws DecodingException, EncodingException {
+    public void testDecodeHeatsinksBeforeEngine() throws Exception {
         Base64 base64 = new Base64();
-        LoadoutStandard l = cut.decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY="
-                .toCharArray()));
+        LoadoutStandard l = cut
+                .decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY=".toCharArray()));
 
         assertTrue(l.getFreeMass() < 0.005);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());

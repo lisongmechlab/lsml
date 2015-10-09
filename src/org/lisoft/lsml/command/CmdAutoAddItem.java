@@ -33,6 +33,7 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipResult.Type;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -54,7 +55,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         final Node           parent;
         final int            score;
 
-        final Item           targetItem;
+        final Item targetItem;
 
         Node(LoadoutBase<?> aRoot, Item aItem) {
             parent = null;
@@ -66,7 +67,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             score = score();
         }
 
-        Node(Node aParent, Location aSource, Location aTarget, Item aItem) {
+        Node(Node aParent, Location aSource, Location aTarget, Item aItem) throws Exception {
             data = DefaultLoadoutFactory.instance.produceClone(aParent.data);
             parent = aParent;
             source = aSource;
@@ -78,14 +79,8 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             score = score();
         }
 
-        /**
-         * @param aParent
-         * @param aSourcePart
-         * @param aTargetPart
-         * @param aSourceItem
-         * @param aTargetItem
-         */
-        Node(Node aParent, Location aSourcePart, Location aTargetPart, Item aSourceItem, Item aTargetItem) {
+        Node(Node aParent, Location aSourcePart, Location aTargetPart, Item aSourceItem, Item aTargetItem)
+                throws Exception {
             data = DefaultLoadoutFactory.instance.produceClone(aParent.data);
             parent = aParent;
             source = aSourcePart;
@@ -114,19 +109,18 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
 
         private int score() {
             if (itemToPlace instanceof Engine && ((Engine) itemToPlace).getType() == EngineType.XL) {
-                int slotsFreeCt = Math.min(itemToPlace.getNumCriticalSlots(), data.getComponent(Location.CenterTorso)
-                        .getSlotsFree());
+                int slotsFreeCt = Math.min(itemToPlace.getNumCriticalSlots(),
+                        data.getComponent(Location.CenterTorso).getSlotsFree());
                 int slotsFreeLt = Math.min(3, data.getComponent(Location.LeftTorso).getSlotsFree());
                 int slotsFreeRt = Math.min(3, data.getComponent(Location.RightTorso).getSlotsFree());
                 return (slotsFreeCt + slotsFreeLt + slotsFreeRt);
             }
             int maxFree = 0;
             for (Location location : validLocations) {
-                maxFree = Math
-                        .max(maxFree,
-                                data.getComponent(location).getSlotsFree()
-                                        * (data.getComponent(location).getInternalComponent()
-                                                .isAllowed(item, data.getEngine()) ? 1 : 0));
+                maxFree = Math.max(maxFree,
+                        data.getComponent(location).getSlotsFree()
+                                * (data.getComponent(location).getInternalComponent().isAllowed(item, data.getEngine())
+                                        ? 1 : 0));
             }
             return maxFree;
 
@@ -136,7 +130,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
     private final Item           itemToPlace;
     private final List<Location> validLocations = new ArrayList<>();
     private final List<Location> partTraversalOrder;
-    private final CommandStack stack          = new CommandStack(0);
+    private final CommandStack   stack          = new CommandStack(0);
 
     public CmdAutoAddItem(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, Item anItem) {
         super(aLoadout, aMessageDelivery, "auto place item");
@@ -148,7 +142,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
     }
 
     @Override
-    protected void buildCommand() {
+    protected void buildCommand() throws EquipResult {
         // If it can go into the engine, put it there.
         ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
         if (itemToPlace instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax()
@@ -188,7 +182,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             Collections.sort(open); // Greedy search, I need *a* solution, not the best one.
         }
 
-        throw new IllegalArgumentException("Not possible");
+        throw EquipResult.make(Type.NotEnoughSlots);
     }
 
     private void applySolution(Node node) {
@@ -237,7 +231,13 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         // Create a temporary loadout where the item has been removed and find all
         // ways it can be placed on another part.
         LoadoutBase<?> tempLoadout = DefaultLoadoutFactory.instance.produceClone(aParent.data);
-        stack.pushAndApply(new CmdRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
+        try {
+            stack.pushAndApply(new CmdRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
+        }
+        catch (Exception e) {
+            // Item can't be removed? Just skip the branch entirely.
+            return ans;
+        }
 
         ConfiguredComponentBase srcPart = tempLoadout.getComponent(aSourcePart);
         for (Location targetPart : Location.values()) {
@@ -248,7 +248,12 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             if (EquipResult.SUCCESS == dstPart.canEquip(aItem)) {
                 // Don't consider swaps if the item can be directly moved. A swap will be generated in another point
                 // of the search tree anyway when we move an item from that component back to this.
-                ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
+                try {
+                    ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
+                }
+                catch (Exception e) {
+                    /* If creating the node failed for some reason we just skip the branch. */
+                }
             }
             else if (dstPart.getInternalComponent().isAllowed(aItem, tempLoadout.getEngine())) {
                 // The part couldn't take the item directly, see if we can swap with some item in the part.
@@ -279,8 +284,14 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
                             || item == ConfiguredComponentBase.ENGINE_INTERNAL_CLAN)
                         continue;
 
-                    if (EquipResult.SUCCESS == srcPart.canEquip(item))
-                        ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
+                    if (EquipResult.SUCCESS == srcPart.canEquip(item)) {
+                        try {
+                            ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
+                        }
+                        catch (Exception e) {
+                            /* If creating the node failed for some reason we just skip the branch. */
+                        }
+                    }
                 }
             }
         }

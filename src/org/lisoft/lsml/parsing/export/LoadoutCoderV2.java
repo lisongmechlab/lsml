@@ -104,7 +104,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
     }
 
     @Override
-    public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException {
+    public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException, Exception {
         final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
         final LoadoutStandard loadout;
         final CommandStack stack = new CommandStack(0);

@@ -30,7 +30,7 @@ public interface LoadoutFactory {
 
     public LoadoutBase<?> produceEmpty(ChassisBase aChassis);
 
-    public LoadoutBase<?> produceStock(ChassisBase aChassis);
+    public LoadoutBase<?> produceStock(ChassisBase aChassis) throws Exception;
 
     public LoadoutBase<?> produceClone(LoadoutBase<?> aLoadout);
 }

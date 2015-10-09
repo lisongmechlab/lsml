@@ -30,9 +30,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdChangeOmniPod;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
+import org.lisoft.lsml.command.CmdSetName;
+import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -137,9 +137,11 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
 
     /**
      * {@link #equals(Object)} shall return <code>true</code> if the objects are equal.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testEquals_Equal() {
+    public final void testEquals_Equal() throws Exception {
         ChassisOmniMech dwfa = (ChassisOmniMech) ChassisDB.lookup("DWF-A");
         LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceStock(dwfa);
         LoadoutBase<?> cut1 = DefaultLoadoutFactory.instance.produceStock(dwfa);
@@ -148,17 +150,19 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the chassis differ.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testEquals_Chassis() {
+    public final void testEquals_Chassis() throws Exception {
         ChassisOmniMech dwfa = (ChassisOmniMech) ChassisDB.lookup("DWF-A");
         ChassisOmniMech dwfb = (ChassisOmniMech) ChassisDB.lookup("DWF-B");
         LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceEmpty(dwfa);
         LoadoutBase<?> cut1 = DefaultLoadoutFactory.instance.produceEmpty(dwfb);
 
         CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdRename(cut, null, "fooba"));
-        stack.pushAndApply(new CmdRename(cut1, null, "fooba"));
+        stack.pushAndApply(new CmdSetName(cut, null, "fooba"));
+        stack.pushAndApply(new CmdSetName(cut1, null, "fooba"));
 
         assertNotEquals(cut, cut1);
     }
@@ -176,9 +180,11 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the objects have different upgrades.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testEquals_Upgrades() {
+    public final void testEquals_Upgrades() throws Exception {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
@@ -189,14 +195,16 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the objects have different names.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testEquals_Name() {
+    public final void testEquals_Name() throws Exception {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdRename(cut, null, "fooba"));
+        stack.pushAndApply(new CmdSetName(cut, null, "fooba"));
 
         assertNotEquals(cut, cut1);
     }
@@ -218,14 +226,16 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the objects have differing components.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testEquals_Components() {
+    public final void testEquals_Components() throws Exception {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdChangeOmniPod(null, cut, cut.getComponent(Location.LeftArm),
+        stack.pushAndApply(new CmdSetOmniPod(null, cut, cut.getComponent(Location.LeftArm),
                 OmniPodDB.lookupOriginal((ChassisOmniMech) ChassisDB.lookup("DWF-B"), Location.LeftArm)));
 
         assertNotEquals(cut, cut1);
@@ -233,9 +243,11 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the objects have differing modules.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testEquals_Modules() {
+    public final void testEquals_Modules() throws Exception {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 

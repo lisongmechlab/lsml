@@ -38,14 +38,15 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import org.lisoft.lsml.command.CmdChangeOmniPod;
 import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
@@ -65,6 +66,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
+import org.lisoft.lsml.view.models.ArmorSpinnerModel;
 import org.lisoft.lsml.view.render.ItemRenderer;
 import org.lisoft.lsml.view.render.OmniPodRenderer;
 import org.lisoft.lsml.view.render.StyleManager;
@@ -72,7 +74,7 @@ import org.lisoft.lsml.view.render.StyledComboBox;
 
 public class PartPanel extends JPanel implements Message.Recipient {
     class ArmorPopupAdapter extends MouseAdapter {
-        private final MessageXBar    xBar;
+        private final MessageXBar  xBar;
         private final CommandStack stack;
 
         public ArmorPopupAdapter(CommandStack aStack, MessageXBar aXBar) {
@@ -92,52 +94,56 @@ public class PartPanel extends JPanel implements Message.Recipient {
                 doPop(e);
         }
 
-        private void doPop(MouseEvent e) {
+        private void doPop(MouseEvent aEvent) {
             JPopupMenu menu = new JPopupMenu("Armor Options");
             menu.add(new JMenuItem(new AbstractAction("Allow automatic adjustment") {
                 private static final long serialVersionUID = 7539044187157207692L;
 
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    if (component.getInternalComponent().getLocation().isTwoSided()) {
-                        stack.pushAndApply(new CmdSetArmor(xBar, loadout, component, ArmorSide.FRONT, component
-                                .getArmor(ArmorSide.FRONT), false));
+                    try {
+                        if (component.getInternalComponent().getLocation().isTwoSided()) {
+                            stack.pushAndApply(new CmdSetArmor(xBar, loadout, component, ArmorSide.FRONT,
+                                    component.getArmor(ArmorSide.FRONT), false));
+                        }
+                        else {
+                            stack.pushAndApply(new CmdSetArmor(xBar, loadout, component, ArmorSide.ONLY,
+                                    component.getArmorTotal(), false));
+                        }
                     }
-                    else {
-                        stack.pushAndApply(new CmdSetArmor(xBar, loadout, component, ArmorSide.ONLY, component
-                                .getArmorTotal(), false));
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, e);
                     }
-                    xBar.post(new ComponentMessage(component,
-                            Type.ArmorDistributionUpdateRequest));
+                    xBar.post(new ComponentMessage(component, Type.ArmorDistributionUpdateRequest));
                 }
             }));
-            menu.show(e.getComponent(), e.getX(), e.getY());
+            menu.show(aEvent.getComponent(), aEvent.getX(), aEvent.getY());
         }
     }
 
-    private static final int              ARMOR_LABEL_WIDTH   = 30;
-    private static final int              ARMOR_SPINNER_WIDTH = 20;
+    private static final int ARMOR_LABEL_WIDTH   = 30;
+    private static final int ARMOR_SPINNER_WIDTH = 20;
 
-    private static final long             serialVersionUID    = -4399442572295284661L;
+    private static final long serialVersionUID = -4399442572295284661L;
 
-    private final JLabel                  frontArmorLabel;
-    private final JLabel                  backArmorLabel;
-    private final JLabel                  armorLabel;
+    private final JLabel frontArmorLabel;
+    private final JLabel backArmorLabel;
+    private final JLabel armorLabel;
 
     private final LoadoutBase<?>          loadout;
     private final ConfiguredComponentBase component;
 
-    private final boolean                 canHaveHardpoints;
-    private final ArmorPopupAdapter       armorPopupAdapter;
-    private JSpinner                      frontSpinner;
-    private JSpinner                      backSpinner;
-    private JSpinner                      spinner;
+    private final boolean           canHaveHardpoints;
+    private final ArmorPopupAdapter armorPopupAdapter;
+    private JSpinner                frontSpinner;
+    private JSpinner                backSpinner;
+    private JSpinner                spinner;
 
-    private final JComboBox<OmniPod>      omnipodSelection;
-    private JPanel                        hardPointsPanel;
+    private final JComboBox<OmniPod> omnipodSelection;
+    private JPanel                   hardPointsPanel;
 
-    private final JCheckBox               toggleHA;
-    private final JCheckBox               toggleLAA;
+    private final JCheckBox toggleHA;
+    private final JCheckBox toggleLAA;
 
     PartPanel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, final MessageXBar aXBar,
             boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
@@ -171,7 +177,12 @@ public class PartPanel extends JPanel implements Message.Recipient {
             toggleLAA.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.LAA, toggleLAA.isSelected()));
+                    try {
+                        aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.LAA, toggleLAA.isSelected()));
+                    }
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
                 }
             });
             toggleLAA.setEnabled(ccom.canToggleOn(ItemDB.LAA) || ccom.getToggleState(ItemDB.LAA) == true);
@@ -183,7 +194,12 @@ public class PartPanel extends JPanel implements Message.Recipient {
             toggleHA.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.HA, toggleHA.isSelected()));
+                    try {
+                        aStack.pushAndApply(new CmdToggleItem(aXBar, loadout, ccom, ItemDB.HA, toggleHA.isSelected()));
+                    }
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
                 }
             });
             toggleHA.setEnabled(ccom.canToggleOn(ItemDB.HA) || ccom.getToggleState(ItemDB.HA) == true);
@@ -199,8 +215,9 @@ public class PartPanel extends JPanel implements Message.Recipient {
         if (!ProgramInit.lsml().preferences.uiPreferences.getCompactMode()) {
             ComponentBase internalPart = aLoadoutPart.getInternalComponent();
             setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createTitledBorder(internalPart.getLocation().longName() + " ("
-                            + (int) internalPart.getHitPoints() + " hp)"), BorderFactory.createEmptyBorder(0, 2, 2, 4)));
+                    BorderFactory.createTitledBorder(
+                            internalPart.getLocation().longName() + " (" + (int) internalPart.getHitPoints() + " hp)"),
+                    BorderFactory.createEmptyBorder(0, 2, 2, 4)));
         }
 
         if (LoadoutOmniMech.class.isAssignableFrom(aLoadout.getClass()) && location != Location.CenterTorso) {
@@ -216,8 +233,13 @@ public class PartPanel extends JPanel implements Message.Recipient {
 
                 @Override
                 public void setSelectedItem(Object aAnObject) {
-                    aStack.pushAndApply(new CmdChangeOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech) component,
-                            (OmniPod) aAnObject));
+                    try {
+                        aStack.pushAndApply(new CmdSetOmniPod(aXBar, omniMech, (ConfiguredComponentOmniMech) component,
+                                (OmniPod) aAnObject));
+                    }
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
                 }
             });
             omnipodSelection.setRenderer(new OmniPodRenderer());
@@ -278,12 +300,13 @@ public class PartPanel extends JPanel implements Message.Recipient {
             frontArmorLabel.setPreferredSize(labelDimension);
             backArmorLabel.setPreferredSize(labelDimension);
 
-            frontSpinner = new JSpinner(new ArmorSpinner(loadout, component, ArmorSide.FRONT, anXBar, aSymmetric,
-                    aStack));
+            frontSpinner = new JSpinner(
+                    new ArmorSpinnerModel(loadout, component, ArmorSide.FRONT, anXBar, aSymmetric, aStack));
             frontSpinner.setMaximumSize(labelDimension);
             frontSpinner.getEditor().setPreferredSize(spinnerDimension);
 
-            backSpinner = new JSpinner(new ArmorSpinner(loadout, component, ArmorSide.BACK, anXBar, aSymmetric, aStack));
+            backSpinner = new JSpinner(
+                    new ArmorSpinnerModel(loadout, component, ArmorSide.BACK, anXBar, aSymmetric, aStack));
             backSpinner.setMaximumSize(labelDimension);
             backSpinner.getEditor().setPreferredSize(spinnerDimension);
 
@@ -318,7 +341,8 @@ public class PartPanel extends JPanel implements Message.Recipient {
         else {
             armorLabel.setPreferredSize(labelDimension);
 
-            spinner = new JSpinner(new ArmorSpinner(loadout, component, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
+            spinner = new JSpinner(
+                    new ArmorSpinnerModel(loadout, component, ArmorSide.ONLY, anXBar, aSymmetric, aStack));
             spinner.setMaximumSize(labelDimension);
             spinner.getEditor().setPreferredSize(spinnerDimension);
 

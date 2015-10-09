@@ -37,7 +37,7 @@ import org.lisoft.lsml.util.message.MessageXBar;
  * 
  * @author Li Song
  */
-public class CmdChangeOmniPod extends CompositeCommand {
+public class CmdSetOmniPod extends CompositeCommand {
 
     private final ConfiguredComponentOmniMech component;
     private final OmniPod                     newOmniPod;
@@ -56,7 +56,7 @@ public class CmdChangeOmniPod extends CompositeCommand {
      * @param aOmniPod
      *            The new {@link OmniPod} to change to.
      */
-    public CmdChangeOmniPod(MessageDelivery aMessageDelivery, LoadoutOmniMech aLoadout,
+    public CmdSetOmniPod(MessageDelivery aMessageDelivery, LoadoutOmniMech aLoadout,
             ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod) {
         super("change omnipod on " + aComponentOmniMech.getInternalComponent().getLocation(), aMessageDelivery);
         if (aOmniPod == null)

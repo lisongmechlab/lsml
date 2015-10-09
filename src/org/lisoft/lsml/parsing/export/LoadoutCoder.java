@@ -49,8 +49,9 @@ public interface LoadoutCoder {
      * @return A {@link LoadoutBase} that has been decoded.
      * @throws DecodingException
      *             If the bit stream is broken.
+     * @throws Exception 
      */
-    public LoadoutBase<?> decode(byte[] aBitStream) throws DecodingException;
+    public LoadoutBase<?> decode(byte[] aBitStream) throws DecodingException, Exception;
 
     /**
      * Determines if this {@link LoadoutCoder} is capable of decoding the given bit stream. Usually implemented by

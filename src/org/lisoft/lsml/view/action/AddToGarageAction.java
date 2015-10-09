@@ -55,7 +55,7 @@ public class AddToGarageAction extends AbstractAction {
             lsml.garageOperationStack.pushAndApply(new CmdAddToGarage(lsml.getGarage(), loadout));
             setEnabled(false);
         }
-        catch (IllegalArgumentException e) {
+        catch (Exception e) {
             JOptionPane.showMessageDialog(ProgramInit.lsml(), "Couldn't add to garage! Error: " + e.getMessage());
         }
     }

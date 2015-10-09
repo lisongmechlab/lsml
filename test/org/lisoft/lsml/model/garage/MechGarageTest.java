@@ -281,11 +281,10 @@ public class MechGarageTest {
      * Make sure that we can load many of the stock builds saved from 1.5.0.
      * <p>
      * Note, this is a backwards compatibility test.
-     * 
-     * @throws IOException
+     * @throws Exception 
      */
     @Test
-    public void testLoadStockBuilds_150() throws IOException {
+    public void testLoadStockBuilds_150() throws Exception {
         MechGarage garage = MechGarage.open(new File("resources/resources/stock1.5.0.xml"), xBar);
         CommandStack stack = new CommandStack(0);
         assertEquals(64, garage.getMechs().size());

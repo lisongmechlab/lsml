@@ -27,6 +27,7 @@ import java.awt.event.MouseAdapter;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 
 import org.lisoft.lsml.command.CmdAddModule;
@@ -51,7 +52,7 @@ public class PilotModuleList extends JList<String> {
     private static final long    serialVersionUID = -3812414074800032146L;
     private final MessageXBar    xBar;
     private final LoadoutBase<?> loadout;
-    private final CommandStack stack;
+    private final CommandStack   stack;
     private final ModuleSlot     moduleSlot;
 
     public PilotModuleList(MessageXBar aXBar, CommandStack aOperationStack, LoadoutBase<?> aLoadout,
@@ -88,7 +89,12 @@ public class PilotModuleList extends JList<String> {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (e.getClickCount() >= 2) {
-                    takeCurrent();
+                    try {
+                        takeCurrent();
+                    }
+                    catch (Exception e1) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
                 }
             }
         });
@@ -97,7 +103,12 @@ public class PilotModuleList extends JList<String> {
             @Override
             public void keyReleased(KeyEvent aE) {
                 if (aE.getKeyCode() == KeyEvent.VK_DELETE) {
-                    takeCurrent();
+                    try {
+                        takeCurrent();
+                    }
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
                 }
             }
         });
@@ -107,11 +118,11 @@ public class PilotModuleList extends JList<String> {
         return loadout;
     }
 
-    public void putElement(PilotModule aModule) {
+    public void putElement(PilotModule aModule) throws Exception {
         stack.pushAndApply(new CmdAddModule(xBar, loadout, aModule));
     }
 
-    public PilotModule takeCurrent() {
+    public PilotModule takeCurrent() throws Exception {
         String sel = getSelectedValue();
         if (sel.equals(PilotModuleModel.EMPTY))
             return null;

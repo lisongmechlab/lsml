@@ -24,8 +24,8 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.lisoft.lsml.util.message.Message.Recipient;
-import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.util.message.MessageReception;
+import org.lisoft.lsml.view.ProgramInit;
 
 /**
  * This abstract base class allows toggle button models to be created as anonymous inner classes while still being
@@ -40,14 +40,14 @@ public abstract class BinaryAttributeModel extends JToggleButton.ToggleButtonMod
         aMessageReception.attach(this);
     }
 
-    abstract public void changeValue(boolean aEnabled);
+    abstract public void changeValue(boolean aEnabled) throws Exception;
 
     @Override
     public void setSelected(boolean aEnabled) {
         try {
             changeValue(aEnabled);
         }
-        catch (final IllegalArgumentException e) {
+        catch (final Exception e) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {

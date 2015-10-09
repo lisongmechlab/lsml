@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipResult.Type;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
@@ -45,19 +47,20 @@ public abstract class CmdUpgradeBase extends Command {
         return description;
     }
 
-    protected void verifyLoadoutInvariant(LoadoutBase<?> aLoadout) {
+    EquipResult verifyLoadoutInvariant(LoadoutBase<?> aLoadout) {
         if (aLoadout == null)
-            return;
+            return EquipResult.SUCCESS;
         if (aLoadout.getFreeMass() < 0) {
-            throw new IllegalArgumentException("Not enough tonnage!");
+            return EquipResult.make(Type.TooHeavy);
         }
         if (aLoadout.getNumCriticalSlotsFree() < 0) {
-            throw new IllegalArgumentException("Not enough free slots!");
+            return EquipResult.make(Type.NotEnoughSlots);
         }
-        for (ConfiguredComponentBase loadoutPart : aLoadout.getComponents()) {
-            if (loadoutPart.getSlotsFree() < 0) {
-                throw new IllegalArgumentException("Not enough free slots!");
+        for (ConfiguredComponentBase component : aLoadout.getComponents()) {
+            if (component.getSlotsFree() < 0) {
+                return EquipResult.make(component.getInternalComponent().getLocation(), Type.NotEnoughSlots);
             }
         }
+        return EquipResult.SUCCESS;
     }
 }

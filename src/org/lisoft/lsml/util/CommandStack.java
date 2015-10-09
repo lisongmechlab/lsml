@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.util.message.MessageBuffer;
 import org.lisoft.lsml.util.message.MessageDelivery;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -50,8 +51,9 @@ public class CommandStack {
 
         /**
          * Will 'do' this operation
+         * @throws Exception 
          */
-        protected abstract void apply();
+        protected abstract void apply() throws Exception;
 
         /**
          * Will undo this action.
@@ -81,7 +83,7 @@ public class CommandStack {
      * @author Li Song
      */
     public abstract static class CompositeCommand extends Command {
-        private final List<Command>   commands    = new ArrayList<>();
+        private final List<Command>   commands      = new ArrayList<>();
         private final String          desciption;
         private transient boolean     isPerpared    = false;
         protected final MessageBuffer messageBuffer = new MessageBuffer();
@@ -102,7 +104,7 @@ public class CommandStack {
         }
 
         @Override
-        protected void apply() {
+        protected void apply() throws Exception {
             if (!isPerpared) {
                 buildCommand();
                 isPerpared = true;
@@ -150,7 +152,7 @@ public class CommandStack {
             return result;
         }
 
-        public void prepareCommandAheadOfTime() {
+        public void prepareCommandAheadOfTime() throws EquipResult {
             if (!isPerpared) {
                 buildCommand();
                 isPerpared = true;
@@ -160,8 +162,11 @@ public class CommandStack {
         /**
          * The user should implement this to create the operation. Will be called only once, immediately before the
          * first time the operation is applied.
+         * 
+         * @throws EquipResult
+         *             If for some reason the command failed to build.
          */
-        protected abstract void buildCommand();
+        protected abstract void buildCommand() throws EquipResult;
 
         @Override
         public boolean equals(Object obj) {
@@ -188,7 +193,7 @@ public class CommandStack {
         }
     }
 
-    private final List<Command> actions   = new LinkedList<>();
+    private final List<Command> actions    = new LinkedList<>();
     private final int           depth;
     private int                 currentCmd = -1;
 
@@ -203,7 +208,7 @@ public class CommandStack {
         depth = anUndoDepth;
     }
 
-    public void pushAndApply(Command aCmd) {
+    public void pushAndApply(Command aCmd) throws Exception {
         // Perform automatic coalesceling
         int cmdBeforeCoalescele = currentCmd;
         while (nextUndo() != null && nextUndo().canCoalescele(aCmd)) {
@@ -213,7 +218,7 @@ public class CommandStack {
         try {
             aCmd.apply();
         }
-        catch (Throwable throwable) {
+        catch (Exception throwable) {
             // Undo the coalesceling if the new operation threw.
             while (currentCmd != cmdBeforeCoalescele && nextRedo() != null) {
                 redo();
@@ -241,7 +246,7 @@ public class CommandStack {
         }
     }
 
-    public void redo() {
+    public void redo() throws Exception {
         Command cmd = nextRedo();
         if (null != cmd) {
             cmd.apply();

@@ -41,8 +41,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.lisoft.lsml.command.CmdSetArmorType;
-import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisDB;
@@ -51,7 +49,6 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
-import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.graphs.PayloadGraphPanel.Entry;
 
 /**
@@ -110,7 +107,6 @@ public class PayloadSelectionPanel extends JPanel {
 
         void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel,
                 final UpgradesMutable aUpgrades) {
-            final CommandStack stack = new CommandStack(0);
 
             graphEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 @Override
@@ -151,16 +147,16 @@ public class PayloadSelectionPanel extends JPanel {
             endoSteel.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    stack.pushAndApply(new CmdSetStructureType(aUpgrades,
-                            endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE));
+                    aUpgrades.setStructure(
+                            endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE);
                     aGraphPanel.updateGraph();
                 }
             });
             ferroFibrous.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    stack.pushAndApply(new CmdSetArmorType(aUpgrades,
-                            ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR));
+                    aUpgrades.setArmor(
+                            ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR);
                     aGraphPanel.updateGraph();
                 }
             });
@@ -168,7 +164,7 @@ public class PayloadSelectionPanel extends JPanel {
         }
     }
 
-    private static final long                   serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private final UpgradesMutable               upgrades;
     private final PayloadGraphPanel             graphPanel;

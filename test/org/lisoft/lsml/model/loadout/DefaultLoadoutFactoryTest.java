@@ -45,7 +45,7 @@ public class DefaultLoadoutFactoryTest {
     DefaultLoadoutFactory cut = new DefaultLoadoutFactory();
 
     @Test
-    public void testProduceClone_NotSame() {
+    public void testProduceClone_NotSame() throws Exception{
         LoadoutBase<?> loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
         assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
 
@@ -55,7 +55,7 @@ public class DefaultLoadoutFactoryTest {
     }
 
     @Test
-    public void testProduceClone_ItemsAndArmor() {
+    public void testProduceClone_ItemsAndArmor() throws Exception{
         LoadoutBase<?> loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
         assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
 

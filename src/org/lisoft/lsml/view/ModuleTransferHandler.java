@@ -24,10 +24,12 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.TransferHandler;
 
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.PilotModuleDB;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.view.mechlab.PilotModuleList;
 import org.lisoft.lsml.view.mechlab.equipment.ModuleSeletionList;
 
@@ -53,14 +55,20 @@ public class ModuleTransferHandler extends TransferHandler {
         }
         else if (aComponent instanceof PilotModuleList) {
             PilotModuleList pml = (PilotModuleList) aComponent;
-            module = pml.takeCurrent();
-            if (module == null)
+            try {
+                module = pml.takeCurrent();
+            }
+            catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Couldn't remove module.\nError: " + e.getMessage());
                 return null;
+            }
         }
         else {
             return null;
         }
 
+        if (module == null)
+            return null;
         return new StringSelection(Integer.toString(module.getMwoId()));
     }
 
@@ -99,7 +107,7 @@ public class ModuleTransferHandler extends TransferHandler {
         try {
             PilotModule module = parseModule(aInfo);
             PilotModuleList pml = (PilotModuleList) aInfo.getComponent();
-            return pml.getLoadout().canAddModule(module);
+            return pml.getLoadout().canAddModule(module) == EquipResult.SUCCESS;
         }
         catch (Exception exception) {
             return false;
