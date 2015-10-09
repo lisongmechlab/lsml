@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.Location;
@@ -37,7 +37,6 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.parsing.export.LoadoutCoderV2;
 import org.lisoft.lsml.util.Base64;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.CommandStack;
 
 /**
@@ -73,7 +72,7 @@ public class LoadoutCoderV2Test {
 
                 // Name is not encoded
                 CommandStack stack = new CommandStack(0);
-                stack.pushAndApply(new CmdRename(decoded, null, reference.getName()));
+                stack.pushAndApply(new CmdSetName(decoded, null, reference.getName()));
 
                 // Verify
                 assertEquals(reference, decoded);
@@ -85,10 +84,10 @@ public class LoadoutCoderV2Test {
      * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
      * sinks.
      * 
-     * @throws DecodingException
+     * @throws Exception
      */
     @Test
-    public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
+    public void testDecodeHeatsinksBeforeEngine() throws Exception {
         Base64 base64 = new Base64();
 
         LoadoutStandard l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ=="

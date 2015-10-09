@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view.mechlab;
+package org.lisoft.lsml.view.models;
 
 import java.awt.Toolkit;
 
@@ -36,16 +36,16 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 
-public class ArmorSpinner extends SpinnerNumberModel implements Message.Recipient {
+public class ArmorSpinnerModel extends SpinnerNumberModel implements Message.Recipient {
     private static final long             serialVersionUID = 2130487332299251881L;
     private final ConfiguredComponentBase part;
     private final ArmorSide               side;
     private final JCheckBox               symmetric;
-    private final CommandStack          opStack;
+    private final CommandStack            cmdStack;
     private final MessageXBar             xBar;
     private final LoadoutBase<?>          loadout;
 
-    public ArmorSpinner(LoadoutBase<?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide,
+    public ArmorSpinnerModel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide,
             MessageXBar anXBar, JCheckBox aSymmetric, CommandStack anOperationStack) {
         part = aPart;
         loadout = aLoadout;
@@ -53,7 +53,7 @@ public class ArmorSpinner extends SpinnerNumberModel implements Message.Recipien
         symmetric = aSymmetric;
         xBar = anXBar;
         xBar.attach(this);
-        opStack = anOperationStack;
+        cmdStack = anOperationStack;
     }
 
     @Override
@@ -87,14 +87,13 @@ public class ArmorSpinner extends SpinnerNumberModel implements Message.Recipien
             final int armor = ((Integer) arg0).intValue();
 
             if (setSymmetric) {
-                opStack.pushAndApply(new CmdSetArmorSymmetric(xBar, loadout, part, side, armor, true));
+                cmdStack.pushAndApply(new CmdSetArmorSymmetric(xBar, loadout, part, side, armor, true));
             }
             else {
-                opStack.pushAndApply(new CmdSetArmor(xBar, loadout, part, side, armor, true));
+                cmdStack.pushAndApply(new CmdSetArmor(xBar, loadout, part, side, armor, true));
             }
         }
-        catch (IllegalArgumentException exception) {
-            // TODO: Handle failed case better!
+        catch (Exception exception) {
             Toolkit.getDefaultToolkit().beep();
         }
         finally {

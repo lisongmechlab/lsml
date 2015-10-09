@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
 import org.lisoft.lsml.parsing.export.SmurfyXML;
@@ -19,7 +19,7 @@ public class SmurfyXMLTest {
     private void referenceTest(String aLSMLLink, String aResource) throws Exception {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutBase<?> loadout = coder.parse(aLSMLLink);
-        (new CommandStack(0)).pushAndApply(new CmdRename(loadout, null, "stock"));
+        (new CommandStack(0)).pushAndApply(new CmdSetName(loadout, null, "stock"));
 
         String xml = SmurfyXML.toXml(loadout);
         String lines[] = xml.split("\n");

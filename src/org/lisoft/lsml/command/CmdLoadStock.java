@@ -75,7 +75,7 @@ public class CmdLoadStock extends CmdLoadoutBase {
                     omnipod = OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(), location);
                 }
 
-                addOp(new CmdChangeOmniPod(messageBuffer, loadoutOmniMech, loadoutOmniMech.getComponent(location),
+                addOp(new CmdSetOmniPod(messageBuffer, loadoutOmniMech, loadoutOmniMech.getComponent(location),
                         omnipod));
             }
 

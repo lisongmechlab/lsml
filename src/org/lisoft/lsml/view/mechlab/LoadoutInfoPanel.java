@@ -524,7 +524,7 @@ public class LoadoutInfoPanel extends JPanel implements Message.Recipient {
             offence.add(weapons, BorderLayout.CENTER);
             add(offence);
         }
-        
+
         environemnts.setSelectedIndex(0);
         updateDisplay();
     }
@@ -620,7 +620,7 @@ public class LoadoutInfoPanel extends JPanel implements Message.Recipient {
             }
 
             @Override
-            public void changeValue(boolean aEnabled) {
+            public void changeValue(boolean aEnabled) throws Exception {
                 StructureUpgrade structure = aEnabled ? structureEs : structureStandards;
                 cmdStack.pushAndApply(new CmdSetStructureType(xBar, (LoadoutStandard) loadout, structure));
             }
@@ -641,7 +641,7 @@ public class LoadoutInfoPanel extends JPanel implements Message.Recipient {
             }
 
             @Override
-            public void changeValue(boolean aEnabled) {
+            public void changeValue(boolean aEnabled) throws Exception {
                 ArmorUpgrade armor = aEnabled ? armorFF : armorStandard;
                 cmdStack.pushAndApply(new CmdSetArmorType(xBar, (LoadoutStandard) loadout, armor));
             }
@@ -659,7 +659,7 @@ public class LoadoutInfoPanel extends JPanel implements Message.Recipient {
             }
 
             @Override
-            public void changeValue(boolean aEnabled) {
+            public void changeValue(boolean aEnabled) throws Exception {
                 HeatSinkUpgrade heatSinks = aEnabled ? heatSinkDouble : heatSinkStandard;
                 cmdStack.pushAndApply(new CmdSetHeatSinkType(xBar, (LoadoutStandard) loadout, heatSinks));
             }
@@ -675,7 +675,7 @@ public class LoadoutInfoPanel extends JPanel implements Message.Recipient {
             }
 
             @Override
-            public void changeValue(boolean aEnabled) {
+            public void changeValue(boolean aEnabled) throws Exception {
                 GuidanceUpgrade guidance = aEnabled ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE;
                 cmdStack.pushAndApply(new CmdSetGuidanceType(xBar, loadout, guidance));
             }

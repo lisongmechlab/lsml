@@ -66,19 +66,19 @@ public class DeleteLoadoutAction extends AbstractAction implements Message.Recip
         if (garage.getMechs().contains(loadout)) {
             Component source = loadoutFrame == null ? ProgramInit.lsml() : loadoutFrame;
 
-            int result = JOptionPane.showConfirmDialog(source, "Are you certain you want to delete the loadout: "
-                    + loadout.getName() + "?", "Confirm operation", JOptionPane.YES_NO_OPTION);
+            int result = JOptionPane.showConfirmDialog(source,
+                    "Are you certain you want to delete the loadout: " + loadout.getName() + "?", "Confirm operation",
+                    JOptionPane.YES_NO_OPTION);
             if (JOptionPane.YES_OPTION == result) {
                 try {
                     ProgramInit.lsml().garageOperationStack.pushAndApply(new CmdRemoveFromGarage(garage, loadout));
                 }
-                catch (RuntimeException e) {
-                    JOptionPane
-                            .showMessageDialog(
-                                    source,
-                                    "An error occured!\n"
-                                            + "Please report an issue at https://github.com/EmilyBjoerk/lsml/issues and copy paste the following this message:\n"
-                                            + e.getMessage() + "\nStack trace:\n" + e.getStackTrace());
+                catch (Exception e) {
+                    // TODO replace with generic report bug dialog.
+                    JOptionPane.showMessageDialog(source,
+                            "An error occured!\n"
+                                    + "Please report an issue at https://github.com/EmilyBjoerk/lsml/issues and copy paste the following this message:\n"
+                                    + e.getMessage() + "\nStack trace:\n" + e.getStackTrace());
                 }
             }
         }

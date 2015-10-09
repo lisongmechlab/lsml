@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
@@ -88,12 +89,10 @@ public class CmdSetArmorType extends CmdUpgradeBase {
             ArmorUpgrade old = upgrades.getArmor();
             upgrades.setArmor(aValue);
 
-            try {
-                verifyLoadoutInvariant(loadout);
-            }
-            catch (Exception e) {
+            EquipResult result = verifyLoadoutInvariant(loadout);
+            if(result != EquipResult.SUCCESS){
                 upgrades.setArmor(old);
-                throw new IllegalArgumentException("Couldn't change armour type: ", e);
+                throw new IllegalArgumentException("Couldn't change armour type: " + result.toString());
             }
 
             if (messageDelivery != null)

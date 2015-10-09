@@ -22,10 +22,10 @@ package org.lisoft.lsml.parsing.datacache;
 import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetArmorType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
@@ -43,7 +43,6 @@ import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -130,7 +129,7 @@ public class LoadoutConverter implements Converter {
         ChassisBase chassis = ChassisDB.lookup(aReader.getAttribute("chassis"));
         LoadoutBase<?> loadoutBase = DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdRename(loadoutBase, null, name));
+        builder.push(new CmdSetName(loadoutBase, null, name));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
@@ -203,7 +202,7 @@ public class LoadoutConverter implements Converter {
 
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdRename(loadout, null, name));
+        builder.push(new CmdSetName(loadout, null, name));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
@@ -213,12 +212,6 @@ public class LoadoutConverter implements Converter {
                 builder.push(new CmdSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
                 builder.push(new CmdSetStructureType(null, loadout, upgrades.getStructure()));
                 builder.push(new CmdSetArmorType(null, loadout, upgrades.getArmor()));
-
-                // We cheat here to preserve backwards compatibility with really old V1 garages.
-                // Just make sure that the guidance type is set so that fixes for artemis changes will be applied in
-                // v1 parser in ConfiguredComponentConverter.
-                (new CommandStack(0)).pushAndApply(new CmdSetGuidanceType(null, loadout, upgrades.getGuidance()));
-
             }
             else if ("efficiencies".equals(aReader.getNodeName())) {
                 Efficiencies eff = (Efficiencies) aContext.convertAnother(loadout, Efficiencies.class);

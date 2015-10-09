@@ -96,9 +96,11 @@ public class CmdAddItemTest {
 
     /**
      * If an item can't be added, an exception shall be thrown when the operation is applied.
+     * 
+     * @throws Exception
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testCantAddItem() {
+    public void testCantAddItem() throws Exception {
         CmdAddItem cut = null;
         try {
             Item item = ItemDB.lookup("LRM 20");
@@ -116,9 +118,11 @@ public class CmdAddItemTest {
 
     /**
      * C.A.S.E. together with an XL engine should generate a warning notice
+     * 
+     * @throws Exception
      */
     @Test
-    public void testAddItem_XLCase() {
+    public void testAddItem_XLCase() throws Exception {
         Engine engine = Mockito.mock(Engine.class);
         Mockito.when(engine.getType()).thenReturn(EngineType.XL);
         Mockito.when(loadout.getEngine()).thenReturn(engine);

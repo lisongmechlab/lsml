@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisDB;
@@ -39,8 +39,8 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.parsing.export.LoadoutCoderV3;
 import org.lisoft.lsml.util.Base64;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.DecodingException;
 
 /**
  * Test suite for {@link LoadoutCoderV3}.
@@ -71,7 +71,7 @@ public class LoadoutCoderV3Test {
             LoadoutBase<?> decoded = cut.decode(result);
 
             // Name is not encoded
-            stack.pushAndApply(new CmdRename(decoded, null, loadout.getName()));
+            stack.pushAndApply(new CmdSetName(decoded, null, loadout.getName()));
 
             // Verify
             assertEquals(loadout, decoded);
@@ -105,7 +105,7 @@ public class LoadoutCoderV3Test {
                 LoadoutBase<?> decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded
-                stack.pushAndApply(new CmdRename(decoded, null, reference.getName()));
+                stack.pushAndApply(new CmdSetName(decoded, null, reference.getName()));
 
                 // Verify
                 assertEquals(reference, decoded);

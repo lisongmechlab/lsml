@@ -83,7 +83,7 @@ public class CmdSetArmorSymmetricTest {
     }
 
     @Test
-    public void testApply() {
+    public void testApply() throws Exception {
         LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
         ConfiguredComponentBase right = loadout.getComponent(Location.RightTorso);
@@ -104,7 +104,7 @@ public class CmdSetArmorSymmetricTest {
     }
 
     @Test
-    public void testApply_OnlyOneSideChanges() {
+    public void testApply_OnlyOneSideChanges() throws Exception {
         for (Location setSide : new Location[] { Location.LeftTorso, Location.RightTorso }) {
             LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty( ChassisDB.lookup("AS7-D-DC"));
             ConfiguredComponentBase left = loadout.getComponent(Location.LeftTorso);
@@ -128,7 +128,7 @@ public class CmdSetArmorSymmetricTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testApply_NotSymmetric() {
+    public void testApply_NotSymmetric() throws Exception {
         LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         ConfiguredComponentBase left = loadout.getComponent(Location.Head);
         ArmorSide side = ArmorSide.BACK;

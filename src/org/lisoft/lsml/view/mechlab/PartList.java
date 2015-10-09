@@ -34,6 +34,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DropMode;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -294,7 +295,12 @@ public class PartList extends JList<Item> {
             @Override
             public void keyPressed(KeyEvent aArg0) {
                 if (aArg0.getKeyCode() == KeyEvent.VK_DELETE) {
-                    removeSelected(aXBar);
+                    try {
+                        removeSelected(aXBar);
+                    }
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
                 }
             }
         });
@@ -303,13 +309,18 @@ public class PartList extends JList<Item> {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
-                    removeSelected(aXBar);
+                    try {
+                        removeSelected(aXBar);
+                    }
+                    catch (Exception e1) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
                 }
             }
         });
     }
 
-    public Item removeSelected(MessageXBar aXBar) {
+    public Item removeSelected(MessageXBar aXBar) throws Exception {
         RenderState state = componentRenderer.getRenderState(getSelectedIndex());
         Item item = state.getItem();
         if (component.canRemoveItem(state.getItem())) {
@@ -327,7 +338,7 @@ public class PartList extends JList<Item> {
         return loadout;
     }
 
-    public void putElement(Item aItem, int aDropIndex, boolean aShouldReplace) {
+    public void putElement(Item aItem, int aDropIndex, boolean aShouldReplace) throws Exception {
         RenderState state = componentRenderer.getRenderState(aDropIndex);
 
         switch (state.getRenderType()) {

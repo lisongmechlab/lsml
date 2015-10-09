@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
@@ -58,7 +59,13 @@ public class ItemTransferHandler extends TransferHandler {
         if (aComponent instanceof PartList) {
             PartList partList = (PartList) aComponent;
 
-            Item sourceItems = partList.removeSelected(ProgramInit.lsml().xBar);
+            Item sourceItems = null;
+            try {
+                sourceItems = partList.removeSelected(ProgramInit.lsml().xBar);
+            }
+            catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
             if (sourceItems == null)
                 return null;
 

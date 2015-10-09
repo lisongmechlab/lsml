@@ -47,11 +47,13 @@ public class CommandStackTest {
     }
 
     /**
-     * {@link CommandStack#pushAndApply(Command)} shall push an {@link Command} and call it's
-     * {@link Command#apply()} function.
+     * {@link CommandStack#pushAndApply(Command)} shall push an {@link Command} and call it's {@link Command#apply()}
+     * function.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testPushAndApply() {
+    public final void testPushAndApply() throws Exception {
         Command op = Mockito.mock(Command.class);
 
         cut.pushAndApply(op);
@@ -62,9 +64,11 @@ public class CommandStackTest {
     /**
      * {@link CommandStack#nextUndo()} shall return the {@link Command} that would be undone if
      * {@link CommandStack#undo()} was called now.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testNextUndo() {
+    public final void testNextUndo() throws Exception {
         Command op = Mockito.mock(Command.class);
         cut.pushAndApply(op);
 
@@ -73,9 +77,11 @@ public class CommandStackTest {
 
     /**
      * {@link CommandStack#nextUndo()} shall return <code>null</code> if there is nothing to undo.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testNextUndo_empty() {
+    public final void testNextUndo_empty() throws Exception {
         assertNull(cut.nextUndo());
 
         Command op = Mockito.mock(Command.class);
@@ -88,9 +94,11 @@ public class CommandStackTest {
     /**
      * {@link CommandStack#nextRedo()} shall return the {@link Command} that would be done if
      * {@link CommandStack#redo()} was called now.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testNextRedo() {
+    public final void testNextRedo() throws Exception {
         Command op = Mockito.mock(Command.class);
         cut.pushAndApply(op);
         cut.undo();
@@ -100,9 +108,11 @@ public class CommandStackTest {
 
     /**
      * {@link CommandStack#nextRedo()} shall return null if there is nothing to redo.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testNextRedo_empty() {
+    public final void testNextRedo_empty() throws Exception {
         assertNull(cut.nextRedo());
 
         Command op = Mockito.mock(Command.class);
@@ -114,7 +124,7 @@ public class CommandStackTest {
     }
 
     @Test
-    public final void testUndo() {
+    public final void testUndo() throws Exception {
         Command op = Mockito.mock(Command.class);
         InOrder inOrder = Mockito.inOrder(op);
 
@@ -131,12 +141,12 @@ public class CommandStackTest {
     }
 
     @Test
-    public final void testRedo_emptystack() {
+    public final void testRedo_emptystack() throws Exception {
         cut.redo(); // No-op
     }
 
     @Test
-    public final void testRedo() {
+    public final void testRedo() throws Exception {
         Command op = Mockito.mock(Command.class);
         InOrder inOrder = Mockito.inOrder(op);
 
@@ -150,7 +160,7 @@ public class CommandStackTest {
     }
 
     @Test
-    public final void testRedoAfterApplyAfterUndo() {
+    public final void testRedoAfterApplyAfterUndo() throws Exception {
         Command a0 = Mockito.mock(Command.class);
         Command a1 = Mockito.mock(Command.class);
         Command a2 = Mockito.mock(Command.class);
@@ -175,7 +185,7 @@ public class CommandStackTest {
     }
 
     @Test
-    public final void testMaxDepth() {
+    public final void testMaxDepth() throws Exception {
         // Setup
         cut = new CommandStack(2);
         Command a0 = Mockito.mock(Command.class);
@@ -202,7 +212,7 @@ public class CommandStackTest {
     }
 
     @Test
-    public final void testApplyAfterUndo() {
+    public final void testApplyAfterUndo() throws Exception {
         // Setup
         Command a0 = Mockito.mock(Command.class);
         Command a1 = Mockito.mock(Command.class);
@@ -227,7 +237,7 @@ public class CommandStackTest {
     }
 
     @Test
-    public final void testApplyAfterUndoCapped() {
+    public final void testApplyAfterUndoCapped() throws Exception {
         // Setup
         cut = new CommandStack(2);
         Command a0 = Mockito.mock(Command.class);
@@ -266,7 +276,7 @@ public class CommandStackTest {
     }
 
     @Test
-    public final void testApplyAfterUndoAll() {
+    public final void testApplyAfterUndoAll() throws Exception {
         // Setup
         Command a0 = Mockito.mock(Command.class);
         Command a1 = Mockito.mock(Command.class);

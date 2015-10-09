@@ -243,13 +243,13 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     /**
      * @param aModule
      *            The module to test if it can be added to this loadout.
-     * @return <code>true</code> if the given module can be added to this loadout.
+     * @return A {@link EquipResult}.
      */
-    public boolean canAddModule(PilotModule aModule) {
+    public EquipResult canAddModule(PilotModule aModule) {
         if (getModules().contains(aModule))
-            return false;
+            return EquipResult.make(Type.ModuleAlreadyEquipped);
         if (!aModule.getFaction().isCompatible(getChassis().getFaction()))
-            return false;
+            return EquipResult.make(Type.NotSupported);
 
         final boolean canUseHybridSlot = aModule.getSlot() == ModuleSlot.WEAPON || aModule.getSlot() == ModuleSlot.MECH;
 
@@ -258,10 +258,10 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
         if (getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot())
                 && (!canUseHybridSlot || !isHybridSlotFree))
-            return false;
+            return EquipResult.make(Type.NotEnoughSlots);
 
         // TODO: Apply any additional limitations on modules
-        return true;
+        return EquipResult.SUCCESS;
     }
 
     /**

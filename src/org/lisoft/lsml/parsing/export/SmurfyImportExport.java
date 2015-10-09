@@ -38,13 +38,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.model.NotificationMessage;
 import org.lisoft.lsml.model.NotificationMessage.Severity;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.LSML;
 
@@ -154,10 +153,10 @@ public class SmurfyImportExport {
                     String lsml = lsmlMatcher.group(1);
                     try {
                         LoadoutBase<?> loadout = coder.parse(lsml);
-                        stack.pushAndApply(new CmdRename(loadout, null, name));
+                        stack.pushAndApply(new CmdSetName(loadout, null, name));
                         ans.add(loadout);
                     }
-                    catch (DecodingException | IllegalArgumentException e) {
+                    catch (Exception e) {
                         aXBar.post(new NotificationMessage(Severity.ERROR, null, "Unable to decode \"" + name
                                 + "\", loadout is not available for import.\n\nReason: " + e.getMessage()));
                     }

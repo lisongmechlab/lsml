@@ -66,22 +66,21 @@ public class ImportFromSmurfyAction extends AbstractAction {
     private final Window             parent;
     private final Base64LoadoutCoder decoder;
 
-    private final DefaultTableModel  model            = new DefaultTableModel(null,
-                                                              new String[] { "Import", "Loadout" }) {
-                                                          private static final long serialVersionUID = 1L;
+    private final DefaultTableModel model = new DefaultTableModel(null, new String[] { "Import", "Loadout" }) {
+        private static final long serialVersionUID = 1L;
 
-                                                          @Override
-                                                          public boolean isCellEditable(int rowIndex, int columnIndex) {
-                                                              return columnIndex == 0;
-                                                          }
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return columnIndex == 0;
+        }
 
-                                                          @Override
-                                                          public Class<?> getColumnClass(int c) {
-                                                              if (c == 0)
-                                                                  return Boolean.class;
-                                                              return super.getColumnClass(c);
-                                                          }
-                                                      };
+        @Override
+        public Class<?> getColumnClass(int c) {
+            if (c == 0)
+                return Boolean.class;
+            return super.getColumnClass(c);
+        }
+    };
 
     private void clearModel() {
         while (model.getRowCount() > 0) {
@@ -109,8 +108,8 @@ public class ImportFromSmurfyAction extends AbstractAction {
         final JPanel topPanel = new JPanel(new BorderLayout());
 
         final JLabel apiKeyLabel = new JLabel("API-Key: ");
-        final JTextField textApiKey = new JTextField(preferences.shouldRememberAPIKey() ? preferences.getApiKey()
-                : EMPTY_API_KEY);
+        final JTextField textApiKey = new JTextField(
+                preferences.shouldRememberAPIKey() ? preferences.getApiKey() : EMPTY_API_KEY);
         final JPanel apiPanel = new JPanel(new BorderLayout());
         final JCheckBox rememberKey = new JCheckBox("Remember API key", preferences.shouldRememberAPIKey());
         apiPanel.add(apiKeyLabel, BorderLayout.WEST);
@@ -238,8 +237,15 @@ public class ImportFromSmurfyAction extends AbstractAction {
             public void actionPerformed(ActionEvent aArg0) {
                 for (int i = 0; i < model.getRowCount(); ++i) {
                     if ((boolean) model.getValueAt(i, 0)) {
-                        ProgramInit.lsml().garageOperationStack.pushAndApply(new CmdAddToGarage(ProgramInit.lsml()
-                                .getGarage(), (LoadoutBase<?>) model.getValueAt(i, 1)));
+                        try {
+                            ProgramInit.lsml().garageOperationStack.pushAndApply(new CmdAddToGarage(
+                                    ProgramInit.lsml().getGarage(), (LoadoutBase<?>) model.getValueAt(i, 1)));
+                        }
+                        catch (Exception e) {
+                            // TODO Generic bug report dialogue.
+                            JOptionPane.showMessageDialog(parent,
+                                    "Unable to add 'Mech to garage.\nError: " + e.getMessage());
+                        }
                     }
                 }
                 dialog.dispose();
@@ -250,12 +256,10 @@ public class ImportFromSmurfyAction extends AbstractAction {
             @Override
             public void actionPerformed(ActionEvent aE) {
                 if (rememberKey.isSelected()) {
-                    int ans = JOptionPane
-                            .showConfirmDialog(parent,
-                                    "Your API key will be stored in plain text on your computer.\n"
-                                            + "Any one with access to your files can read it.\n\n"
-                                            + "Do you wish to continue?", "Remember API Key?",
-                                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    int ans = JOptionPane.showConfirmDialog(parent,
+                            "Your API key will be stored in plain text on your computer.\n"
+                                    + "Any one with access to your files can read it.\n\n" + "Do you wish to continue?",
+                            "Remember API Key?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                     if (ans != JOptionPane.YES_OPTION) {
                         rememberKey.setSelected(false);
                     }

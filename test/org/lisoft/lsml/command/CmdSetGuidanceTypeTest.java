@@ -38,7 +38,6 @@ import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -64,9 +63,10 @@ public class CmdSetGuidanceTypeTest {
     /**
      * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link LoadoutStandard}
      * given as argument.
+     * @throws Exception 
      */
     @Test
-    public void testApply() {
+    public void testApply() throws Exception {
         Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
         CommandStack stack = new CommandStack(0);
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
@@ -98,9 +98,10 @@ public class CmdSetGuidanceTypeTest {
 
     /**
      * Apply shall delegate to the upgrades object to change all Missile Weapons and Ammunition types.
+     * @throws Exception 
      */
     @Test
-    public void testApply_changeMissileLaunchersAndAmmo() {
+    public void testApply_changeMissileLaunchersAndAmmo() throws Exception {
         Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
         CommandStack stack = new CommandStack(0);
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
@@ -142,7 +143,7 @@ public class CmdSetGuidanceTypeTest {
     }
 
     @Test
-    public void testUndo() throws DecodingException {
+    public void testUndo() throws Exception {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutBase<?> loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         LoadoutBase<?> loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");

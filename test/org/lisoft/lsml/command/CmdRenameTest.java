@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test suite for {@link CmdRename}.
+ * Test suite for {@link CmdSetName}.
  * 
  * @author Emily Björk
  */
@@ -50,7 +50,7 @@ public class CmdRenameTest {
         LoadoutBase<?> loadout = Mockito.mock(LoadoutBase.class);
 
         // Execute
-        new CmdRename(loadout, xBar, "Test").apply();
+        new CmdSetName(loadout, xBar, "Test").apply();
 
         // Verify
         verify(loadout).rename("Test");
@@ -65,7 +65,7 @@ public class CmdRenameTest {
         LoadoutBase<?> loadout = Mockito.mock(LoadoutBase.class);
 
         // Execute
-        new CmdRename(loadout, xBar, "Test").apply();
+        new CmdSetName(loadout, xBar, "Test").apply();
 
         // Verify
         verify(loadout).rename("Test");

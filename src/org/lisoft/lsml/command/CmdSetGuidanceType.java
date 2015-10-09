@@ -22,6 +22,8 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
+import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipResult.Type;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -82,10 +84,10 @@ public class CmdSetGuidanceType extends CompositeCommand {
     }
 
     @Override
-    public void buildCommand() {
+    public void buildCommand() throws EquipResult {
         if (loadout != null) {
             if (newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree())
-                throw new IllegalArgumentException("Too few critical slots available in loadout!");
+                throw EquipResult.make(Type.NotEnoughSlots);
 
             for (ConfiguredComponentBase part : loadout.getComponents()) {
                 if (newValue.getExtraSlots(part) > part.getSlotsFree())

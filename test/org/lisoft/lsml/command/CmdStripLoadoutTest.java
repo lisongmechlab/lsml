@@ -39,7 +39,6 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageDelivery;
 import org.mockito.ArgumentCaptor;
@@ -59,9 +58,10 @@ public class CmdStripLoadoutTest {
 
     /**
      * Stripping a loadout shall remove all upgrades, items and armor.
+     * @throws Exception 
      */
     @Test
-    public void testStrip_OmniMech() {
+    public void testStrip_OmniMech() throws Exception {
         // Setup
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance
                 .produceStock(ChassisDB.lookup("TBR-PRIME"));
@@ -118,7 +118,7 @@ public class CmdStripLoadoutTest {
     }
 
     @Test
-    public void testStripMech() throws DecodingException {
+    public void testStripMech() throws Exception {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutBase<?> loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         LoadoutBase<?> loadoutOriginal = DefaultLoadoutFactory.instance.produceClone(loadout);
@@ -139,9 +139,10 @@ public class CmdStripLoadoutTest {
 
     /**
      * The strip operation shall leave armor untouched if requested.
+     * @throws Exception 
      */
     @Test
-    public void testStrip_LeaveArmor() {
+    public void testStrip_LeaveArmor() throws Exception {
         // Setup
         LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
         // Has Endo-Steel standard and lots of stuff

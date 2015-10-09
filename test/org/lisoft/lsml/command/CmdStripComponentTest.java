@@ -66,7 +66,7 @@ public class CmdStripComponentTest {
     }
 
     @Test
-    public void testStripComponent_EngineHs() {
+    public void testStripComponent_EngineHs() throws Exception {
         Item engine = ItemDB.lookup("STD ENGINE 325");
         HeatSink hs = ItemDB.SHS;
         Mockito.when(mlc.heatSinkUpgrade.getHeatSinkType()).thenReturn(hs);
@@ -99,7 +99,7 @@ public class CmdStripComponentTest {
     }
 
     @Test
-    public void testStripComponent_NoInternals() {
+    public void testStripComponent_NoInternals() throws Exception {
         Item ha = ItemDB.HA;
         Mockito.when(mlc.ct.getItemsEquipped()).thenReturn(items);
         items.add(ha);
@@ -121,7 +121,7 @@ public class CmdStripComponentTest {
     }
 
     @Test
-    public void testStripComponent_ArmorResetBothSides() {
+    public void testStripComponent_ArmorResetBothSides() throws Exception {
         CmdStripComponent cut = new CmdStripComponent(messages, mlc.loadout, mlc.rt);
         CommandStack os = new CommandStack(2);
         os.pushAndApply(cut);
@@ -143,7 +143,7 @@ public class CmdStripComponentTest {
     }
 
     @Test
-    public void testStripComponent_ArmorResetOnlySide() {
+    public void testStripComponent_ArmorResetOnlySide() throws Exception {
         CmdStripComponent cut = new CmdStripComponent(messages, mlc.loadout, mlc.la);
         CommandStack os = new CommandStack(2);
         os.pushAndApply(cut);
@@ -163,7 +163,7 @@ public class CmdStripComponentTest {
     }
 
     @Test
-    public void testStripComponent_ItemsRemoved() {
+    public void testStripComponent_ItemsRemoved() throws Exception {
         items.add(ItemDB.ECM);
 
         CmdStripComponent cut = new CmdStripComponent(messages, mlc.loadout, mlc.rt);
@@ -178,7 +178,7 @@ public class CmdStripComponentTest {
     }
 
     @Test
-    public void testStripComponent_NoMessages() {
+    public void testStripComponent_NoMessages() throws Exception {
         items.add(ItemDB.ECM);
 
         CmdStripComponent cut = new CmdStripComponent(null, mlc.loadout, mlc.rt);
@@ -191,7 +191,7 @@ public class CmdStripComponentTest {
     }
 
     @Test
-    public void testStripComponent_LeaveArmor() {
+    public void testStripComponent_LeaveArmor() throws Exception {
         items.add(ItemDB.ECM);
 
         CmdStripComponent cut = new CmdStripComponent(messages, mlc.loadout, mlc.rt, false);

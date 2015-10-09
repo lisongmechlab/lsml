@@ -79,7 +79,7 @@ public class CmdSetHeatSinkType extends CompositeCommand {
     }
 
     @Override
-    protected void apply() {
+    protected void apply() throws Exception {
         set(newValue);
         super.apply();
     }

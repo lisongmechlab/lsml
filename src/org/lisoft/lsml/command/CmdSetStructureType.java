@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
@@ -90,12 +91,10 @@ public class CmdSetStructureType extends CmdUpgradeBase {
             StructureUpgrade old = upgrades.getStructure();
             upgrades.setStructure(aValue);
 
-            try {
-                verifyLoadoutInvariant(loadout);
-            }
-            catch (Exception e) {
+            EquipResult result = verifyLoadoutInvariant(loadout);
+            if(result != EquipResult.SUCCESS){
                 upgrades.setStructure(old);
-                throw new IllegalArgumentException("Couldn't change internal structure: ", e);
+                throw new IllegalArgumentException("Couldn't change internal structure: " + result.toString());
             }
 
             if (messageDelivery != null)

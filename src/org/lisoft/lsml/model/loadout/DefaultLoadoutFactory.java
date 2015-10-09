@@ -78,7 +78,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
     }
 
     @Override
-    public LoadoutBase<?> produceStock(ChassisBase aChassis) {
+    public LoadoutBase<?> produceStock(ChassisBase aChassis) throws Exception {
         LoadoutBase<?> ans = produceEmpty(aChassis);
         stack.pushAndApply(new CmdLoadStock(aChassis, ans, null));
         return ans;

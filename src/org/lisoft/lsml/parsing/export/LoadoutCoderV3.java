@@ -40,11 +40,11 @@ import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdChangeOmniPod;
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdSetArmorType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
+import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.chassi.ArmorSide;
@@ -148,7 +148,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
                 if (isOmniMech && location != Location.CenterTorso) {
                     LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
                     OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
-                    builder.push(new CmdChangeOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
+                    builder.push(new CmdSetOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
                 }
 
                 Integer v;

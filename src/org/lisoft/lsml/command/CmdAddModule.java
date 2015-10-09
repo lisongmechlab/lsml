@@ -20,6 +20,7 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMessage;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -57,9 +58,9 @@ public class CmdAddModule extends Command {
     }
 
     @Override
-    protected void apply() {
-        if (!loadout.canAddModule(module))
-            throw new IllegalArgumentException("Can't add module to loadout!");
+    protected void apply() throws EquipResult {
+        EquipResult result = loadout.canAddModule(module);
+        result.checkFailureAndThrow();
         loadout.addModule(module);
 
         if (xBar != null) {

@@ -36,7 +36,6 @@ import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
@@ -55,7 +54,7 @@ public class CmdDistributeArmorTest {
 
     CommandStack stack = new CommandStack(0);
 
-    private LoadoutBase<?> loadLink(String aLsml) throws DecodingException {
+    private LoadoutBase<?> loadLink(String aLsml) throws Exception {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutBase<?> loadout = coder.parse(aLsml);
         for (ConfiguredComponentBase part : loadout.getComponents()) {
@@ -79,9 +78,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall succeed at placing the armor points somewhere on an empty loadout.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_Distribute() {
+    public void testArmorDistributor_Distribute() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
@@ -101,9 +101,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall always max CT if possible.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_CT_Priority() {
+    public void testArmorDistributor_CT_Priority() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C"));
@@ -118,9 +119,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall provide protection for components linking important components.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_Link_Priority() {
+    public void testArmorDistributor_Link_Priority() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C"));
@@ -141,9 +143,10 @@ public class CmdDistributeArmorTest {
     /**
      * The operator shall not barf if there is not enough free tonnage to accommodate the request. It shall allocate as
      * much as possible to fill the loadout.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_NotEnoughTonnage() {
+    public void testArmorDistributor_NotEnoughTonnage() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("LCT-3M"));
@@ -164,11 +167,10 @@ public class CmdDistributeArmorTest {
     /**
      * The operator shall not barf if there is not enough free tonnage to accommodate the request. It shall allocate as
      * much as possible to fill the loadout.
-     * 
-     * @throws DecodingException
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_NotEnoughTonnage2() throws DecodingException {
+    public void testArmorDistributor_NotEnoughTonnage2() throws Exception {
         // Setup
         LoadoutBase<?> loadout = loadLink("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
 
@@ -183,9 +185,10 @@ public class CmdDistributeArmorTest {
     /**
      * If the budget given is larger than can be assigned due to manually set parts, the operator shall assign max armor
      * to the remaining parts.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_RespectManual_TooBigBudget() {
+    public void testArmorDistributor_RespectManual_TooBigBudget() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
@@ -206,9 +209,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall not barf if the manually set armors take up more than the available budget.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_RespectManual_NegativeBudget() {
+    public void testArmorDistributor_RespectManual_NegativeBudget() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
@@ -231,9 +235,10 @@ public class CmdDistributeArmorTest {
     /**
      * The operator shall take already existing armor amounts into account when deciding on how much armor to
      * distribute.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_RespectManual_CorrectTotal() {
+    public void testArmorDistributor_RespectManual_CorrectTotal() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
@@ -258,9 +263,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall not add armor to manually assigned locations.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_RespectManual_DoNotAdd() {
+    public void testArmorDistributor_RespectManual_DoNotAdd() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
@@ -285,9 +291,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall not remove armor from manually assigned locations.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_RespectManual_DoNotRemove() {
+    public void testArmorDistributor_RespectManual_DoNotRemove() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
@@ -312,9 +319,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall respect the front-back ratio.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_FrontBackRatio() {
+    public void testArmorDistributor_FrontBackRatio() throws Exception {
         // Setup
         final double frontBackRatio = 5.0;
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
@@ -340,9 +348,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * Values that are even half tons shall not be rounded down.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_EvenHalfNoRoundDown() {
+    public void testArmorDistributor_EvenHalfNoRoundDown() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
@@ -360,9 +369,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * Values that are not even half tons shall be rounded down.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_RoundDown() {
+    public void testArmorDistributor_RoundDown() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
@@ -381,11 +391,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operation shall round down to the closest half ton, even if quarter ton items are present.
-     * 
-     * @throws DecodingException
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_RoundDownQuarterTons() throws DecodingException {
+    public void testArmorDistributor_RoundDownQuarterTons() throws Exception {
         // Setup
         LoadoutBase<?> loadout = loadLink("lsml://rgC0CCwECQc7BSwECAAP6zHaJmuzrtq69oNmgrsUyma7Wuws");
 
@@ -400,11 +409,10 @@ public class CmdDistributeArmorTest {
     /**
      * The operator shall not barf if there is not enough free tonnage to accommodate the request. It shall allocate as
      * much as possible to fill the loadout.
-     * 
-     * @throws DecodingException
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_RoundDown2() throws DecodingException {
+    public void testArmorDistributor_RoundDown2() throws Exception {
         // Setup
         LoadoutBase<?> loadout = loadLink("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
 
@@ -418,11 +426,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall not touch a manually set torso even if the attached arm contains items.
-     * 
-     * @throws DecodingException
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_LeaveManualTorsoAloneWhenAutomaticArm() throws DecodingException {
+    public void testArmorDistributor_LeaveManualTorsoAloneWhenAutomaticArm() throws Exception {
         // Setup
         LoadoutBase<?> loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
 
@@ -445,11 +452,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall do nothing if the requested amount of armor is less than manually set amount.
-     * 
-     * @throws DecodingException
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_RequestSmallerThanManuallySet() throws DecodingException {
+    public void testArmorDistributor_RequestSmallerThanManuallySet() throws Exception {
         // Setup
         LoadoutBase<?> loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
 
@@ -472,9 +478,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * Old armor values on automatically managed parts should be cleared
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_ClearOld() {
+    public void testArmorDistributor_ClearOld() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("CPLT-A1")); // 65 tons, 6.5
@@ -496,9 +503,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * Shield arms should get lower priority.
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_ShieldArm() {
+    public void testArmorDistributor_ShieldArm() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("BNC-3S")); // 95 tons, 9.5
@@ -519,9 +527,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operation shall succeed even if there is already max armor on the mech. (More on front parts than rear)
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_AlreadyMaxArmor_FrontRear() {
+    public void testArmorDistributor_AlreadyMaxArmor_FrontRear() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
@@ -540,9 +549,10 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operation shall succeed even if there is already max armor on the mech. (More on rear parts than front)
+     * @throws Exception 
      */
     @Test
-    public void testArmorDistributor_AlreadyMaxArmor_RearFront() {
+    public void testArmorDistributor_AlreadyMaxArmor_RearFront() throws Exception {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9

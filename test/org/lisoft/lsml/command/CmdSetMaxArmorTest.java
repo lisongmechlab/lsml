@@ -83,7 +83,7 @@ public class CmdSetMaxArmorTest {
     }
 
     @Test
-    public void testApply() {
+    public void testApply() throws Exception {
         final int tolerance = 1;
         final double frontBackRatio = 3.0 / 2.0;
         final boolean manual = true;

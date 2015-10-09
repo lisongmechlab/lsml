@@ -37,7 +37,6 @@ import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
-import org.lisoft.lsml.util.DecodingException;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -122,7 +121,7 @@ public class CmdSetHeatSinkTypeTest {
     }
 
     @Test
-    public void testIssue288() throws DecodingException {
+    public void testIssue288() throws Exception {
         String lsml = "lsml://rRoAkUBDDVASZBRDDVAGvqmbPkyZMmTJkxmZiZMmTJkyZMJkxgjXEyZMVZOTTAI=";
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
@@ -136,7 +135,7 @@ public class CmdSetHeatSinkTypeTest {
     }
 
     @Test
-    public void testIssue288_test2() throws DecodingException {
+    public void testIssue288_test2() throws Exception {
         String lsml = "lsml://rQAAFwAAAAAAAAAAAAAAQapmxMmTJkwmTJkwFvpkyZMAmTJh";
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
@@ -150,7 +149,7 @@ public class CmdSetHeatSinkTypeTest {
     }
 
     @Test
-    public void testDHSBug1() throws DecodingException {
+    public void testDHSBug1() throws Exception {
         String lsml = "lsml://rQAAawgMBA4ODAQMBA4IQapmzq6gTJgt1+H0kJkx1dSMFA==";
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
@@ -164,7 +163,7 @@ public class CmdSetHeatSinkTypeTest {
     }
 
     @Test
-    public void testSwapSHS4DHS_GlobalLimit() {
+    public void testSwapSHS4DHS_GlobalLimit() throws Exception {
         // Setup
         items.add(shs);
         items.add(shs);
@@ -194,7 +193,7 @@ public class CmdSetHeatSinkTypeTest {
     }
 
     @Test
-    public void testSwapSHS4DHS_InEngine() {
+    public void testSwapSHS4DHS_InEngine() throws Exception {
         // Setup
         items.add(shs);
         items.add(shs);
@@ -224,7 +223,7 @@ public class CmdSetHeatSinkTypeTest {
     }
 
     @Test
-    public void testSwapSHS4DHS_NotInEngine() {
+    public void testSwapSHS4DHS_NotInEngine() throws Exception {
         // Setup
         items.add(shs);
         items.add(shs);
@@ -254,7 +253,7 @@ public class CmdSetHeatSinkTypeTest {
     }
 
     @Test
-    public void testSwapSHS4DHS_NothingRemoved() {
+    public void testSwapSHS4DHS_NothingRemoved() throws Exception {
         // Setup
         newType = dhs;
         oldType = shs;

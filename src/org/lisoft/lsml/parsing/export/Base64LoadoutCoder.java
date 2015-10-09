@@ -57,10 +57,9 @@ public class Base64LoadoutCoder {
      * @param aUrl
      *            The string to parse.
      * @return A new {@link LoadoutStandard} object.
-     * @throws DecodingException
-     *             Thrown if decoding of the string failed.
+     * @throws Exception
      */
-    public LoadoutBase<?> parse(String aUrl) throws DecodingException {
+    public LoadoutBase<?> parse(String aUrl) throws Exception {
         String url = aUrl.trim();
         if (url.toLowerCase().startsWith(LSML_PROTOCOL)) {
             url = url.substring(LSML_PROTOCOL.length());

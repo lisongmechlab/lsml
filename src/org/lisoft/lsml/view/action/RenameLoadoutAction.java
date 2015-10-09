@@ -26,7 +26,7 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -38,7 +38,7 @@ public class RenameLoadoutAction extends AbstractAction {
     private final LoadoutFrame   loadoutFrame;
     private final LoadoutBase<?> loadout;
     private final MessageXBar    xBar;
-    private final CommandStack stack;
+    private final CommandStack   stack;
 
     public RenameLoadoutAction(LoadoutBase<?> aLoadout, MessageXBar aXBar, CommandStack aStack) {
         super("Rename loadout...");
@@ -68,6 +68,11 @@ public class RenameLoadoutAction extends AbstractAction {
             JOptionPane.showMessageDialog(loadoutFrame, "No name given!");
             return;
         }
-        stack.pushAndApply(new CmdRename(loadout, xBar, name));
+        try {
+            stack.pushAndApply(new CmdSetName(loadout, xBar, name));
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Change name failed.\nError: " + e.getMessage());
+        }
     }
 }

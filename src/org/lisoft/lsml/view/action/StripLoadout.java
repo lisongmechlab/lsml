@@ -22,6 +22,8 @@ package org.lisoft.lsml.view.action;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdStripLoadout;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -61,6 +63,11 @@ public class StripLoadout extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        loadoutFrame.getOpStack().pushAndApply(new CmdStripLoadout(loadout, xBar, removeArmor));
+        try {
+            loadoutFrame.getOpStack().pushAndApply(new CmdStripLoadout(loadout, xBar, removeArmor));
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null,  getValue(Action.NAME) +  " failed.\nError: " + e.getMessage());
+        }
     }
 }
