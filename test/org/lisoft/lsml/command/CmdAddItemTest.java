@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
@@ -70,7 +70,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public void testDescription() {
+    public void testDescription() throws Exception {
         Item item = ItemDB.ECM;
 
         CmdAddItem cut = new CmdAddItem(xBar, loadout, configuredComponent, item);
@@ -82,7 +82,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public void testDescription_artemis() {
+    public void testDescription_artemis() throws Exception {
         Item item = ItemDB.lookup("LRM 20");
         Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
 
@@ -99,13 +99,14 @@ public class CmdAddItemTest {
      * 
      * @throws Exception
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = EquipResult.class)
     public void testCantAddItem() throws Exception {
         CmdAddItem cut = null;
         try {
             Item item = ItemDB.lookup("LRM 20");
             Mockito.when(loadout.canEquip(item)).thenReturn(EquipResult.SUCCESS);
-            Mockito.when(configuredComponent.canEquip(item)).thenReturn(EquipResult.make(Type.NotEnoughSlots));
+            Mockito.when(configuredComponent.canEquip(item))
+                    .thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
             cut = new CmdAddItem(xBar, loadout, configuredComponent, item);
         }
         catch (Throwable t) {

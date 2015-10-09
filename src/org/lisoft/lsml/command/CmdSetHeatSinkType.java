@@ -21,6 +21,7 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -99,7 +100,7 @@ public class CmdSetHeatSinkType extends CompositeCommand {
     }
 
     @Override
-    public void buildCommand() {
+    public void buildCommand() throws EquipResult {
         if (oldValue != newValue) {
             HeatSink oldHsType = oldValue.getHeatSinkType();
             HeatSink newHsType = newValue.getHeatSinkType();

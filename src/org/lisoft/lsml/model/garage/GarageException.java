@@ -19,20 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-
 /**
  * Thrown if the attempt to add a mech to the garage failed due to it already being in the garage.
  * 
  * @author Emily Björk
  */
-public class AlreadyInGarageException extends Exception {
-    /**
-     * @param aLoadout
-     *            The loadout that the error occurred for.
-     */
-    public AlreadyInGarageException(LoadoutBase<?> aLoadout) {
-        super("The loadout \"" + aLoadout.getName() + "\" is already saved to the garage!");
+public class GarageException extends Exception {
+
+    public GarageException(String aMessage) {
+        super(aMessage);
     }
 
     private static final long serialVersionUID = 4597113571327421920L;

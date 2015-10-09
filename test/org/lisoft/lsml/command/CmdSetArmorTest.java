@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -146,58 +147,73 @@ public class CmdSetArmorTest {
 
     /**
      * Setting the armor manually after an automatic set shall produce correct results.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testApplyUndo_Auto2Manual() {
+    public final void testApplyUndo_Auto2Manual() throws Exception {
         applyUndoTestTemplate(false, true, 25, 20);
     }
 
     /**
      * Setting the armor automatically after an automatic set shall produce correct results.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testApplyUndo_Auto2Auto() {
+    public final void testApplyUndo_Auto2Auto() throws Exception {
         applyUndoTestTemplate(false, false, 25, 20);
     }
 
     /**
      * Setting the armor manually after a manual set shall produce correct results.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testApplyUndo_Manual2Manual() {
+    public final void testApplyUndo_Manual2Manual() throws Exception {
         applyUndoTestTemplate(true, true, 25, 20);
     }
 
     /**
      * Setting the armor automatically after a manual set produce correct result and override manual set flag.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testApplyUndo_Manual2Auto() {
+    public final void testApplyUndo_Manual2Auto() throws Exception {
         applyUndoTestTemplate(true, false, 25, 20);
     }
 
     /**
      * Changing just the manual flag shall produce the expected result.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testApplyUndo_OnlyManualStatus() {
+    public final void testApplyUndo_OnlyManualStatus() throws Exception {
         applyUndoTestTemplate(false, true, 20, 20);
+
     }
 
     /**
      * An armor operation shall complete even if the message crossbar is null.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testApplyUndo_NullXBarOK() {
+    public final void testApplyUndo_NullXBarOK() throws Exception {
         messageRecipint = null;
         applyUndoTestTemplate(true, true, 25, 20);
     }
 
     /**
      * An armor operation that would result in no change shall not execute.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testApplyUndo_NoChange() {
+    public final void testApplyUndo_NoChange() throws Exception {
         // Setup
         CmdSetArmor cut = makeCUT(armor, manual);
 
@@ -212,13 +228,15 @@ public class CmdSetArmorTest {
 
     /**
      * Attempting to add armor that would cause the mass limit on the loadout to be exceeded shall result in an
-     * {@link IllegalArgumentException} when the operation is applied.
+     * {@link EquipResult} when the operation is applied.
      * <p>
      * It must not be thrown on creation as there may be a composite operation that will be executed before this one
      * that reduces the armor so that this operation will succeed.
+     * 
+     * @throws Exception
      */
-    @Test(expected = IllegalArgumentException.class)
-    public final void testApply_TooHeavy() {
+    @Test(expected = EquipResult.class)
+    public final void testApply_TooHeavy() throws Exception {
         // Setup
         armorPerTon = 32 * 1.12;
         chassisMass = 10;
@@ -245,9 +263,11 @@ public class CmdSetArmorTest {
     /**
      * Apply should correctly handle numerical precision problems that arise from armor amounts that result in
      * irrational tonnages.
+     * 
+     * @throws Exception
      */
     @Test
-    public final void testApply_FloatingPointPrecision() {
+    public final void testApply_FloatingPointPrecision() throws Exception {
         // Setup
         armorPerTon = 38.4;
         chassisMass = 30;
@@ -284,10 +304,12 @@ public class CmdSetArmorTest {
 
     /**
      * Attempting to set armor that is more than the side can support (but less than free tonnage) shall fail with an
-     * {@link IllegalArgumentException}.
+     * {@link EquipResult}.
+     * 
+     * @throws Exception
      */
-    @Test(expected = IllegalArgumentException.class)
-    public final void testApply_TooMuchArmorForSide() {
+    @Test(expected = EquipResult.class)
+    public final void testApply_TooMuchArmorForSide() throws Exception {
         // Setup
         componentMaxArmorLeft = TEST_MAX_ARMOR / 2;
         itemMass = 0;
@@ -361,9 +383,11 @@ public class CmdSetArmorTest {
 
     /**
      * Undoing twice to only one apply shall throw an instance of {@link RuntimeException}.
+     * 
+     * @throws Exception
      */
     @Test(expected = RuntimeException.class)
-    public final void testUndo_DoubleUndoAfterApply() {
+    public final void testUndo_DoubleUndoAfterApply() throws Exception {
         // Setup
         CmdSetArmor cut = null;
         try {
@@ -382,7 +406,8 @@ public class CmdSetArmorTest {
         cut.undo();
     }
 
-    private final void applyUndoTestTemplate(boolean aWasManual, boolean aManualSet, int aOldArmor, int aNewArmor) {
+    private final void applyUndoTestTemplate(boolean aWasManual, boolean aManualSet, int aOldArmor, int aNewArmor)
+            throws Exception {
         // Setup
         armor = aOldArmor;
         manual = aWasManual;

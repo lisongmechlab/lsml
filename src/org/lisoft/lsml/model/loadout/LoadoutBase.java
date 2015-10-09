@@ -39,7 +39,7 @@ import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.ModifierEquipment;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
@@ -247,9 +247,9 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      */
     public EquipResult canAddModule(PilotModule aModule) {
         if (getModules().contains(aModule))
-            return EquipResult.make(Type.ModuleAlreadyEquipped);
+            return EquipResult.make(EquipResultType.ModuleAlreadyEquipped);
         if (!aModule.getFaction().isCompatible(getChassis().getFaction()))
-            return EquipResult.make(Type.NotSupported);
+            return EquipResult.make(EquipResultType.NotSupported);
 
         final boolean canUseHybridSlot = aModule.getSlot() == ModuleSlot.WEAPON || aModule.getSlot() == ModuleSlot.MECH;
 
@@ -258,7 +258,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
         if (getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot())
                 && (!canUseHybridSlot || !isHybridSlotFree))
-            return EquipResult.make(Type.NotEnoughSlots);
+            return EquipResult.make(EquipResultType.NotEnoughSlots);
 
         // TODO: Apply any additional limitations on modules
         return EquipResult.SUCCESS;
@@ -456,10 +456,10 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
             if (engine.getType() == EngineType.XL) {
                 final int sideSlots = engine.getSide().getNumCriticalSlots();
                 if (getComponent(Location.LeftTorso).getSlotsFree() < sideSlots) {
-                    return EquipResult.make(Location.LeftTorso, Type.NotEnoughSlotsForXLSide);
+                    return EquipResult.make(Location.LeftTorso, EquipResultType.NotEnoughSlotsForXLSide);
                 }
                 if (getComponent(Location.RightTorso).getSlotsFree() < sideSlots) {
-                    return EquipResult.make(Location.RightTorso, Type.NotEnoughSlotsForXLSide);
+                    return EquipResult.make(Location.RightTorso, EquipResultType.NotEnoughSlotsForXLSide);
                 }
             }
             return getComponent(Location.CenterTorso).canEquip(engine);
@@ -487,14 +487,14 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      */
     protected EquipResult canEquipGlobal(Item aItem) {
         if (!getChassis().isAllowed(aItem))
-            return EquipResult.make(Type.NotSupported);
+            return EquipResult.make(EquipResultType.NotSupported);
         if (aItem.getMass() > getFreeMass())
-            return EquipResult.make(Type.TooHeavy);
+            return EquipResult.make(EquipResultType.TooHeavy);
         if (!aItem.isCompatible(getUpgrades()))
-            return EquipResult.make(Type.IncompatibleUpgrades);
+            return EquipResult.make(EquipResultType.IncompatibleUpgrades);
 
         if (aItem instanceof JumpJet && getJumpJetsMax() - getJumpJetCount() < 1)
-            return EquipResult.make(Type.JumpJetCapacityReached);
+            return EquipResult.make(EquipResultType.JumpJetCapacityReached);
 
         // Allow engine slot heat sinks as long as there is enough free mass.
         ConfiguredComponentBase ct = getComponent(Location.CenterTorso);
@@ -507,7 +507,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         int requiredSlots = aItem.getNumCriticalSlots();
         if (aItem instanceof Engine) {
             if (getEngine() != null) {
-                return EquipResult.make(Type.EngineAlreadyEquipped);
+                return EquipResult.make(EquipResultType.EngineAlreadyEquipped);
             }
 
             Engine engine = (Engine) aItem;
@@ -517,7 +517,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         }
 
         if (requiredSlots > getNumCriticalSlotsFree())
-            return EquipResult.make(Type.NotEnoughSlots);
+            return EquipResult.make(EquipResultType.NotEnoughSlots);
         return EquipResult.SUCCESS;
     }
 

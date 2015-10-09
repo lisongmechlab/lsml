@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -43,9 +44,11 @@ public class CmdAddItem extends CmdItemBase {
      *            The {@link ConfiguredComponentBase} to add to.
      * @param aItem
      *            The {@link Item} to add.
+     * @throws EquipResult
+     *             If attempting to add an {@link Internal}.
      */
     public CmdAddItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
-            Item aItem) {
+            Item aItem) throws EquipResult {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
     }
 

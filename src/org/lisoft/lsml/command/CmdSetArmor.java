@@ -20,7 +20,9 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -58,9 +60,6 @@ public class CmdSetArmor extends Command {
      *            The amount to set the armor to.
      * @param aManualSet
      *            True if this set operation is done manually. Will disable automatic armor assignments.
-     * @throws IllegalArgumentException
-     *             Thrown if the component can't take any more armor or if the loadout doesn't have enough free tonnage
-     *             to support the armor.
      */
     public CmdSetArmor(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
             ArmorSide aArmorSide, int aArmorAmount, boolean aManualSet) {
@@ -105,7 +104,7 @@ public class CmdSetArmor extends Command {
     }
 
     @Override
-    protected void apply() {
+    protected void apply() throws EquipResult {
         storePreviousState();
         if (operationHasEffect()) {
             operationTryToLegalize();
@@ -130,10 +129,9 @@ public class CmdSetArmor extends Command {
         oldManual = component.hasManualArmor();
     }
 
-    private void operationTryToLegalize() {
+    private void operationTryToLegalize() throws EquipResult {
         if (amount > component.getArmorMax(side))
-            throw new IllegalArgumentException(
-                    "Exceeded max armor! Max allowed: " + component.getArmorMax(side) + " Was: " + amount);
+            throw EquipResult.make(EquipResultType.ExceededMaxArmor);
 
         int armorDiff = amount - oldAmount;
         int totalArmor = armorDiff + loadout.getArmor(); // This is important to prevent numerical stability issues.
@@ -160,7 +158,7 @@ public class CmdSetArmor extends Command {
                 }
             }
             if (freed < armorDiff) {
-                throw new IllegalArgumentException("Not enough tonnage to add more armor!");
+                throw EquipResult.make(EquipResultType.TooHeavy);
             }
         }
     }

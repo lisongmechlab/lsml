@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -44,12 +45,12 @@ public class CmdAddToGarageTest {
     private CommandStack opStack = new CommandStack(0);
 
     /**
-     * Adding the same {@link LoadoutStandard} twice is an error and shall throw an {@link IllegalArgumentException}.
+     * Adding the same {@link LoadoutStandard} twice is an error and shall throw an {@link GarageException}.
      * 
      * @throws Exception
      *             Shouldn't be thrown.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = GarageException.class)
     public void testAddLoadoutTwice() throws Exception {
         // Setup
         LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);

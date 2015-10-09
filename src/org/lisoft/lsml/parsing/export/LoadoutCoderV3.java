@@ -60,6 +60,7 @@ import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.PilotModuleDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
@@ -153,7 +154,12 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
                 Integer v;
                 while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
-                    builder.push(new CmdAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
+                    try {
+                        builder.push(new CmdAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
+                    }
+                    catch (EquipResult e) {
+                        // FIXME: Report error
+                    }
                 }
             }
 

@@ -38,7 +38,7 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
@@ -119,12 +119,12 @@ public abstract class ConfiguredComponentBase {
      */
     public EquipResult canEquip(Item aItem) {
         if (!getInternalComponent().isAllowed(aItem))
-            return EquipResult.make(getInternalComponent().getLocation(), Type.NotSupported);
+            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotSupported);
 
         // Check enough free hard points
         if (aItem.getHardpointType() != HardPointType.NONE
                 && getItemsOfHardpointType(aItem.getHardpointType()) >= getHardPointCount(aItem.getHardpointType())) {
-            return EquipResult.make(getInternalComponent().getLocation(), Type.NoFreeHardPoints);
+            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NoFreeHardPoints);
         }
         return EquipResult.SUCCESS;
     }
@@ -149,7 +149,7 @@ public abstract class ConfiguredComponentBase {
      * @return <code>true</code> if the item can be removed, <code>false</code> otherwise.
      */
     public boolean canRemoveItem(Item aItem) {
-        return items.contains(aItem);
+        return items.contains(aItem); // TODO convert to use EquipResult
     }
 
     /**

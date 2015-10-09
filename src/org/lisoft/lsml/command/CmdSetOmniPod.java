@@ -22,6 +22,7 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
@@ -68,7 +69,7 @@ public class CmdSetOmniPod extends CompositeCommand {
     }
 
     @Override
-    public void buildCommand() {
+    public void buildCommand() throws EquipResult {
         oldOmniPod = component.getOmniPod();
 
         // Remove all items

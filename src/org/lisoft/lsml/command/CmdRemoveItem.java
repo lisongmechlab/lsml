@@ -19,7 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -42,9 +44,11 @@ public class CmdRemoveItem extends CmdItemBase {
      *            The {@link ConfiguredComponentBase} to remove from.
      * @param aItem
      *            The {@link Item} to remove.
+     * @throws EquipResult
+     *             If attempting to add an {@link Internal}.
      */
     public CmdRemoveItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
-            Item aItem) {
+            Item aItem) throws EquipResult {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
     }
 

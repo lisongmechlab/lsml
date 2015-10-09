@@ -36,6 +36,7 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
@@ -108,7 +109,7 @@ public class CmdAutoAddItemTest {
     }
 
     // Bug #349
-    @Test(expected = IllegalArgumentException.class, timeout = 5000)
+    @Test(expected = EquipResult.class, timeout = 5000)
     public void testMoveItem_Bug_349() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
@@ -217,12 +218,12 @@ public class CmdAutoAddItemTest {
     }
 
     /**
-     * {@link CmdAutoAddItem} shall throw an {@link IllegalArgumentException} if the item cannot be auto added on any
+     * {@link CmdAutoAddItem} shall throw an {@link EquipResult} if the item cannot be auto added on any
      * permutation of the loadout.
      * 
      * @throws Exception
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = EquipResult.class)
     public void testMoveItem_NotPossible() throws Exception {
         LoadoutStandard loadout = null;
         Item gaussRifle = null;

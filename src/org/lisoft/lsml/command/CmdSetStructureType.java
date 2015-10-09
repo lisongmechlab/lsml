@@ -77,16 +77,21 @@ public class CmdSetStructureType extends CmdUpgradeBase {
     }
 
     @Override
-    protected void apply() {
+    protected void apply() throws EquipResult {
         set(newValue);
     }
 
     @Override
     protected void undo() {
-        set(oldValue);
+        try {
+            set(oldValue);
+        }
+        catch (EquipResult e) {
+            // Undo must not throw.
+        }
     }
 
-    protected void set(StructureUpgrade aValue) {
+    protected void set(StructureUpgrade aValue) throws EquipResult {
         if (aValue != upgrades.getStructure()) {
             StructureUpgrade old = upgrades.getStructure();
             upgrades.setStructure(aValue);
@@ -94,7 +99,7 @@ public class CmdSetStructureType extends CmdUpgradeBase {
             EquipResult result = verifyLoadoutInvariant(loadout);
             if(result != EquipResult.SUCCESS){
                 upgrades.setStructure(old);
-                throw new IllegalArgumentException("Couldn't change internal structure: " + result.toString());
+                throw result;
             }
 
             if (messageDelivery != null)

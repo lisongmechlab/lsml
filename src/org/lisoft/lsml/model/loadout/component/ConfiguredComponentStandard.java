@@ -29,7 +29,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
 /**
@@ -59,10 +59,10 @@ public class ConfiguredComponentStandard extends ConfiguredComponentBase {
         }
 
         if (aItem == ItemDB.CASE && getItemsEquipped().contains(ItemDB.CASE))
-            return EquipResult.make(getInternalComponent().getLocation(), Type.ComponentAlreadyHasCase);
+            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.ComponentAlreadyHasCase);
 
         if (getSlotsFree() < aItem.getNumCriticalSlots()) {
-            return EquipResult.make(getInternalComponent().getLocation(), Type.NotEnoughSlots);
+            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
         }
         return EquipResult.SUCCESS;
     }

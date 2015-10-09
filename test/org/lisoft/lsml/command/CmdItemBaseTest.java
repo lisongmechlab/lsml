@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
@@ -46,7 +47,7 @@ public class CmdItemBaseTest {
 
     class CutClass extends CmdItemBase {
         public CutClass(MessageXBar anXBar, LoadoutBase<ConfiguredComponentBase> aLoadout,
-                ConfiguredComponentBase aLoadoutPart, Item aItem) {
+                ConfiguredComponentBase aLoadoutPart, Item aItem) throws EquipResult {
             super(anXBar, aLoadout, aLoadoutPart, aItem);
         }
 
@@ -76,12 +77,12 @@ public class CmdItemBaseTest {
     private CutClass                             cut;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception  {
         cut = new CutClass(xBar, loadout, configuredComponent, null);
     }
 
     /**
-     * removeItem() shall remove the item without qeustinos.
+     * removeItem() shall remove the item without questions.
      */
     @Test
     public final void testRemoveItem() {

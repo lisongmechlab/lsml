@@ -25,6 +25,7 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.chassi.OmniPodDB;
 import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -47,7 +48,7 @@ public class CmdLoadStock extends CmdLoadoutBase {
     }
 
     @Override
-    public void buildCommand() {
+    public void buildCommand() throws EquipResult {
         StockLoadout stockLoadout = StockLoadoutDB.lookup(chassiVariation);
 
         addOp(new CmdStripLoadout(loadout, messageBuffer));

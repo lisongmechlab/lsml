@@ -212,6 +212,10 @@ public class LoadoutConverter implements Converter {
                 builder.push(new CmdSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
                 builder.push(new CmdSetStructureType(null, loadout, upgrades.getStructure()));
                 builder.push(new CmdSetArmorType(null, loadout, upgrades.getArmor()));
+                
+                // Cheat here to preserve backwards compatibility if really old V1 garages.
+                // Doing this here, triggers artemis fixes to be applied in v1 parser in ConfiguredComponentConverter
+                loadout.getUpgrades().setGuidance(upgrades.getGuidance());
             }
             else if ("efficiencies".equals(aReader.getNodeName())) {
                 Efficiencies eff = (Efficiencies) aContext.convertAnother(loadout, Efficiencies.class);

@@ -51,12 +51,13 @@ public class CommandStack {
 
         /**
          * Will 'do' this operation
-         * @throws Exception 
+         * @throws Exception If the operation failed.
          */
         protected abstract void apply() throws Exception;
 
         /**
          * Will undo this action.
+         * 
          */
         protected abstract void undo();
 

@@ -35,7 +35,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -81,7 +81,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
             ConfiguredComponentStandard cut = makeDefaultCUT();
             cut.addItem(item);
     
-            assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), cut.canEquip(item));
+            assertEquals(EquipResult.make(location, EquipResultType.NoFreeHardPoints), cut.canEquip(item));
         }
 
     /**
@@ -110,7 +110,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
             cut.addItem(heatSink);
             assertEquals(EquipResult.SUCCESS, cut.canEquip(heatSink));
             cut.addItem(heatSink);
-            assertEquals(EquipResult.make(location, Type.NotEnoughSlots), cut.canEquip(heatSink));
+            assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), cut.canEquip(heatSink));
         }
 
     @Test
@@ -131,7 +131,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
             Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
             Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
     
-            assertEquals(EquipResult.make(location, Type.NoFreeHardPoints), makeDefaultCUT().canEquip(item));
+            assertEquals(EquipResult.make(location, EquipResultType.NoFreeHardPoints), makeDefaultCUT().canEquip(item));
         }
 
     /**
@@ -156,7 +156,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
         public final void testCanEquip_TwoCASE() {
             ConfiguredComponentBase cut = makeDefaultCUT();
             cut.addItem(ItemDB.CASE);
-            assertEquals(EquipResult.make(location, Type.ComponentAlreadyHasCase), cut.canEquip(ItemDB.CASE));
+            assertEquals(EquipResult.make(location, EquipResultType.ComponentAlreadyHasCase), cut.canEquip(ItemDB.CASE));
         }
 
     @Test

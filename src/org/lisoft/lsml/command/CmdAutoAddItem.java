@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.Type;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -182,10 +182,10 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             Collections.sort(open); // Greedy search, I need *a* solution, not the best one.
         }
 
-        throw EquipResult.make(Type.NotEnoughSlots);
+        throw EquipResult.make(EquipResultType.NotEnoughSlots);
     }
 
-    private void applySolution(Node node) {
+    private void applySolution(Node node) throws EquipResult {
         List<Command> ops = new LinkedList<>();
         Node n = node;
         while (n.parent != null) {
