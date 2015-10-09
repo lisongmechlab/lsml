@@ -42,7 +42,7 @@ import org.lisoft.lsml.model.loadout.LoadoutMessage;
 import org.lisoft.lsml.model.loadout.LoadoutMessage.Type;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.model.modifiers.Efficiencies.EfficienciesMessage;
+import org.lisoft.lsml.model.modifiers.EfficienciesMessage;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;

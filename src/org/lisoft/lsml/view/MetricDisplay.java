@@ -29,7 +29,7 @@ import org.lisoft.lsml.model.metrics.JumpDistance;
 import org.lisoft.lsml.model.metrics.Metric;
 import org.lisoft.lsml.model.metrics.RangeMetric;
 import org.lisoft.lsml.model.metrics.RangeTimeMetric;
-import org.lisoft.lsml.model.modifiers.Efficiencies.EfficienciesMessage;
+import org.lisoft.lsml.model.modifiers.EfficienciesMessage;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
 

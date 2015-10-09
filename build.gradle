@@ -1,7 +1,12 @@
-apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'launch4j'
-apply plugin: 'eclipse'
+
+allprojects {
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+}
 
 /* ----------------------------------------------------------------------------
  * Build configuration
@@ -15,8 +20,6 @@ libsDirName = project.rootDir.toString() + '/lib'
 applicationName = 'Li Song Mechlab'
 archivesBaseName = 'lsml'
 mainClassName = 'lisong_mechlab.view.ProgramInit'
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets {
