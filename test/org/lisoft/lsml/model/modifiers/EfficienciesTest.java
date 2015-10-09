@@ -33,7 +33,6 @@ import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.BaseMovementProfile;
 import org.lisoft.lsml.model.chassi.MovementArchetype;
 import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.modifiers.Efficiencies.EfficienciesMessage.Type;
 import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -122,7 +121,7 @@ public class EfficienciesTest {
         for (boolean b : new boolean[] { true, false }) {
             cut.setSpeedTweak(b, xBar);
             assertEquals(b, cut.hasSpeedTweak());
-            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, false));
+            verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
             reset(xBar);
         }
 
@@ -153,7 +152,7 @@ public class EfficienciesTest {
         for (boolean b : new boolean[] { true, false }) {
             cut.setCoolRun(b, xBar);
             assertEquals(b, cut.hasCoolRun());
-            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, true));
+            verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, true));
             reset(xBar);
         }
 
@@ -187,7 +186,7 @@ public class EfficienciesTest {
         for (boolean b : new boolean[] { true, false }) {
             cut.setHeatContainment(b, xBar);
             assertEquals(b, cut.hasHeatContainment());
-            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, true));
+            verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, true));
             reset(xBar);
         }
 
@@ -221,7 +220,7 @@ public class EfficienciesTest {
         for (boolean b : new boolean[] { true, false }) {
             cut.setDoubleBasics(b, xBar);
             assertEquals(b, cut.hasDoubleBasics());
-            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, true));
+            verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, true));
             reset(xBar);
         }
 
@@ -244,7 +243,7 @@ public class EfficienciesTest {
         for (boolean b : new boolean[] { true, false }) {
             cut.setFastFire(b, xBar);
             assertEquals(b, cut.hasFastFire());
-            verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, true));
+            verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, true));
             reset(xBar);
         }
 
@@ -274,7 +273,7 @@ public class EfficienciesTest {
     public void testSetTwistX() {
         cut.setTwistX(true, xBar);
         assertTrue(cut.hasTwistX());
-        verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, false));
+        verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
     }
 
     @Test
@@ -320,7 +319,7 @@ public class EfficienciesTest {
     public void testSetTwistSpeed() {
         cut.setTwistSpeed(true, xBar);
         assertTrue(cut.hasTwistSpeed());
-        verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, false));
+        verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
     }
 
     @Test
@@ -366,7 +365,7 @@ public class EfficienciesTest {
     public void testSetArmReflex() {
         cut.setArmReflex(true, xBar);
         assertTrue(cut.hasArmReflex());
-        verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, false));
+        verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
     }
 
     @Test
@@ -414,7 +413,7 @@ public class EfficienciesTest {
     public void testSetAnchorTurn() {
         cut.setAnchorTurn(true, xBar);
         assertTrue(cut.hasAnchorTurn());
-        verify(xBar).post(new Efficiencies.EfficienciesMessage(cut, Type.Changed, false));
+        verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
     }
 
     @Test

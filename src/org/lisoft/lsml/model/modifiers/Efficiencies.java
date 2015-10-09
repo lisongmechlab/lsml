@@ -22,9 +22,7 @@ package org.lisoft.lsml.model.modifiers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.modifiers.Efficiencies.EfficienciesMessage.Type;
-import org.lisoft.lsml.util.message.Message;
+import org.lisoft.lsml.model.modifiers.EfficienciesMessage.Type;
 import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
@@ -62,41 +60,6 @@ public class Efficiencies {
     private final static Modifier TWIST_SPEED_PITCH_2X = new Modifier(ModifiersDB.TWIST_SPEED_PITCH_DESC, 0.40);
     private final static Modifier TWIST_SPEED_YAW      = new Modifier(ModifiersDB.TWIST_SPEED_YAW_DESC, 0.20);
     private final static Modifier TWIST_SPEED_YAW_2X   = new Modifier(ModifiersDB.TWIST_SPEED_YAW_DESC, 0.40);
-
-    public static class EfficienciesMessage implements Message {
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof EfficienciesMessage) {
-                EfficienciesMessage other = (EfficienciesMessage) obj;
-                return efficiencies == other.efficiencies && type == other.type;
-            }
-            return false;
-        }
-
-        public EfficienciesMessage(Efficiencies aEfficiencies, Type aType, boolean aAffectsHeat) {
-            efficiencies = aEfficiencies;
-            type = aType;
-            affectsHeat = aAffectsHeat;
-        }
-
-        enum Type {
-            Changed
-        }
-
-        private final Efficiencies efficiencies;
-        public final Type          type;
-        private final boolean      affectsHeat;
-
-        @Override
-        public boolean isForMe(LoadoutBase<?> aLoadout) {
-            return aLoadout.getEfficiencies() == efficiencies;
-        }
-
-        @Override
-        public boolean affectsHeatOrDamage() {
-            return affectsHeat;
-        }
-    }
 
     // Elite
     private boolean speedTweak;
