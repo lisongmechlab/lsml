@@ -42,11 +42,8 @@ public class PreferenceStore {
 
     private static final File       propertiesFile;
     private static final Properties properties;
-    public static final String      GAMEDIRECTORY_KEY  = "gamedir";
     public static final String      GARAGEFILE_KEY     = "garagefile";
     public static final String      GARAGEFILE_DEFAULT = "garage.xml";
-    public static final String      GAME_DATA_CACHE    = "gameDataCache";
-    public static final String      USEBUNDLED_DATA    = "gameDataBundled";
     public static final String      IPC_PORT           = "localPortForLSMLIPC";
 
     static public String getString(String key) {

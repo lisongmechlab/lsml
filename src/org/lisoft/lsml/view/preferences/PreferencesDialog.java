@@ -19,9 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view.preferences;
 
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.AbstractAction;
@@ -66,51 +68,70 @@ public class PreferencesDialog extends JDialog {
     }
 
     private void addCorePane(JPanel aRoot) {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(StyleManager.sectionBorder("LSML Core Settings"));
+        final JCheckBox useBundledCheckbox = new JCheckBox("Use bundled data");
+        useBundledCheckbox.setToolTipText("<html>If checked, LSML will quietly fallback to bundled data "
+                + "files if no game install is available.<br/>"
+                + "Otherwise it will prompt you to locate the game install on next startup.</html>");
+        useBundledCheckbox.setModel(CorePreferences.USE_BUNDLED_DATA_MODEL);
 
-        {
-            final JPanel gameInstallPanel = new JPanel(new BorderLayout());
-            final JLabel gameInstallLabel = new JLabel("Game Install: ");
-            final JTextField gameInstallPath = new JTextField(
-                    PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
-            final JButton gameInstallBrowse = new JButton(new AbstractAction("Browse...") {
-                @Override
-                public void actionPerformed(ActionEvent aE) {
-                    if (GameVFS.browseForGameInstall()) {
-                        JOptionPane.showMessageDialog(null,
-                                "A restart of LSML is required before the new game files are used."
-                                        + "\n\nPlease restart manually at your convenience.", "Restart required",
-                                JOptionPane.INFORMATION_MESSAGE);
-                        File cacheFile = new File(PreferenceStore.getString(PreferenceStore.GAME_DATA_CACHE));
-                        if (cacheFile.exists()) {
-                            cacheFile.delete();
-                        }
+        final JLabel gameInstallLabel = new JLabel("Game Install: ");
+        final JTextField gameInstallPath = new JTextField(CorePreferences.getGameDirectory());
+        gameInstallPath.setEnabled(false);
+
+        final JButton gameInstallBrowse = new JButton(new AbstractAction("Browse...") {
+            @Override
+            public void actionPerformed(ActionEvent aE) {
+                if (GameVFS.browseForGameInstall()) {
+                    JOptionPane.showMessageDialog(null,
+                            "A restart of LSML is required before the new game files are used."
+                                    + "\n\nPlease restart manually at your convenience.",
+                            "Restart required", JOptionPane.INFORMATION_MESSAGE);
+                    File cacheFile = new File(CorePreferences.getGameDataCache());
+                    if (cacheFile.exists()) {
+                        cacheFile.delete();
                     }
                 }
-            });
-            gameInstallPath.setEnabled(false);
-            gameInstallPanel.add(gameInstallLabel, BorderLayout.WEST);
-            gameInstallPanel.add(gameInstallPath, BorderLayout.CENTER);
-            gameInstallPanel.add(gameInstallBrowse, BorderLayout.EAST);
-            panel.add(gameInstallPanel, BorderLayout.SOUTH);
-        }
+            }
+        });
+
+        final JCheckBox acceptBetaCheckbox = new JCheckBox("Accept beta releases");
+        acceptBetaCheckbox.setModel(CorePreferences.UPDATE_ACCEPT_BETA_MODEL);
+        JCheckBox checkUpdatesCheckBox = new JCheckBox("Automatically check for udpates");
+        checkUpdatesCheckBox.setModel(CorePreferences.UPDATE_CHECK_FOR_UPDATES_MODEL);
+        checkUpdatesCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent aE) {
+                acceptBetaCheckbox.repaint();
+            }
+        });
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(StyleManager.sectionBorder("LSML Core Settings"));
+
+        gbc.gridy = 0;
         {
-            final String useBundledString = PreferenceStore.getString(PreferenceStore.USEBUNDLED_DATA, "false");
-            final boolean useBundledBool = Boolean.parseBoolean(useBundledString);
-            final JCheckBox useBundledCheckbox = new JCheckBox("Use bundled data", useBundledBool);
-            useBundledCheckbox.setToolTipText("<html>If checked, LSML will quietly fallback to bundled data "
-                    + "files if no game install is available.<br/>"
-                    + "Otherwise it will prompt you to locate the game install on next startup.</html>");
-            useBundledCheckbox.addActionListener(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent aArg0) {
-                    PreferenceStore.setString(PreferenceStore.USEBUNDLED_DATA,
-                            Boolean.toString(useBundledCheckbox.isSelected()));
-                }
-            });
-            panel.add(useBundledCheckbox, BorderLayout.NORTH);
+            gbc.gridx = 0;
+            panel.add(useBundledCheckbox, gbc);
+            gbc.gridx = 1;
+            panel.add(checkUpdatesCheckBox, gbc);
+            gbc.gridx = 2;
+            panel.add(acceptBetaCheckbox, gbc);
         }
+
+        gbc.gridy = 1;
+        {
+            gbc.gridx = 0;
+            panel.add(gameInstallLabel, gbc);
+            gbc.gridx = 1;
+            gbc.weightx = 1.0;
+            panel.add(gameInstallPath, gbc);
+            gbc.gridx = 2;
+            gbc.weightx = 0.0;
+            panel.add(gameInstallBrowse, gbc);
+        }
+
         aRoot.add(panel);
     }
 
@@ -120,8 +141,8 @@ public class PreferencesDialog extends JDialog {
 
         final JCheckBox smartPlace = new JCheckBox("Use SmartPlace",
                 ProgramInit.lsml().preferences.uiPreferences.getUseSmartPlace());
-        smartPlace
-                .setToolTipText("SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
+        smartPlace.setToolTipText(
+                "SmartPlace allows you to place items that would not fit your current loadout by automatically moving items around.");
         smartPlace.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -8136020916897237506L;
 
@@ -147,8 +168,8 @@ public class PreferencesDialog extends JDialog {
 
         final JCheckBox hideSpecials = new JCheckBox("Hide mech variations",
                 ProgramInit.lsml().preferences.uiPreferences.getHideSpecialMechs());
-        hideSpecials
-                .setToolTipText("<html>Will hide mech variations (champion, founders, phoenix, sarah, etc) from chassis lists.<br/>"
+        hideSpecials.setToolTipText(
+                "<html>Will hide mech variations (champion, founders, phoenix, sarah, etc) from chassis lists.<br/>"
                         + "Stock loadouts are still available on the \"Load stock\" menu action on relevant loadouts</html>");
         hideSpecials.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -8136020916897237506L;

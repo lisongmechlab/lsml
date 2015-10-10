@@ -51,7 +51,7 @@ import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
-import org.lisoft.lsml.view.preferences.PreferenceStore;
+import org.lisoft.lsml.view.preferences.CorePreferences;
 
 /**
  * This class is a Virtual File System for finding data files in the game folder.
@@ -59,11 +59,11 @@ import org.lisoft.lsml.view.preferences.PreferenceStore;
  * @author Emily Björk
  */
 public class GameVFS {
-    public static final File      ITEM_STATS_XML  = new File("Game/Libs/Items/ItemStats.xml");
-    public static final File      MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
-    public static final File      MDF_ROOT        = new File("Game/mechs/Objects/mechs/");
+    public static final File ITEM_STATS_XML  = new File("Game/Libs/Items/ItemStats.xml");
+    public static final File MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
+    public static final File MDF_ROOT        = new File("Game/mechs/Objects/mechs/");
 
-    private final Map<File, File> file2archive    = new HashMap<File, File>();
+    private final Map<File, File> file2archive = new HashMap<File, File>();
     private static Path           gamePath;
 
     /**
@@ -292,9 +292,9 @@ public class GameVFS {
                 }
 
                 if (isValidGameDirectory(dir.toFile())) {
-                    int answer = JOptionPane.showConfirmDialog(null, "Found the game files at: " + dir.toString()
-                            + "\nIs this your primary game install?", "Confirm game directory",
-                            JOptionPane.YES_NO_OPTION);
+                    int answer = JOptionPane.showConfirmDialog(null,
+                            "Found the game files at: " + dir.toString() + "\nIs this your primary game install?",
+                            "Confirm game directory", JOptionPane.YES_NO_OPTION);
                     if (JOptionPane.YES_OPTION == answer) {
                         gameRoot = dir;
                         return TERMINATE;
@@ -318,12 +318,12 @@ public class GameVFS {
         while (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(null)) {
             Path selectedPath = fc.getSelectedFile().toPath();
             if (isValidGameDirectory(selectedPath.toFile())) {
-                PreferenceStore.setString(PreferenceStore.GAMEDIRECTORY_KEY, selectedPath.toAbsolutePath().toString());
+                CorePreferences.setGameDirectory(selectedPath.toAbsolutePath().toString());
                 return true;
             }
             int tryagain = JOptionPane.showConfirmDialog(null,
-                    "The selected folder doesn't contain a valid game install.\nWould you like to try again?",
-                    "Ooops!", JOptionPane.YES_NO_OPTION);
+                    "The selected folder doesn't contain a valid game install.\nWould you like to try again?", "Ooops!",
+                    JOptionPane.YES_NO_OPTION);
             if (tryagain != JOptionPane.YES_OPTION)
                 break;
         }
@@ -331,20 +331,20 @@ public class GameVFS {
     }
 
     public static void checkGameFilesInstalled() {
-        File storedGameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+        File storedGameDir = new File(CorePreferences.getGameDirectory());
         if (storedGameDir.isDirectory() && isValidGameDirectory(storedGameDir))
             return;
 
         // Look for a quick exit in the default install directories.
         for (Path path : getDefaultGameFileLocations()) {
             if (isValidGameDirectory(path.toFile())) {
-                PreferenceStore.setString(PreferenceStore.GAMEDIRECTORY_KEY, path.toAbsolutePath().toString());
+                CorePreferences.setGameDirectory(path.toAbsolutePath().toString());
                 return;
             }
         }
 
         // Check bundled status only after looking for the easy locations.
-        if (true == Boolean.parseBoolean(PreferenceStore.getString(PreferenceStore.USEBUNDLED_DATA, "false"))) {
+        if (CorePreferences.getUseBundledData()) {
             return;
         }
 
@@ -353,9 +353,11 @@ public class GameVFS {
                     "The game was not installed in any of the default locations.\n"
                             + "If you don't have a game install, LSML can use bundled data.\n"
                             + "Be aware, the bundled data may be inaccurate if this is an old release.\n\n"
-                            + "How would you like to proceed?", "Determining game install...",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[] { "Automatic search",
-                            "Manual browse", "I don't have a game install", "Close program" }, null);
+                            + "How would you like to proceed?",
+                    "Determining game install...", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                    new String[] { "Automatic search", "Manual browse", "I don't have a game install",
+                            "Close program" },
+                    null);
             if (answer == 0) {
                 // Walk all the file roots, or drives in windows
                 GameFinder finder = new GameFinder();
@@ -368,8 +370,7 @@ public class GameVFS {
                         if (root.getTotalSpace() > 1024 * 1024 * 1500 && root.getFreeSpace() > 1024 * 1024 * 5) {
                             Files.walkFileTree(root.toPath(), finder);
                             if (null != finder.gameRoot) {
-                                PreferenceStore.setString(PreferenceStore.GAMEDIRECTORY_KEY, finder.gameRoot
-                                        .toAbsolutePath().toString());
+                                CorePreferences.setGameDirectory(finder.gameRoot.toAbsolutePath().toString());
                                 return;
                             }
                         }
@@ -385,7 +386,7 @@ public class GameVFS {
                 browseForGameInstall();
             }
             else if (answer == 2) {
-                PreferenceStore.setString(PreferenceStore.USEBUNDLED_DATA, Boolean.TRUE.toString());
+                CorePreferences.setUseBundledData(true);
                 return;
             }
             else {
