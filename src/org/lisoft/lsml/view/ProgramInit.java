@@ -203,7 +203,7 @@ public class ProgramInit {
         boolean acceptBeta = CorePreferences.getAcceptBeta();
 
         try {
-            new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS), "1.6.5", new UpdateCallback() {
+            new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS), LSML.getVersion(), new UpdateCallback() {
                 @Override
                 public void run(final ReleaseData aReleaseData) {
                     if (aReleaseData != null) {
