@@ -67,7 +67,7 @@ public class ItemInfoPanel extends JPanel {
     private final JLabel      dps              = new JLabel();
     private final JLabel      dph              = new JLabel();
     // Ammo info
-    private final JLabel      ammoperton       = new JLabel();
+    private final JLabel      ammoPerTon       = new JLabel();
 
     public ItemInfoPanel() {
         // setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -131,7 +131,7 @@ public class ItemInfoPanel extends JPanel {
             stats.add(damageInfo2);
 
             stats.add(gh_MaxFreeAlpha);
-            stats.add(ammoperton);
+            stats.add(ammoPerTon);
             stats.add(engineHSSlots);
             stats.add(engineInternalHS);
         }
@@ -181,8 +181,8 @@ public class ItemInfoPanel extends JPanel {
     }
 
     private void showAmmoInfo(Ammunition anAmmo) {
-        ammoperton.setVisible(true);
-        ammoperton.setText("Shots: " + anAmmo.getNumShots());
+        ammoPerTon.setVisible(true);
+        ammoPerTon.setText("Shots: " + anAmmo.getNumShots());
     }
 
     private void showWeaponInfo(Weapon aWeapon, Collection<Modifier> aModifiers) {
@@ -223,7 +223,7 @@ public class ItemInfoPanel extends JPanel {
                 + LoadoutInfoPanel.df0.format(aWeapon.getRangeLong(aModifiers)) + " / "
                 + LoadoutInfoPanel.df0.format(aWeapon.getRangeMax(aModifiers)));
 
-        ammoperton.setVisible(false);
+        ammoPerTon.setVisible(false);
     }
 
     private void clearDisplay() {
@@ -241,7 +241,7 @@ public class ItemInfoPanel extends JPanel {
         dph.setVisible(false);
         secondsPerShot.setVisible(false);
 
-        ammoperton.setVisible(false);
+        ammoPerTon.setVisible(false);
     }
 
     public void showItem(Item anItem, Collection<Modifier> aModifiers) {

@@ -120,8 +120,15 @@ public class ModifiedFlowLayout extends FlowLayout {
 
             int targetWidth = target.getSize().width;
 
-            if (targetWidth == 0)
-                targetWidth = Integer.MAX_VALUE;
+            if (targetWidth == 0) {
+                Container p = target.getParent();
+                if (p != null) {
+                    targetWidth = p.getWidth();
+                }
+                if (targetWidth == 0) {
+                    targetWidth = Integer.MAX_VALUE;
+                }
+            }
 
             int hgap = getHgap();
             int vgap = getVgap();

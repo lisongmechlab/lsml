@@ -28,6 +28,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
@@ -78,7 +79,6 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
         List<Item> items = ItemDB.lookup(Item.class);
         Collections.sort(items);
 
-        JPanel itemFlowPanel = new ScrollablePanel();
         energyItems.setBorder(BorderFactory.createTitledBorder("Energy"));
         ballisticItems.setBorder(BorderFactory.createTitledBorder("Ballistic"));
         missileItems.setBorder(BorderFactory.createTitledBorder("Missile"));
@@ -132,13 +132,14 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
             }
         }
 
+        JPanel itemFlowPanel = new ScrollablePanel();
+        itemFlowPanel.setLayout(new BoxLayout(itemFlowPanel, BoxLayout.PAGE_AXIS));
         itemFlowPanel.add(energyItems);
         itemFlowPanel.add(ballisticItems);
         itemFlowPanel.add(missileItems);
         itemFlowPanel.add(miscItems);
         itemFlowPanel.add(engineItems);
         itemFlowPanel.add(engineXlItems);
-        itemFlowPanel.setLayout(new BoxLayout(itemFlowPanel, BoxLayout.PAGE_AXIS));
         JScrollPane itemFlowScrollPanel = new JScrollPane(itemFlowPanel);
         itemFlowScrollPanel.setAlignmentX(LEFT_ALIGNMENT);
 
@@ -226,7 +227,7 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
             }
         }
     }
-
+    
     @Override
     public void receive(Message aMsg) {
         if (currentLoadout == null || aMsg.isForMe(currentLoadout)) {
@@ -239,12 +240,11 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
                     }
                 }
             }
-
+            
             changeLoadout(currentLoadout, shouldUpdateVisibility);
 
-            if (shouldUpdateVisibility) {
-                revalidate();
-            }
+            //revalidate();
+//            repaint();
         }
     }
 
