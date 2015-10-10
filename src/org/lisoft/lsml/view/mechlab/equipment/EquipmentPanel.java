@@ -43,6 +43,7 @@ import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
+import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.util.message.Message;
 import org.lisoft.lsml.util.message.MessageXBar;
@@ -230,8 +231,20 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
     public void receive(Message aMsg) {
         if (currentLoadout == null || aMsg.isForMe(currentLoadout)) {
             boolean shouldUpdateVisibility = (aMsg == null ? true : aMsg instanceof UpgradesMessage);
+            if (!shouldUpdateVisibility) {
+                if (aMsg instanceof ComponentMessage) {
+                    ComponentMessage msg = (ComponentMessage) aMsg;
+                    if (msg.isItemsChanged()) {
+                        shouldUpdateVisibility = true;
+                    }
+                }
+            }
+
             changeLoadout(currentLoadout, shouldUpdateVisibility);
 
+            if (shouldUpdateVisibility) {
+                revalidate();
+            }
         }
     }
 
