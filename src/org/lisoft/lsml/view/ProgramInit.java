@@ -19,19 +19,22 @@
 //@formatter:on
 package org.lisoft.lsml.view;
 
-import java.awt.Color;
-import java.awt.DisplayMode;
-import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -44,6 +47,10 @@ import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.parsing.export.LsmlProtocolIPC;
 import org.lisoft.lsml.parsing.mwo_gamedata.GameVFS;
 import org.lisoft.lsml.util.OS;
+import org.lisoft.lsml.util.SwingHelpers;
+import org.lisoft.lsml.view.UpdateChecker.ReleaseData;
+import org.lisoft.lsml.view.UpdateChecker.UpdateCallback;
+import org.lisoft.lsml.view.preferences.CorePreferences;
 import org.lisoft.lsml.view.preferences.PreferenceStore;
 
 import com.sun.jna.Native;
@@ -56,124 +63,39 @@ import com.sun.jna.WString;
  * 
  * @author Li Song
  */
-public class ProgramInit extends JFrame {
-    private static final long  serialVersionUID   = -2877785947094537320L;
-    private static final long  MIN_SPLASH_TIME_MS = 20;
-    private static ProgramInit instance;
-    private static LSML        instanceL;
-    public static Image        programIcon;
+public class ProgramInit {
+    private static final long MIN_SPLASH_TIME_MS = 20;
+    private static LSML       instanceL;
+    public static Image       programIcon        = Toolkit.getDefaultToolkit()
+            .getImage(ProgramInit.class.getResource("/resources/icon.png"));
 
-    private String progressSubText = "";
-    private String progressText    = "";
+    public static void loadGameFiles() throws IOException {
+        GameVFS.checkGameFilesInstalled();
 
-    private class BackgroundImage extends JComponent {
-        private static final long serialVersionUID = 2294812231919303690L;
-        private Image             image;
+        PrintWriter writer = new PrintWriter(System.out);
+        DataCache.getInstance(writer);
+        writer.flush();
 
-        public BackgroundImage(Image anImage) {
-            image = anImage;
+        switch (DataCache.getStatus()) {
+            case Builtin:
+                break;
+            case ParseFailed:
+                JOptionPane.showMessageDialog(null,
+                        "Reading the game files failed. This is most likely due to changes in the last patch.\n\n"
+                                + "LSML will still function with data from the last successfull parse.\n"
+                                + "Please update LSML to the latest version to be sure you have the latest game data.",
+                        "Game file parse failed", JOptionPane.INFORMATION_MESSAGE);
+                break;
+            default:
+                break;
+
         }
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            g.drawImage(image, 0, 0, this);
-            int penX = 20;
-            int penY = 250;
-            g.setColor(Color.WHITE);
-            g.drawString(progressText, penX, penY);
-            penY += 15;
-            g.drawString(progressSubText, penX, penY);
-        }
-    }
-
-    ProgramInit() {
-        instance = this;
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                Image splash = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/splash.png"));
-                setContentPane(new BackgroundImage(splash));
-                programIcon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icon.png"));
-                setIconImage(programIcon);
-                setResizable(false);
-                setUndecorated(true);
-                setTitle("loading...");
-                setSize(350, 350);
-
-                // This works for multi-screen configurations in linux as well.
-                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                DisplayMode mode = ge.getDefaultScreenDevice().getDisplayMode();
-
-                setLocation(mode.getWidth() / 2 - getSize().width / 2, mode.getHeight() / 2 - getSize().height / 2);
-                setVisible(true);
-                getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                getRootPane().putClientProperty("Window.shadow", Boolean.TRUE);
-            }
-        });
-    }
-
-    public static void setProcessText(String aString) {
-        if (null != instance) {
-            instance.progressText = aString;
-            instance.repaint();
-        }
-    }
-
-    public static void setSubText(String aString) {
-        if (null != instance) {
-            instance.progressSubText = aString;
-            instance.repaint();
-        }
-    }
-
-    public boolean waitUntilDone() {
-        long startTimeMs = new Date().getTime();
-
-        try {
-            GameVFS.checkGameFilesInstalled();
-
-            PrintWriter writer = new PrintWriter(System.out);
-            DataCache.getInstance(writer);
-            writer.flush();
-
-            switch (DataCache.getStatus()) {
-                case Builtin:
-                    break;
-                case ParseFailed:
-                    JOptionPane.showMessageDialog(null,
-                            "Reading the game files failed. This is most likely due to changes in the last patch.\n\n"
-                                    + "LSML will still function with data from the last successfull parse.\n"
-                                    + "Please update LSML to the latest version to be sure you have the latest game data.",
-                            "Game file parse failed", JOptionPane.INFORMATION_MESSAGE);
-                    break;
-                default:
-                    break;
-
-            }
-
-            // Causes static initialization to be ran.
-            ItemDB.lookup("C.A.S.E.");
-            StockLoadoutDB.lookup(ChassisDB.lookup("JR7-D"));
-            EnvironmentDB.lookupAll();
-            UpgradeDB.lookup(3003);
-        }
-        catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-        finally {
-            long endTimeMs = new Date().getTime();
-            long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
-            try {
-                Thread.sleep(sleepTimeMs);
-            }
-            catch (Exception e) {
-                // No-Op
-            }
-            dispose();
-            instance = null;
-        }
-        return true;
+        // Causes static initialization to be ran.
+        ItemDB.lookup("C.A.S.E.");
+        StockLoadoutDB.lookup(ChassisDB.lookup("JR7-D"));
+        EnvironmentDB.lookupAll();
+        UpgradeDB.lookup(3003);
     }
 
     private static native NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
@@ -185,7 +107,57 @@ public class ProgramInit extends JFrame {
 
     public static void main(final String[] args) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
+        setAppUserModelID();
+        checkCliArguments(args);
+        setLookAndFeel();
 
+        checkForUpdates();
+        SplashScreen.showSplash();
+        try {
+            long startTimeMs = new Date().getTime();
+            loadGameFiles();
+            long endTimeMs = new Date().getTime();
+            long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
+            Thread.sleep(sleepTimeMs);
+        }
+        catch (Exception e) {
+            System.exit(1);
+        }
+        finally {
+            SplashScreen.closeSplash();
+        }
+
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                instanceL = new LSML();
+                if (args.length > 0) {
+                    // This has to be done after other events have been processed and the UI is constructed.
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            instanceL.mechLabPane.openLoadout(args[0]);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+    private static void checkCliArguments(final String[] args) {
+        // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
+        if (args.length > 0) {
+            int port = Integer.parseInt(PreferenceStore.getString(PreferenceStore.IPC_PORT, "0"));
+            if (port < 1024)
+                port = LsmlProtocolIPC.DEFAULT_PORT;
+            if (LsmlProtocolIPC.sendLoadout(args[0], port)) {
+                System.exit(0);
+            }
+        }
+    }
+
+    private static void setAppUserModelID() {
         if (OS.isWindowsOrNewer(OS.WindowsVersion.Win7)) {
             try {
                 // Setup AppUserModelID if windows 7 or later.
@@ -198,16 +170,9 @@ public class ProgramInit extends JFrame {
                 System.out.println(t.getMessage());
             }
         }
+    }
 
-        // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
-        if (args.length > 0) {
-            int port = Integer.parseInt(PreferenceStore.getString(PreferenceStore.IPC_PORT, "0"));
-            if (port < 1024)
-                port = LsmlProtocolIPC.DEFAULT_PORT;
-            if (LsmlProtocolIPC.sendLoadout(args[0], port))
-                return; // Message received we can close this program.
-        }
-
+    private static void setLookAndFeel() {
         try {
             // Static global initialization. Stuff that needs to be done before anything else.
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -219,33 +184,70 @@ public class ProgramInit extends JFrame {
                     "Unable to set default look and feel. Something is seriously wrong with your java install!\nError: "
                             + e);
         }
+    }
 
-        ProgramInit splash = new ProgramInit();
-        if (!splash.waitUntilDone()) {
-            System.exit(1);
+    @SuppressWarnings("unused")
+    private static void checkForUpdates() {
+        if (!CorePreferences.getCheckForUpdates())
+            return;
+        
+        Date lastUpdate = CorePreferences.getLastUpdateCheck();
+        Date now = new Date();
+        final long msPerDay = 24*60*60*1000; 
+        long diffDays = (now.getTime() - lastUpdate.getTime()) / msPerDay;
+        if(diffDays < 3){ // Will check every three days.
+            return;
         }
+        CorePreferences.setLastUpdateCheck(now);
+        
+        boolean acceptBeta = CorePreferences.getAcceptBeta();
 
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    instanceL = new LSML();
-
-                    if (args.length > 0) {
-                        // This has to be done after other events have been processed and the UI is constructed.
+        try {
+            new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS), "1.6.5", new UpdateCallback() {
+                @Override
+                public void run(final ReleaseData aReleaseData) {
+                    if (aReleaseData != null) {
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
-                                instanceL.mechLabPane.openLoadout(args[0]);
+                                JLabel release = new JLabel(aReleaseData.name);
+                                Font f = release.getFont();
+                                release.setFont(f.deriveFont(2.0f * f.getSize2D()));
+
+                                JLabel downloadLink = new JLabel();
+                                SwingHelpers.hypertextLink(downloadLink, aReleaseData.html_url, aReleaseData.html_url);
+
+                                final JPanel message = new JPanel();
+                                message.setLayout(new BoxLayout(message, BoxLayout.PAGE_AXIS));
+                                message.add(new JLabel("A new update is available!"));
+                                message.add(release);
+                                message.add(new JLabel("Download from here:"));
+                                message.add(downloadLink);
+
+                                JCheckBox checkUpdates = new JCheckBox("Automatically check for udpates");
+                                checkUpdates.setModel(CorePreferences.UPDATE_CHECK_FOR_UPDATES_MODEL);
+                                message.add(Box.createVerticalStrut(15));
+                                message.add(checkUpdates);
+
+                                JCheckBox acceptBetaCheckbox = new JCheckBox("Accept beta releases");
+                                acceptBetaCheckbox.setModel(CorePreferences.UPDATE_ACCEPT_BETA_MODEL);
+                                message.add(acceptBetaCheckbox);
+
+                                JOptionPane.showMessageDialog(null, message, "Update available!",
+                                        JOptionPane.INFORMATION_MESSAGE);
                             }
                         });
                     }
+
                 }
-                catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Unable to start! Error: " + e);
-                }
-            }
-        });
+            }, acceptBeta);
+        }
+        catch (MalformedURLException e) {
+            // MalformedURL is a programmer error, promote to unchecked, let default
+            // exception handler report it.
+            throw new RuntimeException(e);
+        }
+
     }
 
     public static LSML lsml() {

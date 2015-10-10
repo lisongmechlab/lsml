@@ -68,9 +68,9 @@ public class MinMovementProfile extends ModifiedProfileBase {
             }
             return ans;
         }
-        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(); // Promote all of the above to unchecked.
         }
     }
 

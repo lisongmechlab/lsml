@@ -94,11 +94,8 @@ public class MaxArmorAction extends AbstractAction {
                     JOptionPane.showMessageDialog(loadoutFrame, "Error parsing ratio! Loadout was not changed!");
             }
         }
-        catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(loadoutFrame, "Unable to set max armor! Error: " + e.getMessage());
-        }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(loadoutFrame, "Unexpected exception! Error: " + e);
+            JOptionPane.showMessageDialog(loadoutFrame, "Unable to set max armor! Error: " + e.getMessage());
         }
     }
 }

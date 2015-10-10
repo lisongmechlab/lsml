@@ -27,13 +27,13 @@ import java.io.InputStream;
 
 import org.junit.Test;
 import org.lisoft.lsml.parsing.mwo_gamedata.GameVFS;
-import org.lisoft.lsml.view.preferences.PreferenceStore;
+import org.lisoft.lsml.view.preferences.CorePreferences;
 
 public class GameDataFileTest {
 
     @Test
     public void test() throws IOException {
-        File gameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+        File gameDir = new File(CorePreferences.getGameDirectory());
         GameVFS dataFile = new GameVFS(gameDir);
 
         InputStream inputStream = dataFile.openGameFile(new File("Game/mechs/Objects/mechs/spider/sdr-5k.mdf")).stream;

@@ -62,38 +62,40 @@ import org.lisoft.lsml.view.preferences.Preferences;
  * @author Li Song
  */
 public class LSML extends JFrame implements Message.Recipient {
+    /**
+     * 
+     */
+    public static final String      DEVELOP_VERSION        = "(develop)";
     public static final String      PROGRAM_FNAME          = "Li Song Mechlab ";
     private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
     private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter() {
-                                                               @Override
-                                                               public String getDescription() {
-                                                                   return GARAGE_FILEDESCRIPTION;
-                                                               }
+        @Override
+        public String getDescription() {
+            return GARAGE_FILEDESCRIPTION;
+        }
 
-                                                               @Override
-                                                               public boolean accept(File aArg0) {
-                                                                   return aArg0.isDirectory()
-                                                                           || (aArg0.isFile() && aArg0.getName()
-                                                                                   .toLowerCase().endsWith(".xml"));
-                                                               }
-                                                           };
+        @Override
+        public boolean accept(File aArg0) {
+            return aArg0.isDirectory() || (aArg0.isFile() && aArg0.getName().toLowerCase().endsWith(".xml"));
+        }
+    };
     private static final long       serialVersionUID       = -2463321343234141728L;
     private static final String     CMD_UNDO_GARAGE        = "undo garage action";
     private static final String     CMD_REDO_GARAGE        = "redo garage action";
 
     // Order of definition matters here !
-    public final MessageXBar        xBar                   = new MessageXBar();
-    public final Preferences        preferences            = new Preferences(xBar);
-    public final CommandStack     garageOperationStack   = new CommandStack(256);
+    public final MessageXBar  xBar                 = new MessageXBar();
+    public final Preferences  preferences          = new Preferences(xBar);
+    public final CommandStack garageOperationStack = new CommandStack(256);
 
-    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder();
-    public final MechLabPane        mechLabPane            = new MechLabPane(xBar, preferences);
-    public final JTabbedPane        tabbedPane             = new JTabbedPane();
-    final Action                    undoGarageAction       = new UndoGarageAction(xBar);
-    final Action                    redoGarageAction       = new RedoGarageAction(xBar);
+    public final Base64LoadoutCoder loadoutCoder     = new Base64LoadoutCoder();
+    public final MechLabPane        mechLabPane      = new MechLabPane(xBar, preferences);
+    public final JTabbedPane        tabbedPane       = new JTabbedPane();
+    final Action                    undoGarageAction = new UndoGarageAction(xBar);
+    final Action                    redoGarageAction = new RedoGarageAction(xBar);
 
-    private LsmlProtocolIPC         lsmlProtocolIPC;
-    private MechGarage              garage;
+    private LsmlProtocolIPC lsmlProtocolIPC;
+    private MechGarage      garage;
 
     public static String getVersion() {
         Class<?> clazz = LSML.class;
@@ -101,7 +103,7 @@ public class LSML extends JFrame implements Message.Recipient {
         String classPath = clazz.getResource(className).toString();
         if (!classPath.startsWith("jar")) {
             // Class not from JAR
-            return "(develop)";
+            return DEVELOP_VERSION;
         }
         String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
         try (InputStream stream = new URL(manifestPath).openStream()) {
@@ -111,7 +113,7 @@ public class LSML extends JFrame implements Message.Recipient {
             return value;
         }
         catch (IOException e) {
-            return "(develop)";
+            return DEVELOP_VERSION;
         }
     }
 
@@ -145,7 +147,14 @@ public class LSML extends JFrame implements Message.Recipient {
             }
         });
 
-        // Open the IPC socket first after everything else has succeeded.
+        openIpcSocket(); // Open the IPC socket first after everything else has succeeded.
+        setupKeybindings();
+        openLastGarage();
+
+        ToolTipManager.sharedInstance().setDismissDelay(60000);
+    }
+
+    private void openIpcSocket() {
         boolean keepTrying = true;
         int port = Integer.parseInt(PreferenceStore.getString(PreferenceStore.IPC_PORT, "0"));
         if (port < 1024)
@@ -155,12 +164,12 @@ public class LSML extends JFrame implements Message.Recipient {
                 lsmlProtocolIPC = new LsmlProtocolIPC(port);
                 keepTrying = false;
             }
-            catch (IOException | IllegalArgumentException e) {
+            catch (Throwable e) {
                 lsmlProtocolIPC = null;
 
-                int ans = JOptionPane.showOptionDialog(this, "LSML was unable to open local socket on port: " + port
-                        + " for IPC."
-                        + "\nYou can try again with a new (random) port or disable automatic links for this session. ",
+                int ans = JOptionPane.showOptionDialog(this,
+                        "LSML was unable to open local socket on port: " + port + " for IPC."
+                                + "\nYou can try again with a new (random) port or disable automatic links for this session. ",
                         "Unable to start IPC", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
                         new String[] { "Try again (random)", "Try again (manual)", "Disable" }, "Try again");
 
@@ -191,11 +200,6 @@ public class LSML extends JFrame implements Message.Recipient {
                 }
             }
         }
-        setupKeybindings();
-
-        openLastGarage();
-
-        ToolTipManager.sharedInstance().setDismissDelay(60000);
     }
 
     private void setupKeybindings() {
@@ -208,7 +212,7 @@ public class LSML extends JFrame implements Message.Recipient {
     }
 
     public void openLastGarage() {
-        assert (SwingUtilities.isEventDispatchThread());
+        assert(SwingUtilities.isEventDispatchThread());
 
         String garageFileName = PreferenceStore.getString(PreferenceStore.GARAGEFILE_KEY,
                 PreferenceStore.GARAGEFILE_DEFAULT);
@@ -218,12 +222,10 @@ public class LSML extends JFrame implements Message.Recipient {
                 garage = MechGarage.open(garageFile, xBar);
             }
             catch (Exception e) {
-                JOptionPane
-                        .showMessageDialog(
-                                this,
-                                "An error ocurred while opening your last saved garage!\nTo prevent further damage to the garage file, the application will close.\nPlease check your garage file manually, it is located at: "
-                                        + garageFile + "\nError: " + e.getMessage(), "Error loading mech garage!",
-                                JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "An error ocurred while opening your last saved garage!\nTo prevent further damage to the garage file, the application will close.\nPlease check your garage file manually, it is located at: "
+                                + garageFile + "\nError: " + e.getMessage(),
+                        "Error loading mech garage!", JOptionPane.ERROR_MESSAGE);
                 shutdown();
             }
         }
@@ -233,15 +235,13 @@ public class LSML extends JFrame implements Message.Recipient {
             boolean done = false;
 
             while (!done) {
-                int ans = JOptionPane
-                        .showOptionDialog(
-                                this,
-                                "Your last garage could not be found. This is normal if this is the first time you are using LSML or if you have moved your garage file manually.\n\n"
-                                        + "All your mechs will be stored in a \"garage\" and the garage is saved to a \"garage file\".\n"
-                                        + "The last opened garage is automatically opened when you start LSML and your currently open garage is always saved automatically on exit.\n"
-                                        + "How would you like to proceed?", "No garage found",
-                                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                                options[2]);
+                int ans = JOptionPane.showOptionDialog(this,
+                        "Your last garage could not be found. This is normal if this is the first time you are using LSML or if you have moved your garage file manually.\n\n"
+                                + "All your mechs will be stored in a \"garage\" and the garage is saved to a \"garage file\".\n"
+                                + "The last opened garage is automatically opened when you start LSML and your currently open garage is always saved automatically on exit.\n"
+                                + "How would you like to proceed?",
+                        "No garage found", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                        options, options[2]);
                 if (ans == 0) {
                     newGarage();
                     saveGarageAs();
@@ -255,8 +255,8 @@ public class LSML extends JFrame implements Message.Recipient {
                 else if (ans == 1) {
                     openGarage();
                     if (garage == null) {
-                        JOptionPane.showMessageDialog(this, "A garage must be opened or created.",
-                                "No garage selected", JOptionPane.OK_OPTION);
+                        JOptionPane.showMessageDialog(this, "A garage must be opened or created.", "No garage selected",
+                                JOptionPane.OK_OPTION);
                     }
                     done = garage != null;
                 }
@@ -272,7 +272,7 @@ public class LSML extends JFrame implements Message.Recipient {
     }
 
     public void openGarage() {
-        assert (SwingUtilities.isEventDispatchThread());
+        assert(SwingUtilities.isEventDispatchThread());
 
         File startingPosition = garage != null ? garage.getFile() : new File(System.getProperty("user.home"));
         JFileChooser chooser = new JFileChooser(startingPosition);
@@ -294,7 +294,7 @@ public class LSML extends JFrame implements Message.Recipient {
     }
 
     public void newGarage() {
-        assert (SwingUtilities.isEventDispatchThread());
+        assert(SwingUtilities.isEventDispatchThread());
 
         if (garage != null && !garage.getMechs().isEmpty()) {
             try {
@@ -302,8 +302,8 @@ public class LSML extends JFrame implements Message.Recipient {
             }
             catch (IOException e) {
                 int choice = JOptionPane.showOptionDialog(this, "Error: " + e.getMessage(),
-                        "Couldn't save current garage!", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-                        null, new String[] { "Don't save", "Cancel", "Pick another file" }, 0);
+                        "Couldn't save current garage!", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                        new String[] { "Don't save", "Cancel", "Pick another file" }, 0);
                 if (1 == choice) {
                     return;
                 }
@@ -317,7 +317,7 @@ public class LSML extends JFrame implements Message.Recipient {
     }
 
     public void saveGarageAs() {
-        assert (SwingUtilities.isEventDispatchThread());
+        assert(SwingUtilities.isEventDispatchThread());
 
         JFileChooser chooser = new JFileChooser(garage.getFile());
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -356,8 +356,8 @@ public class LSML extends JFrame implements Message.Recipient {
             }
             catch (IOException e) {
                 int choice = JOptionPane.showOptionDialog(this, "Error was: " + e.getMessage(), "Couldn't save file!",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[] { "Cancel",
-                                "Pick another file" }, 0);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                        new String[] { "Cancel", "Pick another file" }, 0);
                 if (choice == 0)
                     break;
             }
@@ -365,7 +365,7 @@ public class LSML extends JFrame implements Message.Recipient {
     }
 
     public void saveGarage() {
-        assert (SwingUtilities.isEventDispatchThread());
+        assert(SwingUtilities.isEventDispatchThread());
 
         try {
             if (garage != null)

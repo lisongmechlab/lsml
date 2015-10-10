@@ -106,7 +106,7 @@ import org.lisoft.lsml.parsing.mwo_gamedata.helpers.XMLWeaponStats;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
 import org.lisoft.lsml.view.LSML;
-import org.lisoft.lsml.view.preferences.PreferenceStore;
+import org.lisoft.lsml.view.preferences.CorePreferences;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
@@ -279,7 +279,7 @@ public class DataCache {
             }
             loading = true;
 
-            File dataCacheFile = new File(PreferenceStore.getString(PreferenceStore.GAME_DATA_CACHE));
+            File dataCacheFile = new File(CorePreferences.getGameDataCache());
             DataCache dataCache = null;
             if (dataCacheFile.isFile()) {
                 try {
@@ -303,7 +303,7 @@ public class DataCache {
                 }
             }
 
-            File gameDir = new File(PreferenceStore.getString(PreferenceStore.GAMEDIRECTORY_KEY));
+            File gameDir = new File(CorePreferences.getGameDirectory());
             if (gameDir.isDirectory()) {
                 try {
                     GameVFS gameVfs = new GameVFS(gameDir);
@@ -390,7 +390,7 @@ public class DataCache {
      *             Thrown if no location could be determined or the location is invalid.
      */
     private static File getNewCacheLocation() throws IOException {
-        String dataCacheLocation = PreferenceStore.getString(PreferenceStore.GAME_DATA_CACHE);
+        String dataCacheLocation = CorePreferences.getGameDataCache();
         if (dataCacheLocation.isEmpty()) {
             if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
                 dataCacheLocation = System.getenv("AppData") + "/lsml_datacache.xml";
@@ -917,7 +917,7 @@ public class DataCache {
             // Write to file
             ow.append(sw.toString());
         }
-        PreferenceStore.setString(PreferenceStore.GAME_DATA_CACHE, cacheLocation.getPath());
+        CorePreferences.setGameDataCache(cacheLocation.getPath());
 
         return dataCache;
     }

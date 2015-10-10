@@ -30,6 +30,7 @@ public class Preferences {
     public final FontPreferences   fontPreferences   = new FontPreferences();
     public final SmurfyPreferences smurfyPreferences = new SmurfyPreferences();
     public final UiPreferences     uiPreferences;
+    public final CorePreferences   corePreferences   = new CorePreferences();
 
     /**
      * Creates a new preferences object.
