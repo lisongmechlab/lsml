@@ -28,7 +28,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
@@ -242,9 +241,6 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
             }
             
             changeLoadout(currentLoadout, shouldUpdateVisibility);
-
-            //revalidate();
-//            repaint();
         }
     }
 
