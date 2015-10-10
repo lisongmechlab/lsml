@@ -68,15 +68,13 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Emily Björk
  */
 public class ItemLabel extends JLabel {
-    private static final long   serialVersionUID = 1237952620487557121L;
-    private final String        baseText;
-    private final String        defaultText;
-    private final Item          item;
-    private final DecimalFormat decimalFormat    = new DecimalFormat("###");
-    private final int           gradientOffset   = 60;
-    private final GradientPaint gradientPaint    = new GradientPaint(gradientOffset, 0, getBackground(),
-            gradientOffset + 1, 1, StyleManager.getBgColorInvalid());
-    private boolean             smartPlace       = false;
+    private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###");
+    private final String               baseText;
+    private final String               defaultText;
+    private final Item                 item;
+    private final int                  gradientOffset = 60;
+    private final GradientPaint        gradientPaint;
+    private boolean                    smartPlace     = false;
 
     private static class ProgressDialog extends JDialog {
         private static final long serialVersionUID = -6084430266229568009L;
@@ -158,21 +156,23 @@ public class ItemLabel extends JLabel {
         }
     }
 
-    public ItemLabel(Item anItem, final EquipmentPanel aEquipmentPanel, final ItemInfoPanel aInfoPanel,
+    public ItemLabel(Item aItem, final EquipmentPanel aEquipmentPanel, final ItemInfoPanel aInfoPanel,
             final MessageXBar anXBar) {
-        item = anItem;
+        item = aItem;
 
         StyleManager.styleItem(this, item);
+        gradientPaint = new GradientPaint(gradientOffset, 0, getBackground(), gradientOffset + 1, 1,
+                StyleManager.getBgColorInvalid());
         setToolTipText("<html>" + item.getName() + "<p>" + item.getDescription() + "</html>");
 
         setTransferHandler(new ItemTransferHandler());
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent anEvent) {
+            public void mousePressed(MouseEvent aEvent) {
                 final LoadoutFrame frame = ProgramInit.lsml().mechLabPane.getActiveLoadoutFrame();
                 final LoadoutBase<?> loadout = aEquipmentPanel.getCurrentLoadout();
 
-                Component component = anEvent.getComponent();
+                Component component = aEvent.getComponent();
                 if (component instanceof ItemLabel) {
                     if (null != loadout) {
                         aInfoPanel.showItem(item, loadout.getModifiers());
@@ -182,11 +182,11 @@ public class ItemLabel extends JLabel {
                     }
                 }
 
-                ItemLabel button = (ItemLabel) anEvent.getSource();
+                ItemLabel button = (ItemLabel) aEvent.getSource();
                 ItemTransferHandler handle = (ItemTransferHandler) button.getTransferHandler();
-                handle.exportAsDrag(button, anEvent, TransferHandler.COPY);
+                handle.exportAsDrag(button, aEvent, TransferHandler.COPY);
 
-                if (SwingUtilities.isLeftMouseButton(anEvent) && anEvent.getClickCount() >= 2) {
+                if (SwingUtilities.isLeftMouseButton(aEvent) && aEvent.getClickCount() >= 2) {
                     if (null != loadout) {
                         if (smartPlace) {
                             if (!ProgramInit.lsml().preferences.uiPreferences.getUseSmartPlace()) {
@@ -266,7 +266,7 @@ public class ItemLabel extends JLabel {
             Engine engine = (Engine) item;
             double speed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(),
                     aLoadout.getChassis().getMassMax(), aLoadout.getModifiers());
-            builder.append("<br/>" + decimalFormat.format(speed) + "kph");
+            builder.append("<br/>" + DECIMAL_FORMAT.format(speed) + "kph");
             builder.append("</span></html>");
             setText(builder.toString());
         }
