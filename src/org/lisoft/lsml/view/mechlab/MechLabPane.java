@@ -73,7 +73,7 @@ public class MechLabPane extends JSplitPane {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
         tabbedPane.addTab("Garage", garagePanel);
-
+        
         JPanel modulesPanel = new ScrollablePanel();
         modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.PAGE_AXIS));
 

@@ -196,6 +196,10 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
                 engineItems.setVisible(false);
                 engineXlItems.setVisible(false);
             }
+            else {
+                engineItems.setVisible(true);
+                engineXlItems.setVisible(true);
+            }
         }
         else {
             energyItems.setVisible(true);
@@ -226,7 +230,7 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
             }
         }
     }
-    
+
     @Override
     public void receive(Message aMsg) {
         if (currentLoadout == null || aMsg.isForMe(currentLoadout)) {
@@ -239,7 +243,7 @@ public class EquipmentPanel extends JPanel implements Message.Recipient, Interna
                     }
                 }
             }
-            
+
             changeLoadout(currentLoadout, shouldUpdateVisibility);
         }
     }
