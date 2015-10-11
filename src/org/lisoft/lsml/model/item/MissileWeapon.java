@@ -37,12 +37,12 @@ public class MissileWeapon extends AmmoWeapon {
             Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
             Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
             double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
-            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, String aAmmoType, int aRequiredGuidanceId,
-            int aBaseItemId, double aVolleyDelay) {
+            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, String aAmmoType, double aSpread,
+            int aRequiredGuidanceId, int aBaseItemId, double aVolleyDelay) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.MISSILE, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
-                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                aGhostHeatMaxFreeAlpha, aAmmoType, aVolleyDelay);
+                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
+                aAmmoType, aVolleyDelay, aSpread);
         requiredGuidanceType = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
     }
@@ -93,11 +93,24 @@ public class MissileWeapon extends AmmoWeapon {
         return (MissileWeapon) ItemDB.lookup(baseItemId);
     }
 
+    @Override
+    public boolean hasSpread() {
+        return super.hasSpread() && getAliases().contains("srm");
+    }
+
     /**
      * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns
      *         <code>null</code>.
      */
     public Upgrade getRequiredUpgrade() {
         return UpgradeDB.lookup(requiredGuidanceType);
+    }
+
+    @Override
+    public double getSpread() {
+        if (requiredGuidanceType == UpgradeDB.ARTEMIS_IV.getMwoId()) {
+            return super.getSpread() * 0.75;
+        }
+        return super.getSpread();
     }
 }

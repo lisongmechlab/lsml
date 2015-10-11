@@ -201,7 +201,7 @@ public class ItemStatsWeapon extends ItemStats {
                 return new AmmoWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, HardPointType.AMS, hp, itemFaction,
                         heat, cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
                         damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
-                        ghostHeatMultiplier, ghostHeatFreeAlpha, getAmmoType(), WeaponStats.volleydelay);
+                        ghostHeatMultiplier, ghostHeatFreeAlpha, getAmmoType(), WeaponStats.volleydelay, 0.0);
             case BALLISTIC:
                 final double spread;
                 if (WeaponStats.spread > 0)
@@ -250,7 +250,7 @@ public class ItemStatsWeapon extends ItemStats {
                 return new MissileWeapon(uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction, heat, cooldown,
                         rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot, damagePerProjectile,
                         projectilesPerRound, projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier,
-                        ghostHeatFreeAlpha, getAmmoType(), requiredGuidance, baseItemId, WeaponStats.volleydelay);
+                        ghostHeatFreeAlpha, getAmmoType(), WeaponStats.spread, requiredGuidance, baseItemId, WeaponStats.volleydelay);
 
             default:
                 throw new IOException("Unknown value for type field in ItemStatsXML. Please update the program!");

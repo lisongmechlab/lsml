@@ -24,7 +24,6 @@ import java.util.Collection;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.util.GaussianDistribution;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -34,8 +33,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Emily Björk
  */
 public class BallisticWeapon extends AmmoWeapon {
-    @XStreamAsAttribute
-    protected final double    spread;
     @XStreamAsAttribute
     protected final Attribute jammingChance;
     @XStreamAsAttribute
@@ -52,8 +49,7 @@ public class BallisticWeapon extends AmmoWeapon {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
                 aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
-                aAmmoType, aVolleyDelay);
-        spread = aSpread;
+                aAmmoType, aVolleyDelay, aSpread);
         jammingChance = aJammingChance;
         jammingTime = aJammingTime;
         shotsduringcooldown = aShotsDuringCooldown;
@@ -65,11 +61,6 @@ public class BallisticWeapon extends AmmoWeapon {
         name = name.replace("ULTRA ", "U");
         name = name.replace("MACHINE GUN", "MG");
         return name;
-    }
-
-    @Override
-    public boolean hasSpread() {
-        return spread > 0;
     }
 
     public boolean canDoubleFire() {
@@ -113,27 +104,6 @@ public class BallisticWeapon extends AmmoWeapon {
             return super.getSecondsPerShot(aModifiers) + 0.75;
         }
         return super.getSecondsPerShot(aModifiers);
-    }
-
-    @Override
-    public double getRangeEffectivity(double range, Collection<Modifier> aPilotModules) {
-        double spreadFactor = 1.0;
-        if (hasSpread()) {
-            // Assumption:
-            // The 'spread' value is the standard deviation of a zero-mean gaussian distribution of angles.
-            GaussianDistribution gaussianDistribution = new GaussianDistribution();
-
-            final double targetRadius = 6; // [m]
-            double maxAngle = Math.atan2(targetRadius, range) * 180 / Math.PI; // [deg]
-
-            // X ~= N(0, spread)
-            // P_hit = P(-maxAngle <= X; X <= +maxangle)
-            // Xn = (X - 0) / spread ~ N(0,1)
-            // P_hit = cdf(maxangle / spread) - cdf(-maxangle / spread) = 2*cdf(maxangle / spread) - 1.0;
-            double P_hit = 2 * gaussianDistribution.cdf(maxAngle / spread) - 1;
-            spreadFactor = P_hit;
-        }
-        return spreadFactor * super.getRangeEffectivity(range, aPilotModules);
     }
 
 }
