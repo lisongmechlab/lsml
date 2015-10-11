@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.loadout;
 
 import org.lisoft.lsml.model.environment.Environment;
+import org.lisoft.lsml.model.metrics.AlphaHeat;
 import org.lisoft.lsml.model.metrics.AlphaStrike;
 import org.lisoft.lsml.model.metrics.AlphaTimeToOverHeat;
 import org.lisoft.lsml.model.metrics.ArmRotatePitchSpeed;
@@ -84,6 +85,7 @@ public class LoadoutMetrics {
 
     // Per group (Offense)
     public final AlphaStrike         groupAlphaStrike[]         = new AlphaStrike[WeaponGroups.MAX_GROUPS];
+    public final AlphaHeat           groupAlphaHeat[]           = new AlphaHeat[WeaponGroups.MAX_GROUPS];
     public final BurstDamageOverTime groupBurstDamageOverTime[] = new BurstDamageOverTime[WeaponGroups.MAX_GROUPS];
     public final MaxDPS              groupMaxDPS[]              = new MaxDPS[WeaponGroups.MAX_GROUPS];
     public final MaxSustainedDPS     groupMaxSustainedDPS[]     = new MaxSustainedDPS[WeaponGroups.MAX_GROUPS];
@@ -135,6 +137,7 @@ public class LoadoutMetrics {
 
             // Offense
             groupAlphaStrike[i] = new AlphaStrike(aLoadout, i);
+            groupAlphaHeat[i] = new AlphaHeat(aLoadout, i);
             groupBurstDamageOverTime[i] = new BurstDamageOverTime(aLoadout, aXBar, i);
             groupMaxDPS[i] = new MaxDPS(aLoadout, i);
             groupMaxSustainedDPS[i] = new MaxSustainedDPS(aLoadout, heatDissipation, i);

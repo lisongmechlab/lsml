@@ -87,11 +87,13 @@ public class LoadoutInfoPanel extends JPanel implements Message.Recipient {
     public static final String MAX_DPS_TOOLTIP          = "The maximum damage you can deal per second at the displayed range. For Ultra-AC type weapons, this caculates the statistically expected DPS. Also takes spread of LB-X and similar weapons into account.";
     public static final String BURST_DAMAGE_TEXT        = "Burst  %.1f s: %.1f @ %.0f m";
     public static final String BURST_DAMAGE_TOOLTIP     = "The amount of damage you can deal in a limited time window, under the assumption that heat can be ignored (see time to overheat above). For double fire weapons (U-AC) includes the statistically expected damage. For LB-X type weapons it includes the spread of the weapon.";
+    public static final String ALPHA_HEAT_TOOLTIP       = "The amount of heat done by an alpha strike, not including ghost heat.";
+    public static final String ALPHA_HEAT_TEXT          = "Alpha heat: %.1f";
     public static final String ALPHA_DAMAGE_TEXT        = "Alpha: %.1f @ %.0f m";
     public static final String ALPHA_DAMAGE_TOOLTIP     = "The maximum damage you can deal at the displayed range in one volley.";
     public static final String GHOST_HEAT_TEXT          = "Ghost heat: %.1f";
     public static final String GHOST_HEAT_TOOLTIP       = "The amount of extra heat you receive on an alpha strike due to the ghost heat mechanic.";
-    public static final String TIME_TO_OVERHEAT_TEXT    = "Seconds to Overheat: %.1f";
+    public static final String TIME_TO_OVERHEAT_TEXT    = "Seconds to overheat: %.1f";
     public static final String TIME_TO_OVERHEAT_TOOLTIP = "The amount of seconds you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.";
     public static final String COOLING_RATIO_TEXT       = "Cooling ratio: %.0f %%";
     public static final String COOLING_RATIO_TOOLTIP    = "How much of your maximal heat generation that can be dissipated. A value of 100% means that you will never overheat.";

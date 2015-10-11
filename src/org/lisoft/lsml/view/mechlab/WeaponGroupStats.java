@@ -82,7 +82,8 @@ public class WeaponGroupStats extends JPanel {
                 LoadoutInfoPanel.TIME_TO_OVERHEAT_TEXT, LoadoutInfoPanel.TIME_TO_OVERHEAT_TOOLTIP, aXBar, aLoadout);
         timeToOverheat.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        alphaHeat = new JLabel("Alpha Heat: ");
+        alphaHeat = new MetricDisplay(aMetrics.groupAlphaHeat[aGroup], LoadoutInfoPanel.ALPHA_HEAT_TEXT,
+                LoadoutInfoPanel.ALPHA_HEAT_TOOLTIP, aXBar, aLoadout);
         ghostHeat = new MetricDisplay(aMetrics.groupGhostHeat[aGroup], LoadoutInfoPanel.GHOST_HEAT_TEXT,
                 LoadoutInfoPanel.GHOST_HEAT_TOOLTIP, aXBar, aLoadout) {
             private static final long serialVersionUID = 1L;
@@ -120,10 +121,10 @@ public class WeaponGroupStats extends JPanel {
         add(maxDPS);
         add(sustDPS);
     }
-    
+
     @Override
     public void setEnabled(boolean aEnabled) {
-        for(Component c : getComponents()){
+        for (Component c : getComponents()) {
             c.setEnabled(aEnabled);
         }
         super.setEnabled(aEnabled);
