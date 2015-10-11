@@ -62,13 +62,20 @@ public class Weapon extends HeatSource {
     private final int      ghostHeatFreeAlpha;
     @XStreamAsAttribute
     protected final double volleyDelay;
+    @XStreamAsAttribute
+    private final double   impulse;
 
-    public Weapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, int aHP, Faction aFaction, Attribute aHeat, Attribute aCooldown,
-            Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
+    public Weapon(
+            // Item Arguments
+            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardPointType, int aHP, Faction aFaction,
+            // HeatSource Arguments
+            Attribute aHeat,
+            // Weapon Arguments
+            Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
             double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
-            double aVolleyDelay) {
+            double aVolleyDelay, double aImpulse) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
         cooldown = aCooldown;
         rangeZero = aRangeZero;
@@ -84,6 +91,7 @@ public class Weapon extends HeatSource {
         ghostHeatMultiplier = aGhostHeatMultiplier;
         ghostHeatFreeAlpha = aGhostHeatMaxFreeAlpha;
         volleyDelay = aVolleyDelay;
+        impulse = aImpulse;
 
         if (roundsPerShot < 1)
             throw new IllegalArgumentException("All weapons must have Rounds per shot > 0");
@@ -128,6 +136,10 @@ public class Weapon extends HeatSource {
 
     public double getProjectileSpeed() {
         return projectileSpeed;
+    }
+
+    public double getImpulse() {
+        return impulse;
     }
 
     public double getRangeZero(Collection<Modifier> aModifiers) {
@@ -240,7 +252,7 @@ public class Weapon extends HeatSource {
         return false;
     }
 
-    public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
+    public final static Comparator<Item>   DEFAULT_WEAPON_ORDERING;
     public final static Comparator<Weapon> RANGE_WEAPON_ORDERING;
 
     static {

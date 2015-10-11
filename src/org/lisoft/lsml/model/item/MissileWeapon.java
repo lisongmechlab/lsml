@@ -33,16 +33,31 @@ public class MissileWeapon extends AmmoWeapon {
     private final int requiredGuidanceType;
     private final int baseItemId;
 
-    public MissileWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
-            Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
-            Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
-            double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
-            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, String aAmmoType, double aSpread,
-            int aRequiredGuidanceId, int aBaseItemId, double aVolleyDelay) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.MISSILE, aHP, aFaction, aHeat, aCooldown,
-                aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
-                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
-                aAmmoType, aVolleyDelay, aSpread);
+    public MissileWeapon(
+            // Item Arguments
+            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            Faction aFaction,
+            // HeatSource Arguments
+            Attribute aHeat,
+            // Weapon Arguments
+            Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
+            double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
+            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
+            double aVolleyDelay, double aImpulse,
+            // AmmoWeapon Arguments
+            String aAmmoType, double aSpread,
+            // MissileWeapon Arguments
+            int aRequiredGuidanceId, int aBaseItemId) {
+        super(// Item Arguments
+                aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.MISSILE, aHP, aFaction,
+                // HeatSource Arguments
+                aHeat,
+                // Weapon Arguments
+                aCooldown, aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot,
+                aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
+                aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
+                // AmmoWeapon Arguments
+                aAmmoType, aSpread);
         requiredGuidanceType = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
     }

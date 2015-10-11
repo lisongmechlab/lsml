@@ -36,15 +36,26 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 public class EnergyWeapon extends Weapon {
     protected final Attribute burnTime;
 
-    public EnergyWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
-            Faction aFaction, Attribute aHeat, Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin,
-            Attribute aRangeLong, Attribute aRangeMax, double aFallOffExponent, int aRoundsPerShot,
-            double aDamagePerProjectile, int aProjectilesPerRound, double aProjectileSpeed, int aGhostHeatGroupId,
-            double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha, Attribute aBurnTime, double aVolleyDelay) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ENERGY, aHP, aFaction, aHeat, aCooldown,
-                aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
-                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
-                aVolleyDelay);
+    public EnergyWeapon(// Item Arguments
+            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            Faction aFaction,
+            // HeatSource Arguments
+            Attribute aHeat,
+            // Weapon Arguments
+            Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
+            double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
+            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
+            double aVolleyDelay, double aImpulse,
+            // EnergyWeaponm Arguments
+            Attribute aBurnTime) {
+        super(// Item Arguments
+                aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ENERGY, aHP, aFaction,
+                // HeatSource Arguments
+                aHeat,
+                // Weapon Arguments
+                aCooldown, aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot,
+                aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
+                aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
         burnTime = aBurnTime;
     }
 

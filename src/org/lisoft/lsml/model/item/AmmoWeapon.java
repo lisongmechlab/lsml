@@ -40,16 +40,23 @@ public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     protected final double spread;
 
-    public AmmoWeapon(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, int aHP, Faction aFaction, Attribute aHeat, Attribute aCooldown,
-            Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
+    public AmmoWeapon(
+            // Item Arguments
+            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+            HardPointType aHardPointType, int aHP, Faction aFaction,
+            // HeatSource Arguments
+            Attribute aHeat,
+            // Weapon Arguments
+            Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
             double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
-            String aAmmoType, double aVolleyDelay, double aSpread) {
+            double aVolleyDelay, double aImpulse,
+            // AmmoWeapon Arguments
+            String aAmmoType, double aSpread) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
                 aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
-                aVolleyDelay);
+                aVolleyDelay, aImpulse);
         ammoTypeId = aAmmoType;
         spread = aSpread;
     }

@@ -39,9 +39,13 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 public class HeatSource extends Item {
     private final Attribute heat;
 
-    protected HeatSource(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+    protected HeatSource(
+            // Item Arguments
+            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardPointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
-            List<ChassisClass> aAllowedChassisClasses, Attribute aHeat) {
+            List<ChassisClass> aAllowedChassisClasses,
+            // HeatSource Arguments
+            Attribute aHeat) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aAllowedLocations,
                 aAllowedChassisClasses);
         heat = aHeat;
