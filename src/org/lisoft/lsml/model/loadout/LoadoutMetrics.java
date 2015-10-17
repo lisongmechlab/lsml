@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.metrics.AlphaHeat;
 import org.lisoft.lsml.model.metrics.AlphaStrike;
@@ -43,7 +44,6 @@ import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.metrics.TorsoTwistPitchSpeed;
 import org.lisoft.lsml.model.metrics.TorsoTwistYawSpeed;
 import org.lisoft.lsml.model.metrics.TurningSpeed;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This is a convenience class that collects all useful metrics about a loadout in one easily accessible and re-usable

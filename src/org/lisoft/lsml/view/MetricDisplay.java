@@ -24,21 +24,22 @@ import java.util.Formatter;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import org.lisoft.lsml.messages.EfficienciesMessage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.metrics.JumpDistance;
 import org.lisoft.lsml.model.metrics.Metric;
 import org.lisoft.lsml.model.metrics.RangeMetric;
 import org.lisoft.lsml.model.metrics.RangeTimeMetric;
-import org.lisoft.lsml.model.modifiers.EfficienciesMessage;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This class is a convenience for showing the results of a metric in a JLabel.
  * 
  * @author Li Song
  */
-public class MetricDisplay extends JLabel implements Message.Recipient {
+public class MetricDisplay extends JLabel implements MessageReceiver {
     private static final long    serialVersionUID = 4947119462839900984L;
     private final LoadoutBase<?> loadout;
     private final Formatter      formatter;

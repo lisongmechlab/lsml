@@ -30,11 +30,12 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lisoft.lsml.messages.EfficienciesMessage;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.EfficienciesMessage.Type;
 import org.lisoft.lsml.model.chassi.BaseMovementProfile;
 import org.lisoft.lsml.model.chassi.MovementArchetype;
 import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.modifiers.EfficienciesMessage.Type;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 

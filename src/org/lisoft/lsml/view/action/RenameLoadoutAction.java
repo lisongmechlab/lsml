@@ -27,10 +27,10 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.lisoft.lsml.command.CmdSetName;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.message.MessageXBar;
-import org.lisoft.lsml.view.mechlab.LoadoutFrame;
+import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
 public class RenameLoadoutAction extends AbstractAction {
     private static final String  SHORTCUT_STROKE  = "control R";

@@ -25,10 +25,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdStripArmor;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.message.MessageXBar;
-import org.lisoft.lsml.view.mechlab.LoadoutFrame;
+import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
 /**
  * This action sets the armor to max on the given {@link LoadoutStandard}.

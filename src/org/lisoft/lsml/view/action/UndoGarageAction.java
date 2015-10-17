@@ -26,9 +26,10 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.MechGarage;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
 
 /**
@@ -36,7 +37,7 @@ import org.lisoft.lsml.view.ProgramInit;
  * 
  * @author Li Song
  */
-public class UndoGarageAction extends AbstractAction implements Message.Recipient {
+public class UndoGarageAction extends AbstractAction implements MessageReceiver {
     private static final long   serialVersionUID = 665074705972425989L;
     private static final String SHORTCUT_STROKE  = "control shift Z";
 
@@ -50,7 +51,7 @@ public class UndoGarageAction extends AbstractAction implements Message.Recipien
     public Object getValue(String key) {
         if (key == Action.NAME) {
             if (isEnabled()) {
-                return "Undo " + ProgramInit.lsml().garageOperationStack.nextUndo().describe();
+                return "Undo " + ProgramInit.lsml().garageCmdStack.nextUndo().describe();
             }
             return "Undo Garage";
         }
@@ -59,7 +60,7 @@ public class UndoGarageAction extends AbstractAction implements Message.Recipien
 
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        ProgramInit.lsml().garageOperationStack.undo();
+        ProgramInit.lsml().garageCmdStack.undo();
     }
 
     @Override
@@ -68,10 +69,10 @@ public class UndoGarageAction extends AbstractAction implements Message.Recipien
             @Override
             public void run() {
                 if (aMsg instanceof MechGarage.GarageMessage) {
-                    if (ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null)
+                    if (ProgramInit.lsml() == null || ProgramInit.lsml().garageCmdStack == null)
                         setEnabled(false);
                     else
-                        setEnabled(null != ProgramInit.lsml().garageOperationStack.nextUndo());
+                        setEnabled(null != ProgramInit.lsml().garageCmdStack.nextUndo());
                     firePropertyChange(NAME, "", getValue(NAME));
                 }
             }

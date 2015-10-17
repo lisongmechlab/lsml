@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
@@ -33,8 +36,6 @@ import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This class calculates the accurate heat generation over time for a {@link LoadoutStandard} assuming all guns fire as
@@ -42,7 +43,7 @@ import org.lisoft.lsml.util.message.MessageXBar;
  * 
  * @author Li Song
  */
-public class HeatOverTime implements VariableMetric, Message.Recipient {
+public class HeatOverTime implements VariableMetric, MessageReceiver {
 
     private final LoadoutBase<?>         loadout;
     private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();

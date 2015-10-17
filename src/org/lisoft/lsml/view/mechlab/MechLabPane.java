@@ -32,15 +32,17 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.DecodingException;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
-import org.lisoft.lsml.view.mechlab.equipment.EquipmentPanel;
-import org.lisoft.lsml.view.mechlab.equipment.GarageTree;
-import org.lisoft.lsml.view.mechlab.equipment.ModuleSeletionList;
+import org.lisoft.lsml.view.mechlab.equipmentpanel.EquipmentPanel;
+import org.lisoft.lsml.view.mechlab.equipmentpanel.ModuleSeletionList;
+import org.lisoft.lsml.view.mechlab.garagetree.GarageTree;
+import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 import org.lisoft.lsml.view.preferences.Preferences;
 import org.lisoft.lsml.view.render.ScrollablePanel;
 import org.lisoft.lsml.view.render.StyleManager;
@@ -51,14 +53,14 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Li Song
  */
 public class MechLabPane extends JSplitPane {
-    private static final long    serialVersionUID = 1079910953509846928L;
-    private final LoadoutDesktop desktop;
-    private final MessageXBar    xBar;
+    private static final long serialVersionUID = 1079910953509846928L;
+    private final DesktopPane desktop;
+    private final MessageXBar xBar;
 
     public MechLabPane(MessageXBar anXBar, Preferences aPreferences) {
         super(JSplitPane.HORIZONTAL_SPLIT, true);
         xBar = anXBar;
-        desktop = new LoadoutDesktop(xBar);
+        desktop = new DesktopPane(xBar);
 
         JTextField filterBar = new JTextField();
         JPanel filterPanel = new JPanel(new BorderLayout(5, 5));
@@ -73,7 +75,7 @@ public class MechLabPane extends JSplitPane {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Equipment", new EquipmentPanel(desktop, xBar));
         tabbedPane.addTab("Garage", garagePanel);
-        
+
         JPanel modulesPanel = new ScrollablePanel();
         modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.PAGE_AXIS));
 
@@ -97,9 +99,15 @@ public class MechLabPane extends JSplitPane {
      * 
      * @param aLoadout
      *            The {@link LoadoutBase} to create the frame for.
+     * @param aDropShipMode
+     *            If this loadout was opened from a drop ship.
      */
-    public void openLoadout(LoadoutBase<?> aLoadout) {
-        desktop.openLoadout(aLoadout);
+    public void openLoadout(LoadoutBase<?> aLoadout, boolean aDropShipMode) {
+        desktop.openLoadout(aLoadout, aDropShipMode);
+    }
+
+    public void openDropShip(DropShip aDropShip) {
+        desktop.openDropShip(aDropShip);
     }
 
     /**
@@ -127,15 +135,15 @@ public class MechLabPane extends JSplitPane {
     public void openLoadout(String aLSMLUrl) {
         assert (SwingUtilities.isEventDispatchThread());
         try {
-            openLoadout(ProgramInit.lsml().loadoutCoder.parse(aLSMLUrl));
+            openLoadout(ProgramInit.lsml().loadoutCoder.parse(aLSMLUrl), false);
         }
         catch (DecodingException e) {
-            JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to import loadout from \"" + aLSMLUrl
-                    + "\"!\n\nError:\n" + e);
+            JOptionPane.showMessageDialog(ProgramInit.lsml(),
+                    "Unable to import loadout from \"" + aLSMLUrl + "\"!\n\nError:\n" + e);
         }
         catch (Throwable e) {
-            JOptionPane.showMessageDialog(ProgramInit.lsml(), "Unable to decode: " + aLSMLUrl + "\n\n"
-                    + "The link is malformed.\nError:" + e);
+            JOptionPane.showMessageDialog(ProgramInit.lsml(),
+                    "Unable to decode: " + aLSMLUrl + "\n\n" + "The link is malformed.\nError:" + e);
         }
     }
 

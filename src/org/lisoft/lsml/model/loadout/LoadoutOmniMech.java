@@ -22,7 +22,6 @@ package org.lisoft.lsml.model.loadout;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.ModifierEquipment;
@@ -90,11 +89,6 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     public void setOmniPod(OmniPod aOmniPod) {
         ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
         component.setOmniPod(aOmniPod);
-    }
-
-    @Override
-    public MovementProfile getMovementProfile() {
-        return getChassis().getMovementProfileBase();
     }
 
     @Override

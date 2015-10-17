@@ -32,9 +32,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 

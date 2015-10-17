@@ -23,14 +23,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This class performs a simulated destruction of a component by large alphas [1] and for each item calculates the
@@ -49,7 +50,7 @@ import org.lisoft.lsml.util.message.MessageXBar;
  * 
  * @author Li Song
  */
-public class ComponentDestructionSimulator implements Message.Recipient {
+public class ComponentDestructionSimulator implements MessageReceiver {
     private final ConfiguredComponentBase loadoutPart;
     private final double                  P_miss;
     private final double                  weaponAlpha;

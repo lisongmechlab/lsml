@@ -36,13 +36,14 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.VerticalAlignment;
+import org.lisoft.lsml.messages.LoadoutMessage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.graphs.DamageGraphModel;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutMessage;
 import org.lisoft.lsml.util.Pair;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.render.StyleManager;
 
 /**
@@ -50,7 +51,7 @@ import org.lisoft.lsml.view.render.StyleManager;
  * 
  * @author Li Song
  */
-public class DamageGraphPanel extends ChartPanel implements Message.Recipient {
+public class DamageGraphPanel extends ChartPanel implements MessageReceiver {
     private final LoadoutBase<?>                loadout;
     private final WeaponColouredDrawingSupplier colours = new WeaponColouredDrawingSupplier();
     private final DamageGraphModel              model;

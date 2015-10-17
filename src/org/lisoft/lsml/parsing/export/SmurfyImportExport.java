@@ -39,12 +39,12 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.lisoft.lsml.command.CmdSetName;
-import org.lisoft.lsml.model.NotificationMessage;
-import org.lisoft.lsml.model.NotificationMessage.Severity;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.NotificationMessage;
+import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.LSML;
 
 /**

@@ -28,13 +28,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.parsing.datacache.GarageConverter;
+import org.lisoft.lsml.parsing.datacache.LoadoutConverter;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -45,7 +47,7 @@ import com.thoughtworks.xstream.XStream;
  */
 public class MechGarage {
     /**
-     * This class implements {@link org.lisoft.lsml.util.message.Message}s for the {@link MechGarage} so that other
+     * This class implements {@link org.lisoft.lsml.messages.Message}s for the {@link MechGarage} so that other
      * components can react to changes in the garage.
      * 
      * @author Li Song
@@ -71,21 +73,30 @@ public class MechGarage {
         }
 
         public enum Type {
-            LoadoutAdded, LoadoutRemoved, NewGarage, Saved
+            LoadoutAdded, LoadoutRemoved, NewGarage, Saved, DropShipRemoved, DropShipAdded
         }
 
         public final Type            type;
         public final MechGarage      garage;
         private final LoadoutBase<?> loadout;
+        public final DropShip        dropShip;
 
         public GarageMessage(Type aType, MechGarage aGarage, LoadoutBase<?> aLoadout) {
             type = aType;
             garage = aGarage;
             loadout = aLoadout;
+            dropShip = null;
+        }
+
+        public GarageMessage(Type aType, MechGarage aGarage, DropShip aDropShip) {
+            type = aType;
+            garage = aGarage;
+            loadout = null;
+            dropShip = aDropShip;
         }
 
         public GarageMessage(Type aType, MechGarage aGarage) {
-            this(aType, aGarage, null);
+            this(aType, aGarage, (DropShip) null);
         }
 
         @Override
@@ -99,9 +110,10 @@ public class MechGarage {
         }
     }
 
-    private final List<LoadoutBase<?>> mechs = new ArrayList<>();
+    private final List<LoadoutBase<?>> mechs     = new ArrayList<>();
     private File                       file;
     private transient MessageXBar      xBar;
+    private final List<DropShip>       dropShips = new ArrayList<>();
 
     /**
      * Creates a new, empty {@link MechGarage}.
@@ -111,7 +123,8 @@ public class MechGarage {
      */
     public MechGarage(MessageXBar aXBar) {
         xBar = aXBar;
-        xBar.post(new GarageMessage(GarageMessage.Type.NewGarage, this));
+        if (aXBar != null)
+            xBar.post(new GarageMessage(GarageMessage.Type.NewGarage, this));
     }
 
     /**
@@ -199,7 +212,8 @@ public class MechGarage {
                 fileWriter.close();
             }
         }
-        xBar.post(new GarageMessage(GarageMessage.Type.Saved, this));
+        if (xBar != null)
+            xBar.post(new GarageMessage(GarageMessage.Type.Saved, this));
     }
 
     /**
@@ -224,20 +238,24 @@ public class MechGarage {
      *            The {@link LoadoutStandard} to add.
      */
     public void add(LoadoutBase<?> aLoadout) {
+        if (aLoadout == null)
+            throw new NullPointerException();
         mechs.add(aLoadout);
-        xBar.post(new GarageMessage(GarageMessage.Type.LoadoutAdded, MechGarage.this, aLoadout));
+        if (xBar != null)
+            xBar.post(new GarageMessage(GarageMessage.Type.LoadoutAdded, MechGarage.this, aLoadout));
     }
 
     /**
-     * Removes the given {@link LoadoutStandard} from the garage. This will submit an {@link Command} to the
-     * {@link CommandStack} given in the constructor so that the action can be undone.
+     * Removes the given loadout from the garage. This will submit an {@link Command} to the {@link CommandStack} given
+     * in the constructor so that the action can be undone.
      * 
      * @param aLoadout
      *            The {@link LoadoutStandard} to remove.
      */
     public void remove(LoadoutBase<?> aLoadout) {
         if (mechs.remove(aLoadout)) {
-            xBar.post(new GarageMessage(GarageMessage.Type.LoadoutRemoved, MechGarage.this, aLoadout));
+            if (xBar != null)
+                xBar.post(new GarageMessage(GarageMessage.Type.LoadoutRemoved, MechGarage.this, aLoadout));
         }
     }
 
@@ -252,6 +270,43 @@ public class MechGarage {
         stream.omitField(MechGarage.class, "file");
         stream.alias("loadout", LoadoutOmniMech.class);
         stream.alias("loadout", LoadoutStandard.class);
+        stream.registerConverter(new GarageConverter());
+        stream.registerConverter(new LoadoutConverter());
         return stream;
+    }
+
+    /**
+     * @return A {@link List} of all the {@link DropShip}s stored in the garage.
+     */
+    public List<DropShip> getDropShips() {
+        return dropShips;
+    }
+
+    /**
+     * Adds a drop ship to the garage.
+     * 
+     * @param aDropShip
+     *            The {@link DropShip} to add.
+     */
+    public void add(DropShip aDropShip) {
+        if (aDropShip == null)
+            throw new NullPointerException();
+        dropShips.add(aDropShip);
+        if (xBar != null)
+            xBar.post(new GarageMessage(GarageMessage.Type.DropShipAdded, MechGarage.this, aDropShip));
+    }
+
+    /**
+     * Removes the given {@link DropShip} from the garage. This will submit an {@link Command} to the
+     * {@link CommandStack} given in the constructor so that the action can be undone.
+     * 
+     * @param aDropShip
+     *            The {@link DropShip} to remove.
+     */
+    public void remove(DropShip aDropShip) {
+        if (dropShips.remove(aDropShip)) {
+            if (xBar != null)
+                xBar.post(new GarageMessage(GarageMessage.Type.DropShipRemoved, MechGarage.this, aDropShip));
+        }
     }
 }

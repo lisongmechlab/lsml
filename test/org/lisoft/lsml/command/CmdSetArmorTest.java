@@ -9,15 +9,15 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.ComponentMessage.Type;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mock;

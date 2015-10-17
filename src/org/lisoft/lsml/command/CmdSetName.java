@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.messages.LoadoutMessage;
+import org.lisoft.lsml.messages.LoadoutMessage.Type;
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutMessage;
-import org.lisoft.lsml.model.loadout.LoadoutMessage.Type;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This operation renames a loadout.
@@ -32,23 +32,22 @@ import org.lisoft.lsml.util.message.MessageXBar;
  * @author Li Song
  */
 public class CmdSetName extends Command {
-    private String                 oldName;
-    private final String           newName;
-
-    protected final MessageXBar    xBar;
-    protected final LoadoutBase<?> loadout;
+    private final MessageDelivery messageDelivery;
+    private final LoadoutBase<?>  loadout;
+    private final String          newName;
+    private String                oldName;
 
     /**
      * @param aLoadout
      *            The {@link LoadoutStandard} to rename.
-     * @param anXBar
-     *            A {@link MessageXBar} to announce the change on.
+     * @param aMessageDelivery
+     *            A {@link MessageDelivery} to announce the change on.
      * @param aName
      *            The new name of the loadout.
      */
-    public CmdSetName(LoadoutBase<?> aLoadout, MessageXBar anXBar, String aName) {
+    public CmdSetName(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, String aName) {
         loadout = aLoadout;
-        xBar = anXBar;
+        messageDelivery = aMessageDelivery;
         newName = aName;
     }
 
@@ -57,7 +56,7 @@ public class CmdSetName extends Command {
         if (oldName == loadout.getName())
             return;
         loadout.rename(oldName);
-        xBar.post(new LoadoutMessage(loadout, Type.RENAME));
+        messageDelivery.post(new LoadoutMessage(loadout, Type.RENAME));
     }
 
     @Override
@@ -66,8 +65,8 @@ public class CmdSetName extends Command {
         if (oldName == newName)
             return;
         loadout.rename(newName);
-        if (xBar != null)
-            xBar.post(new LoadoutMessage(loadout, Type.RENAME));
+        if (messageDelivery != null)
+            messageDelivery.post(new LoadoutMessage(loadout, Type.RENAME));
     }
 
     @Override

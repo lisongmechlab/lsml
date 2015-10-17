@@ -19,8 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
+import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.util.message.Message;
 
 /**
  * This class is a simple container that manages upgrades for an loadout.

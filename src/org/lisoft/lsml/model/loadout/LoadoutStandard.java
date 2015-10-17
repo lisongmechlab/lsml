@@ -24,7 +24,6 @@ import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModifierEquipment;
@@ -119,12 +118,7 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
         }
         return ans;
     }
-
-    @Override
-    public MovementProfile getMovementProfile() {
-        return getChassis().getMovementProfileBase();
-    }
-
+    
     @Override
     public int getJumpJetsMax() {
         return getChassis().getJumpJetsMax();

@@ -39,9 +39,9 @@ import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.view.mechlab.ItemLabel;
-import org.lisoft.lsml.view.mechlab.PartList;
-import org.lisoft.lsml.view.mechlab.equipment.GarageTree;
+import org.lisoft.lsml.view.mechlab.equipmentpanel.ItemLabel;
+import org.lisoft.lsml.view.mechlab.garagetree.GarageTree;
+import org.lisoft.lsml.view.mechlab.loadoutframe.PartList;
 import org.lisoft.lsml.view.render.ItemRenderer;
 
 public class ItemTransferHandler extends TransferHandler {
@@ -132,29 +132,29 @@ public class ItemTransferHandler extends TransferHandler {
             }
             return true;
         }
-        return true;
+        return aInfo.isDataFlavorSupported(DataFlavor.stringFlavor);
     }
 
     /**
      * Perform the actual import. This only supports drag and drop.
      */
     @Override
-    public boolean importData(TransferHandler.TransferSupport info) {
-        if (!info.isDrop()) {
+    public boolean importData(TransferHandler.TransferSupport aInfo) {
+        if (!aInfo.isDrop()) {
             return false;
         }
 
-        if (null != sourcePart && info.getDropAction() != COPY) {
+        if (null != sourcePart && aInfo.getDropAction() != COPY) {
             sourcePart = null;
         }
 
-        Component component = info.getComponent();
+        Component component = aInfo.getComponent();
         if (component instanceof PartList) {
             PartList model = (PartList) component;
-            int dropIndex = ((JList.DropLocation) info.getDropLocation()).getIndex();
+            int dropIndex = ((JList.DropLocation) aInfo.getDropLocation()).getIndex();
             try {
                 boolean first = true;
-                List<Item> items = parseItems(info);
+                List<Item> items = parseItems(aInfo);
                 if (null == items)
                     return false;
                 for (Item item : items) {
@@ -168,7 +168,7 @@ public class ItemTransferHandler extends TransferHandler {
             }
         }
         // Allow the user to drop the item to get it removed
-        return true;
+        return aInfo.isDataFlavorSupported(DataFlavor.stringFlavor);
     }
 
     private List<Item> parseItems(TransferHandler.TransferSupport aInfo) {

@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view.models;
 
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
 import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageReception;
 
 /**
  * This model is used for 'Mech upgrades.

@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view.preferences;
 
-import org.lisoft.lsml.util.message.MessageXBar;
+import org.lisoft.lsml.messages.MessageXBar;
 
 /**
  * This class is a container class for all the individual preferences classes.

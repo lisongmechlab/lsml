@@ -31,6 +31,9 @@ import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
@@ -38,15 +41,13 @@ import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This class displays a summary of weapons and ammo for a loadout in a JTable.
  * 
  * @author Li Song
  */
-public class WeaponSummaryTable extends JTable implements Message.Recipient {
+public class WeaponSummaryTable extends JTable implements MessageReceiver {
     private static final long    serialVersionUID = 868861599143353045L;
     private final LoadoutBase<?> loadout;
     private final DecimalFormat  decimalFormat    = new DecimalFormat("####");

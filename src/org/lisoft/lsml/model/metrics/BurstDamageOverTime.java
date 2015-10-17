@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Weapon;
@@ -32,15 +35,13 @@ import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This metric calculates how much damage a loadout can dish out in a given time interval ignoring heat.
  * 
  * @author Li Song
  */
-public class BurstDamageOverTime extends RangeTimeMetric implements Message.Recipient {
+public class BurstDamageOverTime extends RangeTimeMetric implements MessageReceiver {
     private final List<IntegratedSignal> damageIntegrals = new ArrayList<>();
     private double                       cachedRange     = -1;
     private final int                    weaponGroup;

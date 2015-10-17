@@ -21,21 +21,22 @@ package org.lisoft.lsml.view.render;
 
 import java.util.Collection;
 
+import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This class is a helper class to map a display list index to an item and associated render state.
  * 
  * @author Li Song
  */
-public class ComponentRenderer implements Message.Recipient {
+public class ComponentRenderer implements MessageReceiver {
     public enum RenderType {
         Empty, MultiSlot, Item, EngineHeatSink, LastSlot
     }
