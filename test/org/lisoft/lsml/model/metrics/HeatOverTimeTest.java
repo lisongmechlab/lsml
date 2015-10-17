@@ -9,15 +9,15 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mockito;
 
 public class HeatOverTimeTest {

@@ -25,12 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mockito;
 
 /**

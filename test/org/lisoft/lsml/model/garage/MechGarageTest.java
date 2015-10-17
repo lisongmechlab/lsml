@@ -37,10 +37,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdLoadStock;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.garage.MechGarage.GarageMessage;
 import org.lisoft.lsml.model.garage.MechGarage.GarageMessage.Type;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.PilotModuleDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
@@ -48,12 +50,10 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class MechGarageTest {
-
     File        testFile = null;
 
     @Mock
@@ -81,6 +81,7 @@ public class MechGarageTest {
         // Verify
         verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.NewGarage, cut));
 
+        assertTrue(cut.getDropShips().isEmpty());
         assertTrue(cut.getMechs().isEmpty());
         assertNull(cut.getFile());
     }
@@ -98,13 +99,14 @@ public class MechGarageTest {
         reset(xBar);
 
         // Execute
-        MechGarage c = MechGarage.open(testFile, xBar);
+        MechGarage cut = MechGarage.open(testFile, xBar);
 
         // Verify
-        verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.NewGarage, c));
+        verify(xBar).post(new GarageMessage(MechGarage.GarageMessage.Type.NewGarage, cut));
 
-        assertTrue(c.getMechs().isEmpty());
-        assertSame(testFile, c.getFile());
+        assertTrue(cut.getDropShips().isEmpty());
+        assertTrue(cut.getMechs().isEmpty());
+        assertSame(testFile, cut.getFile());
     }
 
     /**
@@ -158,6 +160,9 @@ public class MechGarageTest {
     }
 
     /**
+     * This is in reality an integration test as the test has to verify that the loadouts and dropships can be properly
+     * serialised.
+     * 
      * {@link MechGarage#saveas(File)} shall produce a file that can be subsequently
      * {@link MechGarage#open(File, MessageXBar)}ed to restore the contents of the garage before the call to
      * {@link MechGarage#saveas(File)}
@@ -173,10 +178,15 @@ public class MechGarageTest {
         LoadoutBase<?> lo3 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("nva-prime"));
         LoadoutBase<?> lo4 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("tbr-c"));
 
-        CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdLoadStock(lo3.getChassis(), lo3, xBar));
-        stack.pushAndApply(new CmdLoadStock(lo4.getChassis(), lo4, xBar));
+        DropShip ds1 = new DropShip(Faction.InnerSphere);
+        DropShip ds2 = new DropShip(Faction.Clan);
+        ds1.setMech(0, lo1);
+        ds1.setMech(1, lo2);
+        ds2.setMech(2, lo3);
+        ds2.setMech(3, lo4);
 
+        // Add some pilot modules to make sure they are serialised
+        CommandStack stack = new CommandStack(0);
         stack.pushAndApply(new CmdAddModule(null, lo1, PilotModuleDB.lookup("ADVANCED UAV")));
         stack.pushAndApply(new CmdAddModule(null, lo4, PilotModuleDB.lookup("COOL SHOT 6")));
 
@@ -185,6 +195,8 @@ public class MechGarageTest {
         cut.add(lo2);
         cut.add(lo3);
         cut.add(lo4);
+        cut.add(ds1);
+        cut.add(ds2);
         reset(xBar);
 
         // Execute
@@ -199,6 +211,14 @@ public class MechGarageTest {
         assertEquals(lo2, loadedGarage.getMechs().get(1));
         assertEquals(lo3, loadedGarage.getMechs().get(2));
         assertEquals(lo4, loadedGarage.getMechs().get(3));
+
+        assertEquals(2, loadedGarage.getDropShips().size());
+        assertEquals(ds1, loadedGarage.getDropShips().get(0));
+        assertEquals(ds2, loadedGarage.getDropShips().get(1));
+        assertEquals(loadedGarage.getMechs().get(0), loadedGarage.getDropShips().get(0).getMech(0));
+        assertEquals(loadedGarage.getMechs().get(1), loadedGarage.getDropShips().get(0).getMech(1));
+        assertEquals(loadedGarage.getMechs().get(2), loadedGarage.getDropShips().get(1).getMech(0));
+        assertEquals(loadedGarage.getMechs().get(3), loadedGarage.getDropShips().get(1).getMech(1));
     }
 
     /**
@@ -281,7 +301,8 @@ public class MechGarageTest {
      * Make sure that we can load many of the stock builds saved from 1.5.0.
      * <p>
      * Note, this is a backwards compatibility test.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testLoadStockBuilds_150() throws Exception {
@@ -291,7 +312,7 @@ public class MechGarageTest {
 
         for (LoadoutBase<?> loadout : garage.getMechs()) {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-            
+
             LoadoutBase<?> clone = DefaultLoadoutFactory.instance.produceClone(loadoutStandard);
             stack.pushAndApply(new CmdLoadStock(clone.getChassis(), clone, xBar));
 

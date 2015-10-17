@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
-import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
  * This operation removes all armor from a {@link LoadoutStandard}.

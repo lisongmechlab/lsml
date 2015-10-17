@@ -23,8 +23,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
-import org.lisoft.lsml.util.message.Message.Recipient;
-import org.lisoft.lsml.util.message.MessageReception;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view.ProgramInit;
 
 /**
@@ -34,7 +34,7 @@ import org.lisoft.lsml.view.ProgramInit;
  * @author Emily Björk
  *
  */
-public abstract class BinaryAttributeModel extends JToggleButton.ToggleButtonModel implements Recipient {
+public abstract class BinaryAttributeModel extends JToggleButton.ToggleButtonModel implements MessageReceiver {
 
     public BinaryAttributeModel(MessageReception aMessageReception) {
         aMessageReception.attach(this);

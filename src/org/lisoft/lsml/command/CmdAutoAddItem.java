@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Engine;
@@ -39,7 +40,6 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
  * This operation automatically places an item at a suitable location on the {@link LoadoutStandard}.

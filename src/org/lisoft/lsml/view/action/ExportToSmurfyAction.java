@@ -32,7 +32,7 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.parsing.export.SmurfyImportExport;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.view.ProgramInit;
-import org.lisoft.lsml.view.mechlab.LoadoutFrame;
+import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
 /**
  * This action will upload the given loadout to Smurfy's website.

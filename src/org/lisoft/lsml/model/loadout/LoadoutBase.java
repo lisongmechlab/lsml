@@ -520,9 +520,11 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
             return EquipResult.make(EquipResultType.NotEnoughSlots);
         return EquipResult.SUCCESS;
     }
-
-    public abstract MovementProfile getMovementProfile();
-
+    
+    public MovementProfile getMovementProfile() {
+        return getChassis().getMovementProfileBase();
+    }
+    
     /**
      * @return A String containing a HTML formatted summary of the quirks for this loadout.
      */

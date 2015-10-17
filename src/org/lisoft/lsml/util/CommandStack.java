@@ -24,10 +24,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.lisoft.lsml.messages.MessageBuffer;
+import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.util.message.MessageBuffer;
-import org.lisoft.lsml.util.message.MessageDelivery;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This class models an command stack that can be used for undo etc (see: Command Pattern). It will automatically reset

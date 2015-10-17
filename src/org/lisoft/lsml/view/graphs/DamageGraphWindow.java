@@ -22,9 +22,9 @@ package org.lisoft.lsml.view.graphs;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.graphs.DamageGraphModel;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
 
 /**

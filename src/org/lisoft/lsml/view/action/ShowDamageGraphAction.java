@@ -23,10 +23,10 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.graphs.DamageGraphModel;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.graphs.DamageGraphWindow;
 
 /**

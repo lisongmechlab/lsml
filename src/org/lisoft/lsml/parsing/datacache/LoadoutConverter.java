@@ -126,7 +126,8 @@ public class LoadoutConverter implements Converter {
 
     private LoadoutBase<?> parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         String name = aReader.getAttribute("name");
-        ChassisBase chassis = ChassisDB.lookup(aReader.getAttribute("chassis"));
+        String chassisName = aReader.getAttribute("chassis");
+        ChassisBase chassis = ChassisDB.lookup(chassisName);
         LoadoutBase<?> loadoutBase = DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
         builder.push(new CmdSetName(loadoutBase, null, name));
@@ -146,8 +147,8 @@ public class LoadoutConverter implements Converter {
                     while (aReader.hasMoreChildren()) {
                         aReader.moveDown();
                         if (aReader.getNodeName().equals("guidance")) {
-                            GuidanceUpgrade artemis = (GuidanceUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader
-                                    .getValue()));
+                            GuidanceUpgrade artemis = (GuidanceUpgrade) UpgradeDB
+                                    .lookup(Integer.parseInt(aReader.getValue()));
                             builder.push(new CmdSetGuidanceType(null, loadoutBase, artemis));
                         }
                         aReader.moveUp();
@@ -197,8 +198,8 @@ public class LoadoutConverter implements Converter {
         String name = aReader.getAttribute("name");
         ChassisBase chassis = ChassisDB.lookup(chassisVariation);
         if (!(chassis instanceof ChassisStandard))
-            throw new RuntimeException("Error parsing loadout: " + name
-                    + " expected standard mech but found an omni mech chassis.");
+            throw new RuntimeException(
+                    "Error parsing loadout: " + name + " expected standard mech but found an omni mech chassis.");
 
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
@@ -212,7 +213,7 @@ public class LoadoutConverter implements Converter {
                 builder.push(new CmdSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
                 builder.push(new CmdSetStructureType(null, loadout, upgrades.getStructure()));
                 builder.push(new CmdSetArmorType(null, loadout, upgrades.getArmor()));
-                
+
                 // Cheat here to preserve backwards compatibility if really old V1 garages.
                 // Doing this here, triggers artemis fixes to be applied in v1 parser in ConfiguredComponentConverter
                 loadout.getUpgrades().setGuidance(upgrades.getGuidance());
@@ -225,8 +226,8 @@ public class LoadoutConverter implements Converter {
                 loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak(), null);
             }
             else if ("component".equals(aReader.getNodeName())) {
-                aContext.convertAnother(loadout, ConfiguredComponentStandard.class, new ConfiguredComponentConverter(
-                        loadout, builder));
+                aContext.convertAnother(loadout, ConfiguredComponentStandard.class,
+                        new ConfiguredComponentConverter(loadout, builder));
             }
             aReader.moveUp();
         }

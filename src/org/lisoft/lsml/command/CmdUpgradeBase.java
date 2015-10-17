@@ -19,13 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
  * An abstract package local class that facilitates implementing {@link Command}s that relate to

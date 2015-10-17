@@ -19,9 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.view.preferences;
 
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This class contains preferences related to the UI behavior.

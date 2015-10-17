@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.messages.LoadoutMessage;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutMessage;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This {@link Command} removes a module from a loadout.

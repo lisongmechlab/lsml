@@ -30,8 +30,8 @@ import javax.swing.TransferHandler;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.PilotModuleDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.view.mechlab.PilotModuleList;
-import org.lisoft.lsml.view.mechlab.equipment.ModuleSeletionList;
+import org.lisoft.lsml.view.mechlab.equipmentpanel.ModuleSeletionList;
+import org.lisoft.lsml.view.mechlab.loadoutframe.PilotModuleList;
 
 /**
  * This class handles dragging and transfer of {@link PilotModule}s.

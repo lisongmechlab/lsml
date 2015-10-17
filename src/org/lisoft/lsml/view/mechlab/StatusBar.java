@@ -33,10 +33,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
-import org.lisoft.lsml.model.NotificationMessage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
 
 /**
@@ -45,7 +46,7 @@ import org.lisoft.lsml.view.ProgramInit;
  * 
  * @author Emily Björk
  */
-public class StatusBar extends JPanel implements Message.Recipient {
+public class StatusBar extends JPanel implements MessageReceiver {
     private static final long    serialVersionUID = -4434467429002792379L;
     private final LoadoutBase<?> loadout;
     private final JLabel         statusLabel;

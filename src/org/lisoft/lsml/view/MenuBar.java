@@ -29,8 +29,10 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.view.action.ImportFromSmurfyAction;
 import org.lisoft.lsml.view.action.ImportMechAction;
+import org.lisoft.lsml.view.action.NewDropShipAction;
 import org.lisoft.lsml.view.action.OpenHelp;
 import org.lisoft.lsml.view.action.OpenPreferences;
 
@@ -130,9 +132,15 @@ public class MenuBar extends JMenuBar {
 
                 menu.add(item);
             }
+            menu.addSeparator();
+            {
+                menu.add(new JMenuItem(new NewDropShipAction(Faction.Clan)));
+                menu.add(new JMenuItem(new NewDropShipAction(Faction.InnerSphere)));
+            }
 
-            menu.add(new JMenuItem(new ImportFromSmurfyAction(SwingUtilities.getWindowAncestor(this),
-                    application.loadoutCoder)));
+            menu.addSeparator();
+            menu.add(new JMenuItem(
+                    new ImportFromSmurfyAction(SwingUtilities.getWindowAncestor(this), application.loadoutCoder)));
         }
 
         setEnabled(true);

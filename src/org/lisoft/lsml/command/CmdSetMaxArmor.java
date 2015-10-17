@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
  * This operation sets the maximum amount of armor possible on a mech with a given ratio between front and back.

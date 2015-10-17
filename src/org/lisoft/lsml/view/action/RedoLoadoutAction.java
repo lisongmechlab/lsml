@@ -27,19 +27,20 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import org.lisoft.lsml.model.loadout.component.ComponentMessage;
+import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
-import org.lisoft.lsml.view.mechlab.LoadoutFrame;
+import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
 /**
  * This action will re-do a change to the given loadout.
  * 
  * @author Emily Björk
  */
-public class RedoLoadoutAction extends AbstractAction implements Message.Recipient {
+public class RedoLoadoutAction extends AbstractAction implements MessageReceiver {
     private static final String SHORTCUT_STROKE  = "control Y";
     private static final long   serialVersionUID = 665074705972425989L;
     private final LoadoutFrame  loadoutFrame;
@@ -79,7 +80,7 @@ public class RedoLoadoutAction extends AbstractAction implements Message.Recipie
             public void run() {
                 if (aMsg instanceof ComponentMessage
                         || aMsg instanceof Upgrades.UpgradesMessage) {
-                    if (ProgramInit.lsml() == null || ProgramInit.lsml().garageOperationStack == null)
+                    if (ProgramInit.lsml() == null || ProgramInit.lsml().garageCmdStack == null)
                         setEnabled(false);
                     else
                         setEnabled(null != loadoutFrame.getOpStack().nextRedo());

@@ -19,16 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
+import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.message.MessageDelivery;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This {@link Command} will change the armor of a {@link ConfiguredComponentBase}.

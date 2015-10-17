@@ -19,19 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
-import org.lisoft.lsml.util.message.MessageDelivery;
-import org.lisoft.lsml.util.message.MessageXBar;
 
 /**
  * This operation changes an {@link OmniPod} on a {@link ConfiguredComponentOmniMech}.

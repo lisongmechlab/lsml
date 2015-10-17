@@ -40,14 +40,15 @@ import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
-import org.lisoft.lsml.model.NotificationMessage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
 import org.lisoft.lsml.parsing.export.LsmlProtocolIPC;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.SwingHelpers;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.action.RedoGarageAction;
 import org.lisoft.lsml.view.action.UndoGarageAction;
 import org.lisoft.lsml.view.graphs.PayloadSelectionPanel;
@@ -61,7 +62,7 @@ import org.lisoft.lsml.view.preferences.Preferences;
  * 
  * @author Emily Björk
  */
-public class LSML extends JFrame implements Message.Recipient {
+public class LSML extends JFrame implements MessageReceiver {
     /**
      * 
      */
@@ -86,7 +87,7 @@ public class LSML extends JFrame implements Message.Recipient {
     // Order of definition matters here !
     public final MessageXBar  xBar                 = new MessageXBar();
     public final Preferences  preferences          = new Preferences(xBar);
-    public final CommandStack garageOperationStack = new CommandStack(256);
+    public final CommandStack garageCmdStack = new CommandStack(256);
 
     public final Base64LoadoutCoder loadoutCoder     = new Base64LoadoutCoder();
     public final MechLabPane        mechLabPane      = new MechLabPane(xBar, preferences);

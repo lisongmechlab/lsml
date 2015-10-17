@@ -27,16 +27,17 @@ import javax.swing.SwingUtilities;
 
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdSetArmorSymmetric;
+import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 
-public class ArmorSpinnerModel extends SpinnerNumberModel implements Message.Recipient {
+public class ArmorSpinnerModel extends SpinnerNumberModel implements MessageReceiver {
     private static final long             serialVersionUID = 2130487332299251881L;
     private final ConfiguredComponentBase part;
     private final ArmorSide               side;

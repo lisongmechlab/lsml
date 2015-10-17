@@ -42,6 +42,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -57,8 +60,7 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
+import org.lisoft.lsml.view.models.ChassiTableModel;
 import org.lisoft.lsml.view.preferences.Preferences;
 import org.lisoft.lsml.view.preferences.UiPreferences;
 import org.lisoft.lsml.view.render.ScrollablePanel;
@@ -69,7 +71,7 @@ import org.lisoft.lsml.view.render.StyleManager;
  * 
  * @author Emily Björk
  */
-public class ChassiSelectionPane extends JPanel implements Message.Recipient {
+public class ChassiSelectionPane extends JPanel implements MessageReceiver {
     static class NameColumn extends AttributeTableColumn {
         private static final long serialVersionUID = -816217603635882304L;
 
@@ -321,7 +323,7 @@ public class ChassiSelectionPane extends JPanel implements Message.Recipient {
                                 LoadoutBase<?> loadout = DefaultLoadoutFactory.instance
                                         .produceEmpty((ChassisBase) cell);
                                 ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                                ProgramInit.lsml().mechLabPane.openLoadout(loadout);
+                                ProgramInit.lsml().mechLabPane.openLoadout(loadout, false);
                             }
                         }
                     }

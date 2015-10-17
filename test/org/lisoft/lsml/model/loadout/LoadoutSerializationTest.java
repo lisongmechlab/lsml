@@ -31,6 +31,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
@@ -43,7 +44,6 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 

@@ -27,15 +27,16 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.lisoft.lsml.command.CmdRemoveFromGarage;
+import org.lisoft.lsml.command.CmdRemoveLoadoutFromGarage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.util.message.Message;
-import org.lisoft.lsml.util.message.MessageXBar;
 import org.lisoft.lsml.view.ProgramInit;
-import org.lisoft.lsml.view.mechlab.LoadoutFrame;
+import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
-public class DeleteLoadoutAction extends AbstractAction implements Message.Recipient {
+public class DeleteLoadoutAction extends AbstractAction implements MessageReceiver {
     private static final long    serialVersionUID = -4813215864397617783L;
     private static final String  SHORTCUT_STROKE  = "control D";
     private final LoadoutBase<?> loadout;
@@ -71,7 +72,7 @@ public class DeleteLoadoutAction extends AbstractAction implements Message.Recip
                     JOptionPane.YES_NO_OPTION);
             if (JOptionPane.YES_OPTION == result) {
                 try {
-                    ProgramInit.lsml().garageOperationStack.pushAndApply(new CmdRemoveFromGarage(garage, loadout));
+                    ProgramInit.lsml().garageCmdStack.pushAndApply(new CmdRemoveLoadoutFromGarage(garage, loadout));
                 }
                 catch (Exception e) {
                     // TODO replace with generic report bug dialog.

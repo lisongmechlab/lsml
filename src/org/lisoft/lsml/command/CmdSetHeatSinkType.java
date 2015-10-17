@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
@@ -30,7 +31,6 @@ import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
-import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
  * This {@link Command} can alter the heat sink upgrade status of a {@link LoadoutStandard}.

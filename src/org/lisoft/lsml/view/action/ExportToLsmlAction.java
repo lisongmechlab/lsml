@@ -33,7 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import org.lisoft.lsml.view.ProgramInit;
-import org.lisoft.lsml.view.mechlab.LoadoutFrame;
+import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
 /**
  * This action opens up a share frame where the user can copy the link to the build.

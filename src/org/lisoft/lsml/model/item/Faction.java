@@ -25,7 +25,7 @@ package org.lisoft.lsml.model.item;
  * @author Emily Björk
  */
 public enum Faction {
-    Any, InnerSphere, Clan;
+    Any("Any"), InnerSphere("Inner Sphere"), Clan("Clan");
 
     public boolean isCompatible(Faction aFaction) {
         if (this == Any || aFaction == Any)
@@ -43,4 +43,20 @@ public enum Faction {
             return Any;
         return valueOf(aFaction);
     }
+
+    /**
+     * 
+     */
+    private Faction(String aUiName) {
+        uiName = aUiName;
+    }
+
+    /**
+     * @return The name that should be shown in the UI for the faction.
+     */
+    public String getUiName() {
+        return uiName;
+    }
+
+    private final String uiName;
 }

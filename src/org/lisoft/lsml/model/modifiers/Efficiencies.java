@@ -22,8 +22,8 @@ package org.lisoft.lsml.model.modifiers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lisoft.lsml.model.modifiers.EfficienciesMessage.Type;
-import org.lisoft.lsml.util.message.MessageXBar;
+import org.lisoft.lsml.messages.EfficienciesMessage;
+import org.lisoft.lsml.messages.MessageXBar;
 
 /**
  * Handles efficiencies for a mech.
@@ -357,7 +357,7 @@ public class Efficiencies {
         if (twistX != aValue) {
             twistX = aValue;
             if (null != aXBar)
-                aXBar.post(new EfficienciesMessage(this, Type.Changed, false));
+                aXBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
         }
     }
 
@@ -380,7 +380,7 @@ public class Efficiencies {
         if (twistSpeed != aValue) {
             twistSpeed = aValue;
             if (null != aXBar) {
-                aXBar.post(new EfficienciesMessage(this, Type.Changed, false));
+                aXBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
             }
         }
     }
@@ -404,7 +404,7 @@ public class Efficiencies {
         if (armReflex != aValue) {
             armReflex = aValue;
             if (null != aXBar) {
-                aXBar.post(new EfficienciesMessage(this, Type.Changed, false));
+                aXBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
             }
         }
     }

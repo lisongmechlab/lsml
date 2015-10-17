@@ -19,16 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage;
-import org.lisoft.lsml.model.loadout.component.ComponentMessage.Type;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.message.MessageDelivery;
 
 /**
  * This operation toggles the state of toggleable items, for now HA/LAA.
