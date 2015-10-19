@@ -267,7 +267,7 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
 
     static class QuirksColumn extends TableColumn {
         private final static QuirksRenderingStrategy rs = new FilteredHtmlQuirksRenderingStrategy(
-                ModifiersDB.ALL_WEAPONS, false);
+                ModifiersDB.getAllWeaponSelectors(), false);
 
         public QuirksColumn() {
             super(0);
