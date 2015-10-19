@@ -526,11 +526,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     }
     
     /**
-     * @return A String containing a HTML formatted summary of the quirks for this loadout.
-     */
-    public abstract String getQuirkHtmlSummary();
-
-    /**
      * Returns a {@link Collection} of all equipment or modules or omnipods or quirks that are modifiers.
      * 
      * @return The {@link Collection} of modifiers.

@@ -21,6 +21,7 @@ package org.lisoft.lsml.view.mechlab.loadoutframe;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
@@ -45,6 +46,8 @@ import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ProgramInit;
+import org.lisoft.lsml.view.mechlab.HtmlQuirkRenderingStrategy;
+import org.lisoft.lsml.view.mechlab.QuirksRenderingStrategy;
 import org.lisoft.lsml.view.mechlab.StatusBar;
 import org.lisoft.lsml.view.render.StyleManager;
 
@@ -61,7 +64,7 @@ public class LoadoutPanel extends JPanel {
     private static final int     HEAD_OFFSET      = 0;
     private final LoadoutBase<?> loadout;
     private final MessageXBar    xBar;
-    private final CommandStack loadoutOperationStack;
+    private final CommandStack   loadoutOperationStack;
 
     public LoadoutPanel(LoadoutBase<?> aLoadout, CommandStack aOpStack, MessageXBar aXBar) {
         xBar = aXBar;
@@ -202,42 +205,50 @@ public class LoadoutPanel extends JPanel {
             final JPanel arm = new PartPanel(aLoadout, aLoadout.getComponent(Location.LeftArm), aXBar, true,
                     slotDistributor, symmetricArmor, loadoutOperationStack);
 
-            final JLabel quirksummary = new JLabel("Quirk summary");
-            quirksummary.addMouseListener(new MouseAdapter() {
-                JWindow window = null;
-
-                @Override
-                public void mouseEntered(MouseEvent aE) {
-                    window = new JWindow(ProgramInit.lsml());
-                    JLabel text = new JLabel(loadout.getQuirkHtmlSummary());
-                    JPanel textPanel = new JPanel();
-
-                    textPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
-                            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-                    textPanel.add(text);
-                    textPanel.setBackground(Color.WHITE);
-                    window.add(textPanel);
-                    window.pack();
-                    window.setLocation(aE.getLocationOnScreen());
-                    window.setVisible(true);
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    if (window != null) {
-                        window.dispose();
-                        window = null;
-                    }
-                }
-            });
-            quirksummary.setForeground(Color.BLUE);
-            Font font = quirksummary.getFont();
-            Map<TextAttribute, Object> attributes = new HashMap<>();
-            attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-            quirksummary.setFont(font.deriveFont(attributes));
+            final JLabel quirksummary = makeQuirkSummarLabel(aLoadout);
 
             panel.add(createComponentPanel(createComponentPadPanel(ARM_OFFSET, quirksummary), arm, null));
         }
         return panel;
+    }
+
+    // TODO: This really should be moved somewhere else.
+    public static JLabel makeQuirkSummarLabel(final LoadoutBase<?> aLoadout) {
+        final QuirksRenderingStrategy renderingStrategy = new HtmlQuirkRenderingStrategy(true);
+
+        final JLabel quirksummary = new JLabel("Quirk summary");
+        quirksummary.addMouseListener(new MouseAdapter() {
+            JWindow window = null;
+
+            @Override
+            public void mouseEntered(MouseEvent aE) {
+                window = new JWindow(ProgramInit.lsml());
+                Component text = renderingStrategy.render(aLoadout);
+                JPanel textPanel = new JPanel();
+
+                textPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
+                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+                textPanel.add(text);
+                textPanel.setBackground(Color.WHITE);
+                window.add(textPanel);
+                window.pack();
+                window.setLocation(aE.getLocationOnScreen());
+                window.setVisible(true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (window != null) {
+                    window.dispose();
+                    window = null;
+                }
+            }
+        });
+        quirksummary.setForeground(Color.BLUE);
+        Font font = quirksummary.getFont();
+        Map<TextAttribute, Object> attributes = new HashMap<>();
+        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        quirksummary.setFont(font.deriveFont(attributes));
+        return quirksummary;
     }
 }

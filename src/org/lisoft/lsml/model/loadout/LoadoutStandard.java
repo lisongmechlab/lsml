@@ -26,9 +26,7 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ModifierEquipment;
 import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -153,37 +151,5 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
         Collection<Modifier> ans = super.getModifiers();
         ans.addAll(getChassis().getQuirks());
         return ans;
-    }
-
-    @Override
-    public String getQuirkHtmlSummary() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<body>");
-
-        sb.append("<p>Chassis Quirks:</p>");
-        for (Modifier modifier : getChassis().getQuirks()) {
-            modifier.describeToHtml(sb);
-        }
-
-        sb.append("<p>Equipment Bonuses:</p>");
-        for (ModifierEquipment me : items(ModifierEquipment.class)) {
-            for (Modifier modifier : me.getModifiers()) {
-                modifier.describeToHtml(sb);
-            }
-        }
-
-        sb.append("<p>Module Bonuses:</p>");
-        for (PilotModule me : getModules()) {
-            if (me instanceof ModifierEquipment) {
-                for (Modifier modifier : ((ModifierEquipment) me).getModifiers()) {
-                    modifier.describeToHtml(sb);
-                }
-            }
-        }
-
-        sb.append("</body>");
-        sb.append("</html>");
-        return sb.toString();
     }
 }
