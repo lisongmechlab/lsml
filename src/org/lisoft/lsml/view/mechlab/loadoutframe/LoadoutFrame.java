@@ -70,7 +70,6 @@ public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
     private static final String  CMD_REDO_LOADOUT      = "redo loadout";
     private static final String  CMD_RENAME_LOADOUT    = "rename loadout";
     private static final String  CMD_SAVE_TO_GARAGE    = "add to garage";
-    private static final long    serialVersionUID      = -9181002222136052106L;
     private static final int     xOffset               = 30;
     private static final int     yOffset               = 30;
     private static int           openFrameCount        = 0;
