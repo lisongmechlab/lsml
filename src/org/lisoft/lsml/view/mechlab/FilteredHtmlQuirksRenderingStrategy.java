@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view.mechlab;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -30,11 +30,11 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class FilteredHtmlQuirksRenderingStrategy extends HtmlQuirkRenderingStrategy {
 
-    private final List<String> selectors;
+    private final Collection<String> selectors;
 
-    public FilteredHtmlQuirksRenderingStrategy(List<String> aSelectors, boolean aShowHeaders) {
+    public FilteredHtmlQuirksRenderingStrategy(Collection<String> aCollection, boolean aShowHeaders) {
         super(aShowHeaders);
-        selectors = aSelectors;
+        selectors = aCollection;
     }
 
     @Override
