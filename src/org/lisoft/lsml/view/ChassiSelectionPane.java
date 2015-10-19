@@ -21,12 +21,13 @@ package org.lisoft.lsml.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -40,6 +41,7 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -61,6 +63,9 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifiersDB;
+import org.lisoft.lsml.view.mechlab.FilteredHtmlQuirksRenderingStrategy;
+import org.lisoft.lsml.view.mechlab.QuirksRenderingStrategy;
 import org.lisoft.lsml.view.models.ChassiTableModel;
 import org.lisoft.lsml.view.preferences.Preferences;
 import org.lisoft.lsml.view.preferences.UiPreferences;
@@ -96,7 +101,7 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
     }
 
     static class JumpJetsColumn extends TableColumn {
-        private final JPanel panel = new JPanel();
+        private final JPanel panel = new JPanel(new GridBagLayout());
         private final JLabel text  = new JLabel();
 
         public JumpJetsColumn() {
@@ -137,44 +142,33 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
         }
     }
 
-    static class PilotModulesColumn extends TableColumn {
-        private final JPanel     panel = new JPanel();
-        private final JLabel     text  = new JLabel();
+    static class PilotModulesColumn extends AttributeTableColumn {
         private final ModuleSlot slot;
 
         public PilotModulesColumn(ModuleSlot aSlot) {
-            super(0);
+            super("Modules (" + aSlot + ")", 0);
             slot = aSlot;
-            panel.add(text);
-            setHeaderValue("Modules (" + slot + ")");
         }
 
         @Override
-        public TableCellRenderer getCellRenderer() {
-            return new TableCellRenderer() {
-                @Override
-                public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected,
-                        boolean aHasFocus, int aRow, int aColumn) {
-                    ChassisBase chassis = ((ChassisBase) aValue);
-                    final int modules;
-                    switch (slot) {
-                        case CONSUMABLE:
-                            modules = chassis.getConsumableModulesMax();
-                            break;
-                        case MECH:
-                            modules = chassis.getMechModulesMax();
-                            break;
-                        case WEAPON:
-                            modules = chassis.getWeaponModulesMax();
-                            break;
-                        case HYBRID:
-                        default:
-                            throw new RuntimeException("Bad module type!");
-                    }
-                    text.setText(Integer.toString(modules));
-                    return panel;
-                }
-            };
+        public String valueOf(Object aSourceRowObject) {
+            ChassisBase chassis = ((ChassisBase) aSourceRowObject);
+            final int modules;
+            switch (slot) {
+                case CONSUMABLE:
+                    modules = chassis.getConsumableModulesMax();
+                    break;
+                case MECH:
+                    modules = chassis.getMechModulesMax();
+                    break;
+                case WEAPON:
+                    modules = chassis.getWeaponModulesMax();
+                    break;
+                case HYBRID:
+                default:
+                    throw new RuntimeException("Bad module type!");
+            }
+            return Integer.toString(modules);
         }
     }
 
@@ -214,7 +208,7 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
     }
 
     static class PartColumn extends TableColumn {
-        private final JPanel   panel     = new JPanel();
+        private final JPanel   panel     = new JPanel(new GridBagLayout());
         private final JLabel   energy    = new JLabel();
         private final JLabel   ballistic = new JLabel();
         private final JLabel   missile   = new JLabel();
@@ -231,11 +225,17 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
             StyleManager.styleThinItem(ams, HardPointType.AMS);
             StyleManager.styleThinItem(ecm, HardPointType.ECM);
 
-            panel.add(energy);
-            panel.add(ballistic);
-            panel.add(missile);
-            panel.add(ams);
-            panel.add(ecm);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            panel.add(energy, gbc);
+            gbc.gridx++;
+            panel.add(ballistic, gbc);
+            gbc.gridx++;
+            panel.add(missile, gbc);
+            gbc.gridx++;
+            panel.add(ams, gbc);
+            gbc.gridx++;
+            panel.add(ecm, gbc);
             part = aPart;
         }
 
@@ -260,6 +260,29 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
                     StyleManager.styleHardpointLabel(ams, stock.getComponent(part), HardPointType.AMS);
                     StyleManager.styleHardpointLabel(ecm, stock.getComponent(part), HardPointType.ECM);
                     return panel;
+                }
+            };
+        }
+    }
+
+    static class QuirksColumn extends TableColumn {
+        private final static QuirksRenderingStrategy rs = new FilteredHtmlQuirksRenderingStrategy(
+                ModifiersDB.ALL_WEAPONS, false);
+
+        public QuirksColumn() {
+            super(0);
+            setHeaderValue("Weapon Quirks");
+        }
+
+        @Override
+        public TableCellRenderer getCellRenderer() {
+            return new TableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected,
+                        boolean aHasFocus, int aRow, int aColumn) {
+                    ChassisBase chassis = (ChassisBase) aValue;
+                    LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(chassis);
+                    return rs.render(loadout);
                 }
             };
         }
@@ -293,32 +316,32 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
         JPanel tablesPanel = new ScrollablePanel();
         tablesPanel.setLayout(new BoxLayout(tablesPanel, BoxLayout.PAGE_AXIS));
 
+        boolean hideSpecialMechs = aPreferences.uiPreferences.getHideSpecialMechs();
+
+        MouseAdapter tableMouseAdapter = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
+                    final JTable target = (JTable) e.getSource();
+                    final int row = target.getSelectedRow();
+                    final int column = target.getSelectedColumn();
+                    final Object cell = target.getValueAt(row, column);
+                    if (cell instanceof ChassisBase) {
+                        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty((ChassisBase) cell);
+                        ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
+                        ProgramInit.lsml().mechLabPane.openLoadout(loadout, false);
+                    }
+                }
+            }
+        };
+
         for (Faction faction : new Faction[] { Faction.InnerSphere, Faction.Clan }) {
             for (ChassisClass chassisClass : ChassisClass.values()) {
                 if (ChassisClass.COLOSSAL == chassisClass)
                     continue;
 
-                JTable table = new JTable(
-                        new ChassiTableModel(faction, chassisClass, aPreferences.uiPreferences.getHideSpecialMechs()));
-                table.setRowHeight(30);
-                table.addMouseListener(new MouseAdapter() {
-
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
-                            final JTable target = (JTable) e.getSource();
-                            final int row = target.getSelectedRow();
-                            final int column = target.getSelectedColumn();
-                            final Object cell = target.getValueAt(row, column);
-                            if (cell instanceof ChassisBase) {
-                                LoadoutBase<?> loadout = DefaultLoadoutFactory.instance
-                                        .produceEmpty((ChassisBase) cell);
-                                ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
-                                ProgramInit.lsml().mechLabPane.openLoadout(loadout, false);
-                            }
-                        }
-                    }
-                });
+                final JTable table = new JTable(new ChassiTableModel(faction, chassisClass, hideSpecialMechs));
+                table.addMouseListener(tableMouseAdapter);
 
                 table.removeColumn(table.getColumnModel().getColumn(0)); // Remove auto-generated column
                 table.addColumn(new NameColumn());
@@ -329,13 +352,16 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
                 table.addColumn(new PilotModulesColumn(ModuleSlot.WEAPON));
                 for (
 
-                Location part : Arrays.asList(Location.RightArm, Location.RightTorso, Location.CenterTorso,
-                        Location.LeftTorso, Location.LeftArm, Location.Head)) {
+                Location part : Location.right2Left()) {
+                    if (part == Location.LeftLeg || part == Location.RightLeg)
+                        continue;
                     table.addColumn(new PartColumn(part));
                 }
                 table.addColumn(new JumpJetsColumn());
+                table.addColumn(new QuirksColumn());
+                resizeColumnWidth(table);
+                resizeRowHeight(table);
                 tables.add(table);
-
                 JPanel tp = new JPanel(new BorderLayout());
                 tp.add(table.getTableHeader(), BorderLayout.NORTH);
                 tp.add(table, BorderLayout.CENTER);
@@ -365,6 +391,31 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
                     ((ChassiTableModel) table.getModel()).recreate(hideSpecials.isSelected());
                 }
             }
+        }
+    }
+
+    private void resizeColumnWidth(JTable table) {
+        final TableColumnModel columnModel = table.getColumnModel();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            int width = 50; // Min width
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, column);
+                Component comp = table.prepareRenderer(renderer, row, column);
+                width = Math.max(comp.getPreferredSize().width + 1, width);
+            }
+            columnModel.getColumn(column).setPreferredWidth(width);
+        }
+    }
+
+    private void resizeRowHeight(JTable table) {
+        for (int row = 0; row < table.getRowCount(); row++) {
+            int height = 30; // Min height
+            for (int col = 0; col < table.getColumnCount(); col++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, col);
+                Component comp = table.prepareRenderer(renderer, row, col);
+                height = Math.max(comp.getPreferredSize().height + 1, height);
+            }
+            table.setRowHeight(row, height);
         }
     }
 
