@@ -268,11 +268,14 @@ public class DropShipFrame extends JInternalFrame implements MessageReceiver {
             if (aMsg instanceof DropShipMessage) {
                 update();
             }
-            else if (aMsg.isForMe(dropShip.getMech(bayIndex))) {
-                if (aMsg instanceof ComponentMessage) {
-                    ComponentMessage msg = (ComponentMessage) aMsg;
-                    if (msg.isItemsChanged()) {
-                        update();
+            else {
+                LoadoutBase<?> loadout = dropShip.getMech(bayIndex);
+                if (loadout != null && aMsg.isForMe(loadout)) {
+                    if (aMsg instanceof ComponentMessage) {
+                        ComponentMessage msg = (ComponentMessage) aMsg;
+                        if (msg.isItemsChanged()) {
+                            update();
+                        }
                     }
                 }
             }
