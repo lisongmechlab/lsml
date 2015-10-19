@@ -100,7 +100,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
         actionUndoLoadout = new UndoLoadoutAction(xBar, this);
         actionRedoLoadout = new RedoLoadoutAction(xBar, this);
         actionRename = new RenameLoadoutAction(this, xBar);
-        actionAddToGarage = new AddLoadoutToGarageAction(loadout);
+        actionAddToGarage = new AddLoadoutToGarageAction(loadout, dropShipMode);
 
         // Set the window's location.
         setLocation(xOffset * openFrameCount, yOffset * openFrameCount);

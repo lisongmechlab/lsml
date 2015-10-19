@@ -41,10 +41,11 @@ public class AddLoadoutToGarageAction extends AbstractAction {
     private static final String  SHORTCUT_STROKE  = "control S";
     private final LoadoutBase<?> loadout;
 
-    public AddLoadoutToGarageAction(LoadoutBase<?> aLoadout) {
+    public AddLoadoutToGarageAction(LoadoutBase<?> aLoadout, boolean aDropShipMode) {
         super("Add to garage");
         loadout = aLoadout;
-        setEnabled(!ProgramInit.lsml().getGarage().getMechs().contains(aLoadout));
+        boolean inGarage = ProgramInit.lsml().getGarage().getMechs().contains(aLoadout);
+        setEnabled(!inGarage && !aDropShipMode);
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(SHORTCUT_STROKE));
     }
 
