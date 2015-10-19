@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import javax.swing.SwingUtilities;
-
 /**
  * Implements a message passing framework for an UI where the components don't have to know about each other, only about
  * the crossbar.
