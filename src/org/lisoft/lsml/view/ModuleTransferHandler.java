@@ -27,8 +27,8 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.TransferHandler;
 
+import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.item.PilotModuleDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.view.mechlab.equipmentpanel.ModuleSeletionList;
 import org.lisoft.lsml.view.mechlab.loadoutframe.PilotModuleList;

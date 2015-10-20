@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.item;
+package org.lisoft.lsml.model.datacache;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lisoft.lsml.model.DataCache;
+import org.lisoft.lsml.model.item.ModuleCathegory;
+import org.lisoft.lsml.model.item.ModuleSlot;
+import org.lisoft.lsml.model.item.PilotModule;
 
 /**
  * This class acts as a database of all the pilot modules that are parsed.

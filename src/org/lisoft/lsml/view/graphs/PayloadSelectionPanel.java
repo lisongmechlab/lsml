@@ -48,11 +48,11 @@ import javax.swing.event.ListSelectionListener;
 
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
-import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 
 /**

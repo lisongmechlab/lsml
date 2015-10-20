@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.chassi;
+package org.lisoft.lsml.model.datacache;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.lisoft.lsml.model.DataCache;
+import org.lisoft.lsml.model.chassi.ChassisOmniMech;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.chassi.OmniPod;
 
 /**
  * This class acts as a database for all {@link OmniPod}s.

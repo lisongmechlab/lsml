@@ -21,6 +21,7 @@ package org.lisoft.lsml.view.mechlab.loadoutframe;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -29,12 +30,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.DropMode;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -47,6 +51,10 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.item.AmmoWeapon;
+import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
@@ -61,6 +69,8 @@ import org.lisoft.lsml.model.metrics.helpers.ComponentDestructionSimulator;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ItemTransferHandler;
 import org.lisoft.lsml.view.ProgramInit;
+import org.lisoft.lsml.view.action.AddItem;
+import org.lisoft.lsml.view.action.ChangeEngine;
 import org.lisoft.lsml.view.render.ComponentRenderer;
 import org.lisoft.lsml.view.render.ComponentRenderer.RenderState;
 import org.lisoft.lsml.view.render.StyleManager;
@@ -69,7 +79,7 @@ public class PartList extends JList<Item> {
     private static final long                   serialVersionUID = 5995694414450060827L;
     private final ConfiguredComponentBase       component;
     private final DynamicSlotDistributor        slotDistributor;
-    private CommandStack                      opStack;
+    private CommandStack                        cmdStack;
 
     private final DecimalFormat                 df               = new DecimalFormat("###.#");
     private final DecimalFormat                 df2              = new DecimalFormat("###.##");
@@ -81,7 +91,7 @@ public class PartList extends JList<Item> {
     private final MessageXBar                   xBar;
     private final ComponentDestructionSimulator cds;
     private final boolean                       isCompact        = ProgramInit.lsml().preferences.uiPreferences
-                                                                         .getCompactMode();
+            .getCompactMode();
 
     private class Renderer extends JLabel implements ListCellRenderer<Object> {
         private static final long serialVersionUID = -8157859670319431469L;
@@ -112,8 +122,7 @@ public class PartList extends JList<Item> {
             sb.append("</table>");
             sb.append("<br/>");
 
-            sb.append("<div style='width:300px'>")
-                    .append("<p>")
+            sb.append("<div style='width:300px'>").append("<p>")
                     .append("<b>Critical hit</b> is the probability that a shot on this component's internal structure will deal damage to this item. "
                             + "When other items break, the crit % increases as it's more likely this item will be hit. "
                             + "If the weapon dealing damage does equal to or more damage than the HP of this item, it will break in one shot.")
@@ -194,8 +203,9 @@ public class PartList extends JList<Item> {
                 }
                 case EngineHeatSink: {
                     setTooltipForItem(item);
-                    setText(isCompact ? Model.HEATSINKS_COMPACT_STRING : Model.HEATSINKS_STRING
-                            + component.getEngineHeatsinks() + "/" + component.getEngineHeatsinksMax());
+                    setText(isCompact ? Model.HEATSINKS_COMPACT_STRING
+                            : Model.HEATSINKS_STRING + component.getEngineHeatsinks() + "/"
+                                    + component.getEngineHeatsinksMax());
                     StyleManager.styleItemBottom(this, item);
                     break;
                 }
@@ -269,7 +279,7 @@ public class PartList extends JList<Item> {
     PartList(CommandStack aStack, final LoadoutBase<?> aLoadout, final ConfiguredComponentBase aComponent,
             final MessageXBar aXBar, DynamicSlotDistributor aSlotDistributor) {
         slotDistributor = aSlotDistributor;
-        opStack = aStack;
+        cmdStack = aStack;
         component = aComponent;
         loadout = aLoadout;
         xBar = aXBar;
@@ -318,6 +328,119 @@ public class PartList extends JList<Item> {
                     }
                 }
             }
+
+            @Override
+            public void mousePressed(MouseEvent aE) {
+                if (aE.isPopupTrigger()) {
+                    doPop(aE);
+                }
+                else {
+                    super.mousePressed(aE);
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent aE) {
+                if (aE.isPopupTrigger()) {
+                    doPop(aE);
+                }
+                else {
+                    super.mouseReleased(aE);
+                }
+            }
+
+            private void doPop(MouseEvent aE) {
+                RenderState state = componentRenderer.getRenderState(locationToIndex(aE.getPoint()));
+                final Item item = state.getItem();
+                if (item == null || state.isFixed())
+                    return;
+
+                final JPopupMenu menu = new JPopupMenu();
+
+                menu.add(new JMenuItem(new AbstractAction("Remove " + item.getName()) {
+                    @Override
+                    public void actionPerformed(ActionEvent aEvent) {
+                        try {
+                            cmdStack.pushAndApply(new CmdRemoveItem(xBar, loadout, component, item));
+                        }
+                        catch (Exception e) {
+                            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+                        }
+                    }
+                }));
+
+                if (item instanceof Engine && loadout instanceof LoadoutStandard) {
+                    LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+                    menu.addSeparator();
+                    final Engine engine = (Engine) item;
+                    menu.add(new JMenuItem(new ChangeEngine(xBar, "Rating +5", cmdStack,
+                            ItemDB.getEngine(engine.getRating() + 5, engine.getType(), engine.getFaction()),
+                            loadoutStandard)));
+                    menu.add(new JMenuItem(new ChangeEngine(xBar, "Rating -5", cmdStack,
+                            ItemDB.getEngine(engine.getRating() - 5, engine.getType(), engine.getFaction()),
+                            loadoutStandard)));
+                    menu.add(new JMenuItem(new ChangeEngine(xBar, "Change to " + engine.getType().otherType(), cmdStack,
+                            ItemDB.getEngine(engine.getRating(), engine.getType().otherType(), engine.getFaction()),
+                            loadoutStandard)));
+                    menu.addSeparator();
+
+                    final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+                    JMenuItem addHeatSink = new JMenuItem(new AddItem("Add Heat Sink", cmdStack, xBar, loadout,
+                            loadout.getComponent(Location.CenterTorso), hs));
+
+                    menu.add(addHeatSink);
+
+                    menu.add(new JMenuItem(new AbstractAction("Remove Heat Sink") {
+                        @Override
+                        public boolean isEnabled() {
+                            return component.getItemsEquipped().contains(hs);
+                        }
+
+                        @Override
+                        public void actionPerformed(ActionEvent aEvent) {
+                            try {
+                                cmdStack.pushAndApply(new CmdRemoveItem(xBar, loadout, component, hs));
+                            }
+                            catch (Exception e) {
+                                Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
+                                        e);
+                            }
+                        }
+                    }));
+                }
+                else if (item instanceof AmmoWeapon) {
+                    AmmoWeapon ammoWeapon = (AmmoWeapon) item;
+                    final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
+                    final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
+
+                    menu.addSeparator();
+
+                    menu.add(new JMenuItem(new AddItem("Add 1 ton ammo", cmdStack, xBar, loadout, ammo)));
+                    menu.add(new JMenuItem(new AddItem("Add ½ ton ammo", cmdStack, xBar, loadout, ammoHalf)));
+                    menu.add(new JMenuItem(new AbstractAction("Remove all ammo") {
+
+                        @Override
+                        public void actionPerformed(ActionEvent aEvent) {
+                            for (ConfiguredComponentBase confComp : loadout.getComponents()) {
+                                try {
+                                    while (confComp.getItemsEquipped().contains(ammo)) {
+                                        cmdStack.pushAndApply(new CmdRemoveItem(xBar, loadout, confComp, ammo));
+                                    }
+                                    while (confComp.getItemsEquipped().contains(ammoHalf)) {
+                                        cmdStack.pushAndApply(new CmdRemoveItem(xBar, loadout, confComp, ammoHalf));
+                                    }
+                                }
+                                catch (Exception e) {
+                                    Thread.getDefaultUncaughtExceptionHandler()
+                                            .uncaughtException(Thread.currentThread(), e);
+                                }
+                            }
+                        }
+                    }));
+                }
+
+                menu.show(aE.getComponent(), aE.getX(), aE.getY());
+            }
         });
     }
 
@@ -325,7 +448,7 @@ public class PartList extends JList<Item> {
         RenderState state = componentRenderer.getRenderState(getSelectedIndex());
         Item item = state.getItem();
         if (component.canRemoveItem(state.getItem())) {
-            opStack.pushAndApply(new CmdRemoveItem(aXBar, loadout, component, state.getItem()));
+            cmdStack.pushAndApply(new CmdRemoveItem(aXBar, loadout, component, state.getItem()));
             return item;
         }
         return null;
@@ -346,7 +469,7 @@ public class PartList extends JList<Item> {
             case EngineHeatSink: {
                 if (aItem instanceof HeatSink && EquipResult.SUCCESS == loadout.canEquip(aItem)
                         && EquipResult.SUCCESS == component.canEquip(aItem)) {
-                    opStack.pushAndApply(new CmdAddItem(xBar, loadout, component, aItem));
+                    cmdStack.pushAndApply(new CmdAddItem(xBar, loadout, component, aItem));
                 }
             }
             case LastSlot: // Fall through
@@ -355,13 +478,14 @@ public class PartList extends JList<Item> {
                 // Drop on existing component, try to replace it if we should, otherwise just add it to the component.
                 if (aShouldReplace && component.canRemoveItem(aItem)
                         && !(aItem instanceof HeatSink && state.getItem() instanceof Engine)) {
-                    opStack.pushAndApply(new CmdRemoveItem(xBar, loadout, component, state.getItem()));
+                    cmdStack.pushAndApply(new CmdRemoveItem(xBar, loadout, component, state.getItem()));
                 }
                 // Fall through
             }
             case Empty: {
-                if (EquipResult.SUCCESS == loadout.canEquip(aItem) && EquipResult.SUCCESS == component.canEquip(aItem)) {
-                    opStack.pushAndApply(new CmdAddItem(xBar, loadout, component, aItem));
+                if (EquipResult.SUCCESS == loadout.canEquip(aItem)
+                        && EquipResult.SUCCESS == component.canEquip(aItem)) {
+                    cmdStack.pushAndApply(new CmdAddItem(xBar, loadout, component, aItem));
                 }
             }
             default:

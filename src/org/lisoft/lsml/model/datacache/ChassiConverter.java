@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache;
 
-import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 
 import com.thoughtworks.xstream.converters.Converter;

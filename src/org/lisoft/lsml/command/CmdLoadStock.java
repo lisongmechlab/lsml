@@ -24,14 +24,14 @@ import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.chassi.OmniPodDB;
-import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.datacache.OmniPodDB;
+import org.lisoft.lsml.model.datacache.StockLoadoutDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.StockLoadout;
-import org.lisoft.lsml.model.loadout.StockLoadoutDB;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 
 /**

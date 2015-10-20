@@ -21,8 +21,8 @@ package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 /**

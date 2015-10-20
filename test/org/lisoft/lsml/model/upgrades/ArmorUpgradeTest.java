@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 
 /**
  * Test suite for {@link ArmorUpgrade}.

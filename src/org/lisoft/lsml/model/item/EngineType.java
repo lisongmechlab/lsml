@@ -20,5 +20,11 @@
 package org.lisoft.lsml.model.item;
 
 public enum EngineType {
-    XL, STD
+    XL, STD;
+
+    public EngineType otherType() {
+        if (this == XL)
+            return STD;
+        return XL;
+    }
 }

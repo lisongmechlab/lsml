@@ -26,8 +26,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifiersDB;
 import org.mockito.Mockito;
 
 /**

@@ -23,10 +23,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lisoft.lsml.model.DataCache;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.gamedata.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsComponent;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsOmniPodType;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfComponent;

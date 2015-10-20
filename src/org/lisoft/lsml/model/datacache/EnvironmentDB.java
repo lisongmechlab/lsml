@@ -18,14 +18,14 @@
  */
 //@formatter:on
 
-package org.lisoft.lsml.model.environment;
+package org.lisoft.lsml.model.datacache;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.lisoft.lsml.model.DataCache;
+import org.lisoft.lsml.model.environment.Environment;
 
 /**
  * This class parses all the environments to memory from the game files.

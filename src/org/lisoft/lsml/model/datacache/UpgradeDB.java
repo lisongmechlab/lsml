@@ -17,13 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.upgrades;
+package org.lisoft.lsml.model.datacache;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.lisoft.lsml.model.DataCache;
+import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 
 /**
  * A database class that holds all the {@link Upgrade}s parsed from the game files.

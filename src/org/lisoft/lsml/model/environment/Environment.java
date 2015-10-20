@@ -21,9 +21,9 @@ package org.lisoft.lsml.model.environment;
 
 import java.util.Collection;
 
+import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifiersDB;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

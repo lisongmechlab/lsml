@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.modifiers;
+package org.lisoft.lsml.model.datacache;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,9 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.lisoft.lsml.model.DataCache;
-import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
 

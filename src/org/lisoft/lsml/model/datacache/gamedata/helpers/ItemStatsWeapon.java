@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.datacache.gamedata.Localization;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.BallisticWeapon;
@@ -32,7 +33,6 @@ import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.ModifiersDB;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.model.DataCache;
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;

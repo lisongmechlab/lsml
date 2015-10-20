@@ -24,7 +24,7 @@ import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.OmniPodDB;
+import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 
 /**

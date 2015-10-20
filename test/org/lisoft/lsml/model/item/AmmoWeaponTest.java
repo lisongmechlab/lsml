@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.item;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.datacache.ItemDB;
 
 /**
  * Test suite for {@link AmmoWeapon}.

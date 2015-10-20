@@ -17,15 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.loadout;
+package org.lisoft.lsml.model.datacache;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lisoft.lsml.model.DataCache;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.loadout.StockLoadout;
 
 /**
  * A database class that holds descriptions of all stock loadouts.

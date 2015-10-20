@@ -109,7 +109,7 @@ public class Item implements Comparable<Item> {
     }
 
     public String getShortName() {
-        return getName();
+        return getName().replaceAll("[cC][Ll][Aa][Nn] ", "C-");
     }
 
     public String getDescription() {

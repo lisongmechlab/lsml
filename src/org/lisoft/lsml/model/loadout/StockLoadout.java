@@ -24,14 +24,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.UpgradeDB;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

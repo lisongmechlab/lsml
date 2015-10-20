@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 
 /**
  * Test suite for {@link StructureUpgrade}

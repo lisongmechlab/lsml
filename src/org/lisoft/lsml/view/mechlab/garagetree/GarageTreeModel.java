@@ -34,7 +34,7 @@ import javax.swing.tree.TreePath;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.chassi.ChassisDB;
+import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.view.preferences.Preferences;
 

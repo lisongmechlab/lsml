@@ -32,7 +32,7 @@ import javax.swing.border.TitledBorder;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**

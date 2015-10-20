@@ -21,12 +21,12 @@ package org.lisoft.lsml.model.metrics;
 
 import java.util.Collection;
 
+import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifiersDB;
 
 /**
  * This {@link Metric} calculates the heat dissipation for a {@link LoadoutStandard}.

@@ -20,10 +20,10 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**

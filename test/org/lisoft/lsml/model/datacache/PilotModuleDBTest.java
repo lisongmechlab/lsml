@@ -17,11 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.item;
+package org.lisoft.lsml.model.datacache;
 
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.item.MissileWeapon;
+import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**

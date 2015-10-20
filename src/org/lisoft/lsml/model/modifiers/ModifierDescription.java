@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.lisoft.lsml.model.datacache.ModifiersDB;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**

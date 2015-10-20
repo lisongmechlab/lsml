@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache.gamedata;
 
-import org.lisoft.lsml.model.DataCache;
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 

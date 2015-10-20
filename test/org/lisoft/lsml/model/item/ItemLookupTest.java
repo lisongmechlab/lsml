@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.datacache.ItemDB;
 
 /**
  * Test suite for {@link ItemDB}.

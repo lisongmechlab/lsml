@@ -30,7 +30,7 @@ import javax.swing.JOptionPane;
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.chassi.ChassisDB;
+import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;

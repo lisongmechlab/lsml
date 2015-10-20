@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lisoft.lsml.model.DataCache;
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.Workbook;
 
 import com.thoughtworks.xstream.XStream;
