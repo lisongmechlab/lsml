@@ -20,8 +20,8 @@
 package org.lisoft.lsml.model.upgrades;
 
 import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.parsing.mwo_gamedata.helpers.ItemStatsUpgradeType;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

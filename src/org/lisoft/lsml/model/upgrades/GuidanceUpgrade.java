@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.upgrades;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
@@ -27,7 +28,6 @@ import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.parsing.mwo_gamedata.helpers.ItemStatsUpgradeType;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

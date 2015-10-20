@@ -19,9 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-
 /**
  * This class is a simple container that manages upgrades for an loadout.
  * 
@@ -32,42 +29,6 @@ public class Upgrades {
     protected StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
     protected GuidanceUpgrade  guidanceType  = UpgradeDB.STANDARD_GUIDANCE;
     protected HeatSinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
-
-    public static class UpgradesMessage implements Message {
-        public final ChangeMsg msg;
-        private final Upgrades source;
-
-        public enum ChangeMsg {
-            GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof UpgradesMessage) {
-                UpgradesMessage other = (UpgradesMessage) obj;
-                return msg == other.msg && source == other.source;
-            }
-            return false;
-        }
-
-        public UpgradesMessage(ChangeMsg aChangeMsg, Upgrades anUpgrades) {
-            msg = aChangeMsg;
-            source = anUpgrades;
-        }
-
-        @Override
-        public boolean isForMe(LoadoutBase<?> aLoadout) {
-            return aLoadout.getUpgrades() == source;
-        }
-
-        @Override
-        public boolean affectsHeatOrDamage() {
-            if (msg == ChangeMsg.HEATSINKS)
-                return true;
-            return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
-                          // messages will trigger that already.
-        }
-    }
 
     /**
      * @param aArmor

@@ -38,7 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import org.lisoft.lsml.parsing.mwo_gamedata.GameVFS;
+import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.action.SetFontSizeAction;
 import org.lisoft.lsml.view.preferences.FontPreferences.FontSize;

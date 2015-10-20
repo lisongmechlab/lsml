@@ -40,12 +40,12 @@ import javax.swing.UIManager;
 
 import org.lisoft.lsml.model.DataCache;
 import org.lisoft.lsml.model.chassi.ChassisDB;
+import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.model.environment.EnvironmentDB;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.StockLoadoutDB;
 import org.lisoft.lsml.model.upgrades.UpgradeDB;
-import org.lisoft.lsml.parsing.mwo_gamedata.GameVFS;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.view.UpdateChecker.ReleaseData;

@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.lisoft.lsml.parsing.mwo_gamedata.GameVFS;
+import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.view.preferences.CorePreferences;
 
 public class GameDataFileTest {

@@ -28,13 +28,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.datacache.GarageConverter;
+import org.lisoft.lsml.model.datacache.LoadoutConverter;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.parsing.datacache.GarageConverter;
-import org.lisoft.lsml.parsing.datacache.LoadoutConverter;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 
@@ -46,70 +46,6 @@ import com.thoughtworks.xstream.XStream;
  * @author Emily Björk
  */
 public class MechGarage {
-    /**
-     * This class implements {@link org.lisoft.lsml.messages.Message}s for the {@link MechGarage} so that other
-     * components can react to changes in the garage.
-     * 
-     * @author Emily Björk
-     */
-    public static class GarageMessage implements Message {
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((garage == null) ? 0 : garage.hashCode());
-            result = prime * result + ((loadout == null) ? 0 : loadout.hashCode());
-            result = prime * result + ((type == null) ? 0 : type.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof GarageMessage) {
-                GarageMessage that = (GarageMessage) obj;
-                return this.garage == that.garage && this.type == that.type && this.loadout == that.loadout;
-            }
-            return false;
-        }
-
-        public enum Type {
-            LoadoutAdded, LoadoutRemoved, NewGarage, Saved, DropShipRemoved, DropShipAdded
-        }
-
-        public final Type            type;
-        public final MechGarage      garage;
-        private final LoadoutBase<?> loadout;
-        public final DropShip        dropShip;
-
-        public GarageMessage(Type aType, MechGarage aGarage, LoadoutBase<?> aLoadout) {
-            type = aType;
-            garage = aGarage;
-            loadout = aLoadout;
-            dropShip = null;
-        }
-
-        public GarageMessage(Type aType, MechGarage aGarage, DropShip aDropShip) {
-            type = aType;
-            garage = aGarage;
-            loadout = null;
-            dropShip = aDropShip;
-        }
-
-        public GarageMessage(Type aType, MechGarage aGarage) {
-            this(aType, aGarage, (DropShip) null);
-        }
-
-        @Override
-        public boolean isForMe(LoadoutBase<?> aLoadout) {
-            return aLoadout == loadout;
-        }
-
-        @Override
-        public boolean affectsHeatOrDamage() {
-            return false;
-        }
-    }
-
     private final List<LoadoutBase<?>> mechs     = new ArrayList<>();
     private File                       file;
     private transient MessageXBar      xBar;

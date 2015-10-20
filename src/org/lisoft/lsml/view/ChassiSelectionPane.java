@@ -68,6 +68,7 @@ import org.lisoft.lsml.view.mechlab.FilteredHtmlQuirksRenderingStrategy;
 import org.lisoft.lsml.view.mechlab.QuirksRenderingStrategy;
 import org.lisoft.lsml.view.models.ChassiTableModel;
 import org.lisoft.lsml.view.preferences.Preferences;
+import org.lisoft.lsml.view.preferences.PreferencesMessage;
 import org.lisoft.lsml.view.preferences.UiPreferences;
 import org.lisoft.lsml.view.render.ScrollablePanel;
 import org.lisoft.lsml.view.render.StyleManager;
@@ -382,8 +383,8 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof UiPreferences.PreferencesMessage) {
-            UiPreferences.PreferencesMessage msg = (UiPreferences.PreferencesMessage) aMsg;
+        if (aMsg instanceof PreferencesMessage) {
+            PreferencesMessage msg = (PreferencesMessage) aMsg;
             if (msg.attribute == UiPreferences.UI_HIDE_SPECIAL_MECHS) {
                 hideSpecials.setSelected(preferences.uiPreferences.getHideSpecialMechs());
 

@@ -19,9 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view.preferences;
 
-import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
 
 /**
  * This class contains preferences related to the UI behavior.
@@ -29,29 +27,6 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
  * @author Emily Björk
  */
 public class UiPreferences {
-    /**
-     * This message is sent over the {@link MessageXBar} when a UI preference has been changed.
-     * 
-     * @author Emily Björk
-     */
-    public class PreferencesMessage implements Message {
-        public final String attribute;
-
-        PreferencesMessage(String aAttribute) {
-            attribute = aAttribute;
-        }
-
-        @Override
-        public boolean isForMe(LoadoutBase<?> aLoadout) {
-            return false;
-        }
-
-        @Override
-        public boolean affectsHeatOrDamage() {
-            return false;
-        }
-    }
-
     public static final String          UI_USE_SMARTPLACE     = "uiUseSmartPlace";
     public static final String          UI_COMPACT_MODE       = "uiCompactMode";
     public static final String          UI_HIDE_SPECIAL_MECHS = "uiHideSpecialMechs";
