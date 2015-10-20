@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;

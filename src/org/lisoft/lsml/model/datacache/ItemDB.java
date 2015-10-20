@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.item;
+package org.lisoft.lsml.model.datacache;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lisoft.lsml.model.DataCache;
+import org.lisoft.lsml.model.item.AmmoWeapon;
+import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.EngineType;
+import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.item.HeatSink;
+import org.lisoft.lsml.model.item.Internal;
+import org.lisoft.lsml.model.item.Item;
 
 /**
  * This class is a database of all {@link Item}s. One can lookup by MWO id, textual name and MWO string name of the
@@ -56,11 +62,11 @@ public class ItemDB {
     static private final Map<String, Item>  mwoname2item;
     static private final Map<Integer, Item> mwoidx2item;
 
-    public static Item lookup(final String anItemName) {
-        String key = canonize(anItemName);
+    public static Item lookup(final String aItemName) {
+        String key = canonize(aItemName);
         if (!locname2item.containsKey(key)) {
             if (!mwoname2item.containsKey(key)) {
-                throw new IllegalArgumentException("There exists no item by name:" + anItemName);
+                throw new IllegalArgumentException("There exists no item by name:" + aItemName);
             }
             return mwoname2item.get(key);
         }
@@ -69,10 +75,10 @@ public class ItemDB {
 
     @SuppressWarnings("unchecked")
     // It is checked...
-    public static <T extends Item> List<T> lookup(Class<T> type) {
+    public static <T extends Item> List<T> lookup(Class<T> aClass) {
         List<T> ans = new ArrayList<T>();
         for (Item it : locname2item.values()) {
-            if (type.isInstance(it)) {
+            if (aClass.isInstance(it)) {
                 ans.add((T) it);
             }
         }
@@ -86,14 +92,23 @@ public class ItemDB {
         return mwoidx2item.get(aMwoIndex);
     }
 
-    private static void put(Item anItem) {
-        assert anItem != null;
-        assert (!locname2item.containsKey(anItem));
+    public static Engine getEngine(int aRating, EngineType aType, Faction aFaction) {
+        StringBuilder sb = new StringBuilder();
+        if (aFaction == Faction.Clan) {
+            sb.append("CLAN ");
+        }
+        sb.append(aType.name()).append(" ENGINE ").append(aRating);
+        return (Engine) lookup(sb.toString());
+    }
 
-        mwoname2item.put(canonize(anItem.getKey()), anItem);
-        locname2item.put(canonize(anItem.getName()), anItem);
-        if (anItem.getMwoId() >= 0)
-            mwoidx2item.put(anItem.getMwoId(), anItem);
+    private static void put(Item aItem) {
+        assert aItem != null;
+        assert (!locname2item.containsKey(aItem));
+
+        mwoname2item.put(canonize(aItem.getKey()), aItem);
+        locname2item.put(canonize(aItem.getName()), aItem);
+        if (aItem.getMwoId() >= 0)
+            mwoidx2item.put(aItem.getMwoId(), aItem);
     }
 
     private static String canonize(String aString) {

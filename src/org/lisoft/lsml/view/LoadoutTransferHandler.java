@@ -96,6 +96,8 @@ public class LoadoutTransferHandler extends TransferHandler {
         if (aComponent instanceof GarageTree) {
             GarageTree tree = (GarageTree) aComponent;
             Point mouse = tree.getMousePosition();
+            if (mouse == null)
+                return NONE;
             TreePath mousePath = tree.getPathForLocation(mouse.x, mouse.y);
             Object selected = mousePath.getLastPathComponent();
             if (selected instanceof ChassisBase) {

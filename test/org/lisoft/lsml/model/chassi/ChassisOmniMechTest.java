@@ -32,12 +32,13 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;

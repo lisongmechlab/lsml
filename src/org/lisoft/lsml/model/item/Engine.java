@@ -86,7 +86,7 @@ public class Engine extends HeatSource {
 
     @Override
     public String getShortName() {
-        String name = getName();
+        String name = super.getShortName();
         name = name.replace("ENGINE ", "");
         return name;
     }

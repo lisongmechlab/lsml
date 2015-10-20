@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.datacache;
 
 import org.lisoft.lsml.model.upgrades.Upgrade;
-import org.lisoft.lsml.model.upgrades.UpgradeDB;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

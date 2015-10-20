@@ -26,9 +26,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifiersDB;
 
 
 /**

@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
+import org.lisoft.lsml.model.datacache.UpgradeDB;
+
 /**
  * This class is a simple container that manages upgrades for an loadout.
  * 

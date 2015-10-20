@@ -28,9 +28,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.EnergyWeapon;
-import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
 import org.mockito.Mockito;
 

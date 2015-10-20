@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.datacache;
 
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.item.PilotModuleDB;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

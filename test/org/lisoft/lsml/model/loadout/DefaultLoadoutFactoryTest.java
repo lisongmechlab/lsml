@@ -27,13 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.chassi.OmniPodDB;
-import org.lisoft.lsml.model.item.ItemDB;
-import org.lisoft.lsml.model.item.PilotModuleDB;
-import org.lisoft.lsml.model.upgrades.UpgradeDB;
+import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.datacache.OmniPodDB;
+import org.lisoft.lsml.model.datacache.PilotModuleDB;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 
 /**
  * Test the default factory for creating loadouts.

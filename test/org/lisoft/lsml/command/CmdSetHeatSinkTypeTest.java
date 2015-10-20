@@ -26,16 +26,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;

@@ -28,7 +28,6 @@ import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
@@ -41,7 +40,6 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.view.ProgramInit;
 

@@ -34,7 +34,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.item.ItemDB;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
 
 /**

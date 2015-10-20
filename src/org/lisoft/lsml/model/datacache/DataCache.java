@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model;
+package org.lisoft.lsml.model.datacache;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,7 +45,6 @@ import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.datacache.HardPointConverter;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.model.datacache.gamedata.Localization;
 import org.lisoft.lsml.model.datacache.gamedata.MdfMechDefinition;
@@ -80,7 +79,6 @@ import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Module;
@@ -96,7 +94,6 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
-import org.lisoft.lsml.model.modifiers.ModifiersDB;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;

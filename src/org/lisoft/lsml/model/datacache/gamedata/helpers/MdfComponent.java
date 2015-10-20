@@ -23,13 +23,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.lisoft.lsml.model.DataCache;
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
+import org.lisoft.lsml.model.datacache.DataCache;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.gamedata.HardPointCache;
 import org.lisoft.lsml.model.datacache.gamedata.WeaponDoorSet;
 import org.lisoft.lsml.model.datacache.gamedata.XMLHardpoints;
@@ -37,7 +38,6 @@ import org.lisoft.lsml.model.datacache.gamedata.WeaponDoorSet.WeaponDoor;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ItemDB;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

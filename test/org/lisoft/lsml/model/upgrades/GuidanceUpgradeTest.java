@@ -22,8 +22,9 @@ package org.lisoft.lsml.model.upgrades;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.ItemDB;
 
 /**
  * Test suite for {@link GuidanceUpgrade}.

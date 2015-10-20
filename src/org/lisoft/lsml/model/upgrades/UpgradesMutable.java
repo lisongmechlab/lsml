@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
+import org.lisoft.lsml.model.datacache.UpgradeDB;
+
 /**
  * This subclass of {@link Upgrades} can be mutated by setters.
  * 

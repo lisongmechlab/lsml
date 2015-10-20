@@ -24,13 +24,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lisoft.lsml.model.DataCache;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.ChassisVariant;
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfCockpit;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfComponent;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfItem;

@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.ModifiersDB;
 
 /**
  * This {@link Metric} calculates the total heat capacity of a {@link LoadoutStandard}.

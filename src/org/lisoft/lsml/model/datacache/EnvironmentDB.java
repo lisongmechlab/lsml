@@ -17,37 +17,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.loadout;
+
+package org.lisoft.lsml.model.datacache;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import org.lisoft.lsml.model.DataCache;
-import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.environment.Environment;
 
 /**
- * A database class that holds descriptions of all stock loadouts.
+ * This class parses all the environments to memory from the game files.
  * 
  * @author Li Song
  */
-public class StockLoadoutDB {
-    private static final Map<ChassisBase, StockLoadout> stockloadouts;
+public class EnvironmentDB {
+    private static List<Environment> environments = new ArrayList<>();
 
     /**
-     * Will find the stock loadout matching the given {@link ChassisStandard}.
+     * Looks up an {@link Environment} by name.
      * 
-     * @param aChassis
-     *            The {@link ChassisStandard} to get the stock loadout for.
-     * @return A {@link StockLoadout} description of the stock loadout.
+     * @param aString
+     *            The name of the {@link Environment} to look for.
+     * @return The {@link Environment} which's name matches <code>aString</code> or null if no {@link Environment}
+     *         matched.
      */
-    public static StockLoadout lookup(ChassisBase aChassis) {
-        StockLoadout ans = stockloadouts.get(aChassis);
-        if (null == ans) {
-            throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);
+    public static Environment lookup(String aString) {
+        for (Environment environment : environments) {
+            if (environment.getName().toLowerCase().equals(aString.toLowerCase())) {
+                return environment;
+            }
         }
-        return ans;
+        return null;
+    }
+
+    /**
+     * @return A list of all {@link Environment}s loaded.
+     */
+    public static List<Environment> lookupAll() {
+        return Collections.unmodifiableList(environments);
     }
 
     /**
@@ -63,9 +72,6 @@ public class StockLoadoutDB {
             throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
         }
 
-        stockloadouts = new HashMap<>();
-        for (StockLoadout loadout : dataCache.getStockLoadouts()) {
-            stockloadouts.put(loadout.getChassis(), loadout);
-        }
+        environments = dataCache.getEnvironments();
     }
 }

@@ -33,8 +33,8 @@ import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
 import org.mockito.Mockito;
 

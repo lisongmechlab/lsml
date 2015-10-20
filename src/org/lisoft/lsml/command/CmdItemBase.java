@@ -29,6 +29,7 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
@@ -36,10 +37,8 @@ import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -77,7 +76,7 @@ public abstract class CmdItemBase extends Command {
     protected CmdItemBase(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
             Item aItem) throws EquipResult {
         if (aItem instanceof Internal)
-            throw EquipResult.make(EquipResultType.InternalsNotAllowed);
+            throw new IllegalArgumentException("Internals cannot be added!");
 
         loadout = aLoadout;
         component = aComponent;

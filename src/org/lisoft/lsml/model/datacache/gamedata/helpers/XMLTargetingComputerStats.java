@@ -24,12 +24,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
-import org.lisoft.lsml.model.modifiers.ModifiersDB;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

@@ -29,7 +29,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.chassi.ChassisDB;
+import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
 
 public class ChassiTableModel extends AbstractTableModel {
