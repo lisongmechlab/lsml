@@ -29,9 +29,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ComponentMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.UpgradesMessage;
+import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisDB;
@@ -42,8 +44,6 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -119,7 +119,7 @@ public class CmdLoadStockTest {
         Mockito.verify(xBar, Mockito.atLeast(1))
                 .post(new ComponentMessage(Matchers.any(ConfiguredComponentBase.class), Type.ItemAdded));
         Mockito.verify(xBar, Mockito.atLeast(1))
-                .post(new Upgrades.UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
+                .post(new UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
     }
 
     /**

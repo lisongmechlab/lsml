@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.lisoft.lsml.command.CmdRemoveLoadoutFromGarage;
+import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -87,8 +88,8 @@ public class DeleteLoadoutAction extends AbstractAction implements MessageReceiv
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof MechGarage.GarageMessage) {
-            MechGarage.GarageMessage msg = (MechGarage.GarageMessage) aMsg;
+        if (aMsg instanceof GarageMessage) {
+            GarageMessage msg = (GarageMessage) aMsg;
             if (msg.isForMe(loadout)) {
                 setEnabled(garage.getMechs().contains(loadout));
             }

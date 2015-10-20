@@ -11,6 +11,7 @@ import javax.swing.event.TreeModelEvent;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.view.preferences.PreferencesMessage;
 import org.lisoft.lsml.view.preferences.UiPreferences;
 
 public abstract class FilterTreeNode<T> extends DefaultTreeNode<T> implements MessageReceiver {
@@ -99,8 +100,8 @@ public abstract class FilterTreeNode<T> extends DefaultTreeNode<T> implements Me
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof UiPreferences.PreferencesMessage) {
-            UiPreferences.PreferencesMessage msg = (UiPreferences.PreferencesMessage) aMsg;
+        if (aMsg instanceof PreferencesMessage) {
+            PreferencesMessage msg = (PreferencesMessage) aMsg;
             if (msg.attribute == UiPreferences.UI_HIDE_SPECIAL_MECHS) {
                 filterDirty = true;
                 getModel().notifyTreeChange(new TreeModelEvent(this, getPath()));

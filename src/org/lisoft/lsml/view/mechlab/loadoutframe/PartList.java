@@ -45,6 +45,7 @@ import org.lisoft.lsml.messages.ComponentMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
@@ -57,7 +58,6 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.model.metrics.ItemEffectiveHP;
 import org.lisoft.lsml.model.metrics.helpers.ComponentDestructionSimulator;
-import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ItemTransferHandler;
 import org.lisoft.lsml.view.ProgramInit;
@@ -260,7 +260,7 @@ public class PartList extends JList<Item> {
             }
 
             // Only update on item changes or upgrades
-            if (aMsg instanceof ComponentMessage || aMsg instanceof Upgrades.UpgradesMessage) {
+            if (aMsg instanceof ComponentMessage || aMsg instanceof UpgradesMessage) {
                 fireContentsChanged(this, 0, component.getInternalComponent().getSlots());
             }
         }

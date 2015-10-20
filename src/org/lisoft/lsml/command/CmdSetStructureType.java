@@ -20,11 +20,11 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.messages.UpgradesMessage;
+import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage;
-import org.lisoft.lsml.model.upgrades.Upgrades.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 

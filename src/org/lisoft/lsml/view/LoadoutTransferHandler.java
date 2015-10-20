@@ -35,7 +35,6 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view.mechlab.dropshipframe.DropShipFrame;
-import org.lisoft.lsml.view.mechlab.garagetree.DropShipContainerNode;
 import org.lisoft.lsml.view.mechlab.garagetree.GarageTree;
 
 /**

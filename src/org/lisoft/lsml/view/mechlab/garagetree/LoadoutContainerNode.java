@@ -23,13 +23,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 
+import org.lisoft.lsml.messages.GarageMessage;
+import org.lisoft.lsml.messages.GarageMessage.Type;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.garage.MechGarage;
-import org.lisoft.lsml.model.garage.MechGarage.GarageMessage.Type;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 
@@ -48,8 +49,8 @@ class LoadoutContainerNode extends FilterTreeNode<LoadoutBase<?>> {
     @Override
     public void receive(Message aMsg) {
         assert (SwingUtilities.isEventDispatchThread());
-        if (aMsg instanceof MechGarage.GarageMessage) {
-            MechGarage.GarageMessage msg = (MechGarage.GarageMessage) aMsg;
+        if (aMsg instanceof GarageMessage) {
+            GarageMessage msg = (GarageMessage) aMsg;
             if (msg.type == Type.NewGarage) {
                 garage = msg.garage;
             }

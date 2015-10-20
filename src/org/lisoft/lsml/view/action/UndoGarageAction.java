@@ -26,10 +26,10 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.view.ProgramInit;
 
 /**
@@ -68,7 +68,7 @@ public class UndoGarageAction extends AbstractAction implements MessageReceiver 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (aMsg instanceof MechGarage.GarageMessage) {
+                if (aMsg instanceof GarageMessage) {
                     if (ProgramInit.lsml() == null || ProgramInit.lsml().garageCmdStack == null)
                         setEnabled(false);
                     else

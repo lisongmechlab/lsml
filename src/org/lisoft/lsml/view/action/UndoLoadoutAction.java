@@ -30,7 +30,7 @@ import org.lisoft.lsml.messages.ComponentMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.upgrades.Upgrades;
+import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
@@ -73,7 +73,7 @@ public class UndoLoadoutAction extends AbstractAction implements MessageReceiver
             @Override
             public void run() {
                 if (aMsg instanceof ComponentMessage
-                        || aMsg instanceof Upgrades.UpgradesMessage) {
+                        || aMsg instanceof UpgradesMessage) {
                     if (ProgramInit.lsml() == null || ProgramInit.lsml().garageCmdStack == null)
                         setEnabled(false);
                     else
