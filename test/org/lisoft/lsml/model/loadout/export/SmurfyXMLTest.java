@@ -9,9 +9,9 @@ import java.io.InputStreamReader;
 
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdSetName;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.export.SmurfyXML;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
-import org.lisoft.lsml.parsing.export.SmurfyXML;
 import org.lisoft.lsml.util.CommandStack;
 
 public class SmurfyXMLTest {

@@ -28,6 +28,7 @@ import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.chassi.OmniPodDB;
+import org.lisoft.lsml.model.export.CompatibilityHelper;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemDB;
@@ -38,7 +39,6 @@ import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
-import org.lisoft.lsml.parsing.export.CompatibilityHelper;
 import org.lisoft.lsml.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;

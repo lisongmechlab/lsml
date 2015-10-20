@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.parsing.export;
+package org.lisoft.lsml.model.export;
 
 import java.io.StringWriter;
 
