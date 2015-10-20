@@ -182,8 +182,8 @@ public class MechGarageTest {
         DropShip ds2 = new DropShip(Faction.Clan);
         ds1.setMech(0, lo1);
         ds1.setMech(1, lo2);
-        ds2.setMech(2, lo3);
-        ds2.setMech(3, lo4);
+        ds2.setMech(0, lo3);
+        ds2.setMech(1, lo4);
 
         // Add some pilot modules to make sure they are serialised
         CommandStack stack = new CommandStack(0);

@@ -150,6 +150,9 @@ public class Item implements Comparable<Item> {
             return 1;
         else if (!(this instanceof Engine) && rhs instanceof Engine)
             return -1;
+        else if(this instanceof Engine && rhs instanceof Engine){
+            return Integer.compare(((Engine)this).getRating(), ((Engine)rhs).getRating());
+        }
 
         // Count ammunition types together with their parent weapon type.
         HardPointType lhsHp = this instanceof Ammunition ? ((Ammunition) this).getWeaponHardpointType() : this
