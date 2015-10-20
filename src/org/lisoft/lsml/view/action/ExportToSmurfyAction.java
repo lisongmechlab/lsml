@@ -28,8 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.parsing.export.SmurfyImportExport;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;

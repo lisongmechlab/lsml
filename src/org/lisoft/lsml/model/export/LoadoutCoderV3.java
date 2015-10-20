@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.parsing.export;
+package org.lisoft.lsml.model.export;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,8 +35,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
-
-import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
@@ -76,7 +74,6 @@ import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman1;
 import org.lisoft.lsml.util.Huffman2;
-import org.lisoft.lsml.view.ProgramInit;
 
 /**
  * The Second version of {@link LoadoutCoder} for LSML.
@@ -171,8 +168,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         builder.apply();
         String errors = builder.getErrors("<nameless LSML import>");
         if (null != errors) {
-            JOptionPane.showMessageDialog(ProgramInit.lsml(), errors, "Error parsing loadout: <nameless LSML import>",
-                    JOptionPane.WARNING_MESSAGE);
+            throw new DecodingException(errors);
         }
         return loadout;
     }

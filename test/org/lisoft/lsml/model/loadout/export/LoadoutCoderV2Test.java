@@ -32,10 +32,10 @@ import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisDB;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.export.LoadoutCoderV2;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.parsing.export.LoadoutCoderV2;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.CommandStack;
 

@@ -48,9 +48,9 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.lisoft.lsml.command.CmdAddLoadoutToGarage;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.parsing.export.Base64LoadoutCoder;
-import org.lisoft.lsml.parsing.export.SmurfyImportExport;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.preferences.SmurfyPreferences;
