@@ -90,11 +90,13 @@ public class CmdRemoveItemTest {
     /**
      * Internal items can't be removed. Shall throw directly on creation.
      * 
+     * It is a programmer error to attempt to remove an internal.
+     * 
      * @throws Exception
      */
     @SuppressWarnings("unused")
     // Expecting exception
-    @Test(expected = EquipResult.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testCantRemoveInternal() throws Exception {
         Internal item = Mockito.mock(Internal.class);
         new CmdRemoveItem(xBar, loadout, loadoutPart, item);
