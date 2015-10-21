@@ -19,16 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache.gamedata.helpers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

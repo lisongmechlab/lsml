@@ -27,13 +27,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
- * This {@link Metric} calculates the maximal DPS that a {@link LoadoutStandard} can sustain indefinitely.
+ * This {@link Metric} calculates the maximal DPS that a {@link LoadoutStandard} can sustain indefinitely assuming that
+ * the pilot is moving at full throttle.
  * 
  * @author Li Song
  */
@@ -88,7 +90,7 @@ public class MaxSustainedDPS extends RangeMetric {
     /**
      * Calculates the ratio with each weapon should be fired to obtain the maximal sustained DPS. A ratio of 0.0 means
      * the weapon is never fired and a ratio of 0.5 means the weapon is fired every 2 cool downs and a ratio of 1.0
-     * means the weapon is fired every time it is available.
+     * means the weapon is fired every time it is available. This method assumes that the engine is at full throttle.
      * 
      * @param aRange
      *            The range to calculate for.
@@ -97,8 +99,12 @@ public class MaxSustainedDPS extends RangeMetric {
      */
     public Map<Weapon, Double> getWeaponRatios(final double aRange) {
         final Collection<Modifier> modifiers = loadout.getModifiers();
-
         double heatleft = dissipation.calculate();
+        Engine engine = loadout.getEngine();
+        if (null != engine) {
+            heatleft -= engine.getHeat(modifiers);
+        }
+
         List<Weapon> weapons = new ArrayList<>(15);
 
         final Iterable<Weapon> weaponsToUse;

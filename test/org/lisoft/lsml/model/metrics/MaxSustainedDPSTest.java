@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.metrics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +35,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
+import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mockito;
 
 /**
@@ -149,6 +151,45 @@ public class MaxSustainedDPSTest {
         // Verify
         double expected = gauss.getStat("d/s", null) + erppc.getStat("d/s", null) * 1.5 + llas.getStat("d/s", null);
         assertEquals(expected, result, 0.0);
+    }
+
+    /**
+     * If an engine is equipped, its heat should be taken into account.
+     */
+    @Test
+    public void testCalculate_EngineHeat() {
+        // Setup
+        List<Modifier> modifiers = mock(List.class);
+        when(mlc.loadout.getModifiers()).thenReturn(modifiers);
+        
+        final double range = 100.0;
+        final double dph = 2.0;
+        final double dps = 4.0;
+        final double hps = 1.0;
+        Weapon weapon = mock(Weapon.class);
+        when(weapon.getRangeEffectivity(anyDouble(), same(modifiers))).thenReturn(1.0);
+        when(weapon.getRangeMax(same(modifiers))).thenReturn(range);
+        when(weapon.isOffensive()).thenReturn(true);
+        when(weapon.getStat("d/h", modifiers)).thenReturn(dph);
+        when(weapon.getStat("d/s", modifiers)).thenReturn(dps);
+        when(weapon.getStat("h/s", modifiers)).thenReturn(hps);
+        items.add(weapon);
+
+        final double engineHeat = 0.2;
+        Engine engine = Mockito.mock(Engine.class);
+        when(engine.getHeat(modifiers)).thenReturn(engineHeat);
+        when(mlc.loadout.getEngine()).thenReturn(engine);
+
+        final double heatDiss = 1.0;
+        when(heatDissipation.calculate()).thenReturn(heatDiss);
+
+        // Execute
+        final double result = cut.calculate(range); // 300.0 is inside LLAS optimal
+
+        // Verify
+        final double expectedRatio = (heatDiss - engineHeat) / hps;
+        final double expectedDPS = expectedRatio * dps;
+        assertEquals(expectedDPS, result, 0.0);
     }
 
     /**

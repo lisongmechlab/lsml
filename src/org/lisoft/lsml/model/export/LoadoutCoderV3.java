@@ -400,7 +400,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
      * @throws Exception
      */
     public static void main(String[] arg) throws Exception {
-        // generateAllLoadouts();
+         generateAllLoadouts();
         // generateStatsFromStdin();
         // generateStatsFromStock();
     }
