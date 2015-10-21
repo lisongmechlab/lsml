@@ -265,4 +265,10 @@ public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
             }
         }
     }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        xBar.detach(this);
+    }
 }

@@ -35,6 +35,7 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view.mechlab.dropshipframe.DropShipFrame;
+import org.lisoft.lsml.view.mechlab.dropshipframe.LoadoutDisplay;
 import org.lisoft.lsml.view.mechlab.garagetree.GarageTree;
 
 /**
@@ -116,11 +117,11 @@ public class LoadoutTransferHandler extends TransferHandler {
         if (!info.isDrop())
             return false;
 
-        if (!(info.getComponent() instanceof DropShipFrame.LoadoutDisplay))
+        if (!(info.getComponent() instanceof LoadoutDisplay))
             return false;
 
         try {
-            DropShipFrame.LoadoutDisplay target = (DropShipFrame.LoadoutDisplay) info.getComponent();
+            LoadoutDisplay target = (LoadoutDisplay) info.getComponent();
             LoadoutBase<?> loadout = (LoadoutBase<?>) info.getTransferable()
                     .getTransferData(LoadoutTransferable.LOADOUT_DATA_FLAVOR);
 

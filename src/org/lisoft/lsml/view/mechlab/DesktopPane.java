@@ -75,6 +75,11 @@ public class DesktopPane extends JDesktopPane implements InternalFrameListener {
         frame.addInternalFrameListener(this);
         add(frame);
 
+        System.out.println("Dumping frames");
+        for (JInternalFrame frame2 : getAllFrames()) {
+            System.out.println(frame2.getTitle());
+        }
+
         frame.setLocation(20 * (opened_windows % MAX_OPEN_WINDOWS), 20 * (opened_windows % MAX_OPEN_WINDOWS));
         opened_windows++;
 
@@ -93,7 +98,7 @@ public class DesktopPane extends JDesktopPane implements InternalFrameListener {
      * 
      * @param aLoadout
      *            The {@link LoadoutStandard} to create the frame for.
-     * @param aDropShipMode 
+     * @param aDropShipMode
      */
     public void openLoadout(LoadoutBase<?> aLoadout, boolean aDropShipMode) {
         LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar, aDropShipMode);
