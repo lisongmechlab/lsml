@@ -19,12 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache.gamedata.helpers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -35,8 +39,11 @@ public class ItemStatsEngineStats extends ItemStatsModuleStats {
     public int       type;
     @XStreamAsAttribute
     public int       heatsinks;
+    @XStreamAsAttribute
+    public double    movementHeatMultiplier;
 
-    static Attribute ENGINE_HEAT = new Attribute(Engine.ENGINE_HEAT_FULL_THROTTLE, Arrays.asList("engineheat"), null);
+    static Attribute ENGINE_HEAT = new Attribute(Engine.ENGINE_HEAT_FULL_THROTTLE,
+            Arrays.asList(ModifiersDB.SEL_HEAT_MOVEMENT), null);
 
     public Engine asEngine(ItemStats aStats) {
         String uiName = aStats.getUiName();
@@ -49,7 +56,8 @@ public class ItemStatsEngineStats extends ItemStatsModuleStats {
         int internalHs = Math.min(10, hs);
         int heatSinkSlots = hs - internalHs;
         EngineType engineType = (uiName.toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
+
         return new Engine(uiName, uiDesc, mwoName, mwoId, slots, tons, health, itemFaction, ENGINE_HEAT, rating,
-                engineType, internalHs, heatSinkSlots);
+                engineType, internalHs, heatSinkSlots, movementHeatMultiplier);
     }
 }

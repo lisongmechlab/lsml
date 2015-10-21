@@ -49,6 +49,7 @@ public class ModifiersDB {
     public final static String                            SEL_MOVEMENT_TURN_SPEED   = "turnlerp_speed";
     public final static String                            SEL_MOVEMENT_TURN_RATE    = "turnlerp";
 
+    public final static String                            SEL_HEAT_MOVEMENT         = "movementheat";
     public final static String                            SEL_HEAT_DISSIPATION      = "heatloss";
     public final static String                            SEL_HEAT_LIMIT            = "heatlimit";
     public final static String                            SEL_HEAT_EXTERNALTRANSFER = "externalheat";
@@ -74,6 +75,8 @@ public class ModifiersDB {
     public final static ModifierDescription               ARM_REFLEX_YAW_DESC;
     public final static ModifierDescription               TWIST_SPEED_PITCH_DESC;
     public final static ModifierDescription               TWIST_SPEED_YAW_DESC;
+
+    public final static ModifierDescription               HEAT_MOVEMENT_DESC;
 
     private final static Map<String, ModifierDescription> mwoname2modifier;
 
@@ -121,6 +124,9 @@ public class ModifiersDB {
 
         ALL_WEAPONS = Collections
                 .unmodifiableList(Arrays.asList("energy", "ballistic", "missile", "antimissilesystem"));
+
+        HEAT_MOVEMENT_DESC = new ModifierDescription("ENGINE HEAT", null, Operation.MUL, SEL_HEAT_MOVEMENT,
+                null, ModifierType.NEGATIVE_GOOD);
 
         // Descriptions for Basic Pilot Efficiencies
         HEAT_CONTAINMENT_DESC = new ModifierDescription("HEAT CONTAINMENT", null, Operation.MUL, SEL_HEAT_LIMIT, null,
