@@ -19,12 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -33,27 +38,33 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Emily Björk
  */
-public class Engine extends HeatSource {
-    public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
-    public final static double ENGINE_HEAT_66_THROTTLE   = 0.1;
+public class Engine extends HeatSource implements ModifierEquipment {
+    public final static double       ENGINE_HEAT_FULL_THROTTLE = 0.2;
+    public final static double       ENGINE_HEAT_66_THROTTLE   = 0.1;
 
     @XStreamAsAttribute
-    final private EngineType   type;
+    final private EngineType         type;
     @XStreamAsAttribute
-    final private int          rating;
+    final private int                rating;
     @XStreamAsAttribute
-    final private int          internalHs;
+    final private int                internalHs;
     @XStreamAsAttribute
-    final private int          heatSinkSlots;
+    final private int                heatSinkSlots;
+    @XStreamAsAttribute
+    final private double             movementHeatMultiplier;
+
+    transient private List<Modifier> modifiers                 = null;
 
     public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
-            Faction aFaction, Attribute aHeat, int aRating, EngineType aType, int aInternalHS, int aHSSlots) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, Arrays
-                .asList(Location.CenterTorso), null, aHeat);
+            Faction aFaction, Attribute aHeat, int aRating, EngineType aType, int aInternalHS, int aHSSlots,
+            double aMovementHeatMultiplier) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction,
+                Arrays.asList(Location.CenterTorso), null, aHeat);
         rating = aRating;
         type = aType;
         internalHs = aInternalHS;
         heatSinkSlots = aHSSlots;
+        movementHeatMultiplier = aMovementHeatMultiplier;
     }
 
     /**
@@ -99,5 +110,16 @@ public class Engine extends HeatSource {
             return getFaction() == Faction.Clan ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN
                     : ConfiguredComponentBase.ENGINE_INTERNAL;
         return null;
+    }
+
+    @Override
+    public Collection<Modifier> getModifiers() {
+        if (null == modifiers) {
+            modifiers = new ArrayList<>();
+            if (movementHeatMultiplier != 0.0) {
+                modifiers.add(new Modifier(ModifiersDB.HEAT_MOVEMENT_DESC, movementHeatMultiplier));
+            }
+        }
+        return modifiers;
     }
 }
