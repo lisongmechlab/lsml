@@ -81,6 +81,12 @@ public class PayloadGraphPanel extends ChartPanel {
 
         private final List<CurvePoint> points = new ArrayList<>();
 
+        public TonnageCurve(Collection<ChassisBase> aChassisGroup, Efficiencies aEfficiencies) {
+            for (ChassisBase entry : aChassisGroup) {
+                addChassis(entry, aEfficiencies);
+            }
+        }
+
         void addSpeed(double aSpeed, ChassisBase aChassis, int aRating) {
             for (int i = 0; i < points.size(); ++i) {
                 CurvePoint section = points.get(i);
@@ -112,7 +118,7 @@ public class PayloadGraphPanel extends ChartPanel {
                 List<Modifier> modifiers = new ArrayList<>(c.getQuirks());
                 modifiers.addAll(aEffs.getModifiers());
 
-                for (int r = c.getEngineMin(); r < c.getEngineMax(); r += 5) {
+                for (int r = c.getEngineMin(); r <= c.getEngineMax(); r += 5) {
                     double speed = TopSpeed.calculate(r, c.getMovementProfileBase(), c.getMassMax(), modifiers);
                     addSpeed(speed, aChassis, r);
                 }
@@ -195,39 +201,43 @@ public class PayloadGraphPanel extends ChartPanel {
         return sb.toString();
     }
 
-    private void makeSeriesFromGroup(Collection<ChassisBase> chassisGroup, DefaultTableXYDataset dataset) {
-        TonnageCurve curve = new TonnageCurve();
-
-        for (ChassisBase entry : chassisGroup) {
-            curve.addChassis(entry, efficiencies);
+    private double getPayLoad(ChassisBase aRepresetant, int aRating) {
+        try {
+            if (aRepresetant instanceof ChassisStandard) {
+                return payloadStatistics.calculate((ChassisStandard) aRepresetant, aRating);
+            }
+            return payloadStatistics.calculate((ChassisOmniMech) aRepresetant);
         }
-        List<ChassisBase> previousEntries = curve.points.get(0).chassis;
-        XYSeries series = new XYSeries(makeName(previousEntries), false, false);
+        catch (Throwable t) {
+            // Eat it, engine didn't exist.
+            return -1.0; // Cannot carry any payload if no engine exists.
+        }
+    }
+
+    private void makeSeriesFromGroup(Collection<ChassisBase> chassisGroup, DefaultTableXYDataset dataset) {
+        TonnageCurve curve = new TonnageCurve(chassisGroup, efficiencies);
+
+        XYSeries series = null;
+        CurvePoint previousPoint = null;
+        double previousPayload = 0.0;
         for (CurvePoint point : curve.points) {
-            try {
-                final double payload;
-                ChassisBase represetant = point.chassis.get(0);
-                if (represetant instanceof ChassisStandard) {
-                    payload = payloadStatistics.calculate((ChassisStandard) point.chassis.get(0), point.rating);
-                }
-                else {
-                    payload = payloadStatistics.calculate((ChassisOmniMech) represetant);
-                }
-                if (payload < 0)
-                    continue;
-                series.add(point.speed, payload);
+            final double payload = getPayLoad(point.chassis.get(0), point.rating);
+            if (payload < 0)
+                continue;
 
-                if (!ListArrayUtils.equalsUnordered(previousEntries, point.chassis)) {
-                    dataset.addSeries(series);
-                    previousEntries = point.chassis;
-                    series = new XYSeries(makeName(previousEntries), false, false);
-                    series.add(point.speed, payload);
-                }
+            if (series == null) {
+                series = new XYSeries(makeName(point.chassis), false, false);
+            }
 
+            if (previousPoint != null && !ListArrayUtils.equalsUnordered(previousPoint.chassis, point.chassis)) {
+                dataset.addSeries(series);
+                series = new XYSeries(makeName(point.chassis), false, false);
+                series.add(previousPoint.speed, previousPayload);
             }
-            catch (Throwable t) {
-                // Eat it, engine didn't exist.
-            }
+            
+            series.add(point.speed, payload);
+            previousPayload = payload;
+            previousPoint = point;
         }
         dataset.addSeries(series);
     }
