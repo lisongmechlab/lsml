@@ -101,6 +101,8 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
     @Override
     public boolean equals(Object obj) {
+        if(obj == null)
+            return false;
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         LoadoutBase<T> that = getClass().cast(obj);
@@ -469,12 +471,13 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         for (ConfiguredComponentBase part : getComponents()) {
             EquipResult componentResult = part.canEquip(aItem);
             if (componentResult == EquipResult.SUCCESS)
-                return componentResult;
+                return EquipResult.SUCCESS;
             if (componentResult.isMoreSpecificThan(reason)) {
                 reason = componentResult;
             }
         }
-        return reason;
+        // Loose component information from specific reason.
+        return EquipResult.make(reason.getType());
     }
 
     /**

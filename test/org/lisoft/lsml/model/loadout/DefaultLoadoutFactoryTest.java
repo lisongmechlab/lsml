@@ -19,9 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,7 @@ public class DefaultLoadoutFactoryTest {
     DefaultLoadoutFactory cut = new DefaultLoadoutFactory();
 
     @Test
-    public void testProduceClone_NotSame() throws Exception{
+    public void testProduceClone_NotSame() throws Exception {
         LoadoutBase<?> loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
         assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
 
@@ -55,7 +53,7 @@ public class DefaultLoadoutFactoryTest {
     }
 
     @Test
-    public void testProduceClone_ItemsAndArmor() throws Exception{
+    public void testProduceClone_ItemsAndArmor() throws Exception {
         LoadoutBase<?> loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
         assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
 
@@ -149,5 +147,16 @@ public class DefaultLoadoutFactoryTest {
         LoadoutBase<?> clone = cut.produceClone(loadout);
 
         assertEquals(loadout, clone);
+    }
+
+    /**
+     * Must be able to load stock builds that have actuator states set.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProduceStock_Bug433() throws Exception {
+        LoadoutOmniMech loadout = (LoadoutOmniMech) cut.produceStock(ChassisDB.lookup("SCR-PRIME(S)"));
+        assertFalse(loadout.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA));
     }
 }

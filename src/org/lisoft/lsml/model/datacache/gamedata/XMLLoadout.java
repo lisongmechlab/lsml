@@ -111,6 +111,16 @@ public class XMLLoadout {
     @XStreamAsAttribute
     String                 Name;
 
+    public class ActuatorState {
+        @XStreamAsAttribute
+        public String LeftActuatorState;
+        @XStreamAsAttribute
+        public String RightActuatorState;
+    }
+    
+    @XStreamAlias("ActuatorState")
+    public ActuatorState actuatorState;
+
     public static XMLLoadout fromXml(InputStream is) {
         XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
             @Override

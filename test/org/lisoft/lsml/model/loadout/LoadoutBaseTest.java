@@ -355,6 +355,25 @@ public abstract class LoadoutBaseTest {
     }
 
     @Test
+    public void testCanEquip_ComponentError() throws Exception {
+        Item item = makeTestItem(0.0, 0, HardPointType.NONE, true,
+                true, false);
+
+        EquipResult.EquipResultType resultTypes[] = new EquipResult.EquipResultType[] {
+                EquipResult.EquipResultType.NoFreeHardPoints, EquipResult.EquipResultType.NoComponentSupport,
+                EquipResult.EquipResultType.NotEnoughSlots, EquipResult.EquipResultType.ComponentAlreadyHasCase };
+
+        int typeIndex = 0;
+        for (ConfiguredComponentBase component : components) {
+            Mockito.when(component.getInternalComponent().getLocation()).thenReturn(Location.CenterTorso);
+            EquipResult result = EquipResult.make(component.getInternalComponent().getLocation(), resultTypes[typeIndex]);
+            Mockito.when(component.canEquip(item)).thenReturn(result);
+            typeIndex = (typeIndex + 1) % resultTypes.length;
+        }
+        assertEquals(EquipResult.make(EquipResultType.NoFreeHardPoints), makeDefaultCUT().canEquip(item));
+    }
+
+    @Test
     public void testConstruct_Empty() {
         LoadoutBase<?> cut = makeDefaultCUT();
 

@@ -31,8 +31,7 @@ public class LoadoutMessage implements Message {
         RENAME, CREATE, UPDATE, MODULES_CHANGED, WEAPON_GROUPS_CHANGED
     }
 
-    private final LoadoutBase<?> loadout;
-
+    public final LoadoutBase<?> loadout;
     public final Type            type;
 
     public LoadoutMessage(LoadoutBase<?> aLoadout, Type aType) {

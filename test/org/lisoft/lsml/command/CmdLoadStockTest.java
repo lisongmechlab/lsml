@@ -20,6 +20,7 @@
 package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack;
@@ -123,7 +125,7 @@ public class CmdLoadStockTest {
     }
 
     /**
-     * Loading stock shall handle artemis changes on February 4th patch.
+     * Loading stock shall handle Artemis changes on February 4th patch.
      * 
      * @throws Exception
      */
@@ -138,6 +140,27 @@ public class CmdLoadStockTest {
 
         assertTrue(loadout.getComponent(Location.LeftTorso).getItemsEquipped()
                 .contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
+    }
+
+    /**
+     * Actuator state shall be set on arms for OmniMechs.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testApply_ActuatorState() throws Exception {
+        // Setup
+        LoadoutOmniMech loadout = (LoadoutOmniMech) DefaultLoadoutFactory.instance
+                .produceEmpty(ChassisDB.lookup("SCR-PRIME(S)"));
+
+        // Execute
+        CommandStack opstack = new CommandStack(0);
+        opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
+
+        assertFalse(loadout.getComponent(Location.LeftArm).getToggleState(ItemDB.HA));
+        assertFalse(loadout.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA));
+        assertTrue(loadout.getComponent(Location.RightArm).getToggleState(ItemDB.HA));
+        assertTrue(loadout.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));
     }
 
     /**
@@ -162,7 +185,7 @@ public class CmdLoadStockTest {
     }
 
     /**
-     * Loading stock shall succeed even if there is an automatic armor distribution thinggie going on.
+     * Loading stock shall succeed even if there is an automatic armor distribution going on.
      * 
      * @throws Exception
      */
