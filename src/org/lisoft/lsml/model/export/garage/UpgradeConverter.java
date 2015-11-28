@@ -17,9 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.datacache;
+package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -27,40 +28,24 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-/**
- * This converter serializes an item as a reference instead of as a full item.
- * 
- * @author Li Song
- */
-public class ItemConverter implements Converter {
+public class UpgradeConverter implements Converter {
 
     @Override
     public boolean canConvert(Class aClass) {
-        return Item.class.isAssignableFrom(aClass);
+        return Upgrade.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        Item item = (Item) anObject;
+        Upgrade item = (Upgrade) anObject;
         int mwoIdx = item.getMwoId();
-        if (mwoIdx > 0) {
-            aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
-        }
-        else {
-            aWriter.addAttribute("key", item.getKey());
-        }
+        aWriter.setValue(Integer.valueOf(mwoIdx).toString());
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        String id = aReader.getAttribute("id");
-        if (id == null || id.isEmpty()) {
-            id = aReader.getValue();
-        }
-        if (id != null && !id.isEmpty()) {
-            int mwoidx = Integer.parseInt(id);
-            return ItemDB.lookup(mwoidx);
-        }
-        return ItemDB.lookup(aReader.getAttribute("key"));
+        int mwoidx = Integer.parseInt(aReader.getValue());
+        return UpgradeDB.lookup(mwoidx);
     }
+
 }

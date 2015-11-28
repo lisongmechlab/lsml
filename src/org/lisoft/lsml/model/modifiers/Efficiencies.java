@@ -20,7 +20,9 @@
 package org.lisoft.lsml.model.modifiers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -32,51 +34,8 @@ import org.lisoft.lsml.model.datacache.ModifiersDB;
  * @author Li Song
  */
 public class Efficiencies {
-    // TwistX
-    // Arm Reflex
-    // Twist Speed
-
-    public final static Modifier SPEED_TWEAK         = new Modifier(ModifiersDB.SPEED_TWEAK_DESC, 0.1);
-    private final static Modifier FAST_FIRE           = new Modifier(ModifiersDB.FAST_FIRE_DESC, 0.05);
-    private final static Modifier COOL_RUN            = new Modifier(ModifiersDB.COOL_RUN_DESC, 0.075);
-    private final static Modifier COOL_RUN_2X         = new Modifier(ModifiersDB.COOL_RUN_DESC, 0.075 * 2.0);
-    private final static Modifier HEAT_CONTAINMENT    = new Modifier(ModifiersDB.HEAT_CONTAINMENT_DESC, 0.1);
-    private final static Modifier HEAT_CONTAINMENT_2X = new Modifier(ModifiersDB.HEAT_CONTAINMENT_DESC, 0.1 * 2.0);
-    private final static Modifier ANCHOR_TURN_LOW     = new Modifier(ModifiersDB.ANCHOR_TURN_LOW_DESC, 0.1);
-    private final static Modifier ANCHOR_TURN_LOW_2X  = new Modifier(ModifiersDB.ANCHOR_TURN_LOW_DESC, 0.2);
-    private final static Modifier ANCHOR_TURN_MID     = new Modifier(ModifiersDB.ANCHOR_TURN_MID_DESC, 0.1);
-    private final static Modifier ANCHOR_TURN_MID_2X  = new Modifier(ModifiersDB.ANCHOR_TURN_MID_DESC, 0.2);
-    private final static Modifier ANCHOR_TURN_HIGH    = new Modifier(ModifiersDB.ANCHOR_TURN_HIGH_DESC, 0.1);
-    private final static Modifier ANCHOR_TURN_HIGH_2X = new Modifier(ModifiersDB.ANCHOR_TURN_HIGH_DESC, 0.2);
-
-    private final static Modifier TWIST_X_PITCH        = new Modifier(ModifiersDB.TWIST_X_PITCH_DESC, 0.1);
-    private final static Modifier TWIST_X_PITCH_2X     = new Modifier(ModifiersDB.TWIST_X_PITCH_DESC, 0.2);
-    private final static Modifier TWIST_X_YAW          = new Modifier(ModifiersDB.TWIST_X_YAW_DESC, 0.1);
-    private final static Modifier TWIST_X_YAW_2X       = new Modifier(ModifiersDB.TWIST_X_YAW_DESC, 0.2);
-    private final static Modifier ARM_REFLEX_PITCH     = new Modifier(ModifiersDB.ARM_REFLEX_PITCH_DESC, 0.15);
-    private final static Modifier ARM_REFLEX_PITCH_2X  = new Modifier(ModifiersDB.ARM_REFLEX_PITCH_DESC, 0.3);
-    private final static Modifier ARM_REFLEX_YAW       = new Modifier(ModifiersDB.ARM_REFLEX_YAW_DESC, 0.15);
-    private final static Modifier ARM_REFLEX_YAW_2X    = new Modifier(ModifiersDB.ARM_REFLEX_YAW_DESC, 0.30);
-    private final static Modifier TWIST_SPEED_PITCH    = new Modifier(ModifiersDB.TWIST_SPEED_PITCH_DESC, 0.20);
-    private final static Modifier TWIST_SPEED_PITCH_2X = new Modifier(ModifiersDB.TWIST_SPEED_PITCH_DESC, 0.40);
-    private final static Modifier TWIST_SPEED_YAW      = new Modifier(ModifiersDB.TWIST_SPEED_YAW_DESC, 0.20);
-    private final static Modifier TWIST_SPEED_YAW_2X   = new Modifier(ModifiersDB.TWIST_SPEED_YAW_DESC, 0.40);
-
-    // Elite
-    private boolean speedTweak;
-
-    // Basic
-    private boolean coolRun;
-    private boolean heatContainment;
-    private boolean anchorTurn;
-
-    // Meta
-    private boolean doubleBasics;
-
-    private boolean fastfire;
-    private boolean twistX;
-    private boolean twistSpeed;
-    private boolean armReflex;
+    private final Set<MechEfficiencyType> efficiencyTypes = new HashSet<>();
+    private boolean                       doubleBasics    = false;
 
     /**
      * Creates a new efficiencies object.
@@ -84,64 +43,12 @@ public class Efficiencies {
     public Efficiencies() {
     }
 
-    public Efficiencies(Efficiencies aEfficiencies) {
-        speedTweak = aEfficiencies.speedTweak;
-        coolRun = aEfficiencies.coolRun;
-        heatContainment = aEfficiencies.coolRun;
-        anchorTurn = aEfficiencies.anchorTurn;
-        doubleBasics = aEfficiencies.doubleBasics;
-        fastfire = aEfficiencies.fastfire;
-    }
-
-    /**
-     * @return <code>true</code> if speed tweak is enabled (10% faster movement speed).
-     */
-    public boolean hasSpeedTweak() {
-        return speedTweak;
-    }
-
-    /**
-     * @return <code>true</code> if anchor turn is enabled (10% faster turn speed).
-     */
-    public boolean hasAnchorTurn() {
-        return anchorTurn;
-    }
-
-    /**
-     * @return <code>true</code> if cool run is enabled (7.5% more heat dissipation).
-     */
-    public boolean hasCoolRun() {
-        return coolRun;
-    }
-
-    /**
-     * @return <code>true</code> if heat containment is enabled (10% more heat capactity).
-     */
-    public boolean hasHeatContainment() {
-        return heatContainment;
-    }
-
-    /**
-     * @return <code>true</code> if all elite skills are unlocked. Effectiveness of cool run and heat containment is
-     *         doubled.
-     */
-    public boolean hasDoubleBasics() {
-        return doubleBasics;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (anchorTurn ? 1231 : 1237);
-        result = prime * result + (armReflex ? 1231 : 1237);
-        result = prime * result + (coolRun ? 1231 : 1237);
         result = prime * result + (doubleBasics ? 1231 : 1237);
-        result = prime * result + (fastfire ? 1231 : 1237);
-        result = prime * result + (heatContainment ? 1231 : 1237);
-        result = prime * result + (speedTweak ? 1231 : 1237);
-        result = prime * result + (twistSpeed ? 1231 : 1237);
-        result = prime * result + (twistX ? 1231 : 1237);
+        result = prime * result + ((efficiencyTypes == null) ? 0 : efficiencyTypes.hashCode());
         return result;
     }
 
@@ -154,89 +61,50 @@ public class Efficiencies {
         if (getClass() != obj.getClass())
             return false;
         Efficiencies other = (Efficiencies) obj;
-        if (anchorTurn != other.anchorTurn)
-            return false;
-        if (armReflex != other.armReflex)
-            return false;
-        if (coolRun != other.coolRun)
-            return false;
         if (doubleBasics != other.doubleBasics)
             return false;
-        if (fastfire != other.fastfire)
-            return false;
-        if (heatContainment != other.heatContainment)
-            return false;
-        if (speedTweak != other.speedTweak)
-            return false;
-        if (twistSpeed != other.twistSpeed)
-            return false;
-        if (twistX != other.twistX)
+        if (efficiencyTypes == null) {
+            if (other.efficiencyTypes != null)
+                return false;
+        }
+        else if (!efficiencyTypes.equals(other.efficiencyTypes))
             return false;
         return true;
     }
 
     /**
-     * Sets speed tweak status.
+     * Assigns this to be equal to that.
      * 
-     * @param aSpeedTweak
-     *            The value to set.
-     * @param xBar
-     *            {@link MessageXBar} to signal changes on.
+     * @param aEfficiencies
+     *            The {@link Efficiencies} to copy from.
      */
-    public void setSpeedTweak(boolean aSpeedTweak, MessageXBar xBar) {
-        if (aSpeedTweak != speedTweak) {
-            speedTweak = aSpeedTweak;
-            if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
-        }
+    public void assign(Efficiencies aEfficiencies) {
+        efficiencyTypes.clear();
+        efficiencyTypes.addAll(aEfficiencies.efficiencyTypes);
+        doubleBasics = aEfficiencies.doubleBasics;
     }
 
     /**
-     * Sets anchor turn status.
-     * 
-     * @param aAnchorTurn
-     *            The value to set.
-     * @param xBar
-     *            {@link MessageXBar} to signal changes on.
+     * @return A {@link List} of all the modifiers that should be applied for these efficiencies.
      */
-    public void setAnchorTurn(boolean aAnchorTurn, MessageXBar xBar) {
-        if (aAnchorTurn != anchorTurn) {
-            anchorTurn = aAnchorTurn;
-            if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
+    public List<Modifier> getModifiers() {
+        List<Modifier> ans = new ArrayList<>();
+        for (MechEfficiencyType type : efficiencyTypes) {
+            ans.addAll(ModifiersDB.lookupEfficiencyModifiers(type, doubleBasics));
         }
+        return ans;
     }
 
     /**
-     * Sets cool run status.
-     * 
-     * @param aCoolRun
-     *            The value to set.
-     * @param xBar
-     *            {@link MessageXBar} to signal changes on.
+     * @return <code>true</code> if all elite skills are unlocked. Effectiveness of cool run and heat containment is
+     *         doubled.
      */
-    public void setCoolRun(boolean aCoolRun, MessageXBar xBar) {
-        if (aCoolRun != coolRun) {
-            coolRun = aCoolRun;
-            if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, true));
-        }
+    public boolean hasDoubleBasics() {
+        return doubleBasics;
     }
 
-    /**
-     * Sets heat containment status.
-     * 
-     * @param aHeatContainment
-     *            The value to set.
-     * @param xBar
-     *            {@link MessageXBar} to signal changes on.
-     */
-    public void setHeatContainment(boolean aHeatContainment, MessageXBar xBar) {
-        if (aHeatContainment != heatContainment) {
-            heatContainment = aHeatContainment;
-            if (xBar != null)
-                xBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, true));
-        }
+    public boolean hasEfficiency(MechEfficiencyType aMechEfficiencyType) {
+        return efficiencyTypes.contains(aMechEfficiencyType);
     }
 
     /**
@@ -256,176 +124,26 @@ public class Efficiencies {
     }
 
     /**
-     * @return A {@link List} of all the modifiers that should be applied for these efficiencies.
-     */
-    public List<Modifier> getModifiers() {
-        List<Modifier> ans = new ArrayList<>();
-
-        if (hasFastFire())
-            ans.add(FAST_FIRE);
-        if (hasSpeedTweak())
-            ans.add(SPEED_TWEAK);
-
-        if (hasDoubleBasics()) {
-            if (hasCoolRun())
-                ans.add(COOL_RUN_2X);
-            if (hasHeatContainment())
-                ans.add(HEAT_CONTAINMENT_2X);
-            if (hasAnchorTurn()) {
-                ans.add(ANCHOR_TURN_LOW_2X);
-                ans.add(ANCHOR_TURN_MID_2X);
-                ans.add(ANCHOR_TURN_HIGH_2X);
-            }
-            if (hasTwistX()) {
-                ans.add(TWIST_X_YAW_2X);
-                ans.add(TWIST_X_PITCH_2X);
-            }
-            if (hasTwistSpeed()) {
-                ans.add(TWIST_SPEED_PITCH_2X);
-                ans.add(TWIST_SPEED_YAW_2X);
-            }
-            if (hasArmReflex()) {
-                ans.add(ARM_REFLEX_PITCH_2X);
-                ans.add(ARM_REFLEX_YAW_2X);
-            }
-        }
-        else {
-            if (hasCoolRun())
-                ans.add(COOL_RUN);
-            if (hasHeatContainment())
-                ans.add(HEAT_CONTAINMENT);
-            if (hasAnchorTurn()) {
-                ans.add(ANCHOR_TURN_LOW);
-                ans.add(ANCHOR_TURN_MID);
-                ans.add(ANCHOR_TURN_HIGH);
-            }
-            if (hasTwistX()) {
-                ans.add(TWIST_X_YAW);
-                ans.add(TWIST_X_PITCH);
-            }
-            if (hasTwistSpeed()) {
-                ans.add(TWIST_SPEED_PITCH);
-                ans.add(TWIST_SPEED_YAW);
-            }
-            if (hasArmReflex()) {
-                ans.add(ARM_REFLEX_PITCH);
-                ans.add(ARM_REFLEX_YAW);
-            }
-        }
-
-        return ans;
-    }
-
-    /**
-     * @return <code>true</code> if the fast fire efficiency is enabled.
-     */
-    public boolean hasFastFire() {
-        return fastfire;
-    }
-
-    /**
-     * Sets the status of the fast fire efficiency.
+     * Changes the status of an efficiency.
      * 
-     * @param aFastFire
-     *            The new status of the fast fire efficiency.
-     * @param aXBar
-     *            {@link MessageXBar} to signal changes on.
-     */
-    public void setFastFire(boolean aFastFire, MessageXBar aXBar) {
-        if (aFastFire != fastfire) {
-            fastfire = aFastFire;
-            if (aXBar != null)
-                aXBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, true));
-        }
-    }
-
-    /**
-     * @return <code>true</code> if the Twist X efficiency is enabled.
-     */
-    public boolean hasTwistX() {
-        return twistX;
-    }
-
-    /**
-     * Sets the status of the Twist X efficiency.
-     * 
+     * @param aMechEfficiencyType
+     *            The efficiency to change.
      * @param aValue
-     *            New state of the Twist X efficiency.
+     *            The new value.
      * @param aXBar
-     *            {@link MessageXBar} to signal changes on.
+     *            The {@link MessageXBar} to send change messages on.
      */
-    public void setTwistX(boolean aValue, MessageXBar aXBar) {
-        if (twistX != aValue) {
-            twistX = aValue;
-            if (null != aXBar)
-                aXBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
-        }
-    }
+    public void setEfficiency(MechEfficiencyType aMechEfficiencyType, boolean aValue, MessageXBar aXBar) {
+        if (aValue == hasEfficiency(aMechEfficiencyType))
+            return;
 
-    /**
-     * @return <code>true</code> if the Twist Speed efficiency is enabled.
-     */
-    public boolean hasTwistSpeed() {
-        return twistSpeed;
-    }
+        if (aValue)
+            efficiencyTypes.add(aMechEfficiencyType);
+        else
+            efficiencyTypes.remove(aMechEfficiencyType);
 
-    /**
-     * Sets the status of the Twist Speed efficiency.
-     * 
-     * @param aValue
-     *            The new status of the twist speed efficiency.
-     * @param aXBar
-     *            {@link MessageXBar} to signal changes on.
-     */
-    public void setTwistSpeed(boolean aValue, MessageXBar aXBar) {
-        if (twistSpeed != aValue) {
-            twistSpeed = aValue;
-            if (null != aXBar) {
-                aXBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
-            }
-        }
+        if (aXBar != null)
+            aXBar.post(
+                    new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, aMechEfficiencyType.affectsHeat()));
     }
-
-    /**
-     * @return <code>true</code> if the Arm Reflex efficiency is enabled.
-     */
-    public boolean hasArmReflex() {
-        return armReflex;
-    }
-
-    /**
-     * Sets the status of the Arm Reflex efficiency.
-     * 
-     * @param aValue
-     *            The new status of the arm reflex efficiency.
-     * @param aXBar
-     *            {@link MessageXBar} to signal changes on.
-     */
-    public void setArmReflex(boolean aValue, MessageXBar aXBar) {
-        if (armReflex != aValue) {
-            armReflex = aValue;
-            if (null != aXBar) {
-                aXBar.post(new EfficienciesMessage(this, EfficienciesMessage.Type.Changed, false));
-            }
-        }
-    }
-
-    /**
-     * Assigns this to be equal to that.
-     * 
-     * @param aEfficiencies
-     *            The {@link Efficiencies} to copy from.
-     */
-    public void assign(Efficiencies aEfficiencies) {
-        speedTweak = aEfficiencies.speedTweak;
-        coolRun = aEfficiencies.coolRun;
-        heatContainment = aEfficiencies.heatContainment;
-        anchorTurn = aEfficiencies.anchorTurn;
-        doubleBasics = aEfficiencies.doubleBasics;
-        fastfire = aEfficiencies.fastfire;
-        twistX = aEfficiencies.twistX;
-        twistSpeed = aEfficiencies.twistSpeed;
-        armReflex = aEfficiencies.armReflex;
-    }
-
 }

@@ -17,9 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.datacache;
+package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.upgrades.Upgrade;
+import org.lisoft.lsml.model.chassi.HardPoint;
+import org.lisoft.lsml.model.chassi.HardPointType;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -27,24 +28,40 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class UpgradeConverter implements Converter {
+public class HardPointConverter implements Converter {
 
     @Override
     public boolean canConvert(Class aClass) {
-        return Upgrade.class.isAssignableFrom(aClass);
+        return HardPoint.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        Upgrade item = (Upgrade) anObject;
-        int mwoIdx = item.getMwoId();
-        aWriter.setValue(Integer.valueOf(mwoIdx).toString());
+        HardPoint hp = (HardPoint) anObject;
+
+        aWriter.addAttribute("type", hp.getType().toString());
+        if (hp.getNumMissileTubes() > 0) {
+            aWriter.addAttribute("tubes", Integer.toString(hp.getNumMissileTubes()));
+        }
+        if (hp.hasMissileBayDoor() != false) {
+            aWriter.addAttribute("bayDoor", Boolean.toString(hp.hasMissileBayDoor()));
+        }
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        int mwoidx = Integer.parseInt(aReader.getValue());
-        return UpgradeDB.lookup(mwoidx);
+        HardPointType type = HardPointType.valueOf(aReader.getAttribute("type"));
+        int numTubes = 0;
+        boolean hasDoors = false;
+
+        String tubes = aReader.getAttribute("tubes");
+        String doors = aReader.getAttribute("bayDoor");
+
+        if (null != tubes && !tubes.isEmpty())
+            numTubes = Integer.parseInt(tubes);
+        if (null != doors && !doors.isEmpty())
+            hasDoors = Boolean.parseBoolean(doors);
+        return new HardPoint(type, numTubes, hasDoors);
     }
 
 }

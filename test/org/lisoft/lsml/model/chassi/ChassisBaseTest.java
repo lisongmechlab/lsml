@@ -60,7 +60,7 @@ public abstract class ChassisBaseTest {
     protected String          name                 = "Timber Wolf Primal";
     protected String          series               = "Timber Wolf";
     protected String          shortName            = "tbw primal";
-    protected ChassisVariant  variant              = ChassisVariant.FOUNDER;
+    protected ChassisVariant  variant              = ChassisVariant.HERO;
     protected int             maxPilotModules      = 3;
     protected int             maxConsumableModules = 2;
     protected int             maxWeaponModules     = 1;

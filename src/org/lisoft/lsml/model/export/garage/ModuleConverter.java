@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.datacache;
+package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.chassi.HardPoint;
-import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.datacache.PilotModuleDB;
+import org.lisoft.lsml.model.item.PilotModule;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -28,40 +28,40 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class HardPointConverter implements Converter {
+/**
+ * This converter serializes a {@link PilotModule} as a reference instead of as a full item.
+ * 
+ * @author Li Song
+ */
+public class ModuleConverter implements Converter {
 
     @Override
     public boolean canConvert(Class aClass) {
-        return HardPoint.class.isAssignableFrom(aClass);
+        return PilotModule.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        HardPoint hp = (HardPoint) anObject;
-
-        aWriter.addAttribute("type", hp.getType().toString());
-        if (hp.getNumMissileTubes() > 0) {
-            aWriter.addAttribute("tubes", Integer.toString(hp.getNumMissileTubes()));
+        PilotModule item = (PilotModule) anObject;
+        int mwoIdx = item.getMwoId();
+        if (mwoIdx > 0) {
+            aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
         }
-        if (hp.hasMissileBayDoor() != false) {
-            aWriter.addAttribute("bayDoor", Boolean.toString(hp.hasMissileBayDoor()));
+        else {
+            aWriter.addAttribute("key", item.getKey());
         }
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        HardPointType type = HardPointType.valueOf(aReader.getAttribute("type"));
-        int numTubes = 0;
-        boolean hasDoors = false;
-
-        String tubes = aReader.getAttribute("tubes");
-        String doors = aReader.getAttribute("bayDoor");
-
-        if (null != tubes && !tubes.isEmpty())
-            numTubes = Integer.parseInt(tubes);
-        if (null != doors && !doors.isEmpty())
-            hasDoors = Boolean.parseBoolean(doors);
-        return new HardPoint(type, numTubes, hasDoors);
+        String id = aReader.getAttribute("id");
+        if (id == null || id.isEmpty()) {
+            id = aReader.getValue();
+        }
+        if (id != null && !id.isEmpty()) {
+            int mwoidx = Integer.parseInt(id);
+            return PilotModuleDB.lookup(mwoidx);
+        }
+        return PilotModuleDB.lookup(aReader.getAttribute("key"));
     }
-
 }

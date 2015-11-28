@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.datacache;
+package org.lisoft.lsml.model.export.garage;
 
 import javax.swing.JOptionPane;
 
@@ -29,6 +29,8 @@ import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -50,8 +52,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * This {@link Converter} is used to load {@link LoadoutStandard}s from xml. It is not used for {@link LoadoutOmniMech}
- * s.
+ * This {@link Converter} is used to load Loadouts from XML.
  * 
  * @author Li Song
  */
@@ -155,12 +156,7 @@ public class LoadoutConverter implements Converter {
             }
             else if ("efficiencies".equals(aReader.getNodeName())) {
                 Efficiencies eff = (Efficiencies) aContext.convertAnother(loadoutBase, Efficiencies.class);
-                loadoutBase.getEfficiencies().setCoolRun(eff.hasCoolRun(), null);
-                loadoutBase.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics(), null);
-                loadoutBase.getEfficiencies().setHeatContainment(eff.hasHeatContainment(), null);
-                loadoutBase.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak(), null);
-                loadoutBase.getEfficiencies().setAnchorTurn(eff.hasAnchorTurn(), null);
-                loadoutBase.getEfficiencies().setFastFire(eff.hasFastFire(), null);
+                loadoutBase.getEfficiencies().assign(eff);
             }
             else if ("component".equals(aReader.getNodeName())) {
                 aContext.convertAnother(loadoutBase, ConfiguredComponentStandard.class,
@@ -218,10 +214,7 @@ public class LoadoutConverter implements Converter {
             }
             else if ("efficiencies".equals(aReader.getNodeName())) {
                 Efficiencies eff = (Efficiencies) aContext.convertAnother(loadout, Efficiencies.class);
-                loadout.getEfficiencies().setCoolRun(eff.hasCoolRun(), null);
-                loadout.getEfficiencies().setDoubleBasics(eff.hasDoubleBasics(), null);
-                loadout.getEfficiencies().setHeatContainment(eff.hasHeatContainment(), null);
-                loadout.getEfficiencies().setSpeedTweak(eff.hasSpeedTweak(), null);
+                loadout.getEfficiencies().assign(eff);
             }
             else if ("component".equals(aReader.getNodeName())) {
                 aContext.convertAnother(loadout, ConfiguredComponentStandard.class,

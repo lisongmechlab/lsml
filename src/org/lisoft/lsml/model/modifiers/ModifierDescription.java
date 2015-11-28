@@ -25,8 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.lisoft.lsml.model.datacache.ModifiersDB;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -46,6 +44,30 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class ModifierDescription {
+    public final static List<String> ALL_WEAPONS               = Collections
+            .unmodifiableList(Arrays.asList("energy", "ballistic", "missile", "antimissilesystem"));
+
+    public final static String       SEL_MOVEMENT_MAX_SPEED    = "speed";
+    public final static String       SEL_MOVEMENT_REVERSE_MUL  = "reversespeed";
+    public final static String       SEL_MOVEMENT_TORSO_SPEED  = "torsospeed";
+    public final static String       SEL_MOVEMENT_ARM_SPEED    = "armspeed";
+    public final static String       SEL_MOVEMENT_TORSO_ANGLE  = "torsoangle";
+    public final static String       SEL_MOVEMENT_ARM_ANGLE    = "armrotate";
+    public final static String       SEL_MOVEMENT_TURN_SPEED   = "turnlerp_speed";
+    public final static String       SEL_MOVEMENT_TURN_RATE    = "turnlerp";
+
+    public final static String       SEL_HEAT_MOVEMENT         = "movementheat";
+    public final static String       SEL_HEAT_DISSIPATION      = "heatloss";
+    public final static String       SEL_HEAT_LIMIT            = "heatlimit";
+    public final static String       SEL_HEAT_EXTERNALTRANSFER = "externalheat";
+
+    public final static String       SEL_WEAPON_RANGE          = "range";
+    public final static String       SEL_WEAPON_COOLDOWN       = "cooldown";
+    public final static String       SEL_WEAPON_HEAT           = "heat";
+    public final static String       SEL_WEAPON_LARGE_BORE     = "largeweapon";
+    public final static String       SEL_WEAPON_JAMMING_CHANCE = "jamchance";
+    public final static String       SEL_WEAPON_JAMMED_TIME    = "jamtime";
+
     /**
      * This attribute defines how a modifier is applied.
      * 
@@ -179,7 +201,7 @@ public class ModifierDescription {
         }
         specifier = canonizeName(aAttribute);
 
-        if (specifier != null && specifier.equals(ModifiersDB.SEL_WEAPON_COOLDOWN)) {
+        if (specifier != null && specifier.equals(ModifierDescription.SEL_WEAPON_COOLDOWN)) {
             // Ugh... PGI, PGI... why did you have to make cooldown a positive good?
             type = ModifierType.NEGATIVE_GOOD;
         }

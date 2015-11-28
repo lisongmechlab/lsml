@@ -49,6 +49,7 @@ import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
@@ -218,8 +219,8 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
-        cut.getEfficiencies().setAnchorTurn(true, null);
-        cut1.getEfficiencies().setAnchorTurn(false, null);
+        cut.getEfficiencies().setEfficiency(MechEfficiencyType.ANCHORTURN, true, null);
+        cut1.getEfficiencies().setEfficiency(MechEfficiencyType.ANCHORTURN, false, null);
 
         assertEquals(cut, cut1);
     }

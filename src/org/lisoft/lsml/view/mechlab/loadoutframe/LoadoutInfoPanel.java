@@ -70,6 +70,8 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.metrics.TorsoTwistYawSpeed;
 import org.lisoft.lsml.model.metrics.TurningSpeed;
+import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -77,37 +79,38 @@ import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.MetricDisplay;
 import org.lisoft.lsml.view.WeaponSummaryTable;
+import org.lisoft.lsml.view.models.EfficiencyModel;
 import org.lisoft.lsml.view.models.UpgradeModel;
 import org.lisoft.lsml.view.render.ProgressBarRenderer;
 import org.lisoft.lsml.view.render.StyleManager;
 
 public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
-    public static final String SUST_DPS_TEXT            = "Sust. DPS: %.1f @ %.0f m";
-    public static final String SUST_DPS_TOOLTIP         = "The DPS you can sustain over a prolonged encounter with your current heat dissipation under assumption that the player will not trigger ghost heat. For Ultra-AC type weapons, this caculates the statistically expected DPS. Takes environmental heat and spread of LB-X type weapons into account.";
-    public static final String MAX_DPS_TEXT             = "DPS: %.1f @ %.0f m";
-    public static final String MAX_DPS_TOOLTIP          = "The maximum damage you can deal per second at the displayed range. For Ultra-AC type weapons, this caculates the statistically expected DPS. Also takes spread of LB-X and similar weapons into account.";
-    public static final String BURST_DAMAGE_TEXT        = "Burst  %.1f s: %.1f @ %.0f m";
-    public static final String BURST_DAMAGE_TOOLTIP     = "The amount of damage you can deal in a limited time window, under the assumption that heat can be ignored (see time to overheat above). For double fire weapons (U-AC) includes the statistically expected damage. For LB-X type weapons it includes the spread of the weapon.";
-    public static final String ALPHA_HEAT_TOOLTIP       = "The amount of heat done by an alpha strike, not including ghost heat.";
-    public static final String ALPHA_HEAT_TEXT          = "Alpha heat: %.1f";
-    public static final String ALPHA_DAMAGE_TEXT        = "Alpha: %.1f @ %.0f m";
-    public static final String ALPHA_DAMAGE_TOOLTIP     = "The maximum damage you can deal at the displayed range in one volley.";
-    public static final String GHOST_HEAT_TEXT          = "Ghost heat: %.1f";
-    public static final String GHOST_HEAT_TOOLTIP       = "The amount of extra heat you receive on an alpha strike due to the ghost heat mechanic.";
-    public static final String TIME_TO_OVERHEAT_TEXT    = "Seconds to overheat: %.1f";
-    public static final String TIME_TO_OVERHEAT_TOOLTIP = "The amount of seconds you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.";
-    public static final String COOLING_RATIO_TEXT       = "Cooling ratio: %.0f %%";
-    public static final String COOLING_RATIO_TOOLTIP    = "How much of your maximal heat generation that can be dissipated. A value of 100% means that you will never overheat.";
-    public static final String TIME_TO_COOL_TEXT        = "Time to cool: %.1f";
-    public static final String TIME_TO_COOL_TOOLTIP     = "The time the loadout needs to cool from overheat to 0, while moving at full speed.";
+    public static final String        SUST_DPS_TEXT            = "Sust. DPS: %.1f @ %.0f m";
+    public static final String        SUST_DPS_TOOLTIP         = "The DPS you can sustain over a prolonged encounter with your current heat dissipation under assumption that the player will not trigger ghost heat. For Ultra-AC type weapons, this caculates the statistically expected DPS. Takes environmental heat and spread of LB-X type weapons into account.";
+    public static final String        MAX_DPS_TEXT             = "DPS: %.1f @ %.0f m";
+    public static final String        MAX_DPS_TOOLTIP          = "The maximum damage you can deal per second at the displayed range. For Ultra-AC type weapons, this caculates the statistically expected DPS. Also takes spread of LB-X and similar weapons into account.";
+    public static final String        BURST_DAMAGE_TEXT        = "Burst  %.1f s: %.1f @ %.0f m";
+    public static final String        BURST_DAMAGE_TOOLTIP     = "The amount of damage you can deal in a limited time window, under the assumption that heat can be ignored (see time to overheat above). For double fire weapons (U-AC) includes the statistically expected damage. For LB-X type weapons it includes the spread of the weapon.";
+    public static final String        ALPHA_HEAT_TOOLTIP       = "The amount of heat done by an alpha strike, not including ghost heat.";
+    public static final String        ALPHA_HEAT_TEXT          = "Alpha heat: %.1f";
+    public static final String        ALPHA_DAMAGE_TEXT        = "Alpha: %.1f @ %.0f m";
+    public static final String        ALPHA_DAMAGE_TOOLTIP     = "The maximum damage you can deal at the displayed range in one volley.";
+    public static final String        GHOST_HEAT_TEXT          = "Ghost heat: %.1f";
+    public static final String        GHOST_HEAT_TOOLTIP       = "The amount of extra heat you receive on an alpha strike due to the ghost heat mechanic.";
+    public static final String        TIME_TO_OVERHEAT_TEXT    = "Seconds to overheat: %.1f";
+    public static final String        TIME_TO_OVERHEAT_TOOLTIP = "The amount of seconds you can go \"All guns a'blazing\" before overheating, assuming no ghost heat.";
+    public static final String        COOLING_RATIO_TEXT       = "Cooling ratio: %.0f %%";
+    public static final String        COOLING_RATIO_TOOLTIP    = "How much of your maximal heat generation that can be dissipated. A value of 100% means that you will never overheat.";
+    public static final String        TIME_TO_COOL_TEXT        = "Time to cool: %.1f";
+    public static final String        TIME_TO_COOL_TOOLTIP     = "The time the loadout needs to cool from overheat to 0, while moving at full speed.";
 
-    private static final long serialVersionUID = 4720126200474042446L;
+    private static final long         serialVersionUID         = 4720126200474042446L;
 
-    public final static DecimalFormat df2_floor = new DecimalFormat("###.##");
-    public final static DecimalFormat df2       = new DecimalFormat("###.##");
-    public final static DecimalFormat df1_floor = new DecimalFormat("###.#");
-    public final static DecimalFormat df1       = new DecimalFormat("###.#");
-    public final static DecimalFormat df0       = new DecimalFormat("###");
+    public final static DecimalFormat df2_floor                = new DecimalFormat("###.##");
+    public final static DecimalFormat df2                      = new DecimalFormat("###.##");
+    public final static DecimalFormat df1_floor                = new DecimalFormat("###.#");
+    public final static DecimalFormat df1                      = new DecimalFormat("###.#");
+    public final static DecimalFormat df0                      = new DecimalFormat("###");
 
     static {
         df2_floor.setMinimumFractionDigits(2);
@@ -118,26 +121,26 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
         df1.setMinimumFractionDigits(1);
     }
 
-    private final LoadoutBase<?> loadout;
+    private final LoadoutBase<?>         loadout;
 
     // General pane
-    private final JProgressBar massBar;
-    private final JLabel       massValue      = new JLabel("xxx");
-    private final JProgressBar armorBar;
-    private final JLabel       armorValue     = new JLabel("xxx");
-    private final JProgressBar critslotsBar   = new JProgressBar(0, 5 * 12 + 3 * 6);
-    private final JLabel       critslotsValue = new JLabel("xxx");
-    private final JCheckBox    ferroFibros    = new JCheckBox();
-    private final JCheckBox    endoSteel      = new JCheckBox();
-    private final JCheckBox    artemis        = new JCheckBox();
+    private final JProgressBar           massBar;
+    private final JLabel                 massValue       = new JLabel("xxx");
+    private final JProgressBar           armorBar;
+    private final JLabel                 armorValue      = new JLabel("xxx");
+    private final JProgressBar           critslotsBar    = new JProgressBar(0, 5 * 12 + 3 * 6);
+    private final JLabel                 critslotsValue  = new JLabel("xxx");
+    private final JCheckBox              ferroFibros     = new JCheckBox();
+    private final JCheckBox              endoSteel       = new JCheckBox();
+    private final JCheckBox              artemis         = new JCheckBox();
 
     // Movement pane
-    private final MetricDisplay topSpeed;
-    private final MetricDisplay turnSpeed;
-    private final MetricDisplay twistSpeed;
-    private final JCheckBox     speedTweak = new JCheckBox("Speed Tweak");
-    private final JCheckBox     anchorTurn = new JCheckBox("Anchor Turn");
-    private final MetricDisplay jumpJets;
+    private final MetricDisplay          topSpeed;
+    private final MetricDisplay          turnSpeed;
+    private final MetricDisplay          twistSpeed;
+    private final JCheckBox              speedTweak      = new JCheckBox("Speed Tweak");
+    private final JCheckBox              anchorTurn      = new JCheckBox("Anchor Turn");
+    private final MetricDisplay          jumpJets;
 
     // Heat pane
     private final JLabel                 heatsinks       = new JLabel("xxx");
@@ -152,25 +155,25 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
     private final JComboBox<Environment> environemnts;
 
     // Offense pane
-    private final JComboBox<String> range;
-    private final MetricDisplay     alphaStrike;
-    private final MetricDisplay     dpsMax;
-    private final MetricDisplay     dpsSustained;
-    private final MetricDisplay     burstDamage;
-    private final JCheckBox         fastFire = new JCheckBox("F. Fire");
-    private final MetricDisplay     ghostHeat;
-    private final JTable            weaponTable;
+    private final JComboBox<String>      range;
+    private final MetricDisplay          alphaStrike;
+    private final MetricDisplay          dpsMax;
+    private final MetricDisplay          dpsSustained;
+    private final MetricDisplay          burstDamage;
+    private final JCheckBox              fastFire        = new JCheckBox("F. Fire");
+    private final MetricDisplay          ghostHeat;
+    private final JTable                 weaponTable;
 
-    private final CommandStack          cmdStack;
-    private final transient MessageXBar xBar;
+    private final CommandStack           cmdStack;
+    private final transient MessageXBar  xBar;
 
     // Constants for loadout
-    final ArmorUpgrade     armorFF;
-    final ArmorUpgrade     armorStandard;
-    final StructureUpgrade structureEs;
-    final StructureUpgrade structureStandards;
-    final HeatSinkUpgrade  heatSinkStandard;
-    final HeatSinkUpgrade  heatSinkDouble;
+    final ArmorUpgrade                   armorFF;
+    final ArmorUpgrade                   armorStandard;
+    final StructureUpgrade               structureEs;
+    final StructureUpgrade               structureStandards;
+    final HeatSinkUpgrade                heatSinkStandard;
+    final HeatSinkUpgrade                heatSinkDouble;
 
     public LoadoutInfoPanel(LoadoutBase<?> aLoadout, final LoadoutMetrics aMetrics, CommandStack aCommandStack,
             MessageXBar aXBar) {
@@ -688,77 +691,25 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
     }
 
     private void setupEfficiencies() {
-        speedTweak.setModel(new JToggleButton.ToggleButtonModel() {
-            @Override
-            public void setSelected(boolean aB) {
-                loadout.getEfficiencies().setSpeedTweak(aB, xBar);
-            }
-
-            @Override
-            public boolean isSelected() {
-                return loadout.getEfficiencies().hasSpeedTweak();
-            }
-        });
-
-        anchorTurn.setModel(new JToggleButton.ToggleButtonModel() {
-            @Override
-            public void setSelected(boolean aB) {
-                loadout.getEfficiencies().setAnchorTurn(aB, xBar);
-            }
-
-            @Override
-            public boolean isSelected() {
-                return loadout.getEfficiencies().hasAnchorTurn();
-            }
-        });
-
-        coolRun.setModel(new JToggleButton.ToggleButtonModel() {
-            @Override
-            public void setSelected(boolean aB) {
-                loadout.getEfficiencies().setCoolRun(aB, xBar);
-            }
-
-            @Override
-            public boolean isSelected() {
-                return loadout.getEfficiencies().hasCoolRun();
-            }
-        });
-
-        heatContainment.setModel(new JToggleButton.ToggleButtonModel() {
-            @Override
-            public void setSelected(boolean aB) {
-                loadout.getEfficiencies().setHeatContainment(aB, xBar);
-            }
-
-            @Override
-            public boolean isSelected() {
-                return loadout.getEfficiencies().hasHeatContainment();
-            }
-        });
+        Efficiencies efficiencies = loadout.getEfficiencies();
+        speedTweak.setModel(new EfficiencyModel(xBar, MechEfficiencyType.SPEED_TWEAK, efficiencies));
+        anchorTurn.setModel(new EfficiencyModel(xBar, MechEfficiencyType.ANCHORTURN, efficiencies));
+        coolRun.setModel(new EfficiencyModel(xBar, MechEfficiencyType.COOL_RUN, efficiencies));
+        heatContainment.setModel(new EfficiencyModel(xBar, MechEfficiencyType.HEAT_CONTAINMENT, efficiencies));
 
         doubleBasics.setModel(new JToggleButton.ToggleButtonModel() {
             @Override
             public void setSelected(boolean aB) {
-                loadout.getEfficiencies().setDoubleBasics(aB, xBar);
+                efficiencies.setDoubleBasics(aB, xBar);
             }
 
             @Override
             public boolean isSelected() {
-                return loadout.getEfficiencies().hasDoubleBasics();
+                return efficiencies.hasDoubleBasics();
             }
         });
 
-        fastFire.setModel(new JToggleButton.ToggleButtonModel() {
-            @Override
-            public void setSelected(boolean aB) {
-                loadout.getEfficiencies().setFastFire(aB, xBar);
-            }
-
-            @Override
-            public boolean isSelected() {
-                return loadout.getEfficiencies().hasFastFire();
-            }
-        });
+        fastFire.setModel(new EfficiencyModel(xBar, MechEfficiencyType.FAST_FIRE, efficiencies));
     }
 
     @Override

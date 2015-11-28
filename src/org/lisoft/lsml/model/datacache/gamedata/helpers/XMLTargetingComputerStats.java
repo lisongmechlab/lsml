@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -80,9 +79,9 @@ public class XMLTargetingComputerStats {
                         // FIXME add the selectors to the modifier description somehow.
                         Operation op = Operation.fromString(stats.operation);
                         ModifierDescription longRangeDesc = new ModifierDescription(name + " (LONG RANGE)", null, op,
-                                selectors, ModifiersDB.SEL_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
+                                selectors, ModifierDescription.SEL_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
                         ModifierDescription maxRangeDesc = new ModifierDescription(name + " (MAX RANGE)", null, op,
-                                selectors, ModifiersDB.SEL_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
+                                selectors, ModifierDescription.SEL_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
 
                         Modifier longRange = new Modifier(longRangeDesc, stats.longRange - 1);
                         Modifier maxRange = new Modifier(maxRangeDesc, stats.maxRange - 1);

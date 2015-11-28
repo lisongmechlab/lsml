@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.datacache.gamedata.Localization;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.BallisticWeapon;
@@ -33,6 +32,7 @@ import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -187,7 +187,7 @@ public class ItemStatsWeapon extends ItemStats {
             ghostHeatMultiplier = 0;
             ghostHeatFreeAlpha = -1;
         }
-        
+
         final double spread;
         if (WeaponStats.spread > 0)
             spread = WeaponStats.spread;
@@ -195,12 +195,12 @@ public class ItemStatsWeapon extends ItemStats {
             spread = 0;
 
         List<String> selectors = Arrays.asList(HardpointAliases.toLowerCase().split(","));
-        Attribute cooldown = new Attribute(cooldownValue, selectors, ModifiersDB.SEL_WEAPON_COOLDOWN);
-        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors, ModifiersDB.SEL_WEAPON_RANGE);
-        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, ModifiersDB.SEL_WEAPON_RANGE);
-        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors, ModifiersDB.SEL_WEAPON_RANGE);
-        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, ModifiersDB.SEL_WEAPON_RANGE);
-        Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifiersDB.SEL_WEAPON_HEAT);
+        Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SEL_WEAPON_COOLDOWN);
+        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
+        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
+        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
+        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
+        Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SEL_WEAPON_HEAT);
 
         switch (HardPointType.fromMwoType(WeaponStats.type)) {
             case AMS:
@@ -231,8 +231,9 @@ public class ItemStatsWeapon extends ItemStats {
                 }
 
                 Attribute jamChanceAttrib = new Attribute(jammingChance, selectors,
-                        ModifiersDB.SEL_WEAPON_JAMMING_CHANCE);
-                Attribute jamTimeAttrib = new Attribute(jammingTime, selectors, ModifiersDB.SEL_WEAPON_JAMMED_TIME);
+                        ModifierDescription.SEL_WEAPON_JAMMING_CHANCE);
+                Attribute jamTimeAttrib = new Attribute(jammingTime, selectors,
+                        ModifierDescription.SEL_WEAPON_JAMMED_TIME);
 
                 return new BallisticWeapon(
                         // Item Arguments
@@ -271,7 +272,7 @@ public class ItemStatsWeapon extends ItemStats {
 
                 int baseItemId = baseType == -1 ? (requiredGuidance != -1 ? mwoId : -1) : baseType;
                 return new MissileWeapon(
-                     // Item Arguments
+                        // Item Arguments
                         uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
                         // HeatSource Arguments
                         heat,

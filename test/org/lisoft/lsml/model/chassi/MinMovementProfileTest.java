@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mockito;
 
@@ -71,10 +70,10 @@ public class MinMovementProfileTest {
         Collection<Modifier> leg_omnipod2 = new ArrayList<>();
         
         // Just add some junk to the collections to make sure they don't compare equal
-        arm_omnipod1.add(new Modifier(ModifiersDB.FAST_FIRE_DESC, 1.0));
-        arm_omnipod2.add(new Modifier(ModifiersDB.FAST_FIRE_DESC, 2.0));
-        leg_omnipod1.add(new Modifier(ModifiersDB.FAST_FIRE_DESC, 3.0));
-        leg_omnipod2.add(new Modifier(ModifiersDB.FAST_FIRE_DESC, 4.0));
+        arm_omnipod1.add(Mockito.mock(Modifier.class));
+        arm_omnipod2.add(Mockito.mock(Modifier.class));
+        leg_omnipod1.add(Mockito.mock(Modifier.class));
+        leg_omnipod2.add(Mockito.mock(Modifier.class));
         
         List<Collection<Modifier>> arm = new ArrayList<>();
         List<Collection<Modifier>> leg = new ArrayList<>();

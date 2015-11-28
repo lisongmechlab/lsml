@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
@@ -104,7 +103,7 @@ public class HeatDissipationTest {
             @Override
             public Boolean answer(InvocationOnMock aInvocation) throws Throwable {
                 Attribute a = (Attribute) aInvocation.getArguments()[0];
-                return a.getSelectors().contains(ModifiersDB.SEL_HEAT_DISSIPATION);
+                return a.getSelectors().contains(ModifierDescription.SEL_HEAT_DISSIPATION);
             }
         });
 

@@ -32,6 +32,7 @@ import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -88,13 +89,15 @@ public class HeatCapacityTest {
      */
     @Test
     public void testCalculate() {
-        double expectedCapacity = (basecapacity + numInternalHs * internalHsCapacity + numExternalHs
-                * externalHsCapacity)
-                * capacityFactor;
-        
-        ModifierDescription description = ModifiersDB.HEAT_CONTAINMENT_DESC;
+        double expectedCapacity = (basecapacity + numInternalHs * internalHsCapacity
+                + numExternalHs * externalHsCapacity) * capacityFactor;
 
         Modifier heatlimit = Mockito.mock(Modifier.class);
+
+        List<Modifier> heatContainment = new ArrayList<>(
+                ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.HEAT_CONTAINMENT, true));
+        ModifierDescription description = heatContainment.get(0).getDescription();
+
         Mockito.when(heatlimit.getValue()).thenReturn(capacityFactor - 1.0);
         Mockito.when(heatlimit.getDescription()).thenReturn(description);
         modifiers.add(heatlimit);

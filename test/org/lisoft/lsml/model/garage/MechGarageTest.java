@@ -53,6 +53,8 @@ import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.thoughtworks.xstream.XStream;
+
 public class MechGarageTest {
     File        testFile = null;
 
@@ -343,4 +345,16 @@ public class MechGarageTest {
         assertFalse(loaded.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));
     }
 
+    /**
+     * Even if DHS are serialized before the Engine, they should be added as engine heat sinks.
+     */
+    @Test
+    public void testUnMarshalDhsBeforeEngine() {
+        String xml = "<?xml version=\"1.0\" ?><loadout name=\"AS7-BH\" chassi=\"AS7-BH\"><upgrades version=\"2\"><armor>2810</armor><structure>3100</structure><guidance>3051</guidance><heatsinks>3002</heatsinks></upgrades><efficiencies><speedTweak>false</speedTweak><coolRun>false</coolRun><heatContainment>false</heatContainment><anchorTurn>false</anchorTurn><doubleBasics>false</doubleBasics><fastfire>false</fastfire></efficiencies><component part=\"Head\" armor=\"0\" /><component part=\"LeftArm\" armor=\"0\" /><component part=\"LeftLeg\" armor=\"0\" /><component part=\"LeftTorso\" armor=\"0/0\" /><component part=\"CenterTorso\" armor=\"0/0\"><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3278</item></component><component part=\"RightTorso\" armor=\"0/0\" /><component part=\"RightLeg\" armor=\"0\" /><component part=\"RightArm\" armor=\"0\" /></loadout>";
+
+        XStream stream = LoadoutBase.loadoutXstream();
+        LoadoutStandard loadout = (LoadoutStandard) stream.fromXML(xml);
+
+        assertEquals(6, loadout.getComponent(Location.CenterTorso).getEngineHeatsinks());
+    }
 }

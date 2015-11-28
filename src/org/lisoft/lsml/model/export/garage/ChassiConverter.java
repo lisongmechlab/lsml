@@ -17,9 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.datacache;
+package org.lisoft.lsml.model.export.garage;
 
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.datacache.ChassisDB;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
