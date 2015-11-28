@@ -394,6 +394,8 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
 
                 for (JTable table : tables) {
                     ((ChassiTableModel) table.getModel()).recreate(hideSpecials.isSelected());
+                    resizeColumnWidth(table);
+                    resizeRowHeight(table);
                 }
             }
         }
