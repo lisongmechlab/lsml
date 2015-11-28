@@ -3,16 +3,19 @@
 	<!-- Movement -->
 	<Category name="Movement">
 		<Quirk name="AccelLerp" loc="ACCELERATION RATE">
+            <Modify specifier="All" operation="Multiplier" context="PositiveGood" loc="(ALL SPEEDS)" />
 			<Modify specifier="LowRate" operation="Multiplier" context="PositiveGood" loc="(LOW SPEED)" />
 			<Modify specifier="MidRate" operation="Multiplier" context="PositiveGood" loc="(MED SPEED)" />
 			<Modify specifier="HighRate" operation="Multiplier" context="PositiveGood" loc="(HIGH SPEED)" />
 		</Quirk>
 		<Quirk name="DecelLerp" loc="DECELERATION RATE">
+            <Modify specifier="All" operation="Multiplier" context="PositiveGood" loc="(ALL SPEEDS)" />
 			<Modify specifier="LowRate" operation="Multiplier" context="PositiveGood" loc="(LOW SPEED)" />
 			<Modify specifier="MidRate" operation="Multiplier" context="PositiveGood" loc="(MED SPEED)" />
 			<Modify specifier="HighRate" operation="Multiplier" context="PositiveGood" loc="(HIGH SPEED)" />
 		</Quirk>
 		<Quirk name="TurnLerp" loc="TURN RATE">
+            <Modify specifier="All" operation="Multiplier" context="PositiveGood" loc="(ALL SPEEDS)" />
 			<Modify specifier="LowRate" operation="Multiplier" context="PositiveGood" loc="(LOW SPEED)" />
 			<Modify specifier="MidRate" operation="Multiplier" context="PositiveGood" loc="(MED SPEED)" />
 			<Modify specifier="HighRate" operation="Multiplier" context="PositiveGood" loc="(HIGH SPEED)" />

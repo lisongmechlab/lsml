@@ -47,6 +47,8 @@ public class ModifierDescription {
     public final static List<String> ALL_WEAPONS               = Collections
             .unmodifiableList(Arrays.asList("energy", "ballistic", "missile", "antimissilesystem"));
 
+    public final static String       SPECIFIER_ALL             = "all";
+
     public final static String       SEL_MOVEMENT_MAX_SPEED    = "speed";
     public final static String       SEL_MOVEMENT_REVERSE_MUL  = "reversespeed";
     public final static String       SEL_MOVEMENT_TORSO_SPEED  = "torsospeed";
@@ -202,7 +204,7 @@ public class ModifierDescription {
         specifier = canonizeName(aAttribute);
 
         if (specifier != null && specifier.equals(ModifierDescription.SEL_WEAPON_COOLDOWN)) {
-            // Ugh... PGI, PGI... why did you have to make cooldown a positive good?
+            // Ugh... PGI, PGI... why did you have to make cool down a positive good?
             type = ModifierType.NEGATIVE_GOOD;
         }
         else {
@@ -247,7 +249,7 @@ public class ModifierDescription {
                 return false;
         }
         else {
-            if (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier))
+            if (!specifier.equals(SPECIFIER_ALL) && (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier)))
                 return false;
         }
 
