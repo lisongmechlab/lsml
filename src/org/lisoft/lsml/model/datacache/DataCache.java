@@ -52,6 +52,8 @@ import org.lisoft.lsml.model.datacache.gamedata.MdfMechDefinition;
 import org.lisoft.lsml.model.datacache.gamedata.XMLHardpoints;
 import org.lisoft.lsml.model.datacache.gamedata.XMLItemStats;
 import org.lisoft.lsml.model.datacache.gamedata.XMLLoadout;
+import org.lisoft.lsml.model.datacache.gamedata.XMLMechEfficiencyTalent;
+import org.lisoft.lsml.model.datacache.gamedata.XMLMechEfficiencyTalent.XMLTalentRank;
 import org.lisoft.lsml.model.datacache.gamedata.XMLMechIdMap;
 import org.lisoft.lsml.model.datacache.gamedata.XMLOmniPods;
 import org.lisoft.lsml.model.datacache.gamedata.XMLPilotTalents;
@@ -69,6 +71,7 @@ import org.lisoft.lsml.model.datacache.gamedata.helpers.XMLPilotModuleWeaponStat
 import org.lisoft.lsml.model.datacache.gamedata.helpers.XMLWeaponStats;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.export.LoadoutCoderV3;
+import org.lisoft.lsml.model.export.garage.HardPointConverter;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.BallisticWeapon;
@@ -91,6 +94,8 @@ import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
 import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.MechEfficiency;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
@@ -136,93 +141,8 @@ public class DataCache {
     }
 
     private static transient DataCache   instance;
-    private static transient Boolean     loading   = false;
-    private static transient ParseStatus status    = ParseStatus.NotInitialized;
-
-    @XStreamAsAttribute
-    private String                       lsmlVersion;
-    private Map<String, Long>            checksums = new HashMap<>();           // Filename - CRC
-    private List<Upgrade>                upgrades;
-    private List<Environment>            environments;
-    private List<Item>                   items;
-    private List<ChassisBase>            chassis;
-
-    private List<PilotModule>            modules;
-
-    private List<OmniPod>                omniPods;
-
-    private List<StockLoadout>           stockLoadouts;
-    private List<ModifierDescription>    modifierDescriptions;
-
-    /**
-     * @return An unmodifiable {@link List} of all inner sphere {@link ChassisStandard}s.
-     */
-    public List<ChassisBase> getChassis() {
-        return Collections.unmodifiableList(chassis);
-    }
-
-    /**
-     * @return An unmodifiable {@link List} of all {@link Environment}s.
-     */
-    public List<Environment> getEnvironments() {
-        return Collections.unmodifiableList(environments);
-    }
-
-    /**
-     * @return An unmodifiable {@link List} of all {@link Item}s.
-     */
-    public List<Item> getItems() {
-        return Collections.unmodifiableList(items);
-    }
-
-    /**
-     * @return An unmodifiable {@link List} of {@link OmniPod}s.
-     */
-    public List<OmniPod> getOmniPods() {
-        return omniPods;
-    }
-
-    /**
-     * @return An unmodifiable {@link List} of all {@link PilotModule}s.
-     */
-    public List<PilotModule> getPilotModules() {
-        return Collections.unmodifiableList(modules);
-    }
-
-    /**
-     * @return An unmodifiable {@link List} of all {@link StockLoadout}s.
-     */
-    public List<StockLoadout> getStockLoadouts() {
-        return Collections.unmodifiableList(stockLoadouts);
-    }
-
-    /**
-     * @return An unmodifiable {@link List} of all {@link Upgrade}s.
-     */
-    public List<Upgrade> getUpgrades() {
-        return Collections.unmodifiableList(upgrades);
-    }
-
-    private boolean mustUpdate() {
-        if (!lsmlVersion.equals(LSML.getVersion()))
-            return true;
-        return false;
-    }
-
-    private boolean shouldUpdate(Collection<GameFile> aGameFiles) {
-        if (null == aGameFiles) {
-            return false;
-        }
-
-        Map<String, Long> crc = new HashMap<>(checksums);
-        for (GameFile gameFile : aGameFiles) {
-            Long fileCrc = crc.remove(gameFile.path);
-            if (null == fileCrc || fileCrc != gameFile.crc32) {
-                return true;
-            }
-        }
-        return !crc.isEmpty();
-    }
+    private static transient Boolean     loading = false;
+    private static transient ParseStatus status  = ParseStatus.NotInitialized;
 
     public static Item findItem(int aItemId, List<Item> aItems) {
         for (Item item : aItems) {
@@ -239,22 +159,6 @@ public class DataCache {
                 return item;
         }
         throw new IllegalArgumentException("Unknown item: " + aKey);
-    }
-
-    public Upgrade findUpgrade(String aKey) {
-        for (Upgrade upgrade : getUpgrades()) {
-            if (aKey.equals(upgrade.getName()))
-                return upgrade;
-        }
-        throw new IllegalArgumentException("Unknown upgrade: " + aKey);
-    }
-
-    public Upgrade findUpgrade(int aId) {
-        for (Upgrade upgrade : getUpgrades()) {
-            if (aId == upgrade.getMwoId())
-                return upgrade;
-        }
-        throw new IllegalArgumentException("Unknown upgrade: " + aId);
     }
 
     /**
@@ -366,6 +270,14 @@ public class DataCache {
         return status;
     }
 
+    /**
+     * Returns a list of all files to parse. This is also used for checksumming to see if the data files have changes.
+     * 
+     * @param aGameVfs
+     *            The {@link GameVFS} object to use for reading files.
+     * @return A {@link Collection} of {@link GameFile}s.
+     * @throws IOException
+     */
     private static Collection<GameFile> filesToParse(GameVFS aGameVfs) throws IOException {
         List<GameFile> ans = new ArrayList<>();
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Weapons/Weapons.xml")));
@@ -381,6 +293,7 @@ public class DataCache {
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/MASC.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Mechs/Mechs.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/OmniPods.xml")));
+        ans.add(aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/MechEfficiencies.xml")));
         return ans;
     }
 
@@ -446,6 +359,90 @@ public class DataCache {
             catch (Exception e) {
                 throw new IOException("Unable to load chassi configuration for [" + mech.name + "]!", e);
             }
+        }
+        return ans;
+    }
+
+    private static Map<MechEfficiencyType, MechEfficiency> parseEfficiencies(XMLItemStats aItemStatsXml) {
+        Map<MechEfficiencyType, MechEfficiency> ans = new HashMap<>();
+        for (XMLMechEfficiencyTalent talent : aItemStatsXml.MechEfficiencies) {
+            XMLTalentRank bestRank = talent.ranks.get(0);
+            for (XMLTalentRank rank : talent.ranks) {
+                if (bestRank.id < rank.id) {
+                    bestRank = rank;
+                }
+            }
+
+            double value = bestRank.Bonus.value;
+            double eliteModifier = talent.EliteBonus > 0 ? talent.EliteBonus : 1.0;
+            double valueElited = value * eliteModifier;
+            MechEfficiencyType type = MechEfficiencyType.fromMwo(talent.name);
+            List<ModifierDescription> descriptions = new ArrayList<>();
+            switch (type) {
+                case ANCHORTURN:
+                    descriptions.add(new ModifierDescription("ANCHOR TURN (LOW SPEED)", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, "lowrate", ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("ANCHOR TURN (MID SPEED)", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, "midrate", ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("ANCHOR TURN (HIGH SPEED)", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, "highrate", ModifierType.POSITIVE_GOOD));
+                    break;
+                case ARM_REFLEX:
+                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "pitch", ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "yaw", ModifierType.POSITIVE_GOOD));
+                    break;
+                case COOL_RUN:
+                    descriptions.add(new ModifierDescription("COOL RUN", null, Operation.MUL, "heatloss", null,
+                            ModifierType.POSITIVE_GOOD));
+                    break;
+                case FAST_FIRE:
+                    descriptions.add(
+                            new ModifierDescription("FAST FIRE", null, Operation.MUL, ModifierDescription.ALL_WEAPONS,
+                                    ModifierDescription.SEL_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD));
+                    break;
+                case HARD_BRAKE: // NYI
+                    break;
+                case HEAT_CONTAINMENT:
+                    descriptions.add(new ModifierDescription("HEAT CONTAINMENT", null, Operation.MUL,
+                            ModifierDescription.SEL_HEAT_LIMIT, null, ModifierType.POSITIVE_GOOD));
+                    break;
+                case KINETIC_BURST: // NYI
+                    break;
+                case MODULESLOT: // NYI
+                    break;
+                case PINPOINT: // NYI
+                    break;
+                case QUICKIGNITION: // NYI
+                    break;
+                case SPEED_TWEAK:
+                    descriptions
+                            .add(new ModifierDescription("SPEED TWEAK", null, Operation.MUL,
+                                    Arrays.asList(ModifierDescription.SEL_MOVEMENT_MAX_SPEED,
+                                            ModifierDescription.SEL_MOVEMENT_REVERSE_MUL),
+                                    null, ModifierType.POSITIVE_GOOD));
+                    break;
+                case TWIST_SPEED:
+                    descriptions.add(new ModifierDescription("TORSO TURN RATE", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "pitch", ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("TORSO TURN RATE", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "yaw", ModifierType.POSITIVE_GOOD));
+
+                    break;
+                case TWIST_X:
+                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, "pitch", ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, "yaw", ModifierType.POSITIVE_GOOD));
+
+                    break;
+                default:
+                    throw new RuntimeException("Unknown efficiency: " + type);
+            }
+
+            MechEfficiency efficiency = new MechEfficiency(value, valueElited, descriptions);
+            ans.put(type, efficiency);
         }
         return ans;
     }
@@ -593,9 +590,9 @@ public class DataCache {
                     }
 
                     ModifierDescription rangeDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifiersDB.SEL_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
+                            ModifierDescription.SEL_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
                     ModifierDescription cooldownDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifiersDB.SEL_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
+                            ModifierDescription.SEL_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
 
                     int maxRank = weaponStats.size();
                     double longRange[] = new double[maxRank];
@@ -910,6 +907,7 @@ public class DataCache {
         dataCache.lsmlVersion = LSML.getVersion();
         dataCache.modifierDescriptions = Collections.unmodifiableList(
                 XMLQuirkDef.fromXml(LoadoutCoderV3.class.getResourceAsStream("/resources/Quirks.def.xml")));
+        dataCache.mechEfficiencies = Collections.unmodifiableMap(parseEfficiencies(itemStatsXml));
         dataCache.items = Collections.unmodifiableList(parseItems(itemStatsXml));
         dataCache.modules = Collections.unmodifiableList(parseModules(aGameVfs, itemStatsXml));
         dataCache.upgrades = Collections.unmodifiableList(parseUpgrades(itemStatsXml, dataCache));
@@ -934,6 +932,29 @@ public class DataCache {
         return dataCache;
     }
 
+    private List<ChassisBase>                       chassis;
+
+    private Map<String, Long>                       checksums = new HashMap<>(); // Filename - CRC
+
+    private List<Environment>                       environments;
+
+    private List<Item>                              items;
+
+    @XStreamAsAttribute
+    private String                                  lsmlVersion;
+
+    private Map<MechEfficiencyType, MechEfficiency> mechEfficiencies;
+
+    private List<ModifierDescription>               modifierDescriptions;
+
+    private List<PilotModule>                       modules;
+
+    private List<OmniPod>                           omniPods;
+
+    private List<StockLoadout>                      stockLoadouts;
+
+    private List<Upgrade>                           upgrades;
+
     public OmniPod findOmniPod(int aOmniPod) {
         for (OmniPod item : getOmniPods()) {
             if (item.getMwoId() == aOmniPod)
@@ -942,10 +963,103 @@ public class DataCache {
         throw new IllegalArgumentException("Unknown OmniPod: " + aOmniPod);
     }
 
+    public Upgrade findUpgrade(int aId) {
+        for (Upgrade upgrade : getUpgrades()) {
+            if (aId == upgrade.getMwoId())
+                return upgrade;
+        }
+        throw new IllegalArgumentException("Unknown upgrade: " + aId);
+    }
+
+    public Upgrade findUpgrade(String aKey) {
+        for (Upgrade upgrade : getUpgrades()) {
+            if (aKey.equals(upgrade.getName()))
+                return upgrade;
+        }
+        throw new IllegalArgumentException("Unknown upgrade: " + aKey);
+    }
+
+    /**
+     * @return An unmodifiable {@link List} of all inner sphere {@link ChassisStandard}s.
+     */
+    public List<ChassisBase> getChassis() {
+        return Collections.unmodifiableList(chassis);
+    }
+
+    /**
+     * @return An unmodifiable {@link List} of all {@link Environment}s.
+     */
+    public List<Environment> getEnvironments() {
+        return Collections.unmodifiableList(environments);
+    }
+
+    /**
+     * @return An unmodifiable {@link List} of all {@link Item}s.
+     */
+    public List<Item> getItems() {
+        return Collections.unmodifiableList(items);
+    }
+
+    /**
+     * @return A {@link Collection} of all the mech efficiencies read from the data files.
+     */
+    public Map<MechEfficiencyType, MechEfficiency> getMechEfficiencies() {
+        return mechEfficiencies;
+    }
+
     /**
      * @return A {@link Collection} of all the modifier descriptions.
      */
     public Collection<ModifierDescription> getModifierDescriptions() {
         return modifierDescriptions;
+    }
+
+    /**
+     * @return An unmodifiable {@link List} of {@link OmniPod}s.
+     */
+    public List<OmniPod> getOmniPods() {
+        return omniPods;
+    }
+
+    /**
+     * @return An unmodifiable {@link List} of all {@link PilotModule}s.
+     */
+    public List<PilotModule> getPilotModules() {
+        return Collections.unmodifiableList(modules);
+    }
+
+    /**
+     * @return An unmodifiable {@link List} of all {@link StockLoadout}s.
+     */
+    public List<StockLoadout> getStockLoadouts() {
+        return Collections.unmodifiableList(stockLoadouts);
+    }
+
+    /**
+     * @return An unmodifiable {@link List} of all {@link Upgrade}s.
+     */
+    public List<Upgrade> getUpgrades() {
+        return Collections.unmodifiableList(upgrades);
+    }
+
+    private boolean mustUpdate() {
+        if (!lsmlVersion.equals(LSML.getVersion()))
+            return true;
+        return false;
+    }
+
+    private boolean shouldUpdate(Collection<GameFile> aGameFiles) {
+        if (null == aGameFiles) {
+            return false;
+        }
+
+        Map<String, Long> crc = new HashMap<>(checksums);
+        for (GameFile gameFile : aGameFiles) {
+            Long fileCrc = crc.remove(gameFile.path);
+            if (null == fileCrc || fileCrc != gameFile.crc32) {
+                return true;
+            }
+        }
+        return !crc.isEmpty();
     }
 }

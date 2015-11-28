@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.datacache;
+package org.lisoft.lsml.model.export.garage;
 
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.MechGarage;

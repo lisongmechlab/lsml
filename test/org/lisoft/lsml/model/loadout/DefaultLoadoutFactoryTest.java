@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.ChassisDB;
@@ -32,6 +33,9 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.loadout.WeaponGroups.FiringMode;
+import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 
 /**
  * Test the default factory for creating loadouts.
@@ -41,6 +45,38 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 public class DefaultLoadoutFactoryTest {
 
     DefaultLoadoutFactory cut = new DefaultLoadoutFactory();
+
+    @Test
+    public void testProduceEmpty() {
+        ChassisBase chassis = ChassisDB.lookup("CPLT-K2");
+        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CPLT-K2"));
+
+        assertEquals(0, loadout.getArmor());
+        assertSame(chassis, loadout.getChassis());
+        assertNull(loadout.getEngine());
+        assertEquals(0, loadout.getHeatsinksCount());
+        assertEquals(chassis.getNameShort(), loadout.getName());
+        assertEquals(21, loadout.getNumCriticalSlotsUsed()); // 21 for empty K2
+        assertEquals(57, loadout.getNumCriticalSlotsFree()); // 57 for empty K2
+        assertEquals(8, loadout.getComponents().size());
+
+        Efficiencies efficiencies = loadout.getEfficiencies();
+        for (MechEfficiencyType type : MechEfficiencyType.values()) {
+            assertFalse(efficiencies.hasEfficiency(type));
+        }
+        assertFalse(efficiencies.hasDoubleBasics());
+
+        WeaponGroups groups = loadout.getWeaponGroups();
+        for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
+            assertTrue(groups.getWeapons(i, loadout).isEmpty());
+            assertSame(FiringMode.Optimal, groups.getFiringMode(i));
+        }
+
+        assertEquals(UpgradeDB.STANDARD_GUIDANCE, loadout.getUpgrades().getGuidance());
+        assertEquals(UpgradeDB.STANDARD_STRUCTURE, loadout.getUpgrades().getStructure());
+        assertEquals(UpgradeDB.STANDARD_ARMOR, loadout.getUpgrades().getArmor());
+        assertEquals(UpgradeDB.STANDARD_HEATSINKS, loadout.getUpgrades().getHeatSink());
+    }
 
     @Test
     public void testProduceClone_NotSame() throws Exception {
@@ -98,13 +134,9 @@ public class DefaultLoadoutFactoryTest {
     @Test
     public void testProduceClone_Efficiencies() {
         LoadoutBase<?> loadout = cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        loadout.getEfficiencies().setAnchorTurn(true, null);
-        loadout.getEfficiencies().setTwistSpeed(true, null);
-        loadout.getEfficiencies().setTwistX(true, null);
-        loadout.getEfficiencies().setArmReflex(true, null);
-        loadout.getEfficiencies().setFastFire(true, null);
-        loadout.getEfficiencies().setCoolRun(true, null);
-        loadout.getEfficiencies().setHeatContainment(true, null);
+        for (MechEfficiencyType type : MechEfficiencyType.values()) {
+            loadout.getEfficiencies().setEfficiency(type, true, null);
+        }
         loadout.getEfficiencies().setDoubleBasics(true, null);
 
         LoadoutBase<?> clone = cut.produceClone(loadout);

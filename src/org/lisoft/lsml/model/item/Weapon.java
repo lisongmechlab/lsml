@@ -27,9 +27,9 @@ import java.util.regex.Pattern;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -305,7 +305,7 @@ public class Weapon extends HeatSource {
      *         weapon is equipped.
      */
     public boolean isLargeBore() {
-        return getAliases().contains(ModifiersDB.SEL_WEAPON_LARGE_BORE);
+        return getAliases().contains(ModifierDescription.SEL_WEAPON_LARGE_BORE);
     }
 
     /**

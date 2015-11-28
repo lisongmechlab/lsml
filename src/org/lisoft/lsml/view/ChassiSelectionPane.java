@@ -62,7 +62,7 @@ import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view.mechlab.FilteredHtmlQuirksRenderingStrategy;
 import org.lisoft.lsml.view.mechlab.QuirksRenderingStrategy;
@@ -202,14 +202,14 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
             MovementProfile mp = chassis.getMovementProfileBase();
 
             final double maxSpeed = TopSpeed.calculate(rating, mp, chassis.getMassMax(), modifiers);
-            modifiers.add(Efficiencies.SPEED_TWEAK);
+            modifiers.addAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.SPEED_TWEAK, true));
             final double maxSpeedTweak = TopSpeed.calculate(rating, mp, chassis.getMassMax(), modifiers);
             return df.format(maxSpeed) + " kph (" + df.format(maxSpeedTweak) + " kph)";
         }
     }
 
     static class PartColumn extends TableColumn {
-        static private boolean         couldntLoadStockErrorHasShown = false;
+        static private boolean couldntLoadStockErrorHasShown = false;
         private final JPanel   panel                         = new JPanel(new GridBagLayout());
         private final JLabel   energy                        = new JLabel();
         private final JLabel   ballistic                     = new JLabel();

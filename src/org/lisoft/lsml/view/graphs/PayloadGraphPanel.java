@@ -42,11 +42,12 @@ import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.util.ListArrayUtils;
 import org.lisoft.lsml.view.graphs.PayloadGraphPanel.TonnageCurve.CurvePoint;
 
@@ -148,7 +149,7 @@ public class PayloadGraphPanel extends ChartPanel {
         aSpeedTweak.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent aArg0) {
-                efficiencies.setSpeedTweak(aSpeedTweak.isSelected(), null);
+                efficiencies.setEfficiency(MechEfficiencyType.SPEED_TWEAK, aSpeedTweak.isSelected(), null);
                 updateGraph();
             }
         });
@@ -234,7 +235,7 @@ public class PayloadGraphPanel extends ChartPanel {
                 series = new XYSeries(makeName(point.chassis), false, false);
                 series.add(previousPoint.speed, previousPayload);
             }
-            
+
             series.add(point.speed, payload);
             previousPayload = payload;
             previousPoint = point;
@@ -255,7 +256,8 @@ public class PayloadGraphPanel extends ChartPanel {
 
                     double speedQuirkValue = 0.0;
                     for (Modifier modifier : cs.getQuirks()) {
-                        if (modifier.getDescription().getSelectors().contains(ModifiersDB.SEL_MOVEMENT_MAX_SPEED)) {
+                        if (modifier.getDescription().getSelectors()
+                                .contains(ModifierDescription.SEL_MOVEMENT_MAX_SPEED)) {
                             speedQuirkValue = modifier.getValue();
                             break;
                         }

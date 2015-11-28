@@ -17,9 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.datacache;
+package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.datacache.PilotModuleDB;
+import org.lisoft.lsml.model.item.PilotModule;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -28,20 +29,20 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * This converter serializes an item as a reference instead of as a full item.
+ * This converter serializes a {@link PilotModule} as a reference instead of as a full item.
  * 
  * @author Emily Björk
  */
-public class ItemConverter implements Converter {
+public class ModuleConverter implements Converter {
 
     @Override
     public boolean canConvert(Class aClass) {
-        return Item.class.isAssignableFrom(aClass);
+        return PilotModule.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        Item item = (Item) anObject;
+        PilotModule item = (PilotModule) anObject;
         int mwoIdx = item.getMwoId();
         if (mwoIdx > 0) {
             aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
@@ -59,8 +60,8 @@ public class ItemConverter implements Converter {
         }
         if (id != null && !id.isEmpty()) {
             int mwoidx = Integer.parseInt(id);
-            return ItemDB.lookup(mwoidx);
+            return PilotModuleDB.lookup(mwoidx);
         }
-        return ItemDB.lookup(aReader.getAttribute("key"));
+        return PilotModuleDB.lookup(aReader.getAttribute("key"));
     }
 }

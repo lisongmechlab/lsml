@@ -32,7 +32,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
 
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.LoadoutMessage;
@@ -46,11 +45,13 @@ import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view.MetricDisplay;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.graphs.DamageGraphPanel;
 import org.lisoft.lsml.view.mechlab.AngleDisplay;
+import org.lisoft.lsml.view.models.EfficiencyModel;
 import org.lisoft.lsml.view.render.ScrollablePanel;
 import org.lisoft.lsml.view.render.StyleManager;
 
@@ -65,15 +66,15 @@ public class MechStatisticsPanel extends JPanel implements MessageReceiver {
     private final WeaponGroupStats    weaponGroupStats[] = new WeaponGroupStats[WeaponGroups.MAX_GROUPS];
     private final LoadoutBase<?>      loadout;
 
-    private final AngleDisplay  torsoYawDisplay   = new AngleDisplay(90.0);
-    private final AngleDisplay  torsoPitchDisplay = new AngleDisplay(0.0);
-    private final MetricDisplay torsoYawSpeed;
-    private final MetricDisplay torsoPitchSpeed;
-    private final MetricDisplay armYawSpeed;
-    private final MetricDisplay armPitchSpeed;
-    private final JCheckBox     twistX;
-    private final JCheckBox     twistSpeed;
-    private final JCheckBox     armReflex;
+    private final AngleDisplay        torsoYawDisplay    = new AngleDisplay(90.0);
+    private final AngleDisplay        torsoPitchDisplay  = new AngleDisplay(0.0);
+    private final MetricDisplay       torsoYawSpeed;
+    private final MetricDisplay       torsoPitchSpeed;
+    private final MetricDisplay       armYawSpeed;
+    private final MetricDisplay       armPitchSpeed;
+    private final JCheckBox           twistX;
+    private final JCheckBox           twistSpeed;
+    private final JCheckBox           armReflex;
 
     /**
      * @param aLoadout
@@ -102,43 +103,12 @@ public class MechStatisticsPanel extends JPanel implements MessageReceiver {
                 "How fast the 'Mech can move its arms vertically.", aXBar, loadout);
 
         twistX = new JCheckBox("Twist X");
-        twistX.setModel(new JToggleButton.ToggleButtonModel() {
-            @Override
-            public void setSelected(boolean aB) {
-                loadout.getEfficiencies().setTwistX(aB, aXBar);
-            }
-
-            @Override
-            public boolean isSelected() {
-                return loadout.getEfficiencies().hasTwistX();
-            }
-        });
-
+        twistX.setModel(new EfficiencyModel(aXBar, MechEfficiencyType.TWIST_X, loadout.getEfficiencies()));
         twistSpeed = new JCheckBox("Twist Speed");
-        twistSpeed.setModel(new JToggleButton.ToggleButtonModel() {
-            @Override
-            public void setSelected(boolean aB) {
-                loadout.getEfficiencies().setTwistSpeed(aB, aXBar);
-            }
-
-            @Override
-            public boolean isSelected() {
-                return loadout.getEfficiencies().hasTwistSpeed();
-            }
-        });
+        twistSpeed.setModel(new EfficiencyModel(aXBar, MechEfficiencyType.TWIST_SPEED, loadout.getEfficiencies()));
 
         armReflex = new JCheckBox("Arm Reflex");
-        armReflex.setModel(new JToggleButton.ToggleButtonModel() {
-            @Override
-            public void setSelected(boolean aB) {
-                loadout.getEfficiencies().setArmReflex(aB, aXBar);
-            }
-
-            @Override
-            public boolean isSelected() {
-                return loadout.getEfficiencies().hasArmReflex();
-            }
-        });
+        armReflex.setModel(new EfficiencyModel(aXBar, MechEfficiencyType.ARM_REFLEX, loadout.getEfficiencies()));
 
         if (ProgramInit.lsml().preferences.uiPreferences.getCompactMode()) {
             setLayout(new BorderLayout());

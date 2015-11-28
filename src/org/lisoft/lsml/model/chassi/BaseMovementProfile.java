@@ -21,9 +21,9 @@ package org.lisoft.lsml.model.chassi;
 
 import java.util.Collection;
 
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 /**
  * This class contains the movement parameters for a chassis.
@@ -54,24 +54,24 @@ public class BaseMovementProfile implements MovementProfile {
             double aMaxTorsoAnglePitch, double aMaxArmRotationYaw, double aMaxArmRotationPitch,
             double aTurnLerpLowSpeed, double aTurnLerpMidSpeed, double aTurnLerpHighSpeed, double aTurnLerpLowRate,
             double aTurnLerpMidRate, double aTurnLerpHighRate, MovementArchetype aMovementArchetype) {
-        maxMovementSpeed = new Attribute(aMaxMovementSpeed, ModifiersDB.SEL_MOVEMENT_MAX_SPEED);
-        reverseSpeedMultiplier = new Attribute(aReverseSpeedMult, ModifiersDB.SEL_MOVEMENT_REVERSE_MUL);
+        maxMovementSpeed = new Attribute(aMaxMovementSpeed, ModifierDescription.SEL_MOVEMENT_MAX_SPEED);
+        reverseSpeedMultiplier = new Attribute(aReverseSpeedMult, ModifierDescription.SEL_MOVEMENT_REVERSE_MUL);
 
-        torsoTurnSpeedYaw = new Attribute(aTorsoTurnSpeedYaw, ModifiersDB.SEL_MOVEMENT_TORSO_SPEED, "yaw");
-        torsoTurnSpeedPitch = new Attribute(aTorsoTurnSpeedPitch, ModifiersDB.SEL_MOVEMENT_TORSO_SPEED, "pitch");
-        armTurnSpeedYaw = new Attribute(aArmTurnSpeedYaw, ModifiersDB.SEL_MOVEMENT_ARM_SPEED, "yaw");
-        armTurnSpeedPitch = new Attribute(aArmTurnSpeedPitch, ModifiersDB.SEL_MOVEMENT_ARM_SPEED, "pitch");
-        maxTorsoAngleYaw = new Attribute(aMaxTorsoAngleYaw, ModifiersDB.SEL_MOVEMENT_TORSO_ANGLE, "yaw");
-        maxTorsoAnglePitc = new Attribute(aMaxTorsoAnglePitch, ModifiersDB.SEL_MOVEMENT_TORSO_ANGLE, "pitch");
-        maxArmRotationYaw = new Attribute(aMaxArmRotationYaw, ModifiersDB.SEL_MOVEMENT_ARM_ANGLE, "yaw");
-        maxArmRotationPitch = new Attribute(aMaxArmRotationPitch, ModifiersDB.SEL_MOVEMENT_ARM_ANGLE, "pitch");
+        torsoTurnSpeedYaw = new Attribute(aTorsoTurnSpeedYaw, ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "yaw");
+        torsoTurnSpeedPitch = new Attribute(aTorsoTurnSpeedPitch, ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "pitch");
+        armTurnSpeedYaw = new Attribute(aArmTurnSpeedYaw, ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "yaw");
+        armTurnSpeedPitch = new Attribute(aArmTurnSpeedPitch, ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "pitch");
+        maxTorsoAngleYaw = new Attribute(aMaxTorsoAngleYaw, ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, "yaw");
+        maxTorsoAnglePitc = new Attribute(aMaxTorsoAnglePitch, ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, "pitch");
+        maxArmRotationYaw = new Attribute(aMaxArmRotationYaw, ModifierDescription.SEL_MOVEMENT_ARM_ANGLE, "yaw");
+        maxArmRotationPitch = new Attribute(aMaxArmRotationPitch, ModifierDescription.SEL_MOVEMENT_ARM_ANGLE, "pitch");
 
-        turnLerpLowSpeed = new Attribute(aTurnLerpLowSpeed, ModifiersDB.SEL_MOVEMENT_TURN_SPEED, "lowrate");
-        turnLerpMidSpeed = new Attribute(aTurnLerpMidSpeed, ModifiersDB.SEL_MOVEMENT_TURN_SPEED, "midrate");
-        turnLerpHighSpeed = new Attribute(aTurnLerpHighSpeed, ModifiersDB.SEL_MOVEMENT_TURN_SPEED, "highrate");
-        turnLerpLowRate = new Attribute(aTurnLerpLowRate, ModifiersDB.SEL_MOVEMENT_TURN_RATE, "lowrate");
-        turnLerpMidRate = new Attribute(aTurnLerpMidRate, ModifiersDB.SEL_MOVEMENT_TURN_RATE, "midrate");
-        turnLerpHighRate = new Attribute(aTurnLerpHighRate, ModifiersDB.SEL_MOVEMENT_TURN_RATE, "highrate");
+        turnLerpLowSpeed = new Attribute(aTurnLerpLowSpeed, ModifierDescription.SEL_MOVEMENT_TURN_SPEED, "lowrate");
+        turnLerpMidSpeed = new Attribute(aTurnLerpMidSpeed, ModifierDescription.SEL_MOVEMENT_TURN_SPEED, "midrate");
+        turnLerpHighSpeed = new Attribute(aTurnLerpHighSpeed, ModifierDescription.SEL_MOVEMENT_TURN_SPEED, "highrate");
+        turnLerpLowRate = new Attribute(aTurnLerpLowRate, ModifierDescription.SEL_MOVEMENT_TURN_RATE, "lowrate");
+        turnLerpMidRate = new Attribute(aTurnLerpMidRate, ModifierDescription.SEL_MOVEMENT_TURN_RATE, "midrate");
+        turnLerpHighRate = new Attribute(aTurnLerpHighRate, ModifierDescription.SEL_MOVEMENT_TURN_RATE, "highrate");
 
         archetype = aMovementArchetype;
     }

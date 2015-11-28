@@ -21,12 +21,12 @@ package org.lisoft.lsml.model.metrics;
 
 import java.util.Collection;
 
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 /**
  * This {@link Metric} calculates the heat dissipation for a {@link LoadoutStandard}.
@@ -58,7 +58,7 @@ public class HeatDissipation implements Metric {
         ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 0.2 : 0.1);
         ans += (loadout.getHeatsinksCount() - enginehs) * dissipation;
 
-        final Attribute heatDissipation = new Attribute(ans, ModifiersDB.SEL_HEAT_DISSIPATION);
+        final Attribute heatDissipation = new Attribute(ans, ModifierDescription.SEL_HEAT_DISSIPATION);
         final double externalHeat = (environment != null) ? environment.getHeat(modifiers) : 0;
 
         return heatDissipation.value(modifiers) - externalHeat;

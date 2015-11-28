@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 /**
  * This {@link Metric} calculates the total heat capacity of a {@link LoadoutStandard}.
@@ -50,7 +50,7 @@ public class HeatCapacity implements Metric {
         ans += (loadout.getHeatsinksCount() - enginehs)
                 * loadout.getUpgrades().getHeatSink().getHeatSinkType().getCapacity();
 
-        final Attribute heatLimit = new Attribute(ans, ModifiersDB.SEL_HEAT_LIMIT);
+        final Attribute heatLimit = new Attribute(ans, ModifierDescription.SEL_HEAT_LIMIT);
         return heatLimit.value(loadout.getModifiers());
     }
 }

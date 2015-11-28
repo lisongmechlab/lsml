@@ -36,8 +36,9 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.BaseMovementProfile;
 import org.lisoft.lsml.model.chassi.MovementArchetype;
 import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,41 +59,15 @@ public class EfficienciesTest {
         assertEquals(cut, cut);
         assertEquals(cut, cut1);
 
-        cut1.setAnchorTurn(true, null);
-        assertNotEquals(cut, cut1);
-        cut1.setAnchorTurn(false, null);
-
-        cut1.setCoolRun(true, null);
-        assertNotEquals(cut, cut1);
-        cut1.setCoolRun(false, null);
-
         cut1.setDoubleBasics(true, null);
         assertNotEquals(cut, cut1);
         cut1.setDoubleBasics(false, null);
 
-        cut1.setFastFire(true, null);
-        assertNotEquals(cut, cut1);
-        cut1.setFastFire(false, null);
-
-        cut1.setHeatContainment(true, null);
-        assertNotEquals(cut, cut1);
-        cut1.setHeatContainment(false, null);
-
-        cut1.setSpeedTweak(true, null);
-        assertNotEquals(cut, cut1);
-        cut1.setSpeedTweak(false, null);
-
-        cut1.setTwistX(true, null);
-        assertNotEquals(cut, cut1);
-        cut1.setTwistX(false, null);
-
-        cut1.setTwistSpeed(true, null);
-        assertNotEquals(cut, cut1);
-        cut1.setTwistSpeed(false, null);
-
-        cut1.setArmReflex(true, null);
-        assertNotEquals(cut, cut1);
-        cut1.setArmReflex(false, null);
+        for (MechEfficiencyType type : MechEfficiencyType.values()) {
+            cut1.setEfficiency(type, true, null);
+            assertNotEquals(cut, cut1);
+            cut1.setEfficiency(type, true, null);
+        }
     }
 
     @Test
@@ -100,78 +75,60 @@ public class EfficienciesTest {
         Efficiencies cut0 = new Efficiencies();
         Efficiencies cut1 = new Efficiencies();
 
-        cut1.setAnchorTurn(!cut0.hasAnchorTurn(), null);
-        cut1.setCoolRun(!cut0.hasCoolRun(), null);
+        for (MechEfficiencyType type : MechEfficiencyType.values()) {
+            cut1.setEfficiency(type, !cut0.hasEfficiency(type), null);
+        }
         cut1.setDoubleBasics(!cut0.hasDoubleBasics(), null);
-        cut1.setFastFire(!cut0.hasFastFire(), null);
-        cut1.setHeatContainment(!cut0.hasHeatContainment(), null);
-        cut1.setSpeedTweak(!cut0.hasSpeedTweak(), null);
-        cut1.setTwistX(!cut0.hasTwistX(), null);
-        cut1.setTwistSpeed(!cut0.hasTwistSpeed(), null);
-        cut1.setArmReflex(!cut0.hasArmReflex(), null);
 
         cut0.assign(cut1);
         assertEquals(cut0, cut1);
     }
 
     @Test
-    public void testSetHasSpeedTweak() throws Exception {
-        // Default false
-        assertEquals(false, cut.hasSpeedTweak());
-        verifyZeroInteractions(xBar);
-
-        // We want messages too!
-        for (boolean b : new boolean[] { true, false }) {
-            cut.setSpeedTweak(b, xBar);
-            assertEquals(b, cut.hasSpeedTweak());
-            verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
-            reset(xBar);
+    public void testSetEfficiency_NoXBar() throws Exception {
+        for (MechEfficiencyType type : MechEfficiencyType.values()) {
+            assertFalse(cut.hasEfficiency(type));
+            cut.setEfficiency(type, false, null);
         }
+        // no crash :)
+    }
 
-        // No messages if there was no change.
-        for (boolean b : new boolean[] { true, false }) {
-            cut.setSpeedTweak(b, xBar);
-            reset(xBar);
-            cut.setSpeedTweak(b, xBar);
-            verifyZeroInteractions(xBar);
+    @Test
+    public void testSetEfficiency_NoChange() throws Exception {
+        for (MechEfficiencyType type : MechEfficiencyType.values()) {
+            assertFalse(cut.hasEfficiency(type));
+            cut.setEfficiency(type, false, xBar);
+        }
+        verifyZeroInteractions(xBar);
+    }
+
+    @Test
+    public void testHasSetEfficiency() throws Exception {
+        InOrder order = Mockito.inOrder(xBar);
+        for (MechEfficiencyType type : MechEfficiencyType.values()) {
+            assertFalse(cut.hasEfficiency(type));
+            cut.setEfficiency(type, true, xBar);
+            order.verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, type.affectsHeat()));
+
+            assertTrue(cut.hasEfficiency(type));
+            cut.setEfficiency(type, false, xBar);
+            order.verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, type.affectsHeat()));
+            assertFalse(cut.hasEfficiency(type));
         }
     }
 
     @Test
     public void testSpeedModifier() throws Exception {
-        Attribute attribute = new Attribute(1.0, ModifiersDB.SEL_MOVEMENT_MAX_SPEED);
-        cut.setSpeedTweak(true, null);
+        Attribute attribute = new Attribute(1.0, ModifierDescription.SEL_MOVEMENT_MAX_SPEED);
+        cut.setEfficiency(MechEfficiencyType.SPEED_TWEAK, true, null);
 
         assertEquals(1.1, attribute.value(cut.getModifiers()), 0.0);
     }
 
     @Test
-    public void testSetHasCoolRun() throws Exception {
-        // Default false
-        assertEquals(false, cut.hasCoolRun());
-        verifyZeroInteractions(xBar);
-
-        // We want messages too!
-        for (boolean b : new boolean[] { true, false }) {
-            cut.setCoolRun(b, xBar);
-            assertEquals(b, cut.hasCoolRun());
-            verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, true));
-            reset(xBar);
-        }
-
-        // No messages if there was no change.
-        for (boolean b : new boolean[] { true, false }) {
-            cut.setCoolRun(b, xBar);
-            reset(xBar);
-            cut.setCoolRun(b, xBar);
-            verifyZeroInteractions(xBar);
-        }
-    }
-
-    @Test
     public void testGetHeatDissipationModifier() throws Exception {
-        Attribute attribute = new Attribute(1.0, ModifiersDB.SEL_HEAT_DISSIPATION);
-        cut.setCoolRun(true, null);
+        Attribute attribute = new Attribute(1.0, ModifierDescription.SEL_HEAT_DISSIPATION);
+        cut.setEfficiency(MechEfficiencyType.COOL_RUN, true, null);
 
         assertEquals(1.075, attribute.value(cut.getModifiers()), 0.0);
 
@@ -180,32 +137,9 @@ public class EfficienciesTest {
     }
 
     @Test
-    public void testSetHasHeatContainment() throws Exception {
-        // Default false
-        assertEquals(false, cut.hasHeatContainment());
-        verifyZeroInteractions(xBar);
-
-        // We want messages too!
-        for (boolean b : new boolean[] { true, false }) {
-            cut.setHeatContainment(b, xBar);
-            assertEquals(b, cut.hasHeatContainment());
-            verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, true));
-            reset(xBar);
-        }
-
-        // No messages if there was no change.
-        for (boolean b : new boolean[] { true, false }) {
-            cut.setHeatContainment(b, xBar);
-            reset(xBar);
-            cut.setHeatContainment(b, xBar);
-            verifyZeroInteractions(xBar);
-        }
-    }
-
-    @Test
     public void testGetHeatCapacityModifier() throws Exception {
-        Attribute attribute = new Attribute(1.0, ModifiersDB.SEL_HEAT_LIMIT);
-        cut.setHeatContainment(true, null);
+        Attribute attribute = new Attribute(1.0, ModifierDescription.SEL_HEAT_LIMIT);
+        cut.setEfficiency(MechEfficiencyType.HEAT_CONTAINMENT, true, null);
 
         assertEquals(1.1, attribute.value(cut.getModifiers()), 0.0);
 
@@ -237,64 +171,17 @@ public class EfficienciesTest {
     }
 
     @Test
-    public void testSetHasFastFire() throws Exception {
-        // Default false
-        assertEquals(false, cut.hasFastFire());
-        verifyZeroInteractions(xBar);
-
-        // We want messages too!
-        for (boolean b : new boolean[] { true, false }) {
-            cut.setFastFire(b, xBar);
-            assertEquals(b, cut.hasFastFire());
-            verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, true));
-            reset(xBar);
-        }
-
-        // No messages if there was no change.
-        for (boolean b : new boolean[] { true, false }) {
-            cut.setFastFire(b, xBar);
-            reset(xBar);
-            cut.setFastFire(b, xBar);
-            verifyZeroInteractions(xBar);
-        }
-    }
-
-    @Test
     public void testGetWeaponCycletimeModifier() throws Exception {
-        Attribute attribute = new Attribute(1.0, ModifiersDB.ALL_WEAPONS, ModifiersDB.SEL_WEAPON_COOLDOWN);
-        cut.setFastFire(true, null);
+        Attribute attribute = new Attribute(1.0, ModifierDescription.ALL_WEAPONS,
+                ModifierDescription.SEL_WEAPON_COOLDOWN);
+        cut.setEfficiency(MechEfficiencyType.FAST_FIRE, true, null);
 
         assertEquals(0.95, attribute.value(cut.getModifiers()), 0.0);
     }
 
     @Test
-    public void testHasTwistX_Default() {
-        assertFalse(cut.hasTwistX());
-    }
-
-    @Test
-    public void testSetTwistX() {
-        cut.setTwistX(true, xBar);
-        assertTrue(cut.hasTwistX());
-        verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
-    }
-
-    @Test
-    public void testSetTwistX_NoXBar() {
-        cut.setTwistX(true, null);
-        assertTrue(cut.hasTwistX());
-    }
-
-    @Test
-    public void testSetTwistX_NoUnNecessaryMessages() {
-        cut.setTwistX(true, null);
-        cut.setTwistX(true, xBar);
-        verifyZeroInteractions(xBar);
-    }
-
-    @Test
     public void testTwistX_Applies() {
-        cut.setTwistX(true, null);
+        cut.setEfficiency(MechEfficiencyType.TWIST_X, true, null);
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
 
@@ -304,7 +191,7 @@ public class EfficienciesTest {
 
     @Test
     public void testTwistX_Applies2X() {
-        cut.setTwistX(true, null);
+        cut.setEfficiency(MechEfficiencyType.TWIST_X, true, null);
         cut.setDoubleBasics(true, null);
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
@@ -314,33 +201,8 @@ public class EfficienciesTest {
     }
 
     @Test
-    public void testHasTwistSpeed_Default() {
-        assertFalse(cut.hasTwistSpeed());
-    }
-
-    @Test
-    public void testSetTwistSpeed() {
-        cut.setTwistSpeed(true, xBar);
-        assertTrue(cut.hasTwistSpeed());
-        verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
-    }
-
-    @Test
-    public void testSetTwistSpeed_NoXBar() {
-        cut.setTwistSpeed(true, null);
-        assertTrue(cut.hasTwistSpeed());
-    }
-
-    @Test
-    public void testSetTwistSpeed_NoUnnecessaryMessages() {
-        cut.setTwistSpeed(true, null);
-        cut.setTwistSpeed(true, xBar);
-        verifyZeroInteractions(xBar);
-    }
-
-    @Test
     public void testTwistSpeed_Applies() {
-        cut.setTwistSpeed(true, null);
+        cut.setEfficiency(MechEfficiencyType.TWIST_SPEED, true, null);
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
 
@@ -350,7 +212,7 @@ public class EfficienciesTest {
 
     @Test
     public void testTwistSpeed_Applies2X() {
-        cut.setTwistSpeed(true, null);
+        cut.setEfficiency(MechEfficiencyType.TWIST_SPEED, true, null);
         cut.setDoubleBasics(true, null);
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
@@ -360,33 +222,8 @@ public class EfficienciesTest {
     }
 
     @Test
-    public void testHasArmReflex_Default() {
-        assertFalse(cut.hasArmReflex());
-    }
-
-    @Test
-    public void testSetArmReflex() {
-        cut.setArmReflex(true, xBar);
-        assertTrue(cut.hasArmReflex());
-        verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
-    }
-
-    @Test
-    public void testSetArmReflex_NoXBar() {
-        cut.setArmReflex(true, null);
-        assertTrue(cut.hasArmReflex());
-    }
-
-    @Test
-    public void testSetArmReflex_NoUnnecessaryMessages() {
-        cut.setArmReflex(true, null);
-        cut.setArmReflex(true, xBar);
-        verifyZeroInteractions(xBar);
-    }
-
-    @Test
     public void testArmReflex_Applies() {
-        cut.setArmReflex(true, null);
+        cut.setEfficiency(MechEfficiencyType.ARM_REFLEX, true, null);
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
 
@@ -396,7 +233,7 @@ public class EfficienciesTest {
 
     @Test
     public void testArmReflex_Applies2X() {
-        cut.setArmReflex(true, null);
+        cut.setEfficiency(MechEfficiencyType.ARM_REFLEX, true, null);
         cut.setDoubleBasics(true, null);
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
@@ -404,37 +241,10 @@ public class EfficienciesTest {
         assertEquals(1.3, mp.getArmPitchSpeed(cut.getModifiers()), 0.0);
         assertEquals(1.3, mp.getArmYawSpeed(cut.getModifiers()), 0.0);
     }
-    
-    ///
-
-    @Test
-    public void testHasAnchorTurn_Default() {
-        assertFalse(cut.hasAnchorTurn());
-    }
-
-    @Test
-    public void testSetAnchorTurn() {
-        cut.setAnchorTurn(true, xBar);
-        assertTrue(cut.hasAnchorTurn());
-        verify(xBar).post(new EfficienciesMessage(cut, Type.Changed, false));
-    }
-
-    @Test
-    public void testSetAnchorTurn_NoXBar() {
-        cut.setAnchorTurn(true, null);
-        assertTrue(cut.hasAnchorTurn());
-    }
-
-    @Test
-    public void testSetAnchorTurn_NoUnnecessaryMessages() {
-        cut.setAnchorTurn(true, null);
-        cut.setAnchorTurn(true, xBar);
-        verifyZeroInteractions(xBar);
-    }
 
     @Test
     public void testAnchorTurn_Applies() {
-        cut.setAnchorTurn(true, null);
+        cut.setEfficiency(MechEfficiencyType.ANCHORTURN, true, null);
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
 
@@ -445,11 +255,11 @@ public class EfficienciesTest {
 
     @Test
     public void testAnchorTurn_Applies2X() {
-        cut.setAnchorTurn(true, null);
+        cut.setEfficiency(MechEfficiencyType.ANCHORTURN, true, null);
         cut.setDoubleBasics(true, null);
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
-        
+
         assertEquals(1.2, mp.getTurnLerpLowRate(cut.getModifiers()), 0.0);
         assertEquals(1.2, mp.getTurnLerpMidRate(cut.getModifiers()), 0.0);
         assertEquals(1.2, mp.getTurnLerpHighRate(cut.getModifiers()), 0.0);

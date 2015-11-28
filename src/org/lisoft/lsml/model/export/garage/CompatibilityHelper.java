@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.export;
+package org.lisoft.lsml.model.export.garage;
 
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
@@ -32,7 +32,7 @@ import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 public class CompatibilityHelper {
 
     /**
-     * February 4th patch introduced new weapon IDs for artemis enabled missile launchers. This function canonizes old
+     * February 4th patch introduced new weapon IDs for Artemis enabled missile launchers. This function canonicalizes old
      * missile launchers to the new types if applicable.
      * 
      * @param anItem

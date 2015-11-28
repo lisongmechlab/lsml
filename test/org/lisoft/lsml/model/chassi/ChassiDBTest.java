@@ -426,7 +426,7 @@ public class ChassiDBTest {
         Collection<? extends ChassisBase> ans = ChassisDB.lookupVariations(ChassisDB.lookup(aLookup));
         assertTrue(ans.contains(ChassisDB.lookup(aLookup)));
         assertTrue(ans.contains(ChassisDB.lookup(aExpected)));
-        assertEquals(2, ans.size());
+        assertTrue(ans.size() >= 2);
     }
 
 }

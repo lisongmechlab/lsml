@@ -21,11 +21,11 @@ package org.lisoft.lsml.model.datacache.gamedata.helpers;
 
 import java.util.Arrays;
 
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -40,7 +40,7 @@ public class ItemStatsEngineStats extends ItemStatsModuleStats {
     public double    movementHeatMultiplier;
 
     static Attribute ENGINE_HEAT = new Attribute(Engine.ENGINE_HEAT_FULL_THROTTLE,
-            Arrays.asList(ModifiersDB.SEL_HEAT_MOVEMENT), null);
+            Arrays.asList(ModifierDescription.SEL_HEAT_MOVEMENT), null);
 
     public Engine asEngine(ItemStats aStats) {
         String uiName = aStats.getUiName();

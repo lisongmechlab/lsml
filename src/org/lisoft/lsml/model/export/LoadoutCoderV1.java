@@ -39,11 +39,13 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.export.garage.CompatibilityHelper;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -80,7 +82,7 @@ public class LoadoutCoderV1 implements LoadoutCoder {
     }
 
     @Override
-    public LoadoutStandard decode(final byte[] aBitStream)throws DecodingException, Exception  {
+    public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException, Exception {
         final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
         final LoadoutStandard loadout;
         final CommandStack stack = new CommandStack(0);
@@ -108,14 +110,14 @@ public class LoadoutCoderV1 implements LoadoutCoder {
             StructureUpgrade structure = endoSteel ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE;
             ArmorUpgrade armor = ferroFib ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
             HeatSinkUpgrade heatSinks = dhs ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
-            
+
             stack.pushAndApply(new CmdSetGuidanceType(null, loadout, guidance));
             stack.pushAndApply(new CmdSetHeatSinkType(null, loadout, heatSinks));
             stack.pushAndApply(new CmdSetStructureType(null, loadout, structure));
             stack.pushAndApply(new CmdSetArmorType(null, loadout, armor));
-            loadout.getEfficiencies().setCoolRun((upeff & (1 << 3)) != 0, null);
-            loadout.getEfficiencies().setHeatContainment((upeff & (1 << 2)) != 0, null);
-            loadout.getEfficiencies().setSpeedTweak((upeff & (1 << 1)) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.COOL_RUN, (upeff & (1 << 3)) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.HEAT_CONTAINMENT, (upeff & (1 << 2)) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.SPEED_TWEAK, (upeff & (1 << 1)) != 0, null);
             loadout.getEfficiencies().setDoubleBasics((upeff & (1 << 0)) != 0, null);
         }
 
@@ -125,12 +127,12 @@ public class LoadoutCoderV1 implements LoadoutCoder {
             if (location.isTwoSided()) {
                 stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.FRONT,
                         buffer.read(), true));
-                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.BACK, buffer
-                        .read(), true));
+                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.BACK,
+                        buffer.read(), true));
             }
             else {
-                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.ONLY, buffer
-                        .read(), true));
+                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.ONLY,
+                        buffer.read(), true));
             }
         }
 

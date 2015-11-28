@@ -21,9 +21,9 @@ package org.lisoft.lsml.model.environment;
 
 import java.util.Collection;
 
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -47,7 +47,7 @@ public class Environment {
      */
     public Environment(String aName, double aHeat) {
         name = aName;
-        heat = new Attribute(aHeat, ModifiersDB.SEL_HEAT_EXTERNALTRANSFER);
+        heat = new Attribute(aHeat, ModifierDescription.SEL_HEAT_EXTERNALTRANSFER);
     }
 
     /**
