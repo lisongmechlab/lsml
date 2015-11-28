@@ -51,4 +51,5 @@ public enum ChassisClass {
             return ChassisClass.ASSAULT;
         }
     }
+
 }

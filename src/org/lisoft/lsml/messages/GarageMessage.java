@@ -55,7 +55,7 @@ public class GarageMessage implements Message {
 
     public final GarageMessage.Type            type;
     public final MechGarage      garage;
-    private final LoadoutBase<?> loadout;
+    public final LoadoutBase<?> loadout;
     public final DropShip        dropShip;
 
     public GarageMessage(GarageMessage.Type aType, MechGarage aGarage, LoadoutBase<?> aLoadout) {

@@ -46,6 +46,7 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
+import org.lisoft.lsml.model.datacache.gamedata.GameVFS.GameFile;
 import org.lisoft.lsml.model.datacache.gamedata.Localization;
 import org.lisoft.lsml.model.datacache.gamedata.MdfMechDefinition;
 import org.lisoft.lsml.model.datacache.gamedata.XMLHardpoints;
@@ -54,10 +55,9 @@ import org.lisoft.lsml.model.datacache.gamedata.XMLLoadout;
 import org.lisoft.lsml.model.datacache.gamedata.XMLMechIdMap;
 import org.lisoft.lsml.model.datacache.gamedata.XMLOmniPods;
 import org.lisoft.lsml.model.datacache.gamedata.XMLPilotTalents;
-import org.lisoft.lsml.model.datacache.gamedata.XMLQuirkDef;
-import org.lisoft.lsml.model.datacache.gamedata.GameVFS.GameFile;
 import org.lisoft.lsml.model.datacache.gamedata.XMLPilotTalents.XMLTalent;
 import org.lisoft.lsml.model.datacache.gamedata.XMLPilotTalents.XMLTalent.XMLRank;
+import org.lisoft.lsml.model.datacache.gamedata.XMLQuirkDef;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsModule;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsOmniPodType;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsUpgradeType;
@@ -89,6 +89,7 @@ import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent;
+import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -123,31 +124,35 @@ public class DataCache {
         /**
          * No game install was detected and the built-in or cached data was loaded.
          */
-        Builtin, /** A previously created cache was loaded. */
-        Loaded, /** The cache has not yet been initialized. */
-        NotInitialized, /** A game install was detected and successfully parsed. */
-        Parsed, /** A game install was detected but parsing failed. */
+        Builtin,
+        /** A previously created cache was loaded. */
+        Loaded,
+        /** The cache has not yet been initialized. */
+        NotInitialized,
+        /** A game install was detected and successfully parsed. */
+        Parsed,
+        /** A game install was detected but parsing failed. */
         ParseFailed
     }
 
     private static transient DataCache   instance;
-    private static transient Boolean     loading = false;
-    private static transient ParseStatus status  = ParseStatus.NotInitialized;
+    private static transient Boolean     loading   = false;
+    private static transient ParseStatus status    = ParseStatus.NotInitialized;
 
     @XStreamAsAttribute
-    private String            lsmlVersion;
-    private Map<String, Long> checksums = new HashMap<>(); // Filename - CRC
-    private List<Upgrade>     upgrades;
-    private List<Environment> environments;
-    private List<Item>        items;
-    private List<ChassisBase> chassis;
+    private String                       lsmlVersion;
+    private Map<String, Long>            checksums = new HashMap<>();           // Filename - CRC
+    private List<Upgrade>                upgrades;
+    private List<Environment>            environments;
+    private List<Item>                   items;
+    private List<ChassisBase>            chassis;
 
-    private List<PilotModule> modules;
+    private List<PilotModule>            modules;
 
-    private List<OmniPod> omniPods;
+    private List<OmniPod>                omniPods;
 
-    private List<StockLoadout>        stockLoadouts;
-    private List<ModifierDescription> modifierDescriptions;
+    private List<StockLoadout>           stockLoadouts;
+    private List<ModifierDescription>    modifierDescriptions;
 
     /**
      * @return An unmodifiable {@link List} of all inner sphere {@link ChassisStandard}s.
@@ -730,6 +735,13 @@ public class DataCache {
             File loadoutXml = new File("Game/Libs/MechLoadout/" + chassis.getMwoName().toLowerCase() + ".xml");
             XMLLoadout stockXML = XMLLoadout.fromXml(aGameVfs.openGameFile(loadoutXml).stream);
 
+            ActuatorState leftArmState = null;
+            ActuatorState rightArmState = null;
+            if (stockXML.actuatorState != null) {
+                leftArmState = ActuatorState.fromMwoString(stockXML.actuatorState.LeftActuatorState);
+                rightArmState = ActuatorState.fromMwoString(stockXML.actuatorState.RightActuatorState);
+            }
+
             List<StockLoadout.StockComponent> components = new ArrayList<>();
             for (XMLLoadout.Component xmlComponent : stockXML.ComponentList) {
                 List<Integer> items = new ArrayList<>();
@@ -757,7 +769,7 @@ public class DataCache {
                     omniPod = Integer.parseInt(xmlComponent.OmniPod);
                 }
 
-                Location partType = Location.fromMwoName(xmlComponent.ComponentName);
+                Location location = Location.fromMwoName(xmlComponent.ComponentName);
                 boolean isRear = Location.isRear(xmlComponent.ComponentName);
                 int armorFront = isRear ? 0 : xmlComponent.Armor;
                 int armorBack = isRear ? xmlComponent.Armor : 0;
@@ -766,7 +778,7 @@ public class DataCache {
                 Iterator<StockComponent> it = components.iterator();
                 while (it.hasNext()) {
                     StockComponent stockComponent = it.next();
-                    if (stockComponent.getPart() == partType) {
+                    if (stockComponent.getLocation() == location) {
                         items.addAll(stockComponent.getItems());
                         armorFront = isRear ? stockComponent.getArmorFront() : armorFront;
                         armorBack = isRear ? armorBack : stockComponent.getArmorBack();
@@ -776,8 +788,11 @@ public class DataCache {
                     }
                 }
 
-                StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(partType, armorFront,
-                        armorBack, items, omniPod);
+                ActuatorState actuatorState = location == Location.LeftArm ? leftArmState
+                        : (location == Location.RightArm ? rightArmState : null);
+
+                StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(location, armorFront,
+                        armorBack, items, omniPod, actuatorState);
                 components.add(stockComponent);
             }
 

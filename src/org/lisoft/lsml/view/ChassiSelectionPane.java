@@ -209,12 +209,13 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
     }
 
     static class PartColumn extends TableColumn {
-        private final JPanel   panel     = new JPanel(new GridBagLayout());
-        private final JLabel   energy    = new JLabel();
-        private final JLabel   ballistic = new JLabel();
-        private final JLabel   missile   = new JLabel();
-        private final JLabel   ams       = new JLabel();
-        private final JLabel   ecm       = new JLabel();
+        static private boolean         couldntLoadStockErrorHasShown = false;
+        private final JPanel   panel                         = new JPanel(new GridBagLayout());
+        private final JLabel   energy                        = new JLabel();
+        private final JLabel   ballistic                     = new JLabel();
+        private final JLabel   missile                       = new JLabel();
+        private final JLabel   ams                           = new JLabel();
+        private final JLabel   ecm                           = new JLabel();
         private final Location part;
 
         public PartColumn(Location aPart) {
@@ -250,16 +251,19 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
                     LoadoutBase<?> stock;
                     try {
                         stock = DefaultLoadoutFactory.instance.produceStock(chassis);
+                        StyleManager.styleHardpointLabel(energy, stock.getComponent(part), HardPointType.ENERGY);
+                        StyleManager.styleHardpointLabel(ballistic, stock.getComponent(part), HardPointType.BALLISTIC);
+                        StyleManager.styleHardpointLabel(missile, stock.getComponent(part), HardPointType.MISSILE);
+                        StyleManager.styleHardpointLabel(ams, stock.getComponent(part), HardPointType.AMS);
+                        StyleManager.styleHardpointLabel(ecm, stock.getComponent(part), HardPointType.ECM);
                     }
                     catch (Exception e) {
-                        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
-                        return panel;
+                        if (!couldntLoadStockErrorHasShown) {
+                            SwingUtilities.invokeLater(() -> Thread.getDefaultUncaughtExceptionHandler()
+                                    .uncaughtException(Thread.currentThread(), e));
+                            couldntLoadStockErrorHasShown = true;
+                        }
                     }
-                    StyleManager.styleHardpointLabel(energy, stock.getComponent(part), HardPointType.ENERGY);
-                    StyleManager.styleHardpointLabel(ballistic, stock.getComponent(part), HardPointType.BALLISTIC);
-                    StyleManager.styleHardpointLabel(missile, stock.getComponent(part), HardPointType.MISSILE);
-                    StyleManager.styleHardpointLabel(ams, stock.getComponent(part), HardPointType.AMS);
-                    StyleManager.styleHardpointLabel(ecm, stock.getComponent(part), HardPointType.ECM);
                     return panel;
                 }
             };

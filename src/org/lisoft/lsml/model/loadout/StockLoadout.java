@@ -26,6 +26,7 @@ import java.util.List;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
@@ -51,8 +52,29 @@ public class StockLoadout {
      */
     @XStreamAlias("Component")
     public static class StockComponent {
+        public enum ActuatorState {
+            NONE, LAA, BOTH;
+
+            public static ActuatorState fromMwoString(String aString) {
+                if (aString == null || aString.isEmpty()) {
+                    return null;
+                }
+
+                switch (aString.toLowerCase()) {
+                    case "eactuatorstate_none":
+                        return ActuatorState.NONE;
+                    case "eactuatorstate_handsandarms":
+                        return ActuatorState.BOTH;
+                    case "eactuatorstate_armsonly":
+                        return ActuatorState.LAA;
+                    default:
+                        throw new IllegalArgumentException("Unknown actuator state: [" + aString + "]");
+                }
+            }
+        }
+
         @XStreamAsAttribute
-        private final Location      part;
+        private final Location      location;
         @XStreamAsAttribute
         private final Integer       armorFront;
         @XStreamAsAttribute
@@ -61,6 +83,14 @@ public class StockLoadout {
         private final Integer       omniPod;
         @XStreamImplicit
         private final List<Integer> items;
+        @XStreamAsAttribute
+        private final ActuatorState actuatorState;
+
+        @Override
+        public String toString() {
+            return location.shortName() + " " + armorFront + "/" + armorBack + " (pod: "
+                    + OmniPodDB.lookup(omniPod.intValue()) + ") " + items;
+        }
 
         /**
          * Creates a new {@link StockComponent}.
@@ -75,11 +105,14 @@ public class StockLoadout {
          *            A {@link List} of items in the component.
          * @param aOmniPod
          *            The ID of the omnipod to use (or 0 if stock/none)
+         * @param aActuatorState
+         *            The state of the actuators for this component, may be <code>null</code>.
          */
-        public StockComponent(Location aPart, int aFront, int aBack, List<Integer> aItems, Integer aOmniPod) {
-            part = aPart;
+        public StockComponent(Location aPart, int aFront, int aBack, List<Integer> aItems, Integer aOmniPod,
+                ActuatorState aActuatorState) {
+            location = aPart;
             armorFront = aFront;
-            if (part.isTwoSided()) {
+            if (location.isTwoSided()) {
                 armorBack = aBack;
             }
             else {
@@ -87,13 +120,14 @@ public class StockLoadout {
             }
             items = Collections.unmodifiableList(aItems);
             omniPod = aOmniPod;
+            actuatorState = aActuatorState;
         }
 
         /**
          * @return The {@link Location} that defines this {@link StockComponent}.
          */
-        public Location getPart() {
-            return part;
+        public Location getLocation() {
+            return location;
         }
 
         /**
@@ -125,6 +159,13 @@ public class StockLoadout {
          */
         public Integer getOmniPod() {
             return omniPod;
+        }
+
+        /**
+         * @return The actuator state for this {@link StockComponent} or <code>null</code> if not applicable.
+         */
+        public ActuatorState getActuatorState() {
+            return actuatorState;
         }
     }
 

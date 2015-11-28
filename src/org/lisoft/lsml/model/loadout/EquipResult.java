@@ -100,6 +100,31 @@ public class EquipResult extends Exception {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((location == null) ? 0 : location.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EquipResult other = (EquipResult) obj;
+        if (location != other.location)
+            return false;
+        if (type != other.type)
+            return false;
+        return true;
+    }
+
+    @Override
     public String getMessage() {
         return toString();
     }
@@ -129,6 +154,10 @@ public class EquipResult extends Exception {
         return make(null, aType);
     }
 
+    public EquipResultType getType(){
+        return type;
+    }
+    
     /**
      * Checks if this result is a failure and throw if it is
      * 

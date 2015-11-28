@@ -76,7 +76,7 @@ import org.lisoft.lsml.util.Huffman1;
 import org.lisoft.lsml.util.Huffman2;
 
 /**
- * The Second version of {@link LoadoutCoder} for LSML.
+ * The Third version of {@link LoadoutCoder} for LSML.
  * 
  * @author Emily Björk
  */
@@ -134,7 +134,8 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             List<Integer> ids = huff.decode(rest);
             if (!isOmniMech) {
                 LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-                builder.push(new CmdSetArmorType(null, loadoutStandard, (ArmorUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                builder.push(
+                        new CmdSetArmorType(null, loadoutStandard, (ArmorUpgrade) UpgradeDB.lookup(ids.remove(0))));
                 builder.push(new CmdSetStructureType(null, loadoutStandard,
                         (StructureUpgrade) UpgradeDB.lookup(ids.remove(0))));
                 builder.push(new CmdSetHeatSinkType(null, loadoutStandard,
@@ -380,7 +381,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
         short chassisId = (short) (((aBuffer.read() & 0xFF) << 8) | (aBuffer.read() & 0xFF));
         ChassisBase chassis = ChassisDB.lookup(chassisId);
-        
+
         return DefaultLoadoutFactory.instance.produceEmpty(chassis);
     }
 
@@ -400,7 +401,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
      * @throws Exception
      */
     public static void main(String[] arg) throws Exception {
-         generateAllLoadouts();
+        // generateAllLoadouts();
         // generateStatsFromStdin();
         // generateStatsFromStock();
     }

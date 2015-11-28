@@ -32,10 +32,15 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.StockLoadout;
+import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 
 /**
  * This operation loads a 'mechs stock {@link LoadoutStandard}.
+ * 
+ * TODO: Devise a method for composite commands to wrap the exceptions from their sub commands for useful error
+ * messages.
  * 
  * @author Emily Björk
  */
@@ -62,7 +67,7 @@ public class CmdLoadStock extends CmdLoadoutBase {
         addOp(new CmdSetGuidanceType(messageBuffer, loadout, stockLoadout.getGuidanceType()));
 
         for (StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()) {
-            Location location = stockComponent.getPart();
+            Location location = stockComponent.getLocation();
             ConfiguredComponentBase configured = loadout.getComponent(location);
 
             if (loadout instanceof LoadoutOmniMech) {
@@ -76,8 +81,29 @@ public class CmdLoadStock extends CmdLoadoutBase {
                     omnipod = OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(), location);
                 }
 
-                addOp(new CmdSetOmniPod(messageBuffer, loadoutOmniMech, loadoutOmniMech.getComponent(location),
-                        omnipod));
+                ConfiguredComponentOmniMech omniComponent = loadoutOmniMech.getComponent(location);
+
+                addOp(new CmdSetOmniPod(messageBuffer, loadoutOmniMech, omniComponent, omnipod));
+
+                ActuatorState actuatorState = stockComponent.getActuatorState();
+                if (actuatorState != null) {
+                    switch (stockComponent.getActuatorState()) {
+                        case BOTH:
+                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.LAA, true));
+                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.HA, true));
+                            break;
+                        case LAA:
+                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.HA, false));
+                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.LAA, true));
+                            break;
+                        case NONE:
+                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.HA, false));
+                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.LAA, false));
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown actuator state encountered!");
+                    }
+                }
             }
 
             if (location.isTwoSided()) {

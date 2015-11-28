@@ -64,7 +64,7 @@ import com.sun.jna.WString;
  * @author Emily Björk
  */
 public class ProgramInit {
-    private static final long MIN_SPLASH_TIME_MS = 20;
+    public static final long MIN_SPLASH_TIME_MS = 20;
     private static LSML       instanceL;
     public static Image       programIcon        = Toolkit.getDefaultToolkit()
             .getImage(ProgramInit.class.getResource("/resources/icon.png"));
@@ -145,7 +145,7 @@ public class ProgramInit {
         });
     }
 
-    private static void checkCliArguments(final String[] args) {
+    public static void checkCliArguments(final String[] args) {
         // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
         if (args.length > 0) {
             int port = Integer.parseInt(PreferenceStore.getString(PreferenceStore.IPC_PORT, "0"));
@@ -157,7 +157,7 @@ public class ProgramInit {
         }
     }
 
-    private static void setAppUserModelID() {
+    public static void setAppUserModelID() {
         if (OS.isWindowsOrNewer(OS.WindowsVersion.Win7)) {
             try {
                 // Setup AppUserModelID if windows 7 or later.
@@ -187,7 +187,8 @@ public class ProgramInit {
     }
 
     @SuppressWarnings("unused")
-    private static void checkForUpdates() {
+    public
+    static void checkForUpdates() {
         if (!CorePreferences.getCheckForUpdates())
             return;
         

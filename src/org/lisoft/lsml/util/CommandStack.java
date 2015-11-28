@@ -210,7 +210,7 @@ public class CommandStack {
     }
 
     public void pushAndApply(Command aCmd) throws Exception {
-        // Perform automatic coalesceling
+        // Perform automatic coalescing
         int cmdBeforeCoalescele = currentCmd;
         while (nextUndo() != null && nextUndo().canCoalescele(aCmd)) {
             undo();
@@ -220,7 +220,7 @@ public class CommandStack {
             aCmd.apply();
         }
         catch (Exception throwable) {
-            // Undo the coalesceling if the new operation threw.
+            // Undo the coalescing if the new operation threw.
             while (currentCmd != cmdBeforeCoalescele && nextRedo() != null) {
                 redo();
             }

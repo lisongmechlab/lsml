@@ -37,7 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CmdRenameTest {
+public class CmdSetNameTest {
 
     @Mock
     private MessageXBar xBar;

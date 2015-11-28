@@ -30,8 +30,8 @@ import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.gamedata.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsComponent;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsOmniPodType;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfComponent;
-import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfItem;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfComponent.MdfHardpoint;
+import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfItem;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
