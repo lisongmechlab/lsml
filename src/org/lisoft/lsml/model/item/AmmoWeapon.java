@@ -38,7 +38,7 @@ public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final String   ammoTypeId;
     @XStreamAsAttribute
-    protected final double spread;
+    protected final Attribute spread;
 
     public AmmoWeapon(
             // Item Arguments
@@ -52,7 +52,7 @@ public class AmmoWeapon extends Weapon {
             double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, double aSpread) {
+            String aAmmoType, Attribute aSpread) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCooldown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
                 aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
@@ -81,11 +81,11 @@ public class AmmoWeapon extends Weapon {
 
     @Override
     public boolean hasSpread() {
-        return spread > 0;
+        return spread.value(null) > 0;
     }
 
     @Override
-    public double getRangeEffectivity(double range, Collection<Modifier> aPilotModules) {
+    public double getRangeEffectivity(double aRange, Collection<Modifier> aModifiers) {
         double spreadFactor = 1.0;
         if (hasSpread()) {
             // Assumption:
@@ -93,22 +93,24 @@ public class AmmoWeapon extends Weapon {
             GaussianDistribution gaussianDistribution = new GaussianDistribution();
 
             final double targetRadius = 6; // [m]
-            double maxAngle = Math.atan2(targetRadius, range) * 180 / Math.PI; // [deg]
+            double maxAngle = Math.atan2(targetRadius, aRange) * 180 / Math.PI; // [deg]
 
             // X ~= N(0, spread)
             // P_hit = P(-maxAngle <= X; X <= +maxangle)
             // Xn = (X - 0) / spread ~ N(0,1)
             // P_hit = cdf(maxangle / spread) - cdf(-maxangle / spread) = 2*cdf(maxangle / spread) - 1.0;
-            double P_hit = 2 * gaussianDistribution.cdf(maxAngle / getSpread()) - 1;
+            double P_hit = 2 * gaussianDistribution.cdf(maxAngle / getSpread(aModifiers)) - 1;
             spreadFactor = P_hit;
         }
-        return spreadFactor * super.getRangeEffectivity(range, aPilotModules);
+        return spreadFactor * super.getRangeEffectivity(aRange, aModifiers);
     }
 
     /**
+     * @param aModifiers
+     *            {@link Modifier}s that can affect the spread value.
      * @return The spread value for the weapon.
      */
-    public double getSpread() {
-        return spread;
+    public double getSpread(Collection<Modifier> aModifiers) {
+        return spread.value(aModifiers);
     }
 }

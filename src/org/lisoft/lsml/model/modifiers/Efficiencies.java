@@ -37,12 +37,6 @@ public class Efficiencies {
     private final Set<MechEfficiencyType> efficiencyTypes = new HashSet<>();
     private boolean                       doubleBasics    = false;
 
-    /**
-     * Creates a new efficiencies object.
-     */
-    public Efficiencies() {
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;

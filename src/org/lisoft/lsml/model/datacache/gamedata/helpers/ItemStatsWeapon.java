@@ -188,13 +188,13 @@ public class ItemStatsWeapon extends ItemStats {
             ghostHeatFreeAlpha = -1;
         }
 
-        final double spread;
-        if (WeaponStats.spread > 0)
-            spread = WeaponStats.spread;
-        else
-            spread = 0;
-
         List<String> selectors = Arrays.asList(HardpointAliases.toLowerCase().split(","));
+        final Attribute spread;
+        if (WeaponStats.spread > 0)
+            spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SEL_WEAPON_SPREAD);
+        else
+            spread = new Attribute(0, selectors, ModifierDescription.SEL_WEAPON_SPREAD);
+
         Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SEL_WEAPON_COOLDOWN);
         Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
         Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
@@ -214,7 +214,7 @@ public class ItemStatsWeapon extends ItemStats {
                         damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
                         ghostHeatMultiplier, ghostHeatFreeAlpha, WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType(), 0.0);
+                        getAmmoType(), spread);
             case BALLISTIC:
                 final double jammingChance;
                 final int shotsDuringCooldown;

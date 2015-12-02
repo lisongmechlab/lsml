@@ -52,7 +52,7 @@ public class BallisticWeapon extends AmmoWeapon {
             double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, double aSpread, Attribute aJammingChance, Attribute aJammingTime,
+            String aAmmoType, Attribute aSpread, Attribute aJammingChance, Attribute aJammingTime,
             int aShotsDuringCooldown) {
         super(// Item Arguments
                 aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction,
