@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.upgrades;
 
 import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.item.Faction;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -41,18 +40,6 @@ public class StructureUpgrade extends Upgrade {
         super(aName, aDescription, aMwoId, aFaction);
         extraSlots = aExtraSlots;
         internalStructurePct = aStructurePct;
-    }
-
-    public StructureUpgrade(ItemStatsUpgradeType aUpgradeType) {
-        super(aUpgradeType);
-
-        internalStructurePct = aUpgradeType.StructureTypeStats.weightPerTon;
-        if (aUpgradeType.SlotUsage != null) {
-            extraSlots = aUpgradeType.SlotUsage.slots;
-        }
-        else {
-            extraSlots = 0;
-        }
     }
 
     /**

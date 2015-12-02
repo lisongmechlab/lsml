@@ -19,7 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -92,5 +94,20 @@ public class GuidanceUpgradeTest {
                 standard.upgrade((Ammunition) ItemDB.lookup("STREAK SRM AMMO (1/2)")));
         assertSame(ItemDB.lookup("SRM AMMO (1/2)"),
                 standard.upgrade((Ammunition) ItemDB.lookup("SRM AMMO + ART. IV (1/2)")));
+    }
+    
+    @Test
+    public final void testGetSpreadFactor_Artemis(){
+        GuidanceUpgrade cut = UpgradeDB.ARTEMIS_IV;
+        double ans = cut.getSpreadFactor();
+        assertTrue(ans < 0.9); // Reasonable range of values.
+        assertTrue(ans > 0.4);        
+    }
+    
+    @Test
+    public final void testGetSpreadFactor_NoArtemis(){
+        GuidanceUpgrade cut = UpgradeDB.STANDARD_GUIDANCE;
+        double ans = cut.getSpreadFactor();
+        assertEquals(1.0, ans, 0.0);
     }
 }

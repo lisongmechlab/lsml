@@ -125,7 +125,7 @@ public class MissileWeapon extends AmmoWeapon {
     @Override
     public double getSpread(Collection<Modifier> aModifiers) {
         if (requiredGuidanceType == UpgradeDB.ARTEMIS_IV.getMwoId()) {
-            return super.getSpread(aModifiers) * 0.75;
+            return super.getSpread(aModifiers) * UpgradeDB.ARTEMIS_IV.getSpreadFactor();
         }
         return super.getSpread(aModifiers);
     }

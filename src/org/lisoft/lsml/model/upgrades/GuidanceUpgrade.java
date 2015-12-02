@@ -21,8 +21,8 @@ package org.lisoft.lsml.model.upgrades;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.item.Ammunition;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -41,11 +41,15 @@ public class GuidanceUpgrade extends Upgrade {
     final private int    slots;
     @XStreamAsAttribute
     final private double tons;
+    @XStreamAsAttribute
+    final private double spreadFactor;
 
-    public GuidanceUpgrade(ItemStatsUpgradeType aUpgradeType) {
-        super(aUpgradeType);
-        slots = aUpgradeType.ArtemisTypeStats.extraSlots;
-        tons = aUpgradeType.ArtemisTypeStats.extraTons;
+    public GuidanceUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aSlots, double aTons,
+            double aSpreadFactor) {
+        super(aName, aDescription, aMwoId, aFaction);
+        slots = aSlots;
+        tons = aTons;
+        spreadFactor = aSpreadFactor;
     }
 
     public int getSlots() {
@@ -192,5 +196,12 @@ public class GuidanceUpgrade extends Upgrade {
     @Override
     public UpgradeType getType() {
         return UpgradeType.ARTEMIS;
+    }
+
+    /**
+     * @return The spread factor for this guidance upgrade.
+     */
+    public double getSpreadFactor() {
+        return spreadFactor;
     }
 }

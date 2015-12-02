@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.model.datacache.DataCache;
-import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
 
@@ -33,12 +31,6 @@ public class HeatSinkUpgrade extends Upgrade {
     public HeatSinkUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, HeatSink aHeatSink) {
         super(aName, aDescription, aMwoId, aFaction);
         heatSinkType = aHeatSink;
-    }
-
-    public HeatSinkUpgrade(ItemStatsUpgradeType aUpgradeType, DataCache aDataCache) {
-        super(aUpgradeType);
-        heatSinkType = (HeatSink) DataCache.findItem(aUpgradeType.HeatSinkTypeStats.compatibleHeatSink,
-                aDataCache.getItems());
     }
 
     /**

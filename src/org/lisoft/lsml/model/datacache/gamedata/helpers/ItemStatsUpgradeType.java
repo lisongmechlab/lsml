@@ -51,6 +51,8 @@ public class ItemStatsUpgradeType extends ItemStatsModule {
         public int    extraSlots;
         @XStreamAsAttribute
         public double extraTons;
+        @XStreamAsAttribute
+        public double missileSpread;
     }
 
     public ArmorTypeStatsType     ArmorTypeStats;
