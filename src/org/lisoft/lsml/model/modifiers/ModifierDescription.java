@@ -69,6 +69,7 @@ public class ModifierDescription {
     public final static String       SEL_WEAPON_LARGE_BORE     = "largeweapon";
     public final static String       SEL_WEAPON_JAMMING_CHANCE = "jamchance";
     public final static String       SEL_WEAPON_JAMMED_TIME    = "jamtime";
+    public final static String       SEL_WEAPON_SPREAD         = "spread";
 
     /**
      * This attribute defines how a modifier is applied.
@@ -249,7 +250,8 @@ public class ModifierDescription {
                 return false;
         }
         else {
-            if (!specifier.equals(SPECIFIER_ALL) && (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier)))
+            if (!specifier.equals(SPECIFIER_ALL)
+                    && (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier)))
                 return false;
         }
 

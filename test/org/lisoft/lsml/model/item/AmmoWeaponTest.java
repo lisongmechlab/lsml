@@ -19,10 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
+import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
 
 /**
  * Test suite for {@link AmmoWeapon}.
@@ -40,6 +47,20 @@ public class AmmoWeaponTest {
 
         assertTrue(ac20.isCompatibleAmmo(ac20ammoHalf));
         assertTrue(ac20.isCompatibleAmmo(ac20ammo));
+    }
+
+    @Test
+    public final void testSpreadQuirks() {
+        ModifierDescription quirkDescription = new ModifierDescription(null, null, Operation.MUL,
+                ModifierDescription.ALL_WEAPONS, ModifierDescription.SEL_WEAPON_SPREAD, ModifierType.POSITIVE_GOOD);
+        Modifier modifier = new Modifier(quirkDescription, 1.0);
+
+        AmmoWeapon cut = (AmmoWeapon) ItemDB.lookup("SRM6");
+
+        double normal = cut.getSpread(null);
+        double quirked = cut.getSpread(Arrays.asList(modifier));
+
+        assertEquals(normal * 2, quirked, 0.0);
     }
 
 }

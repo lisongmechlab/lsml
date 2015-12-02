@@ -46,7 +46,7 @@ public class MissileWeapon extends AmmoWeapon {
             double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, double aSpread,
+            String aAmmoType, Attribute aSpread,
             // MissileWeapon Arguments
             int aRequiredGuidanceId, int aBaseItemId) {
         super(// Item Arguments
@@ -123,10 +123,10 @@ public class MissileWeapon extends AmmoWeapon {
     }
 
     @Override
-    public double getSpread() {
+    public double getSpread(Collection<Modifier> aModifiers) {
         if (requiredGuidanceType == UpgradeDB.ARTEMIS_IV.getMwoId()) {
-            return super.getSpread() * 0.75;
+            return super.getSpread(aModifiers) * 0.75;
         }
-        return super.getSpread();
+        return super.getSpread(aModifiers);
     }
 }
