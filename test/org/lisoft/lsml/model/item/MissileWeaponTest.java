@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 
 public class MissileWeaponTest {
 
@@ -159,7 +161,7 @@ public class MissileWeaponTest {
     }
 
     @Test
-    public void testGetRangeEffectivity_srm6() throws Exception {
+    public void testGetRangeEffectivity_SRM6() throws Exception {
         MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
         assertEquals(1.0, srm6.getRangeEffectivity(0, null), 0.0);
         assertTrue(srm6.getRangeEffectivity(srm6.getRangeLong(null), null) < 0.5); // Spread taken into account.
@@ -170,4 +172,25 @@ public class MissileWeaponTest {
         assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax(null), null), 0.0);
     }
 
+    @Test
+    public void testGetRangeEffectivity_SRM6_Artemis() throws Exception {
+        MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
+        MissileWeapon srm6Artemis = (MissileWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
+
+        double withoutArtemis = srm6.getRangeEffectivity(90.0, null);
+        double withArtemis = srm6Artemis.getRangeEffectivity(90.0, null);
+        assertTrue(withArtemis > withoutArtemis * 1.1);
+    }
+
+    @Test
+    public void testGetSpread_Artemis() throws Exception {
+        MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
+        MissileWeapon srm6Artemis = (MissileWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
+
+        GuidanceUpgrade artemis = UpgradeDB.ARTEMIS_IV;
+
+        double withoutArtemis = srm6.getSpread(null);
+        double withArtemis = srm6Artemis.getSpread(null);
+        assertEquals(withArtemis, withoutArtemis * artemis.getSpreadFactor(), 0.0);
+    }
 }

@@ -813,27 +813,45 @@ public class DataCache {
 
     /**
      * @param aItemStatsXml
-     * @param aDataCace
+     * @param aDataCache
      * @return
      */
-    private static List<Upgrade> parseUpgrades(XMLItemStats aItemStatsXml, DataCache aDataCace) {
+    private static List<Upgrade> parseUpgrades(XMLItemStats aItemStatsXml, DataCache aDataCache) {
         List<Upgrade> ans = new ArrayList<>();
 
         for (ItemStatsUpgradeType upgradeType : aItemStatsXml.UpgradeTypeList) {
             UpgradeType type = UpgradeType.fromMwo(upgradeType.CType);
+            String name = Localization.key2string(upgradeType.Loc.nameTag);
+            String desc = Localization.key2string(upgradeType.Loc.descTag);
+            Faction faction = Faction.fromMwo(upgradeType.faction);
+            int mwoid = Integer.parseInt(upgradeType.id);
+
             switch (type) {
-                case ARMOR:
-                    ans.add(new ArmorUpgrade(upgradeType));
+                case ARMOR: {
+                    int slots = upgradeType.SlotUsage == null ? 0 : upgradeType.SlotUsage.slots;
+                    double armorPerTon = upgradeType.ArmorTypeStats.armorPerTon;
+                    ans.add(new ArmorUpgrade(name, desc, mwoid, faction, slots, armorPerTon));
                     break;
-                case ARTEMIS:
-                    ans.add(new GuidanceUpgrade(upgradeType));
+                }
+                case ARTEMIS: {
+                    int slots = upgradeType.ArtemisTypeStats.extraSlots;
+                    double tons = upgradeType.ArtemisTypeStats.extraTons;
+                    double spread = upgradeType.ArtemisTypeStats.missileSpread;
+                    ans.add(new GuidanceUpgrade(name, desc, mwoid, faction, slots, tons, spread));
                     break;
-                case HEATSINK:
-                    ans.add(new HeatSinkUpgrade(upgradeType, aDataCace));
+                }
+                case HEATSINK: {
+                    HeatSink heatSink = (HeatSink) DataCache.findItem(upgradeType.HeatSinkTypeStats.compatibleHeatSink,
+                            aDataCache.getItems());
+                    ans.add(new HeatSinkUpgrade(name, desc, mwoid, faction, heatSink));
                     break;
-                case STRUCTURE:
-                    ans.add(new StructureUpgrade(upgradeType));
+                }
+                case STRUCTURE: {
+                    int slots = upgradeType.SlotUsage == null ? 0 : upgradeType.SlotUsage.slots;
+                    double structurePct = upgradeType.StructureTypeStats.weightPerTon;
+                    ans.add(new StructureUpgrade(name, desc, mwoid, faction, slots, structurePct));
                     break;
+                }
                 default:
                     throw new IllegalArgumentException("Unknown upgrade type: " + type);
             }

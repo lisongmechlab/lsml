@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.model.datacache.gamedata.Localization;
-import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.item.Faction;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -44,11 +42,6 @@ public abstract class Upgrade {
         mwoId = aMwoId;
         description = aDescription;
         faction = aFaction;
-    }
-
-    protected Upgrade(ItemStatsUpgradeType aUpgradeType) {
-        this(Localization.key2string(aUpgradeType.Loc.nameTag), Localization.key2string(aUpgradeType.Loc.descTag),
-                Integer.parseInt(aUpgradeType.id), Faction.fromMwo(aUpgradeType.faction));
     }
 
     @Override

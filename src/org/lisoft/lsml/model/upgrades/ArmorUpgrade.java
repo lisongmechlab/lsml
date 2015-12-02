@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.item.Faction;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -40,17 +39,6 @@ public class ArmorUpgrade extends Upgrade {
         super(aName, aDescription, aMwoId, aFaction);
         slots = aExtraSlots;
         armorPerTon = aArmorPerTon;
-    }
-
-    public ArmorUpgrade(ItemStatsUpgradeType aUpgradeType) {
-        super(aUpgradeType);
-        if (aUpgradeType.SlotUsage != null) {
-            slots = aUpgradeType.SlotUsage.slots;
-        }
-        else {
-            slots = 0;
-        }
-        armorPerTon = aUpgradeType.ArmorTypeStats.armorPerTon;
     }
 
     /**
