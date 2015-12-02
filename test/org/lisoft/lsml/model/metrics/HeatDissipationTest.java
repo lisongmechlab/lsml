@@ -71,7 +71,7 @@ public class HeatDissipationTest {
     final double    dissipationFactor     = 1.3;
     final int       numExternalHs         = 5;
     final int       numInternalHs         = 9;
-    final double    internalHsDissipation = 0.2;
+    final double    internalHsDissipation = 0.15;
     final double    externalHsDissipation = 0.14;
 
     @Before
@@ -113,6 +113,7 @@ public class HeatDissipationTest {
         modifiers.add(heatdissipation);
         Mockito.when(heatSinkUpgrade.isDouble()).thenReturn(true);
         Mockito.when(heatSinkType.isDouble()).thenReturn(true);
+        Mockito.when(heatSinkType.getEngineDissipation()).thenReturn(internalHsDissipation);
         
 
         Environment environment = mock(Environment.class);

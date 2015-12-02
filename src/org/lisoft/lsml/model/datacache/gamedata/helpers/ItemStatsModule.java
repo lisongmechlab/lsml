@@ -58,7 +58,7 @@ public class ItemStatsModule extends ItemStats {
                 return EngineStats.asEngine(this);
             case "CHeatSinkStats":
                 return new HeatSink(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
-                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(), HeatSinkStats.cooling,
+                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(), HeatSinkStats.cooling, HeatSinkStats.engineCooling,
                         -HeatSinkStats.heatbase);
             case "CJumpJetStats":
                 // Two values, first is heat for one JJ

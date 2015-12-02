@@ -23,18 +23,20 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 public class HeatSink extends Module {
-    private final double dissapation;
+    private final double dissipation;
     private final double capacity;
+    private final double engineDissipation;
 
     public HeatSink(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction, double aDissipation, double aCapacity) {
+            HardPointType aHardpointType, int aHP, Faction aFaction, double aDissipation, double aEngineDissipation, double aCapacity) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
-        dissapation = aDissipation;
+        dissipation = aDissipation;
+        engineDissipation = aEngineDissipation;
         capacity = aCapacity;
     }
 
     public double getDissipation() {
-        return dissapation;
+        return dissipation;
     }
 
     public double getCapacity() {
@@ -48,5 +50,12 @@ public class HeatSink extends Module {
     @Override
     public boolean isCompatible(Upgrades aUpgrades) {
         return aUpgrades.getHeatSink().getHeatSinkType() == this;
+    }
+
+    /**
+     * @return The heat dissipation of one heat sink of this type when internal to the engine.
+     */
+    public double getEngineDissipation() {
+        return engineDissipation;
     }
 }

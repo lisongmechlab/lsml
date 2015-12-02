@@ -17,15 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.datacache.gamedata.helpers;
+package org.lisoft.lsml.model.item;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.junit.Assert.assertEquals;
 
-public class ItemStatsHeatSinkStats {
-    @XStreamAsAttribute
-    public double cooling;
-    @XStreamAsAttribute
-    public double heatbase;
-    @XStreamAsAttribute
-    public double engineCooling;
+import org.junit.Test;
+import org.lisoft.lsml.model.datacache.ItemDB;
+
+/**
+ * Test suite for {@link HeatSink}.
+ * 
+ * @author Li Song
+ */
+public class HeatSinkTest {
+
+    @Test
+    public void testGetEngineCooling(){
+        HeatSink isShs = ItemDB.SHS;
+        HeatSink isDhs = ItemDB.DHS;
+        
+        assertEquals(0.11, isShs.getEngineDissipation(), 0.0);
+        assertEquals(0.2, isDhs.getEngineDissipation(), 0.0);
+    }
 }

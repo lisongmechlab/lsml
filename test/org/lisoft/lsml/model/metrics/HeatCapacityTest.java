@@ -66,7 +66,6 @@ public class HeatCapacityTest {
     final int       numExternalHs      = 5;
     final int       numInternalHs      = 9;
     final double    basecapacity       = 30;
-    final double    internalHsCapacity = 2.0;
     final double    externalHsCapacity = 1.4;
 
     @Before
@@ -88,7 +87,8 @@ public class HeatCapacityTest {
      * count as 1.4 still). These values are also affected by the efficiency modifier.
      */
     @Test
-    public void testCalculate() {
+    public void testCalculate_DHS() {
+        final double internalHsCapacity = 2.0;
         double expectedCapacity = (basecapacity + numInternalHs * internalHsCapacity
                 + numExternalHs * externalHsCapacity) * capacityFactor;
 
@@ -103,7 +103,33 @@ public class HeatCapacityTest {
         modifiers.add(heatlimit);
         Mockito.when(heatSinkUpgrade.isDouble()).thenReturn(true);
         Mockito.when(heatSinkType.isDouble()).thenReturn(true);
+        HeatCapacity cut = new HeatCapacity(loadout);
 
+        assertEquals(expectedCapacity, cut.calculate(), 0.0);
+    }
+
+    /**
+     * Each 'mech has a base heat capacity of 30 heat. Each single heat sink adds 1 capacity. Each double heat sink adds
+     * 1.4 capacity. Except for the ones counted as engine internal heat sinks which count as 2.0 (those in engine slots
+     * count as 1.4 still). These values are also affected by the efficiency modifier.
+     */
+    @Test
+    public void testCalculate_SHS() {
+        final double internalHsCapacity = 1.0;
+        double expectedCapacity = (basecapacity + numInternalHs * internalHsCapacity
+                + numExternalHs * externalHsCapacity) * capacityFactor;
+
+        Modifier heatlimit = Mockito.mock(Modifier.class);
+
+        List<Modifier> heatContainment = new ArrayList<>(
+                ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.HEAT_CONTAINMENT, true));
+        ModifierDescription description = heatContainment.get(0).getDescription();
+
+        Mockito.when(heatlimit.getValue()).thenReturn(capacityFactor - 1.0);
+        Mockito.when(heatlimit.getDescription()).thenReturn(description);
+        modifiers.add(heatlimit);
+        Mockito.when(heatSinkUpgrade.isDouble()).thenReturn(false);
+        Mockito.when(heatSinkType.isDouble()).thenReturn(false);
         HeatCapacity cut = new HeatCapacity(loadout);
 
         assertEquals(expectedCapacity, cut.calculate(), 0.0);

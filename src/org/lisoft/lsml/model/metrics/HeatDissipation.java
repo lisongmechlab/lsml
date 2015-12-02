@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.metrics;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.environment.Environment;
+import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Attribute;
@@ -44,19 +45,12 @@ public class HeatDissipation implements Metric {
 
     @Override
     public double calculate() {
-        Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
 
-        double ans = 0;
-        int enginehs = 0;
-        if (loadout.getEngine() != null) {
-            enginehs = loadout.getEngine().getNumInternalHeatsinks();
-        }
-
-        final double dissipation = loadout.getUpgrades().getHeatSink().getHeatSinkType().getDissipation();
-
-        // Engine internal HS count as true doubles
-        ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 0.2 : 0.1);
-        ans += (loadout.getHeatsinksCount() - enginehs) * dissipation;
+        final int internalHs = (loadout.getEngine() == null) ? 0 : loadout.getEngine().getNumInternalHeatsinks();
+        final int externalHs = loadout.getHeatsinksCount() - internalHs;
+        final double ans = internalHs * hs.getEngineDissipation() + externalHs * hs.getDissipation();
 
         final Attribute heatDissipation = new Attribute(ans, ModifierDescription.SEL_HEAT_DISSIPATION);
         final double externalHeat = (environment != null) ? environment.getHeat(modifiers) : 0;
