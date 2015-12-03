@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Vector;
 
@@ -123,29 +124,29 @@ public class PartPanel extends JPanel implements MessageReceiver {
         }
     }
 
-    private static final int ARMOR_LABEL_WIDTH   = 30;
-    private static final int ARMOR_SPINNER_WIDTH = 20;
+    private static final int              ARMOR_LABEL_WIDTH   = 30;
+    private static final int              ARMOR_SPINNER_WIDTH = 20;
 
-    private static final long serialVersionUID = -4399442572295284661L;
+    private static final long             serialVersionUID    = -4399442572295284661L;
 
-    private final JLabel frontArmorLabel;
-    private final JLabel backArmorLabel;
-    private final JLabel armorLabel;
+    private final JLabel                  frontArmorLabel;
+    private final JLabel                  backArmorLabel;
+    private final JLabel                  armorLabel;
 
     private final LoadoutBase<?>          loadout;
     private final ConfiguredComponentBase component;
 
-    private final boolean           canHaveHardpoints;
-    private final ArmorPopupAdapter armorPopupAdapter;
-    private JSpinner                frontSpinner;
-    private JSpinner                backSpinner;
-    private JSpinner                spinner;
+    private final boolean                 canHaveHardpoints;
+    private final ArmorPopupAdapter       armorPopupAdapter;
+    private JSpinner                      frontSpinner;
+    private JSpinner                      backSpinner;
+    private JSpinner                      spinner;
 
-    private final JComboBox<OmniPod> omnipodSelection;
-    private JPanel                   hardPointsPanel;
+    private final JComboBox<OmniPod>      omnipodSelection;
+    private JPanel                        hardPointsPanel;
 
-    private final JCheckBox toggleHA;
-    private final JCheckBox toggleLAA;
+    private final JCheckBox               toggleHA;
+    private final JCheckBox               toggleLAA;
 
     PartPanel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, final MessageXBar aXBar,
             boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
@@ -240,10 +241,16 @@ public class PartPanel extends JPanel implements MessageReceiver {
                     BorderFactory.createEmptyBorder(0, 2, 2, 4)));
         }
 
-        if (LoadoutOmniMech.class.isAssignableFrom(aLoadout.getClass()) && location != Location.CenterTorso) {
+        if (LoadoutOmniMech.class.isAssignableFrom(aLoadout.getClass())) {
             final LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
             // Omnimech
-            Collection<OmniPod> compatiblePods = OmniPodDB.lookup(omniMech.getChassis(), location);
+            final Collection<OmniPod> compatiblePods;
+            if (location == Location.CenterTorso) {
+                compatiblePods = Arrays.asList(omniMech.getComponent(location).getOmniPod());
+            }
+            else {
+                compatiblePods = OmniPodDB.lookup(omniMech.getChassis(), location);
+            }
 
             omnipodSelection = new JComboBox<>(new DefaultComboBoxModel<OmniPod>(new Vector<>(compatiblePods)) {
                 @Override
