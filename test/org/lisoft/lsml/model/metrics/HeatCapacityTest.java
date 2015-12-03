@@ -88,7 +88,7 @@ public class HeatCapacityTest {
      */
     @Test
     public void testCalculate_DHS() {
-        final double internalHsCapacity = 2.0;
+        final double internalHsCapacity = externalHsCapacity;
         double expectedCapacity = (basecapacity + numInternalHs * internalHsCapacity
                 + numExternalHs * externalHsCapacity) * capacityFactor;
 
@@ -105,7 +105,7 @@ public class HeatCapacityTest {
         Mockito.when(heatSinkType.isDouble()).thenReturn(true);
         HeatCapacity cut = new HeatCapacity(loadout);
 
-        assertEquals(expectedCapacity, cut.calculate(), 0.0);
+        assertEquals(expectedCapacity, cut.calculate(), 0.000000001);
     }
 
     /**
@@ -115,7 +115,7 @@ public class HeatCapacityTest {
      */
     @Test
     public void testCalculate_SHS() {
-        final double internalHsCapacity = 1.0;
+        final double internalHsCapacity = externalHsCapacity;
         double expectedCapacity = (basecapacity + numInternalHs * internalHsCapacity
                 + numExternalHs * externalHsCapacity) * capacityFactor;
 
@@ -132,7 +132,7 @@ public class HeatCapacityTest {
         Mockito.when(heatSinkType.isDouble()).thenReturn(false);
         HeatCapacity cut = new HeatCapacity(loadout);
 
-        assertEquals(expectedCapacity, cut.calculate(), 0.0);
+        assertEquals(expectedCapacity, cut.calculate(), 0.000000001);
     }
 
 }

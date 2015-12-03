@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Attribute;
@@ -39,17 +40,8 @@ public class HeatCapacity implements Metric {
 
     @Override
     public double calculate() {
-        double ans = MECH_BASE_HEAT_CAPACITY;
-        int enginehs = 0;
-        if (loadout.getEngine() != null) {
-            enginehs = loadout.getEngine().getNumInternalHeatsinks();
-        }
-
-        // Engine internal HS count as true doubles
-        ans += enginehs * (loadout.getUpgrades().getHeatSink().isDouble() ? 2 : 1);
-        ans += (loadout.getHeatsinksCount() - enginehs)
-                * loadout.getUpgrades().getHeatSink().getHeatSinkType().getCapacity();
-
+        HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+        final double ans = MECH_BASE_HEAT_CAPACITY + loadout.getHeatsinksCount() * hs.getCapacity();
         final Attribute heatLimit = new Attribute(ans, ModifierDescription.SEL_HEAT_LIMIT);
         return heatLimit.value(loadout.getModifiers());
     }

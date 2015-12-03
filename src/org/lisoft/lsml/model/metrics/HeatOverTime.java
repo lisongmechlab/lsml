@@ -133,7 +133,8 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
                         new IntegratedImpulseTrain(weapon.getSecondsPerShot(modifiers), weapon.getHeat(modifiers)));
             }
             if (item instanceof Engine) {
-                heatIntegrals.add(new IntegratedPulseTrain(10, 10, ((Engine) item).getHeat(modifiers)));
+                double arbitraryValue = 10.0;
+                heatIntegrals.add(new IntegratedPulseTrain(arbitraryValue, arbitraryValue, ((Engine) item).getHeat(modifiers)));
             }
         }
     }
