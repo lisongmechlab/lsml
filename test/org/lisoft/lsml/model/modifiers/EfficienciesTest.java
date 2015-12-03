@@ -248,9 +248,9 @@ public class EfficienciesTest {
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
 
-        assertEquals(1.025, mp.getTurnLerpLowRate(cut.getModifiers()), 0.0);
-        assertEquals(1.025, mp.getTurnLerpMidRate(cut.getModifiers()), 0.0);
-        assertEquals(1.025, mp.getTurnLerpHighRate(cut.getModifiers()), 0.0);
+        assertEquals(1.1, mp.getTurnLerpLowRate(cut.getModifiers()), 0.0);
+        assertEquals(1.1, mp.getTurnLerpMidRate(cut.getModifiers()), 0.0);
+        assertEquals(1.1, mp.getTurnLerpHighRate(cut.getModifiers()), 0.0);
     }
 
     @Test
@@ -260,8 +260,8 @@ public class EfficienciesTest {
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 MovementArchetype.Medium);
 
-        assertEquals(1.05, mp.getTurnLerpLowRate(cut.getModifiers()), 0.0);
-        assertEquals(1.05, mp.getTurnLerpMidRate(cut.getModifiers()), 0.0);
-        assertEquals(1.05, mp.getTurnLerpHighRate(cut.getModifiers()), 0.0);
+        assertEquals(1.2, mp.getTurnLerpLowRate(cut.getModifiers()), 0.0);
+        assertEquals(1.2, mp.getTurnLerpMidRate(cut.getModifiers()), 0.0);
+        assertEquals(1.2, mp.getTurnLerpHighRate(cut.getModifiers()), 0.0);
     }
 }
