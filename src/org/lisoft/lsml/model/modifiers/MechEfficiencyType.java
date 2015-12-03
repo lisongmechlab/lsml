@@ -88,6 +88,6 @@ public enum MechEfficiencyType {
      * @return <code>true</code> if this {@link MechEfficiencyType} will affect the 'Mech heat.
      */
     public boolean affectsHeat() {
-        return this == MechEfficiencyType.COOL_RUN || this == HEAT_CONTAINMENT;
+        return this == MechEfficiencyType.COOL_RUN || this == HEAT_CONTAINMENT || this == FAST_FIRE;
     }
 }
