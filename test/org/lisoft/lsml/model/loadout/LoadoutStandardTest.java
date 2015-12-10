@@ -109,7 +109,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         maxJumpJets = 0;
         JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
 
-        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         maxJumpJets = 1;
         JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
 
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
@@ -128,14 +128,14 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         items.add(item);
         Mockito.when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
 
-        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
     public void testCanEquip_Engine() throws Exception {
         Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
 
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
@@ -145,7 +145,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         items.add(item);
         Mockito.when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
 
-        assertEquals(EquipResult.make(EquipResultType.EngineAlreadyEquipped), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.EngineAlreadyEquipped), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
 
         assertEquals(EquipResult.make(Location.LeftTorso, EquipResultType.NotEnoughSlotsForXLSide),
-                makeDefaultCUT().canEquip(engine));
+                makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -173,7 +173,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
 
         assertEquals(EquipResult.make(Location.RightTorso, EquipResultType.NotEnoughSlotsForXLSide),
-                makeDefaultCUT().canEquip(engine));
+                makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -185,7 +185,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(components[Location.CenterTorso.ordinal()].canEquip(engine))
                 .thenReturn(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
 
-        assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(engine));
+        assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -201,7 +201,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
         Mockito.when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
 
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(engine));
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -217,6 +217,6 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
         Mockito.when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
 
-        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(engine));
+        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquipDirectly(engine));
     }
 }

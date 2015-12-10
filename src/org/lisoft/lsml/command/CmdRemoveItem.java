@@ -20,6 +20,8 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
@@ -33,6 +35,8 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Emily Björk
  */
 public class CmdRemoveItem extends CmdItemBase {
+    private int numEngineHS = 0;
+
     /**
      * Creates a new operation.
      * 
@@ -50,22 +54,8 @@ public class CmdRemoveItem extends CmdItemBase {
     public CmdRemoveItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
             Item aItem) throws EquipResult {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((item == null) ? 0 : item.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof CmdRemoveItem))
-            return false;
-        CmdRemoveItem other = (CmdRemoveItem) obj;
-        return item == other.item && super.equals(other);
+        if (aItem instanceof Internal)
+            throw new IllegalArgumentException("Internals cannot be removed!");
     }
 
     @Override
@@ -73,15 +63,71 @@ public class CmdRemoveItem extends CmdItemBase {
         return "remove " + item.getName() + " from " + component.getInternalComponent().getLocation();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + numEngineHS;
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (!(obj instanceof CmdRemoveItem))
+            return false;
+        CmdRemoveItem other = (CmdRemoveItem) obj;
+        if (numEngineHS != other.numEngineHS)
+            return false;
+        return true;
+    }
+
     @Override
     public void undo() {
-        addItem(item);
+        add(component, item);
+
+        if (item instanceof Engine) {
+            Engine engine = (Engine) item;
+            addXLSides(engine);
+
+            HeatSink heatSinkType = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+            while (numEngineHS > 0) {
+                numEngineHS--;
+                add(component, heatSinkType);
+            }
+        }
     }
 
     @Override
     public void apply() {
         if (!component.canRemoveItem(item))
             throw new IllegalArgumentException("Can not remove item: " + item + " from " + component);
-        removeItem(item);
+
+        if (item instanceof Engine) {
+            Engine engine = (Engine) item;
+            removeXLSides(engine);
+
+            int engineHsLeft = component.getEngineHeatSinks();
+            HeatSink heatSinkType = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+            while (engineHsLeft > 0) {
+                engineHsLeft--;
+                numEngineHS++;
+                remove(component, heatSinkType);
+            }
+        }
+        remove(component, item);
     }
 }

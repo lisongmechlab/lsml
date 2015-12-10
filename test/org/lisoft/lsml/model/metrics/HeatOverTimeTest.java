@@ -2,6 +2,9 @@ package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +12,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
@@ -18,7 +21,6 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.mockito.Mockito;
 
 public class HeatOverTimeTest {
     private MessageXBar            xBar;
@@ -28,8 +30,8 @@ public class HeatOverTimeTest {
 
     @Before
     public void setup() {
-        xBar = Mockito.mock(MessageXBar.class);
-        Mockito.when(mlc.loadout.items(HeatSource.class)).thenReturn(items);
+        xBar = mock(MessageXBar.class);
+        when(mlc.loadout.items(HeatSource.class)).thenReturn(items);
     }
 
     /**
@@ -124,7 +126,7 @@ public class HeatOverTimeTest {
         int group = 3;
         Collection<Weapon> weaponsGroup = new ArrayList<>();
         weaponsGroup.add(erllas);
-        Mockito.when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(weaponsGroup);
+        when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(weaponsGroup);
 
         HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar, group);
 
@@ -141,15 +143,18 @@ public class HeatOverTimeTest {
         items.add(ac20);
 
         HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
-        Mockito.verify(xBar).attach(cut);
+        verify(xBar).attach(cut);
 
         double old = cut.calculate(20);
         items.remove(ac20);
-        Collection<ConfiguredComponentBase> partLoadouts = Mockito.mock(Collection.class);
-        Mockito.when(partLoadouts.contains(null)).thenReturn(true);
-        Mockito.when(mlc.loadout.getComponents()).thenReturn(partLoadouts);
-        cut.receive(new ComponentMessage(null,
-                ComponentMessage.Type.ItemAdded));
+        Collection<ConfiguredComponentBase> partLoadouts = mock(Collection.class);
+        when(partLoadouts.contains(null)).thenReturn(true);
+        when(mlc.loadout.getComponents()).thenReturn(partLoadouts);
+
+        Message msg = mock(Message.class);
+        when(msg.isForMe(mlc.loadout)).thenReturn(true);
+        when(msg.affectsHeatOrDamage()).thenReturn(true);
+        cut.receive(msg);
         assertTrue(old != cut.calculate(20));
     }
 }

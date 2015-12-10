@@ -71,7 +71,7 @@ public class CmdSetHeatSinkTypeTest {
         Mockito.when(upgrades.getHeatSink()).thenReturn(shsUpgrade);
 
         Mockito.when(component.getItemsEquipped()).thenReturn(items);
-        Mockito.when(component.getEngineHeatsinksMax()).thenReturn(engineHsSlots);
+        Mockito.when(component.getEngineHeatSinksMax()).thenReturn(engineHsSlots);
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock aInvocation) throws Throwable {
@@ -109,7 +109,7 @@ public class CmdSetHeatSinkTypeTest {
         Mockito.when(loadout.getName()).thenReturn("Mock Loadout");
         Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
         Mockito.when(loadout.getComponents()).thenReturn(Arrays.asList(component));
-        Mockito.when(loadout.canEquip(newType)).then(new Answer<EquipResult>() {
+        Mockito.when(loadout.canEquipDirectly(newType)).then(new Answer<EquipResult>() {
             @Override
             public EquipResult answer(InvocationOnMock aInvocation) throws Throwable {
                 if (equippedHs < maxGloballyEquippableNewType) {

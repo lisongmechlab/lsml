@@ -97,7 +97,6 @@ public class CmdSetOmniPod extends CompositeCommand {
             protected void undo() {
                 loadout.setOmniPod(oldOmniPod);
                 messageBuffer.post(new ComponentMessage(component, Type.OmniPodChanged));
-                messageBuffer.post(new ComponentMessage(component, Type.ItemsChanged));
             }
 
             @Override
@@ -109,7 +108,6 @@ public class CmdSetOmniPod extends CompositeCommand {
             protected void apply() {
                 loadout.setOmniPod(newOmniPod);
                 messageBuffer.post(new ComponentMessage(component, Type.OmniPodChanged));
-                messageBuffer.post(new ComponentMessage(component, Type.ItemsChanged));
             }
         });
     }

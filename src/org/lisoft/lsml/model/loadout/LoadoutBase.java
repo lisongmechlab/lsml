@@ -103,7 +103,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == null)
+        if (obj == null)
             return false;
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
@@ -446,7 +446,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      *            The {@link Item} to check for.
      * @return <code>true</code> if the given {@link Item} is globally feasible on this loadout.
      */
-    public EquipResult canEquip(Item aItem) {
+    public EquipResult canEquipDirectly(Item aItem) {
         EquipResult globalResult = canEquipGlobal(aItem);
 
         if (globalResult != EquipResult.SUCCESS) {
@@ -490,7 +490,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      *            The {@link Item} to check.
      * @return <code>true</code> if the necessary checks are passed.
      */
-    protected EquipResult canEquipGlobal(Item aItem) {
+    public EquipResult canEquipGlobal(Item aItem) {
         if (!getChassis().isAllowed(aItem))
             return EquipResult.make(EquipResultType.NotSupported);
         if (aItem.getMass() > getFreeMass())
@@ -503,7 +503,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
         // Allow engine slot heat sinks as long as there is enough free mass.
         ConfiguredComponentBase ct = getComponent(Location.CenterTorso);
-        if (aItem instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax())
+        if (aItem instanceof HeatSink && ct.getEngineHeatSinks() < ct.getEngineHeatSinksMax())
             return EquipResult.SUCCESS;
 
         // FIXME: The case where adding a weapon that would cause LAA/HA to be removed
@@ -523,13 +523,25 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
         if (requiredSlots > getNumCriticalSlotsFree())
             return EquipResult.make(EquipResultType.NotEnoughSlots);
+
+        HardPointType hp = aItem.getHardpointType();
+        if (HardPointType.NONE != hp && getItemsOfHardPointType(hp) >= getHardpointsCount(hp))
+            return EquipResult.make(EquipResultType.NoFreeHardPoints);
         return EquipResult.SUCCESS;
     }
-    
+
+    public int getItemsOfHardPointType(HardPointType aHardPointType) {
+        int ans = 0;
+        for (ConfiguredComponentBase component : components) {
+            ans += component.getItemsOfHardpointType(aHardPointType);
+        }
+        return ans;
+    }
+
     public MovementProfile getMovementProfile() {
         return getChassis().getMovementProfileBase();
     }
-    
+
     /**
      * Returns a {@link Collection} of all equipment or modules or omnipods or quirks that are modifiers.
      * 

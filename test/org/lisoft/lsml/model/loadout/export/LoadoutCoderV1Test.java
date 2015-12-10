@@ -131,6 +131,6 @@ public class LoadoutCoderV1Test {
                 .decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY=".toCharArray()));
 
         assertTrue(l.getFreeMass() < 0.005);
-        assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
+        assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());
     }
 }

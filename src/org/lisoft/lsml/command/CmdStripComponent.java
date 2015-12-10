@@ -75,7 +75,7 @@ public class CmdStripComponent extends CompositeCommand {
     @Override
     public void buildCommand() throws EquipResult {
         // Engine heat sinks are removed together with the engine.
-        int hsSkipp = component.getEngineHeatsinks();
+        int hsSkipp = component.getEngineHeatSinks();
         for (Item item : component.getItemsEquipped()) {
             if (!(item instanceof Internal)) {
                 if (item instanceof HeatSink) {

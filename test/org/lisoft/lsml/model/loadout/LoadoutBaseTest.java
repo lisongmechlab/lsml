@@ -260,13 +260,35 @@ public abstract class LoadoutBaseTest {
     }
 
     @Test
-    public void testCanEquip() throws Exception {
-        Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true);
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
+    public void testGetItemsOfHardPointType() throws Exception {
+        HardPointType pointType = HardPointType.ENERGY;
+        for (ConfiguredComponentBase component : components) {
+            Mockito.when(component.getItemsOfHardpointType(pointType)).thenReturn(2);
+        }
+        assertEquals(components.length * 2, makeDefaultCUT().getItemsOfHardPointType(pointType));
     }
 
     @Test
-    public void testCanEquip_EngineHs() throws Exception {
+    public void testCanEquipGlobal_NotAllowedByChassis() {
+        Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, false, true);
+        assertEquals(EquipResult.make(EquipResultType.NotSupported), makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquipGlobal_NoFreeHardpoints() {
+        Item item = makeTestItem(0.0, 0, HardPointType.ECM, true, true, true);
+
+        assertEquals(EquipResult.make(EquipResultType.NoFreeHardPoints), makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquipDirectly() throws Exception {
+        Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true);
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquipDirectly_EngineHs() throws Exception {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
         HeatSink item = makeTestItem(0.0, 3, HardPointType.NONE, true, true, true, HeatSink.class);
@@ -276,18 +298,18 @@ public abstract class LoadoutBaseTest {
 
             if (component == components[Location.CenterTorso.ordinal()]) {
                 Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
-                Mockito.when(component.getEngineHeatsinksMax()).thenReturn(1);
+                Mockito.when(component.getEngineHeatSinksMax()).thenReturn(1);
             }
             else {
                 Mockito.when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
             }
         }
 
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
-    public void testCanEquip_EnoughGlobalSlots() throws Exception {
+    public void testCanEquipDirectly_EnoughGlobalSlots() throws Exception {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
         Item item = makeTestItem(0.0, components.length, HardPointType.NONE, true, true, false);
@@ -297,11 +319,11 @@ public abstract class LoadoutBaseTest {
             Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
         }
 
-        assertEquals(EquipResult.make(EquipResultType.Success), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.Success), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
-    public void testCanEquip_NoEngineHs() throws Exception {
+    public void testCanEquipDirectly_NoEngineHs() throws Exception {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
         HeatSink item = makeTestItem(0.0, 3, HardPointType.NONE, true, true, true, HeatSink.class);
@@ -311,30 +333,30 @@ public abstract class LoadoutBaseTest {
             Mockito.when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
         }
 
-        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
-    public void testCanEquip_NotCompatibleUpgrades() throws Exception {
+    public void testCanEquipDirectly_NotCompatibleUpgrades() throws Exception {
         Item item = makeTestItem(0.0, 0, HardPointType.NONE, false, true, true);
-        assertEquals(EquipResult.make(EquipResultType.IncompatibleUpgrades), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.IncompatibleUpgrades), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
-    public void testCanEquip_NotSupportedByChassis() throws Exception {
+    public void testCanEquipDirectly_NotSupportedByChassis() throws Exception {
         Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, false, true);
-        assertEquals(EquipResult.make(EquipResultType.NotSupported), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.NotSupported), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
-    public void testCanEquip_NotTooHeavy() throws Exception {
+    public void testCanEquipDirectly_NotTooHeavy() throws Exception {
         LoadoutBase<?> cut = makeDefaultCUT();
         Item item = makeTestItem(mass - cut.getMass(), 0, HardPointType.NONE, true, true, true);
-        assertEquals(EquipResult.SUCCESS, cut.canEquip(item));
+        assertEquals(EquipResult.SUCCESS, cut.canEquipDirectly(item));
     }
 
     @Test
-    public void testCanEquip_TooFewSlots() throws Exception {
+    public void testCanEquipDirectly_TooFewSlots() throws Exception {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
         Item item = makeTestItem(0.0, components.length + 1, HardPointType.NONE, true, true, false);
@@ -344,20 +366,19 @@ public abstract class LoadoutBaseTest {
             Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
         }
 
-        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
-    public void testCanEquip_TooHeavy() throws Exception {
+    public void testCanEquipDirectly_TooHeavy() throws Exception {
         Item item = makeTestItem(Math.nextAfter((double) mass, Double.POSITIVE_INFINITY), 0, HardPointType.NONE, true,
                 true, true);
-        assertEquals(EquipResult.make(EquipResultType.TooHeavy), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.TooHeavy), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test
-    public void testCanEquip_ComponentError() throws Exception {
-        Item item = makeTestItem(0.0, 0, HardPointType.NONE, true,
-                true, false);
+    public void testCanEquipDirectly_ComponentError() throws Exception {
+        Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, false);
 
         EquipResult.EquipResultType resultTypes[] = new EquipResult.EquipResultType[] {
                 EquipResult.EquipResultType.NoFreeHardPoints, EquipResult.EquipResultType.NoComponentSupport,
@@ -366,11 +387,12 @@ public abstract class LoadoutBaseTest {
         int typeIndex = 0;
         for (ConfiguredComponentBase component : components) {
             Mockito.when(component.getInternalComponent().getLocation()).thenReturn(Location.CenterTorso);
-            EquipResult result = EquipResult.make(component.getInternalComponent().getLocation(), resultTypes[typeIndex]);
+            EquipResult result = EquipResult.make(component.getInternalComponent().getLocation(),
+                    resultTypes[typeIndex]);
             Mockito.when(component.canEquip(item)).thenReturn(result);
             typeIndex = (typeIndex + 1) % resultTypes.length;
         }
-        assertEquals(EquipResult.make(EquipResultType.NoFreeHardPoints), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.NoFreeHardPoints), makeDefaultCUT().canEquipDirectly(item));
     }
 
     @Test

@@ -233,7 +233,7 @@ public class ItemLabel extends JLabel {
                                 dialog.setVisible(true); // Show progress meter if it's taking time and resume EDT
                             }
                         }
-                        else if (EquipResult.SUCCESS == loadout.canEquip(item)) {
+                        else if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
                             try {
                                 frame.getOpStack().pushAndApply(new CmdAutoAddItem(loadout, anXBar, item));
                             }
@@ -331,7 +331,7 @@ public class ItemLabel extends JLabel {
 
             updateText(aLoadout);
 
-            if (aLoadout != null && EquipResult.SUCCESS != aLoadout.canEquip(item)) {
+            if (aLoadout != null && EquipResult.SUCCESS != aLoadout.canEquipDirectly(item)) {
                 if (aLoadout.getCandidateLocationsForItem(item).isEmpty()) {
                     StyleManager.colourInvalid(this);
                 }

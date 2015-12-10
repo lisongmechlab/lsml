@@ -95,8 +95,9 @@ public abstract class ConfiguredComponentBase {
     }
 
     /**
-     * Adds a new item to this component. This method is unchecked and can put the component into an illegal state. It
-     * is the caller's responsibility to make sure local and global conditions are met before adding an item.
+     * Adds a new item to this component. This method does not verify loadout invariants and can put the component into
+     * an illegal state. It is the caller's responsibility to make sure local and global conditions are met before
+     * adding an item.
      * <p>
      * This is intended for use only from {@link CmdAddItem}, {@link CmdRemoveItem} and relatives.
      * <p>
@@ -104,14 +105,24 @@ public abstract class ConfiguredComponentBase {
      * 
      * @param aItem
      *            The item to add.
+     * @return The index where the item was added or -1 if the item was consumed by another item (HS going into engine
+     *         for example).
      */
-    public void addItem(Item aItem) {
+    public int addItem(Item aItem) {
         items.add(aItem);
+
+        if (aItem instanceof HeatSink && getEngineHeatSinksMax() >= getHeatSinkCount()) {
+            return -1; // Consumed by engine
+        }
+
+        // This works because items are always added at the end.
+        int consumedHs = getEngineHeatSinks();
+        return items.size() - 1 - consumedHs;
     }
 
     /**
      * Checks if all local conditions for the item to be equipped on this component are full filled. Before an item can
-     * be equipped, global conditions on the loadout must also be checked by {@link LoadoutBase#canEquip(Item)}.
+     * be equipped, global conditions on the loadout must also be checked by {@link LoadoutBase#canEquipDirectly(Item)}.
      * 
      * @param aItem
      *            The item to check with.
@@ -157,9 +168,23 @@ public abstract class ConfiguredComponentBase {
      * 
      * @param aItem
      *            The item to remove.
+     * @return The index of the removed item. Or -1 for engine heat sinks.
      */
-    public void removeItem(Item aItem) {
-        items.remove(aItem);
+    public int removeItem(Item aItem) {
+        int index = items.lastIndexOf(aItem);
+        if (index < 0) {
+            throw new IllegalArgumentException("Can't remove nonexistent item!");
+        }
+
+        int hsBefore = 0;
+        for (int i = 0; i <= index; ++i) {
+            if (items.get(i) instanceof HeatSink)
+                hsBefore++;
+        }
+
+        items.remove(index);
+        int consumedHs = Math.min(getEngineHeatSinksMax(), hsBefore);
+        return index - consumedHs;
     }
 
     /**
@@ -239,16 +264,21 @@ public abstract class ConfiguredComponentBase {
      * @return The number of heat sinks inside the engine (if any) equipped on this component. Does not count the (up
      *         to) 10 included in the engine itself, rather it only counts the external heat sink slots.
      */
-    public int getEngineHeatsinks() {
+    public int getEngineHeatSinks() {
+        int ans = getHeatSinkCount();
+        return Math.min(ans, getEngineHeatSinksMax());
+    }
+
+    private int getHeatSinkCount() {
         int ans = ListArrayUtils.countByType(items, HeatSink.class)
                 + ListArrayUtils.countByType(getInternalComponent().getFixedItems(), HeatSink.class);
-        return Math.min(ans, getEngineHeatsinksMax());
+        return ans;
     }
 
     /**
      * @return The maximal number of heat sinks that the engine (if any) equipped on this component can sustain.
      */
-    public int getEngineHeatsinksMax() {
+    public int getEngineHeatSinksMax() {
         for (Item item : items) {
             if (item instanceof Engine) {
                 return ((Engine) item).getNumHeatsinkSlots();
@@ -330,7 +360,7 @@ public abstract class ConfiguredComponentBase {
      */
     public int getSlotsUsed() {
         int crits = getInternalComponent().getFixedItemSlots();
-        int engineHsLeft = getEngineHeatsinksMax();
+        int engineHsLeft = getEngineHeatSinksMax();
         for (Item item : items) {
             if (item instanceof HeatSink && engineHsLeft > 0) {
                 engineHsLeft--;

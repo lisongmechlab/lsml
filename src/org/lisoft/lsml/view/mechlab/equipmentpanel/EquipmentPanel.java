@@ -31,7 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -237,11 +237,8 @@ public class EquipmentPanel extends JPanel implements MessageReceiver, InternalF
         if (currentLoadout == null || aMsg.isForMe(currentLoadout)) {
             boolean shouldUpdateVisibility = (aMsg == null ? true : aMsg instanceof UpgradesMessage);
             if (!shouldUpdateVisibility) {
-                if (aMsg instanceof ComponentMessage) {
-                    ComponentMessage msg = (ComponentMessage) aMsg;
-                    if (msg.isItemsChanged()) {
-                        shouldUpdateVisibility = true;
-                    }
+                if (aMsg instanceof ItemMessage) {
+                    shouldUpdateVisibility = true;
                 }
             }
 
