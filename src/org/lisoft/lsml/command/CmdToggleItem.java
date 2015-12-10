@@ -19,8 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ItemMessage;
+import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Item;
@@ -58,7 +58,7 @@ public class CmdToggleItem extends Command {
 
     @Override
     public String describe() {
-        return "toggle " + item;
+        return "toggle " + item.getName();
     }
 
     @Override
@@ -70,6 +70,10 @@ public class CmdToggleItem extends Command {
             return;
 
         if (newState == true) {
+            if (item == ItemDB.HA && false == component.getToggleState(ItemDB.LAA)) {
+                throw EquipResult.make(component.getInternalComponent().getLocation(), EquipResultType.LaaBeforeHa);
+            }
+
             if (loadout.getNumCriticalSlotsFree() < 1) {
                 throw EquipResult.make(EquipResultType.NotEnoughSlots);
             }
@@ -79,27 +83,30 @@ public class CmdToggleItem extends Command {
             }
         }
 
-        component.setToggleState(item, newState);
-
         if (item == ItemDB.LAA && newState == false && component.getToggleState(ItemDB.HA)) {
             component.setToggleState(ItemDB.HA, false);
+            post(Type.Removed, ItemDB.HA);
         }
 
-        if (messageDelivery != null) {
-            messageDelivery.post(new ComponentMessage(component, Type.ItemsChanged));
-        }
+        component.setToggleState(item, newState);
+        post(newState ? Type.Added : Type.Removed, item);
     }
 
     @Override
     protected void undo() {
         if (newState == oldState)
             return;
-        component.setToggleState(item, oldState);
-        if (item == ItemDB.LAA && oldHAState == true && EquipResult.SUCCESS == component.canToggleOn(ItemDB.HA)) {
+        if (oldHAState) {
             component.setToggleState(ItemDB.HA, true);
+            post(Type.Added, ItemDB.HA);
         }
+        component.setToggleState(item, oldState);
+        post(oldState ? Type.Added : Type.Removed, item);
+    }
+
+    private void post(Type aType, Item aItem) {
         if (messageDelivery != null) {
-            messageDelivery.post(new ComponentMessage(component, Type.ItemsChanged));
+            messageDelivery.post(new ItemMessage(component, aType, aItem, -1));
         }
     }
 }

@@ -23,6 +23,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +52,7 @@ public abstract class ConfiguredComponentBaseTest {
     protected int           slots              = 12;
     protected Location      location           = Location.LeftArm;
     protected ComponentBase internal           = null;
-    protected boolean       manualArmor          = false;
+    protected boolean       manualArmor        = false;
     protected int           internalFixedSlots = 0;
     protected List<Item>    internalFixedItems = new ArrayList<>();
     protected int           maxArmor           = 32;
@@ -58,67 +60,67 @@ public abstract class ConfiguredComponentBaseTest {
     protected abstract ConfiguredComponentBase makeDefaultCUT();
 
     /**
-         * Simple items without any requirements are equippable.
-         */
-        @Test
-        public final void testCanEquip_Simple() {
-            Item item = Mockito.mock(Item.class);
-            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-            Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
-    
-            assertSame(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
-        }
+     * Simple items without any requirements are equippable.
+     */
+    @Test
+    public final void testCanEquip_Simple() {
+        Item item = Mockito.mock(Item.class);
+        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+
+        assertSame(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
+    }
 
     /**
-         * No item is equippable if the internal component can't support it.
-         */
-        @Test
-        public final void testCanEquip_NoInternalSupport() {
-            Item item = Mockito.mock(Item.class);
-            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-            Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
-    
-            Mockito.when(internal.isAllowed(item)).thenReturn(false);
-            assertEquals(EquipResult.make(location, EquipResultType.NotSupported) ,makeDefaultCUT().canEquip(item));
-        }
+     * No item is equippable if the internal component can't support it.
+     */
+    @Test
+    public final void testCanEquip_NoInternalSupport() {
+        Item item = Mockito.mock(Item.class);
+        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+
+        Mockito.when(internal.isAllowed(item)).thenReturn(false);
+        assertEquals(EquipResult.make(location, EquipResultType.NotSupported), makeDefaultCUT().canEquip(item));
+    }
 
     /**
-         * Item's are not equippable if there is no space for them
-         */
-        @Test
-        public final void testCanEquip_NoSpace() {
-            // Fixed items setup
-            internalFixedSlots = 2;
-            Item fixed1 = Mockito.mock(Item.class);
-            Mockito.when(fixed1.getNumCriticalSlots()).thenReturn(internalFixedSlots);
-            internalFixedItems.add(fixed1);
-    
-            // Setup existing items in the component
-            Item item1 = Mockito.mock(Item.class);
-            Mockito.when(item1.getHardpointType()).thenReturn(HardPointType.NONE);
-            Mockito.when(item1.getNumCriticalSlots()).thenReturn(slots / 4);
-    
-            int freeSlots = 2;
-            Item item2 = Mockito.mock(Item.class);
-            Mockito.when(item2.getHardpointType()).thenReturn(HardPointType.NONE);
-            Mockito.when(item2.getNumCriticalSlots()).thenReturn(slots - slots / 4 - freeSlots - internalFixedSlots);
-    
-            ConfiguredComponentBase cut = makeDefaultCUT();
-            cut.addItem(item1);
-            cut.addItem(item2);
-    
-            // Item to add
-            Item item = Mockito.mock(Item.class);
-            Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-    
-            // Test tight fit.
-            Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
-            assertEquals(EquipResult.SUCCESS, cut.canEquip(item));
-    
-            // Test too big
-            Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
-            assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), cut.canEquip(item));
-        }
+     * Item's are not equippable if there is no space for them
+     */
+    @Test
+    public final void testCanEquip_NoSpace() {
+        // Fixed items setup
+        internalFixedSlots = 2;
+        Item fixed1 = Mockito.mock(Item.class);
+        Mockito.when(fixed1.getNumCriticalSlots()).thenReturn(internalFixedSlots);
+        internalFixedItems.add(fixed1);
+
+        // Setup existing items in the component
+        Item item1 = Mockito.mock(Item.class);
+        Mockito.when(item1.getHardpointType()).thenReturn(HardPointType.NONE);
+        Mockito.when(item1.getNumCriticalSlots()).thenReturn(slots / 4);
+
+        int freeSlots = 2;
+        Item item2 = Mockito.mock(Item.class);
+        Mockito.when(item2.getHardpointType()).thenReturn(HardPointType.NONE);
+        Mockito.when(item2.getNumCriticalSlots()).thenReturn(slots - slots / 4 - freeSlots - internalFixedSlots);
+
+        ConfiguredComponentBase cut = makeDefaultCUT();
+        cut.addItem(item1);
+        cut.addItem(item2);
+
+        // Item to add
+        Item item = Mockito.mock(Item.class);
+        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+
+        // Test tight fit.
+        Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
+        assertEquals(EquipResult.SUCCESS, cut.canEquip(item));
+
+        // Test too big
+        Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
+        assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), cut.canEquip(item));
+    }
 
     @Test
     public final void testAddRemoveCanRemoveItem() throws Exception {
@@ -130,12 +132,81 @@ public abstract class ConfiguredComponentBaseTest {
         assertFalse(cut.canRemoveItem(ItemDB.CASE));
     }
 
+    // TODO: //Write tests for remove item with xl sides and remove HS with engine HS present.
+
+    /**
+     * Engine internals shall be counted as a normal item for now.
+     * 
+     * XXX: Consider special casing engine internals to be counted into the fixed items. Would solve some problems
+     */
     @Test
-        public final void testHasManualArmor() throws Exception {
-            assertEquals(manualArmor, makeDefaultCUT().hasManualArmor());
-            manualArmor = !manualArmor;
-            assertEquals(manualArmor, makeDefaultCUT().hasManualArmor());
-        }
+    public final void testAddRemoveItems_EngineInternals() {
+        ConfiguredComponentBase cut = makeDefaultCUT();
+
+        assertEquals(0, cut.addItem(ItemDB.AMS));
+        assertEquals(1, cut.addItem(ItemDB.AMS));
+        assertEquals(2, cut.addItem(ItemDB.AMS));
+        assertEquals(3, cut.addItem(ConfiguredComponentBase.ENGINE_INTERNAL));
+        assertEquals(4, cut.addItem(ConfiguredComponentBase.ENGINE_INTERNAL_CLAN));
+
+        assertEquals(4, cut.removeItem(ConfiguredComponentBase.ENGINE_INTERNAL_CLAN));
+        assertEquals(3, cut.removeItem(ConfiguredComponentBase.ENGINE_INTERNAL));
+    }
+
+    /**
+     * Add/Remove item for heat sinks in the engine should return special -1.
+     */
+    @Test
+    public final void testAddRemoveItems_EngineHS() {
+        slots = 8;
+        ConfiguredComponentBase cut = makeDefaultCUT();
+
+        Engine engine = mock(Engine.class);
+        int hsSlots = 4;
+        int freeSlots = 2;
+        when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+        when(engine.getNumCriticalSlots()).thenReturn(slots - freeSlots);
+        when(engine.getNumHeatsinkSlots()).thenReturn(hsSlots);
+
+        int i = 0;
+        assertEquals(i++, cut.addItem(ItemDB.AMS));
+        assertEquals(i++, cut.addItem(ItemDB.SHS));
+        assertEquals(i++, cut.addItem(ItemDB.SHS));
+        assertEquals(i++, cut.addItem(ItemDB.SHS));
+        assertEquals(i++, cut.addItem(ItemDB.SHS));
+        assertEquals(1, cut.addItem(engine)); // 4 SHS are removed and put into engine.
+        assertEquals(2, cut.addItem(ItemDB.SHS)); // Doesn't fit in HS slots
+
+        assertEquals(2, cut.removeItem(ItemDB.SHS)); // External first.
+        assertEquals(0, cut.removeItem(ItemDB.AMS));
+        assertEquals(-1, cut.removeItem(ItemDB.SHS));
+        assertEquals(-1, cut.removeItem(ItemDB.SHS));
+        assertEquals(-1, cut.addItem(ItemDB.SHS));
+        assertEquals(-1, cut.addItem(ItemDB.SHS));
+        assertEquals(1, cut.addItem(ItemDB.SHS));
+    }
+
+    @Test
+    public final void testAddRemoveItems() {
+        ConfiguredComponentBase cut = makeDefaultCUT();
+
+        assertEquals(0, cut.addItem(ItemDB.BAP));
+        assertEquals(1, cut.addItem(ItemDB.CASE));
+        assertEquals(2, cut.addItem(ItemDB.AMS));
+
+        assertEquals(1, cut.removeItem(ItemDB.CASE));
+        assertEquals(0, cut.removeItem(ItemDB.BAP));
+        assertEquals(1, cut.addItem(ItemDB.AMS));
+        assertEquals(1, cut.removeItem(ItemDB.AMS));
+        assertEquals(0, cut.removeItem(ItemDB.AMS));
+    }
+
+    @Test
+    public final void testHasManualArmor() throws Exception {
+        assertEquals(manualArmor, makeDefaultCUT().hasManualArmor());
+        manualArmor = !manualArmor;
+        assertEquals(manualArmor, makeDefaultCUT().hasManualArmor());
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public final void testSetGetArmor_WrongSide() throws Exception {
@@ -230,7 +301,7 @@ public abstract class ConfiguredComponentBaseTest {
     }
 
     @Test
-    public final void testGetEngineHeatsinks() throws Exception {
+    public final void testGetEngineHeatSinks() throws Exception {
         HeatSink fixed1 = Mockito.mock(HeatSink.class);
         internalFixedItems.add(fixed1);
 
@@ -245,11 +316,11 @@ public abstract class ConfiguredComponentBaseTest {
         cut.addItem(item1);
         cut.addItem(item2);
 
-        assertEquals(2, cut.getEngineHeatsinks());
+        assertEquals(2, cut.getEngineHeatSinks());
     }
 
     @Test
-    public final void testGetEngineHeatsinks_overflow() throws Exception {
+    public final void testGetEngineHeatSinks_overflow() throws Exception {
         HeatSink fixed1 = Mockito.mock(HeatSink.class);
         internalFixedItems.add(fixed1);
 
@@ -266,11 +337,11 @@ public abstract class ConfiguredComponentBaseTest {
         cut.addItem(item1);
         cut.addItem(item2);
 
-        assertEquals(2, cut.getEngineHeatsinks());
+        assertEquals(2, cut.getEngineHeatSinks());
     }
 
     @Test
-    public final void testGetEngineHeatsinksMax_fixedEngine() throws Exception {
+    public final void testGetEngineHeatSinksMax_fixedEngine() throws Exception {
         Engine fixed1 = Mockito.mock(Engine.class);
         Mockito.when(fixed1.getNumHeatsinkSlots()).thenReturn(3);
         internalFixedItems.add(fixed1);
@@ -278,11 +349,11 @@ public abstract class ConfiguredComponentBaseTest {
         Item fixed2 = Mockito.mock(Item.class);
         internalFixedItems.add(fixed2);
 
-        assertEquals(3, makeDefaultCUT().getEngineHeatsinksMax());
+        assertEquals(3, makeDefaultCUT().getEngineHeatSinksMax());
     }
 
     @Test
-    public final void testGetEngineHeatsinksMax_userEngine() throws Exception {
+    public final void testGetEngineHeatSinksMax_userEngine() throws Exception {
         Item item1 = Mockito.mock(Item.class);
         Engine item2 = Mockito.mock(Engine.class);
         Mockito.when(item2.getNumHeatsinkSlots()).thenReturn(2);
@@ -291,7 +362,7 @@ public abstract class ConfiguredComponentBaseTest {
         cut.addItem(item1);
         cut.addItem(item2);
 
-        assertEquals(2, cut.getEngineHeatsinksMax());
+        assertEquals(2, cut.getEngineHeatSinksMax());
     }
 
     @Test

@@ -39,7 +39,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.LoadoutMessage.Type;
 import org.lisoft.lsml.messages.Message;
@@ -192,11 +192,8 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
                 changeLoadout(currentLoadout);
             }
         }
-        else if (aMsg instanceof ComponentMessage) {
-            ComponentMessage msg = (ComponentMessage) aMsg;
-            if (msg.isForMe(currentLoadout) && msg.isItemsChanged()) {
-                changeLoadout(currentLoadout);
-            }
+        else if (aMsg.isForMe(currentLoadout) && aMsg instanceof ItemMessage) {
+            changeLoadout(currentLoadout);
         }
     }
 

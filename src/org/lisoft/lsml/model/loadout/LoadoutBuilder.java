@@ -45,8 +45,8 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * <p>
  * One passes the {@link Command}s that would be used to naively construct the loadout to the {@link #push(Command)}
  * method. Once all operations have been pushed, one applies the operations loadout with the {@link #apply()} method.
- * The call to {@link #apply()} will re-order and apply the pushed {@link Command}s in an order that allows the
- * loadout to be constructed without violating validity invariants during creation.
+ * The call to {@link #apply()} will re-order and apply the pushed {@link Command}s in an order that allows the loadout
+ * to be constructed without violating validity invariants during creation.
  * 
  * @author Li Song
  */
@@ -93,20 +93,20 @@ public class LoadoutBuilder {
             Integer priorityRHS = CLASS_PRIORITY_ORDER.get(aRHS.getClass());
 
             if (null == priorityLHS) {
-                throw new IllegalArgumentException("Class missing from priority map: "
-                        + aLHS.getClass().getSimpleName());
+                throw new IllegalArgumentException(
+                        "Class missing from priority map: " + aLHS.getClass().getSimpleName());
             }
 
             if (null == priorityRHS) {
-                throw new IllegalArgumentException("Class missing from priority map: "
-                        + aRHS.getClass().getSimpleName());
+                throw new IllegalArgumentException(
+                        "Class missing from priority map: " + aRHS.getClass().getSimpleName());
             }
             return priorityLHS.compareTo(priorityRHS);
         }
     }
 
     final private List<Command> operations = new ArrayList<>(20);
-    private List<Throwable>       errors     = null;
+    private List<Throwable>     errors     = null;
 
     public void push(final Command aOperation) {
         operations.add(aOperation);

@@ -55,7 +55,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         final Node           parent;
         final int            score;
 
-        final Item targetItem;
+        final Item           targetItem;
 
         Node(LoadoutBase<?> aRoot, Item aItem) {
             parent = null;
@@ -132,9 +132,9 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
     private final List<Location> partTraversalOrder;
     private final CommandStack   stack          = new CommandStack(0);
 
-    public CmdAutoAddItem(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, Item anItem) {
+    public CmdAutoAddItem(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, Item aItem) {
         super(aLoadout, aMessageDelivery, "auto place item");
-        itemToPlace = anItem;
+        itemToPlace = aItem;
         for (ConfiguredComponentBase part : aLoadout.getCandidateLocationsForItem(itemToPlace)) {
             validLocations.add(part.getInternalComponent().getLocation());
         }
@@ -143,9 +143,14 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
 
     @Override
     protected void buildCommand() throws EquipResult {
+        EquipResult globalResult = loadout.canEquipGlobal(itemToPlace);
+        if (globalResult != EquipResult.SUCCESS) {
+            throw globalResult;
+        }
+
         // If it can go into the engine, put it there.
         ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
-        if (itemToPlace instanceof HeatSink && ct.getEngineHeatsinks() < ct.getEngineHeatsinksMax()
+        if (itemToPlace instanceof HeatSink && ct.getEngineHeatSinks() < ct.getEngineHeatSinksMax()
                 && EquipResult.SUCCESS == ct.canEquip(itemToPlace)) {
             addOp(new CmdAddItem(messageBuffer, loadout, ct, itemToPlace));
             return;
@@ -161,7 +166,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             closed.add(node);
 
             // Are we there yet?
-            if (EquipResult.SUCCESS == node.data.canEquip(itemToPlace)) {
+            if (EquipResult.SUCCESS == node.data.canEquipDirectly(itemToPlace)) {
                 applySolution(node);
                 return; // Yes we are!
             }
@@ -267,7 +272,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
                 }
                 for (Item item : dstPart.getItemsEquipped()) {
                     // The item has to clear enough room to make our item fit.
-                    if (item instanceof HeatSink && dstPart.getEngineHeatsinks() > 0)
+                    if (item instanceof HeatSink && dstPart.getEngineHeatSinks() > 0)
                         continue; // Engine HS will not clear slots...
                     if (item.getNumCriticalSlots() < minItemSize)
                         continue;

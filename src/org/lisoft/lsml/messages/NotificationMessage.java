@@ -79,6 +79,11 @@ public class NotificationMessage implements Message {
     }
 
     @Override
+    public String toString() {
+        return severity + " for " + loadout.getName() + ": " + message;
+    }
+
+    @Override
     public boolean isForMe(LoadoutBase<?> aLoadout) {
         return loadout == aLoadout;
     }

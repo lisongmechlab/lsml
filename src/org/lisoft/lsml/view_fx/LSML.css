@@ -1,0 +1,111 @@
+.root {
+	-fx-text-fill: white;
+	-fx-base: #29292b;
+	-fx-font-family: Quark-Bold;
+	-fx-font-size: 8pt;
+
+	item-colour-energy: #9b8c16;
+	item-colour-ballistic: #6719cd;
+	item-colour-ballistic-ammo: #451189;
+	item-colour-missile: #008b76;
+	item-colour-missile-ammo: #005c4f;
+	item-colour-ams: #78a62d;
+	item-colour-ams-ammo: #606f1e;
+	item-colour-ecm: #cb5d01;
+	item-colour-misc: #0067a5;
+	item-colour-jj: #0067a5;
+	item-colour-engine: #0067a5;
+	item-colour-hs: #004069;
+	item-colour-internal: #d3d7cf;
+	item-colour-dynamic: #e1e6dd;
+	item-colour-disabled: #404040;
+}
+
+.ArmStrut {
+	-fx-min-height: 20.0px;
+	-fx-pref-height: 100.0px;
+}
+
+.TorsoStrut{
+	-fx-min-height: 10.0px;
+	-fx-pref-height: 50.0px;
+}
+
+.Equipped{
+	-fx-background-insets: 1;
+	-fx-background-radius: 0 6 0 6;
+	-fx-font-size: 8pt;
+	-fx-font-weight: bolder;
+	-fx-alignment: top-left;
+	-fx-padding: 3pt;
+}
+
+.ItemEnergy{
+	-fx-text-fill: white;
+	-fx-background: item-colour-energy;
+}
+
+.ItemBallistic {
+	-fx-text-fill: white;
+	-fx-background: item-colour-ballistic;
+}
+
+.ItemBallisticAmmo{
+	-fx-text-fill: white;
+	-fx-background: item-colour-ballistic-ammo;
+}
+
+.ItemMissile{
+	-fx-text-fill: white;
+	-fx-background: item-colour-missile;
+}
+
+.ItemMissileAmmo{
+	-fx-text-fill: white;
+	-fx-background: item-colour-missile-ammo;
+}
+
+.ItemAms{
+	-fx-text-fill: white;
+	-fx-background: item-colour-ams;
+}
+
+.ItemAmsAmmo{
+	-fx-text-fill: white;
+	-fx-background: item-colour-ams-ammo;
+}
+        
+.ItemEcm{
+	-fx-text-fill: white;
+	-fx-background: item-colour-ecm;
+}
+
+.ItemMisc{
+	-fx-text-fill: white;
+	-fx-background: item-colour-misc;
+}
+
+.ItemJumpJet{
+	-fx-text-fill: white;
+	-fx-background: item-colour-jj;
+}
+
+.ItemEngine{
+	-fx-text-fill: white;
+	-fx-background: item-colour-engine;
+}
+
+.ItemHeatSink{
+	-fx-text-fill: white;
+	-fx-background: item-colour-hs
+}
+
+.ItemInternal{
+	-fx-text-fill: white;
+	-fx-background: item-colour-internal;
+}
+
+.ItemDynamic{
+	-fx-text-fill: white;
+	-fx-background: item-colour-dynamic;
+}

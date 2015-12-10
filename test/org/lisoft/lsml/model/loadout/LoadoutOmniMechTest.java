@@ -122,7 +122,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
     @Test
     public void testCanEquip_NoEngine() throws Exception {
         Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
-        assertEquals(EquipResult.make(EquipResultType.EngineAlreadyEquipped), makeDefaultCUT().canEquip(item));
+        assertEquals(EquipResult.make(EquipResultType.EngineAlreadyEquipped), makeDefaultCUT().canEquipDirectly(item));
     }
 
     /**

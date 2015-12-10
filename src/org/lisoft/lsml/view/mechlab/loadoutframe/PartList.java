@@ -204,8 +204,8 @@ public class PartList extends JList<Item> {
                 case EngineHeatSink: {
                     setTooltipForItem(item);
                     setText(isCompact ? Model.HEATSINKS_COMPACT_STRING
-                            : Model.HEATSINKS_STRING + component.getEngineHeatsinks() + "/"
-                                    + component.getEngineHeatsinksMax());
+                            : Model.HEATSINKS_STRING + component.getEngineHeatSinks() + "/"
+                                    + component.getEngineHeatSinksMax());
                     StyleManager.styleItemBottom(this, item);
                     break;
                 }
@@ -467,7 +467,7 @@ public class PartList extends JList<Item> {
 
         switch (state.getRenderType()) {
             case EngineHeatSink: {
-                if (aItem instanceof HeatSink && EquipResult.SUCCESS == loadout.canEquip(aItem)
+                if (aItem instanceof HeatSink && EquipResult.SUCCESS == loadout.canEquipDirectly(aItem)
                         && EquipResult.SUCCESS == component.canEquip(aItem)) {
                     cmdStack.pushAndApply(new CmdAddItem(xBar, loadout, component, aItem));
                 }
@@ -483,7 +483,7 @@ public class PartList extends JList<Item> {
                 // Fall through
             }
             case Empty: {
-                if (EquipResult.SUCCESS == loadout.canEquip(aItem)
+                if (EquipResult.SUCCESS == loadout.canEquipDirectly(aItem)
                         && EquipResult.SUCCESS == component.canEquip(aItem)) {
                     cmdStack.pushAndApply(new CmdAddItem(xBar, loadout, component, aItem));
                 }

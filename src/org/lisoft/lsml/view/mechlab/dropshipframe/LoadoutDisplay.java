@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package org.lisoft.lsml.view.mechlab.dropshipframe;
 
@@ -38,8 +38,8 @@ import javax.swing.SwingConstants;
 
 import org.lisoft.lsml.command.CmdDropShipSetLoadout;
 import org.lisoft.lsml.command.CmdMoveLoadoutFromGarageToDropShip;
-import org.lisoft.lsml.messages.ComponentMessage;
 import org.lisoft.lsml.messages.DropShipMessage;
+import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -143,8 +143,8 @@ public class LoadoutDisplay extends JPanel implements MessageReceiver {
             @Override
             public void actionPerformed(ActionEvent aE) {
                 try {
-                    ProgramInit.lsml().garageCmdStack.pushAndApply(
-                            new CmdDropShipSetLoadout(ProgramInit.lsml().xBar, dropShip, bayIndex, null));
+                    ProgramInit.lsml().garageCmdStack
+                            .pushAndApply(new CmdDropShipSetLoadout(ProgramInit.lsml().xBar, dropShip, bayIndex, null));
                 }
                 catch (Exception e) {
                     // There is no reason for this to fail, promote to unchecked.
@@ -249,11 +249,8 @@ public class LoadoutDisplay extends JPanel implements MessageReceiver {
         else {
             LoadoutBase<?> loadout = dropShip.getMech(bayIndex);
             if (loadout != null && aMsg.isForMe(loadout)) {
-                if (aMsg instanceof ComponentMessage) {
-                    ComponentMessage msg = (ComponentMessage) aMsg;
-                    if (msg.isItemsChanged()) {
-                        update();
-                    }
+                if (aMsg instanceof ItemMessage) {
+                    update();
                 }
             }
         }

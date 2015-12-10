@@ -20,7 +20,6 @@
 package org.lisoft.lsml.command;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -35,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.messages.ComponentMessage;
 import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -43,7 +43,6 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Matchers;
-import org.mockito.Mockito;
 
 public class CmdStripComponentTest {
     private MockLoadoutContainer mlc        = new MockLoadoutContainer();
@@ -69,11 +68,11 @@ public class CmdStripComponentTest {
     public void testStripComponent_EngineHs() throws Exception {
         Item engine = ItemDB.lookup("STD ENGINE 325");
         HeatSink hs = ItemDB.SHS;
-        Mockito.when(mlc.heatSinkUpgrade.getHeatSinkType()).thenReturn(hs);
-        Mockito.when(mlc.ct.getEngineHeatsinks()).thenReturn(3);
-        Mockito.when(mlc.ct.getItemsEquipped()).thenReturn(items);
-        Mockito.when(mlc.ct.canRemoveItem(hs)).thenReturn(true);
-        Mockito.when(mlc.ct.canRemoveItem(engine)).thenReturn(true);
+        when(mlc.heatSinkUpgrade.getHeatSinkType()).thenReturn(hs);
+        when(mlc.ct.getEngineHeatSinks()).thenReturn(3);
+        when(mlc.ct.getItemsEquipped()).thenReturn(items);
+        when(mlc.ct.canRemoveItem(hs)).thenReturn(true);
+        when(mlc.ct.canRemoveItem(engine)).thenReturn(true);
         items.add(hs);
         items.add(hs);
         items.add(hs);
@@ -87,7 +86,7 @@ public class CmdStripComponentTest {
         os.pushAndApply(cut);
         verify(mlc.ct, times(1)).removeItem(engine);
         verify(mlc.ct, times(4)).removeItem(hs);
-        verify(messages, atLeastOnce()).post(new ComponentMessage(mlc.ct, Type.ItemRemoved));
+        verify(messages, times(5)).post(any(ItemMessage.class));
 
         // Test undo
         reset(mlc.rt);
@@ -95,13 +94,13 @@ public class CmdStripComponentTest {
         os.undo();
         verify(mlc.ct, times(1)).addItem(engine);
         verify(mlc.ct, times(4)).addItem(hs);
-        verify(messages, atLeastOnce()).post(new ComponentMessage(mlc.ct, Type.ItemAdded));
+        verify(messages, times(5)).post(any(ItemMessage.class));
     }
 
     @Test
     public void testStripComponent_NoInternals() throws Exception {
         Item ha = ItemDB.HA;
-        Mockito.when(mlc.ct.getItemsEquipped()).thenReturn(items);
+        when(mlc.ct.getItemsEquipped()).thenReturn(items);
         items.add(ha);
 
         CmdStripComponent cut = new CmdStripComponent(messages, mlc.loadout, mlc.ct);
@@ -110,14 +109,14 @@ public class CmdStripComponentTest {
         // Test apply
         os.pushAndApply(cut);
         verify(mlc.ct, never()).removeItem(any(Item.class));
-        verify(messages, never()).post(new ComponentMessage(mlc.rt, Type.ItemRemoved));
+        verify(messages, never()).post(any(ItemMessage.class));
 
         // Test undo
         reset(mlc.rt);
         reset(messages);
         os.undo();
         verify(mlc.ct, never()).addItem(any(Item.class));
-        verify(messages, never()).post(new ComponentMessage(mlc.rt, Type.ItemAdded));
+        verify(messages, never()).post(any(ItemMessage.class));
     }
 
     @Test
@@ -173,7 +172,7 @@ public class CmdStripComponentTest {
         verify(mlc.rt).removeItem(ItemDB.ECM);
         verify(mlc.rt).setArmor(ArmorSide.FRONT, 0, false);
         verify(mlc.rt).setArmor(ArmorSide.BACK, 0, false);
-        verify(messages, times(1)).post(new ComponentMessage(mlc.rt, Type.ItemRemoved));
+        verify(messages, times(1)).post(new ItemMessage(mlc.rt, ItemMessage.Type.Removed, ItemDB.ECM, 0));
         verify(messages, times(2)).post(new ComponentMessage(mlc.rt, Type.ArmorChanged, false));
     }
 
@@ -199,7 +198,7 @@ public class CmdStripComponentTest {
         os.pushAndApply(cut);
 
         verify(mlc.rt).removeItem(ItemDB.ECM);
-        verify(messages, times(1)).post(new ComponentMessage(mlc.rt, Type.ItemRemoved));
+        verify(messages, times(1)).post(new ItemMessage(mlc.rt, ItemMessage.Type.Removed, ItemDB.ECM, 0));
         verify(messages, never()).post(new ComponentMessage(mlc.rt, Type.ArmorChanged, false));
     }
 }

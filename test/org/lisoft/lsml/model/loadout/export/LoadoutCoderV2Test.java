@@ -94,6 +94,6 @@ public class LoadoutCoderV2Test {
                 .toCharArray()));
 
         assertTrue(l.getFreeMass() < 0.005);
-        assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatsinks());
+        assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());
     }
 }

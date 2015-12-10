@@ -26,6 +26,7 @@ import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
@@ -54,14 +55,30 @@ public class ConfiguredComponentStandard extends ConfiguredComponentBase {
             return superResult;
         }
 
-        if (aItem instanceof HeatSink && getEngineHeatsinks() < getEngineHeatsinksMax()) {
+        if (aItem instanceof HeatSink && getEngineHeatSinks() < getEngineHeatSinksMax()) {
             return EquipResult.SUCCESS;
         }
 
         if (aItem == ItemDB.CASE && getItemsEquipped().contains(ItemDB.CASE))
             return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.ComponentAlreadyHasCase);
 
-        if (getSlotsFree() < aItem.getNumCriticalSlots()) {
+        int engineHsDiscount = 0;
+        if (aItem instanceof Engine) {
+            Engine engine = (Engine) aItem;
+            int heatsinks = 0;
+            HeatSink hsType = null;
+            for (Item item : getItemsEquipped()) {
+                if (item instanceof HeatSink) {
+                    heatsinks++;
+                    hsType = (HeatSink) item;
+                }
+            }
+            if (hsType != null) {
+                engineHsDiscount = Math.min(heatsinks, engine.getNumHeatsinkSlots()) * hsType.getNumCriticalSlots();
+            }
+        }
+
+        if (getSlotsFree() + engineHsDiscount < aItem.getNumCriticalSlots()) {
             return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
         }
         return EquipResult.SUCCESS;

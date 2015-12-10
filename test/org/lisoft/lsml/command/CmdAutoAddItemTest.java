@@ -20,31 +20,39 @@
 package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ItemMessage;
+import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.ListArrayUtils;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -57,7 +65,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CmdAutoAddItemTest {
     @Mock
-    private MessageXBar xBar;
+    private MessageXBar  xBar;
 
     private CommandStack stack = new CommandStack(0);
 
@@ -180,46 +188,39 @@ public class CmdAutoAddItemTest {
     @Test
     public void testMoveItem_SwapItems() throws Exception {
         // Setup
-        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("JR7-O"));
-        stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso),
-                ItemDB.lookup("XL ENGINE 200")));
-        stack.pushAndApply(
-                new CmdAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso), ItemDB.lookup("LRM 10")));
-        stack.pushAndApply(
-                new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("LRM 10")));
-        stack.pushAndApply(
-                new CmdAddItem(xBar, loadout, loadout.getComponent(Location.LeftArm), ItemDB.lookup("LRM 5")));
-        Mockito.reset(xBar);
+        ChassisBase chassis = ChassisDB.lookup("JR7-O");
+        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
+        ConfiguredComponentStandard la = loadout.getComponent(Location.LeftArm);
+        ConfiguredComponentStandard ra = loadout.getComponent(Location.RightArm);
+        ConfiguredComponentStandard ct = loadout.getComponent(Location.CenterTorso);
+        Item lrm5 = ItemDB.lookup("LRM 5");
+        Item lrm10 = ItemDB.lookup("LRM 10");
+        Item engine = ItemDB.lookup("XL ENGINE 200");
+
+        ct.addItem(engine);
+        ct.addItem(lrm10);
+        ra.addItem(lrm10);
+        la.addItem(lrm5);
         // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.lookup("LRM 5")));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, lrm5));
 
-        // Verify
-        List<Item> allItems = new ArrayList<>();
-        for (Item item : loadout.items()) {
-            if (item instanceof Internal)
-                continue;
-            allItems.add(item);
-        }
-        assertEquals(5, allItems.size());
-        assertTrue(allItems.remove(ItemDB.lookup("LRM 10")));
-        assertTrue(allItems.remove(ItemDB.lookup("LRM 10")));
-        assertTrue(allItems.remove(ItemDB.lookup("LRM 5")));
-        assertTrue(allItems.remove(ItemDB.lookup("LRM 5")));
-        assertTrue(allItems.remove(ItemDB.lookup("XL ENGINE 200")));
+        // Verify (this is the only valid solution)
+        assertTrue(ListArrayUtils.equalsUnordered(ct.getItemsEquipped(), Arrays.asList(engine, lrm5, lrm5)));
+        assertTrue(ListArrayUtils.equalsUnordered(la.getItemsEquipped(), Arrays.asList(lrm10)));
+        assertTrue(ListArrayUtils.equalsUnordered(ra.getItemsEquipped(), Arrays.asList(lrm10)));
 
-        // 1 + 1, move one lrm 5 here and add the wanted lrm 5
-        verify(xBar, times(2)).post(new ComponentMessage(loadout.getComponent(Location.CenterTorso), Type.ItemAdded));
-        verify(xBar, times(1)).post(new ComponentMessage(loadout.getComponent(Location.CenterTorso), Type.ItemRemoved));
-        verify(xBar, times(1)).post(new ComponentMessage(loadout.getComponent(Location.LeftArm), Type.ItemAdded));
-        verify(xBar, times(1)).post(new ComponentMessage(loadout.getComponent(Location.LeftArm), Type.ItemRemoved));
+        verify(xBar).post(new ItemMessage(ct, Type.Removed, lrm10, 1));
+        verify(xBar).post(new ItemMessage(ct, Type.Added, lrm5, 1));
+        verify(xBar).post(new ItemMessage(ct, Type.Added, lrm5, 2));
+        verify(xBar).post(new ItemMessage(la, Type.Removed, lrm5, 0));
+        verify(xBar).post(new ItemMessage(la, Type.Added, lrm10, 0));
     }
 
     /**
-     * {@link CmdAutoAddItem} shall throw an {@link EquipResult} if the item cannot be auto added on any
-     * permutation of the loadout.
+     * {@link CmdAutoAddItem} shall throw an {@link EquipResult} if the item cannot be auto added on any permutation of
+     * the loadout.
      * 
      * @throws Exception
      */
@@ -301,10 +302,11 @@ public class CmdAutoAddItemTest {
     /**
      * {@link CmdAutoAddItem} shall try to move items in order to make room for the added item if there is no room in
      * any component with a hard point but there are items that could be moved to make room.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
-    public void testMoveItem_()throws Exception  {
+    public void testMoveItem_() throws Exception {
         // Setup
         Item ac20 = ItemDB.lookup("AC/20");
         Item ac10 = ItemDB.lookup("AC/10");
@@ -337,52 +339,73 @@ public class CmdAutoAddItemTest {
      */
     @Test
     public void testAddItem() throws Exception {
-        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
-
+        ChassisBase chassis = ChassisDB.lookup("AS7-D-DC");
         Item mlas = ItemDB.lookup("MEDIUM LASER");
         Item ac20 = ItemDB.lookup("AC/20");
         Item lrm5 = ItemDB.lookup("LRM 5");
         Item lrm15 = ItemDB.lookup("LRM 15");
         Item std250 = ItemDB.lookup("STD ENGINE 250");
+        HeatSink dhs = ItemDB.DHS;
+
+        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
+        ConfiguredComponentStandard ct = loadout.getComponent(Location.CenterTorso);
+        ConfiguredComponentStandard lt = loadout.getComponent(Location.LeftTorso);
+        ConfiguredComponentStandard rt = loadout.getComponent(Location.RightTorso);
+        ConfiguredComponentStandard la = loadout.getComponent(Location.LeftArm);
+        ConfiguredComponentStandard ra = loadout.getComponent(Location.RightArm);
+        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+
+        InOrder io = Mockito.inOrder(xBar);
 
         stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, mlas));
-        assertTrue(loadout.getComponent(Location.RightArm).getItemsEquipped().contains(mlas));
+        assertTrue(ra.getItemsEquipped().contains(mlas));
+        io.verify(xBar).post(new ItemMessage(ra, Type.Added, mlas, 0));
 
         stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, mlas));
-        assertTrue(loadout.getComponent(Location.LeftArm).getItemsEquipped().contains(mlas));
+        assertTrue(la.getItemsEquipped().contains(mlas));
+        io.verify(xBar).post(new ItemMessage(la, Type.Added, mlas, 0));
 
         stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ac20));
-        assertTrue(loadout.getComponent(Location.RightTorso).getItemsEquipped().contains(ac20));
+        assertTrue(rt.getItemsEquipped().contains(ac20));
+        io.verify(xBar).post(new ItemMessage(rt, Type.Added, ac20, 0));
 
         stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, lrm5));
-        assertTrue(loadout.getComponent(Location.LeftTorso).getItemsEquipped().contains(lrm5));
+        assertTrue(lt.getItemsEquipped().contains(lrm5));
+        io.verify(xBar).post(new ItemMessage(lt, Type.Added, lrm5, 0));
 
         stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, lrm15));
-        assertTrue(loadout.getComponent(Location.LeftTorso).getItemsEquipped().contains(lrm15));
+        assertTrue(lt.getItemsEquipped().contains(lrm15));
+        io.verify(xBar).post(new ItemMessage(lt, Type.Added, lrm15, 1));
 
         stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, std250));
-        assertTrue(loadout.getComponent(Location.CenterTorso).getItemsEquipped().contains(std250));
+        assertTrue(ct.getItemsEquipped().contains(std250));
+        io.verify(xBar).post(new ItemMessage(ct, Type.Added, std250, 0));
 
         // Fill right arm
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.DHS));
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.DHS));
-        assertTrue(loadout.getComponent(Location.RightArm).getItemsEquipped().contains(ItemDB.DHS));
-        verify(xBar, times(1 + 2)).post(new ComponentMessage(loadout.getComponent(Location.RightArm), Type.ItemAdded));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, dhs));
+        assertEquals(1, ListArrayUtils.countByType(ra.getItemsEquipped(), HeatSink.class));
+        io.verify(xBar).post(new ItemMessage(ra, Type.Added, dhs, 1));
+
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, dhs));
+        assertEquals(2, ListArrayUtils.countByType(ra.getItemsEquipped(), HeatSink.class));
+        io.verify(xBar).post(new ItemMessage(ra, Type.Added, dhs, 2));
 
         // Skips RA, RT, RL, HD, CT (too few slots) and places the item in LT
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.DHS));
-        assertTrue(loadout.getComponent(Location.LeftTorso).getItemsEquipped().contains(ItemDB.DHS));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, dhs));
+        assertTrue(lt.getItemsEquipped().contains(dhs));
+        io.verify(xBar).post(new ItemMessage(lt, Type.Added, dhs, 2));
 
         // Skips RA (too few slots) and places the item in RT
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.BAP));
-        assertTrue(loadout.getComponent(Location.RightTorso).getItemsEquipped().contains(ItemDB.BAP));
+        Item bap = ItemDB.BAP;
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, bap));
+        assertTrue(rt.getItemsEquipped().contains(bap));
+        io.verify(xBar).post(new ItemMessage(rt, Type.Added, bap, 1));
     }
 
     /**
      * {@link CmdAutoAddItem}shall prioritize engine slots for heat sinks
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testAddItem_engineHS() throws Exception {
@@ -394,13 +417,36 @@ public class CmdAutoAddItemTest {
         assertTrue(loadout.getComponent(Location.CenterTorso).getItemsEquipped()
                 .contains(ItemDB.lookup("STD ENGINE 300")));
 
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.SHS)); // Engine HS slot 1
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.SHS)); // Engine HS slot 2
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.SHS)); // Right arm
+        HeatSink shs = ItemDB.SHS;
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, shs)); // Engine HS slot 1
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, shs)); // Engine HS slot 2
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, shs)); // Right arm
 
-        verify(xBar, times(1 + 2))
-                .post(new ComponentMessage(loadout.getComponent(Location.CenterTorso), Type.ItemAdded));
-        assertTrue(loadout.getComponent(Location.CenterTorso).getItemsEquipped().contains(ItemDB.SHS)); // 1 remaining
-        assertTrue(loadout.getComponent(Location.RightArm).getItemsEquipped().contains(ItemDB.SHS));
+        verify(xBar, times(2)).post(new ItemMessage(loadout.getComponent(Location.CenterTorso), Type.Added, shs, -1));
+        verify(xBar).post(new ItemMessage(loadout.getComponent(Location.RightArm), Type.Added, shs, 0));
+        assertTrue(loadout.getComponent(Location.CenterTorso).getItemsEquipped().contains(shs)); // 1 remaining
+        assertTrue(loadout.getComponent(Location.RightArm).getItemsEquipped().contains(shs));
+    }
+
+    /**
+     * {@link CmdAutoAddItem}shall throw the correct error if the item is not feasible globally.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testAddItem_NotGloballyFeasible() throws Exception {
+        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
+                .produceEmpty(ChassisDB.lookup("JR7-D"));
+
+        try {
+            stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.ECM));
+            fail("Expected exception");
+        }
+        catch (EquipResult equipResult) {
+            assertSame(EquipResult.make(EquipResultType.NotSupported), equipResult);
+        }
+        catch (Throwable t) {
+            fail("Wrong exeption type!");
+        }
     }
 }

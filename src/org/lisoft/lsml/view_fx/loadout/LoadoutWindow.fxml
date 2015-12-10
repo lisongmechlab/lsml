@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@../LSML.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindowController">
+  <center>
+    <HBox fx:id="layoutContainer" />
+  </center>
+  <left>
+    <TreeTableView fx:id="equipmentList" onDragDetected="#equipmentDragDetected" showRoot="false">
+      <columnResizePolicy>
+        <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+      </columnResizePolicy>
+    </TreeTableView>
+  </left>
+  <right>
+    <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
+      <content>
+        <VBox>
+          <children>
+            <TitledPane animated="false" text="Structure">
+              <content>
+                <GridPane hgap="5.0" vgap="5.0">
+                  <columnConstraints>
+                    <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+                    <ColumnConstraints hgrow="SOMETIMES" />
+                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
+                  </rowConstraints>
+                  <children>
+                    <ProgressBar prefWidth="200.0" progress="0.0" GridPane.columnIndex="1" />
+                    <ProgressBar prefWidth="200.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Mass:" />
+                    <Label text="Slots:" GridPane.rowIndex="1" />
+                    <Label text="x.xx free" GridPane.columnIndex="2" />
+                    <Label text="xx free" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                    <Label text="Type:" GridPane.rowIndex="2" />
+                    <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                      <children>
+                        <ToggleButton mnemonicParsing="false" text="Endo-Steel" />
+                        <Label text="14 Slots, 5.0 tons" />
+                      </children>
+                    </HBox>
+                  </children>
+                </GridPane>
+              </content>
+            </TitledPane>
+            <TitledPane animated="false" text="Armor">
+              <content>
+                <GridPane hgap="5.0" vgap="5.0">
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" />
+                    <ColumnConstraints hgrow="SOMETIMES" />
+                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                    <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                    <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                    <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                  <children>
+                    <Slider majorTickUnit="5.0" max="16.0" min="1.0" minorTickCount="4" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Slider majorTickUnit="100.0" max="400.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Amount:" GridPane.rowIndex="2" />
+                    <Label text="F/R:" GridPane.rowIndex="3" />
+                    <ProgressBar prefWidth="200.0" progress="0.0" GridPane.columnIndex="1" />
+                    <Label text="Armor:" />
+                    <Label text="x free" GridPane.columnIndex="2" />
+                    <Label text="Type:" GridPane.rowIndex="1" />
+                    <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                      <children>
+                        <ToggleButton mnemonicParsing="false" text="Ferro-Fibrous" />
+                        <Label text="14 Slots, 1.3 tons" />
+                      </children>
+                    </HBox>
+                  </children>
+                </GridPane>
+              </content>
+            </TitledPane>
+            <TitledPane animated="false" text="Mobility">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </TitledPane>
+            <TitledPane animated="false" text="Offense">
+              <content>
+                <VBox />
+              </content>
+            </TitledPane>
+          </children>
+        </VBox>
+      </content>
+    </ScrollPane>
+  </right>
+  <top>
+    <MenuBar BorderPane.alignment="CENTER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Close" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Redo" />
+            <MenuItem mnemonicParsing="false" text="Undo" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+  </top>
+  <bottom>
+    <TextField text="Status" BorderPane.alignment="CENTER" />
+  </bottom>
+</BorderPane>

@@ -355,6 +355,6 @@ public class MechGarageTest {
         XStream stream = LoadoutBase.loadoutXstream();
         LoadoutStandard loadout = (LoadoutStandard) stream.fromXML(xml);
 
-        assertEquals(6, loadout.getComponent(Location.CenterTorso).getEngineHeatsinks());
+        assertEquals(6, loadout.getComponent(Location.CenterTorso).getEngineHeatSinks());
     }
 }

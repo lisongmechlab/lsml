@@ -22,9 +22,10 @@ package org.lisoft.lsml.messages;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 
+@Deprecated // Introduce a new armor/omnipod message instead
 public class ComponentMessage implements Message {
     public enum Type {
-        ArmorChanged, ArmorDistributionUpdateRequest, ItemAdded, ItemRemoved, ItemsChanged, OmniPodChanged
+        ArmorChanged, ArmorDistributionUpdateRequest, OmniPodChanged
     }
 
     /**
@@ -46,7 +47,7 @@ public class ComponentMessage implements Message {
 
     @Override
     public boolean affectsHeatOrDamage() {
-        return isItemsChanged();
+        return type == Type.OmniPodChanged;
     }
 
     @Override
@@ -71,10 +72,6 @@ public class ComponentMessage implements Message {
     @Override
     public boolean isForMe(LoadoutBase<?> aLoadout) {
         return aLoadout.getComponents().contains(component);
-    }
-
-    public boolean isItemsChanged() {
-        return type == Type.ItemAdded || type == Type.ItemRemoved || type == Type.ItemsChanged;
     }
 
     @Override

@@ -64,7 +64,7 @@ public class CmdChangeEngine extends CompositeCommand {
         
         double freeMass = loadout.getFreeMass() - (newEngine.getMass() - oldEngine.getMass());
 
-        int hsToAdd = Math.min(ct.getEngineHeatsinks(), newEngine.getNumHeatsinkSlots());
+        int hsToAdd = Math.min(ct.getEngineHeatSinks(), newEngine.getNumHeatsinkSlots());
         hsToAdd = Math.min(hsToAdd, (int)freeMass);
         
         addOp(new CmdRemoveItem(messageBuffer, loadout, ct, oldEngine));

@@ -99,7 +99,7 @@ public class AddItem extends AbstractAction {
 
     @Override
     public boolean isEnabled() {
-        boolean canEquipGlobally = EquipResult.SUCCESS == loadout.canEquip(item);
+        boolean canEquipGlobally = EquipResult.SUCCESS == loadout.canEquipDirectly(item);
         if (component != null)
             return canEquipGlobally && EquipResult.SUCCESS == component.canEquip(item);
         return canEquipGlobally;

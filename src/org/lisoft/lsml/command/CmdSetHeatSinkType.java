@@ -119,7 +119,7 @@ public class CmdSetHeatSinkType extends CompositeCommand {
                 }
                 // Note: This will not be correct for omnimechs, but you can't change heat sink upgrades on them
                 // anyways.
-                globalEngineHs += Math.min(locallyRemoved, component.getEngineHeatsinksMax());
+                globalEngineHs += Math.min(locallyRemoved, component.getEngineHeatSinksMax());
             }
 
             int globalSlotsFree = (globallyRemoved - globalEngineHs) * oldHsType.getNumCriticalSlots()
@@ -136,13 +136,13 @@ public class CmdSetHeatSinkType extends CompositeCommand {
                     }
                 }
 
-                int hsInEngine = Math.min(hsRemoved, component.getEngineHeatsinksMax());
+                int hsInEngine = Math.min(hsRemoved, component.getEngineHeatSinksMax());
                 int slotsFreed = (hsRemoved - hsInEngine) * oldHsType.getNumCriticalSlots();
                 int slotsFree = Math.min(slotsFreed + component.getSlotsFree(), globalSlotsFree);
                 int hsToAdd = Math.min(hsRemoved + globalHsLag,
                         hsInEngine + slotsFree / newHsType.getNumCriticalSlots());
 
-                globalSlotsFree -= newHsType.getNumCriticalSlots() * (hsToAdd - component.getEngineHeatsinksMax());
+                globalSlotsFree -= newHsType.getNumCriticalSlots() * (hsToAdd - component.getEngineHeatSinksMax());
                 globalHsLag += hsRemoved - hsToAdd;
 
                 while (hsToAdd > 0) {

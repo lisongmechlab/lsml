@@ -22,6 +22,11 @@ package org.lisoft.lsml.command;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.ComponentMessage;
 import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.UpgradesMessage;
@@ -48,7 +54,6 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -66,7 +71,7 @@ public class CmdLoadStockTest {
 
     @Before
     public void setup() {
-        xBar = Mockito.mock(MessageXBar.class);
+        xBar = mock(MessageXBar.class);
     }
 
     /**
@@ -116,12 +121,10 @@ public class CmdLoadStockTest {
         // armor?!)
         assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
         for (ConfiguredComponentBase part : loadout.getComponents()) {
-            Mockito.verify(xBar, Mockito.atLeast(1)).post(new ComponentMessage(part, Type.ArmorChanged, true));
+            verify(xBar, atLeast(1)).post(new ComponentMessage(part, Type.ArmorChanged, true));
         }
-        Mockito.verify(xBar, Mockito.atLeast(1))
-                .post(new ComponentMessage(Matchers.any(ConfiguredComponentBase.class), Type.ItemAdded));
-        Mockito.verify(xBar, Mockito.atLeast(1))
-                .post(new UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
+        verify(xBar, atLeast(1)).post(any(ItemMessage.class));
+        verify(xBar, atLeast(1)).post(new UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
     }
 
     /**
@@ -195,7 +198,7 @@ public class CmdLoadStockTest {
         final LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("BNC-3S"));
         final CommandStack stack = new CommandStack(0);
 
-        Mockito.doAnswer(new Answer<Void>() {
+        doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock aInvocation) throws Throwable {
                 Message aMsg = (Message) aInvocation.getArguments()[0];
