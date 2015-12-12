@@ -19,6 +19,14 @@
 	item-colour-internal: #d3d7cf;
 	item-colour-dynamic: #e1e6dd;
 	item-colour-disabled: #404040;
+	
+	category-colour-energy: #9b8c16;
+	category-colour-ballistic: #6719cd;
+	category-colour-missile: #008b76;
+	category-colour-ams: #78a62d;
+	category-colour-ecm: #cb5d01;
+	category-colour-misc: #0067a5;
+	category-colour-engine: #0067a5;
 }
 
 .ArmStrut {
@@ -38,74 +46,4 @@
 	-fx-font-weight: bolder;
 	-fx-alignment: top-left;
 	-fx-padding: 3pt;
-}
-
-.ItemEnergy{
-	-fx-text-fill: white;
-	-fx-background: item-colour-energy;
-}
-
-.ItemBallistic {
-	-fx-text-fill: white;
-	-fx-background: item-colour-ballistic;
-}
-
-.ItemBallisticAmmo{
-	-fx-text-fill: white;
-	-fx-background: item-colour-ballistic-ammo;
-}
-
-.ItemMissile{
-	-fx-text-fill: white;
-	-fx-background: item-colour-missile;
-}
-
-.ItemMissileAmmo{
-	-fx-text-fill: white;
-	-fx-background: item-colour-missile-ammo;
-}
-
-.ItemAms{
-	-fx-text-fill: white;
-	-fx-background: item-colour-ams;
-}
-
-.ItemAmsAmmo{
-	-fx-text-fill: white;
-	-fx-background: item-colour-ams-ammo;
-}
-        
-.ItemEcm{
-	-fx-text-fill: white;
-	-fx-background: item-colour-ecm;
-}
-
-.ItemMisc{
-	-fx-text-fill: white;
-	-fx-background: item-colour-misc;
-}
-
-.ItemJumpJet{
-	-fx-text-fill: white;
-	-fx-background: item-colour-jj;
-}
-
-.ItemEngine{
-	-fx-text-fill: white;
-	-fx-background: item-colour-engine;
-}
-
-.ItemHeatSink{
-	-fx-text-fill: white;
-	-fx-background: item-colour-hs
-}
-
-.ItemInternal{
-	-fx-text-fill: white;
-	-fx-background: item-colour-internal;
-}
-
-.ItemDynamic{
-	-fx-text-fill: white;
-	-fx-background: item-colour-dynamic;
 }

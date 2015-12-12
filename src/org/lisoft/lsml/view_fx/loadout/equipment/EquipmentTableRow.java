@@ -29,7 +29,6 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.StyleManager;
 import org.lisoft.lsml.view_fx.loadout.ItemTooltipBuilder;
 
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
@@ -56,7 +55,6 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         });
 
         setOnMouseClicked(aEvent -> {
-            System.out.println(aEvent.getClickCount());
             if (MouseButton.PRIMARY == aEvent.getButton() && 2 == aEvent.getClickCount()) {
                 Item item = getValueAsItem();
                 if (null == item)
@@ -106,9 +104,13 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
             setTooltip(ItemTooltipBuilder.build(item, loadout));
         }
         else {
-            setStyle("");
+            if (aObject instanceof EquipmentCategory) {
+                setStyle("-fx-background: " + StyleManager.getCssColorFor((EquipmentCategory) aObject));
+            }
+            else {
+                setStyle("");
+            }
             setTooltip(null);
-            // StyleManager.clearCssItemClass(getStyleClass());
         }
     }
 }
