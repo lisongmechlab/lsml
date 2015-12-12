@@ -29,6 +29,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 
 /**
  * This class helps setting consistent CSS classes to various UI elements.
@@ -98,6 +99,27 @@ public class StyleManager {
         }
 
         return getCssColorFor(aItem.getHardpointType());
+    }
+
+    public static String getCssColorFor(EquipmentCategory aCategory) {
+        switch (aCategory) {
+            case ENERGY:
+                return CSS_COLOUR_ENERGY.replace("item", "category");
+            case BALLISTIC:
+                return CSS_COLOUR_BALLISTIC.replace("item", "category");
+            case MISSILE:
+                return CSS_COLOUR_MISSILE.replace("item", "category");
+            case ECM:
+                return CSS_COLOUR_ECM.replace("item", "category");
+            case AMS:
+                return CSS_COLOUR_AMS.replace("item", "category");
+            case ENGINE:
+                return CSS_COLOUR_ENGINE.replace("item", "category");
+            case MISC:
+                return CSS_COLOUR_MISC.replace("item", "category");
+            default:
+                throw new RuntimeException("Unknown category: " + aCategory);
+        }
     }
 
     public static String getCssColorForDisabled() {

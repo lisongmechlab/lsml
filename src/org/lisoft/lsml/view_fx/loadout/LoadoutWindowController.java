@@ -37,6 +37,7 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.StyleManager;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
+import org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableCell;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableRow;
@@ -77,15 +78,24 @@ public class LoadoutWindowController implements MessageReceiver {
     private CommandStack          cmdStack     = new CommandStack(UNDO_DEPTH);
     private LoadoutBase<?>        loadout;
 
-    /**
-     * @param aLoadout
-     */
     public void setLoadout(LoadoutBase<?> aLoadout) {
         xBar.attach(this);
         loadout = aLoadout;
 
+        setupLayoutView();
+        setupEquipmentList();
+        setupHeatPanel();
+    }
+
+    private void setupHeatPanel() {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void setupLayoutView() {
         Region rightArmStrut = new Region();
         rightArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
+
         Region leftArmStrut = new Region();
         leftArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
 
@@ -95,16 +105,14 @@ public class LoadoutWindowController implements MessageReceiver {
         leftTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
 
         ObservableList<Node> children = layoutContainer.getChildren();
-        children.add(new VBox(leftArmStrut, new ComponentPane(xBar, cmdStack, aLoadout, Location.RightArm)));
-        children.add(new VBox(rightTorsoStrut, new ComponentPane(xBar, cmdStack, aLoadout, Location.RightTorso),
-                new ComponentPane(xBar, cmdStack, aLoadout, Location.RightLeg)));
-        children.add(new VBox(new ComponentPane(xBar, cmdStack, aLoadout, Location.Head),
-                new ComponentPane(xBar, cmdStack, aLoadout, Location.CenterTorso)));
-        children.add(new VBox(leftTorsoStrut, new ComponentPane(xBar, cmdStack, aLoadout, Location.LeftTorso),
-                new ComponentPane(xBar, cmdStack, aLoadout, Location.LeftLeg)));
-        children.add(new VBox(rightArmStrut, new ComponentPane(xBar, cmdStack, aLoadout, Location.LeftArm)));
-
-        setupEquipmentList();
+        children.add(new VBox(leftArmStrut, new ComponentPane(xBar, cmdStack, loadout, Location.RightArm)));
+        children.add(new VBox(rightTorsoStrut, new ComponentPane(xBar, cmdStack, loadout, Location.RightTorso),
+                new ComponentPane(xBar, cmdStack, loadout, Location.RightLeg)));
+        children.add(new VBox(new ComponentPane(xBar, cmdStack, loadout, Location.Head),
+                new ComponentPane(xBar, cmdStack, loadout, Location.CenterTorso)));
+        children.add(new VBox(leftTorsoStrut, new ComponentPane(xBar, cmdStack, loadout, Location.LeftTorso),
+                new ComponentPane(xBar, cmdStack, loadout, Location.LeftLeg)));
+        children.add(new VBox(rightArmStrut, new ComponentPane(xBar, cmdStack, loadout, Location.LeftArm)));
     }
 
     private void setupEquipmentList() {
@@ -117,6 +125,7 @@ public class LoadoutWindowController implements MessageReceiver {
         Map<EquipmentCategory, FilterTreeItem<Object>> categories = new HashMap<>();
         for (EquipmentCategory category : EquipmentCategory.values()) {
             FilterTreeItem<Object> treeItem = new FilterTreeItem<>(category);
+            treeItem.setExpanded(true);
             root.add(treeItem);
             categories.put(category, treeItem);
         }
@@ -133,7 +142,6 @@ public class LoadoutWindowController implements MessageReceiver {
 
         equipmentList.setRowFactory(aParam -> new EquipmentTableRow(loadout, cmdStack, xBar));
         equipmentList.setRoot(root);
-        equipmentList.autosize();
         updateEquipmentPredicates();
     }
 
@@ -141,6 +149,7 @@ public class LoadoutWindowController implements MessageReceiver {
         TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(COLUMN_NAME);
         nameColumn.setCellValueFactory(new ItemValueFactory(item -> item.getShortName(), true));
         nameColumn.setCellFactory(aTree -> new EquipmentTableCell());
+        nameColumn.setPrefWidth(ComponentPaneController.ITEM_WIDTH * 1.2);
 
         TreeTableColumn<Object, String> slotsColumn = new TreeTableColumn<>(COLUMN_SLOTS);
         slotsColumn
@@ -177,7 +186,6 @@ public class LoadoutWindowController implements MessageReceiver {
     public void receive(Message aMsg) {
         if (aMsg instanceof ItemMessage) {
             updateEquipmentPredicates();
-            equipmentList.refresh();
         }
     }
 
@@ -190,5 +198,8 @@ public class LoadoutWindowController implements MessageReceiver {
         root.setPredicate(aCategory -> {
             return !aCategory.getChildren().isEmpty();
         });
+        // Force full refresh of tree, because apparently the observed changes on the children aren't enough.
+        equipmentList.setRoot(null);
+        equipmentList.setRoot(root);
     }
 }
