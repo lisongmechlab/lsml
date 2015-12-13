@@ -23,9 +23,9 @@
       <content>
         <VBox>
           <children>
-            <TitledPane animated="false" text="General">
+            <TitledPane text="General">
               <content>
-                <GridPane hgap="5.0" vgap="5.0">
+                <GridPane>
                   <columnConstraints>
                     <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
                     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
@@ -34,162 +34,162 @@
                   <rowConstraints>
                     <RowConstraints vgrow="SOMETIMES" />
                     <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
                   </rowConstraints>
                   <children>
-                    <ProgressBar progress="0.39" GridPane.columnIndex="1" />
-                    <ProgressBar progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                     <Label text="Mass:" />
+                    <ProgressBar fx:id="generalMassBar" GridPane.columnIndex="1" />
+                    <Label fx:id="generalMassLabel" GridPane.columnIndex="2" />
                     <Label text="Slots:" GridPane.rowIndex="1" />
-                    <Label text="x.xx free" GridPane.columnIndex="2" />
-                    <Label text="xx free" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                    <ProgressBar progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                    <Label text="x free" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                    <ProgressBar fx:id="generalSlotsBar" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label fx:id="generalSlotsLabel" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                     <Label text="Armor:" GridPane.rowIndex="2" />
+                    <ProgressBar fx:id="generalArmorBar" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label fx:id="generalArmorLabel" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   </children>
                 </GridPane>
               </content>
             </TitledPane>
-            <TitledPane animated="false" text="Upgrades">
+            <TitledPane text="Upgrades">
               <content>
-                        <GridPane>
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" />
-                              <ColumnConstraints hgrow="SOMETIMES" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <CheckBox mnemonicParsing="false" text="Endo-Steel" />
-                              <CheckBox mnemonicParsing="false" text="Ferro-Fibrous" GridPane.columnIndex="1" />
-                              <CheckBox mnemonicParsing="false" text="Double Heat Sinks" GridPane.rowIndex="1" />
-                              <CheckBox mnemonicParsing="false" text="Artemis" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                           </children>
-                        </GridPane>
+                <GridPane>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" />
+                    <ColumnConstraints hgrow="SOMETIMES" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
+                  </rowConstraints>
+                  <children>
+                    <CheckBox fx:id="upgradeEndoSteel" text="_Endo-Steel" />
+                    <CheckBox fx:id="upgradeFerroFibrous" text="_Ferro-Fibrous" GridPane.columnIndex="1" />
+                    <CheckBox fx:id="upgradeDoubleHeatSinks" text="_Double Heat Sinks" GridPane.rowIndex="1" />
+                    <CheckBox fx:id="upgradeArtemis" text="_Artemis" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  </children>
+                </GridPane>
               </content>
             </TitledPane>
-            <TitledPane animated="false" text="Efficiencies">
-                     <content>
-                        <GridPane>
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" />
-                            <ColumnConstraints hgrow="SOMETIMES" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints vgrow="SOMETIMES" />
-                            <RowConstraints vgrow="SOMETIMES" />
-                            <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <CheckBox mnemonicParsing="false" text="Cool Run" />
-                              <CheckBox mnemonicParsing="false" text="Heat Containment" GridPane.columnIndex="1" />
-                              <CheckBox mnemonicParsing="false" text="Twist X" GridPane.rowIndex="1" />
-                              <CheckBox mnemonicParsing="false" text="Twist Speed" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <CheckBox mnemonicParsing="false" text="Anchor Turn" GridPane.rowIndex="2" />
-                              <CheckBox mnemonicParsing="false" text="Arm Reflex" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <CheckBox mnemonicParsing="false" text="Fast Fire" GridPane.rowIndex="3" />
-                              <CheckBox mnemonicParsing="false" text="Speed Tweak" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <CheckBox mnemonicParsing="false" text="Double Basics" GridPane.rowIndex="4" />
-                           </children>
-                        </GridPane>
-                     </content>
-            </TitledPane>
-            <TitledPane animated="false" text="Armor Wizard">
+            <TitledPane text="Efficiencies">
               <content>
-                <GridPane hgap="5.0" vgap="5.0">
+                <GridPane>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" />
+                    <ColumnConstraints hgrow="SOMETIMES" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
+                  </rowConstraints>
+                  <children>
+                    <CheckBox fx:id="effCoolRun" text="_Cool Run" />
+                    <CheckBox fx:id="effHeatContainment" text="_Heat Containment" GridPane.columnIndex="1" />
+                    <CheckBox fx:id="effTwistX" text="Twist _X" GridPane.rowIndex="1" />
+                    <CheckBox fx:id="effTwistSpeed" text="_Twist Speed" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <CheckBox fx:id="effAnchorTurn" text="A_nchor Turn" GridPane.rowIndex="2" />
+                    <CheckBox fx:id="effArmReflex" text="Ar_m Reflex" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <CheckBox fx:id="effFastFire" text="Fast F_ire" GridPane.rowIndex="3" />
+                    <CheckBox fx:id="effSpeedTweak" text="_Speed Tweak" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <CheckBox fx:id="effDoubleBasics" text="Double _Basics" GridPane.rowIndex="4" />
+                  </children>
+                </GridPane>
+              </content>
+            </TitledPane>
+            <TitledPane text="Armor Wizard">
+              <content>
+                <GridPane>
                   <columnConstraints>
                     <ColumnConstraints hgrow="NEVER" />
                     <ColumnConstraints hgrow="SOMETIMES" />
                   </columnConstraints>
                   <rowConstraints>
-                              <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-                              <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-                              <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                    <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                    <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                    <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
                   </rowConstraints>
                   <children>
                     <Slider majorTickUnit="5.0" max="16.0" min="1.0" minorTickCount="4" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                     <Slider majorTickUnit="100.0" max="400.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" />
                     <Label text="Amount:" />
                     <Label text="Front/Back:" GridPane.rowIndex="1" />
-                              <Button mnemonicParsing="false" text="Reset manually set armor" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                    <Button mnemonicParsing="false" text="Reset manually set armor" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
                   </children>
                 </GridPane>
               </content>
             </TitledPane>
-                  <TitledPane animated="false" text="Heat Stats">
-                    <content>
-                        <GridPane>
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" />
-                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <ComboBox prefWidth="150.0" promptText="Environment" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
-                              <Label text="Heat Sinks: X" GridPane.rowIndex="1" />
-                              <Label text="Heat Capacity: 30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label text="Cooling Ratio: 0%" GridPane.rowIndex="2" />
-                              <Label text="Time to Cool: 32s" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                           </children>
-                        </GridPane>
-                    </content>
-                  </TitledPane>
-                  <TitledPane animated="false" text="Offensive Stats">
-                    <content>
-                        <VBox>
-                           <children>
-                              <HBox>
-                                 <children>
-                                    <ComboBox prefWidth="150.0" promptText="Range" />
-                                    <ComboBox prefWidth="150.0" promptText="Duration" />
-                                 </children>
-                              </HBox>
-                              <GridPane>
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" />
-                                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints vgrow="SOMETIMES" />
-                                    <RowConstraints vgrow="SOMETIMES" />
-                                  <RowConstraints vgrow="SOMETIMES" />
-                                  <RowConstraints vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <Label text="Alpha: 20@100m" />
-                                    <Label text="Max DPS: 20.1" GridPane.columnIndex="1" />
-                                    <Label text="Alpha Heat: 21%" GridPane.rowIndex="2" />
-                                    <Label text="Alpha Cool: 30s" GridPane.rowIndex="3" />
-                                    <Label text="Alpha Ghost Heat: 3.3" GridPane.rowIndex="1" />
-                                    <Label text="Sustained DPS: 10.3" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label text="Burst damage, 4s: 40 @ 00m" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Label text="Time to overheat: 32s" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                 </children>
-                              </GridPane>
-                              <TableView tableMenuButtonVisible="true">
-                                 <columnResizePolicy>
-                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                 </columnResizePolicy>
-                                 <columns>
-                                    <TableColumn prefWidth="-1.0" text="Weapon" />
-                                    <TableColumn prefWidth="40.0" text="Ammo" />
-                                    <TableColumn prefWidth="40.0" text="Volleys" />
-                                    <TableColumn prefWidth="40.0" text="Time" />
-                                    <TableColumn prefWidth="40.0" text="T. Damage" />
-                                 </columns>
-                              </TableView>
-                           </children>
-                        </VBox>
-                    </content>
-                  </TitledPane>
+            <TitledPane text="Heat Stats">
+              <content>
+                <GridPane>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" />
+                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
+                    <RowConstraints vgrow="SOMETIMES" />
+                  </rowConstraints>
+                  <children>
+                    <ComboBox promptText="Environment" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
+                    <Label text="Heat Sinks: X" GridPane.rowIndex="1" />
+                    <Label text="Heat Capacity: 30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Cooling Ratio: 0%" GridPane.rowIndex="2" />
+                    <Label text="Time to Cool: 32s" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  </children>
+                </GridPane>
+              </content>
+            </TitledPane>
+            <TitledPane text="Offensive Stats">
+              <content>
+                <VBox>
+                  <children>
+                    <HBox>
+                      <children>
+                        <ComboBox promptText="Range" />
+                        <ComboBox promptText="Duration" />
+                      </children>
+                    </HBox>
+                    <GridPane>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                      </rowConstraints>
+                      <children>
+                        <Label text="Alpha: 20@100m" />
+                        <Label text="Max DPS: 20.1" GridPane.columnIndex="1" />
+                        <Label text="Alpha Heat: 21%" GridPane.rowIndex="2" />
+                        <Label text="Alpha Cool: 30s" GridPane.rowIndex="3" />
+                        <Label text="Alpha Ghost Heat: 3.3" GridPane.rowIndex="1" />
+                        <Label text="Sustained DPS: 10.3" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Burst damage, 4s: 40 @ 00m" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Time to overheat: 32s" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                      </children>
+                    </GridPane>
+                    <TableView tableMenuButtonVisible="true">
+                      <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                      </columnResizePolicy>
+                      <columns>
+                        <TableColumn prefWidth="-1.0" text="Weapon" />
+                        <TableColumn prefWidth="40.0" text="Ammo" />
+                        <TableColumn prefWidth="40.0" text="Volleys" />
+                        <TableColumn prefWidth="40.0" text="Time" />
+                        <TableColumn prefWidth="40.0" text="T. Damage" />
+                      </columns>
+                    </TableView>
+                  </children>
+                </VBox>
+              </content>
+            </TitledPane>
           </children>
         </VBox>
       </content>

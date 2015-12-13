@@ -182,12 +182,12 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
 
         // Constants
         boolean isClan = aLoadout.getChassis().getFaction() == Faction.Clan;
-        armorFF = isClan ? UpgradeDB.CLAN_FERRO_FIBROUS_ARMOR : UpgradeDB.FERRO_FIBROUS_ARMOR;
-        armorStandard = isClan ? UpgradeDB.CLAN_STANDARD_ARMOR : UpgradeDB.STANDARD_ARMOR;
-        structureEs = isClan ? UpgradeDB.CLAN_ENDO_STEEL_STRUCTURE : UpgradeDB.ENDO_STEEL_STRUCTURE;
-        structureStandards = isClan ? UpgradeDB.CLAN_STANDARD_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE;
-        heatSinkStandard = isClan ? UpgradeDB.CLAN_STANDARD_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
-        heatSinkDouble = isClan ? UpgradeDB.CLAN_DOUBLE_HEATSINKS : UpgradeDB.DOUBLE_HEATSINKS;
+        armorFF = isClan ? UpgradeDB.CLAN_FF_ARMOR : UpgradeDB.IS_FF_ARMOR;
+        armorStandard = isClan ? UpgradeDB.CLAN_STD_ARMOR : UpgradeDB.IS_STD_ARMOR;
+        structureEs = isClan ? UpgradeDB.CLAN_ES_STRUCTURE : UpgradeDB.IS_ES_STRUCTURE;
+        structureStandards = isClan ? UpgradeDB.CLAN_STD_STRUCTURE : UpgradeDB.IS_STD_STRUCTURE;
+        heatSinkStandard = isClan ? UpgradeDB.CLAN_SHS : UpgradeDB.IS_SHS;
+        heatSinkDouble = isClan ? UpgradeDB.CLAN_DHS : UpgradeDB.IS_DHS;
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         xBar = aXBar;
@@ -682,7 +682,7 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
 
             @Override
             public void changeValue(boolean aEnabled) throws Exception {
-                GuidanceUpgrade guidance = aEnabled ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE;
+                GuidanceUpgrade guidance = aEnabled ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STD_GUIDANCE;
                 cmdStack.pushAndApply(new CmdSetGuidanceType(xBar, loadout, guidance));
             }
         });

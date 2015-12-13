@@ -22,6 +22,8 @@ package org.lisoft.lsml.view_fx.loadout.equipment;
 import java.util.function.Predicate;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -61,8 +63,19 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
             return false;
 
         final HardPointType hardPoint;
-        if (item instanceof Ammunition)
-            hardPoint = ((Ammunition) item).getWeaponHardpointType();
+        if (item instanceof Ammunition) {
+            Ammunition ammunition = (Ammunition) item;
+            hardPoint = ammunition.getWeaponHardpointType();
+
+            for (AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)) {
+                if (weapon.isCompatibleAmmo(ammunition)) {
+                    if (!weapon.isCompatible(loadout.getUpgrades()))
+                        return false;
+                    break;
+                }
+            }
+
+        }
         else
             hardPoint = item.getHardpointType();
 

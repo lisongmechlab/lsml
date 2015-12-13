@@ -149,7 +149,7 @@ public class CmdSetGuidanceTypeTest {
         LoadoutBase<?> loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         CommandStack stack = new CommandStack(1);
 
-        stack.pushAndApply(new CmdSetGuidanceType(xBar, loadout, UpgradeDB.STANDARD_GUIDANCE));
+        stack.pushAndApply(new CmdSetGuidanceType(xBar, loadout, UpgradeDB.STD_GUIDANCE));
         stack.undo();
 
         assertEquals(loadoutOriginal, loadout);

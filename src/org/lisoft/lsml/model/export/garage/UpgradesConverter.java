@@ -76,10 +76,10 @@ public class UpgradesConverter implements Converter {
         else
             version = Integer.parseInt(versionString);
 
-        GuidanceUpgrade guidance = UpgradeDB.STANDARD_GUIDANCE;
-        ArmorUpgrade armor = UpgradeDB.STANDARD_ARMOR;
-        StructureUpgrade structure = UpgradeDB.STANDARD_STRUCTURE;
-        HeatSinkUpgrade heatSinks = UpgradeDB.STANDARD_HEATSINKS;
+        GuidanceUpgrade guidance = UpgradeDB.STD_GUIDANCE;
+        ArmorUpgrade armor = UpgradeDB.IS_STD_ARMOR;
+        StructureUpgrade structure = UpgradeDB.IS_STD_STRUCTURE;
+        HeatSinkUpgrade heatSinks = UpgradeDB.IS_SHS;
 
         if (version == 1) {
             // <artemis>bool</artemis><ferroFibrous>bool</ferroFibrous><endoSteel>bool</endoSteel><dhs>bool</dhs>
@@ -93,17 +93,17 @@ public class UpgradesConverter implements Converter {
                         break;
                     case "ferroFibrous":
                         if (Boolean.parseBoolean(aReader.getValue())) {
-                            armor = UpgradeDB.FERRO_FIBROUS_ARMOR;
+                            armor = UpgradeDB.IS_FF_ARMOR;
                         }
                         break;
                     case "endoSteel":
                         if (Boolean.parseBoolean(aReader.getValue())) {
-                            structure = UpgradeDB.ENDO_STEEL_STRUCTURE;
+                            structure = UpgradeDB.IS_ES_STRUCTURE;
                         }
                         break;
                     case "dhs":
                         if (Boolean.parseBoolean(aReader.getValue())) {
-                            heatSinks = UpgradeDB.DOUBLE_HEATSINKS;
+                            heatSinks = UpgradeDB.IS_DHS;
                         }
                         break;
                     default:

@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
@@ -55,11 +55,11 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
      * 
      * @param aLoadout
      *            The loadout to calculate the metric for.
-     * @param aXBar
+     * @param aReception
      *            The cross-bar to listen for changes on.
      */
-    public HeatOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
-        this(aLoadout, aXBar, -1);
+    public HeatOverTime(LoadoutBase<?> aLoadout, MessageReception aReception) {
+        this(aLoadout, aReception, -1);
     }
 
     /**
@@ -67,16 +67,16 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
      * 
      * @param aLoadout
      *            The loadout to calculate the metric for.
-     * @param aXBar
+     * @param aReception
      *            The cross-bar to listen for changes on.
      * @param aGroup
      *            The weapon group to calculate the metric for.
      */
-    public HeatOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar, int aGroup) {
+    public HeatOverTime(LoadoutBase<?> aLoadout, MessageReception aReception, int aGroup) {
         loadout = aLoadout;
         weaponGroup = aGroup;
         updateEvents();
-        aXBar.attach(this);
+        aReception.attach(this);
     }
 
     @Override
@@ -134,7 +134,8 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
             }
             if (item instanceof Engine) {
                 double arbitraryValue = 10.0;
-                heatIntegrals.add(new IntegratedPulseTrain(arbitraryValue, arbitraryValue, ((Engine) item).getHeat(modifiers)));
+                heatIntegrals.add(
+                        new IntegratedPulseTrain(arbitraryValue, arbitraryValue, ((Engine) item).getHeat(modifiers)));
             }
         }
     }

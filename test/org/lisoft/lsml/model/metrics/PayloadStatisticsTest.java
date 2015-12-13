@@ -89,8 +89,8 @@ public class PayloadStatisticsTest {
     public final void testChangeUseXLEngine() throws Exception {
         ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
         Upgrades upgrades = Mockito.mock(Upgrades.class);
-        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
-        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
+        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.IS_STD_STRUCTURE);
+        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
         PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
 
         cut.changeUseXLEngine(true);
@@ -102,8 +102,8 @@ public class PayloadStatisticsTest {
     public final void testChangeUseMaxArmor() throws Exception {
         ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
         Upgrades upgrades = Mockito.mock(Upgrades.class);
-        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
-        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
+        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.IS_STD_STRUCTURE);
+        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
         PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
 
         cut.changeUseMaxArmor(true);
@@ -118,8 +118,8 @@ public class PayloadStatisticsTest {
         PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
         Upgrades upgradesNew = Mockito.mock(Upgrades.class);
 
-        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
-        Mockito.when(upgradesNew.getStructure()).thenReturn(UpgradeDB.ENDO_STEEL_STRUCTURE);
+        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
+        Mockito.when(upgradesNew.getStructure()).thenReturn(UpgradeDB.IS_ES_STRUCTURE);
 
         cut.changeUpgrades(upgradesNew);
 
@@ -130,8 +130,8 @@ public class PayloadStatisticsTest {
     public final void testCalculate_smallEngine() throws Exception {
         ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
         Upgrades upgrades = Mockito.mock(Upgrades.class);
-        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
-        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
+        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.IS_STD_STRUCTURE);
+        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
 
         PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
         assertEquals(45.0, cut.calculate(jm6_a, 200), 0.0); // Needs two additional heat sinks
@@ -143,8 +143,8 @@ public class PayloadStatisticsTest {
     public final void testCalculate() throws Exception {
         ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
         Upgrades upgrades = Mockito.mock(Upgrades.class);
-        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
-        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
+        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.IS_STD_STRUCTURE);
+        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
 
         PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
         assertEquals(40.0, cut.calculate(jm6_a, 250), 0.0);
@@ -155,8 +155,8 @@ public class PayloadStatisticsTest {
     public final void testCalculate_xl() throws Exception {
         ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
         Upgrades upgrades = Mockito.mock(Upgrades.class);
-        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
-        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
+        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.IS_STD_STRUCTURE);
+        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
 
         PayloadStatistics cut = new PayloadStatistics(true, false, upgrades);
         assertEquals(46.0, cut.calculate(jm6_a, 250), 0.0);
@@ -167,8 +167,8 @@ public class PayloadStatisticsTest {
     public final void testCalculate_maxArmor() throws Exception {
         ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
         Upgrades upgrades = Mockito.mock(Upgrades.class);
-        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
-        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
+        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.IS_STD_STRUCTURE);
+        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
 
         PayloadStatistics cut = new PayloadStatistics(false, true, upgrades);
         assertEquals(26.81, cut.calculate(jm6_a, 250), 0.01);
@@ -179,8 +179,8 @@ public class PayloadStatisticsTest {
     public final void testCalculate_ferroMaxArmor() throws Exception {
         ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
         Upgrades upgrades = Mockito.mock(Upgrades.class);
-        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.FERRO_FIBROUS_ARMOR);
-        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
+        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.IS_FF_ARMOR);
+        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.IS_STD_STRUCTURE);
 
         PayloadStatistics cut = new PayloadStatistics(false, true, upgrades);
         assertEquals(28.23, cut.calculate(jm6_a, 250), 0.01);
@@ -191,8 +191,8 @@ public class PayloadStatisticsTest {
     public final void testCalculate_endo() throws Exception {
         ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
         Upgrades upgrades = Mockito.mock(Upgrades.class);
-        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.ENDO_STEEL_STRUCTURE);
-        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
+        Mockito.when(upgrades.getStructure()).thenReturn(UpgradeDB.IS_ES_STRUCTURE);
+        Mockito.when(upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
 
         PayloadStatistics cut = new PayloadStatistics(false, false, upgrades);
         assertEquals(43.0, cut.calculate(jm6_a, 250), 0.0);

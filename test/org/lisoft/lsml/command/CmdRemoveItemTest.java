@@ -225,7 +225,7 @@ public class CmdRemoveItemTest {
     @Test
     public final void testRemoveItem_XLEngine() throws EquipResult {
         Engine engine = (Engine) ItemDB.lookup("XL ENGINE 300");
-        testRemoveEngine(engine, UpgradeDB.DOUBLE_HEATSINKS, 0);
+        testRemoveEngine(engine, UpgradeDB.IS_DHS, 0);
     }
 
     /**
@@ -236,7 +236,7 @@ public class CmdRemoveItemTest {
     @Test
     public final void testRemoveItem_StdEngine_DHS() throws EquipResult {
         Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
-        testRemoveEngine(engine, UpgradeDB.DOUBLE_HEATSINKS, 2);
+        testRemoveEngine(engine, UpgradeDB.IS_DHS, 2);
     }
 
     /**
@@ -247,7 +247,7 @@ public class CmdRemoveItemTest {
     @Test
     public final void testRemoveItem_StdEngine_SHS() throws EquipResult {
         Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
-        testRemoveEngine(engine, UpgradeDB.STANDARD_HEATSINKS, 2);
+        testRemoveEngine(engine, UpgradeDB.IS_SHS, 2);
     }
 
     /**

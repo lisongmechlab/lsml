@@ -443,13 +443,13 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         }
 
         freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
-        freqs.put(UpgradeDB.STANDARD_ARMOR.getMwoId(), numLoadouts * 7 / 10); // Standard armor
-        freqs.put(UpgradeDB.FERRO_FIBROUS_ARMOR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armor
-        freqs.put(UpgradeDB.STANDARD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
-        freqs.put(UpgradeDB.ENDO_STEEL_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
-        freqs.put(UpgradeDB.STANDARD_HEATSINKS.getMwoId(), numLoadouts * 1 / 20); // SHS
-        freqs.put(UpgradeDB.DOUBLE_HEATSINKS.getMwoId(), numLoadouts * 19 / 20); // DHS
-        freqs.put(UpgradeDB.STANDARD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
+        freqs.put(UpgradeDB.IS_STD_ARMOR.getMwoId(), numLoadouts * 7 / 10); // Standard armor
+        freqs.put(UpgradeDB.IS_FF_ARMOR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armor
+        freqs.put(UpgradeDB.IS_STD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
+        freqs.put(UpgradeDB.IS_ES_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
+        freqs.put(UpgradeDB.IS_SHS.getMwoId(), numLoadouts * 1 / 20); // SHS
+        freqs.put(UpgradeDB.IS_DHS.getMwoId(), numLoadouts * 19 / 20); // DHS
+        freqs.put(UpgradeDB.STD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
         freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
 
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("resources/resources/coderstats_v2.bin"));

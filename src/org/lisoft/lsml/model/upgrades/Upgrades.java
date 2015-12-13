@@ -27,10 +27,10 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
  * @author Li Song
  */
 public class Upgrades {
-    protected ArmorUpgrade     armorType     = UpgradeDB.STANDARD_ARMOR;
-    protected StructureUpgrade structureType = UpgradeDB.STANDARD_STRUCTURE;
-    protected GuidanceUpgrade  guidanceType  = UpgradeDB.STANDARD_GUIDANCE;
-    protected HeatSinkUpgrade  heatSinkType  = UpgradeDB.STANDARD_HEATSINKS;
+    protected ArmorUpgrade     armorType     = UpgradeDB.IS_STD_ARMOR;
+    protected StructureUpgrade structureType = UpgradeDB.IS_STD_STRUCTURE;
+    protected GuidanceUpgrade  guidanceType  = UpgradeDB.STD_GUIDANCE;
+    protected HeatSinkUpgrade  heatSinkType  = UpgradeDB.IS_SHS;
 
     /**
      * @param aArmor

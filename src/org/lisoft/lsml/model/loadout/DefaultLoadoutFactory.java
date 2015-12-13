@@ -71,7 +71,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
         else if (aChassis instanceof ChassisOmniMech) {
             ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
             Upgrades upgrades = new Upgrades(chassis.getFixedArmorType(), chassis.getFixedStructureType(),
-                    UpgradeDB.STANDARD_GUIDANCE, chassis.getFixedHeatSinkType());
+                    UpgradeDB.STD_GUIDANCE, chassis.getFixedHeatSinkType());
             return new LoadoutOmniMech(omniComponentFactory, chassis, upgrades, new WeaponGroups());
         }
         throw new IllegalArgumentException("Unknown chassis type!");
