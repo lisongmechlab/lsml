@@ -42,10 +42,12 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.VBox;
 
 /**
+ * This is the controller for the component pane. The component pane shows the state of one component in the loadout.
+ * 
  * @author Emily Björk
- *
  */
 public class ComponentPaneController {
 
@@ -64,13 +66,27 @@ public class ComponentPaneController {
     private MessageXBar             xBar;
     private Location                location;
     private ConfiguredComponentBase component;
+    @FXML
+    private VBox                    container;
 
-    public void setComponent(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutBase<?> aLoadout,
+    /**
+     * Sets up this component. Must be called before this component is usable.
+     * 
+     * @param aMessageXBar
+     *            A {@link MessageXBar} to send and receive messages on.
+     * @param aStack
+     *            The {@link CommandStack} to use for doing commands.
+     * @param aLoadout
+     *            The loadout to get the component from.
+     * @param aLocation
+     *            The location of the loadout to get component for.
+     */
+    public void setComponent(MessageXBar aMessageXBar, CommandStack aStack, LoadoutBase<?> aLoadout,
             Location aLocation) {
         stack = aStack;
         loadout = aLoadout;
         location = aLocation;
-        xBar = aMessageDelivery;
+        xBar = aMessageXBar;
         component = loadout.getComponent(location);
 
         setupTogglable(toggleLAA, ItemDB.LAA);
@@ -146,7 +162,7 @@ public class ComponentPaneController {
                 return;
             }
         }
-        aButton.setVisible(false);
+        container.getChildren().remove(aButton);
     }
 
     @FXML
@@ -178,7 +194,8 @@ public class ComponentPaneController {
         if (db.hasString()) {
             try {
                 Item item = ItemDB.lookup(Integer.parseInt(db.getString()));
-                if (EquipResult.SUCCESS == loadout.canEquipDirectly(item) && EquipResult.SUCCESS == component.canEquip(item)) {
+                if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)
+                        && EquipResult.SUCCESS == component.canEquip(item)) {
                     aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
             }

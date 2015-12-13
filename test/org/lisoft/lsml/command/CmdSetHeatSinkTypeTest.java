@@ -126,7 +126,7 @@ public class CmdSetHeatSinkTypeTest {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
 
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
         cut.apply();
 
         for (HeatSink item : loaded.items(HeatSink.class)) {
@@ -140,7 +140,7 @@ public class CmdSetHeatSinkTypeTest {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
 
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
         cut.apply();
 
         for (HeatSink item : loaded.items(HeatSink.class)) {
@@ -154,7 +154,7 @@ public class CmdSetHeatSinkTypeTest {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
 
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.DOUBLE_HEATSINKS);
+        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
         cut.apply();
 
         for (HeatSink item : loaded.items(HeatSink.class)) {

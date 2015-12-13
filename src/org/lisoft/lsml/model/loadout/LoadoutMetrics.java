@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.metrics.AlphaHeat;
 import org.lisoft.lsml.model.metrics.AlphaStrike;
@@ -53,11 +53,11 @@ import org.lisoft.lsml.model.metrics.TurningSpeed;
  */
 public class LoadoutMetrics {
     // Mobility
-    public final JumpDistance       jumpDistance;
-    public final ReverseSpeed       reverseSpeed;
-    public final TopSpeed           topSpeed;
-    public final TurningSpeed       turningSpeed;
-    public final TorsoTwistYawSpeed torsoYawSpeed;
+    public final JumpDistance             jumpDistance;
+    public final ReverseSpeed             reverseSpeed;
+    public final TopSpeed                 topSpeed;
+    public final TurningSpeed             turningSpeed;
+    public final TorsoTwistYawSpeed       torsoYawSpeed;
 
     // Heat
     public final AlphaTimeToOverHeat      alphaTimeToOverHeat;
@@ -71,34 +71,34 @@ public class LoadoutMetrics {
     public final TimeToCool               timeToCool;
 
     // Offense
-    public final AlphaStrike         alphaStrike;
-    public final BurstDamageOverTime burstDamageOverTime;
-    public final MaxDPS              maxDPS;
-    public final MaxSustainedDPS     maxSustainedDPS;
+    public final AlphaStrike              alphaStrike;
+    public final BurstDamageOverTime      burstDamageOverTime;
+    public final MaxDPS                   maxDPS;
+    public final MaxSustainedDPS          maxSustainedDPS;
 
     // Per group (Heat)
-    public final AlphaTimeToOverHeat groupAlphaTimeToOverHeat[] = new AlphaTimeToOverHeat[WeaponGroups.MAX_GROUPS];
-    public final CoolingRatio        groupCoolingRatio[]        = new CoolingRatio[WeaponGroups.MAX_GROUPS];
-    public final GhostHeat           groupGhostHeat[]           = new GhostHeat[WeaponGroups.MAX_GROUPS];
-    public final HeatGeneration      groupHeatGeneration[]      = new HeatGeneration[WeaponGroups.MAX_GROUPS];
-    public final HeatOverTime        groupHeatOverTime[]        = new HeatOverTime[WeaponGroups.MAX_GROUPS];
+    public final AlphaTimeToOverHeat      groupAlphaTimeToOverHeat[] = new AlphaTimeToOverHeat[WeaponGroups.MAX_GROUPS];
+    public final CoolingRatio             groupCoolingRatio[]        = new CoolingRatio[WeaponGroups.MAX_GROUPS];
+    public final GhostHeat                groupGhostHeat[]           = new GhostHeat[WeaponGroups.MAX_GROUPS];
+    public final HeatGeneration           groupHeatGeneration[]      = new HeatGeneration[WeaponGroups.MAX_GROUPS];
+    public final HeatOverTime             groupHeatOverTime[]        = new HeatOverTime[WeaponGroups.MAX_GROUPS];
 
     // Per group (Offense)
-    public final AlphaStrike         groupAlphaStrike[]         = new AlphaStrike[WeaponGroups.MAX_GROUPS];
-    public final AlphaHeat           groupAlphaHeat[]           = new AlphaHeat[WeaponGroups.MAX_GROUPS];
-    public final BurstDamageOverTime groupBurstDamageOverTime[] = new BurstDamageOverTime[WeaponGroups.MAX_GROUPS];
-    public final MaxDPS              groupMaxDPS[]              = new MaxDPS[WeaponGroups.MAX_GROUPS];
-    public final MaxSustainedDPS     groupMaxSustainedDPS[]     = new MaxSustainedDPS[WeaponGroups.MAX_GROUPS];
-    public final Metric              torsoPitchSpeed;
-    public final Metric              armYawSpeed;
-    public final Metric              armPitchSpeed;
+    public final AlphaStrike              groupAlphaStrike[]         = new AlphaStrike[WeaponGroups.MAX_GROUPS];
+    public final AlphaHeat                groupAlphaHeat[]           = new AlphaHeat[WeaponGroups.MAX_GROUPS];
+    public final BurstDamageOverTime      groupBurstDamageOverTime[] = new BurstDamageOverTime[WeaponGroups.MAX_GROUPS];
+    public final MaxDPS                   groupMaxDPS[]              = new MaxDPS[WeaponGroups.MAX_GROUPS];
+    public final MaxSustainedDPS          groupMaxSustainedDPS[]     = new MaxSustainedDPS[WeaponGroups.MAX_GROUPS];
+    public final Metric                   torsoPitchSpeed;
+    public final Metric                   armYawSpeed;
+    public final Metric                   armPitchSpeed;
 
     // Defense
     // public final CriticalItemDamage criticalItemDamage;
     // public final CriticalStrikeProbability criticalStrikeProbability;
     // public final ItemEffectiveHP itemEffectiveHP;
 
-    public LoadoutMetrics(LoadoutBase<?> aLoadout, Environment aEnvironment, MessageXBar aXBar) {
+    public LoadoutMetrics(LoadoutBase<?> aLoadout, Environment aEnvironment, MessageReception aReception) {
         // Mobility
         jumpDistance = new JumpDistance(aLoadout);
         reverseSpeed = new ReverseSpeed(aLoadout);
@@ -114,7 +114,7 @@ public class LoadoutMetrics {
         heatCapacity = new HeatCapacity(aLoadout);
         heatDissipation = new HeatDissipation(aLoadout, aEnvironment);
         heatGeneration = new HeatGeneration(aLoadout);
-        heatOverTime = new HeatOverTime(aLoadout, aXBar);
+        heatOverTime = new HeatOverTime(aLoadout, aReception);
         alphaTimeToOverHeat = new AlphaTimeToOverHeat(heatCapacity, heatOverTime, heatDissipation);
         asymptoticTimeToOverHeat = new AsymptoticTimeToOverHeat(heatCapacity, heatDissipation, heatGeneration);
         coolingRatio = new CoolingRatio(heatDissipation, heatGeneration);
@@ -122,7 +122,7 @@ public class LoadoutMetrics {
 
         // Offense
         alphaStrike = new AlphaStrike(aLoadout);
-        burstDamageOverTime = new BurstDamageOverTime(aLoadout, aXBar);
+        burstDamageOverTime = new BurstDamageOverTime(aLoadout, aReception);
         maxDPS = new MaxDPS(aLoadout);
         maxSustainedDPS = new MaxSustainedDPS(aLoadout, heatDissipation);
 
@@ -130,7 +130,7 @@ public class LoadoutMetrics {
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             // Heat
             groupHeatGeneration[i] = new HeatGeneration(aLoadout, i);
-            groupHeatOverTime[i] = new HeatOverTime(aLoadout, aXBar, i);
+            groupHeatOverTime[i] = new HeatOverTime(aLoadout, aReception, i);
             groupAlphaTimeToOverHeat[i] = new AlphaTimeToOverHeat(heatCapacity, groupHeatOverTime[i], heatDissipation);
             groupCoolingRatio[i] = new CoolingRatio(heatDissipation, groupHeatGeneration[i]);
             groupGhostHeat[i] = new GhostHeat(aLoadout, i);
@@ -138,7 +138,7 @@ public class LoadoutMetrics {
             // Offense
             groupAlphaStrike[i] = new AlphaStrike(aLoadout, i);
             groupAlphaHeat[i] = new AlphaHeat(aLoadout, i);
-            groupBurstDamageOverTime[i] = new BurstDamageOverTime(aLoadout, aXBar, i);
+            groupBurstDamageOverTime[i] = new BurstDamageOverTime(aLoadout, aReception, i);
             groupMaxDPS[i] = new MaxDPS(aLoadout, i);
             groupMaxSustainedDPS[i] = new MaxSustainedDPS(aLoadout, heatDissipation, i);
         }

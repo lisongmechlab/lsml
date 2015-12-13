@@ -35,20 +35,20 @@ import org.lisoft.lsml.model.upgrades.Upgrade;
  * @author Emily Björk
  */
 public class UpgradeDB {
-    public static final ArmorUpgrade           STANDARD_ARMOR;
-    public static final StructureUpgrade       STANDARD_STRUCTURE;
-    public static final GuidanceUpgrade        STANDARD_GUIDANCE;
-    public static final HeatSinkUpgrade        STANDARD_HEATSINKS;
+    public static final ArmorUpgrade           IS_STD_ARMOR;
+    public static final StructureUpgrade       IS_STD_STRUCTURE;
+    public static final GuidanceUpgrade        STD_GUIDANCE;
+    public static final HeatSinkUpgrade        IS_SHS;
     public static final GuidanceUpgrade        ARTEMIS_IV;
-    public static final HeatSinkUpgrade        DOUBLE_HEATSINKS;
-    public static final ArmorUpgrade           FERRO_FIBROUS_ARMOR;
-    public static final StructureUpgrade       ENDO_STEEL_STRUCTURE;
-    public static final HeatSinkUpgrade        CLAN_DOUBLE_HEATSINKS;
-    public static final ArmorUpgrade           CLAN_FERRO_FIBROUS_ARMOR;
-    public static final StructureUpgrade       CLAN_ENDO_STEEL_STRUCTURE;
-    public static final HeatSinkUpgrade        CLAN_STANDARD_HEATSINKS;
-    public static final ArmorUpgrade           CLAN_STANDARD_ARMOR;
-    public static final StructureUpgrade       CLAN_STANDARD_STRUCTURE;
+    public static final HeatSinkUpgrade        IS_DHS;
+    public static final ArmorUpgrade           IS_FF_ARMOR;
+    public static final StructureUpgrade       IS_ES_STRUCTURE;
+    public static final HeatSinkUpgrade        CLAN_DHS;
+    public static final ArmorUpgrade           CLAN_FF_ARMOR;
+    public static final StructureUpgrade       CLAN_ES_STRUCTURE;
+    public static final HeatSinkUpgrade        CLAN_SHS;
+    public static final ArmorUpgrade           CLAN_STD_ARMOR;
+    public static final StructureUpgrade       CLAN_STD_STRUCTURE;
     private static final Map<Integer, Upgrade> id2upgrade;
 
     /**
@@ -86,22 +86,22 @@ public class UpgradeDB {
             id2upgrade.put(upgrade.getMwoId(), upgrade);
         }
 
-        STANDARD_ARMOR = (ArmorUpgrade) lookup(2810);
-        FERRO_FIBROUS_ARMOR = (ArmorUpgrade) lookup(2811);
-        CLAN_FERRO_FIBROUS_ARMOR = (ArmorUpgrade) lookup(2815);
-        CLAN_STANDARD_ARMOR = (ArmorUpgrade) lookup(2816);
+        IS_STD_ARMOR = (ArmorUpgrade) lookup(2810);
+        IS_FF_ARMOR = (ArmorUpgrade) lookup(2811);
+        CLAN_FF_ARMOR = (ArmorUpgrade) lookup(2815);
+        CLAN_STD_ARMOR = (ArmorUpgrade) lookup(2816);
 
-        STANDARD_STRUCTURE = (StructureUpgrade) lookup(3100);
-        ENDO_STEEL_STRUCTURE = (StructureUpgrade) lookup(3101);
-        CLAN_ENDO_STEEL_STRUCTURE = (StructureUpgrade) lookup(3102);
-        CLAN_STANDARD_STRUCTURE = (StructureUpgrade) lookup(3103);
+        IS_STD_STRUCTURE = (StructureUpgrade) lookup(3100);
+        IS_ES_STRUCTURE = (StructureUpgrade) lookup(3101);
+        CLAN_ES_STRUCTURE = (StructureUpgrade) lookup(3102);
+        CLAN_STD_STRUCTURE = (StructureUpgrade) lookup(3103);
 
-        STANDARD_HEATSINKS = (HeatSinkUpgrade) lookup(3003);
-        DOUBLE_HEATSINKS = (HeatSinkUpgrade) lookup(3002);
-        CLAN_DOUBLE_HEATSINKS = (HeatSinkUpgrade) lookup(3005);
-        CLAN_STANDARD_HEATSINKS = (HeatSinkUpgrade) lookup(3006);
+        IS_SHS = (HeatSinkUpgrade) lookup(3003);
+        IS_DHS = (HeatSinkUpgrade) lookup(3002);
+        CLAN_DHS = (HeatSinkUpgrade) lookup(3005);
+        CLAN_SHS = (HeatSinkUpgrade) lookup(3006);
 
-        STANDARD_GUIDANCE = (GuidanceUpgrade) lookup(3051);
+        STD_GUIDANCE = (GuidanceUpgrade) lookup(3051);
         ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
     }
 }

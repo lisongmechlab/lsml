@@ -5,23 +5,31 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root fx:id="rootPane" alignment="CENTER" animated="false" collapsible="false" text="Component (x hp)" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController">
+<fx:root fx:id="rootPane" alignment="CENTER" animated="false"
+  collapsible="false" text="Component (x hp)" type="TitledPane"
+  xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController">
   <content>
-      <VBox alignment="TOP_CENTER">
-         <children>
-            <ToggleButton fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" />
-            <ToggleButton fx:id="toggleHA" mnemonicParsing="false" text="Hand" />
-            <ComboBox />
-            <HBox alignment="CENTER">
-               <children>
-                  <Label text="Armor" />
-                  <Spinner editable="true" prefHeight="25.0" prefWidth="60.0" />
-                  <Label text="/max" />
-               </children>
-            </HBox>
-            <HBox />
-            <ItemView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" />
-         </children>
-      </VBox>
+    <VBox alignment="TOP_CENTER" fx:id="container">
+      <children>
+        <ToggleButton fx:id="toggleLAA" mnemonicParsing="false"
+          text="Lower Arm"/>
+        <ToggleButton fx:id="toggleHA" mnemonicParsing="false"
+          text="Hand"/>
+        <ComboBox/>
+        <HBox alignment="CENTER">
+          <children>
+            <Label text="Armor"/>
+            <Spinner editable="true" prefHeight="25.0"
+              prefWidth="60.0"/>
+            <Label text="/max"/>
+          </children>
+        </HBox>
+        <HBox/>
+        <ItemView fx:id="itemView" onDragDetected="#onDragStart"
+          onDragDropped="#onDragDropped" onDragOver="#onDragOver"
+          onMouseClicked="#onEquipmentClicked"/>
+      </children>
+    </VBox>
   </content>
 </fx:root>

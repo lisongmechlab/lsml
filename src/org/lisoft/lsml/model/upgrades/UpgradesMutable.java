@@ -46,8 +46,8 @@ public class UpgradesMutable extends Upgrades {
     }
 
     public static UpgradesMutable standardUpgrades() {
-        return new UpgradesMutable(UpgradeDB.STANDARD_ARMOR, UpgradeDB.STANDARD_STRUCTURE, UpgradeDB.STANDARD_GUIDANCE,
-                UpgradeDB.STANDARD_HEATSINKS);
+        return new UpgradesMutable(UpgradeDB.IS_STD_ARMOR, UpgradeDB.IS_STD_STRUCTURE, UpgradeDB.STD_GUIDANCE,
+                UpgradeDB.IS_SHS);
     }
 
     /**

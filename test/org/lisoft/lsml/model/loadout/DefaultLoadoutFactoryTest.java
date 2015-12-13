@@ -77,10 +77,10 @@ public class DefaultLoadoutFactoryTest {
             assertSame(FiringMode.Optimal, groups.getFiringMode(i));
         }
 
-        assertEquals(UpgradeDB.STANDARD_GUIDANCE, loadout.getUpgrades().getGuidance());
-        assertEquals(UpgradeDB.STANDARD_STRUCTURE, loadout.getUpgrades().getStructure());
-        assertEquals(UpgradeDB.STANDARD_ARMOR, loadout.getUpgrades().getArmor());
-        assertEquals(UpgradeDB.STANDARD_HEATSINKS, loadout.getUpgrades().getHeatSink());
+        assertEquals(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
+        assertEquals(UpgradeDB.IS_STD_STRUCTURE, loadout.getUpgrades().getStructure());
+        assertEquals(UpgradeDB.IS_STD_ARMOR, loadout.getUpgrades().getArmor());
+        assertEquals(UpgradeDB.IS_SHS, loadout.getUpgrades().getHeatSink());
     }
 
     @Test
@@ -152,9 +152,9 @@ public class DefaultLoadoutFactoryTest {
     @Test
     public void testProduceClone_Upgrades() {
         LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        loadout.getUpgrades().setHeatSink(UpgradeDB.DOUBLE_HEATSINKS);
-        loadout.getUpgrades().setArmor(UpgradeDB.FERRO_FIBROUS_ARMOR);
-        loadout.getUpgrades().setStructure(UpgradeDB.ENDO_STEEL_STRUCTURE);
+        loadout.getUpgrades().setHeatSink(UpgradeDB.IS_DHS);
+        loadout.getUpgrades().setArmor(UpgradeDB.IS_FF_ARMOR);
+        loadout.getUpgrades().setStructure(UpgradeDB.IS_ES_STRUCTURE);
         loadout.getUpgrades().setGuidance(UpgradeDB.ARTEMIS_IV);
 
         LoadoutBase<?> clone = cut.produceClone(loadout);

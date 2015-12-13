@@ -64,8 +64,8 @@ public class DynamicSlotDistributorTest {
 
     @Test
     public void testGetDynamicStructureSlotsForComponent_NoUpgrades() {
-        when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
-        when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
+        when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.IS_STD_STRUCTURE);
+        when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
 
         when(mlc.ra.getSlotsFree()).thenReturn(12);
         when(mlc.rt.getSlotsFree()).thenReturn(12);
@@ -138,8 +138,8 @@ public class DynamicSlotDistributorTest {
 
     @Test
     public void testGetDynamicStructureSlotsForComponent_Priority() {
-        when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.ENDO_STEEL_STRUCTURE);
-        when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.STANDARD_ARMOR);
+        when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.IS_ES_STRUCTURE);
+        when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.IS_STD_ARMOR);
 
         when(mlc.ra.getSlotsFree()).thenReturn(12);
         when(mlc.rt.getSlotsFree()).thenReturn(12);
@@ -198,8 +198,8 @@ public class DynamicSlotDistributorTest {
 
     @Test
     public void testGetDynamicArmorSlotsForComponent_Priority() {
-        when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.STANDARD_STRUCTURE);
-        when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.FERRO_FIBROUS_ARMOR);
+        when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.IS_STD_STRUCTURE);
+        when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.IS_FF_ARMOR);
 
         when(mlc.ra.getSlotsFree()).thenReturn(12);
         when(mlc.rt.getSlotsFree()).thenReturn(12);
@@ -261,8 +261,8 @@ public class DynamicSlotDistributorTest {
      */
     @Test
     public void testMixedArmorStructurePriority() {
-        when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.ENDO_STEEL_STRUCTURE);
-        when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.FERRO_FIBROUS_ARMOR);
+        when(mlc.upgrades.getStructure()).thenReturn(UpgradeDB.IS_ES_STRUCTURE);
+        when(mlc.upgrades.getArmor()).thenReturn(UpgradeDB.IS_FF_ARMOR);
 
         when(mlc.ra.getSlotsFree()).thenReturn(4); // 4 armor
         when(mlc.rt.getSlotsFree()).thenReturn(4);

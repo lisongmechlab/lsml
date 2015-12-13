@@ -38,7 +38,7 @@ public class GuidanceUpgradeTest {
     @Test
     public void testUpgrade() {
         GuidanceUpgrade artemis = UpgradeDB.ARTEMIS_IV;
-        GuidanceUpgrade standard = UpgradeDB.STANDARD_GUIDANCE;
+        GuidanceUpgrade standard = UpgradeDB.STD_GUIDANCE;
 
         // Standard -> Artemis
         assertSame(ItemDB.lookup("C-LRM AMMO + ART. IV"), artemis.upgrade((Ammunition) ItemDB.lookup("C-LRM AMMO")));
@@ -106,7 +106,7 @@ public class GuidanceUpgradeTest {
     
     @Test
     public final void testGetSpreadFactor_NoArtemis(){
-        GuidanceUpgrade cut = UpgradeDB.STANDARD_GUIDANCE;
+        GuidanceUpgrade cut = UpgradeDB.STD_GUIDANCE;
         double ans = cut.getSpreadFactor();
         assertEquals(1.0, ans, 0.0);
     }

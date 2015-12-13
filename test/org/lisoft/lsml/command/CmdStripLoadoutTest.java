@@ -83,7 +83,7 @@ public class CmdStripLoadoutTest {
             }
             assertEquals(0, loadoutPart.getArmorTotal());
         }
-        assertEquals(UpgradeDB.STANDARD_GUIDANCE, cut.getUpgrades().getGuidance());
+        assertEquals(UpgradeDB.STD_GUIDANCE, cut.getUpgrades().getGuidance());
         assertEquals(cut.getChassis().getFixedStructureType(), cut.getUpgrades().getStructure());
         assertEquals(cut.getChassis().getFixedArmorType(), cut.getUpgrades().getArmor());
         assertEquals(cut.getChassis().getFixedHeatSinkType(), cut.getUpgrades().getHeatSink());
@@ -111,10 +111,10 @@ public class CmdStripLoadoutTest {
             assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
             assertEquals(0, loadoutPart.getArmorTotal());
         }
-        assertEquals(UpgradeDB.STANDARD_GUIDANCE, cut.getUpgrades().getGuidance());
-        assertEquals(UpgradeDB.STANDARD_STRUCTURE, cut.getUpgrades().getStructure());
-        assertEquals(UpgradeDB.STANDARD_ARMOR, cut.getUpgrades().getArmor());
-        assertEquals(UpgradeDB.STANDARD_HEATSINKS, cut.getUpgrades().getHeatSink());
+        assertEquals(UpgradeDB.STD_GUIDANCE, cut.getUpgrades().getGuidance());
+        assertEquals(UpgradeDB.IS_STD_STRUCTURE, cut.getUpgrades().getStructure());
+        assertEquals(UpgradeDB.IS_STD_ARMOR, cut.getUpgrades().getArmor());
+        assertEquals(UpgradeDB.IS_SHS, cut.getUpgrades().getHeatSink());
     }
 
     @Test
@@ -127,10 +127,10 @@ public class CmdStripLoadoutTest {
         stack.pushAndApply(new CmdStripLoadout(loadout, messageDelivery));
 
         assertEquals(loadout.getMass(), loadout.getChassis().getMassMax() * 0.1, 0.0);
-        assertSame(UpgradeDB.STANDARD_ARMOR, loadout.getUpgrades().getArmor());
-        assertSame(UpgradeDB.STANDARD_STRUCTURE, loadout.getUpgrades().getStructure());
-        assertSame(UpgradeDB.STANDARD_GUIDANCE, loadout.getUpgrades().getGuidance());
-        assertSame(UpgradeDB.STANDARD_HEATSINKS, loadout.getUpgrades().getHeatSink());
+        assertSame(UpgradeDB.IS_STD_ARMOR, loadout.getUpgrades().getArmor());
+        assertSame(UpgradeDB.IS_STD_STRUCTURE, loadout.getUpgrades().getStructure());
+        assertSame(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
+        assertSame(UpgradeDB.IS_SHS, loadout.getUpgrades().getHeatSink());
 
         stack.undo();
 
@@ -158,10 +158,10 @@ public class CmdStripLoadoutTest {
             assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
             assertNotEquals(0, loadoutPart.getArmorTotal());
         }
-        assertEquals(UpgradeDB.STANDARD_GUIDANCE, cut.getUpgrades().getGuidance());
-        assertEquals(UpgradeDB.STANDARD_STRUCTURE, cut.getUpgrades().getStructure());
-        assertEquals(UpgradeDB.STANDARD_ARMOR, cut.getUpgrades().getArmor());
-        assertEquals(UpgradeDB.STANDARD_HEATSINKS, cut.getUpgrades().getHeatSink());
+        assertEquals(UpgradeDB.STD_GUIDANCE, cut.getUpgrades().getGuidance());
+        assertEquals(UpgradeDB.IS_STD_STRUCTURE, cut.getUpgrades().getStructure());
+        assertEquals(UpgradeDB.IS_STD_ARMOR, cut.getUpgrades().getArmor());
+        assertEquals(UpgradeDB.IS_SHS, cut.getUpgrades().getHeatSink());
 
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
         verify(messageDelivery, atLeastOnce()).post(messageCaptor.capture());

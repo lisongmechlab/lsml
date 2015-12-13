@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
@@ -52,11 +53,11 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
      * 
      * @param aLoadout
      *            The loadout to calculate for.
-     * @param aXBar
+     * @param aReception
      *            The {@link MessageXBar} to listen for changes to 'aLoadout' on.
      */
-    public BurstDamageOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
-        this(aLoadout, aXBar, -1);
+    public BurstDamageOverTime(LoadoutBase<?> aLoadout, MessageReception aReception) {
+        this(aLoadout, aReception, -1);
     }
 
     /**
@@ -64,16 +65,16 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
      * 
      * @param aLoadout
      *            The loadout to calculate for.
-     * @param aXBar
+     * @param aReception
      *            The cross-bar to listen to changes on the loadout on.
      * @param aGroup
      *            The group to calculate for.
      */
-    public BurstDamageOverTime(LoadoutBase<?> aLoadout, MessageXBar aXBar, int aGroup) {
+    public BurstDamageOverTime(LoadoutBase<?> aLoadout, MessageReception aReception, int aGroup) {
         super(aLoadout);
         weaponGroup = aGroup;
         updateEvents(getRange());
-        aXBar.attach(this);
+        aReception.attach(this);
     }
 
     @Override
@@ -106,8 +107,8 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
             if (weapon instanceof EnergyWeapon) {
                 EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
                 if (energyWeapon.getDuration(modifiers) > 0) {
-                    damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(modifiers), damage
-                            / energyWeapon.getDuration(modifiers)));
+                    damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(modifiers),
+                            damage / energyWeapon.getDuration(modifiers)));
                     continue;
                 }
             }

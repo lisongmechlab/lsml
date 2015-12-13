@@ -69,13 +69,13 @@ public class CmdStripLoadout extends CompositeCommand {
             addOp(new CmdStripComponent(messageBuffer, loadout, component, removeArmor));
         }
 
-        addOp(new CmdSetGuidanceType(messageBuffer, loadout, UpgradeDB.STANDARD_GUIDANCE));
+        addOp(new CmdSetGuidanceType(messageBuffer, loadout, UpgradeDB.STD_GUIDANCE));
         
         if (loadout instanceof LoadoutStandard) {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-            addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_STRUCTURE));
-            addOp(new CmdSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_ARMOR));
-            addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.STANDARD_HEATSINKS));
+            addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.IS_STD_STRUCTURE));
+            addOp(new CmdSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.IS_STD_ARMOR));
+            addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.IS_SHS));
         }
     }
 }

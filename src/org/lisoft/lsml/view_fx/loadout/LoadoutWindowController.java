@@ -27,15 +27,19 @@ import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.StyleManager;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
+import org.lisoft.lsml.view_fx.controls.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
@@ -43,9 +47,14 @@ import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableCell;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableRow;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquippablePredicate;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
@@ -63,33 +72,124 @@ import javafx.scene.layout.VBox;
  * @author Emily Björk
  */
 public class LoadoutWindowController implements MessageReceiver {
+
+    // Constants
+
     private static final String   COLUMN_MASS  = "Mass";
     private static final String   COLUMN_SLOTS = "Slots";
     private static final String   COLUMN_NAME  = "Name";
-
     private static final int      UNDO_DEPTH   = 128;
+
+    // FXML elements
+
+    @FXML
+    private ProgressBar           generalMassBar;
+    @FXML
+    private ProgressBar           generalArmorBar;
+    @FXML
+    private ProgressBar           generalSlotsBar;
+    @FXML
+    private Label                 generalMassLabel;
+    @FXML
+    private Label                 generalArmorLabel;
+    @FXML
+    private Label                 generalSlotsLabel;
+    @FXML
+    private CheckBox              upgradeEndoSteel;
+    @FXML
+    private CheckBox              upgradeFerroFibrous;
+    @FXML
+    private CheckBox              upgradeDoubleHeatSinks;
+    @FXML
+    private CheckBox              upgradeArtemis;
+
+    @FXML
+    private CheckBox              effCoolRun;
+    @FXML
+    private CheckBox              effHeatContainment;
+    @FXML
+    private CheckBox              effTwistX;
+    @FXML
+    private CheckBox              effTwistSpeed;
+    @FXML
+    private CheckBox              effAnchorTurn;
+    @FXML
+    private CheckBox              effArmReflex;
+    @FXML
+    private CheckBox              effFastFire;
+    @FXML
+    private CheckBox              effSpeedTweak;
+    @FXML
+    private CheckBox              effDoubleBasics;
 
     @FXML
     private HBox                  layoutContainer;
     @FXML
     private TreeTableView<Object> equipmentList;
 
+    // Local state
+    private LoadoutModelAdaptor   model;
     private MessageXBar           xBar         = new MessageXBar();
     private CommandStack          cmdStack     = new CommandStack(UNDO_DEPTH);
-    private LoadoutBase<?>        loadout;
+
+    // Methods
 
     public void setLoadout(LoadoutBase<?> aLoadout) {
         xBar.attach(this);
-        loadout = aLoadout;
+        model = new LoadoutModelAdaptor(aLoadout, xBar, cmdStack);
 
         setupLayoutView();
         setupEquipmentList();
-        setupHeatPanel();
+        setupGeneralPanel();
+        setupUpgradesPanel();
+        setupEfficienciesPanel();
     }
 
-    private void setupHeatPanel() {
-        // TODO Auto-generated method stub
+    private void setupEffCheckbox(CheckBox aCheckBox, MechEfficiencyType aEfficiencyType) {
+        BooleanProperty property = model.hasEffMap.get(aEfficiencyType);
+        aCheckBox.selectedProperty().bindBidirectional(property);
+    }
 
+    private void setupEfficienciesPanel() {
+        setupEffCheckbox(effCoolRun, MechEfficiencyType.COOL_RUN);
+        setupEffCheckbox(effHeatContainment, MechEfficiencyType.HEAT_CONTAINMENT);
+        setupEffCheckbox(effTwistX, MechEfficiencyType.TWIST_X);
+        setupEffCheckbox(effTwistSpeed, MechEfficiencyType.TWIST_SPEED);
+        setupEffCheckbox(effAnchorTurn, MechEfficiencyType.ANCHORTURN);
+        setupEffCheckbox(effArmReflex, MechEfficiencyType.ARM_REFLEX);
+        setupEffCheckbox(effFastFire, MechEfficiencyType.FAST_FIRE);
+        setupEffCheckbox(effSpeedTweak, MechEfficiencyType.SPEED_TWEAK);
+
+        effDoubleBasics.selectedProperty().bindBidirectional(model.hasDoubleBasics);
+    }
+
+    private void setupUpgradesPanel() {
+        upgradeArtemis.selectedProperty().bindBidirectional(model.hasArtemis);
+        upgradeDoubleHeatSinks.selectedProperty().bindBidirectional(model.hasDoubleHeatSinks);
+        upgradeEndoSteel.selectedProperty().bindBidirectional(model.hasEndoSteel);
+        upgradeFerroFibrous.selectedProperty().bindBidirectional(model.hasFerroFibrous);
+
+        if (!(model.loadout instanceof LoadoutStandard)) {
+            upgradeDoubleHeatSinks.setDisable(true);
+            upgradeEndoSteel.setDisable(true);
+            upgradeFerroFibrous.setDisable(true);
+        }
+    }
+
+    private void setupGeneralPanel() {
+        ChassisBase chassis = model.loadout.getChassis();
+        int massMax = chassis.getMassMax();
+        generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
+        generalMassLabel.textProperty().bind(Bindings.format("%.2f t free", model.statsMass.negate().add(massMax)));
+
+        int armorMax = chassis.getArmorMax();
+        generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
+        generalArmorLabel.textProperty().bind(Bindings.format("%d free", model.statsArmor.negate().add(armorMax)));
+
+        int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
+        generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
+        generalSlotsLabel.textProperty()
+                .bind(Bindings.format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
     }
 
     private void setupLayoutView() {
@@ -105,14 +205,14 @@ public class LoadoutWindowController implements MessageReceiver {
         leftTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
 
         ObservableList<Node> children = layoutContainer.getChildren();
-        children.add(new VBox(leftArmStrut, new ComponentPane(xBar, cmdStack, loadout, Location.RightArm)));
-        children.add(new VBox(rightTorsoStrut, new ComponentPane(xBar, cmdStack, loadout, Location.RightTorso),
-                new ComponentPane(xBar, cmdStack, loadout, Location.RightLeg)));
-        children.add(new VBox(new ComponentPane(xBar, cmdStack, loadout, Location.Head),
-                new ComponentPane(xBar, cmdStack, loadout, Location.CenterTorso)));
-        children.add(new VBox(leftTorsoStrut, new ComponentPane(xBar, cmdStack, loadout, Location.LeftTorso),
-                new ComponentPane(xBar, cmdStack, loadout, Location.LeftLeg)));
-        children.add(new VBox(rightArmStrut, new ComponentPane(xBar, cmdStack, loadout, Location.LeftArm)));
+        children.add(new VBox(leftArmStrut, new ComponentPane(xBar, cmdStack, model.loadout, Location.RightArm)));
+        children.add(new VBox(rightTorsoStrut, new ComponentPane(xBar, cmdStack, model.loadout, Location.RightTorso),
+                new ComponentPane(xBar, cmdStack, model.loadout, Location.RightLeg)));
+        children.add(new VBox(new ComponentPane(xBar, cmdStack, model.loadout, Location.Head),
+                new ComponentPane(xBar, cmdStack, model.loadout, Location.CenterTorso)));
+        children.add(new VBox(leftTorsoStrut, new ComponentPane(xBar, cmdStack, model.loadout, Location.LeftTorso),
+                new ComponentPane(xBar, cmdStack, model.loadout, Location.LeftLeg)));
+        children.add(new VBox(rightArmStrut, new ComponentPane(xBar, cmdStack, model.loadout, Location.LeftArm)));
     }
 
     private void setupEquipmentList() {
@@ -131,7 +231,7 @@ public class LoadoutWindowController implements MessageReceiver {
         }
 
         allItems.stream().filter(aItem -> {
-            ChassisBase chassis = loadout.getChassis();
+            ChassisBase chassis = model.loadout.getChassis();
             return aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem);
         }).forEach(aItem -> {
             final EquipmentCategory category = EquipmentCategory.classify(aItem);
@@ -140,7 +240,7 @@ public class LoadoutWindowController implements MessageReceiver {
 
         setupEquipmentListColumns();
 
-        equipmentList.setRowFactory(aParam -> new EquipmentTableRow(loadout, cmdStack, xBar));
+        equipmentList.setRowFactory(aParam -> new EquipmentTableRow(model.loadout, cmdStack, xBar));
         equipmentList.setRoot(root);
         updateEquipmentPredicates();
     }
@@ -184,7 +284,7 @@ public class LoadoutWindowController implements MessageReceiver {
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof ItemMessage) {
+        if (aMsg instanceof ItemMessage || aMsg instanceof UpgradesMessage) {
             updateEquipmentPredicates();
         }
     }
@@ -193,7 +293,7 @@ public class LoadoutWindowController implements MessageReceiver {
         FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
         for (TreeItem<Object> category : root.getChildren()) {
             FilterTreeItem<Object> filterTreeItem = (FilterTreeItem<Object>) category;
-            filterTreeItem.setPredicate(new EquippablePredicate(loadout));
+            filterTreeItem.setPredicate(new EquippablePredicate(model.loadout));
         }
         root.setPredicate(aCategory -> {
             return !aCategory.getChildren().isEmpty();

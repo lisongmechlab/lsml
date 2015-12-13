@@ -190,7 +190,7 @@ public class PayloadSelectionPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
                     aUpgrades.setStructure(
-                            endoSteel.isSelected() ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE);
+                            endoSteel.isSelected() ? UpgradeDB.IS_ES_STRUCTURE : UpgradeDB.IS_STD_STRUCTURE);
                     aGraphPanel.updateGraph();
                 }
             });
@@ -198,7 +198,7 @@ public class PayloadSelectionPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
                     aUpgrades.setArmor(
-                            ferroFibrous.isSelected() ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR);
+                            ferroFibrous.isSelected() ? UpgradeDB.IS_FF_ARMOR : UpgradeDB.IS_STD_ARMOR);
                     aGraphPanel.updateGraph();
                 }
             });
@@ -222,15 +222,15 @@ public class PayloadSelectionPanel extends JPanel {
         boolean xlEngine = false;
         boolean maxArmor = true;
 
-        upgrades = new UpgradesMutable(UpgradeDB.FERRO_FIBROUS_ARMOR, UpgradeDB.ENDO_STEEL_STRUCTURE,
-                UpgradeDB.ARTEMIS_IV, UpgradeDB.DOUBLE_HEATSINKS);
+        upgrades = new UpgradesMutable(UpgradeDB.IS_FF_ARMOR, UpgradeDB.IS_ES_STRUCTURE,
+                UpgradeDB.ARTEMIS_IV, UpgradeDB.IS_DHS);
         payloadStatistics = new PayloadStatistics(xlEngine, maxArmor, upgrades);
         graphPanel = new PayloadGraphPanel(payloadStatistics, settingsPanel.speedTweak);
         graphPanel.selectChassis(chassisGroups);
         graphPanel.updateGraph();
 
-        settingsPanel.endoSteel.setSelected(upgrades.getStructure() != UpgradeDB.STANDARD_STRUCTURE);
-        settingsPanel.ferroFibrous.setSelected(upgrades.getArmor() != UpgradeDB.STANDARD_ARMOR);
+        settingsPanel.endoSteel.setSelected(upgrades.getStructure() != UpgradeDB.IS_STD_STRUCTURE);
+        settingsPanel.ferroFibrous.setSelected(upgrades.getArmor() != UpgradeDB.IS_STD_ARMOR);
         if (maxArmor)
             settingsPanel.maxArmor.setSelected(true);
         else

@@ -106,10 +106,10 @@ public class LoadoutCoderV1 implements LoadoutCoder {
             boolean endoSteel = (upeff & (1 << 4)) != 0;
             boolean ferroFib = (upeff & (1 << 5)) != 0;
             boolean dhs = (upeff & (1 << 6)) != 0;
-            GuidanceUpgrade guidance = artemisIv ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STANDARD_GUIDANCE;
-            StructureUpgrade structure = endoSteel ? UpgradeDB.ENDO_STEEL_STRUCTURE : UpgradeDB.STANDARD_STRUCTURE;
-            ArmorUpgrade armor = ferroFib ? UpgradeDB.FERRO_FIBROUS_ARMOR : UpgradeDB.STANDARD_ARMOR;
-            HeatSinkUpgrade heatSinks = dhs ? UpgradeDB.DOUBLE_HEATSINKS : UpgradeDB.STANDARD_HEATSINKS;
+            GuidanceUpgrade guidance = artemisIv ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STD_GUIDANCE;
+            StructureUpgrade structure = endoSteel ? UpgradeDB.IS_ES_STRUCTURE : UpgradeDB.IS_STD_STRUCTURE;
+            ArmorUpgrade armor = ferroFib ? UpgradeDB.IS_FF_ARMOR : UpgradeDB.IS_STD_ARMOR;
+            HeatSinkUpgrade heatSinks = dhs ? UpgradeDB.IS_DHS : UpgradeDB.IS_SHS;
 
             stack.pushAndApply(new CmdSetGuidanceType(null, loadout, guidance));
             stack.pushAndApply(new CmdSetHeatSinkType(null, loadout, heatSinks));

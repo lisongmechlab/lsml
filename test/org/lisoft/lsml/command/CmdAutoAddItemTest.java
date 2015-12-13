@@ -140,7 +140,7 @@ public class CmdAutoAddItemTest {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("BNC-3M"));
-        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.IS_DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
@@ -231,7 +231,7 @@ public class CmdAutoAddItemTest {
         try {
             // Setup
             loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-            stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+            stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.IS_DHS));
 
             // 2 slots in either leg
             // 2 slots left in CT
@@ -275,7 +275,7 @@ public class CmdAutoAddItemTest {
         // Setup
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.IS_DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
         Item gaussRifle = ItemDB.lookup("GAUSS RIFLE");
@@ -353,7 +353,7 @@ public class CmdAutoAddItemTest {
         ConfiguredComponentStandard rt = loadout.getComponent(Location.RightTorso);
         ConfiguredComponentStandard la = loadout.getComponent(Location.LeftArm);
         ConfiguredComponentStandard ra = loadout.getComponent(Location.RightArm);
-        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.DOUBLE_HEATSINKS));
+        stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.IS_DHS));
 
         InOrder io = Mockito.inOrder(xBar);
 
