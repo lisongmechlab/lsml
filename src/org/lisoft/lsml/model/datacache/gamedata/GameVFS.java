@@ -59,11 +59,11 @@ import org.lisoft.lsml.view.preferences.CorePreferences;
  * @author Li Song
  */
 public class GameVFS {
-    public static final File ITEM_STATS_XML  = new File("Game/Libs/Items/ItemStats.xml");
-    public static final File MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
-    public static final File MDF_ROOT        = new File("Game/mechs/Objects/mechs/");
+    public static final File      ITEM_STATS_XML  = new File("Game/Libs/Items/ItemStats.xml");
+    public static final File      MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
+    public static final File      MDF_ROOT        = new File("Game/mechs/Objects/mechs/");
 
-    private final Map<File, File> file2archive = new HashMap<File, File>();
+    private final Map<File, File> file2archive    = new HashMap<File, File>();
     private static Path           gamePath;
 
     /**
@@ -242,8 +242,9 @@ public class GameVFS {
      * @return <code>true</code> if <code>aPath</code> points to a valid game install, false otherwise.
      */
     private static boolean isValidGameDirectory(File aFile) {
-        return (new File(aFile, "Game/Objects.pak")).exists()
-                && (new File(aFile, "Bin32/MechWarriorOnline.exe")).exists();
+        boolean hasObjectsPak = (new File(aFile, "Game/Objects.pak")).exists();
+        boolean hasBinary = (new File(aFile, "Bin32/MWOClient.exe")).exists() || (new File(aFile, "Bin64/MWOClient.exe")).exists();
+        return hasObjectsPak && hasBinary;
     }
 
     static private class GameFinder extends SimpleFileVisitor<Path> {
