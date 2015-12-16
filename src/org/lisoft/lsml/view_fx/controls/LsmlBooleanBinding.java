@@ -20,46 +20,46 @@
 package org.lisoft.lsml.view_fx.controls;
 
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
-import javafx.beans.binding.IntegerBinding;
-import javafx.util.Callback;
+import javafx.beans.binding.BooleanBinding;
 
 /**
  * This binding will bind to an arbitrary attribute of a loadout and provide automatic updating.
  * 
  * @author Emily Björk
  */
-public class LoadoutIntegerBinding extends IntegerBinding implements MessageReceiver {
-    private final Callable<Integer>          valueFunction;
-    private final Callback<Message, Boolean> invalidationFilter;
+public class LsmlBooleanBinding extends BooleanBinding implements MessageReceiver {
+    private final Callable<Boolean>  valueFunction;
+    private final Predicate<Message> invalidationFilter;
 
-    public LoadoutIntegerBinding(MessageReception aMessageReception, Callable<Integer> aValueFunction,
-            Callback<Message, Boolean> aInvalidationFilter) {
+    public LsmlBooleanBinding(MessageReception aMessageReception, Callable<Boolean> aValueFunction,
+            Predicate<Message> aInvalidationFilter) {
         aMessageReception.attach(this);
         valueFunction = aValueFunction;
         invalidationFilter = aInvalidationFilter;
     }
 
     @Override
-    protected int computeValue() {
+    protected boolean computeValue() {
         try {
             return valueFunction.call();
         }
         catch (Exception e) {
             LiSongMechLab.showError(e);
         }
-        return 0;
+        return false;
     }
 
     @Override
     public void receive(Message aMsg) {
         try {
-            if (invalidationFilter.call(aMsg).booleanValue() == true) {
+            if (invalidationFilter.test(aMsg) == true) {
                 invalidate();
             }
         }

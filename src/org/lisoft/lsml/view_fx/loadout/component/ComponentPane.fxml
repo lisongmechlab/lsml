@@ -5,30 +5,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root fx:id="rootPane" alignment="CENTER" animated="false"
-  collapsible="false" text="Component (x hp)" type="TitledPane"
-  xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController">
+<fx:root fx:id="rootPane" alignment="CENTER" animated="false" collapsible="false" text="Component (x hp)" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController">
   <content>
-    <VBox alignment="TOP_CENTER" fx:id="container">
+    <VBox fx:id="container" alignment="TOP_CENTER">
       <children>
-        <ToggleButton fx:id="toggleLAA" mnemonicParsing="false"
-          text="Lower Arm"/>
-        <ToggleButton fx:id="toggleHA" mnemonicParsing="false"
-          text="Hand"/>
-        <ComboBox/>
-        <HBox alignment="CENTER">
+        <ToggleButton fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" />
+        <ToggleButton fx:id="toggleHA" mnemonicParsing="false" text="Hand" />
+        <ComboBox />
+        <HBox fx:id="armorBox" alignment="CENTER">
           <children>
-            <Label text="Armor"/>
-            <Spinner editable="true" prefHeight="25.0"
-              prefWidth="60.0"/>
-            <Label text="/max"/>
+            <Label fx:id="armorLabel" text="Armor" HBox.hgrow="NEVER" />
+            <Spinner fx:id="armorSpinner" editable="true" prefWidth="60.0" HBox.hgrow="ALWAYS" />
+            <Label fx:id="armorMax" text="/max" HBox.hgrow="NEVER" />
           </children>
         </HBox>
-        <HBox/>
-        <ItemView fx:id="itemView" onDragDetected="#onDragStart"
-          onDragDropped="#onDragDropped" onDragOver="#onDragOver"
-          onMouseClicked="#onEquipmentClicked"/>
+            <HBox fx:id="armorBoxBack" alignment="CENTER">
+               <children>
+                  <Label fx:id="armorLabelBack" text="Armor" HBox.hgrow="NEVER" />
+                  <Spinner fx:id="armorSpinnerBack" editable="true" prefWidth="60.0" HBox.hgrow="ALWAYS" />
+                  <Label fx:id="armorMaxBack" text="/max" HBox.hgrow="NEVER" />
+               </children>
+            </HBox>
+        <HBox />
+        <ItemView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" />
       </children>
     </VBox>
   </content>

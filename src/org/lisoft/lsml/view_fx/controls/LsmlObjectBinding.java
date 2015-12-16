@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view_fx.controls;
 
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -27,7 +28,6 @@ import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 import javafx.beans.binding.ObjectBinding;
-import javafx.util.Callback;
 
 /**
  * This binding will bind to an arbitrary attribute of a loadout and provide automatic updating.
@@ -36,12 +36,12 @@ import javafx.util.Callback;
  * @param <T>
  *            Type of object the binding contains.
  */
-public class LoadoutObjectBinding<T> extends ObjectBinding<T> implements MessageReceiver {
-    private final Callable<T>                valueFunction;
-    private final Callback<Message, Boolean> invalidationFilter;
+public class LsmlObjectBinding<T> extends ObjectBinding<T> implements MessageReceiver {
+    private final Callable<T>        valueFunction;
+    private final Predicate<Message> invalidationFilter;
 
-    public LoadoutObjectBinding(MessageReception aMessageReception, Callable<T> aValueFunction,
-            Callback<Message, Boolean> aInvalidationFilter) {
+    public LsmlObjectBinding(MessageReception aMessageReception, Callable<T> aValueFunction,
+            Predicate<Message> aInvalidationFilter) {
         aMessageReception.attach(this);
         valueFunction = aValueFunction;
         invalidationFilter = aInvalidationFilter;
@@ -61,7 +61,7 @@ public class LoadoutObjectBinding<T> extends ObjectBinding<T> implements Message
     @Override
     public void receive(Message aMsg) {
         try {
-            if (invalidationFilter.call(aMsg).booleanValue() == true) {
+            if (invalidationFilter.test(aMsg) == true) {
                 invalidate();
             }
         }

@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view_fx.controls;
 
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -27,19 +28,18 @@ import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 import javafx.beans.binding.DoubleBinding;
-import javafx.util.Callback;
 
 /**
  * This binding will bind to an arbitrary attribute of a loadout and provide automatic updating.
  * 
  * @author Emily Björk
  */
-public class LoadoutDoubleBinding extends DoubleBinding implements MessageReceiver {
-    private final Callable<Double>           valueFunction;
-    private final Callback<Message, Boolean> invalidationFilter;
+public class LsmlDoubleBinding extends DoubleBinding implements MessageReceiver {
+    private final Callable<Double>   valueFunction;
+    private final Predicate<Message> invalidationFilter;
 
-    public LoadoutDoubleBinding(MessageReception aMessageReception, Callable<Double> aValueFunction,
-            Callback<Message, Boolean> aInvalidationFilter) {
+    public LsmlDoubleBinding(MessageReception aMessageReception, Callable<Double> aValueFunction,
+            Predicate<Message> aInvalidationFilter) {
         aMessageReception.attach(this);
         valueFunction = aValueFunction;
         invalidationFilter = aInvalidationFilter;
@@ -59,7 +59,7 @@ public class LoadoutDoubleBinding extends DoubleBinding implements MessageReceiv
     @Override
     public void receive(Message aMsg) {
         try {
-            if (invalidationFilter.call(aMsg).booleanValue() == true) {
+            if (invalidationFilter.test(aMsg) == true) {
                 invalidate();
             }
         }

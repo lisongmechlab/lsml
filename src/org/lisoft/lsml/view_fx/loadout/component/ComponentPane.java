@@ -23,9 +23,9 @@ import java.io.IOException;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.controls.LoadoutModelAdaptor;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TitledPane;
@@ -37,14 +37,14 @@ import javafx.scene.control.TitledPane;
  */
 public class ComponentPane extends TitledPane {
 
-    public ComponentPane(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutBase<?> aLoadout,
+    public ComponentPane(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutModelAdaptor aModel,
             Location aLocation) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ComponentPane.fxml"));
         try {
             fxmlLoader.setRoot(this);
             fxmlLoader.load();
             ComponentPaneController controller = fxmlLoader.getController();
-            controller.setComponent(aMessageDelivery, aStack, aLoadout, aLocation);
+            controller.setComponent(aMessageDelivery, aStack, aModel, aLocation);
         }
         catch (IOException exception) {
             LiSongMechLab.showError(exception);

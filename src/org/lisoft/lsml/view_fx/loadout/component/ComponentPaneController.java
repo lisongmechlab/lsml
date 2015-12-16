@@ -21,28 +21,35 @@ package org.lisoft.lsml.view_fx.loadout.component;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
-import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.controls.LoadoutModelAdaptor;
 
-import javafx.beans.property.BooleanPropertyBase;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Pair;
 
 /**
  * This is the controller for the component pane. The component pane shows the state of one component in the loadout.
@@ -50,8 +57,8 @@ import javafx.scene.layout.VBox;
  * @author Emily Björk
  */
 public class ComponentPaneController {
-
     public static final int         ITEM_WIDTH = 150;
+
     @FXML
     private TitledPane              rootPane;
     @FXML
@@ -60,14 +67,30 @@ public class ComponentPaneController {
     private ToggleButton            toggleLAA;
     @FXML
     private ToggleButton            toggleHA;
+    @FXML
+    private VBox                    container;
+    @FXML
+    private HBox                    armorBox;
+    @FXML
+    private HBox                    armorBoxBack;
+    @FXML
+    private Label                   armorLabel;
+    @FXML
+    private Label                   armorLabelBack;
+    @FXML
+    private Label                   armorMax;
+    @FXML
+    private Label                   armorMaxBack;
+    @FXML
+    private Spinner<Integer>        armorSpinner;
+    @FXML
+    private Spinner<Integer>        armorSpinnerBack;
 
     private CommandStack            stack;
-    private LoadoutBase<?>          loadout;
+    private LoadoutModelAdaptor     model;
     private MessageXBar             xBar;
     private Location                location;
     private ConfiguredComponentBase component;
-    @FXML
-    private VBox                    container;
 
     /**
      * Sets up this component. Must be called before this component is usable.
@@ -76,23 +99,69 @@ public class ComponentPaneController {
      *            A {@link MessageXBar} to send and receive messages on.
      * @param aStack
      *            The {@link CommandStack} to use for doing commands.
-     * @param aLoadout
+     * @param aModel
      *            The loadout to get the component from.
      * @param aLocation
      *            The location of the loadout to get component for.
      */
-    public void setComponent(MessageXBar aMessageXBar, CommandStack aStack, LoadoutBase<?> aLoadout,
+    public void setComponent(MessageXBar aMessageXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
             Location aLocation) {
         stack = aStack;
-        loadout = aLoadout;
+        model = aModel;
         location = aLocation;
         xBar = aMessageXBar;
-        component = loadout.getComponent(location);
+        component = model.loadout.getComponent(location);
 
-        setupTogglable(toggleLAA, ItemDB.LAA);
-        setupTogglable(toggleHA, ItemDB.HA);
+        setupToggles();
         setupItemView();
         setupTitle();
+
+        if (location.isTwoSided()) {
+
+        }
+        else {
+            
+            IntegerProperty armorAmount=model.armor.get(new Pair<>(location, ArmorSide.ONLY));
+            
+            IntegerSpinnerValueFactory factory = new IntegerSpinnerValueFactory(0, 100, 10);
+            factory.valueProperty().bindBidirectional(armorAmount.asObject());
+            factory.maxProperty()
+            
+
+            armorLabel.setText("Armor:");
+            armorSpinner.setValueFactory(new SpinnerValueFactory.i() {
+                @Override
+                public void increment(int aSteps) {
+                    // TODO Auto-generated method stub
+
+                }
+
+                @Override
+                public void decrement(int aSteps) {
+                    // TODO Auto-generated method stub
+
+                }
+            });
+            armorMax.textProperty().bind(Bindings.format("", model.armor.get(new Pair<>(location, ArmorSide.ONLY)).));
+
+            container.getChildren().remove(armorBoxBack);
+        }
+
+    }
+
+    private void setupToggles() {
+        if (Location.LeftArm == location) {
+            setupTogglable(toggleLAA, model.hasLeftLAA);
+            setupTogglable(toggleHA, model.hasLeftHA);
+        }
+        else if (Location.RightArm == location) {
+            setupTogglable(toggleLAA, model.hasRightLAA);
+            setupTogglable(toggleHA, model.hasRightHA);
+        }
+        else {
+            container.getChildren().remove(toggleLAA);
+            container.getChildren().remove(toggleHA);
+        }
     }
 
     private void setupTitle() {
@@ -101,7 +170,7 @@ public class ComponentPaneController {
 
     private void setupItemView() {
         itemView.setVisibleRows(component.getInternalComponent().getSlots());
-        itemView.setItems(new ComponentItemsList(xBar, loadout, location));
+        itemView.setItems(new ComponentItemsList(xBar, model.loadout, location));
         itemView.setCellFactory((aList) -> {
             return new ComponentItemsCell((ItemView<Item>) aList);
         });
@@ -109,60 +178,12 @@ public class ComponentPaneController {
         itemView.setPrefWidth(ITEM_WIDTH);
     }
 
-    private void setupTogglable(ToggleButton aButton, Item aTogglee) {
-        if (component instanceof ConfiguredComponentOmniMech) {
-            ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
-
-            if (componentOmniMech.getOmniPod().getToggleableItems().contains(aTogglee)) {
-                aButton.setVisible(true);
-                aButton.selectedProperty().bindBidirectional(new BooleanPropertyBase() {
-
-                    @Override
-                    public String getName() {
-                        return "Toggle " + aTogglee.getName();
-                    }
-
-                    @Override
-                    public Object getBean() {
-                        return null;
-                    }
-
-                    @Override
-                    public boolean get() {
-                        return componentOmniMech.getToggleState(aTogglee);
-                    }
-
-                    @Override
-                    public void set(boolean aValue) {
-                        try {
-                            stack.pushAndApply(new CmdToggleItem(xBar, loadout, componentOmniMech, aTogglee, aValue));
-                        }
-                        catch (Exception e) {
-                            LiSongMechLab.showError(e);
-                        }
-                    }
-                });
-
-                aButton.disableProperty().bind(new BooleanPropertyBase() {
-                    @Override
-                    public String getName() {
-                        return "Disable toggle for " + aTogglee.getName();
-                    }
-
-                    @Override
-                    public Object getBean() {
-                        return null;
-                    }
-
-                    @Override
-                    public boolean get() {
-                        return EquipResult.SUCCESS != componentOmniMech.canToggleOn(aTogglee);
-                    }
-                });
-                return;
-            }
+    private void setupTogglable(ToggleButton aButton, BooleanProperty aToggleProperty) {
+        if (aToggleProperty == null) {
+            container.getChildren().remove(aButton);
+            return;
         }
-        container.getChildren().remove(aButton);
+        aButton.selectedProperty().bindBidirectional(aToggleProperty);
     }
 
     @FXML
@@ -171,7 +192,7 @@ public class ComponentPaneController {
             if (aEvent.getSource() == itemView) {
                 Item item = itemView.getSelectionModel().getSelectedItem();
                 if (item != null && component.canRemoveItem(item)) {
-                    stack.pushAndApply(new CmdRemoveItem(xBar, loadout, component, item));
+                    stack.pushAndApply(new CmdRemoveItem(xBar, model.loadout, component, item));
                 }
             }
         }
@@ -183,7 +204,7 @@ public class ComponentPaneController {
         if (component.canRemoveItem(item)) {
             Dragboard db = itemView.startDragAndDrop(TransferMode.MOVE);
             LiSongMechLab.addItemDrag(db, item);
-            stack.pushAndApply(new CmdRemoveItem(xBar, loadout, component, item));
+            stack.pushAndApply(new CmdRemoveItem(xBar, model.loadout, component, item));
         }
         aMouseEvent.consume();
     }
@@ -194,13 +215,14 @@ public class ComponentPaneController {
         if (db.hasString()) {
             try {
                 Item item = ItemDB.lookup(Integer.parseInt(db.getString()));
-                if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)
+                if (EquipResult.SUCCESS == model.loadout.canEquipDirectly(item)
                         && EquipResult.SUCCESS == component.canEquip(item)) {
                     aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
             }
             catch (Throwable t) {
                 // User dragging junk, ignore it.
+                // Sue: Why you always bring me junk?!
             }
         }
         aDragEvent.consume();
@@ -213,7 +235,7 @@ public class ComponentPaneController {
         if (db.hasString()) {
             try {
                 Item item = ItemDB.lookup(Integer.parseInt(db.getString()));
-                stack.pushAndApply(new CmdAddItem(xBar, loadout, component, item));
+                stack.pushAndApply(new CmdAddItem(xBar, model.loadout, component, item));
                 success = true;
             }
             catch (Exception e) {
