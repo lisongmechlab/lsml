@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package org.lisoft.lsml.view.mechlab.dropshipframe;
 
@@ -36,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import org.lisoft.lsml.command.CmdAddLoadoutToGarage;
 import org.lisoft.lsml.command.CmdDropShipSetLoadout;
 import org.lisoft.lsml.command.CmdMoveLoadoutFromGarageToDropShip;
 import org.lisoft.lsml.messages.ComponentMessage;
@@ -143,8 +144,8 @@ public class LoadoutDisplay extends JPanel implements MessageReceiver {
             @Override
             public void actionPerformed(ActionEvent aE) {
                 try {
-                    ProgramInit.lsml().garageCmdStack.pushAndApply(
-                            new CmdDropShipSetLoadout(ProgramInit.lsml().xBar, dropShip, bayIndex, null));
+                    ProgramInit.lsml().garageCmdStack
+                            .pushAndApply(new CmdDropShipSetLoadout(ProgramInit.lsml().xBar, dropShip, bayIndex, null));
                 }
                 catch (Exception e) {
                     // There is no reason for this to fail, promote to unchecked.
@@ -152,6 +153,33 @@ public class LoadoutDisplay extends JPanel implements MessageReceiver {
                 }
             }
         }), gbc);
+
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+        showLoadoutPanel.add(new JButton(new AbstractAction("Return to garage") {
+            @Override
+            public boolean isEnabled() {
+                return !ProgramInit.lsml().getGarage().getMechs().contains(dropShip.getMech(bayIndex));
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent aE) {
+                try {
+                    LoadoutBase<?> l = dropShip.getMech(bayIndex);
+
+                    ProgramInit.lsml().garageCmdStack
+                            .pushAndApply(new CmdDropShipSetLoadout(ProgramInit.lsml().xBar, dropShip, bayIndex, null));
+                    ProgramInit.lsml().garageCmdStack
+                            .pushAndApply(new CmdAddLoadoutToGarage(ProgramInit.lsml().getGarage(), l));
+                }
+                catch (Exception e) {
+                    // There is no reason for this to fail, promote to unchecked.
+                    throw new RuntimeException(e);
+                }
+            }
+        }), gbc);
+        gbc.gridwidth = 1;
 
         gbc.gridy++;
         gbc.gridx = 0;
