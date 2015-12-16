@@ -306,7 +306,7 @@ public class DataCache {
      */
     private static File getNewCacheLocation() throws IOException {
         String dataCacheLocation = CorePreferences.getGameDataCache();
-        if (dataCacheLocation.isEmpty()) {
+        if (dataCacheLocation.isEmpty() || !(new File(dataCacheLocation).isFile())) {
             if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
                 dataCacheLocation = System.getenv("AppData") + "/lsml_datacache.xml";
             }
