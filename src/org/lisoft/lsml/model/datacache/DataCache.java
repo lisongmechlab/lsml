@@ -252,8 +252,7 @@ public class DataCache {
                 if (status == ParseStatus.NotInitialized)
                     status = ParseStatus.Builtin;
                 if (!dataCache.lsmlVersion.equals(LSML.getVersion())) {
-                    // It's from a different LSML version, it's not safe to use
-                    // it.
+                    // It's from a different LSML version, it's not safe to use it.
                     throw new RuntimeException("Bundled data cache not udpated!");
                 }
             }
