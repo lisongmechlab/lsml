@@ -19,40 +19,49 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
+import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdSetArmorType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetStructureType;
+import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.messages.ComponentMessage;
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.UpgradesMessage;
+import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
+import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.util.Callback;
+import javafx.util.Pair;
 
 /**
  * This class adapts a {@link LoadoutBase} for suitability to use with JavaFX bindings type APIs.
@@ -60,26 +69,40 @@ import javafx.util.Callback;
  * @author Li Song
  */
 public class LoadoutModelAdaptor {
-    public final LoadoutBase<?>                           loadout;
-    public final LoadoutMetrics                           metrics;
-    private final CommandStack                            cmdStack;
-    public final DoubleBinding                            statsMass;
-    public final IntegerBinding                           statsArmor;
-    public final IntegerBinding                           statsSlots;
-    public final ObjectBinding<StructureUpgrade>          upgradeStructure;
-    public final ObjectBinding<HeatSinkUpgrade>           upgradeHeatSinks;
-    public final ObjectBinding<ArmorUpgrade>              upgradeArmor;
-    public final ObjectBinding<GuidanceUpgrade>           upgradeGuidance;
 
-    public final BooleanProperty                          hasEndoSteel;
-    public final BooleanProperty                          hasDoubleHeatSinks;
-    public final BooleanProperty                          hasFerroFibrous;
-    public final BooleanProperty                          hasArtemis;
+    static public class ComponentModel {
+        IntegerProperty armor;
+        IntegerProperty armorMax;
+    }
 
-    public final Map<MechEfficiencyType, BooleanBinding>  effMap;
-    public final Map<MechEfficiencyType, BooleanProperty> hasEffMap;
-    public final BooleanBinding                           effDoubleBasics;
-    public final BooleanProperty                          hasDoubleBasics;
+    public final LoadoutBase<?>                                                         loadout;
+    public final LoadoutMetrics                                                         metrics;
+    private final CommandStack                                                          cmdStack;
+
+    // General
+    public final DoubleBinding                                                          statsMass;
+    public final IntegerBinding                                                         statsArmor;
+    public final IntegerBinding                                                         statsSlots;
+
+    // Upgrades
+    public final BooleanProperty                                                        hasEndoSteel;
+    public final BooleanProperty                                                        hasDoubleHeatSinks;
+    public final BooleanProperty                                                        hasFerroFibrous;
+    public final BooleanProperty                                                        hasArtemis;
+
+    // Efficiencies
+    public final Map<MechEfficiencyType, BooleanProperty>                               hasEfficiency;
+    public final BooleanProperty                                                        hasDoubleBasics;
+
+    // Toggles
+    public final BooleanProperty                                                        hasLeftHA;
+    public final BooleanProperty                                                        hasRightHA;
+    public final BooleanProperty                                                        hasLeftLAA;
+    public final BooleanProperty                                                        hasRightLAA;
+
+    // Armor
+    public final Map<Pair<Location, ArmorSide>, Pair<IntegerProperty, IntegerProperty>> armor;
+    public final IntegerProperty                                                        totalArmorMax;
 
     public LoadoutModelAdaptor(LoadoutBase<?> aLoadout, MessageXBar aXBar, CommandStack aCmdStack) {
         cmdStack = aCmdStack;
@@ -93,76 +116,115 @@ public class LoadoutModelAdaptor {
         ArmorUpgrade armorSTD = isClan ? UpgradeDB.CLAN_STD_ARMOR : UpgradeDB.IS_STD_ARMOR;
         HeatSinkUpgrade hsDHS = isClan ? UpgradeDB.CLAN_DHS : UpgradeDB.IS_DHS;
         HeatSinkUpgrade hsSTD = isClan ? UpgradeDB.CLAN_SHS : UpgradeDB.IS_SHS;
-        Callback<Message, Boolean> armorChanged = (aMsg) -> aMsg instanceof ComponentMessage;
-        Callback<Message, Boolean> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
-        Callback<Message, Boolean> upgradesChanged = (aMsg) -> aMsg instanceof UpgradesMessage;
-        Callback<Message, Boolean> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
-        Callback<Message, Boolean> slotsChanged = (aMsg) -> itemsChanged.call(aMsg) || upgradesChanged.call(aMsg);
-        Callback<Message, Boolean> massChanged = (aMsg) -> armorChanged.call(aMsg) || slotsChanged.call(aMsg);
+        Predicate<Message> armorChanged = (aMsg) -> aMsg instanceof ComponentMessage;
+        Predicate<Message> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
+        Predicate<Message> upgradesChanged = (aMsg) -> aMsg instanceof UpgradesMessage;
+        Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
+        Predicate<Message> slotsChanged = (aMsg) -> itemsChanged.test(aMsg) || upgradesChanged.test(aMsg);
+        Predicate<Message> massChanged = (aMsg) -> armorChanged.test(aMsg) || slotsChanged.test(aMsg);
 
-        statsMass = new LoadoutDoubleBinding(aXBar, () -> loadout.getMass(), massChanged);
-        statsArmor = new LoadoutIntegerBinding(aXBar, () -> loadout.getArmor(), armorChanged);
-        statsSlots = new LoadoutIntegerBinding(aXBar, () -> loadout.getNumCriticalSlotsUsed(), slotsChanged);
+        //
+        // General
+        //
+        statsMass = new LsmlDoubleBinding(aXBar, () -> loadout.getMass(), massChanged);
+        statsArmor = new LsmlIntegerBinding(aXBar, () -> loadout.getArmor(), armorChanged);
+        statsSlots = new LsmlIntegerBinding(aXBar, () -> loadout.getNumCriticalSlotsUsed(), slotsChanged);
 
-        upgradeStructure = new LoadoutObjectBinding<>(aXBar, () -> upgrades.getStructure(), upgradesChanged);
-        upgradeHeatSinks = new LoadoutObjectBinding<>(aXBar, () -> upgrades.getHeatSink(), upgradesChanged);
-        upgradeArmor = new LoadoutObjectBinding<>(aXBar, () -> upgrades.getArmor(), upgradesChanged);
-        upgradeGuidance = new LoadoutObjectBinding<>(aXBar, () -> upgrades.getGuidance(), upgradesChanged);
-
-        hasEndoSteel = new SimpleBooleanProperty(structureES == upgrades.getStructure());
-        hasDoubleHeatSinks = new SimpleBooleanProperty(hsDHS == upgrades.getHeatSink());
-        hasFerroFibrous = new SimpleBooleanProperty(armorFF == upgrades.getArmor());
-        hasArtemis = new SimpleBooleanProperty(UpgradeDB.ARTEMIS_IV == upgrades.getGuidance());
-
+        //
+        // Upgrades
+        //
         if (loadout instanceof LoadoutStandard) {
-            LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+            LoadoutStandard loadoutSTD = (LoadoutStandard) loadout;
+            hasEndoSteel = new LsmlBooleanProperty(aXBar, () -> structureES == upgrades.getStructure(), (aValue) -> {
+                cmdStack.pushAndApply(new CmdSetStructureType(aXBar, loadoutSTD, aValue ? structureES : structureSTD));
+                return true;
+            } , upgradesChanged);
 
-            hasEndoSteel.addListener(new SafeBooleanPropertyChangeListener((aValue) -> {
-                StructureUpgrade structure = aValue ? structureES : structureSTD;
-                if (structure != upgrades.getStructure()) {
-                    cmdStack.pushAndApply(new CmdSetStructureType(aXBar, loadoutStandard, structure));
-                }
-            }));
+            hasDoubleHeatSinks = new LsmlBooleanProperty(aXBar, () -> hsDHS == upgrades.getHeatSink(), (aValue) -> {
+                cmdStack.pushAndApply(new CmdSetHeatSinkType(aXBar, loadoutSTD, aValue ? hsDHS : hsSTD));
+                return true;
+            } , upgradesChanged);
 
-            hasDoubleHeatSinks.addListener(new SafeBooleanPropertyChangeListener((aValue) -> {
-                HeatSinkUpgrade heatSinks = aValue ? hsDHS : hsSTD;
-                if (heatSinks != upgrades.getHeatSink()) {
-                    cmdStack.pushAndApply(new CmdSetHeatSinkType(aXBar, loadoutStandard, heatSinks));
-                }
-            }));
-
-            hasFerroFibrous.addListener(new SafeBooleanPropertyChangeListener((aValue) -> {
-                ArmorUpgrade armor = aValue ? armorFF : armorSTD;
-                if (armor != upgrades.getArmor()) {
-                    cmdStack.pushAndApply(new CmdSetArmorType(aXBar, loadoutStandard, armor));
-                }
-            }));
+            hasFerroFibrous = new LsmlBooleanProperty(aXBar, () -> armorFF == upgrades.getArmor(), (aValue) -> {
+                cmdStack.pushAndApply(new CmdSetArmorType(aXBar, loadoutSTD, aValue ? armorFF : armorSTD));
+                return true;
+            } , upgradesChanged);
+        }
+        else {
+            hasEndoSteel = null;
+            hasDoubleHeatSinks = null;
+            hasFerroFibrous = null;
         }
 
-        hasArtemis.addListener(new SafeBooleanPropertyChangeListener((aValue) -> {
-            GuidanceUpgrade guidance = aValue ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STD_GUIDANCE;
-            if (guidance != upgrades.getGuidance()) {
-                cmdStack.pushAndApply(new CmdSetGuidanceType(aXBar, loadout, guidance));
+        hasArtemis = new LsmlBooleanProperty(aXBar, () -> UpgradeDB.ARTEMIS_IV == upgrades.getGuidance(), (aValue) -> {
+            cmdStack.pushAndApply(
+                    new CmdSetGuidanceType(aXBar, loadout, aValue ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STD_GUIDANCE));
+            return true;
+        } , upgradesChanged);
+
+        //
+        // Efficiencies
+        //
+        Efficiencies effs = loadout.getEfficiencies();
+        Map<MechEfficiencyType, BooleanProperty> localHasEffMap = new HashMap<>();
+        for (MechEfficiencyType type : MechEfficiencyType.values()) {
+            localHasEffMap.put(type, new LsmlBooleanProperty(aXBar, () -> effs.hasEfficiency(type), (aValue) -> {
+                effs.setEfficiency(type, aValue, aXBar);
+                return true;
+            } , effsChanged));
+        }
+        hasEfficiency = Collections.unmodifiableMap(localHasEffMap);
+
+        hasDoubleBasics = new SimpleBooleanProperty(effs.hasDoubleBasics());
+        hasDoubleBasics.addListener((aObservable, aOld, aNew) -> effs.setDoubleBasics(aNew, aXBar));
+
+        //
+        // Toggles
+        //
+        hasLeftHA = makeToggle(aXBar, Location.LeftArm, ItemDB.HA, itemsChanged);
+        hasLeftLAA = makeToggle(aXBar, Location.LeftArm, ItemDB.LAA, itemsChanged);
+        hasRightHA = makeToggle(aXBar, Location.RightArm, ItemDB.HA, itemsChanged);
+        hasRightLAA = makeToggle(aXBar, Location.RightArm, ItemDB.LAA, itemsChanged);
+
+        // Armor
+        Map<Pair<Location, ArmorSide>, IntegerProperty> localArmor = new HashMap<>();
+        for (Location location : Location.values()) {
+            if (location.isTwoSided()) {
+                localArmor.put(new Pair<>(location, ArmorSide.FRONT),
+                        makeArmorProperty(aXBar, ArmorSide.FRONT, location, armorChanged));
+                localArmor.put(new Pair<>(location, ArmorSide.BACK),
+                        makeArmorProperty(aXBar, ArmorSide.BACK, location, armorChanged));
             }
-        }));
-
-        Efficiencies loadoutEffs = loadout.getEfficiencies();
-        effMap = new HashMap<>();
-        hasEffMap = new HashMap<>();
-        for (MechEfficiencyType type : MechEfficiencyType.values())
-
-        {
-            BooleanBinding binding = new LoadoutBooleanBinding(aXBar, () -> loadoutEffs.hasEfficiency(type),
-                    effsChanged);
-            effMap.put(type, binding);
-
-            BooleanProperty property = new SimpleBooleanProperty(binding.get());
-            property.addListener((aObservable, aOld, aNew) -> loadoutEffs.setEfficiency(type, aNew, aXBar));
-            hasEffMap.put(type, property);
+            else {
+                localArmor.put(new Pair<>(location, ArmorSide.ONLY),
+                        makeArmorProperty(aXBar, ArmorSide.ONLY, location, armorChanged));
+            }
         }
+        armor = Collections.unmodifiableMap(localArmor);
+    }
 
-        effDoubleBasics = new LoadoutBooleanBinding(aXBar, () -> loadoutEffs.hasDoubleBasics(), effsChanged);
-        hasDoubleBasics = new SimpleBooleanProperty(loadoutEffs.hasDoubleBasics());
-        hasDoubleBasics.addListener((aObservable, aOld, aNew) -> loadoutEffs.setDoubleBasics(aNew, aXBar));
+    private LsmlIntegerProperty makeArmorProperty(MessageXBar aXBar, ArmorSide aArmorSide, Location location,
+            Predicate<Message> armorChanged) {
+        ConfiguredComponentBase component = loadout.getComponent(location);
+
+        return new LsmlIntegerProperty(aXBar, () -> component.getArmor(aArmorSide), (aValue) -> {
+            cmdStack.pushAndApply(new CmdSetArmor(aXBar, loadout, component, aArmorSide, aValue.intValue(), true));
+            return true;
+        } , armorChanged);
+    }
+
+    private BooleanProperty makeToggle(MessageXBar aXBar, Location aLocation, Item aItem,
+            Predicate<Message> aItemsChanged) {
+        if (loadout instanceof LoadoutOmniMech) {
+            LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) loadout;
+            ConfiguredComponentOmniMech component = loadoutOmni.getComponent(aLocation);
+            if (component.getOmniPod().getToggleableItems().contains(aItem)) {
+                return new LsmlBooleanProperty(aXBar, () -> component.getToggleState(aItem), (aNewValue) -> {
+                    cmdStack.pushAndApply(new CmdToggleItem(aXBar, loadoutOmni, component, aItem, aNewValue));
+                    return true;
+                } , aItemsChanged);
+            }
+        }
+        return null;
     }
 }

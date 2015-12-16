@@ -146,7 +146,7 @@ public class LoadoutWindowController implements MessageReceiver {
     }
 
     private void setupEffCheckbox(CheckBox aCheckBox, MechEfficiencyType aEfficiencyType) {
-        BooleanProperty property = model.hasEffMap.get(aEfficiencyType);
+        BooleanProperty property = model.hasEfficiency.get(aEfficiencyType);
         aCheckBox.selectedProperty().bindBidirectional(property);
     }
 
@@ -205,14 +205,14 @@ public class LoadoutWindowController implements MessageReceiver {
         leftTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
 
         ObservableList<Node> children = layoutContainer.getChildren();
-        children.add(new VBox(leftArmStrut, new ComponentPane(xBar, cmdStack, model.loadout, Location.RightArm)));
-        children.add(new VBox(rightTorsoStrut, new ComponentPane(xBar, cmdStack, model.loadout, Location.RightTorso),
-                new ComponentPane(xBar, cmdStack, model.loadout, Location.RightLeg)));
-        children.add(new VBox(new ComponentPane(xBar, cmdStack, model.loadout, Location.Head),
-                new ComponentPane(xBar, cmdStack, model.loadout, Location.CenterTorso)));
-        children.add(new VBox(leftTorsoStrut, new ComponentPane(xBar, cmdStack, model.loadout, Location.LeftTorso),
-                new ComponentPane(xBar, cmdStack, model.loadout, Location.LeftLeg)));
-        children.add(new VBox(rightArmStrut, new ComponentPane(xBar, cmdStack, model.loadout, Location.LeftArm)));
+        children.add(new VBox(leftArmStrut, new ComponentPane(xBar, cmdStack, model, Location.RightArm)));
+        children.add(new VBox(rightTorsoStrut, new ComponentPane(xBar, cmdStack, model, Location.RightTorso),
+                new ComponentPane(xBar, cmdStack, model, Location.RightLeg)));
+        children.add(new VBox(new ComponentPane(xBar, cmdStack, model, Location.Head),
+                new ComponentPane(xBar, cmdStack, model, Location.CenterTorso)));
+        children.add(new VBox(leftTorsoStrut, new ComponentPane(xBar, cmdStack, model, Location.LeftTorso),
+                new ComponentPane(xBar, cmdStack, model, Location.LeftLeg)));
+        children.add(new VBox(rightArmStrut, new ComponentPane(xBar, cmdStack, model, Location.LeftArm)));
     }
 
     private void setupEquipmentList() {
