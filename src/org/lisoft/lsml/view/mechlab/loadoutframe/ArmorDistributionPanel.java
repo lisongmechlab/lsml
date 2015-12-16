@@ -54,19 +54,19 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Emily Björk
  */
 public class ArmorDistributionPanel extends JPanel implements MessageReceiver, ChangeListener {
-    private static final long serialVersionUID = 6835003047682738947L;
+    private static final long    serialVersionUID    = 6835003047682738947L;
 
     private final LoadoutBase<?> loadout;
     private final CommandStack   stack;
     private final MessageXBar    xBar;
     private final JSlider        ratioSlider;
     private final JSlider        armorSlider;
-    private final CommandStack   privateStack = new CommandStack(0);
+    private final CommandStack   privateStack        = new CommandStack(0);
 
-    private boolean disableSliderAction = false;
-    private boolean armorOpInProgress   = false;
-    private int     lastRatio           = 0;
-    private int     lastAmount          = 0;
+    private boolean              disableSliderAction = false;
+    private boolean              armorOpInProgress   = false;
+    private int                  lastRatio           = 0;
+    private int                  lastAmount          = 0;
 
     private class ResetManualArmorOperation extends CompositeCommand {
         private final LoadoutBase<?> opLoadout = loadout;
@@ -202,8 +202,10 @@ public class ArmorDistributionPanel extends JPanel implements MessageReceiver, C
             initialFrontBack = (int) Math.round((double) frontArmor / backArmor);
         }
 
+        final int maxRatio = 26;
         final JLabel ratioLabel = new JLabel("Front/Back:");
-        ratioSlider = new JSlider(1, 16, initialFrontBack);
+        initialFrontBack = Math.min(initialFrontBack, maxRatio);
+        ratioSlider = new JSlider(1, maxRatio, initialFrontBack);
         ratioSlider.setMajorTickSpacing(5);
         ratioSlider.setMinorTickSpacing(1);
         ratioSlider.setPaintTicks(true);
