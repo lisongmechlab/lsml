@@ -22,9 +22,7 @@ package org.lisoft.lsml.view_fx.style;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
@@ -53,37 +51,13 @@ public class StyleManager {
     public static final String                          CSS_CLASS_TORSO_STRUT    = "TorsoStrut";
     public static final String                          CSS_CLASS_HARDPOINT      = "HardPoint";
 
-    private static final String                         CSS_COLOUR_MISSILE       = "item-colour-missile";
-    private static final String                         CSS_COLOUR_ENERGY        = "item-colour-energy";
-    private static final String                         CSS_COLOUR_ECM           = "item-colour-ecm";
-    private static final String                         CSS_COLOUR_BALLISTIC     = "item-colour-ballistic";
-    private static final String                         CSS_COLOUR_AMS           = "item-colour-ams";
-    private static final String                         CSS_COLOUR_MISC          = "item-colour-misc";
-    private static final String                         CSS_COLOUR_AMMO_SUFFIX   = "-ammo";
-    private static final String                         CSS_COLOUR_INTERNAL      = "item-colour-internal";
-    private static final String                         CSS_COLOUR_HEAT_SINK     = "item-colour-hs";
-    private static final String                         CSS_COLOUR_ENGINE        = "item-colour-engine";
-    private static final String                         CSS_COLOUR_JUMP_JET      = "item-colour-jj";
-    private static final String                         CSS_COLOUR_DYNAMIC       = "item-colour-dynamic";
-    private static final String                         CSS_COLOUR_DISABLED      = "item-colour-disabled";
-
     public static final String                          CSS_COLOUR_QUIRK_GOOD    = "quirk-good";
     public static final String                          CSS_COLOUR_QUIRK_BAD     = "quirk-bad";
     public static final String                          CSS_COLOUR_QUIRK_NEUTRAL = "quirk-neutral";
 
-    private static final Map<HardPointType, String>     CSS_HP2COLOUR;
-
     private static final Map<EquipmentCategory, String> CSS_CATEGORY2CLASS_BASE;
 
     static {
-        CSS_HP2COLOUR = new HashMap<>();
-        CSS_HP2COLOUR.put(HardPointType.AMS, CSS_COLOUR_AMS);
-        CSS_HP2COLOUR.put(HardPointType.BALLISTIC, CSS_COLOUR_BALLISTIC);
-        CSS_HP2COLOUR.put(HardPointType.ECM, CSS_COLOUR_ECM);
-        CSS_HP2COLOUR.put(HardPointType.ENERGY, CSS_COLOUR_ENERGY);
-        CSS_HP2COLOUR.put(HardPointType.MISSILE, CSS_COLOUR_MISSILE);
-        CSS_HP2COLOUR.put(HardPointType.NONE, CSS_COLOUR_MISC);
-
         CSS_CATEGORY2CLASS_BASE = new HashMap<>();
         CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.ENERGY, "equipment-energy");
         CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.BALLISTIC, "equipment-ballistic");
@@ -145,67 +119,5 @@ public class StyleManager {
             EquipmentCategory category = EquipmentCategory.classify(aItem);
             aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-default-icon");
         }
-    }
-
-    @Deprecated
-    public static String getCssColorFor(HardPointType aHardPointType) {
-        return CSS_HP2COLOUR.get(aHardPointType);
-    }
-
-    @Deprecated
-    public static String getCssColorFor(Item aItem) {
-        if (aItem == null)
-            return CSS_COLOUR_MISC;
-
-        if (aItem instanceof Ammunition) {
-            Ammunition ammunition = (Ammunition) aItem;
-            return CSS_HP2COLOUR.get(ammunition.getWeaponHardpointType()) + CSS_COLOUR_AMMO_SUFFIX;
-        }
-
-        if (aItem instanceof JumpJet) {
-            return CSS_COLOUR_JUMP_JET;
-        }
-
-        if (aItem instanceof Engine) {
-            return CSS_COLOUR_ENGINE;
-        }
-
-        if (aItem instanceof HeatSink) {
-            return CSS_COLOUR_HEAT_SINK;
-        }
-
-        if (aItem instanceof Internal) {
-            return CSS_COLOUR_INTERNAL;
-        }
-
-        return getCssColorFor(aItem.getHardpointType());
-    }
-
-    @Deprecated
-    public static String getCssColorFor(EquipmentCategory aCategory) {
-        switch (aCategory) {
-            case ENERGY:
-                return CSS_COLOUR_ENERGY.replace("item", "category");
-            case BALLISTIC:
-                return CSS_COLOUR_BALLISTIC.replace("item", "category");
-            case MISSILE:
-                return CSS_COLOUR_MISSILE.replace("item", "category");
-            case ECM:
-                return CSS_COLOUR_ECM.replace("item", "category");
-            case AMS:
-                return CSS_COLOUR_AMS.replace("item", "category");
-            case ENGINE:
-                return CSS_COLOUR_ENGINE.replace("item", "category");
-            case MISC:
-                return CSS_COLOUR_MISC.replace("item", "category");
-            default:
-                throw new RuntimeException("Unknown category: " + aCategory);
-        }
-    }
-
-    @Deprecated
-    public static String getCssColorForDisabled() {
-        // TODO Auto-generated method stub
-        return CSS_COLOUR_DISABLED;
     }
 }

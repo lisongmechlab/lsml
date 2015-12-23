@@ -71,7 +71,7 @@ public class LiSongMechLab extends Application {
         // Create an off-screen scene and add a label representing our item.
         Label label = new Label(aItem.getName());
         label.getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
-        label.setStyle("-fx-background: " + StyleManager.getCssColorFor(aItem));
+        StyleManager.changeItemStyle(label, aItem);
         label.setPrefHeight(ItemView.DEFAULT_HEIGHT * aItem.getNumCriticalSlots());
         label.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
         Scene scene = new Scene(label);
