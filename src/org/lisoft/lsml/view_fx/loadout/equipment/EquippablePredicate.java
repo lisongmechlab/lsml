@@ -22,7 +22,6 @@ package org.lisoft.lsml.view_fx.loadout.equipment;
 import java.util.function.Predicate;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
@@ -36,7 +35,6 @@ import javafx.scene.control.TreeItem;
  * @author Li Song
  */
 public class EquippablePredicate implements Predicate<TreeItem<Object>> {
-
     private final LoadoutBase<?> loadout;
 
     /**
@@ -50,12 +48,12 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
     }
 
     @Override
-    public boolean test(TreeItem<Object> aT) {
-        Object object = aT.getValue();
+    public boolean test(TreeItem<Object> aTreeItem) {
+        Object object = aTreeItem.getValue();
         if (null == object || !(object instanceof Item))
             return false;
 
-        Item item = (Item) aT.getValue();
+        Item item = (Item) aTreeItem.getValue();
         if (!loadout.getChassis().isAllowed(item))
             return false;
 
@@ -67,18 +65,20 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
             Ammunition ammunition = (Ammunition) item;
             hardPoint = ammunition.getWeaponHardpointType();
 
-            for (AmmoWeapon weapon : ItemDB.lookup(AmmoWeapon.class)) {
+            for (AmmoWeapon weapon : loadout.items(AmmoWeapon.class)) {
                 if (weapon.isCompatibleAmmo(ammunition)) {
-                    if (!weapon.isCompatible(loadout.getUpgrades()))
-                        return false;
-                    break;
+                    return true;
                 }
             }
 
+            for (Ammunition otherAmmo : loadout.items(Ammunition.class)) {
+                if (otherAmmo == ammunition)
+                    return true;
+            }
+            return false;
         }
-        else
-            hardPoint = item.getHardpointType();
 
+        hardPoint = item.getHardpointType();
         if (hardPoint != HardPointType.NONE && loadout.getHardpointsCount(hardPoint) < 1)
             return false;
 
