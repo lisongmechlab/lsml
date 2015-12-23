@@ -17,10 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.loadout.component;
+package org.lisoft.lsml.view_fx.drawers;
 
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.view_fx.StyleManager;
+import org.lisoft.lsml.view_fx.loadout.component.ComponentItemsList;
+import org.lisoft.lsml.view_fx.loadout.component.ItemView;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.geometry.Pos;
 
@@ -28,7 +30,6 @@ import javafx.geometry.Pos;
  * This class is responsible for rendering items on the components.
  * 
  * @author Li Song
- *
  */
 public class ComponentItemsCell extends ItemView.Cell<Item> {
     public ComponentItemsCell(ItemView<Item> aItemView) {
@@ -39,17 +40,21 @@ public class ComponentItemsCell extends ItemView.Cell<Item> {
 
     @Override
     protected void updateItem(Item aItem, boolean aEmpty) {
+
         super.updateItem(aItem, aEmpty);
         if (null == aItem) {
             setText("EMPTY");
             setRowSpan(1);
-            setStyle("");
+            pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, false);
         }
         else {
             setText(aItem.getShortName());
             setRowSpan(aItem.getNumCriticalSlots());
 
-            setStyle("-fx-background: " + StyleManager.getCssColorFor(aItem));
+            ComponentItemsList list = (ComponentItemsList) getListView().getItems();
+            boolean isFixed = list.isFixed(getIndex());
+            pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
         }
+        StyleManager.changeItemStyle(this, aItem);
     }
 }

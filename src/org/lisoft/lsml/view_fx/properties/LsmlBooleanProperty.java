@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.controls;
+package org.lisoft.lsml.view_fx.properties;
 
 import java.awt.Toolkit;
 import java.util.function.Predicate;
@@ -27,31 +27,21 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
+ * This is a property that maps to a boolean POJO or state in the LSML model.
+ * 
  * @author Li Song
- *
  */
-public class LsmlDoubleProperty extends SimpleDoubleProperty implements MessageReceiver {
+public class LsmlBooleanProperty extends SimpleBooleanProperty implements MessageReceiver {
+    private final Predicate<Message>               messageFilter;
+    private final ValidatedWriteOpeartion<Boolean> writeOperation;
+    private final ReadOpeartion<Boolean>           readOperation;
+    private boolean                                squelch = false;
 
-    @FunctionalInterface
-    static interface ReadOpeartion {
-        double call();
-    }
-
-    @FunctionalInterface
-    static interface ValidatedWriteOpeartion {
-        boolean call(Number aNewValue) throws Exception;
-    }
-
-    private final Predicate<Message>      messageFilter;
-    private final ValidatedWriteOpeartion writeOperation;
-    private final ReadOpeartion           readOperation;
-    private boolean                       squelch = false;
-
-    LsmlDoubleProperty(MessageReception aMessageReception, ReadOpeartion aReadOp, ValidatedWriteOpeartion aWriteOp,
-            Predicate<Message> aMessageFilter) {
+    public LsmlBooleanProperty(MessageReception aMessageReception, ReadOpeartion<Boolean> aReadOp,
+            ValidatedWriteOpeartion<Boolean> aWriteOp, Predicate<Message> aMessageFilter) {
         aMessageReception.attach(this);
         readOperation = aReadOp;
         writeOperation = aWriteOp;
@@ -62,6 +52,7 @@ public class LsmlDoubleProperty extends SimpleDoubleProperty implements MessageR
         addListener((aObservable, aOldValue, aNewValue) -> {
             if (squelch)
                 return;
+            squelch = true;
             try {
                 if (!writeOperation.call(aNewValue)) {
                     quietSet(aOldValue);
@@ -72,16 +63,13 @@ public class LsmlDoubleProperty extends SimpleDoubleProperty implements MessageR
                 quietSet(aOldValue);
                 LiSongMechLab.showError(e);
             }
+            finally {
+                squelch = false;
+            }
         });
-
     }
 
-    @Override
-    public double get() {
-        return readOperation.call();
-    }
-
-    private void quietSet(Number aValue) {
+    private void quietSet(Boolean aValue) {
         squelch = true;
         setValue(aValue);
         squelch = false;
@@ -89,8 +77,8 @@ public class LsmlDoubleProperty extends SimpleDoubleProperty implements MessageR
 
     @Override
     public void receive(Message aMsg) {
-        if (messageFilter.test(aMsg)) {
-            quietSet(get());
+        if (!squelch && messageFilter.test(aMsg)) {
+            quietSet(readOperation.call());
         }
     }
 }

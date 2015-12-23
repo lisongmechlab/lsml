@@ -17,16 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.loadout;
+package org.lisoft.lsml.view_fx.style;
 
-import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.chassi.HardPoint;
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
+
+import javafx.scene.control.Label;
 
 /**
- * TODO: Is this really necessary, isn't there some standard class I can use?
+ * This class will format a {@link HardPoint} to a {@link Label}.
  * 
  * @author Li Song
+ *
  */
-@FunctionalInterface
-interface ItemAttributeWrapper {
-    String get(Item aItem);
+public class HardPointFormatter {
+
+    public Label format(int aNumHardPoints, HardPointType aHardPointType) {
+        Label label = new Label();
+        if (aNumHardPoints == 1)
+            label.setText(aHardPointType.shortName());
+        else
+            label.setText(aNumHardPoints + aHardPointType.shortName());
+
+        label.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
+        StyleManager.changeCategoryStyle(label, EquipmentCategory.classify(aHardPointType));
+
+        return label;
+    }
 }

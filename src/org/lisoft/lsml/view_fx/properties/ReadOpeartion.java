@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.controls;
+package org.lisoft.lsml.view_fx.properties;
 
 @FunctionalInterface
-public interface ValidatedWriteOpeartion<T> {
-    boolean call(T aNewValue) throws Exception;
+public interface ReadOpeartion<T> {
+    T call();
 }

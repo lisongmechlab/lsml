@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.controls;
+package org.lisoft.lsml.view_fx.properties;
 
 import java.awt.Toolkit;
 import java.util.function.Predicate;
@@ -27,17 +27,17 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 /**
  * @author Li Song
  *
  */
-public class LsmlIntegerProperty extends SimpleIntegerProperty implements MessageReceiver {
+public class LsmlDoubleProperty extends SimpleDoubleProperty implements MessageReceiver {
 
     @FunctionalInterface
     static interface ReadOpeartion {
-        int call();
+        double call();
     }
 
     @FunctionalInterface
@@ -50,7 +50,7 @@ public class LsmlIntegerProperty extends SimpleIntegerProperty implements Messag
     private final ReadOpeartion           readOperation;
     private boolean                       squelch = false;
 
-    LsmlIntegerProperty(MessageReception aMessageReception, ReadOpeartion aReadOp, ValidatedWriteOpeartion aWriteOp,
+    LsmlDoubleProperty(MessageReception aMessageReception, ReadOpeartion aReadOp, ValidatedWriteOpeartion aWriteOp,
             Predicate<Message> aMessageFilter) {
         aMessageReception.attach(this);
         readOperation = aReadOp;
@@ -62,6 +62,7 @@ public class LsmlIntegerProperty extends SimpleIntegerProperty implements Messag
         addListener((aObservable, aOldValue, aNewValue) -> {
             if (squelch)
                 return;
+            squelch = true;
             try {
                 if (!writeOperation.call(aNewValue)) {
                     quietSet(aOldValue);
@@ -72,13 +73,10 @@ public class LsmlIntegerProperty extends SimpleIntegerProperty implements Messag
                 quietSet(aOldValue);
                 LiSongMechLab.showError(e);
             }
+            finally {
+                squelch = false;
+            }
         });
-
-    }
-
-    @Override
-    public int get() {
-        return readOperation.call();
     }
 
     private void quietSet(Number aValue) {
@@ -89,8 +87,8 @@ public class LsmlIntegerProperty extends SimpleIntegerProperty implements Messag
 
     @Override
     public void receive(Message aMsg) {
-        if (messageFilter.test(aMsg)) {
-            quietSet(get());
+        if (!squelch && messageFilter.test(aMsg)) {
+            quietSet(readOperation.call());
         }
     }
 }

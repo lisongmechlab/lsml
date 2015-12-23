@@ -25,7 +25,9 @@ import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
+import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -39,13 +41,43 @@ import javafx.collections.ObservableListBase;
  * @author Li Song
  */
 public class ComponentItemsList extends ObservableListBase<Item> implements MessageReceiver {
-    private final LoadoutBase<?> loadout;
-    private final Location       location;
+    private final LoadoutBase<?>         loadout;
+    private final Location               location;
+    private final DynamicSlotDistributor distributor;
 
-    public ComponentItemsList(MessageReception aMessageReception, LoadoutBase<?> aLoadout, Location aLocation) {
+    public ComponentItemsList(MessageReception aMessageReception, LoadoutBase<?> aLoadout, Location aLocation,
+            DynamicSlotDistributor aDistributor) {
         aMessageReception.attach(this);
         loadout = aLoadout;
         location = aLocation;
+        distributor = aDistributor;
+    }
+
+    public boolean isFixed(int aIndex) {
+        ConfiguredComponentBase component = loadout.getComponent(location);
+
+        List<Item> fixed = component.getItemsFixed();
+        if (aIndex < fixed.size()) {
+            return true;
+        }
+
+        int equipIndex = aIndex - fixed.size();
+        List<Item> equipped = component.getItemsEquipped();
+        if (equipIndex < equipped.size()) {
+            return false;
+        }
+        equipIndex -= equipped.size();
+
+        int armor = distributor.getDynamicArmorSlots(component);
+        if (equipIndex < armor) {
+            return true;
+        }
+        equipIndex -= armor;
+        int structure = distributor.getDynamicStructureSlots(component);
+        if (equipIndex < structure) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -62,6 +94,17 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
         if (equipIndex < equipped.size()) {
             return equipped.get(equipIndex);
         }
+        equipIndex -= equipped.size();
+
+        int armor = distributor.getDynamicArmorSlots(component);
+        if (equipIndex < armor) {
+            return ItemDB.DYN_ARMOR;
+        }
+        equipIndex -= armor;
+        int structure = distributor.getDynamicStructureSlots(component);
+        if (equipIndex < structure) {
+            return ItemDB.DYN_STRUCT;
+        }
         return null;
     }
 
@@ -70,7 +113,10 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
         ConfiguredComponentBase component = loadout.getComponent(location);
         List<Item> fixed = component.getItemsFixed();
         List<Item> equipped = component.getItemsEquipped();
-        return fixed.size() + equipped.size();
+
+        int armor = distributor.getDynamicArmorSlots(component);
+        int structure = distributor.getDynamicStructureSlots(component);
+        return fixed.size() + equipped.size() + armor + structure;
     }
 
     @Override

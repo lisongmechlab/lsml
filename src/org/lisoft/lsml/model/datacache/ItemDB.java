@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
@@ -58,6 +59,12 @@ public class ItemDB {
     static public final Internal            UAA;
     static public final Internal            LAA;
     static public final Internal            HA;
+
+    static public final Internal            DYN_ARMOR;
+    static public final Internal            DYN_STRUCT;
+    static public final Internal            FIX_ARMOR;
+    static public final Internal            FIX_STRUCT;
+
     static private final Map<String, Item>  locname2item;
     static private final Map<String, Item>  mwoname2item;
     static private final Map<Integer, Item> mwoidx2item;
@@ -149,5 +156,10 @@ public class ItemDB {
         UAA = (Internal) lookup("UpperArmActuator");
         LAA = (Internal) lookup("LowerArmActuator");
         HA = (Internal) lookup("HandActuator");
+
+        DYN_ARMOR = new Internal("DYNAMIC ARMOR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.Any);
+        DYN_STRUCT = new Internal("DYNAMIC STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.Any);
+        FIX_ARMOR = new Internal("FIXED ARMOR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.Any);
+        FIX_STRUCT = new Internal("FIXED STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.Any);
     }
 }

@@ -17,9 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.controls;
+package org.lisoft.lsml.view_fx.loadout.component;
 
-@FunctionalInterface
-public interface ReadOpeartion<T> {
-    T call();
+import org.lisoft.lsml.model.item.Item;
+
+/**
+ * This class represents the state of an equipped item.
+ * 
+ * @author Li Song
+ */
+public class EquippedItem {
+    public final Item    item;
+    public final boolean fixed;
+
+    /**
+     * @param aItem
+     *            The item that is equipped or <code>null</code> if no item.
+     * @param aFixed
+     *            <code>true</code> if the item is fixed.
+     */
+    public EquippedItem(Item aItem, boolean aFixed) {
+        item = aItem;
+        fixed = aFixed;
+    }
 }

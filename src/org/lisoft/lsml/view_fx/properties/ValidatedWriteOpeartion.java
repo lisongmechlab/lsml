@@ -17,16 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.loadout;
+package org.lisoft.lsml.view_fx.properties;
 
-import org.lisoft.lsml.model.item.Item;
-
-/**
- * TODO: Is this really necessary, isn't there some standard class I can use?
- * 
- * @author Li Song
- */
 @FunctionalInterface
-interface ItemAttributeWrapper {
-    String get(Item aItem);
+public interface ValidatedWriteOpeartion<T> {
+    boolean call(T aNewValue) throws Exception;
 }

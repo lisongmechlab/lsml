@@ -32,14 +32,6 @@ public class Internal extends Module {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
     }
 
-    public Internal(String aNameTag, String aDescTag, int aSlots, Faction aFaction) {
-        super(aNameTag, aDescTag, aSlots, 0, aFaction);
-    }
-
-    public Internal(String aNameTag, String aDescTag, int aSlots, int aHealth, Faction aFaction) {
-        super(aNameTag, aDescTag, aSlots, aHealth, aFaction);
-    }
-
     @Override
     public String getShortName() {
         String ans = getName().replace("UPPER ", "U-");

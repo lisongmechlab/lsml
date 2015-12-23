@@ -5,13 +5,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root fx:id="rootPane" alignment="CENTER" animated="false" collapsible="false" text="Component (x hp)" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController">
+<fx:root fx:id="rootPane" styleClass="component-root" alignment="CENTER" text="Component (x hp)" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController">
   <content>
-    <VBox fx:id="container" alignment="TOP_CENTER">
+    <VBox fx:id="container" alignment="TOP_CENTER" styleClass="component-container">
       <children>
         <ToggleButton fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" />
         <ToggleButton fx:id="toggleHA" mnemonicParsing="false" text="Hand" />
-        <ComboBox />
+        <ComboBox fx:id="omniPodSelection"/>
         <HBox fx:id="armorBox" alignment="CENTER">
           <children>
             <Label fx:id="armorLabel" text="Armor" HBox.hgrow="NEVER" />
@@ -26,8 +26,8 @@
                   <Label fx:id="armorMaxBack" text="/max" HBox.hgrow="NEVER" />
                </children>
             </HBox>
-        <HBox />
-        <ItemView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" />
+        <HBox fx:id="hardPointContainer" alignment="CENTER" />
+        <ItemView fx:id="itemView" styleClass="component-equipment" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" />
       </children>
     </VBox>
   </content>
