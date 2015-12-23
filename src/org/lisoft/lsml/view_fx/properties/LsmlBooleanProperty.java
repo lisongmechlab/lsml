@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.controls;
+package org.lisoft.lsml.view_fx.properties;
 
 import java.awt.Toolkit;
 import java.util.function.Predicate;
@@ -52,25 +52,21 @@ public class LsmlBooleanProperty extends SimpleBooleanProperty implements Messag
         addListener((aObservable, aOldValue, aNewValue) -> {
             if (squelch)
                 return;
+            squelch = true;
             try {
-                if (aNewValue != readOperation.call()) {
-                    if (!writeOperation.call(aNewValue)) {
-                        quietSet(aOldValue);
-                        Toolkit.getDefaultToolkit().beep();
-                    }
+                if (!writeOperation.call(aNewValue)) {
+                    quietSet(aOldValue);
+                    Toolkit.getDefaultToolkit().beep();
                 }
             }
             catch (Exception e) {
                 quietSet(aOldValue);
                 LiSongMechLab.showError(e);
             }
+            finally {
+                squelch = false;
+            }
         });
-
-    }
-
-    @Override
-    public boolean get() {
-        return readOperation.call();
     }
 
     private void quietSet(Boolean aValue) {
@@ -81,8 +77,8 @@ public class LsmlBooleanProperty extends SimpleBooleanProperty implements Messag
 
     @Override
     public void receive(Message aMsg) {
-        if (messageFilter.test(aMsg)) {
-            quietSet(get());
+        if (!squelch && messageFilter.test(aMsg)) {
+            quietSet(readOperation.call());
         }
     }
 }

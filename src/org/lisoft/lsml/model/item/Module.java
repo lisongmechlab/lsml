@@ -38,8 +38,4 @@ public class Module extends Item {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
                 aAllowedChassisClasses);
     }
-
-    public Module(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {
-        super(aNameTag, aDesc, aSlots, aHealth, aFaction);
-    }
 }

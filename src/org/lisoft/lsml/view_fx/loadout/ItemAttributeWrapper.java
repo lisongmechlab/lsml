@@ -15,12 +15,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
 import org.lisoft.lsml.model.item.Item;
 
+/**
+ * TODO: Is this really necessary, isn't there some standard class I can use?
+ * 
+ * @author Emily Björk
+ */
 @FunctionalInterface
 interface ItemAttributeWrapper {
     String get(Item aItem);

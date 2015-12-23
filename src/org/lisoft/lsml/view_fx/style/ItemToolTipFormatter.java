@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.loadout;
+package org.lisoft.lsml.view_fx.style;
 
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
@@ -30,13 +30,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
 /**
- * This class can build tooltips for items accounting for loadout quirks.
+ * This class can build tool tips for items accounting for loadout quirks.
  * 
  * @author Emily Björk
  */
-public class ItemTooltipBuilder {
+public class ItemToolTipFormatter {
 
-    public static Tooltip build(Item aItem, LoadoutBase<?> aLoadoutBase) {
+    public Tooltip format(Item aItem, LoadoutBase<?> aLoadoutBase) {
         if (aItem instanceof Weapon) {
             Weapon weapon = (Weapon) aItem;
 

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.controls;
+package org.lisoft.lsml.view_fx.properties;
 
 import java.awt.Toolkit;
 import java.util.function.Predicate;
@@ -52,16 +52,16 @@ public class LsmlIntegerProperty extends SimpleIntegerProperty implements Messag
 
     LsmlIntegerProperty(MessageReception aMessageReception, ReadOpeartion aReadOp, ValidatedWriteOpeartion aWriteOp,
             Predicate<Message> aMessageFilter) {
+        super(aReadOp.call());
         aMessageReception.attach(this);
         readOperation = aReadOp;
         writeOperation = aWriteOp;
         messageFilter = aMessageFilter;
 
-        quietSet(aReadOp.call());
-
         addListener((aObservable, aOldValue, aNewValue) -> {
             if (squelch)
                 return;
+            squelch = true;
             try {
                 if (!writeOperation.call(aNewValue)) {
                     quietSet(aOldValue);
@@ -72,13 +72,10 @@ public class LsmlIntegerProperty extends SimpleIntegerProperty implements Messag
                 quietSet(aOldValue);
                 LiSongMechLab.showError(e);
             }
+            finally {
+                squelch = false;
+            }
         });
-
-    }
-
-    @Override
-    public int get() {
-        return readOperation.call();
     }
 
     private void quietSet(Number aValue) {
@@ -89,8 +86,8 @@ public class LsmlIntegerProperty extends SimpleIntegerProperty implements Messag
 
     @Override
     public void receive(Message aMsg) {
-        if (messageFilter.test(aMsg)) {
-            quietSet(get());
+        if (!squelch && messageFilter.test(aMsg)) {
+            quietSet(readOperation.call());
         }
     }
 }

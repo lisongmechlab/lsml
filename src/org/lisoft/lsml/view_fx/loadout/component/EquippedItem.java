@@ -17,26 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.item;
+package org.lisoft.lsml.view_fx.loadout.component;
 
-import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.item.Item;
 
 /**
- * Internals are special items that do not exist in the ItemDB. Instead they are created and owned by the chassii.
+ * This class represents the state of an equipped item.
  * 
- * @author Emily
+ * @author Emily Björk
  */
-public class Internal extends Module {
-    public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
-    }
+public class EquippedItem {
+    public final Item    item;
+    public final boolean fixed;
 
-    @Override
-    public String getShortName() {
-        String ans = getName().replace("UPPER ", "U-");
-        ans = ans.replace("LOWER ", "L-");
-        ans = ans.replace("ACTUATOR", "");
-        return ans;
+    /**
+     * @param aItem
+     *            The item that is equipped or <code>null</code> if no item.
+     * @param aFixed
+     *            <code>true</code> if the item is fixed.
+     */
+    public EquippedItem(Item aItem, boolean aFixed) {
+        item = aItem;
+        fixed = aFixed;
     }
 }

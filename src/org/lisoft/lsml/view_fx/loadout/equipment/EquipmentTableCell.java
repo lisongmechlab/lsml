@@ -19,29 +19,74 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.equipment;
 
+import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.view_fx.style.StyleManager;
+
 import javafx.scene.control.TreeTableCell;
+import javafx.scene.layout.Region;
 
 /**
- * @author Emily
- *
+ * This cell renders info about an {@link Item} in the equipment panel.
+ * 
+ * @author Emily Björk
  */
 public class EquipmentTableCell extends TreeTableCell<Object, String> {
+    private final LoadoutBase<?> loadout;
+    private final boolean        showIcon;
+
+    public EquipmentTableCell(LoadoutBase<?> aLoadout, boolean aShowIcon) {
+        loadout = aLoadout;
+        showIcon = aShowIcon;
+    }
 
     @Override
-    protected void updateItem(String aItem, boolean empty) {
-        super.updateItem(aItem, empty);
+    protected void updateItem(String aItem, boolean aEmpty) {
+        super.updateItem(aItem, aEmpty);
         setText(aItem);
-        // Object obj = getTreeTableRow().getItem();
-        // if (obj instanceof Item) {
-        // Item x = (Item) obj;
-        // StyleManager.updateCssItemClass(getStyleClass(), x);
-        // }
-        // else if (obj instanceof HardPointType) {
-        // HardPointType x = (HardPointType) obj;
-        // StyleManager.updateCssItemClass(getStyleClass(), x);
-        // }
-        // else {
-        // StyleManager.clearCssItemClass(getStyleClass());
-        // }
+
+        Object treeItemObject = getTreeTableRow().getItem();
+        if (treeItemObject instanceof Item) {
+            Item treeItem = (Item) treeItemObject;
+
+            StyleManager.changeEquipmentStyle(this, EquipmentCategory.classify(treeItem));
+
+            if (EquipResult.SUCCESS == loadout.canEquipDirectly(treeItem)) {
+                // Directly equippable
+                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+            }
+            else if (!loadout.getCandidateLocationsForItem(treeItem).isEmpty()) {
+                // Might be smart placeable
+                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, true);
+            }
+            else {
+                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, true);
+                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+            }
+
+            if (showIcon) {
+                Region r = new Region();
+                StyleManager.changeEquipmentIcon(r, treeItem);
+                setGraphic(r);
+            }
+        }
+        else {
+            final EquipmentCategory category;
+            if (treeItemObject instanceof EquipmentCategory) {
+                category = (EquipmentCategory) treeItemObject;
+            }
+            else {
+                category = null;
+            }
+            StyleManager.changeCategoryStyle(this, category);
+            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
+            pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+            if (showIcon) {
+                setGraphic(null);
+            }
+        }
     }
 }

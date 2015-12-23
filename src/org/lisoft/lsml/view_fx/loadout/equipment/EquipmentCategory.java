@@ -43,8 +43,11 @@ public enum EquipmentCategory {
             hardPointType = ((Ammunition) aItem).getWeaponHardpointType();
         else
             hardPointType = aItem.getHardpointType();
+        return classify(hardPointType);
+    }
 
-        switch (hardPointType) {
+    public static EquipmentCategory classify(HardPointType aHardPointType) {
+        switch (aHardPointType) {
             case AMS:
                 return AMS;
             case BALLISTIC:

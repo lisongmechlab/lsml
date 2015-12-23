@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.component;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -96,7 +98,10 @@ public class ItemView<T> extends ListView<T> {
             return new Cell<T>((ItemView<T>) aList);
         });
 
-        prefHeightProperty().bind(rowHeight.multiply(rows).add(2.0));
+        DoubleBinding padding = Bindings.selectDouble(paddingProperty(), "bottom")
+                .add(Bindings.selectDouble(paddingProperty(), "top"));
+
+        prefHeightProperty().bind(rowHeight.multiply(rows).add(padding));
         maxHeightProperty().bind(prefHeightProperty());
         minHeightProperty().bind(prefHeightProperty());
     }

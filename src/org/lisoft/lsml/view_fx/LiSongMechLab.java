@@ -31,6 +31,7 @@ import org.lisoft.lsml.view.SplashScreen;
 import org.lisoft.lsml.view_fx.loadout.LoadoutWindowController;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController;
 import org.lisoft.lsml.view_fx.loadout.component.ItemView;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -90,7 +91,8 @@ public class LiSongMechLab extends Application {
         controller.setLoadout(aLoadout);
         Stage stage = new Stage();
         stage.setTitle("Li Song Mechlab - " + aLoadout.getName());
-        stage.setScene(new Scene(loadoutViewRoot));
+        Scene scene = new Scene(loadoutViewRoot);
+        stage.setScene(scene);
         stage.show();
     }
 

@@ -48,7 +48,8 @@ public class Modifier {
     public Modifier(ModifierDescription aDescription, double aValue) {
         description = aDescription;
 
-        if (aDescription.getSpecifier() != null && aDescription.getSpecifier().equals(ModifierDescription.SEL_WEAPON_COOLDOWN)) {
+        if (aDescription.getSpecifier() != null
+                && aDescription.getSpecifier().equals(ModifierDescription.SEL_WEAPON_COOLDOWN)) {
             // Ugh... PGI, PGI... why did you have to make cooldown a positive good?
             value = -aValue;
         }
@@ -59,7 +60,18 @@ public class Modifier {
 
     @Override
     public String toString() {
-        return description.toString() + " " + value;
+        StringBuilder aSB = new StringBuilder();
+        aSB.append(description.getUiName()).append(": ");
+        if (value > 0) {
+            aSB.append("+");
+        }
+        if (description.getOperation() == Operation.MUL) {
+            aSB.append(FORMAT.format(value * 100)).append("%");
+        }
+        else {
+            aSB.append(FORMAT.format(value));
+        }
+        return aSB.toString();
     }
 
     /**
@@ -78,6 +90,8 @@ public class Modifier {
 
     /**
      * Outputs HTML to describe this quirk to an existing document. I.e. body and header tags are not emitted.
+     * 
+     * FIXME: This really shouldn't be in the model.
      * 
      * @param aSB
      *            The {@link StringBuilder} to send the output to.

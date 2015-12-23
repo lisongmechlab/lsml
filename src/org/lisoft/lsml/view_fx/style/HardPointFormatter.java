@@ -17,26 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.item;
+package org.lisoft.lsml.view_fx.style;
 
+import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
+
+import javafx.scene.control.Label;
 
 /**
- * Internals are special items that do not exist in the ItemDB. Instead they are created and owned by the chassii.
+ * This class will format a {@link HardPoint} to a {@link Label}.
  * 
- * @author Emily
+ * @author Emily Björk
+ *
  */
-public class Internal extends Module {
-    public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
-    }
+public class HardPointFormatter {
 
-    @Override
-    public String getShortName() {
-        String ans = getName().replace("UPPER ", "U-");
-        ans = ans.replace("LOWER ", "L-");
-        ans = ans.replace("ACTUATOR", "");
-        return ans;
+    public Label format(int aNumHardPoints, HardPointType aHardPointType) {
+        Label label = new Label();
+        if (aNumHardPoints == 1)
+            label.setText(aHardPointType.shortName());
+        else
+            label.setText(aNumHardPoints + aHardPointType.shortName());
+
+        label.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
+        StyleManager.changeCategoryStyle(label, EquipmentCategory.classify(aHardPointType));
+
+        return label;
     }
 }

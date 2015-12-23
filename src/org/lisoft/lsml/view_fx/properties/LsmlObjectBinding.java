@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.controls;
+package org.lisoft.lsml.view_fx.properties;
 
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
@@ -27,18 +27,20 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
-import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.ObjectBinding;
 
 /**
  * This binding will bind to an arbitrary attribute of a loadout and provide automatic updating.
  * 
  * @author Emily Björk
+ * @param <T>
+ *            Type of object the binding contains.
  */
-public class LsmlDoubleBinding extends DoubleBinding implements MessageReceiver {
-    private final Callable<Double>   valueFunction;
+public class LsmlObjectBinding<T> extends ObjectBinding<T> implements MessageReceiver {
+    private final Callable<T>        valueFunction;
     private final Predicate<Message> invalidationFilter;
 
-    public LsmlDoubleBinding(MessageReception aMessageReception, Callable<Double> aValueFunction,
+    public LsmlObjectBinding(MessageReception aMessageReception, Callable<T> aValueFunction,
             Predicate<Message> aInvalidationFilter) {
         aMessageReception.attach(this);
         valueFunction = aValueFunction;
@@ -46,14 +48,14 @@ public class LsmlDoubleBinding extends DoubleBinding implements MessageReceiver 
     }
 
     @Override
-    protected double computeValue() {
+    protected T computeValue() {
         try {
             return valueFunction.call();
         }
         catch (Exception e) {
             LiSongMechLab.showError(e);
         }
-        return 0.0;
+        return null;
     }
 
     @Override

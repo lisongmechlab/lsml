@@ -22,12 +22,9 @@ package org.lisoft.lsml.view_fx.loadout.equipment;
 import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.StyleManager;
-import org.lisoft.lsml.view_fx.loadout.ItemTooltipBuilder;
 
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.input.Dragboard;
@@ -75,42 +72,5 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         if (!(object instanceof Item))
             return null;
         return (Item) object;
-    }
-
-    @Override
-    protected void updateItem(Object aObject, boolean aEmpty) {
-        super.updateItem(aObject, aEmpty);
-        if (aObject instanceof Item) {
-            Item item = (Item) aObject;
-
-            String color = StyleManager.getCssColorFor(item);
-            String disabledColor = StyleManager.getCssColorForDisabled();
-
-            // StyleManager.updateCssItemClass(getStyleClass(), item);
-            if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
-                // Directly equippable
-                setStyle("-fx-background: " + color);
-            }
-            else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
-                // Might be smart placable
-                int x = 150;
-                setStyle("-fx-background-color: linear-gradient(from " + x + " 0 to " + (x + 1) + " 1, " + color
-                        + " 0%, " + disabledColor + " 100%)");
-            }
-            else {
-                setStyle("-fx-background: " + disabledColor);
-            }
-
-            setTooltip(ItemTooltipBuilder.build(item, loadout));
-        }
-        else {
-            if (aObject instanceof EquipmentCategory) {
-                setStyle("-fx-background: " + StyleManager.getCssColorFor((EquipmentCategory) aObject));
-            }
-            else {
-                setStyle("");
-            }
-            setTooltip(null);
-        }
     }
 }

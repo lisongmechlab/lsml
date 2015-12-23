@@ -24,7 +24,6 @@ import java.util.List;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.datacache.gamedata.Localization;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -69,11 +68,6 @@ public class Item implements Comparable<Item> {
     }
 
     // TODO: Add a maximum allowed attribute here
-
-    public Item(String aNameTag, String aDesc, int aSlots, int aHealth, Faction aFaction) {
-        this(Localization.key2string(aNameTag), Localization.key2string(aDesc), aNameTag, -1, aSlots, 0.0,
-                HardPointType.NONE, aHealth, aFaction, null, null);
-    }
 
     public String getKey() {
         return mwoName;
@@ -141,7 +135,8 @@ public class Item implements Comparable<Item> {
      * <li>ECM</li>
      * <li>Other items except engines</li>
      * <li>Engines</li>
-     * </ol>.
+     * </ol>
+     * .
      */
     @Override
     public int compareTo(Item rhs) {
@@ -150,15 +145,15 @@ public class Item implements Comparable<Item> {
             return 1;
         else if (!(this instanceof Engine) && rhs instanceof Engine)
             return -1;
-        else if(this instanceof Engine && rhs instanceof Engine){
-            return Integer.compare(((Engine)this).getRating(), ((Engine)rhs).getRating());
+        else if (this instanceof Engine && rhs instanceof Engine) {
+            return Integer.compare(((Engine) this).getRating(), ((Engine) rhs).getRating());
         }
 
         // Count ammunition types together with their parent weapon type.
-        HardPointType lhsHp = this instanceof Ammunition ? ((Ammunition) this).getWeaponHardpointType() : this
-                .getHardpointType();
-        HardPointType rhsHp = rhs instanceof Ammunition ? ((Ammunition) rhs).getWeaponHardpointType() : rhs
-                .getHardpointType();
+        HardPointType lhsHp = this instanceof Ammunition ? ((Ammunition) this).getWeaponHardpointType()
+                : this.getHardpointType();
+        HardPointType rhsHp = rhs instanceof Ammunition ? ((Ammunition) rhs).getWeaponHardpointType()
+                : rhs.getHardpointType();
 
         // Sort by hard point type (order they appear in the enumeration declaration)
         // This gives the main order of items as given in the java doc.

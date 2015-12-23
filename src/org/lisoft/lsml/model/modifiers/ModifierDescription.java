@@ -128,6 +128,8 @@ public class ModifierDescription {
     public static enum ModifierType {
         POSITIVE_GOOD, NEGATIVE_GOOD, INDETERMINATE;
 
+        // FIXME: This really shouldn't be in the model.
+        @Deprecated
         public String getColor(double aValue) {
             switch (this) {
                 case INDETERMINATE:

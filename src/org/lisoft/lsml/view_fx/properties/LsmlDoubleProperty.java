@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.controls;
+package org.lisoft.lsml.view_fx.properties;
 
 import java.awt.Toolkit;
 import java.util.function.Predicate;
@@ -62,6 +62,7 @@ public class LsmlDoubleProperty extends SimpleDoubleProperty implements MessageR
         addListener((aObservable, aOldValue, aNewValue) -> {
             if (squelch)
                 return;
+            squelch = true;
             try {
                 if (!writeOperation.call(aNewValue)) {
                     quietSet(aOldValue);
@@ -72,13 +73,10 @@ public class LsmlDoubleProperty extends SimpleDoubleProperty implements MessageR
                 quietSet(aOldValue);
                 LiSongMechLab.showError(e);
             }
+            finally {
+                squelch = false;
+            }
         });
-
-    }
-
-    @Override
-    public double get() {
-        return readOperation.call();
     }
 
     private void quietSet(Number aValue) {
@@ -89,8 +87,8 @@ public class LsmlDoubleProperty extends SimpleDoubleProperty implements MessageR
 
     @Override
     public void receive(Message aMsg) {
-        if (messageFilter.test(aMsg)) {
-            quietSet(get());
+        if (!squelch && messageFilter.test(aMsg)) {
+            quietSet(readOperation.call());
         }
     }
 }
