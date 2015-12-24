@@ -78,15 +78,18 @@
 	colour-hs-fixed: 			hsb(203, 30%, 60%);
 	colour-hs-fg-fixed: 		hsb(203, 30%, 30%);
 	
-	colour-internal-item: 		hsb(90, 4%, 70%);
-	colour-internal-fg: 		hsb(90, 4%, 95%);
-	colour-internal-fixed: 		hsb(90, 2%, 60%);
-	colour-internal-fg-fixed: 	hsb(90, 2%, 30%);
+	colour-internal-item: 		hsb(203, 12%, 70%);
+	colour-internal-fg: 		hsb(203, 12%, 95%);
+	colour-internal-fixed: 		hsb(203, 8%, 60%);
+	colour-internal-fg-fixed: 	hsb(203, 8%, 30%);
 	
-	colour-dynamic-item: 		hsb(93, 4%, 50%);
-	colour-dynamic-fg: 			hsb(93, 4%, 20%);
-	colour-dynamic-fixed: 		hsb(93, 4%, 50%);
-	colour-dynamic-fg-fixed: 	hsb(93, 4%, 20%);
+	colour-dynamic-item: 		hsb(203, 0%, 55%);
+	colour-dynamic-fg: 			hsb(203, 0%, 30%);
+	colour-dynamic-fixed: 		hsb(203, 0%, 55%);
+	colour-dynamic-fg-fixed: 	hsb(203, 0%, 30%);
+	
+	colour-empty-bg: 			hsb(0, 0%, 35%);
+	colour-empty-fg: 			hsb(0, 0%, 55%);
 }
 
 /*********** Styling for components ***********/
@@ -175,6 +178,13 @@
 	-fx-padding: 1.0px 0.0 0.0 0.0;
 	-fx-font-weight: 200;
 }
+
+/*********** --> Empty slots ***********/
+.equipment-empty-category{
+	-fx-background-color: colour-empty-bg;
+	-fx-text-fill: colour-empty-fg;
+}
+
 
 /*********** --> Jump Jets ***********/
 .equipment-jj-category{
