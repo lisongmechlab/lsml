@@ -22,6 +22,7 @@ package org.lisoft.lsml.view_fx.style;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
@@ -84,7 +85,13 @@ public class StyleManager {
                     aNode.getStyleClass().add("equipment-hs-category");
                 }
                 else if (aItem instanceof Internal) {
-                    aNode.getStyleClass().add("equipment-internal-category");
+                    if (aItem == ItemDB.DYN_ARMOR || aItem == ItemDB.DYN_STRUCT || aItem == ItemDB.FIX_ARMOR
+                            || aItem == ItemDB.FIX_STRUCT) {
+                        aNode.getStyleClass().add("equipment-dynamic-category");
+                    }
+                    else {
+                        aNode.getStyleClass().add("equipment-internal-category");
+                    }
                 }
             }
             else {
