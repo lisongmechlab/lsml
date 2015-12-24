@@ -39,21 +39,23 @@ import javafx.scene.Node;
  *
  */
 public class StyleManager {
-    public static final PseudoClass                     CSS_PC_UNEQUIPPABLE      = PseudoClass
+    public static final PseudoClass                     CSS_PC_UNEQUIPPABLE        = PseudoClass
             .getPseudoClass("unequippable");
-    public static final PseudoClass                     CSS_PC_SMARTPLACEABLE    = PseudoClass
+    public static final PseudoClass                     CSS_PC_SMARTPLACEABLE      = PseudoClass
             .getPseudoClass("smartplaceable");
-    public static final PseudoClass                     CSS_PC_FIXED             = PseudoClass.getPseudoClass("fixed");
+    public static final PseudoClass                     CSS_PC_FIXED               = PseudoClass
+            .getPseudoClass("fixed");
 
-    public static final String                          CSS_CLASS_EQUIPPED       = "equipped";
+    public static final String                          CSS_CLASS_EQUIPPED         = "equipped";
+    public static final String                          CSS_CLASS_COMPONENT_ENGINE = "component-engine";
 
-    public static final String                          CSS_CLASS_ARM_STRUT      = "ArmStrut";
-    public static final String                          CSS_CLASS_TORSO_STRUT    = "TorsoStrut";
-    public static final String                          CSS_CLASS_HARDPOINT      = "HardPoint";
+    public static final String                          CSS_CLASS_ARM_STRUT        = "ArmStrut";
+    public static final String                          CSS_CLASS_TORSO_STRUT      = "TorsoStrut";
+    public static final String                          CSS_CLASS_HARDPOINT        = "HardPoint";
 
-    public static final String                          CSS_COLOUR_QUIRK_GOOD    = "quirk-good";
-    public static final String                          CSS_COLOUR_QUIRK_BAD     = "quirk-bad";
-    public static final String                          CSS_COLOUR_QUIRK_NEUTRAL = "quirk-neutral";
+    public static final String                          CSS_COLOUR_QUIRK_GOOD      = "quirk-good";
+    public static final String                          CSS_COLOUR_QUIRK_BAD       = "quirk-bad";
+    public static final String                          CSS_COLOUR_QUIRK_NEUTRAL   = "quirk-neutral";
 
     private static final Map<EquipmentCategory, String> CSS_CATEGORY2CLASS_BASE;
 
