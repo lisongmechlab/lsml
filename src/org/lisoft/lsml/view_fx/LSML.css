@@ -1,7 +1,7 @@
 .root {
 	-fx-text-fill: white;
 	-fx-base: #29292b;
-	-fx-font-family: Quark-Bold;
+	/*-fx-font-family: Quark-Bold;*/
 	-fx-font-size: 8.0pt;
 
 	quirk-bad: red;
@@ -10,28 +10,28 @@
 		
 	/** New below this, junk above **/
 	colour-energy-item: 		hsb(30, 100%, 70%);
-	colour-energy-bg: 			hsb(30, 25%, 20%);
+	colour-energy-bg: 			hsb(30, 25%, 25%);
 	colour-energy-fg: 			hsb(30, 5%, 95%);
-	colour-energy-bg-dark: 		hsb(30, 25%, 10%);
-	colour-energy-fg-dark: 		hsb(30, 20%, 50%);
+	colour-energy-bg-dark: 		hsb(30, 15%, 30%);
+	colour-energy-fg-dark: 		hsb(30, 10%, 65%);
 	colour-energy-fixed: 		hsb(30, 30%, 60%);
 	colour-energy-fg-fixed:		hsb(30, 30%, 30%);
-	
-	colour-ballistic-item:  	hsb(279, 100%, 70%);
-	colour-ballistic-ammo:  	hsb(279, 100%, 30%);
-	colour-ballistic-bg:		hsb(279, 25%, 20%);
-	colour-ballistic-fg:		hsb(279, 5%, 95%);
-	colour-ballistic-bg-dark:	hsb(279, 25%, 10%);
-	colour-ballistic-fg-dark:	hsb(279, 20%, 50%);
-	colour-ballistic-fixed: 	hsb(279, 30%, 60%);
-	colour-ballistic-fg-fixed:	hsb(279, 30%, 30%);
+	/* 279 */
+	colour-ballistic-item:  	hsb(293, 80%, 70%);
+	colour-ballistic-ammo:  	hsb(293, 80%, 30%);
+	colour-ballistic-bg:		hsb(293, 25%, 25%);
+	colour-ballistic-fg:		hsb(293, 5%, 95%);
+	colour-ballistic-bg-dark:	hsb(293, 10%, 30%);
+	colour-ballistic-fg-dark:	hsb(293, 10%, 65%);
+	colour-ballistic-fixed: 	hsb(293, 30%, 60%);
+	colour-ballistic-fg-fixed:	hsb(293, 30%, 30%);
 	
 	colour-missile-item: 		hsb(171, 100%, 70%);
 	colour-missile-ammo:  		hsb(171, 100%, 30%);
-	colour-missile-bg: 			hsb(171, 25%, 20%);
+	colour-missile-bg: 			hsb(171, 25%, 25%);
 	colour-missile-fg: 			hsb(171, 5%, 95%);
-	colour-missile-bg-dark: 	hsb(171, 25%, 10%);
-	colour-missile-fg-dark: 	hsb(171, 20%, 50%);
+	colour-missile-bg-dark: 	hsb(171, 15%, 30%);
+	colour-missile-fg-dark: 	hsb(171, 10%, 65%);
 	colour-missile-fixed: 		hsb(171, 30%, 60%);
 	colour-missile-fg-fixed:	hsb(171, 30%, 30%);
 	
@@ -39,32 +39,32 @@
 	colour-ams-ammo: 			hsb(83, 100%, 30%);
 	colour-ams-bg: 				hsb(83, 25%, 20%);
 	colour-ams-fg: 				hsb(83, 5%, 95%);
-	colour-ams-bg-dark: 		hsb(83, 25%, 10%);
-	colour-ams-fg-dark: 		hsb(83, 20%, 50%);
+	colour-ams-bg-dark: 		hsb(83, 15%, 30%);
+	colour-ams-fg-dark: 		hsb(83, 10%, 65%);
 	colour-ams-fixed: 			hsb(83, 30%, 60%);
 	colour-ams-fg-fixed:		hsb(83, 30%, 30%);
 	
 	colour-ecm-item: 			hsb(27, 100%, 70%);
 	colour-ecm-bg: 				hsb(27, 25%, 20%);
 	colour-ecm-fg: 				hsb(27, 5%, 95%);
-	colour-ecm-bg-dark: 		hsb(27, 25%, 10%);
-	colour-ecm-fg-dark: 		hsb(27, 20%, 50%);
+	colour-ecm-bg-dark: 		hsb(27, 15%, 30%);
+	colour-ecm-fg-dark: 		hsb(27, 10%, 65%);
 	colour-ecm-fixed: 			hsb(27, 30%, 60%);
 	colour-ecm-fg-fixed:		hsb(27, 30%, 30%);
 	
 	colour-misc-item: 			hsb(200, 100%, 70%);
 	colour-misc-bg: 			hsb(200, 25%, 20%);
 	colour-misc-fg:  			hsb(200, 5%, 95%);
-	colour-misc-bg-dark:  		hsb(200, 25%, 10%);
-	colour-misc-fg-dark:  		hsb(200, 20%, 50%);
+	colour-misc-bg-dark:  		hsb(200, 15%, 30%);
+	colour-misc-fg-dark:  		hsb(200, 10%, 65%);
 	colour-misc-fixed: 			hsb(200, 30%, 60%);
 	colour-misc-fg-fixed:		hsb(200, 30%, 30%);
 	
 	colour-engine-item: 		hsb(203, 100%, 70%);
 	colour-engine-bg: 			hsb(203, 25%, 20%);
 	colour-engine-fg: 			hsb(203, 5%, 95%);
-	colour-engine-bg-dark: 		hsb(203, 25%, 10%);
-	colour-engine-fg-dark: 		hsb(203, 20%, 50%);
+	colour-engine-bg-dark: 		hsb(203, 15%, 30%);
+	colour-engine-fg-dark: 		hsb(203, 10%, 65%);
 	colour-engine-fixed: 		hsb(203, 30%, 60%);
 	colour-engine-fg-fixed: 	hsb(203, 30%, 30%);
 		
