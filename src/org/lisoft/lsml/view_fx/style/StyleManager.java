@@ -103,6 +103,9 @@ public class StyleManager {
                 }
             }
         }
+        else {
+            aNode.getStyleClass().add("equipment-empty-category");
+        }
     }
 
     public static void changeCategoryStyle(Node aNode, EquipmentCategory aCategory) {
