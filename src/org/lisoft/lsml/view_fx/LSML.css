@@ -78,17 +78,15 @@
 	colour-hs-fixed: 			hsb(203, 30%, 60%);
 	colour-hs-fg-fixed: 		hsb(203, 30%, 30%);
 	
-	colour-internal-item: 		hsb(90, 4%, 84%);
+	colour-internal-item: 		hsb(90, 4%, 70%);
 	colour-internal-fg: 		hsb(90, 4%, 95%);
 	colour-internal-fixed: 		hsb(90, 2%, 60%);
 	colour-internal-fg-fixed: 	hsb(90, 2%, 30%);
 	
-	colour-dynamic-item: 		hsb(93, 4%, 90%);
-	colour-dynamic-fg: 			hsb(93, 4%, 95%);
-	colour-dynamic-fixed: 		hsb(93, 30%, 60%);
-	colour-dynamic-fg-fixed: 	hsb(93, 30%, 30%);
-	/*-fx-box-border: transparent;*/
-	item-colour-disabled: #404040;
+	colour-dynamic-item: 		hsb(93, 4%, 50%);
+	colour-dynamic-fg: 			hsb(93, 4%, 20%);
+	colour-dynamic-fixed: 		hsb(93, 4%, 50%);
+	colour-dynamic-fg-fixed: 	hsb(93, 4%, 20%);
 }
 
 /*********** Styling for components ***********/
