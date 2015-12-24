@@ -120,7 +120,11 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
         int engineHS = component.getEngineHeatSinks();
         int armor = distributor.getDynamicArmorSlots(component);
         int structure = distributor.getDynamicStructureSlots(component);
-        return fixed.size() + equipped.size() + armor + structure - engineHS;
+        int actualSize = fixed.size() + equipped.size() + armor + structure - engineHS;
+        // Size must always at least one to prevent "empty list" display from happening
+        // when the contents are empty. This means that a "null" item will appear
+        // in the rendering but this is OK as they are handled anyway.
+        return Math.max(actualSize, 1);
     }
 
     void nextEngineUpdate() {
