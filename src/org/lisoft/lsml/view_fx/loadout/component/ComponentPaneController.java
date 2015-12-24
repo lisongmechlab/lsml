@@ -136,7 +136,10 @@ public class ComponentPaneController {
         setupTitle();
         setupArmors();
         setupHardPoints();
+        setupOmniPods();
+    }
 
+    private void setupOmniPods() {
         if (component instanceof ConfiguredComponentOmniMech) {
             ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
 
@@ -236,7 +239,7 @@ public class ComponentPaneController {
         itemView.setVisibleRows(component.getInternalComponent().getSlots());
         itemView.setItems(new ComponentItemsList(xBar, model.loadout, location, aDistributor));
         itemView.setCellFactory((aList) -> {
-            return new ComponentItemsCell((ItemView<Item>) aList);
+            return new ComponentItemsCell((ItemView<Item>) aList, component, model.loadout, stack, xBar);
         });
 
         itemView.setPrefWidth(ITEM_WIDTH);

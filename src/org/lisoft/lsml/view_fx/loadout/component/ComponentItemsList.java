@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.component;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.messages.ItemMessage;
@@ -28,6 +29,7 @@ import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -45,6 +47,20 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
     private final Location               location;
     private final DynamicSlotDistributor distributor;
 
+    enum EquippedType {
+        FIXED, EQUIPPED, DYN_ARMOR, DYN_STRUCTURE, EMPTY
+    }
+
+    private static class Classification {
+        public final Item         item;
+        public final EquippedType type;
+
+        public Classification(Item aItem, EquippedType aType) {
+            item = aItem;
+            type = aType;
+        }
+    }
+
     public ComponentItemsList(MessageReception aMessageReception, LoadoutBase<?> aLoadout, Location aLocation,
             DynamicSlotDistributor aDistributor) {
         aMessageReception.attach(this);
@@ -53,59 +69,46 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
         distributor = aDistributor;
     }
 
-    public boolean isFixed(int aIndex) {
+    private Classification classify(int aIndex) {
         ConfiguredComponentBase component = loadout.getComponent(location);
+        int visibleLeft = aIndex;
+        int engineHeatSinks = component.getEngineHeatSinks();
 
-        List<Item> fixed = component.getItemsFixed();
-        if (aIndex < fixed.size()) {
-            return true;
+        EquippedType type = EquippedType.FIXED;
+        for (List<Item> items : Arrays.asList(component.getItemsFixed(), component.getItemsEquipped())) {
+            for (Item item : items) {
+                if (engineHeatSinks > 0 && item instanceof HeatSink) {
+                    engineHeatSinks--; // Consumed by engine
+                }
+                else {
+                    if (visibleLeft == 0) {
+                        return new Classification(item, type);
+                    }
+                    visibleLeft--;
+                }
+            }
+            type = EquippedType.EQUIPPED;
         }
 
-        int equipIndex = aIndex - fixed.size();
-        List<Item> equipped = component.getItemsEquipped();
-        if (equipIndex < equipped.size()) {
-            return false;
+        final int armorSlots = distributor.getDynamicArmorSlots(component);
+        if (visibleLeft < armorSlots) {
+            return new Classification(ItemDB.DYN_ARMOR, EquippedType.DYN_ARMOR);
         }
-        equipIndex -= equipped.size();
 
-        int armor = distributor.getDynamicArmorSlots(component);
-        if (equipIndex < armor) {
-            return true;
+        visibleLeft -= armorSlots;
+        if (visibleLeft < distributor.getDynamicStructureSlots(component)) {
+            return new Classification(ItemDB.DYN_STRUCT, EquippedType.DYN_STRUCTURE);
         }
-        equipIndex -= armor;
-        int structure = distributor.getDynamicStructureSlots(component);
-        if (equipIndex < structure) {
-            return true;
-        }
-        return false;
+        return new Classification(null, EquippedType.EMPTY);
+    }
+
+    public boolean isFixed(int aIndex) {
+        return classify(aIndex).type == EquippedType.FIXED;
     }
 
     @Override
     public Item get(int aIndex) {
-        ConfiguredComponentBase component = loadout.getComponent(location);
-
-        List<Item> fixed = component.getItemsFixed();
-        if (aIndex < fixed.size()) {
-            return fixed.get(aIndex);
-        }
-
-        int equipIndex = aIndex - fixed.size();
-        List<Item> equipped = component.getItemsEquipped();
-        if (equipIndex < equipped.size()) {
-            return equipped.get(equipIndex);
-        }
-        equipIndex -= equipped.size();
-
-        int armor = distributor.getDynamicArmorSlots(component);
-        if (equipIndex < armor) {
-            return ItemDB.DYN_ARMOR;
-        }
-        equipIndex -= armor;
-        int structure = distributor.getDynamicStructureSlots(component);
-        if (equipIndex < structure) {
-            return ItemDB.DYN_STRUCT;
-        }
-        return null;
+        return classify(aIndex).item;
     }
 
     @Override
@@ -114,9 +117,18 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
         List<Item> fixed = component.getItemsFixed();
         List<Item> equipped = component.getItemsEquipped();
 
+        int engineHS = component.getEngineHeatSinks();
         int armor = distributor.getDynamicArmorSlots(component);
         int structure = distributor.getDynamicStructureSlots(component);
-        return fixed.size() + equipped.size() + armor + structure;
+        return fixed.size() + equipped.size() + armor + structure - engineHS;
+    }
+
+    void nextEngineUpdate() {
+        int enginePos = 0;
+        while (enginePos < size() && !(get(enginePos) instanceof Engine)) {
+            enginePos++;
+        }
+        nextUpdate(enginePos);
     }
 
     @Override
@@ -135,8 +147,7 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
             case Added: {
                 if (msg.relativeIndex < 0) {
                     if (msg.item instanceof HeatSink) {
-                        // Heat sink was consumed into engine... no-op
-                        // FIXME: Do I need to redraw?
+                        nextEngineUpdate();
                     }
                     else {
                         int fixedIdx = msg.component.getItemsFixed().size() - 1;
@@ -151,8 +162,7 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
             case Removed: {
                 if (msg.relativeIndex < 0) {
                     if (msg.item instanceof HeatSink) {
-                        // Heat sink removed from inside of engine... no-op
-                        // FIXME: Do I need to redraw?
+                        nextEngineUpdate();
                     }
                     else {
                         int fixedIdx = msg.component.getItemsFixed().size() - 1;

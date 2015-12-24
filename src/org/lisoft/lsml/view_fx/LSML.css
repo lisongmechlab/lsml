@@ -97,6 +97,28 @@
 	-fx-padding: 2pt;
 }
 
+.component-engine{
+	-fx-padding: 0 0 4pt 0;
+	-fx-spacing: 3pt;	
+}
+
+.component-engine .combo-box {
+	-fx-background-color: colour-engine-bg;
+}
+
+.component-engine .combo-box .list-view .list-cell{
+	-fx-background-color: colour-engine-bg;
+	-fx-text-fill: colour-engine-fg;
+}
+
+.component-engine .check-box >.box {
+	-fx-background-color: colour-engine-bg;
+}
+
+.component-engine .check-box {
+	-fx-text-fill: colour-engine-fg;
+}
+
 .component-root{
 	-fx-animated: false;
 	-fx-collapsible: false;
