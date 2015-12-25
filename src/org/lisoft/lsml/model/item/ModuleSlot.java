@@ -25,7 +25,7 @@ package org.lisoft.lsml.model.item;
  * @author Emily Björk
  */
 public enum ModuleSlot {
-    CONSUMABLE("Consumable"), WEAPON("Weapon"), MECH("Mech"), HYBRID("Hybrid");
+    CONSUMABLE, WEAPON, MECH, HYBRID;
 
     public static ModuleSlot fromMwo(String aString) {
         switch (aString) {
@@ -38,16 +38,5 @@ public enum ModuleSlot {
             default:
                 throw new IllegalArgumentException("Unknown module type!: " + aString);
         }
-    }
-
-    private final String name;
-
-    private ModuleSlot(String aName) {
-        name = aName;
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

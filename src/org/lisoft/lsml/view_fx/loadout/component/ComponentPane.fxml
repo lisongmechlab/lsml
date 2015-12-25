@@ -27,7 +27,7 @@
                </children>
             </HBox>
         <HBox fx:id="hardPointContainer" alignment="CENTER" />
-        <ItemView fx:id="itemView" styleClass="component-equipment" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" />
+        <ItemView fx:id="itemView" styleClass="equipment-view" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" />
       </children>
     </VBox>
   </content>

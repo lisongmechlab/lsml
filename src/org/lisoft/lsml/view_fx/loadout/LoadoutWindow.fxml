@@ -16,7 +16,7 @@
          <tabs>
             <Tab text="Equipment" closable="false">
                <content>
-                <TreeTableView fx:id="equipmentList" showRoot="false">
+                <TreeTableView fx:id="equipmentList" styleClass="equipment-list" showRoot="false">
                   <columnResizePolicy>
                     <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                   </columnResizePolicy>
@@ -25,7 +25,7 @@
             </Tab>
             <Tab text="Modules" closable="false">
                <content>
-                <TreeTableView fx:id="moduleList" showRoot="false">
+                <TreeTableView fx:id="moduleList" styleClass="equipment-list" showRoot="false">
                   <columnResizePolicy>
                     <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                   </columnResizePolicy>

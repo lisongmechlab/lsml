@@ -1,4 +1,10 @@
 .root {
+	colour-module-item: 		hsb(215, 55%, 48%);
+	colour-module-bg: 			hsb(215, 25%, 25%);
+	colour-module-fg: 			hsb(215, 5%, 95%);
+	colour-module-bg-dark: 		hsb(215, 15%, 30%);
+	colour-module-fg-dark: 		hsb(215, 10%, 65%);
+
 	colour-energy-item: 		hsb(30, 100%, 70%);
 	colour-energy-bg: 			hsb(30, 25%, 25%);
 	colour-energy-fg: 			hsb(30, 5%, 95%);
@@ -99,35 +105,13 @@
 
 /*********** Styling for components ***********/
 
-.layout-container{
-	-fx-spacing: 2pt;
-}
-
 .layout-root{
 	-fx-padding: 2pt;
-	-fx-background-color: linear-gradient( from 0% 0%  to 100% 100%, pink 0%, derive(colour-lsml-orange, -70%) 30%, colour-lsml-gray 60% )
+	-fx-background-color: linear-gradient( from 0% 0%  to 100% 100%, hsb(30, 20%, 50%) 0%, derive(colour-lsml-orange, -70%) 30%, colour-lsml-gray 60% )
 }
 
-.component-engine{
-	-fx-padding: 0 0 4pt 0;
-	-fx-spacing: 3pt;	
-}
-
-.component-engine .combo-box {
-	-fx-background-color: colour-engine-bg;
-}
-
-.component-engine .combo-box .list-view .list-cell{
-	-fx-background-color: colour-engine-bg;
-	-fx-text-fill: colour-engine-fg;
-}
-
-.component-engine .check-box >.box {
-	-fx-background-color: colour-engine-bg;
-}
-
-.component-engine .check-box {
-	-fx-text-fill: colour-engine-fg;
+.layout-container{
+	-fx-spacing: 2pt;
 }
 
 .component-root{
@@ -151,7 +135,8 @@
 	-fx-padding: 2pt;
 }
 
-.component-equipment{
+/* The container showing equipment (modules, items etc) */
+.equipment-view{
 	-fx-background-insets: 0.0;
 	-fx-background-color: none;
 }
@@ -166,105 +151,188 @@
 	-fx-pref-height: 50.0pt;
 }
 
+/*********** Styling for Engine on mech ***********/
+.component-engine{
+	-fx-padding: 0 0 4pt 0;
+	-fx-spacing: 3pt;	
+}
+
+.component-engine .combo-box {
+	-fx-background-color: colour-engine-bg;
+}
+
+.component-engine .combo-box .list-view .list-cell{
+	-fx-background-color: colour-engine-bg;
+	-fx-text-fill: colour-engine-fg;
+}
+
+.component-engine .check-box >.box {
+	-fx-background-color: colour-engine-bg;
+}
+
+.component-engine .check-box {
+	-fx-text-fill: colour-engine-fg;
+}
 
 /*********** Styling for hard points ***********/
-
 #hardPointContainer{
 	-fx-spacing: 2.0pt;
 }
 
-.HardPoint{
+.hard-point{
 	-fx-padding: 2.0pt;
 	-fx-background-radius: 5.0pt;
 }
 
 /*********** Styling for equipment list ***********/
-
-#equipmentList .cell {
-	-fx-padding: 1.0px 0.0 0.0 0.0;
-	-fx-font-weight: 900;
+.equipment-list{
+	-fx-focus-traversable: false;
+	-fx-border-width: 0;
 }
 
-#equipmentList .cell:unequippable {
-	-fx-padding: 1.0px 0.0 0.0 0.0;
+.equipment-list .cell {
+	-fx-font-weight: 900;
+	-fx-border-width: 0;
+}
+
+.equipment-list .cell:unequippable {
 	-fx-font-weight: 200;
 }
 
+.equipment-list .tree-table-row-cell:hover .cell{
+	-fx-effect: dropshadow(three-pass-box, grey, 2, 0.01, 0, 0);
+}
+
+.equipment-list .tree-table-row-cell:selected .cell{
+	-fx-background-color: none;
+}
+
 /*********** --> Empty slots ***********/
-.equipment-empty-category{
+.equipment-empty{
 	-fx-background-color: colour-empty-bg;
 	-fx-text-fill: colour-empty-fg;
 }
 
 
 /*********** --> Jump Jets ***********/
-.equipment-jj-category{
+.equipment-jj{
 	-fx-background-color: colour-jj-item;
 	-fx-text-fill: colour-jj-fg;
 }
 
-.equipment-jj-category:fixed{
+.equipment-jj:fixed{
 	-fx-background-color: colour-jj-fixed;
 	-fx-text-fill: colour-jj-fg-fixed;
 }
 
 /*********** --> Heat Sinks ***********/
-.equipment-hs-category{
+.equipment-hs{
 	-fx-background-color: colour-hs-item;
 	-fx-text-fill: colour-hs-fg;
 }
 
-.equipment-hs-category:fixed{
+.equipment-hs:fixed{
 	-fx-background-color: colour-hs-fixed;
 	-fx-text-fill: colour-hs-fg-fixed;
 }
 
 /*********** --> Internal ***********/
-.equipment-internal-category{
+.equipment-internal{
 	-fx-background-color: colour-internal-item;
 	-fx-text-fill: colour-internal-fg;
 }
 
-.equipment-internal-category:fixed{
+.equipment-internal:fixed{
 	-fx-background-color: colour-internal-fixed;
 	-fx-text-fill: colour-internal-fg-fixed;
 }
 
 /*********** --> Dynamic Structure/Armor ***********/
-.equipment-dynamic-category{
+.equipment-dynamic{
 	-fx-background-color: colour-dynamic-item;
 	-fx-text-fill: colour-dynamic-fg;
 }
 
-.equipment-dynamic-category:fixed{
+.equipment-dynamic:fixed{
 	-fx-background-color: colour-dynamic-fixed;
 	-fx-text-fill: colour-dynamic-fg-fixed;
 }
 
+/*********** --> Modules ***********/
+.equipment-consumable, .equipment-weapon-module, .equipment-mech-module{
+	-fx-background-color: colour-module-item;
+	-fx-background: colour-module-item;
+	-fx-text-fill: colour-module-fg;
+}
+
+.equipment-consumable .cell, .equipment-weapon-module .cell, .equipment-mech-module .cell{
+	-fx-text-fill: colour-module-fg;
+}
+
+.equipment-consumable-list, .equipment-weapon-module-list, .equipment-mech-module-list{
+	-fx-background-color: colour-module-bg;
+	-fx-background: colour-module-bg;
+}
+
+.equipment-consumable-list .cell, .equipment-weapon-module-list .cell, .equipment-mech-module-list .cell{
+	-fx-text-fill: colour-module-fg;
+}
+
+.equipment-consumable-list:unequippable, .equipment-weapon-module-list:unequippable, .equipment-mech-module-list:unequippable{
+	-fx-background-color: colour-module-bg-dark;
+	-fx-background: colour-module-bg-dark;
+}
+
+.equipment-consumable-list:unequippable .cell, .equipment-weapon-module-list:unequippable .cell, .equipment-mech-module-list:unequippable .cell{
+	-fx-text-fill: colour-module-fg-dark;
+}
+
+.equipment-module-default-icon{
+	-fx-min-height: 15.0pt;
+	-fx-pref-height: 15.0pt;
+	-fx-min-width: 15.0pt;
+	-fx-pref-width: 15.0pt;
+	-fx-background-color: colour-module-item;
+    -fx-shape: "M 0 0 v 9 l 1 1 H 20 V 1 l -1 -1 z";
+}
+
 /*********** --> Energy ***********/
-.equipment-energy-category{
+.equipment-energy{
 	-fx-background-color: colour-energy-item;
+	-fx-background: colour-energy-item;
 	-fx-text-fill: colour-energy-fg;
 }
 
-.equipment-energy-category:fixed{
-	-fx-background-color: colour-energy-fixed;
+.equipment-energy .cell{
+	-fx-text-fill: colour-energy-fg;
+}
+
+.equipment-energy:fixed{
+	-fx-background: colour-energy-fixed;
+}
+
+.equipment-energy:fixed .cell{
 	-fx-text-fill: colour-energy-fg-fixed;
 }
+ 
+.equipment-energy-list{
+	-fx-background: colour-energy-bg;
+}
 
-.equipment-energy-item{
-	-fx-background-color: colour-energy-bg;
+.equipment-energy-list .cell{
 	-fx-text-fill: colour-energy-fg;
 }
 
-.equipment-energy-item:unequippable{
-	-fx-background-color: colour-energy-bg-dark;
+.equipment-energy-list:unequippable{
+	-fx-background: colour-energy-bg-dark;
+}
+
+.equipment-energy-list:unequippable .cell{
 	-fx-text-fill: colour-energy-fg-dark;
 }
 
-.equipment-energy-item:smartplaceable{
-	-fx-background-color: colour-energy-bg-dark;
-	-fx-text-fill: colour-energy-fg-dark;
+.equipment-energy-list:smartplaceable{
+	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-energy-bg 0%, colour-energy-bg-dark 100%);
 }
 
 .equipment-energy-default-icon{
@@ -277,34 +345,47 @@
 }
 
 /*********** --> Ballistic ***********/
-.equipment-ballistic-category{
+.equipment-ballistic{
 	-fx-background-color: colour-ballistic-item;
-	-fx-text-fill: #f1edea;
+	-fx-background: colour-ballistic-item;
+	-fx-text-fill: colour-ballistic-fg;
 }
 
-.equipment-ballistic-category:fixed{
-	-fx-background-color: colour-ballistic-fixed;
+.equipment-ballistic .cell{
+	-fx-text-fill: colour-ballistic-fg;
+}
+
+.equipment-ballistic:fixed{
+	-fx-background: colour-ballistic-fixed;
+}
+
+.equipment-ballistic:fixed .cell{
 	-fx-text-fill: colour-ballistic-fg-fixed;
 }
 
-.equipment-ballistic-item{
-	-fx-background-color: colour-ballistic-bg;
-	-fx-text-fill: colour-ballistic-fg;
-}
-
 .equipment-ballistic-ammo{
-	-fx-background-color: colour-ballistic-ammo;
+	-fx-background: colour-ballistic-ammo;
 	-fx-text-fill: colour-ballistic-fg;
 }
 
-.equipment-ballistic-item:unequippable{
-	-fx-background-color: colour-ballistic-bg-dark;
+.equipment-ballistic-list{
+	-fx-background: colour-ballistic-bg;
+}
+
+.equipment-ballistic-list .cell{
+	-fx-text-fill: colour-ballistic-fg;
+}
+
+.equipment-ballistic-list:unequippable{
+	-fx-background: colour-ballistic-bg-dark;
+}
+
+.equipment-ballistic-list:unequippable .cell{
 	-fx-text-fill: colour-ballistic-fg-dark;
 }
 
-.equipment-ballistic-item:smartplaceable{
-	-fx-background-color: colour-ballistic-bg-dark;
-	-fx-text-fill: colour-ballistic-fg-dark;
+.equipment-ballistic-list:smartplaceable{
+	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-ballistic-bg 0%, colour-ballistic-bg-dark 100%);
 }
 
 .equipment-ballistic-default-icon{
@@ -317,19 +398,22 @@
 }
 
 /*********** --> Missile ***********/
-.equipment-missile-category{
+.equipment-missile{
 	-fx-background-color: colour-missile-item;
+	-fx-background: colour-missile-item;
 	-fx-text-fill: colour-missile-fg;
 }
 
-.equipment-missile-category:fixed{
-	-fx-background-color: colour-missile-fixed;
+.equipment-missile .cell{
+	-fx-text-fill: colour-missile-fg;
+}
+
+.equipment-missile:fixed{
+	-fx-background: colour-missile-fixed;
+}
+
+.equipment-missile:fixed .cell{
 	-fx-text-fill: colour-missile-fg-fixed;
-}
-
-.equipment-missile-item{
-	-fx-background-color: colour-missile-bg;
-	-fx-text-fill: colour-missile-fg;
 }
 
 .equipment-missile-ammo{
@@ -337,14 +421,24 @@
 	-fx-text-fill: colour-missile-fg;
 }
 
-.equipment-missile-item:unequippable{
-	-fx-background-color: colour-missile-bg-dark;
+.equipment-missile-list{
+	-fx-background-color: colour-missile-bg;
+}
+
+.equipment-missile-list .cell{
+	-fx-text-fill: colour-missile-fg;
+}
+
+.equipment-missile-list:unequippable{
+	-fx-background: colour-missile-bg-dark;
+}
+
+.equipment-missile-list:unequippable .cell{
 	-fx-text-fill: colour-missile-fg-dark;
 }
 
-.equipment-missile-item:smartplaceable{
-	-fx-background-color: colour-missile-bg-dark;
-	-fx-text-fill: colour-missile-fg-dark;
+.equipment-missile-list:smartplaceable{
+	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-missile-bg 0%, colour-missile-bg-dark 100%);
 }
 
 .equipment-missile-default-icon{
@@ -357,19 +451,22 @@
 }
 
 /*********** --> AMS ***********/
-.equipment-ams-category{
+.equipment-ams{
 	-fx-background-color: colour-ams-item;
+	-fx-background: colour-ams-item;
 	-fx-text-fill: colour-ams-fg;
 }
 
-.equipment-ams-category:fixed{
-	-fx-background-color: colour-ams-fixed;
+.equipment-ams .cell{
+	-fx-text-fill: colour-ams-fg;
+}
+
+.equipment-ams:fixed{
+	-fx-background: colour-ams-fixed;
+}
+
+.equipment-ams:fixed .cell{
 	-fx-text-fill: colour-ams-fg-fixed;
-}
-
-.equipment-ams-item{
-	-fx-background-color: colour-ams-bg;
-	-fx-text-fill: colour-ams-fg;
 }
 
 .equipment-ams-ammo{
@@ -377,14 +474,24 @@
 	-fx-text-fill: colour-ams-fg;
 }
 
-.equipment-ams-item:unequippable{
-	-fx-background-color: colour-ams-bg-dark;
+.equipment-ams-list{
+	-fx-background-color: colour-ams-bg;
+}
+
+.equipment-ams-list .cell{
+	-fx-text-fill: colour-ams-fg;
+}
+
+.equipment-ams-list:unequippable{
+	-fx-background: colour-ams-bg-dark;
+}
+
+.equipment-ams-list:unequippable .cell{
 	-fx-text-fill: colour-ams-fg-dark;
 }
 
-.equipment-ams-item:smartplaceable{
-	-fx-background-color: colour-ams-bg-dark;
-	-fx-text-fill: colour-ams-fg-dark;
+.equipment-ams-list:smartplaceable{
+	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-ams-bg 0%, colour-ams-bg-dark 100%);
 }
 
 .equipment-ams-default-icon{
@@ -397,29 +504,47 @@
 }
 
 /*********** --> ECM ***********/
-.equipment-ecm-category{
+.equipment-ecm{
 	-fx-background-color: colour-ecm-item;
-	-fx-text-fill: colour-ecm-item-fg;
-}
-
-.equipment-ecm-category:fixed{
-	-fx-background-color: colour-ecm-fixed;
-	-fx-text-fill: colour-ecm-item-fg-fixed;
-}
-
-.equipment-ecm-item{
-	-fx-background-color: colour-ecm-bg;
+	-fx-background: colour-ecm-item;
 	-fx-text-fill: colour-ecm-fg;
 }
 
-.equipment-ecm-item:unequippable{
-	-fx-background-color: colour-ecm-bg-dark;
+.equipment-ecm .cell{
+	-fx-text-fill: colour-ecm-fg;
+}
+
+.equipment-ecm:fixed{
+	-fx-background: colour-ecm-fixed;
+}
+
+.equipment-ecm:fixed .cell{
+	-fx-text-fill: colour-ecm-fg-fixed;
+}
+
+.equipment-ecm-ammo{
+	-fx-background-color: colour-ecm-ammo;
+	-fx-text-fill: colour-ecm-fg;
+}
+
+.equipment-ecm-list{
+	-fx-background-color: colour-ecm-bg;
+}
+
+.equipment-ecm-list .cell{
+	-fx-text-fill: colour-ecm-fg;
+}
+
+.equipment-ecm-list:unequippable{
+	-fx-background: colour-ecm-bg-dark;
+}
+
+.equipment-ecm-list:unequippable .cell{
 	-fx-text-fill: colour-ecm-fg-dark;
 }
 
-.equipment-ecm-item:smartplaceable{
-	-fx-background-color: colour-ecm-bg-dark;
-	-fx-text-fill: colour-ecm-fg-dark;
+.equipment-ecm-list:smartplaceable{
+	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-ecm-bg 0%, colour-ecm-bg-dark 100%);
 }
 
 .equipment-ecm-default-icon{
@@ -432,29 +557,47 @@
 }
 
 /*********** --> Engine ***********/
-.equipment-engine-category{
+.equipment-engine{
 	-fx-background-color: colour-engine-item;
+	-fx-background: colour-engine-item;
 	-fx-text-fill: colour-engine-fg;
 }
 
-.equipment-engine-category:fixed{
-	-fx-background-color: colour-engine-fixed;
+.equipment-engine .cell{
+	-fx-text-fill: colour-engine-fg;
+}
+
+.equipment-engine:fixed{
+	-fx-background: colour-engine-fixed;
+}
+
+.equipment-engine:fixed .cell{
 	-fx-text-fill: colour-engine-fg-fixed;
 }
 
-.equipment-engine-item{
-	-fx-background-color: colour-engine-bg;
+.equipment-engine-ammo{
+	-fx-background-color: colour-engine-ammo;
 	-fx-text-fill: colour-engine-fg;
 }
 
-.equipment-engine-item:unequippable{
-	-fx-background-color: colour-engine-bg-dark;
+.equipment-engine-list{
+	-fx-background-color: colour-engine-bg;
+}
+
+.equipment-engine-list .cell{
+	-fx-text-fill: colour-engine-fg;
+}
+
+.equipment-engine-list:unequippable{
+	-fx-background: colour-engine-bg-dark;
+}
+
+.equipment-engine-list:unequippable .cell{
 	-fx-text-fill: colour-engine-fg-dark;
 }
 
-.equipment-engine-item:smartplaceable{
-	-fx-background-color: colour-engine-bg-dark;
-	-fx-text-fill: colour-engine-fg-dark;
+.equipment-engine-list:smartplaceable{
+	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-engine-bg 0%, colour-engine-bg-dark 100%);
 }
 
 .equipment-engine-default-icon{
@@ -467,29 +610,47 @@
 }
 
 /*********** --> Miscellaneous ***********/
-.equipment-misc-category{
+.equipment-misc{
 	-fx-background-color: colour-misc-item;
+	-fx-background: colour-misc-item;
 	-fx-text-fill: colour-misc-fg;
 }
 
-.equipment-misc-category:fixed{
-	-fx-background-color: colour-misc-fixed;
+.equipment-misc .cell{
+	-fx-text-fill: colour-misc-fg;
+}
+
+.equipment-misc:fixed{
+	-fx-background: colour-misc-fixed;
+}
+
+.equipment-misc:fixed .cell{
 	-fx-text-fill: colour-misc-fg-fixed;
 }
 
-.equipment-misc-item{
-	-fx-background-color: colour-misc-bg;
+.equipment-misc-ammo{
+	-fx-background-color: colour-misc-ammo;
 	-fx-text-fill: colour-misc-fg;
 }
 
-.equipment-misc-item:unequippable{
-	-fx-background-color: colour-misc-bg-dark;
+.equipment-misc-list{
+	-fx-background-color: colour-misc-bg;
+}
+
+.equipment-misc-list .cell{
+	-fx-text-fill: colour-misc-fg;
+}
+
+.equipment-misc-list:unequippable{
+	-fx-background: colour-misc-bg-dark;
+}
+
+.equipment-misc-list:unequippable .cell{
 	-fx-text-fill: colour-misc-fg-dark;
 }
 
-.equipment-misc-item:smartplaceable{
-	-fx-background-color: colour-misc-bg-dark;
-	-fx-text-fill: colour-misc-fg-dark;
+.equipment-misc-list:smartplaceable{
+	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-misc-bg 0%, colour-misc-bg-dark 100%);
 }
 
 .equipment-misc-default-icon{

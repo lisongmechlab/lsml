@@ -304,7 +304,7 @@ public class LoadoutWindowController implements MessageReceiver {
             if (slot == ModuleSlot.HYBRID)
                 continue;
 
-            FilterTreeItem<Object> item = new FilterTreeItem<Object>(slot);
+            FilterTreeItem<Object> item = new FilterTreeItem<Object>(EquipmentCategory.classify(slot));
             item.setExpanded(true);
 
             List<PilotModule> modules = PilotModuleDB.lookup(slot);

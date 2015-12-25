@@ -23,6 +23,7 @@ import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 
 /**
@@ -33,7 +34,7 @@ import javafx.scene.control.Label;
  */
 public class HardPointFormatter {
 
-    public Label format(int aNumHardPoints, HardPointType aHardPointType) {
+    public Node format(int aNumHardPoints, HardPointType aHardPointType) {
         Label label = new Label();
         if (aNumHardPoints == 1)
             label.setText(aHardPointType.shortName());
@@ -41,7 +42,7 @@ public class HardPointFormatter {
             label.setText(aNumHardPoints + aHardPointType.shortName());
 
         label.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
-        StyleManager.changeCategoryStyle(label, EquipmentCategory.classify(aHardPointType));
+        StyleManager.changeStyle(label, EquipmentCategory.classify(aHardPointType));
 
         return label;
     }

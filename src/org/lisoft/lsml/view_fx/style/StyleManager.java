@@ -47,7 +47,7 @@ public class StyleManager {
 
     public static final String                          CSS_CLASS_CONTAINER_ROOT    = "component-root";
     public static final String                          CSS_CLASS_EQUIPPED          = "equipped";
-    public static final String                          CSS_CLASS_HARDPOINT         = "HardPoint";
+    public static final String                          CSS_CLASS_HARDPOINT         = "hard-point";
 
     public static final String                          CSS_CLASS_LAYOUT_CONTAINER  = "layout-container";
     public static final String                          CSS_CLASS_TORSO_STRUT       = "TorsoStrut";
@@ -74,14 +74,16 @@ public class StyleManager {
         CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.ECM, "equipment-ecm");
         CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.ENGINE, "equipment-engine");
         CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.MISC, "equipment-misc");
-
+        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.CONSUMABLE, "equipment-consumable");
+        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.WEAPON_MODULE, "equipment-weapon-module");
+        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.MECH_MODULE, "equipment-mech-module");
     }
 
-    public static void changeCategoryStyle(Node aNode, EquipmentCategory aCategory) {
+    public static void changeListStyle(Node aNode, EquipmentCategory aCategory) {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
         if (aCategory != null) {
-            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory) + "-category");
+            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory) + "-list");
         }
     }
 
@@ -98,42 +100,35 @@ public class StyleManager {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
         if (aEquipment != null) {
-            if (aEquipment instanceof Item) {
-                Item item = (Item) aEquipment;
-                EquipmentCategory category = EquipmentCategory.classify(item);
-                if (EquipmentCategory.MISC == category) {
-                    if (item instanceof JumpJet) {
-                        aNode.getStyleClass().add("equipment-jj-category");
-                    }
-                    else if (item instanceof HeatSink) {
-                        aNode.getStyleClass().add("equipment-hs-category");
-                    }
-                    else if (item instanceof Internal) {
-                        if (item == ItemDB.DYN_ARMOR || item == ItemDB.DYN_STRUCT || item == ItemDB.FIX_ARMOR
-                                || item == ItemDB.FIX_STRUCT) {
-                            aNode.getStyleClass().add("equipment-dynamic-category");
-                        }
-                        else {
-                            aNode.getStyleClass().add("equipment-internal-category");
-                        }
-                    }
+            EquipmentCategory category = EquipmentCategory.classify(aEquipment);
+            if (EquipmentCategory.MISC == category) {
+                if (aEquipment instanceof JumpJet) {
+                    aNode.getStyleClass().add("equipment-jj");
                 }
-                else {
-                    if (item instanceof Ammunition) {
-                        aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-ammo");
+                else if (aEquipment instanceof HeatSink) {
+                    aNode.getStyleClass().add("equipment-hs");
+                }
+                else if (aEquipment instanceof Internal) {
+                    if (aEquipment == ItemDB.DYN_ARMOR || aEquipment == ItemDB.DYN_STRUCT
+                            || aEquipment == ItemDB.FIX_ARMOR || aEquipment == ItemDB.FIX_STRUCT) {
+                        aNode.getStyleClass().add("equipment-dynamic");
                     }
                     else {
-                        aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-category");
+                        aNode.getStyleClass().add("equipment-internal");
                     }
                 }
             }
             else {
-                // FIXME later
-                aNode.getStyleClass().add("equipment-internal-category");
+                if (aEquipment instanceof Ammunition) {
+                    aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-ammo");
+                }
+                else {
+                    aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "");
+                }
             }
         }
         else {
-            aNode.getStyleClass().add("equipment-empty-category");
+            aNode.getStyleClass().add("equipment-empty");
         }
     }
 
@@ -141,7 +136,7 @@ public class StyleManager {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
         if (aCategory != null) {
-            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory) + "-item");
+            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory));
         }
     }
 }

@@ -22,9 +22,11 @@ package org.lisoft.lsml.view_fx.loadout.equipment;
 import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.input.Dragboard;
@@ -72,5 +74,42 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         if (!(object instanceof Item))
             return null;
         return (Item) object;
+    }
+
+    @Override
+    protected void updateItem(Object aItem, boolean aEmpty) {
+        super.updateItem(aItem, aEmpty);
+        if (aItem instanceof Item) {
+            Item treeItem = (Item) aItem;
+
+            StyleManager.changeListStyle(this, EquipmentCategory.classify(treeItem));
+
+            if (EquipResult.SUCCESS == loadout.canEquipDirectly(treeItem)) {
+                // Directly equippable
+                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+            }
+            else if (!loadout.getCandidateLocationsForItem(treeItem).isEmpty()) {
+                // Might be smart placeable
+                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, true);
+            }
+            else {
+                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, true);
+                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+            }
+        }
+        else {
+            final EquipmentCategory category;
+            if (aItem instanceof EquipmentCategory) {
+                category = (EquipmentCategory) aItem;
+            }
+            else {
+                category = null;
+            }
+            StyleManager.changeStyle(this, category);
+            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
+            pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+        }
     }
 }

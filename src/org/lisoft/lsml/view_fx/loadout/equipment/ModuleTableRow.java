@@ -21,10 +21,13 @@ package org.lisoft.lsml.view_fx.loadout.equipment;
 
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.input.Dragboard;
@@ -72,5 +75,31 @@ public class ModuleTableRow extends TreeTableRow<Object> {
         if (!(object instanceof PilotModule))
             return null;
         return (PilotModule) object;
+    }
+
+    @Override
+    protected void updateItem(Object aItem, boolean aEmpty) {
+        super.updateItem(aItem, aEmpty);
+
+        final EquipmentCategory category;
+        if (aItem instanceof EquipmentCategory) {
+            category = (EquipmentCategory) aItem;
+            StyleManager.changeStyle(this, category);
+            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
+        }
+        else if (aItem instanceof PilotModule) {
+            PilotModule pilotModule = (PilotModule) aItem;
+
+            boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
+            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, !equippable);
+            category = EquipmentCategory.classify(((Equipment) aItem));
+
+            StyleManager.changeListStyle(this, category);
+        }
+        else {
+            category = null;
+            StyleManager.changeListStyle(this, category);
+            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
+        }
     }
 }

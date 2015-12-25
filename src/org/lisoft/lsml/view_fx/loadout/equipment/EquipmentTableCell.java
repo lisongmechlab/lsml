@@ -49,9 +49,9 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
         Object treeItemObject = getTreeTableRow().getItem();
         if (treeItemObject instanceof Item) {
             Item treeItem = (Item) treeItemObject;
-
-            StyleManager.changeStyle(this, EquipmentCategory.classify(treeItem));
-
+            //
+            // StyleManager.changeStyle(this, EquipmentCategory.classify(treeItem));
+            //
             if (EquipResult.SUCCESS == loadout.canEquipDirectly(treeItem)) {
                 // Directly equippable
                 pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
@@ -74,14 +74,14 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             }
         }
         else {
-            final EquipmentCategory category;
-            if (treeItemObject instanceof EquipmentCategory) {
-                category = (EquipmentCategory) treeItemObject;
-            }
-            else {
-                category = null;
-            }
-            StyleManager.changeCategoryStyle(this, category);
+            // final EquipmentCategory category;
+            // if (treeItemObject instanceof EquipmentCategory) {
+            // category = (EquipmentCategory) treeItemObject;
+            // }
+            // else {
+            // category = null;
+            // }
+            // StyleManager.changeCategoryStyle(this, category);
             pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
             pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
             if (showIcon) {
