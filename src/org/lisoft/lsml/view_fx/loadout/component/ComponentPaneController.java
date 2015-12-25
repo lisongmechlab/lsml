@@ -237,7 +237,7 @@ public class ComponentPaneController {
 
     private void setupItemView(DynamicSlotDistributor aDistributor) {
         itemView.setVisibleRows(component.getInternalComponent().getSlots());
-        itemView.setItems(new ComponentItemsList(xBar, model.loadout, location, aDistributor));
+        itemView.setItems(new ComponentItemsList(xBar, component, aDistributor));
         itemView.setCellFactory((aList) -> {
             return new ComponentItemsCell((ItemView<Item>) aList, component, model.loadout, stack, xBar);
         });
