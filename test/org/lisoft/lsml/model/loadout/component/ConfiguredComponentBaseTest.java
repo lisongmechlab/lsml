@@ -132,6 +132,14 @@ public abstract class ConfiguredComponentBaseTest {
         assertFalse(cut.canRemoveItem(ItemDB.CASE));
     }
 
+    @Test
+    public final void testAddRemoveCanRemoveItem_Internals() throws Exception {
+        ConfiguredComponentBase cut = makeDefaultCUT();
+        assertFalse(cut.canRemoveItem(ConfiguredComponentBase.ENGINE_INTERNAL));
+        cut.addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
+        assertFalse(cut.canRemoveItem(ConfiguredComponentBase.ENGINE_INTERNAL));
+    }
+
     // TODO: //Write tests for remove item with xl sides and remove HS with engine HS present.
 
     /**
