@@ -19,9 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.equipment;
 
-import org.lisoft.lsml.command.CmdAutoAddItem;
+import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
@@ -37,13 +37,13 @@ import javafx.scene.input.TransferMode;
  * @author Li Song
  *
  */
-public class EquipmentTableRow extends TreeTableRow<Object> {
+public class ModuleTableRow extends TreeTableRow<Object> {
     private final LoadoutBase<?> loadout;
 
-    public EquipmentTableRow(LoadoutBase<?> aLoadout, CommandStack aCommandStack, MessageDelivery aMessageDelivery) {
+    public ModuleTableRow(LoadoutBase<?> aLoadout, CommandStack aCommandStack, MessageDelivery aMessageDelivery) {
         loadout = aLoadout;
         setOnDragDetected(aEvent -> {
-            Item item = getValueAsItem();
+            PilotModule item = getValueAsItem();
             if (null == item)
                 return;
             Dragboard db = startDragAndDrop(TransferMode.COPY);
@@ -53,11 +53,11 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
 
         setOnMouseClicked(aEvent -> {
             if (MouseButton.PRIMARY == aEvent.getButton() && 2 == aEvent.getClickCount()) {
-                Item item = getValueAsItem();
+                PilotModule item = getValueAsItem();
                 if (null == item)
                     return;
                 try {
-                    aCommandStack.pushAndApply(new CmdAutoAddItem(loadout, aMessageDelivery, item));
+                    aCommandStack.pushAndApply(new CmdAddModule(aMessageDelivery, loadout, item));
                 }
                 catch (Exception e) {
                     LiSongMechLab.showError(e);
@@ -67,10 +67,10 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         });
     }
 
-    private Item getValueAsItem() {
+    private PilotModule getValueAsItem() {
         Object object = getItem();
-        if (!(object instanceof Item))
+        if (!(object instanceof PilotModule))
             return null;
-        return (Item) object;
+        return (PilotModule) object;
     }
 }

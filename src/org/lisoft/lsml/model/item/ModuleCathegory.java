@@ -23,30 +23,30 @@ package org.lisoft.lsml.model.item;
  * @author Li Song
  */
 public enum ModuleCathegory {
-    Support, Consumable, Vision, Sensor, Targeting, WeaponModule, WeaponRange, UNKOWN, Miscelaneous, WeaponCooldown;
+    SUPPORT, CONSUMABLE, VISION, SENSOR, TARGETING, WEAPON_MODULE, WEAPON_RANGE, UNKOWN, MISCELLANEOUS, WEAPON_COOLDOWN;
 
     public static ModuleCathegory fromMwo(String aMwoValue) {
         if (null == aMwoValue)
             return UNKOWN;
         switch (aMwoValue) {
             case "ePTModule_Support":
-                return Support;
+                return SUPPORT;
             case "ePTModule_Vision":
-                return Vision;
+                return VISION;
             case "ePTModule_Sensor":
-                return Sensor;
+                return SENSOR;
             case "ePTModule_Target":
-                return Targeting;
+                return TARGETING;
             case "ePTModule_Consumable":
-                return Consumable;
+                return CONSUMABLE;
             case "ePTModule_WeaponMod":
-                return WeaponModule;
+                return WEAPON_MODULE;
             case "ePTModule_Range":
-                return WeaponRange;
+                return WEAPON_RANGE;
             case "ePTModule_Misc":
-                return Miscelaneous;
+                return MISCELLANEOUS;
             case "ePTModule_Cooldown":
-                return WeaponCooldown;
+                return WEAPON_COOLDOWN;
             default:
                 throw new IllegalArgumentException("Unknown module type: " + aMwoValue);
         }

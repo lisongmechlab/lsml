@@ -38,7 +38,8 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.drawers.ComponentItemsCell;
+import org.lisoft.lsml.view_fx.controls.ItemView;
+import org.lisoft.lsml.view_fx.drawers.EquippedItemCell;
 import org.lisoft.lsml.view_fx.drawers.OmniPodListCell;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor.ComponentModel;
@@ -237,9 +238,9 @@ public class ComponentPaneController {
 
     private void setupItemView(DynamicSlotDistributor aDistributor) {
         itemView.setVisibleRows(component.getInternalComponent().getSlots());
-        itemView.setItems(new ComponentItemsList(xBar, component, aDistributor));
+        itemView.setItems(new EquippedItemsList(xBar, component, aDistributor));
         itemView.setCellFactory((aList) -> {
-            return new ComponentItemsCell((ItemView<Item>) aList, component, model.loadout, stack, xBar);
+            return new EquippedItemCell((ItemView<Item>) aList, component, model.loadout, stack, xBar);
         });
 
         itemView.setPrefWidth(ITEM_WIDTH);
@@ -266,11 +267,11 @@ public class ComponentPaneController {
     }
 
     @FXML
-    void onDragStart(MouseEvent aMouseEvent) throws EquipResult, Exception {
+    void onDragStart(MouseEvent aMouseEvent) throws Exception {
         Item item = itemView.getSelectionModel().getSelectedItem();
         if (component.canRemoveItem(item)) {
             Dragboard db = itemView.startDragAndDrop(TransferMode.MOVE);
-            LiSongMechLab.addItemDrag(db, item);
+            LiSongMechLab.addEquipmentDrag(db, item);
             stack.pushAndApply(new CmdRemoveItem(xBar, model.loadout, component, item));
         }
         aMouseEvent.consume();

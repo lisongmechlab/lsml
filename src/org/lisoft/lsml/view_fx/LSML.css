@@ -1,14 +1,4 @@
 .root {
-	-fx-text-fill: white;
-	-fx-base: #29292b;
-	/*-fx-font-family: Quark-Bold;*/
-	-fx-font-size: 8.0pt;
-
-	quirk-bad: red;
-	quirk-good: green;
-	quirk-neutral: black;
-		
-	/** New below this, junk above **/
 	colour-energy-item: 		hsb(30, 100%, 70%);
 	colour-energy-bg: 			hsb(30, 25%, 25%);
 	colour-energy-fg: 			hsb(30, 5%, 95%);
@@ -16,7 +6,7 @@
 	colour-energy-fg-dark: 		hsb(30, 10%, 65%);
 	colour-energy-fixed: 		hsb(30, 30%, 60%);
 	colour-energy-fg-fixed:		hsb(30, 30%, 30%);
-	/* 279 */
+
 	colour-ballistic-item:  	hsb(293, 80%, 70%);
 	colour-ballistic-ammo:  	hsb(293, 80%, 30%);
 	colour-ballistic-bg:		hsb(293, 25%, 25%);
@@ -90,12 +80,32 @@
 	
 	colour-empty-bg: 			hsb(0, 0%, 35%);
 	colour-empty-fg: 			hsb(0, 0%, 55%);
+
+	quirk-bad: red;
+	quirk-good: green;
+	quirk-neutral: black;
+		
+	colour-lsml-orange: hsb(30, 100%, 70%);
+	colour-lsml-gray: hsb(240, 5%, 17%);
+	
+
+	/********* Base settings *********/	
+	-fx-text-fill: white;
+	-fx-base: colour-lsml-gray;
+	/*-fx-font-family: Quark-Bold;*/
+	-fx-font-size: 8.0pt;
+	
 }
 
 /*********** Styling for components ***********/
-.loadout-container{
+
+.layout-container{
 	-fx-spacing: 2pt;
+}
+
+.layout-root{
 	-fx-padding: 2pt;
+	-fx-background-color: linear-gradient( from 0% 0%  to 100% 100%, pink 0%, derive(colour-lsml-orange, -70%) 30%, colour-lsml-gray 60% )
 }
 
 .component-engine{
@@ -123,6 +133,7 @@
 .component-root{
 	-fx-animated: false;
 	-fx-collapsible: false;
+	-fx-alignment: center;
 }
 
 .component-root .title{

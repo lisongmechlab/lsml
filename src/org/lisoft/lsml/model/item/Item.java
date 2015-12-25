@@ -28,16 +28,7 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class Item implements Comparable<Item> {
-    @XStreamAsAttribute
-    private final String             locName;
-    @XStreamAsAttribute
-    private final String             locDesc;
-    @XStreamAsAttribute
-    private final String             mwoName;
-    @XStreamAsAttribute
-    private final int                mwoIdx;
-
+public class Item extends Equipment implements Comparable<Item> {
     @XStreamAsAttribute
     private final int                slots;
     @XStreamAsAttribute
@@ -46,32 +37,23 @@ public class Item implements Comparable<Item> {
     private final HardPointType      hardpointType;
     @XStreamAsAttribute
     private final int                health;
-    @XStreamAsAttribute
-    private final Faction            faction;
+
     private final List<Location>     allowedLocations;
     private final List<ChassisClass> allowedChassisClasses;
 
     public Item(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
             List<ChassisClass> aAllowedClasses) {
-        locName = aUiName;
-        locDesc = aUiDesc;
-        mwoName = aMwoName;
-        mwoIdx = aMwoId;
+        super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         slots = aSlots;
         tons = aTons;
         hardpointType = aHardpointType;
         health = aHP;
-        faction = aFaction;
         allowedLocations = aAllowedLocations;
         allowedChassisClasses = aAllowedClasses;
     }
 
     // TODO: Add a maximum allowed attribute here
-
-    public String getKey() {
-        return mwoName;
-    }
 
     public boolean isCrittable() {
         return health > 0;
@@ -80,10 +62,6 @@ public class Item implements Comparable<Item> {
     @Override
     public String toString() {
         return getName();
-    }
-
-    public String getName() {
-        return locName;
     }
 
     public int getNumCriticalSlots() {
@@ -96,18 +74,6 @@ public class Item implements Comparable<Item> {
 
     public double getMass() {
         return tons;
-    }
-
-    public int getMwoId() {
-        return mwoIdx;
-    }
-
-    public String getShortName() {
-        return getName().replaceAll("[cC][Ll][Aa][Nn] ", "C-");
-    }
-
-    public String getDescription() {
-        return locDesc;
     }
 
     /**
@@ -194,13 +160,6 @@ public class Item implements Comparable<Item> {
 
     public int getHealth() {
         return health;
-    }
-
-    /**
-     * @return The faction requirement of this {@link Item}.
-     */
-    public Faction getFaction() {
-        return faction;
     }
 
     /**

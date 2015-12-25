@@ -50,7 +50,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
         if (treeItemObject instanceof Item) {
             Item treeItem = (Item) treeItemObject;
 
-            StyleManager.changeEquipmentStyle(this, EquipmentCategory.classify(treeItem));
+            StyleManager.changeStyle(this, EquipmentCategory.classify(treeItem));
 
             if (EquipResult.SUCCESS == loadout.canEquipDirectly(treeItem)) {
                 // Directly equippable
@@ -69,7 +69,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
 
             if (showIcon) {
                 Region r = new Region();
-                StyleManager.changeEquipmentIcon(r, treeItem);
+                StyleManager.changeIcon(r, treeItem);
                 setGraphic(r);
             }
         }

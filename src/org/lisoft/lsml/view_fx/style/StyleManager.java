@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Ammunition;
+import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
@@ -40,24 +41,28 @@ import javafx.scene.Node;
  *
  */
 public class StyleManager {
-    public static final PseudoClass                     CSS_PC_UNEQUIPPABLE        = PseudoClass
-            .getPseudoClass("unequippable");
-    public static final PseudoClass                     CSS_PC_SMARTPLACEABLE      = PseudoClass
-            .getPseudoClass("smartplaceable");
-    public static final PseudoClass                     CSS_PC_FIXED               = PseudoClass
+    public static final String                          CSS_CLASS_ARM_STRUT         = "ArmStrut";
+    public static final String                          CSS_CLASS_COMPONENT_ENGINE  = "component-engine";
+    public static final String                          CSS_CLASS_CONTAINER_CONTENT = "component-container";
+
+    public static final String                          CSS_CLASS_CONTAINER_ROOT    = "component-root";
+    public static final String                          CSS_CLASS_EQUIPPED          = "equipped";
+    public static final String                          CSS_CLASS_HARDPOINT         = "HardPoint";
+
+    public static final String                          CSS_CLASS_LAYOUT_CONTAINER  = "layout-container";
+    public static final String                          CSS_CLASS_TORSO_STRUT       = "TorsoStrut";
+    public static final String                          CSS_COLOUR_QUIRK_BAD        = "quirk-bad";
+
+    public static final String                          CSS_COLOUR_QUIRK_GOOD       = "quirk-good";
+    public static final String                          CSS_COLOUR_QUIRK_NEUTRAL    = "quirk-neutral";
+    public static final PseudoClass                     CSS_PC_FIXED                = PseudoClass
             .getPseudoClass("fixed");
 
-    public static final String                          CSS_CLASS_EQUIPPED         = "equipped";
-    public static final String                          CSS_CLASS_COMPONENT_ENGINE = "component-engine";
+    public static final PseudoClass                     CSS_PC_SMARTPLACEABLE       = PseudoClass
+            .getPseudoClass("smartplaceable");
 
-    public static final String                          CSS_CLASS_ARM_STRUT        = "ArmStrut";
-    public static final String                          CSS_CLASS_TORSO_STRUT      = "TorsoStrut";
-    public static final String                          CSS_CLASS_HARDPOINT        = "HardPoint";
-
-    public static final String                          CSS_COLOUR_QUIRK_GOOD      = "quirk-good";
-    public static final String                          CSS_COLOUR_QUIRK_BAD       = "quirk-bad";
-    public static final String                          CSS_COLOUR_QUIRK_NEUTRAL   = "quirk-neutral";
-
+    public static final PseudoClass                     CSS_PC_UNEQUIPPABLE         = PseudoClass
+            .getPseudoClass("unequippable");
     private static final Map<EquipmentCategory, String> CSS_CATEGORY2CLASS_BASE;
 
     static {
@@ -72,42 +77,6 @@ public class StyleManager {
 
     }
 
-    public static void changeItemStyle(Node aNode, Item aItem) {
-        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
-
-        if (aItem != null) {
-            EquipmentCategory category = EquipmentCategory.classify(aItem);
-            if (EquipmentCategory.MISC == category) {
-                if (aItem instanceof JumpJet) {
-                    aNode.getStyleClass().add("equipment-jj-category");
-                }
-                else if (aItem instanceof HeatSink) {
-                    aNode.getStyleClass().add("equipment-hs-category");
-                }
-                else if (aItem instanceof Internal) {
-                    if (aItem == ItemDB.DYN_ARMOR || aItem == ItemDB.DYN_STRUCT || aItem == ItemDB.FIX_ARMOR
-                            || aItem == ItemDB.FIX_STRUCT) {
-                        aNode.getStyleClass().add("equipment-dynamic-category");
-                    }
-                    else {
-                        aNode.getStyleClass().add("equipment-internal-category");
-                    }
-                }
-            }
-            else {
-                if (aItem instanceof Ammunition) {
-                    aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-ammo");
-                }
-                else {
-                    aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-category");
-                }
-            }
-        }
-        else {
-            aNode.getStyleClass().add("equipment-empty-category");
-        }
-    }
-
     public static void changeCategoryStyle(Node aNode, EquipmentCategory aCategory) {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
@@ -116,20 +85,63 @@ public class StyleManager {
         }
     }
 
-    public static void changeEquipmentStyle(Node aNode, EquipmentCategory aCategory) {
-        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
-
-        if (aCategory != null) {
-            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory) + "-item");
-        }
-    }
-
-    public static void changeEquipmentIcon(Node aNode, Item aItem) {
+    public static void changeIcon(Node aNode, Item aItem) {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
         if (aItem != null) {
             EquipmentCategory category = EquipmentCategory.classify(aItem);
             aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-default-icon");
+        }
+    }
+
+    public static void changeStyle(Node aNode, Equipment aEquipment) {
+        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
+
+        if (aEquipment != null) {
+            if (aEquipment instanceof Item) {
+                Item item = (Item) aEquipment;
+                EquipmentCategory category = EquipmentCategory.classify(item);
+                if (EquipmentCategory.MISC == category) {
+                    if (item instanceof JumpJet) {
+                        aNode.getStyleClass().add("equipment-jj-category");
+                    }
+                    else if (item instanceof HeatSink) {
+                        aNode.getStyleClass().add("equipment-hs-category");
+                    }
+                    else if (item instanceof Internal) {
+                        if (item == ItemDB.DYN_ARMOR || item == ItemDB.DYN_STRUCT || item == ItemDB.FIX_ARMOR
+                                || item == ItemDB.FIX_STRUCT) {
+                            aNode.getStyleClass().add("equipment-dynamic-category");
+                        }
+                        else {
+                            aNode.getStyleClass().add("equipment-internal-category");
+                        }
+                    }
+                }
+                else {
+                    if (item instanceof Ammunition) {
+                        aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-ammo");
+                    }
+                    else {
+                        aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-category");
+                    }
+                }
+            }
+            else {
+                // FIXME later
+                aNode.getStyleClass().add("equipment-internal-category");
+            }
+        }
+        else {
+            aNode.getStyleClass().add("equipment-empty-category");
+        }
+    }
+
+    public static void changeStyle(Node aNode, EquipmentCategory aCategory) {
+        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
+
+        if (aCategory != null) {
+            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory) + "-item");
         }
     }
 }
