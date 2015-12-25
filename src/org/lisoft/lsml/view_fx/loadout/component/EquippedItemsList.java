@@ -32,6 +32,7 @@ import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
+import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
@@ -80,6 +81,8 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
                 }
                 else {
                     if (visibleLeft == 0) {
+                        if (item instanceof Internal)
+                            type = EquippedType.FIXED;
                         return new Classification(item, type);
                     }
                     visibleLeft--;

@@ -160,7 +160,7 @@ public abstract class ConfiguredComponentBase {
      * @return <code>true</code> if the item can be removed, <code>false</code> otherwise.
      */
     public boolean canRemoveItem(Item aItem) {
-        return items.contains(aItem); // TODO convert to use EquipResult
+        return !(aItem instanceof Internal) && items.contains(aItem); // TODO convert to use EquipResult
     }
 
     /**
