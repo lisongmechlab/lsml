@@ -22,7 +22,10 @@ package org.lisoft.lsml.view_fx.loadout.equipment;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.ModuleSlot;
+import org.lisoft.lsml.model.item.PilotModule;
 
 /**
  * Classification of equipment into categories.
@@ -31,19 +34,26 @@ import org.lisoft.lsml.model.item.Item;
  *
  */
 public enum EquipmentCategory {
-    ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, ENGINE;
+    ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, ENGINE, CONSUMABLE, MECH_MODULE, WEAPON_MODULE;
 
-    public static EquipmentCategory classify(Item aItem) {
-        if (aItem instanceof Engine) {
-            return EquipmentCategory.ENGINE;
+    public static EquipmentCategory classify(Equipment aItem) {
+        if (aItem instanceof PilotModule) {
+            return classify(((PilotModule) aItem).getSlot());
         }
+        else if (aItem instanceof Item) {
+            Item item = (Item) aItem;
+            if (item instanceof Engine) {
+                return EquipmentCategory.ENGINE;
+            }
 
-        final HardPointType hardPointType;
-        if (aItem instanceof Ammunition)
-            hardPointType = ((Ammunition) aItem).getWeaponHardpointType();
-        else
-            hardPointType = aItem.getHardpointType();
-        return classify(hardPointType);
+            final HardPointType hardPointType;
+            if (item instanceof Ammunition)
+                hardPointType = ((Ammunition) item).getWeaponHardpointType();
+            else
+                hardPointType = item.getHardpointType();
+            return classify(hardPointType);
+        }
+        throw new RuntimeException("Unknown equipment type!");
     }
 
     public static EquipmentCategory classify(HardPointType aHardPointType) {
@@ -58,6 +68,19 @@ public enum EquipmentCategory {
                 return ENERGY;
             case MISSILE:
                 return MISSILE;
+            default:
+                return MISC;
+        }
+    }
+
+    public static EquipmentCategory classify(ModuleSlot aHardPointType) {
+        switch (aHardPointType) {
+            case CONSUMABLE:
+                return EquipmentCategory.CONSUMABLE;
+            case MECH:
+                return EquipmentCategory.MECH_MODULE;
+            case WEAPON:
+                return WEAPON_MODULE;
             default:
                 return MISC;
         }

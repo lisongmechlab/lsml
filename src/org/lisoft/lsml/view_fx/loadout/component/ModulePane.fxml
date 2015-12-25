@@ -14,19 +14,19 @@
         <Label text="Consumables"/>
         <ItemView fx:id="consumablesView" onDragDetected="#onDragStart"
           onDragDropped="#onDragDropped" onDragOver="#onDragOver"
-          onMouseClicked="#onEquipmentClicked" styleClass="component-equipment"/>
+          onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
         <Label text="Mech Modules"/>
         <ItemView fx:id="mechModulesView" onDragDetected="#onDragStart"
           onDragDropped="#onDragDropped" onDragOver="#onDragOver"
-          onMouseClicked="#onEquipmentClicked" styleClass="component-equipment"/>
+          onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
         <Label text="Weapon Modules"/>
         <ItemView fx:id="weaponModulesView" onDragDetected="#onDragStart"
           onDragDropped="#onDragDropped" onDragOver="#onDragOver"
-          onMouseClicked="#onEquipmentClicked" styleClass="component-equipment"/>
+          onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
         <Label text="Master Slot"/>
         <ItemView fx:id="masterSlotView" onDragDetected="#onDragStart"
           onDragDropped="#onDragDropped" onDragOver="#onDragOver"
-          onMouseClicked="#onEquipmentClicked" styleClass="component-equipment"/>
+          onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
       </children>
     </VBox>
   </content>
