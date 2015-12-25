@@ -26,13 +26,13 @@ import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
+import org.lisoft.lsml.messages.UpgradesMessage;
+import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
-import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 
 import javafx.collections.ObservableListBase;
@@ -43,9 +43,8 @@ import javafx.collections.ObservableListBase;
  * @author Emily Björk
  */
 public class ComponentItemsList extends ObservableListBase<Item> implements MessageReceiver {
-    private final LoadoutBase<?>         loadout;
-    private final Location               location;
-    private final DynamicSlotDistributor distributor;
+    private final DynamicSlotDistributor  distributor;
+    private final ConfiguredComponentBase component;
 
     enum EquippedType {
         FIXED, EQUIPPED, DYN_ARMOR, DYN_STRUCTURE, EMPTY
@@ -61,16 +60,14 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
         }
     }
 
-    public ComponentItemsList(MessageReception aMessageReception, LoadoutBase<?> aLoadout, Location aLocation,
+    public ComponentItemsList(MessageReception aMessageReception, ConfiguredComponentBase aComponent,
             DynamicSlotDistributor aDistributor) {
         aMessageReception.attach(this);
-        loadout = aLoadout;
-        location = aLocation;
         distributor = aDistributor;
+        component = aComponent;
     }
 
     private Classification classify(int aIndex) {
-        ConfiguredComponentBase component = loadout.getComponent(location);
         int visibleLeft = aIndex;
         int engineHeatSinks = component.getEngineHeatSinks();
 
@@ -111,23 +108,30 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
         return classify(aIndex).item;
     }
 
-    @Override
-    public int size() {
-        ConfiguredComponentBase component = loadout.getComponent(location);
+    private int sizeOfItems() {
         List<Item> fixed = component.getItemsFixed();
         List<Item> equipped = component.getItemsEquipped();
 
         int engineHS = component.getEngineHeatSinks();
+        return fixed.size() + equipped.size() - engineHS;
+    }
+
+    private int sizeOfDynamics() {
         int armor = distributor.getDynamicArmorSlots(component);
         int structure = distributor.getDynamicStructureSlots(component);
-        int actualSize = fixed.size() + equipped.size() + armor + structure - engineHS;
+        return armor + structure;
+    }
+
+    @Override
+    public int size() {
+        int actualSize = sizeOfItems() + sizeOfDynamics();
         // Size must always at least one to prevent "empty list" display from happening
         // when the contents are empty. This means that a "null" item will appear
-        // in the rendering but this is OK as they are handled anyway.
+        // in the rendering but this is OK as they do that already anyway.
         return Math.max(actualSize, 1);
     }
 
-    void nextEngineUpdate() {
+    private void nextEngineUpdate() {
         int enginePos = 0;
         while (enginePos < size() && !(get(enginePos) instanceof Engine)) {
             enginePos++;
@@ -135,14 +139,38 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
         nextUpdate(enginePos);
     }
 
+    private void nextUpdateDynamic() {
+        int start = sizeOfItems();
+        // We have to go to the end here as we don't know how many slots of
+        // dynamic armor were here originally.
+        int end = component.getInternalComponent().getSlots();
+        while (start < end) {
+            nextUpdate(start);
+            start++;
+        }
+    }
+
+    private void changeDynamics() {
+        beginChange();
+        nextUpdateDynamic();
+        endChange();
+    }
+
     @Override
     public void receive(Message aMsg) {
         if (!(aMsg instanceof ItemMessage)) {
+            if (aMsg instanceof UpgradesMessage) {
+                UpgradesMessage msg = (UpgradesMessage) aMsg;
+                if (msg.msg == ChangeMsg.ARMOR || msg.msg == ChangeMsg.STRUCTURE) {
+                    changeDynamics();
+                }
+            }
             return;
         }
 
         ItemMessage msg = (ItemMessage) aMsg;
-        if (!(msg.component == loadout.getComponent(location))) {
+        if (!(msg.component == component)) {
+            changeDynamics();
             return;
         }
 
@@ -154,7 +182,7 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
                         nextEngineUpdate();
                     }
                     else {
-                        int fixedIdx = msg.component.getItemsFixed().size() - 1;
+                        int fixedIdx = component.getItemsFixed().size() - 1;
                         nextAdd(fixedIdx, fixedIdx + 1);
                     }
                 }
