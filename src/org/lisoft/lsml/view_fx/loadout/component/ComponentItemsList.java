@@ -34,6 +34,7 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 
 import javafx.collections.ObservableListBase;
 
@@ -87,14 +88,15 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
             type = EquippedType.EQUIPPED;
         }
 
+        final boolean omni = component instanceof ConfiguredComponentOmniMech;
         final int armorSlots = distributor.getDynamicArmorSlots(component);
         if (visibleLeft < armorSlots) {
-            return new Classification(ItemDB.DYN_ARMOR, EquippedType.DYN_ARMOR);
+            return new Classification(omni ? ItemDB.FIX_ARMOR : ItemDB.DYN_ARMOR, EquippedType.DYN_ARMOR);
         }
 
         visibleLeft -= armorSlots;
         if (visibleLeft < distributor.getDynamicStructureSlots(component)) {
-            return new Classification(ItemDB.DYN_STRUCT, EquippedType.DYN_STRUCTURE);
+            return new Classification(omni ? ItemDB.FIX_STRUCT : ItemDB.DYN_STRUCT, EquippedType.DYN_STRUCTURE);
         }
         return new Classification(null, EquippedType.EMPTY);
     }
