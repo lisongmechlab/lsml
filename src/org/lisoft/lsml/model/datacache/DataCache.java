@@ -662,10 +662,10 @@ public class DataCache {
                                 case "CUAVStats":
                                 case "CStrategicStrikeStats":
                                 case "CCoolantFlushStats":
-                                    cathegory = ModuleCathegory.Consumable;
+                                    cathegory = ModuleCathegory.CONSUMABLE;
                                     break;
                                 case "CTargetDecayStats":
-                                    cathegory = ModuleCathegory.Targeting;
+                                    cathegory = ModuleCathegory.TARGETING;
                                 default:
                                     throw new IllegalArgumentException(
                                             "Unknown module cathegory: " + statsModule.CType);

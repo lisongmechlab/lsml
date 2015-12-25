@@ -26,16 +26,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Emily Björk
  */
-public class PilotModule {
+public class PilotModule extends Equipment {
 
-    private final String          locName;
-    private final String          locDesc;
-    @XStreamAsAttribute
-    private final String          mwoName;
-    @XStreamAsAttribute
-    private final int             mwoIdx;
-    @XStreamAsAttribute
-    private final Faction         faction;
     @XStreamAsAttribute
     private final ModuleCathegory cathegory;
     @XStreamAsAttribute
@@ -46,7 +38,7 @@ public class PilotModule {
      * 
      * @param aMwoName
      *            The name of the module in the MWO data files.
-     * @param aMwoIdx
+     * @param aMwoId
      *            The ID of the module in the MWO data files.
      * @param aName
      *            The human readable name of the module.
@@ -59,40 +51,16 @@ public class PilotModule {
      * @param aSlotType
      *            The {@link ModuleSlot} of the module.
      */
-    public PilotModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction,
+    public PilotModule(String aMwoName, int aMwoId, String aName, String aDescription, Faction aFaction,
             ModuleCathegory aCathegory, ModuleSlot aSlotType) {
-        mwoName = aMwoName;
-        mwoIdx = aMwoIdx;
-        locName = aName;
-        locDesc = aDescription;
-        faction = aFaction;
+        super(aName, aDescription, aMwoName, aMwoId, aFaction);
         cathegory = aCathegory;
         slotType = aSlotType;
-    }
-
-    public String getKey() {
-        return mwoName;
     }
 
     @Override
     public String toString() {
         return getName();
-    }
-
-    public String getName() {
-        return locName;
-    }
-
-    public int getMwoId() {
-        return mwoIdx;
-    }
-
-    public String getDescription() {
-        return locDesc;
-    }
-
-    public Faction getFaction() {
-        return faction;
     }
 
     public ModuleCathegory getCathegory() {

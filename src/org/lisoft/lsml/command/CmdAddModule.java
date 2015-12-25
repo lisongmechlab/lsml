@@ -20,6 +20,7 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.LoadoutMessage;
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult;
@@ -32,29 +33,35 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Emily Björk
  */
 public class CmdAddModule extends Command {
-    private final PilotModule           module;
-    private final LoadoutBase<?>        loadout;
-    private final transient MessageXBar xBar;
+    private final PilotModule               module;
+    private final LoadoutBase<?>            loadout;
+    private final transient MessageDelivery messageDelivery;
 
     /**
      * Creates a new {@link CmdAddModule}.
      * 
-     * @param aXBar
+     * @param aMessageDelivery
      *            The {@link MessageXBar} to signal changes to the loadout on.
      * @param aLoadout
      *            The {@link LoadoutBase} to add the module to.
      * @param aLookup
      *            The {@link PilotModule} to add.
      */
-    public CmdAddModule(MessageXBar aXBar, LoadoutBase<?> aLoadout, PilotModule aLookup) {
+    public CmdAddModule(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, PilotModule aLookup) {
         module = aLookup;
         loadout = aLoadout;
-        xBar = aXBar;
+        messageDelivery = aMessageDelivery;
     }
 
     @Override
     public String describe() {
         return "add " + module + " to " + loadout;
+    }
+
+    void post() {
+        if (messageDelivery != null) {
+            messageDelivery.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
+        }
     }
 
     @Override
@@ -63,16 +70,12 @@ public class CmdAddModule extends Command {
         result.checkFailureAndThrow();
         loadout.addModule(module);
 
-        if (xBar != null) {
-            xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
-        }
+        post();
     }
 
     @Override
     protected void undo() {
         loadout.removeModule(module);
-        if (xBar != null) {
-            xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
-        }
+        post();
     }
 }

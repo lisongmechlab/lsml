@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.lisoft.lsml.messages.ItemMessage;
+import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -32,25 +33,32 @@ import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.ModuleSlot;
+import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController;
+import org.lisoft.lsml.view_fx.loadout.component.ModulePane;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableCell;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableRow;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquippablePredicate;
+import org.lisoft.lsml.view_fx.loadout.equipment.ModuleTableRow;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -60,10 +68,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -77,76 +81,89 @@ public class LoadoutWindowController implements MessageReceiver {
 
     // Constants
 
-    private static final String    COLUMN_MASS  = "Mass";
-    private static final String    COLUMN_SLOTS = "Slots";
-    private static final String    COLUMN_NAME  = "Name";
-    private static final int       UNDO_DEPTH   = 128;
+    private static final String   COLUMN_MASS  = "Mass";
+    private static final String   COLUMN_NAME  = "Name";
+    private static final String   COLUMN_SLOTS = "Slots";
+    private static final int      UNDO_DEPTH   = 128;
 
     // FXML elements
 
+    private CommandStack          cmdStack     = new CommandStack(UNDO_DEPTH);
     @FXML
-    private ProgressBar            generalMassBar;
+    private CheckBox              effAnchorTurn;
     @FXML
-    private ProgressBar            generalArmorBar;
+    private CheckBox              effArmReflex;
     @FXML
-    private ProgressBar            generalSlotsBar;
+    private CheckBox              effCoolRun;
     @FXML
-    private Label                  generalMassLabel;
+    private CheckBox              effDoubleBasics;
     @FXML
-    private Label                  generalArmorLabel;
+    private CheckBox              effFastFire;
     @FXML
-    private Label                  generalSlotsLabel;
+    private CheckBox              effHeatContainment;
     @FXML
-    private CheckBox               upgradeEndoSteel;
+    private CheckBox              effSpeedTweak;
     @FXML
-    private CheckBox               upgradeFerroFibrous;
+    private CheckBox              effTwistSpeed;
     @FXML
-    private CheckBox               upgradeDoubleHeatSinks;
-    @FXML
-    private CheckBox               upgradeArtemis;
+    private CheckBox              effTwistX;
 
     @FXML
-    private CheckBox               effCoolRun;
+    private TreeTableView<Object> equipmentList;
     @FXML
-    private CheckBox               effHeatContainment;
+    private ProgressBar           generalArmorBar;
     @FXML
-    private CheckBox               effTwistX;
+    private Label                 generalArmorLabel;
     @FXML
-    private CheckBox               effTwistSpeed;
+    private ProgressBar           generalMassBar;
     @FXML
-    private CheckBox               effAnchorTurn;
+    private Label                 generalMassLabel;
     @FXML
-    private CheckBox               effArmReflex;
+    private ProgressBar           generalSlotsBar;
     @FXML
-    private CheckBox               effFastFire;
+    private Label                 generalSlotsLabel;
     @FXML
-    private CheckBox               effSpeedTweak;
-    @FXML
-    private CheckBox               effDoubleBasics;
-
-    @FXML
-    private HBox                   layoutContainer;
-    @FXML
-    private TreeTableView<Object>  equipmentList;
-
+    private HBox                  layoutContainer;
     // Local state
-    private LoadoutModelAdaptor    model;
-    private MessageXBar            xBar         = new MessageXBar();
-    private CommandStack           cmdStack     = new CommandStack(UNDO_DEPTH);
-    private DynamicSlotDistributor distributor;
+    private LoadoutModelAdaptor   model;
+
+    @FXML
+    private TreeTableView<Object> moduleList;
+    @FXML
+    private CheckBox              upgradeArtemis;
+    @FXML
+    private CheckBox              upgradeDoubleHeatSinks;
+
+    @FXML
+    private CheckBox              upgradeEndoSteel;
+    @FXML
+    private CheckBox              upgradeFerroFibrous;
+    private MessageXBar           xBar         = new MessageXBar();
 
     // Methods
+
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg instanceof ItemMessage || aMsg instanceof UpgradesMessage) {
+            updateEquipmentPredicates();
+        }
+
+        if (aMsg instanceof ItemMessage || aMsg instanceof LoadoutMessage) {
+
+            updateModulePredicates();
+        }
+    }
 
     public void setLoadout(LoadoutBase<?> aLoadout) {
         xBar.attach(this);
         model = new LoadoutModelAdaptor(aLoadout, xBar, cmdStack);
-        distributor = new DynamicSlotDistributor(aLoadout);
 
         setupLayoutView();
         setupEquipmentList();
         setupGeneralPanel();
         setupUpgradesPanel();
         setupEfficienciesPanel();
+        setupModulesList();
     }
 
     private void setupEffCheckbox(CheckBox aCheckBox, MechEfficiencyType aEfficiencyType) {
@@ -165,66 +182,6 @@ public class LoadoutWindowController implements MessageReceiver {
         setupEffCheckbox(effSpeedTweak, MechEfficiencyType.SPEED_TWEAK);
 
         effDoubleBasics.selectedProperty().bindBidirectional(model.hasDoubleBasics);
-    }
-
-    private void setupUpgradesPanel() {
-        upgradeArtemis.selectedProperty().bindBidirectional(model.hasArtemis);
-
-        if (!(model.loadout instanceof LoadoutStandard)) {
-            Upgrades upgrades = model.loadout.getUpgrades();
-            upgradeDoubleHeatSinks.setSelected(upgrades.getHeatSink().isDouble());
-            upgradeEndoSteel.setSelected(upgrades.getStructure().getExtraSlots() != 0);
-            upgradeFerroFibrous.setSelected(upgrades.getArmor().getExtraSlots() != 0);
-            upgradeDoubleHeatSinks.setDisable(true);
-            upgradeEndoSteel.setDisable(true);
-            upgradeFerroFibrous.setDisable(true);
-        }
-        else {
-            upgradeDoubleHeatSinks.selectedProperty().bindBidirectional(model.hasDoubleHeatSinks);
-            upgradeEndoSteel.selectedProperty().bindBidirectional(model.hasEndoSteel);
-            upgradeFerroFibrous.selectedProperty().bindBidirectional(model.hasFerroFibrous);
-
-        }
-    }
-
-    private void setupGeneralPanel() {
-        ChassisBase chassis = model.loadout.getChassis();
-        int massMax = chassis.getMassMax();
-        generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
-        generalMassLabel.textProperty().bind(Bindings.format("%.2f t free", model.statsFreeMass));
-
-        int armorMax = chassis.getArmorMax();
-        generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
-        generalArmorLabel.textProperty().bind(Bindings.format("%d free", model.statsArmorFree));
-
-        int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
-        generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
-        generalSlotsLabel.textProperty()
-                .bind(Bindings.format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
-    }
-
-    private void setupLayoutView() {
-        Region rightArmStrut = new Region();
-        rightArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
-
-        Region leftArmStrut = new Region();
-        leftArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
-
-        Region rightTorsoStrut = new Region();
-        rightTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
-        Region leftTorsoStrut = new Region();
-        leftTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
-
-        ObservableList<Node> children = layoutContainer.getChildren();
-        children.add(new VBox(leftArmStrut, new ComponentPane(xBar, cmdStack, model, Location.RightArm, distributor)));
-        children.add(
-                new VBox(rightTorsoStrut, new ComponentPane(xBar, cmdStack, model, Location.RightTorso, distributor),
-                        new ComponentPane(xBar, cmdStack, model, Location.RightLeg, distributor)));
-        children.add(new VBox(new ComponentPane(xBar, cmdStack, model, Location.Head, distributor),
-                new ComponentPane(xBar, cmdStack, model, Location.CenterTorso, distributor)));
-        children.add(new VBox(leftTorsoStrut, new ComponentPane(xBar, cmdStack, model, Location.LeftTorso, distributor),
-                new ComponentPane(xBar, cmdStack, model, Location.LeftLeg, distributor)));
-        children.add(new VBox(rightArmStrut, new ComponentPane(xBar, cmdStack, model, Location.LeftArm, distributor)));
     }
 
     private void setupEquipmentList() {
@@ -273,31 +230,132 @@ public class LoadoutWindowController implements MessageReceiver {
         massColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false));
 
         ObservableList<TreeTableColumn<Object, ?>> columns = equipmentList.getColumns();
+        columns.clear();
         columns.add(nameColumn);
         columns.add(slotsColumn);
         columns.add(massColumn);
     }
 
-    @FXML
-    void equipmentDragDetected(MouseEvent aEvent) {
-        TreeItem<Object> treeItem = equipmentList.getSelectionModel().getSelectedItem();
-        if (null == treeItem || !(treeItem.getValue() instanceof Item))
-            return;
+    private void setupGeneralPanel() {
+        ChassisBase chassis = model.loadout.getChassis();
+        int massMax = chassis.getMassMax();
+        generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
+        generalMassLabel.textProperty().bind(Bindings.format("%.2f t free", model.statsFreeMass));
 
-        Item item = (Item) treeItem.getValue();
-        Dragboard db = equipmentList.startDragAndDrop(TransferMode.COPY);
+        int armorMax = chassis.getArmorMax();
+        generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
+        generalArmorLabel.textProperty().bind(Bindings.format("%d free", model.statsArmorFree));
 
-        ClipboardContent cc = new ClipboardContent();
-        cc.put(LiSongMechLab.ITEM_DATA_FORMAT, item);
-        db.setContent(cc);
-
-        aEvent.consume();
+        int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
+        generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
+        generalSlotsLabel.textProperty()
+                .bind(Bindings.format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
     }
 
-    @Override
-    public void receive(Message aMsg) {
-        if (aMsg instanceof ItemMessage || aMsg instanceof UpgradesMessage) {
-            updateEquipmentPredicates();
+    private void setupLayoutView() {
+        DynamicSlotDistributor distributor = new DynamicSlotDistributor(model.loadout);
+
+        Region rightArmStrut = new Region();
+        rightArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
+
+        Region leftArmStrut = new Region();
+        leftArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
+
+        Region rightTorsoStrut = new Region();
+        rightTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
+        Region leftTorsoStrut = new Region();
+        leftTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
+
+        ObservableList<Node> children = layoutContainer.getChildren();
+        VBox rightArmBox = new VBox(rightArmStrut,
+                new ComponentPane(xBar, cmdStack, model, Location.RightArm, distributor));
+        VBox rightTorsoBox = new VBox(rightTorsoStrut,
+                new ComponentPane(xBar, cmdStack, model, Location.RightTorso, distributor),
+                new ComponentPane(xBar, cmdStack, model, Location.RightLeg, distributor));
+        VBox centralBox = new VBox(new ComponentPane(xBar, cmdStack, model, Location.Head, distributor),
+                new ComponentPane(xBar, cmdStack, model, Location.CenterTorso, distributor));
+        VBox leftTorsoBox = new VBox(leftTorsoStrut,
+                new ComponentPane(xBar, cmdStack, model, Location.LeftTorso, distributor),
+                new ComponentPane(xBar, cmdStack, model, Location.LeftLeg, distributor));
+        VBox leftArmBox = new VBox(leftArmStrut,
+                new ComponentPane(xBar, cmdStack, model, Location.LeftArm, distributor));
+
+        ModulePane modulePane = new ModulePane(xBar, cmdStack, model);
+        rightArmBox.getChildren().add(modulePane);
+
+        rightArmBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+        rightTorsoBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+        centralBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+        leftTorsoBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+        leftArmBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+
+        children.add(rightArmBox);
+        children.add(rightTorsoBox);
+        children.add(centralBox);
+        children.add(leftTorsoBox);
+        children.add(leftArmBox);
+    }
+
+    private void setupModulesList() {
+        TreeItem<Object> root = new TreeItem<>();
+        root.setExpanded(true);
+
+        for (ModuleSlot slot : ModuleSlot.values()) {
+            if (slot == ModuleSlot.HYBRID)
+                continue;
+
+            FilterTreeItem<Object> item = new FilterTreeItem<Object>(slot);
+            item.setExpanded(true);
+
+            List<PilotModule> modules = PilotModuleDB.lookup(slot);
+            modules.sort((aLeft, aRight) -> {
+                return aLeft.getName().compareTo(aRight.getName());
+            });
+
+            for (PilotModule module : modules) {
+                TreeItem<Object> moduleTreeItem = new TreeItem<>(module);
+                item.add(moduleTreeItem);
+            }
+            root.getChildren().add(item);
+        }
+
+        TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(COLUMN_NAME);
+        nameColumn.setCellValueFactory((aFeatures) -> {
+            TreeItem<Object> treeItem = aFeatures.getValue();
+            if (null != treeItem && null != treeItem.getValue()) {
+                Object objectValue = treeItem.getValue();
+                if (objectValue instanceof PilotModule) {
+                    return new ReadOnlyStringWrapper(((PilotModule) objectValue).getName());
+                }
+                return new ReadOnlyStringWrapper(objectValue.toString());
+            }
+            return new ReadOnlyStringWrapper("");
+        });
+
+        moduleList.setRoot(root);
+        moduleList.getColumns().clear();
+        moduleList.getColumns().add(nameColumn);
+        moduleList.setRowFactory(aTree -> new ModuleTableRow(model.loadout, cmdStack, xBar));
+        updateModulePredicates();
+    }
+
+    private void setupUpgradesPanel() {
+        upgradeArtemis.selectedProperty().bindBidirectional(model.hasArtemis);
+
+        if (!(model.loadout instanceof LoadoutStandard)) {
+            Upgrades upgrades = model.loadout.getUpgrades();
+            upgradeDoubleHeatSinks.setSelected(upgrades.getHeatSink().isDouble());
+            upgradeEndoSteel.setSelected(upgrades.getStructure().getExtraSlots() != 0);
+            upgradeFerroFibrous.setSelected(upgrades.getArmor().getExtraSlots() != 0);
+            upgradeDoubleHeatSinks.setDisable(true);
+            upgradeEndoSteel.setDisable(true);
+            upgradeFerroFibrous.setDisable(true);
+        }
+        else {
+            upgradeDoubleHeatSinks.selectedProperty().bindBidirectional(model.hasDoubleHeatSinks);
+            upgradeEndoSteel.selectedProperty().bindBidirectional(model.hasEndoSteel);
+            upgradeFerroFibrous.selectedProperty().bindBidirectional(model.hasFerroFibrous);
+
         }
     }
 
@@ -313,5 +371,29 @@ public class LoadoutWindowController implements MessageReceiver {
         // Force full refresh of tree, because apparently the observed changes on the children aren't enough.
         equipmentList.setRoot(null);
         equipmentList.setRoot(root);
+    }
+
+    private void updateModulePredicates() {
+        TreeItem<Object> root = moduleList.getRoot();
+        for (TreeItem<Object> category : root.getChildren()) {
+            FilterTreeItem<Object> filterTreeItem = (FilterTreeItem<Object>) category;
+            filterTreeItem.setPredicate(aObject -> {
+                if (aObject.getValue() instanceof WeaponModule) {
+                    WeaponModule weaponModule = (WeaponModule) aObject.getValue();
+                    boolean affectsAtLeastOne = false;
+                    for (Weapon weapon : model.loadout.items(Weapon.class)) {
+                        if (weaponModule.affectsWeapon(weapon)) {
+                            affectsAtLeastOne = true;
+                            break;
+                        }
+                    }
+                    return affectsAtLeastOne;
+                }
+                return true;
+            });
+        }
+        // Force full refresh of tree, because apparently the observed changes on the children aren't enough.
+        moduleList.setRoot(null);
+        moduleList.setRoot(root);
     }
 }

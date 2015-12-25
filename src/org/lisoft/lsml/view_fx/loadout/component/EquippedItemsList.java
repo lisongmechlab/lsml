@@ -43,7 +43,7 @@ import javafx.collections.ObservableListBase;
  * 
  * @author Emily Björk
  */
-public class ComponentItemsList extends ObservableListBase<Item> implements MessageReceiver {
+public class EquippedItemsList extends ObservableListBase<Item> implements MessageReceiver {
     private final DynamicSlotDistributor  distributor;
     private final ConfiguredComponentBase component;
 
@@ -61,7 +61,7 @@ public class ComponentItemsList extends ObservableListBase<Item> implements Mess
         }
     }
 
-    public ComponentItemsList(MessageReception aMessageReception, ConfiguredComponentBase aComponent,
+    public EquippedItemsList(MessageReception aMessageReception, ConfiguredComponentBase aComponent,
             DynamicSlotDistributor aDistributor) {
         aMessageReception.attach(this);
         distributor = aDistributor;

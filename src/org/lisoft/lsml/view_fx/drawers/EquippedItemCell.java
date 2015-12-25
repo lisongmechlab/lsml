@@ -32,8 +32,8 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.loadout.component.ComponentItemsList;
-import org.lisoft.lsml.view_fx.loadout.component.ItemView;
+import org.lisoft.lsml.view_fx.controls.ItemView;
+import org.lisoft.lsml.view_fx.loadout.component.EquippedItemsList;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.collections.ObservableList;
@@ -51,14 +51,14 @@ import javafx.scene.layout.VBox;
  * 
  * @author Emily Björk
  */
-public class ComponentItemsCell extends ItemView.Cell<Item> {
+public class EquippedItemCell extends ItemView.Cell<Item> {
     private final ConfiguredComponentBase component;
     private final LoadoutBase<?>          loadout;
     private final CommandStack            stack;
     private final MessageDelivery         messageDelivery;
     private boolean                       engineChangeInProgress;
 
-    public ComponentItemsCell(ItemView<Item> aItemView, ConfiguredComponentBase aComponent, LoadoutBase<?> aLoadout,
+    public EquippedItemCell(ItemView<Item> aItemView, ConfiguredComponentBase aComponent, LoadoutBase<?> aLoadout,
             CommandStack aStack, MessageDelivery aMessageDelivery) {
         super(aItemView);
         component = aComponent;
@@ -97,7 +97,7 @@ public class ComponentItemsCell extends ItemView.Cell<Item> {
         }
         else {
             setRowSpan(aItem.getNumCriticalSlots());
-            ComponentItemsList list = (ComponentItemsList) getListView().getItems();
+            EquippedItemsList list = (EquippedItemsList) getListView().getItems();
             boolean isFixed = list.isFixed(getIndex());
 
             if (aItem instanceof Engine) {
@@ -107,8 +107,8 @@ public class ComponentItemsCell extends ItemView.Cell<Item> {
                 final Label nameLabel = new Label(aItem.getShortName());
                 final Label hsLabel = new Label("Heat Sinks: " + engineHS + "/" + engineHSMax);
                 hsLabel.setAlignment(Pos.BASELINE_CENTER);
-                StyleManager.changeItemStyle(nameLabel, engine);
-                StyleManager.changeItemStyle(hsLabel, engine);
+                StyleManager.changeStyle(nameLabel, engine);
+                StyleManager.changeStyle(hsLabel, engine);
                 nameLabel.pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
                 hsLabel.pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
 
@@ -172,6 +172,6 @@ public class ComponentItemsCell extends ItemView.Cell<Item> {
 
             pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
         }
-        StyleManager.changeItemStyle(this, aItem);
+        StyleManager.changeStyle(this, aItem);
     }
 }

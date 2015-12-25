@@ -23,14 +23,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.view.DefaultExceptionHandler;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.SplashScreen;
+import org.lisoft.lsml.view_fx.controls.ItemView;
 import org.lisoft.lsml.view_fx.loadout.LoadoutWindowController;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController;
-import org.lisoft.lsml.view_fx.loadout.component.ItemView;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.application.Application;
@@ -60,9 +61,10 @@ public class LiSongMechLab extends Application {
 
     private static ObservableList<String> active_style_sheets;
 
-    public static final DataFormat        ITEM_DATA_FORMAT = new DataFormat("item.custom");
+    public static final DataFormat        ITEM_DATA_FORMAT   = new DataFormat("item.custom");
+    public static final DataFormat        MODULE_DATA_FORMAT = new DataFormat("module.custom");
 
-    public static void addItemDrag(Dragboard aDragboard, Item aItem) {
+    public static void addEquipmentDrag(Dragboard aDragboard, Equipment aItem) {
         // Pack the data
         ClipboardContent cc = new ClipboardContent();
         cc.putString(Integer.toString(aItem.getMwoId()));
@@ -71,8 +73,13 @@ public class LiSongMechLab extends Application {
         // Create an off-screen scene and add a label representing our item.
         Label label = new Label(aItem.getName());
         label.getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
-        StyleManager.changeItemStyle(label, aItem);
-        label.setPrefHeight(ItemView.DEFAULT_HEIGHT * aItem.getNumCriticalSlots());
+        StyleManager.changeStyle(label, aItem);
+        if (aItem instanceof Item) {
+            label.setPrefHeight(ItemView.DEFAULT_HEIGHT * ((Item) aItem).getNumCriticalSlots());
+        }
+        else {
+            label.setPrefHeight(ItemView.DEFAULT_HEIGHT);
+        }
         label.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
         Scene scene = new Scene(label);
         scene.getStylesheets().setAll(active_style_sheets);

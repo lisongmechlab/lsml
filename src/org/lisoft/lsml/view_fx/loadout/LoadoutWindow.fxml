@@ -9,14 +9,31 @@
 
 <BorderPane stylesheets="@../LSML.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindowController">
   <center>
-    <HBox fx:id="layoutContainer" styleClass="loadout-container" />
+    <HBox fx:id="layoutContainer" styleClass="layout-container, layout-root" />
   </center>
   <left>
-    <TreeTableView fx:id="equipmentList" onDragDetected="#equipmentDragDetected" showRoot="false">
-      <columnResizePolicy>
-        <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-      </columnResizePolicy>
-    </TreeTableView>
+      <TabPane>
+         <tabs>
+            <Tab text="Equipment" closable="false">
+               <content>
+                <TreeTableView fx:id="equipmentList" showRoot="false">
+                  <columnResizePolicy>
+                    <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                  </columnResizePolicy>
+                </TreeTableView>
+               </content>
+            </Tab>
+            <Tab text="Modules" closable="false">
+               <content>
+                <TreeTableView fx:id="moduleList" showRoot="false">
+                  <columnResizePolicy>
+                    <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                  </columnResizePolicy>
+                </TreeTableView>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
   </left>
   <right>
     <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">

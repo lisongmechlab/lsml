@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.loadout.component;
+package org.lisoft.lsml.view_fx.controls;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;

@@ -31,7 +31,7 @@ import org.lisoft.lsml.model.item.Item;
  *
  */
 public enum EquipmentCategory {
-    ENERGY, BALLISTIC, MISSILE, AMS, ECM, ENGINE, MISC;
+    ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, ENGINE;
 
     public static EquipmentCategory classify(Item aItem) {
         if (aItem instanceof Engine) {

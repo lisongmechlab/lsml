@@ -23,7 +23,6 @@ import java.awt.Component;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -31,6 +30,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+
+import javafx.application.Platform;
 
 /**
  * This class handles any exceptions that were not caught and informs the user of a potential problem.
@@ -45,28 +46,20 @@ public class DefaultExceptionHandler implements UncaughtExceptionHandler {
             informUser(aThrowable);
         }
         else {
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        informUser(aThrowable);
-                    }
-                });
-            }
-            catch (InterruptedException ie) {
-                Thread.currentThread().interrupt();
-            }
-            catch (InvocationTargetException ite) {
-                ite.getCause().printStackTrace();
-            }
+            Platform.runLater(() -> {
+                informUser(aThrowable);
+            });
         }
     }
 
     protected void informUser(Throwable aThrowable) {
         StringBuilder builder = new StringBuilder();
-        builder.append("<html><p>An error has been encountered, in most cases LSML can still continue to function normally.</p>");
-        builder.append("<br><p>However as a safety precaution it is recommended to \"save as\" your garage manually from the garage menu.</p>");
-        builder.append("<br><p>Please copy the following and send it to <a href=\"lisongmechlab@gmail.com\">lisongmechlab@gmail.com</a> together with an explanation of what you were doing to make us aware of the problem.</p><br>");
+        builder.append(
+                "<html><p>An error has been encountered, in most cases LSML can still continue to function normally.</p>");
+        builder.append(
+                "<br><p>However as a safety precaution it is recommended to \"save as\" your garage manually from the garage menu.</p>");
+        builder.append(
+                "<br><p>Please copy the following and send it to <a href=\"lisongmechlab@gmail.com\">lisongmechlab@gmail.com</a> together with an explanation of what you were doing to make us aware of the problem.</p><br>");
 
         StringWriter sw = new StringWriter();
         aThrowable.printStackTrace(new PrintWriter(sw));
