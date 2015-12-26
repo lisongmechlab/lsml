@@ -25,9 +25,10 @@ import java.util.function.Predicate;
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReception;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.chassi.MovementProfile;
+import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -55,16 +56,28 @@ public class LoadoutMetricsModelAdaptor {
     public final IntegerBinding  jumpJetCount;
     public final IntegerBinding  jumpJetMax;
 
-    public LoadoutMetricsModelAdaptor(LoadoutMetrics aMetrics, LoadoutBase<?> aLoadout, MessageReception aRcv) {
-        metrics = aMetrics;
+    public final IntegerBinding  heatSinkCount;
+    public final DoubleBinding   heatCapacity;
+    public final DoubleBinding   coolingRatio;
+    public final DoubleBinding   timeToCool;
+    private final MessageXBar    xBar;
 
+    public LoadoutMetricsModelAdaptor(LoadoutMetrics aMetrics, LoadoutBase<?> aLoadout, MessageXBar aRcv) {
+        metrics = aMetrics;
+        xBar = aRcv;
+
+        MovementProfile mp = aLoadout.getMovementProfile();
+        Collection<Modifier> modifiers = aLoadout.getModifiers();
+
+        // Update predicates
         Predicate<Message> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
         Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
         Predicate<Message> omniPodChanged = (aMsg) -> aMsg instanceof OmniPodMessage;
-
+        Predicate<Message> affectsHeatOrDamage = (aMsg) -> aMsg.affectsHeatOrDamage();
         Predicate<Message> engineOrEffsChanged = (aMsg) -> itemsChanged.test(aMsg) || effsChanged.test(aMsg);
         Predicate<Message> itemsOrPodsChanged = (aMsg) -> itemsChanged.test(aMsg) || omniPodChanged.test(aMsg);
 
+        // Mobility
         topSpeed = new LsmlDoubleBinding(aRcv, () -> metrics.topSpeed.calculate(), engineOrEffsChanged);
         turnSpeed = new LsmlDoubleBinding(aRcv, () -> metrics.turningSpeed.calculate(), engineOrEffsChanged);
         torsoPitchSpeed = new LsmlDoubleBinding(aRcv, () -> metrics.torsoPitchSpeed.calculate(), engineOrEffsChanged);
@@ -73,14 +86,37 @@ public class LoadoutMetricsModelAdaptor {
         armYawSpeed = new LsmlDoubleBinding(aRcv, () -> metrics.armYawSpeed.calculate(), engineOrEffsChanged);
         jumpJetCount = new LsmlIntegerBinding(aRcv, () -> aLoadout.getJumpJetCount(), itemsOrPodsChanged);
         jumpJetMax = new LsmlIntegerBinding(aRcv, () -> aLoadout.getJumpJetsMax(), itemsOrPodsChanged);
-
-        MovementProfile mp = aLoadout.getMovementProfile();
-        Collection<Modifier> modifiers = aLoadout.getModifiers();
-
         torsoPitch = new LsmlDoubleBinding(aRcv, () -> mp.getTorsoPitchMax(modifiers), engineOrEffsChanged);
         torsoYaw = new LsmlDoubleBinding(aRcv, () -> mp.getTorsoYawMax(modifiers), engineOrEffsChanged);
         armPitch = new LsmlDoubleBinding(aRcv, () -> mp.getArmPitchMax(modifiers), engineOrEffsChanged);
         armYaw = new LsmlDoubleBinding(aRcv, () -> mp.getArmYawMax(modifiers), engineOrEffsChanged);
 
+        // Heat
+        heatSinkCount = new LsmlIntegerBinding(aRcv, () -> aLoadout.getHeatsinksCount(), itemsOrPodsChanged);
+        heatCapacity = new LsmlDoubleBinding(aRcv, () -> metrics.heatCapacity.calculate(), affectsHeatOrDamage);
+        coolingRatio = new LsmlDoubleBinding(aRcv, () -> metrics.coolingRatio.calculate(), affectsHeatOrDamage);
+        timeToCool = new LsmlDoubleBinding(aRcv, () -> metrics.timeToCool.calculate(), affectsHeatOrDamage);
+    }
+
+    /**
+     * Changes the environment to use for heat calculations.
+     * 
+     * @param aEnvironment
+     */
+    public void changeEnvironment(Environment aEnvironment) {
+        metrics.changeEnvironment(aEnvironment);
+
+        // Provoke bindings that depend on heat to update.
+        xBar.post(new Message() {
+            @Override
+            public boolean isForMe(LoadoutBase<?> aLoadout) {
+                return true;
+            }
+
+            @Override
+            public boolean affectsHeatOrDamage() {
+                return true;
+            }
+        });
     }
 }
