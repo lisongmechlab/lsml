@@ -71,6 +71,55 @@ public class ModifierDescription {
     public final static String       SEL_WEAPON_JAMMED_TIME    = "jamtime";
     public final static String       SEL_WEAPON_SPREAD         = "spread";
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((operation == null) ? 0 : operation.hashCode());
+        result = prime * result + ((selectors == null) ? 0 : selectors.hashCode());
+        result = prime * result + ((specifier == null) ? 0 : specifier.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof ModifierDescription))
+            return false;
+        ModifierDescription other = (ModifierDescription) obj;
+        if (operation != other.operation)
+            return false;
+        if (selectors == null) {
+            if (other.selectors != null)
+                return false;
+        }
+        else if (!selectors.equals(other.selectors))
+            return false;
+        if (specifier == null) {
+            if (other.specifier != null)
+                return false;
+        }
+        else if (!specifier.equals(other.specifier))
+            return false;
+        if (type != other.type)
+            return false;
+        return true;
+    }
+
     /**
      * This attribute defines how a modifier is applied.
      * 
@@ -206,13 +255,7 @@ public class ModifierDescription {
         }
         specifier = canonizeName(aAttribute);
 
-        if (specifier != null && specifier.equals(ModifierDescription.SEL_WEAPON_COOLDOWN)) {
-            // Ugh... PGI, PGI... why did you have to make cool down a positive good?
-            type = ModifierType.NEGATIVE_GOOD;
-        }
-        else {
-            type = aValueType;
-        }
+        type = aValueType;
     }
 
     public ModifierDescription(String aUiName, String aKeyName, Operation aOperation, String aSelector,

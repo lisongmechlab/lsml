@@ -180,6 +180,16 @@ public class EfficienciesTest {
     }
 
     @Test
+    public void testGetWeaponCycletimeModifier_WithDoubleBasics() throws Exception {
+        Attribute attribute = new Attribute(1.0, ModifierDescription.ALL_WEAPONS,
+                ModifierDescription.SEL_WEAPON_COOLDOWN);
+        cut.setDoubleBasics(true, null);
+        cut.setEfficiency(MechEfficiencyType.FAST_FIRE, true, null);
+
+        assertEquals(0.95, attribute.value(cut.getModifiers()), 0.0);
+    }
+
+    @Test
     public void testTwistX_Applies() {
         cut.setEfficiency(MechEfficiencyType.TWIST_X, true, null);
         MovementProfile mp = new BaseMovementProfile(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

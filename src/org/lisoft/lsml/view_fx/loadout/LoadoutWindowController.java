@@ -46,7 +46,6 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
-import org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController;
 import org.lisoft.lsml.view_fx.loadout.component.ModulePane;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableCell;
@@ -54,6 +53,7 @@ import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableRow;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquippablePredicate;
 import org.lisoft.lsml.view_fx.loadout.equipment.ModuleTableRow;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
+import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.beans.binding.Bindings;
@@ -81,64 +81,68 @@ public class LoadoutWindowController implements MessageReceiver {
 
     // Constants
 
-    private static final String   COLUMN_MASS  = "Mass";
-    private static final String   COLUMN_NAME  = "Name";
-    private static final String   COLUMN_SLOTS = "Slots";
-    private static final int      UNDO_DEPTH   = 128;
+    private static final String     COLUMN_MASS       = "Mass";
+    private static final String     COLUMN_NAME       = "Name";
+    private static final String     COLUMN_SLOTS      = "Slots";
+    private static final int        UNDO_DEPTH        = 128;
 
     // FXML elements
 
-    private CommandStack          cmdStack     = new CommandStack(UNDO_DEPTH);
+    private CommandStack            cmdStack          = new CommandStack(UNDO_DEPTH);
     @FXML
-    private CheckBox              effAnchorTurn;
+    private CheckBox                effAnchorTurn;
     @FXML
-    private CheckBox              effArmReflex;
+    private CheckBox                effArmReflex;
     @FXML
-    private CheckBox              effCoolRun;
+    private CheckBox                effCoolRun;
     @FXML
-    private CheckBox              effDoubleBasics;
+    private CheckBox                effDoubleBasics;
     @FXML
-    private CheckBox              effFastFire;
+    private CheckBox                effFastFire;
     @FXML
-    private CheckBox              effHeatContainment;
+    private CheckBox                effHeatContainment;
     @FXML
-    private CheckBox              effSpeedTweak;
+    private CheckBox                effSpeedTweak;
     @FXML
-    private CheckBox              effTwistSpeed;
+    private CheckBox                effTwistSpeed;
     @FXML
-    private CheckBox              effTwistX;
+    private CheckBox                effTwistX;
 
     @FXML
-    private TreeTableView<Object> equipmentList;
+    private TreeTableView<Object>   equipmentList;
     @FXML
-    private ProgressBar           generalArmorBar;
+    private ProgressBar             generalArmorBar;
     @FXML
-    private Label                 generalArmorLabel;
+    private Label                   generalArmorLabel;
     @FXML
-    private ProgressBar           generalMassBar;
+    private ProgressBar             generalMassBar;
     @FXML
-    private Label                 generalMassLabel;
+    private Label                   generalMassLabel;
     @FXML
-    private ProgressBar           generalSlotsBar;
+    private ProgressBar             generalSlotsBar;
     @FXML
-    private Label                 generalSlotsLabel;
+    private Label                   generalSlotsLabel;
     @FXML
-    private HBox                  layoutContainer;
+    private HBox                    layoutContainer;
     // Local state
-    private LoadoutModelAdaptor   model;
+    private LoadoutModelAdaptor     model;
 
     @FXML
-    private TreeTableView<Object> moduleList;
+    private TreeTableView<Object>   moduleList;
     @FXML
-    private CheckBox              upgradeArtemis;
+    private CheckBox                upgradeArtemis;
     @FXML
-    private CheckBox              upgradeDoubleHeatSinks;
+    private CheckBox                upgradeDoubleHeatSinks;
 
     @FXML
-    private CheckBox              upgradeEndoSteel;
+    private CheckBox                upgradeEndoSteel;
     @FXML
-    private CheckBox              upgradeFerroFibrous;
-    private MessageXBar           xBar         = new MessageXBar();
+    private CheckBox                upgradeFerroFibrous;
+    private MessageXBar             xBar              = new MessageXBar();
+    @FXML
+    private VBox                    modifiersBox;
+
+    private final ModifierFormatter modifierFormatter = new ModifierFormatter();
 
     // Methods
 
@@ -146,11 +150,12 @@ public class LoadoutWindowController implements MessageReceiver {
     public void receive(Message aMsg) {
         if (aMsg instanceof ItemMessage || aMsg instanceof UpgradesMessage) {
             updateEquipmentPredicates();
+            updateModifiers();
         }
 
         if (aMsg instanceof ItemMessage || aMsg instanceof LoadoutMessage) {
-
             updateModulePredicates();
+            updateModifiers();
         }
     }
 
@@ -164,6 +169,12 @@ public class LoadoutWindowController implements MessageReceiver {
         setupUpgradesPanel();
         setupEfficienciesPanel();
         setupModulesList();
+        updateModifiers();
+    }
+
+    private void updateModifiers() {
+        modifiersBox.getChildren().clear();
+        modifierFormatter.format(model.loadout.getModifiers(), modifiersBox.getChildren());
     }
 
     private void setupEffCheckbox(CheckBox aCheckBox, MechEfficiencyType aEfficiencyType) {
@@ -215,19 +226,22 @@ public class LoadoutWindowController implements MessageReceiver {
     }
 
     private void setupEquipmentListColumns() {
+
         TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(COLUMN_NAME);
         nameColumn.setCellValueFactory(new ItemValueFactory(item -> item.getShortName(), true));
         nameColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, true));
-        nameColumn.setPrefWidth(ComponentPaneController.ITEM_WIDTH * 1.2);
+        nameColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.6));
 
         TreeTableColumn<Object, String> slotsColumn = new TreeTableColumn<>(COLUMN_SLOTS);
         slotsColumn
                 .setCellValueFactory(new ItemValueFactory(item -> Integer.toString(item.getNumCriticalSlots()), false));
         slotsColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false));
+        slotsColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
 
         TreeTableColumn<Object, String> massColumn = new TreeTableColumn<>(COLUMN_MASS);
         massColumn.setCellValueFactory(new ItemValueFactory(item -> Double.toString(item.getMass()), false));
         massColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false));
+        massColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
 
         ObservableList<TreeTableColumn<Object, ?>> columns = equipmentList.getColumns();
         columns.clear();

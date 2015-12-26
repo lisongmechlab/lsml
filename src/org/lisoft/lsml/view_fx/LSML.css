@@ -87,9 +87,9 @@
 	colour-empty-bg: 			hsb(0, 0%, 35%);
 	colour-empty-fg: 			hsb(0, 0%, 55%);
 
-	quirk-bad: red;
-	quirk-good: green;
-	quirk-neutral: black;
+	quirk-bad: hsb(17, 70%, 90%);
+	quirk-good: hsb(148, 100%, 70%);
+	quirk-neutral: white;
 		
 	colour-lsml-orange: hsb(30, 100%, 70%);
 	colour-lsml-gray: hsb(240, 5%, 17%);
@@ -142,12 +142,10 @@
 }
 
 .ArmStrut {
-	-fx-min-height: 20.0pt;
 	-fx-pref-height: 100.0pt;
 }
 
 .TorsoStrut{
-	-fx-min-height: 10.0pt;
 	-fx-pref-height: 50.0pt;
 }
 

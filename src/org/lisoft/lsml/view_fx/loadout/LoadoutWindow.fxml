@@ -14,18 +14,15 @@
   <left>
       <TabPane>
          <tabs>
-            <Tab text="Equipment" closable="false">
+            <Tab closable="false" text="Equipment">
                <content>
-                <TreeTableView fx:id="equipmentList" styleClass="equipment-list" showRoot="false">
-                  <columnResizePolicy>
-                    <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                  </columnResizePolicy>
+                <TreeTableView fx:id="equipmentList" showRoot="false" styleClass="equipment-list">
                 </TreeTableView>
                </content>
             </Tab>
-            <Tab text="Modules" closable="false">
+            <Tab closable="false" text="Modules">
                <content>
-                <TreeTableView fx:id="moduleList" styleClass="equipment-list" showRoot="false">
+                <TreeTableView fx:id="moduleList" showRoot="false" styleClass="equipment-list">
                   <columnResizePolicy>
                     <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                   </columnResizePolicy>
@@ -115,6 +112,11 @@
                 </GridPane>
               </content>
             </TitledPane>
+                  <TitledPane text="Quirks/Modifiers">
+                    <content>
+                        <VBox fx:id="modifiersBox" />
+                    </content>
+                  </TitledPane>
             <TitledPane text="Armor Wizard">
               <content>
                 <GridPane>
@@ -236,6 +238,6 @@
     </MenuBar>
   </top>
   <bottom>
-    <TextField text="Status" BorderPane.alignment="CENTER" />
+    <TextField maxHeight="-Infinity" minHeight="-Infinity" text="Status" BorderPane.alignment="CENTER" />
   </bottom>
 </BorderPane>

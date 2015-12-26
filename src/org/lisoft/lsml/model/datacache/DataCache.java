@@ -388,9 +388,9 @@ public class DataCache {
                             ModifierDescription.SEL_MOVEMENT_TURN_RATE, "highrate", ModifierType.POSITIVE_GOOD));
                     break;
                 case ARM_REFLEX:
-                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE", null, Operation.MUL,
+                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE (PITCH)", null, Operation.MUL,
                             ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "pitch", ModifierType.POSITIVE_GOOD));
-                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE", null, Operation.MUL,
+                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE (YAW)", null, Operation.MUL,
                             ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "yaw", ModifierType.POSITIVE_GOOD));
                     break;
                 case COOL_RUN:
@@ -398,6 +398,8 @@ public class DataCache {
                             ModifierType.POSITIVE_GOOD));
                     break;
                 case FAST_FIRE:
+                    value = -value; // Because PGI...
+                    valueElited = -valueElited;
                     descriptions.add(
                             new ModifierDescription("FAST FIRE", null, Operation.MUL, ModifierDescription.ALL_WEAPONS,
                                     ModifierDescription.SEL_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD));
@@ -424,16 +426,16 @@ public class DataCache {
                                     null, ModifierType.POSITIVE_GOOD));
                     break;
                 case TWIST_SPEED:
-                    descriptions.add(new ModifierDescription("TORSO TURN RATE", null, Operation.MUL,
+                    descriptions.add(new ModifierDescription("TORSO TURN RATE (PITCH)", null, Operation.MUL,
                             ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "pitch", ModifierType.POSITIVE_GOOD));
-                    descriptions.add(new ModifierDescription("TORSO TURN RATE", null, Operation.MUL,
+                    descriptions.add(new ModifierDescription("TORSO TURN RATE (YAW)", null, Operation.MUL,
                             ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "yaw", ModifierType.POSITIVE_GOOD));
 
                     break;
                 case TWIST_X:
-                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE", null, Operation.MUL,
+                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE (PITCH)", null, Operation.MUL,
                             ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, "pitch", ModifierType.POSITIVE_GOOD));
-                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE", null, Operation.MUL,
+                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE (YAW)", null, Operation.MUL,
                             ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, "yaw", ModifierType.POSITIVE_GOOD));
 
                     break;
