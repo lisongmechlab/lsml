@@ -110,8 +110,15 @@ public class XMLQuirkDef {
                             uiName += " " + modify.specifier.toUpperCase();
                         }
 
-                        ans.add(new ModifierDescription(uiName, keyName, Operation.fromString(modify.operation), Arrays
-                                .asList(quirk.name), modify.specifier, ModifierType.fromMwo(modify.context)));
+                        modify.specifier = ModifierDescription.canonizeName(modify.specifier);
+
+                        ModifierType modifierType = ModifierType.fromMwo(modify.context);
+                        if (ModifierDescription.SEL_WEAPON_COOLDOWN.equals(modify.specifier)) {
+                            modifierType = ModifierType.NEGATIVE_GOOD; // Because PGI
+                        }
+
+                        ans.add(new ModifierDescription(uiName, keyName, Operation.fromString(modify.operation),
+                                Arrays.asList(quirk.name), modify.specifier, modifierType));
                     }
                 }
             }
