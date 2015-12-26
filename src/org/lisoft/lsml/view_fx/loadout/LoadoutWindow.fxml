@@ -256,15 +256,15 @@
                     <RowConstraints vgrow="SOMETIMES"/>
                   </rowConstraints>
                   <children>
-                    <ComboBox promptText="Environment"
-                      GridPane.columnSpan="2147483647"
-                      GridPane.halignment="CENTER"/>
-                    <Label text="Heat Sinks: X" GridPane.rowIndex="1"/>
-                    <Label text="Heat Capacity: 30.0"
+                    <ComboBox fx:id="heatEnvironment" promptText="Environment"
+                      GridPane.columnSpan="2" GridPane.halignment="CENTER"/>
+                    <Label fx:id="heatSinkCount"
+                      GridPane.rowIndex="1"/>
+                    <Label fx:id="heatCapacity"
                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    <Label text="Cooling Ratio: 0%"
+                    <Label fx:id="heatCoolingRatio"
                       GridPane.rowIndex="2"/>
-                    <Label text="Time to Cool: 32s"
+                    <Label fx:id="heatTimeToCool"
                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                   </children>
                 </GridPane>

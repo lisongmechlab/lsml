@@ -39,8 +39,10 @@ import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.EnvironmentDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
+import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
@@ -76,6 +78,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
@@ -159,6 +162,16 @@ public class LoadoutWindowController implements MessageReceiver {
     @FXML
     private Label                      mobilityArmPitchSpeed;
     @FXML
+    private ComboBox<Environment>      heatEnvironment;
+    @FXML
+    private Label                      heatSinkCount;
+    @FXML
+    private Label                      heatCapacity;
+    @FXML
+    private Label                      heatCoolingRatio;
+    @FXML
+    private Label                      heatTimeToCool;
+    @FXML
     private TreeTableView<Object>      moduleList;
     @FXML
     private CheckBox                   upgradeArtemis;
@@ -218,10 +231,30 @@ public class LoadoutWindowController implements MessageReceiver {
         setupModulesList();
         setupArmorWizard();
         updateModifiers();
-        setupMobility();
+        setupMobilityPanel();
+        setupHeatPanel();
     }
 
-    private void setupMobility() {
+    private void setupHeatPanel() {
+
+        heatEnvironment.getItems();
+        heatEnvironment.getItems().add(new Environment("Neutral", 0.0));
+        for (Environment e : EnvironmentDB.lookupAll()) {
+            heatEnvironment.getItems().add(e);
+        }
+        heatEnvironment.getSelectionModel().select(0);
+        heatEnvironment.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
+            metrics.changeEnvironment(aNew);
+        });
+
+        heatSinkCount.textProperty().bind(Bindings.format("Heat Sinks: %d", metrics.heatSinkCount));
+        heatCapacity.textProperty().bind(Bindings.format("Heat Capacity: %.1f", metrics.heatCapacity));
+        heatCoolingRatio.textProperty()
+                .bind(Bindings.format("Cooling Ratio: %.1f%%", metrics.coolingRatio.multiply(100)));
+        heatTimeToCool.textProperty().bind(Bindings.format("Time to Cool: %.1fs", metrics.timeToCool));
+    }
+
+    private void setupMobilityPanel() {
         mobilityTopSpeed.textProperty().bind(Bindings.format("Top Speed: %.1f km/h", metrics.topSpeed));
         mobilityTurnSpeed.textProperty().bind(Bindings.format("Turn Speed: %.1f °/s", metrics.turnSpeed));
 
