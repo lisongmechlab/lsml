@@ -64,6 +64,8 @@ public class StyleManager {
     public static final PseudoClass                     CSS_PC_UNEQUIPPABLE         = PseudoClass
             .getPseudoClass("unequippable");
     private static final Map<EquipmentCategory, String> CSS_CATEGORY2CLASS_BASE;
+    public static final PseudoClass                     CSS_PC_AUTOARMOR            = PseudoClass
+            .getPseudoClass("autoarmor");
 
     static {
         CSS_CATEGORY2CLASS_BASE = new HashMap<>();

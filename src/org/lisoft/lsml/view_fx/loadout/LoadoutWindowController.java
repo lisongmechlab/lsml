@@ -23,7 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lisoft.lsml.command.CmdDistributeArmor;
+import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.EfficienciesMessage;
+import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -31,6 +36,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
+import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -40,11 +46,14 @@ import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.item.WeaponModule;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
 import org.lisoft.lsml.view_fx.loadout.component.ModulePane;
@@ -61,11 +70,13 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
@@ -79,17 +90,15 @@ import javafx.scene.layout.VBox;
  * @author Emily Björk
  */
 public class LoadoutWindowController implements MessageReceiver {
-
-    // Constants
-
     private static final String     COLUMN_MASS       = "Mass";
     private static final String     COLUMN_NAME       = "Name";
     private static final String     COLUMN_SLOTS      = "Slots";
     private static final int        UNDO_DEPTH        = 128;
 
-    // FXML elements
-
-    private CommandStack            cmdStack          = new CommandStack(UNDO_DEPTH);
+    @FXML
+    private Slider                  armorWizardRatio;
+    @FXML
+    private Slider                  armorWizardAmount;
     @FXML
     private CheckBox                effAnchorTurn;
     @FXML
@@ -108,7 +117,6 @@ public class LoadoutWindowController implements MessageReceiver {
     private CheckBox                effTwistSpeed;
     @FXML
     private CheckBox                effTwistX;
-
     @FXML
     private TreeTableView<Object>   equipmentList;
     @FXML
@@ -125,35 +133,34 @@ public class LoadoutWindowController implements MessageReceiver {
     private Label                   generalSlotsLabel;
     @FXML
     private HBox                    layoutContainer;
-    // Local state
-    private LoadoutModelAdaptor     model;
-
     @FXML
     private TreeTableView<Object>   moduleList;
     @FXML
     private CheckBox                upgradeArtemis;
     @FXML
     private CheckBox                upgradeDoubleHeatSinks;
-
     @FXML
     private CheckBox                upgradeEndoSteel;
     @FXML
     private CheckBox                upgradeFerroFibrous;
-    private MessageXBar             xBar              = new MessageXBar();
     @FXML
     private VBox                    modifiersBox;
 
     private final ModifierFormatter modifierFormatter = new ModifierFormatter();
-
-    // Methods
+    private final CommandStack      cmdStack          = new CommandStack(UNDO_DEPTH);
+    private final MessageXBar       xBar              = new MessageXBar();
+    private LoadoutModelAdaptor     model;
 
     @Override
     public void receive(Message aMsg) {
         boolean efficiencies = aMsg instanceof EfficienciesMessage;
-        boolean items = aMsg instanceof EfficienciesMessage;
+        boolean items = aMsg instanceof ItemMessage;
         boolean upgrades = aMsg instanceof UpgradesMessage;
         boolean omniPods = aMsg instanceof OmniPodMessage;
         boolean modules = aMsg instanceof LoadoutMessage;
+
+        boolean autoArmorUpdate = aMsg instanceof ArmorMessage
+                && ((ArmorMessage) aMsg).type == Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST;
 
         if (efficiencies || items || omniPods) {
             updateModifiers();
@@ -165,6 +172,10 @@ public class LoadoutWindowController implements MessageReceiver {
 
         if (modules) {
             updateModulePredicates();
+        }
+
+        if (upgrades || items || autoArmorUpdate) {
+            updateArmorWizard();
         }
     }
 
@@ -178,7 +189,49 @@ public class LoadoutWindowController implements MessageReceiver {
         setupUpgradesPanel();
         setupEfficienciesPanel();
         setupModulesList();
+        setupArmorWizard();
         updateModifiers();
+    }
+
+    private void updateArmorWizard() {
+        try {
+            cmdStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
+                    armorWizardRatio.getValue(), xBar));
+        }
+        catch (Exception e) {
+            LiSongMechLab.showError(e);
+        }
+    }
+
+    private void setupArmorWizard() {
+        armorWizardAmount.setMax(model.loadout.getChassis().getArmorMax());
+        armorWizardAmount.setValue(model.loadout.getArmor());
+        armorWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            try {
+                cmdStack.pushAndApply(
+                        new CmdDistributeArmor(model.loadout, aNew.intValue(), armorWizardRatio.getValue(), xBar));
+            }
+            catch (Exception e) {
+                LiSongMechLab.showError(e);
+            }
+        });
+
+        final double max_ratio = 24;
+        ConfiguredComponentBase ct = model.loadout.getComponent(Location.CenterTorso);
+        double currentRatio = ((double) ct.getArmor(ArmorSide.FRONT)) / Math.max(ct.getArmor(ArmorSide.BACK), 1);
+        currentRatio = Math.min(max_ratio, currentRatio);
+
+        armorWizardRatio.setMax(max_ratio);
+        armorWizardRatio.setValue(currentRatio);
+        armorWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            try {
+                cmdStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
+                        aNew.doubleValue(), xBar));
+            }
+            catch (Exception e) {
+                LiSongMechLab.showError(e);
+            }
+        });
     }
 
     private void updateModifiers() {
@@ -419,4 +472,29 @@ public class LoadoutWindowController implements MessageReceiver {
         moduleList.setRoot(null);
         moduleList.setRoot(root);
     }
+
+    @FXML
+    public void armorWizardResetAll(@SuppressWarnings("unused") ActionEvent event) throws Exception {
+        CommandStack.CompositeCommand cc = new CommandStack.CompositeCommand("Reset manual armor", xBar) {
+            @Override
+            protected void buildCommand() throws EquipResult {
+                for (ConfiguredComponentBase component : model.loadout.getComponents()) {
+                    if (component.getInternalComponent().getLocation().isTwoSided()) {
+                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.FRONT,
+                                component.getArmor(ArmorSide.FRONT), false));
+                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.BACK,
+                                component.getArmor(ArmorSide.BACK), false));
+                    }
+                    else {
+                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.ONLY,
+                                component.getArmor(ArmorSide.ONLY), false));
+                    }
+                }
+
+            }
+        };
+        cmdStack.pushAndApply(cc);
+        updateArmorWizard();
+    }
+
 }

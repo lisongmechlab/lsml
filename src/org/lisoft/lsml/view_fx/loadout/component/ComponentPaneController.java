@@ -24,12 +24,16 @@ import java.util.Collection;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
+import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdSetOmniPod;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
+import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
@@ -46,6 +50,7 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.ItemView;
 import org.lisoft.lsml.view_fx.drawers.EquippedItemCell;
 import org.lisoft.lsml.view_fx.drawers.OmniPodListCell;
+import org.lisoft.lsml.view_fx.properties.ArmorFactory;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor.ComponentModel;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
@@ -54,11 +59,13 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.BooleanProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.DragEvent;
@@ -116,6 +123,9 @@ public class ComponentPaneController implements MessageReceiver {
     @FXML
     private ComboBox<OmniPod>       omniPodSelection;
 
+    @FXML
+    ContextMenu                     armorContextMenu;
+
     /**
      * Sets up this component. Must be called before this component is usable.
      * 
@@ -137,6 +147,7 @@ public class ComponentPaneController implements MessageReceiver {
         location = aLocation;
         xBar = aMessageXBar;
         component = model.loadout.getComponent(location);
+        rootPane.setContextMenu(null);
 
         setupToggles();
         setupItemView(aDistributor);
@@ -204,31 +215,32 @@ public class ComponentPaneController implements MessageReceiver {
         }
     }
 
-    private void setupArmors() {
+    private void setupArmorSpinner(ArmorSide aSide, Spinner<Integer> aSpinner, Labeled aLabel, Labeled aMaxLabel) {
         ComponentModel componentModel = model.components.get(location);
-        if (location.isTwoSided()) {
-            IntegerSpinnerValueFactory frontFactory = new IntegerSpinnerValueFactory(0, 100, 10);
-            frontFactory.valueProperty().bindBidirectional(componentModel.armor.asObject());
-            frontFactory.maxProperty().bind(componentModel.armorMax);
-            armorSpinner.setValueFactory(frontFactory);
-            armorLabel.setText("Front:");
-            armorMax.textProperty().bind(Bindings.format("/%.0f", componentModel.armorMax));
+        ArmorFactory af = new ArmorFactory(xBar, model.loadout, component, aSide, stack, aSpinner);
+        af.manualSetProperty().addListener((aObservable, aOld, aNew) -> {
+            aSpinner.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !aNew.booleanValue());
+            aMaxLabel.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !aNew.booleanValue());
+        });
+        aSpinner.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !af.getManualSet());
+        aSpinner.setValueFactory(af);
+        aSpinner.setContextMenu(armorContextMenu);
+        aLabel.setContextMenu(armorContextMenu);
+        aMaxLabel.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !af.getManualSet());
+        aMaxLabel.textProperty().bind(Bindings.format("/%.0f", componentModel.armorMax));
+        aMaxLabel.setContextMenu(armorContextMenu);
+    }
 
-            IntegerSpinnerValueFactory factory = new IntegerSpinnerValueFactory(0, 100, 10);
-            factory.valueProperty().bindBidirectional(componentModel.armorBack.asObject());
-            factory.maxProperty().bind(componentModel.armorMaxBack);
-            armorSpinnerBack.setValueFactory(factory);
+    private void setupArmors() {
+        if (location.isTwoSided()) {
+            setupArmorSpinner(ArmorSide.FRONT, armorSpinner, armorLabel, armorMax);
+            setupArmorSpinner(ArmorSide.BACK, armorSpinnerBack, armorLabelBack, armorMaxBack);
+            armorLabel.setText("Front:");
             armorLabelBack.setText("Back:");
-            armorMaxBack.textProperty().bind(Bindings.format("/%.0f", componentModel.armorMaxBack));
         }
         else {
-            IntegerSpinnerValueFactory factory = new IntegerSpinnerValueFactory(0, 100, 10);
-            factory.valueProperty().bindBidirectional(componentModel.armor.asObject());
-            factory.maxProperty().bind(componentModel.armorMax);
-            armorSpinner.setValueFactory(factory);
+            setupArmorSpinner(ArmorSide.ONLY, armorSpinner, armorLabel, armorMax);
             armorLabel.setText("Armor:");
-            armorMax.textProperty().bind(Bindings.format("/%.0f", componentModel.armorMax));
-
             container.getChildren().remove(armorBoxBack);
         }
     }
@@ -339,5 +351,21 @@ public class ComponentPaneController implements MessageReceiver {
             }
         }
 
+    }
+
+    @FXML
+    public void resetManualArmor(@SuppressWarnings("unused") ActionEvent event) throws Exception {
+        if (component.getInternalComponent().getLocation().isTwoSided()) {
+            stack.pushAndApply(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.FRONT,
+                    component.getArmor(ArmorSide.FRONT), false));
+            stack.pushAndApply(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.BACK,
+                    component.getArmor(ArmorSide.BACK), false));
+        }
+        else {
+            stack.pushAndApply(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.ONLY,
+                    component.getArmor(ArmorSide.ONLY), false));
+        }
+
+        xBar.post(new ArmorMessage(component, Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST));
     }
 }
