@@ -178,4 +178,14 @@ public class LoadoutMetrics {
             groupBurstDamageOverTime[i].changeTime(aTime);
         }
     }
+
+    /**
+     * Changes the environment the metrics are calculated in.
+     * 
+     * @param aEnvironment
+     *            The new environment.
+     */
+    public void changeEnvironment(Environment aEnvironment) {
+        heatDissipation.changeEnvironment(aEnvironment);
+    }
 }

@@ -227,7 +227,8 @@ public class ComponentPaneController implements MessageReceiver {
         aSpinner.setContextMenu(armorContextMenu);
         aLabel.setContextMenu(armorContextMenu);
         aMaxLabel.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !af.getManualSet());
-        aMaxLabel.textProperty().bind(Bindings.format("/%.0f", componentModel.armorMax));
+        aMaxLabel.textProperty().bind(Bindings.format("/%.0f",
+                aSide == ArmorSide.BACK ? componentModel.armorMaxBack : componentModel.armorMax));
         aMaxLabel.setContextMenu(armorContextMenu);
     }
 
