@@ -47,15 +47,7 @@ public class Modifier {
      */
     public Modifier(ModifierDescription aDescription, double aValue) {
         description = aDescription;
-
-        if (aDescription.getSpecifier() != null
-                && aDescription.getSpecifier().equals(ModifierDescription.SEL_WEAPON_COOLDOWN)) {
-            // Ugh... PGI, PGI... why did you have to make cooldown a positive good?
-            value = -aValue;
-        }
-        else {
-            value = aValue;
-        }
+        value = aValue;
     }
 
     @Override
