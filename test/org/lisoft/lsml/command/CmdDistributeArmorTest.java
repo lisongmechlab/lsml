@@ -25,8 +25,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
@@ -96,7 +96,7 @@ public class CmdDistributeArmorTest {
         assertEquals(9.0 + 10, loadout.getMass(), 0.0);
         assertEquals(320, loadout.getArmor());
         Mockito.verify(xBar, Mockito.atLeastOnce())
-                .post(new ComponentMessage(loadout.getComponent(Location.CenterTorso), Type.ArmorChanged, false));
+                .post(new ArmorMessage(loadout.getComponent(Location.CenterTorso), Type.ARMOR_CHANGED, false));
     }
 
     /**

@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -216,8 +216,8 @@ public class ComponentDestructionSimulator implements MessageReceiver {
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof ComponentMessage) {
-            ComponentMessage message = (ComponentMessage) aMsg;
+        if (aMsg instanceof ArmorMessage) {
+            ArmorMessage message = (ArmorMessage) aMsg;
             if (message.component == loadoutPart && message.affectsHeatOrDamage()) {
                 simulate();
             }

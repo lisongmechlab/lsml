@@ -34,7 +34,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
@@ -112,14 +112,14 @@ public class CmdSetMaxArmorTest {
                 assertEquals(maxArmor.get(loc).intValue(), front + back);
 
                 verify(xBar, atLeast(2))
-                        .post(new ComponentMessage(component, ComponentMessage.Type.ArmorChanged, manual));
+                        .post(new ArmorMessage(component, ArmorMessage.Type.ARMOR_CHANGED, manual));
 
             }
             else {
                 int expected = maxArmor.get(loc).intValue();
                 verify(component).setArmor(ArmorSide.ONLY, expected, manual);
                 verify(xBar, times(1))
-                        .post(new ComponentMessage(component, ComponentMessage.Type.ArmorChanged, manual));
+                        .post(new ArmorMessage(component, ArmorMessage.Type.ARMOR_CHANGED, manual));
             }
         }
     }

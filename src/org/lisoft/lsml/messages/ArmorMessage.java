@@ -22,10 +22,9 @@ package org.lisoft.lsml.messages;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 
-@Deprecated // Introduce a new armor/omnipod message instead
-public class ComponentMessage implements Message {
+public class ArmorMessage implements Message {
     public enum Type {
-        ArmorChanged, ArmorDistributionUpdateRequest, OmniPodChanged
+        ARMOR_CHANGED, ARMOR_DISTRIBUTION_UPDATE_REQUEST
     }
 
     /**
@@ -35,11 +34,11 @@ public class ComponentMessage implements Message {
     public final ConfiguredComponentBase component;
     public final Type                    type;
 
-    public ComponentMessage(ConfiguredComponentBase aComponent, Type aType) {
+    public ArmorMessage(ConfiguredComponentBase aComponent, Type aType) {
         this(aComponent, aType, false);
     }
 
-    public ComponentMessage(ConfiguredComponentBase aComponent, Type aType, boolean aManualArmor) {
+    public ArmorMessage(ConfiguredComponentBase aComponent, Type aType, boolean aManualArmor) {
         component = aComponent;
         type = aType;
         manualArmor = aManualArmor;
@@ -47,7 +46,7 @@ public class ComponentMessage implements Message {
 
     @Override
     public boolean affectsHeatOrDamage() {
-        return type == Type.OmniPodChanged;
+        return false;
     }
 
     @Override
@@ -62,8 +61,8 @@ public class ComponentMessage implements Message {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ComponentMessage) {
-            ComponentMessage other = (ComponentMessage) obj;
+        if (obj instanceof ArmorMessage) {
+            ArmorMessage other = (ArmorMessage) obj;
             return component == other.component && type == other.type && manualArmor == other.manualArmor;
         }
         return false;

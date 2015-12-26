@@ -21,8 +21,8 @@ package org.lisoft.lsml.view.render;
 
 import java.util.Collection;
 
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -159,11 +159,11 @@ public class ComponentRenderer implements MessageReceiver {
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof ComponentMessage) {
-            ComponentMessage message = (ComponentMessage) aMsg;
+        if (aMsg instanceof ArmorMessage) {
+            ArmorMessage message = (ArmorMessage) aMsg;
 
             if (message.component == component) {
-                if (message.type == Type.ArmorChanged || message.type == Type.ArmorDistributionUpdateRequest)
+                if (message.type == Type.ARMOR_CHANGED || message.type == Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST)
                     return;
                 setDirty();
             }

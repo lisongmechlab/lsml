@@ -48,8 +48,8 @@ import javax.swing.SwingUtilities;
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.command.CmdToggleItem;
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -117,7 +117,7 @@ public class PartPanel extends JPanel implements MessageReceiver {
                     catch (Exception e) {
                         JOptionPane.showMessageDialog(null, e);
                     }
-                    xBar.post(new ComponentMessage(component, Type.ArmorDistributionUpdateRequest));
+                    xBar.post(new ArmorMessage(component, Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST));
                 }
             }));
             menu.show(aEvent.getComponent(), aEvent.getX(), aEvent.getY());
@@ -425,10 +425,10 @@ public class PartPanel extends JPanel implements MessageReceiver {
     @Override
     public void receive(Message aMsg) {
         if (aMsg.isForMe(loadout)) {
-            if (aMsg instanceof ComponentMessage) {
+            if (aMsg instanceof ArmorMessage) {
 
-                ComponentMessage msg = (ComponentMessage) aMsg;
-                if (msg.type == Type.ArmorChanged) {
+                ArmorMessage msg = (ArmorMessage) aMsg;
+                if (msg.type == Type.ARMOR_CHANGED) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -436,11 +436,11 @@ public class PartPanel extends JPanel implements MessageReceiver {
                         }
                     });
                 }
-                else if (msg.type == Type.OmniPodChanged) {
-                    if (canHaveHardpoints) {
-                        updateHardpointsPanel(hardPointsPanel);
-                    }
-                }
+                // else if (msg.type == Type.OmniPodChanged) {
+                // if (canHaveHardpoints) {
+                // updateHardpointsPanel(hardPointsPanel);
+                // }
+                // }
             }
         }
     }

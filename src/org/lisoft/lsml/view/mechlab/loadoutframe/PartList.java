@@ -45,7 +45,7 @@ import javax.swing.SwingUtilities;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
-import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -270,7 +270,7 @@ public class PartList extends JList<Item> {
             }
 
             // Only update on item changes or upgrades
-            if (aMsg instanceof ComponentMessage || aMsg instanceof UpgradesMessage) {
+            if (aMsg instanceof ArmorMessage || aMsg instanceof UpgradesMessage) {
                 fireContentsChanged(this, 0, component.getInternalComponent().getSlots());
             }
         }

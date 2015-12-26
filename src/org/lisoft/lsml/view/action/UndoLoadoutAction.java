@@ -26,7 +26,7 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -72,7 +72,7 @@ public class UndoLoadoutAction extends AbstractAction implements MessageReceiver
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (aMsg instanceof ComponentMessage
+                if (aMsg instanceof ArmorMessage
                         || aMsg instanceof UpgradesMessage) {
                     if (ProgramInit.lsml() == null || ProgramInit.lsml().garageCmdStack == null)
                         setEnabled(false);

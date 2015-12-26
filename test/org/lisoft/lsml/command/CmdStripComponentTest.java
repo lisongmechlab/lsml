@@ -32,8 +32,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
@@ -130,7 +130,7 @@ public class CmdStripComponentTest {
         // Test apply
         verify(mlc.rt).setArmor(ArmorSide.FRONT, 0, false);
         verify(mlc.rt).setArmor(ArmorSide.BACK, 0, false);
-        verify(messages, times(2)).post(new ComponentMessage(mlc.rt, Type.ArmorChanged, false));
+        verify(messages, times(2)).post(new ArmorMessage(mlc.rt, Type.ARMOR_CHANGED, false));
 
         // Test undo
         reset(mlc.rt);
@@ -138,7 +138,7 @@ public class CmdStripComponentTest {
         os.undo();
         verify(mlc.rt).setArmor(ArmorSide.BACK, backArmor, manualSet);
         verify(mlc.rt).setArmor(ArmorSide.FRONT, frontArmor, manualSet);
-        verify(messages, times(2)).post(new ComponentMessage(mlc.rt, Type.ArmorChanged, manualSet));
+        verify(messages, times(2)).post(new ArmorMessage(mlc.rt, Type.ARMOR_CHANGED, manualSet));
     }
 
     @Test
@@ -151,14 +151,14 @@ public class CmdStripComponentTest {
 
         // Test apply
         verify(mlc.la).setArmor(ArmorSide.ONLY, 0, false);
-        verify(messages, times(1)).post(new ComponentMessage(mlc.la, Type.ArmorChanged, false));
+        verify(messages, times(1)).post(new ArmorMessage(mlc.la, Type.ARMOR_CHANGED, false));
 
         // Test undo
         reset(mlc.rt);
         reset(messages);
         os.undo();
         verify(mlc.la).setArmor(ArmorSide.ONLY, onlyArmor, manualArmor);
-        verify(messages, times(1)).post(new ComponentMessage(mlc.la, Type.ArmorChanged, manualArmor));
+        verify(messages, times(1)).post(new ArmorMessage(mlc.la, Type.ARMOR_CHANGED, manualArmor));
     }
 
     @Test
@@ -173,7 +173,7 @@ public class CmdStripComponentTest {
         verify(mlc.rt).setArmor(ArmorSide.FRONT, 0, false);
         verify(mlc.rt).setArmor(ArmorSide.BACK, 0, false);
         verify(messages, times(1)).post(new ItemMessage(mlc.rt, ItemMessage.Type.Removed, ItemDB.ECM, 0));
-        verify(messages, times(2)).post(new ComponentMessage(mlc.rt, Type.ArmorChanged, false));
+        verify(messages, times(2)).post(new ArmorMessage(mlc.rt, Type.ARMOR_CHANGED, false));
     }
 
     @Test
@@ -199,6 +199,6 @@ public class CmdStripComponentTest {
 
         verify(mlc.rt).removeItem(ItemDB.ECM);
         verify(messages, times(1)).post(new ItemMessage(mlc.rt, ItemMessage.Type.Removed, ItemDB.ECM, 0));
-        verify(messages, never()).post(new ComponentMessage(mlc.rt, Type.ArmorChanged, false));
+        verify(messages, never()).post(new ArmorMessage(mlc.rt, Type.ARMOR_CHANGED, false));
     }
 }

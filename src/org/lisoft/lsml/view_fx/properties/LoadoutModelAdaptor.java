@@ -30,7 +30,7 @@ import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdToggleItem;
-import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
@@ -141,7 +141,7 @@ public class LoadoutModelAdaptor {
         ArmorUpgrade armorSTD = isClan ? UpgradeDB.CLAN_STD_ARMOR : UpgradeDB.IS_STD_ARMOR;
         HeatSinkUpgrade hsDHS = isClan ? UpgradeDB.CLAN_DHS : UpgradeDB.IS_DHS;
         HeatSinkUpgrade hsSTD = isClan ? UpgradeDB.CLAN_SHS : UpgradeDB.IS_SHS;
-        Predicate<Message> armorChanged = (aMsg) -> aMsg instanceof ComponentMessage;
+        Predicate<Message> armorChanged = (aMsg) -> aMsg instanceof ArmorMessage;
         Predicate<Message> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
         Predicate<Message> upgradesChanged = (aMsg) -> aMsg instanceof UpgradesMessage;
         Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
@@ -236,7 +236,7 @@ public class LoadoutModelAdaptor {
         return new LsmlIntegerProperty(aXBar, () -> component.getArmor(aArmorSide), (aValue) -> {
             cmdStack.pushAndApply(new CmdSetArmor(aXBar, loadout, component, aArmorSide, aValue.intValue(), true));
             return true;
-        } , aMsg -> armorChanged.test(aMsg) && ((ComponentMessage) aMsg).component == component);
+        } , aMsg -> armorChanged.test(aMsg) && ((ArmorMessage) aMsg).component == component);
     }
 
     private BooleanProperty makeToggle(MessageXBar aXBar, Location aLocation, Item aItem,

@@ -28,8 +28,8 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.Location;
@@ -166,9 +166,9 @@ public class CmdStripLoadoutTest {
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
         verify(messageDelivery, atLeastOnce()).post(messageCaptor.capture());
         for (Message message : messageCaptor.getAllValues()) {
-            if (message instanceof ComponentMessage) {
-                ComponentMessage componentMessage = (ComponentMessage) message;
-                assertNotEquals(Type.ArmorChanged, componentMessage.type);
+            if (message instanceof ArmorMessage) {
+                ArmorMessage componentMessage = (ArmorMessage) message;
+                assertNotEquals(Type.ARMOR_CHANGED, componentMessage.type);
             }
         }
     }

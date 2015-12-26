@@ -35,7 +35,7 @@ import javax.swing.event.ChangeListener;
 
 import org.lisoft.lsml.command.CmdDistributeArmor;
 import org.lisoft.lsml.command.CmdSetArmor;
-import org.lisoft.lsml.messages.ComponentMessage;
+import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -279,8 +279,8 @@ public class ArmorDistributionPanel extends JPanel implements MessageReceiver, C
      */
     @Override
     public void receive(Message aMsg) {
-        if (aMsg.isForMe(loadout) && aMsg instanceof ComponentMessage) {
-            ComponentMessage message = (ComponentMessage) aMsg;
+        if (aMsg.isForMe(loadout) && aMsg instanceof ArmorMessage) {
+            ArmorMessage message = (ArmorMessage) aMsg;
             if (!message.manualArmor)
                 return;
             updateArmorDistribution();
