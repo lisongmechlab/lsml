@@ -380,18 +380,14 @@ public class DataCache {
             List<ModifierDescription> descriptions = new ArrayList<>();
             switch (type) {
                 case ANCHORTURN:
-                    descriptions.add(new ModifierDescription("ANCHOR TURN (LOW SPEED)", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, "lowrate", ModifierType.POSITIVE_GOOD));
-                    descriptions.add(new ModifierDescription("ANCHOR TURN (MID SPEED)", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, "midrate", ModifierType.POSITIVE_GOOD));
-                    descriptions.add(new ModifierDescription("ANCHOR TURN (HIGH SPEED)", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, "highrate", ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("ANCHOR TURN", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, ModifierDescription.SPECIFIER_ALL,
+                            ModifierType.POSITIVE_GOOD));
                     break;
                 case ARM_REFLEX:
-                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE (PITCH)", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "pitch", ModifierType.POSITIVE_GOOD));
-                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE (YAW)", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "yaw", ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_ARM_SPEED, ModifierDescription.SPECIFIER_ALL,
+                            ModifierType.POSITIVE_GOOD));
                     break;
                 case COOL_RUN:
                     descriptions.add(new ModifierDescription("COOL RUN", null, Operation.MUL, "heatloss", null,
@@ -426,17 +422,14 @@ public class DataCache {
                                     null, ModifierType.POSITIVE_GOOD));
                     break;
                 case TWIST_SPEED:
-                    descriptions.add(new ModifierDescription("TORSO TURN RATE (PITCH)", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "pitch", ModifierType.POSITIVE_GOOD));
-                    descriptions.add(new ModifierDescription("TORSO TURN RATE (YAW)", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "yaw", ModifierType.POSITIVE_GOOD));
-
+                    descriptions.add(new ModifierDescription("TORSO TURN RATE", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, ModifierDescription.SPECIFIER_ALL,
+                            ModifierType.POSITIVE_GOOD));
                     break;
                 case TWIST_X:
-                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE (PITCH)", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, "pitch", ModifierType.POSITIVE_GOOD));
-                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE (YAW)", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, "yaw", ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, ModifierDescription.SPECIFIER_ALL,
+                            ModifierType.POSITIVE_GOOD));
 
                     break;
                 default:

@@ -34,8 +34,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -121,7 +121,7 @@ public class CmdLoadStockTest {
         // armor?!)
         assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
         for (ConfiguredComponentBase part : loadout.getComponents()) {
-            verify(xBar, atLeast(1)).post(new ComponentMessage(part, Type.ArmorChanged, true));
+            verify(xBar, atLeast(1)).post(new ArmorMessage(part, Type.ARMOR_CHANGED, true));
         }
         verify(xBar, atLeast(1)).post(any(ItemMessage.class));
         verify(xBar, atLeast(1)).post(new UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
@@ -202,15 +202,15 @@ public class CmdLoadStockTest {
             @Override
             public Void answer(InvocationOnMock aInvocation) throws Throwable {
                 Message aMsg = (Message) aInvocation.getArguments()[0];
-                if (aMsg.isForMe(loadout) && aMsg instanceof ComponentMessage) {
-                    ComponentMessage message = (ComponentMessage) aMsg;
+                if (aMsg.isForMe(loadout) && aMsg instanceof ArmorMessage) {
+                    ArmorMessage message = (ArmorMessage) aMsg;
                     if (!message.manualArmor)
                         return null;
                     stack.pushAndApply(new CmdDistributeArmor(loadout, loadout.getChassis().getArmorMax(), 10, xBar));
                 }
                 return null;
             }
-        }).when(xBar).post(Matchers.any(ComponentMessage.class));
+        }).when(xBar).post(Matchers.any(ArmorMessage.class));
 
         // Execute
         CmdLoadStock cut = new CmdLoadStock(loadout.getChassis(), loadout, xBar);

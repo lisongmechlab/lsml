@@ -22,50 +22,41 @@ package org.lisoft.lsml.messages;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 
-@Deprecated // Introduce a new armor/omnipod message instead
-public class ComponentMessage implements Message {
-    public enum Type {
-        ArmorChanged, ArmorDistributionUpdateRequest, OmniPodChanged
-    }
-
-    /**
-     * True if this message was automatically in response to a change.
-     */
-    public final boolean                 manualArmor;
+public class OmniPodMessage implements Message {
     public final ConfiguredComponentBase component;
-    public final Type                    type;
 
-    public ComponentMessage(ConfiguredComponentBase aComponent, Type aType) {
-        this(aComponent, aType, false);
-    }
-
-    public ComponentMessage(ConfiguredComponentBase aComponent, Type aType, boolean aManualArmor) {
+    public OmniPodMessage(ConfiguredComponentBase aComponent) {
         component = aComponent;
-        type = aType;
-        manualArmor = aManualArmor;
-    }
-
-    @Override
-    public boolean affectsHeatOrDamage() {
-        return type == Type.OmniPodChanged;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (manualArmor ? 1231 : 1237);
         result = prime * result + ((component == null) ? 0 : component.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ComponentMessage) {
-            ComponentMessage other = (ComponentMessage) obj;
-            return component == other.component && type == other.type && manualArmor == other.manualArmor;
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof OmniPodMessage))
+            return false;
+        OmniPodMessage other = (OmniPodMessage) obj;
+        if (component == null) {
+            if (other.component != null)
+                return false;
         }
+        else if (!component.equals(other.component))
+            return false;
+        return true;
+    }
+
+    @Override
+    public boolean affectsHeatOrDamage() {
         return false;
     }
 
@@ -76,6 +67,6 @@ public class ComponentMessage implements Message {
 
     @Override
     public String toString() {
-        return type.toString() + " for " + component.getInternalComponent().getLocation().toString();
+        return "OmniPod changed on " + component.getInternalComponent().getLocation().toString();
     }
 }

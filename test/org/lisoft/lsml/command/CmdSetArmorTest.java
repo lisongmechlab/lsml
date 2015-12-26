@@ -9,8 +9,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
@@ -299,7 +299,7 @@ public class CmdSetArmorTest {
 
         // Verify
         Mockito.verify(mlc.ct).setArmor(armorSide, newArmor, true);
-        Mockito.verify(messageRecipint).post(new ComponentMessage(mlc.ct, Type.ArmorChanged, true));
+        Mockito.verify(messageRecipint).post(new ArmorMessage(mlc.ct, Type.ARMOR_CHANGED, true));
     }
 
     /**
@@ -358,7 +358,7 @@ public class CmdSetArmorTest {
 
         // Verify
         Mockito.verify(mlc.ct).setArmor(armorSide, 1, true);
-        Mockito.verify(messageRecipint).post(new ComponentMessage(mlc.ct, Type.ArmorChanged, true));
+        Mockito.verify(messageRecipint).post(new ArmorMessage(mlc.ct, Type.ARMOR_CHANGED, true));
     }
 
     /**
@@ -425,9 +425,9 @@ public class CmdSetArmorTest {
             inOrder = Mockito.inOrder(mlc.ct);
         inOrder.verify(mlc.ct).setArmor(armorSide, aNewArmor, aManualSet);
         if (messageRecipint != null)
-            inOrder.verify(messageRecipint).post(new ComponentMessage(mlc.ct, Type.ArmorChanged, aManualSet));
+            inOrder.verify(messageRecipint).post(new ArmorMessage(mlc.ct, Type.ARMOR_CHANGED, aManualSet));
         inOrder.verify(mlc.ct).setArmor(armorSide, armor, aWasManual);
         if (messageRecipint != null)
-            inOrder.verify(messageRecipint).post(new ComponentMessage(mlc.ct, Type.ArmorChanged, aWasManual));
+            inOrder.verify(messageRecipint).post(new ArmorMessage(mlc.ct, Type.ARMOR_CHANGED, aWasManual));
     }
 }

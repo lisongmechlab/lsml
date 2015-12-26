@@ -93,7 +93,9 @@
 		
 	colour-lsml-orange: hsb(30, 100%, 70%);
 	colour-lsml-gray: hsb(240, 5%, 17%);
+	colour-lsml-gray-light: hsb(0, 0%, 41%);
 	
+	highlight: dropshadow(three-pass-box, grey, 3, 0.02, 0, 0);
 
 	/********* Base settings *********/	
 	-fx-text-fill: white;
@@ -101,7 +103,33 @@
 	/*-fx-font-family: Quark-Bold;*/
 	-fx-font-size: 8.0pt;
 	
+	-fx-accent: white;
+    -fx-focus-color: colour-lsml-gray-light;
+	
 }
+
+/*********** Styling for omnipod combo box ***********/
+.combo-box .list-view .list-cell{
+	-fx-background: colour-lsml-gray;
+	-fx-padding: 2pt;
+}
+
+.combo-box .list-view .list-cell:selected{
+	-fx-background-color: derive(colour-lsml-gray, 20%);
+}
+
+.combo-box .list-view .list-cell:selected .omni-pod-cell{
+	-fx-background-color: derive(colour-lsml-gray-light, 40%);
+}
+
+.combo-box .list-view .list-cell:hover{
+	-fx-background-color: none;
+}
+
+.combo-box .list-view .list-cell .omni-pod-cell{
+	-fx-background-color: colour-lsml-gray-light;
+}
+
 
 /*********** Styling for components ***********/
 
@@ -131,7 +159,7 @@
 
 .component-container{
 	-fx-spacing: 2pt;
-	-fx-background-color: hsb(0, 0%, 41%);
+	-fx-background-color: colour-lsml-gray-light;
 	-fx-padding: 2pt;
 }
 
@@ -198,7 +226,7 @@
 }
 
 .equipment-list .tree-table-row-cell:hover .cell{
-	-fx-effect: dropshadow(three-pass-box, grey, 2, 0.01, 0, 0);
+	-fx-effect: highlight;
 }
 
 .equipment-list .tree-table-row-cell:selected .cell{

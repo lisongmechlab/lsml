@@ -23,6 +23,7 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -58,6 +59,8 @@ public class OmniPodListCell extends ListCell<OmniPod> {
 
         root.getChildren().add(new Label(aItem.getChassisName()));
         root.getChildren().add(box);
+        root.getStyleClass().add("omni-pod-cell");
+        root.getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
 
         modifierFormatter.format(aItem.getQuirks(), root.getChildren());
         setGraphic(root);

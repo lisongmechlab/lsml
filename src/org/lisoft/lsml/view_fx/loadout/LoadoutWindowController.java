@@ -23,11 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lisoft.lsml.messages.ItemMessage;
+import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.ChassisBase;
@@ -148,14 +149,22 @@ public class LoadoutWindowController implements MessageReceiver {
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof ItemMessage || aMsg instanceof UpgradesMessage) {
-            updateEquipmentPredicates();
+        boolean efficiencies = aMsg instanceof EfficienciesMessage;
+        boolean items = aMsg instanceof EfficienciesMessage;
+        boolean upgrades = aMsg instanceof UpgradesMessage;
+        boolean omniPods = aMsg instanceof OmniPodMessage;
+        boolean modules = aMsg instanceof LoadoutMessage;
+
+        if (efficiencies || items || omniPods) {
             updateModifiers();
         }
 
-        if (aMsg instanceof ItemMessage || aMsg instanceof LoadoutMessage) {
+        if (items || upgrades || omniPods) {
+            updateEquipmentPredicates();
+        }
+
+        if (modules) {
             updateModulePredicates();
-            updateModifiers();
         }
     }
 

@@ -19,8 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
@@ -170,7 +170,7 @@ public class CmdSetArmor extends Command {
     private void setValue(int aValue, boolean aManual) {
         component.setArmor(side, aValue, aManual);
         if (messageDelivery != null) {
-            messageDelivery.post(new ComponentMessage(component, Type.ArmorChanged, aManual));
+            messageDelivery.post(new ArmorMessage(component, Type.ARMOR_CHANGED, aManual));
         }
     }
 }

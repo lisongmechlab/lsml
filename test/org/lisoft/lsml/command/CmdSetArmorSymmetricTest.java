@@ -25,8 +25,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
@@ -99,8 +99,8 @@ public class CmdSetArmorSymmetricTest {
         assertTrue(right.hasManualArmor());
         assertEquals(amount, left.getArmor(side));
         assertEquals(amount, right.getArmor(side));
-        Mockito.verify(xBar).post(new ComponentMessage(left, Type.ArmorChanged, true));
-        Mockito.verify(xBar).post(new ComponentMessage(right, Type.ArmorChanged, true));
+        Mockito.verify(xBar).post(new ArmorMessage(left, Type.ARMOR_CHANGED, true));
+        Mockito.verify(xBar).post(new ArmorMessage(right, Type.ARMOR_CHANGED, true));
     }
 
     @Test
@@ -122,8 +122,8 @@ public class CmdSetArmorSymmetricTest {
             assertTrue(right.hasManualArmor());
             assertEquals(amount, left.getArmor(side));
             assertEquals(amount, right.getArmor(side));
-            Mockito.verify(xBar).post(new ComponentMessage(left, Type.ArmorChanged, true));
-            Mockito.verify(xBar).post(new ComponentMessage(right, Type.ArmorChanged, true));
+            Mockito.verify(xBar).post(new ArmorMessage(left, Type.ARMOR_CHANGED, true));
+            Mockito.verify(xBar).post(new ArmorMessage(right, Type.ARMOR_CHANGED, true));
         }
     }
 

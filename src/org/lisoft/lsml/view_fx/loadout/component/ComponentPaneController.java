@@ -24,7 +24,11 @@ import java.util.Collection;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
+import org.lisoft.lsml.command.CmdSetOmniPod;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -34,6 +38,7 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack;
@@ -69,7 +74,7 @@ import javafx.scene.layout.VBox;
  * 
  * @author Li Song
  */
-public class ComponentPaneController {
+public class ComponentPaneController implements MessageReceiver {
     public static final int         ITEM_WIDTH = 150;
 
     @FXML
@@ -126,6 +131,7 @@ public class ComponentPaneController {
      */
     public void setComponent(MessageXBar aMessageXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
             Location aLocation, DynamicSlotDistributor aDistributor) {
+        aMessageXBar.attach(this);
         stack = aStack;
         model = aModel;
         location = aLocation;
@@ -136,7 +142,7 @@ public class ComponentPaneController {
         setupItemView(aDistributor);
         setupTitle();
         setupArmors();
-        setupHardPoints();
+        updateHardPoints();
         setupOmniPods();
     }
 
@@ -160,6 +166,16 @@ public class ComponentPaneController {
                     .add(Bindings.selectDouble(container.paddingProperty(), "right"));
 
             omniPodSelection.maxWidthProperty().bind(container.widthProperty().subtract(padding));
+            omniPodSelection.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
+                try {
+                    stack.pushAndApply(
+                            new CmdSetOmniPod(xBar, (LoadoutOmniMech) model.loadout, componentOmniMech, aNew));
+                }
+                catch (Exception e) {
+                    // Should never fail.
+                    LiSongMechLab.showError(e);
+                }
+            });
         }
         else {
             container.getChildren().remove(omniPodSelection);
@@ -167,7 +183,7 @@ public class ComponentPaneController {
         }
     }
 
-    private void setupHardPoints() {
+    private void updateHardPoints() {
         hardPointContainer.getChildren().clear();
         if (location != Location.LeftLeg && location != Location.RightLeg && location != Location.Head
                 && location != Location.CenterTorso) {
@@ -312,5 +328,16 @@ public class ComponentPaneController {
         }
         aDragEvent.setDropCompleted(success);
         aDragEvent.consume();
+    }
+
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg instanceof OmniPodMessage) {
+            OmniPodMessage omniPodMessage = (OmniPodMessage) aMsg;
+            if (omniPodMessage.component == component) {
+                updateHardPoints();
+            }
+        }
+
     }
 }

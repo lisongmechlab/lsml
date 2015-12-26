@@ -27,8 +27,8 @@ import javax.swing.SwingUtilities;
 
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdSetArmorSymmetric;
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
+import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -104,11 +104,11 @@ public class ArmorSpinnerModel extends SpinnerNumberModel implements MessageRece
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg.isForMe(loadout) && aMsg instanceof ComponentMessage) {
-            ComponentMessage message = (ComponentMessage) aMsg;
+        if (aMsg.isForMe(loadout) && aMsg instanceof ArmorMessage) {
+            ArmorMessage message = (ArmorMessage) aMsg;
             if (message.component != part)
                 return;
-            if (message.type == Type.ArmorChanged) {
+            if (message.type == Type.ARMOR_CHANGED) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {

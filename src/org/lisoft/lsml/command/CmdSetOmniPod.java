@@ -19,10 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import org.lisoft.lsml.messages.ComponentMessage;
-import org.lisoft.lsml.messages.ComponentMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
@@ -96,7 +95,7 @@ public class CmdSetOmniPod extends CompositeCommand {
             @Override
             protected void undo() {
                 loadout.setOmniPod(oldOmniPod);
-                messageBuffer.post(new ComponentMessage(component, Type.OmniPodChanged));
+                messageBuffer.post(new OmniPodMessage(component));
             }
 
             @Override
@@ -107,7 +106,7 @@ public class CmdSetOmniPod extends CompositeCommand {
             @Override
             protected void apply() {
                 loadout.setOmniPod(newOmniPod);
-                messageBuffer.post(new ComponentMessage(component, Type.OmniPodChanged));
+                messageBuffer.post(new OmniPodMessage(component));
             }
         });
     }
