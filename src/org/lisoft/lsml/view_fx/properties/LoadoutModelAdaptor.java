@@ -65,8 +65,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 /**
- * This class adapts a {@link Loadou import javafx.beans.property.SimpleIntegerProperty;tBase} for suitability to use
- * with JavaFX bindings type APIs.
+ * This class adapts a {@link LoadoutBase} for suitability to use with JavaFX bindings type APIs.
  * 
  * @author Emily Björk
  */

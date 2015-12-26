@@ -109,6 +109,19 @@
 	
 }
 
+/*********** Styling for Mobility Arcs ***********/
+.mobility-arc-bg{
+	-fx-fill:  derive(colour-lsml-gray, 20%);
+}
+
+.mobility-arc-outer{
+	-fx-fill: derive(colour-lsml-gray, 60%);
+}
+
+.mobility-arc{
+	-fx-fill: derive(colour-lsml-gray, 90%);
+}
+
 /*********** Styling for omnipod combo box ***********/
 .combo-box .list-view .list-cell{
 	-fx-background: colour-lsml-gray;

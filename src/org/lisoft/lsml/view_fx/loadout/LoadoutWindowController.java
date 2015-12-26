@@ -48,6 +48,7 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
@@ -62,6 +63,7 @@ import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableCell;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableRow;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquippablePredicate;
 import org.lisoft.lsml.view_fx.loadout.equipment.ModuleTableRow;
+import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
@@ -83,6 +85,7 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Arc;
 
 /**
  * Controller for the loadout window.
@@ -90,66 +93,89 @@ import javafx.scene.layout.VBox;
  * @author Emily Björk
  */
 public class LoadoutWindowController implements MessageReceiver {
-    private static final String     COLUMN_MASS       = "Mass";
-    private static final String     COLUMN_NAME       = "Name";
-    private static final String     COLUMN_SLOTS      = "Slots";
-    private static final int        UNDO_DEPTH        = 128;
+    private static final String        COLUMN_MASS       = "Mass";
+    private static final String        COLUMN_NAME       = "Name";
+    private static final String        COLUMN_SLOTS      = "Slots";
+    private static final int           UNDO_DEPTH        = 128;
 
     @FXML
-    private Slider                  armorWizardRatio;
+    private Slider                     armorWizardRatio;
     @FXML
-    private Slider                  armorWizardAmount;
+    private Slider                     armorWizardAmount;
     @FXML
-    private CheckBox                effAnchorTurn;
+    private CheckBox                   effAnchorTurn;
     @FXML
-    private CheckBox                effArmReflex;
+    private CheckBox                   effArmReflex;
     @FXML
-    private CheckBox                effCoolRun;
+    private CheckBox                   effCoolRun;
     @FXML
-    private CheckBox                effDoubleBasics;
+    private CheckBox                   effDoubleBasics;
     @FXML
-    private CheckBox                effFastFire;
+    private CheckBox                   effFastFire;
     @FXML
-    private CheckBox                effHeatContainment;
+    private CheckBox                   effHeatContainment;
     @FXML
-    private CheckBox                effSpeedTweak;
+    private CheckBox                   effSpeedTweak;
     @FXML
-    private CheckBox                effTwistSpeed;
+    private CheckBox                   effTwistSpeed;
     @FXML
-    private CheckBox                effTwistX;
+    private CheckBox                   effTwistX;
     @FXML
-    private TreeTableView<Object>   equipmentList;
+    private TreeTableView<Object>      equipmentList;
     @FXML
-    private ProgressBar             generalArmorBar;
+    private ProgressBar                generalArmorBar;
     @FXML
-    private Label                   generalArmorLabel;
+    private Label                      generalArmorLabel;
     @FXML
-    private ProgressBar             generalMassBar;
+    private ProgressBar                generalMassBar;
     @FXML
-    private Label                   generalMassLabel;
+    private Label                      generalMassLabel;
     @FXML
-    private ProgressBar             generalSlotsBar;
+    private ProgressBar                generalSlotsBar;
     @FXML
-    private Label                   generalSlotsLabel;
+    private Label                      generalSlotsLabel;
     @FXML
-    private HBox                    layoutContainer;
+    private HBox                       layoutContainer;
     @FXML
-    private TreeTableView<Object>   moduleList;
+    private Arc                        mobilityArcYawOuter;
     @FXML
-    private CheckBox                upgradeArtemis;
+    private Arc                        mobilityArcYawInner;
     @FXML
-    private CheckBox                upgradeDoubleHeatSinks;
+    private Arc                        mobilityArcPitchOuter;
     @FXML
-    private CheckBox                upgradeEndoSteel;
+    private Arc                        mobilityArcPitchInner;
     @FXML
-    private CheckBox                upgradeFerroFibrous;
+    private Label                      mobilityTopSpeed;
     @FXML
-    private VBox                    modifiersBox;
+    private Label                      mobilityTurnSpeed;
+    @FXML
+    private Label                      mobilityTorsoYawSpeed;
+    @FXML
+    private Label                      mobilityTorsoPitchSpeed;
+    @FXML
+    private Label                      mobilityJumpJets;
+    @FXML
+    private Label                      mobilityArmYawSpeed;
+    @FXML
+    private Label                      mobilityArmPitchSpeed;
+    @FXML
+    private TreeTableView<Object>      moduleList;
+    @FXML
+    private CheckBox                   upgradeArtemis;
+    @FXML
+    private CheckBox                   upgradeDoubleHeatSinks;
+    @FXML
+    private CheckBox                   upgradeEndoSteel;
+    @FXML
+    private CheckBox                   upgradeFerroFibrous;
+    @FXML
+    private VBox                       modifiersBox;
 
-    private final ModifierFormatter modifierFormatter = new ModifierFormatter();
-    private final CommandStack      cmdStack          = new CommandStack(UNDO_DEPTH);
-    private final MessageXBar       xBar              = new MessageXBar();
-    private LoadoutModelAdaptor     model;
+    private final ModifierFormatter    modifierFormatter = new ModifierFormatter();
+    private final CommandStack         cmdStack          = new CommandStack(UNDO_DEPTH);
+    private final MessageXBar          xBar              = new MessageXBar();
+    private LoadoutModelAdaptor        model;
+    private LoadoutMetricsModelAdaptor metrics;
 
     @Override
     public void receive(Message aMsg) {
@@ -182,6 +208,7 @@ public class LoadoutWindowController implements MessageReceiver {
     public void setLoadout(LoadoutBase<?> aLoadout) {
         xBar.attach(this);
         model = new LoadoutModelAdaptor(aLoadout, xBar, cmdStack);
+        metrics = new LoadoutMetricsModelAdaptor(new LoadoutMetrics(aLoadout, null, xBar), aLoadout, xBar);
 
         setupLayoutView();
         setupEquipmentList();
@@ -191,6 +218,30 @@ public class LoadoutWindowController implements MessageReceiver {
         setupModulesList();
         setupArmorWizard();
         updateModifiers();
+        setupMobility();
+    }
+
+    private void setupMobility() {
+        mobilityTopSpeed.textProperty().bind(Bindings.format("Top Speed: %.1f km/h", metrics.topSpeed));
+        mobilityTurnSpeed.textProperty().bind(Bindings.format("Turn Speed: %.1f °/s", metrics.turnSpeed));
+
+        mobilityTorsoPitchSpeed.textProperty()
+                .bind(Bindings.format("Torso (pitch): %.1f °/s", metrics.torsoPitchSpeed));
+        mobilityTorsoYawSpeed.textProperty().bind(Bindings.format("Torso (yaw): %.1f °/s", metrics.torsoYawSpeed));
+        mobilityArmPitchSpeed.textProperty().bind(Bindings.format("Arm (pitch): %.1f °/s", metrics.armPitchSpeed));
+        mobilityArmYawSpeed.textProperty().bind(Bindings.format("Arm (yaw): %.1f °/s", metrics.armYawSpeed));
+        mobilityJumpJets.textProperty()
+                .bind(Bindings.format("JumpJets: %d/%d", metrics.jumpJetCount, metrics.jumpJetMax));
+
+        mobilityArcPitchOuter.lengthProperty().bind(metrics.armPitch.multiply(2.0));
+        mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
+        mobilityArcYawOuter.lengthProperty().bind(metrics.armYaw.multiply(2.0));
+        mobilityArcYawInner.lengthProperty().bind(metrics.torsoYaw.multiply(2.0));
+
+        mobilityArcPitchOuter.startAngleProperty().bind(metrics.armPitch.negate());
+        mobilityArcPitchInner.startAngleProperty().bind(metrics.torsoPitch.negate());
+        mobilityArcYawOuter.startAngleProperty().bind(metrics.armYaw.negate().add(90));
+        mobilityArcYawInner.startAngleProperty().bind(metrics.torsoYaw.negate().add(90));
     }
 
     private void updateArmorWizard() {
