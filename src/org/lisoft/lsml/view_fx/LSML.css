@@ -100,9 +100,10 @@
 	/********* Base settings *********/	
 	-fx-text-fill: white;
 	-fx-base: colour-lsml-gray;
-	/*-fx-font-family: Quark-Bold;*/
+	/*-fx-font-family: 'Rajdhani Medium';
+	-fx-font-weight: 900;*/
 	-fx-font-size: 8.0pt;
-	
+		
 	-fx-accent: white;
     -fx-focus-color: colour-lsml-gray-light;
 	
@@ -135,7 +136,7 @@
 
 .layout-root{
 	-fx-padding: 2pt;
-	-fx-background-color: linear-gradient( from 0% 0%  to 100% 100%, hsb(30, 20%, 50%) 0%, derive(colour-lsml-orange, -70%) 30%, colour-lsml-gray 60% )
+	/*-fx-background-color: linear-gradient( from 0% 0%  to 100% 100%, hsb(30, 20%, 50%) 0%, derive(colour-lsml-orange, -70%) 30%, colour-lsml-gray 60% )*/
 }
 
 .layout-container{
@@ -208,6 +209,15 @@
 .hard-point{
 	-fx-padding: 2.0pt;
 	-fx-background-radius: 5.0pt;
+}
+
+/*********** Styling for armor display ***********/
+.armor-value, .armor-value .text-field{
+	-fx-text-fill: white;
+}
+
+.armor-value:autoarmor, .armor-value:autoarmor .text-field{
+	-fx-text-fill: hsb(0, 0%, 70%);
 }
 
 /*********** Styling for equipment list ***********/

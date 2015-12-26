@@ -130,11 +130,11 @@
                     <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
                   </rowConstraints>
                   <children>
-                    <Slider majorTickUnit="5.0" max="16.0" min="1.0" minorTickCount="4" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                    <Slider majorTickUnit="100.0" max="400.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" />
+                    <Slider fx:id="armorWizardRatio" majorTickUnit="5.0" max="16.0" min="1.0" minorTickCount="4" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Slider fx:id="armorWizardAmount" majorTickUnit="100.0" max="400.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" />
                     <Label text="Amount:" />
                     <Label text="Front/Back:" GridPane.rowIndex="1" />
-                    <Button mnemonicParsing="false" text="Reset manually set armor" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                    <Button onAction="#armorWizardResetAll" mnemonicParsing="false" text="Reset manually set armor" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
                   </children>
                 </GridPane>
               </content>

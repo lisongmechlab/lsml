@@ -104,9 +104,11 @@ public class LiSongMechLab extends Application {
     }
 
     public static void showError(Exception aException) {
-        Alert alert = new Alert(AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
-        alert.getDialogPane().getStylesheets().addAll(active_style_sheets);
-        alert.showAndWait();
+        javafx.application.Platform.runLater(() -> {
+            Alert alert = new Alert(AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
+            alert.getDialogPane().getStylesheets().addAll(active_style_sheets);
+            alert.showAndWait();
+        });
     }
 
     public static void main(String[] args) {
@@ -129,10 +131,12 @@ public class LiSongMechLab extends Application {
             SplashScreen.closeSplash();
         }
 
-        try (InputStream isBold = LiSongMechLab.class.getResourceAsStream("/resources/Quark-Bold.otf");
+        try (InputStream rajdReg = LiSongMechLab.class.getResourceAsStream("/resources/Rajdhani-Medium.ttf");
+                InputStream isBold = LiSongMechLab.class.getResourceAsStream("/resources/Quark-Bold.otf");
                 InputStream isLight = LiSongMechLab.class.getResourceAsStream("/resources/Quark-Light.otf");) {
             Font.loadFont(isBold, 0);
             Font.loadFont(isLight, 0);
+            Font.loadFont(rajdReg, 0);
         }
         catch (IOException e) {
             showError(e);

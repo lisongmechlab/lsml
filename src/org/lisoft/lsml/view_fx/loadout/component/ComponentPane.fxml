@@ -11,24 +11,31 @@
       <children>
         <ToggleButton fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" />
         <ToggleButton fx:id="toggleHA" mnemonicParsing="false" text="Hand" />
-        <ComboBox fx:id="omniPodSelection"/>
+        <ComboBox fx:id="omniPodSelection" />
         <HBox fx:id="armorBox" alignment="CENTER">
           <children>
             <Label fx:id="armorLabel" text="Armor" HBox.hgrow="NEVER" />
-            <Spinner fx:id="armorSpinner" editable="true" prefWidth="60.0" HBox.hgrow="ALWAYS" />
-            <Label fx:id="armorMax" text="/max" HBox.hgrow="NEVER" />
+            <Spinner fx:id="armorSpinner" editable="true" prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS" />
+            <Label fx:id="armorMax" styleClass="armor-value" text="/max" HBox.hgrow="NEVER" />
           </children>
         </HBox>
             <HBox fx:id="armorBoxBack" alignment="CENTER">
                <children>
                   <Label fx:id="armorLabelBack" text="Armor" HBox.hgrow="NEVER" />
-                  <Spinner fx:id="armorSpinnerBack" editable="true" prefWidth="60.0" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="armorMaxBack" text="/max" HBox.hgrow="NEVER" />
+                  <Spinner fx:id="armorSpinnerBack" editable="true" prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS" />
+                  <Label fx:id="armorMaxBack" styleClass="armor-value" text="/max" HBox.hgrow="NEVER" />
                </children>
             </HBox>
         <HBox fx:id="hardPointContainer" alignment="CENTER" />
-        <ItemView fx:id="itemView" styleClass="equipment-view" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" />
+        <ItemView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
       </children>
     </VBox>
   </content>
+   <contextMenu>
+      <ContextMenu fx:id="armorContextMenu">
+        <items>
+          <MenuItem mnemonicParsing="false" onAction="#resetManualArmor" text="Reset manual armor" />
+        </items>
+      </ContextMenu>
+   </contextMenu>
 </fx:root>
