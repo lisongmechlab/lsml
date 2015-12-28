@@ -35,6 +35,10 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * This class adapts {@link LoadoutMetrics} for JavaFX.
@@ -42,25 +46,42 @@ import javafx.beans.binding.IntegerBinding;
  * @author Emily Björk
  */
 public class LoadoutMetricsModelAdaptor {
-    private final LoadoutMetrics metrics;
-    public final DoubleBinding   topSpeed;
-    public final DoubleBinding   turnSpeed;
-    public final DoubleBinding   torsoPitchSpeed;
-    public final DoubleBinding   torsoYawSpeed;
-    public final DoubleBinding   armPitchSpeed;
-    public final DoubleBinding   armYawSpeed;
-    public final DoubleBinding   torsoPitch;
-    public final DoubleBinding   torsoYaw;
-    public final DoubleBinding   armPitch;
-    public final DoubleBinding   armYaw;
-    public final IntegerBinding  jumpJetCount;
-    public final IntegerBinding  jumpJetMax;
+    private final LoadoutMetrics             metrics;
+    private final MessageXBar                xBar;
 
-    public final IntegerBinding  heatSinkCount;
-    public final DoubleBinding   heatCapacity;
-    public final DoubleBinding   coolingRatio;
-    public final DoubleBinding   timeToCool;
-    private final MessageXBar    xBar;
+    public final DoubleBinding               topSpeed;
+    public final DoubleBinding               turnSpeed;
+    public final DoubleBinding               torsoPitchSpeed;
+    public final DoubleBinding               torsoYawSpeed;
+    public final DoubleBinding               armPitchSpeed;
+    public final DoubleBinding               armYawSpeed;
+    public final DoubleBinding               torsoPitch;
+    public final DoubleBinding               torsoYaw;
+    public final DoubleBinding               armPitch;
+    public final DoubleBinding               armYaw;
+    public final IntegerBinding              jumpJetCount;
+    public final IntegerBinding              jumpJetMax;
+
+    public final IntegerBinding              heatSinkCount;
+    public final DoubleBinding               heatCapacity;
+    public final DoubleBinding               heatDissipation;
+    public final DoubleBinding               coolingRatio;
+    public final DoubleBinding               timeToCool;
+
+    public final DoubleBinding               alphaDamage;
+    public final DoubleBinding               alphaRange;
+    public final DoubleBinding               alphaHeat;
+    public final DoubleBinding               alphaGhostHeat;
+    public final DoubleBinding               alphaTimeToOverheat;
+    public final DoubleBinding               maxDPS;
+    public final DoubleBinding               maxDPSRange;
+    public final DoubleBinding               sustainedDPS;
+    public final DoubleBinding               sustainedDPSRange;
+    public final DoubleBinding               burstDamage;
+    public final DoubleBinding               burstRange;
+    public final DoubleProperty              burstTime   = new SimpleDoubleProperty(5.0);
+    public final ObjectProperty<Double>      range       = new SimpleObjectProperty<>(null);
+    public final ObjectProperty<Environment> environment = new SimpleObjectProperty<>();
 
     public LoadoutMetricsModelAdaptor(LoadoutMetrics aMetrics, LoadoutBase<?> aLoadout, MessageXBar aRcv) {
         metrics = aMetrics;
@@ -94,19 +115,41 @@ public class LoadoutMetricsModelAdaptor {
         // Heat
         heatSinkCount = new LsmlIntegerBinding(aRcv, () -> aLoadout.getHeatsinksCount(), itemsOrPodsChanged);
         heatCapacity = new LsmlDoubleBinding(aRcv, () -> metrics.heatCapacity.calculate(), affectsHeatOrDamage);
+        heatDissipation = new LsmlDoubleBinding(aRcv, () -> metrics.heatDissipation.calculate(), affectsHeatOrDamage);
         coolingRatio = new LsmlDoubleBinding(aRcv, () -> metrics.coolingRatio.calculate(), affectsHeatOrDamage);
         timeToCool = new LsmlDoubleBinding(aRcv, () -> metrics.timeToCool.calculate(), affectsHeatOrDamage);
+
+        // Offense
+        alphaDamage = new LsmlDoubleBinding(aRcv, () -> metrics.alphaStrike.calculate(), affectsHeatOrDamage);
+        alphaRange = new LsmlDoubleBinding(aRcv, () -> metrics.alphaStrike.getRange(), affectsHeatOrDamage);
+        alphaHeat = new LsmlDoubleBinding(aRcv, () -> metrics.alphaHeat.calculate(), affectsHeatOrDamage);
+        alphaGhostHeat = new LsmlDoubleBinding(aRcv, () -> metrics.ghostHeat.calculate(), affectsHeatOrDamage);
+        alphaTimeToOverheat = new LsmlDoubleBinding(aRcv, () -> metrics.alphaTimeToOverHeat.calculate(),
+                affectsHeatOrDamage);
+        maxDPS = new LsmlDoubleBinding(aRcv, () -> metrics.maxDPS.calculate(), affectsHeatOrDamage);
+        maxDPSRange = new LsmlDoubleBinding(aRcv, () -> metrics.maxDPS.getRange(), affectsHeatOrDamage);
+        sustainedDPS = new LsmlDoubleBinding(aRcv, () -> metrics.maxSustainedDPS.calculate(), affectsHeatOrDamage);
+        sustainedDPSRange = new LsmlDoubleBinding(aRcv, () -> metrics.maxSustainedDPS.getRange(), affectsHeatOrDamage);
+        burstDamage = new LsmlDoubleBinding(aRcv, () -> metrics.burstDamageOverTime.calculate(), affectsHeatOrDamage);
+        burstRange = new LsmlDoubleBinding(aRcv, () -> metrics.burstDamageOverTime.getRange(), affectsHeatOrDamage);
+
+        burstTime.addListener((aObservable, aOld, aNew) -> {
+            metrics.changeTime(aNew.doubleValue());
+            updateHeatAndDamageMetrics();
+        });
+
+        range.addListener((aObservable, aOld, aNew) -> {
+            metrics.changeRange(aNew.doubleValue());
+            updateHeatAndDamageMetrics();
+        });
+
+        environment.addListener((aObservable, aOld, aNew) -> {
+            metrics.changeEnvironment(aNew);
+            updateHeatAndDamageMetrics();
+        });
     }
 
-    /**
-     * Changes the environment to use for heat calculations.
-     * 
-     * @param aEnvironment
-     */
-    public void changeEnvironment(Environment aEnvironment) {
-        metrics.changeEnvironment(aEnvironment);
-
-        // Provoke bindings that depend on heat to update.
+    public void updateHeatAndDamageMetrics() {
         xBar.post(new Message() {
             @Override
             public boolean isForMe(LoadoutBase<?> aLoadout) {
