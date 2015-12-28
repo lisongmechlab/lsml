@@ -21,6 +21,7 @@ package org.lisoft.lsml.view_fx.style;
 
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 
 import javafx.scene.Node;
@@ -43,6 +44,19 @@ public class HardPointFormatter {
 
         label.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
         StyleManager.changeStyle(label, EquipmentCategory.classify(aHardPointType));
+
+        return label;
+    }
+
+    public Node format(int aNumHardPoints, JumpJet aJumpJet) {
+        Label label = new Label();
+        if (aNumHardPoints == 1)
+            label.setText("JJ");
+        else
+            label.setText(aNumHardPoints + "JJ");
+
+        label.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
+        StyleManager.changeStyle(label, EquipmentCategory.classify(aJumpJet));
 
         return label;
     }

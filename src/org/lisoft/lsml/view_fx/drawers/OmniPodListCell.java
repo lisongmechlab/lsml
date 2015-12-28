@@ -21,6 +21,8 @@ package org.lisoft.lsml.view_fx.drawers;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.OmniPod;
+import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
@@ -38,6 +40,7 @@ import javafx.scene.layout.VBox;
 public class OmniPodListCell extends ListCell<OmniPod> {
     private final HardPointFormatter hardPointFormatter = new HardPointFormatter();
     private final ModifierFormatter  modifierFormatter  = new ModifierFormatter();
+    private final static JumpJet     PROTO_JUMPJET      = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS III");
 
     @Override
     protected void updateItem(OmniPod aItem, boolean aEmpty) {
@@ -55,6 +58,10 @@ public class OmniPodListCell extends ListCell<OmniPod> {
             if (num > 0) {
                 box.getChildren().add(hardPointFormatter.format(num, hardPointType));
             }
+        }
+
+        if (aItem.getJumpJetsMax() > 0) {
+            box.getChildren().add(hardPointFormatter.format(aItem.getJumpJetsMax(), PROTO_JUMPJET));
         }
 
         root.getChildren().add(new Label(aItem.getChassisName()));
