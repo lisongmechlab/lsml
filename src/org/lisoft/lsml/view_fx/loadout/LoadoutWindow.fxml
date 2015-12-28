@@ -62,18 +62,29 @@
                   </rowConstraints>
                   <children>
                     <Label text="Mass:"/>
-                    <ProgressBar fx:id="generalMassBar"
-                      GridPane.columnIndex="1"/>
+                    <Pane GridPane.columnIndex="1">
+                      <children>
+                        <ProgressBar fx:id="generalMassBar"/>
+                      </children>
+                    </Pane>
                     <Label fx:id="generalMassLabel"
                       GridPane.columnIndex="2"/>
                     <Label text="Slots:" GridPane.rowIndex="1"/>
-                    <ProgressBar fx:id="generalSlotsBar"
-                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <Pane GridPane.columnIndex="1"
+                      GridPane.rowIndex="1">
+                      <children>
+                        <ProgressBar fx:id="generalSlotsBar"/>
+                      </children>
+                    </Pane>
                     <Label fx:id="generalSlotsLabel"
                       GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                     <Label text="Armor:" GridPane.rowIndex="2"/>
-                    <ProgressBar fx:id="generalArmorBar"
-                      GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                    <Pane GridPane.columnIndex="1"
+                      GridPane.rowIndex="2">
+                      <children>
+                        <ProgressBar fx:id="generalArmorBar"/>
+                      </children>
+                    </Pane>
                     <Label fx:id="generalArmorLabel"
                       GridPane.columnIndex="2" GridPane.rowIndex="2"/>
                   </children>
@@ -103,7 +114,7 @@
                 </GridPane>
               </content>
             </TitledPane>
-            <TitledPane text="Efficiencies" expanded="false">
+            <TitledPane expanded="false" text="Efficiencies">
               <content>
                 <GridPane>
                   <columnConstraints>
@@ -139,7 +150,7 @@
                 </GridPane>
               </content>
             </TitledPane>
-            <TitledPane text="Quirks/Modifiers" expanded="false">
+            <TitledPane expanded="false" text="Quirks/Modifiers">
               <content>
                 <VBox fx:id="modifiersBox"/>
               </content>
@@ -178,7 +189,7 @@
                 </GridPane>
               </content>
             </TitledPane>
-            <TitledPane text="Mobility" expanded="false">
+            <TitledPane expanded="false" text="Mobility">
               <content>
                 <GridPane>
                   <columnConstraints>
@@ -314,15 +325,8 @@
                       </children>
                     </GridPane>
                     <TableView fx:id="offensiveWeaponTable"
-                      tableMenuButtonVisible="true"  prefWidth="20.0" prefHeight="200.0">
-
-                      <columns>
-                        <TableColumn prefWidth="-1.0" text="Weapon"/>
-                        <TableColumn prefWidth="40.0" text="Ammo"/>
-                        <TableColumn prefWidth="40.0" text="Volleys"/>
-                        <TableColumn prefWidth="40.0" text="Time"/>
-                        <TableColumn prefWidth="40.0" text="T. Damage"/>
-                      </columns>
+                      prefHeight="200.0" prefWidth="20.0"
+                      tableMenuButtonVisible="true">
                     </TableView>
                   </children>
                 </VBox>
