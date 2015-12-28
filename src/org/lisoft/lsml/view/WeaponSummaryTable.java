@@ -76,7 +76,7 @@ public class WeaponSummaryTable extends JTable implements MessageReceiver {
 
             Entry(Ammunition aItem) {
                 ammoType = aItem.getAmmoType();
-                rounds = aItem.getNumShots();
+                rounds = aItem.getNumRounds();
                 weaponRepresentant = null;
             }
 
@@ -84,7 +84,7 @@ public class WeaponSummaryTable extends JTable implements MessageReceiver {
                 if (anItem instanceof Ammunition) {
                     Ammunition ammo = (Ammunition) anItem;
                     if (null != weaponRepresentant && weaponRepresentant.isCompatibleAmmo(ammo)) {
-                        rounds += ammo.getNumShots();
+                        rounds += ammo.getNumRounds();
                         return true;
                     }
                 }

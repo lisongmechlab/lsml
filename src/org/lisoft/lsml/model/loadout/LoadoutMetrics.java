@@ -61,6 +61,7 @@ public class LoadoutMetrics {
 
     // Heat
     public final AlphaTimeToOverHeat      alphaTimeToOverHeat;
+    public final AlphaHeat                alphaHeat;
     public final AsymptoticTimeToOverHeat asymptoticTimeToOverHeat;
     public final CoolingRatio             coolingRatio;
     public final GhostHeat                ghostHeat;
@@ -119,6 +120,7 @@ public class LoadoutMetrics {
         asymptoticTimeToOverHeat = new AsymptoticTimeToOverHeat(heatCapacity, heatDissipation, heatGeneration);
         coolingRatio = new CoolingRatio(heatDissipation, heatGeneration);
         timeToCool = new TimeToCool(heatCapacity, heatDissipation);
+        alphaHeat = new AlphaHeat(aLoadout);
 
         // Offense
         alphaStrike = new AlphaStrike(aLoadout);

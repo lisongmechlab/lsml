@@ -49,7 +49,7 @@ public class Ammunition extends Item {
         internalDamage = aInternalDamage;
     }
 
-    public int getNumShots() {
+    public int getNumRounds() {
         return rounds;
     }
 

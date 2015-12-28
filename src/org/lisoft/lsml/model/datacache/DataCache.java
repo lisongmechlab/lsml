@@ -608,7 +608,8 @@ public class DataCache {
 
                     List<Modifier> modifiers = new ArrayList<>();
                     if (cooldown[maxRank - 1] != 0) {
-                        modifiers.add(new Modifier(cooldownDesc, 1.0 - cooldown[maxRank - 1]));
+                        // negation because PGI...
+                        modifiers.add(new Modifier(cooldownDesc, -(1.0 - cooldown[maxRank - 1])));
                     }
                     if (maxRange[maxRank - 1] != 0) {
                         // modifiers.add(new Modifier(rangeDesc, longRange[maxRank - 1] - 1.0)); // They are always the

@@ -19,9 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.lisoft.lsml.command.CmdDistributeArmor;
 import org.lisoft.lsml.command.CmdSetArmor;
@@ -57,7 +59,9 @@ import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.controls.BetterTextFormatter;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
+import org.lisoft.lsml.view_fx.controls.RegexStringConverter;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
 import org.lisoft.lsml.view_fx.loadout.component.ModulePane;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
@@ -71,6 +75,7 @@ import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
@@ -82,9 +87,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -96,10 +105,15 @@ import javafx.scene.shape.Arc;
  * @author Li Song
  */
 public class LoadoutWindowController implements MessageReceiver {
-    private static final String        COLUMN_MASS       = "Mass";
-    private static final String        COLUMN_NAME       = "Name";
-    private static final String        COLUMN_SLOTS      = "Slots";
-    private static final int           UNDO_DEPTH        = 128;
+    private static final String        COLUMNS_WPN_WEAPON  = "Weapon";
+    private static final String        COLUMN_MASS         = "Mass";
+    private static final String        COLUMN_NAME         = "Name";
+    private static final String        COLUMN_SLOTS        = "Slots";
+    private static final int           UNDO_DEPTH          = 128;
+    private static final String        COLUMNS_WPN_AMMO    = "Rnds";
+    private static final String        COLUMNS_WPN_VOLLEYS = "Vlys";
+    private static final String        COLUMNS_WPN_SECONDS = "Time";
+    private static final String        COLUMNS_WPN_DAMAGE  = "Dmg";
 
     @FXML
     private Slider                     armorWizardRatio;
@@ -172,6 +186,28 @@ public class LoadoutWindowController implements MessageReceiver {
     @FXML
     private Label                      heatTimeToCool;
     @FXML
+    private ComboBox<String>           offensiveRange;
+    @FXML
+    private ComboBox<String>           offensiveTime;
+    @FXML
+    private Label                      offensiveAlphaDamage;
+    @FXML
+    private Label                      offensiveMaxDPS;
+    @FXML
+    private Label                      offensiveAlphaHeat;
+    @FXML
+    private Label                      offensiveAlphaTimeToCool;
+    @FXML
+    private Label                      offensiveAlphaGhostHeat;
+    @FXML
+    private Label                      offensiveSustainedDPS;
+    @FXML
+    private Label                      offensiveBurstDamage;
+    @FXML
+    private Label                      offensiveTimeToOverheat;
+    @FXML
+    private TableView<WeaponSummary>   offensiveWeaponTable;
+    @FXML
     private TreeTableView<Object>      moduleList;
     @FXML
     private CheckBox                   upgradeArtemis;
@@ -184,9 +220,9 @@ public class LoadoutWindowController implements MessageReceiver {
     @FXML
     private VBox                       modifiersBox;
 
-    private final ModifierFormatter    modifierFormatter = new ModifierFormatter();
-    private final CommandStack         cmdStack          = new CommandStack(UNDO_DEPTH);
-    private final MessageXBar          xBar              = new MessageXBar();
+    private final ModifierFormatter    modifierFormatter   = new ModifierFormatter();
+    private final CommandStack         cmdStack            = new CommandStack(UNDO_DEPTH);
+    private final MessageXBar          xBar                = new MessageXBar();
     private LoadoutModelAdaptor        model;
     private LoadoutMetricsModelAdaptor metrics;
 
@@ -233,19 +269,169 @@ public class LoadoutWindowController implements MessageReceiver {
         updateModifiers();
         setupMobilityPanel();
         setupHeatPanel();
+        setupOffensivePanel();
+    }
+
+    private void setupOffensivePanel() {
+
+        RegexStringConverter rangeConverter = new RegexStringConverter(
+                Pattern.compile("\\s*(-?\\d*(?:\\.\\d*)?)\\s*m?"), new DecimalFormat("#")) {
+
+            @Override
+            public Double fromString(String aString) {
+                if (aString.trim().regionMatches(true, 0, "optimal", 0, Math.min(aString.length(), 7))) {
+                    return -1.0;
+                }
+                return super.fromString(aString);
+            }
+
+            @Override
+            public String toString(Double aObject) {
+                if (aObject <= 0.0) {
+                    return "Optimal";
+                }
+                return super.toString(aObject);
+            }
+        };
+
+        TextFormatter<Double> rangeFormatter = new BetterTextFormatter<Double>(rangeConverter, -1.0);
+        metrics.range.bind(rangeFormatter.valueProperty());
+
+        offensiveRange.getItems().add("Optimal");
+        offensiveRange.getItems().add("90m");
+        offensiveRange.getItems().add("180m");
+        offensiveRange.getItems().add("270m");
+        offensiveRange.getItems().add("450m");
+        offensiveRange.getItems().add("720m");
+        offensiveRange.getEditor().setTextFormatter(rangeFormatter);
+        offensiveTime.getSelectionModel().select(0);
+
+        TextFormatter<Double> timeFormatter = new BetterTextFormatter<Double>(
+                new RegexStringConverter(Pattern.compile("\\s*(-?\\d*)\\s*s?"), new DecimalFormat("# s")), 5.0);
+        metrics.burstTime.bind(timeFormatter.valueProperty());
+
+        offensiveTime.getItems().add("5 s");
+        offensiveTime.getItems().add("10 s");
+        offensiveTime.getItems().add("20 s");
+        offensiveTime.getItems().add("50 s");
+        offensiveTime.getEditor().setTextFormatter(timeFormatter);
+        offensiveTime.getSelectionModel().select(0);
+
+        offensiveAlphaDamage.textProperty()
+                .bind(Bindings.format("A. Dmg: %.1f@%.0fm", metrics.alphaDamage, metrics.alphaRange));
+        offensiveAlphaHeat.textProperty().bind(Bindings.format("A. Heat: %.0f%%",
+                metrics.alphaHeat.add(metrics.alphaGhostHeat).divide(metrics.heatCapacity).multiply(100)));
+        offensiveAlphaTimeToCool.textProperty()
+                .bind(Bindings.format("A. Cool: %.1fs", metrics.alphaHeat.divide(metrics.heatDissipation)));
+        offensiveAlphaGhostHeat.textProperty().bind(Bindings.format("A. Ghost Heat: %.1f", metrics.alphaGhostHeat));
+
+        offensiveMaxDPS.textProperty()
+                .bind(Bindings.format("Max DPS: %.1f@%.0fm", metrics.maxDPS, metrics.maxDPSRange));
+        offensiveSustainedDPS.textProperty()
+                .bind(Bindings.format("Sust. DPS: %.1f@%.0fm", metrics.sustainedDPS, metrics.sustainedDPSRange));
+        offensiveBurstDamage.textProperty().bind(
+                Bindings.format("Burst %.0fs: %.1f@%.0fm", metrics.burstTime, metrics.burstDamage, metrics.burstRange));
+        offensiveTimeToOverheat.textProperty().bind(Bindings.format("A. Overheat: %.1fs", metrics.alphaTimeToOverheat));
+
+        setupWeaponsTable();
+    }
+
+    private void setupWeaponsTable() {
+        offensiveWeaponTable.setItems(new WeaponSummaryList(xBar, model.loadout));
+
+        ObservableList<TableColumn<WeaponSummary, ?>> cols = offensiveWeaponTable.getColumns();
+        cols.clear();
+
+        DecimalFormat df = new DecimalFormat("#");
+        final double nameSize = 0.35;
+        final double margin = 0.02;
+
+        TableColumn<WeaponSummary, String> nameColumn = new TableColumn<>(COLUMNS_WPN_WEAPON);
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply(nameSize - margin));
+
+        TableColumn<WeaponSummary, String> ammoColumn = new TableColumn<>(COLUMNS_WPN_AMMO);
+        ammoColumn.setCellValueFactory((aFeatures) -> {
+            WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+
+                {
+                    bind(value.roundsProperty());
+                }
+
+                @Override
+                protected String computeValue() {
+                    return df.format(value.roundsProperty().get());
+                }
+            };
+        });
+        ammoColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+
+        TableColumn<WeaponSummary, String> volleysColumn = new TableColumn<>(COLUMNS_WPN_VOLLEYS);
+        volleysColumn.setCellValueFactory((aFeatures) -> {
+            WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+                {
+                    bind(value.roundsProperty());
+                    bind(value.volleySizeProperty());
+                }
+
+                @Override
+                protected String computeValue() {
+                    return df.format(value.roundsProperty().get() / value.volleySizeProperty().get());
+                }
+            };
+        });
+        volleysColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+
+        TableColumn<WeaponSummary, String> secondsColumn = new TableColumn<>(COLUMNS_WPN_SECONDS);
+        secondsColumn.setCellValueFactory((aFeatures) -> {
+            WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+                {
+                    bind(value.battleTimeProperty());
+                }
+
+                @Override
+                protected String computeValue() {
+                    return df.format(value.battleTimeProperty().get());
+                }
+            };
+        });
+        secondsColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+
+        TableColumn<WeaponSummary, String> damageColumn = new TableColumn<>(COLUMNS_WPN_DAMAGE);
+        damageColumn.setCellValueFactory((aFeatures) -> {
+            WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+                {
+                    bind(value.totalDamageProperty());
+                }
+
+                @Override
+                protected String computeValue() {
+                    return df.format(value.totalDamageProperty().get());
+                }
+            };
+        });
+        damageColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+
+        cols.add(nameColumn);
+        cols.add(ammoColumn);
+        cols.add(volleysColumn);
+        cols.add(secondsColumn);
+        cols.add(damageColumn);
+
     }
 
     private void setupHeatPanel() {
-
         heatEnvironment.getItems();
         heatEnvironment.getItems().add(new Environment("Neutral", 0.0));
         for (Environment e : EnvironmentDB.lookupAll()) {
             heatEnvironment.getItems().add(e);
         }
+        heatEnvironment.valueProperty().bindBidirectional(metrics.environment);
         heatEnvironment.getSelectionModel().select(0);
-        heatEnvironment.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-            metrics.changeEnvironment(aNew);
-        });
 
         heatSinkCount.textProperty().bind(Bindings.format("Heat Sinks: %d", metrics.heatSinkCount));
         heatCapacity.textProperty().bind(Bindings.format("Heat Capacity: %.1f", metrics.heatCapacity));
@@ -266,15 +452,15 @@ public class LoadoutWindowController implements MessageReceiver {
         mobilityJumpJets.textProperty()
                 .bind(Bindings.format("JumpJets: %d/%d", metrics.jumpJetCount, metrics.jumpJetMax));
 
-        mobilityArcPitchOuter.lengthProperty().bind(metrics.armPitch.multiply(2.0));
+        mobilityArcPitchOuter.lengthProperty().bind(metrics.torsoPitch.add(metrics.armPitch).multiply(2.0));
         mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
-        mobilityArcYawOuter.lengthProperty().bind(metrics.armYaw.multiply(2.0));
+        mobilityArcYawOuter.lengthProperty().bind(metrics.torsoYaw.add(metrics.armYaw).multiply(2.0));
         mobilityArcYawInner.lengthProperty().bind(metrics.torsoYaw.multiply(2.0));
 
-        mobilityArcPitchOuter.startAngleProperty().bind(metrics.armPitch.negate());
-        mobilityArcPitchInner.startAngleProperty().bind(metrics.torsoPitch.negate());
-        mobilityArcYawOuter.startAngleProperty().bind(metrics.armYaw.negate().add(90));
-        mobilityArcYawInner.startAngleProperty().bind(metrics.torsoYaw.negate().add(90));
+        mobilityArcPitchOuter.startAngleProperty().bind(mobilityArcPitchOuter.lengthProperty().negate().divide(2));
+        mobilityArcPitchInner.startAngleProperty().bind(mobilityArcPitchInner.lengthProperty().negate().divide(2));
+        mobilityArcYawOuter.startAngleProperty().bind(mobilityArcYawOuter.lengthProperty().divide(-2).add(90));
+        mobilityArcYawInner.startAngleProperty().bind(mobilityArcYawInner.lengthProperty().divide(-2).add(90));
     }
 
     private void updateArmorWizard() {

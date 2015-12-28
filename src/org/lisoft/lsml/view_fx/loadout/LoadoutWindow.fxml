@@ -20,15 +20,15 @@
       <tabs>
         <Tab closable="false" text="Equipment">
           <content>
-            <TreeTableView fx:id="equipmentList" showRoot="false"
-              styleClass="equipment-list">
+            <TreeTableView fx:id="equipmentList"
+              prefHeight="200.0" showRoot="false" styleClass="equipment-list">
             </TreeTableView>
           </content>
         </Tab>
         <Tab closable="false" text="Modules">
           <content>
-            <TreeTableView fx:id="moduleList" showRoot="false"
-              styleClass="equipment-list">
+            <TreeTableView fx:id="moduleList" prefHeight="200.0"
+              showRoot="false" styleClass="equipment-list">
               <columnResizePolicy>
                 <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
               </columnResizePolicy>
@@ -39,7 +39,8 @@
     </TabPane>
   </left>
   <right>
-    <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
+    <ScrollPane fitToWidth="true" prefHeight="200.0"
+      BorderPane.alignment="CENTER">
       <content>
         <VBox>
           <children>
@@ -102,7 +103,7 @@
                 </GridPane>
               </content>
             </TitledPane>
-            <TitledPane text="Efficiencies">
+            <TitledPane text="Efficiencies" expanded="false">
               <content>
                 <GridPane>
                   <columnConstraints>
@@ -138,7 +139,7 @@
                 </GridPane>
               </content>
             </TitledPane>
-            <TitledPane text="Quirks/Modifiers">
+            <TitledPane text="Quirks/Modifiers" expanded="false">
               <content>
                 <VBox fx:id="modifiersBox"/>
               </content>
@@ -177,7 +178,7 @@
                 </GridPane>
               </content>
             </TitledPane>
-            <TitledPane text="Mobility">
+            <TitledPane text="Mobility" expanded="false">
               <content>
                 <GridPane>
                   <columnConstraints>
@@ -192,12 +193,11 @@
                           radiusX="40.0" radiusY="40.0" styleClass="mobility-arc-bg"
                           type="ROUND"/>
                         <Arc fx:id="mobilityArcYawOuter" centerX="40.0"
-                          centerY="40.0" length="130.0" radiusX="40.0"
-                          radiusY="40.0" styleClass="mobility-arc-outer"
-                          type="ROUND"/>
+                          centerY="40.0" radiusX="40.0" radiusY="40.0"
+                          styleClass="mobility-arc-outer" type="ROUND"/>
                         <Arc fx:id="mobilityArcYawInner" centerX="40.0"
-                          centerY="40.0" length="110.0" radiusX="40.0"
-                          radiusY="40.0" styleClass="mobility-arc" type="ROUND"/>
+                          centerY="40.0" radiusX="40.0" radiusY="40.0"
+                          styleClass="mobility-arc" type="ROUND"/>
                       </children>
                     </Group>
                     <Group GridPane.columnIndex="1"
@@ -207,13 +207,11 @@
                           radiusX="40.0" radiusY="40.0" styleClass="mobility-arc-bg"
                           type="ROUND"/>
                         <Arc fx:id="mobilityArcPitchOuter" centerX="40.0"
-                          centerY="40.0" length="60.0" radiusX="40.0"
-                          radiusY="40.0" startAngle="-30.0" styleClass="mobility-arc-outer"
-                          type="ROUND"/>
+                          centerY="40.0" radiusX="40.0" radiusY="40.0"
+                          styleClass="mobility-arc-outer" type="ROUND"/>
                         <Arc fx:id="mobilityArcPitchInner" centerX="40.0"
-                          centerY="40.0" length="40.0" radiusX="40.0"
-                          radiusY="40.0" startAngle="-20.0" styleClass="mobility-arc"
-                          type="ROUND"/>
+                          centerY="40.0" radiusX="40.0" radiusY="40.0"
+                          styleClass="mobility-arc" type="ROUND"/>
                       </children>
                     </Group>
                     <Label fx:id="mobilityTopSpeed"/>
@@ -256,8 +254,9 @@
                     <RowConstraints vgrow="SOMETIMES"/>
                   </rowConstraints>
                   <children>
-                    <ComboBox fx:id="heatEnvironment" promptText="Environment"
-                      GridPane.columnSpan="2" GridPane.halignment="CENTER"/>
+                    <ComboBox fx:id="heatEnvironment"
+                      promptText="Environment" GridPane.columnSpan="2"
+                      GridPane.halignment="CENTER"/>
                     <Label fx:id="heatSinkCount"
                       GridPane.rowIndex="1"/>
                     <Label fx:id="heatCapacity"
@@ -274,10 +273,14 @@
               <content>
                 <VBox>
                   <children>
-                    <HBox>
+                    <HBox alignment="CENTER_LEFT">
                       <children>
-                        <ComboBox promptText="Range"/>
-                        <ComboBox promptText="Duration"/>
+                        <Label text="Range:"/>
+                        <ComboBox fx:id="offensiveRange"
+                          editable="true" prefWidth="79.0" promptText="Optimal Range"/>
+                        <Label text="Duration:"/>
+                        <ComboBox fx:id="offensiveTime"
+                          editable="true" prefWidth="74.0" promptText="Duration"/>
                       </children>
                     </HBox>
                     <GridPane>
@@ -293,27 +296,26 @@
                         <RowConstraints vgrow="SOMETIMES"/>
                       </rowConstraints>
                       <children>
-                        <Label text="Alpha: 20@100m"/>
-                        <Label text="Max DPS: 20.1"
+                        <Label fx:id="offensiveAlphaDamage"/>
+                        <Label fx:id="offensiveMaxDPS"
                           GridPane.columnIndex="1"/>
-                        <Label text="Alpha Heat: 21%"
+                        <Label fx:id="offensiveAlphaHeat"
                           GridPane.rowIndex="2"/>
-                        <Label text="Alpha Cool: 30s"
+                        <Label fx:id="offensiveAlphaTimeToCool"
                           GridPane.rowIndex="3"/>
-                        <Label text="Alpha Ghost Heat: 3.3"
+                        <Label fx:id="offensiveAlphaGhostHeat"
                           GridPane.rowIndex="1"/>
-                        <Label text="Sustained DPS: 10.3"
+                        <Label fx:id="offensiveSustainedDPS"
                           GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        <Label text="Burst damage, 4s: 40 @ 00m"
+                        <Label fx:id="offensiveBurstDamage"
                           GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                        <Label text="Time to overheat: 32s"
+                        <Label fx:id="offensiveTimeToOverheat"
                           GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                       </children>
                     </GridPane>
-                    <TableView tableMenuButtonVisible="true">
-                      <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                      </columnResizePolicy>
+                    <TableView fx:id="offensiveWeaponTable"
+                      tableMenuButtonVisible="true"  prefWidth="20.0" prefHeight="200.0">
+
                       <columns>
                         <TableColumn prefWidth="-1.0" text="Weapon"/>
                         <TableColumn prefWidth="40.0" text="Ammo"/>

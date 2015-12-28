@@ -183,7 +183,7 @@ public class ItemInfoPanel extends JPanel {
 
     private void showAmmoInfo(Ammunition anAmmo) {
         ammoPerTon.setVisible(true);
-        ammoPerTon.setText("Shots: " + anAmmo.getNumShots());
+        ammoPerTon.setText("Shots: " + anAmmo.getNumRounds());
     }
 
     private void showWeaponInfo(Weapon aWeapon, Collection<Modifier> aModifiers) {
