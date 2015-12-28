@@ -95,6 +95,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
@@ -105,20 +106,21 @@ import javafx.scene.shape.Arc;
  * @author Li Song
  */
 public class LoadoutWindowController implements MessageReceiver {
-    private static final String        COLUMNS_WPN_WEAPON  = "Weapon";
-    private static final String        COLUMN_MASS         = "Mass";
-    private static final String        COLUMN_NAME         = "Name";
-    private static final String        COLUMN_SLOTS        = "Slots";
-    private static final int           UNDO_DEPTH          = 128;
-    private static final String        COLUMNS_WPN_AMMO    = "Rnds";
-    private static final String        COLUMNS_WPN_VOLLEYS = "Vlys";
-    private static final String        COLUMNS_WPN_SECONDS = "Time";
-    private static final String        COLUMNS_WPN_DAMAGE  = "Dmg";
+    private static final String        EQ_COL_MASS       = "Mass";
+    private static final String        EQ_COL_NAME       = "Name";
+    private static final String        EQ_COL_SLOTS      = "Slots";
+    private static final String        WSTAT_COL_AMMO    = "Rnds";
+    private static final String        WSTAT_COL_DAMAGE  = "Dmg";
+    private static final String        WSTAT_COL_SECONDS = "Time";
+    private static final String        WSTAT_COL_VOLLEYS = "Vlys";
+    private static final String        WSTAT_COL_EAPON   = "Weapon";
+    private static final int           UNDO_DEPTH        = 128;
 
     @FXML
-    private Slider                     armorWizardRatio;
-    @FXML
     private Slider                     armorWizardAmount;
+    @FXML
+    private Slider                     armorWizardRatio;
+    private final CommandStack         cmdStack          = new CommandStack(UNDO_DEPTH);
     @FXML
     private CheckBox                   effAnchorTurn;
     @FXML
@@ -152,63 +154,69 @@ public class LoadoutWindowController implements MessageReceiver {
     @FXML
     private Label                      generalSlotsLabel;
     @FXML
-    private HBox                       layoutContainer;
+    private Label                      heatCapacity;
     @FXML
-    private Arc                        mobilityArcYawOuter;
-    @FXML
-    private Arc                        mobilityArcYawInner;
-    @FXML
-    private Arc                        mobilityArcPitchOuter;
-    @FXML
-    private Arc                        mobilityArcPitchInner;
-    @FXML
-    private Label                      mobilityTopSpeed;
-    @FXML
-    private Label                      mobilityTurnSpeed;
-    @FXML
-    private Label                      mobilityTorsoYawSpeed;
-    @FXML
-    private Label                      mobilityTorsoPitchSpeed;
-    @FXML
-    private Label                      mobilityJumpJets;
-    @FXML
-    private Label                      mobilityArmYawSpeed;
-    @FXML
-    private Label                      mobilityArmPitchSpeed;
+    private Label                      heatCoolingRatio;
     @FXML
     private ComboBox<Environment>      heatEnvironment;
     @FXML
     private Label                      heatSinkCount;
     @FXML
-    private Label                      heatCapacity;
-    @FXML
-    private Label                      heatCoolingRatio;
-    @FXML
     private Label                      heatTimeToCool;
     @FXML
-    private ComboBox<String>           offensiveRange;
+    private HBox                       layoutContainer;
+    private LoadoutMetricsModelAdaptor metrics;
     @FXML
-    private ComboBox<String>           offensiveTime;
+    private Arc                        mobilityArcPitchInner;
+    @FXML
+    private Arc                        mobilityArcPitchOuter;
+    @FXML
+    private Arc                        mobilityArcYawInner;
+    @FXML
+    private Arc                        mobilityArcYawOuter;
+    @FXML
+    private Label                      mobilityArmPitchSpeed;
+    @FXML
+    private Label                      mobilityArmYawSpeed;
+    @FXML
+    private Label                      mobilityJumpJets;
+    @FXML
+    private Label                      mobilityTopSpeed;
+    @FXML
+    private Label                      mobilityTorsoPitchSpeed;
+    @FXML
+    private Label                      mobilityTorsoYawSpeed;
+    @FXML
+    private Label                      mobilityTurnSpeed;
+    private LoadoutModelAdaptor        model;
+    private final ModifierFormatter    modifierFormatter = new ModifierFormatter();
+    @FXML
+    private VBox                       modifiersBox;
+    @FXML
+    private TreeTableView<Object>      moduleList;
     @FXML
     private Label                      offensiveAlphaDamage;
     @FXML
-    private Label                      offensiveMaxDPS;
+    private Label                      offensiveAlphaGhostHeat;
     @FXML
     private Label                      offensiveAlphaHeat;
     @FXML
     private Label                      offensiveAlphaTimeToCool;
     @FXML
-    private Label                      offensiveAlphaGhostHeat;
+    private Label                      offensiveBurstDamage;
+    @FXML
+    private Label                      offensiveMaxDPS;
+    @FXML
+    private ComboBox<String>           offensiveRange;
     @FXML
     private Label                      offensiveSustainedDPS;
     @FXML
-    private Label                      offensiveBurstDamage;
+    private ComboBox<String>           offensiveTime;
     @FXML
     private Label                      offensiveTimeToOverheat;
     @FXML
     private TableView<WeaponSummary>   offensiveWeaponTable;
-    @FXML
-    private TreeTableView<Object>      moduleList;
+
     @FXML
     private CheckBox                   upgradeArtemis;
     @FXML
@@ -217,14 +225,31 @@ public class LoadoutWindowController implements MessageReceiver {
     private CheckBox                   upgradeEndoSteel;
     @FXML
     private CheckBox                   upgradeFerroFibrous;
-    @FXML
-    private VBox                       modifiersBox;
+    private final MessageXBar          xBar              = new MessageXBar();
 
-    private final ModifierFormatter    modifierFormatter   = new ModifierFormatter();
-    private final CommandStack         cmdStack            = new CommandStack(UNDO_DEPTH);
-    private final MessageXBar          xBar                = new MessageXBar();
-    private LoadoutModelAdaptor        model;
-    private LoadoutMetricsModelAdaptor metrics;
+    @FXML
+    public void armorWizardResetAll(@SuppressWarnings("unused") ActionEvent event) throws Exception {
+        CommandStack.CompositeCommand cc = new CommandStack.CompositeCommand("Reset manual armor", xBar) {
+            @Override
+            protected void buildCommand() throws EquipResult {
+                for (ConfiguredComponentBase component : model.loadout.getComponents()) {
+                    if (component.getInternalComponent().getLocation().isTwoSided()) {
+                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.FRONT,
+                                component.getArmor(ArmorSide.FRONT), false));
+                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.BACK,
+                                component.getArmor(ArmorSide.BACK), false));
+                    }
+                    else {
+                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.ONLY,
+                                component.getArmor(ArmorSide.ONLY), false));
+                    }
+                }
+
+            }
+        };
+        cmdStack.pushAndApply(cc);
+        updateArmorWizard();
+    }
 
     @Override
     public void receive(Message aMsg) {
@@ -270,6 +295,257 @@ public class LoadoutWindowController implements MessageReceiver {
         setupMobilityPanel();
         setupHeatPanel();
         setupOffensivePanel();
+    }
+
+    private void setupArmorWizard() {
+        armorWizardAmount.setMax(model.loadout.getChassis().getArmorMax());
+        armorWizardAmount.setValue(model.loadout.getArmor());
+        armorWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            try {
+                cmdStack.pushAndApply(
+                        new CmdDistributeArmor(model.loadout, aNew.intValue(), armorWizardRatio.getValue(), xBar));
+            }
+            catch (Exception e) {
+                LiSongMechLab.showError(e);
+            }
+        });
+
+        final double max_ratio = 24;
+        ConfiguredComponentBase ct = model.loadout.getComponent(Location.CenterTorso);
+        double currentRatio = ((double) ct.getArmor(ArmorSide.FRONT)) / Math.max(ct.getArmor(ArmorSide.BACK), 1);
+        currentRatio = Math.min(max_ratio, currentRatio);
+
+        armorWizardRatio.setMax(max_ratio);
+        armorWizardRatio.setValue(currentRatio);
+        armorWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            try {
+                cmdStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
+                        aNew.doubleValue(), xBar));
+            }
+            catch (Exception e) {
+                LiSongMechLab.showError(e);
+            }
+        });
+    }
+
+    private void setupEffCheckbox(CheckBox aCheckBox, MechEfficiencyType aEfficiencyType) {
+        BooleanProperty property = model.hasEfficiency.get(aEfficiencyType);
+        aCheckBox.selectedProperty().bindBidirectional(property);
+    }
+
+    private void setupEfficienciesPanel() {
+        setupEffCheckbox(effCoolRun, MechEfficiencyType.COOL_RUN);
+        setupEffCheckbox(effHeatContainment, MechEfficiencyType.HEAT_CONTAINMENT);
+        setupEffCheckbox(effTwistX, MechEfficiencyType.TWIST_X);
+        setupEffCheckbox(effTwistSpeed, MechEfficiencyType.TWIST_SPEED);
+        setupEffCheckbox(effAnchorTurn, MechEfficiencyType.ANCHORTURN);
+        setupEffCheckbox(effArmReflex, MechEfficiencyType.ARM_REFLEX);
+        setupEffCheckbox(effFastFire, MechEfficiencyType.FAST_FIRE);
+        setupEffCheckbox(effSpeedTweak, MechEfficiencyType.SPEED_TWEAK);
+
+        effDoubleBasics.selectedProperty().bindBidirectional(model.hasDoubleBasics);
+    }
+
+    private void setupEquipmentList() {
+        FilterTreeItem<Object> root = new FilterTreeItem<>();
+        root.setExpanded(true);
+
+        List<Item> allItems = ItemDB.lookup(Item.class);
+        allItems.sort(null);
+
+        Map<EquipmentCategory, FilterTreeItem<Object>> categories = new HashMap<>();
+        for (EquipmentCategory category : EquipmentCategory.values()) {
+            FilterTreeItem<Object> treeItem = new FilterTreeItem<>(category);
+            treeItem.setExpanded(true);
+            root.add(treeItem);
+            categories.put(category, treeItem);
+        }
+
+        allItems.stream().filter(aItem -> {
+            ChassisBase chassis = model.loadout.getChassis();
+            return aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem);
+        }).forEach(aItem -> {
+            final EquipmentCategory category = EquipmentCategory.classify(aItem);
+            categories.get(category).add(new TreeItem<>(aItem));
+        });
+
+        setupEquipmentListColumns();
+
+        equipmentList.setRowFactory(aParam -> new EquipmentTableRow(model.loadout, cmdStack, xBar));
+        equipmentList.setRoot(root);
+        updateEquipmentPredicates();
+    }
+
+    private void setupEquipmentListColumns() {
+
+        TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(EQ_COL_NAME);
+        nameColumn.setCellValueFactory(new ItemValueFactory(item -> item.getShortName(), true));
+        nameColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, true));
+        nameColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.6));
+
+        TreeTableColumn<Object, String> slotsColumn = new TreeTableColumn<>(EQ_COL_SLOTS);
+        slotsColumn
+                .setCellValueFactory(new ItemValueFactory(item -> Integer.toString(item.getNumCriticalSlots()), false));
+        slotsColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false));
+        slotsColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
+
+        TreeTableColumn<Object, String> massColumn = new TreeTableColumn<>(EQ_COL_MASS);
+        massColumn.setCellValueFactory(new ItemValueFactory(item -> Double.toString(item.getMass()), false));
+        massColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false));
+        massColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
+
+        ObservableList<TreeTableColumn<Object, ?>> columns = equipmentList.getColumns();
+        columns.clear();
+        columns.add(nameColumn);
+        columns.add(slotsColumn);
+        columns.add(massColumn);
+    }
+
+    private void setupGeneralPanel() {
+        ChassisBase chassis = model.loadout.getChassis();
+        int massMax = chassis.getMassMax();
+
+        Pane parent = (Pane) generalMassBar.getParent();
+        generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
+        generalMassBar.prefWidthProperty().bind(parent.widthProperty());
+        generalMassLabel.textProperty().bind(Bindings.format("%.2f t free", model.statsFreeMass));
+
+        int armorMax = chassis.getArmorMax();
+        generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
+        generalArmorBar.prefWidthProperty().bind(parent.widthProperty());
+        generalArmorLabel.textProperty().bind(Bindings.format("%d free", model.statsArmorFree));
+
+        int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
+        generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
+        generalSlotsBar.prefWidthProperty().bind(parent.widthProperty());
+        generalSlotsLabel.textProperty()
+                .bind(Bindings.format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
+    }
+
+    private void setupHeatPanel() {
+        heatEnvironment.getItems();
+        heatEnvironment.getItems().add(new Environment("Neutral", 0.0));
+        for (Environment e : EnvironmentDB.lookupAll()) {
+            heatEnvironment.getItems().add(e);
+        }
+        heatEnvironment.valueProperty().bindBidirectional(metrics.environment);
+        heatEnvironment.getSelectionModel().select(0);
+
+        heatSinkCount.textProperty().bind(Bindings.format("Heat Sinks: %d", metrics.heatSinkCount));
+        heatCapacity.textProperty().bind(Bindings.format("Heat Capacity: %.1f", metrics.heatCapacity));
+        heatCoolingRatio.textProperty()
+                .bind(Bindings.format("Cooling Ratio: %.1f%%", metrics.coolingRatio.multiply(100)));
+        heatTimeToCool.textProperty().bind(Bindings.format("Time to Cool: %.1fs", metrics.timeToCool));
+    }
+
+    private void setupLayoutView() {
+        DynamicSlotDistributor distributor = new DynamicSlotDistributor(model.loadout);
+
+        Region rightArmStrut = new Region();
+        rightArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
+
+        Region leftArmStrut = new Region();
+        leftArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
+
+        Region rightTorsoStrut = new Region();
+        rightTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
+        Region leftTorsoStrut = new Region();
+        leftTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
+
+        ObservableList<Node> children = layoutContainer.getChildren();
+        VBox rightArmBox = new VBox(rightArmStrut,
+                new ComponentPane(xBar, cmdStack, model, Location.RightArm, distributor));
+        VBox rightTorsoBox = new VBox(rightTorsoStrut,
+                new ComponentPane(xBar, cmdStack, model, Location.RightTorso, distributor),
+                new ComponentPane(xBar, cmdStack, model, Location.RightLeg, distributor));
+        VBox centralBox = new VBox(new ComponentPane(xBar, cmdStack, model, Location.Head, distributor),
+                new ComponentPane(xBar, cmdStack, model, Location.CenterTorso, distributor));
+        VBox leftTorsoBox = new VBox(leftTorsoStrut,
+                new ComponentPane(xBar, cmdStack, model, Location.LeftTorso, distributor),
+                new ComponentPane(xBar, cmdStack, model, Location.LeftLeg, distributor));
+        VBox leftArmBox = new VBox(leftArmStrut,
+                new ComponentPane(xBar, cmdStack, model, Location.LeftArm, distributor));
+
+        ModulePane modulePane = new ModulePane(xBar, cmdStack, model);
+        rightArmBox.getChildren().add(modulePane);
+
+        rightArmBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+        rightTorsoBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+        centralBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+        leftTorsoBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+        leftArmBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+
+        children.add(rightArmBox);
+        children.add(rightTorsoBox);
+        children.add(centralBox);
+        children.add(leftTorsoBox);
+        children.add(leftArmBox);
+    }
+
+    private void setupMobilityPanel() {
+        mobilityTopSpeed.textProperty().bind(Bindings.format("Top Speed: %.1f km/h", metrics.topSpeed));
+        mobilityTurnSpeed.textProperty().bind(Bindings.format("Turn Speed: %.1f °/s", metrics.turnSpeed));
+
+        mobilityTorsoPitchSpeed.textProperty()
+                .bind(Bindings.format("Torso (pitch): %.1f °/s", metrics.torsoPitchSpeed));
+        mobilityTorsoYawSpeed.textProperty().bind(Bindings.format("Torso (yaw): %.1f °/s", metrics.torsoYawSpeed));
+        mobilityArmPitchSpeed.textProperty().bind(Bindings.format("Arm (pitch): %.1f °/s", metrics.armPitchSpeed));
+        mobilityArmYawSpeed.textProperty().bind(Bindings.format("Arm (yaw): %.1f °/s", metrics.armYawSpeed));
+        mobilityJumpJets.textProperty()
+                .bind(Bindings.format("JumpJets: %d/%d", metrics.jumpJetCount, metrics.jumpJetMax));
+
+        mobilityArcPitchOuter.lengthProperty().bind(metrics.torsoPitch.add(metrics.armPitch).multiply(2.0));
+        mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
+        mobilityArcYawOuter.lengthProperty().bind(metrics.torsoYaw.add(metrics.armYaw).multiply(2.0));
+        mobilityArcYawInner.lengthProperty().bind(metrics.torsoYaw.multiply(2.0));
+
+        mobilityArcPitchOuter.startAngleProperty().bind(mobilityArcPitchOuter.lengthProperty().negate().divide(2));
+        mobilityArcPitchInner.startAngleProperty().bind(mobilityArcPitchInner.lengthProperty().negate().divide(2));
+        mobilityArcYawOuter.startAngleProperty().bind(mobilityArcYawOuter.lengthProperty().divide(-2).add(90));
+        mobilityArcYawInner.startAngleProperty().bind(mobilityArcYawInner.lengthProperty().divide(-2).add(90));
+    }
+
+    private void setupModulesList() {
+        TreeItem<Object> root = new TreeItem<>();
+        root.setExpanded(true);
+
+        for (ModuleSlot slot : ModuleSlot.values()) {
+            if (slot == ModuleSlot.HYBRID)
+                continue;
+
+            FilterTreeItem<Object> item = new FilterTreeItem<Object>(EquipmentCategory.classify(slot));
+            item.setExpanded(true);
+
+            List<PilotModule> modules = PilotModuleDB.lookup(slot);
+            modules.sort((aLeft, aRight) -> {
+                return aLeft.getName().compareTo(aRight.getName());
+            });
+
+            for (PilotModule module : modules) {
+                TreeItem<Object> moduleTreeItem = new TreeItem<>(module);
+                item.add(moduleTreeItem);
+            }
+            root.getChildren().add(item);
+        }
+
+        TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(EQ_COL_NAME);
+        nameColumn.setCellValueFactory((aFeatures) -> {
+            TreeItem<Object> treeItem = aFeatures.getValue();
+            if (null != treeItem && null != treeItem.getValue()) {
+                Object objectValue = treeItem.getValue();
+                if (objectValue instanceof PilotModule) {
+                    return new ReadOnlyStringWrapper(((PilotModule) objectValue).getName());
+                }
+                return new ReadOnlyStringWrapper(objectValue.toString());
+            }
+            return new ReadOnlyStringWrapper("");
+        });
+
+        moduleList.setRoot(root);
+        moduleList.getColumns().clear();
+        moduleList.getColumns().add(nameColumn);
+        moduleList.setRowFactory(aTree -> new ModuleTableRow(model.loadout, cmdStack, xBar));
+        updateModulePredicates();
     }
 
     private void setupOffensivePanel() {
@@ -336,355 +612,6 @@ public class LoadoutWindowController implements MessageReceiver {
         setupWeaponsTable();
     }
 
-    private void setupWeaponsTable() {
-        offensiveWeaponTable.setItems(new WeaponSummaryList(xBar, model.loadout));
-
-        ObservableList<TableColumn<WeaponSummary, ?>> cols = offensiveWeaponTable.getColumns();
-        cols.clear();
-
-        DecimalFormat df = new DecimalFormat("#");
-        final double nameSize = 0.35;
-        final double margin = 0.02;
-
-        TableColumn<WeaponSummary, String> nameColumn = new TableColumn<>(COLUMNS_WPN_WEAPON);
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        nameColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply(nameSize - margin));
-
-        TableColumn<WeaponSummary, String> ammoColumn = new TableColumn<>(COLUMNS_WPN_AMMO);
-        ammoColumn.setCellValueFactory((aFeatures) -> {
-            WeaponSummary value = aFeatures.getValue();
-            return new StringBinding() {
-
-                {
-                    bind(value.roundsProperty());
-                }
-
-                @Override
-                protected String computeValue() {
-                    return df.format(value.roundsProperty().get());
-                }
-            };
-        });
-        ammoColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
-
-        TableColumn<WeaponSummary, String> volleysColumn = new TableColumn<>(COLUMNS_WPN_VOLLEYS);
-        volleysColumn.setCellValueFactory((aFeatures) -> {
-            WeaponSummary value = aFeatures.getValue();
-            return new StringBinding() {
-                {
-                    bind(value.roundsProperty());
-                    bind(value.volleySizeProperty());
-                }
-
-                @Override
-                protected String computeValue() {
-                    return df.format(value.roundsProperty().get() / value.volleySizeProperty().get());
-                }
-            };
-        });
-        volleysColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
-
-        TableColumn<WeaponSummary, String> secondsColumn = new TableColumn<>(COLUMNS_WPN_SECONDS);
-        secondsColumn.setCellValueFactory((aFeatures) -> {
-            WeaponSummary value = aFeatures.getValue();
-            return new StringBinding() {
-                {
-                    bind(value.battleTimeProperty());
-                }
-
-                @Override
-                protected String computeValue() {
-                    return df.format(value.battleTimeProperty().get());
-                }
-            };
-        });
-        secondsColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
-
-        TableColumn<WeaponSummary, String> damageColumn = new TableColumn<>(COLUMNS_WPN_DAMAGE);
-        damageColumn.setCellValueFactory((aFeatures) -> {
-            WeaponSummary value = aFeatures.getValue();
-            return new StringBinding() {
-                {
-                    bind(value.totalDamageProperty());
-                }
-
-                @Override
-                protected String computeValue() {
-                    return df.format(value.totalDamageProperty().get());
-                }
-            };
-        });
-        damageColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
-
-        cols.add(nameColumn);
-        cols.add(ammoColumn);
-        cols.add(volleysColumn);
-        cols.add(secondsColumn);
-        cols.add(damageColumn);
-
-    }
-
-    private void setupHeatPanel() {
-        heatEnvironment.getItems();
-        heatEnvironment.getItems().add(new Environment("Neutral", 0.0));
-        for (Environment e : EnvironmentDB.lookupAll()) {
-            heatEnvironment.getItems().add(e);
-        }
-        heatEnvironment.valueProperty().bindBidirectional(metrics.environment);
-        heatEnvironment.getSelectionModel().select(0);
-
-        heatSinkCount.textProperty().bind(Bindings.format("Heat Sinks: %d", metrics.heatSinkCount));
-        heatCapacity.textProperty().bind(Bindings.format("Heat Capacity: %.1f", metrics.heatCapacity));
-        heatCoolingRatio.textProperty()
-                .bind(Bindings.format("Cooling Ratio: %.1f%%", metrics.coolingRatio.multiply(100)));
-        heatTimeToCool.textProperty().bind(Bindings.format("Time to Cool: %.1fs", metrics.timeToCool));
-    }
-
-    private void setupMobilityPanel() {
-        mobilityTopSpeed.textProperty().bind(Bindings.format("Top Speed: %.1f km/h", metrics.topSpeed));
-        mobilityTurnSpeed.textProperty().bind(Bindings.format("Turn Speed: %.1f °/s", metrics.turnSpeed));
-
-        mobilityTorsoPitchSpeed.textProperty()
-                .bind(Bindings.format("Torso (pitch): %.1f °/s", metrics.torsoPitchSpeed));
-        mobilityTorsoYawSpeed.textProperty().bind(Bindings.format("Torso (yaw): %.1f °/s", metrics.torsoYawSpeed));
-        mobilityArmPitchSpeed.textProperty().bind(Bindings.format("Arm (pitch): %.1f °/s", metrics.armPitchSpeed));
-        mobilityArmYawSpeed.textProperty().bind(Bindings.format("Arm (yaw): %.1f °/s", metrics.armYawSpeed));
-        mobilityJumpJets.textProperty()
-                .bind(Bindings.format("JumpJets: %d/%d", metrics.jumpJetCount, metrics.jumpJetMax));
-
-        mobilityArcPitchOuter.lengthProperty().bind(metrics.torsoPitch.add(metrics.armPitch).multiply(2.0));
-        mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
-        mobilityArcYawOuter.lengthProperty().bind(metrics.torsoYaw.add(metrics.armYaw).multiply(2.0));
-        mobilityArcYawInner.lengthProperty().bind(metrics.torsoYaw.multiply(2.0));
-
-        mobilityArcPitchOuter.startAngleProperty().bind(mobilityArcPitchOuter.lengthProperty().negate().divide(2));
-        mobilityArcPitchInner.startAngleProperty().bind(mobilityArcPitchInner.lengthProperty().negate().divide(2));
-        mobilityArcYawOuter.startAngleProperty().bind(mobilityArcYawOuter.lengthProperty().divide(-2).add(90));
-        mobilityArcYawInner.startAngleProperty().bind(mobilityArcYawInner.lengthProperty().divide(-2).add(90));
-    }
-
-    private void updateArmorWizard() {
-        try {
-            cmdStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
-                    armorWizardRatio.getValue(), xBar));
-        }
-        catch (Exception e) {
-            LiSongMechLab.showError(e);
-        }
-    }
-
-    private void setupArmorWizard() {
-        armorWizardAmount.setMax(model.loadout.getChassis().getArmorMax());
-        armorWizardAmount.setValue(model.loadout.getArmor());
-        armorWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
-            try {
-                cmdStack.pushAndApply(
-                        new CmdDistributeArmor(model.loadout, aNew.intValue(), armorWizardRatio.getValue(), xBar));
-            }
-            catch (Exception e) {
-                LiSongMechLab.showError(e);
-            }
-        });
-
-        final double max_ratio = 24;
-        ConfiguredComponentBase ct = model.loadout.getComponent(Location.CenterTorso);
-        double currentRatio = ((double) ct.getArmor(ArmorSide.FRONT)) / Math.max(ct.getArmor(ArmorSide.BACK), 1);
-        currentRatio = Math.min(max_ratio, currentRatio);
-
-        armorWizardRatio.setMax(max_ratio);
-        armorWizardRatio.setValue(currentRatio);
-        armorWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
-            try {
-                cmdStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
-                        aNew.doubleValue(), xBar));
-            }
-            catch (Exception e) {
-                LiSongMechLab.showError(e);
-            }
-        });
-    }
-
-    private void updateModifiers() {
-        modifiersBox.getChildren().clear();
-        modifierFormatter.format(model.loadout.getModifiers(), modifiersBox.getChildren());
-    }
-
-    private void setupEffCheckbox(CheckBox aCheckBox, MechEfficiencyType aEfficiencyType) {
-        BooleanProperty property = model.hasEfficiency.get(aEfficiencyType);
-        aCheckBox.selectedProperty().bindBidirectional(property);
-    }
-
-    private void setupEfficienciesPanel() {
-        setupEffCheckbox(effCoolRun, MechEfficiencyType.COOL_RUN);
-        setupEffCheckbox(effHeatContainment, MechEfficiencyType.HEAT_CONTAINMENT);
-        setupEffCheckbox(effTwistX, MechEfficiencyType.TWIST_X);
-        setupEffCheckbox(effTwistSpeed, MechEfficiencyType.TWIST_SPEED);
-        setupEffCheckbox(effAnchorTurn, MechEfficiencyType.ANCHORTURN);
-        setupEffCheckbox(effArmReflex, MechEfficiencyType.ARM_REFLEX);
-        setupEffCheckbox(effFastFire, MechEfficiencyType.FAST_FIRE);
-        setupEffCheckbox(effSpeedTweak, MechEfficiencyType.SPEED_TWEAK);
-
-        effDoubleBasics.selectedProperty().bindBidirectional(model.hasDoubleBasics);
-    }
-
-    private void setupEquipmentList() {
-        FilterTreeItem<Object> root = new FilterTreeItem<>();
-        root.setExpanded(true);
-
-        List<Item> allItems = ItemDB.lookup(Item.class);
-        allItems.sort(null);
-
-        Map<EquipmentCategory, FilterTreeItem<Object>> categories = new HashMap<>();
-        for (EquipmentCategory category : EquipmentCategory.values()) {
-            FilterTreeItem<Object> treeItem = new FilterTreeItem<>(category);
-            treeItem.setExpanded(true);
-            root.add(treeItem);
-            categories.put(category, treeItem);
-        }
-
-        allItems.stream().filter(aItem -> {
-            ChassisBase chassis = model.loadout.getChassis();
-            return aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem);
-        }).forEach(aItem -> {
-            final EquipmentCategory category = EquipmentCategory.classify(aItem);
-            categories.get(category).add(new TreeItem<>(aItem));
-        });
-
-        setupEquipmentListColumns();
-
-        equipmentList.setRowFactory(aParam -> new EquipmentTableRow(model.loadout, cmdStack, xBar));
-        equipmentList.setRoot(root);
-        updateEquipmentPredicates();
-    }
-
-    private void setupEquipmentListColumns() {
-
-        TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(COLUMN_NAME);
-        nameColumn.setCellValueFactory(new ItemValueFactory(item -> item.getShortName(), true));
-        nameColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, true));
-        nameColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.6));
-
-        TreeTableColumn<Object, String> slotsColumn = new TreeTableColumn<>(COLUMN_SLOTS);
-        slotsColumn
-                .setCellValueFactory(new ItemValueFactory(item -> Integer.toString(item.getNumCriticalSlots()), false));
-        slotsColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false));
-        slotsColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
-
-        TreeTableColumn<Object, String> massColumn = new TreeTableColumn<>(COLUMN_MASS);
-        massColumn.setCellValueFactory(new ItemValueFactory(item -> Double.toString(item.getMass()), false));
-        massColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false));
-        massColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
-
-        ObservableList<TreeTableColumn<Object, ?>> columns = equipmentList.getColumns();
-        columns.clear();
-        columns.add(nameColumn);
-        columns.add(slotsColumn);
-        columns.add(massColumn);
-    }
-
-    private void setupGeneralPanel() {
-        ChassisBase chassis = model.loadout.getChassis();
-        int massMax = chassis.getMassMax();
-        generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
-        generalMassLabel.textProperty().bind(Bindings.format("%.2f t free", model.statsFreeMass));
-
-        int armorMax = chassis.getArmorMax();
-        generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
-        generalArmorLabel.textProperty().bind(Bindings.format("%d free", model.statsArmorFree));
-
-        int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
-        generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
-        generalSlotsLabel.textProperty()
-                .bind(Bindings.format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
-    }
-
-    private void setupLayoutView() {
-        DynamicSlotDistributor distributor = new DynamicSlotDistributor(model.loadout);
-
-        Region rightArmStrut = new Region();
-        rightArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
-
-        Region leftArmStrut = new Region();
-        leftArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
-
-        Region rightTorsoStrut = new Region();
-        rightTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
-        Region leftTorsoStrut = new Region();
-        leftTorsoStrut.getStyleClass().add(StyleManager.CSS_CLASS_TORSO_STRUT);
-
-        ObservableList<Node> children = layoutContainer.getChildren();
-        VBox rightArmBox = new VBox(rightArmStrut,
-                new ComponentPane(xBar, cmdStack, model, Location.RightArm, distributor));
-        VBox rightTorsoBox = new VBox(rightTorsoStrut,
-                new ComponentPane(xBar, cmdStack, model, Location.RightTorso, distributor),
-                new ComponentPane(xBar, cmdStack, model, Location.RightLeg, distributor));
-        VBox centralBox = new VBox(new ComponentPane(xBar, cmdStack, model, Location.Head, distributor),
-                new ComponentPane(xBar, cmdStack, model, Location.CenterTorso, distributor));
-        VBox leftTorsoBox = new VBox(leftTorsoStrut,
-                new ComponentPane(xBar, cmdStack, model, Location.LeftTorso, distributor),
-                new ComponentPane(xBar, cmdStack, model, Location.LeftLeg, distributor));
-        VBox leftArmBox = new VBox(leftArmStrut,
-                new ComponentPane(xBar, cmdStack, model, Location.LeftArm, distributor));
-
-        ModulePane modulePane = new ModulePane(xBar, cmdStack, model);
-        rightArmBox.getChildren().add(modulePane);
-
-        rightArmBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
-        rightTorsoBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
-        centralBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
-        leftTorsoBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
-        leftArmBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
-
-        children.add(rightArmBox);
-        children.add(rightTorsoBox);
-        children.add(centralBox);
-        children.add(leftTorsoBox);
-        children.add(leftArmBox);
-    }
-
-    private void setupModulesList() {
-        TreeItem<Object> root = new TreeItem<>();
-        root.setExpanded(true);
-
-        for (ModuleSlot slot : ModuleSlot.values()) {
-            if (slot == ModuleSlot.HYBRID)
-                continue;
-
-            FilterTreeItem<Object> item = new FilterTreeItem<Object>(EquipmentCategory.classify(slot));
-            item.setExpanded(true);
-
-            List<PilotModule> modules = PilotModuleDB.lookup(slot);
-            modules.sort((aLeft, aRight) -> {
-                return aLeft.getName().compareTo(aRight.getName());
-            });
-
-            for (PilotModule module : modules) {
-                TreeItem<Object> moduleTreeItem = new TreeItem<>(module);
-                item.add(moduleTreeItem);
-            }
-            root.getChildren().add(item);
-        }
-
-        TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(COLUMN_NAME);
-        nameColumn.setCellValueFactory((aFeatures) -> {
-            TreeItem<Object> treeItem = aFeatures.getValue();
-            if (null != treeItem && null != treeItem.getValue()) {
-                Object objectValue = treeItem.getValue();
-                if (objectValue instanceof PilotModule) {
-                    return new ReadOnlyStringWrapper(((PilotModule) objectValue).getName());
-                }
-                return new ReadOnlyStringWrapper(objectValue.toString());
-            }
-            return new ReadOnlyStringWrapper("");
-        });
-
-        moduleList.setRoot(root);
-        moduleList.getColumns().clear();
-        moduleList.getColumns().add(nameColumn);
-        moduleList.setRowFactory(aTree -> new ModuleTableRow(model.loadout, cmdStack, xBar));
-        updateModulePredicates();
-    }
-
     private void setupUpgradesPanel() {
         upgradeArtemis.selectedProperty().bindBidirectional(model.hasArtemis);
 
@@ -705,6 +632,102 @@ public class LoadoutWindowController implements MessageReceiver {
         }
     }
 
+    private void setupWeaponsTable() {
+        offensiveWeaponTable.setItems(new WeaponSummaryList(xBar, model.loadout));
+
+        DecimalFormat df = new DecimalFormat("#");
+        final double nameSize = 0.35;
+        final double margin = 0.02;
+
+        TableColumn<WeaponSummary, String> nameColumn = new TableColumn<>(WSTAT_COL_EAPON);
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply(nameSize - margin));
+
+        TableColumn<WeaponSummary, String> ammoColumn = new TableColumn<>(WSTAT_COL_AMMO);
+        ammoColumn.setCellValueFactory((aFeatures) -> {
+            WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+
+                {
+                    bind(value.roundsProperty());
+                }
+
+                @Override
+                protected String computeValue() {
+                    return df.format(value.roundsProperty().get());
+                }
+            };
+        });
+        ammoColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+
+        TableColumn<WeaponSummary, String> volleysColumn = new TableColumn<>(WSTAT_COL_VOLLEYS);
+        volleysColumn.setCellValueFactory((aFeatures) -> {
+            WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+                {
+                    bind(value.roundsProperty());
+                    bind(value.volleySizeProperty());
+                }
+
+                @Override
+                protected String computeValue() {
+                    return df.format(value.roundsProperty().get() / value.volleySizeProperty().get());
+                }
+            };
+        });
+        volleysColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+
+        TableColumn<WeaponSummary, String> secondsColumn = new TableColumn<>(WSTAT_COL_SECONDS);
+        secondsColumn.setCellValueFactory((aFeatures) -> {
+            WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+                {
+                    bind(value.battleTimeProperty());
+                }
+
+                @Override
+                protected String computeValue() {
+                    return df.format(value.battleTimeProperty().get());
+                }
+            };
+        });
+        secondsColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+
+        TableColumn<WeaponSummary, String> damageColumn = new TableColumn<>(WSTAT_COL_DAMAGE);
+        damageColumn.setCellValueFactory((aFeatures) -> {
+            WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+                {
+                    bind(value.totalDamageProperty());
+                }
+
+                @Override
+                protected String computeValue() {
+                    return df.format(value.totalDamageProperty().get());
+                }
+            };
+        });
+        damageColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+
+        ObservableList<TableColumn<WeaponSummary, ?>> cols = offensiveWeaponTable.getColumns();
+        cols.clear();
+        cols.add(nameColumn);
+        cols.add(ammoColumn);
+        cols.add(volleysColumn);
+        cols.add(secondsColumn);
+        cols.add(damageColumn);
+    }
+
+    private void updateArmorWizard() {
+        try {
+            cmdStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
+                    armorWizardRatio.getValue(), xBar));
+        }
+        catch (Exception e) {
+            LiSongMechLab.showError(e);
+        }
+    }
+
     private void updateEquipmentPredicates() {
         FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
         for (TreeItem<Object> category : root.getChildren()) {
@@ -717,6 +740,11 @@ public class LoadoutWindowController implements MessageReceiver {
         // Force full refresh of tree, because apparently the observed changes on the children aren't enough.
         equipmentList.setRoot(null);
         equipmentList.setRoot(root);
+    }
+
+    private void updateModifiers() {
+        modifiersBox.getChildren().clear();
+        modifierFormatter.format(model.loadout.getModifiers(), modifiersBox.getChildren());
     }
 
     private void updateModulePredicates() {
@@ -741,30 +769,6 @@ public class LoadoutWindowController implements MessageReceiver {
         // Force full refresh of tree, because apparently the observed changes on the children aren't enough.
         moduleList.setRoot(null);
         moduleList.setRoot(root);
-    }
-
-    @FXML
-    public void armorWizardResetAll(@SuppressWarnings("unused") ActionEvent event) throws Exception {
-        CommandStack.CompositeCommand cc = new CommandStack.CompositeCommand("Reset manual armor", xBar) {
-            @Override
-            protected void buildCommand() throws EquipResult {
-                for (ConfiguredComponentBase component : model.loadout.getComponents()) {
-                    if (component.getInternalComponent().getLocation().isTwoSided()) {
-                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.FRONT,
-                                component.getArmor(ArmorSide.FRONT), false));
-                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.BACK,
-                                component.getArmor(ArmorSide.BACK), false));
-                    }
-                    else {
-                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.ONLY,
-                                component.getArmor(ArmorSide.ONLY), false));
-                    }
-                }
-
-            }
-        };
-        cmdStack.pushAndApply(cc);
-        updateArmorWizard();
     }
 
 }

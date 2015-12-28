@@ -25,7 +25,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.util.StringConverter;
 
 /**
- * This is a {@link TextFormatter} that formats a double from a string using a regexp matcher.
+ * This is a {@link TextFormatter} that reuses the string converter to double as a filter.
  * 
  * @author Li Song
  * @param <T>
