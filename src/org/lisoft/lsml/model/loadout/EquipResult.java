@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.item.Item;
  * 
  * @author Emily Björk
  */
-public class EquipResult extends Exception {
+public class EquipResult {
     public static enum EquipResultType {
         Success(0, "Success"), //
         TooHeavy(1, "Too heavy"), //
@@ -53,7 +53,7 @@ public class EquipResult extends Exception {
         LaaBeforeHa(90, "Hand actuator can only be enabled if Lower Arm Actuator is enabled"), //
         NotToggleable(90, "Item is not toggleable");
 
-        private final int specificity;
+        private final int    specificity;
         private final String message;
 
         EquipResultType(int aSpecificity, String aMessage) {
@@ -125,11 +125,6 @@ public class EquipResult extends Exception {
     }
 
     @Override
-    public String getMessage() {
-        return toString();
-    }
-
-    @Override
     public String toString() {
         if (location != null)
             return type.toString() + " on " + location.longName();
@@ -154,18 +149,8 @@ public class EquipResult extends Exception {
         return make(null, aType);
     }
 
-    public EquipResultType getType(){
+    public EquipResultType getType() {
         return type;
     }
-    
-    /**
-     * Checks if this result is a failure and throw if it is
-     * 
-     * @throws EquipResult
-     *             Thrown if this is a failure result.
-     */
-    public void checkFailureAndThrow() throws EquipResult {
-        if (this != SUCCESS)
-            throw this;
-    }
+
 }

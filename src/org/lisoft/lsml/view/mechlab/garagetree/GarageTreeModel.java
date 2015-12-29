@@ -76,10 +76,10 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener {
     private void addDropShipFolders(MessageXBar aXBar, JTextField aFilterBar, GarageTree aGarageTree) {
 
         DropShipContainerNode is = new DropShipContainerNode("Drop Ships - IS", root, this, aXBar, aFilterBar,
-                aGarageTree, Faction.InnerSphere);
+                aGarageTree, Faction.INNERSPHERE);
 
         DropShipContainerNode clan = new DropShipContainerNode("Drop Ships - Clan", root, this, aXBar, aFilterBar,
-                aGarageTree, Faction.Clan);
+                aGarageTree, Faction.CLAN);
 
         root.addChild(is);
         root.addChild(clan);
@@ -91,7 +91,7 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener {
             if (ChassisClass.COLOSSAL == chassiClass)
                 continue;
             LoadoutContainerNode clazz = new LoadoutContainerNode(chassiClass.toString(), garageIs, this, aXBar,
-                    chassiClass, aFilterBar, aGarageTree, Faction.InnerSphere);
+                    chassiClass, aFilterBar, aGarageTree, Faction.INNERSPHERE);
             garageIs.addChild(clazz);
         }
 
@@ -100,7 +100,7 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener {
             if (ChassisClass.COLOSSAL == chassiClass)
                 continue;
             LoadoutContainerNode clazz = new LoadoutContainerNode(chassiClass.toString(), garageClan, this, aXBar,
-                    chassiClass, aFilterBar, aGarageTree, Faction.Clan);
+                    chassiClass, aFilterBar, aGarageTree, Faction.CLAN);
             garageClan.addChild(clazz);
         }
 
@@ -121,9 +121,9 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener {
                     chassisClan, aFilterBar, aGarageTree);
 
             for (ChassisBase chassi : ChassisDB.lookup(chassiClass)) {
-                if (chassi.getFaction() == Faction.InnerSphere)
+                if (chassi.getFaction() == Faction.INNERSPHERE)
                     classIS.addChild(chassi);
-                else if (chassi.getFaction() == Faction.Clan)
+                else if (chassi.getFaction() == Faction.CLAN)
                     classClan.addChild(chassi);
                 else
                     throw new RuntimeException("Unexpected chassis faction when generating garage tree.");

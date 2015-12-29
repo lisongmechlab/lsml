@@ -17,24 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.item;
+package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
+/**
+ * Thrown when an equipment related operation failed with an excepton.
+ * 
+ * @author Emily Björk
+ */
+public class EquipException extends Exception {
+    private final EquipResult result;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.datacache.ItemDB;
-
-public class EngineTest {
-
-    @Test
-    public void testGetFaction_Clan() {
-        Engine e = (Engine) ItemDB.lookup("CLAN XL ENGINE 375");
-        assertEquals(Faction.CLAN, e.getFaction());
+    public EquipException(EquipResult aResult) {
+        result = aResult;
     }
 
-    @Test
-    public void testGetFaction_IS() {
-        Engine e = (Engine) ItemDB.lookup("XL ENGINE 375");
-        assertEquals(Faction.INNERSPHERE, e.getFaction());
+    public static void checkAndThrow(EquipResult aResult) throws EquipException {
+        if (aResult != EquipResult.SUCCESS) {
+            throw new EquipException(aResult);
+        }
     }
+
+    @Override
+    public String getMessage() {
+        return result.toString();
+    }
+
 }

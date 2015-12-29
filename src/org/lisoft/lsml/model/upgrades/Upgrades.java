@@ -19,18 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.model.datacache.UpgradeDB;
-
 /**
  * This class is a simple container that manages upgrades for an loadout.
  * 
  * @author Emily Björk
  */
 public class Upgrades {
-    protected ArmorUpgrade     armorType     = UpgradeDB.IS_STD_ARMOR;
-    protected StructureUpgrade structureType = UpgradeDB.IS_STD_STRUCTURE;
-    protected GuidanceUpgrade  guidanceType  = UpgradeDB.STD_GUIDANCE;
-    protected HeatSinkUpgrade  heatSinkType  = UpgradeDB.IS_SHS;
+    protected ArmorUpgrade     armorType;
+    protected StructureUpgrade structureType;
+    protected GuidanceUpgrade  guidanceType;
+    protected HeatSinkUpgrade  heatSinkType;
 
     /**
      * @param aArmor

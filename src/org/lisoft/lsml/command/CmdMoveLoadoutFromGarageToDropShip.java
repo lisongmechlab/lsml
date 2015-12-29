@@ -22,7 +22,7 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.MechGarage;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
@@ -63,7 +63,7 @@ public class CmdMoveLoadoutFromGarageToDropShip extends CompositeCommand {
     }
 
     @Override
-    protected void buildCommand() throws EquipResult {
+    protected void buildCommand() throws EquipException {
         addOp(new CmdDropShipSetLoadout(messageBuffer, dropShip, bayIndex, loadout));
         addOp(new CmdRemoveLoadoutFromGarage(garage, loadout));
     }

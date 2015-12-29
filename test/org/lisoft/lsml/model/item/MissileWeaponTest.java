@@ -62,7 +62,7 @@ public class MissileWeaponTest {
     @Test
     public void testGetRangeZero() {
         for (MissileWeapon weapon : allMissileWeapons) {
-            if (weapon.getName().contains("LRM") && weapon.getFaction() == Faction.Clan)
+            if (weapon.getName().contains("LRM") && weapon.getFaction() == Faction.CLAN)
                 continue;
             assertTrue(weapon.getRangeMin(null) - weapon.getRangeZero(null) < 0.0001);
         }

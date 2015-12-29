@@ -22,6 +22,7 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
@@ -75,7 +76,7 @@ public class CmdSetArmorType extends CmdUpgradeBase {
     }
 
     @Override
-    protected void apply() throws EquipResult {
+    protected void apply() throws EquipException {
         set(newValue);
     }
 
@@ -84,20 +85,20 @@ public class CmdSetArmorType extends CmdUpgradeBase {
         try {
             set(oldValue);
         }
-        catch (EquipResult e) {
+        catch (EquipException e) {
             // Undo must not throw
         }
     }
 
-    protected void set(ArmorUpgrade aValue) throws EquipResult {
+    protected void set(ArmorUpgrade aValue) throws EquipException {
         if (aValue != upgrades.getArmor()) {
             ArmorUpgrade old = upgrades.getArmor();
             upgrades.setArmor(aValue);
 
             EquipResult result = verifyLoadoutInvariant(loadout);
-            if(result != EquipResult.SUCCESS){
+            if (result != EquipResult.SUCCESS) {
                 upgrades.setArmor(old);
-                throw result;
+                EquipException.checkAndThrow(result);
             }
 
             if (messageDelivery != null)

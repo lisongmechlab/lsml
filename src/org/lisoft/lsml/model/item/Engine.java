@@ -107,7 +107,7 @@ public class Engine extends HeatSource implements ModifierEquipment {
      */
     public Internal getSide() {
         if (getType() == EngineType.XL)
-            return getFaction() == Faction.Clan ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN
+            return getFaction() == Faction.CLAN ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN
                     : ConfiguredComponentBase.ENGINE_INTERNAL;
         return null;
     }

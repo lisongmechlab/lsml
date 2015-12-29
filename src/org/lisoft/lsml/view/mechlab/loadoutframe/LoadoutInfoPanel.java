@@ -181,7 +181,7 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
         cmdStack = aCommandStack;
 
         // Constants
-        boolean isClan = aLoadout.getChassis().getFaction() == Faction.Clan;
+        boolean isClan = aLoadout.getChassis().getFaction() == Faction.CLAN;
         armorFF = isClan ? UpgradeDB.CLAN_FF_ARMOR : UpgradeDB.IS_FF_ARMOR;
         armorStandard = isClan ? UpgradeDB.CLAN_STD_ARMOR : UpgradeDB.IS_STD_ARMOR;
         structureEs = isClan ? UpgradeDB.CLAN_ES_STRUCTURE : UpgradeDB.IS_ES_STRUCTURE;

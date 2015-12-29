@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -35,42 +36,25 @@ import org.lisoft.lsml.model.upgrades.Upgrade;
  * @author Emily Björk
  */
 public class UpgradeDB {
-    public static final ArmorUpgrade           IS_STD_ARMOR;
-    public static final StructureUpgrade       IS_STD_STRUCTURE;
-    public static final GuidanceUpgrade        STD_GUIDANCE;
-    public static final HeatSinkUpgrade        IS_SHS;
     public static final GuidanceUpgrade        ARTEMIS_IV;
-    public static final HeatSinkUpgrade        IS_DHS;
-    public static final ArmorUpgrade           IS_FF_ARMOR;
-    public static final StructureUpgrade       IS_ES_STRUCTURE;
     public static final HeatSinkUpgrade        CLAN_DHS;
-    public static final ArmorUpgrade           CLAN_FF_ARMOR;
     public static final StructureUpgrade       CLAN_ES_STRUCTURE;
+    public static final ArmorUpgrade           CLAN_FF_ARMOR;
     public static final HeatSinkUpgrade        CLAN_SHS;
     public static final ArmorUpgrade           CLAN_STD_ARMOR;
     public static final StructureUpgrade       CLAN_STD_STRUCTURE;
+    public static final HeatSinkUpgrade        IS_DHS;
+    public static final StructureUpgrade       IS_ES_STRUCTURE;
+    public static final ArmorUpgrade           IS_FF_ARMOR;
+    public static final HeatSinkUpgrade        IS_SHS;
+    public static final ArmorUpgrade           IS_STD_ARMOR;
+    public static final StructureUpgrade       IS_STD_STRUCTURE;
+    public static final GuidanceUpgrade        STD_GUIDANCE;
     private static final Map<Integer, Upgrade> id2upgrade;
 
     /**
-     * Looks up an {@link Upgrade} by its MW:O ID.
-     * 
-     * @param aMwoId
-     *            The ID to look up.
-     * @return The {@link Upgrade} for the sought for ID.
-     * @throws IllegalArgumentException
-     *             Thrown if the ID is not a valid upgrade ID.
-     */
-    public static Upgrade lookup(int aMwoId) throws IllegalArgumentException {
-        Upgrade ans = id2upgrade.get(aMwoId);
-        if (null == ans) {
-            throw new IllegalArgumentException("The ID: " + aMwoId + " is not a valid MWO upgrade ID!");
-        }
-        return ans;
-    }
-
-    /**
      * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
-     * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
+     * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
      */
     static {
         DataCache dataCache;
@@ -103,5 +87,43 @@ public class UpgradeDB {
 
         STD_GUIDANCE = (GuidanceUpgrade) lookup(3051);
         ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
+    }
+
+    public static ArmorUpgrade getArmor(Faction aFaction, boolean aUpgraded) {
+        if (Faction.CLAN == aFaction) {
+            return aUpgraded ? CLAN_FF_ARMOR : CLAN_STD_ARMOR;
+        }
+        return aUpgraded ? IS_FF_ARMOR : IS_STD_ARMOR;
+    }
+
+    public static HeatSinkUpgrade getHeatSinks(Faction aFaction, boolean aUpgraded) {
+        if (Faction.CLAN == aFaction) {
+            return aUpgraded ? CLAN_DHS : CLAN_SHS;
+        }
+        return aUpgraded ? IS_DHS : IS_SHS;
+    }
+
+    public static StructureUpgrade getStructure(Faction aFaction, boolean aUpgraded) {
+        if (Faction.CLAN == aFaction) {
+            return aUpgraded ? CLAN_ES_STRUCTURE : CLAN_STD_STRUCTURE;
+        }
+        return aUpgraded ? IS_ES_STRUCTURE : IS_STD_STRUCTURE;
+    }
+
+    /**
+     * Looks up an {@link Upgrade} by its MW:O ID.
+     * 
+     * @param aMwoId
+     *            The ID to look up.
+     * @return The {@link Upgrade} for the sought for ID.
+     * @throws IllegalArgumentException
+     *             Thrown if the ID is not a valid upgrade ID.
+     */
+    public static Upgrade lookup(int aMwoId) throws IllegalArgumentException {
+        Upgrade ans = id2upgrade.get(aMwoId);
+        if (null == ans) {
+            throw new IllegalArgumentException("The ID: " + aMwoId + " is not a valid MWO upgrade ID!");
+        }
+        return ans;
     }
 }

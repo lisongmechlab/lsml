@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.model.datacache.UpgradeDB;
-
 /**
  * This subclass of {@link Upgrades} can be mutated by setters.
  * 
@@ -43,11 +41,6 @@ public class UpgradesMutable extends Upgrades {
     public UpgradesMutable(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
             HeatSinkUpgrade aHeatSinks) {
         super(aArmor, aStructure, aGuidance, aHeatSinks);
-    }
-
-    public static UpgradesMutable standardUpgrades() {
-        return new UpgradesMutable(UpgradeDB.IS_STD_ARMOR, UpgradeDB.IS_STD_STRUCTURE, UpgradeDB.STD_GUIDANCE,
-                UpgradeDB.IS_SHS);
     }
 
     /**

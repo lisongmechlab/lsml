@@ -109,6 +109,11 @@
 	
 }
 
+.copyable-label, .copyable-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+}
+
 /*********** Styling for Mobility Arcs ***********/
 .mobility-arc-bg{
 	-fx-fill:  derive(colour-lsml-gray, 20%);

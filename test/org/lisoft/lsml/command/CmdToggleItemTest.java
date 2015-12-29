@@ -37,6 +37,7 @@ import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -86,7 +87,7 @@ public class CmdToggleItemTest {
     }
 
     @Test
-    public final void testToggle_SameState() throws EquipResult {
+    public final void testToggle_SameState() throws Exception {
         LoadoutBase<?> loadout = makeLoadoutMock(10);
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
 
@@ -97,8 +98,8 @@ public class CmdToggleItemTest {
         verify(component, never()).setToggleState(any(Item.class), anyBoolean());
     }
 
-    @Test(expected = EquipResult.class)
-    public final void testToggle_NotEnoughSlots() throws EquipResult {
+    @Test(expected = EquipException.class)
+    public final void testToggle_NotEnoughSlots() throws Exception {
         // Setup
         LoadoutBase<?> loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
@@ -111,8 +112,8 @@ public class CmdToggleItemTest {
         cut.apply();
     }
 
-    @Test(expected = EquipResult.class)
-    public final void testToggle_NotAllowed() throws EquipResult {
+    @Test(expected = EquipException.class)
+    public final void testToggle_NotAllowed() throws Exception {
         // Setup
         LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
@@ -128,10 +129,10 @@ public class CmdToggleItemTest {
     /**
      * Functions correctly even with a <code>null</code> {@link MessageDelivery}.
      * 
-     * @throws EquipResult
+     * @throws Exception
      */
     @Test
-    public final void testToggle_NoMessages() throws EquipResult {
+    public final void testToggle_NoMessages() throws Exception {
         // Setup
         LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
@@ -155,7 +156,7 @@ public class CmdToggleItemTest {
     }
 
     @Test
-    public final void testToggle_DisableLAA_NoHA() throws EquipResult {
+    public final void testToggle_DisableLAA_NoHA() throws Exception {
         // Setup
         boolean oldState = true;
         LoadoutBase<?> loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
@@ -179,7 +180,7 @@ public class CmdToggleItemTest {
     }
 
     @Test
-    public final void testToggle_EnableLAA() throws EquipResult {
+    public final void testToggle_EnableLAA() throws Exception {
         // Setup
         LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(false);
@@ -204,7 +205,7 @@ public class CmdToggleItemTest {
     }
 
     @Test
-    public final void testToggle_DisableLAA_HasHA() throws EquipResult {
+    public final void testToggle_DisableLAA_HasHA() throws Exception {
         // Setup
         boolean oldState = true;
         boolean haOldState = true;
@@ -235,7 +236,7 @@ public class CmdToggleItemTest {
     }
 
     @Test
-    public final void testToggle_EnableHA() throws EquipResult {
+    public final void testToggle_EnableHA() throws Exception {
         // Setup
         LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
@@ -260,8 +261,8 @@ public class CmdToggleItemTest {
         inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Removed, ItemDB.HA, -1));
     }
 
-    @Test(expected = EquipResult.class)
-    public final void testToggle_EnableHABeforeLAA() throws EquipResult {
+    @Test(expected = EquipException.class)
+    public final void testToggle_EnableHABeforeLAA() throws Exception {
         // Setup
         LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(false);
@@ -275,7 +276,7 @@ public class CmdToggleItemTest {
     }
 
     @Test
-    public final void testToggle_DisableHA() throws EquipResult {
+    public final void testToggle_DisableHA() throws Exception {
         // Setup
         LoadoutBase<?> loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.HA)).thenReturn(true);

@@ -21,61 +21,39 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
- * This operation removes all armor, upgrades and items from a {@link LoadoutStandard}.
+ * This operation removes everything from the loadout and puts it to a "blank" state.
  * 
  * @author Emily Björk
  */
 public class CmdStripLoadout extends CompositeCommand {
+
     private final LoadoutBase<?> loadout;
-    private final boolean        removeArmor;
 
-    /**
-     * Creates a new strip operation that removes armor, equipment and modules.
-     * 
-     * @param aLoadout
-     *            The loadout to strip.
-     * @param aMessageDelivery
-     *            Where to deliver message changes.
-     */
-    public CmdStripLoadout(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
-        this(aLoadout, aMessageDelivery, true);
-    }
-
-    /**
-     * Creates a new strip operation that optionally removes armor, and always removes equipment and modules.
-     * 
-     * @param aLoadout
-     *            The loadout to strip.
-     * @param aMessageDelivery
-     *            Where to deliver message changes.
-     * @param aRemoveArmor
-     *            If <code>true</code> armor will be removed too.
-     */
-    public CmdStripLoadout(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, boolean aRemoveArmor) {
-        super("strip mech", aMessageDelivery);
+    public CmdStripLoadout(MessageDelivery aMessageTarget, LoadoutBase<?> aLoadout) {
+        super("strip everything", aMessageTarget);
         loadout = aLoadout;
-        removeArmor = aRemoveArmor;
     }
 
     @Override
-    public void buildCommand() {
-        for (ConfiguredComponentBase component : loadout.getComponents()) {
-            addOp(new CmdStripComponent(messageBuffer, loadout, component, removeArmor));
-        }
+    protected void buildCommand() throws EquipException {
+        addOp(new CmdStripArmor(loadout, messageBuffer));
+        addOp(new CmdStripEquipment(loadout, messageBuffer));
 
         addOp(new CmdSetGuidanceType(messageBuffer, loadout, UpgradeDB.STD_GUIDANCE));
-        
         if (loadout instanceof LoadoutStandard) {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-            addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.IS_STD_STRUCTURE));
-            addOp(new CmdSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.IS_STD_ARMOR));
-            addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.IS_SHS));
+            Faction faction = loadoutStandard.getChassis().getFaction();
+            addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.getStructure(faction, false)));
+            addOp(new CmdSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.getArmor(faction, false)));
+            addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.getHeatSinks(faction, false)));
         }
     }
+
 }

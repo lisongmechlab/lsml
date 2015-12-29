@@ -518,9 +518,9 @@ public class DataCache {
 
         // Special items
         ans.add(new Internal("ENGINE", "", "mdf_Engine", ItemDB.ENGINE_INTERNAL_ID, 3, 0, HardPointType.NONE, 15,
-                Faction.InnerSphere));
+                Faction.INNERSPHERE));
         ans.add(new Internal("C-ENGINE", "", "mdf_CEngine", ItemDB.ENGINE_INTERNAL_CLAN_ID, 2, 0, HardPointType.NONE,
-                15, Faction.Clan));
+                15, Faction.CLAN));
 
         // Modules (they contain ammo now, and weapons need to find their ammo
         // types when parsed)

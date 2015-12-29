@@ -40,8 +40,8 @@ public class SplashScreen extends JFrame {
 
     private static SplashScreen instance;
 
-    private String progressSubText = "";
-    private String progressText    = "";
+    private String              progressSubText = "";
+    private String              progressText    = "";
 
     private class BackgroundImage extends JComponent {
         private static final long serialVersionUID = 2294812231919303690L;
@@ -77,7 +77,7 @@ public class SplashScreen extends JFrame {
                 setResizable(false);
                 setUndecorated(true);
                 setTitle("loading...");
-                setSize(350, 350);
+                setSize(560, 320);
 
                 // This works for multi-screen configurations in linux as well.
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

@@ -30,6 +30,7 @@ import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -58,23 +59,23 @@ public class CmdAddItem extends CmdItemBase {
      *            The {@link ConfiguredComponentBase} to add to.
      * @param aItem
      *            The {@link Item} to add.
-     * @throws EquipResult
+     * @throws EquipException
      *             If attempting to add an {@link Internal}.
      */
     public CmdAddItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
-            Item aItem) throws EquipResult {
+            Item aItem) throws EquipException {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
         if (aItem instanceof Internal)
             throw new IllegalArgumentException("Internals cannot be added!");
     }
 
     @Override
-    public void apply() throws EquipResult {
+    public void apply() throws EquipException {
         EquipResult result = loadout.canEquipDirectly(item);
-        result.checkFailureAndThrow();
+        EquipException.checkAndThrow(result);
 
         result = component.canEquip(item);
-        result.checkFailureAndThrow();
+        EquipException.checkAndThrow(result);
 
         if (item instanceof Engine) {
             addXLSides((Engine) item);

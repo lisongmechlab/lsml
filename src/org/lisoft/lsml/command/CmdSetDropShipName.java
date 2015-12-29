@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view.action;
+package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.DropShipMessage;
 import org.lisoft.lsml.messages.MessageDelivery;

@@ -25,7 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 
-import org.lisoft.lsml.command.CmdStripLoadout;
+import org.lisoft.lsml.command.CmdStripEquipment;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -36,7 +36,7 @@ import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
  * 
  * @author Emily Björk
  */
-public class StripLoadout extends AbstractAction {
+public class StripLoadoutAction extends AbstractAction {
     private static final long    serialVersionUID = -5939335331941199195L;
     private final LoadoutBase<?> loadout;
     private final LoadoutFrame   loadoutFrame;
@@ -44,7 +44,7 @@ public class StripLoadout extends AbstractAction {
     private final boolean        removeArmor;
 
     /**
-     * Creates a new {@link StripLoadout}.
+     * Creates a new {@link StripLoadoutAction}.
      * 
      * @param aLoadout
      *            The {@link LoadoutStandard} to set armor for.
@@ -53,7 +53,7 @@ public class StripLoadout extends AbstractAction {
      * @param aRemoveArmor
      *            If <code>true</code> will remove armor too.
      */
-    public StripLoadout(LoadoutFrame aLoadout, MessageXBar aXBar, boolean aRemoveArmor) {
+    public StripLoadoutAction(LoadoutFrame aLoadout, MessageXBar aXBar, boolean aRemoveArmor) {
         super(aRemoveArmor ? "Strip Everything" : "Strip Equipment");
         loadoutFrame = aLoadout;
         loadout = aLoadout.getLoadout();
@@ -64,7 +64,7 @@ public class StripLoadout extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent aArg0) {
         try {
-            loadoutFrame.getOpStack().pushAndApply(new CmdStripLoadout(loadout, xBar, removeArmor));
+            loadoutFrame.getOpStack().pushAndApply(new CmdStripEquipment(loadout, xBar, removeArmor));
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(null,  getValue(Action.NAME) +  " failed.\nError: " + e.getMessage());

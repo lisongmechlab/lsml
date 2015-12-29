@@ -23,14 +23,28 @@ import static javafx.beans.binding.Bindings.format;
 import static javafx.beans.binding.Bindings.isNull;
 import static javafx.beans.binding.Bindings.when;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.lisoft.lsml.command.CmdAddLoadoutToGarage;
 import org.lisoft.lsml.command.CmdDistributeArmor;
+import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdSetMaxArmor;
+import org.lisoft.lsml.command.CmdSetName;
+import org.lisoft.lsml.command.CmdStripArmor;
+import org.lisoft.lsml.command.CmdStripEquipment;
+import org.lisoft.lsml.command.CmdStripLoadout;
 import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.EfficienciesMessage;
@@ -45,15 +59,20 @@ import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.EnvironmentDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.environment.Environment;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.export.SmurfyImportExport;
+import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.item.WeaponModule;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -63,6 +82,7 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.BetterTextFormatter;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
@@ -87,8 +107,15 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
@@ -96,10 +123,13 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -108,6 +138,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
+import javafx.stage.Stage;
 
 /**
  * Controller for the loadout window.
@@ -322,6 +353,12 @@ public class LoadoutWindowController implements MessageReceiver {
     @FXML
     private CheckBox                   upgradeFerroFibrous;
     private final MessageXBar          xBar                = new MessageXBar();
+    @FXML
+    private MenuItem                   menuAddToGarage;
+    private MechGarage                 garage;
+    private Stage                      stage;
+    @FXML
+    MenuItem                           menuLoadStock;
 
     @FXML
     public void armorWizardResetAll(@SuppressWarnings("unused") ActionEvent event) throws Exception {
@@ -362,11 +399,44 @@ public class LoadoutWindowController implements MessageReceiver {
         cmdStack.redo();
     }
 
-    public void setLoadout(LoadoutBase<?> aLoadout) {
+    public void setLoadout(LoadoutBase<?> aLoadout, MechGarage aGarage, Stage aStage) {
         xBar.attach(this);
         model = new LoadoutModelAdaptor(aLoadout, xBar, cmdStack);
         metrics = new LoadoutMetricsModelAdaptor(new LoadoutMetrics(aLoadout, null, xBar), aLoadout, xBar);
+        garage = aGarage;
+        stage = aStage;
 
+        stage.setOnCloseRequest((aWindowEvent) -> {
+            if (!garage.getMechs().contains(model.loadout)) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Add to Garage?");
+                alert.setContentText("The loadout is not saved in your garage.");
+                ButtonType add = new ButtonType("Save to garage");
+                ButtonType discard = new ButtonType("Discard");
+                ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(add, discard, cancel);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent()) {
+                    if (add == result.get()) {
+                        try {
+                            addToGarage();
+                        }
+                        catch (Exception e) {
+                            LiSongMechLab.showError(e);
+                            aWindowEvent.consume();
+                        }
+                    }
+                    else if (discard == result.get()) {
+                        // no-op
+                    }
+                    else {
+                        aWindowEvent.consume();
+                    }
+                }
+            }
+        });
+
+        updateTitle();
         setupLayoutView();
         setupEquipmentList();
         setupGeneralPanel();
@@ -585,6 +655,12 @@ public class LoadoutWindowController implements MessageReceiver {
         menuUndo.disableProperty().bind(isNull(cmdStack.nextUndoProperty()));
         menuUndo.textProperty().bind(when(isNull(cmdStack.nextUndoProperty())).then("Undo")
                 .otherwise(format("Undo (%s)", cmdStack.nextUndoProperty().asString())));
+
+        menuAddToGarage.setDisable(garage.getMechs().contains(model.loadout));
+
+        if (ChassisDB.lookupVariations(model.loadout.getChassis()).size() > 1) {
+            menuLoadStock.setText(menuLoadStock.getText() + "...");
+        }
     }
 
     private void setupMobilityPanel() {
@@ -871,6 +947,193 @@ public class LoadoutWindowController implements MessageReceiver {
         // Force full refresh of tree, because apparently the observed changes on the children aren't enough.
         moduleList.setRoot(null);
         moduleList.setRoot(root);
+    }
+
+    @FXML
+    public void addToGarage() throws Exception {
+        cmdStack.pushAndApply(new CmdAddLoadoutToGarage(garage, model.loadout));
+        menuAddToGarage.setDisable(true);
+    }
+
+    @FXML
+    public void renameLoadout() {
+        TextInputDialog dialog = new TextInputDialog(model.loadout.getName());
+        dialog.setTitle("Renaming Loadout");
+        dialog.setHeaderText("Renaming Loadout");
+        dialog.setContentText("Please enter the new name:");
+
+        dialog.showAndWait().ifPresent((aName) -> {
+            try {
+                cmdStack.pushAndApply(new CmdSetName(model.loadout, xBar, aName));
+                // TODO: The message needs to be passed to the garage window too so that it updates.
+                updateTitle();
+
+            }
+            catch (Exception e) {
+                LiSongMechLab.showError(e);
+            }
+        });
+    }
+
+    private void updateTitle() {
+        LoadoutBase<?> loadout = model.loadout;
+        stage.setTitle("Li Song Mechlab - " + loadout.getName() + " (" + loadout.getChassis().getNameShort() + ")");
+    }
+
+    @FXML
+    public void closeWindow() {
+        stage.close();
+    }
+
+    @FXML
+    public void loadStock() throws Exception {
+        ChassisBase chassis = model.loadout.getChassis();
+        Collection<ChassisBase> variations = ChassisDB.lookupVariations(chassis);
+
+        if (variations.size() == 1) {
+            cmdStack.pushAndApply(new CmdLoadStock(chassis, model.loadout, xBar));
+        }
+        else {
+            ChoiceDialog<ChassisBase> dialog = new ChoiceDialog<ChassisBase>(chassis, variations);
+
+            dialog.setTitle("Select stock loadout");
+            dialog.setHeaderText("This chassis has several different stock loadout variants.");
+            dialog.setContentText("Select a variant:");
+
+            Optional<ChassisBase> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                cmdStack.pushAndApply(new CmdLoadStock(result.get(), model.loadout, xBar));
+            }
+        }
+    }
+
+    @FXML
+    public void stripArmor() throws Exception {
+        cmdStack.pushAndApply(new CmdStripArmor(model.loadout, xBar));
+    }
+
+    @FXML
+    public void stripEquipment() throws Exception {
+        cmdStack.pushAndApply(new CmdStripEquipment(model.loadout, xBar));
+    }
+
+    @FXML
+    public void stripEverything() throws Exception {
+        cmdStack.pushAndApply(new CmdStripLoadout(xBar, model.loadout));
+    }
+
+    private final static Base64LoadoutCoder loadoutCoder = new Base64LoadoutCoder();
+
+    private void showLink(String aTitle, String aContent, String aLink) {
+        Hyperlink hyperlink = new Hyperlink(aLink);
+        hyperlink.setOnAction((aEvent) -> {
+            try {
+                Desktop.getDesktop().browse(new URI(aLink));
+            }
+            catch (Exception e) {
+                LiSongMechLab.showError(e);
+            }
+        });
+
+        MenuItem mi = new MenuItem("Copy link");
+        mi.setOnAction((aEvent) -> {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(aLink);
+            Clipboard.getSystemClipboard().setContent(content);
+        });
+        ContextMenu cm = new ContextMenu(mi);
+        hyperlink.setContextMenu(cm);
+
+        VBox content = new VBox();
+        content.getChildren().add(new Label("Right click to copy:"));
+        content.getChildren().add(hyperlink);
+
+        Alert alert = new Alert(AlertType.INFORMATION, aLink, ButtonType.OK);
+        alert.setTitle(aTitle);
+        alert.setHeaderText(aContent);
+        alert.show();
+        alert.getDialogPane().setContent(content);
+    }
+
+    @FXML
+    public void shareLsmlLink() throws EncodingException, UnsupportedEncodingException {
+        String trampolineLink = loadoutCoder.encodeHttpTrampoline(model.loadout);
+
+        showLink("LSML Export Complete", "The loadout " + model.loadout.getName() + " has been encoded to a LSML link.",
+                trampolineLink);
+    }
+
+    @FXML
+    public void shareSmurfy() {
+        SmurfyImportExport export = new SmurfyImportExport(null, loadoutCoder);
+        try {
+            String url = export.sendLoadout(model.loadout);
+            showLink("Smurfy Export Complete",
+                    "The loadout " + model.loadout.getName() + " has been uploaded to smurfy.", url);
+        }
+        catch (IOException e) {
+            LiSongMechLab.showError(e);
+        }
+    }
+
+    @FXML
+    public void openManual() throws IOException, URISyntaxException {
+        Desktop.getDesktop().browse(new URI("https://github.com/EmilyBjoerk/lsml/wiki"));
+    }
+
+    @FXML
+    public void reportBug() throws IOException, URISyntaxException {
+        Desktop.getDesktop().browse(new URI("https://github.com/EmilyBjoerk/lsml/wiki/Reporting-Issues"));
+    }
+
+    private void maxArmor(double aRatio) throws Exception {
+        try {
+            cmdStack.pushAndApply(new CmdSetMaxArmor(model.loadout, xBar, aRatio, true));
+        }
+        catch (EquipException e) {
+            LiSongMechLab.showError(e);
+        }
+    }
+
+    @FXML
+    public void maxArmor3to1() throws Exception {
+        maxArmor(3);
+    }
+
+    @FXML
+    public void maxArmor5to1() throws Exception {
+        maxArmor(5);
+    }
+
+    @FXML
+    public void maxArmor10to1() throws Exception {
+        maxArmor(10);
+    }
+
+    @FXML
+    public void maxArmorCustom() throws Exception {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Max armor");
+        dialog.setHeaderText("Setting max armor with custom ratio");
+        dialog.setContentText("Front to back ratio:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            String textRatio = result.get().replace(',', '.');
+            final double ratio;
+            try {
+                ratio = Double.parseDouble(textRatio);
+            }
+            catch (NumberFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setHeaderText("Invalid ratio");
+                alert.setHeaderText("Unable to set the max armor");
+                alert.setContentText("You must ender a decimal number!");
+                alert.show();
+                return;
+            }
+            maxArmor(ratio);
+        }
     }
 
 }

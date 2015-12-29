@@ -52,6 +52,7 @@ import org.lisoft.lsml.view.UpdateChecker.ReleaseData;
 import org.lisoft.lsml.view.UpdateChecker.UpdateCallback;
 import org.lisoft.lsml.view.preferences.CorePreferences;
 import org.lisoft.lsml.view.preferences.PreferenceStore;
+import org.lisoft.lsml.view_fx.DefaultExceptionHandler;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;

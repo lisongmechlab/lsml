@@ -15,6 +15,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -28,12 +29,12 @@ import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmdSetArmorTest {
-    private static final int     TEST_MAX_ARMOR = 40;
-    private ArmorSide            armorSide      = ArmorSide.ONLY;
+    private static final int              TEST_MAX_ARMOR        = 40;
+    private ArmorSide                     armorSide             = ArmorSide.ONLY;
     @Mock
-    private MessageXBar          messageRecipint;
-    private double               armorPerTon    = 32;
-    private MockLoadoutContainer mlc            = new MockLoadoutContainer();
+    private MessageXBar                   messageRecipint;
+    private double                        armorPerTon           = 32;
+    private MockLoadoutContainer          mlc                   = new MockLoadoutContainer();
 
     private Integer                       chassisMass           = 100;
     private double                        itemMass              = 50;
@@ -235,7 +236,7 @@ public class CmdSetArmorTest {
      * 
      * @throws Exception
      */
-    @Test(expected = EquipResult.class)
+    @Test(expected = EquipException.class)
     public final void testApply_TooHeavy() throws Exception {
         // Setup
         armorPerTon = 32 * 1.12;
@@ -308,7 +309,7 @@ public class CmdSetArmorTest {
      * 
      * @throws Exception
      */
-    @Test(expected = EquipResult.class)
+    @Test(expected = EquipException.class)
     public final void testApply_TooMuchArmorForSide() throws Exception {
         // Setup
         componentMaxArmorLeft = TEST_MAX_ARMOR / 2;

@@ -27,7 +27,7 @@ import java.util.ListIterator;
 import org.lisoft.lsml.messages.MessageBuffer;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipException;
 
 import javafx.beans.binding.ObjectBinding;
 
@@ -146,7 +146,7 @@ public class CommandStack {
             return result;
         }
 
-        public void prepareCommandAheadOfTime() throws EquipResult {
+        public void prepareCommandAheadOfTime() throws EquipException {
             if (!isPerpared) {
                 buildCommand();
                 isPerpared = true;
@@ -182,10 +182,10 @@ public class CommandStack {
          * The user should implement this to create the operation. Will be called only once, immediately before the
          * first time the operation is applied.
          * 
-         * @throws EquipResult
+         * @throws EquipException
          *             If for some reason the command failed to build.
          */
-        protected abstract void buildCommand() throws EquipResult;
+        protected abstract void buildCommand() throws EquipException;
 
         @Override
         protected void undo() {
@@ -203,23 +203,23 @@ public class CommandStack {
         }
     }
 
-    private final List<Command> actions    = new LinkedList<>();
-    private int                 currentCmd = -1;
-    private final int           depth;
+    private final List<Command>          actions      = new LinkedList<>();
+    private int                          currentCmd   = -1;
+    private final int                    depth;
 
     private final ObjectBinding<Command> nextRedoProp = new ObjectBinding<CommandStack.Command>() {
-        @Override
-        protected Command computeValue() {
-            return nextRedo();
-        }
-    };
+                                                          @Override
+                                                          protected Command computeValue() {
+                                                              return nextRedo();
+                                                          }
+                                                      };
 
     private final ObjectBinding<Command> nextUndoProp = new ObjectBinding<CommandStack.Command>() {
-        @Override
-        protected Command computeValue() {
-            return nextUndo();
-        }
-    };
+                                                          @Override
+                                                          protected Command computeValue() {
+                                                              return nextUndo();
+                                                          }
+                                                      };
 
     /**
      * Creates a new {@link CommandStack} that listens on the given {@link MessageXBar} for garage resets and has the
@@ -281,6 +281,11 @@ public class CommandStack {
             actions.remove(0);
             currentCmd--;
         }
+        // FIXME: Unit test the bindings functionality.
+        updateBindings(); // FIXME: does this need to be in a try-catch on apply?
+    }
+
+    private void updateBindings() {
         nextRedoProp.invalidate();
         nextUndoProp.invalidate();
     }
@@ -291,8 +296,7 @@ public class CommandStack {
             cmd.apply();
             currentCmd++;
         }
-        nextRedoProp.invalidate();
-        nextUndoProp.invalidate();
+        updateBindings(); // FIXME: does this need to be in a try-catch on apply?
     }
 
     public void undo() {
@@ -301,7 +305,6 @@ public class CommandStack {
             cmd.undo();
             currentCmd--;
         }
-        nextRedoProp.invalidate();
-        nextUndoProp.invalidate();
+        updateBindings(); // FIXME: does this need to be in a try-catch on undo?
     }
 }

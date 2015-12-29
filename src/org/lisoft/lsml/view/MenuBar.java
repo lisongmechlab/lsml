@@ -134,8 +134,8 @@ public class MenuBar extends JMenuBar {
             }
             menu.addSeparator();
             {
-                menu.add(new JMenuItem(new NewDropShipAction(Faction.Clan)));
-                menu.add(new JMenuItem(new NewDropShipAction(Faction.InnerSphere)));
+                menu.add(new JMenuItem(new NewDropShipAction(Faction.CLAN)));
+                menu.add(new JMenuItem(new NewDropShipAction(Faction.INNERSPHERE)));
             }
 
             menu.addSeparator();

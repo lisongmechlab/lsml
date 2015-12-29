@@ -80,7 +80,7 @@ public class GarageController {
     private MessageXBar                   xBar            = new MessageXBar();
     private BooleanProperty               hasGarageFile   = new SimpleBooleanProperty();
 
-    private SimpleObjectProperty<Faction> filteredFaction = new SimpleObjectProperty<Faction>(Faction.Any);
+    private SimpleObjectProperty<Faction> filteredFaction = new SimpleObjectProperty<Faction>(Faction.ANY);
 
     private boolean isGarageSaved() {
         return null != garage && null != garage.getFile();
@@ -208,17 +208,17 @@ public class GarageController {
 
     @FXML
     public void filterIS(@SuppressWarnings("unused") ActionEvent aEvent) {
-        filteredFaction.set(Faction.InnerSphere);
+        filteredFaction.set(Faction.INNERSPHERE);
     }
 
     @FXML
     public void filterClan(@SuppressWarnings("unused") ActionEvent aEvent) {
-        filteredFaction.set(Faction.Clan);
+        filteredFaction.set(Faction.CLAN);
     }
 
     @FXML
     public void filterBoth(@SuppressWarnings("unused") ActionEvent aEvent) {
-        filteredFaction.set(Faction.Any);
+        filteredFaction.set(Faction.ANY);
     }
 
     @FXML
