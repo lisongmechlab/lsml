@@ -132,19 +132,19 @@ public class ChassisStandardTest extends ChassisBaseTest {
 
     @Test
     public void testIsAllowed_ClanEngineIsChassis() {
-        faction = Faction.Clan;
+        faction = Faction.CLAN;
         Engine engine = makeEngine(engineMin);
 
-        faction = Faction.InnerSphere;
+        faction = Faction.INNERSPHERE;
         assertFalse(makeDefaultCUT().isAllowed(engine));
     }
 
     @Test
     public void testIsAllowed_IsEngineClanChassis() {
-        faction = Faction.InnerSphere;
+        faction = Faction.INNERSPHERE;
         Engine engine = makeEngine(engineMin);
 
-        faction = Faction.Clan;
+        faction = Faction.CLAN;
         assertFalse(makeDefaultCUT().isAllowed(engine));
     }
 
@@ -157,7 +157,7 @@ public class ChassisStandardTest extends ChassisBaseTest {
     public final void testIsAllowed_NoComponentSupport() {
         Item item = Mockito.mock(Item.class);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getFaction()).thenReturn(Faction.Clan);
+        Mockito.when(item.getFaction()).thenReturn(Faction.CLAN);
         Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
 
         ChassisStandard cut = makeDefaultCUT();

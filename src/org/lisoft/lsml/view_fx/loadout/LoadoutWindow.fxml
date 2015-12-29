@@ -340,21 +340,52 @@
   <top>
     <MenuBar BorderPane.alignment="CENTER">
       <menus>
-        <Menu mnemonicParsing="false" text="File">
+        <Menu mnemonicParsing="false" text="Loadout">
           <items>
-            <MenuItem mnemonicParsing="false" text="Close"/>
+            <MenuItem onAction="#addToGarage" fx:id="menuAddToGarage"  mnemonicParsing="false" text="Add to garage"/>
+            <MenuItem onAction="#renameLoadout" mnemonicParsing="false" text="Rename..."/>
+            <MenuItem onAction="#closeWindow" mnemonicParsing="false" text="Close"/>
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
           <items>
-            <MenuItem fx:id="menuUndo" mnemonicParsing="false" text="Undo" onAction="#undo"/>
-            <MenuItem fx:id="menuRedo" mnemonicParsing="false" text="Redo" onAction="#redo"/>
+            <MenuItem fx:id="menuUndo" mnemonicParsing="false"
+              text="Undo" onAction="#undo"/>
+            <MenuItem fx:id="menuRedo" mnemonicParsing="false"
+              text="Redo" onAction="#redo"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
+            <Menu mnemonicParsing="false" text="Max armor">
+              <items>
+                <MenuItem onAction="#maxArmor3to1" mnemonicParsing="false" text="3:1"/>
+                <MenuItem onAction="#maxArmor5to1" mnemonicParsing="false" text="5:1"/>
+                <MenuItem onAction="#maxArmor10to1" mnemonicParsing="false" text="10:1"/>
+                <MenuItem onAction="#maxArmorCustom" mnemonicParsing="false" text="Custom..."/>
+              </items>
+            </Menu>
+            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem onAction="#loadStock"  fx:id="menuLoadStock" mnemonicParsing="false" text="Load stock"/>
+            <MenuItem onAction="#stripArmor" mnemonicParsing="false" text="Strip armor"/>
+            <MenuItem onAction="#stripEquipment" mnemonicParsing="false" text="Strip equipment"/>
+            <MenuItem onAction="#stripEverything" mnemonicParsing="false" text="Strip everything"/>
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Share">
+          <items>
+            <MenuItem onAction="#shareLsmlLink" mnemonicParsing="false" text="Generate LSML Link"/>
+            <MenuItem onAction="#shareSmurfy" mnemonicParsing="false" text="Upload to Smurfy-net"/>
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Graphs">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Alpha strike"/>
+            <MenuItem mnemonicParsing="false" text="Max DPS"/>
+            <MenuItem mnemonicParsing="false" text="Sustained DPS"/>
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About"/>
+            <MenuItem onAction="#openManual" mnemonicParsing="false" text="Open manual"/>
+            <MenuItem onAction="#reportBug" mnemonicParsing="false" text="Report a bug"/>
           </items>
         </Menu>
       </menus>

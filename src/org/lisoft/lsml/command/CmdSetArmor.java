@@ -24,6 +24,7 @@ import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -104,7 +105,7 @@ public class CmdSetArmor extends Command {
     }
 
     @Override
-    protected void apply() throws EquipResult {
+    protected void apply() throws EquipException {
         storePreviousState();
         if (operationHasEffect()) {
             operationTryToLegalize();
@@ -129,9 +130,9 @@ public class CmdSetArmor extends Command {
         oldManual = component.hasManualArmor();
     }
 
-    private void operationTryToLegalize() throws EquipResult {
+    private void operationTryToLegalize() throws EquipException {
         if (amount > component.getArmorMax(side))
-            throw EquipResult.make(EquipResultType.ExceededMaxArmor);
+            EquipException.checkAndThrow(EquipResult.make(EquipResultType.ExceededMaxArmor));
 
         int armorDiff = amount - oldAmount;
         int totalArmor = armorDiff + loadout.getArmor(); // This is important to prevent numerical stability issues.
@@ -154,7 +155,7 @@ public class CmdSetArmor extends Command {
                 }
             }
             if (freed < armorDiff) {
-                throw EquipResult.make(EquipResultType.TooHeavy);
+                EquipException.checkAndThrow(EquipResult.make(EquipResultType.TooHeavy));
             }
         }
     }

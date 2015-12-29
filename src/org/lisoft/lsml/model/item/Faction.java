@@ -25,10 +25,10 @@ package org.lisoft.lsml.model.item;
  * @author Li Song
  */
 public enum Faction {
-    Any("Any"), InnerSphere("Inner Sphere"), Clan("Clan");
+    ANY("Any"), INNERSPHERE("Inner Sphere"), CLAN("Clan");
 
     public boolean isCompatible(Faction aFaction) {
-        if (this == Any || aFaction == Any)
+        if (this == ANY || aFaction == ANY)
             return true;
         return this == aFaction;
     }
@@ -40,8 +40,8 @@ public enum Faction {
      */
     public static Faction fromMwo(String aFaction) {
         if (null == aFaction || "clan,innersphere".equals(aFaction.toLowerCase()))
-            return Any;
-        return valueOf(aFaction);
+            return ANY;
+        return valueOf(aFaction.toUpperCase());
     }
 
     /**

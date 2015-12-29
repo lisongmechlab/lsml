@@ -23,10 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.view.DefaultExceptionHandler;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.SplashScreen;
 import org.lisoft.lsml.view_fx.controls.ItemView;
@@ -90,16 +90,16 @@ public class LiSongMechLab extends Application {
         aDragboard.setDragView(label.snapshot(sp, null));
     }
 
-    public static void openLoadout(LoadoutBase<?> aLoadout) throws IOException {
+    public static void openLoadout(LoadoutBase<?> aLoadout, MechGarage aGarage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(LSMLFXML.LOADOUT_WINDOW);
         Parent loadoutViewRoot = loader.load();
         LoadoutWindowController controller = loader.getController();
-        controller.setLoadout(aLoadout);
         Stage stage = new Stage();
-        stage.setTitle("Li Song Mechlab - " + aLoadout.getName());
         Scene scene = new Scene(loadoutViewRoot);
         stage.setScene(scene);
+
+        controller.setLoadout(aLoadout, aGarage, stage);
         stage.show();
     }
 

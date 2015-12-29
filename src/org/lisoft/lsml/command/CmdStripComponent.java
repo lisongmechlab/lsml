@@ -24,7 +24,7 @@ import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -35,6 +35,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * 
  * @author Li Song
  */
+@Deprecated
 public class CmdStripComponent extends CompositeCommand {
     private final ConfiguredComponentBase component;
     private final LoadoutBase<?>          loadout;
@@ -73,7 +74,7 @@ public class CmdStripComponent extends CompositeCommand {
     }
 
     @Override
-    public void buildCommand() throws EquipResult {
+    public void buildCommand() throws EquipException {
         // Engine heat sinks are removed together with the engine.
         int hsSkipp = component.getEngineHeatSinks();
         for (Item item : component.getItemsEquipped()) {

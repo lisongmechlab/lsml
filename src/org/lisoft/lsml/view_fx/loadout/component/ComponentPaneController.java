@@ -284,7 +284,7 @@ public class ComponentPaneController implements MessageReceiver {
     }
 
     @FXML
-    void onEquipmentClicked(MouseEvent aEvent) throws EquipResult, Exception {
+    void onEquipmentClicked(MouseEvent aEvent) throws Exception {
         if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() == 2) {
             if (aEvent.getSource() == itemView) {
                 Item item = itemView.getSelectionModel().getSelectedItem();

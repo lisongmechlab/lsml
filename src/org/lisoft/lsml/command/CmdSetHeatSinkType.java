@@ -24,7 +24,7 @@ import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -44,8 +44,9 @@ public class CmdSetHeatSinkType extends CompositeCommand {
     private final LoadoutStandard loadout;
 
     /**
-     * Creates a {@link CmdSetHeatSinkType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
-     * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
+     * Creates a {@link CmdSetHeatSinkType} that only affects a stand-alone {@link UpgradesMutable} object This is
+     * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in
+     * any way.
      * 
      * @param aUpgrades
      *            The {@link UpgradesMutable} object to alter with this {@link Command}.
@@ -100,7 +101,7 @@ public class CmdSetHeatSinkType extends CompositeCommand {
     }
 
     @Override
-    public void buildCommand() throws EquipResult {
+    public void buildCommand() throws EquipException {
         if (oldValue != newValue) {
             HeatSink oldHsType = oldValue.getHeatSinkType();
             HeatSink newHsType = newValue.getHeatSinkType();

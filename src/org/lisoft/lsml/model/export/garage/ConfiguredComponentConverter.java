@@ -31,7 +31,7 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
@@ -135,20 +135,21 @@ public class ConfiguredComponentConverter implements Converter {
             if (partType.isTwoSided()) {
                 String[] armors = aReader.getAttribute("armor").split("/");
                 if (armors.length == 2) {
-                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT, Integer
-                            .parseInt(armors[0]), !autoArmor));
+                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT,
+                            Integer.parseInt(armors[0]), !autoArmor));
                     builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.BACK,
                             Integer.parseInt(armors[1]), !autoArmor));
                 }
             }
             else {
-                builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader
-                        .getAttribute("armor")), !autoArmor));
+                builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY,
+                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
             }
         }
         catch (IllegalArgumentException exception) {
-            JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
-                    + " is corrupt. Continuing to load as much as possible.");
+            // FIXME: Don't show messages from the model?-
+            JOptionPane.showMessageDialog(ProgramInit.lsml(),
+                    "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
         }
 
         while (aReader.hasMoreChildren()) {
@@ -158,15 +159,16 @@ public class ConfiguredComponentConverter implements Converter {
                     Item item = (Item) aContext.convertAnother(null, Item.class);
                     builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                 }
-                catch (IllegalArgumentException | EquipResult exception) {
+                catch (IllegalArgumentException | EquipException exception) {
+                    // FIXME: Don't show messages from the model?-
                     JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
                             + " is corrupt. Continuing to load as much as possible.");
                 }
             }
             else if ("togglestate".equals(aReader.getNodeName())) {
                 Item item = ItemDB.lookup(Integer.parseInt(aReader.getAttribute("item")));
-                builder.push(new CmdToggleItem(null, loadout, (ConfiguredComponentOmniMech) loadoutPart, item, Boolean
-                        .parseBoolean(aReader.getAttribute("enabled"))));
+                builder.push(new CmdToggleItem(null, loadout, (ConfiguredComponentOmniMech) loadoutPart, item,
+                        Boolean.parseBoolean(aReader.getAttribute("enabled"))));
             }
             aReader.moveUp();
         }
@@ -186,20 +188,21 @@ public class ConfiguredComponentConverter implements Converter {
             if (partType.isTwoSided()) {
                 String[] armors = aReader.getAttribute("armor").split("/");
                 if (armors.length == 2) {
-                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT, Integer
-                            .parseInt(armors[0]), !autoArmor));
+                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT,
+                            Integer.parseInt(armors[0]), !autoArmor));
                     builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.BACK,
                             Integer.parseInt(armors[1]), !autoArmor));
                 }
             }
             else {
-                builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY, Integer.parseInt(aReader
-                        .getAttribute("armor")), !autoArmor));
+                builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY,
+                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
             }
         }
         catch (IllegalArgumentException exception) {
-            JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
-                    + " is corrupt. Continuing to load as much as possible.");
+            // FIXME: Don't show messages from the model?-
+            JOptionPane.showMessageDialog(ProgramInit.lsml(),
+                    "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
         }
 
         while (aReader.hasMoreChildren()) {
@@ -210,7 +213,8 @@ public class ConfiguredComponentConverter implements Converter {
                     item = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().getGuidance());
                     builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                 }
-                catch (IllegalArgumentException | EquipResult exception) {
+                catch (IllegalArgumentException | EquipException exception) {
+                    // FIXME: Don't show messages from the model?-
                     JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
                             + " is corrupt. Continuing to load as much as possible.");
                 }

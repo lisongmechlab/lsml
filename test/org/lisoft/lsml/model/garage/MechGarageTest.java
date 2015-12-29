@@ -180,8 +180,8 @@ public class MechGarageTest {
         LoadoutBase<?> lo3 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("nva-prime"));
         LoadoutBase<?> lo4 = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("tbr-c"));
 
-        DropShip ds1 = new DropShip(Faction.InnerSphere);
-        DropShip ds2 = new DropShip(Faction.Clan);
+        DropShip ds1 = new DropShip(Faction.INNERSPHERE);
+        DropShip ds2 = new DropShip(Faction.CLAN);
         ds1.setMech(0, lo1);
         ds1.setMech(1, lo2);
         ds2.setMech(0, lo3);

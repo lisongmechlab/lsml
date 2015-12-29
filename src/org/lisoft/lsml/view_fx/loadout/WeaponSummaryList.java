@@ -22,6 +22,7 @@ package org.lisoft.lsml.view_fx.loadout;
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.ItemMessage.Type;
+import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
@@ -43,7 +44,6 @@ import javafx.collections.ObservableListBase;
 public class WeaponSummaryList extends ObservableListBase<WeaponSummary> implements MessageReceiver {
 
     private final ObservableList<WeaponSummary> entries = FXCollections.observableArrayList();
-    private MessageReception                    reception;
     private LoadoutBase<?>                      loadout;
 
     private void add(Item aItem) {
@@ -58,14 +58,13 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
 
         beginChange();
         int idx = entries.size();
-        entries.add(new WeaponSummary(reception, loadout, aItem));
+        entries.add(new WeaponSummary(loadout, aItem));
         nextAdd(idx, idx + 1);
         endChange();
     }
 
     public WeaponSummaryList(MessageReception aReception, LoadoutBase<?> aLoadoutBase) {
         aReception.attach(this);
-        reception = aReception;
         loadout = aLoadoutBase;
         for (Ammunition ammunition : aLoadoutBase.items(Ammunition.class)) {
             add(ammunition);
@@ -107,7 +106,7 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
                 if (!consumed) {
                     beginChange();
                     int idx = entries.size();
-                    entries.add(new WeaponSummary(reception, loadout, itemMessage.item));
+                    entries.add(new WeaponSummary(loadout, itemMessage.item));
                     nextAdd(idx, idx + 1);
                     endChange();
                 }
@@ -131,11 +130,13 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
                 }
             }
         }
-        else if (aMsg instanceof OmniPodMessage || aMsg instanceof EfficienciesMessage) {
+        else if (aMsg instanceof LoadoutMessage || aMsg instanceof OmniPodMessage
+                || aMsg instanceof EfficienciesMessage) {
             // Efficiencies or quirks changed, update values.
             beginChange();
             int sz = size();
             for (int i = 0; i < sz; ++i) {
+                get(i).battleTimeProperty().invalidate();
                 nextUpdate(i);
             }
             endChange();

@@ -25,6 +25,7 @@ import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -49,8 +50,9 @@ public class CmdSetGuidanceType extends CompositeCommand {
     private final LoadoutBase<?>  loadout;
 
     /**
-     * Creates a {@link CmdSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
-     * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutBase} in any way.
+     * Creates a {@link CmdSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is
+     * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutBase} in any
+     * way.
      * 
      * @param aUpgrades
      *            The {@link UpgradesMutable} object to alter with this {@link Command}.
@@ -75,7 +77,8 @@ public class CmdSetGuidanceType extends CompositeCommand {
      * @param aGuidanceUpgrade
      *            The new upgrade to use.
      */
-    public CmdSetGuidanceType(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, GuidanceUpgrade aGuidanceUpgrade) {
+    public CmdSetGuidanceType(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
+            GuidanceUpgrade aGuidanceUpgrade) {
         super(aGuidanceUpgrade.getName(), aMessageDelivery);
         upgrades = aLoadout.getUpgrades();
         loadout = aLoadout;
@@ -84,18 +87,19 @@ public class CmdSetGuidanceType extends CompositeCommand {
     }
 
     @Override
-    public void buildCommand() throws EquipResult {
+    public void buildCommand() throws EquipException {
         if (loadout != null) {
             if (newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree())
-                throw EquipResult.make(EquipResultType.NotEnoughSlots);
+                EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
 
             for (ConfiguredComponentBase part : loadout.getComponents()) {
                 if (newValue.getExtraSlots(part) > part.getSlotsFree())
-                    throw EquipResult.make(part.getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
+                    EquipException.checkAndThrow(EquipResult.make(part.getInternalComponent().getLocation(),
+                            EquipResultType.NotEnoughSlots));
             }
 
             if (newValue.getExtraTons(loadout) > loadout.getFreeMass()) {
-                throw EquipResult.make(EquipResultType.TooHeavy);
+                EquipException.checkAndThrow(EquipResult.make(EquipResultType.TooHeavy));
             }
 
             addOp(new CommandStack.Command() {

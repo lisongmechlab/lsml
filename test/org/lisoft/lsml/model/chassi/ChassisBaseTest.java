@@ -52,7 +52,7 @@ import junitparams.Parameters;
 @RunWith(JUnitParamsRunner.class)
 public abstract class ChassisBaseTest {
     protected int             baseVariant          = 12;
-    protected Faction         faction              = Faction.Clan;
+    protected Faction         faction              = Faction.CLAN;
     protected int             maxTons              = 75;
     protected MovementProfile movementProfile;
     protected int             mwoID                = 300;
@@ -188,11 +188,11 @@ public abstract class ChassisBaseTest {
     public final void testIsAllowed() throws Exception {
         ChassisBase cut0 = makeDefaultCUT();
         Item clanItem = Mockito.mock(Item.class);
-        Mockito.when(clanItem.getFaction()).thenReturn(Faction.Clan);
+        Mockito.when(clanItem.getFaction()).thenReturn(Faction.CLAN);
         Item isItem = Mockito.mock(Item.class);
-        Mockito.when(isItem.getFaction()).thenReturn(Faction.InnerSphere);
+        Mockito.when(isItem.getFaction()).thenReturn(Faction.INNERSPHERE);
 
-        if (cut0.getFaction() == Faction.Clan) {
+        if (cut0.getFaction() == Faction.CLAN) {
             assertTrue(cut0.isAllowed(clanItem));
             assertFalse(cut0.isAllowed(isItem));
         }

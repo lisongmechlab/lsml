@@ -31,7 +31,6 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * 
  * @author Li Song
  */
-@Deprecated // Remove this and make it a mode on CmdStripLoadout/CmdStripComponent.
 public class CmdStripArmor extends CompositeCommand {
     protected final LoadoutBase<?> loadout;
 

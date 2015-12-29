@@ -19,12 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
-import org.lisoft.lsml.messages.EfficienciesMessage;
-import org.lisoft.lsml.messages.LoadoutMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageReception;
-import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
@@ -44,7 +38,7 @@ import javafx.beans.property.StringProperty;
  * 
  * @author Li Song
  */
-public class WeaponSummary implements MessageReceiver {
+public class WeaponSummary {
     private class BattleTimeBinding extends DoubleBinding {
         private Weapon weapon;
 
@@ -95,29 +89,15 @@ public class WeaponSummary implements MessageReceiver {
     private final DoubleBinding     totalDamage;
     private String                  selectorName;
 
-    @Override
-    public void receive(Message aMsg) {
-        // Any of the below messages affects battle time
-        // LoadoutMessage: Modules changed
-        // EfficienciesMessage: Efficiencies can affect summary
-        // OmniPodMessage: Quirks changed
-        if (aMsg instanceof LoadoutMessage || aMsg instanceof EfficienciesMessage || aMsg instanceof OmniPodMessage) {
-            battleTime.invalidate();
-        }
-    }
-
     /**
      * Creates a new weapon summary based on an Item.
      * 
      * @param aItem
      *            The {@link Item} to base this {@link WeaponSummary} on initially.
-     * @param aReception
-     *            The {@link MessageReception} to listen to changes that affect this on.
      * @param aLoadout
      *            A {@link LoadoutBase} that this {@link WeaponSummary} is calculated for.
      */
-    public WeaponSummary(MessageReception aReception, LoadoutBase<?> aLoadout, Item aItem) {
-        aReception.attach(this);
+    public WeaponSummary(LoadoutBase<?> aLoadout, Item aItem) {
         loadout = aLoadout;
 
         if (aItem instanceof Weapon) {

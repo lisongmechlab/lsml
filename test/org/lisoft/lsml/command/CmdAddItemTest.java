@@ -54,6 +54,7 @@ import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -92,10 +93,10 @@ public class CmdAddItemTest {
     /**
      * Internals are not valid items for adding
      * 
-     * @throws EquipResult
+     * @throws EquipException
      */
     @Test(expected = IllegalArgumentException.class)
-    public final void testAddItem_Internals() throws EquipResult {
+    public final void testAddItem_Internals() throws EquipException {
         // Setup
         Internal item = mock(Internal.class);
         @SuppressWarnings("unused") // Should throw
@@ -105,10 +106,10 @@ public class CmdAddItemTest {
     /**
      * Adding an item shall work with a <code>null</code> {@link MessageDelivery}.
      * 
-     * @throws EquipResult
+     * @throws EquipException
      */
     @Test
-    public final void testAddItem_NoMessage() throws EquipResult {
+    public final void testAddItem_NoMessage() throws EquipException {
         // Setup
         Item item = ItemDB.ECM;
         int index = 5;
@@ -136,10 +137,10 @@ public class CmdAddItemTest {
      * Adding an item shall be possible if the loadout and component supports it. Necessary manipulation of the
      * component and sending of messages is done in proper order.
      * 
-     * @throws EquipResult
+     * @throws EquipException
      */
     @Test
-    public final void testAddItem() throws EquipResult {
+    public final void testAddItem() throws EquipException {
         // Setup
         Item item = ItemDB.ECM;
         int index = 5;
@@ -168,10 +169,10 @@ public class CmdAddItemTest {
     /**
      * Shouldn't throw or anything.
      * 
-     * @throws EquipResult
+     * @throws EquipException
      */
     @Test
-    public final void testAddItem_LargeBore_NotOmni() throws EquipResult {
+    public final void testAddItem_LargeBore_NotOmni() throws EquipException {
         // Setup
         Weapon item = (Weapon) ItemDB.lookup("ER PPC");
         assertTrue(item.isLargeBore());
@@ -200,7 +201,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_NotLargeBore_HALAAUnaffected() throws EquipResult {
+    public final void testAddItem_NotLargeBore_HALAAUnaffected() throws EquipException {
         // Setup
         ConfiguredComponentOmniMech omniComponent = mock(ConfiguredComponentOmniMech.class);
 
@@ -235,7 +236,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_LargeBore_NoHALAA() throws EquipResult {
+    public final void testAddItem_LargeBore_NoHALAA() throws EquipException {
         // Setup
         ConfiguredComponentOmniMech omniComponent = mock(ConfiguredComponentOmniMech.class);
 
@@ -270,7 +271,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_LargeBore_OnlyLAA() throws EquipResult {
+    public final void testAddItem_LargeBore_OnlyLAA() throws EquipException {
         // Setup
         ConfiguredComponentOmniMech omniComponent = mock(ConfiguredComponentOmniMech.class);
 
@@ -309,7 +310,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_LargeBore_BothHALAA() throws EquipResult {
+    public final void testAddItem_LargeBore_BothHALAA() throws EquipException {
         // Setup
         ConfiguredComponentOmniMech omniComponent = mock(ConfiguredComponentOmniMech.class);
 
@@ -352,10 +353,10 @@ public class CmdAddItemTest {
     /**
      * Operation will fail with a {@link EquipResult} exception if the loadout cannot support the item.
      * 
-     * @throws EquipResult
+     * @throws EquipException
      */
     @Test
-    public final void testAddItem_NoLoadoutSupport() throws EquipResult {
+    public final void testAddItem_NoLoadoutSupport() throws EquipException {
         // Setup
         Item item = ItemDB.ECM;
         EquipResult result = EquipResult.make(Location.LeftArm, EquipResultType.NoFreeHardPoints);
@@ -368,7 +369,7 @@ public class CmdAddItemTest {
             cut.apply();
             fail("Expected exception!");
         }
-        catch (EquipResult e) {
+        catch (EquipException e) {
             // No-op
         }
 
@@ -380,10 +381,10 @@ public class CmdAddItemTest {
     /**
      * Operation will fail with a {@link EquipResult} exception if the component cannot support the item.
      * 
-     * @throws EquipResult
+     * @throws EquipException
      */
     @Test
-    public final void testAddItem_NoComponentSupport() throws EquipResult {
+    public final void testAddItem_NoComponentSupport() throws EquipException {
         // Setup
         Item item = ItemDB.ECM;
         EquipResult result = EquipResult.make(Location.LeftArm, EquipResultType.NoFreeHardPoints);
@@ -396,7 +397,7 @@ public class CmdAddItemTest {
             cut.apply();
             fail("Expected exception!");
         }
-        catch (EquipResult e) {
+        catch (EquipException e) {
             // No-op
         }
 
@@ -406,7 +407,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_AddEnginePossible() throws EquipResult {
+    public final void testAddItem_AddEnginePossible() throws EquipException {
         Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
         int index = 0;
         when(loadout.canEquipDirectly(engine)).thenReturn(EquipResult.SUCCESS);
@@ -428,7 +429,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_AddEngineXLSides() throws EquipResult {
+    public final void testAddItem_AddEngineXLSides() throws EquipException {
         Engine engine = (Engine) ItemDB.lookup("XL ENGINE 300");
         int index = 0;
         int indexSideLt = 1;
@@ -606,7 +607,7 @@ public class CmdAddItemTest {
      * 
      * @throws Exception
      */
-    @Test(expected = EquipResult.class)
+    @Test(expected = EquipException.class)
     public void testCantAddItem() throws Exception {
         CmdAddItem cut = null;
         try {

@@ -45,6 +45,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -117,7 +118,7 @@ public class CmdAutoAddItemTest {
     }
 
     // Bug #349
-    @Test(expected = EquipResult.class, timeout = 5000)
+    @Test(expected = EquipException.class, timeout = 5000)
     public void testMoveItem_Bug_349() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
@@ -224,7 +225,7 @@ public class CmdAutoAddItemTest {
      * 
      * @throws Exception
      */
-    @Test(expected = EquipResult.class)
+    @Test(expected = EquipException.class)
     public void testMoveItem_NotPossible() throws Exception {
         LoadoutStandard loadout = null;
         Item gaussRifle = null;
@@ -442,7 +443,7 @@ public class CmdAutoAddItemTest {
             stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.ECM));
             fail("Expected exception");
         }
-        catch (EquipResult equipResult) {
+        catch (EquipException equipResult) {
             assertSame(EquipResult.make(EquipResultType.NotSupported), equipResult);
         }
         catch (Throwable t) {

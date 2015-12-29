@@ -101,7 +101,7 @@ public class ItemDB {
 
     public static Engine getEngine(int aRating, EngineType aType, Faction aFaction) {
         StringBuilder sb = new StringBuilder();
-        if (aFaction == Faction.Clan) {
+        if (aFaction == Faction.CLAN) {
             sb.append("CLAN ");
         }
         sb.append(aType.name()).append(" ENGINE ").append(aRating);
@@ -157,9 +157,9 @@ public class ItemDB {
         LAA = (Internal) lookup("LowerArmActuator");
         HA = (Internal) lookup("HandActuator");
 
-        DYN_ARMOR = new Internal("DYNAMIC ARMOR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.Any);
-        DYN_STRUCT = new Internal("DYNAMIC STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.Any);
-        FIX_ARMOR = new Internal("FIXED ARMOR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.Any);
-        FIX_STRUCT = new Internal("FIXED STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.Any);
+        DYN_ARMOR = new Internal("DYNAMIC ARMOR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
+        DYN_STRUCT = new Internal("DYNAMIC STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
+        FIX_ARMOR = new Internal("FIXED ARMOR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
+        FIX_STRUCT = new Internal("FIXED STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
     }
 }

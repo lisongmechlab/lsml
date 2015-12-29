@@ -23,6 +23,7 @@ import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -65,9 +66,9 @@ public class CmdAddModule extends Command {
     }
 
     @Override
-    protected void apply() throws EquipResult {
+    protected void apply() throws EquipException {
         EquipResult result = loadout.canAddModule(module);
-        result.checkFailureAndThrow();
+        EquipException.checkAndThrow(result);
         loadout.addModule(module);
 
         post();

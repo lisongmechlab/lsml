@@ -340,7 +340,7 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
             }
         };
 
-        for (Faction faction : new Faction[] { Faction.InnerSphere, Faction.Clan }) {
+        for (Faction faction : new Faction[] { Faction.INNERSPHERE, Faction.CLAN }) {
             for (ChassisClass chassisClass : ChassisClass.values()) {
                 if (ChassisClass.COLOSSAL == chassisClass)
                     continue;

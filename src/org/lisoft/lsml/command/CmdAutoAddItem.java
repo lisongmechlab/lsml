@@ -33,6 +33,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -142,11 +143,9 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
     }
 
     @Override
-    protected void buildCommand() throws EquipResult {
+    protected void buildCommand() throws EquipException {
         EquipResult globalResult = loadout.canEquipGlobal(itemToPlace);
-        if (globalResult != EquipResult.SUCCESS) {
-            throw globalResult;
-        }
+        EquipException.checkAndThrow(globalResult);
 
         // If it can go into the engine, put it there.
         ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
@@ -187,10 +186,10 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             Collections.sort(open); // Greedy search, I need *a* solution, not the best one.
         }
 
-        throw EquipResult.make(EquipResultType.NotEnoughSlots);
+        EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
     }
 
-    private void applySolution(Node node) throws EquipResult {
+    private void applySolution(Node node) throws EquipException {
         List<Command> ops = new LinkedList<>();
         Node n = node;
         while (n.parent != null) {

@@ -24,6 +24,7 @@ import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -62,7 +63,7 @@ public class CmdToggleItem extends Command {
     }
 
     @Override
-    protected void apply() throws EquipResult {
+    protected void apply() throws EquipException {
         oldState = component.getToggleState(item);
         oldHAState = component.getToggleState(ItemDB.HA);
 
@@ -71,16 +72,15 @@ public class CmdToggleItem extends Command {
 
         if (newState == true) {
             if (item == ItemDB.HA && false == component.getToggleState(ItemDB.LAA)) {
-                throw EquipResult.make(component.getInternalComponent().getLocation(), EquipResultType.LaaBeforeHa);
+                EquipException.checkAndThrow(
+                        EquipResult.make(component.getInternalComponent().getLocation(), EquipResultType.LaaBeforeHa));
             }
 
             if (loadout.getNumCriticalSlotsFree() < 1) {
-                throw EquipResult.make(EquipResultType.NotEnoughSlots);
+                EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
             }
             EquipResult e = component.canToggleOn(item);
-            if (e != EquipResult.SUCCESS) {
-                throw e;
-            }
+            EquipException.checkAndThrow(e);
         }
 
         if (item == ItemDB.LAA && newState == false && component.getToggleState(ItemDB.HA)) {

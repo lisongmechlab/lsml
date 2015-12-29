@@ -23,7 +23,7 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -98,7 +98,7 @@ public class CmdRemoveItemTest {
     }
 
     @Test
-    public final void testRemoveItem() throws EquipResult {
+    public final void testRemoveItem() throws EquipException {
         // Setup
         Item item = ItemDB.ECM;
         int index = 4;
@@ -124,7 +124,7 @@ public class CmdRemoveItemTest {
     }
 
     @Test
-    public final void testRemoveItem_NoMessages() throws EquipResult {
+    public final void testRemoveItem_NoMessages() throws EquipException {
         // Setup
         Item item = ItemDB.ECM;
         int index = 4;
@@ -148,7 +148,7 @@ public class CmdRemoveItemTest {
     }
 
     private final void testRemoveEngine(Engine aEngine, HeatSinkUpgrade aSinkUpgrade, int aEngineHS)
-            throws EquipResult {
+            throws EquipException {
         // Setup
         Item hsType = aSinkUpgrade.getHeatSinkType();
         int index = 0;
@@ -220,10 +220,10 @@ public class CmdRemoveItemTest {
     /**
      * Removing an XL engine shall also remove ENGINE_INTERNAL from side torsii
      * 
-     * @throws EquipResult
+     * @throws EquipException
      */
     @Test
-    public final void testRemoveItem_XLEngine() throws EquipResult {
+    public final void testRemoveItem_XLEngine() throws EquipException {
         Engine engine = (Engine) ItemDB.lookup("XL ENGINE 300");
         testRemoveEngine(engine, UpgradeDB.IS_DHS, 0);
     }
@@ -231,10 +231,10 @@ public class CmdRemoveItemTest {
     /**
      * Removing a standard engine shall also remove engine heat sinks (SHS).
      * 
-     * @throws EquipResult
+     * @throws EquipException
      */
     @Test
-    public final void testRemoveItem_StdEngine_DHS() throws EquipResult {
+    public final void testRemoveItem_StdEngine_DHS() throws EquipException {
         Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
         testRemoveEngine(engine, UpgradeDB.IS_DHS, 2);
     }
@@ -242,10 +242,10 @@ public class CmdRemoveItemTest {
     /**
      * Removing a standard engine shall also remove engine heat sinks (DHS).
      * 
-     * @throws EquipResult
+     * @throws EquipException
      */
     @Test
-    public final void testRemoveItem_StdEngine_SHS() throws EquipResult {
+    public final void testRemoveItem_StdEngine_SHS() throws EquipException {
         Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
         testRemoveEngine(engine, UpgradeDB.IS_SHS, 2);
     }

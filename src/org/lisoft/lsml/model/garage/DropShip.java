@@ -88,14 +88,14 @@ public class DropShip {
      * @return The minimum tonnage allowed for this drop ship.
      */
     public int getMinTonnage() {
-        return faction == Faction.InnerSphere ? MIN_IS_TONNAGE : MIN_CLAN_TONNAGE;
+        return faction == Faction.INNERSPHERE ? MIN_IS_TONNAGE : MIN_CLAN_TONNAGE;
     }
 
     /**
      * @return The maximum tonnage allowed for this drop ship.
      */
     public int getMaxTonnage() {
-        return faction == Faction.InnerSphere ? MAX_IS_TONNAGE : MAX_CLAN_TONNAGE;
+        return faction == Faction.INNERSPHERE ? MAX_IS_TONNAGE : MAX_CLAN_TONNAGE;
     }
 
     /**

@@ -119,13 +119,13 @@ public class GarageListViewController implements MessageReceiver {
     @FXML
     public void contentsClick(MouseEvent aEvent) throws IOException {
         if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() >= 2) {
-            LiSongMechLab.openLoadout(getSelected());
+            LiSongMechLab.openLoadout(getSelected(), garage);
         }
     }
 
     @FXML
     public void contextMenuOpen(@SuppressWarnings("unused") ActionEvent aEvent) throws IOException {
-        LiSongMechLab.openLoadout(getSelected());
+        LiSongMechLab.openLoadout(getSelected(), garage);
     }
 
     @FXML

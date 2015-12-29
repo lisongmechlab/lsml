@@ -321,7 +321,7 @@ public class DynamicSlotDistributorTest {
 
         // Create chassis
         ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null,
-                Faction.InnerSphere, internalComponents, 0, 0, 0, aStructureType, armorType, null, false);
+                Faction.INNERSPHERE, internalComponents, 0, 0, 0, aStructureType, armorType, null, false);
         
         // Setup factory
         DefaultLoadoutFactory factory = new DefaultLoadoutFactory(null, mockOmniComponentFactory(internalComponents));

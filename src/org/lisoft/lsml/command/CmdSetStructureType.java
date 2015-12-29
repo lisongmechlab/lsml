@@ -22,6 +22,7 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
@@ -30,6 +31,8 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This {@link Command} can alter the internal structure of a {@link LoadoutStandard}.
+ * 
+ * FIXME: All pugrades need to have their factions checked against existing faction.
  * 
  * @author Li Song
  */
@@ -77,7 +80,7 @@ public class CmdSetStructureType extends CmdUpgradeBase {
     }
 
     @Override
-    protected void apply() throws EquipResult {
+    protected void apply() throws EquipException {
         set(newValue);
     }
 
@@ -86,20 +89,20 @@ public class CmdSetStructureType extends CmdUpgradeBase {
         try {
             set(oldValue);
         }
-        catch (EquipResult e) {
+        catch (EquipException e) {
             // Undo must not throw.
         }
     }
 
-    protected void set(StructureUpgrade aValue) throws EquipResult {
+    protected void set(StructureUpgrade aValue) throws EquipException {
         if (aValue != upgrades.getStructure()) {
             StructureUpgrade old = upgrades.getStructure();
-            upgrades.setStructure(aValue);
+            upgrades.setStructure(aValue); // FIXME: Check that faction matches.
 
             EquipResult result = verifyLoadoutInvariant(loadout);
-            if(result != EquipResult.SUCCESS){
+            if (result != EquipResult.SUCCESS) {
                 upgrades.setStructure(old);
-                throw result;
+                EquipException.checkAndThrow(result);
             }
 
             if (messageDelivery != null)

@@ -62,7 +62,7 @@ import org.lisoft.lsml.view.action.RedoLoadoutAction;
 import org.lisoft.lsml.view.action.RenameLoadoutAction;
 import org.lisoft.lsml.view.action.ShowDamageGraphAction;
 import org.lisoft.lsml.view.action.StripArmorAction;
-import org.lisoft.lsml.view.action.StripLoadout;
+import org.lisoft.lsml.view.action.StripLoadoutAction;
 import org.lisoft.lsml.view.action.UndoLoadoutAction;
 
 public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
@@ -215,8 +215,8 @@ public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
         loadoutMenu.add(new JMenuItem(actionRename));
         loadoutMenu.add(new JMenuItem(new DeleteLoadoutAction(xBar, ProgramInit.lsml().getGarage(), this)));
         loadoutMenu.add(new JMenuItem(new LoadStockAction(loadout, loadoutOperationStack, xBar, this)));
-        loadoutMenu.add(new JMenuItem(new StripLoadout(this, xBar, true)));
-        loadoutMenu.add(new JMenuItem(new StripLoadout(this, xBar, false)));
+        loadoutMenu.add(new JMenuItem(new StripLoadoutAction(this, xBar, true)));
+        loadoutMenu.add(new JMenuItem(new StripLoadoutAction(this, xBar, false)));
 
         loadoutMenu.add(new JMenuItem(new CloneLoadoutAction("Clone", loadout, KeyStroke.getKeyStroke("C"))));
         return loadoutMenu;

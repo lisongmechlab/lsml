@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.export.garage;
 
 import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -77,11 +78,14 @@ public class UpgradesConverter implements Converter {
             version = Integer.parseInt(versionString);
 
         GuidanceUpgrade guidance = UpgradeDB.STD_GUIDANCE;
-        ArmorUpgrade armor = UpgradeDB.IS_STD_ARMOR;
-        StructureUpgrade structure = UpgradeDB.IS_STD_STRUCTURE;
-        HeatSinkUpgrade heatSinks = UpgradeDB.IS_SHS;
+        ArmorUpgrade armor = null;
+        StructureUpgrade structure = null;
+        HeatSinkUpgrade heatSinks = null;
 
         if (version == 1) {
+            armor = UpgradeDB.getArmor(Faction.INNERSPHERE, false);
+            structure = UpgradeDB.getStructure(Faction.INNERSPHERE, false);
+            heatSinks = UpgradeDB.getHeatSinks(Faction.INNERSPHERE, false);
             // <artemis>bool</artemis><ferroFibrous>bool</ferroFibrous><endoSteel>bool</endoSteel><dhs>bool</dhs>
             while (aReader.hasMoreChildren()) {
                 aReader.moveDown();
@@ -93,17 +97,17 @@ public class UpgradesConverter implements Converter {
                         break;
                     case "ferroFibrous":
                         if (Boolean.parseBoolean(aReader.getValue())) {
-                            armor = UpgradeDB.IS_FF_ARMOR;
+                            armor = UpgradeDB.getArmor(Faction.INNERSPHERE, true);
                         }
                         break;
                     case "endoSteel":
                         if (Boolean.parseBoolean(aReader.getValue())) {
-                            structure = UpgradeDB.IS_ES_STRUCTURE;
+                            structure = UpgradeDB.getStructure(Faction.INNERSPHERE, true);
                         }
                         break;
                     case "dhs":
                         if (Boolean.parseBoolean(aReader.getValue())) {
-                            heatSinks = UpgradeDB.IS_DHS;
+                            heatSinks = UpgradeDB.getHeatSinks(Faction.INNERSPHERE, true);
                         }
                         break;
                     default:

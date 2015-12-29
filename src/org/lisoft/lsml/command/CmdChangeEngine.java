@@ -23,7 +23,7 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
@@ -57,16 +57,16 @@ public class CmdChangeEngine extends CompositeCommand {
     }
 
     @Override
-    protected void buildCommand() throws EquipResult {
+    protected void buildCommand() throws EquipException {
         Engine oldEngine = loadout.getEngine();
         HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
         ConfiguredComponentStandard ct = loadout.getComponent(Location.CenterTorso);
-        
+
         double freeMass = loadout.getFreeMass() - (newEngine.getMass() - oldEngine.getMass());
 
         int hsToAdd = Math.min(ct.getEngineHeatSinks(), newEngine.getNumHeatsinkSlots());
-        hsToAdd = Math.min(hsToAdd, (int)freeMass);
-        
+        hsToAdd = Math.min(hsToAdd, (int) freeMass);
+
         addOp(new CmdRemoveItem(messageBuffer, loadout, ct, oldEngine));
         addOp(new CmdAddItem(messageBuffer, loadout, ct, newEngine));
         while (hsToAdd > 0) {

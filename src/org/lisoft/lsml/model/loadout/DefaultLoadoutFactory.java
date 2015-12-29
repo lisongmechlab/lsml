@@ -27,6 +27,7 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
@@ -65,8 +66,12 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
     public LoadoutBase<?> produceEmpty(ChassisBase aChassis) {
         if (aChassis instanceof ChassisStandard) {
             ChassisStandard chassis = (ChassisStandard) aChassis;
-            return new LoadoutStandard(stdComponentFactory, chassis, UpgradesMutable.standardUpgrades(),
-                    new WeaponGroups());
+            Faction faction = aChassis.getFaction();
+            UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getArmor(faction, false),
+                    UpgradeDB.getStructure(faction, false), UpgradeDB.STD_GUIDANCE,
+                    UpgradeDB.getHeatSinks(faction, false));
+
+            return new LoadoutStandard(stdComponentFactory, chassis, upgrades, new WeaponGroups());
         }
         else if (aChassis instanceof ChassisOmniMech) {
             ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
