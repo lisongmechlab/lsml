@@ -19,6 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
+import static javafx.beans.binding.Bindings.format;
+import static javafx.beans.binding.Bindings.isNull;
+import static javafx.beans.binding.Bindings.when;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +54,6 @@ import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.item.WeaponModule;
-import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -58,6 +61,8 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.BetterTextFormatter;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
@@ -74,7 +79,7 @@ import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
-import javafx.beans.binding.Bindings;
+import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -85,6 +90,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
@@ -94,6 +100,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -106,21 +115,107 @@ import javafx.scene.shape.Arc;
  * @author Li Song
  */
 public class LoadoutWindowController implements MessageReceiver {
-    private static final String        EQ_COL_MASS       = "Mass";
-    private static final String        EQ_COL_NAME       = "Name";
-    private static final String        EQ_COL_SLOTS      = "Slots";
-    private static final String        WSTAT_COL_AMMO    = "Rnds";
-    private static final String        WSTAT_COL_DAMAGE  = "Dmg";
-    private static final String        WSTAT_COL_SECONDS = "Time";
-    private static final String        WSTAT_COL_VOLLEYS = "Vlys";
-    private static final String        WSTAT_COL_EAPON   = "Weapon";
-    private static final int           UNDO_DEPTH        = 128;
+    private class CmdArmorSlider extends CompositeCommand {
+        private final double newValue;
+        private double       oldValue;
+        private final Slider slider;
 
+        public CmdArmorSlider(Slider aSlider, double aOldValue) {
+            super("armor adjustment", xBar);
+            slider = aSlider;
+            oldValue = aOldValue;
+            newValue = slider.getValue();
+        }
+
+        @Override
+        public void buildCommand() {
+            addOp(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(), armorWizardRatio.getValue(),
+                    messageBuffer));
+        }
+
+        @Override
+        public boolean canCoalescele(Command aOperation) {
+            if (aOperation != this && aOperation != null && aOperation instanceof CmdArmorSlider) {
+                CmdArmorSlider op = (CmdArmorSlider) aOperation;
+                boolean ans = slider == op.slider;
+                if (ans) {
+                    op.oldValue = oldValue;
+                }
+                return ans;
+            }
+            return false;
+        }
+
+        @Override
+        protected void apply() throws Exception {
+            disableSliderAction = true;
+            slider.setValue(newValue);
+            super.apply();
+            disableSliderAction = false;
+        }
+
+        @Override
+        protected void undo() {
+            disableSliderAction = true;
+            slider.setValue(oldValue);
+            super.undo();
+            disableSliderAction = false;
+        }
+    }
+
+    private class CmdResetManualArmor extends CompositeCommand {
+        public CmdResetManualArmor() {
+            super("reset manual armor", xBar);
+        }
+
+        @Override
+        public void buildCommand() {
+            LoadoutBase<?> loadout = model.loadout;
+            for (ConfiguredComponentBase component : loadout.getComponents()) {
+                for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+                    addOp(new CmdSetArmor(messageBuffer, loadout, component, side, component.getArmor(side), false));
+                }
+            }
+        }
+
+        @Override
+        public boolean canCoalescele(Command aOperation) {
+            return aOperation != this && aOperation instanceof CmdResetManualArmor;
+        }
+
+        @Override
+        protected void apply() throws Exception {
+            super.apply();
+            updateArmorWizard();
+        }
+
+        @Override
+        protected void undo() {
+            super.undo();
+            updateArmorWizard();
+        }
+    }
+
+    private static final String        EQ_COL_MASS         = "Mass";
+    private static final String        EQ_COL_NAME         = "Name";
+    private static final String        EQ_COL_SLOTS        = "Slots";
+    private static final int           UNDO_DEPTH          = 128;
+    private static final String        WSTAT_COL_AMMO      = "Rnds";
+    private static final String        WSTAT_COL_DAMAGE    = "Dmg";
+    private static final String        WSTAT_COL_EAPON     = "Weapon";
+
+    private static final String        WSTAT_COL_SECONDS   = "Time";
+    private static final String        WSTAT_COL_VOLLEYS   = "Vlys";
+    @FXML
+    MenuItem                           menuRedo;
+    @FXML
+    MenuItem                           menuUndo;
     @FXML
     private Slider                     armorWizardAmount;
     @FXML
     private Slider                     armorWizardRatio;
-    private final CommandStack         cmdStack          = new CommandStack(UNDO_DEPTH);
+    private final CommandStack         cmdStack            = new CommandStack(UNDO_DEPTH);
+    private boolean                    disableSliderAction = false;
     @FXML
     private CheckBox                   effAnchorTurn;
     @FXML
@@ -189,7 +284,7 @@ public class LoadoutWindowController implements MessageReceiver {
     @FXML
     private Label                      mobilityTurnSpeed;
     private LoadoutModelAdaptor        model;
-    private final ModifierFormatter    modifierFormatter = new ModifierFormatter();
+    private final ModifierFormatter    modifierFormatter   = new ModifierFormatter();
     @FXML
     private VBox                       modifiersBox;
     @FXML
@@ -206,6 +301,7 @@ public class LoadoutWindowController implements MessageReceiver {
     private Label                      offensiveBurstDamage;
     @FXML
     private Label                      offensiveMaxDPS;
+
     @FXML
     private ComboBox<String>           offensiveRange;
     @FXML
@@ -216,7 +312,7 @@ public class LoadoutWindowController implements MessageReceiver {
     private Label                      offensiveTimeToOverheat;
     @FXML
     private TableView<WeaponSummary>   offensiveWeaponTable;
-
+    private final CommandStack         sideStack           = new CommandStack(0);
     @FXML
     private CheckBox                   upgradeArtemis;
     @FXML
@@ -225,29 +321,11 @@ public class LoadoutWindowController implements MessageReceiver {
     private CheckBox                   upgradeEndoSteel;
     @FXML
     private CheckBox                   upgradeFerroFibrous;
-    private final MessageXBar          xBar              = new MessageXBar();
+    private final MessageXBar          xBar                = new MessageXBar();
 
     @FXML
     public void armorWizardResetAll(@SuppressWarnings("unused") ActionEvent event) throws Exception {
-        CommandStack.CompositeCommand cc = new CommandStack.CompositeCommand("Reset manual armor", xBar) {
-            @Override
-            protected void buildCommand() throws EquipResult {
-                for (ConfiguredComponentBase component : model.loadout.getComponents()) {
-                    if (component.getInternalComponent().getLocation().isTwoSided()) {
-                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.FRONT,
-                                component.getArmor(ArmorSide.FRONT), false));
-                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.BACK,
-                                component.getArmor(ArmorSide.BACK), false));
-                    }
-                    else {
-                        addOp(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.ONLY,
-                                component.getArmor(ArmorSide.ONLY), false));
-                    }
-                }
-
-            }
-        };
-        cmdStack.pushAndApply(cc);
+        cmdStack.pushAndApply(new CmdResetManualArmor());
         updateArmorWizard();
     }
 
@@ -275,8 +353,13 @@ public class LoadoutWindowController implements MessageReceiver {
         }
 
         if (upgrades || items || autoArmorUpdate) {
-            updateArmorWizard();
+            Platform.runLater(() -> updateArmorWizard());
         }
+    }
+
+    @FXML
+    public void redo(@SuppressWarnings("unused") ActionEvent event) throws Exception {
+        cmdStack.redo();
     }
 
     public void setLoadout(LoadoutBase<?> aLoadout) {
@@ -295,15 +378,23 @@ public class LoadoutWindowController implements MessageReceiver {
         setupMobilityPanel();
         setupHeatPanel();
         setupOffensivePanel();
+
+        setupMenuBar();
+    }
+
+    @FXML
+    public void undo(@SuppressWarnings("unused") ActionEvent event) {
+        cmdStack.undo();
     }
 
     private void setupArmorWizard() {
         armorWizardAmount.setMax(model.loadout.getChassis().getArmorMax());
         armorWizardAmount.setValue(model.loadout.getArmor());
         armorWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            if (disableSliderAction)
+                return;
             try {
-                cmdStack.pushAndApply(
-                        new CmdDistributeArmor(model.loadout, aNew.intValue(), armorWizardRatio.getValue(), xBar));
+                cmdStack.pushAndApply(new CmdArmorSlider(armorWizardAmount, aOld.doubleValue()));
             }
             catch (Exception e) {
                 LiSongMechLab.showError(e);
@@ -318,9 +409,10 @@ public class LoadoutWindowController implements MessageReceiver {
         armorWizardRatio.setMax(max_ratio);
         armorWizardRatio.setValue(currentRatio);
         armorWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            if (disableSliderAction)
+                return;
             try {
-                cmdStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
-                        aNew.doubleValue(), xBar));
+                cmdStack.pushAndApply(new CmdArmorSlider(armorWizardRatio, aOld.doubleValue()));
             }
             catch (Exception e) {
                 LiSongMechLab.showError(e);
@@ -408,18 +500,17 @@ public class LoadoutWindowController implements MessageReceiver {
         Pane parent = (Pane) generalMassBar.getParent();
         generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
         generalMassBar.prefWidthProperty().bind(parent.widthProperty());
-        generalMassLabel.textProperty().bind(Bindings.format("%.2f t free", model.statsFreeMass));
+        generalMassLabel.textProperty().bind(format("%.2f t free", model.statsFreeMass));
 
         int armorMax = chassis.getArmorMax();
         generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
         generalArmorBar.prefWidthProperty().bind(parent.widthProperty());
-        generalArmorLabel.textProperty().bind(Bindings.format("%d free", model.statsArmorFree));
+        generalArmorLabel.textProperty().bind(format("%d free", model.statsArmorFree));
 
         int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
         generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
         generalSlotsBar.prefWidthProperty().bind(parent.widthProperty());
-        generalSlotsLabel.textProperty()
-                .bind(Bindings.format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
+        generalSlotsLabel.textProperty().bind(format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
     }
 
     private void setupHeatPanel() {
@@ -431,11 +522,10 @@ public class LoadoutWindowController implements MessageReceiver {
         heatEnvironment.valueProperty().bindBidirectional(metrics.environment);
         heatEnvironment.getSelectionModel().select(0);
 
-        heatSinkCount.textProperty().bind(Bindings.format("Heat Sinks: %d", metrics.heatSinkCount));
-        heatCapacity.textProperty().bind(Bindings.format("Heat Capacity: %.1f", metrics.heatCapacity));
-        heatCoolingRatio.textProperty()
-                .bind(Bindings.format("Cooling Ratio: %.1f%%", metrics.coolingRatio.multiply(100)));
-        heatTimeToCool.textProperty().bind(Bindings.format("Time to Cool: %.1fs", metrics.timeToCool));
+        heatSinkCount.textProperty().bind(format("Heat Sinks: %d", metrics.heatSinkCount));
+        heatCapacity.textProperty().bind(format("Heat Capacity: %.1f", metrics.heatCapacity));
+        heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1f%%", metrics.coolingRatio.multiply(100)));
+        heatTimeToCool.textProperty().bind(format("Time to Cool: %.1fs", metrics.timeToCool));
     }
 
     private void setupLayoutView() {
@@ -482,17 +572,30 @@ public class LoadoutWindowController implements MessageReceiver {
         children.add(leftArmBox);
     }
 
-    private void setupMobilityPanel() {
-        mobilityTopSpeed.textProperty().bind(Bindings.format("Top Speed: %.1f km/h", metrics.topSpeed));
-        mobilityTurnSpeed.textProperty().bind(Bindings.format("Turn Speed: %.1f °/s", metrics.turnSpeed));
+    /**
+     * 
+     */
+    private void setupMenuBar() {
+        menuRedo.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
+        menuRedo.disableProperty().bind(isNull(cmdStack.nextRedoProperty()));
+        menuRedo.textProperty().bind(when(isNull(cmdStack.nextRedoProperty())).then("Redo")
+                .otherwise(format("Redo (%s)", cmdStack.nextRedoProperty().asString())));
 
-        mobilityTorsoPitchSpeed.textProperty()
-                .bind(Bindings.format("Torso (pitch): %.1f °/s", metrics.torsoPitchSpeed));
-        mobilityTorsoYawSpeed.textProperty().bind(Bindings.format("Torso (yaw): %.1f °/s", metrics.torsoYawSpeed));
-        mobilityArmPitchSpeed.textProperty().bind(Bindings.format("Arm (pitch): %.1f °/s", metrics.armPitchSpeed));
-        mobilityArmYawSpeed.textProperty().bind(Bindings.format("Arm (yaw): %.1f °/s", metrics.armYawSpeed));
-        mobilityJumpJets.textProperty()
-                .bind(Bindings.format("JumpJets: %d/%d", metrics.jumpJetCount, metrics.jumpJetMax));
+        menuUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
+        menuUndo.disableProperty().bind(isNull(cmdStack.nextUndoProperty()));
+        menuUndo.textProperty().bind(when(isNull(cmdStack.nextUndoProperty())).then("Undo")
+                .otherwise(format("Undo (%s)", cmdStack.nextUndoProperty().asString())));
+    }
+
+    private void setupMobilityPanel() {
+        mobilityTopSpeed.textProperty().bind(format("Top Speed: %.1f km/h", metrics.topSpeed));
+        mobilityTurnSpeed.textProperty().bind(format("Turn Speed: %.1f °/s", metrics.turnSpeed));
+
+        mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (pitch): %.1f °/s", metrics.torsoPitchSpeed));
+        mobilityTorsoYawSpeed.textProperty().bind(format("Torso (yaw): %.1f °/s", metrics.torsoYawSpeed));
+        mobilityArmPitchSpeed.textProperty().bind(format("Arm (pitch): %.1f °/s", metrics.armPitchSpeed));
+        mobilityArmYawSpeed.textProperty().bind(format("Arm (yaw): %.1f °/s", metrics.armYawSpeed));
+        mobilityJumpJets.textProperty().bind(format("JumpJets: %d/%d", metrics.jumpJetCount, metrics.jumpJetMax));
 
         mobilityArcPitchOuter.lengthProperty().bind(metrics.torsoPitch.add(metrics.armPitch).multiply(2.0));
         mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
@@ -593,21 +696,19 @@ public class LoadoutWindowController implements MessageReceiver {
         offensiveTime.getEditor().setTextFormatter(timeFormatter);
         offensiveTime.getSelectionModel().select(0);
 
-        offensiveAlphaDamage.textProperty()
-                .bind(Bindings.format("A. Dmg: %.1f@%.0fm", metrics.alphaDamage, metrics.alphaRange));
-        offensiveAlphaHeat.textProperty().bind(Bindings.format("A. Heat: %.0f%%",
+        offensiveAlphaDamage.textProperty().bind(format("A. Dmg: %.1f@%.0fm", metrics.alphaDamage, metrics.alphaRange));
+        offensiveAlphaHeat.textProperty().bind(format("A. Heat: %.0f%%",
                 metrics.alphaHeat.add(metrics.alphaGhostHeat).divide(metrics.heatCapacity).multiply(100)));
         offensiveAlphaTimeToCool.textProperty()
-                .bind(Bindings.format("A. Cool: %.1fs", metrics.alphaHeat.divide(metrics.heatDissipation)));
-        offensiveAlphaGhostHeat.textProperty().bind(Bindings.format("A. Ghost Heat: %.1f", metrics.alphaGhostHeat));
+                .bind(format("A. Cool: %.1fs", metrics.alphaHeat.divide(metrics.heatDissipation)));
+        offensiveAlphaGhostHeat.textProperty().bind(format("A. Ghost Heat: %.1f", metrics.alphaGhostHeat));
 
-        offensiveMaxDPS.textProperty()
-                .bind(Bindings.format("Max DPS: %.1f@%.0fm", metrics.maxDPS, metrics.maxDPSRange));
+        offensiveMaxDPS.textProperty().bind(format("Max DPS: %.1f@%.0fm", metrics.maxDPS, metrics.maxDPSRange));
         offensiveSustainedDPS.textProperty()
-                .bind(Bindings.format("Sust. DPS: %.1f@%.0fm", metrics.sustainedDPS, metrics.sustainedDPSRange));
-        offensiveBurstDamage.textProperty().bind(
-                Bindings.format("Burst %.0fs: %.1f@%.0fm", metrics.burstTime, metrics.burstDamage, metrics.burstRange));
-        offensiveTimeToOverheat.textProperty().bind(Bindings.format("A. Overheat: %.1fs", metrics.alphaTimeToOverheat));
+                .bind(format("Sust. DPS: %.1f@%.0fm", metrics.sustainedDPS, metrics.sustainedDPSRange));
+        offensiveBurstDamage.textProperty()
+                .bind(format("Burst %.0fs: %.1f@%.0fm", metrics.burstTime, metrics.burstDamage, metrics.burstRange));
+        offensiveTimeToOverheat.textProperty().bind(format("A. Overheat: %.1fs", metrics.alphaTimeToOverheat));
 
         setupWeaponsTable();
     }
@@ -720,7 +821,8 @@ public class LoadoutWindowController implements MessageReceiver {
 
     private void updateArmorWizard() {
         try {
-            cmdStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
+
+            sideStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
                     armorWizardRatio.getValue(), xBar));
         }
         catch (Exception e) {

@@ -34,7 +34,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.lisoft.lsml.command.CmdDistributeArmor;
-import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -54,64 +53,19 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Li Song
  */
 public class ArmorDistributionPanel extends JPanel implements MessageReceiver, ChangeListener {
-    private static final long serialVersionUID = 6835003047682738947L;
+    private static final long    serialVersionUID    = 6835003047682738947L;
 
     private final LoadoutBase<?> loadout;
     private final CommandStack   stack;
     private final MessageXBar    xBar;
     private final JSlider        ratioSlider;
     private final JSlider        armorSlider;
-    private final CommandStack   privateStack = new CommandStack(0);
+    private final CommandStack   privateStack        = new CommandStack(0);
 
-    private boolean disableSliderAction = false;
-    private boolean armorOpInProgress   = false;
-    private int     lastRatio           = 0;
-    private int     lastAmount          = 0;
-
-    private class ResetManualArmorOperation extends CompositeCommand {
-        private final LoadoutBase<?> opLoadout = loadout;
-
-        public ResetManualArmorOperation() {
-            super("reset manual armor", xBar);
-        }
-
-        @Override
-        protected void apply() throws Exception {
-            super.apply();
-            updateArmorDistribution();
-        }
-
-        @Override
-        protected void undo() {
-            super.undo();
-            updateArmorDistribution();
-        }
-
-        @Override
-        public boolean canCoalescele(Command aOperation) {
-            if (aOperation != this && aOperation != null && aOperation instanceof ResetManualArmorOperation) {
-                ResetManualArmorOperation operation = (ResetManualArmorOperation) aOperation;
-                return operation.opLoadout == opLoadout;
-            }
-            return false;
-        }
-
-        @Override
-        public void buildCommand() {
-            for (ConfiguredComponentBase loadoutPart : loadout.getComponents()) {
-                if (loadoutPart.getInternalComponent().getLocation().isTwoSided()) {
-                    addOp(new CmdSetArmor(messageBuffer, loadout, loadoutPart, ArmorSide.FRONT,
-                            loadoutPart.getArmor(ArmorSide.FRONT), false));
-                    addOp(new CmdSetArmor(messageBuffer, loadout, loadoutPart, ArmorSide.BACK,
-                            loadoutPart.getArmor(ArmorSide.BACK), false));
-                }
-                else {
-                    addOp(new CmdSetArmor(messageBuffer, loadout, loadoutPart, ArmorSide.ONLY,
-                            loadoutPart.getArmor(ArmorSide.ONLY), false));
-                }
-            }
-        }
-    }
+    private boolean              disableSliderAction = false;
+    private boolean              armorOpInProgress   = false;
+    private int                  lastRatio           = 0;
+    private int                  lastAmount          = 0;
 
     private class ArmorSliderOperation extends CompositeCommand {
         private final JSlider slider;

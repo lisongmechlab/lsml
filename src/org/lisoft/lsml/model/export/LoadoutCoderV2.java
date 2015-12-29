@@ -53,6 +53,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -135,15 +136,9 @@ public class LoadoutCoderV2 implements LoadoutCoder {
         // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA
         // 1 byte per armor value (2 for RT,CT,LT front first)
         for (Location location : Location.right2Left()) {
-            if (location.isTwoSided()) {
-                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.FRONT,
-                        buffer.read(), true));
-                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.BACK,
-                        buffer.read(), true));
-            }
-            else {
-                stack.pushAndApply(new CmdSetArmor(null, loadout, loadout.getComponent(location), ArmorSide.ONLY,
-                        buffer.read(), true));
+            ConfiguredComponentStandard component = loadout.getComponent(location);
+            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+                stack.pushAndApply(new CmdSetArmor(null, loadout, component, side, buffer.read(), true));
             }
         }
 

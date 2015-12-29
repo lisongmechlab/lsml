@@ -88,12 +88,8 @@ public class CmdStripComponent extends CompositeCommand {
             }
         }
         if (removeArmorToo) {
-            if (component.getInternalComponent().getLocation().isTwoSided()) {
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.FRONT, 0, false));
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.BACK, 0, false));
-            }
-            else {
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.ONLY, 0, false));
+            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+                addOp(new CmdSetArmor(messageBuffer, loadout, component, side, 0, false));
             }
         }
     }

@@ -82,15 +82,12 @@ public abstract class ConfiguredComponentBase {
         }
     }
 
-    public ConfiguredComponentBase(ComponentBase aInternalPart, boolean aManualArmor) {
-        internalComponent = aInternalPart;
+    public ConfiguredComponentBase(ComponentBase aInternalComponent, boolean aManualArmor) {
+        internalComponent = aInternalComponent;
         manualArmor = aManualArmor;
-        if (internalComponent.getLocation().isTwoSided()) {
-            armor.put(ArmorSide.FRONT, 0);
-            armor.put(ArmorSide.BACK, 0);
-        }
-        else {
-            armor.put(ArmorSide.ONLY, 0);
+
+        for (ArmorSide side : ArmorSide.allSides(internalComponent)) {
+            armor.put(side, 0);
         }
     }
 

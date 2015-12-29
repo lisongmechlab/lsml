@@ -19,11 +19,24 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * This enumeration names the sides of an {@link ComponentStandard} for use with armor.
  * 
  * @author Li Song
  */
 public enum ArmorSide {
-    ONLY, FRONT, BACK
+    ONLY, FRONT, BACK;
+
+    private static List<ArmorSide> BOTH_SIDES = Arrays.asList(FRONT, BACK);
+    private static List<ArmorSide> ONLY_SIDE  = Arrays.asList(ONLY);
+
+    public static Iterable<ArmorSide> allSides(ComponentBase aComponent) {
+        if (aComponent.getLocation().isTwoSided()) {
+            return BOTH_SIDES;
+        }
+        return ONLY_SIDE;
+    }
 }

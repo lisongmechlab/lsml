@@ -43,12 +43,8 @@ public class CmdStripArmor extends CompositeCommand {
     @Override
     public void buildCommand() {
         for (ConfiguredComponentBase component : loadout.getComponents()) {
-            if (component.getInternalComponent().getLocation().isTwoSided()) {
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.FRONT, 0, true));
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.BACK, 0, true));
-            }
-            else {
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.ONLY, 0, true));
+            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+                addOp(new CmdSetArmor(messageBuffer, loadout, component, side, 0, true));
             }
         }
     }

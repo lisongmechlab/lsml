@@ -47,9 +47,9 @@ import org.lisoft.lsml.util.CommandStack;
 public class DefaultLoadoutFactory implements LoadoutFactory {
     private final Factory<ConfiguredComponentStandard> stdComponentFactory;
     private final Factory<ConfiguredComponentOmniMech> omniComponentFactory;
-    private final CommandStack                         stack = new CommandStack(0);
+    private final CommandStack                         stack    = new CommandStack(0);
 
-    public final static DefaultLoadoutFactory instance = new DefaultLoadoutFactory();
+    public final static DefaultLoadoutFactory          instance = new DefaultLoadoutFactory();
 
     public DefaultLoadoutFactory() {
         this(ComponentBuilder.getStandardComponentFactory(), ComponentBuilder.getOmniComponentFactory());
@@ -121,12 +121,8 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             }
 
             // Armor
-            if (srcCmpnt.getInternalComponent().getLocation().isTwoSided()) {
-                tgtCmpnt.setArmor(ArmorSide.FRONT, srcCmpnt.getArmor(ArmorSide.FRONT), srcCmpnt.hasManualArmor());
-                tgtCmpnt.setArmor(ArmorSide.BACK, srcCmpnt.getArmor(ArmorSide.BACK), srcCmpnt.hasManualArmor());
-            }
-            else {
-                tgtCmpnt.setArmor(ArmorSide.ONLY, srcCmpnt.getArmor(ArmorSide.ONLY), srcCmpnt.hasManualArmor());
+            for (ArmorSide side : ArmorSide.allSides(srcCmpnt.getInternalComponent())) {
+                tgtCmpnt.setArmor(side, srcCmpnt.getArmor(side), srcCmpnt.hasManualArmor());
             }
 
             // Equipment
